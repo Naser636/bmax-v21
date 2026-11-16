@@ -15,6 +15,7 @@
 
 const KAQ = require("./odg-knowledge-acquisition.js");  // corroboration (host-independent supports)
 const AUTH = require("./odg-source-authority.js");      // V230 — official-domain + owner-level independence
+const JC = require("./odg-jidoka-completeness.js");     // V231 — acceptance check for the jidoka-completeness proposal
 
 // REAL executed research (V230, 2026-11-16). status RETRIEVED = fetched with real content; INACCESSIBLE = HTTP 403 (not circumvented).
 const BENCHMARKS = Object.freeze([
@@ -30,6 +31,7 @@ const BENCHMARKS = Object.freeze([
     acceptanceCriteria: "no computed fail-closed verdict is left unconsumed by a decider in the Radar→grade→mission chain",
     reproducibleTest: "for each fail-closed verdict, a test proves a decider consumes it (the V223/V224/V225 pattern)",
     economicContribution: "HYPOTHESIS: fewer bad decisions ⇒ less rework; needs a measured defect/rework baseline to quantify",
+    acceptanceCheck: "jidoka-completeness",   // V231 — the Radar recomputes this item's status from a behavioral acceptance check
   },
   {
     id: "BMK-NVIDIA-CUDA", practice: "NVIDIA CUDA — GPU parallel-computing platform + programming model for accelerated general-purpose compute",
@@ -84,12 +86,20 @@ function synthesize(opts?: any): any {
     const impact = clamp(b.impact), feasibility = clamp(b.feasibility), cost = clamp(b.cost), risk = clamp(b.risk);
     const priorityScore = Math.round(((impact * feasibility) / (cost + risk)) * 10) / 10;
 
-    const decision = !proven
+    let decision = !proven
       ? (auth.hasOfficial ? "OFFICIAL_CLAIM_NOT_CORROBORATED" : "NOT_A_PROVEN_BENCHMARK")
       : b.applicable === false ? "CORROBORATED_NOT_APPLICABLE"
       : b.odgState === "ALIGNED" ? "ALREADY_ALIGNED_NO_BUILD"
       : "PROPOSED";
-    const emit = decision === "PROPOSED";
+    // V231 §1.1: the Radar RECOMPUTES a PROPOSED item's status from its behavioral acceptance check. A jidoka-completeness
+    // check that returns ACCEPTED (every fail-closed verdict demonstrably consumed) moves the item PROPOSED → ACCEPTED.
+    let acceptanceEvidence: any = null;
+    if (decision === "PROPOSED" && b.acceptanceCheck === "jidoka-completeness") {
+      const jc = JC.verify();
+      acceptanceEvidence = Object.freeze({ check: "jidoka-completeness", verdict: jc.verdict, consumed: jc.consumedCount + "/" + jc.total });
+      if (jc.verdict === "ACCEPTED") decision = "ACCEPTED";
+    }
+    const emit = decision === "PROPOSED" || decision === "ACCEPTED";
     return Object.freeze({
       id: b.id, practice: b.practice, metiers: Object.freeze(b.metiers || []),
       benchmarkProven: proven, corroborationHosts: kaq.accessibleCount, independentOwners: auth.independentOwners,
@@ -97,21 +107,24 @@ function synthesize(opts?: any): any {
       odgCapability: b.odgCapability, odgState: b.odgState, applicable: b.applicable !== false, decision,
       impact, feasibility, cost, risk, priorityScore,
       proposal: emit ? b.proposal : null, acceptanceCriteria: b.acceptanceCriteria || null, reproducibleTest: b.reproducibleTest || null,
+      acceptanceEvidence,
       economicContribution: b.economicContribution || null,
-      note: decision === "PROPOSED" ? "corroborated benchmark (≥2 independent owners) + a real ODG gap — PROPOSES, does not implement"
+      note: decision === "ACCEPTED" ? "ACCEPTED — the proposal's acceptance check passed (every fail-closed verdict demonstrably consumed); verified by behavioral exercise, not merely proposed"
+        : decision === "PROPOSED" ? "corroborated benchmark (≥2 independent owners) + a real ODG gap — PROPOSES, does not implement"
         : decision === "OFFICIAL_CLAIM_NOT_CORROBORATED" ? "official vendor source(s) only (<2 independent owners) — a CLAIM, not a benchmark; needs an independent accessible source"
         : decision === "CORROBORATED_NOT_APPLICABLE" ? "corroborated fact but NOT an ODG métier concern — no artificial mapping"
         : decision === "ALREADY_ALIGNED_NO_BUILD" ? "ODG already embodies this — no build (no fabricated gap)"
         : "not corroborated and no official source — a hypothesis, not a benchmark",
     });
   });
-  const ranked = [...items].sort((a: any, b: any) => (b.decision === "PROPOSED" ? 1 : 0) - (a.decision === "PROPOSED" ? 1 : 0) || b.priorityScore - a.priorityScore || (a.id < b.id ? -1 : 1));
+  const rank = (d: string) => d === "PROPOSED" ? 3 : d === "ACCEPTED" ? 2 : 0;
+  const ranked = [...items].sort((a: any, b: any) => rank(b.decision) - rank(a.decision) || b.priorityScore - a.priorityScore || (a.id < b.id ? -1 : 1));
 
   // §4 coverage matrix: which métiers have a PROVEN benchmark vs an official-claim vs none.
   const coverage: Record<string, any> = {};
   for (const it of items) for (const m of it.metiers) {
     if (!coverage[m]) coverage[m] = { metier: m, provenBenchmarks: [], officialClaims: [] };
-    if (it.decision === "PROPOSED" || it.decision === "ALREADY_ALIGNED_NO_BUILD") coverage[m].provenBenchmarks.push(it.id);
+    if (it.decision === "PROPOSED" || it.decision === "ACCEPTED" || it.decision === "ALREADY_ALIGNED_NO_BUILD") coverage[m].provenBenchmarks.push(it.id);
     else if (it.decision === "OFFICIAL_CLAIM_NOT_CORROBORATED") coverage[m].officialClaims.push(it.id);
   }
 
@@ -119,6 +132,7 @@ function synthesize(opts?: any): any {
     benchmarksTotal: items.length,
     corroboratedCount: items.filter((x: any) => x.benchmarkProven).length,
     proposedCount: items.filter((x: any) => x.decision === "PROPOSED").length,
+    acceptedCount: items.filter((x: any) => x.decision === "ACCEPTED").length,
     alignedCount: items.filter((x: any) => x.decision === "ALREADY_ALIGNED_NO_BUILD").length,
     notApplicableCount: items.filter((x: any) => x.decision === "CORROBORATED_NOT_APPLICABLE").length,
     officialClaimOnlyCount: items.filter((x: any) => x.decision === "OFFICIAL_CLAIM_NOT_CORROBORATED").length,
