@@ -108,14 +108,19 @@ function dedupeOpportunities(list: any): any {
   return { list: out, dropped };
 }
 
-function evidenceFrom(rec: any): any {
+/* evidenceFrom(rec, contentIntegrity?) — contentIntegrity is verifyWebProvenance's integrity verdict for rec's source
+ * (MATCH/MISMATCH/FIRST_CAPTURE/NO_CONTENT). A MISMATCH = the recorded content hash no longer matches the live source
+ * (tamper-evident / registry-site mismatch) ⇒ a genuine CONTRADICTION that must reach the grader (previously this was
+ * hard-coded false, so enterprise-lead-grade's REJECT-on-contradiction branch was DEAD). Absent/weak signals (NO_CONTENT/
+ * FIRST_CAPTURE, businessPresence ABSENT) are NOT treated as a contradiction — no contradiction DETECTED ≠ fabricated. */
+function evidenceFrom(rec: any, contentIntegrity?: any): any {
   const officialOrCompany = rec.sourceType === "official-tender" || rec.sourceType === "company";
   return {
     existenceVerified: officialOrCompany === true,
     needEvidence: "explicit",
     budget: rec.budgetEur !== null ? (rec.budgetKind === "published" ? "published" : "qualified-estimate") : "unknown",
     decisionMakerIdentified: rec.sourceType === "official-tender",
-    contradictions: false,
+    contradictions: contentIntegrity === "MISMATCH",   // computed from REAL provenance, not a placeholder
     scamFlags: rec.scamFlags,
   };
 }
@@ -146,12 +151,13 @@ function detect(rawItems: any, opts: any): any {
   const normalized = (Array.isArray(rawItems) ? rawItems : []).map((x: any) => normalizeOpportunity(x, nowMs));
   const { list, dropped } = dedupeOpportunities(normalized);
   const shortlist = list.map((rec: any) => {
-    const grade = LEAD ? LEAD.gradeLead(evidenceFrom(rec)).grade : "C";
-    const provenance = budgetProvenance(rec);
+    // provenance FIRST: its integrity verdict feeds the grader so a tamper-evident content MISMATCH can reject the lead.
     const contentProvenance = verifyWebProvenance({
       httpStatus: rec.httpStatus, content: rec.content, expectedHash: rec.expectedHash,
       value: rec.budgetEur, lastCheckedAt: rec.lastCheckedAt, nowMs: nowMs, maxAgeDays: o.maxAgeDays,
     });
+    const grade = LEAD ? LEAD.gradeLead(evidenceFrom(rec, contentProvenance.integrity)).grade : "C";
+    const provenance = budgetProvenance(rec);
     let feasible: any = null;
     // Guard: revenue-model exposes projectRevenue/pathsToTarget/contractsForTarget — NOT targetPlan (renamed in a
     // migration). Call it ONLY if present; otherwise leave feasibility null (honestly NOT computed, never fabricated).

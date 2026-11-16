@@ -127,4 +127,23 @@ t("detect attaches contentProvenance, strips raw content; parity", () => {
   assert.deepStrictEqual(TS.detect(raw, { nowMs: NOW2 }), JS.detect(raw, { nowMs: NOW2 }));
 });
 
+// 11. V223: content-integrity MISMATCH ⇒ contradictions true ⇒ lead REJECTED (previously `contradictions` was hard-coded
+//     false, so enterprise-lead-grade's REJECT-on-contradiction branch was DEAD). Backward-compat: bare evidenceFrom(rec)
+//     still reports contradictions false. Weak signals (NO_CONTENT/FIRST_CAPTURE/ABSENT) are NOT a contradiction.
+t("content MISMATCH ⇒ contradiction ⇒ REJECTED; no-content ⇒ not a contradiction; backward-compat", () => {
+  const NOW3 = Date.parse("2026-10-20T00:00:00Z");
+  // a grade-A-eligible official tender whose recorded hash NO LONGER matches the live content ⇒ tamper-evident contradiction.
+  const tampered = { ref: "RT", buyer: "CD Yvelines", subject: "TMA CRM", sourceType: "official-tender", url: "https://francemarches.com/x", httpStatus: 200, budgetEur: 250000, lastCheckedAt: "2026-10-20", content: "TAMPERED CONTENT", expectedHash: TS.sha256("ORIGINAL CONTENT") };
+  const out = TS.detect([tampered], { nowMs: NOW3 });
+  assert.strictEqual(out.shortlist[0].contentProvenance.integrity, "MISMATCH");
+  assert.strictEqual(out.shortlist[0].grade, "REJECTED");   // the previously-dead contradiction branch now fires
+  // the SAME record without the mismatch (no content) grades A — mismatch is the discriminator, not the official status.
+  const clean = TS.detect([{ ...tampered, content: undefined, expectedHash: undefined }], { nowMs: NOW3 });
+  assert.strictEqual(clean.shortlist[0].grade, "A");
+  // backward-compat: evidenceFrom with no integrity arg ⇒ contradictions false (unchanged for direct callers).
+  assert.strictEqual(TS.evidenceFrom({ sourceType: "official-tender", budgetEur: 250000, scamFlags: [] }).contradictions, false);
+  // a weak ABSENT/FIRST_CAPTURE signal is NOT escalated to a contradiction.
+  assert.strictEqual(TS.evidenceFrom({ sourceType: "official-tender", scamFlags: [] }, "FIRST_CAPTURE").contradictions, false);
+});
+
 console.log(`\nALL PASS — opportunity-detector (${n} tests)`);
