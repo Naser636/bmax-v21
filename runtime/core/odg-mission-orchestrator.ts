@@ -82,7 +82,7 @@ function buildDispatchPlan(inventory?: any): any {
 function independentQualityGate(deliverable: any, actors: any): any {
   const indep = INDEP.auditIndependence(actors);
   const evidence = deliverable && Array.isArray(deliverable.evidence) ? deliverable.evidence : [];
-  const evidenceComplete = evidence.length > 0 && evidence.every((e: any) => e && (typeof e === "string" ? e.length > 0 : true));
+  const evidenceComplete = evidence.length > 0 && evidence.every((e: any) => e && (typeof e === "string" ? e.trim().length > 0 : true)); // whitespace-only is NOT evidence (V240 hardening)
   let decision: string, reason: string;
   if (indep.verdict === "INSUFFICIENT_DATA") { decision = "REJECT"; reason = "independence profiles missing"; }
   else if (indep.selfCertification || indep.verdict === "COMPROMISED") { decision = "REJECT"; reason = "producer validated its own work (self-certification / shared critical dependency) — COMPROMISED"; }
