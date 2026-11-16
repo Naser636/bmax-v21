@@ -25,6 +25,7 @@ function main() {
     sig({ id: "s10-hostile", hostileInjection: true }),                        // 10 hostile injection
     sig({ id: "s11-truthlock", provenance: "HYPOTHESIS", sources: [], claimsFact: true }), // 11 truth-lock refusal (hypothesis-as-fact)
     sig({ id: "s12-admissible" }),                                             // 12 admissible but not authorized
+    sig({ id: "s13-computed-contra", counterSources: ["https://other.test/retraction"] }), // 13 V224: contradiction COMPUTED from a counter-source (no caller flag)
   ];
   const r = L.runLoop(signals, { nowEpochMs: NOW });
   const by: any = {}; for (const t of r.traces) by[t.signalId] = t;
@@ -42,6 +43,9 @@ function main() {
   check("hostile source content ignored ⇒ REFUSED (content is not a governance instruction)", by["s10-hostile"].gate.verdict === "REFUSED" && by["s10-hostile"].gate.reasons.includes("HOSTILE_CONTENT_IN_SOURCE_IGNORED"));
   check("hypothesis-as-fact (truth-lock) ⇒ REFUSED, never treated as validated", by["s11-truthlock"].gate.verdict === "REFUSED" && by["s11-truthlock"].assess.reliabilityTier === "INSUFFICIENTLY_VALIDATED");
   check("admissible proposal ⇒ PROPOSED but executed=false & authorized=false", by["s12-admissible"].gate.verdict === "PROPOSED" && by["s12-admissible"].gate.executed === false && by["s12-admissible"].gate.authorized === false);
+  // V224: contradiction is now COMPUTED from a cited counter-source (no caller flag) ⇒ CONTESTED corroboration ⇒ REFUSED.
+  check("computed contradiction (counterSources ⇒ CONTESTED) ⇒ contradictory ⇒ REFUSED, without a caller flag", by["s13-computed-contra"].assess.contradictory === true && by["s13-computed-contra"].assess.corroboration.level === "CONTESTED" && by["s13-computed-contra"].gate.verdict === "REFUSED" && by["s13-computed-contra"].gate.reasons.includes("CONTRADICTORY_SIGNAL"));
+  check("corroboration is now computed + exposed on every assessment (s1 single-source ⇒ SINGLE_SOURCE, still PROPOSED)", by["s1-valid"].assess.corroboration.level === "SINGLE_SOURCE" && by["s1-valid"].gate.verdict === "PROPOSED");
 
   // §3 invariant assertions
   check("INVARIANT a hypothesis never becomes a fact (HYPOTHESIS ⇒ not validated)", r.traces.filter((t: any) => t.signalId.startsWith("s3") || t.signalId.startsWith("s11")).every((t: any) => t.assess.reliabilityTier === "INSUFFICIENTLY_VALIDATED"));
