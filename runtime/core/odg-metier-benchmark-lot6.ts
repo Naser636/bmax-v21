@@ -69,5 +69,18 @@ const BENCHMARK_LOT6_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { SOURCES, GRANT, fetcher, campaign, BENCHMARK, CONSTRUCTION_CONTRACTS, report, BENCHMARK_LOT6_CONTRACT };
+/*
+ * V212 — HISTORICAL-SNAPSHOT disambiguation. This lot is a POINT-IN-TIME radar study consulted 2026-11-15; its
+ * regulatory statuses (esp. M5 EN 301 549 / EAA) are AS-OF that date and are PRESERVED as a historical record — NOT
+ * rewritten. The CURRENT EAA status of record lives in the M5 reference module (odg-wcag-accessibility-evidence.ts,
+ * updated 2026-11-16). Do NOT read this benchmark as the current regulatory status.
+ */
+const SNAPSHOT_NOTICE = Object.freeze({
+  nature: "HISTORICAL_SNAPSHOT",
+  snapshotDate: "2026-11-15",
+  currentStatusOfRecord: "runtime/core/odg-wcag-accessibility-evidence.ts (M5 reference, EAA status as-of 2026-11-16)",
+  note: "regulatory statuses in this lot (esp. M5 EN 301 549 / EAA) are POINT-IN-TIME as consulted 2026-11-15 — a snapshot date is NOT a rule's validity date; this benchmark is NOT the current source of truth and declares no conformance; historical facts are preserved, not retroactively rewritten.",
+});
+
+module.exports = { SOURCES, GRANT, fetcher, campaign, BENCHMARK, CONSTRUCTION_CONTRACTS, report, SNAPSHOT_NOTICE, BENCHMARK_LOT6_CONTRACT };
 export {};
