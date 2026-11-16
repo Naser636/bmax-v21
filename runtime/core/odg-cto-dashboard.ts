@@ -28,6 +28,7 @@ const DEP = require("./odg-deployment-dossier.js");             // V228 — depl
 const RMAP = require("./odg-radar-roadmap.js");                 // V229-R — radar roadmap from corroborated benchmarks
 const SIG = require("./odg-sandbox-integration-gate.js");       // V232 — deny-by-default sandbox auto-integration decision gate
 const ICHAIN = require("./odg-improvement-chain.js");           // V233 — end-to-end chain consuming the gate's 3 verdicts
+const CDIAG = require("./odg-continuation-diagnostic.js");      // V234 — forensic proof of continuation + owner-gated boundary
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -62,6 +63,7 @@ function build(opts?: any): any {
   const rmap = RMAP.synthesize();              // V229-R: radar roadmap from the REAL corroborated Toyota-jidoka benchmark
   const sigDeny = SIG.decide({});              // V232: deny-by-default demo — no evidence ⇒ REJECT (hard conditions unsatisfied); never INTEGRATE
   const ich = ICHAIN.demonstrate();            // V233: the improvement chain consuming the gate's 3 verdicts on a real cycle
+  const cdiag = CDIAG.diagnose();              // V234: forensic proof the continuation engine works + the owner-gated break point
 
   return Object.freeze({
     asOfEpochMs: Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : null, // injected; NOT_MEASURED if absent
@@ -105,6 +107,8 @@ function build(opts?: any): any {
     deploymentDossier: ind(Object.freeze({ dossierStatus: dep.dossierStatus, goNoGo: dep.goNoGo, sections: dep.totalSections, deployPackageOk: dep.deployPackageOk, productionReady: dep.productionReady, ownerGatedInterventions: dep.ownerGatedInterventions.length }), "odg-deployment-dossier (V228 §6) → deploy-package-check + odg-production-gate-matrix", "DRAFT dossier: 20 sections mapped to REAL artifacts; goNoGo COMPUTED = NO_GO (production gates not green); deploy package ok but nothing DEPLOYED/READY; owner-gated interventions (secrets/TLS/systemd/VPS) listed, never done", "HIGH"),
 
     autoIntegrationGate: ind(Object.freeze({ denyByDefaultVerdict: sigDeny.verdict, conditions: sigDeny.total, integrateRequiresAll12: true, deployAlwaysOwnerGated: sigDeny.deployStillOwnerGated }), "odg-sandbox-integration-gate (V232 §8)", "deny-by-default sandbox auto-integration DECISION gate: with no evidence the verdict is " + sigDeny.verdict + " (not INTEGRATE); INTEGRATE needs ALL 12 §8 conditions; contract/permission/security violation ⇒ REJECT; significant change w/o inspection ⇒ RETURN; INTEGRATE = merge-eligible ONLY — deploy/secrets/destructive/production stay OWNER_GATED", "HIGH"),
+
+    continuationEngine: ind(Object.freeze({ withinSessionContinuationProven: cdiag.withinSessionContinuationProven, dagCompleted: cdiag.proofs.continuesBeyondOneMission.verdict, blockedNoFreeze: cdiag.proofs.blockedDoesNotFreezeIndependent.proven, resumeSkipsAccepted: cdiag.proofs.resumeSkipsCompleted.proven, crossSessionDriver: "OWNER_GATED" }), "odg-continuation-diagnostic (V234 §5) → campaign-loop + campaign-controller", "FORENSIC: ODG does NOT stop after one mission — the REAL campaign-loop runs a 4-mission DAG to COMPLETED in one call, resumes without redo, and a BLOCKED lot never freezes independent work (all proven). The 'stop after each mission' across turns is the CROSS-SESSION resident DRIVER (OWNER_GATED — no resident campaign-loop process; a user-systemd timer exists+runs so it is feasible). odg-schedule-tick canary ≠ the campaign-loop driver. No fabricated fix", "HIGH"),
 
     improvementChain: ind(Object.freeze({ integrateDemonstrated: ich.integrateDemonstrated, rejectDemonstrated: ich.rejectDemonstrated, returnDemonstrated: ich.returnDemonstrated, idempotent: ich.idempotent }), "odg-improvement-chain (V233 §5) → odg-sandbox-integration-gate", "the end-to-end auto-improvement chain CONSUMES the V232 gate's 3 verdicts on a REAL cycle: V231 jidoka (merged #599, gate 672/672, inspection PASS) ⇒ INTEGRATE/MERGE_ELIGIBLE; a security-violation ⇒ REJECTED; an incomplete experiment ⇒ RETURNED; idempotent (no repeated integration); INTEGRATE = controlled merge ONLY — deploy stays OWNER_GATED; ODG is the authority", "HIGH"),
 
