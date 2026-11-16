@@ -15,6 +15,7 @@
  */
 
 const RADAR = require("./odg-global-opportunity-radar.js");
+const COR = require("./odg-claim-corroboration.js");   // V224 — compute corroboration/contradiction from the signal's real evidence
 const PQ = require("./odg-prospect-qualification.js");
 const COMM = require("./odg-commercial-metier-matrix.js");
 const { METIERS } = require("./odg-metier-certification-planner.js");
@@ -25,14 +26,25 @@ const OWNER_GATED_KINDS = Object.freeze(["payment", "certification", "real_conta
 
 function daysBetween(aEpochMs: number, bEpochMs: number): number { return Math.floor((aEpochMs - bEpochMs) / 86400000); }
 
-/* B/C — provenance + freshness + reliability. Reuses radar.validationTier. */
+/* B/C — provenance + freshness + reliability + CORROBORATION. Reuses radar.validationTier + odg-claim-corroboration.
+ * `contradictory` is now COMPUTED from the signal's real evidence (counterSources ⇒ a CONTESTED corroboration verdict),
+ * not only trusted from the caller's boolean — closing a dead-field gap: governanceGate's CONTRADICTORY_SIGNAL refusal
+ * was driven solely by a caller-supplied flag, never derived from the cited sources. */
 function assess(signal: any, nowEpochMs: number): any {
   const consulted = Number(signal.consultedEpochMs);
   const ageDays = Number.isFinite(consulted) ? daysBetween(nowEpochMs, consulted) : null;
   const fresh = ageDays != null && ageDays >= 0 && ageDays <= FRESHNESS_DAYS;
-  const hasProvenance = signal.provenance === "OBSERVED_EVIDENCE" && Array.isArray(signal.sources) && signal.sources.length > 0;
+  const srcs = Array.isArray(signal.sources) ? signal.sources : [];
+  const hasProvenance = signal.provenance === "OBSERVED_EVIDENCE" && srcs.length > 0;
   const tier = RADAR.validationTier(signal); // VALIDATED_MARKET_SIGNAL | INSUFFICIENTLY_VALIDATED
-  return Object.freeze({ ageDays, fresh, hasProvenance, reliabilityTier: tier, contradictory: !!signal.contradictory });
+  // corroborate the signal's own evidence: cited sources SUPPORT; optional counterSources CONTRADICT.
+  const counter = Array.isArray(signal.counterSources) ? signal.counterSources : [];
+  const cor = COR.corroborate({ claim: signal.id || null,
+    evidence: srcs.map((u: any) => ({ url: u, stance: "SUPPORTS" })).concat(counter.map((u: any) => ({ url: u, stance: "CONTRADICTS" }))) });
+  const corroboration = Object.freeze({ level: cor.level, independentSupportCount: cor.independentSupportCount, officialCorroboration: cor.officialCorroboration });
+  // contradictory = caller flag OR a genuinely CONTESTED corroboration (a cited counter-source contradicts the claim).
+  const contradictory = !!signal.contradictory || cor.level === "CONTESTED";
+  return Object.freeze({ ageDays, fresh, hasProvenance, reliabilityTier: tier, corroboration, contradictory });
 }
 
 /* D — economic/métier qualification. Reuses prospect-qualification. A VALIDATED signal is NOT a client. */
@@ -133,6 +145,7 @@ const RADAR_TO_MISSION_CONTRACT = Object.freeze({
     "hypothesis ≠ fact; VALIDATED_MARKET_SIGNAL ≠ client; score ≠ authorization; expired signal ⇒ no mission",
     "deny-by-default governance gate; owner-gated proposals never auto-authorized; duplicates refused",
     "PROPOSED ≠ AUTHORIZED ≠ EXECUTED; no canonical register write; nothing marked executed; refused ≠ executed",
+    "contradictory is COMPUTED from the signal's evidence (counterSources ⇒ CONTESTED via odg-claim-corroboration), not only caller-trusted",
     "synthetic signals tagged SYNTHETIC; deterministic (injected nowEpochMs); read-only",
   ]),
 });
