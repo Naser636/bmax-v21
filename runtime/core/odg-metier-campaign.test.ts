@@ -14,9 +14,10 @@ function main() {
   check("ONE campaign drives the REAL loop over ALL 20 métiers (processes the whole set, not one)", d.metiersTotal === 20 && d.metiersProcessedInOneCampaign >= 15 && d.continuousExecutionProven === true);
   check("every non-blocked métier is accepted in this one campaign; blocked ones are excluded", d.accepted.length === 20 - d.blocked.length && d.accepted.length + d.blocked.length === 20);
   check("a blocked métier (real gap) never freezes the rest", d.blockedDoesNotFreeze === true);
-  check("REAL gaps surfaced: P5 (Cloud/DevOps/Platform) + P8 (API/integration) have no reference ⇒ blocked", d.blocked.includes("P5") && d.blocked.includes("P8") && d.rows.find((r: any) => r.id === "P5").maturity === "ABSENT" && d.rows.find((r: any) => r.id === "P8").maturity === "ABSENT");
-  check("the 18 present métiers classify INTEGRATED from real evidence (module+test+gate), not upgraded to OPERATIONAL", (d.byMaturity.INTEGRATED || 0) === 18 && !d.byMaturity.OPERATIONAL && !d.byMaturity.ACCEPTED);
-  check("campaign stops IDLE_BLOCKED (real gaps remain), not COMPLETED — honest", d.campaignStopped === "IDLE_BLOCKED");
+  // V246: P5 + P8 reference modules were BUILT+tested+gated ⇒ their gap is CLOSED (now INTEGRATED, no longer ABSENT/blocked).
+  check("V246 gap CLOSED: P5 (Cloud/DevOps/Platform) + P8 (API/integration) now have reference modules ⇒ INTEGRATED, not blocked", !d.blocked.includes("P5") && !d.blocked.includes("P8") && d.rows.find((r: any) => r.id === "P5").maturity === "INTEGRATED" && d.rows.find((r: any) => r.id === "P8").maturity === "INTEGRATED");
+  check("all 20 métiers classify INTEGRATED from real evidence (module+test+gate), none upgraded to OPERATIONAL/ACCEPTED", (d.byMaturity.INTEGRATED || 0) === 20 && !d.byMaturity.OPERATIONAL && !d.byMaturity.ACCEPTED && !d.byMaturity.ABSENT);
+  check("campaign now COMPLETED (no gaps remain) — the real win of building P5+P8", d.campaignStopped === "COMPLETED" && d.blocked.length === 0);
   check("HONEST: qualification only — note says NOT claimed improved/operational", /QUALIFICATION only/.test(d.note) && /NOT claimed improved/.test(d.note));
 
   // maturity never inferred upward.

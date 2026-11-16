@@ -4,35 +4,336 @@
   "title": "Boussole V12.4 — consolidated capability-build roadmap (V234–V238)",
   "note": "CANONICAL, PERSISTENT, NON-PROTECTED companion that attaches every DISTINCT capability-build mission from V234–V238 to Boussole V12.4 as sections/domains — lossless, provenance-preserving. The execution manifest runtime/governance/ROADMAP.json (11 Mission-Contract missions) is UNCHANGED and remains authoritative for the autonomy loop; this companion carries the capability-build roadmap consumed by roadmap-consolidation + odg-program-continuity. Old roadmaps (V234..V238) are ARCHIVES / provenance, never concurrent. Adding completed capability-builds as runnable execution-manifest missions would halt the loop on missing contracts and break the v104/crosswalk 'still 11 / no second roadmap' guards ⇒ that amendment stays OWNER_GATED.",
   "roadmapIntegration": "INTEGRATED",
-  "expectedMissionSources": ["V234", "V235", "V236", "V237"],
+  "expectedMissionSources": [
+    "V234",
+    "V235",
+    "V236",
+    "V237"
+  ],
   "executionManifest": {
     "file": "runtime/governance/ROADMAP.json",
     "missions": 11,
     "status": "UNCHANGED_AUTHORITATIVE",
     "amendment": "OWNER_GATED — see note (completed capability-builds are not runtime Mission Contracts)"
   },
-  "archives": ["V234", "V235", "V236", "V237", "V238"],
+  "archives": [
+    "V234",
+    "V235",
+    "V236",
+    "V237",
+    "V238"
+  ],
   "programs": [
-    { "name": "V234 Continuity", "integratedInto": "Boussole V12.4 — section D (continuity)", "concurrent": false, "status": "INTEGRATED" },
-    { "name": "V235 Memory currency", "integratedInto": "Boussole V12.4 — section B (observation currency)", "concurrent": false, "status": "INTEGRATED" },
-    { "name": "V236 Cartography", "integratedInto": "Boussole V12.4 — section C (cartography reconciliation)", "concurrent": false, "status": "INTEGRATED" },
-    { "name": "V237 Program consolidation", "integratedInto": "Boussole V12.4 — section D (program continuity)", "concurrent": false, "status": "INTEGRATED" },
-    { "name": "V238 Canonical consolidation", "integratedInto": "Boussole V12.4 — sections A–R (this consolidation)", "concurrent": false, "status": "INTEGRATED" }
+    {
+      "name": "V234 Continuity",
+      "integratedInto": "Boussole V12.4 — section D (continuity)",
+      "concurrent": false,
+      "status": "INTEGRATED"
+    },
+    {
+      "name": "V235 Memory currency",
+      "integratedInto": "Boussole V12.4 — section B (observation currency)",
+      "concurrent": false,
+      "status": "INTEGRATED"
+    },
+    {
+      "name": "V236 Cartography",
+      "integratedInto": "Boussole V12.4 — section C (cartography reconciliation)",
+      "concurrent": false,
+      "status": "INTEGRATED"
+    },
+    {
+      "name": "V237 Program consolidation",
+      "integratedInto": "Boussole V12.4 — section D (program continuity)",
+      "concurrent": false,
+      "status": "INTEGRATED"
+    },
+    {
+      "name": "V238 Canonical consolidation",
+      "integratedInto": "Boussole V12.4 — sections A–R (this consolidation)",
+      "concurrent": false,
+      "status": "INTEGRATED"
+    }
   ],
   "missions": [
-    { "id": "CM-V234-CONTINUATION", "source": "V234", "section": "D", "objective": "Forensic proof the campaign-loop continuation logic works in-session (4-mission DAG⇒COMPLETED, blocked≠freeze, resume skips ACCEPTED)", "components": ["runtime/core/odg-continuation-diagnostic.ts"], "deps": [], "status": "ACCEPTED", "commit": "d1c042f", "evidence": "PR #602, gate 675/675, inspection PASS", "owner": "ODG", "risk": "low", "authorizations": [], "nextAction": null },
-    { "id": "CM-V234-RESIDENT-DRIVER", "source": "V234", "section": "E", "objective": "Cross-session resident driver for campaign-loop (continuity across turns)", "components": ["runtime/core/odg-resident-driver.ts", "runtime/bin/odg-resident-driver-tick.ts", "deploy/odg-resident-driver.service", "deploy/odg-resident-driver.timer", "scripts/odg-resident-driver-install.sh"], "deps": ["CM-V234-CONTINUATION"], "status": "IN_PROGRESS", "commit": null, "evidence": "V242: L0 driver INSTALLED + ENABLED as a user-systemd unit (root-free, linger=yes) on the host(=private VPS); real cycles ExecMainStatus=0, writes=0, registers intact. V244 PRECOMPILE: transpile-not-bundle node build + freshness-guarded launcher ⇒ measured (same systemd accounting) cgroup MemoryPeak 111MB→~17MB (~85%), CPU ~2.7s→~0.59s (~78%), RSS ~113MB→~71MB; real systemd cycle on the precompiled path confirmed (single clean L0 line). Reversible (scripts/odg-resident-driver-install.sh uninstall). L1 prepared, L2 declared (not activated).", "owner": "OWNER", "risk": "medium", "authorizations": ["owner mandate V242/V244 (user-systemd install/enable + local optimization, non-production)"], "nextAction": "sustained multi-cycle wake/idle/resume + rest-consumption measurement on the precompiled path ⇒ then OPERATIONAL; then L1 activation after independent inspection" },
-    { "id": "CM-V235-OBS-CURRENCY", "source": "V235", "section": "B", "objective": "Observation-currency decider (mémoire≠état-actuel): CURRENT vs HISTORICAL, deny-by-default, composes memory-taxonomy", "components": ["runtime/core/odg-observation-currency.ts"], "deps": [], "status": "ACCEPTED", "commit": "bd13eef", "evidence": "PR #603, gate 676/676, inspection PASS (259k brute-force)", "owner": "ODG", "risk": "low", "authorizations": [], "nextAction": null },
-    { "id": "CM-V236-CARTOGRAPHY", "source": "V236", "section": "C", "objective": "Per-component cartography reconciliation (UNCHANGED/MODIFIED/ADDED/MOVED/REMOVED, MOVED≠REMOVED, reuse-vs-restudy)", "components": ["runtime/core/odg-cartography-reconcile.ts"], "deps": ["CM-V235-OBS-CURRENCY"], "status": "ACCEPTED", "commit": "389e32e", "evidence": "PR #604, gate 677/677, inspection PASS_WITH_FINDINGS (fixed)", "owner": "ODG", "risk": "low", "authorizations": [], "nextAction": null },
-    { "id": "CM-V237-PROGRAM-CONTINUITY", "source": "V237", "section": "D", "objective": "Program-continuity dossier fusing the 3 staleness sources (dependency / observation-currency / component-change)", "components": ["runtime/core/odg-program-continuity.ts"], "deps": ["CM-V235-OBS-CURRENCY", "CM-V236-CARTOGRAPHY"], "status": "ACCEPTED", "commit": "0293c86", "evidence": "PR #605, gate 678/678, inspection PASS", "owner": "ODG", "risk": "low", "authorizations": [], "nextAction": null },
-    { "id": "CM-V237-AZ-SCENARIO", "source": "V237", "section": "G", "objective": "End-to-end A-Z scenario on real components (DAG, independent missions, interruption, resume, moved+modified component, accept+reject)", "components": ["runtime/core/odg-az-scenario.ts", "odg-program-continuity", "campaign-controller", "odg-cartography-reconcile"], "deps": ["CM-V237-PROGRAM-CONTINUITY"], "status": "REVIEW", "commit": null, "evidence": "V239: odg-az-scenario built+tested+integrated on the real components (gate green); independent inspection + merge in progress", "owner": "ODG", "risk": "medium", "authorizations": [], "nextAction": "merge + independent inspection ⇒ ACCEPTED" },
-    { "id": "CM-V237-ORCHESTRATION", "source": "V237", "section": "F", "objective": "Multi-executor orchestration: parent mission → children → authorized executors → evidence → independent validation → accept/reject", "components": ["runtime/core/odg-orchestration-scenario.ts", "odg-mission-orchestrator", "campaign-controller", "delegate-isolation", "evaluator-independence"], "deps": ["CM-V237-PROGRAM-CONTINUITY"], "status": "REVIEW", "commit": null, "evidence": "V240: odg-orchestration-scenario drives the REAL odg-mission-orchestrator (least-privilege/isolation/independent-eval/parent-closure/blocked≠freeze/resume-no-redo); gate green; independent inspection + merge in progress", "owner": "ODG", "risk": "medium", "authorizations": [], "nextAction": "merge + independent inspection ⇒ ACCEPTED" },
-    { "id": "CM-V237-REPO-VPS-MAP", "source": "V237", "section": "C", "objective": "Deep repo↔VPS cartography (read-only), reconciled by content fingerprint", "components": ["odg-cartography-reconcile", "persistent-impact-graph"], "deps": ["CM-V236-CARTOGRAPHY"], "status": "READY", "commit": null, "evidence": null, "owner": "ODG", "risk": "low", "authorizations": ["read-only VPS inspection"], "nextAction": "build a repo↔VPS reconciliation snapshot (secrets never recorded)" },
-    { "id": "CM-RADAR-GATE-CHAIN", "source": "V237", "section": "I", "objective": "Radar→memory→opportunity→experiment→gate chain, really wired", "components": ["odg-global-opportunity-radar", "odg-knowledge-acquisition", "odg-sandbox-integration-gate", "odg-improvement-chain"], "deps": [], "status": "READY", "commit": null, "evidence": null, "owner": "ODG", "risk": "medium", "authorizations": [], "nextAction": "compose existing radar+acquisition+gate into one traced chain" },
-    { "id": "CM-METIER-BASELINES", "source": "V237", "section": "L", "objective": "Individual baselines for the 20 métiers P1–P15 / M1–M5 (no métier declared improved on a transversal gain)", "components": ["runtime/core/odg-metier-campaign.ts", "campaign-loop", "odg-metier-certification-planner"], "deps": [], "status": "REVIEW", "commit": null, "evidence": "V245: odg-metier-campaign materializes all 20 canonical métiers and drives the REAL campaign-loop over ALL in ONE campaign — 18 INTEGRATED-qualified from real evidence (module+test+gate), P5/P8 real gaps blocked, blocked≠freeze, IDLE_BLOCKED. QUALIFICATION only (maturity classification, not fabricated improvements). gate green; inspection + merge in progress", "owner": "ODG", "risk": "medium", "authorizations": [], "nextAction": "merge + inspection ⇒ ACCEPTED; then per-métier improvements as separate work-units, starting with the P5/P8 gaps" },
-    { "id": "CM-METIER-P5-PLATFORM", "source": "V245", "section": "L", "objective": "P5 Cloud/DevOps/Platform métier — no canonical profession-reference module exists (real gap surfaced by the métier campaign)", "components": [], "deps": ["CM-METIER-BASELINES"], "status": "READY", "commit": null, "evidence": "V245 métier campaign: maturity=ABSENT (no profession-p5-*-reference.ts)", "owner": "ODG", "risk": "medium", "authorizations": [], "nextAction": "build a profession-p5-platform-reference (capabilities, contracts, tests) like the other 13 P-references" },
-    { "id": "CM-METIER-P8-API", "source": "V245", "section": "L", "objective": "P8 API/integration métier — no canonical profession-reference module exists (real gap surfaced by the métier campaign)", "components": [], "deps": ["CM-METIER-BASELINES"], "status": "READY", "commit": null, "evidence": "V245 métier campaign: maturity=ABSENT (no profession-p8-*-reference.ts)", "owner": "ODG", "risk": "medium", "authorizations": [], "nextAction": "build a profession-p8-api-reference (capabilities, contracts, tests) like the other 13 P-references" },
-    { "id": "CM-BENCHMARK-AUDIT", "source": "V237", "section": "K", "objective": "Audit the relevant world benchmarks (BrowseComp/GDPval/τ-bench/WebArena/OSWorld/METR/SciAgentArena/SWE-bench Pro): availability, licence, protocol, limits", "components": ["runtime/core/odg-benchmark-audit.ts", "odg-source-authority"], "deps": [], "status": "REVIEW", "commit": null, "evidence": "V243: odg-benchmark-audit — 8 benchmarks qualified on availability/licence/reproducibility, NO score/ranking; SWE-bench(MIT)/OSWorld(Apache-2.0)/τ-bench(MIT) FACT_CORROBORATED via real WebSearch ⇒ USABLE_AS_REFERENCE; other 5 INSUFFICIENT (fail-closed); gate green; independent inspection + merge in progress", "owner": "ODG", "risk": "medium", "authorizations": [], "nextAction": "merge + independent inspection ⇒ ACCEPTED; corroborate the remaining 5 (BrowseComp/GDPval/WebArena/METR/SciAgentArena) in a later cycle" },
-    { "id": "CM-MULTIMODAL-VIDEO", "source": "V237", "section": "P", "objective": "Real multimodal analysis of accessible content", "components": ["odg-video-analysis-chain"], "deps": [], "status": "BLOCKED", "commit": null, "evidence": "ffmpeg/ffprobe/yt-dlp/whisper/tesseract ABSENT; Ollama text-only; YouTube ToS on captions", "owner": "OWNER", "risk": "low", "authorizations": ["toolchain install (OWNER_GATED)"], "nextAction": "video content stays NOT_ANALYZED until toolchain + ToS allow" }
+    {
+      "id": "CM-V234-CONTINUATION",
+      "source": "V234",
+      "section": "D",
+      "objective": "Forensic proof the campaign-loop continuation logic works in-session (4-mission DAG⇒COMPLETED, blocked≠freeze, resume skips ACCEPTED)",
+      "components": [
+        "runtime/core/odg-continuation-diagnostic.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": "d1c042f",
+      "evidence": "PR #602, gate 675/675, inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [],
+      "nextAction": null
+    },
+    {
+      "id": "CM-V234-RESIDENT-DRIVER",
+      "source": "V234",
+      "section": "E",
+      "objective": "Cross-session resident driver for campaign-loop (continuity across turns)",
+      "components": [
+        "runtime/core/odg-resident-driver.ts",
+        "runtime/bin/odg-resident-driver-tick.ts",
+        "deploy/odg-resident-driver.service",
+        "deploy/odg-resident-driver.timer",
+        "scripts/odg-resident-driver-install.sh"
+      ],
+      "deps": [
+        "CM-V234-CONTINUATION"
+      ],
+      "status": "IN_PROGRESS",
+      "commit": null,
+      "evidence": "V242: L0 driver INSTALLED + ENABLED as a user-systemd unit (root-free, linger=yes) on the host(=private VPS); real cycles ExecMainStatus=0, writes=0, registers intact. V244 PRECOMPILE: transpile-not-bundle node build + freshness-guarded launcher ⇒ measured (same systemd accounting) cgroup MemoryPeak 111MB→~17MB (~85%), CPU ~2.7s→~0.59s (~78%), RSS ~113MB→~71MB; real systemd cycle on the precompiled path confirmed (single clean L0 line). Reversible (scripts/odg-resident-driver-install.sh uninstall). L1 prepared, L2 declared (not activated).",
+      "owner": "OWNER",
+      "risk": "medium",
+      "authorizations": [
+        "owner mandate V242/V244 (user-systemd install/enable + local optimization, non-production)"
+      ],
+      "nextAction": "sustained multi-cycle wake/idle/resume + rest-consumption measurement on the precompiled path ⇒ then OPERATIONAL; then L1 activation after independent inspection"
+    },
+    {
+      "id": "CM-V235-OBS-CURRENCY",
+      "source": "V235",
+      "section": "B",
+      "objective": "Observation-currency decider (mémoire≠état-actuel): CURRENT vs HISTORICAL, deny-by-default, composes memory-taxonomy",
+      "components": [
+        "runtime/core/odg-observation-currency.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": "bd13eef",
+      "evidence": "PR #603, gate 676/676, inspection PASS (259k brute-force)",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [],
+      "nextAction": null
+    },
+    {
+      "id": "CM-V236-CARTOGRAPHY",
+      "source": "V236",
+      "section": "C",
+      "objective": "Per-component cartography reconciliation (UNCHANGED/MODIFIED/ADDED/MOVED/REMOVED, MOVED≠REMOVED, reuse-vs-restudy)",
+      "components": [
+        "runtime/core/odg-cartography-reconcile.ts"
+      ],
+      "deps": [
+        "CM-V235-OBS-CURRENCY"
+      ],
+      "status": "ACCEPTED",
+      "commit": "389e32e",
+      "evidence": "PR #604, gate 677/677, inspection PASS_WITH_FINDINGS (fixed)",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [],
+      "nextAction": null
+    },
+    {
+      "id": "CM-V237-PROGRAM-CONTINUITY",
+      "source": "V237",
+      "section": "D",
+      "objective": "Program-continuity dossier fusing the 3 staleness sources (dependency / observation-currency / component-change)",
+      "components": [
+        "runtime/core/odg-program-continuity.ts"
+      ],
+      "deps": [
+        "CM-V235-OBS-CURRENCY",
+        "CM-V236-CARTOGRAPHY"
+      ],
+      "status": "ACCEPTED",
+      "commit": "0293c86",
+      "evidence": "PR #605, gate 678/678, inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [],
+      "nextAction": null
+    },
+    {
+      "id": "CM-V237-AZ-SCENARIO",
+      "source": "V237",
+      "section": "G",
+      "objective": "End-to-end A-Z scenario on real components (DAG, independent missions, interruption, resume, moved+modified component, accept+reject)",
+      "components": [
+        "runtime/core/odg-az-scenario.ts",
+        "odg-program-continuity",
+        "campaign-controller",
+        "odg-cartography-reconcile"
+      ],
+      "deps": [
+        "CM-V237-PROGRAM-CONTINUITY"
+      ],
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V239: odg-az-scenario built+tested+integrated on the real components (gate green); independent inspection + merge in progress",
+      "owner": "ODG",
+      "risk": "medium",
+      "authorizations": [],
+      "nextAction": "merge + independent inspection ⇒ ACCEPTED"
+    },
+    {
+      "id": "CM-V237-ORCHESTRATION",
+      "source": "V237",
+      "section": "F",
+      "objective": "Multi-executor orchestration: parent mission → children → authorized executors → evidence → independent validation → accept/reject",
+      "components": [
+        "runtime/core/odg-orchestration-scenario.ts",
+        "odg-mission-orchestrator",
+        "campaign-controller",
+        "delegate-isolation",
+        "evaluator-independence"
+      ],
+      "deps": [
+        "CM-V237-PROGRAM-CONTINUITY"
+      ],
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V240: odg-orchestration-scenario drives the REAL odg-mission-orchestrator (least-privilege/isolation/independent-eval/parent-closure/blocked≠freeze/resume-no-redo); gate green; independent inspection + merge in progress",
+      "owner": "ODG",
+      "risk": "medium",
+      "authorizations": [],
+      "nextAction": "merge + independent inspection ⇒ ACCEPTED"
+    },
+    {
+      "id": "CM-V237-REPO-VPS-MAP",
+      "source": "V237",
+      "section": "C",
+      "objective": "Deep repo↔VPS cartography (read-only), reconciled by content fingerprint",
+      "components": [
+        "odg-cartography-reconcile",
+        "persistent-impact-graph"
+      ],
+      "deps": [
+        "CM-V236-CARTOGRAPHY"
+      ],
+      "status": "READY",
+      "commit": null,
+      "evidence": null,
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "read-only VPS inspection"
+      ],
+      "nextAction": "build a repo↔VPS reconciliation snapshot (secrets never recorded)"
+    },
+    {
+      "id": "CM-RADAR-GATE-CHAIN",
+      "source": "V237",
+      "section": "I",
+      "objective": "Radar→memory→opportunity→experiment→gate chain, really wired",
+      "components": [
+        "odg-global-opportunity-radar",
+        "odg-knowledge-acquisition",
+        "odg-sandbox-integration-gate",
+        "odg-improvement-chain"
+      ],
+      "deps": [],
+      "status": "READY",
+      "commit": null,
+      "evidence": null,
+      "owner": "ODG",
+      "risk": "medium",
+      "authorizations": [],
+      "nextAction": "compose existing radar+acquisition+gate into one traced chain"
+    },
+    {
+      "id": "CM-METIER-BASELINES",
+      "source": "V237",
+      "section": "L",
+      "objective": "Individual baselines for the 20 métiers P1–P15 / M1–M5 (no métier declared improved on a transversal gain)",
+      "components": [
+        "runtime/core/odg-metier-campaign.ts",
+        "campaign-loop",
+        "odg-metier-certification-planner"
+      ],
+      "deps": [],
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V245: odg-metier-campaign materializes all 20 canonical métiers and drives the REAL campaign-loop over ALL in ONE campaign — 18 INTEGRATED-qualified from real evidence (module+test+gate), P5/P8 real gaps blocked, blocked≠freeze, IDLE_BLOCKED. QUALIFICATION only (maturity classification, not fabricated improvements). gate green; inspection + merge in progress",
+      "owner": "ODG",
+      "risk": "medium",
+      "authorizations": [],
+      "nextAction": "merge + inspection ⇒ ACCEPTED; then per-métier improvements as separate work-units, starting with the P5/P8 gaps"
+    },
+    {
+      "id": "CM-METIER-P5-PLATFORM",
+      "source": "V245",
+      "section": "L",
+      "objective": "P5 Cloud/DevOps/Platform métier — no canonical profession-reference module exists (real gap surfaced by the métier campaign)",
+      "components": [
+        "runtime/core/profession-p5-platform-reference.ts"
+      ],
+      "deps": [
+        "CM-METIER-BASELINES"
+      ],
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V246: profession-p5-platform-reference BUILT+tested (config lint/controlled rollout/resource budget/recovery drill) + in gate ⇒ métier campaign now classifies P5 INTEGRATED (gap closed); inspection+merge in progress",
+      "owner": "ODG",
+      "risk": "medium",
+      "authorizations": [],
+      "nextAction": "merge + independent inspection ⇒ ACCEPTED"
+    },
+    {
+      "id": "CM-METIER-P8-API",
+      "source": "V245",
+      "section": "L",
+      "objective": "P8 API/integration métier — no canonical profession-reference module exists (real gap surfaced by the métier campaign)",
+      "components": [
+        "runtime/core/profession-p8-api-reference.ts"
+      ],
+      "deps": [
+        "CM-METIER-BASELINES"
+      ],
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V246: profession-p8-api-reference BUILT+tested (request validation/idempotency/bounded retry/contract-compat) + in gate ⇒ métier campaign now classifies P8 INTEGRATED (gap closed); inspection+merge in progress",
+      "owner": "ODG",
+      "risk": "medium",
+      "authorizations": [],
+      "nextAction": "merge + independent inspection ⇒ ACCEPTED"
+    },
+    {
+      "id": "CM-BENCHMARK-AUDIT",
+      "source": "V237",
+      "section": "K",
+      "objective": "Audit the relevant world benchmarks (BrowseComp/GDPval/τ-bench/WebArena/OSWorld/METR/SciAgentArena/SWE-bench Pro): availability, licence, protocol, limits",
+      "components": [
+        "runtime/core/odg-benchmark-audit.ts",
+        "odg-source-authority"
+      ],
+      "deps": [],
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V243: odg-benchmark-audit — 8 benchmarks qualified on availability/licence/reproducibility, NO score/ranking; SWE-bench(MIT)/OSWorld(Apache-2.0)/τ-bench(MIT) FACT_CORROBORATED via real WebSearch ⇒ USABLE_AS_REFERENCE; other 5 INSUFFICIENT (fail-closed); gate green; independent inspection + merge in progress",
+      "owner": "ODG",
+      "risk": "medium",
+      "authorizations": [],
+      "nextAction": "merge + independent inspection ⇒ ACCEPTED; corroborate the remaining 5 (BrowseComp/GDPval/WebArena/METR/SciAgentArena) in a later cycle"
+    },
+    {
+      "id": "CM-MULTIMODAL-VIDEO",
+      "source": "V237",
+      "section": "P",
+      "objective": "Real multimodal analysis of accessible content",
+      "components": [
+        "odg-video-analysis-chain"
+      ],
+      "deps": [],
+      "status": "BLOCKED",
+      "commit": null,
+      "evidence": "ffmpeg/ffprobe/yt-dlp/whisper/tesseract ABSENT; Ollama text-only; YouTube ToS on captions",
+      "owner": "OWNER",
+      "risk": "low",
+      "authorizations": [
+        "toolchain install (OWNER_GATED)"
+      ],
+      "nextAction": "video content stays NOT_ANALYZED until toolchain + ToS allow"
+    }
   ]
 }
