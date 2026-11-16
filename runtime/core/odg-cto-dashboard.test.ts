@@ -33,6 +33,8 @@ function main() {
   check("improvements honesty: BUILT+TESTED+INTEGRATED but NOT REAL_WORLD_VALIDATED", /BUILT\+TESTED\+INTEGRATED/.test(d.improvements.method) && /NOT REAL_WORLD_VALIDATED/.test(d.improvements.method) && hasProvenance(d.improvements));
   check("Speed-Marketing chain visible with all verdict states + score≠client", /STOPPED_NO_FIT/.test(d.speedMarketingChain.value) && /MODEL_PROMISING/.test(d.speedMarketingChain.value) && /UNDETERMINED/.test(d.speedMarketingChain.value) && /score ≠ qualified client/.test(d.speedMarketingChain.method));
   check("production gates visible: deny-by-default NOT production-ready + owner-gated count", d.productionGates.value.productionReady === false && d.productionGates.value.ownerGatedActions >= 2 && hasProvenance(d.productionGates));
+  // V214: the radar indicator now CONSUMES odg-radar-video-sources (resolves the orphan reserve) — 2 videos RECORDED, content NOT_ANALYZED, not fabricated
+  check("radar indicator consumes video-sources: 2 videos RECORDED, content NOT_ANALYZED, provenance names the module", /2 owner-designated videos RECORDED/.test(d.radar.value) && /NOT_ANALYZED/.test(d.radar.value) && /NOT_MEASURED/.test(d.radar.value) && /odg-radar-video-sources\.ts/.test(d.radar.provenance) && /NOT fabricated/.test(d.radar.method));
 
   // ---- contract + determinism ----
   check("contract: read-only, provenance-tagged, NOT_MEASURED-on-missing, runtime unmeasured", D.CTO_DASHBOARD_CONTRACT.invariants.some((i: string) => /never mutates a canonical status/.test(i)) && D.CTO_DASHBOARD_CONTRACT.invariants.some((i: string) => /missing ⇒ NOT_MEASURED/.test(i)));
