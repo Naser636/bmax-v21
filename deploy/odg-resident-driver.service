@@ -1,0 +1,13 @@
+[Unit]
+Description=ODG resident driver — L0 OBSERVE (strictly private, read-only; no exec/accept/reject, no business-state write, no network, no privilege)
+ConditionPathExists=/home/ubuntu/bmax-v21/runtime/bin/odg-resident-driver-tick.ts
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/ubuntu/bmax-v21
+Environment=ODG_TRUTH_LOCK_ENFORCE=1
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# ONE bounded L0 OBSERVE cycle then exit (no daemon loop, no polling). The driver reports roadmap state read-only and
+# returns to standby; it executes/accepts/rejects NO mission and writes NO business register/source/config. Bounded.
+TimeoutStartSec=120
+ExecStart=/bin/bash -lc 'npx tsx runtime/bin/odg-resident-driver-tick.ts'
