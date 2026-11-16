@@ -113,12 +113,18 @@ function dedupeOpportunities(list: any): any {
  * (tamper-evident / registry-site mismatch) ⇒ a genuine CONTRADICTION that must reach the grader (previously this was
  * hard-coded false, so enterprise-lead-grade's REJECT-on-contradiction branch was DEAD). Absent/weak signals (NO_CONTENT/
  * FIRST_CAPTURE, businessPresence ABSENT) are NOT treated as a contradiction — no contradiction DETECTED ≠ fabricated. */
-function evidenceFrom(rec: any, contentIntegrity?: any): any {
+function evidenceFrom(rec: any, contentIntegrity?: any, budgetVerification?: any): any {
   const officialOrCompany = rec.sourceType === "official-tender" || rec.sourceType === "company";
+  // budget is "unverified" (⇒ NOT budgetKnown ⇒ no grade A) when its provenance check REJECTED the source
+  // (non-2xx/unverifiable). This is a proportionate DOWNGRADE, NOT a contradiction: a technical failure to verify a
+  // budget ≠ fraudulent/contradictory evidence. N/A (no budget/url) stays "unknown" (absence ≠ rejection).
+  const budget = rec.budgetEur !== null
+    ? (budgetVerification === "REJECTED" ? "unverified" : (rec.budgetKind === "published" ? "published" : "qualified-estimate"))
+    : "unknown";
   return {
     existenceVerified: officialOrCompany === true,
     needEvidence: "explicit",
-    budget: rec.budgetEur !== null ? (rec.budgetKind === "published" ? "published" : "qualified-estimate") : "unknown",
+    budget,
     decisionMakerIdentified: rec.sourceType === "official-tender",
     contradictions: contentIntegrity === "MISMATCH",   // computed from REAL provenance, not a placeholder
     scamFlags: rec.scamFlags,
@@ -156,8 +162,10 @@ function detect(rawItems: any, opts: any): any {
       httpStatus: rec.httpStatus, content: rec.content, expectedHash: rec.expectedHash,
       value: rec.budgetEur, lastCheckedAt: rec.lastCheckedAt, nowMs: nowMs, maxAgeDays: o.maxAgeDays,
     });
-    const grade = LEAD ? LEAD.gradeLead(evidenceFrom(rec, contentProvenance.integrity)).grade : "C";
+    // budget provenance BEFORE grading too: a REJECTED budget verification (unreachable/unverifiable source) must not
+    // award grade A on an unconfirmed budget — it was computed but the grader never consumed it (over-grading of 503s).
     const provenance = budgetProvenance(rec);
+    const grade = LEAD ? LEAD.gradeLead(evidenceFrom(rec, contentProvenance.integrity, provenance.verification_status)).grade : "C";
     let feasible: any = null;
     // Guard: revenue-model exposes projectRevenue/pathsToTarget/contractsForTarget — NOT targetPlan (renamed in a
     // migration). Call it ONLY if present; otherwise leave feasibility null (honestly NOT computed, never fabricated).
