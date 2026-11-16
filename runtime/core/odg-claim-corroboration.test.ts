@@ -42,7 +42,18 @@ function main() {
   const oppCorr = C.corroborateOpportunity({ id: "eaa-accessibility-eu", provenance: "OBSERVED_EVIDENCE", sources: [BLOG_EAA_1, BLOG_EAA_2] }, [{ url: OFFICIAL_EAA, stance: "SUPPORTS" }]);
   check("corroborateOpportunity: radar blogs + official ⇒ CORROBORATED + official, id preserved", oppCorr.id === "eaa-accessibility-eu" && oppCorr.level === "CORROBORATED" && oppCorr.officialCorroboration === true);
 
-  check("contract: ≥2 independent for corroboration, contradiction⇒CONTESTED, single≠corroboration, reuses V218", C.CLAIM_CORROBORATION_CONTRACT.invariants.some((i: string) => /≥2 INDEPENDENT/.test(i)) && C.CLAIM_CORROBORATION_CONTRACT.invariants.some((i: string) => /ANY contradicting source ⇒ CONTESTED/.test(i)) && C.CLAIM_CORROBORATION_CONTRACT.invariants.some((i: string) => /no second provenance\/registry/.test(i)));
+  // ---- V222 TEMPORAL qualification: dates de consultation, obsolescence, contradiction temporelle ----
+  const ASOF = Date.UTC(2026, 10, 16); // 2026-11-16 (injected, deterministic)
+  const freshCase = C.corroborate({ claim: "x", asOfEpochMs: ASOF, freshnessDays: 365, evidence: [{ url: BLOG_EAA_1, stance: "SUPPORTS", date: "2026-11-01" }, { url: OFFICIAL_EAA, stance: "SUPPORTS", date: "2026-11-10" }] });
+  check("recent dated supports ⇒ freshness FRESH (CORROBORATED), per-item ageDays computed", freshCase.freshness === "FRESH" && freshCase.level === "CORROBORATED" && freshCase.evidence[0].ageDays >= 0);
+  const staleCase = C.corroborate({ claim: "x", asOfEpochMs: ASOF, freshnessDays: 365, evidence: [{ url: BLOG_EAA_1, stance: "SUPPORTS", date: "2023-01-01" }, { url: OFFICIAL_EAA, stance: "SUPPORTS", date: "2023-02-01" }] });
+  check("supports older than the freshness window ⇒ CORROBORATED but STALE (re-verify), surfaced in note", staleCase.freshness === "STALE" && staleCase.level === "CORROBORATED" && /possibly OUTDATED; re-verify/.test(staleCase.note));
+  const undated = C.corroborate({ claim: "x", evidence: [{ url: BLOG_EAA_1, stance: "SUPPORTS" }, { url: OFFICIAL_EAA, stance: "SUPPORTS" }] });
+  check("no asOf/dates ⇒ freshness UNDATED (not assessed); level logic unchanged", undated.freshness === "UNDATED" && undated.level === "CORROBORATED" && /freshness NOT assessed/.test(undated.note));
+  const superseded = C.corroborate({ claim: "x", asOfEpochMs: ASOF, evidence: [{ url: BLOG_EAA_1, stance: "SUPPORTS", date: "2024-01-01" }, { url: "https://news.example/update", stance: "CONTRADICTS", date: "2026-10-01" }] });
+  check("a NEWER contradiction than the supports ⇒ CONTESTED + supersededByNewerContradiction flag", superseded.level === "CONTESTED" && superseded.supersededByNewerContradiction === true && /may be SUPERSEDED/.test(superseded.note));
+
+  check("contract: ≥2 independent for corroboration, contradiction⇒CONTESTED, single≠corroboration, temporal, reuses V218", C.CLAIM_CORROBORATION_CONTRACT.invariants.some((i: string) => /≥2 INDEPENDENT/.test(i)) && C.CLAIM_CORROBORATION_CONTRACT.invariants.some((i: string) => /ANY contradicting source ⇒ CONTESTED/.test(i)) && C.CLAIM_CORROBORATION_CONTRACT.invariants.some((i: string) => /SUPERSEDED/.test(i)) && C.CLAIM_CORROBORATION_CONTRACT.invariants.some((i: string) => /no second provenance\/registry/.test(i)));
   check("deterministic + frozen", JSON.stringify(C.corroborate({ claim: "EAA applies 28 June 2025", evidence: [{ url: BLOG_EAA_1, stance: "SUPPORTS" }, { url: OFFICIAL_EAA, stance: "SUPPORTS" }] })) === JSON.stringify(withOfficial) && Object.isFrozen(withOfficial));
 
   process.stdout.write("\n" + (failures === 0 ? "ALL PASS — claim-corroboration (V221 §2.1/§5.3: ≥2 independent supports⇒CORROBORATED; 1 source [even official]⇒SINGLE_SOURCE; any contradiction⇒CONTESTED; neutral/non-URL never counts; official bounds confidence; reuses V218; real EUR-Lex retrieval example)" : failures + " FAIL") + "\n");
