@@ -23,6 +23,10 @@ function main() {
   check("20/20 studied — 0 métiers remain after lot6", r.remainingMetiers.length === 0 && /ALL 20 métiers studied/.test(r.note));
   check("contract + determinism", L.BENCHMARK_LOT6_CONTRACT.invariants.some((i: string) => /THROUGH the radar adapter/.test(i)) && L.BENCHMARK_LOT6_CONTRACT.invariants.some((i: string) => /20\/20 studied/.test(i)) && JSON.stringify(L.report(NOW).benchmark) === JSON.stringify(r.benchmark) && Object.isFrozen(r));
 
+  // V212 — EAA consistency: lot6 is explicitly a HISTORICAL SNAPSHOT (2026-11-15) pointing to the M5 reference; history preserved, not current truth.
+  check("V212 snapshot notice: HISTORICAL_SNAPSHOT @2026-11-15, points to the M5 reference, declares no conformance", L.SNAPSHOT_NOTICE.nature === "HISTORICAL_SNAPSHOT" && L.SNAPSHOT_NOTICE.snapshotDate === "2026-11-15" && /odg-wcag-accessibility-evidence\.ts/.test(L.SNAPSHOT_NOTICE.currentStatusOfRecord) && /snapshot date is NOT a rule's validity date/.test(L.SNAPSHOT_NOTICE.note) && /declares no conformance/.test(L.SNAPSHOT_NOTICE.note) && Object.isFrozen(L.SNAPSHOT_NOTICE));
+  check("V212 historical M5 worldRef PRESERVED (not retroactively rewritten)", byId.M5.worldRef.includes("as of Oct 2026 NONE yet harmonised") && byId.M5.worldRef.includes("EN 301 549 v4.1.1 (Sep 2026)"));
+
   process.stdout.write("\n" + (failures === 0 ? "ALL PASS — metier-benchmark-lot6 (V199 §3/§12: P14 DevEx / P15 orchestration / M3 FinOps / M4 Data-Eng / M5 Accessibility THROUGH the adapter; M5 EAA signal, nothing conformant; P15 runtime + M4 platform REJECTED; 5 contracts BLOCKED_AWAITING_ISOLATION; 20/20 métiers studied, 0 remain)" : failures + " FAIL") + "\n");
   process.exit(failures === 0 ? 0 : 1);
 }
