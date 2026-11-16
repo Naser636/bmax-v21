@@ -2,7 +2,7 @@
 # V244 — resident-driver L0 launcher: run the PRECOMPILED node build when FRESH (fast, low-RAM), else rebuild it, else
 # fall back to tsx on the TS source. A STALE build is NEVER run. No sudo, no network. Deterministic choice.
 set -uo pipefail
-REPO="/home/ubuntu/bmax-v21"; cd "$REPO"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$REPO"
 SRC="runtime/bin/odg-resident-driver-tick.ts"
 OUT="runtime/dist/bin/odg-resident-driver-tick.js"
 HASH="runtime/dist/bin/odg-resident-driver-tick.srchash"

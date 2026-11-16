@@ -5,7 +5,7 @@
 # behave correctly (esbuild --bundle misfires them). A source-hash sidecar lets the launcher refuse a STALE build.
 # No sudo, no network. Reproducible.
 set -euo pipefail
-REPO="/home/ubuntu/bmax-v21"; cd "$REPO"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$REPO"
 SRC="runtime/bin/odg-resident-driver-tick.ts"
 META="runtime/dist/bin/odg-resident-driver-tick.meta.json"
 HASH="runtime/dist/bin/odg-resident-driver-tick.srchash"
