@@ -3,6 +3,11 @@
   "title": "ODG Runtime Roadmap v1.0",
   "source": "runtime/system/ROADMAP.md",
   "description": "Official, machine-readable roadmap manifest. The single ordered list of missions the Runtime executes autonomously (odg autonomy). Each entry names a real Mission Contract; the Autonomy Cycle selects the first entry not yet proven in the ledger, executes it, and advances. A missing contract is a real blocker that halts the loop for human authoring.",
+  "consolidation": {
+    "companion": "docs/odg/v124-consolidated-roadmap.json",
+    "integration": "INTEGRATED",
+    "note": "V238 (owner-authorized): the DISTINCT V234–V238 capability-build missions are consolidated into Boussole V12.4 via the non-protected companion above (validated by odg-v124-consolidation, consumable by odg-program-continuity). This execution manifest and its 'missions' array are UNCHANGED and authoritative for the autonomy loop. Adding completed capability-builds as runnable manifest missions would halt the loop on missing contracts and break the v104/crosswalk 'still 11 / no second roadmap' guards ⇒ that amendment stays OWNER_GATED."
+  },
   "missions": [
     {
       "id": "M0000",

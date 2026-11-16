@@ -15,7 +15,7 @@ const PROTOCOL = Object.freeze({
   masterRoadmap: "V12.4 is the single master roadmap. The V12.4 extension is a PARKED strategic reserve attached to it, not a parallel roadmap.",
   canonicalSources: Object.freeze({
     closureRegister: "docs/odg/closure-register.json (427 items: 415 ACCEPTED / 6 BLOCKED / 3 IN_PROGRESS / 3 DEFERRED; last-touched @V123 2382665) — PROTECTED, do not mutate without owner authorization",
-    roadmap: "runtime/governance/ROADMAP.json (last-touched @V123 2382665) — PROTECTED, OWNER_GATED",
+    roadmap: "runtime/governance/ROADMAP.json — execution manifest of 11 Mission-Contract missions, UNCHANGED since @V123 2382665 (V238 added ONLY an additive 'consolidation' reference to the companion docs/odg/v124-consolidated-roadmap.json; the missions array and the manifest amendment stay PROTECTED, OWNER_GATED)",
     boussole: "ODG_PROJECT_STATE.md (LATEST banner + EOF checkpoint)",
     memory: "the auto-memory MEMORY.md index + topic files",
   }),
