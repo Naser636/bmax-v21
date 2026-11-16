@@ -14,17 +14,24 @@
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function str(v: any): string { return typeof v === "string" ? v.trim() : ""; }
 
-// The two canonical videos, recovered from the directive continuity (NOT from a repo file — none existed).
+// The two canonical videos. V226: title/author retrieved from the OFFICIAL YouTube oEmbed API (licit metadata access —
+// NOT caption/video download, which YouTube ToS gates) on 2026-11-16. Metadata ≠ content: titles are identity, never the
+// video's claims/arguments/conclusions. Relevance-to-ODG is a TITLE-ONLY signal (not a content assessment).
 const CANONICAL_VIDEOS = Object.freeze([
-  { id: "UeHmxZMdw2g", url: "https://www.youtube.com/watch?v=UeHmxZMdw2g&t=39s", designation: "owner-designated (V12.4 master directive §6.5 — mandatory acquisition/analysis test case)" },
-  { id: "2uyhavEACdo", url: "https://www.youtube.com/watch?v=2uyhavEACdo", designation: "owner-designated (V12.4 master directive §6.5 — mandatory acquisition/analysis test case)" },
+  { id: "UeHmxZMdw2g", url: "https://www.youtube.com/watch?v=UeHmxZMdw2g&t=39s", designation: "owner-designated (V12.4 master directive §6.5 — mandatory acquisition/analysis test case)",
+    metadata: { title: "J'ai Demandé à Claude De Gagner Un Maximum d'Argent", author: "NOCT SENSEI", authorUrl: "https://www.youtube.com/@noct_ai", provider: "YouTube", source: "YouTube oEmbed API", consultedDate: "2026-11-16" },
+    titleRelevanceToOdgEngineering: "LOW (consumer 'make money with Claude' content by title — NOT a technical engineering/model talk; title-only signal, content NOT analyzed)" },
+  { id: "2uyhavEACdo", url: "https://www.youtube.com/watch?v=2uyhavEACdo", designation: "owner-designated (V12.4 master directive §6.5 — mandatory acquisition/analysis test case)",
+    metadata: { title: "You Have 5 Years to Get Rich Before AI Takes Over", author: "Mark Tilbury", authorUrl: "https://www.youtube.com/@marktilbury", provider: "YouTube", source: "YouTube oEmbed API", consultedDate: "2026-11-16" },
+    titleRelevanceToOdgEngineering: "LOW (consumer 'get rich before AI' finance content by title — NOT a technical engineering/model talk; title-only signal, content NOT analyzed)" },
 ]);
 
 const ANALYSIS_STATUS = Object.freeze({
   status: "NOT_ANALYZED",
-  reason: "this environment has no video/transcript/audio access; the Radar collection seam is injected-provider only and no transcript was supplied — the content cannot be retrieved here",
-  rule: "titles/arguments/figures/conclusions are NEVER invented; a summary without a real transcript is NOT produced",
-  unblock: "owner supplies a verifiable transcript/caption text ⇒ the video is then analyzed through the normal provenance discipline (OBSERVED_EVIDENCE, dated, source-cited)",
+  metadataStatus: "METADATA_IDENTIFIED (title/author via official YouTube oEmbed API, 2026-11-16) — identity only, NOT content",
+  reason: "content analysis remains blocked: (1) no local multimodal toolchain (ffmpeg/whisper/tesseract/vision absent); (2) YouTube ToS gates caption/video download for videos the operator does not own (captions.download needs video permissions) — not circumvented",
+  rule: "titles/arguments/figures/conclusions are NEVER invented; a TITLE is metadata, not content; a summary without a real transcript is NOT produced",
+  unblock: "owner supplies a verifiable transcript/caption text (or authorizes a licit transcript channel) ⇒ the video is then analyzed through the normal provenance discipline (OBSERVED_EVIDENCE, dated, source-cited)",
 });
 
 /* register(opts?) -> the recorded video sources + honest analysis status. opts.transcripts = { <videoId>: "<text>" }
@@ -35,14 +42,16 @@ function register(opts: any): any {
     const transcript = str(t[v.id]);
     return Object.freeze({
       id: v.id, url: v.url, designation: v.designation,
+      metadata: v.metadata, titleRelevanceToOdgEngineering: v.titleRelevanceToOdgEngineering,
       analysis: transcript ? "ANALYSIS_ELIGIBLE (owner transcript supplied — analyze via provenance discipline; still no fabrication)" : "NOT_ANALYZED",
+      metadataIdentified: !!(v.metadata && v.metadata.title),   // identity known (licit oEmbed), content still NOT analyzed
       transcriptSupplied: transcript.length > 0,
     });
   });
   return Object.freeze({
     count: videos.length, videos: Object.freeze(videos),
     defaultStatus: ANALYSIS_STATUS,
-    note: "the two owner-designated videos are RECORDED (continuity gap resolved); their content stays NOT_ANALYZED until a real transcript is supplied — never fabricated; feeds the EXISTING radar, not a second one.",
+    note: "the two owner-designated videos are RECORDED + METADATA-IDENTIFIED (title/author via official YouTube oEmbed API, licit metadata only); their CONTENT stays NOT_ANALYZED (no toolchain + ToS-gated captions) — never fabricated; title is identity, not content; feeds the EXISTING radar, not a second one.",
   });
 }
 

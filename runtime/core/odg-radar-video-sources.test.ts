@@ -9,6 +9,9 @@ function main() {
   const r = V.register();
   check("the 2 owner-designated videos recorded with exact canonical URLs", r.count === 2 && r.videos.some((x: any) => x.id === "UeHmxZMdw2g" && /UeHmxZMdw2g/.test(x.url)) && r.videos.some((x: any) => x.id === "2uyhavEACdo" && /2uyhavEACdo/.test(x.url)));
   check("content NOT_ANALYZED by default (no video/transcript access)", r.videos.every((x: any) => x.analysis === "NOT_ANALYZED" && x.transcriptSupplied === false) && r.defaultStatus.status === "NOT_ANALYZED");
+  // V226: real licit metadata from the official YouTube oEmbed API — IDENTITY only, content still NOT_ANALYZED, title ≠ content.
+  check("metadata identified via official oEmbed (title/author), content still NOT_ANALYZED (identity ≠ content)", r.videos.every((x: any) => x.metadataIdentified === true && x.metadata && typeof x.metadata.title === "string" && x.metadata.source === "YouTube oEmbed API" && x.analysis === "NOT_ANALYZED") && r.videos.find((x: any) => x.id === "UeHmxZMdw2g").metadata.author === "NOCT SENSEI" && r.videos.find((x: any) => x.id === "2uyhavEACdo").metadata.author === "Mark Tilbury");
+  check("title-only relevance is honestly labelled LOW (consumer content, not a technical talk) — never a content assessment", r.videos.every((x: any) => /LOW/.test(x.titleRelevanceToOdgEngineering) && /title-only/.test(x.titleRelevanceToOdgEngineering)) && /title is identity, not content/i.test(r.note) && /ToS-gated captions/.test(r.note));
   check("honesty: titles/arguments NEVER invented; no summary without a real transcript", /NEVER invented/.test(r.defaultStatus.rule) && /not produced/i.test(r.defaultStatus.rule));
   check("recovered from directive continuity (not a repo file); designation = owner-designated V12.4 §6.5", r.videos.every((x: any) => /owner-designated \(V12\.4 master directive §6\.5/.test(x.designation)) && /not a repo file/.test(V.RADAR_VIDEO_SOURCES_CONTRACT.invariants[0]));
 
