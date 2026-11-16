@@ -146,4 +146,22 @@ t("content MISMATCH ⇒ contradiction ⇒ REJECTED; no-content ⇒ not a contrad
   assert.strictEqual(TS.evidenceFrom({ sourceType: "official-tender", scamFlags: [] }, "FIRST_CAPTURE").contradictions, false);
 });
 
+// 12. V225: a REJECTED budget-provenance (unreachable/unverifiable source) must DOWNGRADE grade A→B — the fail-closed
+//     budgetProvenance verdict was computed but the grader ignored it (over-grading of 503s). Technical failure ≠
+//     contradiction (not REJECTED) and ≠ absence (N/A, no url/budget, stays as-is). 2xx tenders keep grade A.
+t("REJECTED budget-provenance downgrades A→B (not REJECTED); 2xx stays A; N/A not penalized", () => {
+  const NOW4 = Date.parse("2026-10-20T00:00:00Z");
+  const ok = TS.detect([tender()], { nowMs: NOW4 }).shortlist[0];
+  assert.strictEqual(ok.grade, "A");                                    // 2xx reachable ⇒ grade A (unchanged)
+  const unreachable = TS.detect([tender({ httpStatus: 503 })], { nowMs: NOW4 }).shortlist[0];
+  assert.strictEqual(unreachable.provenance.verification_status, "REJECTED");
+  assert.strictEqual(unreachable.grade, "B");                           // downgraded from A — budget NOT confirmed
+  assert.notStrictEqual(unreachable.grade, "REJECTED");                 // a technical failure is NOT a contradiction
+  // evidenceFrom: REJECTED budget verification ⇒ budget "unverified" (not budgetKnown); CANDIDATE/PROVEN/undefined ⇒ unchanged.
+  assert.strictEqual(TS.evidenceFrom({ sourceType: "official-tender", budgetEur: 250000, budgetKind: "published", scamFlags: [] }, "NO_CONTENT", "REJECTED").budget, "unverified");
+  assert.strictEqual(TS.evidenceFrom({ sourceType: "official-tender", budgetEur: 250000, budgetKind: "published", scamFlags: [] }, "NO_CONTENT", "CANDIDATE").budget, "published");
+  // N/A (no url ⇒ budgetProvenance N/A, not REJECTED) ⇒ budget "unknown" from absence, never "unverified".
+  assert.strictEqual(TS.evidenceFrom({ sourceType: "official-tender", budgetEur: null, scamFlags: [] }, "NO_CONTENT", "N/A").budget, "unknown");
+});
+
 console.log(`\nALL PASS — opportunity-detector (${n} tests)`);
