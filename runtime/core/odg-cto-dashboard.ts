@@ -15,6 +15,7 @@ const BIZ = require("./odg-metier-business-matrix.js");
 const PMX = require("./odg-primitive-metier-matrix.js");
 const IDX = require("./odg-metier-improvement-index.js");         // V208 — consumer of the 16 V207 improvements
 const GM = require("./odg-production-gate-matrix.js");            // V205 — consolidated production gates
+const VID = require("./odg-radar-video-sources.js");             // V213 — owner-designated radar video sources
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -35,6 +36,7 @@ function build(opts?: any): any {
   const pmx = PMX.matrix();
   const idx = IDX.integrate();                 // V208: 16 improvement capabilities — built/integrated reconciliation
   const gm = GM.productionGateMatrix({});      // V205: consolidated production-gate status
+  const vid = VID.register();                  // V213: owner-designated radar videos (content NOT_ANALYZED)
 
   return Object.freeze({
     asOfEpochMs: Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : null, // injected; NOT_MEASURED if absent
@@ -63,7 +65,7 @@ function build(opts?: any): any {
 
     gates: ind(null, "gate is run on demand (not a stored metric here)", "the dashboard does not re-run the gate; last known full gate = 613/613 at build-time per campaign reports (verify live before relying)", "LOW"),
 
-    radar: ind("scheduler present; realScheduledRun NOT_MEASURED", "odg-weekly-radar-scheduler.ts + grant V141", "no resident timer observed in the 2026-11-13 audit", "MEDIUM"),
+    radar: ind("scheduler present; realScheduledRun NOT_MEASURED; " + vid.count + " owner-designated videos RECORDED (content " + vid.defaultStatus.status + ")", "odg-weekly-radar-scheduler.ts + grant V141 + odg-radar-video-sources.ts", "no resident timer observed in the 2026-11-13 audit; designated video content NOT fabricated (needs transcript)", "MEDIUM"),
 
     runtime: ind("NOT_MEASURED", "2026-11-13 read-only VPS audit", "no resident ODG process/service observed; ODG runs on demand", "HIGH"),
 
