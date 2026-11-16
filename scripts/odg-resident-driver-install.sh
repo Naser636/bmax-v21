@@ -6,7 +6,7 @@
 #   scripts/odg-resident-driver-install.sh status      # show unit + timer state (read-only)
 #   scripts/odg-resident-driver-install.sh runonce      # start one L0 service cycle now (read-only)
 set -euo pipefail
-REPO="/home/ubuntu/bmax-v21"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 UDIR="${HOME}/.config/systemd/user"
 SVC="odg-resident-driver.service"
 TMR="odg-resident-driver.timer"

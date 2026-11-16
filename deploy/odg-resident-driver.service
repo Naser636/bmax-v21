@@ -10,4 +10,11 @@ Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # ONE bounded L0 OBSERVE cycle then exit (no daemon loop, no polling). The driver reports roadmap state read-only and
 # returns to standby; it executes/accepts/rejects NO mission and writes NO business register/source/config. Bounded.
 TimeoutStartSec=120
-ExecStart=/bin/bash -lc 'npx tsx runtime/bin/odg-resident-driver-tick.ts'
+# defense-in-depth: the L0 tick needs NO network and writes nothing outside the repo/dist — ENFORCE it, don't just assert it.
+PrivateNetwork=yes
+RestrictAddressFamilies=AF_UNIX
+NoNewPrivileges=yes
+ProtectControlGroups=yes
+# V244: run the PRECOMPILED node build when fresh (~71MB/~0.3s) via the freshness-guarded launcher; it rebuilds if the
+# TS source changed and falls back to tsx if the build is unavailable (a stale build is never run).
+ExecStart=/bin/bash -lc 'bash scripts/odg-resident-driver-run.sh'
