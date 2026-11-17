@@ -204,6 +204,33 @@ function reconcileDossier(dossier: any): any {
   });
 }
 
+// V254/V255 M2 — extractDocument tags each field with a confidence (HIGH/LOW) + normalized value, but nothing ROUTED
+// low-confidence extraction to human review. The core IDP human-in-the-loop control is a confidence GATE: a LOW-confidence
+// field, a field whose normalized value is null (ambiguous/not coerced), or a line that fails self-consistency must be routed
+// to REVIEW, never auto-accepted. gateExtraction adds exactly that, fail-closed. Deterministic; proposes only.
+/** gateExtraction(ext) -> auto-accept vs needs-review per field + line; a LOW/null/inconsistent item is never auto-accepted. */
+function gateExtraction(ext: any): any {
+  if (!isObj(ext) || ext.ok !== true || !isObj(ext.fields)) return Object.freeze({ ok: false, code: "NO_EXTRACTION", detail: "gateExtraction needs a successful extractDocument result (fail-closed)" });
+  const fields = ext.fields;
+  const autoAccepted: string[] = []; const needsReview: any[] = [];
+  for (const key of Object.keys(fields)) {
+    const f = isObj(fields[key]) ? fields[key] : {};
+    const highConf = f.confidence === "HIGH";
+    const hasNorm = f.normalized !== null && f.normalized !== undefined;
+    if (highConf && hasNorm) autoAccepted.push(key);
+    else needsReview.push(Object.freeze({ field: key, confidence: f.confidence || "UNKNOWN", reason: !hasNorm ? "normalized value is null (ambiguous/not coerced) ⇒ human review" : "confidence '" + (f.confidence || "UNKNOWN") + "' below HIGH ⇒ human review" }));
+  }
+  const lineExceptions = (Array.isArray(ext.lines) ? ext.lines : []).map((l: any, i: number) => (l && l.selfConsistent === false ? Object.freeze({ line: i + 1, reason: "qty*unitPrice != net (self-inconsistent) ⇒ human review" }) : null)).filter(Boolean);
+  const totalFields = Object.keys(fields).length;
+  const autoAcceptRate = totalFields > 0 ? Math.round((autoAccepted.length / totalFields) * 1000) / 1000 : 0;
+  return Object.freeze({
+    ok: true, totalFields, autoAccepted: Object.freeze(autoAccepted), autoAcceptedCount: autoAccepted.length,
+    needsReview: Object.freeze(needsReview), reviewCount: needsReview.length, lineExceptions: Object.freeze(lineExceptions),
+    autoAcceptRate, clean: needsReview.length === 0 && lineExceptions.length === 0 && totalFields > 0,
+    note: "confidence gate (human-in-the-loop): only HIGH-confidence fields with a non-null normalized value are auto-accepted; LOW/null/self-inconsistent items are routed to REVIEW (fail-closed, never auto-accepted). Proposes only — books/pays nothing.",
+  });
+}
+
 const DOCUMENT_INTELLIGENCE_CONTRACT = Object.freeze({
   id: "V147-DOCUMENT-INTELLIGENCE",
   metier: "M2 BTP/TP — document extraction + devis→commande→facture→BL reconciliation",
@@ -217,7 +244,8 @@ const DOCUMENT_INTELLIGENCE_CONTRACT = Object.freeze({
     "integer minor units for money; line self-consistency (qty*unitPrice=net) checked deterministically",
     "reconciliation reuses order-coherence-check — no duplicate reconciliation logic, no new primitive/store",
     "prepares + proposes only: books nothing, pays nothing, emits no invoice; human validation gates any write",
+    "V254 confidence gate: gateExtraction auto-accepts ONLY HIGH-confidence fields with a non-null normalized value; LOW/null/self-inconsistent items route to human REVIEW (fail-closed, never auto-accepted)",
   ]),
 });
-module.exports = { extractDocument, reconcileDossier, reconcileDelivery, DOC_TYPES, DOCUMENT_INTELLIGENCE_CONTRACT };
+module.exports = { extractDocument, gateExtraction, reconcileDossier, reconcileDelivery, DOC_TYPES, DOCUMENT_INTELLIGENCE_CONTRACT };
 export {};
