@@ -168,6 +168,34 @@ function verifyRemediation(input: any): any {
   });
 }
 
+// V254/V255 M1 — the engine keyed remediation on fixedVersion/evidence but had no VEX (Vulnerability Exploitability eXchange)
+// triage: a vulnerability present in the SBOM may be NOT exploitable in this product. VEX (CISA / OpenVEX / CycloneDX / CSAF)
+// records that with a status + justification. triageVex applies it FAIL-CLOSED: only `not_affected` WITH a justification may be
+// suppressed; `affected`/`under_investigation`/unknown/invalid/missing-justification remain OPEN (never silently suppressed);
+// `fixed` is resolved. This invents nothing — it uses only the VEX status each finding carries. Deterministic.
+const VEX_STATUSES = Object.freeze(["not_affected", "affected", "fixed", "under_investigation"]);
+/** triageVex(findings) -> per-finding VEX disposition. Only a justified `not_affected` is suppressed (fail-closed). */
+function triageVex(findings: any): any {
+  const list = Array.isArray(findings) ? findings.filter(isObj) : [];
+  const items = list.map((f: any, i: number) => {
+    const vex = isObj(f.vex) ? f.vex : {};
+    const status = typeof vex.status === "string" && VEX_STATUSES.indexOf(vex.status) >= 0 ? vex.status : "unknown";
+    const justified = isStr(vex.justification);
+    let disposition: string, actionable: boolean, suppressed: boolean;
+    if (status === "fixed") { disposition = "RESOLVED_FIXED"; actionable = false; suppressed = false; }
+    else if (status === "not_affected" && justified) { disposition = "SUPPRESSED_NOT_AFFECTED"; actionable = false; suppressed = true; }    // the ONLY safe suppression
+    else if (status === "not_affected") { disposition = "OPEN_NOT_AFFECTED_UNJUSTIFIED"; actionable = true; suppressed = false; }            // fail-closed: no justification ⇒ stays open
+    else if (status === "affected") { disposition = "OPEN_AFFECTED"; actionable = true; suppressed = false; }
+    else if (status === "under_investigation") { disposition = "OPEN_UNDER_INVESTIGATION"; actionable = true; suppressed = false; }
+    else { disposition = "OPEN_UNKNOWN_VEX"; actionable = true; suppressed = false; }                                                        // unknown/invalid/missing ⇒ OPEN
+    return Object.freeze({ id: isStr(f.id) ? f.id : "f#" + i, component: isStr(f.component) ? f.component : null, vexStatus: status, justified, disposition, actionable, suppressed });
+  });
+  const open = items.filter((x: any) => x.actionable === true).length;
+  const suppressed = items.filter((x: any) => x.suppressed === true).length;
+  const resolved = items.filter((x: any) => x.disposition === "RESOLVED_FIXED").length;
+  return Object.freeze({ total: items.length, items: Object.freeze(items), open, suppressed, resolved, note: "VEX triage (CISA/OpenVEX): only a `not_affected` WITH a justification is suppressed; affected/under_investigation/unknown/unjustified remain OPEN (fail-closed — an unknown-exploitability vuln is NEVER silently suppressed); invents no status." });
+}
+
 const CRA_REMEDIATION_CONTRACT = Object.freeze({
   id: "V147-CRA-REMEDIATION-ENGINE",
   metier: "M1 CRA/SBOM — remediation planning + before/after closure verification",
@@ -179,7 +207,8 @@ const CRA_REMEDIATION_CONTRACT = Object.freeze({
     "no auto-fix on any real repo; no push/publication; analyse + propose only (APPLIED/VERIFIED are owner-gated)",
     "closure is derived from the AFTER SBOM + fresh findings, never from a declaration; new HIGH ⇒ not closed",
     "deterministic + fail-closed; does not replace or weaken V143 detection",
+    "V254 VEX triage: only a `not_affected` WITH a justification may be suppressed; affected/under_investigation/unknown/unjustified stay OPEN (fail-closed — an unknown-exploitability vuln is never silently suppressed); invents no VEX status",
   ]),
 });
-module.exports = { buildRemediationPlan, verifyRemediation, cmpSemver, CRA_REMEDIATION_CONTRACT };
+module.exports = { buildRemediationPlan, verifyRemediation, cmpSemver, triageVex, VEX_STATUSES, CRA_REMEDIATION_CONTRACT };
 export {};
