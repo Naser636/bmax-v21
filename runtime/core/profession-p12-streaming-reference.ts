@@ -39,8 +39,39 @@ function replayConsistent(events: any, checkpointSeq: any): boolean {
   return JSON.stringify(full) === JSON.stringify(replay) && full.ordered === true;
 }
 
+// V254 §2 — the existing P12 ordered/deduped by SEQUENCE but had no EVENT-TIME semantics: tumbling windows + a WATERMARK to
+// detect LATE events (events whose event-time is behind the watermark). This is the core streaming-correctness model (Apache
+// Flink / Google Dataflow): a late event must be surfaced explicitly, NEVER silently folded into a window as if on-time.
+// Deterministic (watermark is INJECTED, no wall clock); fail-closed.
+/** windowByEventTime(events, {windowMs, watermark}) -> tumbling event-time windows + late/rejected events. */
+function windowByEventTime(events: any, opts: any): any {
+  const o = isObj(opts) ? opts : {};
+  const windowMs = num(o.windowMs, 0);
+  const watermark = num(o.watermark, 0);
+  if (!(windowMs > 0)) return Object.freeze({ ok: false, code: "INVALID_WINDOW", detail: "windowMs must be > 0 (fail-closed)" });
+  const byStart: Record<number, string[]> = {};
+  const late: any[] = []; const rejected: any[] = []; let onTime = 0;
+  for (const e of arr(events)) {
+    if (!isObj(e) || typeof e.eventTime !== "number" || !isFinite(e.eventTime)) { rejected.push(Object.freeze({ event: e === null ? null : (isObj(e) ? (isStr(e.id) ? e.id : "(no-id)") : String(e)), reason: "missing/invalid eventTime (fail-closed)" })); continue; }
+    const id = isStr(e.id) ? e.id : "ev@" + e.eventTime;
+    if (e.eventTime < watermark) { late.push(Object.freeze({ id, eventTime: e.eventTime })); continue; }   // behind the watermark ⇒ LATE
+    const start = Math.floor(e.eventTime / windowMs) * windowMs;
+    (byStart[start] = byStart[start] || []).push(id); onTime++;
+  }
+  const windows = Object.keys(byStart).map(Number).sort((a, b) => a - b).map((start) => Object.freeze({ start, end: start + windowMs, ids: Object.freeze(byStart[start].slice()), count: byStart[start].length }));
+  return Object.freeze({
+    ok: true, windowMs, watermark, windows: Object.freeze(windows),
+    onTime, late: Object.freeze(late), lateCount: late.length, rejected: Object.freeze(rejected), rejectedCount: rejected.length,
+    note: "tumbling EVENT-TIME windows [start, start+windowMs); an event with eventTime < watermark is LATE (surfaced, NOT folded into a window); missing/invalid eventTime ⇒ rejected (fail-closed). Watermark injected (deterministic, no wall clock).",
+  });
+}
+
 function runReferenceProject(opts: any): any {
   const o = isObj(opts) ? opts : {};
+  if (o.eventTimeWindows) {
+    const w = windowByEventTime(arr(o.events), { windowMs: num(o.windowMs, 10), watermark: num(o.watermark, 0) });
+    return Object.freeze({ synthetic: true, profession: "P12", eventTimeWindows: w, level: "E2", degraded: w.ok === false || w.lateCount > 0 || w.rejectedCount > 0, note: "SYNTHETIC event stream (not a real broker, not E5); event-time tumbling windows + watermark late-event detection; real Kafka/Pulsar + real watermarks (E5) owner-gated NOT_RUN" });
+  }
   const events = arr(o.events).length ? o.events : [
     { id: "e1", seq: 3 }, { id: "e2", seq: 1 }, { id: "e3", seq: 2 }, { id: "e2", seq: 1 }, { id: "e4", seq: 4 },
   ];
@@ -63,10 +94,11 @@ const P12_STREAMING_REFERENCE_CONTRACT = Object.freeze({
     "ordering by sequence + idempotent dedup by id + replay consistency from a checkpoint + bounded backpressure",
     "a duplicate event is dropped (idempotent); replay yields the same processed set",
     "pure/deterministic + reproducible",
+    "V254 event-time: windowByEventTime assigns events to tumbling [start,start+windowMs) windows; an event behind the WATERMARK is LATE (surfaced, never silently folded in); invalid eventTime ⇒ rejected (fail-closed); watermark injected (deterministic)",
   ]),
 });
 
-module.exports = { processStream, replayConsistent, runReferenceProject, P12_STREAMING_REFERENCE_CONTRACT };
+module.exports = { processStream, replayConsistent, windowByEventTime, runReferenceProject, P12_STREAMING_REFERENCE_CONTRACT };
 
 if (require.main === module) { process.stdout.write(JSON.stringify({ ...P12_STREAMING_REFERENCE_CONTRACT, demo: runReferenceProject({}) }, null, 2) + "\n"); }
 
