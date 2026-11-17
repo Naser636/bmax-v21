@@ -36,7 +36,18 @@ function main() {
   check("garbage input ⇒ empty analysis, no throw (fail-closed)", F.analyzeCosts(null).totalMinor === 0 && F.analyzeCosts(null).recordsAnalyzed === 0);
   check("READ-ONLY note (never writes infra/subscriptions/spend)", /NO write to infra\/subscriptions\/spend/.test(r.note));
 
-  process.stdout.write("\n" + (failures === 0 ? "ALL PASS — finops-analyzer (group/dedup/unused/spike; estimates≠realized; measureSavings over actual periods; read-only; fail-closed; integer-minor)" : failures + " FAIL") + "\n");
+  // V248: detectWaste (FinOps rightsizing / unit-cost / anomaly — ESTIMATES only, never realized).
+  const waste = F.detectWaste([
+    { vendor: "AWS", service: "ec2", amountMinor: 10000, usage: 1, capacity: 10 },     // 10% util ⇒ idle
+    { vendor: "AWS", service: "s3", amountMinor: 500, usage: 9, capacity: 10, workUnits: 100 }, // healthy + unit cost
+    { vendor: "GCP", service: "bq", amountMinor: 100 }, { vendor: "GCP", service: "bq", amountMinor: 120 }, { vendor: "GCP", service: "bq", amountMinor: 900 }, // anomaly vs mean
+  ]);
+  check("detectWaste: idle resource (10% util) ⇒ ESTIMATED recoverable 90% of spend", waste.idle.length === 1 && waste.idle[0].estimatedRecoverableMinor === 9000 && waste.estimatedWasteMinor === 9000);
+  check("detectWaste: cost-per-work-unit computed (500/100 = 5 minor)", waste.unitCosts.some((u: any) => u.costPerUnitMinor === 5));
+  check("detectWaste: spend far above trailing mean ⇒ anomaly flagged", waste.anomalies.some((a: any) => a.service === "bq" && a.amountMinor === 900));
+  check("detectWaste: estimates ONLY (never a realized saving) — honest", waste.confidence === "ESTIMATE" && /NEVER a realized saving/.test(waste.note));
+  check("detectWaste: a well-utilised resource (50%) is NOT flagged idle (no false positive)", F.detectWaste([{ vendor: "x", service: "y", amountMinor: 1, usage: 5, capacity: 10 }]).idle.length === 0);
+  process.stdout.write("\n" + (failures === 0 ? "ALL PASS — finops-analyzer (group/dedup/unused/spike; V248 detectWaste idle/unit-cost/anomaly ESTIMATES; estimates≠realized; measureSavings over actual periods; read-only; fail-closed; integer-minor)" : failures + " FAIL") + "\n");
   process.exit(failures === 0 ? 0 : 1);
 }
 main();

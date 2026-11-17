@@ -81,6 +81,43 @@ function measureSavings(before: any, after: any): any {
   return Object.freeze({ measurable: true, beforeMinor: b, afterMinor: a, realizedMinor, pct: b > 0 ? Math.round((realizedMinor / b) * 1000) / 10 : 0, note: "realized delta between two ACTUAL periods — a measured result, not an estimate" });
 }
 
+/*
+ * detectWaste(records, opts) -> V248 M3 improvement (FinOps Framework: "Reduce waste / rightsizing" + unit economics +
+ * anomaly). Over imported SYNTHETIC records it flags: IDLE/underutilised resources (usage/capacity below a threshold) with
+ * an ESTIMATED recoverable amount (rightsizing — NEVER a realized saving); COST-PER-WORK-UNIT when workUnits present; and
+ * a SPEND ANOMALY (a record far above the trailing mean of the same vendor/service). READ-ONLY; integer minor; fail-closed.
+ */
+function detectWaste(records: any, opts?: any): any {
+  const o = isObj(opts) ? opts : {};
+  const idleThreshold = typeof o.idleUtilization === "number" ? o.idleUtilization : 0.2;
+  const anomalyFactor = typeof o.anomalyFactor === "number" ? o.anomalyFactor : 3;
+  const recs = (Array.isArray(records) ? records : []).filter((r) => isObj(r) && isInt(r.amountMinor));
+  const idle: any[] = [], unitCosts: any[] = [], anomalies: any[] = [];
+  let estimatedWasteMinor = 0;
+  // idle / rightsizing (estimate only) + unit cost.
+  for (const r of recs) {
+    const cap = typeof r.capacity === "number" && r.capacity > 0 ? r.capacity : null;
+    const use = typeof r.usage === "number" && r.usage >= 0 ? r.usage : null;
+    if (cap !== null && use !== null) {
+      const util = use / cap;
+      if (util < idleThreshold) { const recoverable = Math.round(r.amountMinor * (1 - util)); estimatedWasteMinor += recoverable; idle.push({ vendor: norm(r.vendor), service: norm(r.service), utilization: Math.round(util * 1000) / 1000, estimatedRecoverableMinor: recoverable, confidence: "ESTIMATE" }); }
+    }
+    if (isInt(r.workUnits) && r.workUnits > 0) unitCosts.push({ vendor: norm(r.vendor), service: norm(r.service), costPerUnitMinor: Math.round(r.amountMinor / r.workUnits) });
+  }
+  // spend anomaly: per (vendor,service) trailing mean, flag a record far above it.
+  const groups: Record<string, number[]> = {};
+  for (const r of recs) { const k = norm(r.vendor) + "|" + norm(r.service); (groups[k] = groups[k] || []).push(r.amountMinor); }
+  for (const r of recs) {
+    const k = norm(r.vendor) + "|" + norm(r.service); const g = groups[k];
+    if (g.length >= 3) {
+      const sum = g.reduce((a, b) => a + b, 0);
+      const baseline = (sum - r.amountMinor) / (g.length - 1); // leave-one-out mean so the outlier doesn't dilute its own baseline
+      if (baseline > 0 && r.amountMinor > baseline * anomalyFactor) anomalies.push({ vendor: norm(r.vendor), service: norm(r.service), amountMinor: r.amountMinor, trailingMeanMinor: Math.round(baseline), factor: Math.round((r.amountMinor / baseline) * 10) / 10 });
+    }
+  }
+  return Object.freeze({ idle: Object.freeze(idle), unitCosts: Object.freeze(unitCosts), anomalies: Object.freeze(anomalies), estimatedWasteMinor, confidence: "ESTIMATE", note: "idle/anomaly are FinOps rightsizing ESTIMATES flagged for human verification — NEVER a realized saving; use measureSavings over two actual periods for realized deltas" });
+}
+
 const FINOPS_ANALYZER_CONTRACT = Object.freeze({
   id: "V146-FINOPS-ANALYZER",
   reuses: ["integer-minor arithmetic convention (shared with invoicing/einvoice); FinOps unit-economics concepts (finops.org)"],
@@ -91,5 +128,5 @@ const FINOPS_ANALYZER_CONTRACT = Object.freeze({
     "duplicates/anomalies are flagged for human verification; no new primitive/parallel system",
   ]),
 });
-module.exports = { analyzeCosts, measureSavings, FINOPS_ANALYZER_CONTRACT };
+module.exports = { analyzeCosts, measureSavings, detectWaste, FINOPS_ANALYZER_CONTRACT };
 export {};

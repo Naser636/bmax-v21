@@ -31,6 +31,24 @@ function syntheticProject(over?: any): any {
   }, over || {});
 }
 
+// V248 P3 improvement (OWASP ASVS 5.0 V12 Files & Resources / CWE-22): detect unsafe file-access SINKS and path traversal
+// in source — a dimension the prior scan (license/secrets/injection/unpinned/SBOM) did NOT cover. LINT-GRADE pattern
+// heuristic (deterministic, not sound taint analysis): it catches the common direct-sink / traversal shapes and keeps a
+// true-negative discipline, but a template-literal or indirect-variable sink can be missed (⇒ do not treat as a proof of safety).
+const TRAVERSAL = /(\.\.[\/\\]){2,}/;                             // ../../ (escape ≥2 levels) — strong traversal signal, avoids benign single-level relative paths
+const UNSANITISED_SINK = /\b(readFile|readFileSync|writeFile|writeFileSync|createReadStream|createWriteStream|unlink|unlinkSync|open|openSync)\s*\(\s*(req|request|params|query|body|userInput|input|argv)\b/;
+const JOIN_WITH_INPUT = /\bpath\.(join|resolve)\s*\([^)]*\b(req|request|params|query|body|userInput|input|argv)\b/;
+function scanPathSafety(files: any): any[] {
+  const out: any[] = [];
+  for (const f of arr(files)) {
+    if (!isObj(f) || !isStr(f.content)) continue;
+    if (UNSANITISED_SINK.test(f.content)) out.push({ path: f.path, issue: "user input flows to a file-system sink without validation", severity: "HIGH" });
+    else if (JOIN_WITH_INPUT.test(f.content)) out.push({ path: f.path, issue: "path built from user input without containment check (potential traversal)", severity: "HIGH" });
+    if (TRAVERSAL.test(f.content)) out.push({ path: f.path, issue: "path traversal sequence (../) present", severity: "HIGH" });
+  }
+  return out;
+}
+
 /** scanProject(project) -> findings + verdict. Fail-closed: any HIGH finding ⇒ not clean. */
 function scanProject(project: any): any {
   const p = isObj(project) ? project : {};
@@ -61,8 +79,9 @@ function scanProject(project: any): any {
   const unpinnedDeps = arr(p.dependencies).filter((d: any) => isObj(d) && !isStr(d.version)).map((d: any) => d.name);
   const sbomPresent = isObj(p.sbom) && p.sbom.present === true;
 
-  const highs = licenseViolations.filter((v: any) => v.severity === "HIGH").length + secretsFound.length + injectionVulns.length + (sbomPresent ? 0 : 1);
-  const findings = { licenseViolations, secretsFound, injectionVulns, unpinnedDeps, sbomPresent };
+  const pathUnsafe = scanPathSafety(arr(p.files)); // V248: unsafe file sinks / traversal
+  const highs = licenseViolations.filter((v: any) => v.severity === "HIGH").length + secretsFound.length + injectionVulns.length + pathUnsafe.length + (sbomPresent ? 0 : 1);
+  const findings = { licenseViolations, secretsFound, injectionVulns, unpinnedDeps, pathUnsafe, sbomPresent };
   const clean = highs === 0 && licenseViolations.length === 0 && unpinnedDeps.length === 0;
   return Object.freeze({
     synthetic: true, profession: "P3",
@@ -86,7 +105,7 @@ const P3_SECURITY_REFERENCE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { syntheticProject, scanProject, P3_SECURITY_REFERENCE_CONTRACT };
+module.exports = { syntheticProject, scanProject, scanPathSafety, P3_SECURITY_REFERENCE_CONTRACT };
 
 if (require.main === module) { process.stdout.write(JSON.stringify({ ...P3_SECURITY_REFERENCE_CONTRACT, demo: scanProject(syntheticProject()) }, null, 2) + "\n"); }
 
