@@ -40,6 +40,15 @@ console.log("V12.4 §43 P7 — SRE REFERENCE (E2/E3)");
 }
 check(P7.P7_SRE_REFERENCE_CONTRACT.invariants.some((i: any) => /E5.*owner-gated NOT_RUN/.test(i)), "honesty: SYNTHETIC only, E5 owner-gated NOT_RUN");
 
+// V248: multi-window burn-rate alerting (Google SRE Workbook, AND-gate).
+{
+  const slo = { availabilityTarget: 0.999 }; // error budget 0.001
+  check(P7.burnRateAlert({ longErrorRate: 0.0145, shortErrorRate: 0.02 }, slo).severity === "PAGE" && P7.burnRateAlert({ longErrorRate: 0.0145, shortErrorRate: 0.02 }, slo).tier === "CRITICAL", "burnRate: both windows ≥14.4× ⇒ PAGE CRITICAL");
+  check(P7.burnRateAlert({ longErrorRate: 0.007, shortErrorRate: 0.008 }, slo).severity === "PAGE" && P7.burnRateAlert({ longErrorRate: 0.007, shortErrorRate: 0.008 }, slo).tier === "HIGH", "burnRate: both ≥6× (but <14.4) ⇒ PAGE HIGH");
+  check(P7.burnRateAlert({ longErrorRate: 0.0035, shortErrorRate: 0.004 }, slo).severity === "TICKET", "burnRate: both ≥3× (but <6) ⇒ TICKET MEDIUM");
+  check(P7.burnRateAlert({ longErrorRate: 0.00001, shortErrorRate: 0.05 }, slo).severity === "OK", "burnRate AND-gate: short spikes but long window safe ⇒ OK (no alert fatigue)");
+  check(P7.burnRateAlert({ longErrorRate: 0.0001, shortErrorRate: 0.0001 }, slo).severity === "OK", "burnRate: budget safe ⇒ OK");
+}
 console.log(failures === 0 ? "ALL PASS — V12.4 §43 P7 SRE REFERENCE" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
 export {};

@@ -43,6 +43,26 @@ function chaosRecovery(incident: any): any {
   return Object.freeze({ rto, rpo, withinRto: rto <= num(i.rtoTargetMs, Infinity), withinRpo: rpo <= num(i.rpoTargetMs, Infinity), recovered: num(i.recoveredAt) > num(i.failedAt) });
 }
 
+/*
+ * burnRateAlert({longErrorRate, shortErrorRate}, slo) -> V248 P7 improvement: multi-window multi-burn-rate alerting per the
+ * Google SRE Workbook (sre.google/workbook/alerting-on-slos). Error budget = 1 - target. Burn rate = errorRate/budget.
+ * AND-GATE: a tier fires ONLY when BOTH the long AND the short window exceed its threshold (avoids slow detection AND
+ * alert-fatigue). Tiers: 14.4x & 6x ⇒ PAGE, 3x ⇒ TICKET, else OK. Deterministic; gap the prior evaluateSLO did not cover.
+ */
+function burnRateAlert(w: any, slo: any): any {
+  const o = isObj(w) ? w : {};
+  const target = num(isObj(slo) ? slo.availabilityTarget : undefined, 0.999);
+  const budget = Math.max(1e-9, 1 - target);               // error budget fraction (never 0)
+  const longBurn = num(o.longErrorRate) / budget;
+  const shortBurn = num(o.shortErrorRate) / budget;
+  const TIERS = [{ x: 14.4, sev: "PAGE", tier: "CRITICAL" }, { x: 6, sev: "PAGE", tier: "HIGH" }, { x: 3, sev: "TICKET", tier: "MEDIUM" }];
+  const EPS = 1e-6; // tolerance so an exact-threshold input isn't lost to float error in (1-target)
+  for (const t of TIERS) {
+    if (longBurn >= t.x - EPS && shortBurn >= t.x - EPS) return Object.freeze({ severity: t.sev, tier: t.tier, firedThreshold: t.x, longBurn: round(longBurn), shortBurn: round(shortBurn), reason: "both windows ≥ " + t.x + "x burn (AND-gate)" });
+  }
+  return Object.freeze({ severity: "OK", tier: null, firedThreshold: null, longBurn: round(longBurn), shortBurn: round(shortBurn), reason: "no tier with BOTH windows exceeding (budget safe or transient)" });
+}
+
 /** runReferenceProject({latencies, slo, incident}) -> E2/E3 result (measured, reproducible). */
 function runReferenceProject(opts: any): any {
   const o = isObj(opts) ? opts : {};
@@ -72,7 +92,7 @@ const P7_SRE_REFERENCE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { percentiles, evaluateSLO, chaosRecovery, runReferenceProject, P7_SRE_REFERENCE_CONTRACT };
+module.exports = { percentiles, evaluateSLO, chaosRecovery, burnRateAlert, runReferenceProject, P7_SRE_REFERENCE_CONTRACT };
 
 if (require.main === module) { process.stdout.write(JSON.stringify({ ...P7_SRE_REFERENCE_CONTRACT, demo: runReferenceProject({}) }, null, 2) + "\n"); }
 
