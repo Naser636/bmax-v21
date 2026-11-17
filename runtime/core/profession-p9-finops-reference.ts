@@ -37,6 +37,33 @@ function budgetStop(spentObservedEur: any, budgetEur: any): any {
   return Object.freeze({ stop: spent > budget, spent: round(spent), budget, reason: spent > budget ? "OBSERVED spend exceeds budget — fail-closed stop" : "within budget" });
 }
 
+// V253 §3 — P9 had only a REACTIVE budget stop (it triggers AFTER OBSERVED spend already exceeded the budget). The FinOps
+// Framework "Inform" capability is to FORECAST: from OBSERVED spend part-way through a period, project end-of-period spend
+// at the current run-rate and warn BEFORE the overrun. This is distinct from M3 finops-analyzer.detectWaste (waste/
+// rightsizing/anomaly over a record set) — it is a forward run-rate projection. A forecast is ESTIMATED (modelled), NEVER
+// OBSERVED — kept strictly separate (F11/§9 doctrine). Deterministic; fail-closed. Ref: FinOps Foundation Framework.
+/** forecastBudget(spentObservedEur, elapsedFraction, budgetEur) -> run-rate projection + early overrun warning. */
+function forecastBudget(spentObservedEur: any, elapsedFraction: any, budgetEur: any): any {
+  const spent = num(spentObservedEur, NaN);
+  const elapsed = num(elapsedFraction, NaN);
+  const budget = num(budgetEur, NaN);
+  if (!(spent >= 0) || !(elapsed > 0 && elapsed <= 1) || !(budget > 0)) return Object.freeze({ ok: false, code: "INVALID_INPUT", detail: "need spentObservedEur>=0, 0<elapsedFraction<=1, budgetEur>0 (fail-closed)" });
+  const runRate = spent / elapsed;                        // projected full-period spend at the current pace
+  const projected = round(runRate);
+  const willExceed = projected > budget;
+  const overrunForecast = willExceed ? round(projected - budget) : 0;
+  const projectedExhaustionFraction = runRate > 0 ? round(Math.min(1, budget / runRate)) : 1;   // when budget is hit (0..1 of period)
+  const alreadyOver = spent > budget;
+  return Object.freeze({
+    ok: true, kind: "ESTIMATED",                          // a forecast is ESTIMATED, never OBSERVED
+    spentObserved: round(spent), elapsedFraction: round(elapsed), budget: round(budget),
+    runRate: projected, projectedEndOfPeriod: projected, pctOfBudgetProjected: round(projected / budget),
+    willExceed, alreadyOver, overrunForecast, projectedExhaustionFraction,
+    severity: alreadyOver ? "OVER" : willExceed ? "FORECAST_OVERRUN" : "ON_TRACK",
+    note: "run-rate = OBSERVED spend / elapsed fraction; projection is ESTIMATED (constant-pace assumption), NEVER OBSERVED — early warning BEFORE the reactive budget-stop fires. Not an E5/real-bill claim.",
+  });
+}
+
 /** auditSeparation(costs) -> { clean, issues }. OBSERVED must never be summed with SIMULATED/ESTIMATED into one headline. */
 function auditSeparation(costs: any): any {
   const c = isObj(costs) ? costs : {};
@@ -53,11 +80,14 @@ function runReferenceProject(opts: any): any {
   ];
   const costs = computeCosts(lines);
   const sep = auditSeparation(costs);
-  const budget = budgetStop(costs.byKind.OBSERVED, num(o.budgetEur, 10));
-  const degraded = !sep.clean || budget.stop;
+  const budgetEur = num(o.budgetEur, 10);
+  const budget = budgetStop(costs.byKind.OBSERVED, budgetEur);
+  // V253 — opt-in forward forecast (early overrun warning); default path unchanged.
+  const forecast = typeof o.elapsedFraction === "number" ? forecastBudget(costs.byKind.OBSERVED, o.elapsedFraction, budgetEur) : null;
+  const degraded = !sep.clean || budget.stop || (forecast && forecast.ok === true && forecast.willExceed === true);
   return Object.freeze({
-    synthetic: true, profession: "P9", costs, separationAudit: sep, budget,
-    level: "E2", degraded, note: "SYNTHETIC FOCUS-style billing (not real cloud bills, not E5); OBSERVED/ESTIMATED/SIMULATED kept separate; cost/mission (OBSERVED only); budget-stop; real cloud billing (E5) owner-gated NOT_RUN",
+    synthetic: true, profession: "P9", costs, separationAudit: sep, budget, forecast,
+    level: "E2", degraded: !!degraded, note: "SYNTHETIC FOCUS-style billing (not real cloud bills, not E5); OBSERVED/ESTIMATED/SIMULATED kept separate; cost/mission (OBSERVED only); reactive budget-stop + (opt-in) ESTIMATED run-rate forecast; real cloud billing (E5) owner-gated NOT_RUN",
   });
 }
 
@@ -71,10 +101,11 @@ const P9_FINOPS_REFERENCE_CONTRACT = Object.freeze({
     "cost-per-mission is computed from OBSERVED spend only; budget-stop is on OBSERVED spend (fail-closed)",
     "SYNTHETIC billing only; real cloud billing (E5) owner-gated NOT_RUN (no inflated level)",
     "pure/deterministic + reproducible",
+    "V253 forecast: run-rate projection from OBSERVED spend / elapsed fraction warns of an overrun BEFORE the reactive stop; the forecast is ESTIMATED (constant-pace), NEVER OBSERVED (kinds stay separate); fail-closed on invalid inputs",
   ]),
 });
 
-module.exports = { COST_KINDS, computeCosts, budgetStop, auditSeparation, runReferenceProject, P9_FINOPS_REFERENCE_CONTRACT };
+module.exports = { COST_KINDS, computeCosts, budgetStop, auditSeparation, forecastBudget, runReferenceProject, P9_FINOPS_REFERENCE_CONTRACT };
 
 if (require.main === module) { process.stdout.write(JSON.stringify({ ...P9_FINOPS_REFERENCE_CONTRACT, demo: runReferenceProject({}) }, null, 2) + "\n"); }
 
