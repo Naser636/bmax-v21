@@ -32,6 +32,24 @@ console.log("V12.4 §43 P10 — EU REGULATORY/ASSURANCE REFERENCE (E2/E3)");
 
 check(P10.P10_REGULATORY_REFERENCE_CONTRACT.invariants.some((i: any) => /E5.*owner-gated NOT_RUN/.test(i)), "honesty: SYNTHETIC only, E5 owner-gated NOT_RUN");
 
+// V254 §2 — obligation→evidence coverage traceability.
+{
+  const act = { developsOrPlacesAiSystemUnderOwnName: true };
+  const all = P10.assessObligationEvidence(act, []);           // nothing provided ⇒ all families missing
+  check(all.families.length >= 1 && all.missing.length === all.families.length && all.covered.length === 0 && all.coverageRatio === 0 && all.complete === false, "coverage: no evidence provided ⇒ every obligation family is a MISSING gap, coverageRatio 0, not complete");
+  const full = P10.assessObligationEvidence(act, all.families);   // provide evidence for every family
+  check(full.missing.length === 0 && full.coverageRatio === 1 && full.complete === true && full.certified === false, "coverage: evidence for every family ⇒ complete, coverageRatio 1, but NEVER certified");
+  const partial = P10.assessObligationEvidence(act, [all.families[0]]);
+  check(partial.covered.length === 1 && partial.missing.length === all.families.length - 1 && partial.coverageRatio > 0 && partial.coverageRatio < 1, "coverage: partial evidence ⇒ covered + missing both non-empty, 0<ratio<1");
+  const undetermined = P10.assessObligationEvidence({}, ["anything"]);   // no declared activity ⇒ undetermined
+  check(undetermined.undetermined === true && undetermined.families.length === 0 && undetermined.complete === false, "coverage fail-closed: no declared activity ⇒ UNDETERMINED, families empty, NOT complete (no coverage-of-nothing)");
+  const extra = P10.assessObligationEvidence(act, all.families.concat(["irrelevant-extra-family"]));
+  check(extra.complete === true && extra.covered.length === all.families.length, "coverage: an irrelevant extra evidence family does not inflate coverage (only declared families count)");
+  check(JSON.stringify(P10.assessObligationEvidence(act, [])) === JSON.stringify(all) && Object.isFrozen(all), "coverage deterministic + frozen");
+  const integ = P10.runReferenceProject({ providedFamilies: [] });
+  check(integ.obligationEvidence && integ.obligationEvidence.missing.length >= 1 && integ.obligationEvidence.certified === false, "integration: runReferenceProject carries obligationEvidence with gaps, never certified");
+}
+
 console.log(failures === 0 ? "ALL PASS — V12.4 §43 P10 REGULATORY REFERENCE" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
 export {};
