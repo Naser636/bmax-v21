@@ -62,6 +62,22 @@ function auditHtml(html: any, opts?: any): any {
   const dup = ids.length - new Set(ids).size;
   add("4.1.1", "A", "duplicate id attributes (invalid; breaks label/ARIA association)", dup);
 
+  // V254/V255 M5 — additional machine-checkable WCAG criteria the HTML auditor did not cover.
+  // 4.1.2 Name, Role, Value — an <iframe> needs a non-empty title (its accessible name).
+  // NB: (?<![-\w]) prevents matching inside a `data-title`/custom attribute (the \b-at-hyphen false-match, M5 inspection finding).
+  const iframes = h.match(/<iframe\b[^>]*>/gi) || [];
+  add("4.1.2", "A", "iframe without a non-empty title attribute (no accessible name)", iframes.filter((t: string) => !/(?<![-\w])title\s*=\s*["'][^"']+["']/i.test(t)).length);
+  // 2.4.3 Focus Order — a positive tabindex (>0) overrides the natural order (anti-pattern that breaks keyboard order).
+  const positiveTabindex = (h.match(/(?<![-\w])tabindex\s*=\s*["']?(\d+)/gi) || []).filter((m: string) => { const n = parseInt((m.match(/(\d+)/) || [])[1] || "0", 10); return n > 0; }).length;
+  add("2.4.3", "A", "positive tabindex (>0) overrides natural focus order (keyboard-order anti-pattern)", positiveTabindex);
+  // 1.4.2 Audio Control — media that autoplays without a controls mechanism (no way to pause/stop).
+  const autoplayMedia = (h.match(/<(audio|video)\b[^>]*>/gi) || []).filter((t: string) => /(?<![-\w])autoplay(?![-\w])/i.test(t) && !/(?<![-\w])controls(?![-\w])/i.test(t)).length;
+  add("1.4.2", "A", "audio/video autoplay without a controls mechanism (no pause/stop)", autoplayMedia);
+  // 1.4.4 Resize Text — a viewport that blocks zoom (user-scalable=no or maximum-scale<=1) prevents resizing.
+  const viewport = (h.match(/<meta\b[^>]*name\s*=\s*["']viewport["'][^>]*>/i) || [])[0] || "";
+  add("1.4.4", "AA", "viewport blocks zoom (user-scalable=no or maximum-scale<=1) — prevents text resize", viewport && (/user-scalable\s*=\s*(no|0)/i.test(viewport) || /maximum-scale\s*=\s*(1(\.0+)?|0?\.\d+)\b/i.test(viewport)) ? 1 : 0);
+  for (const c of ["4.1.2-iframe", "2.4.3", "1.4.2", "1.4.4"]) criteriaChecked.push(c);
+
   const totalIssues = findings.reduce((n, f) => n + f.count, 0);
   return Object.freeze({
     findings: Object.freeze(findings.map((f) => Object.freeze(f))),
@@ -83,6 +99,7 @@ const ACCESSIBILITY_CHECK_CONTRACT = Object.freeze({
     "each finding cites its WCAG success criterion; no rendering (contrast needs declared colours)",
     "fail-closed: empty/invalid HTML ⇒ not conformant; pure/deterministic; no network; no new primitive",
     "does NOT assess whether an organisation is legally obligated — that is a separate, sourced determination",
+    "V254 added machine-checkable criteria: 4.1.2 iframe-title, 2.4.3 positive-tabindex, 1.4.2 autoplay-without-controls, 1.4.4 zoom-blocking viewport — still an automated SUBSET, never full conformance",
   ]),
 });
 module.exports = { auditHtml, ACCESSIBILITY_CHECK_CONTRACT };
