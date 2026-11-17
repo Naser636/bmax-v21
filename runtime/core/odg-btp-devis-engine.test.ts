@@ -30,6 +30,10 @@ function main() {
   // fail-closed.
   check("fail-closed: no lines ⇒ NO_LINES", D.computeDevis({ lines: [] }).code === "NO_LINES" && D.computeDevis(null).code === "NO_LINES");
   check("fail-closed: negative/non-integer money ⇒ INVALID_LINE (never silently coerced)", D.computeDevis({ lines: [{ id: "x", quantity: 1, materialQty: 1, materialUnitPriceMinor: -5 }] }).code === "INVALID_LINE" && D.computeDevis({ lines: [{ id: "y", quantity: 1, materialQty: 1, materialUnitPriceMinor: 10.5 }] }).code === "INVALID_LINE");
+  // inspection finding: equipment/transport must ALSO fail-closed on negative/non-integer (not silently coerced to 0).
+  check("fail-closed: negative/non-integer equipment OR transport ⇒ INVALID_LINE (inspection finding)", D.computeDevis({ lines: [{ id: "e", quantity: 1, materialQty: 1, materialUnitPriceMinor: 100, equipmentMinor: -500 }] }).code === "INVALID_LINE" && D.computeDevis({ lines: [{ id: "t", quantity: 1, materialQty: 1, materialUnitPriceMinor: 100, transportMinor: 12.7 }] }).code === "INVALID_LINE");
+  // a genuinely-absent equipment/transport still defaults to 0 (valid).
+  check("absent equipment/transport ⇒ default 0 (still valid)", D.computeDevis({ lines: [{ id: "ok", quantity: 1, materialQty: 1, materialUnitPriceMinor: 100 }] }).ok === true);
 
   // omission / under-pricing detection (fn 15).
   const om = D.detectOmissions({ lines: [{ id: "A", quantity: 5, materialQty: 0, labourHours: 0 }, { id: "B", quantity: 1, materialQty: 1, materialUnitPriceMinor: 100, measurementState: "ASSUMED" }] });

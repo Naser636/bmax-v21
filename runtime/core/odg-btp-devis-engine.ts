@@ -37,10 +37,12 @@ function computeDevis(request: any): any {
     const l = lines[i];
     const qty = nonNegNum(l.quantity); const matQty = nonNegNum(l.materialQty); const matPrice = intMinor(l.materialUnitPriceMinor);
     const labHours = nonNegNum(l.labourHours); const labRate = intMinor(l.labourRateMinor);
-    const equip = intMinor(l.equipmentMinor) !== null ? l.equipmentMinor : 0; const transport = intMinor(l.transportMinor) !== null ? l.transportMinor : 0;
-    // fail-closed: a negative/non-integer money field or negative qty invalidates the whole devis (never silently coerced).
-    if ((l.materialUnitPriceMinor !== undefined && matPrice === null) || (l.labourRateMinor !== undefined && labRate === null) || (l.quantity !== undefined && qty === null) || intMinor(equip) === null || intMinor(transport) === null)
+    // fail-closed: test the RAW fields — a negative/non-integer money field or negative qty invalidates the whole devis
+    // (never silently coerced). (equipment/transport default to 0 only when truly absent.)
+    if ((l.materialUnitPriceMinor !== undefined && matPrice === null) || (l.labourRateMinor !== undefined && labRate === null) || (l.quantity !== undefined && qty === null)
+      || (l.equipmentMinor !== undefined && intMinor(l.equipmentMinor) === null) || (l.transportMinor !== undefined && intMinor(l.transportMinor) === null))
       return Object.freeze({ ok: false, code: "INVALID_LINE", detail: "line '" + (l.id || i) + "' has a negative/non-integer money or quantity field" });
+    const equip = intMinor(l.equipmentMinor) !== null ? l.equipmentMinor : 0; const transport = intMinor(l.transportMinor) !== null ? l.transportMinor : 0;
     const materialCost = matQty !== null && matPrice !== null ? round(matQty * matPrice) : 0;
     const labourCost = labHours !== null && labRate !== null ? round(labHours * labRate) : 0;
     const directCost = materialCost + labourCost + equip + transport;
