@@ -34,8 +34,34 @@ function processDocument(inv: any): any {
   return Object.freeze({ accepted: report.valid === true && high === 0, highFindings: high, findings: Object.freeze(findings) });
 }
 
+// V254 §2 — P11 processed ONE document. The core IDP operational metric is the STRAIGHT-THROUGH-PROCESSING (STP) rate over a
+// BATCH, with rejected docs routed to a human EXCEPTION queue (never auto-accepted). processBatch adds exactly that, reusing
+// processDocument (no second validator). Fail-closed: a HIGH-finding doc goes to exceptions; an empty batch is NOT 100% STP.
+/** processBatch(invoices) -> { total, accepted, exceptions, stpRate }. STP rate = straight-through accepted / total. */
+function processBatch(invoices: any): any {
+  const list = Array.isArray(invoices) ? invoices : [];
+  const accepted: number[] = []; const exceptions: any[] = [];
+  list.forEach((inv: any, i: number) => {
+    const r = processDocument(inv);
+    if (r.accepted === true) accepted.push(i);
+    else exceptions.push(Object.freeze({ index: i, highFindings: r.highFindings, reason: r.reason || "HIGH conformance finding(s) ⇒ routed to human exception queue (not auto-accepted)" }));
+  });
+  const total = list.length;
+  const stpRate = total > 0 ? Math.round((accepted.length / total) * 1000) / 1000 : 0;   // empty batch ⇒ 0 (not a fake 100%)
+  return Object.freeze({
+    total, accepted: accepted.length, acceptedIndices: Object.freeze(accepted),
+    exceptions: Object.freeze(exceptions), exceptionCount: exceptions.length,
+    stpRate, allStraightThrough: total > 0 && exceptions.length === 0,
+    note: "STP rate = straight-through (accepted, no HIGH finding) / total; rejected documents are routed to a human EXCEPTION queue, never auto-accepted (fail-closed). SYNTHETIC; real OCR corpus (E5) owner-gated NOT_RUN.",
+  });
+}
+
 function runReferenceProject(opts: any): any {
   const o = isObj(opts) ? opts : {};
+  if (Array.isArray(o.batch)) {
+    const batch = processBatch(o.batch);
+    return Object.freeze({ synthetic: true, profession: "P11", batch, level: "E2", degraded: batch.exceptionCount > 0, note: "SYNTHETIC invoice BATCH (not real OCR, not E5); per-doc EN 16931 validation + STP rate + exception queue; a HIGH finding ⇒ exception (fail-closed); real scanned-doc OCR corpus (E5) owner-gated NOT_RUN" });
+  }
   const inv = isObj(o.invoice) ? o.invoice : goodInvoice();
   const result = processDocument(inv);
   const degraded = !result.accepted;
@@ -56,10 +82,11 @@ const P11_DOCUMENT_REFERENCE_CONTRACT = Object.freeze({
     "mandatory-term and calculation-rule violations are surfaced, never silently passed",
     "SYNTHETIC structured input only; real scanned-doc OCR corpus (E5) owner-gated NOT_RUN (no inflated level)",
     "reuses einvoice-validator; no second validator engine",
+    "V254 batch: processBatch computes the STP rate and routes HIGH-finding docs to a human EXCEPTION queue (never auto-accepted); an empty batch is NOT a fake 100% STP (fail-closed)",
   ]),
 });
 
-module.exports = { processDocument, runReferenceProject, P11_DOCUMENT_REFERENCE_CONTRACT };
+module.exports = { processDocument, processBatch, runReferenceProject, P11_DOCUMENT_REFERENCE_CONTRACT };
 
 if (require.main === module) { process.stdout.write(JSON.stringify({ ...P11_DOCUMENT_REFERENCE_CONTRACT, demo: runReferenceProject({}) }, null, 2) + "\n"); }
 
