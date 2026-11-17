@@ -95,6 +95,25 @@ function main() {
   check("garbage dossier ⇒ MISSING_DATA, no throw", D.reconcileDossier(null).status === "MISSING_DATA");
   check("READ-ONLY: note states it books/pays/emits nothing", (() => { const r = D.reconcileDossier({ quote: QUOTE, invoice: INVOICE }); return /books\/pays\/emits nothing/.test(r.note); })());
 
+  // V254 M2 — extraction confidence gate (human-in-the-loop routing).
+  {
+    // a doc with a HIGH-confidence good field, a LOW/non-integer money field, an unknown doc type (LOW/null), and a
+    // self-inconsistent line ⇒ the bad items route to review, never auto-accepted.
+    const text = "TYPE: FACTURE\nNUMERO: F-1\nTOTAL_HT_MINOR: 100000\nTOTAL_TTC_MINOR: notanumber\nLINE: id=L1; qty=2; unitPriceMinor=5000; netMinor=99999\n";
+    const ext = D.extractDocument(text);
+    const g = D.gateExtraction(ext);
+    check("M2 gate: LOW/null-normalized field (TOTAL_TTC_MINOR='notanumber') routes to REVIEW, not auto-accepted", g.ok === true && g.needsReview.some((r: any) => r.field === "totalTtcMinor") && g.autoAccepted.indexOf("totalTtcMinor") < 0);
+    check("M2 gate: HIGH-confidence valid field (totalHtMinor) IS auto-accepted", g.autoAccepted.indexOf("totalHtMinor") >= 0);
+    check("M2 gate: a self-inconsistent LINE (qty*unitPrice != net) ⇒ line exception (human review)", g.lineExceptions.length >= 1);
+    check("M2 gate: autoAcceptRate in [0,1], clean=false when any review needed", g.autoAcceptRate >= 0 && g.autoAcceptRate <= 1 && g.clean === false);
+    // all-clean doc ⇒ every field auto-accepted, clean true.
+    const clean = D.extractDocument("TYPE: INVOICE\nTOTAL_HT_MINOR: 100000\n");  // INVOICE is a known DOC_TYPE ⇒ docType HIGH
+    const gc = D.gateExtraction(clean);
+    check("M2 gate: fully HIGH-confidence doc (known TYPE + integer money) ⇒ all auto-accepted, clean true", gc.needsReview.length === 0 && gc.clean === true && gc.autoAcceptRate === 1);
+    check("M2 gate fail-closed: a failed/empty extraction ⇒ NO_EXTRACTION (no throw)", D.gateExtraction({ ok: false }).code === "NO_EXTRACTION" && D.gateExtraction(null).code === "NO_EXTRACTION");
+    check("M2 gate deterministic + frozen", JSON.stringify(D.gateExtraction(ext)) === JSON.stringify(g) && Object.isFrozen(g));
+  }
+
   process.stdout.write("\n" + (failures === 0 ? "ALL PASS — document-intelligence (extraction w/ provenance+confidence, no faked OCR; devis→cmd→facture→BL reconciliation reusing order-coherence-check; MATCHED/MISMATCH/PARTIAL/DUPLICATE/MISSING_DATA/NOT_TRACEABLE; read-only)" : failures + " FAIL") + "\n");
   process.exit(failures === 0 ? 0 : 1);
 }
