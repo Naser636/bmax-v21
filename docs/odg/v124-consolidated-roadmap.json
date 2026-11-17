@@ -8,7 +8,11 @@
     "V234",
     "V235",
     "V236",
-    "V237"
+    "V237",
+    "V258",
+    "V259",
+    "V260",
+    "V261"
   ],
   "executionManifest": {
     "file": "runtime/governance/ROADMAP.json",
@@ -52,6 +56,12 @@
       "name": "V238 Canonical consolidation",
       "integratedInto": "Boussole V12.4 — sections A–R (this consolidation)",
       "concurrent": false,
+      "status": "INTEGRATED"
+    },
+    {
+      "name": "V258–V261 ODG BTP World-Class",
+      "integratedInto": "Boussole V12.4 — BTP cumulative extension (additive companion; master spec ODG_BTP_WORLD_CLASS_V12_4_ROADMAP.md)",
+      "concurrent": true,
       "status": "INTEGRATED"
     }
   ],
@@ -334,6 +344,128 @@
         "toolchain install (OWNER_GATED)"
       ],
       "nextAction": "video content stays NOT_ANALYZED until toolchain + ToS allow"
+    },
+    {
+      "id": "CM-BTP-ROADMAP",
+      "source": "V258-V261",
+      "section": "BTP",
+      "objective": "Persist the owner-authored ODG BTP World-Class master roadmap (additive canonical extension)",
+      "components": [
+        "ODG_BTP_WORLD_CLASS_V12_4_ROADMAP.md"
+      ],
+      "deps": [],
+      "status": "INTEGRATED",
+      "commit": "6a275f1c",
+      "evidence": "PR #638; sha256 ba7a298537b2bc5e2d80cb6e19ff543139ddb2c7fb2b3bc887566b98c493453d; independent inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [],
+      "nextAction": null
+    },
+    {
+      "id": "CM-BTP-CAPABILITY-MATRIX",
+      "source": "V258-V261",
+      "section": "BTP",
+      "objective": "Read-only BTP capability/gap matrix (15 domains + voice/vision/suivi; EXISTANT/PARTIEL/ABSENT, fail-closed)",
+      "components": [
+        "runtime/core/odg-btp-capability-matrix.ts"
+      ],
+      "deps": [],
+      "status": "INTEGRATED",
+      "commit": "31a52372",
+      "evidence": "PR #637; gate green; independent inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [],
+      "nextAction": null
+    },
+    {
+      "id": "CM-BTP-DEVIS-ENGINE",
+      "source": "V258-V261",
+      "section": "BTP",
+      "objective": "Deterministic intelligent-devis COSTING engine (COST→margin→VAT→TTC, measurement-state gating, variants, omissions, forecast-vs-actual); devis fns BUILT 9/PARTIAL 7/ABSENT 4",
+      "components": [
+        "runtime/core/odg-btp-devis-engine.ts"
+      ],
+      "deps": [],
+      "status": "INTEGRATED",
+      "commit": "09ae2a7c",
+      "evidence": "PR #641; gate 697; independent inspection PASS_WITH_FINDINGS (finding fixed)",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [],
+      "nextAction": null
+    },
+    {
+      "id": "CM-BTP-METRE",
+      "source": "V258-V261",
+      "section": "BTP",
+      "objective": "Deterministic métré/quantity engine (lengths/areas/volumes/deductions/waste; MEASURED/ESTIMATED/ASSUMED, traceability) feeding the devis engine",
+      "components": [],
+      "deps": [
+        "CM-BTP-DEVIS-ENGINE"
+      ],
+      "status": "READY",
+      "commit": null,
+      "evidence": null,
+      "owner": "ODG",
+      "risk": "medium",
+      "authorizations": [],
+      "nextAction": "build the deterministic métré engine; never invent a dimension/scale; uncertain ⇒ human validation"
+    },
+    {
+      "id": "CM-BTP-VISION",
+      "source": "V258-V261",
+      "section": "BTP",
+      "objective": "Vision/OCR chain (photo/plan ingestion, scale detection, cote/annotation extraction, confidence+provenance) for devis fns 1-2",
+      "components": [],
+      "deps": [
+        "CM-BTP-METRE"
+      ],
+      "status": "BLOCKED",
+      "commit": null,
+      "evidence": null,
+      "owner": "ODG",
+      "risk": "high",
+      "authorizations": [
+        "capability: a real vision/OCR engine is ABSENT; heavy-model download NOT authorized"
+      ],
+      "nextAction": "audit/build or delegate vision+OCR; a photo without a metric reference yields ESTIMATED hypotheses, never certified measurements"
+    },
+    {
+      "id": "CM-BTP-VOICE",
+      "source": "V258-V261",
+      "section": "BTP",
+      "objective": "Voice/STT chain (recording ingestion, transcription, unit/quantity/trade extraction, ambiguity confirmation) for devis fn 3",
+      "components": [],
+      "deps": [
+        "CM-BTP-DEVIS-ENGINE"
+      ],
+      "status": "BLOCKED",
+      "commit": null,
+      "evidence": null,
+      "owner": "ODG",
+      "risk": "high",
+      "authorizations": [
+        "capability: real speech-to-text is ABSENT (nl-objective-gateway is text-only)"
+      ],
+      "nextAction": "build/delegate STT chain; an uncertain transcript is never a certain instruction/quantity without confirmation"
     }
-  ]
+  ],
+  "btpExtension": {
+    "source": "V258–V261 ODG BTP World-Class programme",
+    "masterRoadmapFile": "ODG_BTP_WORLD_CLASS_V12_4_ROADMAP.md",
+    "masterRoadmapSha256": "ba7a298537b2bc5e2d80cb6e19ff543139ddb2c7fb2b3bc887566b98c493453d",
+    "integrationState": "INTEGRATED_ADDITIVE",
+    "preserves": [
+      "9 primitives",
+      "166 reference capabilities",
+      "A01–A54 contracts",
+      "20 métiers",
+      "executionManifest ROADMAP.json=11 (UNCHANGED)",
+      "Truth Lock",
+      "ODG authority"
+    ],
+    "note": "ADDITIVE integration: BTP appended as programs/missions + this provenance key only. executionManifest (ROADMAP.json, 11) is UNCHANGED/authoritative (amendment OWNER_GATED). CM-BTP-ROADMAP/MATRIX/DEVIS-ENGINE are INTEGRATED (merged+inspected); CM-BTP-METRE READY; CM-BTP-VISION/VOICE BLOCKED on absent capabilities (vision/STT) — not fabricated."
+  }
 }
