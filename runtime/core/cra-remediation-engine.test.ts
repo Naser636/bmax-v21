@@ -55,6 +55,23 @@ function main() {
   check("missing before/after state ⇒ MISSING_STATE", R.verifyRemediation({ before: {} }).code === "MISSING_STATE" && R.verifyRemediation(null).code === "MISSING_STATE");
   check("no auto-fix: note states no real repo modified", /No real repo was modified/.test(R.verifyRemediation({ before, after: afterFull, findings: f2 }).note) && /no auto-fix applied/.test(plan.note));
 
+  // V254 M1 — VEX triage (fail-closed suppression).
+  const vexFindings = [
+    { id: "v1", component: "a", vex: { status: "not_affected", justification: "vulnerable_code_not_in_execute_path" } }, // justified ⇒ suppressed
+    { id: "v2", component: "b", vex: { status: "not_affected" } },                                                      // NO justification ⇒ stays OPEN
+    { id: "v3", component: "c", vex: { status: "affected" } },                                                          // OPEN
+    { id: "v4", component: "d", vex: { status: "fixed" } },                                                             // RESOLVED
+    { id: "v5", component: "e", vex: { status: "under_investigation" } },                                              // OPEN
+    { id: "v6", component: "f" },                                                                                       // no VEX ⇒ unknown ⇒ OPEN
+    { id: "v7", component: "g", vex: { status: "bogus-status" } },                                                     // invalid ⇒ unknown ⇒ OPEN
+  ];
+  const t = R.triageVex(vexFindings);
+  check("VEX: only justified not_affected is suppressed (1), all else open (5), fixed resolved (1)", t.total === 7 && t.suppressed === 1 && t.resolved === 1 && t.open === 5);
+  check("VEX fail-closed: not_affected WITHOUT justification stays OPEN (never silently suppressed)", t.items.find((x: any) => x.id === "v2").actionable === true && t.items.find((x: any) => x.id === "v2").suppressed === false && t.items.find((x: any) => x.id === "v2").disposition === "OPEN_NOT_AFFECTED_UNJUSTIFIED");
+  check("VEX fail-closed: unknown/invalid/missing VEX ⇒ OPEN_UNKNOWN_VEX (not suppressed)", t.items.find((x: any) => x.id === "v6").disposition === "OPEN_UNKNOWN_VEX" && t.items.find((x: any) => x.id === "v7").disposition === "OPEN_UNKNOWN_VEX" && t.items.find((x: any) => x.id === "v6").suppressed === false);
+  check("VEX: justified not_affected suppressed + fixed resolved (not actionable)", t.items.find((x: any) => x.id === "v1").disposition === "SUPPRESSED_NOT_AFFECTED" && t.items.find((x: any) => x.id === "v4").disposition === "RESOLVED_FIXED" && t.items.find((x: any) => x.id === "v4").actionable === false);
+  check("VEX deterministic + frozen + fail-closed on non-array", JSON.stringify(R.triageVex(vexFindings)) === JSON.stringify(t) && Object.isFrozen(t) && R.triageVex("x").total === 0 && R.triageVex(null).total === 0);
+
   process.stdout.write("\n" + (failures === 0 ? "ALL PASS — cra-remediation-engine (classify/prioritise; no invented CVE/score/version; no-known-fix⇒investigate; before/after SBOM diff; closure from AFTER evidence only; new-HIGH blocks; no auto-fix; fail-closed)" : failures + " FAIL") + "\n");
   process.exit(failures === 0 ? 0 : 1);
 }
