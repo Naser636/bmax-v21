@@ -37,7 +37,7 @@ function main() {
   check("contract: fail-closed, no fabrication, no world-class claim, no 2nd roadmap", M.BTP_CAPABILITY_MATRIX_CONTRACT.invariants.some((i: string) => /FAIL-CLOSED/.test(i)) && M.BTP_CAPABILITY_MATRIX_CONTRACT.invariants.some((i: string) => /not fabricated/i.test(i)) && M.BTP_CAPABILITY_MATRIX_CONTRACT.invariants.some((i: string) => /no second radar/i.test(i)));
   check("deterministic + frozen", JSON.stringify(M.buildMatrix()) === JSON.stringify(matrix) && Object.isFrozen(matrix) && Object.isFrozen(matrix.rows));
 
-  process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-capability-matrix (V258: read-only BTP gap map; GROUNDED [every named module exists]; FAIL-CLOSED [vision/métré ABSENT]; HONEST [MASTER ROADMAP.md absent not fabricated; integration PROPOSED not applied; nothing world-class]; no 2nd roadmap)" : f + " FAIL") + "\n");
+  process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-capability-matrix (V258: read-only BTP gap map; GROUNDED [every named module exists]; FAIL-CLOSED [vision/métré ABSENT]; HONEST [MASTER ROADMAP artefact PRESENT, owner-authored, sha256-grounded; canonical V12.4 integration NOT yet applied; nothing world-class]; no 2nd roadmap)" : f + " FAIL") + "\n");
   process.exit(f === 0 ? 0 : 1);
 }
 main();
