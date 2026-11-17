@@ -51,8 +51,9 @@ function main() {
   const closure = JSON.parse(fs.readFileSync("docs/odg/closure-register.json", "utf8"));
   const roadmap = JSON.parse(fs.readFileSync("runtime/governance/ROADMAP.json", "utf8"));
   const v124 = JSON.parse(fs.readFileSync("docs/odg/v124-consolidated-roadmap.json", "utf8"));
-  check("canonical registers preserved: closure 427, ROADMAP 11, v124 14 (sections⊆A-R, NOT mutated)",
-    closure.items.length === 427 && roadmap.missions.length === 11 && v124.missions.length === 14 && v124.missions.every((m: any) => "ABCDEFGHIJKLMNOPQR".indexOf(m.section) >= 0));
+  // hard registers (closure 427 / ROADMAP 11) byte-identical; v124 companion now integrated as section S (owner-authorized V272 §4 / V273 §1).
+  check("hard registers preserved (closure 427, ROADMAP 11); v124 companion integrated as section S (24 missions, sections⊆A-S)",
+    closure.items.length === 427 && roadmap.missions.length === 11 && v124.missions.length === 24 && v124.missions.every((m: any) => "ABCDEFGHIJKLMNOPQRS".indexOf(m.section) >= 0) && v124.missions.some((m: any) => m.section === "S"));
   check("contract: additive only, no 10th primitive/2nd orchestrator/Radar, anti-duplication, OWNER_GATED, nothing operational",
     R.COMPANY_MANAGEMENT_COVERAGE_CONTRACT.invariants.some((i: string) => /additive ONLY/.test(i)) && R.COMPANY_MANAGEMENT_COVERAGE_CONTRACT.invariants.some((i: string) => /anti-duplication/.test(i)) && R.COMPANY_MANAGEMENT_COVERAGE_CONTRACT.invariants.some((i: string) => /OWNER_GATED/.test(i)));
 
