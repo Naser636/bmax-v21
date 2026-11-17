@@ -39,6 +39,20 @@ function main() {
   check("deterministic + frozen", JSON.stringify(L.demonstrate()) === JSON.stringify(d) && Object.isFrozen(d) && Object.isFrozen(d.result.rows));
   check("contract: reuses transform-catalog + delegate-isolation, native-exec vs honest-defer, no self-accept, no 2nd engine", L.NATIVE_ENGINEERING_LOOP_CONTRACT.invariants.some((i: string) => /REUSES odg-transform-catalog/.test(i)) && L.NATIVE_ENGINEERING_LOOP_CONTRACT.invariants.some((i: string) => /honestly DEFERRED/.test(i)) && L.NATIVE_ENGINEERING_LOOP_CONTRACT.invariants.some((i: string) => /NEVER self-accepts/.test(i)));
 
+  // ---- V251 §3: driveSource — composed native repair over a REAL multi-defect file source ----
+  const compoundSrc = 'function g(a, b) { return a == b; }\nmodule.exports = { g };\n';   // missing use-strict + dual-export + loose ==
+  const dv = L.driveSource({ filePath: "runtime/core/ok.ts", source: compoundSrc }, { writeSet: ["runtime/core/ok.ts"] });
+  check("driveSource COMPOSES ≥3 transforms on a real multi-defect source ⇒ NATIVE_REPAIRED, native, verified, never writes disk", dv.disposition === "NATIVE_REPAIRED" && dv.nativelyExecuted === true && dv.composedTransforms >= 3 && dv.verified === true && dv.wroteToDisk === false && dv.realRepoWrite === "OWNER_GATED");
+  check("driveSource PROPOSES acceptance but NEVER self-accepts (accepted=false)", dv.proposedAcceptance === true && dv.accepted === false);
+  const dvOos = L.driveSource({ filePath: "etc/passwd.ts", source: compoundSrc }, { writeSet: ["runtime/core/ok.ts"] });
+  check("driveSource out-of-scope filePath ⇒ REFUSED_OUT_OF_SCOPE before any action (deny-by-default)", dvOos.disposition === "REFUSED_OUT_OF_SCOPE" && dvOos.nativelyExecuted === false);
+  const dvClean = L.driveSource({ filePath: "runtime/core/ok.ts", source: '"use strict";\nmodule.exports = { x: 1 };\nexport {};\n' }, { writeSet: ["runtime/core/ok.ts"] });
+  check("driveSource already-clean source ⇒ ALREADY_CLEAN (not a false repair)", dvClean.disposition === "ALREADY_CLEAN" && dvClean.changed === false);
+  const rr = L.demonstrateRealReach();
+  check("demonstrateRealReach: compound file repaired natively (composed), clean recognised, scope enforced, never self-accepts", rr.composedNativeProven === true && rr.cleanRecognised === true && rr.scopeEnforced === true && rr.neverSelfAccepts === true);
+  check("driveSource deterministic + frozen + fail-closed on missing source", JSON.stringify(L.demonstrateRealReach()) === JSON.stringify(rr) && Object.isFrozen(dv) && L.driveSource({ filePath: "runtime/core/ok.ts" }, { writeSet: ["runtime/core/ok.ts"] }).disposition === "FAILED");
+  check("contract invariant records V251 driveSource composed real-file repair (write-set, OWNER_GATED, no self-accept)", L.NATIVE_ENGINEERING_LOOP_CONTRACT.invariants.some((i: string) => /driveSource/.test(i) && /COMPOSED/.test(i) && /OWNER_GATED/.test(i)));
+
   process.stdout.write("\n" + (f === 0 ? "ALL PASS — native-engineering-loop (V250 §3: the decide→drive loop REALLY executes deterministic repairs natively via odg-transform-catalog [no model/provider] — 5/5 transform classes repaired+verified, write-set enforced [out-of-scope refused], novel honestly deferred to provider, proposes-but-never-self-accepts; first measured dependency reduction; no 2nd engine)" : f + " FAIL") + "\n");
   process.exit(f === 0 ? 0 : 1);
 }

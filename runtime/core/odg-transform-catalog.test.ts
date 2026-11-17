@@ -51,6 +51,22 @@ function main() {
   check("benchmark is reproducible (two runs identical)", JSON.stringify(b1) === JSON.stringify(b2));
   check("benchmark honestly shows V152 adds source-text transforms over V151 baseline (0→5)", b1.v151Baseline.sourceTextTransforms === 0 && b1.v152.sourceTextTransforms === 5);
 
+  // ---- V251 §2 real-source REACH: scanSource (read-only diagnosis) + repairSource (composed, verified, idempotent) ----
+  const compound = 'function f(a, b) { return a == b; }\nmodule.exports = { f };\n';   // missing "use strict" + export {}; + loose ==
+  const scan = T.scanSource(compound);
+  check("scanSource diagnoses a REAL multi-defect source (applicable classes found), modifies no text", scan.ok === true && scan.modifiesText === false && scan.defectCount >= 2 && scan.applicable.indexOf("ensure-use-strict@1") >= 0 && scan.applicable.indexOf("ensure-dual-export@1") >= 0 && scan.applicable.indexOf("normalize-strict-equality@1") >= 0);
+  const rep = T.repairSource(compound);
+  check("repairSource COMPOSES all applicable transforms ⇒ NATIVE_REPAIRED_GREEN, ≥3 composed, verified, never writes disk", rep.outcome === "NATIVE_REPAIRED_GREEN" && rep.defectsRepaired >= 3 && rep.verified === true && rep.wroteToDisk === false && rep.evidence.executedTransformedCode === false);
+  check("repairSource result is correct: has \"use strict\", ends export {};, no loose == remains, module.exports kept", /["']use strict["']/.test(rep.after) && /export \{\};\s*$/.test(rep.after.trimEnd() + "\n") && !/[^=!<>](==|!=)(?!=)/.test(rep.after) && /module\.exports/.test(rep.after));
+  check("repairSource is IDEMPOTENT: a re-scan of the repaired source finds 0 applicable + repair again ⇒ NATIVE_GREEN", T.scanSource(rep.after).defectCount === 0 && rep.idempotent === true && T.repairSource(rep.after).outcome === "NATIVE_GREEN");
+  const cleanSrc = '"use strict";\nmodule.exports = { x: 1 };\nexport {};\n';
+  check("already-clean source ⇒ scanSource defectCount 0, repairSource NATIVE_GREEN (not changed, not a false repair)", T.scanSource(cleanSrc).defectCount === 0 && T.repairSource(cleanSrc).outcome === "NATIVE_GREEN" && T.repairSource(cleanSrc).changed === false);
+  const ambiguous = '"use strict";\nif (x == null) {}\nmodule.exports = { x };\nexport {};\n';   // == null ⇒ must ESCALATE, not transform
+  const scanAmb = T.scanSource(ambiguous);
+  check("ambiguous `== null` ⇒ scanSource lists it as ESCALATED (provider judgment), repairSource does NOT touch it", scanAmb.escalated.indexOf("normalize-strict-equality@1") >= 0 && T.repairSource(ambiguous).skipped.some((s: any) => s.classId === "normalize-strict-equality@1" && s.outcome === "ESCALATED_TO_PROVIDER"));
+  check("repairSource/scanSource deterministic + frozen + fail-closed on non-string", JSON.stringify(T.repairSource(compound)) === JSON.stringify(rep) && Object.isFrozen(rep) && T.scanSource(null).code === "SOURCE_REQUIRED" && T.repairSource(null).code === "SOURCE_REQUIRED");
+  check("contract invariant records the V251 real-source reach (scanSource/repairSource, OWNER_GATED, no 2nd catalog)", T.ODG_TRANSFORM_CATALOG_CONTRACT.invariants.some((i: string) => /real-source REACH/.test(i) && /OWNER_GATED/.test(i)));
+
   // ---- fail-closed ----
   check("malformed mission / contract ⇒ fail-closed (no throw)", T.runTransform(null).code === "INVALID_MISSION" && T.generateContractTests(null).code === "INVALID_CONTRACT" && T.runRepair("nope").code === "NO_FAULT_FIXTURE");
 

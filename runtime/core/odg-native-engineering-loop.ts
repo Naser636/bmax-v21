@@ -100,6 +100,53 @@ function demonstrate(): any {
     honestDefer: result.deferredToProvider === 1 && result.rows.some((r: any) => r.id === "novel" && r.disposition === "DEFERRED_TO_PROVIDER") });
 }
 
+/*
+ * V251 §3 — driveSource(fileTask, policy): drive COMPOSED native repair over a REAL file source (not a synthetic fault).
+ * fileTask: { filePath?, source }. Enforces the write-set BEFORE any action (deny-by-default), composes every applicable
+ * deterministic transform via T.repairSource (each step structurally verified + idempotent), PROPOSES acceptance, and NEVER
+ * writes to disk / self-accepts (real-repo write stays OWNER_GATED). This lifts the loop from one-synthetic-fault to real
+ * multi-defect files — the class of work V251 measured at 230 real repair instances across the core.
+ */
+function driveSource(fileTask: any, policy: any): any {
+  const t = isObj(fileTask) ? fileTask : {};
+  const p = isObj(policy) ? policy : {};
+  const filePath = typeof t.filePath === "string" ? t.filePath : null;
+  const source = typeof t.source === "string" ? t.source : null;
+  if (source === null) return Object.freeze({ filePath, disposition: "FAILED", nativelyExecuted: false, reason: "source (string) required" });
+  // SCOPE: deny-by-default write-set enforcement before any action.
+  if (filePath !== null) {
+    const scope = DI.validateScope([{ rel: filePath }], arr(p.writeSet));
+    if (scope.ok !== true) return Object.freeze({ filePath, disposition: "REFUSED_OUT_OF_SCOPE", nativelyExecuted: false, reason: "filePath '" + filePath + "' not in the authorized write-set ⇒ DENY" });
+  }
+  let res: any;
+  try { res = T.repairSource(source); } catch (e: any) { return Object.freeze({ filePath, disposition: "FAILED", nativelyExecuted: false, reason: "repairSource threw: " + String(e && e.message || e) }); }
+  const O = isObj(T.OUTCOME) ? T.OUTCOME : {};
+  if (res.outcome === O.GREEN || res.outcome === "NATIVE_GREEN")
+    return Object.freeze({ filePath, disposition: "ALREADY_CLEAN", nativelyExecuted: true, changed: false, reason: "no applicable deterministic transform ⇒ source already clean" });
+  if (res.outcome !== O.REPAIRED && res.outcome !== "NATIVE_REPAIRED_GREEN" || res.verified !== true)
+    return Object.freeze({ filePath, disposition: "FAILED", nativelyExecuted: true, changed: res.changed === true, reason: "composed repair not verified/idempotent ⇒ not a native success" });
+  const escalated = arr(res.skipped).filter((s: any) => s.outcome === O.ESCALATED || s.outcome === "ESCALATED_TO_PROVIDER").length;
+  return Object.freeze({ filePath, disposition: "NATIVE_REPAIRED", nativelyExecuted: true, changed: true, verified: true,
+    composedTransforms: res.defectsRepaired, applied: res.applied, escalatedToProvider: escalated,
+    proposedAcceptance: true, accepted: false, wroteToDisk: false, realRepoWrite: "OWNER_GATED",
+    reason: "composed deterministic repair of a REAL file source (native; no model, no provider): each step structurally verified + idempotent ⇒ PROPOSED for independent acceptance; disk write OWNER_GATED" });
+}
+
+/* demonstrateRealReach() -> drive composed repair over a compound-defect source (mirrors a real file: missing "use strict"
+ * AND dual-export), a clean file, and an out-of-scope path — deterministic, no disk access. */
+function demonstrateRealReach(): any {
+  const compound = 'function f(a: any, b: any) { return a + b; }\nmodule.exports = { f };\n';   // missing "use strict" + export {};
+  const clean = '"use strict";\nmodule.exports = { x: 1 };\nexport {};\n';
+  const compoundRepair = driveSource({ filePath: "runtime/core/x.ts", source: compound }, { writeSet: ["runtime/core/x.ts", "runtime/core/y.ts"] });
+  const cleanFile = driveSource({ filePath: "runtime/core/y.ts", source: clean }, { writeSet: ["runtime/core/x.ts", "runtime/core/y.ts"] });
+  const outOfScope = driveSource({ filePath: "etc/secret.ts", source: compound }, { writeSet: ["runtime/core/x.ts"] });
+  return Object.freeze({ compoundRepair, cleanFile, outOfScope,
+    composedNativeProven: compoundRepair.disposition === "NATIVE_REPAIRED" && compoundRepair.composedTransforms >= 2 && compoundRepair.verified === true && compoundRepair.wroteToDisk === false,
+    cleanRecognised: cleanFile.disposition === "ALREADY_CLEAN",
+    scopeEnforced: outOfScope.disposition === "REFUSED_OUT_OF_SCOPE" && outOfScope.nativelyExecuted === false,
+    neverSelfAccepts: compoundRepair.accepted === false });
+}
+
 const NATIVE_ENGINEERING_LOOP_CONTRACT = Object.freeze({
   id: "V250-NATIVE-ENGINEERING-LOOP",
   purpose: "§3 — the decide→drive loop that REALLY executes deterministic repairs natively via odg-transform-catalog; the first measured provider-dependency reduction",
@@ -109,8 +156,9 @@ const NATIVE_ENGINEERING_LOOP_CONTRACT = Object.freeze({
     "deterministic tasks are EXECUTED NATIVELY (no Claude Code, no Ollama); novel/judgment tasks are honestly DEFERRED to a provider mandate (never faked as native)",
     "deny-by-default: a filePath outside the write-set is REFUSED before any action; a transform that fails verification is FAILED (not a native success)",
     "the loop PROPOSES acceptance and NEVER self-accepts; ODG/independent decides — proposing ≠ accepting",
+    "V251: driveSource drives COMPOSED repair over a REAL file source (multi-defect), each step structurally verified + idempotent; enforces the write-set; NEVER writes disk (OWNER_GATED); never self-accepts",
   ]),
 });
 
-module.exports = { driveTask, run, demonstrate, DISPOSITION, NATIVE_ENGINEERING_LOOP_CONTRACT };
+module.exports = { driveTask, driveSource, run, demonstrate, demonstrateRealReach, DISPOSITION, NATIVE_ENGINEERING_LOOP_CONTRACT };
 export {};
