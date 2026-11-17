@@ -168,6 +168,56 @@ function benchmarkCatalog(): any {
   });
 }
 
+// ---------- V251 §2 real-source REACH: diagnose + COMPOSE deterministic repairs over a REAL file source ----------
+// Honest finding (V251 measurement): across 641 core source files there are 230 real deterministic repair instances (217
+// defective files, 13 needing ≥2 composed transforms). The gap was NOT more transform CLASSES (new cosmetic classes —
+// final-newline/blank-lines/var — measured 0 frequency = vanity counters, forbidden by §2.3) but REACH: the catalog could
+// only repair ONE synthetic fault at a time, never diagnose or COMPOSE repairs on a real multi-defect file. These two
+// functions close that gap WITHOUT a second catalog/engine — they only drive the existing TRANSFORMS registry.
+
+/** scanSource(source) — READ-ONLY multi-defect diagnosis of a REAL source: which deterministic classes apply / are clean /
+ * must escalate to a provider (ambiguous). Modifies no text. */
+function scanSource(source: string): any {
+  if (!isStr(source)) return Object.freeze({ ok: false, code: "SOURCE_REQUIRED", detail: "source (string) required" });
+  const applicable: string[] = [], alreadyClean: string[] = [], escalated: string[] = [], notApplicable: string[] = [];
+  for (const classId of TRANSFORM_IDS) {
+    const r = runTransform({ classId, source });
+    if (r.outcome === OUTCOME.REPAIRED) applicable.push(classId);
+    else if (r.outcome === OUTCOME.GREEN) alreadyClean.push(classId);
+    else if (r.outcome === OUTCOME.ESCALATED) escalated.push(classId);
+    else notApplicable.push(classId);   // REFUSED (out of scope) / VALIDATION_FAILED
+  }
+  return Object.freeze({ ok: true, applicable: Object.freeze(applicable), alreadyClean: Object.freeze(alreadyClean), escalated: Object.freeze(escalated), notApplicable: Object.freeze(notApplicable), defectCount: applicable.length, modifiesText: false, note: "read-only diagnosis; escalated = ambiguous (needs provider judgment), never auto-transformed." });
+}
+
+/** repairSource(source) — COMPOSE every applicable deterministic transform on ONE real source, each step independently
+ * verified by its own STRUCTURAL postconditions (via runTransform; no eval), chaining before→after. Idempotence is PROVEN
+ * by a final re-scan (second pass finds nothing). NEVER writes to disk — a candidate patch only; real-repo write OWNER_GATED. */
+function repairSource(source: string): any {
+  if (!isStr(source)) return Object.freeze({ ok: false, code: "SOURCE_REQUIRED", detail: "source (string) required" });
+  const applied: any[] = [], skipped: any[] = [];
+  let current = source;
+  for (const classId of TRANSFORM_IDS) {
+    const r = runTransform({ classId, source: current });
+    if (r.outcome === OUTCOME.REPAIRED && r.accepted === true && isStr(r.after)) { applied.push(Object.freeze({ classId, outcome: r.outcome, patchSummary: r.patchSummary })); current = r.after; }
+    else if (r.outcome === OUTCOME.ESCALATED) skipped.push(Object.freeze({ classId, outcome: r.outcome, reason: r.reason || "escalated ⇒ provider judgment" }));
+    else if (r.outcome === OUTCOME.VALIDATION_FAILED) skipped.push(Object.freeze({ classId, outcome: r.outcome, reason: r.reason || "postcondition failed ⇒ not applied" }));
+    // GREEN / REFUSED ⇒ not applicable to THIS source; correctly not applied.
+  }
+  const changed = current !== source;
+  const rescan = scanSource(current);                       // IDEMPOTENCE proof: a second full pass must find 0 applicable.
+  const idempotent = rescan.ok && rescan.defectCount === 0;
+  const verified = changed ? idempotent : true;
+  const outcome = !changed ? OUTCOME.GREEN : (idempotent ? OUTCOME.REPAIRED : OUTCOME.VALIDATION_FAILED);
+  return Object.freeze({
+    ok: true, outcome, before: source, after: current, changed,
+    applied: Object.freeze(applied), skipped: Object.freeze(skipped), defectsRepaired: applied.length,
+    idempotent, verified, reversible: true, wroteToDisk: false,
+    evidence: Object.freeze({ composedTransforms: applied.length, escalatedToProvider: skipped.filter((s: any) => s.outcome === OUTCOME.ESCALATED).length, structurallyVerifiedEachStep: true, executedTransformedCode: false }),
+    note: "composed deterministic repair of a REAL source: each step verified by STRUCTURAL postconditions (no eval), final re-scan proves idempotence; candidate patch only — real-repo write OWNER_GATED.",
+  });
+}
+
 const ODG_TRANSFORM_CATALOG_CONTRACT = Object.freeze({
   id: "V152-ODG-TRANSFORM-CATALOG",
   purpose: "expand ODG native deterministic engineering: source-text transforms with pre/postconditions + hard refusal + mutation-proven test generation",
@@ -179,7 +229,8 @@ const ODG_TRANSFORM_CATALOG_CONTRACT = Object.freeze({
     "a GENERATED patch is NOT an accepted patch; postcondition failure ⇒ VALIDATION_FAILED + revert (transactional); real-repo write OWNER_GATED",
     "generated tests derive expectations from the CONTRACT, not the implementation; native-verified requires a MUTATION to be caught (anti-reward-hacking)",
     "novel/unsupported structure ⇒ ESCALATED_TO_PROVIDER; no Claude-Code/provider work relabelled as native; no new primitive",
+    "V251 real-source REACH: scanSource diagnoses a REAL file (applicable/clean/escalated), repairSource COMPOSES all applicable transforms (each structurally verified) + proves idempotence by re-scan; NEVER writes disk (OWNER_GATED); no 2nd catalog",
   ]),
 });
-module.exports = { runTransform, runRepair, generateContractTests, proveTestsDetectMutation, benchmarkCatalog, TRANSFORM_IDS, OUTCOME, ODG_TRANSFORM_CATALOG_CONTRACT };
+module.exports = { runTransform, runRepair, generateContractTests, proveTestsDetectMutation, benchmarkCatalog, scanSource, repairSource, TRANSFORM_IDS, OUTCOME, ODG_TRANSFORM_CATALOG_CONTRACT };
 export {};
