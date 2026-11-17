@@ -27,14 +27,14 @@ function main() {
   check("strongest BTP area is D13 finance (EXISTANT) — the only EXISTANT, honest", matrix.rows.find((r: any) => r.id === "D13").status === "EXISTANT" && /D13/.test(matrix.strongestArea));
   check("no world-class/operational/leader claim in the note", !/world-class|operational|numéro un|leader|number one/i.test(matrix.note) || /NOTHING is claimed|no benchmark/i.test(matrix.note));
 
-  // INTEGRATION honesty: named MASTER ROADMAP.md is reported ABSENT (matches disk) and NOT fabricated; proposed-not-applied.
+  // INTEGRATION honesty: the owner-provided MASTER ROADMAP artefact EXISTS (grounded on disk); its canonical integration is NOT yet applied.
   const integ = M.integrationStatus();
-  check("integration: named MASTER ROADMAP.md reported absent AND is genuinely absent on disk (not fabricated)", integ.namedMasterRoadmapExists === false && !fs.existsSync(integ.namedMasterRoadmapFile));
+  check("integration: MASTER ROADMAP artefact reported present AND genuinely exists on disk (grounded, owner-authored)", integ.masterRoadmapExists === true && fs.existsSync(integ.masterRoadmapFile));
   check("integration: prior V147 BTP artefacts are acknowledged AND exist", integ.priorBtpArtefactsPresent.every((p: string) => fs.existsSync(p)));
-  check("integration: state is PROPOSED_NOT_APPLIED (no protected-register mutation this checkpoint)", integ.integrationState === "PROPOSED_NOT_APPLIED" && /v124-consolidated-roadmap/.test(integ.canonicalMechanism) && !/ROADMAP\.json \(additive/.test(integ.canonicalMechanism));
+  check("integration: state = ARTEFACT_PRESENT_INTEGRATION_NOT_APPLIED (no protected-register mutation this checkpoint)", integ.integrationState === "ARTEFACT_PRESENT_INTEGRATION_NOT_APPLIED" && /v124-consolidated-roadmap/.test(integ.canonicalMechanism) && !/ROADMAP\.json \(additive/.test(integ.canonicalMechanism));
   check("integration preserves the canonical invariants (9 primitives / 166 caps / A01–A54 / 20 métiers)", integ.mustPreserve.some((x: string) => /9 primitives/.test(x)) && integ.mustPreserve.some((x: string) => /166/.test(x)) && integ.mustPreserve.some((x: string) => /A01/.test(x)) && integ.mustPreserve.some((x: string) => /20 métiers/.test(x)));
 
-  check("contract: fail-closed, no fabrication, no world-class claim, no 2nd roadmap", M.BTP_CAPABILITY_MATRIX_CONTRACT.invariants.some((i: string) => /FAIL-CLOSED/.test(i)) && M.BTP_CAPABILITY_MATRIX_CONTRACT.invariants.some((i: string) => /NOT fabricated/.test(i)) && M.BTP_CAPABILITY_MATRIX_CONTRACT.invariants.some((i: string) => /no second radar/i.test(i)));
+  check("contract: fail-closed, no fabrication, no world-class claim, no 2nd roadmap", M.BTP_CAPABILITY_MATRIX_CONTRACT.invariants.some((i: string) => /FAIL-CLOSED/.test(i)) && M.BTP_CAPABILITY_MATRIX_CONTRACT.invariants.some((i: string) => /not fabricated/i.test(i)) && M.BTP_CAPABILITY_MATRIX_CONTRACT.invariants.some((i: string) => /no second radar/i.test(i)));
   check("deterministic + frozen", JSON.stringify(M.buildMatrix()) === JSON.stringify(matrix) && Object.isFrozen(matrix) && Object.isFrozen(matrix.rows));
 
   process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-capability-matrix (V258: read-only BTP gap map; GROUNDED [every named module exists]; FAIL-CLOSED [vision/métré ABSENT]; HONEST [MASTER ROADMAP.md absent not fabricated; integration PROPOSED not applied; nothing world-class]; no 2nd roadmap)" : f + " FAIL") + "\n");

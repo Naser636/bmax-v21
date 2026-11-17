@@ -69,13 +69,14 @@ function buildMatrix(): any {
 /** integrationStatus() -> honest state of the BTP↔V12.4 canonical integration (no fabrication). */
 function integrationStatus(): any {
   return Object.freeze({
-    namedMasterRoadmapFile: "docs/odg/ODG_BTP_WORLD_CLASS_V12_4_ROADMAP.md",
-    namedMasterRoadmapExists: false,                         // verified absent on asOf — NOT fabricated
+    masterRoadmapFile: "ODG_BTP_WORLD_CLASS_V12_4_ROADMAP.md",   // owner-created at repo root (V258 follow-up)
+    masterRoadmapExists: true,                               // the artefact now EXISTS (owner-provided content, sha256 ba7a2985…); grounded by the test
+    masterRoadmapSha256: "ba7a298537b2bc5e2d80cb6e19ff543139ddb2c7fb2b3bc887566b98c493453d",
     priorBtpArtefactsPresent: Object.freeze(["docs/odg/V147_BTP_TP_ROADMAP.json", "docs/odg/V147_RADAR_BTP.json"]),
     canonicalMechanism: "docs/odg/v124-consolidated-roadmap.json (additive companion) — NOT ROADMAP.json (protected, 11 missions) nor closure-register (protected, 427)",
-    integrationState: "PROPOSED_NOT_APPLIED",               // this checkpoint diagnoses + proposes; it does not mutate any protected register
+    integrationState: "ARTEFACT_PRESENT_INTEGRATION_NOT_APPLIED",   // the roadmap artefact exists; its canonical integration into V12.4 is NOT yet applied
     mustPreserve: Object.freeze(["9 primitives", "166 reference capabilities + ids", "A01–A54 architectural contracts", "20 métiers + CURRENT evidence", "Truth Lock", "ODG authority"]),
-    note: "integration is PROPOSED via the existing companion mechanism, additive only; it is NOT applied here (no protected-register mutation). The named MASTER ROADMAP.md is absent and is NOT fabricated. Per §6, when canonical structure is uncertain, diagnose — do not guess/mutate.",
+    note: "the owner-provided MASTER ROADMAP artefact EXISTS at repo root (persisted); its canonical integration into V12.4 (via the additive v124-consolidated-roadmap companion) is NOT yet applied — no protected-register mutation. Per §22, integration proceeds only after source-of-truth inspection and via authorized mechanisms; when uncertain, diagnose rather than guess/mutate.",
   });
 }
 
@@ -87,8 +88,8 @@ const BTP_CAPABILITY_MATRIX_CONTRACT = Object.freeze({
   invariants: Object.freeze([
     "maps the 15 BTP domains + voice/vision/suivi clusters to REAL existing modules; FAIL-CLOSED (no backing ⇒ ABSENT, never inflated)",
     "PARTIEL = a real module exists but does NOT reach world-class scope; ABSENT = genuine gap (vision/métré/BIM/3D); nothing claimed OPERATIONAL or world-class",
-    "the named ODG_BTP_WORLD_CLASS_V12_4_ROADMAP.md is ABSENT and is NOT fabricated; prior V147_BTP artefacts are acknowledged",
-    "integration is PROPOSED via the existing v124-consolidated-roadmap companion (additive) — NOT applied; protected ROADMAP.json/closure-register/9 primitives/166 caps/A01–A54/20 métiers preserved",
+    "the owner-provided ODG_BTP_WORLD_CLASS_V12_4_ROADMAP.md artefact EXISTS (repo root, persisted); its CONTENT is owner-authored, not fabricated; prior V147_BTP artefacts acknowledged",
+    "the roadmap artefact's CANONICAL INTEGRATION into V12.4 is NOT yet applied — via the existing v124-consolidated-roadmap companion (additive) only; protected ROADMAP.json/closure-register/9 primitives/166 caps/A01–A54/20 métiers preserved",
     "pure/deterministic/read-only; no second radar/engine/roadmap; no new primitive; no world-class/ranking claim",
   ]),
 });
