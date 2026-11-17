@@ -27,7 +27,11 @@ const PC = require("./odg-program-continuity.js");    // V237 — the consumer t
 const COMPANION = "docs/odg/v124-consolidated-roadmap.json";
 const MISSION_STATUS = Object.freeze(["NOT_STARTED", "READY", "IN_PROGRESS", "BLOCKED", "OWNER_GATED", "TESTING", "REVIEW", "ACCEPTED", "COMPLETED", "DEFERRED", "REJECTED"]);
 const INTEGRATION_LADDER = Object.freeze(["PROPOSED", "IN_PROGRESS", "INTEGRATED", "INDEPENDENTLY_VALIDATED", "ACCEPTED"]);
-const SECTIONS = Object.freeze("ABCDEFGHIJKLMNOPQR".split(""));
+// Sections A–R are the original V234–V238 domains. Section S is a VALIDATED canonical amendment (owner-authorized by CTO
+// directives V272 §4 / V273 §1) for the BTP STRATEGIC EXTENSION (V260–V271): devis/métré/vision-voice/normative/communication/
+// project/billing engines + growth & company-management reconciliations + executive dashboard/decision engine. The amendment is
+// additive — A–R are untouched — and preserves every invariant (9 primitives, single directeur, lossless, manifest at 11).
+const SECTIONS = Object.freeze("ABCDEFGHIJKLMNOPQRS".split(""));
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function isStr(v: any): boolean { return typeof v === "string" && v.length > 0; }
@@ -92,7 +96,7 @@ function validate(companion: any, roadmap: any): any {
     orphans: Object.freeze(orphans),
     duplicates: Object.freeze(dups),
     reasons: Object.freeze(reasons),
-    note: "V12.4 is the sole directeur; V234–V238 integrated as sections A–R (lossless, provenance-preserved); execution manifest UNCHANGED (amendment OWNER_GATED); roadmap INTEGRATED, not COMPLETED (missions remain OPEN)",
+    note: "V12.4 is the sole directeur; V234–V238 integrated as sections A–R + the BTP strategic extension V260–V271 as section S (owner-authorized V272 §4 / V273 §1, lossless, provenance-preserved); execution manifest UNCHANGED at 11 (amendment OWNER_GATED); roadmap INTEGRATED, not COMPLETED",
   });
 }
 
@@ -130,7 +134,7 @@ const V124_CONSOLIDATION_CONTRACT = Object.freeze({
   purpose: "Phase 3/4/6/10 — load+validate the canonical V12.4 consolidation companion (lossless, single-source, consumable); execution manifest UNCHANGED; no 2nd roadmap/store/engine",
   invariants: Object.freeze([
     "V12.4 is the SOLE directeur (reuses roadmap-consolidation.consolidate); every V234–V238 program INTEGRATED, none concurrent",
-    "LOSSLESS + DISTINCT: unique ids, each mapped to a V12.4 section A–R (no ORPHAN), status in the Phase-11 ladder — nothing dropped",
+    "LOSSLESS + DISTINCT: unique ids, each mapped to a V12.4 section A–S (no ORPHAN; S = BTP strategic extension V260–V271, owner-authorized V272 §4 / V273 §1), status in the Phase-11 ladder — nothing dropped",
     "execution manifest ROADMAP.json stays 11 missions / not replaced (honours v104 + crosswalk guards); the manifest amendment is OWNER_GATED",
     "CONSUMABLE by odg-program-continuity (not a static doc), recoverable after restart; roadmap INTEGRATED ≠ COMPLETED; no 10th primitive",
   ]),
