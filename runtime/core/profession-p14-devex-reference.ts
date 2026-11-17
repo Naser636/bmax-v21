@@ -33,8 +33,38 @@ function scaffoldEvidence(input: any): any {
   return Object.freeze({ attested: bundle.attested === true && v.ok !== false, missing: Object.freeze([]), reasons: Object.freeze(Array.isArray(bundle.reasons) ? bundle.reasons : []) });
 }
 
+// V254/V255 §2 — scaffoldEvidence returned a single attested/not-attested verdict; on an incomplete scaffold it did not
+// LOCALIZE which golden-path dimension is the gap. scaffoldScorecard gives a per-dimension PASS/FAIL breakdown + a readiness
+// score, so a developer sees exactly what to fix. It mirrors the SAME honesty rules as makeBundle (confinement attested only
+// when netOff AND envCleared; health only when available) — no second bundler, no upgraded dimension. EVIDENCE_PREP_NOT_CONFORMITY.
+/** scaffoldScorecard(input) -> per-dimension pass/fail + readinessScore + ready (never a conformity verdict). */
+function scaffoldScorecard(input: any): any {
+  const i = isObj(input) ? input : {};
+  const conf = isObj(i.confinement) ? i.confinement : {};
+  const sbomComponents = (isObj(i.sbom) && Array.isArray(i.sbom.components) ? i.sbom.components.length : (Array.isArray(i.components) ? i.components.length : 0));
+  const health = isObj(i.health) ? i.health : {};
+  const dims = [
+    Object.freeze({ dimension: "buildRef", pass: typeof i.buildRef === "string" && i.buildRef.trim().length > 0, detail: "a build reference identifies the attested artefact" }),
+    Object.freeze({ dimension: "sbom-components", pass: sbomComponents > 0, detail: "SBOM must list >=1 component (absent ⇒ not a pass)" }),
+    Object.freeze({ dimension: "confinement", pass: conf.netOff === true && conf.envCleared === true, detail: "attested ONLY when netOff===true AND envCleared===true" }),
+    Object.freeze({ dimension: "health", pass: health.available === true, detail: "attested ONLY when available===true (absent ⇒ UNKNOWN, not a pass)" }),
+  ];
+  const passed = dims.filter((d: any) => d.pass === true).length;
+  const total = dims.length;
+  return Object.freeze({
+    dimensions: Object.freeze(dims), passed, total,
+    readinessScore: Math.round((passed / total) * 1000) / 1000, ready: passed === total,
+    gaps: Object.freeze(dims.filter((d: any) => d.pass !== true).map((d: any) => d.dimension)),
+    certified: false, basis: "EVIDENCE_PREP_NOT_CONFORMITY — a golden-path readiness scorecard (which dimension is the gap), NOT a conformity/certification verdict; a missing dimension is never upgraded",
+  });
+}
+
 function runReferenceProject(opts: any): any {
   const o = isObj(opts) ? opts : {};
+  if (o.scorecard === true) {
+    const card = scaffoldScorecard(isObj(o.input) ? o.input : completeInput());
+    return Object.freeze({ synthetic: true, profession: "P14", scorecard: card, level: "E2", degraded: card.ready === false, note: "SYNTHETIC golden-path scaffold (not a real graduated project, not E5); per-dimension readiness scorecard (basis EVIDENCE_PREP_NOT_CONFORMITY); a real scaffold graduating to CI (E5) owner-gated NOT_RUN" });
+  }
   const input = isObj(o.input) ? o.input : completeInput();
   const result = scaffoldEvidence(input);
   const degraded = !result.attested;
@@ -55,10 +85,11 @@ const P14_DEVEX_REFERENCE_CONTRACT = Object.freeze({
     "basis is EVIDENCE_PREP_NOT_CONFORMITY — the bundle is preparation, not a conformity verdict",
     "SYNTHETIC scaffold only; a real project graduating to CI (E5) owner-gated NOT_RUN (no inflated level)",
     "reuses golden-path-evidence-bundle; no second evidence bundler",
+    "V254 scorecard: scaffoldScorecard localizes which golden-path dimension (buildRef/sbom-components/confinement/health) is the gap + a readinessScore; same honesty rules (confinement needs netOff AND envCleared; health needs available); a missing dimension is never upgraded; NOT a conformity verdict",
   ]),
 });
 
-module.exports = { scaffoldEvidence, runReferenceProject, P14_DEVEX_REFERENCE_CONTRACT };
+module.exports = { scaffoldEvidence, scaffoldScorecard, runReferenceProject, P14_DEVEX_REFERENCE_CONTRACT };
 
 if (require.main === module) { process.stdout.write(JSON.stringify({ ...P14_DEVEX_REFERENCE_CONTRACT, demo: runReferenceProject({}) }, null, 2) + "\n"); }
 
