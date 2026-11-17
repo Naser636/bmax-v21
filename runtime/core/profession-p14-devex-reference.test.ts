@@ -35,6 +35,24 @@ console.log("V12.4 §43 P14 — IDP/DEVEX GOLDEN-PATH REFERENCE (E2/E3)");
 
 check(P14.P14_DEVEX_REFERENCE_CONTRACT.invariants.some((i: any) => /E5.*owner-gated NOT_RUN/.test(i)), "honesty: SYNTHETIC only, E5 owner-gated NOT_RUN");
 
+// V254 §2 — per-dimension golden-path readiness scorecard (localizes the gap).
+{
+  const complete = { buildRef: "x@deadbeef", sbom: { bomFormat: "CycloneDX", components: [{ name: "a" }] }, confinement: { netOff: true, envCleared: true }, health: { available: true } };
+  const full = P14.scaffoldScorecard(complete);
+  check(full.ready === true && full.passed === 4 && full.readinessScore === 1 && full.gaps.length === 0 && full.certified === false, "scorecard: complete scaffold ⇒ 4/4, ready, readiness 1, NOT certified");
+  const noHealth = P14.scaffoldScorecard(Object.assign({}, complete, { health: { available: false } }));
+  check(noHealth.ready === false && noHealth.readinessScore === 0.75 && noHealth.gaps.indexOf("health") >= 0 && noHealth.dimensions.find((d: any) => d.dimension === "health").pass === false, "scorecard: health unavailable ⇒ localizes 'health' gap, 3/4, not ready (absent ≠ pass)");
+  const unconfined = P14.scaffoldScorecard(Object.assign({}, complete, { confinement: { netOff: true, envCleared: false } }));
+  check(unconfined.gaps.indexOf("confinement") >= 0 && unconfined.ready === false, "scorecard: netOff but NOT envCleared ⇒ confinement FAIL (needs both), gap localized");
+  const noComponents = P14.scaffoldScorecard(Object.assign({}, complete, { sbom: { components: [] } }));
+  check(noComponents.gaps.indexOf("sbom-components") >= 0, "scorecard: empty SBOM components ⇒ sbom-components gap (absent ≠ pass)");
+  const empty = P14.scaffoldScorecard({});
+  check(empty.passed === 0 && empty.readinessScore === 0 && empty.ready === false && empty.gaps.length === 4, "scorecard fail-closed: empty input ⇒ 0/4, readiness 0, every dimension a gap");
+  check(JSON.stringify(P14.scaffoldScorecard(complete)) === JSON.stringify(full) && Object.isFrozen(full), "scorecard deterministic + frozen");
+  const integ = P14.runReferenceProject({ scorecard: true, input: Object.assign({}, complete, { health: {} }) });
+  check(integ.scorecard && integ.scorecard.gaps.indexOf("health") >= 0 && integ.degraded === true, "integration: scorecard surfaces the gap + degrades");
+}
+
 console.log(failures === 0 ? "ALL PASS — V12.4 §43 P14 DEVEX REFERENCE" : `FAILURES: ${failures}`);
 process.exit(failures === 0 ? 0 : 1);
 export {};
