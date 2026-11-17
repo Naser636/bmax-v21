@@ -37,6 +37,27 @@ function main() {
 
   check("READ-ONLY note (no write/fetch)", /no write\/fetch/.test(r.note));
 
+  // V254 M4 — incremental high-water-mark load (idempotent).
+  {
+    const rows = [{ id: 1, ts: 100 }, { id: 2, ts: 200 }, { id: 3, ts: 300 }];
+    const first = D.incrementalLoad(rows, { watermarkField: "ts", since: 150 });
+    check("incremental: since=150 ⇒ only ts>150 ingested (2,3), skipped 1, newWatermark 300", first.includedCount === 2 && first.skipped === 1 && first.newWatermark === 300);
+    const idem = D.incrementalLoad(rows, { watermarkField: "ts", since: first.newWatermark });
+    check("incremental IDEMPOTENT: re-run with newWatermark ⇒ 0 ingested", idem.includedCount === 0 && idem.skipped === 3);
+    const all = D.incrementalLoad(rows, { watermarkField: "ts" });
+    check("incremental: no `since` ⇒ ingest all placeable, newWatermark = max", all.includedCount === 3 && all.newWatermark === 300);
+    const strict = D.incrementalLoad(rows, { watermarkField: "ts", since: 300 });
+    check("incremental: STRICTLY greater (since==max ⇒ 0, no re-ingest of the boundary row)", strict.includedCount === 0);
+    const bad = D.incrementalLoad([{ id: 1, ts: 100 }, { id: 2 }, { id: 3, ts: "oops" }], { watermarkField: "ts", since: 0 });
+    check("incremental fail-closed: missing/non-numeric watermark ⇒ rejected (not ingested)", bad.includedCount === 1 && bad.rejectedCount === 2);
+    check("incremental fail-closed: no watermarkField ⇒ NO_WATERMARK_FIELD; non-array rows ⇒ ok, 0", D.incrementalLoad(rows, {}).code === "NO_WATERMARK_FIELD" && D.incrementalLoad("x", { watermarkField: "ts" }).includedCount === 0);
+    check("incremental deterministic + frozen", JSON.stringify(D.incrementalLoad(rows, { watermarkField: "ts", since: 150 })) === JSON.stringify(first) && Object.isFrozen(first));
+    // works on importCsv output rows
+    const imp = D.importCsv("id,ts\nr1,100\nr2,250\n", { keyField: "id" });
+    const incFromCsv = D.incrementalLoad(imp.rows, { watermarkField: "ts", since: 150 });
+    check("incremental integrates with importCsv rows (ts>150 ⇒ 1)", incFromCsv.includedCount === 1);
+  }
+
   process.stdout.write("\n" + (failures === 0 ? "ALL PASS — data-connector (controlled CSV/JSON import; schema+quality via assessDataQuality; dedup; field-map; fail-closed; read-only)" : failures + " FAIL") + "\n");
   process.exit(failures === 0 ? 0 : 1);
 }

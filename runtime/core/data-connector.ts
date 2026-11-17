@@ -81,6 +81,32 @@ function importJson(text: any, opts?: any): any {
   return Object.freeze({ ...analyze(rows, o), dropped });
 }
 
+// V254/V255 M4 — the connector imported a full batch every time but had no INCREMENTAL load: re-running re-ingested every row.
+// A standard data-engineering pattern is a high-water-mark (CDC-style): ingest only rows whose numeric watermark (epoch ms or
+// a monotonic sequence id) is STRICTLY greater than `since`, then advance the watermark. Re-running with the advanced
+// watermark ingests 0 (idempotent). Fail-closed: a row with a missing/non-numeric watermark is REJECTED (cannot be placed),
+// never silently ingested. Deterministic; quality/dedup remain delegated to analyze/P4 (no duplication).
+/** incrementalLoad(rows, { watermarkField, since }) -> only rows with numeric watermark > since; advances the watermark. */
+function incrementalLoad(rows: any, opts: any): any {
+  const o = isObj(opts) ? opts : {};
+  const field = isStr(o.watermarkField) && o.watermarkField.length > 0 ? o.watermarkField : null;
+  if (field === null) return Object.freeze({ ok: false, code: "NO_WATERMARK_FIELD", detail: "watermarkField (string) required (fail-closed)" });
+  const since = typeof o.since === "number" && isFinite(o.since) ? o.since : -Infinity;   // default: ingest everything placeable
+  const list = Array.isArray(rows) ? rows.filter(isObj) : [];
+  const included: any[] = []; let skipped = 0; const rejected: any[] = []; let newWatermark = since === -Infinity ? null : since;
+  for (const r of list) {
+    const v = r[field];
+    if (typeof v !== "number" || !isFinite(v)) { rejected.push(Object.freeze({ reason: "missing/non-numeric watermark '" + field + "' ⇒ cannot place (fail-closed)" })); continue; }
+    if (v > since) { included.push(r); if (newWatermark === null || v > newWatermark) newWatermark = v; } else skipped++;
+  }
+  return Object.freeze({
+    ok: true, watermarkField: field, since: since === -Infinity ? null : since,
+    included: Object.freeze(included), includedCount: included.length, skipped, rejected: Object.freeze(rejected), rejectedCount: rejected.length,
+    newWatermark,
+    note: "incremental high-water-mark load: ingest rows with numeric watermark STRICTLY > since, then advance; re-running with newWatermark ingests 0 (idempotent). A missing/non-numeric watermark ⇒ rejected (fail-closed). READ-ONLY.",
+  });
+}
+
 const DATA_CONNECTOR_CONTRACT = Object.freeze({
   id: "V146-DATA-CONNECTOR",
   reuses: ["profession-p4-data-reference.assessDataQuality (6-dimension quality incl. timeliness)"],
@@ -89,7 +115,8 @@ const DATA_CONNECTOR_CONTRACT = Object.freeze({
     "fail-closed: empty/no-data/ragged-CSV/invalid-JSON/not-an-array ⇒ { ok:false, code } (never a silent partial import)",
     "dedup by key field; quality + anomalies via the existing data-quality engine (no parallel integration architecture)",
     "deterministic parser; coerces numbers only when exact; no new primitive",
+    "V254 incremental load: incrementalLoad ingests only rows with numeric watermark STRICTLY > since then advances it (re-run with newWatermark ⇒ 0, idempotent); a missing/non-numeric watermark ⇒ rejected (fail-closed)",
   ]),
 });
-module.exports = { importCsv, importJson, parseCsvLine, DATA_CONNECTOR_CONTRACT };
+module.exports = { importCsv, importJson, parseCsvLine, incrementalLoad, DATA_CONNECTOR_CONTRACT };
 export {};
