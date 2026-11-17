@@ -2,13 +2,23 @@
   "schema": "odg.v124-consolidated-roadmap.v1",
   "directeur": "V12.4",
   "title": "Boussole V12.4 — consolidated capability-build roadmap (V234–V238)",
-  "note": "CANONICAL, PERSISTENT, NON-PROTECTED companion that attaches every DISTINCT capability-build mission from V234–V238 to Boussole V12.4 as sections/domains — lossless, provenance-preserving. The execution manifest runtime/governance/ROADMAP.json (11 Mission-Contract missions) is UNCHANGED and remains authoritative for the autonomy loop; this companion carries the capability-build roadmap consumed by roadmap-consolidation + odg-program-continuity. Old roadmaps (V234..V238) are ARCHIVES / provenance, never concurrent. Adding completed capability-builds as runnable execution-manifest missions would halt the loop on missing contracts and break the v104/crosswalk 'still 11 / no second roadmap' guards ⇒ that amendment stays OWNER_GATED.",
+  "note": "CANONICAL, PERSISTENT, NON-PROTECTED companion that attaches every DISTINCT capability-build mission from V234–V238 to Boussole V12.4 as sections/domains — lossless, provenance-preserving. The execution manifest runtime/governance/ROADMAP.json (11 Mission-Contract missions) is UNCHANGED and remains authoritative for the autonomy loop; this companion carries the capability-build roadmap consumed by roadmap-consolidation + odg-program-continuity. Old roadmaps (V234..V238) are ARCHIVES / provenance, never concurrent. Adding completed capability-builds as runnable execution-manifest missions would halt the loop on missing contracts and break the v104/crosswalk 'still 11 / no second roadmap' guards ⇒ that amendment stays OWNER_GATED. [V272 §4 / V273 §1: BTP strategic extension V260–V271 integrated as section S — owner-authorized validated amendment; A–R and the execution manifest (ROADMAP.json, 11) are UNCHANGED.]",
   "roadmapIntegration": "INTEGRATED",
   "expectedMissionSources": [
     "V234",
     "V235",
     "V236",
-    "V237"
+    "V237",
+    "V260",
+    "V262",
+    "V263",
+    "V264",
+    "V265",
+    "V266",
+    "V267",
+    "V268",
+    "V269",
+    "V271"
   ],
   "executionManifest": {
     "file": "runtime/governance/ROADMAP.json",
@@ -334,6 +344,209 @@
         "toolchain install (OWNER_GATED)"
       ],
       "nextAction": "video content stays NOT_ANALYZED until toolchain + ToS allow"
+    },
+    {
+      "id": "SX-BTP-DEVIS-ENGINE",
+      "source": "V260",
+      "section": "S",
+      "objective": "Deterministic BTP intelligent-devis costing engine (integer cents, MARGIN≠MARKUP, measurement-state gating, fail-closed)",
+      "components": [
+        "runtime/core/odg-btp-devis-engine.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #641, gate 571, inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
+    },
+    {
+      "id": "SX-BTP-METRE-ENGINE",
+      "source": "V262",
+      "section": "S",
+      "objective": "Deterministic BTP quantity-surveying engine (geometry/units/coefficients/provenance; feeds computeDevis)",
+      "components": [
+        "runtime/core/odg-btp-metre-engine.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #643, inspection PASS (24 exact cases)",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
+    },
+    {
+      "id": "SX-BTP-VISION-VOICE-PIPELINE",
+      "source": "V263",
+      "section": "S",
+      "objective": "BTP vision/OCR + voice/STT ingestion & extraction pipeline (recognition BLOCKED, never fabricated)",
+      "components": [
+        "runtime/core/odg-btp-vision-voice-pipeline.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #644, inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
+    },
+    {
+      "id": "SX-BTP-NORMATIVE-REGISTRY",
+      "source": "V264",
+      "section": "S",
+      "objective": "Versioned BTP normative registry from source-verified references (match≠compliance; LOW-confidence⇒abstain)",
+      "components": [
+        "runtime/core/odg-btp-normative-registry.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #645, inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
+    },
+    {
+      "id": "SX-BTP-COMMUNICATION-MATRIX",
+      "source": "V265",
+      "section": "S",
+      "objective": "Read-only Ollama qualification + BTP communication/documents/audio/video capability matrix (PROPOSER_ONLY)",
+      "components": [
+        "runtime/core/odg-btp-communication-capability-matrix.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #646, inspection PASS (live re-probe)",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
+    },
+    {
+      "id": "SX-BTP-PROJECT-WORKFLOW",
+      "source": "V266",
+      "section": "S",
+      "objective": "Deterministic BTP project-to-chantier execution lifecycle (deny-by-default approval, DAG, materials, closure-gated)",
+      "components": [
+        "runtime/core/odg-btp-project-workflow.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #647, inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
+    },
+    {
+      "id": "SX-BTP-BILLING-ENGINE",
+      "source": "V267",
+      "section": "S",
+      "objective": "Deterministic BTP billing/progress-claims/cash-collection (invoice≠payment; invoiced≠collected; realized≠forecast)",
+      "components": [
+        "runtime/core/odg-btp-billing-engine.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #648, inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
+    },
+    {
+      "id": "SX-BTP-GROWTH-RECONCILIATION",
+      "source": "V268",
+      "section": "S",
+      "objective": "Phase-0 canonical reconciliation of the V2.0 growth roadmap + independent financial recompute (PLANNING estimates)",
+      "components": [
+        "runtime/core/odg-btp-growth-roadmap-reconciliation.ts",
+        "ODG_BTP_INTERNATIONAL_GROWTH_ROADMAP_V2.md"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #649, inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
+    },
+    {
+      "id": "SX-BTP-COMPANY-COVERAGE",
+      "source": "V269",
+      "section": "S",
+      "objective": "Phase-A coverage & anti-duplication audit of the Autonomous Company Management V1.0 roadmap (20 domains/20 assistants, A/B/C/D)",
+      "components": [
+        "runtime/core/odg-btp-company-management-coverage.ts",
+        "ODG_BTP_AUTONOMOUS_COMPANY_MANAGEMENT_ROADMAP_V1.md"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #650, inspection PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
+    },
+    {
+      "id": "SX-BTP-EXECUTIVE-DASHBOARD-DECISION",
+      "source": "V271",
+      "section": "S",
+      "objective": "Evidence-backed executive dashboard + deterministic decision engine (A/B/C/D authority; UNKNOWN≠0; executionResult null)",
+      "components": [
+        "runtime/core/odg-executive-dashboard.ts",
+        "runtime/core/odg-executive-decision-engine.ts"
+      ],
+      "deps": [],
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #651, two independent inspections PASS",
+      "owner": "ODG",
+      "risk": "low",
+      "authorizations": [
+        "V272",
+        "V273"
+      ],
+      "nextAction": null
     }
   ]
 }

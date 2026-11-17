@@ -20,6 +20,11 @@ function main() {
   const openish = (v.byStatus.READY || 0) + (v.byStatus.REVIEW || 0) + (v.byStatus.IN_PROGRESS || 0) + (v.byStatus.OWNER_GATED || 0);
   check("distinct ACCEPTED builds + BLOCKED + open/in-progress missions all preserved (nothing dropped)", v.byStatus.ACCEPTED >= 4 && v.byStatus.BLOCKED >= 1 && openish >= 1);
   check("sections A–R used (missions mapped across V12.4 domains, not one bucket)", v.sectionsCovered.length >= 5 && v.sectionsCovered.includes("B") && v.sectionsCovered.includes("D"));
+  // V272/V273: the BTP strategic extension V260–V271 is integrated LOSSLESSLY as section S (owner-authorized validated amendment).
+  check("section S integrated: >=10 BTP strategic-extension missions (V260–V271) present, lossless, each source declared+present", v.sectionsCovered.includes("S") && (v.byStatus.ACCEPTED >= 14) && ["V260", "V266", "V267", "V268", "V269", "V271"].every((s: string) => (v.bySource[s] || 0) >= 1));
+  check("section S is a VALIDATED amendment (not an orphan): companion still consolidated=true with sections A–S", v.consolidated === true && v.orphans.length === 0 && v.sectionsCovered.indexOf("S") === v.sectionsCovered.length - 1);
+  // a section OUTSIDE the validated A–S set is still an ORPHAN (the boundary moved to S exactly, not beyond).
+  check("FAIL-CLOSED: a mission with section 'Z' (outside A–S) ⇒ still ORPHAN ⇒ not consolidated", C.validate({ directeur: "V12.4", programs: companion.programs, executionManifest: companion.executionManifest, roadmapIntegration: "INTEGRATED", missions: [{ id: "Z1", section: "Z", status: "READY" }] }, roadmap).consolidated === false);
 
   // CONSUMABLE: the consolidated roadmap is driven by the REAL V237 program-continuity (not a static doc).
   const dem = C.demonstrate();
