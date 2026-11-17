@@ -33,6 +33,17 @@ function main() {
   // fail-closed on empty input.
   check("empty HTML ⇒ not conformant (fail-closed)", A.auditHtml("").conformantAutomated === false && A.auditHtml(null).conformantAutomated === false);
 
+  // V254 M5 — new machine-checkable criteria.
+  check("4.1.2 iframe without title ⇒ detected", crit(A.auditHtml('<html lang="fr"><title>t</title><iframe src="x"></iframe></html>')).includes("4.1.2"));
+  check("4.1.2 iframe WITH title ⇒ NOT flagged (true-negative)", !crit(A.auditHtml('<html lang="fr"><title>t</title><iframe src="x" title="Map"></iframe></html>')).includes("4.1.2"));
+  check("2.4.3 positive tabindex (>0) ⇒ detected", crit(A.auditHtml('<html lang="fr"><title>t</title><div tabindex="3">x</div></html>')).includes("2.4.3"));
+  check("2.4.3 tabindex=0 / -1 ⇒ NOT flagged (only >0 is the anti-pattern)", !crit(A.auditHtml('<html lang="fr"><title>t</title><div tabindex="0">a</div><div tabindex="-1">b</div></html>')).includes("2.4.3"));
+  check("1.4.2 autoplay media without controls ⇒ detected", crit(A.auditHtml('<html lang="fr"><title>t</title><audio autoplay src="a.mp3"></audio></html>')).includes("1.4.2"));
+  check("1.4.2 autoplay WITH controls ⇒ NOT flagged (true-negative)", !crit(A.auditHtml('<html lang="fr"><title>t</title><video autoplay controls src="v.mp4"></video></html>')).includes("1.4.2"));
+  check("1.4.4 viewport user-scalable=no ⇒ detected (zoom blocked)", crit(A.auditHtml('<html lang="fr"><head><title>t</title><meta name="viewport" content="width=device-width, user-scalable=no"></head></html>')).includes("1.4.4"));
+  check("1.4.4 viewport allowing zoom ⇒ NOT flagged (true-negative)", !crit(A.auditHtml('<html lang="fr"><head><title>t</title><meta name="viewport" content="width=device-width, initial-scale=1"></head></html>')).includes("1.4.4"));
+  check("new criteria listed in criteriaChecked", (() => { const c = A.auditHtml(good).criteriaChecked; return c.includes("4.1.2-iframe") && c.includes("2.4.3") && c.includes("1.4.2") && c.includes("1.4.4"); })());
+
   process.stdout.write("\n" + (failures === 0 ? "ALL PASS — accessibility-check (RGAA/WCAG automated subset; criteria detected; no false positives on aria/alt; manual review ALWAYS required; fail-closed)" : failures + " FAIL") + "\n");
   process.exit(failures === 0 ? 0 : 1);
 }
