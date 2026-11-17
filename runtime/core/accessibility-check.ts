@@ -64,13 +64,14 @@ function auditHtml(html: any, opts?: any): any {
 
   // V254/V255 M5 — additional machine-checkable WCAG criteria the HTML auditor did not cover.
   // 4.1.2 Name, Role, Value — an <iframe> needs a non-empty title (its accessible name).
+  // NB: (?<![-\w]) prevents matching inside a `data-title`/custom attribute (the \b-at-hyphen false-match, M5 inspection finding).
   const iframes = h.match(/<iframe\b[^>]*>/gi) || [];
-  add("4.1.2", "A", "iframe without a non-empty title attribute (no accessible name)", iframes.filter((t: string) => !/\btitle\s*=\s*["'][^"']+["']/i.test(t)).length);
+  add("4.1.2", "A", "iframe without a non-empty title attribute (no accessible name)", iframes.filter((t: string) => !/(?<![-\w])title\s*=\s*["'][^"']+["']/i.test(t)).length);
   // 2.4.3 Focus Order — a positive tabindex (>0) overrides the natural order (anti-pattern that breaks keyboard order).
-  const positiveTabindex = (h.match(/\btabindex\s*=\s*["']?(\d+)/gi) || []).filter((m: string) => { const n = parseInt((m.match(/(\d+)/) || [])[1] || "0", 10); return n > 0; }).length;
+  const positiveTabindex = (h.match(/(?<![-\w])tabindex\s*=\s*["']?(\d+)/gi) || []).filter((m: string) => { const n = parseInt((m.match(/(\d+)/) || [])[1] || "0", 10); return n > 0; }).length;
   add("2.4.3", "A", "positive tabindex (>0) overrides natural focus order (keyboard-order anti-pattern)", positiveTabindex);
   // 1.4.2 Audio Control — media that autoplays without a controls mechanism (no way to pause/stop).
-  const autoplayMedia = (h.match(/<(audio|video)\b[^>]*>/gi) || []).filter((t: string) => /\bautoplay\b/i.test(t) && !/\bcontrols\b/i.test(t)).length;
+  const autoplayMedia = (h.match(/<(audio|video)\b[^>]*>/gi) || []).filter((t: string) => /(?<![-\w])autoplay(?![-\w])/i.test(t) && !/(?<![-\w])controls(?![-\w])/i.test(t)).length;
   add("1.4.2", "A", "audio/video autoplay without a controls mechanism (no pause/stop)", autoplayMedia);
   // 1.4.4 Resize Text — a viewport that blocks zoom (user-scalable=no or maximum-scale<=1) prevents resizing.
   const viewport = (h.match(/<meta\b[^>]*name\s*=\s*["']viewport["'][^>]*>/i) || [])[0] || "";
