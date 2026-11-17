@@ -5,7 +5,8 @@
  * fabricated), referentially sound (INTEGRATED components reference real files), and that the PROTECTED executionManifest
  * (ROADMAP.json = 11) is UNCHANGED. Read-only validation. */
 const fs = require("fs");
-const R = require("../../docs/odg/v124-consolidated-roadmap.json");
+// load via CWD-relative fs (repo root in both local + parity/dist runs) — NOT a cross-dir require (which breaks under dist cwd).
+const R = JSON.parse(fs.readFileSync("docs/odg/v124-consolidated-roadmap.json", "utf8"));
 let f = 0; function check(n: string, c: boolean) { process.stdout.write((c ? "ok" : "NOT OK") + " - " + n + "\n"); if (!c) f++; }
 
 function main() {
@@ -37,8 +38,8 @@ function main() {
   check("btpExtension provenance: INTEGRATED_ADDITIVE, master roadmap + sha256, preserves canon (9 prim/166/A01-A54/20 métiers/11)", R.btpExtension && R.btpExtension.integrationState === "INTEGRATED_ADDITIVE" && /ba7a2985/.test(R.btpExtension.masterRoadmapSha256) && R.btpExtension.preserves.some((p: string) => /9 primitives/.test(p)) && R.btpExtension.preserves.some((p: string) => /11 \(UNCHANGED\)/.test(p)));
 
   // protected registers truly untouched (independent read).
-  const closure = require("../../docs/odg/closure-register.json");
-  const roadmap = require("../../runtime/governance/ROADMAP.json");
+  const closure = JSON.parse(fs.readFileSync("docs/odg/closure-register.json", "utf8"));
+  const roadmap = JSON.parse(fs.readFileSync("runtime/governance/ROADMAP.json", "utf8"));
   check("protected registers unchanged: closure-register 427, ROADMAP.json 11", (closure.length || (closure.items ? closure.items.length : 0)) === 427 && roadmap.missions.length === 11);
 
   process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-canonical-integration (V261 §2: BTP integrated ADDITIVELY into v124-consolidated-roadmap — 14 original missions preserved, 6 CM-BTP appended [3 INTEGRATED grounded on real files, métré READY, vision/voice BLOCKED on absent vision/STT — not fabricated]; executionManifest 11 UNCHANGED; protected registers 427/11 intact; no second roadmap)" : f + " FAIL") + "\n");
