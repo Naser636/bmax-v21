@@ -1,0 +1,65 @@
+{
+  "schema": "v318-novel-synthesis",
+  "generatedInside": "C6 sandbox child (/work)",
+  "cases": [
+    {
+      "id": "clamp",
+      "status": "ACCEPTED",
+      "model": "qwen2.5-coder:7b",
+      "edits": [
+        "src/f.js"
+      ],
+      "initialHash": "13ec69501c70eebdd69484977a5a4ee1244b7b7ba69ab17add9778405cae6d80",
+      "producedCode": "module.exports = (x, lo, hi) => x < lo ? lo : x > hi ? hi : x;",
+      "initialCode": "module.exports = (x, lo, hi) => x;",
+      "novel": true,
+      "adversarialEdgePass": true
+    },
+    {
+      "id": "second-largest",
+      "status": "ACCEPTED",
+      "model": "qwen2.5-coder:7b",
+      "edits": [
+        "src/f.js"
+      ],
+      "initialHash": "0f6f23fd09ec2eb0d34cf961692b48fc4d80e60680bd76f3551dadb2b51a9a69",
+      "producedCode": "module.exports = (arr) => {\n  const uniqueNumbers = [...new Set(arr)].sort((a, b) => b - a);\n  return uniqueNumbers.length > 1 ? uniqueNumbers[1] : null;\n};",
+      "initialCode": "module.exports = (arr) => arr[0];",
+      "novel": true,
+      "adversarialEdgePass": true
+    },
+    {
+      "id": "roman-hard",
+      "status": "ACCEPTED",
+      "model": "qwen2.5-coder:7b",
+      "edits": [
+        "src/f.js"
+      ],
+      "initialHash": "6e2678f2f97eb3e6bdeb109468bfde994a3bf24ddafafdcda138a97eb1396c77",
+      "producedCode": "module.exports = (n) => {\n  const map = [\n    ['M', 1000], ['CM', 900], ['D', 500], ['CD', 400],\n    ['C', 100], ['XC', 90], ['L', 50], ['XL', 40],\n    ['X', 10], ['IX', 9], ['V', 5], ['IV', 4], ['I', 1]\n  ];\n  let result = '';\n  for (let [roman, value] of map) {\n    while (n >= value) {\n      result += roman;\n      n -= value;\n    }\n  }\n  return result;\n};",
+      "initialCode": "module.exports = (n) => String(n);",
+      "novel": true,
+      "adversarialEdgePass": true
+    }
+  ],
+  "rollback": {
+    "status": "ABSTAINED",
+    "restoredExactly": true,
+    "initialHash": "13ec69501c70eebdd69484977a5a4ee1244b7b7ba69ab17add9778405cae6d80",
+    "afterHash": "13ec69501c70eebdd69484977a5a4ee1244b7b7ba69ab17add9778405cae6d80"
+  },
+  "summary": {
+    "novelAccepted": 3,
+    "acceptedGeneralised": 3,
+    "acceptedButOverfit": 0,
+    "abstained": 0,
+    "abstainRestoredExactly": true,
+    "total": 3,
+    "rollbackProof": {
+      "status": "ABSTAINED",
+      "restoredExactly": true,
+      "initialHash": "13ec69501c70eebdd69484977a5a4ee1244b7b7ba69ab17add9778405cae6d80",
+      "afterHash": "13ec69501c70eebdd69484977a5a4ee1244b7b7ba69ab17add9778405cae6d80"
+    }
+  }
+}
