@@ -97,7 +97,7 @@ async function extractPdfText(input: any, opts?: any): Promise<any> {
   const extracted = pages.filter((p: any) => p.status === "TEXT_EXTRACTED").length;
   const anyText = extracted > 0;
   const allText = extracted === totalPages && totalPages > 0;
-  const documentStatus = allText ? "OK" : (anyText || needsOcr.length > 0 || pages.some((p: any) => p.status === "EMPTY_PAGE" || p.status === "EXTRACTION_FAILED") ? "PARTIAL" : "PARTIAL");
+  const documentStatus = allText ? "OK" : "PARTIAL";   // any non-fully-extracted document is PARTIAL (never a complete success)
   return result(documentStatus, {
     pageCount: totalPages, pages: Object.freeze(pages), metadata,
     anyTextExtracted: anyText, textPageCount: extracted, needsOcrPages: Object.freeze(needsOcr), needsOcr: needsOcr.length > 0,
