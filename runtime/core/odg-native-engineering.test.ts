@@ -37,6 +37,25 @@ function main() {
   // ---- executor taxonomy present ----
   check("executor taxonomy exposes all 5 honesty states", N.EXEC.NATIVE === "ODG_NATIVE_EXECUTION" && N.EXEC.CLAUDE === "CLAUDE_CODE_EXECUTION" && N.EXEC.HUMAN === "HUMAN_VALIDATION" && N.EXEC.SIM === "SIMULATED" && N.EXEC.NM === "NOT_MEASURED");
 
+  // ---- V284 §5: ODG_LOCAL_MODEL_EXECUTION attribution tier (additive — the 5 states above are unchanged) ----
+  check("V284: new tier EXEC.LOCAL = ODG_LOCAL_MODEL_EXECUTION (ODG's own local model, between native and frontier)", N.EXEC.LOCAL === "ODG_LOCAL_MODEL_EXECUTION");
+  check("V284: audit still 13/10/3 (local tier is ADDITIVE metadata — did not change the native/provider counts)", a.total === 13 && a.nativeToday === 10 && a.needsProvider === 3);
+  check("V284: novel codegen + novel correction are localModelCapable with tier LOCAL (proven live V283-B/C); novel DESIGN is not", (() => {
+    const by = (name: string) => a.steps.find((s: any) => s.step === name);
+    return by("code generation (novel)").localModelCapable === true && by("code generation (novel)").localModelTier === "ODG_LOCAL_MODEL_EXECUTION"
+      && by("correction proposal (novel)").localModelCapable === true
+      && by("solution design (novel)").localModelCapable === false;
+  })());
+  check("V284: audit exposes a localModelTier summary pointing at the live V283-B/C evidence + untrusted-output caveat", a.localModelTier && a.localModelTier.tier === "ODG_LOCAL_MODEL_EXECUTION" && /V283-B\/C/.test(a.localModelTier.evidence) && /UNTRUSTED/.test(a.localModelTier.caveat) && a.localModelTier.steps.length === 2);
+  check("V284: attribution ladder is ordered NATIVE → LOCAL → CLAUDE → HUMAN (frozen)", Object.isFrozen(N.ATTRIBUTION_LADDER) && N.ATTRIBUTION_LADDER.map((r: any) => r.tier).join(",") === [N.EXEC.NATIVE, N.EXEC.LOCAL, N.EXEC.CLAUDE, N.EXEC.HUMAN].join(","));
+  // classifyCodegenAttribution: evidence-based + fail-closed (never reclassify all novel as local).
+  check("V284 classify: catalog kind ⇒ NATIVE (no model, no controlled-apply)", (() => { const c = N.classifyCodegenAttribution({ kind: "sum" }); return c.tier === "ODG_NATIVE_EXECUTION" && c.controlledApplyRequired === false; })());
+  check("V284 classify: novel + local available + within ability ⇒ LOCAL (controlled apply required)", (() => { const c = N.classifyCodegenAttribution({ kind: "slugify", localModelAvailable: true, taskWithinLocalModelAbility: true }); return c.tier === "ODG_LOCAL_MODEL_EXECUTION" && c.controlledApplyRequired === true; })());
+  check("V284 classify FAIL-CLOSED: novel + local available but NOT demonstrated within ability ⇒ CLAUDE (not reclassified to local)", N.classifyCodegenAttribution({ kind: "slugify", localModelAvailable: true }).tier === "CLAUDE_CODE_EXECUTION");
+  check("V284 classify FAIL-CLOSED: novel + no local model ⇒ CLAUDE", N.classifyCodegenAttribution({ kind: "slugify" }).tier === "CLAUDE_CODE_EXECUTION");
+  check("V284: runNativeCycle (pure surface) STILL escalates novel ⇒ ESCALATED_TO_PROVIDER (V283-A scenario preserved, not reclassified)", esc.verdict === "ESCALATED_TO_PROVIDER" && esc.nativeCycle === false);
+  check("V284: contract records the local-model tier invariant + evidence-based fail-closed classifier", N.ODG_NATIVE_ENGINEERING_CONTRACT.invariants.some((i: string) => /ODG_LOCAL_MODEL_EXECUTION/.test(i)) && N.ODG_NATIVE_ENGINEERING_CONTRACT.invariants.some((i: string) => /EVIDENCE-based \+ fail-closed/.test(i)));
+
   // ---- fail-closed ----
   check("malformed mission ⇒ INVALID_MISSION (no throw)", N.runNativeCycle({ id: "X" }).code === "INVALID_MISSION" && N.runNativeCycle(null).code === "INVALID_MISSION");
   check("green cycle with a wrong example ⇒ NATIVE_STILL_FAILING (honest, no false green)", (() => { const r = N.runNativeCycle({ id: "W", spec: { fnName: "sum", kind: "sum", examples: [{ args: [2, 2], expect: 99 }] } }); return r.verdict === "NATIVE_STILL_FAILING" && r.testsPass === 0; })());
