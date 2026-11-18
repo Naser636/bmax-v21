@@ -107,16 +107,38 @@ class Bridge(socketserver.BaseRequestHandler):
     def handle(self):
         with socket.socket(socket.AF_UNIX) as u:
             u.connect(SOCK)
-            sockets = [self.request, u]
-            while True:
-                ready, _, _ = select.select(sockets, [], [], 300)
+            client = self.request
+            peer = {id(client): u, id(u): client}
+            # V313 FIX — half-close aware pumping. The previous loop returned on the FIRST EOF from
+            # EITHER side, which DROPPED an in-flight response in the opposite direction. HTTP clients
+            # (e.g. curl) half-close their write side right after sending the request; that EOF would
+            # tear the tunnel down before the upstream response was relayed. We now treat an EOF as a
+            # one-directional half-close: signal it downstream with SHUT_WR, stop reading that side, and
+            # keep pumping the other direction until it, too, reaches EOF. No behavioural change for
+            # peers that keep both directions open until completion.
+            readers = [client, u]
+            while readers:
+                ready, _, _ = select.select(readers, [], [], 300)
                 if not ready:
                     break
                 for src in ready:
-                    data = src.recv(65536)
+                    try:
+                        data = src.recv(65536)
+                    except OSError:
+                        data = b""
+                    dst = peer[id(src)]
                     if not data:
-                        return
-                    (u if src is self.request else self.request).sendall(data)
+                        try:
+                            dst.shutdown(socket.SHUT_WR)
+                        except OSError:
+                            pass
+                        readers.remove(src)
+                        continue
+                    try:
+                        dst.sendall(data)
+                    except OSError:
+                        readers = []
+                        break
 
 
 def _unlink_sock():
@@ -149,9 +171,11 @@ if __name__ == "__main__":
         finally:
             _unlink_sock()
     elif sys.argv[1:] == ["bridge"]:
+        # Port is configurable only for in-process testing; the sandbox default stays 127.0.0.1:11434.
+        bridge_port = int(os.environ.get("ODG_BRIDGE_PORT", "11434"))
         class Server(socketserver.ThreadingTCPServer):
             allow_reuse_address = False
-        with Server(("127.0.0.1", 11434), Bridge) as s:
+        with Server(("127.0.0.1", bridge_port), Bridge) as s:
             s.serve_forever()
     else:
         raise SystemExit("Usage: relay.py host|bridge")
