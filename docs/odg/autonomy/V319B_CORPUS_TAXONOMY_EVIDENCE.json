@@ -1,0 +1,99 @@
+{
+  "schema": "v319b-corpus-taxonomy",
+  "generatedInside": "C6 sandbox child",
+  "cases": [
+    {
+      "id": "celsius-f",
+      "diff": "easy",
+      "status": "ACCEPTED",
+      "producedCode": "module.exports=(c)=>c*9/5 + 32;",
+      "generalises": true,
+      "eval3b": "CORRECT"
+    },
+    {
+      "id": "title-case",
+      "diff": "easy",
+      "status": "ACCEPTED",
+      "producedCode": "module.exports=(s)=>s.split(' ').map(word=>word.charAt(0).toUpperCase()+word.slice(1).toLowerCase()).join(' ');",
+      "generalises": true,
+      "eval3b": "CORRECT"
+    },
+    {
+      "id": "gcd",
+      "diff": "med",
+      "status": "ABSTAINED",
+      "restoredExactly": true,
+      "abstainFailureMode": "syntax-error",
+      "attemptSnippet": "```json { \"edits\": [ { \"path\": \"src/f.js\", \"content\": \"module.exports=(a,b)=>a>b?f(b,a):b===0?a:f(a%b,b);\" } ] } ```"
+    },
+    {
+      "id": "flatten",
+      "diff": "med",
+      "status": "ACCEPTED",
+      "producedCode": "module.exports = (arr) => arr.flat(Infinity);",
+      "generalises": true,
+      "eval3b": "CORRECT"
+    },
+    {
+      "id": "iso-week",
+      "diff": "hard",
+      "status": "ACCEPTED",
+      "producedCode": "module.exports=(y,m,d)=>new Date(y,m-1,d).getWeekNumber();\n\nDate.prototype.getWeekNumber = function() {\n  const date = new Date(this.getFullYear(), this.getMonth(), this.getDate());\n  date.setHours(0, 0, 0, 0);\n  date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));\n  const yearStart = new Date(date.getFullYear(), 0, 1);\n  return Math.ceil(((date - yearStart) / 86400000) / 7) + 1;\n};",
+      "generalises": false,
+      "eval3b": "CORRECT"
+    },
+    {
+      "id": "json-path",
+      "diff": "hard",
+      "status": "ACCEPTED",
+      "producedCode": "module.exports=(o,p)=>p.split('.').reduce((a,c)=>a&&a[c],o);",
+      "generalises": true,
+      "eval3b": "CORRECT"
+    },
+    {
+      "id": "debounce-pure",
+      "diff": "med",
+      "status": "ACCEPTED",
+      "producedCode": "module.exports=(nums)=>nums.filter((num, index, array) => index === 0 || num !== array[index - 1]);",
+      "generalises": true,
+      "eval3b": "CORRECT"
+    },
+    {
+      "id": "base64-ish",
+      "diff": "hard",
+      "status": "ACCEPTED",
+      "producedCode": "module.exports=(s)=>s.split('').reduce((acc, char, index, arr) => {\n  if (index === 0 || char !== arr[index - 1]) {\n    acc += char + '1';\n  } else {\n    acc = acc.slice(0, -1) + (parseInt(acc.slice(-1)) + 1);\n  }\n  return acc;\n}, '');",
+      "generalises": true,
+      "eval3b": "CORRECT"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "accepted": 7,
+    "abstained": 1,
+    "rejected": 0,
+    "acceptRate": 0.875,
+    "acceptedGeneralised": 6,
+    "eval3bAgreed": 7,
+    "abstainRestoredExactly": true,
+    "acceptByDifficulty": {
+      "easy": {
+        "total": 2,
+        "accepted": 2
+      },
+      "med": {
+        "total": 3,
+        "accepted": 2
+      },
+      "hard": {
+        "total": 3,
+        "accepted": 3
+      }
+    },
+    "abstainFailureModes": {
+      "syntax-error": 1
+    },
+    "generator": "qwen2.5-coder:7b",
+    "evaluator": "qwen2.5-coder:3b"
+  }
+}
