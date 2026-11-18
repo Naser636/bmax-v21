@@ -58,6 +58,17 @@ function main() {
   const mReal = M.productionGateMatrix({ fileExists: () => false, readFile: realReader });
   check("the COMMITTED docs/odg/c6-certification-evidence.json certifies ⇒ sandbox READY", mReal.gates.find((g: any) => g.id === "sandbox-certification").status === "READY");
 
+  // REGISTER-DRIVEN improvement-contracts: all modules present ⇒ READY; a missing module ⇒ BLOCKED (teeth)
+  const mC = M.productionGateMatrix({ fileExists: () => true });
+  check("improvement-contracts ⇒ READY when every contract module+test exists (register-driven)", mC.gates.find((g: any) => g.id === "improvement-contracts").status === "READY" && /BUILT \+ TESTED/.test(mC.gates.find((g: any) => g.id === "improvement-contracts").detail));
+  const mCmiss = M.productionGateMatrix({ fileExists: (p: string) => !/odg-dora-metrics-view\.ts$/.test(p) });
+  check("teeth: one missing contract module ⇒ improvement-contracts BLOCKED (fail-closed)", mCmiss.gates.find((g: any) => g.id === "improvement-contracts").status === "BLOCKED_AWAITING_ISOLATION");
+
+  // STRONGEST cannot-force-GO: satisfy EVERY satisfiable gate at once (contracts+sandbox+deploy) — production STILL not ready
+  const mAll = M.productionGateMatrix({ fileExists: () => true, readFile: c6Reader(certifiedEvidence()), deployPackage: { root: "/x", readFile: satisfyingReadFile } });
+  const st = (id: string) => mAll.gates.find((g: any) => g.id === id).status;
+  check("every satisfiable gate READY (contracts+sandbox+deploy) yet productionReady STILL false (exposure+iso owner/external)", st("improvement-contracts") === "READY" && st("sandbox-certification") === "READY" && st("deploy-package") === "READY" && st("dashboard-exposure") === "NOT_READY" && st("iso-certification") === "NOT_READY" && mAll.productionReady === false);
+
   check("contract: composes existing gates, deny-by-default, evidence-driven sandbox, read-only, honesty ladder", M.PRODUCTION_GATE_MATRIX_CONTRACT.invariants.some((i: string) => /no new primitive\/engine\/registry/.test(i)) && M.PRODUCTION_GATE_MATRIX_CONTRACT.invariants.some((i: string) => /EVIDENCE-DRIVEN/.test(i)) && M.PRODUCTION_GATE_MATRIX_CONTRACT.invariants.some((i: string) => /read-only/.test(i)) && M.PRODUCTION_GATE_MATRIX_CONTRACT.invariants.some((i: string) => /DOCUMENTED ≠ BUILT/.test(i)));
   check("deterministic + frozen", JSON.stringify(M.productionGateMatrix({ fileExists: () => false }).byStatus) === JSON.stringify(m.byStatus) && Object.isFrozen(m) && Object.isFrozen(m.gates));
 
