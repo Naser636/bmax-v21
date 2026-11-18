@@ -42,6 +42,10 @@ function main(): void {
   const mixed = I.intakeEstimate({ chantierId: "C1", localeCode: "en-GB", lineItems: [sourced(2, 5000, 4000), { ref: "L2", qty: 3 /* unpriced */ }] });
   check("one unsourced line ⇒ whole estimate INCOMPLETE (withheld)", mixed.estimate.status === "INCOMPLETE" && mixed.estimate.sellingMinor === null);
 
+  // 8b. overflow guard — a caller-sourced but unsafe-integer product is NOT totalled as certain (fail-closed)
+  const overflow = I.intakeEstimate({ chantierId: "C1", localeCode: "fr-FR", lineItems: [{ ref: "L", qty: Number.MAX_SAFE_INTEGER, sellUnitPriceMinor: 1000, priceSource: "x" }] });
+  check("unsafe-integer product ⇒ INCOMPLETE (overflow withheld, not an imprecise total)", overflow.estimate.status === "INCOMPLETE" && overflow.estimate.sellingMinor === null && overflow.lines[0].missing === "overflow");
+
   // 9. money display is a non-empty ICU string containing a digit (ICU-version-safe)
   check("localized money display present (ICU)", typeof fr.estimate.sellingDisplay === "string" && /\d/.test(fr.estimate.sellingDisplay) && fr.lines[0].sellingDisplay.length > 0);
 

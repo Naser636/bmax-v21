@@ -58,13 +58,18 @@ function intakeEstimate(input: any): any {
   const lines = rawLines.map((r: any, idx: number) => {
     const qty = isNonNegInt(r.qty) ? r.qty : null;
     const hasSourcedPrice = isNonNegInt(r.sellUnitPriceMinor) && isStr(r.priceSource); // fail-closed: price AND its source
-    const complete = qty !== null && hasSourcedPrice;
+    const rawComplete = qty !== null && hasSourcedPrice;
+    const rawSelling = rawComplete ? qty * r.sellUnitPriceMinor : null;
+    // overflow guard: a product beyond safe-integer precision must NOT be totalled as a certain amount (fail-closed).
+    const overflow = rawSelling !== null && !Number.isSafeInteger(rawSelling);
+    const complete = rawComplete && !overflow;
     if (!complete) anyIncomplete = true;
-    const lineSelling = complete ? qty * r.sellUnitPriceMinor : null;
-    const lineCost = qty !== null && isNonNegInt(r.costUnitPriceMinor) ? qty * r.costUnitPriceMinor : null;
+    const lineSelling = complete ? rawSelling : null;
+    const rawCost = qty !== null && isNonNegInt(r.costUnitPriceMinor) ? qty * r.costUnitPriceMinor : null;
+    const lineCost = rawCost !== null && Number.isSafeInteger(rawCost) ? rawCost : null;
     if (lineSelling !== null) sellingMinor += lineSelling;
     if (lineCost !== null) costMinor += lineCost;
-    const missing = complete ? null : qty === null ? "qty" : !isNonNegInt(r.sellUnitPriceMinor) ? "sellUnitPriceMinor" : "priceSource";
+    const missing = complete ? null : qty === null ? "qty" : !isNonNegInt(r.sellUnitPriceMinor) ? "sellUnitPriceMinor" : !isStr(r.priceSource) ? "priceSource" : "overflow";
     return freeze({ ref: isStr(r.ref) ? r.ref : "L" + (idx + 1), label: isStr(r.label) ? r.label : null, qty, unit: isStr(r.unit) ? r.unit : null,
       priceSource: isStr(r.priceSource) ? r.priceSource : null, status: complete ? "PRICED" : "INCOMPLETE",
       sellingMinor: lineSelling, sellingDisplay: lineSelling !== null ? fmtMoney(lineSelling, currency, sel.locale) : null, missing });
