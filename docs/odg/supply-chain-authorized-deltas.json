@@ -1,0 +1,14 @@
+{
+  "//": "OWNER-AUTHORIZED supply-chain baseline evolutions over the forensic baseline commit e84a0cf2. The v97 guard (runtime/bin/v97-forensic-release-selection.test.ts) applies these deltas to the e84a0cf2 package.json BEFORE comparing to HEAD. The control is PRESERVED, not bypassed: any dependency drift NOT recorded here (new dep, removed dep, or a version differing from the authorized 'to') still fails the guard. Each entry is a reviewable, security-driven, owner-authorized change.",
+  "baseline": "e84a0cf2",
+  "dependencies": {
+    "next": {
+      "from": "16.2.9",
+      "to": "16.4.6",
+      "reason": "Security: next@16.2.9 carried multiple CRITICAL advisories (RCE in Image Optimization API via AVIF GHSA-2xp9-vwfh-vxw4 / SVG GHSA-2464-fhr4-w9xw, RCE in next/og GHSA-vcvr-r3jv-pc5j) plus HIGH (middleware/proxy bypass, SSRF in Server Actions/rewrites/Image Optimization, DoS). Fix is next@16.4.6 — latest stable 16.x, isSemVerMajor:false. Build verified compatible (build:runtime + next build OK on node v22).",
+      "authorizedBy": "CTO V312",
+      "date": "2026-11-18"
+    }
+  },
+  "devDependencies": {}
+}

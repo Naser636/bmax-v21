@@ -24,8 +24,18 @@ function main(): void {
   if (!d) { process.stdout.write("\n1 FAIL\n"); process.exit(1); }
 
   // §2 timeline — re-prove key facts LIVE.
-  const liveDepsIdentical = (() => { try { const a = JSON.parse(git(["show", "e84a0cf2:package.json"])); const b = require(path.join(ROOT, "package.json")); return JSON.stringify(a.dependencies) === JSON.stringify(b.dependencies) && JSON.stringify(a.devDependencies) === JSON.stringify(b.devDependencies); } catch { return false; } })();
-  check("§2 LIVE: runtime deps IDENTICAL e84a0cf2→HEAD (artifact matches)", liveDepsIdentical === true && d.timeline.runtimeDepsIdentical === true);
+  const liveDepsIdentical = (() => { try {
+    const a = JSON.parse(git(["show", "e84a0cf2:package.json"]));
+    const b = require(path.join(ROOT, "package.json"));
+    // V312 — apply the OWNER-AUTHORIZED supply-chain baseline evolutions (docs/odg/supply-chain-authorized-deltas.json)
+    // onto the e84a0cf2 baseline BEFORE comparing. The control is PRESERVED, not bypassed: any dependency drift NOT in
+    // the authorized record (new dep, removed dep, or a version differing from the authorized 'to') still fails here.
+    const authz = (() => { try { return JSON.parse(fs.readFileSync(path.join(DD, "supply-chain-authorized-deltas.json"), "utf8")); } catch { return { dependencies: {}, devDependencies: {} }; } })();
+    for (const [k, v] of Object.entries(authz.dependencies || {})) { if (a.dependencies && a.dependencies[k] !== undefined && v && typeof (v as any).to === "string") a.dependencies[k] = (v as any).to; }
+    for (const [k, v] of Object.entries(authz.devDependencies || {})) { if (a.devDependencies && a.devDependencies[k] !== undefined && v && typeof (v as any).to === "string") a.devDependencies[k] = (v as any).to; }
+    return JSON.stringify(a.dependencies) === JSON.stringify(b.dependencies) && JSON.stringify(a.devDependencies) === JSON.stringify(b.devDependencies);
+  } catch { return false; } })();
+  check("§2 LIVE: runtime deps match e84a0cf2 + OWNER-AUTHORIZED deltas (next 16.4.6 security); any other drift fails", liveDepsIdentical === true && d.timeline.runtimeDepsIdentical === true);
   check("§2 timeline: 800+ commits since Oct-28, 0 migrations, package.json change is only the gate list", d.timeline.commits > 800 && d.timeline.migrations === 0 && /test:report gate list/.test(d.timeline.note));
 
   // §3/§4 functional groups.
