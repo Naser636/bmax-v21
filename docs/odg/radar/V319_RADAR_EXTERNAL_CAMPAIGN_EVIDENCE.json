@@ -1,0 +1,108 @@
+{
+  "schema": "v319-radar-external-campaign",
+  "consultedDate": "2026-11-18",
+  "routing": "REAL grant-V141 WebSearch operated by the technical provider, INJECTED via odg-radar-collection-adapter.collect() — radar owns provenance/dedup/fail-closed. NOT a parallel collection.",
+  "grantValid": true,
+  "collected": {
+    "autonomy-benchmarks": {
+      "state": "COLLECTED_REAL",
+      "count": 3,
+      "allReal": true,
+      "autonomousEgress": "NOT_MEASURED (radar self-egress needs an owner-gated runtime binding; here the provider is injected)",
+      "sources": [
+        {
+          "org": "arXiv",
+          "url": "https://arxiv.org/pdf/2606.17799",
+          "provenance": "OBSERVED_EVIDENCE"
+        },
+        {
+          "org": "arXiv",
+          "url": "https://arxiv.org/pdf/2609.08149",
+          "provenance": "OBSERVED_EVIDENCE"
+        },
+        {
+          "org": "ArtificialAnalysis",
+          "url": "https://artificialanalysis.ai/evaluations/gdpval-aa",
+          "provenance": "OBSERVED_EVIDENCE"
+        }
+      ]
+    },
+    "btp-takeoff": {
+      "state": "COLLECTED_REAL",
+      "count": 2,
+      "allReal": true,
+      "autonomousEgress": "NOT_MEASURED (radar self-egress needs an owner-gated runtime binding; here the provider is injected)",
+      "sources": [
+        {
+          "org": "Procore (via review)",
+          "url": "https://dupple.com/learn/best-construction-estimating-software",
+          "provenance": "OBSERVED_EVIDENCE"
+        },
+        {
+          "org": "Autodesk (via review)",
+          "url": "https://www.appintent.com/software/construction/AI/Takeoff/",
+          "provenance": "OBSERVED_EVIDENCE"
+        }
+      ]
+    },
+    "local-code-llm": {
+      "state": "COLLECTED_REAL",
+      "count": 2,
+      "allReal": true,
+      "autonomousEgress": "NOT_MEASURED (radar self-egress needs an owner-gated runtime binding; here the provider is injected)",
+      "sources": [
+        {
+          "org": "benchlm.ai",
+          "url": "https://benchlm.ai/best/for/local-code",
+          "provenance": "OBSERVED_EVIDENCE"
+        },
+        {
+          "org": "Kilo",
+          "url": "https://kilo.ai/open-source-models",
+          "provenance": "OBSERVED_EVIDENCE"
+        }
+      ]
+    }
+  },
+  "denyByDefaultProof": {
+    "noProvider": "BLOCKED",
+    "reason": "NO_INJECTED_PROVIDER"
+  },
+  "honesty": "OBSERVED_EVIDENCE = search-result metadata; pages NOT deep-read (no claim of studying inaccessible content). signal≠fact, signal≠sale. External content untrusted; never a governance instruction.",
+  "proposals": [
+    {
+      "id": "RMP-AUTONOMY-HOLDOUT",
+      "title": "Evaluate ODG autonomy vs SWE-bench Pro Verified using PRIVATE adversarial holdouts (never single external judge)",
+      "value": "HIGH (independent capability measure)",
+      "cost": "MED (harness + holdout curation)",
+      "risk": "LOW (read-only eval)",
+      "urgency": "MED",
+      "canonicalCompat": "REUSES generative-repair-eval + odg-broad-it-eval-set; no new primitive",
+      "status": "PROPOSED",
+      "rationale": "External sources flag ~19.78% of SWE-bench 'solved' as semantically wrong — corroborates the V319b overfit finding; confirms private adversarial holdouts + distinct evaluators are required."
+    },
+    {
+      "id": "RMP-GEN-MODEL-UPGRADE",
+      "title": "Trial Qwen3-Coder-Next / DeepSeek V4.1 Flash as the local generator vs qwen2.5-coder:7b in the V318/V319 harness",
+      "value": "HIGH (directly lifts the measured accept-rate ceiling)",
+      "cost": "MED (model pull + A/B through existing harness)",
+      "risk": "MED (larger local model resource; isolate in C6)",
+      "urgency": "MED",
+      "canonicalCompat": "REUSES ollama-provider seam + generative-repair harness; no new engine",
+      "status": "PROPOSED",
+      "rationale": "V318/V319b proved model-dependence (3b weak / 7b 0.79 accept). Qwen3-Coder-Next reports 58.7% SWE-bench Verified on a single 24GB GPU — candidate ceiling lift."
+    },
+    {
+      "id": "RMP-BTP-TAKEOFF",
+      "title": "Scope a plan/photo TAKEOFF capability for ODG BTP (OCR/vision area detect + symbol auto-count) vs Procore/Autodesk Forma/Togal",
+      "value": "HIGH (core §7 differentiator)",
+      "cost": "HIGH (vision pipeline + multilingual)",
+      "risk": "MED (accuracy; human-confirm before contractual use)",
+      "urgency": "MED",
+      "canonicalCompat": "EXTENDS document-intelligence + chantier-profitability; feeds §7 BTP product; no 2nd engine",
+      "status": "PROPOSED",
+      "rationale": "Procore (AI floor-plan area detect + auto-count) and Autodesk Forma (auto quantities from 3D) are the references; ODG currently lacks plan/photo takeoff — the largest §7 gap."
+    }
+  ],
+  "authorization": "ALL proposals are PROPOSED only — real mission creation is OWNER_GATED (K). A score/finding is never an authorization; nothing registered, nothing executed."
+}
