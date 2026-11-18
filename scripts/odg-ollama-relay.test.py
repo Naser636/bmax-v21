@@ -98,6 +98,26 @@ def main():
         st, _ = req("POST", "/api/generate", b'{}', override_cl=17 * 1024 * 1024)
         check("9 >16 MiB -> 413", st == 413)
 
+        # V302 — test 10: the relay UNLINKS its socket on SIGTERM (no orphaned socket that blocks the next launch).
+        cleanup_sock = os.path.join(tempfile.gettempdir(), "odg-ollama-cleanup-%d.sock" % os.getpid())
+        cenv = dict(os.environ); cenv["ODG_OLLAMA_SOCK"] = cleanup_sock
+        cproc = subprocess.Popen([sys.executable, RELAY, "host"], env=cenv,
+                                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        for _ in range(50):
+            if os.path.lexists(cleanup_sock):
+                break
+            time.sleep(0.1)
+        bound = os.path.lexists(cleanup_sock)
+        cproc.terminate()
+        try:
+            cproc.wait(timeout=5)
+        except Exception:
+            cproc.kill(); cproc.wait()
+        time.sleep(0.3)
+        check("10 relay self-unlinks its socket on SIGTERM (no orphaned socket)", bound and not os.path.lexists(cleanup_sock))
+        if os.path.lexists(cleanup_sock):
+            os.remove(cleanup_sock)
+
         print()
         if failures == 0:
             print("ALL PASS — odg-ollama-relay (V197: FIX1 stream forced False via JSON "

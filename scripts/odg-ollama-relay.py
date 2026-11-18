@@ -119,14 +119,35 @@ class Bridge(socketserver.BaseRequestHandler):
                     (u if src is self.request else self.request).sendall(data)
 
 
+def _unlink_sock():
+    # Remove our own socket file on shutdown. The pre-existence guard below still protects against a
+    # concurrent/second relay; this only cleans up OUR socket so a non-clean exit (SIGTERM from the
+    # launcher's stop_host_relay) does not leave an ORPHANED socket that blocks the next launch.
+    try:
+        os.unlink(SOCK)
+    except OSError:
+        pass
+
+
 if __name__ == "__main__":
     if sys.argv[1:] == ["host"]:
         if os.path.lexists(SOCK):
             raise RuntimeError("Socket already exists; inspect before removal")
         os.makedirs(os.path.dirname(SOCK), exist_ok=True)
-        with UnixServer(SOCK, Relay) as s:
-            os.chmod(SOCK, 0o660)
-            s.serve_forever()
+        import signal
+
+        def _on_signal(_signum, _frame):
+            _unlink_sock()
+            raise SystemExit(0)
+
+        signal.signal(signal.SIGTERM, _on_signal)
+        signal.signal(signal.SIGINT, _on_signal)
+        try:
+            with UnixServer(SOCK, Relay) as s:
+                os.chmod(SOCK, 0o660)
+                s.serve_forever()
+        finally:
+            _unlink_sock()
     elif sys.argv[1:] == ["bridge"]:
         class Server(socketserver.ThreadingTCPServer):
             allow_reuse_address = False
