@@ -1,0 +1,435 @@
+{
+  "schemaVersion": "v317-mission-1",
+  "generatedInside": "C6 sandbox child (/work)",
+  "batch": [
+    {
+      "mission": "m-sum-01",
+      "kind": "sum",
+      "injectedFault": true,
+      "odg": {
+        "ok": true,
+        "missionId": "m-sum-01",
+        "verdict": "NATIVE_REPAIRED_GREEN",
+        "nativeCycle": true,
+        "finalCode": "(a, b) => a + b",
+        "testResults": [
+          {
+            "args": [
+              2,
+              3
+            ],
+            "expect": 5,
+            "actual": 5,
+            "ok": true,
+            "err": null
+          },
+          {
+            "args": [
+              10,
+              7
+            ],
+            "expect": 17,
+            "actual": 17,
+            "ok": true,
+            "err": null
+          },
+          {
+            "args": [
+              -4,
+              4
+            ],
+            "expect": 0,
+            "actual": 0,
+            "ok": true,
+            "err": null
+          }
+        ],
+        "testsPass": 3,
+        "testsTotal": 3,
+        "corrected": true,
+        "steps": [
+          {
+            "step": "consult_context",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "read mission 'm-sum-01' + spec for 'sum' (kind=sum)"
+          },
+          {
+            "step": "plan",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "plan: emit a PURE sum function + example tests, run, repair-if-needed"
+          },
+          {
+            "step": "select_write_set",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "authorized (in-memory only) write-set: (in-memory scaffold)"
+          },
+          {
+            "step": "generate_code",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "selected closed-registry op 'sum.faulty@1' (seeded-fault sibling, repair demo)",
+            "code": "(a, b) => a - b",
+            "opId": "sum.faulty@1",
+            "executedCodeString": false
+          },
+          {
+            "step": "generate_tests",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "3 example assertion(s) from the spec",
+            "exampleCount": 3
+          },
+          {
+            "step": "execute_tests",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "ran 3 assertion(s) via the CLOSED executor (no eval/new Function): 0/3 pass",
+            "pass": 0,
+            "total": 3
+          },
+          {
+            "step": "analyse",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "3 failing — fault-pattern = seeded sum defect"
+          },
+          {
+            "step": "propose_correction",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "mechanical repair: switch to canonical registered op 'sum@1'",
+            "code": "(a, b) => a + b",
+            "opId": "sum@1"
+          },
+          {
+            "step": "verify_regression",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "re-ran 3 assertion(s) via the CLOSED executor: 3/3 pass",
+            "pass": 3,
+            "total": 3
+          },
+          {
+            "step": "evidence",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "produced tagged cycle trace + final code + test results (capitalised)"
+          },
+          {
+            "step": "real_repo_write",
+            "executor": "HUMAN_VALIDATION",
+            "detail": "writing this to a REAL repo file is OWNER_GATED (not performed)"
+          }
+        ],
+        "executorSummary": {
+          "ODG_NATIVE_EXECUTION": 10,
+          "HUMAN_VALIDATION": 1
+        },
+        "rollback": "in-memory only; no real-repo file written (owner-gated)",
+        "note": "ODG natively generated + tested + (if needed) repaired a BOUNDED deterministic function and ran the tests itself. Novel reasoning is out of this native class (would be CLAUDE_CODE_EXECUTION). No real repo modified."
+      }
+    },
+    {
+      "mission": "m-even-02",
+      "kind": "isEven",
+      "injectedFault": true,
+      "odg": {
+        "ok": true,
+        "missionId": "m-even-02",
+        "verdict": "NATIVE_REPAIRED_GREEN",
+        "nativeCycle": true,
+        "finalCode": "(n) => n % 2 === 0",
+        "testResults": [
+          {
+            "args": [
+              4
+            ],
+            "expect": true,
+            "actual": true,
+            "ok": true,
+            "err": null
+          },
+          {
+            "args": [
+              7
+            ],
+            "expect": false,
+            "actual": false,
+            "ok": true,
+            "err": null
+          },
+          {
+            "args": [
+              0
+            ],
+            "expect": true,
+            "actual": true,
+            "ok": true,
+            "err": null
+          }
+        ],
+        "testsPass": 3,
+        "testsTotal": 3,
+        "corrected": true,
+        "steps": [
+          {
+            "step": "consult_context",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "read mission 'm-even-02' + spec for 'isEven' (kind=isEven)"
+          },
+          {
+            "step": "plan",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "plan: emit a PURE isEven function + example tests, run, repair-if-needed"
+          },
+          {
+            "step": "select_write_set",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "authorized (in-memory only) write-set: (in-memory scaffold)"
+          },
+          {
+            "step": "generate_code",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "selected closed-registry op 'isEven.faulty@1' (seeded-fault sibling, repair demo)",
+            "code": "(n) => n % 2 === 1",
+            "opId": "isEven.faulty@1",
+            "executedCodeString": false
+          },
+          {
+            "step": "generate_tests",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "3 example assertion(s) from the spec",
+            "exampleCount": 3
+          },
+          {
+            "step": "execute_tests",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "ran 3 assertion(s) via the CLOSED executor (no eval/new Function): 0/3 pass",
+            "pass": 0,
+            "total": 3
+          },
+          {
+            "step": "analyse",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "3 failing — fault-pattern = seeded isEven defect"
+          },
+          {
+            "step": "propose_correction",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "mechanical repair: switch to canonical registered op 'isEven@1'",
+            "code": "(n) => n % 2 === 0",
+            "opId": "isEven@1"
+          },
+          {
+            "step": "verify_regression",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "re-ran 3 assertion(s) via the CLOSED executor: 3/3 pass",
+            "pass": 3,
+            "total": 3
+          },
+          {
+            "step": "evidence",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "produced tagged cycle trace + final code + test results (capitalised)"
+          },
+          {
+            "step": "real_repo_write",
+            "executor": "HUMAN_VALIDATION",
+            "detail": "writing this to a REAL repo file is OWNER_GATED (not performed)"
+          }
+        ],
+        "executorSummary": {
+          "ODG_NATIVE_EXECUTION": 10,
+          "HUMAN_VALIDATION": 1
+        },
+        "rollback": "in-memory only; no real-repo file written (owner-gated)",
+        "note": "ODG natively generated + tested + (if needed) repaired a BOUNDED deterministic function and ran the tests itself. Novel reasoning is out of this native class (would be CLAUDE_CODE_EXECUTION). No real repo modified."
+      }
+    },
+    {
+      "mission": "m-max-03",
+      "kind": "max",
+      "injectedFault": false,
+      "odg": {
+        "ok": true,
+        "missionId": "m-max-03",
+        "verdict": "NATIVE_GREEN",
+        "nativeCycle": true,
+        "finalCode": "(a, b) => (a > b ? a : b)",
+        "testResults": [
+          {
+            "args": [
+              3,
+              9
+            ],
+            "expect": 9,
+            "actual": 9,
+            "ok": true,
+            "err": null
+          },
+          {
+            "args": [
+              12,
+              5
+            ],
+            "expect": 12,
+            "actual": 12,
+            "ok": true,
+            "err": null
+          }
+        ],
+        "testsPass": 2,
+        "testsTotal": 2,
+        "corrected": false,
+        "steps": [
+          {
+            "step": "consult_context",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "read mission 'm-max-03' + spec for 'max' (kind=max)"
+          },
+          {
+            "step": "plan",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "plan: emit a PURE max function + example tests, run, repair-if-needed"
+          },
+          {
+            "step": "select_write_set",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "authorized (in-memory only) write-set: (in-memory scaffold)"
+          },
+          {
+            "step": "generate_code",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "selected closed-registry op 'max@1'",
+            "code": "(a, b) => (a > b ? a : b)",
+            "opId": "max@1",
+            "executedCodeString": false
+          },
+          {
+            "step": "generate_tests",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "2 example assertion(s) from the spec",
+            "exampleCount": 2
+          },
+          {
+            "step": "execute_tests",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "ran 2 assertion(s) via the CLOSED executor (no eval/new Function): 2/2 pass",
+            "pass": 2,
+            "total": 2
+          },
+          {
+            "step": "analyse",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "all assertions pass"
+          },
+          {
+            "step": "verify_regression",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "no correction needed; assertions already green"
+          },
+          {
+            "step": "evidence",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "produced tagged cycle trace + final code + test results (capitalised)"
+          },
+          {
+            "step": "real_repo_write",
+            "executor": "HUMAN_VALIDATION",
+            "detail": "writing this to a REAL repo file is OWNER_GATED (not performed)"
+          }
+        ],
+        "executorSummary": {
+          "ODG_NATIVE_EXECUTION": 9,
+          "HUMAN_VALIDATION": 1
+        },
+        "rollback": "in-memory only; no real-repo file written (owner-gated)",
+        "note": "ODG natively generated + tested + (if needed) repaired a BOUNDED deterministic function and ran the tests itself. Novel reasoning is out of this native class (would be CLAUDE_CODE_EXECUTION). No real repo modified."
+      }
+    },
+    {
+      "mission": "m-fib-04",
+      "kind": "fibonacci",
+      "injectedFault": false,
+      "odg": {
+        "ok": true,
+        "missionId": "m-fib-04",
+        "verdict": "ESCALATED_TO_PROVIDER",
+        "nativeCycle": false,
+        "steps": [
+          {
+            "step": "consult_context",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "read mission 'm-fib-04' + spec for 'fibonacci' (kind=fibonacci)"
+          },
+          {
+            "step": "plan",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "plan: emit a PURE fibonacci function + example tests, run, repair-if-needed"
+          },
+          {
+            "step": "select_write_set",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "authorized (in-memory only) write-set: (in-memory scaffold)"
+          },
+          {
+            "step": "generate_code",
+            "executor": "CLAUDE_CODE_EXECUTION",
+            "detail": "kind 'fibonacci' is OUTSIDE the native deterministic catalog ⇒ requires generative reasoning",
+            "missingDependency": "frontier generative provider (LLM) for novel code synthesis"
+          },
+          {
+            "step": "generate_tests",
+            "executor": "ODG_NATIVE_EXECUTION",
+            "detail": "example→assertion generation is native, but there is no native-generated code to test"
+          },
+          {
+            "step": "execute_tests",
+            "executor": "NOT_MEASURED",
+            "detail": "no native code produced"
+          }
+        ],
+        "executorSummary": {
+          "ODG_NATIVE_EXECUTION": 4,
+          "CLAUDE_CODE_EXECUTION": 1,
+          "NOT_MEASURED": 1
+        },
+        "rollback": "nothing written (in-memory); no real-repo change",
+        "note": "ODG natively planned + scoped, but NOVEL code synthesis is a frontier-LLM step (honestly tagged CLAUDE_CODE_EXECUTION) — not presented as native."
+      }
+    }
+  ],
+  "ollamaIndependentReview": [
+    {
+      "mission": "m-sum-01",
+      "kind": "sum",
+      "repairedCode": "(a, b) => a + b",
+      "faultyCode": "(a, b) => a - b",
+      "ollamaOnRepaired": {
+        "raw": "VERDICT=CORRECT because the implementation uses the addition operator to correctly calculate the sum of two numbers.",
+        "verdict": "CORRECT"
+      },
+      "ollamaOnFaulty": {
+        "raw": "VERDICT=INCORRECT because the operator '-' is used instead of '+' to calculate the sum.",
+        "verdict": "INCORRECT"
+      },
+      "discriminated": true
+    },
+    {
+      "mission": "m-even-02",
+      "kind": "isEven",
+      "repairedCode": "(n) => n % 2 === 0",
+      "faultyCode": "(n) => n % 2 === 1",
+      "ollamaOnRepaired": {
+        "raw": "VERDICT=CORRECT because the operator % checks if the remainder of n divided by 2 is 0, which correctly identifies even numbers.",
+        "verdict": "CORRECT"
+      },
+      "ollamaOnFaulty": {
+        "raw": "VERDICT=INCORRECT because it checks if the number is odd, not even.",
+        "verdict": "INCORRECT"
+      },
+      "discriminated": true
+    }
+  ],
+  "summary": {
+    "missionsTotal": 4,
+    "nativeRepairedGreen": 2,
+    "nativeGreen": 1,
+    "escalatedHonestly": 1,
+    "ollamaReviews": 2,
+    "ollamaDiscriminatedAll": true
+  }
+}
