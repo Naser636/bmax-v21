@@ -49,4 +49,9 @@ A back-to-back second launch correctly **refused** with "Ollama socket already e
 held the loopback relay socket — a safe fail-closed re-run conflict. Allow the prior isolated session to fully exit
 before relaunching.
 
+## Provenance
+The exact 8-case harness that produced the evidence is committed at `docs/odg/autonomy/V319B_DRIVER.js` (8 cases,
+`num_predict:1024`). The live `~/odg-sandbox-work` copy was subsequently edited to a 6-case variant for a re-run that
+the launcher correctly refused (socket held), so the committed driver — not that edited copy — is the reproducible source.
+
 Evidence: `docs/odg/autonomy/V319B_CORPUS_TAXONOMY_EVIDENCE.json`. No canonical/production change; no secrets.
