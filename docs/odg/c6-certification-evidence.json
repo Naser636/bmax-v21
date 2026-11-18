@@ -1,0 +1,63 @@
+{
+  "//": "ODG C6 (sandbox isolation) CERTIFICATION EVIDENCE. Captured by the REAL isolated bwrap child launched via ~/bin/odg-claude-sandbox with ODG_SANDBOX_PROBE=1; the 8 canonical probes ran INSIDE the child (cwd=/work) and wrote this to /work (host-recoverable at ~/odg-sandbox-work). Ingested by the deny-by-default canonical module odg-c6-certification-ingest. ATTESTED in-session evidence: CI cannot re-run bwrap/Ollama, so the production gate reads this committed record and re-validates it structurally (all 8 tests pass with evidence AND all 4 isolation markers) on every evaluation. Provenance SHAs let a reviewer confirm the launcher/probe/relay that produced it.",
+  "provenance": {
+    "date": "2026-11-18",
+    "repoCommit": "dd96cec81f7073a5d7e95f90ecfb0e2baf72dc26",
+    "capturedBy": "real isolated bwrap child (~/bin/odg-claude-sandbox, ODG_SANDBOX_PROBE=1)",
+    "launcherSha256": "351db0ed126019fa4638d4cd45383234765322854093360fedd63ee2717c01b4",
+    "probeSha256": "e94280362e94ec805e570b741fe9d9d7b7f3d40bcfb0889fafa24591fcf4a4c2",
+    "relaySha256": "3d05b7e779e54fedb67f3e9183a5731ac1efc0bc1399c2813f14cb3c43031da4",
+    "independentlyInspected": true,
+    "canonicalIngest": "runtime/core/odg-c6-certification-ingest.ts"
+  },
+  "results": {
+    "tests": [
+      {
+        "n": 1,
+        "pass": true,
+        "evidence": "only-lo=true ifaces="
+      },
+      {
+        "n": 2,
+        "pass": true,
+        "evidence": "anthropic=404 platform=200 non-allowed(example)=000"
+      },
+      {
+        "n": 3,
+        "pass": true,
+        "evidence": "ANTHROPIC_API_KEY unset=true"
+      },
+      {
+        "n": 4,
+        "pass": true,
+        "evidence": "claude --print rc=0 reply_has_token=true"
+      },
+      {
+        "n": 5,
+        "pass": true,
+        "evidence": "api/tags qwen2.5-coder:7b present=true"
+      },
+      {
+        "n": 6,
+        "pass": true,
+        "evidence": "generate response_present=true"
+      },
+      {
+        "n": 7,
+        "pass": true,
+        "evidence": "/work writable=true"
+      },
+      {
+        "n": 8,
+        "pass": true,
+        "evidence": "canonical repo invisible=true"
+      }
+    ],
+    "session": {
+      "netnsOnlyLo": true,
+      "canonicalInvisible": true,
+      "workWritable": true,
+      "noAnthropicKey": true
+    }
+  }
+}
