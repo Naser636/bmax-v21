@@ -118,6 +118,43 @@ def main():
         if os.path.lexists(cleanup_sock):
             os.remove(cleanup_sock)
 
+        # V313 — test 11: the bridge tunnel still delivers the upstream RESPONSE when the client
+        # HALF-CLOSES its write side right after sending (what curl does). Regression for the old
+        # drop-on-first-EOF defect that made C6 sandbox probes 5/6 fail while the health check passed.
+        probe = socket.socket(); probe.bind(("127.0.0.1", 0)); bport = probe.getsockname()[1]; probe.close()
+        benv = dict(os.environ); benv["ODG_OLLAMA_SOCK"] = SOCK; benv["ODG_BRIDGE_PORT"] = str(bport)
+        bproc = subprocess.Popen([sys.executable, RELAY, "bridge"], env=benv,
+                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        halfclose_ok = False
+        try:
+            for _ in range(50):
+                try:
+                    t = socket.create_connection(("127.0.0.1", bport), timeout=1); t.close(); break
+                except OSError:
+                    time.sleep(0.1)
+            c = socket.create_connection(("127.0.0.1", bport), timeout=15)
+            c.sendall(b"GET /api/tags HTTP/1.1\r\nHost: x\r\nConnection: close\r\n\r\n")
+            c.shutdown(socket.SHUT_WR)  # the exact condition that used to drop the response
+            resp = b""
+            while True:
+                try:
+                    d = c.recv(65536)
+                except socket.timeout:
+                    break
+                if not d:
+                    break
+                resp += d
+            c.close()
+            status = int(resp.split(b" ", 2)[1]) if resp else 0
+            halfclose_ok = status == 200 and b"qwen2.5-coder:7b" in resp
+        finally:
+            bproc.terminate()
+            try:
+                bproc.wait(timeout=5)
+            except Exception:
+                bproc.kill()
+        check("11 bridge delivers upstream response after client half-close (no drop-on-EOF)", halfclose_ok)
+
         print()
         if failures == 0:
             print("ALL PASS — odg-ollama-relay (V197: FIX1 stream forced False via JSON "
