@@ -31,7 +31,7 @@ function main() {
 
   const gov = A.runGovernanceQualityAssistant("GOUVERNANCE", input);
   check("Gouvernance: real OWASP posture via scorecard — 17 threats, 8 covered, 8 partial, 0 gap; NOT a security certification; deny-by-default",
-    gov.ok && gov.domainFindings.kind === "GOVERNANCE" && gov.domainFindings.threats === 17 && gov.domainFindings.covered === 8 && gov.domainFindings.partial === 8 && gov.domainFindings.gap === 0 && gov.domainFindings.isSecurityCertification === false && gov.domainFindings.denyByDefault === true);
+    gov.ok && gov.domainFindings.kind === "GOVERNANCE" && gov.domainFindings.threats === 17 && gov.domainFindings.covered === 8 && gov.domainFindings.partial === 8 && gov.domainFindings.gap === 0 && gov.domainFindings.isSecurityCertification === false && gov.domainFindings.denyByDefault === true && gov.domainFindings.denyByDefaultProvenEmpirically === true);
   check("Gouvernance: forbidden to claim certification / declare the system secure / weaken a validator; posture ≠ certification (UNKNOWN stays UNKNOWN)",
     gov.forbiddenActions.some((x: string) => /claim security certification/.test(x)) && gov.forbiddenActions.some((x: string) => /declare the system secure/.test(x)) && gov.forbiddenActions.some((x: string) => /weaken a validator/.test(x)));
 

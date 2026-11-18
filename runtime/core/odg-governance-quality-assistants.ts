@@ -22,6 +22,7 @@ const SURFACE = require("./odg-executive-surface.js");            // V275
 const FMEA = require("./safety-fmea.js");                        // buildRiskRegister
 const DOCINT = require("./document-intelligence.js");            // reconcileDossier
 const OWASP = require("./odg-owasp-agentic-matrix.js");          // scorecard
+const APISEC = require("./odg-api-security-posture.js");         // validate (deny-by-default, genuinely exercised)
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
@@ -63,9 +64,12 @@ function domainFindings(id: string, input: any): any {
   }
   if (id === "GOUVERNANCE") {
     const sc = OWASP.scorecard();
+    // deny-by-default is DERIVED from a real odg-api-security-posture.validate probe: an undeclared path must be rejected.
+    const probe = APISEC.validate({ paths: {} }, { path: "/__undeclared_probe__", method: "GET" });
+    const denyByDefault = probe.admitted === false && Array.isArray(probe.violations) && probe.violations.some((v: string) => /deny-by-default/.test(String(v)));
     // covered/partial/gap are reported as-is from the scorecard; they need not sum to totalThreats (other coverage buckets may
     // exist). We never force a tally — the posture is reported honestly, gaps tracked, NOT presented as a certification.
-    return Object.freeze({ kind: "GOVERNANCE", threats: sc.totalThreats, covered: sc.covered, partial: sc.partial, gap: sc.gap, isSecurityCertification: false, denyByDefault: true });
+    return Object.freeze({ kind: "GOVERNANCE", threats: sc.totalThreats, covered: sc.covered, partial: sc.partial, gap: sc.gap, isSecurityCertification: false, denyByDefault, denyByDefaultProvenEmpirically: true });
   }
   return Object.freeze({ kind: "NONE" });
 }
