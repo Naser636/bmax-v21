@@ -44,6 +44,25 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
   ok("parse: empty edits ⇒ reject", O.parseEditsProposal('{"edits":[]}').ok === false);
   ok("parse: malformed edit ⇒ reject", O.parseEditsProposal('{"edits":[{"path":"a.js"}]}').ok === false);
 
+  // (4b) V283-B salvage: small code models emit source with an INVALID JSON escape (a regex backslash like /\s+/).
+  //      This is the MEASURED blocker that stopped ODG's own local model (qwen2.5-coder) completing the native cycle.
+  //      Valid JSON must be untouched; the regex payload (previously rejected) must now parse WITH semantics preserved;
+  //      real \n escapes still decode to newlines; genuinely-broken JSON must still fail-closed after salvage.
+  const okJson = O.parseEditsProposal('{"edits":[{"path":"a.js","content":"module.exports=1;"}]}');
+  ok("salvage: already-valid JSON parses with salvaged=false (no behaviour change for good output)", okJson.ok === true && okJson.salvaged === false);
+  // raw model bytes: content has an invalid \s (regex) AND a valid \n (newline).
+  const regexPayload = '{"edits":[{"path":"a.js","content":"const r=/\\s+/;\\nmodule.exports=r;"}]}';
+  let strictThrew = false; try { JSON.parse(regexPayload); } catch { strictThrew = true; }
+  ok("salvage: the \\s regex payload is INVALID strict JSON (reproduces the real blocker)", strictThrew === true);
+  const salv = O.parseEditsProposal(regexPayload);
+  ok("salvage: \\s regex payload now PARSES (salvaged=true) — unblocks ODG's local model", salv.ok === true && salv.salvaged === true);
+  ok("salvage: regex /\\s+/ literal is preserved in the recovered content", salv.ok && salv.proposal.edits[0].content.includes("/\\s+/"));
+  ok("salvage: valid \\n escape still decoded to a real newline (not doubled)", salv.ok && salv.proposal.edits[0].content.includes("\n") && !salv.proposal.edits[0].content.includes("\\n"));
+  // genuinely-broken JSON (missing value) must stay rejected even after the salvage attempt — fail-closed.
+  ok("salvage: structurally-broken JSON still REJECTED (fail-closed, salvage is backslash-only)", O.parseEditsProposal('{"edits":[{"path":"a.js","content":}]}').ok === false);
+  // escapeLoneBackslashes unit: valid escape kept, lone backslash doubled; non-string backslashes untouched.
+  ok("escapeLoneBackslashes: lone \\s becomes literal, valid \\n kept", JSON.parse(O.escapeLoneBackslashes('{"c":"a\\sb\\nx"}')).c === "a\\sb\nx");
+
   // (5) buildRepairPrompt includes the task + allowed files + strict JSON instruction.
   const prompt = O.buildRepairPrompt({ instruction: "fix add", allowedFiles: ["src/add.js"] }, { "src/add.js": "module.exports=(a,b)=>a-b;" });
   ok("prompt carries instruction, allowed files, strict JSON directive", /fix add/.test(prompt) && /src\/add\.js/.test(prompt) && /"edits"/.test(prompt));
