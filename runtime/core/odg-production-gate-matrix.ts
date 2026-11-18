@@ -21,6 +21,7 @@ const REG = require("./odg-blocked-contracts-register.js");
 const DPC = require("./deploy-package-check.js");
 const DER = require("./dashboard-exposure-readiness.js");
 const CR = require("./certification-readiness.js");
+const C6_INGEST = require("./odg-c6-certification-ingest.js");
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 
@@ -38,12 +39,31 @@ function productionGateMatrix(facts: any): any {
     ownerGated: true,
   });
 
-  // 2. sandbox certification — V198 patch prepared+validated; host launcher unmodified ⇒ OWNER_GATED
+  // 2. sandbox certification — EVIDENCE-DRIVEN, deny-by-default. Reads the committed in-session C6 evidence
+  //    (docs/odg/c6-certification-evidence.json, captured by the real isolated bwrap child) and runs the
+  //    canonical ingest (odg-c6-certification-ingest). READY only when the ingest certifies (all 8 canonical
+  //    tests pass WITH evidence AND all 4 isolation markers hold); absent/unreadable/incomplete ⇒ OWNER_GATED.
+  //    This reads the evidence via the injected f.readFile (like the other gates inject their inputs) so the
+  //    module stays pure and testable; with no readFile the gate fails closed to OWNER_GATED.
+  const c6 = (() => {
+    try {
+      const raw = typeof f.readFile === "function" ? f.readFile("docs/odg/c6-certification-evidence.json") : null;
+      if (typeof raw !== "string" || !raw.trim()) return null;
+      const parsed = JSON.parse(raw);
+      const results = isObj(parsed) && isObj(parsed.results) ? parsed.results : parsed;
+      return C6_INGEST.ingestCertification(results);
+    } catch { return null; }
+  })();
+  const sandboxCertified = !!(c6 && c6.certified === true);
   const sandboxGate = Object.freeze({
-    id: "sandbox-certification", status: "OWNER_GATED", scope: "owner",
-    detail: "V198 launcher-integration patch PREPARED + VALIDATED (12/12); host launcher UNMODIFIED; 8 in-session certification tests NOT run",
-    remainingAction: "owner: install relay under /run, apply the V198 patch to the host launcher, run the 8 in-session certification tests in the real isolated session",
-    ownerGated: true,
+    id: "sandbox-certification", status: sandboxCertified ? "READY" : "OWNER_GATED", scope: "owner",
+    detail: sandboxCertified
+      ? `C6 CERTIFIED from real in-session evidence: all ${c6.totalCanonical} canonical tests passed with evidence AND all isolation markers hold (ingested, not asserted)`
+      : "no certified in-session C6 evidence ingested (deny-by-default); the 8 in-session certification tests must pass in the real isolated session",
+    remainingAction: sandboxCertified
+      ? "certified — sandbox isolation proven in a real isolated session (actual deploy remains separately OWNER_GATED)"
+      : "owner: run the 8 in-session certification tests in the real isolated session, then ingest the captured evidence",
+    ownerGated: !sandboxCertified,
   });
 
   // 3. deploy package — structural + safety check of the prepared deploy artifacts
@@ -95,7 +115,7 @@ const PRODUCTION_GATE_MATRIX_CONTRACT = Object.freeze({
   invariants: Object.freeze([
     "composes EXISTING gates (blocked-contracts-register / deploy-package-check / dashboard-exposure-readiness / certification-readiness) — no new primitive/engine/registry",
     "deny-by-default: absent facts ⇒ NOT_READY / OWNER_GATED / BLOCKED (never READY by omission)",
-    "16 contracts stay BLOCKED_AWAITING_ISOLATION; sandbox certification stays OWNER_GATED; no status is changed",
+    "sandbox certification is EVIDENCE-DRIVEN via the canonical C6 ingest: READY only when all 8 in-session tests pass + all isolation markers hold; absent/incomplete/unreadable evidence ⇒ OWNER_GATED (never certified by omission)",
     "identifies every production gate + its exact remaining action (local vs OWNER_GATED); deploys/certifies nothing",
     "preserves the honesty ladder DOCUMENTED ≠ BUILT ≠ TESTED ≠ ACCEPTED ≠ OPERATIONAL ≠ DEPLOYED; deterministic; read-only",
   ]),
