@@ -8,7 +8,7 @@
  * primitive/engine/registry).
  *
  * Gates reconciled (each from its real module, deny-by-default):
- *   1. improvement-contracts   — odg-blocked-contracts-register (16 contracts) ⇒ BLOCKED_AWAITING_ISOLATION
+ *   1. improvement-contracts   — odg-blocked-contracts-register (fileExists-driven) ⇒ READY when all built+tested, else BLOCKED
  *   2. sandbox-certification   — V198 patch PREPARED+VALIDATED (12/12), host launcher UNMODIFIED ⇒ OWNER_GATED
  *   3. deploy-package          — deploy-package-check.checkPackage ⇒ READY | NOT_READY (locally buildable)
  *   4. dashboard-exposure      — dashboard-exposure-readiness.assessExposureReadiness ⇒ NOT_READY until controls + OWNER TLS
@@ -30,13 +30,22 @@ function isObj(v: any): boolean { return v !== null && typeof v === "object" && 
 function productionGateMatrix(facts: any): any {
   const f = isObj(facts) ? facts : {};
 
-  // 1. improvement contracts (16) — BLOCKED_AWAITING_ISOLATION
+  // 1. improvement contracts — REGISTER-DRIVEN, deny-by-default. The AWAITING_ISOLATION premise is resolved:
+  //    C6 is certified AND the 16 contracts are deterministic (built WITHOUT untrusted exec). READY only when
+  //    every contract's module+test target exists on disk (built===total, remaining===0, each has module+test);
+  //    the register's built count is fileExists-driven, so a missing module fails closed to BLOCKED (teeth).
+  //    READY here means code-complete + CI-gated — NOT operational/deployed (honesty ladder preserved).
   const reg = REG.consolidate({ fileExists: f.fileExists });
+  const contractsBuilt = reg.summary.total > 0 && reg.summary.built === reg.summary.total && reg.summary.remaining === 0 && reg.summary.allHaveModuleAndTest === true;
   const contractsGate = Object.freeze({
-    id: "improvement-contracts", status: "BLOCKED_AWAITING_ISOLATION", scope: "local",
-    detail: `${reg.summary.total} contracts (disjoint, unbuilt)`,
-    remainingAction: "owner-activate a validated isolated session ⇒ then build the 16 contracts under V188 delegation",
-    ownerGated: true,
+    id: "improvement-contracts", status: contractsBuilt ? "READY" : "BLOCKED_AWAITING_ISOLATION", scope: "local",
+    detail: contractsBuilt
+      ? `${reg.summary.total} improvement contracts BUILT + TESTED (code-complete, CI-gated; deterministic, built without untrusted exec)`
+      : `${reg.summary.total} contracts — ${reg.summary.built}/${reg.summary.total} built (missing modules fail closed)`,
+    remainingAction: contractsBuilt
+      ? "contracts code-complete + CI-gated — code-level satisfied (operational rollout stays owner-gated)"
+      : "owner-activate a validated isolated session ⇒ then build the remaining contracts under V188 delegation",
+    ownerGated: !contractsBuilt,
   });
 
   // 2. sandbox certification — EVIDENCE-DRIVEN, deny-by-default. Reads the committed in-session C6 evidence
@@ -116,6 +125,7 @@ const PRODUCTION_GATE_MATRIX_CONTRACT = Object.freeze({
     "composes EXISTING gates (blocked-contracts-register / deploy-package-check / dashboard-exposure-readiness / certification-readiness) — no new primitive/engine/registry",
     "deny-by-default: absent facts ⇒ NOT_READY / OWNER_GATED / BLOCKED (never READY by omission)",
     "sandbox certification is EVIDENCE-DRIVEN via the canonical C6 ingest: READY only when all 8 in-session tests pass + all isolation markers hold; absent/incomplete/unreadable evidence ⇒ OWNER_GATED (never certified by omission)",
+    "improvement contracts are REGISTER-DRIVEN (fileExists): READY only when every contract's module+test exists on disk (built===total); a missing module fails closed to BLOCKED; READY = code-complete + CI-gated, NOT operational/deployed",
     "identifies every production gate + its exact remaining action (local vs OWNER_GATED); deploys/certifies nothing",
     "preserves the honesty ladder DOCUMENTED ≠ BUILT ≠ TESTED ≠ ACCEPTED ≠ OPERATIONAL ≠ DEPLOYED; deterministic; read-only",
   ]),
