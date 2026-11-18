@@ -104,12 +104,46 @@ function parseEditsProposal(text: any): any {
   if (!candidate) { const i = s.indexOf('"edits"'); if (i >= 0) { const start = s.lastIndexOf("{", i); if (start >= 0) candidate = balancedObject(s, start); } }
   if (!candidate) { const start = s.indexOf("{"); if (start >= 0) candidate = balancedObject(s, start); }
   if (!candidate) return { ok: false, reason: "no JSON object found in model output" };
-  let obj: any; try { obj = JSON.parse(candidate); } catch { return { ok: false, reason: "model output JSON did not parse" }; }
+  // V283-B: small code models routinely emit otherwise-valid JSON whose `content` string carries source code with an
+  // INVALID JSON escape — most commonly a regex backslash (`/\s+/`, `\d`, `\w`). JSON only permits \" \\ \/ \b \f \n
+  // \r \t \uXXXX, so JSON.parse rejects semantically-correct model output. Fail-closed fallback: ONLY when strict
+  // parse throws, double any lone (invalid) backslash inside a string literal and retry once. Valid escapes are left
+  // untouched (so real \n newlines still decode); if the retry ALSO fails we still reject — no other leniency.
+  let obj: any; let salvaged = false;
+  try { obj = JSON.parse(candidate); }
+  catch {
+    try { obj = JSON.parse(escapeLoneBackslashes(candidate)); salvaged = true; }
+    catch { return { ok: false, reason: "model output JSON did not parse" }; }
+  }
   if (!isObj(obj) || !Array.isArray(obj.edits)) return { ok: false, reason: "proposal missing edits[]" };
   const edits: any[] = [];
   for (const e of obj.edits) { if (!isObj(e) || typeof e.path !== "string" || typeof e.content !== "string") return { ok: false, reason: "each edit needs { path:string, content:string }" }; edits.push({ path: e.path, content: e.content }); }
   if (edits.length === 0) return { ok: false, reason: "empty edits[]" };
-  return { ok: true, proposal: { edits } };
+  return { ok: true, proposal: { edits }, salvaged };
+}
+
+/**
+ * escapeLoneBackslashes(s): inside JSON string literals, double any backslash that is NOT the start of a valid JSON
+ * escape (\" \\ \/ \b \f \n \r \t \u). Backslashes outside strings are left alone. Narrow, deterministic, fail-closed:
+ * it only makes an INVALID escape into a valid literal backslash; it never relaxes structure, so garbage still fails
+ * the subsequent JSON.parse. Used ONLY as a one-shot salvage after strict parse throws.
+ */
+function escapeLoneBackslashes(s: string): string {
+  let out = ""; let inStr = false; let esc = false;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (esc) { out += c; esc = false; continue; }
+    if (c === "\\") {
+      if (!inStr) { out += c; continue; }
+      const n = s[i + 1];
+      if (n !== undefined && '"\\/bfnrtu'.indexOf(n) >= 0) { out += c; esc = true; }  // valid escape: keep + consume
+      else { out += "\\\\"; }                                                          // lone backslash: double it
+      continue;
+    }
+    if (c === '"') inStr = !inStr;
+    out += c;
+  }
+  return out;
 }
 
 /** balancedObject(s, start): return the substring of the balanced {...} starting at `start`, or null. */
@@ -136,5 +170,5 @@ function buildRepairPrompt(contract: any, currentFiles: any): string {
   ].join("\n\n");
 }
 
-export { detectOllama, generate, loopbackGet, parseEditsProposal, buildRepairPrompt, balancedObject, PREFERRED_MODELS, OLLAMA_HOST, OLLAMA_PORT };
-module.exports = { detectOllama, generate, loopbackGet, parseEditsProposal, buildRepairPrompt, balancedObject, PREFERRED_MODELS, OLLAMA_HOST, OLLAMA_PORT };
+export { detectOllama, generate, loopbackGet, parseEditsProposal, buildRepairPrompt, balancedObject, escapeLoneBackslashes, PREFERRED_MODELS, OLLAMA_HOST, OLLAMA_PORT };
+module.exports = { detectOllama, generate, loopbackGet, parseEditsProposal, buildRepairPrompt, balancedObject, escapeLoneBackslashes, PREFERRED_MODELS, OLLAMA_HOST, OLLAMA_PORT };
