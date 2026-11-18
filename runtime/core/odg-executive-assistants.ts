@@ -25,7 +25,7 @@ function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
 const ASSISTANTS = Object.freeze({
   DIRECTION_GENERALE: Object.freeze({
     id: "DIRECTION_GENERALE", domain: "Direction générale",
-    mandate: "oversee the whole company: priorities, risks, pending approvals, cross-domain conflicts; decide only level-A autonomous items, escalate C/D",
+    mandate: "oversee the whole company: priorities, risks, pending approvals, cross-domain conflicts; act autonomously ONLY on pre-authorized items (level A, or an owner-pre-approved level-B transactional action e.g. an authorized dunning reminder); escalate every level-C/D (significant) act",
     kpiSections: Object.freeze(["A_FINANCIAL", "C_OPERATIONAL", "E_COMPANY", "F_ODG"]),
     ownsThrusts: Object.freeze(["GOVERNANCE", "RESOLVE_OPS"]),           // owner-gated items + operational blockers surface here
     oversight: true,                                                      // sees the full governed queue + conflicts
@@ -107,7 +107,7 @@ const EXECUTIVE_ASSISTANTS_CONTRACT = Object.freeze({
   reuses: Object.freeze(["odg-executive-surface (V275 — composes dashboard/decision/country-ranking/market-entry)"]),
   invariants: Object.freeze([
     "functional assistants = governed role-scoped projections over the unified surface — NOT descriptive cards; reuse the surface (no duplication, no new engine)",
-    "an assistant PREPARES/RECOMMENDS only and NEVER executes a significant act: owned decisions keep their authority (C/D ⇒ human approval), executionResult always null",
+    "an assistant PREPARES/RECOMMENDS only and NEVER executes a SIGNIFICANT act: owned decisions keep their authority; level-C/D (market entry, significant financial, reserved) ALWAYS require human approval; executionResult is always null. Autonomy (requiresApproval false) is confined to level-A items and owner-pre-approved level-B transactional actions (e.g. an authorized dunning reminder) — inherited from the V271 decision engine, never a significant act",
     "UNKNOWN ≠ 0 — missing/unknown data is surfaced (missingDataCount, decidable), never fabricated; each assistant carries authorised vs forbidden actions",
     "maturity is honest: PARTIAL (wired to real engines but fed synthetic/estimate data) — NO assistant is claimed OPERATIONAL (no real company data)",
     "deterministic/read-only; market entry / significant financial acts never autonomous; Lot 1 is 3 of the 20 domains — the lot sequence continues",
