@@ -1,0 +1,115 @@
+{
+  "schema": "v319-harder-battery",
+  "generatedInside": "C6 sandbox child (/work)",
+  "cases": [
+    {
+      "id": "multimodule",
+      "mode": "multi",
+      "status": "ACCEPTED",
+      "model": "qwen2.5-coder:7b",
+      "edits": [
+        "src/util.js"
+      ],
+      "producedCode": "module.exports.pct = (part, whole) => (part / whole) * 100;",
+      "editedExpectedFile": true,
+      "adversarialEdgePass": true,
+      "independentModelEval": {
+        "model": "qwen2.5-coder:3b",
+        "verdict": "CORRECT",
+        "raw": "VERDICT=CORRECT"
+      }
+    },
+    {
+      "id": "stacktrace",
+      "mode": "stack",
+      "status": "ACCEPTED",
+      "model": "qwen2.5-coder:7b",
+      "edits": [
+        "src/f.js"
+      ],
+      "producedCode": "module.exports = (arr) => arr.reduce((s, x) => s + (x.value || 0), 0);",
+      "editedExpectedFile": true,
+      "adversarialEdgePass": true,
+      "independentModelEval": {
+        "model": "qwen2.5-coder:3b",
+        "verdict": "CORRECT",
+        "raw": "VERDICT=CORRECT"
+      }
+    },
+    {
+      "id": "parse-duration",
+      "mode": "single",
+      "status": "ABSTAINED",
+      "model": "qwen2.5-coder:7b",
+      "edits": [
+        "src/f.js"
+      ],
+      "restoredExactly": true
+    },
+    {
+      "id": "balanced-parens",
+      "mode": "single",
+      "status": "ABSTAINED",
+      "model": "qwen2.5-coder:7b",
+      "edits": [
+        "src/f.js"
+      ],
+      "restoredExactly": true
+    },
+    {
+      "id": "group-by",
+      "mode": "single",
+      "status": "ACCEPTED",
+      "model": "qwen2.5-coder:7b",
+      "edits": [
+        "src/f.js"
+      ],
+      "producedCode": "module.exports = (arr, key) => arr.reduce((acc, obj) => {\n  const keyValue = obj[key];\n  if (!acc[keyValue]) {\n    acc[keyValue] = [];\n  }\n  acc[keyValue].push(obj);\n  return acc;\n}, {});",
+      "editedExpectedFile": true,
+      "adversarialEdgePass": true,
+      "independentModelEval": {
+        "model": "qwen2.5-coder:3b",
+        "verdict": "CORRECT",
+        "raw": "VERDICT=CORRECT"
+      }
+    },
+    {
+      "id": "roman-to-int",
+      "mode": "single",
+      "status": "ACCEPTED",
+      "model": "qwen2.5-coder:7b",
+      "edits": [
+        "src/f.js"
+      ],
+      "producedCode": "const romanToInt = (s) => {\n  const romanValues = {\n    I: 1,\n    V: 5,\n    X: 10,\n    L: 50,\n    C: 100,\n    D: 500,\n    M: 1000\n  };\n\n  let result = 0;\n  let prevValue = 0;\n\n  for (let i = s.length - 1; i >= 0; i--) {\n    const currentValue = romanValues[s[i]];\n    if (currentValue < prevValue) {\n      result -= currentValue;\n    } else {\n      result += currentValue;\n    }\n    prevValue = currentValue;\n  }\n\n  return result;\n};\n\nmodule.exports = romanToInt;",
+      "editedExpectedFile": true,
+      "adversarialEdgePass": true,
+      "independentModelEval": {
+        "model": "qwen2.5-coder:3b",
+        "verdict": "CORRECT",
+        "raw": "VERDICT=CORRECT"
+      }
+    }
+  ],
+  "rollback": {
+    "status": "ABSTAINED",
+    "restoredExactly": true
+  },
+  "summary": {
+    "total": 6,
+    "accepted": 4,
+    "abstained": 2,
+    "rejected": 0,
+    "acceptRate": 0.667,
+    "acceptedGeneralised": 4,
+    "multimoduleEditedCorrectFile": true,
+    "independentModelAgreedCorrect": 4,
+    "abstainRestoredExactly": true,
+    "rollbackProof": {
+      "status": "ABSTAINED",
+      "restoredExactly": true
+    },
+    "generator": "qwen2.5-coder:7b",
+    "independentEvaluator": "qwen2.5-coder:3b"
+  }
+}
