@@ -28,6 +28,12 @@ function main(): void {
   check("disjoint ⇒ no conflicts", I.findConflicts([iv(1, 2), iv(3, 4), iv(5, 6)]).hasConflict === false);
   // triple overlap ⇒ 3 pairs
   check("three mutually overlapping ⇒ 3 conflict pairs", I.findConflicts([iv(1, 5, "X"), iv(2, 6, "Y"), iv(3, 7, "Z")]).conflicts.length === 3);
+  // WIDE-interval early-break index pin: W=[1,100] overlaps BOTH an early-ending [2,3] AND a later [50,60];
+  // the break must compare against sorted[i].end (W.end=100), not sorted[j-1].end — a wrong-index break would DROP W∩Q.
+  const wide = I.findConflicts([iv(1, 100, "W"), iv(2, 3, "P"), iv(50, 60, "Q")]);
+  check("wide interval finds BOTH conflicts (early-break index pinned): W∩P[2,3] + W∩Q[50,60]", wide.conflicts.length === 2 &&
+    wide.conflicts.some((x: any) => x.a === "W" && x.b === "P" && x.overlapStart === 2 && x.overlapEnd === 3) &&
+    wide.conflicts.some((x: any) => x.a === "W" && x.b === "Q" && x.overlapStart === 50 && x.overlapEnd === 60));
 
   // totalCovered = union length: [1,3],[2,6],[8,10] ⇒ (6-1)+(10-8)=7
   check("totalCovered union = 7", (() => { const t = I.totalCovered([iv(1, 3), iv(2, 6), iv(8, 10)]); return t.covered === 7 && t.segments === 2; })());
