@@ -26,6 +26,8 @@ function main(): void {
   check("entry with validUntil<validFrom rejected", P.buildCatalog([{ itemRef: "Y", unit: "u", supplier: "S", unitPriceMinor: 1, priceSource: "s", validFrom: "2026-06-01", validUntil: "2026-01-01" }], {}).rejected.length === 1);
   check("foreign currency rejected (no implicit FX)", P.buildCatalog([{ itemRef: "Z", unit: "u", supplier: "S", unitPriceMinor: 1, priceSource: "s", validFrom: "2026-01-01", currency: "USD" }], { currency: "EUR" }).rejected.length === 1);
   check("empty ⇒ NO_ENTRIES", P.buildCatalog([], {}).code === "NO_ENTRIES");
+  check("calendar-garbage validUntil (2026-13-99) rejected (can't extend validity)", P.buildCatalog([{ itemRef: "G", unit: "u", supplier: "S", unitPriceMinor: 1, priceSource: "s", validFrom: "2026-01-01", validUntil: "2026-13-99" }], {}).rejected.length === 1);
+  check("calendar-garbage asOfDate (2026-00-00) ⇒ BAD_ASOF_DATE", P.lookup(P.buildCatalog(entries(), {}), { itemRef: "CIM-42.5", asOfDate: "2026-00-00" }).code === "BAD_ASOF_DATE");
 
   // --- lookup: cheapest-first candidates + non-binding suggestion ---
   const lk = P.lookup(cat, { itemRef: "CIM-42.5", asOfDate: "2026-03-15" });

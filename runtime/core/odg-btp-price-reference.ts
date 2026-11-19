@@ -24,7 +24,11 @@
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function isStr(v: any): boolean { return typeof v === "string" && v.trim().length > 0; }
 function isNonNegInt(v: any): boolean { return typeof v === "number" && Number.isSafeInteger(v) && v >= 0; }
-function isISODate(v: any): boolean { return typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v); } // ISO sorts lexicographically
+function isISODate(v: any): boolean { // ISO YYYY-MM-DD (sorts lexicographically); range-checks month/day so a calendar-garbage date (e.g. 2026-13-99) can't extend validity
+  if (typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const mo = +v.slice(5, 7), d = +v.slice(8, 10);
+  return mo >= 1 && mo <= 12 && d >= 1 && d <= 31; // range check (not full per-month calendar validation)
+}
 function freeze(o: any): any { return Object.freeze(o); }
 
 /**
