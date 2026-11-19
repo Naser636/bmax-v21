@@ -4,9 +4,10 @@
  * FRENCH VAT (TVA) COMPUTATION — multi-rate net→VAT→gross, per-rate breakdown, and BTP subcontracting reverse-charge
  * (autoliquidation). PURE, deterministic, integer minor-unit (centimes), fail-closed.
  *
- * THE GAP (reconciled): the einvoice stack PARSES/consumes VAT amounts; the billing/devis/chantier engines compute none;
- * nothing computes VAT from a net base or applies the autoliquidation rule. Useful for the commercial stack (devis /
- * invoice / supplier-commitment).
+ * THE GAP (reconciled): the einvoice stack PARSES VAT amounts; odg-btp-billing-engine.computeInvoice computes ONE
+ * single-line VAT from a supplied FLOAT rate — but nothing does MULTI-RATE integer-basis-point VAT, a per-rate
+ * breakdown on the aggregated base, or the BTP autoliquidation (reverse-charge) rule. This adds those. Useful for the
+ * commercial stack (devis / invoice / supplier-commitment).
  *
  * TWO HARD HONESTY BOUNDARIES (do not over-claim):
  *  1. This COMPUTES VAT given a DECLARED rate — it does NOT decide WHICH rate legally applies. 5.5% vs 10% vs 20% for
