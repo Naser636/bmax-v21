@@ -24,6 +24,7 @@
  */
 
 const { signature } = require("./patch-memory.js");
+const reuseValidity = require("./odg-reuse-validity-gate.js"); // V324 §6.3 — FORWARD pre-reuse validity (additive)
 
 const NAME = "decision-precedent";
 const AUTHOR_UNKNOWN = "UNKNOWN";
@@ -97,7 +98,23 @@ function summarizeReuse(store: any): any {
 }
 
 export {};
-module.exports = { NAME, signature, emptyStore, recordPrecedent, recallPrecedent, applyPrecedent, reusePrecedent, summarizeReuse };
+// (V324 §6.3, ADDITIVE — recallPrecedent UNCHANGED) recallPrecedentFresh(store, task, signals): recall the full
+// precedent and run the FORWARD pre-reuse validity gate over it (odg-reuse-validity-gate). A DECISION precedent has
+// NO file write-set, so fileScope:false — freshness is governed by age / provenance / suppressed / dependencyDrift
+// (NOT file drift). Returns null on a miss; else { ...precedent, validity, reusableAsProven }. reusableAsProven is
+// true ONLY for REUSABLE_AS_PROVEN; absent/aged/UNKNOWN-provenance/suppressed ⇒ not reusable-as-proven (fail-closed).
+// signals: { asOfMs, maxAgeDays?, suppressed?, dependencyDrift? } — forwarded (fileScope is forced false here).
+function recallPrecedentFresh(store: any, task: any, signals: any): any {
+  const precedent = recallPrecedent(store, task);
+  if (!precedent) return null;
+  const validity = reuseValidity.classifyReuseValidity(
+    { learnedAt: precedent.capturedAt, authoredBy: precedent.authoredBy },
+    { ...(signals && typeof signals === "object" ? signals : {}), fileScope: false },
+  );
+  return Object.freeze({ ...precedent, validity, reusableAsProven: validity.ok === true && validity.verdict === "REUSABLE_AS_PROVEN" });
+}
+
+module.exports = { NAME, signature, emptyStore, recordPrecedent, recallPrecedent, recallPrecedentFresh, applyPrecedent, reusePrecedent, summarizeReuse };
 
 // Read-only CLI: print the store model; mutates nothing.
 if (require.main === module) {
