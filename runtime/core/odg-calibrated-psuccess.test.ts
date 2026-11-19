@@ -64,6 +64,8 @@ function main(): void {
 
   // honesty + determinism + frozen + contract
   check("note: measuredP≠confidence, CALIBRATED-only, plan is a hypothesis", /raw success RATE/.test(dA.note) && /ONLY when the estimate is CALIBRATED/.test(dA.note) && /a plan is a hypothesis, not a result/i.test(dA.note));
+  check("estimate authorizes nothing (field + note)", dA.authorizes === false && dB.authorizes === false && /AUTHORIZES NOTHING/.test(dA.note));
+  check("contract reuses is honest: NOT wired into the planner here", M.CALIBRATED_PSUCCESS_CONTRACT.reuses.some((s: string) => /NOT wired into the planner here/.test(s)));
   check("deterministic", JSON.stringify(M.derivePsuccess("build", surv)) === JSON.stringify(dA));
   check("frozen", Object.isFrozen(dA));
   check("contract: measuredP≠confidence, bias⇒null, thin/stale⇒null, null⇒0-credit, only-decided",
