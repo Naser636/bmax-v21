@@ -52,6 +52,9 @@ function main(): void {
   // no stated VAT ⇒ vat-consistency MEDIUM (recomputed, not blocking ready)
   const noStated = { ...validInvoice() }; delete noStated.statedTotalVatMinor;
   check("no stated VAT ⇒ MEDIUM check, still ready (recomputed)", (() => { const x = C.precheckInvoice(noStated); return x.ready === true && checkOf(x, "vat-consistency").severity === "MEDIUM"; })());
+  // present-but-MALFORMED stated VAT ⇒ HIGH fail (not silently treated as absent)
+  check("malformed stated VAT (float) ⇒ vat-consistency HIGH fail, not ready", (() => { const x = C.precheckInvoice({ ...validInvoice(), statedTotalVatMinor: 21650.5 }); const c = checkOf(x, "vat-consistency"); return x.ready === false && c.pass === false && c.severity === "HIGH" && /present but malformed/.test(c.detail); })());
+  check("malformed stated VAT (negative) ⇒ HIGH fail", C.precheckInvoice({ ...validInvoice(), statedTotalVatMinor: -1 }).ready === false);
 
   // HONESTY: note disclaims legal certification + the composed-module disclaimers
   check("note: pre-check NOT legal certification, SIRET≠exists, rate≠applies", /NOT a legal-compliance certification/.test(r.note) && /SIRET entity exists/.test(r.note) && /VAT rate legally applies/.test(r.note));

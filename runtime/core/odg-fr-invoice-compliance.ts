@@ -69,8 +69,9 @@ function precheckInvoice(invoice: any): any {
       if (bd.ok !== true) add("vat-consistency", false, "HIGH", bd.code || "vat breakdown failed");
       else {
         computed = { totalHTMinor: bd.totals.netMinor, totalVatMinor: bd.totals.vatMinor, totalTTCMinor: bd.totals.grossMinor, byRate: bd.byRate };
-        if (isNonNegInt(i.statedTotalVatMinor)) add("vat-consistency", i.statedTotalVatMinor === bd.totals.vatMinor, "HIGH", i.statedTotalVatMinor === bd.totals.vatMinor ? "stated VAT matches recomputed" : `stated VAT ${i.statedTotalVatMinor} ≠ recomputed ${bd.totals.vatMinor}`);
-        else add("vat-consistency", true, "MEDIUM", "no stated VAT to cross-check; recomputed from lines");
+        if (i.statedTotalVatMinor === undefined) add("vat-consistency", true, "MEDIUM", "no stated VAT to cross-check; recomputed from lines");
+        else if (!isNonNegInt(i.statedTotalVatMinor)) add("vat-consistency", false, "HIGH", "statedTotalVatMinor is present but malformed (must be a non-negative safe integer) — not silently treated as absent");
+        else add("vat-consistency", i.statedTotalVatMinor === bd.totals.vatMinor, "HIGH", i.statedTotalVatMinor === bd.totals.vatMinor ? "stated VAT matches recomputed" : `stated VAT ${i.statedTotalVatMinor} ≠ recomputed ${bd.totals.vatMinor}`);
       }
     }
   }
