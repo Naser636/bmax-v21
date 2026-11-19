@@ -27,6 +27,11 @@ function main(): void {
   // avgRanks tie handling direct
   check("avgRanks ties: [10,10,20,30] ⇒ [1.5,1.5,3,4]", JSON.stringify(R.avgRanks([10, 10, 20, 30])) === JSON.stringify([1.5, 1.5, 3, 4]));
 
+  // TIES ON BOTH SIDES — pins the both-tied branch (a pair tied on x AND y must go to BOTH tie corrections, NOT concordant).
+  // [1,1,2,2,3,4] vs [2,2,2,1,3,4]: pair(0,1) tied on both ⇒ τ-b=0.560449 (nc 9, nd 2), ρ=0.656571 (scipy-equivalent)
+  check("Kendall both-tie branch: [1,1,2,2,3,4] vs [2,2,2,1,3,4] ⇒ τ-b=0.560449 (nc 9, nd 2)", (() => { const k = R.kendall([1, 1, 2, 2, 3, 4], [2, 2, 2, 1, 3, 4]); return k.tau === 0.560449 && k.concordant === 9 && k.discordant === 2; })());
+  check("Spearman both-tie: same ⇒ ρ=0.656571", R.spearman([1, 1, 2, 2, 3, 4], [2, 2, 2, 1, 3, 4]).rho === 0.656571);
+
   // Spearman differs from the no-ties shortcut when ties exist (robustness proof): shortcut would give a different number
   check("tie-correct ρ (0.8333) ≠ naive-shortcut value", R.spearman([1, 1, 2, 3], [1, 2, 2, 3]).rho === 0.833333);
 
