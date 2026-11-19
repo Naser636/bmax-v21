@@ -36,6 +36,10 @@ function main(): void {
   check("owner-authorized publish ⇒ PUBLISHED with publication record", pub.ok && pub.asset.status === "PUBLISHED" && pub.asset.publication.owner === "akabi");
   check("double publish ⇒ ALREADY_PUBLISHED", C.requestPublish(pub.asset, { ownerAuthorized: true, owner: "akabi" }).code === "ALREADY_PUBLISHED");
 
+  // defense-in-depth: a FORGED asset (status admissible but governance.publishable false) cannot publish
+  const forged = { assetId: "F", status: "DRAFT_ADMISSIBLE", channel: "seo", governance: { publishable: false } };
+  check("forged status (governance.publishable false) ⇒ NOT_ADMISSIBLE (status not trusted)", C.requestPublish(forged, { ownerAuthorized: true, owner: "akabi" }).code === "NOT_ADMISSIBLE");
+
   // performance — descriptive, published-only, no fabrication
   check("performance on unpublished ⇒ NOT_PUBLISHED", C.recordPerformance(ok.asset, { impressions: 10 }).code === "NOT_PUBLISHED");
   check("bad metric (negative) ⇒ BAD_METRIC", C.recordPerformance(pub.asset, { clicks: -5 }).code === "BAD_METRIC");

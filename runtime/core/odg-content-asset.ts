@@ -46,6 +46,8 @@ function requestPublish(asset: any, auth: any): any {
   if (!isStr(a.assetId) || !isStr(a.status)) return freeze({ ok: false, code: "BAD_ASSET" });
   if (a.status === "PUBLISHED") return freeze({ ok: false, code: "ALREADY_PUBLISHED" });
   if (a.status !== "DRAFT_ADMISSIBLE") return freeze({ ok: false, code: "NOT_ADMISSIBLE", detail: "only a brand-validated admissible draft can be published" });
+  // defense-in-depth: re-assert the brand governance verdict, not just the status label (a forged status cannot publish).
+  if (!isObj(a.governance) || a.governance.publishable !== true) return freeze({ ok: false, code: "NOT_ADMISSIBLE", detail: "governance.publishable must be true (re-asserted; status alone is not trusted)" });
   const o = isObj(auth) ? auth : {};
   if (o.ownerAuthorized !== true || !isStr(o.owner)) return freeze({ ok: false, code: "OWNER_GATED", detail: "publishing requires explicit owner authorization (ownerAuthorized:true + owner); never auto-published" });
   return freeze({ ok: true, asset: freeze({ ...a, status: "PUBLISHED", publication: freeze({ owner: o.owner, channel: a.channel, note: isStr(o.note) ? o.note : null }) }) });
