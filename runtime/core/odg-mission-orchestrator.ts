@@ -18,6 +18,7 @@ const DEP = require("./dep-planner.js");
 const PCC = require("./provider-capability-contract.js");
 const INDEP = require("./evaluator-independence.js");
 const DI = require("./delegate-isolation.js");
+const WSC = require("./odg-writeset-contention.js");
 
 // ODG native capability registry (what ODG executes itself, §6) vs what is routed to a provider (§7). Conservative/honest:
 // only bounded deterministic classes are native; anything owner/external-gated is NOT dispatchable at all.
@@ -65,14 +66,28 @@ function buildDispatchPlan(inventory?: any): any {
   let schedule: any;
   try { schedule = DEP.schedule(items); } catch (e: any) { schedule = { layerCount: 0, maxParallelism: 0, layers: [], error: String(e && e.message || e) }; }
 
+  // WRITE-SAFETY (§ isolation): dep-planner parallelises by DECLARED DEPS ONLY — it does NOT check whether two missions
+  // in the same layer write overlapping paths (dependency-order ≠ write-set independence). Re-check each layer for
+  // write-set contention and expose safe sub-waves. Missions in the open-mission inventory carry no declared write-set,
+  // so each is UNKNOWN ⇒ fail-closed: parallel dispatch is NOT proven safe until missions declare authorizedPaths. As
+  // write-sets appear on missions, this analysis sharpens automatically.
+  const layerIds = Array.isArray(schedule.layers) ? schedule.layers.map((l: any) => (Array.isArray(l.items) ? l.items : [])) : [];
+  const contentionMissions = missions
+    .filter((m: any) => actableIds.has(m.id))
+    .map((m: any) => ({ id: m.id, authorizedPaths: m.authorizedPaths || m.writeSet, readOnly: m.readOnly === true }));
+  const writeSafety = WSC.computeLayerContention(layerIds, contentionMissions);
+  const parallelDispatchProvenSafe = writeSafety.ok === true && writeSafety.anyContention === false;
+
   const byRoute: any = {}; for (const r of routed) byRoute[r.route] = (byRoute[r.route] || 0) + 1;
   return Object.freeze({
     totalOpen: routed.length,
     byRoute: Object.freeze(byRoute),
     routes: Object.freeze(routed),
     parallelSchedule: Object.freeze(schedule),
+    writeSafety: Object.freeze(writeSafety),
+    parallelDispatchProvenSafe,
     dispatchableNow: actable.length,
-    note: "orchestrator over the REAL open-mission inventory; routes each mission, schedules the dispatchable work into dependency layers. Changes NO status; executes nothing; ODG alone accepts deliverables.",
+    note: "orchestrator over the REAL open-mission inventory; routes each mission, schedules the dispatchable work into dependency layers, and RE-CHECKS each layer for write-set contention (dependency-order ≠ write-set independence). A mission without a declared write-set is UNKNOWN ⇒ parallel dispatch is NOT proven safe (fail-closed). Changes NO status; executes nothing; ODG alone accepts deliverables.",
   });
 }
 
@@ -116,9 +131,10 @@ function aggregateEvidence(results: any): any {
 const MISSION_ORCHESTRATOR_CONTRACT = Object.freeze({
   id: "V167A-MISSION-ORCHESTRATOR",
   purpose: "Addendum-A — multi-worker dispatch/coordination over the REAL open-mission inventory, composing ODG's existing mechanisms (dep-planner / provider-capability-contract / evaluator-independence / delegate-isolation / recovery inventory)",
-  reuses: Object.freeze(["dep-planner.schedule", "provider-capability-contract.canUse", "evaluator-independence.auditIndependence", "delegate-isolation.validateScope", "odg-open-mission-recovery.inventoryOpenMissions"]),
+  reuses: Object.freeze(["dep-planner.schedule", "odg-writeset-contention.computeLayerContention (per-layer write-set isolation)", "provider-capability-contract.canUse", "evaluator-independence.auditIndependence", "delegate-isolation.validateScope", "odg-open-mission-recovery.inventoryOpenMissions"]),
   invariants: Object.freeze([
     "composes existing canonical mechanisms — NO parallel engine, NO duplicate register/scheduler/validator",
+    "dependency-order ≠ write-set independence: each parallel layer is re-checked for write-set contention; parallelDispatchProvenSafe is true ONLY when every layer is write-isolated, and a mission lacking a declared write-set is UNKNOWN ⇒ NOT proven safe (fail-closed)",
     "routes every REAL open mission (ODG_NATIVE / DELEGATE_PROVIDER / SEQUENCED / NOT_DISPATCHABLE) grounded in the inventory classification",
     "independent quality gate: producer ≠ validator (self-certification ⇒ REJECT); incomplete evidence ⇒ REJECT",
     "worker scope isolation (delegate-isolation) + least-privilege permission (provider-capability-contract) enforced",
