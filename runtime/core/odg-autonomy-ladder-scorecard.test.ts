@@ -51,6 +51,7 @@ function main(): void {
 
   // honest boundaries carried per category (no over-claim)
   check("honest boundary present for every category", res.perCategory.every((m: any) => typeof m.honestBoundary === "string" && m.honestBoundary.length > 0));
+  check("top-level honestBoundaries emitted (referenced by refusal), one per category", Array.isArray(res.honestBoundaries) && res.honestBoundaries.length === 5 && res.honestBoundaries.every((b: any) => typeof b.category === "string" && typeof b.boundary === "string"));
 
   // normaliser: unrecognised schema surfaced, never guessed
   const bad = L.normaliseMission({ schema: "v999-made-up", summary: { total: 99, accepted: 99 } });

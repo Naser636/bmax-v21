@@ -87,6 +87,7 @@ function ladder(missions: any): any {
     ok: true,
     frontier,                                   // highest difficulty rung actually reached (measured, not claimed)
     perCategory: freeze(recognised),            // each rung reported SEPARATELY — the canonical view
+    honestBoundaries,                           // per-category honest boundary (referenced by the refusal below)
     census: freeze(census),                     // plain counts only (a census, NOT a capability score)
     unrecognised: freeze(unrecognised),         // surfaced, never silently dropped
     blendedAutonomyScore: null,                 // REFUSED on purpose
