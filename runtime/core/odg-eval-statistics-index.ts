@@ -4,12 +4,14 @@
  * EVAL MEASUREMENT-INTEGRITY TOOLKIT INDEX — the consumer that makes the session's eval statistics discoverable.
  * PURE, deterministic, READ-ONLY.
  *
- * The nine eval/statistics modules built this session (plus the pre-existing eval-significance) are otherwise ORPHANS —
- * present, tested, contract-bearing, but with no consumer tying them together (the §2 "built ≠ integrated" gap the V207
- * audit named; cf. odg-metier-improvement-index, which resolved the same gap for the 16 improvement modules). This index
- * resolves it: it imports each, verifies it LOADS and exposes its frozen *_CONTRACT, groups them by MEASUREMENT CONCERN,
- * and carries a "pick-which-for-what" routing aid + the cross-cutting honesty reminders. It EXECUTES none of them against
- * data (each stays an on-demand capability) — it only confirms they are loadable + contract-bearing + categorised.
+ * The nine eval/statistics modules built this session (plus the pre-existing eval-significance) had NO SINGLE
+ * DISCOVERABILITY CONSUMER tying them together as a toolkit (the §2 "built ≠ integrated" gap the V207 audit named; cf.
+ * odg-metier-improvement-index). NB (honest scope): this is NOT a blanket "0-consumer" claim — eval-significance is
+ * already well-integrated (several external consumers), and 4 leaf modules are consumed intra-cluster (e.g. κ/rank-corr/
+ * MCC by the agreement-scorecard, ks-test by the data-drift-view); 5 are genuinely standalone. What was missing is a
+ * UNIFIED catalog + routing. This index provides it: it imports each, verifies it LOADS and exposes its frozen
+ * *_CONTRACT, groups them by MEASUREMENT CONCERN, and carries a "pick-which-for-what" routing aid + cross-cutting honesty
+ * reminders. It EXECUTES none of them against data (each stays an on-demand capability) — only loadable + contract-bearing.
  *
  * Honesty: this is a discoverability INDEX, NOT a new statistic and NOT a new engine; the routing `pickWhen` is an aid,
  * not a verdict; it makes no measurement claim of its own. Deterministic; no network/clock/randomness.
@@ -62,7 +64,7 @@ function buildIndex(): any {
   for (const m of modules) { (byCategory[m.category] = byCategory[m.category] || []).push(m.name); }
   const frozenByCat: any = {}; for (const k of Object.keys(byCategory)) frozenByCat[k] = freeze(byCategory[k]);
   return freeze({ ok: true, total: modules.length, loaded, modules: freeze(modules), byCategory: freeze(frozenByCat), honesty: HONESTY,
-    note: "discoverability index for the eval measurement-integrity toolkit — the missing CONSUMER for these otherwise-orphan modules; READ-ONLY (loads + verifies contracts, executes nothing); `pickWhen` is a routing aid, not a verdict; makes no measurement claim of its own." });
+    note: "unified DISCOVERABILITY/ROUTING consumer for the eval measurement-integrity toolkit — what was missing was a single catalog (NOT a blanket 0-consumer claim: eval-significance is already integrated; several leaf modules are consumed intra-cluster). READ-ONLY (loads + verifies contracts, executes nothing); `pickWhen` is a routing aid, not a verdict; makes no measurement claim of its own." });
 }
 
 /** pickFor(concern) -> modules whose category matches (AGREEMENT|CLASSIFICATION_QUALITY|CAPABILITY|SIGNIFICANCE|DRIFT). */
@@ -75,7 +77,7 @@ function pickFor(concern: any): any {
 
 const EVAL_STATISTICS_INDEX_CONTRACT = Object.freeze({
   id: "EVAL-STATISTICS-INDEX",
-  purpose: "the CONSUMER that makes the eval measurement-integrity statistics discoverable (resolves the orphan/0-consumer gap), grouped by concern with routing + honesty reminders",
+  purpose: "unified DISCOVERABILITY/ROUTING consumer for the eval measurement-integrity statistics (a single catalog — NOT a 0-consumer claim), grouped by concern with routing + honesty reminders",
   reuses: Object.freeze(REGISTRY.map((e: any) => e.name)),
   invariants: Object.freeze([
     "a discoverability INDEX — NOT a new statistic/engine; it makes no measurement claim of its own",

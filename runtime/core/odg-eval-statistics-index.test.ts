@@ -39,7 +39,7 @@ function main(): void {
   check("index is read-only (only buildIndex/pickFor exported, no statistic)", typeof IX.buildIndex === "function" && typeof IX.pickFor === "function" && IX.REGISTRY.length === 10);
 
   // note + determinism + frozen + contract
-  check("note: consumer for orphan modules, READ-ONLY, no measurement claim", /missing CONSUMER/.test(idx.note) && /READ-ONLY/.test(idx.note) && /makes no measurement claim/.test(idx.note));
+  check("note: unified discoverability consumer (honest — NOT a 0-consumer claim), READ-ONLY, no measurement claim", /DISCOVERABILITY\/ROUTING consumer/.test(idx.note) && /NOT a blanket 0-consumer claim/.test(idx.note) && /READ-ONLY/.test(idx.note) && /makes no measurement claim/.test(idx.note));
   check("deterministic", JSON.stringify(IX.buildIndex()) === JSON.stringify(idx));
   check("frozen", Object.isFrozen(idx) && Object.isFrozen(idx.modules) && Object.isFrozen(idx.byCategory) && Object.isFrozen(idx.honesty));
   check("contract: index-not-statistic, read-only, routing-aid-not-verdict",
@@ -47,7 +47,7 @@ function main(): void {
     IX.EVAL_STATISTICS_INDEX_CONTRACT.invariants.some((s: string) => /READ-ONLY/.test(s)) &&
     IX.EVAL_STATISTICS_INDEX_CONTRACT.invariants.some((s: string) => /routing AID, not a verdict/.test(s)));
 
-  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-eval-statistics-index (consumer/index for 10 eval measurement-integrity modules: all loaded + contract-bearing [resolves orphan/0-consumer gap]; grouped AGREEMENT/CLASSIFICATION_QUALITY/CAPABILITY/SIGNIFICANCE/DRIFT; pickFor routing; cross-cutting honesty reminders; READ-ONLY executes nothing; deterministic/frozen)" : failures + " FAIL"}\n`);
+  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-eval-statistics-index (consumer/index for 10 eval measurement-integrity modules: all loaded + contract-bearing [unified discoverability consumer; NOT a 0-consumer claim]; grouped AGREEMENT/CLASSIFICATION_QUALITY/CAPABILITY/SIGNIFICANCE/DRIFT; pickFor routing; cross-cutting honesty reminders; READ-ONLY executes nothing; deterministic/frozen)" : failures + " FAIL"}\n`);
   process.exit(failures === 0 ? 0 : 1);
 }
 main();
