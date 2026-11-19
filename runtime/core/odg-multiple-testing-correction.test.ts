@@ -50,6 +50,18 @@ function main(): void {
   // results preserve original order + index
   check("results keep original order + index", bon.results.map((r: any) => r.index).join(",") === "0,1,2,3,4" && bon.results[0].p === 0.001);
 
+  // UNSORTED input pins the sorted→original index mapping (a wrong adj[rank] vs adj[idx] bug would pass on sorted inputs).
+  // [0.04,0.001,0.03,0.009] (m=4): Holm by orig idx [0.06,0.004,0.06,0.027]; BH [0.04,0.004,0.04,0.018]; Bonferroni [0.16,0.004,0.12,0.036]
+  const U = [0.04, 0.001, 0.03, 0.009];
+  const uBon = MT.bonferroni(U, {}), uHol = MT.holm(U, {}), uBh = MT.benjaminiHochberg(U, {});
+  check("unsorted Bonferroni mapped to original indices [0.16,0.004,0.12,0.036]", JSON.stringify(uBon.results.map((r: any) => r.pAdjusted)) === JSON.stringify([0.16, 0.004, 0.12, 0.036]));
+  check("unsorted Holm mapped to original indices [0.06,0.004,0.06,0.027]", JSON.stringify(uHol.results.map((r: any) => r.pAdjusted)) === JSON.stringify([0.06, 0.004, 0.06, 0.027]));
+  check("unsorted BH mapped to original indices [0.04,0.004,0.04,0.018]", JSON.stringify(uBh.results.map((r: any) => r.pAdjusted)) === JSON.stringify([0.04, 0.004, 0.04, 0.018]));
+
+  // TIES: [0.01,0.01,0.04,0.03,0.005] ⇒ BH q [0.016667,0.016667,0.04,0.0375,0.016667]
+  const T = [0.01, 0.01, 0.04, 0.03, 0.005];
+  check("tied BH q [0.016667,0.016667,0.04,0.0375,0.016667]", JSON.stringify(MT.benjaminiHochberg(T, {}).results.map((r: any) => r.pAdjusted)) === JSON.stringify([0.016667, 0.016667, 0.04, 0.0375, 0.016667]));
+
   // fail-closed
   check("p>1 ⇒ BAD_PVALUES", MT.bonferroni([0.5, 1.2], {}).code === "BAD_PVALUES");
   check("p<0 ⇒ BAD_PVALUES", MT.holm([-0.1, 0.5], {}).code === "BAD_PVALUES");
