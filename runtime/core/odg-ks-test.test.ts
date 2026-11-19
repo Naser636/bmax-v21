@@ -13,6 +13,12 @@ function main(): void {
   // hand-computed D: A=[1,2,3,4] (n4), B=[1..8] (m8). Max gap at x=4: Fa=1.0, Fb=0.5 ⇒ D=0.5
   check("ksStatistic hand-check: [1,2,3,4] vs [1..8] ⇒ D=0.5", KS.ksStatistic([1, 2, 3, 4], [1, 2, 3, 4, 5, 6, 7, 8]) === 0.5);
 
+  // WITHIN-SAMPLE TIES (the classic KS bug): a tied value must step BOTH ECDFs fully before the gap is measured.
+  // [1,1,2,3] vs [1,2,2,3]: x=1 Fa=.5/Fb=.25→.25; x=2 both .75; x=3 both 1 ⇒ D=0.25
+  check("ties: ksStatistic([1,1,2,3],[1,2,2,3]) === 0.25", KS.ksStatistic([1, 1, 2, 3], [1, 2, 2, 3]) === 0.25);
+  // heavy ties [5,5,5,1] vs [5,1,1,2]: sorted A[1,5,5,5] B[1,1,2,5]; x=1 Fa=.25/Fb=.5→.25; x=2 Fa=.25/Fb=.75→.5; x=5 both 1 ⇒ D=0.5
+  check("ties heavy: ksStatistic([5,5,5,1],[5,1,1,2]) === 0.5", KS.ksStatistic([5, 5, 5, 1], [5, 1, 1, 2]) === 0.5);
+
   // disjoint ranges ⇒ D=1 (max possible), significant ⇒ DIFFERENT
   const disj = KS.ksTwoSample([1, 2, 3, 4, 5], [6, 7, 8, 9, 10]);
   check("disjoint ⇒ D 1, DIFFERENT, p<0.05", disj.d === 1 && disj.verdict === "DIFFERENT" && disj.pValue < 0.05 && disj.reject === true);
@@ -25,6 +31,9 @@ function main(): void {
 
   // probKS bounds: 0 ⇒ 1; large λ ⇒ ~0; monotone-ish
   check("probKS(0)=1, probKS(large)→~0", KS.probKS(0) === 1 && KS.probKS(3) < 0.001 && KS.probKS(0.3) > 0.9);
+  // MID-RANGE value (pins the alternating sign): Q_KS(0.7)=2Σ(−1)^(j−1)e^(−2j²·0.49) = 0.7112 (sign-drop ⇒ ~0.7906)
+  check("probKS(0.7) ≈ 0.7112 (alternating sign pinned)", Math.abs(KS.probKS(0.7) - 0.7112) < 0.001);
+  check("probKS monotone decreasing across the mid-range (0.5>0.7>0.9)", KS.probKS(0.5) > KS.probKS(0.7) && KS.probKS(0.7) > KS.probKS(0.9));
 
   // p-value in [0,1], criticalD present; smallSample flagged
   check("p in [0,1], criticalD>0, smallSample flagged for tiny n", same.pValue >= 0 && same.pValue <= 1 && disj.criticalD > 0 && disj.smallSample === true);
