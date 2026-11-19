@@ -41,6 +41,7 @@ const MCAMP = require("./odg-metier-campaign.js");            // V245 — materi
 const LMC = require("./odg-local-model-capability.js");       // V247 — REAL local-model capability qualification + deny-by-default tool gate
 const NEA = require("./odg-native-engineering-audit.js");     // V249 — honest actor attribution (V247/V248) + deterministic native-capability census
 const NEL = require("./odg-native-engineering-loop.js");      // V250 — decide→drive loop that REALLY executes deterministic repairs natively
+const AMR = require("./odg-autonomy-maturity-report.js");     // V324 §6.4 — native/assisted/escalated maturity over the REAL mission-ledger
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -50,6 +51,10 @@ function ind(value: any, provenance: string, method: string, confidence: string)
 function build(opts?: any): any {
   const o = opts || {};
   const registerPath = o.registerPath || "docs/odg/closure-register.json";
+  // V324 §6.4/§14 — autonomy maturity over the REAL mission-ledger (read-only; unreadable ⇒ NOT_MEASURED).
+  const ledgerPath = o.ledgerPath || "runtime/generated/mission-ledger.json";
+  let maturity: any = null;
+  try { maturity = AMR.reportMaturityFromLedger(JSON.parse(require("fs").readFileSync(ledgerPath, "utf8"))); } catch { maturity = null; }
   let reg: any = null, regErr: string | null = null;
   try {
     const r = auditClosureRegister(registerPath);
@@ -181,6 +186,17 @@ function build(opts?: any): any {
       "P2: business/use matrices now built; BTP DCE analyzer + ext programs NOT built; most métiers not métier-qualified",
       "BLOCKED: BMAX HFT/AO forensic audits (assets absent)",
     ]), "2026-11-13 audit + Livrables A/B", "prioritized gap list", "HIGH"),
+
+    autonomyMaturity: maturity ? ind(Object.freeze({
+      distinctMissions: maturity.distinctMissions,
+      nativeAutonomyMeasurable: maturity.nativeAutonomyMeasurable,
+      actorCoverageRate: maturity.attribution.actorCoverageRate,
+      nativeDemonstrated: maturity.maturity.buckets.NATIVE_DEMONSTRATED.count,
+      assisted: maturity.maturity.buckets.ASSISTED.count,
+      escalated: maturity.maturity.buckets.ESCALATED.count,
+      notMeasurable: maturity.maturity.notMeasurable.count,
+      measuredDenominator: maturity.maturity.measuredDenominator,
+    }), ledgerPath + " → odg-autonomy-maturity-report (composes autonomy-program-aggregate.latestPerMission + odg-autonomy-maturity-trichotomy)", maturity.note, maturity.nativeAutonomyMeasurable ? "MEDIUM" : "NONE") : ind(null, ledgerPath, "mission-ledger unreadable — autonomy maturity NOT_MEASURED", "NONE"),
 
     nextRecommended: ind("await two owner decisions (ROADMAP.json integration; runtime intent) before any PARKED-extension build; non-blocking next = BTP DCE product-design behind demand-validation", "CTO recommendation", "dependency analysis", "MEDIUM"),
 

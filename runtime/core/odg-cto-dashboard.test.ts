@@ -13,6 +13,9 @@ function main() {
   check("reads the REAL register: total 427, counts 415/6/3/3", d.missions.total.value === 427 && d.missions.counts.value.ACCEPTED === 415 && d.missions.counts.value.BLOCKED === 6);
   check("is explicitly a READ-ONLY projection, not a new source of truth", /READ-ONLY projection, NOT a new source of truth/.test(d.sourceOfTruth));
   check("every top indicator carries provenance + method + confidence", hasProvenance(d.roadmap) && hasProvenance(d.primitives) && hasProvenance(d.metiers) && hasProvenance(d.useMatrix) && hasProvenance(d.runtime) && hasProvenance(d.ownerGates));
+  // V324 §6.4/§14 — autonomy maturity surfaced over the REAL ledger, with its honest limit (validation ≠ native autonomy)
+  check("autonomy maturity visible: native/assisted/escalated over the real ledger, with the honest limit", hasProvenance(d.autonomyMaturity) && typeof d.autonomyMaturity.value.nativeAutonomyMeasurable === "boolean" && typeof d.autonomyMaturity.value.distinctMissions === "number" && d.autonomyMaturity.value.distinctMissions > 0);
+  check("real ledger has no execution actor ⇒ native autonomy NON-MEASURABLE, confidence NONE (not masked)", d.autonomyMaturity.value.nativeAutonomyMeasurable === false && d.autonomyMaturity.value.actorCoverageRate === 0 && d.autonomyMaturity.confidence === "NONE" && /NON-MEASURABLE/.test(d.autonomyMaturity.method) && /validation ≠ demonstrated native autonomy/.test(d.autonomyMaturity.method));
   check("runtime state is NOT_MEASURED (no resident process observed)", d.runtime.value === "NOT_MEASURED" && /no resident ODG process/.test(d.runtime.method));
   check("radar realScheduledRun is unmeasured", /NOT_MEASURED/.test(d.radar.value));
   check("gate is NOT re-run by the dashboard (low confidence, verify live)", d.gates.confidence === "LOW" && /does not re-run the gate/.test(d.gates.method));
