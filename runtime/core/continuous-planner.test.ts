@@ -31,13 +31,18 @@ const cand = { candidatesFor: (id: string) => [{ id: id + "-alt", metrics: { Psu
   const r = C.repairPlan(plan, { type: "MISSION_BLOCKED", missionId: "C" }, { candidatesFor: () => [{ id: "bad", policyAllowed: false, metrics: { Psuccess: 1 } }] });
   check(r.newPlan.missions.find((m: any) => m.id === "C").status === "BLOCKED", "an infeasible-only candidate ⇒ BLOCKED (hard constraint enforced via plan-evaluator)");
 }
-// (6) §2.2 calibrated estimate from VERIFIED history; no data ⇒ UNKNOWN (never favourable).
+// (6) §2.2 P(success) now routes through the bias/sample guard (odg-calibrated-psuccess): a thin/biased history is
+//     DEGRADED/BIASED ⇒ p=null (no flattering default); no data ⇒ UNKNOWN. Delegation = single source of truth.
 {
   const hist = [{ type: "repair", status: "ACCEPTED" }, { type: "repair", status: "ACCEPTED" }, { type: "repair", status: "BLOCKED" }, { type: "build", status: "ACCEPTED" }];
   const e = C.estimateSuccess("repair", hist);
-  check(e.basis === "VERIFIED_HISTORY" && e.observations === 3 && Math.abs(e.p - 0.6667) < 0.01, "success estimate calibrated from verified history (2/3)");
+  // 2 DECIDED successes (BLOCKED is undecided ⇒ excluded); 2 < MIN_OBSERVATIONS ⇒ DEGRADED ⇒ p=null (too thin to trust)
+  check(e.quality === "DEGRADED" && e.observations === 2 && e.measuredP === 1 && e.p === null, "thin verified history ⇒ DEGRADED, p=null (bias/sample-guarded, no flattering default)");
   const u = C.estimateSuccess("never-seen", hist);
   check(u.basis === "UNKNOWN" && u.p === null, "no observations ⇒ UNKNOWN, p=null (never a favourable default)");
+  // survivorship (many successes, 0 failures) is no longer served as confidence
+  const biased = C.estimateSuccess("b", Array.from({ length: 12 }, () => ({ type: "b", status: "ACCEPTED" })));
+  check(biased.quality === "BIASED" && biased.p === null && !/calibrated from/.test(biased.note), "survivorship history ⇒ BIASED, p=null, no 'calibrated from' overclaim");
 }
 // (7) an unrelated event (no missionId, no priority list) affects nothing ⇒ plan preserved whole.
 {

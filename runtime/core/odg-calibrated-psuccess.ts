@@ -82,7 +82,7 @@ function derivePsuccess(missionType: any, history: any, opts: any = {}): any {
 const CALIBRATED_PSUCCESS_CONTRACT = Object.freeze({
   id: "CALIBRATED-PSUCCESS",
   purpose: "serve plan-evaluator a P(success) that survives a survivorship-bias + sample-size guard — the honest replacement for continuous-planner.estimateSuccess's raw accepted/total ratio mislabeled 'calibrated'",
-  reuses: Object.freeze(["calibration.calibratedEstimate (bias/sample/staleness verdict — not reimplemented)", "plan-evaluator MAY consume pForPlanner as the Psuccess benefit factor — this module is standalone and is NOT wired into the planner here"]),
+  reuses: Object.freeze(["calibration.calibratedEstimate (bias/sample/staleness verdict — not reimplemented)", "continuous-planner.estimateSuccess DELEGATES to derivePsuccess (single source of truth — wired); plan-evaluator consumes the resulting pForPlanner as the Psuccess benefit factor"]),
   invariants: Object.freeze([
     "measuredP (raw success RATE) ≠ usable confidence; pForPlanner is non-null ONLY when the estimate is CALIBRATED",
     "survivorship-biased history (successes with ~0 recorded failures) ⇒ quality BIASED ⇒ pForPlanner=null — a biased rate is never served as planner confidence",

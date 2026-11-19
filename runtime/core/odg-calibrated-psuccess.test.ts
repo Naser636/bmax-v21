@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 "use strict";
 /* Tests for odg-calibrated-psuccess (bias-guarded P(success) for the planner). PURE. Composes the REAL
-   calibration, continuous-planner (the naive estimator it corrects) and plan-evaluator (the consumer) — no mocks. */
+   calibration, continuous-planner (whose estimateSuccess now DELEGATES to this module) and plan-evaluator
+   (the consumer) — no mocks. */
 const M = require("./odg-calibrated-psuccess.js");
 const CP = require("./continuous-planner.js");
 const PE = require("./plan-evaluator.js");
@@ -10,14 +11,16 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
 function mk(n: number, st: string): any[] { return Array.from({ length: n }, () => ({ missionType: "build", status: st })); }
 
 function main(): void {
-  // A) SURVIVORSHIP — the honesty hole, demonstrated against the REAL naive estimator
+  // A) SURVIVORSHIP — the honesty hole. continuous-planner.estimateSuccess now DELEGATES to this module, so the
+  //    hole is closed at its source: the live planner API agrees with the guard (both reject the biased estimate).
   const surv = mk(12, "ACCEPTED"); // 12 successes, 0 recorded failures
   const dA = M.derivePsuccess("build", surv);
   const nA = CP.estimateSuccess("build", surv);
-  check("naive estimateSuccess returns p=1.0 and LABELS it 'calibrated' (the overclaim)", nA.p === 1 && /calibrated/.test(nA.note));
-  check("honest: same raw measuredP=1 BUT quality BIASED", dA.measuredP === 1 && dA.quality === "BIASED");
+  check("honest: raw measuredP=1 BUT quality BIASED", dA.measuredP === 1 && dA.quality === "BIASED");
   check("honest: biased ⇒ pForPlanner=null (never served as confidence)", dA.pForPlanner === null);
   check("honest reason names survivorship bias", /survivorship/.test(dA.reason));
+  check("estimateSuccess now DELEGATES: survivorship ⇒ p=null, quality BIASED, no 'calibrated' overclaim", nA.p === null && nA.quality === "BIASED" && !/calibrated from/.test(nA.note));
+  check("estimateSuccess.p agrees with derivePsuccess.pForPlanner (single source of truth)", nA.p === dA.pForPlanner && nA.measuredP === dA.measuredP);
 
   // B) CALIBRATED — enough observations WITH recorded failures
   const dB = M.derivePsuccess("build", [...mk(18, "ACCEPTED"), ...mk(6, "REJECTED")]);
@@ -52,10 +55,10 @@ function main(): void {
   // F) END-TO-END planner effect through the REAL plan-evaluator: biased naive p inflates J by the full
   //    Psuccess weight; the honest null earns 0 success-credit.
   const base = { Vobjective: 0.6, Qquality: 0.6, Ttime: 0.2, Cresources: 0.2, Rrisk: 0.2, Uuncertainty: 0.2 };
-  const Jh = PE.scorePlan({ metrics: { ...base, Psuccess: dA.pForPlanner } }); // null
-  const Jn = PE.scorePlan({ metrics: { ...base, Psuccess: nA.p } });          // 1.0 (biased)
+  const Jh = PE.scorePlan({ metrics: { ...base, Psuccess: dA.pForPlanner } }); // null (guarded)
+  const Jn = PE.scorePlan({ metrics: { ...base, Psuccess: dA.measuredP } });   // 1.0 (raw un-guarded rate)
   check("planner: honest null ⇒ 0 Psuccess contribution", Jh.contributions.Psuccess === 0);
-  check("planner: biased 1.0 ⇒ full (1.0) Psuccess contribution", Jn.contributions.Psuccess === 1);
+  check("planner: un-guarded raw 1.0 ⇒ full (1.0) Psuccess contribution", Jn.contributions.Psuccess === 1);
   check("planner: biased estimate inflates plan J by exactly the Psuccess weight (1.0)", Number((Jn.J - Jh.J).toFixed(4)) === 1);
 
   // fail-closed
@@ -65,7 +68,7 @@ function main(): void {
   // honesty + determinism + frozen + contract
   check("note: measuredP≠confidence, CALIBRATED-only, plan is a hypothesis", /raw success RATE/.test(dA.note) && /ONLY when the estimate is CALIBRATED/.test(dA.note) && /a plan is a hypothesis, not a result/i.test(dA.note));
   check("estimate authorizes nothing (field + note)", dA.authorizes === false && dB.authorizes === false && /AUTHORIZES NOTHING/.test(dA.note));
-  check("contract reuses is honest: NOT wired into the planner here", M.CALIBRATED_PSUCCESS_CONTRACT.reuses.some((s: string) => /NOT wired into the planner here/.test(s)));
+  check("contract reuses is honest: estimateSuccess DELEGATES to it (wired)", M.CALIBRATED_PSUCCESS_CONTRACT.reuses.some((s: string) => /estimateSuccess DELEGATES to derivePsuccess/.test(s)));
   check("deterministic", JSON.stringify(M.derivePsuccess("build", surv)) === JSON.stringify(dA));
   check("frozen", Object.isFrozen(dA));
   check("contract: measuredP≠confidence, bias⇒null, thin/stale⇒null, null⇒0-credit, only-decided",
@@ -75,7 +78,7 @@ function main(): void {
     M.CALIBRATED_PSUCCESS_CONTRACT.invariants.some((s: string) => /0 success-credit — fail-closed/.test(s)) &&
     M.CALIBRATED_PSUCCESS_CONTRACT.invariants.some((s: string) => /only DECIDED outcomes are counted/.test(s)));
 
-  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-calibrated-psuccess (bias-guarded P(success) composing REAL calibration + contrasting the REAL naive continuous-planner.estimateSuccess + feeding REAL plan-evaluator: survivorship 12/0 ⇒ naive p=1.0 'calibrated' BUT honest quality=BIASED pForPlanner=null; 24-obs-with-failures ⇒ CALIBRATED 0.75; thin⇒DEGRADED null; empty⇒UNKNOWN null; OPEN/PENDING not counted; VALIDATED/FAILED/verified vocabulary; missionType filter; END-TO-END biased estimate inflates plan J by the full Psuccess weight while honest null earns 0 credit; non-array fail-closed; measuredP≠confidence honest; PURE/deterministic/frozen)" : failures + " FAIL"}\n`);
+  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-calibrated-psuccess (bias-guarded P(success) composing REAL calibration + the live continuous-planner.estimateSuccess now DELEGATES to it + feeding REAL plan-evaluator: survivorship 12/0 ⇒ quality=BIASED pForPlanner=null and estimateSuccess agrees (p=null, no 'calibrated' overclaim); 24-obs-with-failures ⇒ CALIBRATED 0.75; thin⇒DEGRADED null; empty⇒UNKNOWN null; OPEN/PENDING not counted; VALIDATED/FAILED/verified vocabulary; missionType filter; END-TO-END biased estimate inflates plan J by the full Psuccess weight while honest null earns 0 credit; non-array fail-closed; measuredP≠confidence honest; PURE/deterministic/frozen)" : failures + " FAIL"}\n`);
   process.exit(failures === 0 ? 0 : 1);
 }
 main();

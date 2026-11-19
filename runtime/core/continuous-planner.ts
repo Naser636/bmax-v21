@@ -12,6 +12,7 @@
  */
 
 const EVAL = require("./plan-evaluator.js");
+const CPS = require("./odg-calibrated-psuccess.js");
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
@@ -35,14 +36,16 @@ function affectedMissions(plan: any, event: any): Set<string> {
 }
 
 /**
- * estimateSuccess(missionType, history) -> { p, basis, observations }. Calibrated from VERIFIED history (ACCEPTED/total
- * for that type). FAIL-CLOSED: no observations ⇒ { p: null, basis: "UNKNOWN" } — never a favourable default (§2.2).
+ * estimateSuccess(missionType, history) -> { p, measuredP, basis, quality, observations, authorizes, note }.
+ * §2.2: DELEGATES to the bias-guarded calibrated estimator (odg-calibrated-psuccess) — the single source of truth,
+ * so a raw accepted/total ratio is NEVER mislabeled "calibrated". `p` is the planner-usable value: non-null ONLY
+ * when the estimate is CALIBRATED (sufficient DECIDED outcomes with recorded failures, not stale); a survivorship-
+ * biased / thin / stale / empty history ⇒ quality BIASED/DEGRADED/UNKNOWN ⇒ p=null (fail-closed, never a favourable
+ * default). `measuredP` is the raw rate for transparency (not usable confidence). An estimate authorizes nothing.
  */
 function estimateSuccess(missionType: any, history: any): any {
-  const items = arr(history).filter(isObj).filter((i) => (i.type || i.missionType) === missionType);
-  if (items.length === 0) return Object.freeze({ p: null, basis: "UNKNOWN", observations: 0, note: "no verified observations for this type — UNKNOWN (not assumed favourable)" });
-  const accepted = items.filter((i) => i.status === "ACCEPTED" || i.status === "VALIDATED" || i.verified === true).length;
-  return Object.freeze({ p: Number((accepted / items.length).toFixed(4)), basis: "VERIFIED_HISTORY", observations: items.length, note: `calibrated from ${items.length} verified observation(s)` });
+  const d = CPS.derivePsuccess(missionType, arr(history));
+  return Object.freeze({ p: d.pForPlanner, measuredP: d.measuredP, basis: d.basis, quality: d.quality, observations: d.observations, authorizes: false, note: d.reason });
 }
 
 /**
