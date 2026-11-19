@@ -171,6 +171,8 @@
     "runtime/core/exposure-audit.ts",
     "runtime/core/maintenance-alerts.ts",
     "runtime/core/odg-fr-vat.ts",
-    "runtime/core/odg-language-management.ts"
+    "runtime/core/odg-language-management.ts",
+    "runtime/core/odg-writeset-contention.ts",
+    "runtime/core/odg-reuse-validity-gate.ts"
   ]
 }
