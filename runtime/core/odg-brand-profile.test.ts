@@ -49,6 +49,12 @@ function main(): void {
   check("empty text ⇒ NO_TEXT", B.validateContent(prof(), { text: "" }).code === "NO_TEXT");
   check("bad profile ⇒ BAD_PROFILE", B.validateContent({}, { text: "x" }).code === "BAD_PROFILE");
 
+  // 8b) conservative allowlist: a too-short approved entry must NOT over-approve a longer flagged claim
+  const shortApproved = B.validateContent(prof({ approvedClaims: ["fast"] }), { text: `We are the fastest. ${DISC}` });
+  check("short approved entry ('fast') does NOT approve flagged 'fastest' ⇒ still BLOCKED", shortApproved.publishable === false && shortApproved.unapprovedUnproven.includes("fastest"));
+  const coveringApproved = B.validateContent(prof({ approvedClaims: ["the fastest in the region"] }), { text: `We are the fastest. ${DISC}` });
+  check("a pre-approved entry CONTAINING the flagged token ('fastest') approves it", coveringApproved.publishable === true);
+
   // 9) multiple blockers accumulate
   const multi = B.validateContent(prof(), { text: "We guarantee the fastest results." });
   check("multiple blockers accumulate (forbidden + unapproved + missing disclaimer)", multi.publishable === false && multi.blockers.length >= 3);

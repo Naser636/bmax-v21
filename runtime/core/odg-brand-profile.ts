@@ -53,7 +53,9 @@ function validateContent(profile: any, content: any): any {
   // 3) unproven claims via the engine; survive only if pre-approved in the allowlist
   const audit = ENGINE.claimAudit(text, c.evidenceRefs);
   const approved = (p.approvedClaims || []);
-  const unapprovedUnproven = audit.unproven.filter((u: string) => !approved.some((a: string) => has(a, u) || has(u, a)));
+  // conservative allowlist: a flagged claim is pre-approved ONLY if a pre-approved entry CONTAINS it (has(a,u)).
+  // (NOT the reverse — a short allowlist entry must never broadly over-approve longer flagged claims.)
+  const unapprovedUnproven = audit.unproven.filter((u: string) => !approved.some((a: string) => has(a, u)));
 
   const blockers: string[] = [];
   if (forbiddenHits.length) blockers.push(`forbidden claim(s): ${forbiddenHits.join(", ")}`);
