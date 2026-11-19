@@ -1,10 +1,25 @@
+import { createRequire } from "node:module";
 import { notFound } from "next/navigation";
-import { LANGS, LANG_NAMES, COPY, isLang, type Lang } from "@/lib/estimate-i18n";
+import { LANGS, LANG_NAMES, LANG_TO_LOCALE, COPY, isLang, type Lang } from "@/lib/estimate-i18n";
 
 // Nested layout for the multilingual BTP product surface. It renders INSIDE the existing root
 // <html lang="en"> (src/app/layout.tsx) — it does NOT create a second <html> element. The locale's
 // writing direction is applied to a wrapper <div dir>, which is valid HTML and scopes RTL (ar) to
 // this subtree without restructuring the dashboard root. First thin vertical slice (owner review).
+
+export const runtime = "nodejs";
+
+// Writing direction comes from the SAME reused core resolver the page uses (odg-language-management),
+// not a hardcoded per-lang guess — one source of truth, so a future RTL locale added to the core is
+// honoured here automatically.
+const require_ = createRequire(import.meta.url);
+const langmod = require_("../../../runtime/dist/core/odg-language-management.js") as {
+  SUPPORTED_LOCALES: { code: string; rtl: boolean }[];
+};
+function dirFor(lang: Lang): "rtl" | "ltr" {
+  const code = LANG_TO_LOCALE[lang];
+  return langmod.SUPPORTED_LOCALES.find((l) => l.code === code)?.rtl === true ? "rtl" : "ltr";
+}
 
 export function generateStaticParams(): { lang: Lang }[] {
   return LANGS.map((lang) => ({ lang }));
@@ -19,7 +34,7 @@ export default async function LangLayout({
 }) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
-  const dir = lang === "ar" ? "rtl" : "ltr";
+  const dir = dirFor(lang);
   const copy = COPY[lang];
 
   return (

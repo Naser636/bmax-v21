@@ -17,12 +17,19 @@ export const dynamic = "force-dynamic";
 
 // Required at runtime from the compiled dist closure (not bundled) — same pattern/depth as the intake route.
 const require_ = createRequire(import.meta.url);
-type VatBreakdown = {
-  byRate: { rateBps: number; baseMinor: number; vatMinor: number }[];
-  totals: { netMinor: number; vatMinor: number; grossMinor: number };
-};
+type VatBreakdown =
+  | { ok: false; code: string }
+  | {
+      ok?: true;
+      byRate: { rateBps: number; baseMinor: number; vatMinor: number }[];
+      totals: { netMinor: number; vatMinor: number; grossMinor: number };
+    };
 const vat = require_("../../../../runtime/dist/core/odg-fr-vat.js") as {
   vatBreakdown: (lines: { netMinor: number; rateBps: number }[]) => VatBreakdown;
+};
+const EMPTY_VAT = {
+  byRate: [] as { rateBps: number; baseMinor: number; vatMinor: number }[],
+  totals: { netMinor: 0, vatMinor: 0, grossMinor: 0 },
 };
 const langmod = require_("../../../../runtime/dist/core/odg-language-management.js") as {
   selectLocale: (
@@ -90,7 +97,11 @@ export default async function EstimatePage({
   });
   const pricedLines = priced.filter((p) => p.complete);
   const anyMissing = priced.some((p) => !p.complete);
-  const bd = vat.vatBreakdown(pricedLines.map((p) => ({ netMinor: p.netMinor, rateBps: p.rateBps })));
+  // Fail-closed, not fail-OPEN: if NO line is priced, odg-fr-vat returns {ok:false} (no byRate/totals).
+  // Render a clean zero breakdown (the per-line INCOMPLETE flags + ⚠ warning carry the message) rather
+  // than crashing on undefined.map.
+  const bdRaw = vat.vatBreakdown(pricedLines.map((p) => ({ netMinor: p.netMinor, rateBps: p.rateBps })));
+  const bd = bdRaw.ok === false ? EMPTY_VAT : bdRaw;
 
   const th: React.CSSProperties = {
     textAlign: rtl ? "right" : "left",
