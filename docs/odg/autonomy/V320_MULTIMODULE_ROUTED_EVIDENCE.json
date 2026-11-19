@@ -1,0 +1,91 @@
+{
+  "schema": "v320-multimodule-routed",
+  "generatedInside": "C6 sandbox child",
+  "cases": [
+    {
+      "id": "mm-add",
+      "diff": "easy",
+      "route": {
+        "decision": "LOCAL",
+        "model": "qwen2.5-coder:3b",
+        "requiresAuthorization": false
+      },
+      "status": "ACCEPTED",
+      "editedFiles": [
+        "src/util.js"
+      ],
+      "editedBugFile": true,
+      "producedCode": "module.exports.add = (a, b) => a + b;",
+      "generalises": true,
+      "eval3b": "CORRECT"
+    },
+    {
+      "id": "cross-config",
+      "diff": "moderate",
+      "route": {
+        "decision": "LOCAL",
+        "model": "qwen2.5-coder:7b",
+        "requiresAuthorization": false
+      },
+      "status": "ACCEPTED",
+      "editedFiles": [
+        "src/config.js"
+      ],
+      "editedBugFile": true,
+      "producedCode": "module.exports.MAX=10;",
+      "generalises": true,
+      "eval3b": "CORRECT"
+    },
+    {
+      "id": "mm-tax",
+      "diff": "moderate",
+      "route": {
+        "decision": "LOCAL",
+        "model": "qwen2.5-coder:7b",
+        "requiresAuthorization": false
+      },
+      "status": "ACCEPTED",
+      "editedFiles": [
+        "src/tax.js"
+      ],
+      "editedBugFile": true,
+      "producedCode": "module.exports.ratePct=()=>20;",
+      "generalises": true,
+      "eval3b": "CORRECT"
+    },
+    {
+      "id": "hard-expr",
+      "diff": "hard",
+      "route": {
+        "decision": "ESCALATE_TO_PROVIDER",
+        "model": null,
+        "requiresAuthorization": true
+      },
+      "status": "ESCALATED_NO_LOCAL_MODEL",
+      "note": "router: no local model covers this difficulty — flagged for provider authorization, NOT auto-run/paid"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "routedLocal": 3,
+    "escalated": 1,
+    "accepted": 3,
+    "acceptedGeneralised": 3,
+    "multiModuleEditedBugFile": 3,
+    "eval3bAgreed": 3,
+    "routingByModel": {
+      "qwen2.5-coder:3b": 1,
+      "qwen2.5-coder:7b": 2
+    },
+    "acceptByDifficulty": {
+      "easy": {
+        "routed": 1,
+        "accepted": 1
+      },
+      "moderate": {
+        "routed": 2,
+        "accepted": 2
+      }
+    }
+  }
+}
