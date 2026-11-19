@@ -45,6 +45,8 @@ function main(): void {
   check("bad base amount ⇒ BAD_BASE_AMOUNT", M.revisePrice({ baseAmountMinor: -1, fixedTermCoeff: 0.125, indexedTerms: [{ coeff: 0.875, baseIndex: 100, currentIndex: 110 }] }).code === "BAD_BASE_AMOUNT");
   check("empty indexedTerms ⇒ NO_INDEXED_TERMS", M.revisePrice({ baseAmountMinor: 100000, fixedTermCoeff: 1, indexedTerms: [] }).code === "NO_INDEXED_TERMS");
   check("non-object input ⇒ BAD_INPUT", M.revisePrice(null).code === "BAD_INPUT");
+  // output-finiteness guard: finite-but-extreme index magnitudes must NOT return a non-finite price in an ok:true envelope
+  check("extreme index overflow ⇒ NON_FINITE_RESULT (never Infinity in an ok:true result)", M.revisePrice({ baseAmountMinor: 100000, fixedTermCoeff: 0.5, indexedTerms: [{ coeff: 0.5, baseIndex: 1e-300, currentIndex: 1e300 }] }).code === "NON_FINITE_RESULT");
   check("bad term coeff ⇒ BAD_TERM_COEFF", M.revisePrice({ baseAmountMinor: 100000, fixedTermCoeff: 0.125, indexedTerms: [{ coeff: 0, baseIndex: 100, currentIndex: 110 }] }).code === "BAD_TERM_COEFF");
 
   // honesty + determinism + frozen + contract

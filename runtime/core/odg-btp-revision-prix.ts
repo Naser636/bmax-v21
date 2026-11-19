@@ -58,6 +58,9 @@ function revisePrice(input: any): any {
   if (Math.abs(coeffSum - 1) > COEFF_SUM_EPS) return freeze({ ok: false, code: "BAD_COEFFICIENTS", detail: `coefficients (terme fixe + indexed) must sum to 1 — got ${Number(coeffSum.toFixed(6))}; a well-formed revision formula sums to 1` });
 
   const revised = Math.round(base * k);
+  // Output-finiteness guard: finite inputs can still overflow to Infinity at extreme index magnitudes (e.g. a base
+  // index ~1e-300 against a current index ~1e300). Never return a non-finite price in an ok:true envelope (fail-closed).
+  if (!Number.isFinite(k) || !Number.isFinite(revised)) return freeze({ ok: false, code: "NON_FINITE_RESULT", detail: "K or the revised amount overflowed to a non-finite value (extreme index magnitudes) — refused" });
   return freeze({
     ok: true,
     baseAmountMinor: base,
