@@ -169,6 +169,8 @@
     "runtime/bin/odg-exposure-check.ts",
     "runtime/bin/odg-maintenance-check.ts",
     "runtime/core/exposure-audit.ts",
-    "runtime/core/maintenance-alerts.ts"
+    "runtime/core/maintenance-alerts.ts",
+    "runtime/core/odg-fr-vat.ts",
+    "runtime/core/odg-language-management.ts"
   ]
 }
