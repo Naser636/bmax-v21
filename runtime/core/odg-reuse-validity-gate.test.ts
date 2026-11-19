@@ -54,6 +54,14 @@ function main(): void {
   const sup = M.classifyReuseValidity(fresh, { asOfMs: NOW, changedPaths: ["src/a.ts"], suppressed: true });
   check("suppressed (prior regression) ⇒ STALE (overrides revalidation triggers)", sup.verdict === "STALE" && sup.reasons.some((r: string) => /net-regressed/.test(r)));
 
+  // fileScope:false (DECISION precedent, no file write-set) ⇒ the file-drift dimension is skipped
+  const decFresh = M.classifyReuseValidity({ learnedAt: NOW - 10 * DAY, authoredBy: "odg" }, { asOfMs: NOW, fileScope: false });
+  check("fileScope:false + fresh + provenanced (no targets, no changedPaths) ⇒ REUSABLE_AS_PROVEN", decFresh.verdict === "REUSABLE_AS_PROVEN");
+  check("fileScope:false + aged ⇒ REQUIRES_REVALIDATION (age still governs)", M.classifyReuseValidity({ learnedAt: NOW - 200 * DAY, authoredBy: "odg" }, { asOfMs: NOW, fileScope: false }).verdict === "REQUIRES_REVALIDATION");
+  check("fileScope:false + UNKNOWN provenance ⇒ REQUIRES_REVALIDATION (provenance still governs)", M.classifyReuseValidity({ learnedAt: NOW - DAY, authoredBy: "UNKNOWN" }, { asOfMs: NOW, fileScope: false }).verdict === "REQUIRES_REVALIDATION");
+  check("fileScope:false + suppressed ⇒ STALE (prior regression still governs)", M.classifyReuseValidity({ learnedAt: NOW - DAY, authoredBy: "odg" }, { asOfMs: NOW, fileScope: false, suppressed: true }).verdict === "STALE");
+  check("default (fileScope omitted) still fail-closed on no targets (patch behaviour preserved)", M.classifyReuseValidity({ learnedAt: NOW - DAY, authoredBy: "odg" }, { asOfMs: NOW, changedPaths: [] }).verdict === "REQUIRES_REVALIDATION");
+
   // ISO learnedAt also accepted (parsed deterministically)
   check("ISO-string learnedAt parsed", M.classifyReuseValidity({ learnedAt: new Date(NOW - 5 * DAY).toISOString(), authoredBy: "x", edits: [{ file: "src/a.ts" }] }, { asOfMs: NOW, changedPaths: [] }).ageDays === 5);
 

@@ -87,6 +87,21 @@ ok("RETRIEVED: a new objective with the same goal recalls the precedent (goal-ke
 const applied = dp.applyPrecedent(objective2, recalled);
 ok("APPLIED: decision attached to a COPY (input not mutated; no edits/patch field)", applied.decision && applied.resolvedBy === "PRECEDENT" && objective2.decision === undefined && !("edits" in applied));
 
+// V324 §6.3 — recallPrecedentFresh runs the FORWARD validity gate (fileScope:false: a DECISION has no file drift)
+console.log("FRESHNESS — recallPrecedentFresh gates reuse on forward validity (V324 §6.3)");
+{
+  const capturedMs = Date.parse(CAPTURED_AT);
+  ok("recallPrecedentFresh exported", typeof dp.recallPrecedentFresh === "function");
+  ok("miss ⇒ null", dp.recallPrecedentFresh(dp.emptyStore(), objective2, { asOfMs: capturedMs + 1000 }) === null);
+  const fresh = dp.recallPrecedentFresh(storeB, objective2, { asOfMs: capturedMs + 86400000 }); // 1 day later
+  ok("fresh + provenanced DECISION (no file drift required) ⇒ REUSABLE_AS_PROVEN, reusableAsProven true, decision retained",
+    fresh.validity.verdict === "REUSABLE_AS_PROVEN" && fresh.reusableAsProven === true && fresh.decision === storeB.entries[captured.signature].decision);
+  ok("aged DECISION ⇒ REQUIRES_REVALIDATION (age still governs)", dp.recallPrecedentFresh(storeB, objective2, { asOfMs: capturedMs + 400 * 86400000 }).validity.verdict === "REQUIRES_REVALIDATION");
+  ok("suppressed DECISION ⇒ STALE", dp.recallPrecedentFresh(storeB, objective2, { asOfMs: capturedMs + 86400000, suppressed: true }).validity.verdict === "STALE");
+  ok("no asOfMs ⇒ REQUIRES_REVALIDATION (fail-closed: remembered ≠ valid today)", dp.recallPrecedentFresh(storeB, objective2, {}).reusableAsProven === false);
+  ok("recallPrecedent UNCHANGED (still returns the raw precedent)", dp.recallPrecedent(storeB, objective2).signature === captured.signature);
+}
+
 // 6 — DEMONSTRATED EFFECT (state 5): controlled A/B — same objective, only the seeded precedent differs.
 const storeA = dp.emptyStore(); // control: empty
 const armA = resolveReadOnly({ id: "NEW_MISSION_OBJ_1", goal: objGoal }, storeA);

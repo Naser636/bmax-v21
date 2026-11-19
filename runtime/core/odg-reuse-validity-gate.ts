@@ -77,17 +77,23 @@ function classifyReuseValidity(precedent: any, signals: any): any {
   }
 
   // (C) target-path drift — any path the precedent writes that overlaps a path changed since it was learned.
+  // fileScope (default true) = a PATCH precedent that edits files. fileScope:false = a DECISION precedent with NO
+  // file write-set (e.g. decision-precedent) — the file-drift dimension is N/A and is skipped; freshness is then
+  // governed by age / provenance / suppressed / declared dependencyDrift only.
+  const fileScope = s.fileScope !== false;
   const targets = targetPathsOf(precedent);
   const changedTargets: string[] = [];
-  if (targets.length === 0) {
-    // Cannot identify what the precedent writes ⇒ cannot certify the edited files are unchanged (fail-closed).
-    revalidate = true; reasons.push("precedent declares no resolvable target paths — cannot certify the edited files are unchanged (fail-closed)");
-  }
-  if (!Array.isArray(s.changedPaths)) {
-    revalidate = true; reasons.push("drift not checked (no changedPaths supplied) — cannot certify the edited files are unchanged (fail-closed)");
-  } else {
-    for (const t of targets) for (const c of s.changedPaths) if (typeof c === "string" && WSC.pathsConflict(t, c)) { if (!changedTargets.includes(t)) changedTargets.push(t); }
-    if (changedTargets.length > 0) { revalidate = true; reasons.push(`target path(s) changed since learned: ${changedTargets.join(", ")} — stored edit may no longer apply`); }
+  if (fileScope) {
+    if (targets.length === 0) {
+      // Cannot identify what the precedent writes ⇒ cannot certify the edited files are unchanged (fail-closed).
+      revalidate = true; reasons.push("precedent declares no resolvable target paths — cannot certify the edited files are unchanged (fail-closed)");
+    }
+    if (!Array.isArray(s.changedPaths)) {
+      revalidate = true; reasons.push("drift not checked (no changedPaths supplied) — cannot certify the edited files are unchanged (fail-closed)");
+    } else {
+      for (const t of targets) for (const c of s.changedPaths) if (typeof c === "string" && WSC.pathsConflict(t, c)) { if (!changedTargets.includes(t)) changedTargets.push(t); }
+      if (changedTargets.length > 0) { revalidate = true; reasons.push(`target path(s) changed since learned: ${changedTargets.join(", ")} — stored edit may no longer apply`); }
+    }
   }
 
   // (D) declared dependency drift (truthy ⇒ bad condition, fail-closed)
@@ -120,6 +126,7 @@ const REUSE_VALIDITY_GATE_CONTRACT = Object.freeze({
     "REUSABLE_AS_PROVEN requires POSITIVE freshness evidence (recent age + known provenance + a clean drift check + not suppressed); absence of evidence ⇒ REQUIRES_REVALIDATION (fail-closed), never an optimistic reuse",
     "age ALONE never upgrades a precedent to valid; NEVER-REGRESSED is NOT the same as STILL-VALID",
     "a positive bad signal (prior net-regression / reuse-ledger suppressed) ⇒ STALE; a changed target path or missing provenance/learnedAt ⇒ REQUIRES_REVALIDATION",
+    "fileScope:false (a DECISION precedent with no file write-set) skips the file-drift dimension — freshness is then age/provenance/suppressed/dependencyDrift only; default fileScope:true keeps the fail-closed patch behaviour",
     "FORWARD complement to reuse-ledger's backward signal — composes pathsConflict, consumes `suppressed`; PURE/deterministic/frozen/clock-free (caller supplies asOfMs)",
   ]),
 });
