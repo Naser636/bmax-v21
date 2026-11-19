@@ -48,7 +48,7 @@ function main(): void {
     BA.BLAND_ALTMAN_CONTRACT.invariants.some((s: string) => /NOT a verdict of interchangeability/.test(s)) &&
     BA.BLAND_ALTMAN_CONTRACT.invariants.some((s: string) => /PROPORTIONAL bias is NOT assessed/.test(s)));
 
-  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-bland-altman (continuous-method agreement, hand-verified: A/B⇒bias-0.4/SD2.701851/LoA[-5.695629,4.895629]; identical⇒0; systematic +2 offset⇒bias2/SD0 [correlation would miss]; swap flips bias sign; custom z narrows; mismatch/n<2/non-finite fail-closed; agreement≠correlation, descriptive-not-interchangeability; PURE/deterministic/frozen)" : failures + " FAIL"}\n`);
+  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-bland-altman (continuous-method agreement, hand-verified: A/B⇒bias-0.4/SD2.701851/LoA[-5.695531,4.895531]; identical⇒0; systematic +2 offset⇒bias2/SD0 [correlation would miss]; swap flips bias sign; custom z narrows; mismatch/n<2/non-finite fail-closed; agreement≠correlation, descriptive-not-interchangeability; PURE/deterministic/frozen)" : failures + " FAIL"}\n`);
   process.exit(failures === 0 ? 0 : 1);
 }
 main();
