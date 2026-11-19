@@ -48,6 +48,25 @@ inTempCwd((pm) => {
     ok("empty-edits record is rejected", (() => { try { pm.record({ ...TASK, edits: [] }); return false; } catch { return true; } })());
 });
 
+console.log("Case 2b — lookupFresh gates reuse on FORWARD validity (V324 §6.3); lookup() unchanged");
+inTempCwd((pm) => {
+    ok("lookupFresh miss ⇒ null", pm.lookupFresh(TASK, {}) === null);
+    pm.record({ ...TASK, mission: "M1", authoredBy: "odg-native", edits: EDITS });
+    const rec = pm.recall(TASK);
+    const asOf = Date.parse(rec.learnedAt) + 86400000; // 1 day after it was learned (deterministic time base)
+    const fresh = pm.lookupFresh(TASK, { asOfMs: asOf, changedPaths: [] });
+    ok("fresh + provenanced + drift-clean ⇒ REUSABLE_AS_PROVEN, reusableAsProven true, edits returned",
+        fresh.validity.verdict === "REUSABLE_AS_PROVEN" && fresh.reusableAsProven === true && JSON.stringify(fresh.edits) === JSON.stringify(EDITS));
+    const changed = pm.lookupFresh(TASK, { asOfMs: asOf, changedPaths: [EDITS[0].target] });
+    ok("the edited file changed since learned ⇒ REQUIRES_REVALIDATION, not reusable-as-proven",
+        changed.validity.verdict === "REQUIRES_REVALIDATION" && changed.reusableAsProven === false);
+    ok("prior net-regression (suppressed) ⇒ STALE", pm.lookupFresh(TASK, { asOfMs: asOf, changedPaths: [], suppressed: true }).validity.verdict === "STALE");
+    ok("no freshness signals ⇒ REQUIRES_REVALIDATION (fail-closed: remembered ≠ valid today)", pm.lookupFresh(TASK, {}).reusableAsProven === false);
+    const unknownProv = (() => { pm.record({ ...TASK, target: "x/y.js", mission: "M2", edits: [{ target: "x/y.js", diff: "d" }] }); const r = pm.recall({ ...TASK, target: "x/y.js" }); return pm.lookupFresh({ ...TASK, target: "x/y.js" }, { asOfMs: Date.parse(r.learnedAt) + 1, changedPaths: [] }); })();
+    ok("UNKNOWN provenance record ⇒ REQUIRES_REVALIDATION (never auto-reused)", unknownProv.validity.verdict === "REQUIRES_REVALIDATION" && unknownProv.authoredBy === "UNKNOWN");
+    ok("lookup() UNCHANGED (still returns raw edits — non-breaking)", JSON.stringify(pm.lookup(TASK)) === JSON.stringify(EDITS));
+});
+
 console.log("Case 3 — idempotent by signature + reuse counter");
 inTempCwd((pm) => {
     pm.record({ ...TASK, mission: "M1", edits: EDITS });

@@ -15,6 +15,7 @@
 "use strict";
 
 const store = require("./autonomy-store");
+const reuseValidity = require("./odg-reuse-validity-gate.js"); // V324 §6.3 — FORWARD pre-reuse validity (additive)
 
 const NAME = "patch-memory";
 
@@ -92,7 +93,27 @@ function recall(task: any): any {
   return db.entries[sig] || null;
 }
 
-module.exports = { signature, record, lookup, recall, hit, list, NAME };
+// (V324 §6.3, ADDITIVE — lookup/recall UNCHANGED) lookupFresh(task, signals): recall the full record and run the
+// FORWARD pre-reuse validity gate over it (odg-reuse-validity-gate), so "remembered" is not treated as "valid today".
+// Returns null on a miss; else { signature, edits, learnedAt, authoredBy, validity, reusableAsProven }.
+// reusableAsProven is true ONLY when the gate returns REUSABLE_AS_PROVEN (fresh + provenanced + drift-checked clean +
+// not suppressed). With no freshness signals supplied ⇒ REQUIRES_REVALIDATION (fail-closed) ⇒ reusableAsProven false.
+// signals: { asOfMs, changedPaths?, maxAgeDays?, suppressed?, dependencyDrift? } — forwarded to the gate.
+function lookupFresh(task: any, signals: any): any {
+  const rec = recall(task);
+  if (!rec) return null;
+  const validity = reuseValidity.classifyReuseValidity(rec, signals || {});
+  return Object.freeze({
+    signature: rec.signature,
+    edits: rec.edits,
+    learnedAt: rec.learnedAt,
+    authoredBy: rec.authoredBy,
+    validity,
+    reusableAsProven: validity.ok === true && validity.verdict === "REUSABLE_AS_PROVEN",
+  });
+}
+
+module.exports = { signature, record, lookup, recall, hit, list, lookupFresh, NAME };
 
 // Module-scope marker (adds NO export): forces TypeScript MODULE scope so internal names (emptyDB, norm,
 // problemKey) are module-scoped, not global script scope (prevents cross-lot TS2393). API unchanged.
