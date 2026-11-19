@@ -57,6 +57,7 @@ function main(): void {
   // fileScope:false (DECISION precedent, no file write-set) ⇒ the file-drift dimension is skipped
   const decFresh = M.classifyReuseValidity({ learnedAt: NOW - 10 * DAY, authoredBy: "odg" }, { asOfMs: NOW, fileScope: false });
   check("fileScope:false + fresh + provenanced (no targets, no changedPaths) ⇒ REUSABLE_AS_PROVEN", decFresh.verdict === "REUSABLE_AS_PROVEN");
+  check("fileScope:false REUSABLE reason says 'no file write-set to drift-check' (not falsely 'drift-checked clean')", decFresh.reasons.some((r: string) => /no file write-set to drift-check/.test(r)) && !decFresh.reasons.some((r: string) => /drift-checked clean/.test(r)));
   check("fileScope:false + aged ⇒ REQUIRES_REVALIDATION (age still governs)", M.classifyReuseValidity({ learnedAt: NOW - 200 * DAY, authoredBy: "odg" }, { asOfMs: NOW, fileScope: false }).verdict === "REQUIRES_REVALIDATION");
   check("fileScope:false + UNKNOWN provenance ⇒ REQUIRES_REVALIDATION (provenance still governs)", M.classifyReuseValidity({ learnedAt: NOW - DAY, authoredBy: "UNKNOWN" }, { asOfMs: NOW, fileScope: false }).verdict === "REQUIRES_REVALIDATION");
   check("fileScope:false + suppressed ⇒ STALE (prior regression still governs)", M.classifyReuseValidity({ learnedAt: NOW - DAY, authoredBy: "odg" }, { asOfMs: NOW, fileScope: false, suppressed: true }).verdict === "STALE");

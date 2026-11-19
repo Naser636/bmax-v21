@@ -104,7 +104,7 @@ function classifyReuseValidity(precedent: any, signals: any): any {
   if (authoredBy === "" || authoredBy === "UNKNOWN") { revalidate = true; reasons.push("provenance UNKNOWN — remembered, not independently validated"); }
 
   const verdict = stale ? "STALE" : revalidate ? "REQUIRES_REVALIDATION" : "REUSABLE_AS_PROVEN";
-  if (verdict === "REUSABLE_AS_PROVEN") reasons.push(`fresh (${ageDays}d ≤ ${maxAgeDays}d), provenanced, drift-checked clean, never regressed — reusable AS PROVEN (still a replay of a past result, not a new guarantee)`);
+  if (verdict === "REUSABLE_AS_PROVEN") reasons.push(`fresh (${ageDays}d ≤ ${maxAgeDays}d), provenanced, ${fileScope ? "drift-checked clean" : "no file write-set to drift-check"}, never regressed — reusable AS PROVEN (still a replay of a past result, not a new guarantee)`);
 
   return freeze({
     ok: true,
@@ -113,7 +113,7 @@ function classifyReuseValidity(precedent: any, signals: any): any {
     ageDays,
     maxAgeDays,
     changedTargets: freeze(changedTargets),
-    note: "REMEMBERED ≠ CURRENTLY VALIDATED. REUSABLE_AS_PROVEN requires positive freshness evidence (recent age + known provenance + a clean drift check + no suppression); absent evidence ⇒ REQUIRES_REVALIDATION (fail-closed); a prior net-regression ⇒ STALE. Age alone never upgrades to valid; never-regressed ≠ still-valid. This is a FORWARD complement to reuse-ledger's backward (post-outcome) signal.",
+    note: "REMEMBERED ≠ CURRENTLY VALIDATED. REUSABLE_AS_PROVEN requires positive freshness evidence (recent age + known provenance + a clean drift check for file precedents [fileScope:false skips the file-drift dimension] + no suppression); absent evidence ⇒ REQUIRES_REVALIDATION (fail-closed); a prior net-regression ⇒ STALE. Age alone never upgrades to valid; never-regressed ≠ still-valid. This is a FORWARD complement to reuse-ledger's backward (post-outcome) signal.",
   });
 }
 
