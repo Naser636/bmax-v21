@@ -79,6 +79,11 @@ function adjudicateHypothesis(prediction: any, measured: any): any {
   if (metric.direction !== dir)
     return freeze({ ...base, verdict: VERDICT.REFUTED, preRegistered: true, measured: measuredOut, reason: `measured ${metric.direction} contradicts the pre-registered prediction (${dir})`, note: NOTE });
 
+  // direction matches but the delta isn't a finite number (only from a hand-crafted/malformed metrics map;
+  // measureDelta never emits this) ⇒ cannot adjudicate ⇒ INCONCLUSIVE (fail-closed, never a silent CONFIRMED).
+  if (!Number.isFinite(Number(metric.delta)))
+    return freeze({ ...base, verdict: VERDICT.INCONCLUSIVE, preRegistered: true, measured: measuredOut, reason: "direction matched but delta is not a finite number — cannot adjudicate (fail-closed)", note: NOTE });
+
   // direction matches — check magnitude if one was predicted
   if (hasMag && Math.abs(metric.delta) < prediction.magnitude)
     return freeze({ ...base, verdict: VERDICT.INCONCLUSIVE, preRegistered: true, measured: measuredOut, reason: `direction matched but |delta| ${Math.abs(metric.delta)} < predicted magnitude ${prediction.magnitude} — under-powered / partial`, note: NOTE });

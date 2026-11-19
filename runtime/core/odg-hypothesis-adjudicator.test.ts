@@ -58,6 +58,8 @@ function main(): void {
   check("direction not improved/regressed ⇒ BAD_PREDICTION", M.adjudicateHypothesis({ signal: "x", direction: "flat", preRegistered: true }, md).code === "BAD_PREDICTION");
   check("negative magnitude ⇒ BAD_PREDICTION", M.adjudicateHypothesis({ signal: "x", direction: "improved", magnitude: -1, preRegistered: true }, md).code === "BAD_PREDICTION");
   check("bad measured ⇒ BAD_MEASURED", M.adjudicateHypothesis(P({ signal: "x", direction: "improved" }), 42).code === "BAD_MEASURED");
+  // hand-crafted malformed metrics map: matching direction but non-finite delta ⇒ INCONCLUSIVE (never a silent CONFIRMED)
+  check("direction match but non-finite delta ⇒ INCONCLUSIVE (fail-closed)", M.adjudicateHypothesis(P({ signal: "x", direction: "improved", magnitude: 1 }), { metrics: { x: { before: 0, after: 1, delta: "xx", direction: "improved" } } }).verdict === V.INCONCLUSIVE);
 
   // honesty + determinism + frozen + contract
   const ok = adj(P({ signal: "passRate", direction: "improved" }));
