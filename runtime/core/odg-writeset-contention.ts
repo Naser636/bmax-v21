@@ -21,16 +21,33 @@
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 
-// Normalise a repo-relative path: trim, drop leading "./", collapse duplicate and trailing slashes.
+// Normalise a repo-relative path: trim, strip leading slashes, collapse duplicate/trailing slashes, and
+// resolve "." and ".." segments. The empty string "" denotes the REPO ROOT — a write-set that may touch the
+// whole tree, so it conflicts with EVERY path. A ".."-escape above the root also collapses to "" (fail-closed:
+// an out-of-tree path we cannot reason about is treated as whole-tree, never as isolated).
 function normPath(p: string): string {
-  return String(p).trim().replace(/^\.\//, "").replace(/\/{2,}/g, "/").replace(/\/+$/, "");
+  const s = String(p).trim().replace(/^\/+/, "").replace(/\/{2,}/g, "/").replace(/\/+$/, "");
+  if (s === "" || s === ".") return "";
+  const stack: string[] = [];
+  let escaped = false;
+  for (const seg of s.split("/")) {
+    if (seg === "" || seg === ".") continue;
+    if (seg === "..") { if (stack.length) stack.pop(); else escaped = true; continue; }
+    stack.push(seg);
+  }
+  return escaped ? "" : stack.join("/");
 }
 
-/** Two normalised paths conflict if equal or one is a directory ancestor of the other. */
+/**
+ * Two paths conflict if (after normalisation) they are equal, one is a directory ancestor of the other, or
+ * either is the repo root (""), which is an ancestor of everything. Arguments are normalised here, so callers
+ * may pass raw or pre-normalised paths (normalisation is idempotent).
+ */
 function pathsConflict(a: string, b: string): boolean {
-  if (a === "" || b === "") return false;
-  if (a === b) return true;
-  return a.startsWith(b + "/") || b.startsWith(a + "/");
+  const x = normPath(a), y = normPath(b);
+  if (x === y) return true;
+  if (x === "" || y === "") return true;
+  return x.startsWith(y + "/") || y.startsWith(x + "/");
 }
 
 type WriteSet = { kind: "KNOWN"; paths: string[] } | { kind: "READ_ONLY" } | { kind: "UNKNOWN" };
@@ -40,9 +57,11 @@ type WriteSet = { kind: "KNOWN"; paths: string[] } | { kind: "READ_ONLY" } | { k
 function writeSetOf(m: any): WriteSet {
   if (m && m.readOnly === true) return { kind: "READ_ONLY" };
   const raw = m && (m.authorizedPaths || m.writeSet || m.paths);
-  if (Array.isArray(raw)) {
-    const paths = raw.map(normPath).filter((p: string) => p !== "");
-    if (paths.length > 0) return { kind: "KNOWN", paths };
+  // KNOWN only if a non-empty array of strings. A non-array, an empty array, or any non-string element ⇒
+  // UNKNOWN (fail-closed). A declared path that normalises to "" (repo root / ".." escape) is KEPT as "" so
+  // it conflicts with everything — a whole-tree writer is never silently treated as isolated.
+  if (Array.isArray(raw) && raw.length > 0 && raw.every((x: any) => typeof x === "string")) {
+    return { kind: "KNOWN", paths: raw.map(normPath) };
   }
   return { kind: "UNKNOWN" };
 }
@@ -50,11 +69,12 @@ function writeSetOf(m: any): WriteSet {
 /** Do two missions' write-sets conflict? UNKNOWN conflicts with everything (incl. read-only) except nothing. */
 function missionsConflict(wa: WriteSet, wb: WriteSet): { conflict: boolean; reason: string; shared: string[] } {
   if (wa.kind === "UNKNOWN" || wb.kind === "UNKNOWN")
-    return { conflict: true, reason: "UNKNOWN_WRITESET", shared: [] };
+    return { conflict: true, reason: "UNKNOWN_WRITESET", shared: freeze([]) as string[] };
   if (wa.kind === "READ_ONLY" || wb.kind === "READ_ONLY")
-    return { conflict: false, reason: "READ_ONLY", shared: [] };
+    return { conflict: false, reason: "READ_ONLY", shared: freeze([]) as string[] };
   const shared: string[] = [];
-  for (const a of wa.paths) for (const b of wb.paths) if (pathsConflict(a, b)) shared.push(a === b ? a : `${a} ↔ ${b}`);
+  const show = (p: string) => (p === "" ? "<repo-root>" : p);
+  for (const a of wa.paths) for (const b of wb.paths) if (pathsConflict(a, b)) shared.push(a === b ? show(a) : `${show(a)} ↔ ${show(b)}`);
   return { conflict: shared.length > 0, reason: shared.length > 0 ? "WRITESET_OVERLAP" : "DISJOINT", shared: freeze(shared) as string[] };
 }
 
@@ -113,7 +133,7 @@ function computeLayerContention(layers: any, missions: any): any {
     ok: true,
     anyContention,
     layers: freeze(outLayers),
-    note: "write-set contention within dep-planner's parallel layers: INDEPENDENT IN DEPENDENCY-ORDER ≠ INDEPENDENT IN WRITE-SET. Contended members are split into ordered sub-waves (safe greedy, not provably-minimum). UNKNOWN write-set (no authorizedPaths, not read-only) conflicts with everything — fail-closed, never optimistically parallelised. Overlap = equal path or directory-ancestor containment.",
+    note: "write-set contention within dep-planner's parallel layers: INDEPENDENT IN DEPENDENCY-ORDER ≠ INDEPENDENT IN WRITE-SET. Contended members are split into ordered sub-waves (safe greedy, not provably-minimum). UNKNOWN write-set (no authorizedPaths, not read-only) conflicts with everything — fail-closed, never optimistically parallelised. Overlap = equal path or directory-ancestor containment; paths are normalised (resolve . / .. / leading-slash) and the repo root (a '.'/'/'/..'-escape path) conflicts with EVERY path (fail-closed, never isolated).",
   });
 }
 
@@ -125,7 +145,8 @@ const WRITESET_CONTENTION_CONTRACT = Object.freeze({
     "INDEPENDENT IN DEPENDENCY-ORDER ≠ INDEPENDENT IN WRITE-SET — absence of a declared dep is NOT proof two missions can write concurrently",
     "UNKNOWN write-set (no authorizedPaths declared and not explicitly read-only) conflicts with EVERYTHING — fail-closed, never optimistically parallelised",
     "an explicitly read-only mission writes nothing and conflicts with no one",
-    "path overlap = equal path OR one path is a directory ancestor of the other (src/app conflicts with src/app/page.tsx)",
+    "path overlap = equal path OR one path is a directory ancestor of the other (src/app conflicts with src/app/page.tsx); paths are normalised (. / .. / leading-slash resolved) so src/x, ./src/x, /src/x and src/a/../x compare equal",
+    "the repo root (a path that normalises to '' — '.', '/', or a '..'-escape) conflicts with EVERY path — a whole-tree writer is never silently treated as isolated (fail-closed)",
     "sub-waves are a SAFE greedy schedule (deterministic, stable id order) — write-isolated within each wave, but NOT claimed to be the minimum number of waves; PURE/deterministic/frozen",
   ]),
 });

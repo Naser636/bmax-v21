@@ -22,6 +22,15 @@ function main(): void {
   check("directory ancestor conflicts (src/a ⊃ src/a/x.ts)", M.pathsConflict("src/a", "src/a/x.ts") === true);
   check("sibling prefix does NOT conflict (src/a vs src/ab)", M.pathsConflict("src/a", "src/ab") === false);
   check("disjoint dirs do not conflict", M.pathsConflict("src/a", "src/b") === false);
+  // NORMALISATION + repo-root (regression: these were fail-OPENs — a whole-tree/alias path deemed isolated)
+  check("repo root '.' conflicts with everything (fail-closed)", M.pathsConflict(".", "src/a") === true);
+  check("leading-slash alias /src/a ≡ src/a", M.pathsConflict("/src/a", "src/a") === true);
+  check("'..' segments resolved (src/foo/../shared ≡ src/shared)", M.pathsConflict("src/foo/../shared", "src/shared") === true);
+  check("'..'-escape above root ⇒ root ⇒ conflicts all (fail-closed)", M.pathsConflict("../x", "src/a") === true);
+  check("trailing slash normalised (src/a/ ⊃ src/a/x.ts)", M.pathsConflict("src/a/", "src/a/x.ts") === true);
+  check("'.' path in a write-set makes the mission conflict with a sibling (not isolated)",
+    M.computeLayerContention([["A", "B"]], [{ id: "A", authorizedPaths: ["."] }, { id: "B", authorizedPaths: ["src/a"] }]).layers[0].parallelSafe === false);
+  check("non-string element in authorizedPaths ⇒ UNKNOWN (fail-closed)", M.writeSetOf({ authorizedPaths: [123] }).kind === "UNKNOWN");
 
   // layer 0: m1 vs m3 overlap; m2 disjoint
   check("L0 not parallel-safe", L0.parallelSafe === false && r.anyContention === true);
@@ -78,6 +87,8 @@ function main(): void {
   check("note: dep-order ≠ write-set, unknown fail-closed, not provably-minimum", /INDEPENDENT IN DEPENDENCY-ORDER ≠ INDEPENDENT IN WRITE-SET/.test(r.note) && /fail-closed/.test(r.note) && /not provably-minimum/.test(r.note));
   check("deterministic", J(M.computeLayerContention([["m1", "m2", "m3"], ["m4", "m5"]], missions)) === J(r));
   check("frozen (result, layers, a layer, its subWaves, a contention)", Object.isFrozen(r) && Object.isFrozen(r.layers) && Object.isFrozen(L0) && Object.isFrozen(L0.subWaves) && Object.isFrozen(L0.contentions[0]));
+  // the `shared` array is frozen even for UNKNOWN/READ_ONLY contentions (regression: was a raw mutable [])
+  check("UNKNOWN contention.shared is frozen", Object.isFrozen(L1.contentions[0].shared));
   check("contract: dep≠writeset, unknown-fail-closed, readonly-safe, ancestor-overlap, safe-not-minimal",
     M.WRITESET_CONTENTION_CONTRACT.invariants.some((s: string) => /NOT proof two missions can write concurrently/.test(s)) &&
     M.WRITESET_CONTENTION_CONTRACT.invariants.some((s: string) => /conflicts with EVERYTHING — fail-closed/.test(s)) &&
