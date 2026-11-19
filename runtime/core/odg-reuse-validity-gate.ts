@@ -60,8 +60,9 @@ function classifyReuseValidity(precedent: any, signals: any): any {
   let stale = false;
   let revalidate = false;
 
-  // (A) STALE — a positive bad signal: a prior reuse net-regressed (reuse-ledger suppressed it).
-  if (s.suppressed === true) { stale = true; reasons.push("STALE: prior reuse net-regressed (reuse-ledger suppressed) — do not replay until revalidated"); }
+  // (A) STALE — a positive bad signal: a prior reuse net-regressed (reuse-ledger suppressed it). Truthy (not
+  // strictly ===true): for a BAD signal, any truthy flag is treated as the bad condition (fail-closed).
+  if (s.suppressed) { stale = true; reasons.push("STALE: prior reuse net-regressed (reuse-ledger suppressed) — do not replay until revalidated"); }
 
   // (B) age
   const lms = learnedAtMs(precedent.learnedAt);
@@ -69,11 +70,19 @@ function classifyReuseValidity(precedent: any, signals: any): any {
   let ageDays: number | null = null;
   if (lms === null) { revalidate = true; reasons.push("learnedAt missing/unparseable — cannot verify freshness (fail-closed)"); }
   else if (asOf === null) { revalidate = true; reasons.push("asOfMs not supplied — cannot compute age (fail-closed)"); }
-  else { ageDays = Number(((asOf - lms) / DAY_MS).toFixed(2)); if (ageDays > maxAgeDays) { revalidate = true; reasons.push(`aged ${ageDays}d > ${maxAgeDays}d since learned — re-evidence before trusting`); } }
+  else {
+    ageDays = Number(((asOf - lms) / DAY_MS).toFixed(2));
+    if (ageDays < 0) { revalidate = true; reasons.push(`learnedAt is in the future (age ${ageDays}d) — implausible timestamp, cannot certify freshness (fail-closed)`); }
+    else if (ageDays > maxAgeDays) { revalidate = true; reasons.push(`aged ${ageDays}d > ${maxAgeDays}d since learned — re-evidence before trusting`); }
+  }
 
   // (C) target-path drift — any path the precedent writes that overlaps a path changed since it was learned.
   const targets = targetPathsOf(precedent);
   const changedTargets: string[] = [];
+  if (targets.length === 0) {
+    // Cannot identify what the precedent writes ⇒ cannot certify the edited files are unchanged (fail-closed).
+    revalidate = true; reasons.push("precedent declares no resolvable target paths — cannot certify the edited files are unchanged (fail-closed)");
+  }
   if (!Array.isArray(s.changedPaths)) {
     revalidate = true; reasons.push("drift not checked (no changedPaths supplied) — cannot certify the edited files are unchanged (fail-closed)");
   } else {
@@ -81,8 +90,8 @@ function classifyReuseValidity(precedent: any, signals: any): any {
     if (changedTargets.length > 0) { revalidate = true; reasons.push(`target path(s) changed since learned: ${changedTargets.join(", ")} — stored edit may no longer apply`); }
   }
 
-  // (D) declared dependency drift
-  if (s.dependencyDrift === true) { revalidate = true; reasons.push("declared dependency drift — re-evidence before trusting"); }
+  // (D) declared dependency drift (truthy ⇒ bad condition, fail-closed)
+  if (s.dependencyDrift) { revalidate = true; reasons.push("declared dependency drift — re-evidence before trusting"); }
 
   // (E) provenance — a precedent with UNKNOWN/absent authorship is remembered, not independently validated.
   const authoredBy = typeof precedent.authoredBy === "string" ? precedent.authoredBy : "";

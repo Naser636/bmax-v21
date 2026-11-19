@@ -40,6 +40,16 @@ function main(): void {
   check("missing authoredBy ⇒ REQUIRES_REVALIDATION", M.classifyReuseValidity({ learnedAt: NOW - DAY, edits: [{ file: "src/a.ts" }] }, { asOfMs: NOW, changedPaths: [] }).verdict === "REQUIRES_REVALIDATION");
   check("declared dependencyDrift ⇒ REQUIRES_REVALIDATION", M.classifyReuseValidity(fresh, { asOfMs: NOW, changedPaths: [], dependencyDrift: true }).verdict === "REQUIRES_REVALIDATION");
 
+  // REQUIRES_REVALIDATION — unrecognized edit-record shape ⇒ no resolvable targets ⇒ cannot certify drift (fail-closed)
+  check("unrecognized edit shape (no resolvable targets) ⇒ REQUIRES_REVALIDATION (not falsely drift-clean)",
+    M.classifyReuseValidity({ learnedAt: NOW - DAY, authoredBy: "x", edits: [{ weird: "src/x.ts" }] }, { asOfMs: NOW, changedPaths: ["src/x.ts"] }).verdict === "REQUIRES_REVALIDATION");
+  // REQUIRES_REVALIDATION — future learnedAt (negative age) is implausible, not fresh
+  const future = M.classifyReuseValidity({ learnedAt: NOW + 100 * DAY, authoredBy: "x", edits: [{ file: "src/a.ts" }] }, { asOfMs: NOW, changedPaths: [] });
+  check("future learnedAt (negative age) ⇒ REQUIRES_REVALIDATION (fail-closed, not a fresh-pass)", future.verdict === "REQUIRES_REVALIDATION" && future.ageDays === -100 && future.reasons.some((r: string) => /in the future/.test(r)));
+  // truthy-but-non-boolean bad signals still trigger (fail-closed on negative signals)
+  check("suppressed truthy-non-boolean ⇒ STALE", M.classifyReuseValidity(fresh, { asOfMs: NOW, changedPaths: [], suppressed: 1 }).verdict === "STALE");
+  check("dependencyDrift truthy-non-boolean ⇒ REQUIRES_REVALIDATION", M.classifyReuseValidity(fresh, { asOfMs: NOW, changedPaths: [], dependencyDrift: "yes" }).verdict === "REQUIRES_REVALIDATION");
+
   // STALE — a prior net-regression (reuse-ledger suppressed) is the hard signal; beats everything
   const sup = M.classifyReuseValidity(fresh, { asOfMs: NOW, changedPaths: ["src/a.ts"], suppressed: true });
   check("suppressed (prior regression) ⇒ STALE (overrides revalidation triggers)", sup.verdict === "STALE" && sup.reasons.some((r: string) => /net-regressed/.test(r)));
