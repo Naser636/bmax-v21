@@ -51,8 +51,9 @@ function main(): void {
   check("ASSISTED 1, ESCALATED 1", agg.buckets.ASSISTED.count === 1 && agg.buckets.ESCALATED.count === 1);
   check("NOT_MEASURABLE 2, reported separately (NOT in the measured denominator)", agg.notMeasurable.count === 2 && agg.measuredDenominator === 4);
   check("ids attributed to the right bucket", JSON.stringify(agg.buckets.NATIVE_DEMONSTRATED.ids) === JSON.stringify(["a", "b"]) && JSON.stringify(agg.buckets.ESCALATED.ids) === JSON.stringify(["d"]) && JSON.stringify(agg.notMeasurable.ids) === JSON.stringify(["e", "f"]));
-  // three measured rates sum to 1 over the measured set (no blending into one number)
-  check("three bucket rates sum to 1 over measured (no blended score)", Number((agg.buckets.NATIVE_DEMONSTRATED.rateOfMeasured + agg.buckets.ASSISTED.rateOfMeasured + agg.buckets.ESCALATED.rateOfMeasured).toFixed(4)) === 1);
+  // the real invariant: bucket COUNTS sum EXACTLY to the measured denominator (rateOfMeasured values are each
+  // independently rounded to 4dp, so they may differ from a sum of 1 by ±0.0001 — the counts are the truth).
+  check("bucket COUNTS sum exactly to the measured denominator (no blended score; counts are the truth)", agg.buckets.NATIVE_DEMONSTRATED.count + agg.buckets.ASSISTED.count + agg.buckets.ESCALATED.count === agg.measuredDenominator);
   // all NOT_MEASURABLE ⇒ measured denominator 0, rates null (never a 0-denominator rate)
   const none = M.aggregateMaturity([{ id: "x", actor: "UNKNOWN" }, { id: "y", actor: "ODG" }]);
   check("0 measured ⇒ rateOfMeasured null (never a 0-denominator rate)", none.measuredDenominator === 0 && none.buckets.NATIVE_DEMONSTRATED.rateOfMeasured === null);
@@ -73,7 +74,7 @@ function main(): void {
     M.AUTONOMY_MATURITY_CONTRACT.invariants.some((s: string) => /share of MEASURED missions/.test(s)) &&
     M.AUTONOMY_MATURITY_CONTRACT.invariants.some((s: string) => /EXPLICIT fields only/.test(s)));
 
-  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-autonomy-maturity-trichotomy (native/assisted/escalated over REAL autonomy-claim-guard: ODG+REAL/verified⇒NATIVE_DEMONSTRATED; ODG+simulated/declared/no-evidence⇒NOT_MEASURABLE [capability≠demonstrated]; provider/human⇒ASSISTED; automated/unknown⇒NOT_MEASURABLE; escalated/ownerGated/OWNER_GATED/DEFERRED_TO_OWNER⇒ESCALATED [overrides actor]; aggregate 3 counts over ONE measured denominator + separate NOT_MEASURABLE, rates sum to 1, 0-denominator⇒null, NO blended score; non-array/non-object fail-closed; PURE/deterministic/frozen)" : failures + " FAIL"}\n`);
+  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-autonomy-maturity-trichotomy (native/assisted/escalated over REAL autonomy-claim-guard: ODG+REAL/verified⇒NATIVE_DEMONSTRATED; ODG+simulated/declared/no-evidence⇒NOT_MEASURABLE [capability≠demonstrated]; provider/human⇒ASSISTED; automated/unknown⇒NOT_MEASURABLE; escalated/ownerGated/OWNER_GATED/DEFERRED_TO_OWNER⇒ESCALATED [overrides actor]; aggregate 3 counts over ONE measured denominator + separate NOT_MEASURABLE, counts sum EXACTLY to measured denominator, 0-denominator⇒null rate, NO blended score; non-array/non-object fail-closed; PURE/deterministic/frozen)" : failures + " FAIL"}\n`);
   process.exit(failures === 0 ? 0 : 1);
 }
 main();
