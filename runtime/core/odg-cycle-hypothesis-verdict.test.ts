@@ -41,6 +41,13 @@ function main(): void {
   // GENUINE PRE-REGISTRATION: createdAt (hypothesis registration) must precede the measurement time
   const backdated = { id: "CY-3", createdAt: 9000, history: [{ at: 1000 }, { at: 5000 }], hypothesis: { hypothesis: "x", refutationConditions: ["a"], successCriteria: ["b"], prediction: { signal: "passRate", direction: "improved" } }, measurement: md };
   check("createdAt AFTER the measurement time ⇒ INCONCLUSIVE (not genuinely pre-registered)", M.adjudicateCycle(backdated).verdict === V.INCONCLUSIVE);
+  // FAIL-CLOSED on unresolvable timestamps: a matching prediction must NOT self-confirm without a registration time
+  const noCreatedAt = { id: "CY-5", history: [{ at: 5000 }], hypothesis: { hypothesis: "x", refutationConditions: ["a"], successCriteria: ["b"], prediction: { signal: "passRate", direction: "improved" } }, measurement: md };
+  check("no createdAt ⇒ INCONCLUSIVE (cannot prove pre-registration — fail-closed, not self-confirming)", M.adjudicateCycle(noCreatedAt).verdict === V.INCONCLUSIVE);
+  const noHistory = { id: "CY-6", createdAt: 1000, hypothesis: { hypothesis: "x", refutationConditions: ["a"], successCriteria: ["b"], prediction: { signal: "passRate", direction: "improved" } }, measurement: md };
+  check("no history (no measurement time) ⇒ INCONCLUSIVE (fail-closed)", M.adjudicateCycle(noHistory).verdict === V.INCONCLUSIVE);
+  check("garbage history timestamps ⇒ INCONCLUSIVE (fail-closed)", M.adjudicateCycle({ id: "CY-7", createdAt: "nope", history: [{ at: "nope" }], hypothesis: { hypothesis: "x", refutationConditions: ["a"], successCriteria: ["b"], prediction: { signal: "passRate", direction: "improved" } }, measurement: md }).verdict === V.INCONCLUSIVE);
+
   // ISO timestamps also accepted (parsed), order enforced
   const isoCycle = { id: "CY-4", createdAt: "2026-01-01T00:00:00Z", history: [{ at: "2026-01-01T00:00:00Z" }, { at: "2026-01-02T00:00:00Z" }], hypothesis: { hypothesis: "x", refutationConditions: ["a"], successCriteria: ["b"], prediction: { signal: "passRate", direction: "improved" } }, measurement: md };
   check("ISO createdAt < ISO measurement ⇒ CONFIRMED (timestamps parsed)", M.adjudicateCycle(isoCycle).verdict === V.CONFIRMED);

@@ -56,13 +56,19 @@ function adjudicateCycle(cycle: any): any {
   if (!isObj(cycle.measurement))
     return freeze({ ok: true, cycleId, verdict: ADJ.VERDICT.INCONCLUSIVE, adjudicable: false, reason: "cycle has no measurement (measureDelta result) — cannot adjudicate", prediction: freeze({ signal: pred.signal, direction: pred.direction, magnitude: pred.magnitude ?? null }), adjudication: null });
 
+  // Genuine pre-registration REQUIRES both timestamps to resolve (createdAt = registration time; measuredAt = the
+  // cycle's latest recorded event, ≥ the measurement). If either is unresolvable we CANNOT prove the prediction
+  // predated the result ⇒ preRegistered:false ⇒ the adjudicator returns INCONCLUSIVE (fail-closed, never a
+  // self-confirming post-hoc prediction).
+  const pMs = toMs(cycle.createdAt);
+  const mMs = measuredAtOf(cycle);
   const prediction = {
     signal: pred.signal,
     direction: pred.direction,
     magnitude: pred.magnitude,
-    preRegistered: true, // the prediction lives in the hypothesis recorded at startCycle (before measurement)
-    preRegisteredAtMs: toMs(cycle.createdAt) ?? undefined,
-    measuredAtMs: measuredAtOf(cycle) ?? undefined,
+    preRegistered: pMs !== null && mMs !== null,
+    preRegisteredAtMs: pMs ?? undefined,
+    measuredAtMs: mMs ?? undefined,
   };
   const adjudication = ADJ.adjudicateHypothesis(prediction, cycle.measurement);
   return freeze({
@@ -108,7 +114,7 @@ const CYCLE_HYPOTHESIS_VERDICT_CONTRACT = Object.freeze({
   reuses: Object.freeze(["odg-hypothesis-adjudicator.adjudicateHypothesis (predicted-vs-measured — not reimplemented)", "consumes evolution-loop cycle records (hypothesis.prediction + measurement + createdAt + history); composes with improvement-baseline.measureDelta upstream"]),
   invariants: Object.freeze([
     "read-only — adjudicates a SUPPLIED cycle record; promotes nothing, re-measures nothing, mutates nothing",
-    "pre-registration is genuine: the structured prediction lives in the hypothesis recorded at startCycle (before measurement); createdAt < measurement-stage time is enforced via the adjudicator when timestamps resolve",
+    "pre-registration is genuine AND fail-closed: it holds ONLY when both the registration time (createdAt) and the measurement time (the cycle's latest recorded event) resolve AND createdAt < measurement; an unresolvable timestamp ⇒ NOT pre-registered ⇒ INCONCLUSIVE (never a self-confirming post-hoc prediction)",
     "CONFIRMED only when the measured delta matches the pre-registered prediction (direction + magnitude); the author's expectation never confirms itself",
     "a cycle without a structured prediction (signal + direction) or without a measurement ⇒ INCONCLUSIVE + adjudicable:false — never counted as confirmed",
     "the batch confirmed rate is over ADJUDICABLE cycles ONLY (explicit denominator, no blended score); PURE/deterministic/frozen/clock-free",
