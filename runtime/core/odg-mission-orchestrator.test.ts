@@ -19,6 +19,29 @@ function main() {
   check("parallel schedule is a real dependency layering (layers + maxParallelism)", typeof plan.parallelSchedule.layerCount === "number" && typeof plan.parallelSchedule.maxParallelism === "number");
   check("counts reconcile: dispatchableNow = ODG_NATIVE + DELEGATE_PROVIDER", plan.dispatchableNow === (plan.byRoute.ODG_NATIVE || 0) + (plan.byRoute.DELEGATE_PROVIDER || 0));
 
+  // ---- WRITE-SAFETY: each parallel layer is re-checked for write-set contention (dependency-order ≠ write-set independence) ----
+  check("write-safety present on the real plan (ok verdict)", plan.writeSafety && plan.writeSafety.ok === true && typeof plan.parallelDispatchProvenSafe === "boolean");
+  // synthetic: 3 same-layer ODG_NATIVE missions; m1/m2 write-sets OVERLAP, m3 disjoint ⇒ NOT proven safe, safe sub-waves split m2 out
+  const ov = O.buildDispatchPlan({ missions: [
+    { id: "m1", class: "REALIZABLE_LOCAL", deps: [], nextAction: "read-only analysis", authorizedPaths: ["src/a"] },
+    { id: "m2", class: "REALIZABLE_LOCAL", deps: [], nextAction: "deterministic analysis", authorizedPaths: ["src/a/x.ts"] },
+    { id: "m3", class: "REALIZABLE_LOCAL", deps: [], nextAction: "classif", authorizedPaths: ["src/b"] },
+  ] });
+  check("overlapping write-sets in a layer ⇒ parallelDispatchProvenSafe false + contention flagged", ov.parallelDispatchProvenSafe === false && ov.writeSafety.anyContention === true);
+  check("safe sub-waves isolate the contended mission ([[m1,m3],[m2]])", JSON.stringify(ov.writeSafety.layers[0].subWaves) === JSON.stringify([["m1", "m3"], ["m2"]]));
+  // disjoint write-sets ⇒ proven safe
+  const dj = O.buildDispatchPlan({ missions: [
+    { id: "a", class: "REALIZABLE_LOCAL", deps: [], nextAction: "analysis", authorizedPaths: ["src/a"] },
+    { id: "b", class: "REALIZABLE_LOCAL", deps: [], nextAction: "analysis", authorizedPaths: ["src/b"] },
+  ] });
+  check("disjoint write-sets in a layer ⇒ parallelDispatchProvenSafe true", dj.parallelDispatchProvenSafe === true);
+  // no declared write-set ⇒ UNKNOWN ⇒ NOT proven safe (fail-closed)
+  const nows = O.buildDispatchPlan({ missions: [
+    { id: "x", class: "REALIZABLE_LOCAL", deps: [], nextAction: "analysis" },
+    { id: "y", class: "REALIZABLE_LOCAL", deps: [], nextAction: "analysis" },
+  ] });
+  check("missions without declared write-sets ⇒ UNKNOWN ⇒ parallel dispatch NOT proven safe (fail-closed)", nows.parallelDispatchProvenSafe === false);
+
   // ---- delegation contract (§9/§11): precise scope/acceptance/evidence/prohibitions ----
   const contract = O.delegationContract({ id: "m1", nextAction: "do X" }, ["runtime/core/x.ts"]);
   check("delegation contract carries scope + acceptance + evidence + prohibitions (incl. no self-closure)", contract.authorizedFiles[0] === "runtime/core/x.ts" && contract.acceptanceCriteria.length >= 2 && contract.prohibitions.some((p: string) => /no status self-promotion|closure/.test(p)));
