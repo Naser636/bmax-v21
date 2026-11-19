@@ -62,10 +62,14 @@ function buildCommitment(input: any): any {
   const allPriced = lines.every((l: any) => l.status === "PRICED");
   const grossMinor = allPriced ? lines.reduce((n: number, l: any) => n + l.amountMinor, 0) : null;
   const grossOverflow = grossMinor !== null && !Number.isSafeInteger(grossMinor);
-  const engageable = allPriced && !grossOverflow;
+  const engageable = allPriced && !grossOverflow && grossMinor !== null;
   // retenue de garantie: held back from gross; net payable now = gross − retention. Retention is HELD, released by owner later.
-  const retentionMinor = engageable ? Math.round((grossMinor * retentionBps) / 10000) : null;
-  const netPayableMinor = engageable ? grossMinor - retentionMinor : null;
+  let retentionMinor: number | null = null;
+  let netPayableMinor: number | null = null;
+  if (engageable && grossMinor !== null) {
+    retentionMinor = Math.round((grossMinor * retentionBps) / 10000);
+    netPayableMinor = grossMinor - retentionMinor; // net = gross − retention (structural identity: net + retention == gross)
+  }
 
   return freeze({
     ok: true, id: i.id, chantierId: i.chantierId, kind: i.kind, supplier: i.supplier, currency,
