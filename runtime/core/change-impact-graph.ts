@@ -161,9 +161,11 @@ function impactedTests(root: string, names: Set<string>): string[] {
   return [...out].sort();
 }
 
-/** Full impact report for ONE module. Pure read; closure walked over direct-dep edges. */
-export function impactOf(root: string = process.cwd(), module: string): ImpactReport {
-  const graph = buildGraph(root);
+/** Full impact report for ONE module. Pure read; closure walked over direct-dep edges. V327 §9: an optional PRE-BUILT
+ *  graph (same shape as buildGraph) is reused instead of rescanning the filesystem — the enabling primitive for
+ *  cross-call graph reuse (persistent-impact-graph.makeReusableImpactOf). Absent ⇒ buildGraph as before (unchanged). */
+export function impactOf(root: string = process.cwd(), module: string, prebuilt?: any): ImpactReport {
+  const graph = (prebuilt && Array.isArray(prebuilt.modules) && prebuilt.deps && prebuilt.consumers) ? prebuilt : buildGraph(root);
   const exists = graph.modules.includes(module);
   if (!exists) {
     return {
