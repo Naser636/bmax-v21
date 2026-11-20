@@ -31,7 +31,9 @@ async function main(): Promise<void> {
   // V327 §3 SELF-CALIBRATION: no explicit history, but ACCUMULATED native-build outcomes (keyed by the store's complexity
   // key) drive the policy via odg-calibration-key ⇒ the cycle learns from its OWN outcomes. KEY reconstructs from the spec.
   const KEY = "native-build:MONOLITHIC:TRIVIAL"; // mission.spec = 1-file arch ⇒ chooseStrategy MONOLITHIC / complexity TRIVIAL
-  const po = (s: number, f: number): any[] => [...Array(s).fill(0).map(() => ({ type: KEY, outcome: "SUCCESS", independentlyVerified: true })), ...Array(f).fill(0).map(() => ({ type: KEY, outcome: "FAILURE", independentlyVerified: true }))];
+  // distinct missionId per outcome ⇒ diverse source contexts ⇒ §6 generalization-validity GENERALIZABLE (belief trusted)
+  let _sid = 0; const nextId = () => `native:m${_sid++}`;
+  const po = (s: number, f: number): any[] => [...Array(s).fill(0).map(() => ({ type: KEY, outcome: "SUCCESS", independentlyVerified: true, missionId: nextId() })), ...Array(f).fill(0).map(() => ({ type: KEY, outcome: "FAILURE", independentlyVerified: true, missionId: nextId() }))];
   const scHigh = await IC.runIntelligentCycle({ mission, generatorFor: genFor, deps: { priorOutcomes: po(18, 2), buildProject: async () => ({ accepted: true, verified: true }) } });
   check("SELF-CALIBRATED high (store 18✓/2✗, no explicit history) ⇒ cheap policy 3b/1; selfCalibrated.key = store key, KNOWN, 20 obs", scHigh.policy.model === "qwen2.5-coder:3b" && scHigh.policy.maxRepair === 1 && scHigh.selfCalibrated && scHigh.selfCalibrated.key === KEY && scHigh.selfCalibrated.confidence === "KNOWN" && scHigh.selfCalibrated.observations === 20);
   const scLow = await IC.runIntelligentCycle({ mission, generatorFor: genFor, deps: { priorOutcomes: po(4, 16), buildProject: async () => ({ accepted: false }) } });
@@ -42,8 +44,8 @@ async function main(): Promise<void> {
 
   // V327 §2 BEHAVIORAL OBSOLESCENCE: a REGRESSING class (point-belief MEDIUM 0.5 ⇒ policy would NOT escalate) still
   // escalates because the trend shows more local probing won't help. Isolates the §2 effect (LOW band is 0.3).
-  const Sx = () => ({ type: KEY, outcome: "SUCCESS", independentlyVerified: true });
-  const Fr = (r: string) => ({ type: KEY, outcome: "FAILURE", independentlyVerified: true, reason: r });
+  const Sx = () => ({ type: KEY, outcome: "SUCCESS", independentlyVerified: true, missionId: nextId() });
+  const Fr = (r: string) => ({ type: KEY, outcome: "FAILURE", independentlyVerified: true, reason: r, missionId: nextId() });
   const regPo = [...Array(10).fill(0).map(Sx), ...Array(10).fill(0).map(() => Fr("stuck"))]; // early 1.0 → recent 0.0, overall 0.5
   const regR = await IC.runIntelligentCycle({ mission, generatorFor: genFor, deps: { priorOutcomes: regPo, buildProject: async () => ({ accepted: false }) } });
   check("§2 REGRESSING (point-belief MEDIUM 0.5 — policy tier NATIVE_REPAIR, would NOT escalate) ⇒ behavioral obsolescence FORCES escalate", regR.behavioral.verdict === "REGRESSING" && regR.behavioral.obsolete === true && regR.policy.tier === "NATIVE_REPAIR" && regR.escalation.escalate === true && /behaviorally obsolete/.test(regR.note));
@@ -51,6 +53,11 @@ async function main(): Promise<void> {
   const platPo = [...Array(6).fill(0).map(Sx), Fr("e1"), Fr("e2"), Fr("e3"), Fr("e4"), ...Array(7).fill(0).map(Sx), Fr("a"), Fr("b"), Fr("c")]; // ~0.6→0.7 flat, distinct fails
   const platR = await IC.runIntelligentCycle({ mission, generatorFor: genFor, deps: { priorOutcomes: platPo, buildProject: async () => ({ accepted: false }) } });
   check("§2 PLATEAU medium (not obsolete, no recurring signature) ⇒ NO forced escalation (keep probing) — contrast with REGRESSING", platR.behavioral.verdict === "PLATEAU" && platR.behavioral.obsolete === false && platR.escalation.escalate === false && /keep probing/.test(platR.note));
+
+  // V327 §6 ANTI OVER-GENERALIZATION: 20 outcomes but ALL from ONE source ⇒ OVERFIT ⇒ belief NOT trusted ⇒ probe (not ridden).
+  const narrowPo = Array(20).fill(0).map(() => ({ type: KEY, outcome: "SUCCESS", independentlyVerified: true, missionId: "native:only-one" }));
+  const narrowR = await IC.runIntelligentCycle({ mission, generatorFor: genFor, deps: { priorOutcomes: narrowPo, buildProject: async () => ({ accepted: true, verified: true }) } });
+  check("§6 narrow-source belief (20 outcomes, 1 source) ⇒ OVERFIT ⇒ selfCalibrated refused, generalization not generalizable (probed, not over-generalized)", narrowR.generalization.verdict === "OVERFIT" && narrowR.generalization.generalizable === false && narrowR.selfCalibrated.refused === true && narrowR.behavioral === null);
 
   // selectIntelligently consumes routing: calibrated data flips the selection (unreliable→reliable)
   const reg = { version: "r", items: [{ id: "A_unreliable", status: "READY", deps: [], priority: 5, missionType: "unreliable" }, { id: "B_reliable", status: "READY", deps: [], priority: 5, missionType: "reliable" }] };
