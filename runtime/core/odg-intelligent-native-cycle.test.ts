@@ -64,6 +64,12 @@ async function main(): Promise<void> {
   const sel = IC.selectIntelligently(reg, [...h(0, 0), ...Array(4).fill({ missionType: "unreliable", verified: true }), ...Array(16).fill({ missionType: "unreliable", verified: false }), ...Array(18).fill({ missionType: "reliable", verified: true }), ...Array(2).fill({ missionType: "reliable", verified: false })]);
   check("selectIntelligently (routing) flips the pick to the calibrated-reliable mission", sel.changed === true && sel.routedSelected === "B_reliable");
 
+  // V327 §6/§9 MISSING-INFORMATION PRE-FLIGHT: an UNDERSPECIFIED spec (no acceptance criterion) is NOT attempted.
+  let buildCalled = false;
+  const underMission = { id: "U", type: "t", spec: { name: "U", architecture: [{ path: "f.js", role: "r", contract: "c" }] } }; // no independentTest
+  const under = await IC.runIntelligentCycle({ mission: underMission, generatorFor: genFor, deps: { buildProject: async () => { buildCalled = true; return { accepted: true }; } } });
+  check("UNDERSPECIFIED spec (no acceptance criterion) ⇒ not attempted (code UNDERSPECIFIED, buildProject never called, not a capability failure)", under.code === "UNDERSPECIFIED" && under.accepted === false && buildCalled === false && under.escalation.escalate === false && under.completeness.missing.some((m: string) => /acceptance/.test(m)));
+
   // fail-closed + frozen + contract
   check("fail-closed: bad input ⇒ BAD_INPUT", (await IC.runIntelligentCycle({})).code === "BAD_INPUT" && (await IC.runIntelligentCycle({ mission: { id: "x" }, generatorFor: genFor })).code === "BAD_INPUT");
   check("frozen result", Object.isFrozen(acc) && Object.isFrozen(acc.policy));
