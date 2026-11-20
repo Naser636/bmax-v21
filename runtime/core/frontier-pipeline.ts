@@ -19,6 +19,7 @@
 
 const RADAR = require("./frontier-radar");
 const STORE = require("./frontier-radar-store");
+const SELFIMP = require("./frontier-radar-self-improvement"); // V360 §3.8 — radar measures its OWN cycle (PROPOSED-only)
 const EVO = require("./evolution-loop");
 const AG = require("./action-gate");
 const OA = require("./objective-authorization");
@@ -82,6 +83,12 @@ async function runFrontierPipeline(input: any, deps: any): Promise<any> {
   // 1) RADAR — signals → qualified candidates/proposals.
   const report = RADAR.runRadar(isObj(i.radar) ? i.radar : {});
 
+  // 1b) V360 §3.8 — RADAR SELF-EVALUATION: the radar measures its OWN cycle (precision/noise/miss) against caller-supplied
+  // ground truth and PROPOSES tunings (selfAuthorized:false — never self-applied; meta-intelligence anti-gaming). This runs
+  // every cycle; absent/insufficient ground truth ⇒ measurable:false (NOT_MEASURED), never a fabricated improvement.
+  const se = isObj(i.radarSelfEval) ? i.radarSelfEval : {};
+  const selfImprovement = SELFIMP.assessRadarCycle({ discoveries: se.discoveries, groundTruth: se.groundTruth, priorMetrics: se.priorMetrics, integritySignals: d.integritySignals });
+
   // 2) ODG admission (POLICY + AUTHORITY) over each proposal; integrate as canonical DEFERRED lots.
   let register = isObj(i.register) && Array.isArray(i.register.items) ? { items: i.register.items.slice() } : { items: [] };
   const admissions: any[] = [];
@@ -89,7 +96,7 @@ async function runFrontierPipeline(input: any, deps: any): Promise<any> {
 
   // 3) CANONICAL SELECTION — the EXISTING campaign-controller selects the next READY lot (no new scheduler).
   const selection = CC.selectNextLot(register);
-  if (!selection.lot) return Object.freeze({ ok: true, stage: "selection", report, admissions, register, selection, reason: selection.reason || "no admissible lot (all DEFERRED / POLICY-blocked)", chainTraversed: false });
+  if (!selection.lot) return Object.freeze({ ok: true, stage: "selection", report, admissions, register, selection, selfImprovement, reason: selection.reason || "no admissible lot (all DEFERRED / POLICY-blocked)", chainTraversed: false });
 
   // 4) LAB + EVOLUTION — the real self-improvement cycle (uses frontier-lab + the WI-FR-05 sandbox runner internally).
   if (typeof d.runner !== "function" || typeof d.builder !== "function") return Object.freeze({ ok: false, stage: "evolution", reason: "a Builder and a (sandbox) Tester runner are required", report, admissions, register, selection });
@@ -116,7 +123,7 @@ async function runFrontierPipeline(input: any, deps: any): Promise<any> {
   // 6) DECISION — the cycle outcome; promotion stays EXTERNAL.
   return Object.freeze({
     ok: true, chainTraversed: true,
-    report, admissions, register, selection,
+    report, admissions, register, selection, selfImprovement,
     cycle, evidence: stamped,
     decision: Object.freeze({ outcome: cycle ? cycle.outcome : null, promoted: !!(cycle && cycle.promoted), promotionIsExternal: true }),
     stages: Object.freeze(["RADAR", "ODG_INTEGRATE", "POLICY_AUTHORITY", "CANONICAL_SELECTION", "LAB+EVOLUTION(sandbox)", "EVIDENCE", "DECISION"]),
@@ -131,7 +138,7 @@ function safeStamp(record: any, now: any): any {
 const FRONTIER_PIPELINE_CONTRACT = Object.freeze({
   id: "WI-FR-06-FRONTIER-PIPELINE",
   source: "Resumption mandate WI-FR-06 — canonical runtime integration Radar→ODG→POLICY→Lab→Evolution→Evidence→Decision",
-  reuses: Object.freeze(["frontier-radar", "frontier-radar-store", "evolution-loop (→frontier-lab→frontier-sandbox)", "action-gate (POLICY)", "objective-authorization", "campaign-controller (register + selectNextLot)", "mission-evidence + evidence-provenance"]),
+  reuses: Object.freeze(["frontier-radar", "frontier-radar-store", "frontier-radar-self-improvement (V360 §3.8 — radar self-evaluation)", "evolution-loop (→frontier-lab→frontier-sandbox)", "action-gate (POLICY)", "objective-authorization", "campaign-controller (register + selectNextLot)", "mission-evidence + evidence-provenance"]),
   notAuthority: "wires existing components into the canonical chain; creates NO second queue/scheduler/store/authorizer; promotion stays external/governed",
   invariants: Object.freeze([
     "NO parallel architecture — every stage is an existing canonical mechanism (campaign-controller is the only scheduler)",
@@ -140,6 +147,7 @@ const FRONTIER_PIPELINE_CONTRACT = Object.freeze({
     "the real WI-FR-05 sandbox runner is the Tester; executor≠verifier is preserved via evolution-loop/frontier-lab",
     "promotion is NOT performed by the pipeline (external/governed); evidence is canonical (mission-evidence + provenance)",
     "fail-closed: no admissible lot ⇒ chainTraversed:false; missing Builder/Tester ⇒ refused",
+    "V360 §3.8: every cycle also emits selfImprovement — the radar's OWN precision/noise/miss vs caller ground truth + PROPOSED tunings (selfAuthorized:false, never self-applied; NOT_MEASURED when no verified ground truth — never fabricated)",
   ]),
 });
 

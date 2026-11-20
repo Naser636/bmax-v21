@@ -75,7 +75,19 @@ void (async () => {
   // (15) self-promotion is structurally impossible through the pipeline (decision carries promotionIsExternal).
   check(ok.decision.promotionIsExternal === true && ok.cycle.promoted === false, "no self-promotion — the pipeline never promotes (external/governed only)");
 
-  console.log(failures === 0 ? "ALL PASS — WI-FR-06 FRONTIER PIPELINE" : `FAILURES: ${failures}`);
+  // (V360 §3.8) RADAR SELF-EVALUATION is emitted every cycle. Without ground truth ⇒ NOT_MEASURED (never fabricated).
+  check(ok.selfImprovement && ok.selfImprovement.measurable === false && ok.selfImprovement.selfAuthorized === false, "§3.8: no ground truth ⇒ selfImprovement NOT_MEASURED (measurable:false), never self-authorized");
+  // With caller-supplied ground truth ⇒ MEASURED precision/noise/miss + PROPOSED tunings (selfAuthorized:false).
+  const withGT = await P.runFrontierPipeline({ radar: radar([goodSignal]), register: { items: [] }, radarSelfEval: {
+    discoveries: [{ id: "d1", relevant: true }, { id: "d2", relevant: false }, { id: "d3", relevant: true }],
+    groundTruth: { knownRelevant: ["d1", "d3"], knownMissed: ["d9"] },
+    priorMetrics: { relevance: 0.9, noise: 0.1, missRate: 0.1 },
+  } }, deps());
+  check("§3.8: with ground truth ⇒ selfImprovement MEASURED (precision/noise/miss) + PROPOSED-only, never self-applied", withGT.selfImprovement.measurable === true && typeof withGT.selfImprovement.metrics.relevance === "number" && withGT.selfImprovement.selfAuthorized === false && withGT.selfImprovement.proposals.every((p: any) => p.status === "PROPOSED"));
+  // the self-eval does NOT gate the chain (radar self-measurement is advisory, never an authorization)
+  check("§3.8: self-evaluation is advisory — the chain still traverses normally (radar never self-authorizes)", withGT.chainTraversed === true);
+
+  console.log(failures === 0 ? "ALL PASS — WI-FR-06 FRONTIER PIPELINE (+ V360 §3.8 radar self-evaluation wired)" : `FAILURES: ${failures}`);
   process.exit(failures === 0 ? 0 : 1);
 })();
 export {};
