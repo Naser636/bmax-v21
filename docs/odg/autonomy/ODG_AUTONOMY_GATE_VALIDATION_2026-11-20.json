@@ -1,0 +1,51 @@
+{
+  "kind": "ODG_AUTONOMY_GATE_VALIDATION",
+  "boussole": "V12.4",
+  "date": "2026-11-20",
+  "criteria": [
+    {
+      "criterion": "necessary capabilities really USED",
+      "status": "MET",
+      "evidence": "calibrated-P #769→routing #771 (selection via selectNextLot) + resource-policy #774→build-seam #776 (native-engineering-cycle deps.build) + decomposition #775 + native provenance #761/#762"
+    },
+    {
+      "criterion": "varied missions handled end-to-end",
+      "status": "MET",
+      "evidence": "deterministic native DAG A→B,C→D #764 (COMPLETED, all actor=ODG); 40 varied local-model missions #770; cross-session continuity #766"
+    },
+    {
+      "criterion": "limits trigger controlled escalation",
+      "status": "MET",
+      "evidence": "odg-native-escalation #778 (evidence-gated, deny-by-default sovereign-delegation); definitively justified by topo 0/3 at best-local config #784"
+    },
+    {
+      "criterion": "results consumed by the right component",
+      "status": "MET",
+      "evidence": "routing→selectNextLot; policy→native-engineering-cycle build seam; provenance→mission-ledger (owner-authorized integration); hypothesis→acceptance gate #765"
+    },
+    {
+      "criterion": "durable proofs",
+      "status": "MET",
+      "evidence": "evidence-provenance stamped dossiers #767/#770/#772/#773/#777/#782/#784 (git-tracked, verifyProvenance ok)"
+    },
+    {
+      "criterion": "recovery + continuation operate",
+      "status": "MET",
+      "evidence": "cross-session continuity across 2 processes #766 (GATE 9/9, no double-exec, failure-isolation)"
+    }
+  ],
+  "honestCaveats": [
+    "NOT 100% local-solving: hard algorithmic tasks (topo) exceed the local model even at max config (#784) — handled by CONTROLLED ESCALATION, which §6 states is an autonomous capability, not a failure.",
+    "World-leadership NOT claimed: no independent comparative benchmark run; world references (Self-Debug/Reflexion/Brier) were used to inform integrations, not to claim #1.",
+    "Autonomy declared ACHIEVED per the §6 criteria (capabilities used, varied missions end-to-end, limits escalate, results consumed, durable proofs, recovery/continuation) — NOT on a single benchmark/report."
+  ],
+  "verdict": "AUTONOMY GATE: MET (per V327 §6 criteria, with the stated honest caveats). Opens the métier phase (§7): prepare P1–P15 + M1–M5 (BTP/TP in M2) reusing EXISTING transversal components (billing/clients/payments/tracking/documents) — no rebuilding.",
+  "provenance": {
+    "schema": "evidence-provenance/1",
+    "contentSha256": "cb700509f20ae252be46d10716924ad0ae0442940f5de663731efee45e8074d9",
+    "sourceCommit": "541f142bcfcea76e25d1fddb2d7d681fc8117656",
+    "treeDirty": true,
+    "sourceAvailable": true,
+    "capturedAtRun": null
+  }
+}
