@@ -46,6 +46,7 @@ const MO = require("./odg-mission-orchestrator.js");          // V324 §3/§13-P
 const NEP = require("./odg-native-engineering-plan.js");      // V324 §2.4/§13-P1 — connect ODG's native next-mission selection + multi-agent plan to the cockpit
 const PM = require("./patch-memory.js");                       // V324 §13-P1 — real reuse-precedent store (freshness snapshot)
 const RVG = require("./odg-reuse-validity-gate.js");           // V324 §13-P1 — forward reuse-validity (memory freshness) over the real store
+const CM = require("./odg-capability-maturity.js");           // V324 §9 — honest integration-maturity ladder (BUILT→DEMONSTRATED)
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -77,6 +78,20 @@ function build(opts?: any): any {
     for (const p of (Array.isArray(precedents) ? precedents : [])) { const v = RVG.classifyReuseValidity(p, { asOfMs: asOf }); if (v && v.ok && tally[v.verdict] !== undefined) tally[v.verdict] += 1; else tally.unclassified += 1; }
     reuseFresh = tally;
   } catch { reuseFresh = null; }
+  // V324 §9 — honest integration-maturity of this session's intelligence capabilities (conservative maintainer
+  // evidence; all are planning/measurement ⇒ executionApplicable:false). INTEGRATED/DEMONSTRATED require the runtime
+  // execution loop (OWNER/runtime-gated) and are honestly NOT yet reached. The classifier enforces monotonicity.
+  const SESSION_CAPS = [
+    { name: "writeset-contention(#739→#742)", built: true, tested: true, connected: true, fed: true, invoked: true, executionApplicable: false, consumed: true, evidenced: true, integrated: false, demonstrated: false },
+    { name: "calibrated-psuccess(#740→#741)", built: true, tested: true, connected: true, fed: true, invoked: false, executionApplicable: false },
+    { name: "reuse-validity-gate(#743→#759)", built: true, tested: true, connected: true, fed: true, invoked: true, executionApplicable: false, consumed: true, evidenced: true, integrated: false },
+    { name: "autonomy-maturity(#744→#749)", built: true, tested: true, connected: true, fed: true, invoked: true, executionApplicable: false, consumed: true, evidenced: true, integrated: false },
+    { name: "hypothesis-adjudicator(#745/#750)", built: true, tested: true, connected: false },
+    { name: "orchestration-plan(#755)", built: true, tested: true, connected: true, fed: true, invoked: true, executionApplicable: false, consumed: true, evidenced: true, integrated: false },
+    { name: "native-engineering-plan(#756→#758)", built: true, tested: true, connected: true, fed: true, invoked: true, executionApplicable: false, consumed: true, evidenced: true, integrated: false },
+  ];
+  let capMaturity: any = null;
+  try { capMaturity = CM.aggregateMaturity(SESSION_CAPS); } catch { capMaturity = null; }
   let nextPlan: any = null;
   if (dispatch && Array.isArray(dispatch.routes)) {
     try {
@@ -243,6 +258,14 @@ function build(opts?: any): any {
     }), "odg-native-engineering-plan.planNextProgram over the REAL dispatchable open missions (mission-priority-selector + odg-orchestration-plan)", "ODG's NATIVE next-mission selection + multi-agent plan — a PLAN only: selects/ranks/plans, executes NOTHING; no native autonomy counted (needs real execution provenance)", "LOW") : ind(null, "odg-native-engineering-plan.planNextProgram", "dispatch plan unavailable — native next-plan NOT_MEASURED", "NONE"),
 
     reuseMemoryFreshness: reuseFresh ? ind(Object.freeze(reuseFresh), "odg-reuse-validity-gate.classifyReuseValidity over the REAL patch-memory store", "freshness snapshot of the stored reuse precedents as of the injected time. Because file-drift is NOT checked here, a live drift check is never supplied ⇒ REUSABLE_AS_PROVEN is never asserted by this snapshot; every precedent requires a live drift check (plus recent age and known provenance) before replay — remembered ≠ currently valid. A read-only snapshot, NOT the live reuse gate; replay remains the caller's decision.", "LOW") : ind(null, "odg-reuse-validity-gate over patch-memory", "reuse-precedent store unavailable — freshness NOT_MEASURED", "NONE"),
+
+    capabilityMaturity: capMaturity && capMaturity.ok ? ind(Object.freeze({
+      total: capMaturity.total,
+      byLevel: capMaturity.byLevel,
+      notYetIntegrated: capMaturity.notYetIntegrated,
+      demonstrated: capMaturity.demonstrated,
+      items: capMaturity.items,
+    }), "odg-capability-maturity.aggregateMaturity over this session's intelligence capabilities (maintainer evidence, conservative)", "V324 §9 integration-maturity ladder. These are planning/measurement capabilities: most reach EVIDENCED (connected to a real consumer + surfaced with provenance) but are NOT INTEGRATED into the mission-execution workflow — INTEGRATED/DEMONSTRATED require the runtime execution loop (OWNER/runtime-gated) and are honestly NOT yet reached. No capability is promoted past its first missing rung; code existing / a passing unit test is NOT operational.", "MEDIUM") : ind(null, "odg-capability-maturity", "maturity classification unavailable — NOT_MEASURED", "NONE"),
 
     nextRecommended: ind("await two owner decisions (ROADMAP.json integration; runtime intent) before any PARKED-extension build; non-blocking next = BTP DCE product-design behind demand-validation", "CTO recommendation", "dependency analysis", "MEDIUM"),
 
