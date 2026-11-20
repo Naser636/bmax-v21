@@ -73,8 +73,8 @@ function build(opts?: any): any {
   try {
     const asOf = Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : Date.UTC(2026, 10, 16);
     const precedents = PM.list();
-    const tally: any = { total: Array.isArray(precedents) ? precedents.length : 0, REUSABLE_AS_PROVEN: 0, REQUIRES_REVALIDATION: 0, STALE: 0 };
-    for (const p of (Array.isArray(precedents) ? precedents : [])) { const v = RVG.classifyReuseValidity(p, { asOfMs: asOf }); if (v && v.ok && tally[v.verdict] !== undefined) tally[v.verdict] += 1; }
+    const tally: any = { total: Array.isArray(precedents) ? precedents.length : 0, REUSABLE_AS_PROVEN: 0, REQUIRES_REVALIDATION: 0, STALE: 0, unclassified: 0 };
+    for (const p of (Array.isArray(precedents) ? precedents : [])) { const v = RVG.classifyReuseValidity(p, { asOfMs: asOf }); if (v && v.ok && tally[v.verdict] !== undefined) tally[v.verdict] += 1; else tally.unclassified += 1; }
     reuseFresh = tally;
   } catch { reuseFresh = null; }
   let nextPlan: any = null;
@@ -242,7 +242,7 @@ function build(opts?: any): any {
       agentCount: nextPlan.orchestrationPlan ? nextPlan.orchestrationPlan.agentCount : 0,
     }), "odg-native-engineering-plan.planNextProgram over the REAL dispatchable open missions (mission-priority-selector + odg-orchestration-plan)", "ODG's NATIVE next-mission selection + multi-agent plan — a PLAN only: selects/ranks/plans, executes NOTHING; no native autonomy counted (needs real execution provenance)", "LOW") : ind(null, "odg-native-engineering-plan.planNextProgram", "dispatch plan unavailable — native next-plan NOT_MEASURED", "NONE"),
 
-    reuseMemoryFreshness: reuseFresh ? ind(Object.freeze(reuseFresh), "odg-reuse-validity-gate.classifyReuseValidity over the REAL patch-memory store", "freshness snapshot of the stored reuse precedents as of the injected time; file-drift is NOT checked here, so REUSABLE_AS_PROVEN requires recent age AND known provenance — UNKNOWN-provenance/undated precedents require revalidation (remembered ≠ currently valid). A read-only snapshot, NOT the live reuse gate; replay remains the caller's decision.", "LOW") : ind(null, "odg-reuse-validity-gate over patch-memory", "reuse-precedent store unavailable — freshness NOT_MEASURED", "NONE"),
+    reuseMemoryFreshness: reuseFresh ? ind(Object.freeze(reuseFresh), "odg-reuse-validity-gate.classifyReuseValidity over the REAL patch-memory store", "freshness snapshot of the stored reuse precedents as of the injected time. Because file-drift is NOT checked here, a live drift check is never supplied ⇒ REUSABLE_AS_PROVEN is never asserted by this snapshot; every precedent requires a live drift check (plus recent age and known provenance) before replay — remembered ≠ currently valid. A read-only snapshot, NOT the live reuse gate; replay remains the caller's decision.", "LOW") : ind(null, "odg-reuse-validity-gate over patch-memory", "reuse-precedent store unavailable — freshness NOT_MEASURED", "NONE"),
 
     nextRecommended: ind("await two owner decisions (ROADMAP.json integration; runtime intent) before any PARKED-extension build; non-blocking next = BTP DCE product-design behind demand-validation", "CTO recommendation", "dependency analysis", "MEDIUM"),
 
