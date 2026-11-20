@@ -111,6 +111,15 @@ function runLifecycle(scenario: any): any {
     links.push(link("K_PROCUREMENT_TRACES_REFERENCE", "every committed line carries a priceSource from the reference catalog (traceable provenance, never invented)", arr(commit.lineItems).length > 0 && arr(commit.lineItems).every((l: any) => l.status === "PRICED" && isStr(l.priceSource)), "lines=" + arr(commit.lineItems).length));
     // link L: net payable = gross − retention (retenue held per contract, not dropped).
     links.push(link("L_PROCUREMENT_NET", "net payable = gross − retention (retenue held, not dropped)", commit.netPayableMinor === commit.grossMinor - commit.retentionMinor, "gross=" + commit.grossMinor + " retention=" + commit.retentionMinor + " net=" + commit.netPayableMinor));
+    // PROCUREMENT RECONCILIATION (OPT-IN) — close the achats→cost loop: committed vs actually incurred (expenses tagged with
+    // this commitment). READ-ONLY; over-commitment is FLAGGED (mirrors chantier-profitability COMMANDE_DEPASSEE). committed ≠ spent.
+    if (Array.isArray(s.procurement.expenses)) {
+      const recon = SUPPLIER.reconcileReadiness(commit, s.procurement.expenses);
+      if (recon.ok !== true) return fail("PROC_RECON_FAILED", "reconcileReadiness: " + (recon.code || "?"));
+      stages.push(Object.freeze({ stage: "PROCUREMENT_RECONCILIATION", engine: "supplier-commitment", committedMinor: recon.committedMinor, spentMinor: recon.spentMinor, remainingMinor: recon.remainingMinor, overCommitment: recon.overCommitment }));
+      // link N: remaining = committed − spent, and the over-commitment flag is exactly (spent > committed) — committed ≠ spent, no shadow cost.
+      links.push(link("N_PROCUREMENT_RECONCILED", "procurement reconciliation: committed = commitment gross, remaining = committed − spent, over-commitment flag = (spent > committed) (committed ≠ spent; mirrors COMMANDE_DEPASSEE)", recon.committedMinor === commit.grossMinor && recon.remainingMinor === recon.committedMinor - recon.spentMinor && recon.overCommitment === (recon.spentMinor > recon.committedMinor), "committed=" + recon.committedMinor + " spent=" + recon.spentMinor + " remaining=" + recon.remainingMinor + " over=" + recon.overCommitment));
+    }
   }
 
   // 8. PRICE REVISION (V330 M2, OPT-IN) — a révision de prix on the ACCEPTED contract base, index-derived (never invented).
