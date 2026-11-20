@@ -18,6 +18,7 @@
  */
 
 const SD = require("./odg-sovereign-delegation.js");
+const BR = require("./odg-belief-refresh.js"); // V327 §4: anti self-reinforcing-error — a STALE calibrated-low belief re-probes, never escalates permanently
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -41,6 +42,13 @@ function decideEscalation(input: any): any {
   if (pol.escalateIfStillFails !== true)
     return freeze({ escalate: false, reason: `local attempt failed but the policy did NOT flag escalation (tier=${pol.tier || "?"}, quality=${pol.quality || "?"}) — insufficient calibrated evidence of unsolvability ⇒ keep probing natively; escalation is evidence-gated, never premature`, attribution: "ODG_LOCAL_MODEL_EXECUTION", delegation: null });
 
+  // ANTI SELF-REINFORCING ERROR (world-reference guard): a calibrated-low belief is acted on (escalate) ONLY while FRESH.
+  // If the caller supplies evidenceAgeDays and the belief is STALE, RE-PROBE instead of permanently escalating — so a
+  // once-low class can be overturned by fresh evidence. No age supplied ⇒ treated as fresh (backward-compatible).
+  const belief = BR.classifyBelief({ quality: pol.quality, pForPlanner: pol.pForPlanner, evidenceAgeDays: i.evidenceAgeDays, maxAgeDays: i.maxAgeDays });
+  if (belief.action === "RE_PROBE_STALE")
+    return freeze({ escalate: false, reason: `calibrated-low but the belief is STALE — RE-PROBE to allow overturning (anti self-reinforcing error): ${belief.reason}`, attribution: "ODG_LOCAL_MODEL_EXECUTION", delegation: null });
+
   // ODG delegates to the controlled provider via the EXISTING sovereign-delegation chain (deny-by-default).
   const delegation = SD.createMission({
     id,
@@ -61,6 +69,7 @@ const NATIVE_ESCALATION_CONTRACT = Object.freeze({
   purpose: "§4 — the native→provider escalation DECISION ('fournisseur si nécessaire'): delegate a MEASURED-unsolvable task to the controlled provider via the EXISTING sovereign-delegation chain, evidence-gated and honestly attributed",
   reuses: Object.freeze(["odg-sovereign-delegation.createMission (the deny-by-default ODG→provider chain — not reimplemented)", "odg-local-model-execution-policy verdict (escalateIfStillFails from a CALIBRATED-low rate)"]),
   invariants: Object.freeze([
+    "anti self-reinforcing error: a calibrated-low belief escalates ONLY while FRESH; a STALE belief (evidenceAgeDays > maxAgeDays) RE-PROBES instead, so a once-low class stays overturn-able (never permanent avoidance)",
     "a local attempt ACCEPTED by the independent verifier ⇒ NEVER escalate",
     "escalate ONLY on a CALIBRATED-LOW policy verdict (escalateIfStillFails) AND a real local failure — a THIN/UNKNOWN history keeps probing (escalation is evidence-gated, never premature)",
     "escalation is the honest fallback, attributed CLAUDE_CODE_PROVIDER — NEVER a fabricated ODG-native success",
