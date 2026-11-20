@@ -32,6 +32,8 @@ const EXEC = NE.EXEC;                                    // { NATIVE, LOCAL, CLA
 // The exact author/executor tokens actor-provenance recognises as a concordant ODG signal (mirrors its ODG_AUTHORS set).
 const ODG_AUTHOR = "ODG_CAPABILITY";
 const ODG_EXECUTOR = "ODG_EXECUTOR";
+// The verdicts a GENUINE native cycle emits (odg-native-engineering.runNativeCycle). Used for cheap forgery corroboration.
+const NATIVE_VERDICTS = Object.freeze(new Set(["NATIVE_GREEN", "NATIVE_REPAIRED_GREEN", "NATIVE_STILL_FAILING"]));
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function isStr(v: any): boolean { return typeof v === "string" && v.trim().length > 0; }
@@ -61,14 +63,23 @@ function fromNativeCycle(cycle: any, missionId: any): any {
   // A genuine native cycle is the ONLY source of ODG executed[] entries. Anything else ⇒ no ODG attribution.
   const nativeCycle = cycle.nativeCycle === true;
   for (const s of steps) {
-    const ex = s && typeof s.executor === "string" ? s.executor : "";
+    const exRaw = s && typeof s.executor === "string" ? s.executor : null;
+    const ex = exRaw || "";
     const name = s && typeof s.step === "string" ? s.step : "step";
     const detail = s && typeof s.detail === "string" ? s.detail : "";
     if (nativeCycle && ex === EXEC.NATIVE) executed.push(odgEntry(name, detail));
     else if (ex === EXEC.HUMAN) ownerGatedFollowups.push(freeze({ step: name, detail, gate: "OWNER_GATED" }));
-    else if (ex && ex !== EXEC.NATIVE) nonNativeSteps.push(freeze({ step: name, executor: ex, detail }));
+    // F3: ANY other step — including a malformed/non-string executor — is CONTAMINATING (never silently dropped). A
+    // genuine native cycle emits only NATIVE + the single HUMAN follow-up, so this only bites non-native/forged input.
+    else nonNativeSteps.push(freeze({ step: name, executor: exRaw === null ? "<non-string:" + typeof (s && s.executor) + ">" : ex, detail }));
   }
-  const attributable = executed.length > 0 && nonNativeSteps.length === 0;
+  // F1 defense-in-depth: corroborate the mapped evidence against the engine's OWN self-report. A genuine runNativeCycle
+  // always emits executorSummary (its per-executor step tally) + a native verdict; requiring executorSummary[NATIVE] ===
+  // executed.length AND a valid native verdict rejects trivially hand-forged objects. This RAISES the forgery bar — it does
+  // NOT make a pure mapper forgery-proof (see contract: the connector TRUSTS a genuine engine result at its input boundary).
+  const summary = isObj(cycle.executorSummary) ? cycle.executorSummary : null;
+  const corroborated = nativeCycle && summary !== null && summary[EXEC.NATIVE] === executed.length && isStr(cycle.verdict) && NATIVE_VERDICTS.has(cycle.verdict);
+  const attributable = executed.length > 0 && nonNativeSteps.length === 0 && corroborated;
   return freeze({
     ok: true, mission, executed: freeze(executed), attributable,
     ownerGatedFollowups: freeze(ownerGatedFollowups), nonNativeSteps: freeze(nonNativeSteps),
@@ -76,9 +87,10 @@ function fromNativeCycle(cycle: any, missionId: any): any {
     testsPass: typeof cycle.testsPass === "number" ? cycle.testsPass : null,
     testsTotal: typeof cycle.testsTotal === "number" ? cycle.testsTotal : null,
     reason: !nativeCycle ? "cycle was NOT an ODG-native execution (escalated/invalid) ⇒ no ODG executed[] entry (honest)"
-      : nonNativeSteps.length > 0 ? "mixed cycle: non-native steps present ⇒ not purely-ODG attributable (surfaced, never laundered)"
-      : executed.length > 0 ? "ODG-native steps mapped to concordant ODG_CAPABILITY/ODG_EXECUTOR evidence; owner-gated write excluded"
-      : "no ODG-native step to attribute",
+      : nonNativeSteps.length > 0 ? "mixed/malformed cycle: non-native or unrecognized steps present ⇒ not purely-ODG attributable (surfaced, not stamped)"
+      : executed.length === 0 ? "no ODG-native step to attribute"
+      : !corroborated ? "native steps present but the cycle does not corroborate against the engine's executorSummary/verdict ⇒ not attributable (likely forged/incomplete)"
+      : "ODG-native steps mapped to concordant ODG_CAPABILITY/ODG_EXECUTOR evidence; owner-gated write excluded; corroborated against the engine self-report",
   });
 }
 
@@ -101,6 +113,7 @@ function fromLoopResult(loopResult: any, missionId: any): any {
   const executed: any[] = [];
   const deferred: any[] = [];
   const refused: any[] = [];
+  const failed: any[] = [];
   for (const r of rows) {
     if (!isObj(r)) continue;
     const disp = typeof r.disposition === "string" ? r.disposition : "";
@@ -108,21 +121,24 @@ function fromLoopResult(loopResult: any, missionId: any): any {
     if (r.nativelyExecuted === true && LOOP_NATIVE_DISPOSITIONS.has(disp)) executed.push(odgEntry("native:" + disp + ":" + id, r.reason || ""));
     else if (disp === "DEFERRED_TO_PROVIDER") deferred.push(freeze({ id, reason: r.reason || "", providerMandate: r.providerMandate || null }));
     else if (disp === "REFUSED_OUT_OF_SCOPE") refused.push(freeze({ id, reason: r.reason || "" }));
-    // FAILED / anything else ⇒ not a clean native execution ⇒ not attributed (surfaced via counts only).
+    else if (disp === "FAILED") failed.push(freeze({ id, nativelyExecuted: r.nativelyExecuted === true, reason: r.reason || "" })); // F4: a failed native attempt is NOT stamped ODG, but is surfaced (not buried)
+    // anything else ⇒ not a clean native execution ⇒ not attributed, not surfaced (no recognized disposition).
   }
   const attributable = executed.length > 0;
   return freeze({
     ok: true, mission, executed: freeze(executed), attributable,
-    deferredToProvider: freeze(deferred), refusedOutOfScope: freeze(refused),
-    reason: executed.length > 0 ? "natively-executed deterministic rows mapped to concordant ODG evidence; deferred/refused rows surfaced, never stamped ODG"
+    deferredToProvider: freeze(deferred), refusedOutOfScope: freeze(refused), failed: freeze(failed),
+    reason: executed.length > 0 ? "natively-executed deterministic rows mapped to concordant ODG evidence; deferred/refused/failed rows surfaced, never stamped ODG"
       : "no natively-executed row to attribute",
   });
 }
 
 /**
- * resolveActor(evidence) — CLOSE the loop: feed the built evidence through the REAL production resolver
- * (actor-provenance.resolveMissionActor) and return its verdict. This is the connection whose absence caused the
- * 0-native-actors gap: a genuine native cycle now resolves to { actor:"ODG", ... }. Fail-closed on a bad evidence object.
+ * resolveActor(evidence) — CLOSE the loop: feed EVIDENCE PRODUCED BY THIS MODULE'S BUILDERS (fromNativeCycle /
+ * fromLoopResult) through the REAL production resolver (actor-provenance.resolveMissionActor) and return its verdict.
+ * This is the connection whose absence caused the 0-native-actors gap: a genuine native cycle now resolves to
+ * { actor:"ODG", ... }. The `attributable` gate (computed by the builders) is the real safety check — a hand-built
+ * evidence object with attributable:true is OUT OF SCOPE (trust boundary; see contract). Fail-closed on bad/failed input.
  */
 function resolveActor(evidence: any): any {
   if (!isObj(evidence) || evidence.ok !== true || !isStr(evidence.mission)) return freeze({ actor: null, executedBy: null, reason: "invalid/failed evidence ⇒ no attribution", unresolvedCount: 0 });
@@ -147,11 +163,13 @@ const NATIVE_EXECUTION_PROVENANCE_CONTRACT = Object.freeze({
   purpose: "connect a genuine ODG-native execution RESULT to the honest provenance evidence shape actor-provenance/mission-ledger consume — the missing caller behind '0 native actors'",
   reuses: Object.freeze(["actor-provenance.resolveMissionActor (honest resolver — NOT re-implemented)", "odg-native-engineering.EXEC (executor tags — single source of truth)", "odg-native-engineering / -loop native-execution results (real ODG_NATIVE_EXECUTION)"]),
   invariants: Object.freeze([
-    "ODG executed[] entry ONLY for a step the native engine tagged ODG_NATIVE_EXECUTION (concordant ODG_CAPABILITY + ODG_EXECUTOR); never fabricates native provenance",
-    "non-native cycle (ESCALATED/invalid/nativeCycle!==true) ⇒ empty executed[] ⇒ resolver returns actor:null (no attribution)",
+    "ODG executed[] entry ONLY for a step the native engine tagged ODG_NATIVE_EXECUTION (the entry's authoredBy/appliedBy are hard-coded ODG_CAPABILITY/ODG_EXECUTOR — a caller CANNOT smuggle author/executor fields in); never fabricates native provenance",
+    "non-native cycle (ESCALATED/invalid/nativeCycle!==true) ⇒ empty executed[] ⇒ actor:null (no attribution)",
     "HUMAN_VALIDATION follow-ups (real-repo write) are EXCLUDED from executed[] (not yet executed; OWNER_GATED) and declared in ownerGatedFollowups — never buried, never stamped ODG",
-    "CLAUDE_CODE/local-model/simulated steps are surfaced in nonNativeSteps and make a cycle not-purely-attributable; they are never laundered into ODG",
-    "resolveActor delegates to the REAL actor-provenance resolver (the connection itself is proven through the production resolver, not a mock)",
+    "CLAUDE_CODE/local-model/simulated AND malformed/non-string-executor steps are surfaced in nonNativeSteps and set attributable:false (a mixed/malformed cycle can never resolve to pure ODG) — the attributable flag, not the resolver, is the real gate",
+    "TRUST BOUNDARY (honest): this is a pure MAPPER of a GENUINE engine result — it does NOT verify execution actually happened. It rejects trivially-forged objects (executorSummary[NATIVE] must equal executed.length AND verdict must be a native verdict) and mixed/malformed cycles, but a caller passing a hand-forged genuine-shaped object (or calling resolveActor with hand-built evidence) is OUT OF SCOPE — the caller is responsible for supplying a real runNativeCycle/loop result. NOT an absolute no-laundering guarantee.",
+    "provenance attributes the EXECUTOR, not success: a genuine NATIVE_STILL_FAILING or ALREADY_CLEAN cycle is honestly actor=ODG (ODG ran it); the verdict/outcome is carried separately, not conflated with the actor",
+    "resolveActor delegates to the REAL actor-provenance resolver after the attributable gate (so the stamp uses production logic, though with uniform-ODG executed[] the resolver's discrimination is exercised by actor-provenance's own tests, not here)",
     "PURE / deterministic / frozen; no fs/clock/network; builds NO 2nd engine/orchestrator, no 10th primitive",
   ]),
 });
