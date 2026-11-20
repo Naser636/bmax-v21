@@ -43,7 +43,7 @@ async function main(): Promise<void> {
   let cycleSawBuild: boolean = false;
   const seam2 = M.makePolicyBuildSeam({ history: h("calc", 18, 2), generatorFor: () => () => ({ ok: true, content: "x" }), buildProject: async (_s: any, deps: any) => { cycleSawBuild = true; return { accepted: true, verified: true, repairs: deps.maxRepair }; } });
   const cyc = await CYCLE.runNativeCycle({ name: "calc", architecture: [{ path: "a.js", role: "r", contract: "c" }], independentTest: () => true }, [], { build: seam2.build }, { mode: "explore", exploreAuthorized: true });
-  check("native-engineering-cycle CONSUMES the policy seam as deps.build (attempted NATIVE, build invoked)", cyc.attempted === true && cyc.routedTo === "NATIVE" && cycleSawBuild === true);
+  check("native-engineering-cycle CONSUMES the policy seam as deps.build (attempted NATIVE, build invoked)", cyc.attempted === true && cyc.routedTo === "NATIVE" && cycleSawBuild);
 
   // fail-closed
   const noGen = M.makePolicyBuildSeam({ history: h("t", 18, 2), buildProject: async () => ({ accepted: true, verified: true }) });
