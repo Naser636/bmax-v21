@@ -26,7 +26,7 @@ function main(): void {
 
   // buildProbe is pure + embeds the source and examples (so the child loads exactly them)
   const probe = M.buildProbe("module.exports=(a,b)=>a+b;", ex);
-  check("buildProbe embeds the source + examples + emits a JSON verdict line", /module.exports=\(a,b\)=>a\+b/.test(probe) && /"expect":5/.test(probe) && /JSON.stringify\(\{v:'PASS'\}\)/.test(probe));
+  check("buildProbe embeds the source + examples + deep-equal compare + JSON verdict", /module.exports=\(a,b\)=>a\+b/.test(probe) && /"expect":5/.test(probe) && /EQ\(a,ex.expect\)/.test(probe) && /JSON.stringify\(\{v:'PASS'\}\)/.test(probe));
   check("classifyResult is pure/deterministic (same input ⇒ same verdict)", JSON.stringify(M.classifyResult({ stdout: '{"v":"PASS"}' })) === JSON.stringify(M.classifyResult({ stdout: '{"v":"PASS"}' })));
 
   // only an explicit PASS is a pass — a child that prints nothing is NOT a pass

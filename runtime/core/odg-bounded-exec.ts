@@ -28,8 +28,9 @@ function buildProbe(sourceCode: any, examples: any): string {
     "catch(e){console.log(JSON.stringify({v:'LOAD_ERROR',e:String(e&&e.message||e)}));process.exit(0);}",
     "var f=m.exports;var E=", EX, ";",
     "if(typeof f!=='function'){console.log(JSON.stringify({v:'LOAD_ERROR',e:'export is not a function'}));process.exit(0);}",
+    "var EQ=function(x,y){return JSON.stringify(x)===JSON.stringify(y);};",  // deep (structural) equality — correct for array/object/null outputs, not just scalars
     "for(var i=0;i<E.length;i++){var ex=E[i];var a,t=null;try{a=f.apply(null,ex.args);}catch(x){t=String(x&&x.message||x);}",
-    "if(t!==null||a!==ex.expect){console.log(JSON.stringify({v:'FAIL',failing:{args:ex.args,expect:ex.expect,actual:t===null?a:null,threw:t}}));process.exit(0);}}",
+    "if(t!==null||!EQ(a,ex.expect)){console.log(JSON.stringify({v:'FAIL',failing:{args:ex.args,expect:ex.expect,actual:t===null?a:null,threw:t}}));process.exit(0);}}",
     "console.log(JSON.stringify({v:'PASS'}));",
   ].join("");
 }
