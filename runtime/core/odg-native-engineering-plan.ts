@@ -35,8 +35,15 @@ function planNextProgram(candidates: any, acceptedIds?: any): any {
 
   // ODG's native selection (top mission) + the eligible set (dependency-ready, not accepted).
   const selection = SEL.selectNext(candidates, accepted);
-  const eligible = candidates.filter((m: any) => isObj(m) && typeof m.id === "string" && SEL.scoreMission(m, accepted).eligible === true);
-  const eligibleIds = new Set(eligible.map((m: any) => m.id));
+  const wellFormed = candidates.filter((m: any) => isObj(m) && typeof m.id === "string");
+  const scored = wellFormed.map((m: any) => ({ m, s: SEL.scoreMission(m, accepted) }));
+  // eligible = dependency-ready + not accepted; dedup by id (keep first) so a duplicate id can't produce a refused plan.
+  const eligibleIds = new Set<string>();
+  const eligible: any[] = [];
+  for (const { m, s } of scored) { if (s.eligible === true && !eligibleIds.has(m.id)) { eligibleIds.add(m.id); eligible.push(m); } }
+  // HONEST split of the non-eligible: genuinely DEFERRED (unmet dependency) vs already ACCEPTED — not conflated.
+  const deferredCount = scored.filter(({ s }: any) => s.eligible !== true && /DEFERRED|dependency unmet/i.test(String(s.reason))).length;
+  const acceptedCount = scored.filter(({ s }: any) => s.eligible !== true && /ACCEPTED/i.test(String(s.reason))).length;
 
   // Map eligible missions → an orchestration task graph. Eligible missions are dependency-ready, so their deps are met
   // (accepted) and intersect the eligible set to empty ⇒ they are genuinely independent and may run in parallel
@@ -58,7 +65,8 @@ function planNextProgram(candidates: any, acceptedIds?: any): any {
     selected: selection.selected || null,
     selectionJustification: selection.selectionJustification,
     eligibleCount: eligible.length,
-    deferredCount: candidates.filter((m: any) => isObj(m) && typeof m.id === "string").length - eligible.length,
+    deferredCount, // genuinely dependency-deferred ONLY (unmet deps) — accepted missions are counted separately
+    acceptedCount,
     orchestrationPlan: orchestrationPlan ? freeze(orchestrationPlan) : null,
     executed: false,
     note: "A PLAN, not an execution: ODG natively SELECTS the top mission, RANKS the eligible (dependency-ready, not-accepted) set, and PLANS the multi-agent allocation across the independent ones (agent count derived, write-safe waves, per-task contracts). It dispatches/tracks/integrates NOTHING (executed:false); the execution half is a separate runtime step and NO native autonomy is counted without real execution provenance. Missions with unmet dependencies are DEFERRED, never planned into a wave.",

@@ -22,7 +22,10 @@ function main(): void {
   check("selected == selectNext().selected (reuses the native selector, no reimplementation)", JSON.stringify(p.selected) === JSON.stringify(SEL.selectNext(cands, []).selected));
 
   // only dependency-ready, not-accepted missions are planned; others deferred
-  check("eligibleCount = 3 (m1,m2,m5); deferredCount = 2 (m3 dep-unmet, m4 accepted)", p.eligibleCount === 3 && p.deferredCount === 2);
+  check("eligibleCount = 3 (m1,m2,m5); deferredCount = 1 (m3 unmet-dep ONLY); acceptedCount = 1 (m4) — not conflated", p.eligibleCount === 3 && p.deferredCount === 1 && p.acceptedCount === 1);
+  // duplicate candidate id ⇒ deduped (keep first), plan still valid (no DUPLICATE_TASK_ID refusal leaking in)
+  const dup = M.planNextProgram([{ id: "a", deps: [], authorizedPaths: ["src/a"], objective: "A" }, { id: "a", deps: [], authorizedPaths: ["src/a2"], objective: "A dup" }], []);
+  check("duplicate candidate id ⇒ deduped, plan ok (no DUPLICATE_TASK_ID)", dup.eligibleCount === 1 && dup.orchestrationPlan.ok === true);
 
   // the multi-agent plan: agent count derived across the independent eligible missions (m1,m2 provider; m5 native)
   check("orchestration plan: agentCount 2 (m1,m2 concurrent providers), m5 native", p.orchestrationPlan.agentCount === 2 && p.orchestrationPlan.split.nativeByODG === 1 && p.orchestrationPlan.split.delegatedToAgents === 2);
