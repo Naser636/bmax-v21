@@ -42,6 +42,19 @@ function main() {
   ] });
   check("missions without declared write-sets ⇒ UNKNOWN ⇒ parallel dispatch NOT proven safe (fail-closed)", nows.parallelDispatchProvenSafe === false);
 
+  // ---- AGENT-COUNT DECISION (0..6) derived from the write-safe waves (V324 §3) ----
+  check("real plan carries a numeric agentCount + rationale", typeof plan.agentCount === "number" && plan.agentCount >= 0 && plan.agentCount <= 6 && typeof plan.agentRationale === "string");
+  const disj = O.buildDispatchPlan({ missions: [
+    { id: "m1", class: "REALIZABLE_LOCAL", deps: [], nextAction: "implement feature", authorizedPaths: ["src/a"] },
+    { id: "m2", class: "REALIZABLE_LOCAL", deps: [], nextAction: "implement feature", authorizedPaths: ["src/b"] },
+  ] });
+  check("2 disjoint delegable missions ⇒ agentCount 2", disj.agentCount === 2);
+  check("2 overlapping delegable missions ⇒ agentCount 1 (write-set contention serializes)", O.buildDispatchPlan({ missions: [
+    { id: "m1", class: "REALIZABLE_LOCAL", deps: [], nextAction: "implement feature", authorizedPaths: ["src/a"] },
+    { id: "m2", class: "REALIZABLE_LOCAL", deps: [], nextAction: "implement feature", authorizedPaths: ["src/a/x.ts"] },
+  ] }).agentCount === 1);
+  check("no delegable mission ⇒ agentCount 0 (derived, never a fixed default)", O.buildDispatchPlan({ missions: [{ id: "m1", class: "REALIZABLE_LOCAL", deps: [], nextAction: "read-only analysis" }] }).agentCount === 0);
+
   // ---- delegation contract (§9/§11): precise scope/acceptance/evidence/prohibitions ----
   const contract = O.delegationContract({ id: "m1", nextAction: "do X" }, ["runtime/core/x.ts"]);
   check("delegation contract carries scope + acceptance + evidence + prohibitions (incl. no self-closure)", contract.authorizedFiles[0] === "runtime/core/x.ts" && contract.acceptanceCriteria.length >= 2 && contract.prohibitions.some((p: string) => /no status self-promotion|closure/.test(p)));

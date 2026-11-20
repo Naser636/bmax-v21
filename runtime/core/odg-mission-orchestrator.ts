@@ -78,6 +78,18 @@ function buildDispatchPlan(inventory?: any): any {
   const writeSafety = WSC.computeLayerContention(layerIds, contentionMissions);
   const parallelDispatchProvenSafe = writeSafety.ok === true && writeSafety.anyContention === false;
 
+  // AGENT-COUNT DECISION (0..6): the max number of DELEGATE_PROVIDER missions that are write-safe-concurrent in ANY
+  // sub-wave (ODG-native missions need no agent). Derived from the write-safe waves above — never a fixed default;
+  // 0 when nothing is concurrently delegable; capped at 6 with the excess serialized (disclosed).
+  const routeById: Record<string, string> = {}; for (const r of routed) routeById[r.id] = r.route;
+  let neededConcurrency = 0;
+  const subWaves = writeSafety && writeSafety.ok === true ? writeSafety.layers.flatMap((l: any) => l.subWaves) : [];
+  for (const wave of subWaves) { const p = wave.filter((id: string) => routeById[id] === "DELEGATE_PROVIDER").length; if (p > neededConcurrency) neededConcurrency = p; }
+  const agentCount = Math.min(6, neededConcurrency);
+  const agentRationale = neededConcurrency === 0
+    ? "0 agents — no provider mission is concurrently dispatchable (all native, sequential, non-dispatchable, or write-set-contended)"
+    : `${agentCount} agent(s) — widest write-safe wave has ${neededConcurrency} concurrently-dispatchable provider mission(s)${neededConcurrency > 6 ? ` (capped at 6; the excess ${neededConcurrency - 6} serialize)` : ""}`;
+
   const byRoute: any = {}; for (const r of routed) byRoute[r.route] = (byRoute[r.route] || 0) + 1;
   return Object.freeze({
     totalOpen: routed.length,
@@ -86,6 +98,8 @@ function buildDispatchPlan(inventory?: any): any {
     parallelSchedule: Object.freeze(schedule),
     writeSafety: Object.freeze(writeSafety),
     parallelDispatchProvenSafe,
+    agentCount,
+    agentRationale,
     dispatchableNow: actable.length,
     note: "orchestrator over the REAL open-mission inventory; routes each mission, schedules the dispatchable work into dependency layers, and RE-CHECKS each layer for write-set contention (dependency-order ≠ write-set independence). A mission without a declared write-set is UNKNOWN ⇒ parallel dispatch is NOT proven safe (fail-closed). Changes NO status; executes nothing; ODG alone accepts deliverables.",
   });
