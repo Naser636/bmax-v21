@@ -38,6 +38,12 @@ function main(): void {
   // UNKNOWN / unverified never counted as success (anti-fabrication)
   check("UNKNOWN + unverified outcomes are censored (never a fabricated success)", M.calibrateFromBuildOutcomes(mk("t", 0, 0, 5)).observations === 0 && M.calibrateFromBuildOutcomes(mk("t", 0, 0, 5)).censoredUnknown === 5);
 
+  // V327 §10: toVerifiedRows is the single store→rows mapper (also consumed by odg-calibration-key.storeHistoryFor)
+  const tv = M.toVerifiedRows(mk("t", 2, 1, 3), { missionType: "t" });
+  check("toVerifiedRows: maps 3 verified (2✓/1✗), censors 3 UNKNOWN, scopedCount 6", tv.rows.length === 3 && tv.censored === 3 && tv.scopedCount === 6 && tv.rows[0].verified === true && tv.rows[2].verified === false);
+  const tvTag = M.toVerifiedRows(mk("t", 1, 0, 0), { missionType: "t", tagMissionType: true });
+  check("toVerifiedRows tagMissionType ⇒ rows carry missionType (policy-history shape)", tvTag.rows[0].missionType === "t" && tvTag.rows[0].verified === true);
+
   // frozen + contract
   check("frozen result", Object.isFrozen(cal));
   check("contract: reuses native-build-outcome store + calibrated-P guard; no second memory; UNKNOWN censored",

@@ -25,19 +25,34 @@ function isObj(v: any): boolean { return v !== null && typeof v === "object" && 
  * Maps only INDEPENDENTLY-VERIFIED SUCCESS/FAILURE outcomes (UNKNOWN censored) → {verified} and defers to the
  * survivorship-guarded calibrateLocalModel. Returns { ...calibration, mappedFrom, censoredUnknown }.
  */
+/**
+ * toVerifiedRows(outcomes, opts?) -> { rows, scopedCount, censored }. THE single store→rows mapper (SSOT): maps only
+ * INDEPENDENTLY-VERIFIED SUCCESS/FAILURE native-build outcomes → {verified, id, at} (UNKNOWN censored). opts.missionType
+ * scopes by native-build class `type`; opts.tagMissionType adds a `missionType` field (for a policy history keyed by that
+ * type). Used by calibrateFromBuildOutcomes here AND by odg-calibration-key.storeHistoryFor (no duplicate mapping).
+ */
+function toVerifiedRows(outcomes: any, opts: any = {}): any {
+  const o = isObj(opts) ? opts : {};
+  const wantType = typeof o.missionType === "string" ? o.missionType : null;
+  const tag = o.tagMissionType === true && wantType !== null;
+  const all = Array.isArray(outcomes) ? outcomes.filter(isObj) : [];
+  const scoped = wantType === null ? all : all.filter((x: any) => x.type === wantType || x.missionType === wantType);
+  let censored = 0;
+  const rows: any[] = [];
+  for (const x of scoped) {
+    const at = x.at === null ? undefined : x.at;
+    if (x.outcome === "SUCCESS" && x.independentlyVerified === true) rows.push(freeze(tag ? { verified: true, id: x.missionId, at, missionType: wantType } : { verified: true, id: x.missionId, at }));
+    else if (x.outcome === "FAILURE" && x.independentlyVerified === true) rows.push(freeze(tag ? { verified: false, id: x.missionId, at, missionType: wantType } : { verified: false, id: x.missionId, at }));
+    else censored += 1; // UNKNOWN / unverified ⇒ censored (never counted as success or failure)
+  }
+  return { rows, scopedCount: scoped.length, censored };
+}
+
 function calibrateFromBuildOutcomes(outcomes: any, opts: any = {}): any {
   const o = isObj(opts) ? opts : {};
-  const all = Array.isArray(outcomes) ? outcomes.filter(isObj) : [];
-  const wantType = typeof o.missionType === "string" ? o.missionType : null;
-  const scoped = wantType === null ? all : all.filter((x: any) => x.type === wantType || x.missionType === wantType);
-  let censoredUnknown = 0;
-  const rows = scoped.map((x: any) => {
-    if (x.outcome === "SUCCESS" && x.independentlyVerified === true) return { verified: true, id: x.missionId, at: x.at === null ? undefined : x.at };
-    if (x.outcome === "FAILURE" && x.independentlyVerified === true) return { verified: false, id: x.missionId, at: x.at === null ? undefined : x.at };
-    censoredUnknown += 1; return null; // UNKNOWN / unverified ⇒ censored (never counted as success or failure)
-  }).filter(Boolean);
-  const cal = CAL.calibrateLocalModel(rows, { maxAgeDays: o.maxAgeDays, asOfMs: o.asOfMs });
-  return freeze({ ...cal, mappedFrom: scoped.length, censoredUnknown, note: "survivorship-GUARDED calibrated-P over REAL accumulated native-build outcomes (UNKNOWN censored); a more honest belief than the raw success rate (nativeReliabilityByClass). Reuses native-build-outcome's store + odg-local-model-outcome-calibration; no second memory." });
+  const mapped = toVerifiedRows(outcomes, { missionType: o.missionType });
+  const cal = CAL.calibrateLocalModel(mapped.rows, { maxAgeDays: o.maxAgeDays, asOfMs: o.asOfMs });
+  return freeze({ ...cal, mappedFrom: mapped.scopedCount, censoredUnknown: mapped.censored, note: "survivorship-GUARDED calibrated-P over REAL accumulated native-build outcomes (UNKNOWN censored); a more honest belief than the raw success rate (nativeReliabilityByClass). Reuses native-build-outcome's store + odg-local-model-outcome-calibration; no second memory." });
 }
 
 const NATIVE_OUTCOME_CALIBRATION_CONTRACT = Object.freeze({
@@ -52,5 +67,5 @@ const NATIVE_OUTCOME_CALIBRATION_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { calibrateFromBuildOutcomes, NATIVE_OUTCOME_CALIBRATION_CONTRACT };
+module.exports = { calibrateFromBuildOutcomes, toVerifiedRows, NATIVE_OUTCOME_CALIBRATION_CONTRACT };
 export {};
