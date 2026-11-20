@@ -1,0 +1,26 @@
+{
+  "kind": "ODG_LAST_FRONTIER_TOPO_EXPERIMENT",
+  "executor": "ODG_LOCAL_MODEL_EXECUTION",
+  "model": "qwen2.5-coder:7b",
+  "config": "maxRepair3 + execution-feedback + bounded-exec",
+  "result": {
+    "attempts": 3,
+    "pass": "0/3",
+    "runs": [
+      "FAIL>FAIL>FAIL>FAIL",
+      "FAIL>FAIL>FAIL>FAIL",
+      "FAIL>FAIL>FAIL>FAIL"
+    ]
+  },
+  "prior": "0/2 at 3b (maxRepair1), 0/2 at 7b (maxRepair1), 0/2 at 3b (maxRepair3)",
+  "finding": "AUTHORIZED single bounded experiment (V327 §2): topological sort with the FULL best-local config — qwen2.5-coder:7b + maxRepair 3 + execution-feedback repair + deep-equal bounded verification — = 0/3 (every attempt FAILed through all repairs). Combined with the prior nulls (0/2 at 3b, 0/2 at 7b/maxRepair1, 0/2 at 3b/maxRepair3), this DEFINITIVELY shows topo is beyond ODG's local model even at maximum local effort. Per §2: result recorded, trail STOPPED, no repeats. Per §6: this is NOT an autonomy failure — the correct autonomous response is controlled provider ESCALATION (odg-native-escalation #778, evidence-gated, independently verified). No gain fabricated.",
+  "gateImplication": "§6 autonomy gate: the local model is used for what it can do (measured: reliable/borderline/medium via model-size+repair-depth levers); a hard limit (topo) triggers a correctly-DECIDED escalation — which §6 states is an autonomous capability, not a failure to mask. ODG does not need to solve every problem locally.",
+  "provenance": {
+    "schema": "evidence-provenance/1",
+    "contentSha256": "acacae2f64be73256916c0a26cb81f810f30895f7efe6f32cdfea7c68b20de08",
+    "sourceCommit": "c8be8036d64c84140dff2ee11527027304a54779",
+    "treeDirty": true,
+    "sourceAvailable": true,
+    "capturedAtRun": null
+  }
+}
