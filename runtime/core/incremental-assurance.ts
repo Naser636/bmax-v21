@@ -59,7 +59,11 @@ function impactClosure(change: any, opts: any = {}): any {
   let tests = arr(c.impactedTests).slice();
   let widened = false;
   if ((modules.length === 0 || tests.length === 0) && typeof o.root === "string" && typeof c.changedModule === "string") {
-    try { const rep = IMPACT.impactOf(o.root, c.changedModule); modules = Array.from(new Set(modules.concat(rep.transitiveClosure, rep.consumers))); tests = Array.from(new Set(tests.concat(rep.impactedTests))); if (rep.closureHazards && (rep.closureHazards.dynamicRequire || rep.closureHazards.externalRequire)) widened = true; } catch { widened = true; }
+    // V327 §9: the impact query is an injectable SEAM (default change-impact-graph.impactOf). A caller may pass a
+    // graph-reusing impactOf (persistent-impact-graph.makeReusableImpactOf) to avoid rebuilding the require-graph on every
+    // mission — results are identical (same graph), only faster. Stays pure here; the reuse/state lives in the seam.
+    const impactOf = typeof o.impactOf === "function" ? o.impactOf : IMPACT.impactOf;
+    try { const rep = impactOf(o.root, c.changedModule); modules = Array.from(new Set(modules.concat(rep.transitiveClosure, rep.consumers))); tests = Array.from(new Set(tests.concat(rep.impactedTests))); if (rep.closureHazards && (rep.closureHazards.dynamicRequire || rep.closureHazards.externalRequire)) widened = true; } catch { widened = true; }
   }
   if (c.changedModule && !modules.includes(c.changedModule)) modules.push(c.changedModule);
   if (c.unknownDependency === true) widened = true;               // §3 — widen prudently when a dependency is unknown
@@ -179,7 +183,12 @@ if (require.main === module) {
       { id: "a.test.ts", forModule: "a", identity: { inputs: 1, code: "x", deps: 1, config: 1, env: 1 }, provenance: "p" },
       { id: "z.test.ts", forModule: "z", identity: { inputs: 1, code: "y", deps: 1, config: 1, env: 1 }, provenance: "p", identityDigest: CACHE.identityDigest({ inputs: 1, code: "y", deps: 1, config: 1, env: 1 }) },
     ]);
-  process.stdout.write(JSON.stringify({ ...INCREMENTAL_ASSURANCE_CONTRACT, demo: { overall: demo.overall, run: demo.testsToRun, avoided: demo.testsAvoided, counts: demo.counts } }, null, 2) + "\n");
+  // V327 §9 — the impactOf seam is honored: an injected impactOf is used in place of change-impact-graph (identical shape).
+  let seamCalled = false;
+  const seamClosure = impactClosure({ changedModule: "a", impactedModules: [], impactedTests: [] }, { root: ".", impactOf: (_r: any, m: any) => { seamCalled = true; return { transitiveClosure: [m, "seam-dep"], consumers: ["seam-consumer"], impactedTests: ["seam.test.ts"], closureHazards: {} }; } });
+  const seamOk = seamCalled && seamClosure.modules.includes("seam-dep") && seamClosure.tests.includes("seam.test.ts");
+  if (!seamOk) { process.stderr.write("FAIL: impactOf seam not honored\n"); process.exit(1); }
+  process.stdout.write(JSON.stringify({ ...INCREMENTAL_ASSURANCE_CONTRACT, seamOk, demo: { overall: demo.overall, run: demo.testsToRun, avoided: demo.testsAvoided, counts: demo.counts } }, null, 2) + "\n");
 }
 
 export {};

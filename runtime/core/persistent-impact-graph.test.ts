@@ -49,6 +49,25 @@ check(G.impactWithValidity({ schema: "wrong" }, "a", digest).mode === "FULL", "t
 }
 // empty source ⇒ null digest (cannot validate ⇒ callers widen to FULL).
 check(G.sourceDigestOf({}) === null, "empty source ⇒ null digest");
+
+// V327 §9 — makeReusableImpactOf: build the graph AT MOST ONCE per process and reuse across module queries.
+{
+  let builds = 0;
+  const fakeBuild = (_r: any) => { builds++; return { modules: ["m", "c"], deps: { m: [], c: ["m"] }, consumers: { m: ["c"], c: [] } }; };
+  const fakeImpact = (_r: any, mod: any, g: any) => ({ transitiveClosure: [mod], consumers: (g && g.consumers[mod]) || [], impactedTests: [], closureHazards: {} });
+  const ru = G.makeReusableImpactOf(undefined, { buildGraph: fakeBuild, impactOf: fakeImpact });
+  const r1 = ru.impactOf(".", "m"); ru.impactOf(".", "c"); ru.impactOf(".", "m");
+  check(ru.builds() === 1 && r1.consumers.includes("c"), "makeReusableImpactOf: 3 queries ⇒ graph built ONCE (cross-mission reuse), result passes prebuilt graph through");
+  // a FRESH persisted stamp seeds the cache with ZERO builds (cross-process reuse)
+  const stamped = G.stampGraph({ modules: ["m"], deps: { m: [] }, consumers: { m: [] } }, { sourceDigest: "D" });
+  const ruSeed = G.makeReusableImpactOf(undefined, { buildGraph: fakeBuild, impactOf: fakeImpact, stamped, currentSourceDigest: "D" });
+  ruSeed.impactOf(".", "m"); ruSeed.impactOf(".", "m");
+  check(ruSeed.builds() === 0, "makeReusableImpactOf: FRESH stamped seed ⇒ 0 builds (cross-process reuse)");
+  // a STALE stamp ⇒ fail-closed rebuild (never reuse an out-of-date graph)
+  const ruStale = G.makeReusableImpactOf(undefined, { buildGraph: fakeBuild, impactOf: fakeImpact, stamped, currentSourceDigest: "MISMATCH" });
+  ruStale.impactOf(".", "m");
+  check(ruStale.builds() === 1, "makeReusableImpactOf: STALE stamp ⇒ rebuild (fail-closed)");
+}
 check(G.PERSISTENT_IMPACT_GRAPH_CONTRACT.invariants.some((i: any) => /STALE ⇒ rebuild/i.test(i)), "contract: stale ⇒ rebuild");
 console.log(failures === 0 ? "ALL PASS — V5-E WAVE-2 PERSISTENT IMPACT GRAPH" : "FAILURES: " + failures);
 process.exit(failures === 0 ? 0 : 1);

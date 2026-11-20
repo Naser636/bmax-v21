@@ -27,6 +27,13 @@ const root = process.cwd();
   check(Array.isArray(r.transitiveClosure) && Array.isArray(r.consumers), "impactOf returns transitiveClosure + consumers arrays");
   const none = CIG.impactOf(root, "definitely-not-a-real-module-xyz");
   check(none.exists === false && none.transitiveClosure.length === 0, "impactOf(nonexistent) ⇒ exists:false, empty closure (fail-closed)");
+
+  // V327 §9 — a PRE-BUILT graph is reused instead of rescanning; results match a freshly-scanned query (same graph).
+  const g = CIG.buildGraph(root);
+  const mod = g.modules[0];
+  const fresh = CIG.impactOf(root, mod);
+  const prebuilt = CIG.impactOf(root, mod, g);
+  check(JSON.stringify(prebuilt.transitiveClosure) === JSON.stringify(fresh.transitiveClosure) && JSON.stringify(prebuilt.consumers) === JSON.stringify(fresh.consumers), "impactOf(root, module, prebuiltGraph) ⇒ identical closure+consumers (reuse, no rescan)");
 }
 
 console.log(failures === 0 ? "ALL PASS — CHANGE-IMPACT-GRAPH" : `FAILURES: ${failures}`);

@@ -15,6 +15,7 @@ const MANDATE = require("./local-work-mandate.js");
 const LOOP = require("./intelligence-loop.js");
 const BOUNDARY = require("./inspection-boundary.js");   // V86 — universal mandatory inspection (PRE+POST), fail-closed
 const INCR = require("./incremental-assurance.js");      // V88 — impact analysis → targeted invalidation → demonstrated reuse
+const PIG = require("./persistent-impact-graph.js");      // V327 §9 — reuse the impact graph across missions (no per-mission rebuild)
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 const plans = (id: string) => [{ id, metrics: { Psuccess: 0.9, Vobjective: 0.8, Qquality: 0.8, Ttime: 0.2, Cresources: 0.2, Rrisk: 0.1, Uuncertainty: 0.1 } }];
@@ -34,6 +35,10 @@ function runCampaign(missions: any, opts: any = {}): any {
   // every Level-A mission traverses the boundary PRE+POST and a result is ACCEPTED only on PASS. When ABSENT (an
   // ISOLATED test invocation), missions may execute but are NEVER operationally accepted (§6) — they are EXECUTED_UNINSPECTED.
   const inspection = isObj(o.inspection) ? o.inspection : null;
+  // V327 §9 — build the change-impact graph AT MOST ONCE per campaign run and reuse it across every mission's incremental
+  // assurance (change-impact-graph.impactOf otherwise rescans the whole require-graph per mission). Identical results
+  // (same graph), only faster. Default on; opt-out via opts.reuseImpactGraph === false.
+  const reusableImpactOf = o.reuseImpactGraph === false ? null : PIG.makeReusableImpactOf();
 
   const handled = new Set<string>();          // missions removed from candidacy (executed/refused/prepared/quarantined)
   const accepted: string[] = [];              // ACCEPTED (for dep-satisfaction + no-repeat)
@@ -75,7 +80,8 @@ function runCampaign(missions: any, opts: any = {}): any {
     // the selection NEVER drops below the mandatory perimeter (the engine's own fail-closed broadening guarantees this).
     let assurance: any = null;
     if (inspection && isObj(mission.change)) {
-      assurance = INCR.assess(mission.change, Array.isArray(mission.priorEvidence) ? mission.priorEvidence : [], mission.assessOpts || {});
+      const assessOpts = reusableImpactOf ? { ...(mission.assessOpts || {}), impactOf: (mission.assessOpts && mission.assessOpts.impactOf) || reusableImpactOf.impactOf } : (mission.assessOpts || {});
+      assurance = INCR.assess(mission.change, Array.isArray(mission.priorEvidence) ? mission.priorEvidence : [], assessOpts);
       if (assurance.overall === "BLOCKED") { metrics.inspectionBlocked++; log.push({ iter, id, decision: "BLOCKED_CONTRADICTION", assurance: { overall: assurance.overall, counts: assurance.counts }, reason: "incremental assurance BLOCKED (contradictory evidence) — never accepted (§3)" }); handled.add(id); continue; }
     }
 

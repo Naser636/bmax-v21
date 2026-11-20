@@ -13,6 +13,7 @@
  */
 
 const PROV = require("./evidence-provenance");         // contentDigest — source digest for provenance + invalidation
+const IMPACT = require("./change-impact-graph");        // the graph itself (no concurrent graph) — reused across calls
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
@@ -74,6 +75,33 @@ function loadGraph(filePath: string): any {
   try { const o = JSON.parse(require("fs").readFileSync(filePath, "utf8")); return o && o.schema === SCHEMA ? o : null; } catch { return null; }
 }
 
+/**
+ * makeReusableImpactOf(root, deps?) -> { impactOf(root, module), builds(), graph() }. V327 §9 — the SPEED consumer:
+ * change-impact-graph.impactOf rebuilds the whole require-graph (a full filesystem scan) on EVERY call, so a campaign
+ * looping over many missions rescans repeatedly. This builds the graph AT MOST ONCE per process and reuses it for all
+ * subsequent impact queries (passing it as change-impact-graph.impactOf's prebuilt graph). A FRESH persisted stamped
+ * graph (deps.stamped + deps.currentSourceDigest) seeds the cache with ZERO builds (cross-process reuse); a STALE/absent
+ * stamp ⇒ build fresh (fail-closed). Results are IDENTICAL to IMPACT.impactOf (same graph) — pure speed, no behaviour
+ * change. deps.buildGraph / deps.impactOf are injectable for testing. builds() reports the rebuild count (measurement).
+ */
+function makeReusableImpactOf(root: any, deps: any = {}): any {
+  const d = isObj(deps) ? deps : {};
+  const build = typeof d.buildGraph === "function" ? d.buildGraph : IMPACT.buildGraph;
+  const impact = typeof d.impactOf === "function" ? d.impactOf : IMPACT.impactOf;
+  let graph: any = null; let builds = 0; let boundRoot: any = Symbol("unbuilt"); let seeded = false;
+  if (isObj(d.stamped) && typeof d.currentSourceDigest === "string" && isFresh(d.stamped, d.currentSourceDigest)) {
+    graph = { modules: arr(d.stamped.modules), deps: d.stamped.deps, consumers: d.stamped.consumers }; seeded = true; // cross-process: a source-digest stamp is root-agnostic ⇒ 0 builds
+  }
+  // build at most once; a graph BUILT via build(r) is bound to that root (rebuild if the root changes); a SEEDED graph
+  // (validated fresh by source digest) is root-agnostic and reused as-is.
+  const ensure = (r: any) => { if (!graph || (!seeded && r !== boundRoot)) { graph = build(r); builds += 1; boundRoot = r; seeded = false; } return graph; };
+  return Object.freeze({
+    impactOf: (r: any, module: any) => impact(r, module, ensure(r)),
+    builds: () => builds,
+    graph: () => graph,
+  });
+}
+
 const PERSISTENT_IMPACT_GRAPH_CONTRACT = Object.freeze({
   id: "V5-E-PERSISTENT-IMPACT-GRAPH",
   source: "ODG Engineering Intelligence wave-2 — persistent file-level impact graph (persistence + provenance + invalidation)",
@@ -89,7 +117,7 @@ const PERSISTENT_IMPACT_GRAPH_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { SCHEMA, sourceDigestOf, stampGraph, isFresh, transitiveConsumers, impactWithValidity, saveGraph, loadGraph, PERSISTENT_IMPACT_GRAPH_CONTRACT };
+module.exports = { SCHEMA, sourceDigestOf, stampGraph, isFresh, transitiveConsumers, impactWithValidity, makeReusableImpactOf, saveGraph, loadGraph, PERSISTENT_IMPACT_GRAPH_CONTRACT };
 
 if (require.main === module) {
   const graph = { modules: ["a", "b", "c"], consumers: { a: ["b"], b: ["c"] }, deps: { b: ["a"], c: ["b"] } };
