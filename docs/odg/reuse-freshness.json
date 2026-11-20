@@ -1,6 +1,6 @@
 {
   "//": "V326 §7 — REAL pre-reuse freshness over the stored patch-memory precedents. changedPaths sourced from READ-ONLY `git log --since=<learnedAt> --name-only`; verdict from the PRODUCTION odg-reuse-validity-gate via odg-git-change-signal. The gate is fail-closed: unknown provenance / unresolved drift / git failure ⇒ REQUIRES_REVALIDATION (never optimistic reuse).",
-  "asOfMs": 1795144581787,
+  "asOfMs": 1795145028263,
   "precedentsConsidered": 7,
   "byVerdict": {
     "REUSABLE_AS_PROVEN": 1,
@@ -13,10 +13,14 @@
       "signature": "|nl_unknown_44381d36_1|factory/readme.md",
       "learnedAt": "2026-10-07T23:03:25.157Z",
       "authoredBy": "(absent)",
+      "targetPaths": [
+        "factory/README.md"
+      ],
+      "targetPathsExist": 1,
       "verdict": "REQUIRES_REVALIDATION",
       "ageDays": 43.18,
       "driftSignalAvailable": true,
-      "changedPathsConsidered": 4170,
+      "changedPathsConsidered": 4174,
       "changedTargets": [],
       "topReason": "provenance UNKNOWN — remembered, not independently validated"
     },
@@ -25,10 +29,14 @@
       "signature": "|nl_unknown_b47c89b4_1|factory/readme.md",
       "learnedAt": "2026-10-07T23:22:12.062Z",
       "authoredBy": "(absent)",
+      "targetPaths": [
+        "factory/README.md"
+      ],
+      "targetPathsExist": 1,
       "verdict": "REQUIRES_REVALIDATION",
-      "ageDays": 43.16,
+      "ageDays": 43.17,
       "driftSignalAvailable": true,
-      "changedPathsConsidered": 4169,
+      "changedPathsConsidered": 4173,
       "changedTargets": [],
       "topReason": "provenance UNKNOWN — remembered, not independently validated"
     },
@@ -37,10 +45,14 @@
       "signature": "|edit the runtime changelog file to append a dat",
       "learnedAt": "2026-10-08T00:36:15.137Z",
       "authoredBy": "(absent)",
+      "targetPaths": [
+        "CHANGELOG.md"
+      ],
+      "targetPathsExist": 1,
       "verdict": "REQUIRES_REVALIDATION",
-      "ageDays": 43.11,
+      "ageDays": 43.12,
       "driftSignalAvailable": true,
-      "changedPathsConsidered": 4164,
+      "changedPathsConsidered": 4168,
       "changedTargets": [],
       "topReason": "provenance UNKNOWN — remembered, not independently validated"
     },
@@ -49,10 +61,14 @@
       "signature": "|edit the changelog file to append an s3 verific",
       "learnedAt": "2026-10-08T01:29:50.342Z",
       "authoredBy": "(absent)",
+      "targetPaths": [
+        "CHANGELOG.md"
+      ],
+      "targetPathsExist": 1,
       "verdict": "REQUIRES_REVALIDATION",
-      "ageDays": 43.07,
+      "ageDays": 43.08,
       "driftSignalAvailable": true,
-      "changedPathsConsidered": 4158,
+      "changedPathsConsidered": 4162,
       "changedTargets": [],
       "topReason": "provenance UNKNOWN — remembered, not independently validated"
     },
@@ -61,10 +77,14 @@
       "signature": "|edit the changelog file to append an s4 end-to-",
       "learnedAt": "2026-10-08T01:55:54.558Z",
       "authoredBy": "(absent)",
+      "targetPaths": [
+        "CHANGELOG.md"
+      ],
+      "targetPathsExist": 1,
       "verdict": "REQUIRES_REVALIDATION",
       "ageDays": 43.06,
       "driftSignalAvailable": true,
-      "changedPathsConsidered": 4157,
+      "changedPathsConsidered": 4161,
       "changedTargets": [],
       "topReason": "provenance UNKNOWN — remembered, not independently validated"
     },
@@ -73,10 +93,14 @@
       "signature": "|fix import|",
       "learnedAt": "2026-10-27T20:50:48.913Z",
       "authoredBy": "ODG_CAPABILITY",
+      "targetPaths": [
+        "a.ts"
+      ],
+      "targetPathsExist": 0,
       "verdict": "REUSABLE_AS_PROVEN",
       "ageDays": 23.27,
       "driftSignalAvailable": true,
-      "changedPathsConsidered": 2421,
+      "changedPathsConsidered": 2425,
       "changedTargets": [],
       "topReason": "fresh (23.27d ≤ 90d), provenanced, drift-checked clean, never regressed — reusable AS PROVEN (still a replay of a past result, not a new guarantee)"
     },
@@ -85,13 +109,17 @@
       "signature": "unused-import|obj_x|x.ts",
       "learnedAt": "2026-11-09T13:19:17.461Z",
       "authoredBy": "UNKNOWN",
+      "targetPaths": [
+        "x.ts"
+      ],
+      "targetPathsExist": 0,
       "verdict": "REQUIRES_REVALIDATION",
-      "ageDays": 10.58,
+      "ageDays": 10.59,
       "driftSignalAvailable": true,
-      "changedPathsConsidered": 1274,
+      "changedPathsConsidered": 1278,
       "changedTargets": [],
       "topReason": "provenance UNKNOWN — remembered, not independently validated"
     }
   ],
-  "honesty": "REMEMBERED ≠ CURRENTLY VALIDATED. REUSABLE_AS_PROVEN requires recent age + known provenance + a clean git drift check + no suppression; the current stored precedents are mostly unprovenanced or drifted ⇒ REQUIRES_REVALIDATION (honest). The git drift signal is now REAL (read-only), resolving §7's 'drift never checked'. No persistent memory mutated; no reuse auto-authorized (replay stays gated)."
+  "honesty": "REMEMBERED ≠ CURRENTLY VALIDATED. REUSABLE_AS_PROVEN requires recent age + known provenance + a clean git drift check + no suppression; the current stored precedents are mostly unprovenanced or drifted ⇒ REQUIRES_REVALIDATION (honest). The git drift signal is now REAL (read-only), resolving §7's 'drift never checked'. CAVEAT: a REUSABLE_AS_PROVEN verdict is trivially drift-clean when the precedent's targetPaths do not exist in the repo (targetPathsExist:0 ⇒ a fixture/toy precedent, not a substantive reusable fix) — check targetPathsExist per row. No persistent memory mutated; no reuse auto-authorized (replay stays gated)."
 }
