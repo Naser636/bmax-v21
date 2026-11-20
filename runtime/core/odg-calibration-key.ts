@@ -16,6 +16,7 @@
 
 const DP = require("./decomposition-planner.js");
 const CP = require("./odg-calibrated-psuccess.js");
+const NOC = require("./odg-native-outcome-calibration.js"); // V327 §10: single store→rows mapper (no duplicate mapping)
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -36,17 +37,10 @@ function calibrationKey(spec: any): any {
 }
 
 /** storeHistoryFor(storeOutcomes, key) -> calibrated-P history rows tagged with `key`, from the store's verified
- *  SUCCESS/FAILURE outcomes of that key (UNKNOWN censored). The rows align with a policy query by `key`. */
+ *  SUCCESS/FAILURE outcomes of that key (UNKNOWN censored). The rows align with a policy query by `key`. V327 §10:
+ *  delegates to the SINGLE store→rows mapper (odg-native-outcome-calibration.toVerifiedRows) — no duplicate mapping. */
 function storeHistoryFor(storeOutcomes: any, key: string): any[] {
-  const all = Array.isArray(storeOutcomes) ? storeOutcomes.filter(isObj) : [];
-  const rows: any[] = [];
-  for (const o of all) {
-    if (o.type !== key) continue;
-    if (o.outcome === "SUCCESS" && o.independentlyVerified === true) rows.push(freeze({ missionType: key, verified: true, at: o.at === null ? undefined : o.at }));
-    else if (o.outcome === "FAILURE" && o.independentlyVerified === true) rows.push(freeze({ missionType: key, verified: false, at: o.at === null ? undefined : o.at }));
-    // UNKNOWN / unverified ⇒ censored
-  }
-  return rows;
+  return NOC.toVerifiedRows(storeOutcomes, { missionType: key, tagMissionType: true }).rows;
 }
 
 /**
