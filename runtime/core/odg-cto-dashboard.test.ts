@@ -22,6 +22,9 @@ function main() {
   // V324 §2.4/§13-P1 — ODG's native next-mission selection + multi-agent plan CONNECTED to the cockpit (over real dispatchable missions)
   check("native next-plan surfaced: ODG selects its next mission over the real dispatchable set", hasProvenance(d.nativeNextPlan) && ("selected" in d.nativeNextPlan.value) && typeof d.nativeNextPlan.value.eligibleCount === "number" && typeof d.nativeNextPlan.value.agentCount === "number");
   check("native next-plan honest: selects/plans only, executes nothing, no autonomy counted (LOW)", /selects\/ranks\/plans, executes NOTHING/.test(d.nativeNextPlan.method) && /no native autonomy counted/.test(d.nativeNextPlan.method) && d.nativeNextPlan.confidence === "LOW");
+  // V324 §13-P1 — reuse-memory freshness snapshot CONNECTED over the real patch-memory store (count-independent: store varies)
+  check("reuse-memory freshness surfaced with provenance + consistent verdict tally", hasProvenance(d.reuseMemoryFreshness) && typeof d.reuseMemoryFreshness.value.total === "number" && (d.reuseMemoryFreshness.value.REUSABLE_AS_PROVEN + d.reuseMemoryFreshness.value.REQUIRES_REVALIDATION + d.reuseMemoryFreshness.value.STALE === d.reuseMemoryFreshness.value.total));
+  check("reuse-memory freshness honest: drift-not-checked, remembered≠valid, read-only snapshot not the live gate", /file-drift is NOT checked here/.test(d.reuseMemoryFreshness.method) && /remembered ≠ currently valid/.test(d.reuseMemoryFreshness.method) && /NOT the live reuse gate/.test(d.reuseMemoryFreshness.method));
   check("runtime state is NOT_MEASURED (no resident process observed)", d.runtime.value === "NOT_MEASURED" && /no resident ODG process/.test(d.runtime.method));
   check("radar realScheduledRun is unmeasured", /NOT_MEASURED/.test(d.radar.value));
   check("gate is NOT re-run by the dashboard (low confidence, verify live)", d.gates.confidence === "LOW" && /does not re-run the gate/.test(d.gates.method));

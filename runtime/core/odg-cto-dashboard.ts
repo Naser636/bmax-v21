@@ -44,6 +44,8 @@ const NEL = require("./odg-native-engineering-loop.js");      // V250 — decide
 const AMR = require("./odg-autonomy-maturity-report.js");     // V324 §6.4 — native/assisted/escalated maturity over the REAL mission-ledger
 const MO = require("./odg-mission-orchestrator.js");          // V324 §3/§13-P1 — connect the real orchestrator plan (routes + write-safety + agent-count) to the cockpit
 const NEP = require("./odg-native-engineering-plan.js");      // V324 §2.4/§13-P1 — connect ODG's native next-mission selection + multi-agent plan to the cockpit
+const PM = require("./patch-memory.js");                       // V324 §13-P1 — real reuse-precedent store (freshness snapshot)
+const RVG = require("./odg-reuse-validity-gate.js");           // V324 §13-P1 — forward reuse-validity (memory freshness) over the real store
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -65,6 +67,16 @@ function build(opts?: any): any {
   // open missions. Reuses the already-computed dispatch.routes (no extra I/O). Read-only; selects/plans, executes nothing.
   // Only plan when the dispatch is actually available — if it is not, leave nextPlan null so the indicator collapses
   // to NOT_MEASURED (like its sibling), rather than emitting an empty plan that would mislabel the cause.
+  // V324 §13-P1 — freshness snapshot of the REAL reuse-precedent store (odg-reuse-validity-gate over patch-memory).
+  // Read-only; file-drift is NOT checked here, so this is a conservative "cannot-certify-fresh" view, not the live gate.
+  let reuseFresh: any = null;
+  try {
+    const asOf = Number.isFinite(o.asOfEpochMs) ? o.asOfEpochMs : Date.UTC(2026, 10, 16);
+    const precedents = PM.list();
+    const tally: any = { total: Array.isArray(precedents) ? precedents.length : 0, REUSABLE_AS_PROVEN: 0, REQUIRES_REVALIDATION: 0, STALE: 0 };
+    for (const p of (Array.isArray(precedents) ? precedents : [])) { const v = RVG.classifyReuseValidity(p, { asOfMs: asOf }); if (v && v.ok && tally[v.verdict] !== undefined) tally[v.verdict] += 1; }
+    reuseFresh = tally;
+  } catch { reuseFresh = null; }
   let nextPlan: any = null;
   if (dispatch && Array.isArray(dispatch.routes)) {
     try {
@@ -229,6 +241,8 @@ function build(opts?: any): any {
       eligibleCount: nextPlan.eligibleCount,
       agentCount: nextPlan.orchestrationPlan ? nextPlan.orchestrationPlan.agentCount : 0,
     }), "odg-native-engineering-plan.planNextProgram over the REAL dispatchable open missions (mission-priority-selector + odg-orchestration-plan)", "ODG's NATIVE next-mission selection + multi-agent plan — a PLAN only: selects/ranks/plans, executes NOTHING; no native autonomy counted (needs real execution provenance)", "LOW") : ind(null, "odg-native-engineering-plan.planNextProgram", "dispatch plan unavailable — native next-plan NOT_MEASURED", "NONE"),
+
+    reuseMemoryFreshness: reuseFresh ? ind(Object.freeze(reuseFresh), "odg-reuse-validity-gate.classifyReuseValidity over the REAL patch-memory store", "freshness snapshot of the stored reuse precedents as of the injected time; file-drift is NOT checked here, so REUSABLE_AS_PROVEN requires recent age AND known provenance — UNKNOWN-provenance/undated precedents require revalidation (remembered ≠ currently valid). A read-only snapshot, NOT the live reuse gate; replay remains the caller's decision.", "LOW") : ind(null, "odg-reuse-validity-gate over patch-memory", "reuse-precedent store unavailable — freshness NOT_MEASURED", "NONE"),
 
     nextRecommended: ind("await two owner decisions (ROADMAP.json integration; runtime intent) before any PARKED-extension build; non-blocking next = BTP DCE product-design behind demand-validation", "CTO recommendation", "dependency analysis", "MEDIUM"),
 
