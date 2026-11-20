@@ -20,6 +20,10 @@ const WORKFLOW = require("./odg-btp-project-workflow.js");  // V266
 const BILLING = require("./odg-btp-billing-engine.js");     // V267
 const REVISION = require("./odg-btp-revision-prix.js");     // V330 M2 — price revision (index-derived), threaded into the chain
 const RETENUE = require("./odg-btp-retenue-garantie.js");   // V330 M2 — retenue de garantie + gated release, threaded into the chain
+const PRICEREF = require("./odg-btp-price-reference.js");   // V330 M2 — supplier/price reference (bordereau) — the sourced-price provenance
+const SUPPLIER = require("./odg-btp-supplier-commitment.js"); // V330 M2 — supplier engagement from reference-sourced lines
+
+function isStr(v: any): boolean { return typeof v === "string" && v.trim().length > 0; }
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
@@ -76,7 +80,28 @@ function runLifecycle(scenario: any): any {
   stages.push(Object.freeze({ stage: "REALIZED_PROFITABILITY", engine: "V266/V267", realizedMargin: realized ? realized.realizedMargin : null, forecastMargin: realized ? realized.forecastMargin : null, marginErosion: realized ? realized.marginErosion : null }));
   links.push(link("F_FORECAST_MARGIN_TRACES_QUOTATION", "forecast gross margin = quotation margin (forecast traces to the devis, never invented)", !!realized && realized.forecastMargin === quotation.margin, "forecast=" + (realized ? realized.forecastMargin : null) + " quoteMargin=" + quotation.margin));
 
-  // 7. PRICE REVISION (V330 M2, OPT-IN) — a révision de prix on the ACCEPTED contract base, index-derived (never invented).
+  // 7. PROCUREMENT (V330 M2, OPT-IN) — achats et fournisseurs: the reference→commitment chain the engines were designed for.
+  // price-reference.buildCatalog → priceLineItems (resolve requested items to SOURCED lines, cheapest valid + provenance) →
+  // supplier-commitment.buildCommitment. Only runs when the scenario requests it (backward-compatible).
+  if (isObj(s.procurement)) {
+    const cat = PRICEREF.buildCatalog(arr(s.procurement.catalog), { currency: s.procurement.currency });
+    if (cat.ok !== true) return fail("PRICE_CATALOG_FAILED", "buildCatalog: " + (cat.code || "?"));
+    const asOf = s.procurement.asOfDate;
+    const sourced = PRICEREF.priceLineItems(cat, arr(s.procurement.requestedLines), asOf, { preferSupplier: s.procurement.preferSupplier });
+    if (sourced.ok !== true) return fail("PRICING_FAILED", "priceLineItems: " + (sourced.code || "?"));
+    const commit = SUPPLIER.buildCommitment({ id: isStr(s.procurement.id) ? s.procurement.id : "C-PROC", chantierId: isStr(s.procurement.chantierId) ? s.procurement.chantierId : "CH", kind: isStr(s.procurement.kind) ? s.procurement.kind : "PURCHASE_ORDER", supplier: isStr(s.procurement.supplier) ? s.procurement.supplier : "S", retentionBps: s.procurement.retentionBps, lineItems: sourced.lineItems });
+    if (commit.ok !== true) return fail("COMMITMENT_FAILED", "buildCommitment: " + (commit.code || "?"));
+    const engageable = commit.status === "DRAFT";    // supplier-commitment: status DRAFT ⟺ engageable (all lines priced), else NOT_ENGAGEABLE
+    stages.push(Object.freeze({ stage: "PROCUREMENT", engine: "price-reference→supplier-commitment", catalogEntries: cat.entries.length, sourcedLines: sourced.lineItems.length, unresolved: sourced.unresolved.length, status: commit.status, engageable, grossMinor: commit.grossMinor, retentionMinor: commit.retentionMinor, netPayableMinor: commit.netPayableMinor }));
+    // link J: every requested item resolved to a reference-SOURCED price ⇒ engageable (an unresolved item ⇒ NOT_ENGAGEABLE; price never invented).
+    links.push(link("J_PROCUREMENT_SOURCED", "every requested item resolved to a reference-sourced price ⇒ engageable (unresolved ⇒ NOT_ENGAGEABLE; price never invented)", sourced.unresolved.length === 0 && engageable === true, "unresolved=" + sourced.unresolved.length + " status=" + commit.status));
+    // link K: every committed line carries a priceSource (provenance) from the reference catalog — traceable, not invented.
+    links.push(link("K_PROCUREMENT_TRACES_REFERENCE", "every committed line carries a priceSource from the reference catalog (traceable provenance, never invented)", arr(commit.lineItems).length > 0 && arr(commit.lineItems).every((l: any) => l.status === "PRICED" && isStr(l.priceSource)), "lines=" + arr(commit.lineItems).length));
+    // link L: net payable = gross − retention (retenue held per contract, not dropped).
+    links.push(link("L_PROCUREMENT_NET", "net payable = gross − retention (retenue held, not dropped)", commit.netPayableMinor === commit.grossMinor - commit.retentionMinor, "gross=" + commit.grossMinor + " retention=" + commit.retentionMinor + " net=" + commit.netPayableMinor));
+  }
+
+  // 8. PRICE REVISION (V330 M2, OPT-IN) — a révision de prix on the ACCEPTED contract base, index-derived (never invented).
   // Only runs when the scenario requests it; absent ⇒ the chain is unchanged (backward-compatible 6-stage flow).
   if (isObj(s.revision)) {
     const base = quotation.sellingHT;
@@ -116,11 +141,11 @@ function runLifecycle(scenario: any): any {
 const BTP_LIFECYCLE_INTEGRATION_CONTRACT = Object.freeze({
   id: "V272-ODG-BTP-LIFECYCLE-INTEGRATION",
   source: "V272 §12 — end-to-end BTP lifecycle data-flow verification",
-  reuses: Object.freeze(["odg-btp-devis-engine (V260)", "odg-btp-project-workflow (V266)", "odg-btp-billing-engine (V267)", "odg-btp-revision-prix (V330 M2 — price revision)", "odg-btp-retenue-garantie (V330 M2 — retention + release)"]),
+  reuses: Object.freeze(["odg-btp-devis-engine (V260)", "odg-btp-project-workflow (V266)", "odg-btp-billing-engine (V267)", "odg-btp-revision-prix (V330 M2 — price revision)", "odg-btp-retenue-garantie (V330 M2 — retention + release)", "odg-btp-price-reference + odg-btp-supplier-commitment (V330 M2 — procurement: reference→commitment)"]),
   invariants: Object.freeze([
     "threads ONE scenario through the REAL engines (V260→V266→V267, + V330 revision/retenue when requested) and asserts cross-stage consistency — no new engine/ledger/primitive",
     "data-flow links checked: work-package cost = quotation cost; work-package selling = quotation selling; contract = accepted sellingHT; Σ milestones ≤ contract; reconciliation invoiced = single ledger total; forecast margin = quotation margin",
-    "V330 M2 OPT-IN stages (backward-compatible — absent ⇒ unchanged 6-stage flow): PRICE_REVISION base = accepted sellingHT and revised−base = delta (index-derived, never invented); RETENUE net = gross − withheld (retention never dropped); RELEASE owner/contract-gated (releasable = cumulative only when RELEASABLE, else 0 — never automatic)",
+    "V330 M2 OPT-IN stages (backward-compatible — absent ⇒ unchanged 6-stage flow): PROCUREMENT via the reference→commitment chain (every committed line reference-sourced WITH provenance; an unresolved item ⇒ NOT_ENGAGEABLE, price never invented; net = gross − retention); PRICE_REVISION base = accepted sellingHT and revised−base = delta (index-derived, never invented); RETENUE net = gross − withheld (retention never dropped); RELEASE owner/contract-gated (releasable = cumulative only when RELEASABLE, else 0 — never automatic)",
     "fails CLOSED: any cross-stage disagreement ⇒ dataFlowIntact false with the exact broken link (catches shadow state / duplicate ledger drift)",
     "deterministic/read-only; SYNTHETIC scenario proves INTEGRATION only — nothing OPERATIONAL/real-traction claimed",
   ]),

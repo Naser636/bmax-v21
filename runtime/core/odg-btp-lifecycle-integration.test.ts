@@ -61,6 +61,27 @@ function main() {
   // fail-closed: a malformed revision (coefficients not summing to 1) ⇒ REVISION_FAILED (chain stops honestly)
   check("fail-closed: revision coefficients not summing to 1 ⇒ REVISION_FAILED", L.runLifecycle(Object.assign({}, scenario, { revision: { fixedTermCoeff: 0.5, indexedTerms: [{ coeff: 0.2, baseIndex: 100, currentIndex: 100 }] } })).code === "REVISION_FAILED");
 
+  // V330 M2 — PROCUREMENT (achats): reference→commitment chain threaded into the journey.
+  const procScenario = Object.assign({}, scenario, { procurement: {
+    catalog: [
+      { itemRef: "CIM-42.5", unit: "sac", supplier: "SupA", unitPriceMinor: 850, priceSource: "bordereau-2026", validFrom: "2026-01-01" },
+      { itemRef: "CIM-42.5", unit: "sac", supplier: "SupB", unitPriceMinor: 900, priceSource: "devis-SupB", validFrom: "2026-01-01" },
+      { itemRef: "ACIER-HA", unit: "kg", supplier: "SupA", unitPriceMinor: 120, priceSource: "bordereau-2026", validFrom: "2026-01-01" },
+    ],
+    requestedLines: [{ itemRef: "CIM-42.5", qty: 100 }, { itemRef: "ACIER-HA", qty: 500 }],
+    asOfDate: "2026-06-01", kind: "PURCHASE_ORDER", supplier: "SupA",
+  } });
+  const proc = L.runLifecycle(procScenario);
+  const plk = (id: string) => proc.links.find((l: any) => l.id === id) || { consistent: false };
+  const procStage = proc.stages.find((s: any) => s.stage === "PROCUREMENT") || {};
+  check("V330 procurement: 7 stages / 9 links, dataFlowIntact true; gross = 100·850 + 500·120 = 145000, cheapest-sourced", proc.ok && proc.stageCount === 7 && proc.linkCount === 9 && proc.dataFlowIntact === true && procStage.grossMinor === 145000 && procStage.unresolved === 0);
+  check("link J: all requested items reference-sourced ⇒ engageable", plk("J_PROCUREMENT_SOURCED").consistent === true);
+  check("link K: every committed line carries a priceSource (provenance)", plk("K_PROCUREMENT_TRACES_REFERENCE").consistent === true);
+  check("link L: net = gross − retention (PO retention 0 ⇒ net = gross)", plk("L_PROCUREMENT_NET").consistent === true && procStage.netPayableMinor === 145000);
+  // fail-closed: a requested item with NO reference ⇒ unresolved ⇒ link J breaks ⇒ dataFlowIntact false (no invented price)
+  const procBroken = L.runLifecycle(Object.assign({}, procScenario, { procurement: Object.assign({}, procScenario.procurement, { requestedLines: [{ itemRef: "CIM-42.5", qty: 100 }, { itemRef: "UNKNOWN-ITEM", qty: 10 }] }) }));
+  check("fail-closed: a requested item with no reference ⇒ dataFlowIntact false, link J broken (price never invented)", procBroken.ok === true && procBroken.dataFlowIntact === false && procBroken.brokenLinks.indexOf("J_PROCUREMENT_SOURCED") >= 0);
+
   process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-lifecycle-integration (V272 §12 + V330 M2: end-to-end data-flow across V260→V266→V267; 6 stages, 6 consistency links [WP cost 90000=quote, WP selling=quote 118800, contract=sellingHT 118800, milestones 71280≤contract, recon invoiced 42768=ledger, forecast margin 19800=quote]; dataFlowIntact true; fail-closed on over-scheduling [link D broken]; realized margin 25800; SYNTHETIC — integration proven, not traction)" : f + " FAIL") + "\n");
   process.exit(f === 0 ? 0 : 1);
 }
