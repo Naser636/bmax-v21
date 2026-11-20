@@ -21,6 +21,7 @@ const ROOT = path.join(__dirname, "..", "..");
 const CL = require(path.join(ROOT, "runtime", "core", "campaign-loop.js"));
 const CC = require(path.join(ROOT, "runtime", "core", "campaign-controller.js"));
 const NMC = require(path.join(ROOT, "runtime", "core", "odg-native-mission-continuation.js"));
+const EP = require(path.join(ROOT, "runtime", "core", "evidence-provenance.js")); // durable sealing: contentSha256 + sourceCommit + tamper-detection
 
 const REGISTER_PATH = process.argv[2];
 const PROV_LOG = process.argv[3];
@@ -78,6 +79,20 @@ for (const id of executedThisRun) {
 }
 
 const failedThisRun = (result.transitions || []).filter((t: any) => t && t.event === "FAILED").map((t: any) => t.lot);
+
+// DURABLE-READY provenance manifest for THIS session: a self-contained, tamper-evident, source-anchored record of what
+// ODG natively executed (contentSha256 + sourceCommit via evidence-provenance — the #767 mechanism). The native flow
+// now SELF-PRODUCES verifiable provenance (not a loose JSONL): verifyProvenance re-reads + integrity-checks it. Persisting
+// it into a git-tracked durable store (durability = git history) stays a deliberate operator step — this runner never commits.
+const manifest = EP.stampProvenance({
+  kind: "ODG_NATIVE_CONTINUITY_SESSION", pid, seededThisRun, registerPath: REGISTER_PATH,
+  executedThisRun, failedThisRun, stopped: result.stopped, lifecycleState: result.lifecycleState,
+  provenanceByMission: executedThisRun.reduce((m: any, id: string) => { m[id] = { actor: (sink[id] || {}).actor || null, verdict: (sink[id] || {}).verdict || null }; return m; }, {}),
+}, {});
+const MANIFEST_PATH = PROV_LOG + ".manifest." + pid + ".json";
+fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n");
+const manifestVerify = EP.verifyProvenance(JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf8"))); // re-read + integrity-check
+
 process.stdout.write(JSON.stringify({
   pid, seededThisRun,
   preAcceptedFromPriorSession: preAccepted,
@@ -86,5 +101,8 @@ process.stdout.write(JSON.stringify({
   reExecutedPriorWork: executedThisRun.filter((id: string) => preStatus[id] === "ACCEPTED"), // MUST be empty (no double execution)
   stopped: result.stopped, lifecycleState: result.lifecycleState, campaignComplete: result.campaignComplete === true,
   allActorsOdg: executedThisRun.every((id: string) => sink[id] && sink[id].actor === "ODG"),
+  durableManifest: MANIFEST_PATH,
+  manifestContentSha256: manifest.provenance.contentSha256,
+  manifestVerified: manifestVerify.ok === true,
 }, null, 2) + "\n");
 export {};
