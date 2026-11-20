@@ -70,9 +70,10 @@ function classifyMaturity(evidence: any): any {
 }
 
 /**
- * aggregateMaturity(capabilities) -> { ok, total, byLevel, atOrBelow, items, note }.
- * capabilities: [{ name, ...evidence }]. Each is classified; byLevel counts per level; atOrBelow flags how many have
- * NOT reached INTEGRATED/DEMONSTRATED (the honest "not yet operational end-to-end" count). NO blended score.
+ * aggregateMaturity(capabilities) -> { ok, total, byLevel, notYetIntegrated, demonstrated, items, note }.
+ * capabilities: [{ name, ...evidence }]. Each is classified; byLevel counts per level; notYetIntegrated = how many have
+ * NOT reached INTEGRATED (the honest "not yet operational end-to-end" count); demonstrated = how many reached
+ * DEMONSTRATED. NO blended score.
  */
 function aggregateMaturity(capabilities: any): any {
   if (!Array.isArray(capabilities)) return freeze({ ok: false, code: "BAD_INPUT", detail: "capabilities must be an array" });
