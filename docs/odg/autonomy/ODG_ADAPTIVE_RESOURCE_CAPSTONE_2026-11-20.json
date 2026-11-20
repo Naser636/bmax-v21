@@ -1,0 +1,25 @@
+{
+  "kind": "ODG_ADAPTIVE_RESOURCE_CAPSTONE",
+  "executor": "ODG_LOCAL_MODEL_EXECUTION",
+  "what": "End-to-end: odg-policy-build-seam (calibrated resource policy) driving the EXISTING native-engineering-cycle.runNativeCycle over a reliable task class, cheap-policy (3b/maxRepair1) vs max-policy (7b/maxRepair3).",
+  "cheap": {
+    "label": "CHEAP(3b/1)",
+    "ms": 10629,
+    "accepted": "2/2"
+  },
+  "max": {
+    "label": "MAX(7b/3)",
+    "ms": 20794,
+    "accepted": "2/2"
+  },
+  "speedup": 1.96,
+  "finding": "For a CALIBRATED-reliable class the policy picks cheap (3b/1) and achieves the SAME acceptance (2/2) as the max policy (7b/3) at 1.96x less wall-clock (10629ms vs 20794ms) — a real adaptive-resource efficiency gain (§6: avoid spending the large model where the small one is reliable). The INDEPENDENT verifier arbitrated acceptance in both runs (no inflation). This exercises the WIRED loop end-to-end: calibrated-P → execution-policy → native-engineering-cycle deps.build seam → buildProject → independent verification.",
+  "provenance": {
+    "schema": "evidence-provenance/1",
+    "contentSha256": "a606c104ef4d57d44b6704ba604b8528734204dc56217ded25c7389b77cf9337",
+    "sourceCommit": "0efe813ba97ee11a4d663fc4e0aab9f56c40b659",
+    "treeDirty": true,
+    "sourceAvailable": true,
+    "capturedAtRun": null
+  }
+}
