@@ -1,0 +1,39 @@
+{
+  "kind": "ODG_LOCAL_MODEL_REPAIR_DEPTH_EXPERIMENT",
+  "executor": "ODG_LOCAL_MODEL_EXECUTION",
+  "model": "qwen2.5-coder:3b",
+  "question": "§3 — does more independent-test-guided repair (maxRepair 1 -> 3) fix the hard native-execution failures?",
+  "completed": "6 of 9 missions (run slow; 2 attempts/type recorded at maxRepair=3, vs 2/type at maxRepair=1)",
+  "perType": [
+    {
+      "type": "infix",
+      "maxRepair1": "0/2",
+      "maxRepair3": "1/2",
+      "improved": true,
+      "stillFails": false
+    },
+    {
+      "type": "lru",
+      "maxRepair1": "0/2",
+      "maxRepair3": "2/2",
+      "improved": true,
+      "stillFails": false
+    },
+    {
+      "type": "topo",
+      "maxRepair1": "0/2",
+      "maxRepair3": "0/2",
+      "improved": false,
+      "stillFails": true
+    }
+  ],
+  "finding": "More guided repair fixes the MEDIUM-hard class: lru 0/2 -> 2/2, infix 0/2 -> 1/2 (the independent-test-failure hint 'builds but fails the test — fix the logic' drives convergence). But topo (cycle-detecting topological sort) remains 0/2 even at maxRepair=3 — it needs DECOMPOSITION, not just more retries. Combined §3 picture: borderline tasks ← model size; medium-hard ← repair depth; hardest (topo) ← decomposition. No failure reclassified as success; `verified` is the independent verifier's verdict.",
+  "provenance": {
+    "schema": "evidence-provenance/1",
+    "contentSha256": "ea461c409618266add3d801c584c56636f1ab31877d148b91695c4540eea8263",
+    "sourceCommit": "d0a9b6f6ea1a08d9f117e2051efc2d34c0a3438e",
+    "treeDirty": true,
+    "sourceAvailable": true,
+    "capturedAtRun": null
+  }
+}
