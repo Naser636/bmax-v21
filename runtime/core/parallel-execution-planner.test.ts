@@ -62,7 +62,17 @@ function main(){
   const bad1=P.plan([{id:"z"},{id:"a"},{id:"m"}], {maxConcurrency:0});
   const bad2=P.plan([{id:"m"},{id:"z"},{id:"a"}], {maxConcurrency:0});
   check("invalid-opts path deterministic: unscheduled sorted + identical under input permutation", JSON.stringify(bad1.unscheduled)===JSON.stringify(bad2.unscheduled) && bad1.unscheduled[0].id==="a");
-  process.stdout.write("\n"+(failures===0?"ALL PASS — parallel-execution-planner O1 (dep-respecting concurrency+resource waves, fail-closed cycle/unknown/dup/oversized, deterministic, pure)":failures+" FAIL")+"\n");
+  // 19 — V327 §8/§79 WRITE-SET SAFETY (opt-in): two independent missions writing the SAME file must NOT share a wave.
+  const wsMiss=[{id:"a",writeSet:["src/x.js"]},{id:"b",writeSet:["src/x.js"]},{id:"c",writeSet:["src/y.js"]}];
+  const rOff=P.plan(wsMiss,{maxConcurrency:3});
+  check("writeSetSafe OFF (default): overlapping writers a,b can share a wave (backward-compatible)", rOff.waves[0].length===3 && rOff.stats.writeSetSafe===false);
+  const rOn=P.plan(wsMiss,{maxConcurrency:3,writeSetSafe:true});
+  check("writeSetSafe ON: a,b (same file) serialized into successive waves; c (disjoint) rides with the first", rOn.waves.length===2 && rOn.waves[0].length===2 && rOn.waves[1].length===1 && rOn.scheduled.length===3 && rOn.stats.writeSetDeferrals===1);
+  check("writeSetSafe ON: the two same-file writers are NOT in the same wave (no uncoordinated concurrent writers)", !rOn.waves.some((w:any)=>w.includes("a")&&w.includes("b")));
+  // ancestor-directory overlap also conflicts (reuses writeset-scheduler prefix semantics)
+  const rDir=P.plan([{id:"a",writeSet:["src/"]},{id:"b",writeSet:["src/deep/f.js"]}],{maxConcurrency:2,writeSetSafe:true});
+  check("writeSetSafe ON: ancestor-dir overlap (src/ vs src/deep/f.js) also serialized", rDir.waves.length===2);
+  process.stdout.write("\n"+(failures===0?"ALL PASS — parallel-execution-planner O1 (dep-respecting concurrency+resource waves, fail-closed cycle/unknown/dup/oversized, deterministic, pure; V327 §8 opt-in write-set-safe waves — no uncoordinated concurrent writers, reuses writeset-scheduler)":failures+" FAIL")+"\n");
   process.exit(failures===0?0:1);
 }
 main();
