@@ -1,0 +1,85 @@
+{
+  "kind": "ODG_LOCAL_MODEL_CALIBRATION_EVIDENCE",
+  "executor": "ODG_LOCAL_MODEL_EXECUTION",
+  "model": "qwen2.5-coder:3b",
+  "host": "http://127.0.0.1:11434 (loopback; ODG own local compute, NOT the Claude-Code provider)",
+  "missions": 40,
+  "pass": 32,
+  "fail": 8,
+  "calibration": {
+    "quality": "CALIBRATED",
+    "observations": 40,
+    "successes": 32,
+    "failures": 8,
+    "measuredP": 0.8,
+    "pForPlanner": 0.8,
+    "uncertainty": 0.1581
+  },
+  "perTask": {
+    "add": {
+      "pass": 4,
+      "total": 4
+    },
+    "sub": {
+      "pass": 4,
+      "total": 4
+    },
+    "double": {
+      "pass": 4,
+      "total": 4
+    },
+    "fib": {
+      "pass": 4,
+      "total": 4
+    },
+    "balanced": {
+      "pass": 4,
+      "total": 4
+    },
+    "rpn": {
+      "pass": 4,
+      "total": 4
+    },
+    "infix": {
+      "pass": 0,
+      "total": 2
+    },
+    "lru": {
+      "pass": 0,
+      "total": 2
+    },
+    "csv": {
+      "pass": 2,
+      "total": 2
+    },
+    "roman": {
+      "pass": 2,
+      "total": 2
+    },
+    "glob": {
+      "pass": 1,
+      "total": 2
+    },
+    "topo": {
+      "pass": 0,
+      "total": 2
+    },
+    "jsonpath": {
+      "pass": 2,
+      "total": 2
+    },
+    "wordwrap": {
+      "pass": 1,
+      "total": 2
+    }
+  },
+  "note": "REAL ODG-local-model probabilistic execution via native-project-builder; `verified` is the INDEPENDENT verifier's verdict (accept ONLY on the independent test), never the generator self-report. calibrated-P reaches CALIBRATED here (survivorship guard satisfied by genuine failures: infix/lru/topo/wordwrap are real capability limits) — MEANINGFUL, unlike the deterministic catalog (always-accept ⇒ P=1 biased). The estimate AUTHORIZES NOTHING. Reproduce: run buildProject over the specs and feed outcomes to odg-local-model-outcome-calibration.calibrateLocalModel.",
+  "provenance": {
+    "schema": "evidence-provenance/1",
+    "contentSha256": "a139fbbd8ed93079ad8a11dff237ff48c6bbb5585559d322be08f16e50d0a964",
+    "sourceCommit": "25865a60d6fda111b7d2ead25d3dd94d5266dd92",
+    "treeDirty": true,
+    "sourceAvailable": true,
+    "capturedAtRun": null
+  }
+}
