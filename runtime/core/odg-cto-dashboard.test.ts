@@ -19,6 +19,9 @@ function main() {
   // V324 §3/§13-P1 — the REAL native orchestrator plan is now CONNECTED to the cockpit (routes + write-safety + agent-count)
   check("orchestration plan surfaced over the REAL inventory with provenance", hasProvenance(d.orchestrationDispatch) && typeof d.orchestrationDispatch.value.totalOpen === "number" && typeof d.orchestrationDispatch.value.agentCount === "number" && typeof d.orchestrationDispatch.value.parallelDispatchProvenSafe === "boolean");
   check("orchestration is honest: PLAN only, executes nothing, no autonomy counted", /PLAN only/.test(d.orchestrationDispatch.method) && /executes\/dispatches NOTHING/.test(d.orchestrationDispatch.method) && d.orchestrationDispatch.confidence === "LOW");
+  // V324 §2.4/§13-P1 — ODG's native next-mission selection + multi-agent plan CONNECTED to the cockpit (over real dispatchable missions)
+  check("native next-plan surfaced: ODG selects its next mission over the real dispatchable set", hasProvenance(d.nativeNextPlan) && ("selected" in d.nativeNextPlan.value) && typeof d.nativeNextPlan.value.eligibleCount === "number" && typeof d.nativeNextPlan.value.agentCount === "number");
+  check("native next-plan honest: selects/plans only, executes nothing, no autonomy counted (LOW)", /selects\/ranks\/plans, executes NOTHING/.test(d.nativeNextPlan.method) && /no native autonomy counted/.test(d.nativeNextPlan.method) && d.nativeNextPlan.confidence === "LOW");
   check("runtime state is NOT_MEASURED (no resident process observed)", d.runtime.value === "NOT_MEASURED" && /no resident ODG process/.test(d.runtime.method));
   check("radar realScheduledRun is unmeasured", /NOT_MEASURED/.test(d.radar.value));
   check("gate is NOT re-run by the dashboard (low confidence, verify live)", d.gates.confidence === "LOW" && /does not re-run the gate/.test(d.gates.method));

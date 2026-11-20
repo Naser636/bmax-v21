@@ -43,6 +43,7 @@ const NEA = require("./odg-native-engineering-audit.js");     // V249 — honest
 const NEL = require("./odg-native-engineering-loop.js");      // V250 — decide→drive loop that REALLY executes deterministic repairs natively
 const AMR = require("./odg-autonomy-maturity-report.js");     // V324 §6.4 — native/assisted/escalated maturity over the REAL mission-ledger
 const MO = require("./odg-mission-orchestrator.js");          // V324 §3/§13-P1 — connect the real orchestrator plan (routes + write-safety + agent-count) to the cockpit
+const NEP = require("./odg-native-engineering-plan.js");      // V324 §2.4/§13-P1 — connect ODG's native next-mission selection + multi-agent plan to the cockpit
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -60,6 +61,17 @@ function build(opts?: any): any {
   // derived agent-count). Read-only; the orchestrator executes nothing. Unavailable ⇒ NOT_MEASURED.
   let dispatch: any = null;
   try { dispatch = MO.buildDispatchPlan(); } catch { dispatch = null; }
+  // V324 §2.4/§13-P1 — ODG's NATIVE next-mission selection + multi-agent plan over the dispatchable (dependency-ready)
+  // open missions. Reuses the already-computed dispatch.routes (no extra I/O). Read-only; selects/plans, executes nothing.
+  // Only plan when the dispatch is actually available — if it is not, leave nextPlan null so the indicator collapses
+  // to NOT_MEASURED (like its sibling), rather than emitting an empty plan that would mislabel the cause.
+  let nextPlan: any = null;
+  if (dispatch && Array.isArray(dispatch.routes)) {
+    try {
+      const ready = dispatch.routes.filter((r: any) => r.route === "ODG_NATIVE" || r.route === "DELEGATE_PROVIDER").map((r: any) => ({ id: r.id, deps: [], route: r.route, objective: r.reason }));
+      nextPlan = NEP.planNextProgram(ready, []);
+    } catch { nextPlan = null; }
+  }
   let reg: any = null, regErr: string | null = null;
   try {
     const r = auditClosureRegister(registerPath);
@@ -210,6 +222,13 @@ function build(opts?: any): any {
       agentCount: dispatch.agentCount,
       parallelDispatchProvenSafe: dispatch.parallelDispatchProvenSafe,
     }), "odg-mission-orchestrator.buildDispatchPlan over the REAL open-mission inventory (routes + write-safety #742 + derived agent-count)", (dispatch.agentRationale || "") + " — PLAN only: the orchestrator executes/dispatches NOTHING; no native autonomy counted here (ODG alone accepts deliverables).", "LOW") : ind(null, "odg-mission-orchestrator.buildDispatchPlan", "dispatch plan unavailable — NOT_MEASURED", "NONE"),
+
+    nativeNextPlan: nextPlan && nextPlan.ok ? ind(Object.freeze({
+      selected: nextPlan.selected ? nextPlan.selected.id : null,
+      selectionJustification: nextPlan.selectionJustification,
+      eligibleCount: nextPlan.eligibleCount,
+      agentCount: nextPlan.orchestrationPlan ? nextPlan.orchestrationPlan.agentCount : 0,
+    }), "odg-native-engineering-plan.planNextProgram over the REAL dispatchable open missions (mission-priority-selector + odg-orchestration-plan)", "ODG's NATIVE next-mission selection + multi-agent plan — a PLAN only: selects/ranks/plans, executes NOTHING; no native autonomy counted (needs real execution provenance)", "LOW") : ind(null, "odg-native-engineering-plan.planNextProgram", "dispatch plan unavailable — native next-plan NOT_MEASURED", "NONE"),
 
     nextRecommended: ind("await two owner decisions (ROADMAP.json integration; runtime intent) before any PARKED-extension build; non-blocking next = BTP DCE product-design behind demand-validation", "CTO recommendation", "dependency analysis", "MEDIUM"),
 
