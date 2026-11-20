@@ -28,6 +28,18 @@ async function main(): Promise<void> {
   const dec = await IC.runIntelligentCycle({ mission: dmission, history: h(4, 16), generatorFor: genFor, deps: { buildProject: async (s: any) => ({ accepted: s.name === "s1", verified: s.name === "s1", modules: {} }) } });
   check("REJECTED whole but DECOMPOSITION all-verified ⇒ solved, no escalation (consumes decomposed-execution)", dec.decomposition && dec.decomposition.allVerified === true && dec.escalation.escalate === false && /decomposition/.test(dec.note));
 
+  // V327 §3 SELF-CALIBRATION: no explicit history, but ACCUMULATED native-build outcomes (keyed by the store's complexity
+  // key) drive the policy via odg-calibration-key ⇒ the cycle learns from its OWN outcomes. KEY reconstructs from the spec.
+  const KEY = "native-build:MONOLITHIC:TRIVIAL"; // mission.spec = 1-file arch ⇒ chooseStrategy MONOLITHIC / complexity TRIVIAL
+  const po = (s: number, f: number): any[] => [...Array(s).fill(0).map(() => ({ type: KEY, outcome: "SUCCESS", independentlyVerified: true })), ...Array(f).fill(0).map(() => ({ type: KEY, outcome: "FAILURE", independentlyVerified: true }))];
+  const scHigh = await IC.runIntelligentCycle({ mission, generatorFor: genFor, deps: { priorOutcomes: po(18, 2), buildProject: async () => ({ accepted: true, verified: true }) } });
+  check("SELF-CALIBRATED high (store 18✓/2✗, no explicit history) ⇒ cheap policy 3b/1; selfCalibrated.key = store key, KNOWN, 20 obs", scHigh.policy.model === "qwen2.5-coder:3b" && scHigh.policy.maxRepair === 1 && scHigh.selfCalibrated && scHigh.selfCalibrated.key === KEY && scHigh.selfCalibrated.confidence === "KNOWN" && scHigh.selfCalibrated.observations === 20);
+  const scLow = await IC.runIntelligentCycle({ mission, generatorFor: genFor, deps: { priorOutcomes: po(4, 16), buildProject: async () => ({ accepted: false }) } });
+  check("SELF-CALIBRATED low (store 4✓/16✗) ⇒ policy 7b/3 + escalate (learned from its own accumulated outcomes)", scLow.policy.model === "qwen2.5-coder:7b" && scLow.policy.maxRepair === 3 && scLow.escalation.escalate === true);
+  // explicit history WINS over the store (backward-compatible): high history + low store ⇒ cheap, selfCalibrated null
+  const win = await IC.runIntelligentCycle({ mission, history: h(18, 2), generatorFor: genFor, deps: { priorOutcomes: po(4, 16), buildProject: async () => ({ accepted: true, verified: true }) } });
+  check("explicit history WINS over the store (backward-compatible) ⇒ cheap policy, selfCalibrated null", win.policy.model === "qwen2.5-coder:3b" && win.selfCalibrated === null);
+
   // selectIntelligently consumes routing: calibrated data flips the selection (unreliable→reliable)
   const reg = { version: "r", items: [{ id: "A_unreliable", status: "READY", deps: [], priority: 5, missionType: "unreliable" }, { id: "B_reliable", status: "READY", deps: [], priority: 5, missionType: "reliable" }] };
   const sel = IC.selectIntelligently(reg, [...h(0, 0), ...Array(4).fill({ missionType: "unreliable", verified: true }), ...Array(16).fill({ missionType: "unreliable", verified: false }), ...Array(18).fill({ missionType: "reliable", verified: true }), ...Array(2).fill({ missionType: "reliable", verified: false })]);
