@@ -1,0 +1,179 @@
+{
+  "//": "V325 §5/§16 — REAL native-execution provenance over ACTUAL repo files. ODG natively executed a deterministic engineering pass (odg-native-engineering-loop.driveSource) over each file; actor resolved via the PRODUCTION actor-provenance resolver. READ-ONLY: no source file written, no mission-ledger append (that is OWNER_GATED). The HEADLINE is the PROVENANCE (actor), NOT the transform count.",
+  "scanDir": "runtime/core",
+  "filesScanned": 734,
+  "nativelyExecuted": 734,
+  "actor": "ODG",
+  "actorReason": "unique recognized actor",
+  "byDisposition": {
+    "NATIVE_REPAIRED": 217,
+    "ALREADY_CLEAN": 517
+  },
+  "deferredToProvider": 0,
+  "refusedOutOfScope": 0,
+  "failed": 0,
+  "proposedTransforms": {
+    "count": 217,
+    "byClass": {
+      "ensure-dual-export@1": 177,
+      "ensure-use-strict@1": 36,
+      "normalize-strict-equality@1": 10,
+      "sort-named-destructure@1": 3,
+      "dedupe-require-lines@1": 4
+    },
+    "sample": [
+      {
+        "filePath": "runtime/core/acceptance-evidence-demonstrator.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 5383,
+              "lenAfter": 5394
+            }
+          }
+        ]
+      },
+      {
+        "filePath": "runtime/core/actor-provenance.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 7768,
+              "lenAfter": 7779
+            }
+          }
+        ]
+      },
+      {
+        "filePath": "runtime/core/agent-governance-harness.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 23720,
+              "lenAfter": 23731
+            }
+          }
+        ]
+      },
+      {
+        "filePath": "runtime/core/agent-identity.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 6577,
+              "lenAfter": 6588
+            }
+          }
+        ]
+      },
+      {
+        "filePath": "runtime/core/ai-act-role-classifier.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 5977,
+              "lenAfter": 5988
+            }
+          }
+        ]
+      },
+      {
+        "filePath": "runtime/core/ai-assurance-assessment.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 9553,
+              "lenAfter": 9564
+            }
+          }
+        ]
+      },
+      {
+        "filePath": "runtime/core/ai-assurance-regression.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 8562,
+              "lenAfter": 8573
+            }
+          }
+        ]
+      },
+      {
+        "filePath": "runtime/core/ai-assurance-report.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 7680,
+              "lenAfter": 7691
+            }
+          }
+        ]
+      },
+      {
+        "filePath": "runtime/core/assurance-pilot-metrics.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 4926,
+              "lenAfter": 4937
+            }
+          }
+        ]
+      },
+      {
+        "filePath": "runtime/core/assurance-pilot-runner.ts",
+        "transformsApplied": [
+          {
+            "classId": "ensure-dual-export@1",
+            "outcome": "NATIVE_REPAIRED_GREEN",
+            "patchSummary": {
+              "linesAdded": 2,
+              "linesRemoved": 1,
+              "lenBefore": 7319,
+              "lenAfter": 7330
+            }
+          }
+        ]
+      }
+    ],
+    "note": "candidate deterministic transforms the loop APPLIED+structurally-verified in-memory; PROPOSED only (owner-gated, NOT applied to disk, NOT asserted to be genuine defects nor semantically safe). The count INCLUDES benign/redundant proposals (e.g. a duplicate `export {};` on files whose existing export marker precedes a require.main trailer) AND semantic-capable rewrites (normalize-strict-equality: == → ===) — see byClass; it is NOT a count of real defects."
+  },
+  "honesty": "the deliverable is PROVENANCE: a genuine ODG-native deterministic pass over actual repo files resolves to actor=ODG via the production resolver. Non-executed files are recorded as deferred/refused/failed, never stamped ODG. Proposed transforms are candidates only; this runner applies nothing and the persistent mission-ledger append remains OWNER_GATED."
+}
