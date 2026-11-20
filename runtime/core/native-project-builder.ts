@@ -15,6 +15,7 @@
 
 const RW = require("./repair-workflow.js");
 const RF = require("./odg-repair-feedback.js"); // V327 §3: Self-Debugging/Reflexion execution-feedback repair hint
+const RF_BE = require("./odg-bounded-exec.js"); // V327 §4/§7: timeboxed pre-guard against non-terminating generations
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function fn(v: any): boolean { return typeof v === "function"; }
@@ -68,7 +69,17 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
   // back to the generator, fail-closed. Acceptance is still decided ONLY by the independent test.
   let build = assembleAndLoad(files);
   let verifyErr: any = null;
-  const runVerify = (): boolean => { verifyErr = null; if (build.ok && fn(s.independentTest)) { try { return s.independentTest(build.modules) === true; } catch (e: any) { verifyErr = String((e && e.message) || e); return false; } } return false; };
+  // V327 §4/§7: bounded PRE-GUARD against a non-terminating generation. The in-thread independentTest below cannot
+  // interrupt an infinite loop; so for a single-file spec that supplies STRUCTURED repairExamples, run the candidate
+  // source in a timeboxed CHILD first (odg-bounded-exec, injectable via deps.boundedCheck). A TIMEOUT ⇒ the code hangs ⇒
+  // treat as not-verified WITHOUT calling the (hang-prone) in-thread test. Opt-in (needs repairExamples + single file);
+  // no repairExamples ⇒ unchanged behaviour. Fail-open to the normal path on any guard error (never a false accept).
+  const boundedCheck = typeof deps.boundedCheck === "function" ? deps.boundedCheck : (src: string, ex: any) => RF_BE.runExamplesBounded(src, ex, { timeoutMs: Number(deps.boundedTimeoutMs) || 3000 });
+  const hangGuardTimedOut = (): boolean => {
+    if (!(build.ok && arch.length === 1 && Array.isArray(s.repairExamples) && typeof files[arch[0].path] === "string")) return false;
+    try { return boundedCheck(files[arch[0].path], s.repairExamples).verdict === "TIMEOUT"; } catch { return false; }
+  };
+  const runVerify = (): boolean => { verifyErr = null; if (hangGuardTimedOut()) { verifyErr = "bounded pre-guard TIMEOUT: candidate did not terminate — in-thread test skipped (fail-closed, cycle protected)"; return false; } if (build.ok && fn(s.independentTest)) { try { return s.independentTest(build.modules) === true; } catch (e: any) { verifyErr = String((e && e.message) || e); return false; } } return false; };
   let verified = runVerify();
   const firstPass = Object.freeze({ buildOk: build.ok === true, verified: build.ok === true && verified === true, error: build.ok ? verifyErr : build.error });  // instrumentation: the pre-repair verdict (no behaviour change)
   let repairs = 0;
