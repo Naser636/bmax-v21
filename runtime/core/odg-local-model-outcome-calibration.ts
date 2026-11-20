@@ -33,6 +33,9 @@ const MISSION_TYPE = "ODG_LOCAL_MODEL";
  */
 function outcomeToRecord(o: any): any {
   const verifiedKnown = typeof (o && o.verified) === "boolean";
+  // carry an `at` timestamp (ISO string or epoch ms) when supplied, so belief-refresh.evidenceAgeDays can assess recency
+  // (anti self-reinforcing error). Absent ⇒ omitted (the belief is then treated as fresh — absence ≠ staleness).
+  const at = o && (typeof o.at === "string" || typeof o.at === "number") ? o.at : undefined;
   return freeze({
     missionType: MISSION_TYPE,
     executor: EXECUTOR,
@@ -40,6 +43,7 @@ function outcomeToRecord(o: any): any {
     model: o && typeof o.model === "string" ? o.model : null,
     // Only a boolean verified becomes a decided outcome; anything else leaves status undecided (not counted).
     ...(verifiedKnown ? { verified: o.verified === true } : {}),
+    ...(at !== undefined ? { at } : {}),
   });
 }
 

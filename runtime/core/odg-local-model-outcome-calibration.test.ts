@@ -29,6 +29,7 @@ function main(): void {
   const withUndecided = M.calibrateLocalModel([...mk(10, 0), { verified: "maybe" }, { id: "x" }, { verified: null }]);
   check("undecided outcomes never pad observations (10✓ + 3 undecided ⇒ 10 obs)", withUndecided.observations === 10);
   check("buildHistory filters non-objects", M.buildHistory([{ verified: true }, null, 42, "x"]).length === 1);
+  check("outcomeToRecord carries `at` timestamp when present (for belief-refresh recency), omits when absent", M.outcomeToRecord({ verified: true, at: "2026-11-01T00:00:00Z" }).at === "2026-11-01T00:00:00Z" && !("at" in M.outcomeToRecord({ verified: true })));
 
   // ── fail-closed + frozen + determinism + contract ──
   check("fail-closed: non-array outcomes ⇒ BAD_OUTCOMES", M.calibrateLocalModel("x").code === "BAD_OUTCOMES" && M.calibrateLocalModel(null).code === "BAD_OUTCOMES");
