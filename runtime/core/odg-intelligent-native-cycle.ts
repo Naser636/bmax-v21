@@ -22,6 +22,7 @@ const CYCLE = require("./native-engineering-cycle.js");
 const ESC = require("./odg-native-escalation.js");
 const DECOMP = require("./odg-decomposed-execution.js");
 const CKEY = require("./odg-calibration-key.js"); // V327 §3: store-aligned calibration key (self-calibrate from accumulated outcomes)
+const BI = require("./odg-behavioral-improvement.js"); // V327 §2: behavioral trend (improving/plateau/regressing) over the store
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -51,11 +52,18 @@ async function runIntelligentCycle(opts: any): Promise<any> {
   // LEARNS from its own real outcomes. Refuse-on-UNKNOWN (usable:false) ⇒ fall back to probing. Explicit history still
   // wins (backward-compatible); no second taxonomy; the store/key are read-only.
   let selfCalibrated: any = null;
+  let behavioral: any = null;       // V327 §2: the behavioral trend for the self-calibrated class (null when explicit history is used)
+  let behaviorallyObsolete = false; // REGRESSING / recurring-failure / plateau-low ⇒ more local probing won't help ⇒ escalate
   let policyType = type, policyHistory = history;
   if (history.length === 0 && Array.isArray(deps.priorOutcomes) && deps.priorOutcomes.length > 0) {
     const bf = CKEY.beliefFromStore(m.spec, deps.priorOutcomes, isObj(o.calibration) ? o.calibration : {});
-    if (bf.usable === true) { policyType = bf.key; policyHistory = bf.history; selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, observations: bf.history.length }); }
-    else selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, refused: true, reason: bf.reason });
+    if (bf.usable === true) {
+      policyType = bf.key; policyHistory = bf.history; selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, observations: bf.history.length });
+      // V327 §2 — behavioral trend over the SAME accumulated outcomes (is this class improving, or is the memory not paying off?)
+      const bi = BI.measureImprovement(deps.priorOutcomes, { key: bf.key });
+      behaviorallyObsolete = bi.verdict === "REGRESSING" || bi.verdict === "PLATEAU_LOW" || !!bi.recurringFailure;
+      behavioral = freeze({ verdict: bi.verdict, delta: bi.delta, recurringFailure: bi.recurringFailure, obsolete: behaviorallyObsolete });
+    } else selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, refused: true, reason: bf.reason });
   }
 
   // (1) resource sizing (policy) + (2) build seam honoring it
@@ -75,19 +83,24 @@ async function runIntelligentCycle(opts: any): Promise<any> {
   }
   const solvedByDecomp = decomposition && decomposition.allVerified === true;
 
-  // (4) still failing ⇒ evidence-gated escalation to the provider (no fabricated native success)
+  // (4) still failing ⇒ evidence-gated escalation to the provider (no fabricated native success). V327 §2: a behaviorally
+  // obsolete class (REGRESSING / recurring failure / plateau-low) is additional legitimate evidence to escalate — more
+  // local probing won't help even if the POINT belief isn't "low" — so escalateIfStillFails is OR'd with that signal
+  // (reuses #778 unchanged; the delegation stays evidence-gated and provider-attributed).
   const stillFailing = !accepted && !solvedByDecomp;
-  const escalation = stillFailing ? ESC.decideEscalation({ task: { id: m.id, type }, policyResult: policy, localAttemptAccepted: false }) : freeze({ escalate: false, reason: accepted ? "accepted by the independent verifier" : "solved via decomposition", attribution: "ODG_LOCAL_MODEL_EXECUTION", delegation: null });
+  const effPolicy = behaviorallyObsolete ? Object.freeze({ ...policy, escalateIfStillFails: true }) : policy;
+  const escalation = stillFailing ? ESC.decideEscalation({ task: { id: m.id, type: policyType }, policyResult: effPolicy, localAttemptAccepted: false }) : freeze({ escalate: false, reason: accepted ? "accepted by the independent verifier" : "solved via decomposition", attribution: "ODG_LOCAL_MODEL_EXECUTION", delegation: null });
 
   return freeze({
     ok: true, mission: m.id,
     policy: freeze({ model: policy.model, maxRepair: policy.maxRepair, tier: policy.tier }),
     selfCalibrated,   // V327 §3: the store-derived belief that drove the policy (or the refusal), or null if explicit history was used
+    behavioral,       // V327 §2: the behavioral trend of the self-calibrated class (improving/plateau/regressing + obsolete flag), or null
     executed: "ODG_LOCAL_MODEL_EXECUTION (native-engineering-cycle via policy seam)",
     accepted, cycleOutcome: cyc ? cyc.outcome : null,
     decomposition: decomposition ? freeze({ allVerified: decomposition.allVerified === true, firstFailure: decomposition.firstFailure || null }) : null,
     escalation: freeze({ escalate: escalation.escalate === true, attribution: escalation.attribution, delegationState: escalation.delegation ? escalation.delegation.state : null }),
-    note: accepted ? "accepted by the independent verifier (local)" : solvedByDecomp ? "solved by decomposition (intermediate verification)" : escalation.escalate ? "local insufficient + calibrated-low ⇒ delegated to provider (evidence-gated)" : "local insufficient; not calibrated-low ⇒ keep probing (no premature escalation)",
+    note: accepted ? "accepted by the independent verifier (local)" : solvedByDecomp ? "solved by decomposition (intermediate verification)" : escalation.escalate ? (behaviorallyObsolete ? "local insufficient + behaviorally obsolete (regressing/recurring/plateau-low) ⇒ delegated to provider (evidence-gated; more local probing won't help)" : "local insufficient + calibrated-low ⇒ delegated to provider (evidence-gated)") : "local insufficient; not calibrated-low and trend not obsolete ⇒ keep probing (no premature escalation)",
   });
 }
 
@@ -100,6 +113,7 @@ const INTELLIGENT_NATIVE_CYCLE_CONTRACT = Object.freeze({
     "the INDEPENDENT verifier (inside native-engineering-cycle) still arbitrates acceptance; the policy sizes resources only",
     "order: select (calibrated) → execute (policy seam) → decompose if hard → escalate only if still failing AND calibrated-low (evidence-gated, provider-attributed)",
     "SELF-CALIBRATION (§3): with no explicit history but accumulated priorOutcomes, the policy is driven by the store-aligned calibration key (odg-calibration-key) so the cycle learns from its own outcomes; UNKNOWN ⇒ refuse+probe; explicit history still wins (backward-compatible); no second taxonomy",
+    "BEHAVIORAL OBSOLESCENCE (§2): a self-calibrated class that is REGRESSING / plateau-low / has a recurring-failure signature (odg-behavioral-improvement) escalates even when the point belief is not low — more local probing won't help; reuses #778 unchanged, delegation stays evidence-gated",
     "all execution is INJECTED (generatorFor/buildProject) ⇒ deterministic + testable without a live model; no fabricated native success",
     "no new primitive/registry/orchestrator; consumes the previously-orphan built capabilities as their real consumer (§7)",
   ]),

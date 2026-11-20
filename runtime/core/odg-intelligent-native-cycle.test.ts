@@ -40,6 +40,18 @@ async function main(): Promise<void> {
   const win = await IC.runIntelligentCycle({ mission, history: h(18, 2), generatorFor: genFor, deps: { priorOutcomes: po(4, 16), buildProject: async () => ({ accepted: true, verified: true }) } });
   check("explicit history WINS over the store (backward-compatible) ⇒ cheap policy, selfCalibrated null", win.policy.model === "qwen2.5-coder:3b" && win.selfCalibrated === null);
 
+  // V327 §2 BEHAVIORAL OBSOLESCENCE: a REGRESSING class (point-belief MEDIUM 0.5 ⇒ policy would NOT escalate) still
+  // escalates because the trend shows more local probing won't help. Isolates the §2 effect (LOW band is 0.3).
+  const Sx = () => ({ type: KEY, outcome: "SUCCESS", independentlyVerified: true });
+  const Fr = (r: string) => ({ type: KEY, outcome: "FAILURE", independentlyVerified: true, reason: r });
+  const regPo = [...Array(10).fill(0).map(Sx), ...Array(10).fill(0).map(() => Fr("stuck"))]; // early 1.0 → recent 0.0, overall 0.5
+  const regR = await IC.runIntelligentCycle({ mission, generatorFor: genFor, deps: { priorOutcomes: regPo, buildProject: async () => ({ accepted: false }) } });
+  check("§2 REGRESSING (point-belief MEDIUM 0.5 — policy tier NATIVE_REPAIR, would NOT escalate) ⇒ behavioral obsolescence FORCES escalate", regR.behavioral.verdict === "REGRESSING" && regR.behavioral.obsolete === true && regR.policy.tier === "NATIVE_REPAIR" && regR.escalation.escalate === true && /behaviorally obsolete/.test(regR.note));
+  // contrast: a PLATEAU medium class (not obsolete, distinct recent failures) ⇒ NO forced escalation (keep probing)
+  const platPo = [...Array(6).fill(0).map(Sx), Fr("e1"), Fr("e2"), Fr("e3"), Fr("e4"), ...Array(7).fill(0).map(Sx), Fr("a"), Fr("b"), Fr("c")]; // ~0.6→0.7 flat, distinct fails
+  const platR = await IC.runIntelligentCycle({ mission, generatorFor: genFor, deps: { priorOutcomes: platPo, buildProject: async () => ({ accepted: false }) } });
+  check("§2 PLATEAU medium (not obsolete, no recurring signature) ⇒ NO forced escalation (keep probing) — contrast with REGRESSING", platR.behavioral.verdict === "PLATEAU" && platR.behavioral.obsolete === false && platR.escalation.escalate === false && /keep probing/.test(platR.note));
+
   // selectIntelligently consumes routing: calibrated data flips the selection (unreliable→reliable)
   const reg = { version: "r", items: [{ id: "A_unreliable", status: "READY", deps: [], priority: 5, missionType: "unreliable" }, { id: "B_reliable", status: "READY", deps: [], priority: 5, missionType: "reliable" }] };
   const sel = IC.selectIntelligently(reg, [...h(0, 0), ...Array(4).fill({ missionType: "unreliable", verified: true }), ...Array(16).fill({ missionType: "unreliable", verified: false }), ...Array(18).fill({ missionType: "reliable", verified: true }), ...Array(2).fill({ missionType: "reliable", verified: false })]);
