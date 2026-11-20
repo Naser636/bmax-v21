@@ -50,13 +50,16 @@ function runHypothesisMission(mission: any): any {
     return freeze({ ok: false, code: "BAD_PREDICTION", detail: 'mission.prediction needs { signal, direction:"improved"|"regressed" }' });
 
   const nowFn = typeof m.now === "function" ? m.now : Date.now;
-  const t0 = nowFn(); // PRE-REGISTRATION timestamp — stamped BEFORE the experiment runs (honesty: no back-dating)
+  // PRE-REGISTRATION timestamp — stamped BEFORE the experiment runs (honesty: no back-dating). A non-finite clock value
+  // is coerced to 0 so the adjudicator's finite preRegisteredAtMs<measuredAtMs ordering is ALWAYS enforceable (a
+  // malformed injected clock can never defeat the pre-registration ordering check).
+  let t0 = nowFn(); if (!Number.isFinite(t0)) t0 = 0;
 
   const cycle = NE.runNativeCycle({ id: m.id, spec: m.spec, injectFault: m.injectFault === true });
   const att = PROV.attributeNativeCycle(cycle, m.id);
   const actor = att && att.provenance ? att.provenance.actor : null;
 
-  let t1 = nowFn(); if (!(t1 > t0)) t1 = t0 + 1; // MEASUREMENT timestamp — strictly after pre-registration
+  let t1 = nowFn(); if (!Number.isFinite(t1) || !(t1 > t0)) t1 = t0 + 1; // MEASUREMENT timestamp — finite + strictly after t0
 
   const ba = beforeAfterTestsPass(cycle);
   // Build the pre-registered prediction object the adjudicator requires.
@@ -65,7 +68,7 @@ function runHypothesisMission(mission: any): any {
   // ⇒ unmeasured ⇒ INCONCLUSIVE, honestly). A non-native cycle (no run) ⇒ no measurement ⇒ INCONCLUSIVE.
   const before = ba ? { testsPass: ba.before } : {};
   const after = ba ? { testsPass: ba.after } : {};
-  const adj = HA.adjudicateFromBaselines(prediction, before, after, { testsPass: "higher-better" });
+  const adj = HA.adjudicateFromBaselines(prediction, before, after, { testsPass: "higher" });
 
   const executionSucceeded = cycle.nativeCycle === true && GREEN.has(cycle.verdict) && actor === "ODG";
   const hypothesisVerdict = adj.ok ? adj.verdict : "INCONCLUSIVE";
