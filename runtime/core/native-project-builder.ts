@@ -14,6 +14,7 @@
  */
 
 const RW = require("./repair-workflow.js");
+const RF = require("./odg-repair-feedback.js"); // V327 §3: Self-Debugging/Reflexion execution-feedback repair hint
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function fn(v: any): boolean { return typeof v === "function"; }
@@ -74,7 +75,17 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
   while (!(build.ok && verified) && repairs < maxRepair && fn(deps.generateFile)) {
     repairs++;
     // regenerate every file with the FAILURE in context: a build error, or a "builds-but-fails-the-test" verify failure.
-    const hint = !build.ok ? { buildError: build.error } : { verifyError: "the project BUILDS but FAILS the independent functional test — the logic does not satisfy the contract; fix the logic" };
+    // V327 §3 (Self-Debugging/Reflexion): when the spec provides STRUCTURED repairExamples [{args,expect}], feed the
+    // generator the SPECIFIC first failing case (input → expected vs actual) instead of the generic message — the
+    // world-reference execution-feedback technique. Backward-compatible: no repairExamples ⇒ the generic hint, unchanged.
+    // Safe: the independent test already ran the modules in-thread above (no new hang surface); fail-closed to generic.
+    let verifyHint = "the project BUILDS but FAILS the independent functional test — the logic does not satisfy the contract; fix the logic";
+    if (build.ok && Array.isArray(s.repairExamples) && build.modules) {
+      const entry = typeof s.entry === "string" ? s.entry : (arch.length ? arch[arch.length - 1].path : null);
+      const entryFn = entry ? build.modules[entry] : null;
+      try { const fb = RF.buildExecutionFeedback(s.repairExamples, entryFn); if (fb && fb.hasFailure === true && typeof fb.verifyError === "string") verifyHint = fb.verifyError; } catch { /* fail-closed to generic */ }
+    }
+    const hint = !build.ok ? { buildError: build.error } : { verifyError: verifyHint };
     for (const fileSpec of arch) { if (!files[fileSpec.path]) continue; const g = await deps.generateFile({ ...fileSpec, ...hint }, builtContracts); if (g && g.ok === true && typeof g.content === "string") files[fileSpec.path] = g.content; }
     build = assembleAndLoad(files);
     verified = runVerify();

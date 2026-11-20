@@ -50,6 +50,21 @@ const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "
   const ro = await B.buildProject(outSpec, { generateFile: good });
   check(ro.fileStatus.some((s: any) => s.stage === "WRITE_SET_VIOLATION"), "a file outside the write-set is refused");
 
+  // V327 §3: with STRUCTURED repairExamples, the repair hint is SPECIFIC execution feedback (Self-Debugging), not generic.
+  const fbSpec = { name: "f", writeSet: ["f.js"], entry: "f.js", repairExamples: [{ args: [2, 3], expect: 5 }],
+    architecture: [{ path: "f.js", role: "add", contract: "module.exports=(a,b)=>a+b" }],
+    independentTest: (m: any) => m["f.js"](2, 3) === 5 };
+  let hintSeen: any = null;
+  const capFeedback = async (f: any) => { if (f.verifyError) hintSeen = f.verifyError; return { ok: true, content: f.verifyError ? "module.exports=(a,b)=>a+b;" : "module.exports=(a,b)=>a*b;" }; };
+  const rfb = await B.buildProject(fbSpec, { generateFile: capFeedback, maxRepair: 1 });
+  check(rfb.accepted === true && rfb.repairs === 1, "repairExamples path still repairs to ACCEPTED (independent test arbiter)");
+  check(hintSeen && /\(2, 3\)/.test(hintSeen) && /returned 6/.test(hintSeen) && /expected result is 5/.test(hintSeen), "repair hint is SPECIFIC execution feedback (input 2,3 → returned 6, expected 5), not the generic message");
+  // without repairExamples ⇒ generic hint (backward-compatible, unchanged)
+  let genHint: any = null;
+  const capGen = async (f: any) => { if (f.verifyError) genHint = f.verifyError; return { ok: true, content: f.verifyError ? "module.exports=(a,b)=>a+b;" : "module.exports=(a,b)=>a*b;" }; };
+  await B.buildProject({ ...fbSpec, repairExamples: undefined }, { generateFile: capGen, maxRepair: 1 });
+  check(genHint && /fix the logic/.test(genHint) && !/EXECUTION FEEDBACK/.test(genHint), "no repairExamples ⇒ generic hint (backward-compatible)");
+
   check(/accepted ONLY if it builds AND passes the INDEPENDENT test/i.test(JSON.stringify(B.NATIVE_PROJECT_BUILDER_CONTRACT.invariants)), "contract: independent test is the arbiter");
   if (failures === 0) process.stdout.write("ALL PASS — V12.4 NATIVE PROJECT BUILDER\n");
   process.exit(failures === 0 ? 0 : 1);
