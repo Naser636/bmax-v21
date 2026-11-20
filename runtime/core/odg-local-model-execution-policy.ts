@@ -33,7 +33,7 @@ const LOW = 0.3;    // < LOW  ⇒ local compute is measured-unreliable ⇒ escal
 function chooseExecutionPolicy(missionType: any, history: any, opts: any = {}): any {
   const d = CP.derivePsuccess(missionType, Array.isArray(history) ? history : [], isObj(opts) ? opts : {});
   const p = d.pForPlanner;
-  let model = MODEL.SMALL, maxRepair = 1, tier = "PROBE", escalate = false, why: string;
+  let model: string = MODEL.SMALL, maxRepair = 1, tier = "PROBE", escalate = false, why: string;
 
   if (d.quality !== "CALIBRATED") {
     // No calibrated evidence ⇒ cheap probe (3b, 1 repair) to GATHER data — never spend the large model on a hunch.
