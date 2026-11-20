@@ -78,6 +78,15 @@ function main() {
   check("link J: all requested items reference-sourced ⇒ engageable", plk("J_PROCUREMENT_SOURCED").consistent === true);
   check("link K: every committed line carries a priceSource (provenance)", plk("K_PROCUREMENT_TRACES_REFERENCE").consistent === true);
   check("link L: net = gross − retention (PO retention 0 ⇒ net = gross)", plk("L_PROCUREMENT_NET").consistent === true && procStage.netPayableMinor === 145000);
+  // V330 M2 — PROCUREMENT RECONCILIATION (achats→cost loop): committed vs actually incurred.
+  const procRecon = L.runLifecycle(Object.assign({}, procScenario, { procurement: Object.assign({}, procScenario.procurement, { id: "C-PROC", expenses: [{ commitmentId: "C-PROC", amountMinor: 60000 }, { commitmentId: "C-PROC", amountMinor: 20000 }] }) }));
+  const rStage = procRecon.stages.find((s: any) => s.stage === "PROCUREMENT_RECONCILIATION") || {};
+  check("V330 procurement reconciliation: 8 stages / 10 links, committed 145000 − spent 80000 = remaining 65000, not over", procRecon.ok && procRecon.stageCount === 8 && procRecon.linkCount === 10 && procRecon.dataFlowIntact === true && rStage.committedMinor === 145000 && rStage.spentMinor === 80000 && rStage.remainingMinor === 65000 && rStage.overCommitment === false);
+  // over-commitment is correctly FLAGGED (spend > committed) — link N still consistent (arithmetic), the flag is the signal
+  const procOver = L.runLifecycle(Object.assign({}, procScenario, { procurement: Object.assign({}, procScenario.procurement, { id: "C-PROC", expenses: [{ commitmentId: "C-PROC", amountMinor: 150000 }] }) }));
+  const oStage = procOver.stages.find((s: any) => s.stage === "PROCUREMENT_RECONCILIATION") || {};
+  check("over-commitment flagged: spent 150000 > committed 145000 ⇒ overCommitment true, link N still consistent (arithmetic correct)", procOver.dataFlowIntact === true && oStage.overCommitment === true && oStage.remainingMinor === -5000 && (procOver.links.find((l: any) => l.id === "N_PROCUREMENT_RECONCILED") || {}).consistent === true);
+
   // fail-closed: a requested item with NO reference ⇒ unresolved ⇒ link J breaks ⇒ dataFlowIntact false (no invented price)
   const procBroken = L.runLifecycle(Object.assign({}, procScenario, { procurement: Object.assign({}, procScenario.procurement, { requestedLines: [{ itemRef: "CIM-42.5", qty: 100 }, { itemRef: "UNKNOWN-ITEM", qty: 10 }] }) }));
   check("fail-closed: a requested item with no reference ⇒ dataFlowIntact false, link J broken (price never invented)", procBroken.ok === true && procBroken.dataFlowIntact === false && procBroken.brokenLinks.indexOf("J_PROCUREMENT_SOURCED") >= 0);
