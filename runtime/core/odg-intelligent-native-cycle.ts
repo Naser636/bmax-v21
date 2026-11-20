@@ -24,6 +24,7 @@ const DECOMP = require("./odg-decomposed-execution.js");
 const CKEY = require("./odg-calibration-key.js"); // V327 §3: store-aligned calibration key (self-calibrate from accumulated outcomes)
 const BI = require("./odg-behavioral-improvement.js"); // V327 §2: behavioral trend (improving/plateau/regressing) over the store
 const GV = require("./odg-generalization-validity.js"); // V327 §6: anti over-generalization (source-context overfitting) guard
+const COMP = require("./odg-mission-completeness.js"); // V327 §6/§9: pre-flight missing-information detection (don't attempt a doomed spec)
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -46,6 +47,12 @@ async function runIntelligentCycle(opts: any): Promise<any> {
   const deps = isObj(o.deps) ? o.deps : {};
   const history = Array.isArray(o.history) ? o.history : [];
   const type = typeof m.type === "string" ? m.type : m.id;
+
+  // V327 §6/§9 — MISSING-INFORMATION PRE-FLIGHT: a structurally UNDERSPECIFIED spec (no buildable architecture / no
+  // acceptance criterion) can never be accepted, so do NOT burn a local attempt on it — surface the missing inputs for
+  // clarification. This precedes selection/readiness/execution (no wasted work). Well-formed specs pass straight through.
+  const completeness = COMP.assessCompleteness(m.spec);
+  if (completeness.complete !== true) return freeze({ ok: true, mission: m.id, code: "UNDERSPECIFIED", completeness: freeze({ verdict: completeness.verdict, missing: completeness.missing }), executed: "NONE", accepted: false, escalation: freeze({ escalate: false, attribution: "NONE", delegationState: null }), note: `mission spec UNDERSPECIFIED (${completeness.missing.join("; ")}) — not attempted; clarification/inputs needed (no wasted local work, not a capability failure)` });
 
   // V327 §3 (SELF-CALIBRATION, close the learning loop): when NO explicit history is supplied but accumulated
   // native-build outcomes are (deps.priorOutcomes), derive the resource belief from the STORE via the safe taxonomy
@@ -126,6 +133,7 @@ const INTELLIGENT_NATIVE_CYCLE_CONTRACT = Object.freeze({
     "order: select (calibrated) → execute (policy seam) → decompose if hard → escalate only if still failing AND calibrated-low (evidence-gated, provider-attributed)",
     "SELF-CALIBRATION (§3): with no explicit history but accumulated priorOutcomes, the policy is driven by the store-aligned calibration key (odg-calibration-key) so the cycle learns from its own outcomes; UNKNOWN ⇒ refuse+probe; explicit history still wins (backward-compatible); no second taxonomy",
     "ANTI OVER-GENERALIZATION (§6): the self-calibrated belief is applied only if its evidence spans enough DISTINCT source contexts (odg-generalization-validity); an OVERFIT/narrow-source belief is NOT ridden on a novel instance — the cycle probes instead (arXiv:2603.07670)",
+    "MISSING-INFORMATION PRE-FLIGHT (§6/§9): a structurally UNDERSPECIFIED spec (no buildable architecture / no acceptance criterion, via odg-mission-completeness) is detected BEFORE any attempt and returned as UNDERSPECIFIED (clarification needed) — never a wasted local build, never miscounted as a capability failure",
     "BEHAVIORAL OBSOLESCENCE (§2): a self-calibrated class that is REGRESSING / plateau-low / has a recurring-failure signature (odg-behavioral-improvement) escalates even when the point belief is not low — more local probing won't help; reuses #778 unchanged, delegation stays evidence-gated",
     "all execution is INJECTED (generatorFor/buildProject) ⇒ deterministic + testable without a live model; no fabricated native success",
     "no new primitive/registry/orchestrator; consumes the previously-orphan built capabilities as their real consumer (§7)",
