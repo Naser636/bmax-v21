@@ -1,0 +1,22 @@
+{
+  "kind": "ODG_EXECUTION_FEEDBACK_AB_EVIDENCE",
+  "executor": "ODG_LOCAL_MODEL_EXECUTION",
+  "model": "qwen2.5-coder:3b",
+  "measurement": {
+    "task": "infix",
+    "attempts": 4,
+    "maxRepair": 3,
+    "feedbackPass": "0/4",
+    "genericPass": "1/4"
+  },
+  "finding": "HONEST NULL/INCONCLUSIVE result: on infix at qwen2.5-coder:3b (N=4, maxRepair 3), execution-feedback repair (0/4) did NOT beat the generic hint (1/4). The world-reference technique (Self-Debug/Reflexion) is established for NEAR-MISS tasks and larger models; infix sits at/beyond the 3b model capability edge, where specific feedback does not nudge it over, and N=4 is within noise. The integration (#780) is RETAINED (backward-compatible, harmless, literature-established); the robustness win is the bounded executor (#781). NO local gain is claimed.",
+  "caveat": "Small N; single hard task; single small model. A null result in THIS narrow setting, reported honestly per the mandate (no gain claimed without proof). A fair positive demonstration would need a near-miss task and/or larger N; not fabricated here.",
+  "provenance": {
+    "schema": "evidence-provenance/1",
+    "contentSha256": "a08284c96986a2e577bb81aaa23625ff0fbf38fa6551c3b41920313a0c4cc958",
+    "sourceCommit": "dff6e3f81f23ed84f19b9a39bda0dd32bd0358f6",
+    "treeDirty": true,
+    "sourceAvailable": true,
+    "capturedAtRun": null
+  }
+}
