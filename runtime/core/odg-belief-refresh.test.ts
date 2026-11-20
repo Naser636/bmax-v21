@@ -20,6 +20,14 @@ function main(): void {
   // threshold boundary: exactly lowThreshold ⇒ not low (TRUST_HIGH)
   check("p == lowThreshold ⇒ TRUST_HIGH (not low)", M.classifyBelief({ quality: "CALIBRATED", pForPlanner: 0.5, evidenceAgeDays: 1 }).action === "TRUST_HIGH");
 
+  // evidenceAgeDays operationalises staleness from timestamped outcomes (makes the guard fire on real data)
+  const asOf = Date.parse("2026-11-20T00:00:00Z");
+  check("evidenceAgeDays = age of the FRESHEST outcome (Nov 1 → Nov 20 = 19d)", M.evidenceAgeDays([{ at: "2026-11-01T00:00:00Z" }, { at: "2026-10-01T00:00:00Z" }], asOf) === 19);
+  check("evidenceAgeDays: no timestamps ⇒ null (absence of recency ≠ staleness)", M.evidenceAgeDays([{ verified: true }, {}], asOf) === null);
+  check("evidenceAgeDays: future timestamp ⇒ 0 (fresh, never negative)", M.evidenceAgeDays([{ at: asOf + 86400000 }], asOf) === 0);
+  // end-to-end: a stale freshest-outcome drives classifyBelief to RE_PROBE_STALE
+  check("evidenceAgeDays → classifyBelief: stale freshest outcome ⇒ RE_PROBE_STALE", M.classifyBelief({ quality: "CALIBRATED", pForPlanner: 0.2, evidenceAgeDays: M.evidenceAgeDays([{ at: "2026-01-01T00:00:00Z" }], asOf), maxAgeDays: 90 }).action === "RE_PROBE_STALE");
+
   // frozen + contract cites the world reference + guard
   check("frozen", Object.isFrozen(M.classifyBelief({ quality: "CALIBRATED", pForPlanner: 0.2 })));
   check("contract cites Reflexion + self-reinforcing-error guard; composes calibration staleness",
