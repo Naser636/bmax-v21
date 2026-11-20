@@ -18,6 +18,8 @@
 const DEVIS = require("./odg-btp-devis-engine.js");         // V260
 const WORKFLOW = require("./odg-btp-project-workflow.js");  // V266
 const BILLING = require("./odg-btp-billing-engine.js");     // V267
+const REVISION = require("./odg-btp-revision-prix.js");     // V330 M2 — price revision (index-derived), threaded into the chain
+const RETENUE = require("./odg-btp-retenue-garantie.js");   // V330 M2 — retenue de garantie + gated release, threaded into the chain
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
@@ -74,6 +76,34 @@ function runLifecycle(scenario: any): any {
   stages.push(Object.freeze({ stage: "REALIZED_PROFITABILITY", engine: "V266/V267", realizedMargin: realized ? realized.realizedMargin : null, forecastMargin: realized ? realized.forecastMargin : null, marginErosion: realized ? realized.marginErosion : null }));
   links.push(link("F_FORECAST_MARGIN_TRACES_QUOTATION", "forecast gross margin = quotation margin (forecast traces to the devis, never invented)", !!realized && realized.forecastMargin === quotation.margin, "forecast=" + (realized ? realized.forecastMargin : null) + " quoteMargin=" + quotation.margin));
 
+  // 7. PRICE REVISION (V330 M2, OPT-IN) — a révision de prix on the ACCEPTED contract base, index-derived (never invented).
+  // Only runs when the scenario requests it; absent ⇒ the chain is unchanged (backward-compatible 6-stage flow).
+  if (isObj(s.revision)) {
+    const base = quotation.sellingHT;
+    const rev = REVISION.revisePrice(Object.assign({ baseAmountMinor: base }, s.revision));
+    if (rev.ok !== true) return fail("REVISION_FAILED", "revisePrice: " + (rev.code || "?"));
+    stages.push(Object.freeze({ stage: "PRICE_REVISION", engine: "revision-prix", baseAmountMinor: rev.baseAmountMinor, revisionCoefficient: rev.revisionCoefficient, revisedAmountMinor: rev.revisedAmountMinor, deltaMinor: rev.deltaMinor }));
+    // link G: the revision base = the accepted contract sellingHT (traces to the devis) AND revised − base = delta (internally consistent, index-derived — not invented).
+    links.push(link("G_REVISION_TRACES_CONTRACT", "revision base = accepted contract sellingHT, and revised − base = delta (index-derived, never invented)", rev.baseAmountMinor === quotation.sellingHT && (rev.revisedAmountMinor - rev.baseAmountMinor) === rev.deltaMinor, "base=" + rev.baseAmountMinor + " sellingHT=" + quotation.sellingHT + " revised=" + rev.revisedAmountMinor + " delta=" + rev.deltaMinor));
+  }
+
+  // 8. RETENUE DE GARANTIE (V330 M2, OPT-IN) — withhold on a situation + gated release. Only runs when the scenario requests it.
+  if (isObj(s.retenue)) {
+    const gross = typeof s.retenue.grossSituationHTMinor === "number" ? s.retenue.grossSituationHTMinor : quotation.sellingHT;
+    const w = RETENUE.withholdOnSituation(Object.assign({ grossSituationHTMinor: gross }, s.retenue));
+    if (w.ok !== true) return fail("RETENUE_FAILED", "withholdOnSituation: " + (w.code || "?"));
+    stages.push(Object.freeze({ stage: "RETENUE_GARANTIE", engine: "retenue-garantie", grossSituationHTMinor: w.grossSituationHTMinor, retainedThisMinor: w.retainedThisMinor, netToPayHTMinor: w.netToPayHTMinor, cumulativeRetainedMinor: w.cumulativeRetainedMinor }));
+    // link H: net to pay = gross − retenue withheld (retention is WITHHELD per contract, never silently dropped nor a collected payment).
+    links.push(link("H_RETENUE_NET_CONSISTENT", "net to pay = gross situation − retenue withheld (retention never dropped; not a payment)", w.netToPayHTMinor === w.grossSituationHTMinor - w.retainedThisMinor, "gross=" + w.grossSituationHTMinor + " retained=" + w.retainedThisMinor + " net=" + w.netToPayHTMinor));
+    if (isObj(s.retenue.release)) {
+      const rel = RETENUE.releaseState(Object.assign({ cumulativeRetainedMinor: w.cumulativeRetainedMinor }, s.retenue.release));
+      if (rel.ok !== true) return fail("RELEASE_FAILED", "releaseState: " + (rel.code || "?"));
+      stages.push(Object.freeze({ stage: "RETENUE_RELEASE", engine: "retenue-garantie", releaseDate: rel.releaseDate, status: rel.status, releasableMinor: rel.releasableMinor }));
+      // link I: release is owner/contract-gated (reserves + warranty delay) — releasable = cumulative ONLY when RELEASABLE, else 0 (never automatic).
+      links.push(link("I_RELEASE_GATED", "release gated (reserves + warranty delay); releasable = cumulative only when RELEASABLE, else 0 (never automatic)", rel.status === "RELEASABLE" ? rel.releasableMinor === w.cumulativeRetainedMinor : rel.releasableMinor === 0, "status=" + rel.status + " releasable=" + rel.releasableMinor + " cumulative=" + w.cumulativeRetainedMinor));
+    }
+  }
+
   const dataFlowIntact = links.every((l: any) => l.consistent);
   return Object.freeze({
     ok: true, SYNTHETIC: true, dataFlowIntact, stageCount: stages.length, linkCount: links.length,
@@ -86,10 +116,11 @@ function runLifecycle(scenario: any): any {
 const BTP_LIFECYCLE_INTEGRATION_CONTRACT = Object.freeze({
   id: "V272-ODG-BTP-LIFECYCLE-INTEGRATION",
   source: "V272 §12 — end-to-end BTP lifecycle data-flow verification",
-  reuses: Object.freeze(["odg-btp-devis-engine (V260)", "odg-btp-project-workflow (V266)", "odg-btp-billing-engine (V267)"]),
+  reuses: Object.freeze(["odg-btp-devis-engine (V260)", "odg-btp-project-workflow (V266)", "odg-btp-billing-engine (V267)", "odg-btp-revision-prix (V330 M2 — price revision)", "odg-btp-retenue-garantie (V330 M2 — retention + release)"]),
   invariants: Object.freeze([
-    "threads ONE scenario through the REAL engines (V260→V266→V267) and asserts cross-stage consistency — no new engine/ledger/primitive",
+    "threads ONE scenario through the REAL engines (V260→V266→V267, + V330 revision/retenue when requested) and asserts cross-stage consistency — no new engine/ledger/primitive",
     "data-flow links checked: work-package cost = quotation cost; work-package selling = quotation selling; contract = accepted sellingHT; Σ milestones ≤ contract; reconciliation invoiced = single ledger total; forecast margin = quotation margin",
+    "V330 M2 OPT-IN stages (backward-compatible — absent ⇒ unchanged 6-stage flow): PRICE_REVISION base = accepted sellingHT and revised−base = delta (index-derived, never invented); RETENUE net = gross − withheld (retention never dropped); RELEASE owner/contract-gated (releasable = cumulative only when RELEASABLE, else 0 — never automatic)",
     "fails CLOSED: any cross-stage disagreement ⇒ dataFlowIntact false with the exact broken link (catches shadow state / duplicate ledger drift)",
     "deterministic/read-only; SYNTHETIC scenario proves INTEGRATION only — nothing OPERATIONAL/real-traction claimed",
   ]),

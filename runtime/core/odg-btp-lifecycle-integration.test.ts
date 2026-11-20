@@ -46,7 +46,22 @@ function main() {
     L.BTP_LIFECYCLE_INTEGRATION_CONTRACT.reuses.some((x: string) => /V260/.test(x)) && L.BTP_LIFECYCLE_INTEGRATION_CONTRACT.reuses.some((x: string) => /V267/.test(x)) &&
     L.BTP_LIFECYCLE_INTEGRATION_CONTRACT.invariants.some((i: string) => /fails CLOSED/.test(i)) && L.BTP_LIFECYCLE_INTEGRATION_CONTRACT.invariants.some((i: string) => /INTEGRATION only/.test(i)));
 
-  process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-lifecycle-integration (V272 §12: end-to-end data-flow across V260→V266→V267; 6 stages, 6 consistency links [WP cost 90000=quote, WP selling=quote 118800, contract=sellingHT 118800, milestones 71280≤contract, recon invoiced 42768=ledger, forecast margin 19800=quote]; dataFlowIntact true; fail-closed on over-scheduling [link D broken]; realized margin 25800; SYNTHETIC — integration proven, not traction)" : f + " FAIL") + "\n");
+  // V330 M2 — OPT-IN price-revision + retenue-de-garantie stages thread the two engines into the complete journey.
+  const extended = L.runLifecycle(Object.assign({}, scenario, {
+    revision: { fixedTermCoeff: 0.15, indexedTerms: [{ coeff: 0.85, baseIndex: 100, currentIndex: 110 }] },  // K = 0.15 + 0.85·1.1
+    retenue: { retentionRate: 0.05, release: { receptionDate: "2026-01-15", warrantyPeriodDays: 365, reservesLifted: true, asOfDate: "2027-06-01" } },
+  }));
+  check("V330 extended journey: 9 stages / 9 links, dataFlowIntact true (revision + retenue + release threaded)", extended.ok && extended.stageCount === 9 && extended.linkCount === 9 && extended.dataFlowIntact === true && extended.brokenLinks.length === 0);
+  const elk = (id: string) => extended.links.find((l: any) => l.id === id) || { consistent: false };
+  check("link G: revision base = accepted contract sellingHT, revised − base = delta (index-derived)", elk("G_REVISION_TRACES_CONTRACT").consistent === true);
+  check("link H: net to pay = gross − retenue withheld (retention never dropped)", elk("H_RETENUE_NET_CONSISTENT").consistent === true);
+  check("link I: release gated — RELEASABLE ⇒ releasable = cumulative (owner/contract-gated, not automatic)", elk("I_RELEASE_GATED").consistent === true && extended.stages.some((s: any) => s.stage === "RETENUE_RELEASE" && s.status === "RELEASABLE"));
+  // backward-compatible: absent revision/retenue ⇒ still exactly 6/6 (the original scenario above already asserted this)
+  check("backward-compatible: no revision/retenue fields ⇒ unchanged 6-stage flow", r.stageCount === 6 && r.linkCount === 6);
+  // fail-closed: a malformed revision (coefficients not summing to 1) ⇒ REVISION_FAILED (chain stops honestly)
+  check("fail-closed: revision coefficients not summing to 1 ⇒ REVISION_FAILED", L.runLifecycle(Object.assign({}, scenario, { revision: { fixedTermCoeff: 0.5, indexedTerms: [{ coeff: 0.2, baseIndex: 100, currentIndex: 100 }] } })).code === "REVISION_FAILED");
+
+  process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-lifecycle-integration (V272 §12 + V330 M2: end-to-end data-flow across V260→V266→V267; 6 stages, 6 consistency links [WP cost 90000=quote, WP selling=quote 118800, contract=sellingHT 118800, milestones 71280≤contract, recon invoiced 42768=ledger, forecast margin 19800=quote]; dataFlowIntact true; fail-closed on over-scheduling [link D broken]; realized margin 25800; SYNTHETIC — integration proven, not traction)" : f + " FAIL") + "\n");
   process.exit(f === 0 ? 0 : 1);
 }
 main();
