@@ -18,6 +18,8 @@
  * EXACTLY; every row opening − depreciation == closing; accumulated is monotonic.
  */
 
+const APPORTION = require("./odg-apportion.js") as { apportion: (total: any, weights: any) => any };
+
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function isPosInt(v: any): boolean { return typeof v === "number" && Number.isSafeInteger(v) && v > 0; }
@@ -44,45 +46,44 @@ function computeDepreciationSchedule(input: any): any {
   if (typeof prorata !== "number" || !Number.isFinite(prorata) || prorata <= 0 || prorata > 1) return freeze({ ok: false, code: "INVALID_PRORATA", detail: "firstYearProrataRatio must be a finite number in (0,1]" });
 
   const depreciable = basis - residual; // the amount to allocate (above residual)
-  const rawDeps: number[] = [];
+  let rounded: number[];
 
   if (method === "linear") {
+    // LARGEST-REMAINDER allocation (reuse odg-apportion) of the depreciable amount across the per-year shares:
+    // annual = depreciable/life; year 1 prorated; a prorata<1 remainder spills into one extra year. This guarantees
+    // integer, NON-NEGATIVE rows summing EXACTLY to the depreciable amount — a naive per-year round + "last row
+    // absorbs drift" can round every year up and drive the final row (and balances) negative.
     const annual = depreciable / life;
-    // year 1 is prorated; years 2..life full; if prorata < 1 the remainder spills into one extra year.
-    rawDeps.push(annual * prorata);
-    for (let y = 2; y <= life; y++) rawDeps.push(annual);
-    if (prorata < 1) rawDeps.push(annual * (1 - prorata));
+    const weights: number[] = [annual * prorata];
+    for (let y = 2; y <= life; y++) weights.push(annual);
+    if (prorata < 1) weights.push(annual * (1 - prorata));
+    const ap = APPORTION.apportion(depreciable, weights);
+    if (!ap || ap.ok !== true) return freeze({ ok: false, code: "ALLOCATION_FAILED", detail: "internal largest-remainder allocation failed" });
+    rounded = ap.parts.slice();
   } else {
-    // declining (dégressif): rate = coefficient / life, applied to the REMAINING depreciable base (VNC above residual).
+    // declining (dégressif): rate = coefficient/life applied to the REMAINING depreciable base (VNC above residual),
+    // integer remaining-tracked so every row is non-negative and the final year absorbs the remainder exactly.
     const coeff = input.decliningCoefficient;
     if (coeff === undefined || coeff === null) return freeze({ ok: false, code: "MISSING_COEFFICIENT", detail: "decliningCoefficient (>0) is required for method 'declining' (caller-supplied; French 1.25/1.75/2.25 are not assumed)" });
     if (typeof coeff !== "number" || !Number.isFinite(coeff) || coeff <= 0) return freeze({ ok: false, code: "INVALID_COEFFICIENT", detail: "decliningCoefficient must be a finite number > 0" });
     const rate = coeff / life;
     const switchSL = input.switchToLinearWhenBetter === true;
+    rounded = [];
     let remaining = depreciable;
     let switched = false;
     for (let y = 1; y <= life; y++) {
-      if (y === life) { rawDeps.push(remaining); break; } // last year absorbs the remainder → closing == residual
+      if (y === life) { rounded.push(remaining); break; } // final year absorbs the remainder → closing == residual
       const yearsLeft = life - y + 1;
       let dep = remaining * rate * (y === 1 ? prorata : 1);
-      if (switchSL || switched) {
-        const sl = remaining / yearsLeft;
-        if (switched || sl > dep) { dep = sl; switched = true; }
-      }
-      if (dep > remaining) dep = remaining;
-      const depR = Math.round(dep);
-      rawDeps.push(depR);
+      if (switchSL || switched) { const sl = remaining / yearsLeft; if (switched || sl > dep) { dep = sl; switched = true; } }
+      let depR = Math.round(dep);
+      if (depR > remaining) depR = remaining;
+      if (depR < 0) depR = 0;
+      rounded.push(depR);
       remaining -= depR;
       if (remaining <= 0) { remaining = 0; break; }
     }
   }
-
-  // round + make the sum EXACT by letting the final row absorb the drift (closing lands exactly on residual).
-  const rounded = rawDeps.map((d) => Math.round(d));
-  // trim trailing zeros that can appear if declining exhausted early
-  while (rounded.length > 1 && rounded[rounded.length - 1] === 0 && rounded.reduce((a, b) => a + b, 0) === depreciable) rounded.pop();
-  const sumSoFar = rounded.slice(0, -1).reduce((a, b) => a + b, 0);
-  rounded[rounded.length - 1] = depreciable - sumSoFar; // final row absorbs drift
 
   const rows: any[] = [];
   let opening = basis;

@@ -56,6 +56,32 @@ function main(): void {
   const odd = M.computeDepreciationSchedule({ basisMinor: 1000003, method: "linear", usefulLifeYears: 3 });
   check("non-divisible basis ⇒ Σ still exactly basis (final row absorbs drift)", invariants(odd, 1000003, 0));
 
+  // REGRESSION (inspector fuzz): small depreciable base over a long life must NOT produce a negative row
+  const longLife = M.computeDepreciationSchedule({ basisMinor: 100, method: "linear", usefulLifeYears: 40 });
+  check("basis 100 / life 40 ⇒ NO negative depreciation, NO balance below residual, Σ exact (largest-remainder)",
+    longLife.rows.every((x: any) => x.depreciationMinor >= 0 && x.closingMinor >= 0) && invariants(longLife, 100, 0));
+  check("basis 100 / life 40 ⇒ rows are 3s then 2s (apportioned), not a negative final row", longLife.rows[0].depreciationMinor === 3 && longLife.rows[39].depreciationMinor === 2);
+
+  // DETERMINISTIC fuzz-lite: invariants + non-negativity across many shapes (incl. asset-near-residual, long life)
+  let fuzzBad = 0; let fuzzN = 0;
+  for (let basis = 7; basis <= 300000; basis += 4999) {
+    for (const life of [1, 2, 3, 7, 12, 33, 40]) {
+      for (const residual of [0, Math.floor(basis * 0.3), basis - 1]) {
+        if (!(residual >= 0 && residual < basis)) continue;
+        for (const method of ["linear", "declining"]) {
+          for (const prorata of [1, 0.5, 0.771]) {
+            const inp: any = { basisMinor: basis, method, usefulLifeYears: life, residualMinor: residual, firstYearProrataRatio: prorata };
+            if (method === "declining") inp.decliningCoefficient = 1.75;
+            const r = M.computeDepreciationSchedule(inp);
+            fuzzN++;
+            if (!invariants(r, basis, residual) || r.rows.some((x: any) => x.depreciationMinor < 0 || x.closingMinor < residual || !Number.isFinite(x.depreciationMinor))) fuzzBad++;
+          }
+        }
+      }
+    }
+  }
+  check(`fuzz-lite: ${fuzzN} schedules, 0 invariant/negativity violations`, fuzzBad === 0 && fuzzN > 1000);
+
   // FAIL-CLOSED: the French dégressif coefficient / life are NOT assumed
   check("declining without coefficient ⇒ MISSING_COEFFICIENT (1.75 not assumed)", M.computeDepreciationSchedule({ basisMinor: 1000000, method: "declining", usefulLifeYears: 5 }).code === "MISSING_COEFFICIENT");
   check("declining coefficient ≤ 0 ⇒ INVALID_COEFFICIENT", M.computeDepreciationSchedule({ basisMinor: 1000000, method: "declining", usefulLifeYears: 5, decliningCoefficient: 0 }).code === "INVALID_COEFFICIENT");
