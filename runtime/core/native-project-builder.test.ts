@@ -65,6 +65,19 @@ const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "
   await B.buildProject({ ...fbSpec, repairExamples: undefined }, { generateFile: capGen, maxRepair: 1 });
   check(genHint && /fix the logic/.test(genHint) && !/EXECUTION FEEDBACK/.test(genHint), "no repairExamples ⇒ generic hint (backward-compatible)");
 
+  // V327 §4/§7: the bounded PRE-GUARD skips the hang-prone in-thread test when a single-file candidate does not terminate.
+  const guardSpec = { name: "f", writeSet: ["f.js"], repairExamples: [{ args: [2, 3], expect: 5 }], architecture: [{ path: "f.js", role: "add", contract: "module.exports=(a,b)=>a+b" }], independentTest: (m: any) => { spy.called = true; return m["f.js"](2, 3) === 5; } };
+  const spy = { called: false };
+  const good1 = async () => ({ ok: true, content: "module.exports=(a,b)=>a+b;" });
+  // guard TIMEOUT ⇒ in-thread test SKIPPED, not accepted (cycle protected) — independentTest never called
+  const rGuard = await B.buildProject(guardSpec, { generateFile: good1, maxRepair: 0, boundedCheck: () => ({ verdict: "TIMEOUT" }) });
+  check(rGuard.accepted === false && spy.called === false && /bounded pre-guard TIMEOUT/.test(String(rGuard.verifyError)), "bounded pre-guard: a non-terminating candidate ⇒ in-thread test SKIPPED, not accepted (cycle protected from hang)");
+  // guard PASS (terminates) ⇒ normal path: independentTest runs and accepts the correct code
+  const spy2 = { called: false };
+  const guardSpec2 = { ...guardSpec, independentTest: (m: any) => { spy2.called = true; return m["f.js"](2, 3) === 5; } };
+  const rOk = await B.buildProject(guardSpec2, { generateFile: good1, maxRepair: 0, boundedCheck: () => ({ verdict: "PASS" }) });
+  check(rOk.accepted === true && spy2.called === true, "bounded pre-guard PASS (terminates) ⇒ normal in-thread verification runs and accepts (backward-compatible)");
+
   check(/accepted ONLY if it builds AND passes the INDEPENDENT test/i.test(JSON.stringify(B.NATIVE_PROJECT_BUILDER_CONTRACT.invariants)), "contract: independent test is the arbiter");
   if (failures === 0) process.stdout.write("ALL PASS — V12.4 NATIVE PROJECT BUILDER\n");
   process.exit(failures === 0 ? 0 : 1);
