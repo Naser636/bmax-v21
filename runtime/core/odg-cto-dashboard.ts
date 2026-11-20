@@ -42,6 +42,7 @@ const LMC = require("./odg-local-model-capability.js");       // V247 — REAL l
 const NEA = require("./odg-native-engineering-audit.js");     // V249 — honest actor attribution (V247/V248) + deterministic native-capability census
 const NEL = require("./odg-native-engineering-loop.js");      // V250 — decide→drive loop that REALLY executes deterministic repairs natively
 const AMR = require("./odg-autonomy-maturity-report.js");     // V324 §6.4 — native/assisted/escalated maturity over the REAL mission-ledger
+const MO = require("./odg-mission-orchestrator.js");          // V324 §3/§13-P1 — connect the real orchestrator plan (routes + write-safety + agent-count) to the cockpit
 
 function ind(value: any, provenance: string, method: string, confidence: string): any {
   return Object.freeze({ value: value == null ? "NOT_MEASURED" : value, provenance, method, confidence });
@@ -55,6 +56,10 @@ function build(opts?: any): any {
   const ledgerPath = o.ledgerPath || "runtime/generated/mission-ledger.json";
   let maturity: any = null;
   try { maturity = AMR.reportMaturityFromLedger(JSON.parse(require("fs").readFileSync(ledgerPath, "utf8"))); } catch { maturity = null; }
+  // V324 §3/§13-P1 — the REAL native orchestrator plan over the open-mission inventory (routes + write-safe waves +
+  // derived agent-count). Read-only; the orchestrator executes nothing. Unavailable ⇒ NOT_MEASURED.
+  let dispatch: any = null;
+  try { dispatch = MO.buildDispatchPlan(); } catch { dispatch = null; }
   let reg: any = null, regErr: string | null = null;
   try {
     const r = auditClosureRegister(registerPath);
@@ -197,6 +202,14 @@ function build(opts?: any): any {
       notMeasurable: maturity.maturity.notMeasurable.count,
       measuredDenominator: maturity.maturity.measuredDenominator,
     }), ledgerPath + " → odg-autonomy-maturity-report (composes autonomy-program-aggregate.latestPerMission + odg-autonomy-maturity-trichotomy)", maturity.note, maturity.nativeAutonomyMeasurable ? "MEDIUM" : "NONE") : ind(null, ledgerPath, "mission-ledger unreadable — autonomy maturity NOT_MEASURED", "NONE"),
+
+    orchestrationDispatch: dispatch ? ind(Object.freeze({
+      totalOpen: dispatch.totalOpen,
+      dispatchableNow: dispatch.dispatchableNow,
+      byRoute: dispatch.byRoute,
+      agentCount: dispatch.agentCount,
+      parallelDispatchProvenSafe: dispatch.parallelDispatchProvenSafe,
+    }), "odg-mission-orchestrator.buildDispatchPlan over the REAL open-mission inventory (routes + write-safety #742 + derived agent-count)", (dispatch.agentRationale || "") + " — PLAN only: the orchestrator executes/dispatches NOTHING; no native autonomy counted here (ODG alone accepts deliverables).", "LOW") : ind(null, "odg-mission-orchestrator.buildDispatchPlan", "dispatch plan unavailable — NOT_MEASURED", "NONE"),
 
     nextRecommended: ind("await two owner decisions (ROADMAP.json integration; runtime intent) before any PARKED-extension build; non-blocking next = BTP DCE product-design behind demand-validation", "CTO recommendation", "dependency analysis", "MEDIUM"),
 
