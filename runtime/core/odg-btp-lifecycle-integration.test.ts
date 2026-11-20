@@ -82,6 +82,27 @@ function main() {
   const procBroken = L.runLifecycle(Object.assign({}, procScenario, { procurement: Object.assign({}, procScenario.procurement, { requestedLines: [{ itemRef: "CIM-42.5", qty: 100 }, { itemRef: "UNKNOWN-ITEM", qty: 10 }] }) }));
   check("fail-closed: a requested item with no reference ⇒ dataFlowIntact false, link J broken (price never invented)", procBroken.ok === true && procBroken.dataFlowIntact === false && procBroken.brokenLinks.indexOf("J_PROCUREMENT_SOURCED") >= 0);
 
+  // V330 M2 — CLIENT INTAKE (journey entry): multilingual, pre-contractual, human-confirmation-gated.
+  const intakeFields = { localeCode: "fr-FR", lineItems: [{ ref: "L1", qty: 10, unit: "m3", sellUnitPriceMinor: 12000, costUnitPriceMinor: 9000, priceSource: "tarif-fournisseur-2026" }] };
+  const withIntake = L.runLifecycle(Object.assign({}, scenario, { intake: intakeFields }));
+  const ilk = (id: string) => withIntake.links.find((l: any) => l.id === id) || { consistent: false };
+  check("V330 intake: 7 stages / 7 links, dataFlowIntact true; CLIENT_INTAKE first, pre-contractual + human-confirm", withIntake.ok && withIntake.stageCount === 7 && withIntake.linkCount === 7 && withIntake.dataFlowIntact === true && withIntake.stages[0].stage === "CLIENT_INTAKE" && ilk("M_INTAKE_PRECONTRACTUAL").consistent === true);
+  // fail-closed: an intake line without a sourced price ⇒ estimate INCOMPLETE ⇒ link M breaks (price never invented)
+  const intakeBroken = L.runLifecycle(Object.assign({}, scenario, { intake: { localeCode: "fr-FR", lineItems: [{ ref: "L1", qty: 10, unit: "m3" }] } }));
+  check("fail-closed: intake line without a sourced price ⇒ link M broken, dataFlowIntact false (price never invented)", intakeBroken.ok === true && intakeBroken.dataFlowIntact === false && intakeBroken.brokenLinks.indexOf("M_INTAKE_PRECONTRACTUAL") >= 0);
+
+  // V330 M2 — FULL §7 COMPLETE JOURNEY: Client → besoin → devis → validation → chantier → achats → facturation → paiements
+  //           → révision → retenue → rentabilité. All real engines, cross-stage consistency, SYNTHETIC.
+  const full = L.runLifecycle(Object.assign({}, scenario, {
+    intake: intakeFields,
+    procurement: { catalog: [{ itemRef: "CIM-42.5", unit: "sac", supplier: "SupA", unitPriceMinor: 850, priceSource: "bordereau-2026", validFrom: "2026-01-01" }], requestedLines: [{ itemRef: "CIM-42.5", qty: 100 }], asOfDate: "2026-06-01", kind: "PURCHASE_ORDER" },
+    revision: { fixedTermCoeff: 0.15, indexedTerms: [{ coeff: 0.85, baseIndex: 100, currentIndex: 110 }] },
+    retenue: { retentionRate: 0.05, release: { receptionDate: "2026-01-15", warrantyPeriodDays: 365, reservesLifted: true, asOfDate: "2027-06-01" } },
+  }));
+  check("V330 FULL journey: 11 stages / 13 links, dataFlowIntact true (Client→…→rentabilité, every engine threaded)", full.ok && full.stageCount === 11 && full.linkCount === 13 && full.dataFlowIntact === true && full.brokenLinks.length === 0);
+  const names = full.stages.map((s: any) => s.stage);
+  check("FULL journey stage order: CLIENT_INTAKE → QUOTATION … → PROCUREMENT → PRICE_REVISION → RETENUE_GARANTIE → RETENUE_RELEASE", names[0] === "CLIENT_INTAKE" && names[1] === "QUOTATION" && names.indexOf("PROCUREMENT") > 0 && names.indexOf("RETENUE_RELEASE") === names.length - 1);
+
   process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-lifecycle-integration (V272 §12 + V330 M2: end-to-end data-flow across V260→V266→V267; 6 stages, 6 consistency links [WP cost 90000=quote, WP selling=quote 118800, contract=sellingHT 118800, milestones 71280≤contract, recon invoiced 42768=ledger, forecast margin 19800=quote]; dataFlowIntact true; fail-closed on over-scheduling [link D broken]; realized margin 25800; SYNTHETIC — integration proven, not traction)" : f + " FAIL") + "\n");
   process.exit(f === 0 ? 0 : 1);
 }

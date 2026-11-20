@@ -22,6 +22,7 @@ const REVISION = require("./odg-btp-revision-prix.js");     // V330 M2 — price
 const RETENUE = require("./odg-btp-retenue-garantie.js");   // V330 M2 — retenue de garantie + gated release, threaded into the chain
 const PRICEREF = require("./odg-btp-price-reference.js");   // V330 M2 — supplier/price reference (bordereau) — the sourced-price provenance
 const SUPPLIER = require("./odg-btp-supplier-commitment.js"); // V330 M2 — supplier engagement from reference-sourced lines
+const INTAKE = require("./odg-btp-client-intake.js");       // V330 M2 — multilingual pre-contractual client intake (journey entry)
 
 function isStr(v: any): boolean { return typeof v === "string" && v.trim().length > 0; }
 
@@ -37,6 +38,17 @@ function runLifecycle(scenario: any): any {
   const s = isObj(scenario) ? scenario : {};
   const stages: any[] = []; const links: any[] = [];
   const fail = (code: string, detail: string) => Object.freeze({ ok: false, code, detail, stages: Object.freeze(stages), links: Object.freeze(links) });
+
+  // 0. CLIENT INTAKE (V330 M2, OPT-IN) — the journey entry: a multilingual, PRE-CONTRACTUAL, human-confirmation-gated
+  // estimate from the client's need. It is INDICATIVE only — the binding price is the formal devis (link C), never the
+  // intake. Only runs when the scenario requests it (backward-compatible).
+  if (isObj(s.intake)) {
+    const intake = INTAKE.intakeEstimate(Object.assign({ chantierId: (isObj(s.dossier) && isStr(s.dossier.projectId)) ? s.dossier.projectId : "CH" }, s.intake));
+    if (intake.ok !== true) return fail("INTAKE_FAILED", "intakeEstimate: " + (intake.code || "?"));
+    stages.push(Object.freeze({ stage: "CLIENT_INTAKE", engine: "client-intake", locale: intake.locale.code, estimateStatus: intake.estimate.status, sellingMinor: intake.estimate.sellingMinor, requiresHumanConfirmation: intake.requiresHumanConfirmation === true }));
+    // link M: the intake is a SOURCED, PRE-CONTRACTUAL, human-confirmation-gated estimate — never auto-committed, never the binding contract.
+    links.push(link("M_INTAKE_PRECONTRACTUAL", "client intake is a complete, sourced, PRE-CONTRACTUAL estimate requiring human confirmation (indicative — never the binding devis, never auto-committed)", intake.estimate.status === "COMPLETE" && intake.requiresHumanConfirmation === true && arr(intake.assumptions).some((a: any) => /PRE-CONTRACTUAL/.test(String(a))), "status=" + intake.estimate.status + " humanConfirm=" + intake.requiresHumanConfirmation));
+  }
 
   // 1. QUOTATION (V260).
   const quotation = DEVIS.computeDevis(s.quotationRequest);
@@ -141,7 +153,7 @@ function runLifecycle(scenario: any): any {
 const BTP_LIFECYCLE_INTEGRATION_CONTRACT = Object.freeze({
   id: "V272-ODG-BTP-LIFECYCLE-INTEGRATION",
   source: "V272 §12 — end-to-end BTP lifecycle data-flow verification",
-  reuses: Object.freeze(["odg-btp-devis-engine (V260)", "odg-btp-project-workflow (V266)", "odg-btp-billing-engine (V267)", "odg-btp-revision-prix (V330 M2 — price revision)", "odg-btp-retenue-garantie (V330 M2 — retention + release)", "odg-btp-price-reference + odg-btp-supplier-commitment (V330 M2 — procurement: reference→commitment)"]),
+  reuses: Object.freeze(["odg-btp-client-intake (V330 M2 — pre-contractual journey entry)", "odg-btp-devis-engine (V260)", "odg-btp-project-workflow (V266)", "odg-btp-billing-engine (V267)", "odg-btp-revision-prix (V330 M2 — price revision)", "odg-btp-retenue-garantie (V330 M2 — retention + release)", "odg-btp-price-reference + odg-btp-supplier-commitment (V330 M2 — procurement: reference→commitment)"]),
   invariants: Object.freeze([
     "threads ONE scenario through the REAL engines (V260→V266→V267, + V330 revision/retenue when requested) and asserts cross-stage consistency — no new engine/ledger/primitive",
     "data-flow links checked: work-package cost = quotation cost; work-package selling = quotation selling; contract = accepted sellingHT; Σ milestones ≤ contract; reconciliation invoiced = single ledger total; forecast margin = quotation margin",
