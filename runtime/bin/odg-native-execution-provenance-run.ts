@@ -53,6 +53,9 @@ for (const r of rows) { const d = (r && r.disposition) || "UNKNOWN"; byDispositi
 // benign/redundant proposals (e.g. ensure-dual-export appending a second `export {};` to a file that already has one
 // before a require.main trailer). These are NOT asserted to be genuine defects — they are candidate transforms only.
 const proposedTransformFiles = rows.filter((r: any) => r && r.disposition === "NATIVE_REPAIRED").map((r: any) => ({ filePath: r.filePath, transformsApplied: r.applied }));
+// Per-transform-class tally so the sample never under-represents the mix (e.g. the semantic-capable == → === rewrites).
+const transformsByClass: Record<string, number> = {};
+for (const f of proposedTransformFiles) for (const a of (Array.isArray(f.transformsApplied) ? f.transformsApplied : [])) { const c = a && a.classId ? a.classId : "unknown"; transformsByClass[c] = (transformsByClass[c] || 0) + 1; }
 
 const out = {
   "//": "V325 §5/§16 — REAL native-execution provenance over ACTUAL repo files. ODG natively executed a deterministic engineering pass (odg-native-engineering-loop.driveSource) over each file; actor resolved via the PRODUCTION actor-provenance resolver. READ-ONLY: no source file written, no mission-ledger append (that is OWNER_GATED). The HEADLINE is the PROVENANCE (actor), NOT the transform count.",
@@ -65,7 +68,7 @@ const out = {
   deferredToProvider: evidence.deferredToProvider.length,
   refusedOutOfScope: evidence.refusedOutOfScope.length,
   failed: evidence.failed.length,
-  proposedTransforms: { count: proposedTransformFiles.length, sample: proposedTransformFiles.slice(0, 10), note: "candidate deterministic transforms the loop APPLIED+structurally-verified in-memory; PROPOSED only (owner-gated, NOT applied to disk, NOT asserted to be genuine defects nor semantically safe). This count INCLUDES benign/redundant proposals (e.g. a duplicate `export {};` on files whose existing export marker precedes a require.main trailer) — it is NOT a count of 217 real defects." },
+  proposedTransforms: { count: proposedTransformFiles.length, byClass: transformsByClass, sample: proposedTransformFiles.slice(0, 10), note: "candidate deterministic transforms the loop APPLIED+structurally-verified in-memory; PROPOSED only (owner-gated, NOT applied to disk, NOT asserted to be genuine defects nor semantically safe). The count INCLUDES benign/redundant proposals (e.g. a duplicate `export {};` on files whose existing export marker precedes a require.main trailer) AND semantic-capable rewrites (normalize-strict-equality: == → ===) — see byClass; it is NOT a count of real defects." },
   honesty: "the deliverable is PROVENANCE: a genuine ODG-native deterministic pass over actual repo files resolves to actor=ODG via the production resolver. Non-executed files are recorded as deferred/refused/failed, never stamped ODG. Proposed transforms are candidates only; this runner applies nothing and the persistent mission-ledger append remains OWNER_GATED.",
 };
 try { fs.mkdirSync(path.dirname(OUT), { recursive: true }); } catch { /* exists */ }

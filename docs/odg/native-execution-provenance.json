@@ -14,6 +14,13 @@
   "failed": 0,
   "proposedTransforms": {
     "count": 217,
+    "byClass": {
+      "ensure-dual-export@1": 177,
+      "ensure-use-strict@1": 36,
+      "normalize-strict-equality@1": 10,
+      "sort-named-destructure@1": 3,
+      "dedupe-require-lines@1": 4
+    },
     "sample": [
       {
         "filePath": "runtime/core/acceptance-evidence-demonstrator.ts",
@@ -166,7 +173,7 @@
         ]
       }
     ],
-    "note": "candidate deterministic transforms the loop APPLIED+structurally-verified in-memory; PROPOSED only (owner-gated, NOT applied to disk, NOT asserted to be genuine defects nor semantically safe). This count INCLUDES benign/redundant proposals (e.g. a duplicate `export {};` on files whose existing export marker precedes a require.main trailer) — it is NOT a count of 217 real defects."
+    "note": "candidate deterministic transforms the loop APPLIED+structurally-verified in-memory; PROPOSED only (owner-gated, NOT applied to disk, NOT asserted to be genuine defects nor semantically safe). The count INCLUDES benign/redundant proposals (e.g. a duplicate `export {};` on files whose existing export marker precedes a require.main trailer) AND semantic-capable rewrites (normalize-strict-equality: == → ===) — see byClass; it is NOT a count of real defects."
   },
   "honesty": "the deliverable is PROVENANCE: a genuine ODG-native deterministic pass over actual repo files resolves to actor=ODG via the production resolver. Non-executed files are recorded as deferred/refused/failed, never stamped ODG. Proposed transforms are candidates only; this runner applies nothing and the persistent mission-ledger append remains OWNER_GATED."
 }
