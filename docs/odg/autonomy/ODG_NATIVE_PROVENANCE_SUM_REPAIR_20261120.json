@@ -1,0 +1,25 @@
+{
+  "kind": "ODG_NATIVE_EXECUTION_PROVENANCE",
+  "mission": "ODG_NATIVE_PROVENANCE_SUM_REPAIR_20261120",
+  "actor": "ODG",
+  "executedBy": "authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR | authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR | authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR | authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR | authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR | authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR | authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR | authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR | authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR | authoredBy=ODG_CAPABILITY;appliedBy=ODG_EXECUTOR",
+  "proven": true,
+  "validated": true,
+  "state": "CREATED",
+  "recordedAt": "2026-11-20T12:46:23.247Z",
+  "ledgerSeal": "fc4adc681dac70668591463218bab33df43bc519b2650f5a721df900035b0929",
+  "nativeSourceProof": {
+    "file": "runtime/generated/patch-execution.json",
+    "sha256": "82f1634cd723c0d9ab14e16d4bc33ebf8f6219a8a838ee4d0b17b6418ca0d820",
+    "nativeVerdict": "NATIVE_REPAIRED_GREEN"
+  },
+  "note": "Durable copy of the first genuine ODG-native-execution provenance recorded into the (ephemeral) mission-ledger. The mission-ledger lives under runtime/generated (gitignored); THIS git-tracked, provenance-stamped record is the durable, re-readable, integrity-checkable proof.",
+  "provenance": {
+    "schema": "evidence-provenance/1",
+    "contentSha256": "126af85f9488463916c829acf86381ac572110d971ef0bdd44c6fafae2d8074c",
+    "sourceCommit": "8c5c5d515d4ba55d1557209c230d1aab26f79de6",
+    "treeDirty": true,
+    "sourceAvailable": true,
+    "capturedAtRun": null
+  }
+}
