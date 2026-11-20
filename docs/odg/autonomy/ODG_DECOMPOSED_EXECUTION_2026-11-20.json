@@ -1,0 +1,26 @@
+{
+  "kind": "ODG_DECOMPOSED_EXECUTION_EVIDENCE",
+  "executor": "ODG_LOCAL_MODEL_EXECUTION",
+  "model": "qwen2.5-coder:3b",
+  "task": "topological sort, decomposed into [indegrees, toposort] each with its OWN independent test",
+  "results": [
+    {
+      "id": "indegrees",
+      "verified": false,
+      "repairs": 2,
+      "buildOk": true,
+      "required": true
+    }
+  ],
+  "escalate": "indegrees",
+  "verifiedCount": 0,
+  "finding": "One live run: decomposition with INTERMEDIATE verification LOCALISED the failure to the FIRST sub-problem (indegrees failed its own test after 2 repairs) and STOPPED the chain — toposort was never attempted (no wasted compute, no blind whole-task retry). This CORRECTS the earlier naive whole-task run, which could not attribute the failure to a specific sub-problem. The §3 value (targeted localisation + escalation of the exact failing unit) is demonstrated; the outcome is probabilistic (the local model failed even in-degrees this run). Escalate unit = indegrees ⇒ targeted repair/provider, not blind retries. No failure reclassified as success.",
+  "provenance": {
+    "schema": "evidence-provenance/1",
+    "contentSha256": "440d11b8271c941a9edd054b0881288f5e0c5222ebe14ad2e2ec2ca725b114c7",
+    "sourceCommit": "243803c8fc5ee64a31846a37a2df878cc3178989",
+    "treeDirty": true,
+    "sourceAvailable": true,
+    "capturedAtRun": null
+  }
+}
