@@ -20,6 +20,8 @@
  *     a single weight > resourceBudget (WEIGHT_EXCEEDS_BUDGET), duplicate id (DUPLICATE_ID). Invalid opts ⇒ empty plan.
  */
 
+const WS = require("./writeset-scheduler.js"); // §8/§79: reuse the write-set overlap semantics (no uncoordinated concurrent writers)
+
 function isStr(v: any): boolean { return typeof v === "string" && v.trim().length > 0; }
 function isPosInt(v: any): boolean { return typeof v === "number" && Number.isInteger(v) && v >= 1; }
 function isPosNum(v: any): boolean { return typeof v === "number" && Number.isFinite(v) && v > 0; }
@@ -64,21 +66,32 @@ function plan(missions: any, opts: any): any {
   const waves: string[][] = [];
   const schedulable = (id: string): boolean => !unknownBlocked.has(id) && depsOf(id).every((d) => done.has(d));
 
+  // V327 §8/§79 — opt-in WRITE-SET SAFETY: two missions with no dependency relation but OVERLAPPING write-sets must NOT
+  // run in the same wave (uncoordinated concurrent writers to the same file). When opts.writeSetSafe, a mission joins a
+  // wave only if its write-set is disjoint from every mission already in that wave (reusing writeset-scheduler's overlap
+  // semantics); otherwise it defers to a later wave (serialized behind the earlier writer). Default OFF (backward-compatible).
+  const writeSetSafe = o.writeSetSafe === true;
+  const wsOf = (id: string): string[] => WS.normPaths(byId[id] && byId[id].writeSet);
+  let writeSetDeferrals = 0;
+
   // deterministic wave loop with a hard progress guarantee (bounded by mission count)
   for (let guard = 0; guard <= allIds.length; guard++) {
     const ready = allIds.filter((id) => !placed.has(id) && !unknownBlocked.has(id) && schedulable(id)).sort();
     if (ready.length === 0) break;
     const wave: string[] = [];
+    const waveWs: string[][] = [];
     let used = 0;
     for (const id of ready) {
       if (wave.length >= maxConc) break;
       const w = weightOf(byId[id]);
+      if (resourceBudget !== undefined && w > resourceBudget) { placed.add(id); unsched.push({ id, reason: "WEIGHT_EXCEEDS_BUDGET" }); continue; }
+      // write-set safety: defer a mission that would write the same files as one already in this wave
+      if (writeSetSafe) { const ws = wsOf(id); if (waveWs.some((prev) => WS.writeSetsOverlap(ws, prev))) { writeSetDeferrals++; continue; } }
       if (resourceBudget !== undefined) {
-        if (w > resourceBudget) { placed.add(id); unsched.push({ id, reason: "WEIGHT_EXCEEDS_BUDGET" }); continue; }
         if (used + w > resourceBudget) continue;  // defer to a later wave
         used += w;
       }
-      wave.push(id); placed.add(id);
+      wave.push(id); placed.add(id); if (writeSetSafe) waveWs.push(wsOf(id));
     }
     if (wave.length === 0) continue;                 // only budget-deferred this round; next round frees the barrier? no — avoid spin:
     waves.push(wave);
@@ -97,7 +110,7 @@ function plan(missions: any, opts: any): any {
     waves: Object.freeze(waves.map((w) => Object.freeze(w.slice()))),
     scheduled: Object.freeze(scheduled),
     unscheduled: Object.freeze(unsched.sort((a, b) => a.id.localeCompare(b.id))),
-    stats: Object.freeze({ maxConcurrency: maxConc, resourceBudget, waveCount: waves.length, scheduledCount: scheduled.length, unscheduledCount: unsched.length }),
+    stats: Object.freeze({ maxConcurrency: maxConc, resourceBudget, waveCount: waves.length, scheduledCount: scheduled.length, unscheduledCount: unsched.length, writeSetSafe, writeSetDeferrals }),
   });
 }
 
