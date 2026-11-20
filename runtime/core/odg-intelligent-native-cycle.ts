@@ -21,6 +21,7 @@ const SEAM = require("./odg-policy-build-seam.js");
 const CYCLE = require("./native-engineering-cycle.js");
 const ESC = require("./odg-native-escalation.js");
 const DECOMP = require("./odg-decomposed-execution.js");
+const CKEY = require("./odg-calibration-key.js"); // V327 §3: store-aligned calibration key (self-calibrate from accumulated outcomes)
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -44,9 +45,22 @@ async function runIntelligentCycle(opts: any): Promise<any> {
   const history = Array.isArray(o.history) ? o.history : [];
   const type = typeof m.type === "string" ? m.type : m.id;
 
+  // V327 §3 (SELF-CALIBRATION, close the learning loop): when NO explicit history is supplied but accumulated
+  // native-build outcomes are (deps.priorOutcomes), derive the resource belief from the STORE via the safe taxonomy
+  // reconciliation — the policy is then driven by the SAME dimension (complexity key) the store accumulates, so the cycle
+  // LEARNS from its own real outcomes. Refuse-on-UNKNOWN (usable:false) ⇒ fall back to probing. Explicit history still
+  // wins (backward-compatible); no second taxonomy; the store/key are read-only.
+  let selfCalibrated: any = null;
+  let policyType = type, policyHistory = history;
+  if (history.length === 0 && Array.isArray(deps.priorOutcomes) && deps.priorOutcomes.length > 0) {
+    const bf = CKEY.beliefFromStore(m.spec, deps.priorOutcomes, isObj(o.calibration) ? o.calibration : {});
+    if (bf.usable === true) { policyType = bf.key; policyHistory = bf.history; selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, observations: bf.history.length }); }
+    else selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, refused: true, reason: bf.reason });
+  }
+
   // (1) resource sizing (policy) + (2) build seam honoring it
-  const policy = POLICY.chooseExecutionPolicy(type, history);
-  const seam = SEAM.makePolicyBuildSeam({ history, generatorFor: o.generatorFor, taskTypeOf: () => type, buildProject: deps.buildProject });
+  const policy = POLICY.chooseExecutionPolicy(policyType, policyHistory);
+  const seam = SEAM.makePolicyBuildSeam({ history: policyHistory, generatorFor: o.generatorFor, taskTypeOf: () => policyType, buildProject: deps.buildProject });
 
   // (2) execute via the EXISTING native-engineering-cycle (explore mode, externally authorized) through the policy seam
   let cyc: any;
@@ -68,6 +82,7 @@ async function runIntelligentCycle(opts: any): Promise<any> {
   return freeze({
     ok: true, mission: m.id,
     policy: freeze({ model: policy.model, maxRepair: policy.maxRepair, tier: policy.tier }),
+    selfCalibrated,   // V327 §3: the store-derived belief that drove the policy (or the refusal), or null if explicit history was used
     executed: "ODG_LOCAL_MODEL_EXECUTION (native-engineering-cycle via policy seam)",
     accepted, cycleOutcome: cyc ? cyc.outcome : null,
     decomposition: decomposition ? freeze({ allVerified: decomposition.allVerified === true, firstFailure: decomposition.firstFailure || null }) : null,
@@ -84,6 +99,7 @@ const INTELLIGENT_NATIVE_CYCLE_CONTRACT = Object.freeze({
     "NOT a second orchestrator: native-engineering-cycle is the engine, selectNextLot the selector, sovereign-delegation the chain — this only composes them with the intelligent signals",
     "the INDEPENDENT verifier (inside native-engineering-cycle) still arbitrates acceptance; the policy sizes resources only",
     "order: select (calibrated) → execute (policy seam) → decompose if hard → escalate only if still failing AND calibrated-low (evidence-gated, provider-attributed)",
+    "SELF-CALIBRATION (§3): with no explicit history but accumulated priorOutcomes, the policy is driven by the store-aligned calibration key (odg-calibration-key) so the cycle learns from its own outcomes; UNKNOWN ⇒ refuse+probe; explicit history still wins (backward-compatible); no second taxonomy",
     "all execution is INJECTED (generatorFor/buildProject) ⇒ deterministic + testable without a live model; no fabricated native success",
     "no new primitive/registry/orchestrator; consumes the previously-orphan built capabilities as their real consumer (§7)",
   ]),
