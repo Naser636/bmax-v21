@@ -40,7 +40,7 @@ async function main(): Promise<void> {
   check("policy sizes resources only — a verifier-rejected build stays un-accepted (authorizes nothing)", (await rej.build({ type: "t", name: "t", architecture: [] })).accepted === false);
 
   // CONSUMED by the EXISTING native-engineering-cycle (EXPLORE authorized): the cycle calls our seam.build
-  let cycleSawBuild = false;
+  let cycleSawBuild: boolean = false;
   const seam2 = M.makePolicyBuildSeam({ history: h("calc", 18, 2), generatorFor: () => () => ({ ok: true, content: "x" }), buildProject: async (_s: any, deps: any) => { cycleSawBuild = true; return { accepted: true, verified: true, repairs: deps.maxRepair }; } });
   const cyc = await CYCLE.runNativeCycle({ name: "calc", architecture: [{ path: "a.js", role: "r", contract: "c" }], independentTest: () => true }, [], { build: seam2.build }, { mode: "explore", exploreAuthorized: true });
   check("native-engineering-cycle CONSUMES the policy seam as deps.build (attempted NATIVE, build invoked)", cyc.attempted === true && cyc.routedTo === "NATIVE" && cycleSawBuild === true);
