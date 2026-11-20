@@ -25,6 +25,12 @@ function main(): void {
   check("escalation hands off a sovereign-delegation mission (CREATED, authority ODG) — reuses the deny-by-default chain", esc.delegation && esc.delegation.state === "CREATED" && esc.delegation.authority === "ODG" && esc.delegation.missionId === "topo");
   check("the handoff is a REAL sovereign mission (its state is in the chain's STATES)", SD.STATES.includes(esc.delegation.state));
 
+  // ANTI SELF-REINFORCING ERROR: a calibrated-low belief that is STALE ⇒ RE-PROBE, NOT escalate (overturn-able)
+  const stale = M.decideEscalation({ task, policyResult: lowPol, localAttemptAccepted: false, evidenceAgeDays: 200, maxAgeDays: 90 });
+  check("calibrated-low but STALE belief ⇒ NO escalation (re-probe to overturn — anti self-reinforcing error)", stale.escalate === false && /STALE/.test(stale.reason) && /self-reinforcing error/.test(stale.reason));
+  const fresh = M.decideEscalation({ task, policyResult: lowPol, localAttemptAccepted: false, evidenceAgeDays: 10, maxAgeDays: 90 });
+  check("calibrated-low + FRESH belief ⇒ escalate (belief still settled)", fresh.escalate === true);
+
   // EVIDENCE GATE: thin/unknown ⇒ NO escalation (keep probing; never premature)
   const thin = M.decideEscalation({ task, policyResult: thinPol, localAttemptAccepted: false });
   check("thin/UNKNOWN policy + local failure ⇒ NO escalation (evidence-gated, keep probing)", thin.escalate === false && thin.delegation === null && /evidence-gated/.test(thin.reason));
