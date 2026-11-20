@@ -23,6 +23,7 @@ const ESC = require("./odg-native-escalation.js");
 const DECOMP = require("./odg-decomposed-execution.js");
 const CKEY = require("./odg-calibration-key.js"); // V327 §3: store-aligned calibration key (self-calibrate from accumulated outcomes)
 const BI = require("./odg-behavioral-improvement.js"); // V327 §2: behavioral trend (improving/plateau/regressing) over the store
+const GV = require("./odg-generalization-validity.js"); // V327 §6: anti over-generalization (source-context overfitting) guard
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -54,15 +55,25 @@ async function runIntelligentCycle(opts: any): Promise<any> {
   let selfCalibrated: any = null;
   let behavioral: any = null;       // V327 §2: the behavioral trend for the self-calibrated class (null when explicit history is used)
   let behaviorallyObsolete = false; // REGRESSING / recurring-failure / plateau-low ⇒ more local probing won't help ⇒ escalate
+  let generalization: any = null;   // V327 §6: whether the belief's evidence is diverse enough to apply to THIS (novel) instance
   let policyType = type, policyHistory = history;
   if (history.length === 0 && Array.isArray(deps.priorOutcomes) && deps.priorOutcomes.length > 0) {
     const bf = CKEY.beliefFromStore(m.spec, deps.priorOutcomes, isObj(o.calibration) ? o.calibration : {});
     if (bf.usable === true) {
-      policyType = bf.key; policyHistory = bf.history; selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, observations: bf.history.length });
-      // V327 §2 — behavioral trend over the SAME accumulated outcomes (is this class improving, or is the memory not paying off?)
-      const bi = BI.measureImprovement(deps.priorOutcomes, { key: bf.key });
-      behaviorallyObsolete = bi.verdict === "REGRESSING" || bi.verdict === "PLATEAU_LOW" || !!bi.recurringFailure;
-      behavioral = freeze({ verdict: bi.verdict, delta: bi.delta, recurringFailure: bi.recurringFailure, obsolete: behaviorallyObsolete });
+      // V327 §6 — anti over-generalization: a belief resting on too few DISTINCT source contexts is source-context overfit
+      // (arXiv:2603.07670). Riding it on a novel instance is over-generalization ⇒ do NOT trust it; probe instead.
+      const gv = GV.assessGeneralization(deps.priorOutcomes, { key: bf.key });
+      generalization = freeze({ verdict: gv.verdict, generalizable: gv.generalizable === true, distinctSources: gv.distinctSources });
+      if (gv.generalizable === true) {
+        policyType = bf.key; policyHistory = bf.history; selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, observations: bf.history.length });
+        // V327 §2 — behavioral trend over the SAME accumulated outcomes (is this class improving, or is the memory not paying off?)
+        const bi = BI.measureImprovement(deps.priorOutcomes, { key: bf.key });
+        behaviorallyObsolete = bi.verdict === "REGRESSING" || bi.verdict === "PLATEAU_LOW" || !!bi.recurringFailure;
+        behavioral = freeze({ verdict: bi.verdict, delta: bi.delta, recurringFailure: bi.recurringFailure, obsolete: behaviorallyObsolete });
+      } else {
+        // over-generalization risk ⇒ keep probing (policyHistory stays empty): do not size resources on a narrow belief
+        selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, refused: true, reason: `evidence not generalizable (${gv.verdict}: ${gv.note}) — probing a novel instance instead of over-generalizing` });
+      }
     } else selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, refused: true, reason: bf.reason });
   }
 
@@ -96,6 +107,7 @@ async function runIntelligentCycle(opts: any): Promise<any> {
     policy: freeze({ model: policy.model, maxRepair: policy.maxRepair, tier: policy.tier }),
     selfCalibrated,   // V327 §3: the store-derived belief that drove the policy (or the refusal), or null if explicit history was used
     behavioral,       // V327 §2: the behavioral trend of the self-calibrated class (improving/plateau/regressing + obsolete flag), or null
+    generalization,   // V327 §6: whether the belief's evidence was diverse enough to apply here (OVERFIT ⇒ probed instead), or null
     executed: "ODG_LOCAL_MODEL_EXECUTION (native-engineering-cycle via policy seam)",
     accepted, cycleOutcome: cyc ? cyc.outcome : null,
     decomposition: decomposition ? freeze({ allVerified: decomposition.allVerified === true, firstFailure: decomposition.firstFailure || null }) : null,
@@ -113,6 +125,7 @@ const INTELLIGENT_NATIVE_CYCLE_CONTRACT = Object.freeze({
     "the INDEPENDENT verifier (inside native-engineering-cycle) still arbitrates acceptance; the policy sizes resources only",
     "order: select (calibrated) → execute (policy seam) → decompose if hard → escalate only if still failing AND calibrated-low (evidence-gated, provider-attributed)",
     "SELF-CALIBRATION (§3): with no explicit history but accumulated priorOutcomes, the policy is driven by the store-aligned calibration key (odg-calibration-key) so the cycle learns from its own outcomes; UNKNOWN ⇒ refuse+probe; explicit history still wins (backward-compatible); no second taxonomy",
+    "ANTI OVER-GENERALIZATION (§6): the self-calibrated belief is applied only if its evidence spans enough DISTINCT source contexts (odg-generalization-validity); an OVERFIT/narrow-source belief is NOT ridden on a novel instance — the cycle probes instead (arXiv:2603.07670)",
     "BEHAVIORAL OBSOLESCENCE (§2): a self-calibrated class that is REGRESSING / plateau-low / has a recurring-failure signature (odg-behavioral-improvement) escalates even when the point belief is not low — more local probing won't help; reuses #778 unchanged, delegation stays evidence-gated",
     "all execution is INJECTED (generatorFor/buildProject) ⇒ deterministic + testable without a live model; no fabricated native success",
     "no new primitive/registry/orchestrator; consumes the previously-orphan built capabilities as their real consumer (§7)",
