@@ -1,0 +1,57 @@
+{
+  "kind": "ODG_LOCAL_MODEL_MODEL_CHOICE_EXPERIMENT",
+  "executor": "ODG_LOCAL_MODEL_EXECUTION",
+  "host": "127.0.0.1:11434 loopback",
+  "question": "§3 — does model choice (qwen2.5-coder 3b -> 7b) fix the real native-execution failures?",
+  "overall": {
+    "3b": "2/10",
+    "7b": "4/10",
+    "gainPassRate": 0.2
+  },
+  "perType": [
+    {
+      "type": "infix",
+      "3b": "0/2",
+      "7b": "0/2",
+      "fixedBy7b": false,
+      "stillFails": true
+    },
+    {
+      "type": "lru",
+      "3b": "0/2",
+      "7b": "0/2",
+      "fixedBy7b": false,
+      "stillFails": true
+    },
+    {
+      "type": "topo",
+      "3b": "0/2",
+      "7b": "0/2",
+      "fixedBy7b": false,
+      "stillFails": true
+    },
+    {
+      "type": "wordwrap",
+      "3b": "1/2",
+      "7b": "2/2",
+      "fixedBy7b": false,
+      "stillFails": false
+    },
+    {
+      "type": "glob",
+      "3b": "1/2",
+      "7b": "2/2",
+      "fixedBy7b": false,
+      "stillFails": false
+    }
+  ],
+  "finding": "7b fixes the BORDERLINE tasks (wordwrap, glob: 1/2 -> 2/2) but NOT the hard-algorithmic ones (infix=operator-precedence parsing, lru=stateful eviction, topo=cycle-detecting topological sort: 0/2 on BOTH models). Model size is NOT the root cause for the hard class — the lever there is DECOMPOSITION / more independent-test-guided repair, not a bigger model. No failure reclassified as success; `verified` is the independent verifier's real verdict.",
+  "provenance": {
+    "schema": "evidence-provenance/1",
+    "contentSha256": "a40397918a72af948f90baf66acd8df28a41b4f449851f9ffd134e031d402ef8",
+    "sourceCommit": "653f0adb9787e2a8d8b5180e643f203aec3aa88c",
+    "treeDirty": true,
+    "sourceAvailable": true,
+    "capturedAtRun": null
+  }
+}
