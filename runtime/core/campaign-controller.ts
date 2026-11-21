@@ -16,6 +16,7 @@
 const fs = require("fs");
 const crypto = require("crypto");
 const DEP = require("./dep-planner.js");
+const AI = require("./agent-identity.js"); // reuse the EXISTING Ed25519 canonicalisation (canon) — no second crypto system
 
 const OPEN_STATES = ["READY", "IN_PROGRESS"];
 const TERMINAL_OK = "ACCEPTED";
@@ -30,12 +31,50 @@ function readJsonSafe(f: string): any { try { return JSON.parse(fs.readFileSync(
 // loop can NEVER self-promote their own discovery, and the MUTATOR — not just the caller — enforces it). Scope ≠ authority.
 // The self-actor blocklist is compared case-insensitively (trimmed + lowercased) so "Frontier-Radar"/" radar " cannot dodge it.
 const SELF_AUTHORING_ACTORS = ["frontier-radar", "evolution-loop", "odg-radar", "radar"]; // lowercase
-function isValidPromotionAuthorization(a: any): boolean {
-  if (!isObj(a)) return false; // a bare string / truthy flag is NOT sufficient — an explicit authorizer record is required
+const PROMOTION_ACTION = "PROMOTE_DEFERRED_TO_SELECTABLE"; // domain-separation tag bound into the signed payload
+
+/**
+ * verifyPromotionAuthorization(a, ctx) — the gate's authority check, in two postures (deny-by-default, fail-closed):
+ *   • IDENTITY-BOUND (when ctx.trustedAuthorizers has keys, OR ctx.requireSigned): authority must be PROVEN — `a` must
+ *     carry an Ed25519 `signature` + `nonce`, verified with crypto.verify over canon({action,lotId,authorizedBy,nonce})
+ *     using the TRUSTED public key registered for `authorizedBy`. A tampered lotId/authorizer, a wrong/absent key, a bad
+ *     signature, or (when ctx.seenNonces is supplied) a replayed nonce ⇒ DENY. This CLOSES the forge-a-claim gap: a
+ *     component can no longer simply assert `{authorizedBy:"owner",approved:true}` — it must hold an authorised key.
+ *   • CLAIM (no trusted keys configured): authority is ASSERTED, not proven — the prior check (non-self authorizer +
+ *     approved). Returns ok but identityVerified:false, so the trace records honestly that identity was NOT cryptographically
+ *     verified. (Owner key provisioning is an EXTERNAL/owner concern — like agent-identity, not provisioned here.)
+ * Returns { ok, identityVerified, authorizedBy, reason }.
+ */
+function verifyPromotionAuthorization(a: any, ctx: any = {}): any {
+  const c = isObj(ctx) ? ctx : {};
+  if (!isObj(a)) return { ok: false, identityVerified: false, authorizedBy: null, reason: "no authorization record (an explicit authorizer record is required)" };
   const by = typeof a.authorizedBy === "string" ? a.authorizedBy.trim() : "";
-  if (by.length === 0 || a.approved !== true || a.selfAuthored === true) return false; // strict: approved MUST be boolean true
-  return SELF_AUTHORING_ACTORS.indexOf(by.toLowerCase()) < 0; // a self-authoring actor can never authorize its own activation
+  if (by.length === 0 || a.approved !== true || a.selfAuthored === true) return { ok: false, identityVerified: false, authorizedBy: null, reason: "missing authorizer / approved!==true / self-authored" };
+  if (SELF_AUTHORING_ACTORS.indexOf(by.toLowerCase()) >= 0) return { ok: false, identityVerified: false, authorizedBy: by, reason: `self-authoring actor '${by}' can never authorize its own activation` };
+
+  const trusted = isObj(c.trustedAuthorizers) ? c.trustedAuthorizers : null;
+  const haveKeys = !!trusted && Object.keys(trusted).length > 0;
+  if (haveKeys || c.requireSigned === true) {
+    // OWN-property lookup only — never read an inherited key (e.g. authorizedBy "__proto__"/"constructor"); such a value
+    // would fail crypto.verify anyway, but this denies it explicitly rather than relying on the verify-throws backstop.
+    const pub = trusted && Object.prototype.hasOwnProperty.call(trusted, by) ? trusted[by] : null;
+    if (!pub || typeof pub !== "string") return { ok: false, identityVerified: false, authorizedBy: by, reason: `no trusted key registered for authorizer '${by}' (identity-bound mode)` };
+    if (typeof a.signature !== "string" || !a.signature || typeof a.nonce !== "string" || !a.nonce) return { ok: false, identityVerified: false, authorizedBy: by, reason: "signed authorization required but signature/nonce missing" };
+    const payload = AI.canon({ action: PROMOTION_ACTION, lotId: typeof c.lotId === "string" ? c.lotId : null, authorizedBy: by, nonce: a.nonce });
+    let sigOk = false;
+    try { sigOk = crypto.verify(null, Buffer.from(payload), pub, Buffer.from(a.signature, "base64")); } catch { sigOk = false; }
+    if (!sigOk) return { ok: false, identityVerified: false, authorizedBy: by, reason: "invalid Ed25519 signature over the bound promotion payload (lotId/authorizer/nonce)" };
+    if (c.seenNonces instanceof Set) { // single-use anti-replay (when the caller supplies a seen-set)
+      if (c.seenNonces.has(a.nonce)) return { ok: false, identityVerified: false, authorizedBy: by, reason: "replayed authorization nonce (single-use)" };
+      c.seenNonces.add(a.nonce);
+    }
+    return { ok: true, identityVerified: true, authorizedBy: by, reason: "identity-bound authorization verified (Ed25519 over lotId+authorizer+nonce)" };
+  }
+  return { ok: true, identityVerified: false, authorizedBy: by, reason: "authorization CLAIMED (no trusted keys configured — identity NOT cryptographically verified)" };
 }
+
+// Back-compat boolean wrapper (claim-mode): existing callers with no key context keep their behaviour.
+function isValidPromotionAuthorization(a: any): boolean { return verifyPromotionAuthorization(a, {}).ok; }
 
 /** loadRegister(path): durable register {items:[...]} or {ok:false}. */
 function loadRegister(path: string): any {
@@ -188,9 +227,10 @@ function selectNextLot(register: any): any {
  * advance(register, id, { status, evidence, nextAction, blockReason }): fail-closed transition. ACCEPTED REQUIRES
  * non-empty evidence. Mutates + returns the register (caller persists via saveRegister). Returns {ok:false} on bad input.
  */
-function advance(register: any, id: string, change: any = {}): any {
+function advance(register: any, id: string, change: any = {}, opts: any = {}): any {
   const it = (register.items || []).find((x: any) => x.id === id);
   if (!it) return { ok: false, code: "NO_SUCH_LOT", reason: `lot '${id}' not in register` };
+  const o = isObj(opts) ? opts : {};
   const status = change.status;
   if (status !== undefined) {
     if (!STATES.includes(status)) return { ok: false, code: "BAD_STATUS", reason: `invalid status '${status}'` };
@@ -201,9 +241,12 @@ function advance(register: any, id: string, change: any = {}): any {
       it.evidence = ev;
     }
     // GATE: a lot that is DEFERRED or flagged authorizationRequired must not ENTER A SELECTABLE/executable state
-    // (READY or IN_PROGRESS — both are OPEN_STATES that selectNextLot can pick) without an explicit authorization —
-    // deny-by-default, enforced at the MUTATOR so NO path can activate unauthorized work, including status-laundering
-    // (DEFERRED→IN_PROGRESS directly, or DEFERRED→BLOCKED→READY). Keying on READY alone was bypassable (IN_PROGRESS is
+    // (READY or IN_PROGRESS — both are OPEN_STATES that selectNextLot can pick) without a valid authorization —
+    // deny-by-default, enforced at the MUTATOR against status-laundering (DEFERRED→IN_PROGRESS directly, or
+    // DEFERRED→BLOCKED→READY). What the mutator enforces UNCONDITIONALLY is a non-self authorizer + approved:true;
+    // cryptographic IDENTITY is additionally enforced in identity-bound mode (trusted keys configured, or the caller/lot
+    // requires signing) — in plain claim mode authority is asserted (identityVerified:false), not proven. Keying on READY
+    // alone was bypassable (IN_PROGRESS is
     // also selectable). Once authorized the proof is stamped and subsequent transitions are not re-gated. Entering a
     // NON-selectable state (BLOCKED/REJECTED/DEFERRED) is not an activation and is not gated; reaching ACCEPTED keeps its
     // own evidence gate above. (Re-opening a regressed ACCEPTED/normal lot carries no authorizationRequired ⇒ not gated.)
@@ -215,13 +258,28 @@ function advance(register: any, id: string, change: any = {}): any {
     const enteringSelectable = OPEN_STATES.includes(status);
     const requiresAuthorization = (it.status === "DEFERRED" || it.status === "BLOCKED" || it.authorizationRequired === true) && !it.readyAuthorization;
     if (enteringSelectable && requiresAuthorization) {
-      if (!isValidPromotionAuthorization(change.authorization)) {
-        return { ok: false, code: "AUTHORIZATION_REQUIRED", reason: `activating a DEFERRED/authorization-required lot (→${status}) requires an explicit authorization (a non-self authorizer with approved:true) — authority, not scope; it is owner/ODG-gated, never auto-activated, and status-laundering via IN_PROGRESS/BLOCKED cannot bypass this` };
+      // Authority check — IDENTITY-BOUND when opts.trustedAuthorizers (public keys) or opts.requireSignedAuthorization is
+      // supplied (an Ed25519 signature over the specific lotId is then MANDATORY — a claim cannot be forged); CLAIM mode
+      // otherwise (back-compat; identity recorded as NOT verified). The signed payload is bound to THIS lotId + a single-use
+      // nonce, so a signature for one lot cannot be replayed to promote another.
+      // A lot can DEMAND strict (signed) authorization via its own persisted `requireSignedAuthorization` flag — this
+      // cannot be downgraded by a caller that simply omits opts (F1): if either the lot OR the caller requires signing,
+      // signing is required. (A radar/owner-origin lot should carry this flag so claim-mode can never activate it.)
+      const v = verifyPromotionAuthorization(change.authorization, {
+        lotId: id,
+        trustedAuthorizers: o.trustedAuthorizers,
+        requireSigned: o.requireSignedAuthorization === true || it.requireSignedAuthorization === true,
+        seenNonces: o.seenNonces,
+      });
+      if (!v.ok) {
+        return { ok: false, code: "AUTHORIZATION_REQUIRED", reason: `activating a DEFERRED/authorization-required lot (→${status}) requires a valid authorization (authority, not scope; owner/ODG-gated, never auto-activated; status-laundering via IN_PROGRESS/BLOCKED cannot bypass): ${v.reason}` };
       }
-      // Durable trace on the item (the register IS the persisted ledger via saveRegister): who authorized, on what basis.
+      // Durable trace on the item (the register IS the persisted ledger via saveRegister): who authorized, on what basis,
+      // and WHETHER the authorizer identity was cryptographically proven (identityVerified) vs merely claimed.
       it.readyAuthorization = {
-        authorizedBy: change.authorization.authorizedBy,
+        authorizedBy: v.authorizedBy,
         approved: true,
+        identityVerified: v.identityVerified,
         basis: typeof change.authorization.basis === "string" ? change.authorization.basis : "authorized activation",
         at: change.authorization.at !== undefined ? change.authorization.at : null,
         promotedFrom: it.status,
@@ -262,8 +320,8 @@ function summary(register: any): any {
   };
 }
 
-export { loadRegister, saveRegister, selectNextLot, advance, summary, layering, lotFingerprint, isStalled, staleAcceptances, reconcile, STATES };
-module.exports = { loadRegister, saveRegister, selectNextLot, advance, summary, layering, lotFingerprint, isStalled, staleAcceptances, reconcile, STATES };
+export { loadRegister, saveRegister, selectNextLot, advance, summary, layering, lotFingerprint, isStalled, staleAcceptances, reconcile, STATES, verifyPromotionAuthorization, PROMOTION_ACTION };
+module.exports = { loadRegister, saveRegister, selectNextLot, advance, summary, layering, lotFingerprint, isStalled, staleAcceptances, reconcile, STATES, verifyPromotionAuthorization, PROMOTION_ACTION };
 
 if (require.main === module) {
   const r = loadRegister(process.argv[2] || "docs/odg/closure-register.json");
