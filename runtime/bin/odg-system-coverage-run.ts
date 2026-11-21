@@ -16,39 +16,33 @@ const fs = require("fs");
 const ROOT = path.join(__dirname, "..", "..");
 const CIG = require(path.join(ROOT, "runtime", "core", "change-impact-graph.js"));
 const COV = require(path.join(ROOT, "runtime", "core", "odg-system-coverage.js"));
+const SCAN = require(path.join(ROOT, "runtime", "core", "odg-consumer-scan.js"));
 
 // (1) the real core require-graph.
 const graph = CIG.buildGraph(ROOT);
-const coreConsumers: Record<string, string[]> = graph.consumers || {};
-const moduleSet = new Set<string>(graph.modules);
 
-// (2) scan the real CONSUMER surfaces outside core — runtime/bin (entry-points), the Next app (src/) and scripts/ — for an
-// IMPORT reference (path-form or path.join .js segment, NOT a bare data-string mention) to each core module basename. A
-// module imported by a bin/app/script is a REAL (non-test) consumer, so it is NOT an orphan. This widens CONNECTION beyond
-// the core-only graph ⇒ fewer false orphans, without the inverse error of counting textual mentions as calls.
-const merged: Record<string, string[]> = {};
-for (const m of graph.modules) merged[m] = (coreConsumers[m] || []).slice();
-// Match a real IMPORT reference only, not a bare data-string mention. A cross-dir import of a core module always appears
-// EITHER path-form (`/<name>` or `/<name>.js`, e.g. require("../core/<name>.js")) OR as a path.join segment (`"<name>.js"`
-// with the extension). A bare quoted id (`"<name>"` — no leading `/`, no `.js`: a registry key / priority list / log string)
-// is NOT a consumer and is correctly dropped (independent-inspection fix: avoids inflating CONNECTED / hiding real orphans).
-const moduleRe = new Map<string, RegExp>();
-for (const m of graph.modules) { const e = m.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); moduleRe.set(m, new RegExp('(?:/' + e + '(?:\\.js)?|["\']' + e + '\\.js)["\']')); }
-function walk(dir: string, tag: string, depth: number): void {
-  let entries: any[]; try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
-  for (const e of entries) {
-    const full = path.join(dir, e.name);
-    if (e.isDirectory()) { if (e.name === "node_modules" || e.name === ".git" || e.name === "dist" || depth > 6) continue; walk(full, tag, depth + 1); continue; }
-    if (!/\.(ts|tsx|js|jsx)$/.test(e.name) || /\.test\.(ts|js)$/.test(e.name)) continue;
-    let src: string; try { src = fs.readFileSync(full, "utf8"); } catch { continue; }
-    const consumerName = tag + ":" + e.name.replace(/\.(tsx?|jsx?)$/, "");
-    for (const m of graph.modules) { if (moduleRe.get(m)!.test(src)) merged[m].push(consumerName); }
+// (2) scan the real CONSUMER surfaces outside core — runtime/bin (entry-points), the Next app (src/) and scripts/ — and merge
+// their IMPORT references via the shared odg-consumer-scan (the ONE place coverage + the self-improvement cycle agree). It
+// matches real require forms (path-form / path.join .js segment / r("name") call-arg indirection) but NOT a bare data-string
+// mention — so a bin/app/script importer is a real (non-test) consumer (no false orphan) without counting textual mentions.
+function collectScanned(): any[] {
+  const out: any[] = [];
+  function walk(dir: string, tag: string, depth: number): void {
+    let entries: any[]; try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) { if (e.name === "node_modules" || e.name === ".git" || e.name === "dist" || depth > 6) continue; walk(full, tag, depth + 1); continue; }
+      if (!/\.(ts|tsx|js|jsx)$/.test(e.name) || /\.test\.(ts|js)$/.test(e.name)) continue;
+      let src: string; try { src = fs.readFileSync(full, "utf8"); } catch { continue; }
+      out.push({ consumer: tag + ":" + e.name.replace(/\.(tsx?|jsx?)$/, ""), src });
+    }
   }
+  walk(path.join(ROOT, "runtime", "bin"), "bin", 0);
+  walk(path.join(ROOT, "src"), "app", 0);
+  walk(path.join(ROOT, "scripts"), "script", 0);
+  return out;
 }
-walk(path.join(ROOT, "runtime", "bin"), "bin", 0);
-walk(path.join(ROOT, "src"), "app", 0);
-walk(path.join(ROOT, "scripts"), "script", 0);
-for (const m of Object.keys(merged)) merged[m] = Array.from(new Set(merged[m])).sort();
+const { consumersOf, merged } = SCAN.mergeConsumers(graph, collectScanned());
 
 // (3) optional prior snapshot for REGRESSION detection.
 let previous: Record<string, string> = {};
@@ -57,7 +51,7 @@ if (prevArg && fs.existsSync(prevArg)) { try { previous = JSON.parse(fs.readFile
 
 const cov = COV.buildCoverage({
   modules: graph.modules,
-  consumersOf: (m: string) => merged[m] || [],
+  consumersOf,
   previous,
   asOf: new Date().toISOString().slice(0, 10),
 });
