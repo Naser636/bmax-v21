@@ -16,6 +16,8 @@
 const HR = require("./odg-hybrid-reasoning.js");           // reasoning soundness (causal + uncertainty/contradiction)
 const DP = require("./decomposition-planner.js");          // complexity classification / decomposition
 const LP = require("./odg-light-path-selector.js");        // tool/path selection under reliability
+const MI = require("./meta-intelligence.js");              // the integrity-inspector (system-under-test for verification)
+const IMV = require("./inspector-meta-validation.js");     // meta-validates the inspector over a seeded defect corpus
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -71,6 +73,21 @@ function evalPathSelection(): any {
   return runCases(cases, (c) => LP.selectLightPath(c.input).pathTier, (c) => c.expect);
 }
 
+// AXIS: independent verification — treat ODG's integrity-inspector (meta-intelligence.assessIntegrity) as the SYSTEM UNDER
+// TEST over a seeded DEFECTIVE/CLEAN corpus; measure whether it actually CATCHES seeded gaming (recall), fail-closed.
+function evalIndependentVerification(): any {
+  const flagged = (r: any) => r && (r.overall === "DETECTED" || r.overall === "SUSPECTED");
+  const cases = [
+    { id: "contamination-leak", label: "DEFECTIVE", input: { contamination: { benchmarkDigests: ["d1", "d2"], seenDigests: ["d1"] } }, detects: flagged },
+    { id: "evaluator-capture", label: "DEFECTIVE", input: { evaluator: { evaluator: { id: "X" }, subject: { id: "X" } } }, detects: flagged },
+    { id: "metric-gaming", label: "DEFECTIVE", input: { gaming: { metric: { before: 1, after: 2 }, manipulationMarker: true } }, detects: flagged },
+    { id: "clean-contamination", label: "CLEAN", input: { contamination: { benchmarkDigests: ["a"], seenDigests: ["b"] } }, detects: flagged },
+    { id: "clean-evaluator", label: "CLEAN", input: { evaluator: { evaluator: { id: "A" }, subject: { id: "B" } } }, detects: flagged },
+  ];
+  const mv = IMV.metaValidate({ inspector: (x: any) => MI.assessIntegrity(x), cases, minDetection: 1.0 });
+  return { cases: cases.length, correct: mv.confusion.TP, accuracy: mv.detectionRate, effective: mv.effective === true, falsePositives: mv.confusion.FP, confusion: mv.confusion };
+}
+
 // the 16 axes (§3). measurability: MEASURED (seeded here), MEASURED_ELSEWHERE (another PR), NOT_MEASURED (+ dependency).
 const AXES = Object.freeze([
   freeze({ id: "goal-understanding", label: "Understanding of goals", measurability: "NOT_MEASURED", dependency: "needs real tasked missions + an independent rubric (external benchmark / owner)" }),
@@ -85,7 +102,7 @@ const AXES = Object.freeze([
   freeze({ id: "decomposition", label: "Decomposition & mission conduct", measurability: "MEASURED", via: "decomposition" }),
   freeze({ id: "debugging-repair", label: "Debugging & repair", measurability: "NOT_MEASURED", dependency: "needs real defect corpus with ground-truth fixes (repair-apply is OWNER_GATED)" }),
   freeze({ id: "execution-autonomy", label: "Execution autonomy", measurability: "NOT_MEASURED", dependency: "needs a real end-to-end native execution (resident-driver beyond L0 is OWNER_GATED)" }),
-  freeze({ id: "independent-verification", label: "Independent verification", measurability: "NOT_MEASURED", dependency: "needs inspector-meta-validation over a seeded defect corpus (separate harness)" }),
+  freeze({ id: "independent-verification", label: "Independent verification", measurability: "MEASURED", via: "independentVerification" }),
   freeze({ id: "anticipation", label: "Anticipation / forecast accuracy", measurability: "NOT_MEASURED", dependency: "needs real forecasts resolved over time (odg-forecast-memory mechanism exists; realized accuracy NOT_MEASURED)" }),
   freeze({ id: "complex-task-success", label: "Complex-task success", measurability: "NOT_MEASURED", dependency: "needs real complex missions executed end-to-end" }),
   freeze({ id: "speed-resource", label: "Speed & resource efficiency", measurability: "MEASURED_ELSEWHERE", via: "odg-mission-performance-profile (PR #838, real hrtime measurement)" }),
@@ -93,11 +110,18 @@ const AXES = Object.freeze([
 
 /** evaluate(opts?) -> frozen per-axis report. Runs the seeded evals and attaches accuracy to the MEASURED axes. NO global score. */
 function evaluate(opts: any = {}): any {
-  const results = { reasoning: evalReasoning(), decomposition: evalDecomposition(), pathSelection: evalPathSelection() };
+  const results = { reasoning: evalReasoning(), decomposition: evalDecomposition(), pathSelection: evalPathSelection(), independentVerification: evalIndependentVerification() };
+  // per-eval protocol strings name the ACTUAL scope each axis measures (so a broad axis label never over-reads).
+  const PROTOCOLS: Record<string, string> = {
+    reasoning: "seeded causal/epistemic reasoning incl ≥2-hop transitive chains — known verdicts (FACTUAL/HYPOTHETICAL/UNSOUND/UNGROUNDED)",
+    decomposition: "seeded complexity classification — known classes (TRIVIAL/SIMPLE/META/COMPLEX)",
+    pathSelection: "seeded path/tool selection under reliability — known tiers (LIGHT_LOCAL/ESCALATE_PROVIDER/DECOMPOSE)",
+    independentVerification: "integrity-gaming detection ONLY — inspector recall on seeded benchmark-contamination / evaluator-capture / metric-gaming (hard-marker paths); heuristic SUSPECTED paths NOT exercised, broader verification NOT covered",
+  };
   const axes = AXES.map((a: any) => {
     if (a.measurability === "MEASURED" && a.via && (results as any)[a.via]) {
       const r = (results as any)[a.via];
-      return freeze({ ...a, accuracy: r.accuracy, cases: r.cases, correct: r.correct, protocol: `seeded ${a.via} eval with KNOWN answers (objective, reproducible)`, reproducible: true });
+      return freeze({ ...a, accuracy: r.accuracy, cases: r.cases, correct: r.correct, protocol: PROTOCOLS[a.via] || `seeded ${a.via} eval with KNOWN answers`, reproducible: true });
     }
     return freeze({ ...a });
   });
@@ -118,8 +142,9 @@ const INTELLIGENCE_EVALUATION_CONTRACT = Object.freeze({
   id: "V361-INTELLIGENCE-EVALUATION",
   purpose: "§3/P2 — reproducible PER-AXIS evaluation of the existing brain on seeded known-answer problems; no artificial global score; axes needing real missions/external benchmarks are NOT_MEASURED with the dependency",
   reuses: Object.freeze([
-    "odg-hybrid-reasoning (causal + uncertainty/contradiction reasoning soundness)",
+    "odg-hybrid-reasoning (causal + uncertainty/contradiction + multi-hop reasoning soundness)",
     "decomposition-planner (complexity classification) + odg-light-path-selector (tool/path decision)",
+    "meta-intelligence.assessIntegrity + inspector-meta-validation.metaValidate (independent-verification: the inspector as system-under-test over a seeded defect corpus)",
     "odg-mission-performance-profile (speed/resource axis, measured in PR #838)",
   ]),
   invariants: Object.freeze([
