@@ -17,7 +17,9 @@ function main(): void {
   // the REAL brain solves the seeded reasoning problems correctly (objective, known answers)
   check("reasoning axis MEASURED incl genuine MULTI-HOP chains (real hybrid-reasoning on known verdicts)", r.seededEvals.reasoning.cases === 6 && r.seededEvals.reasoning.accuracy === 1 && axis(r, "causal-reasoning").accuracy === 1 && axis(r, "causal-reasoning").reproducible === true);
   check("multi-step-reasoning genuinely tested by ≥2-hop transitive chains (not single-hop only)", r.seededEvals.reasoning.details.some((d: any) => /MULTI-HOP/.test(d.case) && d.ok) && axis(r, "multi-step-reasoning").accuracy === 1);
-  check("counts expose distinctEvals (6 measured axes derive from 3 seeded evals — breadth not overstated)", r.counts.distinctEvals === 3 && r.counts.measured === 6);
+  check("counts expose distinctEvals (7 measured axes derive from 4 seeded evals — breadth not overstated)", r.counts.distinctEvals === 4 && r.counts.measured === 7);
+  // independent-verification measured by treating the integrity-inspector as the system-under-test over a seeded defect corpus
+  check("independent-verification MEASURED: inspector CATCHES all seeded gaming (detectionRate 1.0, 0 FP, effective)", axis(r, "independent-verification").measurability === "MEASURED" && r.seededEvals.independentVerification.accuracy === 1 && r.seededEvals.independentVerification.falsePositives === 0 && r.seededEvals.independentVerification.effective === true);
   check("uncertainty/contradiction axis MEASURED via the same seeded reasoning eval", axis(r, "uncertainty-contradiction").measurability === "MEASURED" && typeof axis(r, "uncertainty-contradiction").accuracy === "number");
   check("decomposition axis MEASURED (seeded TRIVIAL/SIMPLE/META/COMPLEX correct)", r.seededEvals.decomposition.cases === 4 && r.seededEvals.decomposition.accuracy === 1 && axis(r, "decomposition").accuracy === 1);
   check("tool-use / decision axis MEASURED (seeded path selection correct)", r.seededEvals.pathSelection.accuracy === 1 && axis(r, "tool-use").accuracy === 1 && axis(r, "decision-quality").accuracy === 1);
