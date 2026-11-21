@@ -41,8 +41,11 @@ walk(path.join(ROOT, "scripts"), "script", 0);
 const sourceCache: Record<string, string> = {};
 const sourceOf = (m: string) => { if (sourceCache[m] === undefined) { try { sourceCache[m] = fs.readFileSync(path.join(CORE, m + ".ts"), "utf8"); } catch { sourceCache[m] = ""; } } return sourceCache[m]; };
 const binExists = (m: string) => { try { return fs.existsSync(path.join(ROOT, "runtime", "bin", m + ".ts")); } catch { return false; } };
+// a module is TESTED if <m>.test.ts OR a <m>-*.test.ts / <m>.*.test.ts variant exists (e.g. specification-loader-contract.test.ts).
+const TEST_FILES = (() => { try { return fs.readdirSync(CORE).filter((f: string) => f.endsWith(".test.ts")); } catch { return []; } })();
+const hasTest = (m: string) => TEST_FILES.some((f: string) => f === m + ".test.ts" || f.startsWith(m + "-") && f.endsWith(".test.ts") || f.startsWith(m + ".") && f.endsWith(".test.ts"));
 
-const r = CENSUS.census({ graph, scanned, sourceOf, appText, binExists });
+const r = CENSUS.census({ graph, scanned, sourceOf, appText, binExists, hasTest });
 
 process.stdout.write(JSON.stringify({
   componentCensus: "V361-A Chantier-1 — real component inventory over the require-graph (core+bin+app+script scan)",
@@ -50,10 +53,12 @@ process.stdout.write(JSON.stringify({
   noConsumerWhy: r.noConsumerWhy,
   decisionSurface: r.decisionSurface.length,
   decisionSurfaceSample: r.decisionSurface.slice(0, 30),
+  architecture: { circularDeps: r.architecture.circularDeps.length, duplicationGroups: r.architecture.duplicationGroups, trulyUnused: r.architecture.trulyUnused },
   brokenRoutes: "0 — evidenced by the passing build + full test suite (a dangling literal require would fail them); NOT independently asserted here",
 }, null, 2) + "\n");
 process.stdout.write(`\nCENSUS: ${r.counts.CONNECTED} CONNECTED / ${r.counts.NO_CONSUMER} NO_CONSUMER (no STATIC importer; may miss dynamic/spawn/app-dynamic) of ${r.total}. ` +
   `No-consumer WHY: ${Object.entries(r.noConsumerWhy).map(([k, v]) => `${k}=${v}`).join(", ")}. ` +
-  `DECISION SURFACE = ${r.decisionSurface.length} modules with no detected importer + no plausible reason — the per-module judgment pool (liveness UNKNOWN; the export convention is near-universal so EXPORTS_API_NO_CONSUMER is NOT proof of harmlessness). This is NOT "no orphans" — it is the set that needs a per-component connect decision. No consumer fabricated, nothing auto-activated. Broken routes: 0 (evidenced by passing build + suite, not independently asserted).\n`);
+  `DECISION SURFACE = ${r.decisionSurface.length} modules with no detected importer + no plausible reason — the per-module judgment pool (liveness UNKNOWN; the export convention is near-universal so EXPORTS_API_NO_CONSUMER is NOT proof of harmlessness). This is NOT "no orphans" — it is the set that needs a per-component connect decision. No consumer fabricated, nothing auto-activated. ` +
+  `ARCHITECTURE AUDIT (now consumed — previously dormant): ${r.architecture.circularDeps.length} circular-dependency cycle(s), ${r.architecture.duplicationGroups} responsibility-duplication group(s), ${r.architecture.trulyUnused} truly-unused (no consumer + no test). All findings NEEDS_REVIEW (read-only). Broken routes: 0 (evidenced by passing build + suite).\n`);
 process.exit(0);
 export {};

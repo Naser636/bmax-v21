@@ -13,6 +13,7 @@
  */
 
 const SCAN = require("./odg-consumer-scan.js"); // the shared import-reference scan (merge core + bin/app/script consumers)
+const AA = require("./architecture-audit.js");  // circular-dep + duplication + truly-unused audit (previously dormant — now a real consumer)
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -67,10 +68,26 @@ function census(input: any): any {
   // excluded as having a plausible reason. (The export-convention is near-universal in core, so EXPORTS_API_NO_CONSUMER is
   // NOT evidence of harmlessness — it only means "no static importer found", which can miss dynamic/spawn/app-dynamic use.)
   const decisionSurface = noConsumer.filter((r: any) => r.why === "EXPORTS_API_NO_CONSUMER" || r.why === "NO_API_NO_CONSUMER").map((r: any) => r.module).sort();
+
+  // ARCHITECTURE AUDIT — feed the previously-dormant architecture-audit with the REAL module metadata (deps + consumers +
+  // hasTest + exports) so ODG's self-knowledge gains circular-dependency + responsibility-duplication detection (findings are
+  // NEEDS_REVIEW, read-only — nothing merged/retired). This is a genuine consumer of a tested-but-unwired capability.
+  const hasTest = typeof i.hasTest === "function" ? i.hasTest : () => false;
+  const meta = modules.map((m: string) => {
+    // take the LAST `module.exports = {…}` — the real CJS dual-export tail — not the FIRST (which may be a string-literal
+    // fixture/example earlier in the file, e.g. a test contract containing `module.exports = { f }`). (inspection fix)
+    const re = /module\.exports\s*=\s*\{([^}]*)\}/g; let mm: any; let last: any = null; const text = String(sourceOf(m) || "");
+    while ((mm = re.exec(text))) last = mm;
+    const exports = last ? last[1].split(",").map((s: string) => s.trim().split(":")[0].trim()).filter((s: string) => s && /^[A-Za-z_]/.test(s)) : [];
+    return { id: m, deps: arr(graph.deps && graph.deps[m]), consumers: arr(merged[m]).filter((c: any) => !isTest(c) && c !== m), hasTest: hasTest(m) === true, exports };
+  });
+  const architecture = AA.auditArchitecture({ modules: meta, entrypoints: arr(i.entrypoints) });
+
   return freeze({
     total: modules.length, counts: freeze(counts),
     noConsumerWhy: freeze(whyCounts),
     decisionSurface: freeze(decisionSurface),   // modules with no detected importer + no plausible reason ⇒ per-module judgment
+    architecture: freeze({ circularDeps: architecture.circularDeps, duplicationGroups: architecture.summary.duplicationGroups, trulyUnused: architecture.summary.unused, duplicationCandidates: architecture.duplicationCandidates }),
     records: freeze(records),
     note: "component census over the REAL require-graph. CONNECTED = a real non-test consumer exists. NO_CONSUMER = NO STATIC LITERAL/alias importer found — it can MISS dynamic/spawn/app-dynamic consumers, so it OVER-reports orphans (not a reliable 'truly dead' set). The `why` is weak HEURISTIC EVIDENCE: EXPORTS_API_NO_CONSUMER means liveness is UNKNOWN (the export convention is near-universal in core — NOT proof of harmlessness), NOT a cleared library. The decisionSurface is the per-module judgment pool (NOT 'no orphans'); nothing is auto-labelled useless, no consumer is fabricated, nothing is auto-activated.",
   });
@@ -79,7 +96,7 @@ function census(input: any): any {
 const COMPONENT_CENSUS_CONTRACT = Object.freeze({
   id: "V361A-COMPONENT-CENSUS",
   purpose: "Chantier-1 inventory/cartography: classify every core module (CONNECTED / BIN_ENTRY / TEST_ONLY / NO_CONSUMER+heuristic-why) over the real require-graph to ground a connect/activate decision; composes change-impact-graph + odg-consumer-scan, no second graph",
-  reuses: Object.freeze(["change-impact-graph.buildGraph (the real module/consumer graph)", "odg-consumer-scan.mergeConsumers (core + bin/app/script import scan — no fabricated consumers)"]),
+  reuses: Object.freeze(["change-impact-graph.buildGraph (the real module/consumer graph)", "odg-consumer-scan.mergeConsumers (core + bin/app/script import scan — no fabricated consumers)", "architecture-audit.auditArchitecture (circular-dep + responsibility-duplication + truly-unused — a previously-dormant tested capability now given a real consumer; findings are NEEDS_REVIEW, read-only)"]),
   invariants: Object.freeze([
     "CONNECTED requires a REAL non-test consumer; a consumer is NEVER fabricated to inflate connectivity",
     "NO_CONSUMER = no STATIC literal/alias importer found — it can MISS dynamic/spawn/app-dynamic consumers, so it OVER-reports orphans (never cite it as 'truly dead')",
