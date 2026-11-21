@@ -13,7 +13,7 @@ function main(): void {
   check("statuses are CONNECTED / DONE_OPERATIONAL (all V360 connect-gaps closed)", c.capabilities.every((r: any) => r.status === "CONNECTED" || r.status === "DONE_OPERATIONAL"));
 
   // owner-gated + superseded are explicit with their exact dependency/reason; AQL stays BLOCKED (never invented).
-  check("owner decisions listed with exact dependencies incl. AQL BLOCKED (never invented)", Array.isArray(c.ownerDecisionsNeeded) && c.ownerDecisionsNeeded.some((d: any) => d.id === "aql-definition" && d.status === "BLOCKED") && c.ownerDecisionsNeeded.some((d: any) => d.id === "radar-tech-sources"));
+  check("owner decisions listed with exact dependencies incl. AQL BLOCKED (never invented); radar-tech-sources RESOLVED (#824, no longer owner-gated)", Array.isArray(c.ownerDecisionsNeeded) && c.ownerDecisionsNeeded.some((d: any) => d.id === "aql-definition" && d.status === "BLOCKED") && c.ownerDecisionsNeeded.some((d: any) => d.id === "deferred-activation") && !c.ownerDecisionsNeeded.some((d: any) => d.id === "radar-tech-sources") && c.capabilities.some((r: any) => r.id === "radar-tech-sources" && r.status === "DONE_OPERATIONAL"));
   check("superseded capabilities are preserved + explained (not deleted, not re-woken)", c.superseded.some((s: any) => /scheduler/.test(s.id) && /canonical/.test(s.reason)));
 
   // all connected ⇒ nextPriority routes to the top owner decision (honest: next value is an owner call).
