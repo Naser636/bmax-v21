@@ -13,7 +13,11 @@ const complexSpec = { name: "multi", architecture: [{ role: "a", dependsOn: ["b"
 function main(): void {
   // (1) simple + CALIBRATED reliable ⇒ LIGHT_LOCAL, fastest model, gate TRUSTED
   const a = M.selectLightPath({ spec: simpleSpec, reliability: { quality: "CALIBRATED", pForPlanner: 0.8 } });
-  check("simple + calibrated-reliable ⇒ LIGHT_LOCAL, gate TRUSTED", a.pathTier === "LIGHT_LOCAL" && a.reliability.gate === "TRUSTED" && a.complexity === "TRIVIAL" || a.complexity === "SIMPLE");
+  check("simple + calibrated-reliable ⇒ LIGHT_LOCAL, gate TRUSTED", a.pathTier === "LIGHT_LOCAL" && a.reliability.gate === "TRUSTED" && (a.complexity === "TRIVIAL" || a.complexity === "SIMPLE"));
+
+  // (1b) out-of-range P is NOT trusted ⇒ UNVERIFIED (honesty hardening; a bogus >1 "probability" never forces LIGHT-trusted)
+  const oob = M.selectLightPath({ spec: simpleSpec, reliability: { quality: "CALIBRATED", pForPlanner: 1.5 } });
+  check("out-of-range pForPlanner (1.5) ⇒ UNVERIFIED, not TRUSTED", oob.reliability.gate === "UNVERIFIED");
   check("light path uses the fastest (SIMPLE) model recommendation", /SIMPLE task/.test(a.modelReason));
 
   // (2) RELIABILITY OVERRIDES SPEED: simple task but CALIBRATED LOW P ⇒ ESCALATE (not light)

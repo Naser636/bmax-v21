@@ -43,7 +43,8 @@ function selectLightPath(input: any, opts: any = {}): any {
 
   // RELIABILITY GATE — reliability overrides speed (§2.I).
   const rel = isObj(i.reliability) ? i.reliability : {};
-  const calibrated = rel.quality === "CALIBRATED" && isNum(rel.pForPlanner);
+  // a usable calibrated signal needs quality CALIBRATED AND a probability in [0,1]; an out-of-range "P" is NOT trusted (⇒ UNVERIFIED).
+  const calibrated = rel.quality === "CALIBRATED" && isNum(rel.pForPlanner) && rel.pForPlanner >= 0 && rel.pForPlanner <= 1;
   let gate: string; let gateBasis: string;
   if (calibrated && rel.pForPlanner >= XR.NATIVE_THRESHOLD) { gate = "TRUSTED"; gateBasis = `CALIBRATED P=${rel.pForPlanner} ≥ ${XR.NATIVE_THRESHOLD}`; }
   else if (calibrated && rel.pForPlanner < XR.NATIVE_THRESHOLD) { gate = "ESCALATE"; gateBasis = `CALIBRATED P=${rel.pForPlanner} < ${XR.NATIVE_THRESHOLD} ⇒ local path unreliable`; }
@@ -73,7 +74,7 @@ function selectLightPath(input: any, opts: any = {}): any {
     reliability: freeze({ gate, basis: gateBasis }),
     expectedLatency: freeze(latency), latencyBudgetMs: isNum(i.latencyBudgetMs) ? i.latencyBudgetMs : null, fitsBudget,
     recommendation: pathTier === "LIGHT_LOCAL" ? (gate === "UNVERIFIED" ? "LIGHT path (local-first, fastest-correct model) — reliability UNVERIFIED, run it as a PROBE to gather calibration data" : "LIGHT path (local-first, fastest-correct model) — calibrated-reliable")
-      : pathTier === "ESCALATE_PROVIDER" ? "ESCALATE to a heavier reliable path — calibrated evidence shows the local path is unreliable (speed never overrides reliability)"
+      : pathTier === "ESCALATE_PROVIDER" ? `ESCALATE to a heavier reliable path — calibrated evidence shows the local path is unreliable (speed never overrides reliability; base complexity ${complexity}${complexity === "META" ? " ⇒ decompose after escalation" : ""})`
       : pathTier === "DECOMPOSE" ? "DECOMPOSE (meta/complex) into focused sub-specs then assemble — monolithic generation fails on local models (V30)"
       : "DEEP_REASONING / higher-quality model — complexity warrants it",
     selfAuthorized: false, authorizes: false,
