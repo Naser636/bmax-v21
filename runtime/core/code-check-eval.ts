@@ -92,6 +92,11 @@ function evaluate(opts: any = {}): any {
   };
 }
 
+// V361-D P2-B (REVIEWED — architecture-audit flagged a signature overlap): this is one of the SEALED-CORPUS EVAL FAMILY —
+// code-check-eval (code CHECKER accuracy, HERE), generative-repair-eval (LOCAL-MODEL repair), repair-eval (DETERMINISTIC
+// repair families). They share the {CORPUS, CORPUS_VERSION, corpusProvenance, evaluate} SHAPE and the sha256(JSON.stringify)
+// corpus-seal idiom (used by ~12 core modules), but measure DISTINCT subjects with DISTINCT ground-truth / harnesses /
+// classifications. The signature overlap is an INTENTIONAL pattern, NOT duplication to merge (similarity ≠ fusion) — kept specialized.
 export { evaluate, corpusProvenance, CORPUS, CORPUS_VERSION };
 module.exports = { evaluate, corpusProvenance, CORPUS, CORPUS_VERSION };
 

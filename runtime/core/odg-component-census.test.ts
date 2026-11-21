@@ -40,6 +40,38 @@ function main(): void {
   check("architecture findings present (duplicationGroups, trulyUnused numbers)", typeof ra.architecture.duplicationGroups === "number" && typeof ra.architecture.trulyUnused === "number");
   check("no cycle ⇒ empty circularDeps (honest, not fabricated)", r.architecture.circularDeps.length === 0);
 
+  // V361-D P2-B: a REVIEWED duplication family (the 3 sealed-corpus evals) is annotated INTENTIONAL_SPECIALIZATION, while an
+  // un-audited overlap stays UNREVIEWED. The raw NEEDS_REVIEW duplicationCandidate is NOT removed in either case.
+  const evalExports = "module.exports = { evaluate, corpusProvenance, CORPUS, CORPUS_VERSION };";
+  const otherExports = "module.exports = { alpha, beta };";
+  const dupGraph = {
+    modules: ["code-check-eval", "generative-repair-eval", "repair-eval", "widget-a", "widget-b", "solo"],
+    deps: {}, consumers: Object.fromEntries(["code-check-eval", "generative-repair-eval", "repair-eval", "widget-a", "widget-b", "solo"].map((m) => [m, ["campaign-engine"]])),
+  };
+  const dsrc: Record<string, string> = {
+    "code-check-eval": evalExports, "generative-repair-eval": evalExports, "repair-eval": evalExports,
+    "widget-a": otherExports, "widget-b": otherExports, "solo": "module.exports = { only };",
+  };
+  const rd = M.census({ graph: dupGraph, scanned: [], sourceOf: (m: string) => dsrc[m] || "", hasTest: () => true });
+  const reviews = rd.architecture.duplicationReviews;
+  const evalReview = reviews.find((x: any) => x.members.indexOf("code-check-eval") >= 0);
+  const widgetReview = reviews.find((x: any) => x.members.indexOf("widget-a") >= 0);
+  check("eval family reviewed ⇒ verdict INTENTIONAL_SPECIALIZATION (members = the 3 evals)", !!evalReview && evalReview.reviewed === true && evalReview.verdict === "INTENTIONAL_SPECIALIZATION" && evalReview.members.length === 3);
+  check("reviewed verdict carries reviewedBy + rationale (not an empty acknowledgement)", !!evalReview && evalReview.reviewedBy === "V361-D P2-B" && /DISTINCT subjects/.test(evalReview.rationale));
+  check("un-audited overlap stays UNREVIEWED (not silently cleared)", !!widgetReview && widgetReview.reviewed === false && widgetReview.verdict === "UNREVIEWED");
+  check("raw NEEDS_REVIEW duplicationCandidate is KEPT for the reviewed family (finding not suppressed)", rd.architecture.duplicationCandidates.some((d: any) => d.members.indexOf("code-check-eval") >= 0 && d.decision === "NEEDS_REVIEW"));
+
+  // FAIL-CLOSED: if a genuinely-new module later acquires the SAME exports signature, the member-set changes, its reviewKey
+  // no longer matches the registry, and the group must REVERT to UNREVIEWED (a new real duplicate re-opens the finding; it is
+  // NEVER silently absorbed into the "INTENTIONAL_SPECIALIZATION" verdict). Exact member-set keying, not subset matching.
+  const dupGraph4 = {
+    modules: ["code-check-eval", "generative-repair-eval", "repair-eval", "sneaky-copy"],
+    deps: {}, consumers: Object.fromEntries(["code-check-eval", "generative-repair-eval", "repair-eval", "sneaky-copy"].map((m) => [m, ["campaign-engine"]])),
+  };
+  const rd4 = M.census({ graph: dupGraph4, scanned: [], sourceOf: () => evalExports, hasTest: () => true });
+  const review4 = rd4.architecture.duplicationReviews.find((x: any) => x.members.indexOf("code-check-eval") >= 0);
+  check("a 4th module joining the same signature REVERTS the group to UNREVIEWED (not silently absorbed)", !!review4 && review4.members.length === 4 && review4.reviewed === false && review4.verdict === "UNREVIEWED");
+
   check("frozen + contract: no fabricated consumer; NO_CONSUMER over-reports (misses dynamic); decisionSurface≠cleared-bucket; no auto-activate",
     Object.isFrozen(r) &&
     /NEVER fabricated to inflate connectivity/.test(JSON.stringify(M.COMPONENT_CENSUS_CONTRACT.invariants)) &&
