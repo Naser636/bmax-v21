@@ -19,6 +19,8 @@ const ALLOWLIST: readonly string[] = Object.freeze([
   "boamp-datadila.opendatasoft.com",   // BOAMP (France) — Licence Ouverte 2.0, anonymous
   "api.ted.europa.eu",                 // TED (EU) — anonymous search/download
   "data.economie.gouv.fr",             // DECP/OCDS (award data) — anonymous
+  "export.arxiv.org",                  // V360 — arXiv API (Atom XML), anonymous read-only (owner-authorized tech source; exact host, no sub-domain wildcard)
+  "api.github.com",                    // V360 — GitHub public REST API (JSON), anonymous read-only (owner-authorized tech source; exact host)
 ]);
 
 function isIpLiteral(host: string): boolean { return /^\d{1,3}(\.\d{1,3}){3}$/.test(host) || host.includes(":"); }
