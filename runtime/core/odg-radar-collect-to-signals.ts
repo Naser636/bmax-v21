@@ -37,12 +37,15 @@ async function collectToProposals(src: any, opts: any = {}): Promise<any> {
 
   const fetcher = typeof o.fetcher === "function" ? o.fetcher : HTTP.get;
   let res: any;
-  try { res = await fetcher(url, { timeoutMs: o.timeoutMs || 20000, maxBytes: o.maxBytes || 50000, allowlist: HTTP.ALLOWLIST }); }
+  // contentTypes/headers pass-through so non-JSON allowlisted sources (e.g. arXiv Atom XML) validate + are accepted.
+  try { res = await fetcher(url, { timeoutMs: o.timeoutMs || 20000, maxBytes: o.maxBytes || 50000, allowlist: HTTP.ALLOWLIST, contentTypes: o.contentTypes, headers: o.headers }); }
   catch (e: any) { return freeze({ enabled: true, decision: "FETCH_ERROR", reason: String((e && e.message) || e), signalCount: 0, proposals: freeze([]), quarantined: 0 }); }
   if (!res || res.ok !== true) return freeze({ enabled: true, decision: "FETCH_FAILED", reason: (res && res.code) || "no response", signalCount: 0, proposals: freeze([]), quarantined: 0 });
 
+  // parser seam (default JSON.parse) → a records container; a non-JSON source (arXiv Atom) supplies its own parser.
   let parsed: any = null;
-  try { parsed = JSON.parse(String(res.body || "")); } catch { return freeze({ enabled: true, decision: "PARSE_FAILED", reason: "response is not JSON", signalCount: 0, proposals: freeze([]), quarantined: 0 }); }
+  const parser = typeof o.parser === "function" ? o.parser : (b: string) => JSON.parse(b);
+  try { parsed = parser(String(res.body || "")); } catch { return freeze({ enabled: true, decision: "PARSE_FAILED", reason: "response body did not parse with the supplied/default parser", signalCount: 0, proposals: freeze([]), quarantined: 0 }); }
   const records = arr(atPath(parsed, s.recordsPath));
   // map each record → an UNVERIFIED rawSignal (title/claims/categories by caller field map); sourceId = the host.
   const sourceId = typeof s.sourceId === "string" ? s.sourceId : v.host;
