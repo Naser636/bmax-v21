@@ -18,6 +18,7 @@ function isObj(v: any): boolean { return v !== null && typeof v === "object" && 
 const CAPABILITIES = Object.freeze([
   freeze({ id: "learning-intelligence", priority: 1, module: "odg-native-learning-pass", status: "CONNECTED", pr: 814, note: "learning-loop over real native outcomes (recurring failures → consolidated lessons)" }),
   freeze({ id: "radar-to-learning", priority: 1, module: "odg-radar-learning-bridge", status: "CONNECTED", pr: 826, note: "qualified radar signals → UNCONFIRMED candidate lessons (canonical memory + trust gate; external never auto-fact); retrieved + reused as mission context" }),
+  freeze({ id: "learning-decision-loop", priority: 1, module: "odg-lesson-decision-loop", status: "CONNECTED", pr: 827, note: "Radar→Learning→DECISION→MEASURE: unconfirmed lesson doesn't auto-change a decision; corroborated+sealed does (before/after); outcome NOT_MEASURED (never fabricated)" }),
   freeze({ id: "radar-self-evaluation", priority: 2, module: "frontier-radar-self-improvement", status: "CONNECTED", pr: 813, note: "wired into frontier-pipeline (precision/noise/miss, PROPOSED-only)" }),
   freeze({ id: "radar-live-collection", priority: 2, module: "odg-radar-live-collect", status: "DONE_OPERATIONAL", pr: 817, note: "governed bounded egress; demonstrated 2 COLLECTED from FR open-data (kill-switch DRY default)" }),
   freeze({ id: "radar-qualification", priority: 2, module: "odg-radar-collect-to-signals", status: "CONNECTED", pr: 818, note: "collection → runRadar qualify → PROPOSAL (proposals, not missions)" }),
