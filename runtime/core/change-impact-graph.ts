@@ -71,13 +71,17 @@ function moduleNames(root: string): string[] {
   return Array.from(names).sort();
 }
 
-/** Direct internal deps (relative `./x` requires), de-duplicated + sorted. */
+/** Direct internal deps (relative `./x` requires), de-duplicated + sorted. The specifier MUST be normalised to the module
+ * BASENAME: core modules import siblings both as `require("./x")` AND, dominantly, as `require("./x.js")` (the compiled-port
+ * convention). The node set is basenames (no extension), so a `.js`/`.ts` extension on the specifier must be stripped — else
+ * buildGraph's `present.has(x)` filter silently DROPS every `.js`-style edge (the majority), under-reporting the whole graph
+ * and causing false "orphan"/"no-consumer" verdicts in every downstream analysis (coverage/hazard/cartography/dep-planner). */
 function directDepsOf(root: string, name: string): string[] {
   const src = refSource(root, name);
   const { literal } = parseRequiresFromSource(src);
   const deps = new Set<string>();
   for (const spec of literal) {
-    if (spec.startsWith("./")) deps.add(spec.slice(2));
+    if (spec.startsWith("./")) deps.add(spec.slice(2).replace(/\.(js|ts)$/, "")); // normalise ./x.js → x (basename node)
     else if (spec.startsWith("../")) continue; // out-of-core refs are not core nodes
   }
   return [...deps].sort();
