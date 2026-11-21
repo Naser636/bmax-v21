@@ -73,10 +73,12 @@ function census(input: any): any {
   // hasTest + exports) so ODG's self-knowledge gains circular-dependency + responsibility-duplication detection (findings are
   // NEEDS_REVIEW, read-only — nothing merged/retired). This is a genuine consumer of a tested-but-unwired capability.
   const hasTest = typeof i.hasTest === "function" ? i.hasTest : () => false;
-  const EXPORTS_RE = /module\.exports\s*=\s*\{([^}]*)\}/;
   const meta = modules.map((m: string) => {
-    const ex = EXPORTS_RE.exec(String(sourceOf(m) || ""));
-    const exports = ex ? ex[1].split(",").map((s) => s.trim().split(":")[0].trim()).filter((s) => s && /^[A-Za-z_]/.test(s)) : [];
+    // take the LAST `module.exports = {…}` — the real CJS dual-export tail — not the FIRST (which may be a string-literal
+    // fixture/example earlier in the file, e.g. a test contract containing `module.exports = { f }`). (inspection fix)
+    const re = /module\.exports\s*=\s*\{([^}]*)\}/g; let mm: any; let last: any = null; const text = String(sourceOf(m) || "");
+    while ((mm = re.exec(text))) last = mm;
+    const exports = last ? last[1].split(",").map((s: string) => s.trim().split(":")[0].trim()).filter((s: string) => s && /^[A-Za-z_]/.test(s)) : [];
     return { id: m, deps: arr(graph.deps && graph.deps[m]), consumers: arr(merged[m]).filter((c: any) => !isTest(c) && c !== m), hasTest: hasTest(m) === true, exports };
   });
   const architecture = AA.auditArchitecture({ modules: meta, entrypoints: arr(i.entrypoints) });

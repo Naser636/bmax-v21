@@ -41,7 +41,9 @@ walk(path.join(ROOT, "scripts"), "script", 0);
 const sourceCache: Record<string, string> = {};
 const sourceOf = (m: string) => { if (sourceCache[m] === undefined) { try { sourceCache[m] = fs.readFileSync(path.join(CORE, m + ".ts"), "utf8"); } catch { sourceCache[m] = ""; } } return sourceCache[m]; };
 const binExists = (m: string) => { try { return fs.existsSync(path.join(ROOT, "runtime", "bin", m + ".ts")); } catch { return false; } };
-const hasTest = (m: string) => { try { return fs.existsSync(path.join(CORE, m + ".test.ts")); } catch { return false; } };
+// a module is TESTED if <m>.test.ts OR a <m>-*.test.ts / <m>.*.test.ts variant exists (e.g. specification-loader-contract.test.ts).
+const TEST_FILES = (() => { try { return fs.readdirSync(CORE).filter((f: string) => f.endsWith(".test.ts")); } catch { return []; } })();
+const hasTest = (m: string) => TEST_FILES.some((f: string) => f === m + ".test.ts" || f.startsWith(m + "-") && f.endsWith(".test.ts") || f.startsWith(m + ".") && f.endsWith(".test.ts"));
 
 const r = CENSUS.census({ graph, scanned, sourceOf, appText, binExists, hasTest });
 
