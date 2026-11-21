@@ -28,14 +28,18 @@ function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
 function routeKind(route: any, explicit: any): string {
   if (explicit === "native" || explicit === "provider") return explicit;
   const r = String(route == null ? "" : route).toLowerCase();
-  if (/native|local/.test(r)) return "native";
-  if (/provider|remote|cloud|api|escalat/.test(r)) return "provider";
+  const nativeish = /native|local/.test(r);
+  const providerish = /provider|remote|cloud|api|escalat/.test(r);
+  if (nativeish && providerish) return "unknown"; // AMBIGUOUS name (both token sets) ⇒ fail-closed, not resolved by regex order
+  if (nativeish) return "native";
+  if (providerish) return "provider";
   return "unknown";
 }
 
 /**
  * assessModelIntelligence(input, opts?) -> frozen view. input: {
- *   missionType, history: [{ success, ... }] (REAL observed outcomes, for calibrated selection),
+ *   missionType, history: [{ missionType|type, status|verified, ... }] (REAL observed outcomes per odg-calibrated-psuccess;
+ *     a `success` field is NOT counted — use status ACCEPTED/VALIDATED/REJECTED/FAILED or verified true/false),
  *   selected: { route, latencyMs: number[] } (the chosen route/model + its latency samples),
  *   baseline?: { route, latencyMs: number[] } (the alternative/prior route to compare against) }.
  *   opts: { minSamples? (default 3 for the perf compare), maxVarianceRatio? (1.5), minSampleN? (20 for latency summary) }.

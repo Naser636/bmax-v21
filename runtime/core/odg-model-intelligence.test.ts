@@ -42,6 +42,10 @@ function main(): void {
   const unk = M.assessModelIntelligence({ missionType: "eng", history: CAL_HI, selected: { route: "mystery-engine", latencyMs: lat(24, 40) }, baseline: { route: "provider", latencyMs: lat(24, 100) } });
   check("unknown route class + faster ⇒ MEASURED_FASTER_RELIABILITY_UNVERIFIED (not a full win)", unk.selection.reliabilityAligned === "UNKNOWN" && unk.verdict === "MEASURED_FASTER_RELIABILITY_UNVERIFIED");
 
+  // (5d) AMBIGUOUS route name (both native-ish and provider-ish tokens) ⇒ fail-closed UNKNOWN (not resolved by regex order)
+  const ambig = M.assessModelIntelligence({ missionType: "eng", history: CAL_HI, selected: { route: "local-cloud-proxy-provider", latencyMs: lat(24, 40) }, baseline: { route: "provider", latencyMs: lat(24, 100) } });
+  check("ambiguous route name ⇒ reliabilityAligned UNKNOWN (fail-closed, not a false native win)", ambig.selection.reliabilityAligned === "UNKNOWN" && ambig.verdict === "MEASURED_FASTER_RELIABILITY_UNVERIFIED");
+
   // (6) NO_DIFFERENCE: identical latency ⇒ no claimed win
   const same = M.assessModelIntelligence({ missionType: "eng", history: CAL_HI, selected: { route: "native-local", latencyMs: lat(24, 100) }, baseline: { route: "provider", latencyMs: lat(24, 100) } });
   check("identical latency ⇒ NO_DIFFERENCE ⇒ SELECTED_NO_MEASURED_GAIN (no claimed win)", same.measuredPerformance === "NO_DIFFERENCE" && same.verdict === "SELECTED_NO_MEASURED_GAIN");
