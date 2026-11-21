@@ -32,6 +32,14 @@ function main(): void {
   check("test module excluded from the census", rec(r, "connected.test") === undefined && r.total === 7);
   check("noConsumerWhy reconciles (5 NO_CONSUMER modules classified)", Object.values(r.noConsumerWhy).reduce((a: any, b: any) => a + b, 0) === 5);
 
+  // CHANTIER-2 connection: architecture-audit (previously dormant) is now a real consumer — fed the census metadata, it
+  // surfaces circular dependencies over the REAL deps. Seed a cycle a->b->a and confirm it is detected.
+  const cyc = { modules: ["a", "b", "x"], deps: { a: ["b"], b: ["a"], x: [] }, consumers: { a: ["campaign-engine"], b: ["campaign-engine"], x: ["campaign-engine"] } };
+  const ra = M.census({ graph: cyc, scanned: [], sourceOf: () => "module.exports = { f };", hasTest: () => true });
+  check("architecture-audit CONSUMED by census: a real circular dependency (a↔b) is detected", Array.isArray(ra.architecture.circularDeps) && ra.architecture.circularDeps.length >= 1);
+  check("architecture findings present (duplicationGroups, trulyUnused numbers)", typeof ra.architecture.duplicationGroups === "number" && typeof ra.architecture.trulyUnused === "number");
+  check("no cycle ⇒ empty circularDeps (honest, not fabricated)", r.architecture.circularDeps.length === 0);
+
   check("frozen + contract: no fabricated consumer; NO_CONSUMER over-reports (misses dynamic); decisionSurface≠cleared-bucket; no auto-activate",
     Object.isFrozen(r) &&
     /NEVER fabricated to inflate connectivity/.test(JSON.stringify(M.COMPONENT_CENSUS_CONTRACT.invariants)) &&
