@@ -40,7 +40,9 @@ const { hasConsumer: hasImport } = SCAN.mergeConsumers(graph, collectScanned());
 const moduleExists = (name: string) => moduleSet.has(name);
 const hasConsumer = (name: string) => hasImport(name) || (() => { try { return fs.existsSync(path.join(ROOT, "runtime", "bin", name + ".ts")); } catch { return false; } })();
 
-const compass = COMPASS.buildCompass({ asOf: new Date().toISOString().slice(0, 10) });
+// pass the REAL hasConsumer so the compass DRIFT check runs: a capability that lost its last non-test consumer becomes
+// DRIFT_NO_CONSUMER (∉ CONNECTED/DONE_OPERATIONAL) and can no longer inflate a dimension to COVERED via the TRACKED path.
+const compass = COMPASS.buildCompass({ asOf: new Date().toISOString().slice(0, 10), hasConsumer });
 const r = DC.buildDimensionCoverage({ compass, moduleExists, hasConsumer });
 
 process.stdout.write(JSON.stringify({

@@ -82,7 +82,7 @@ const DIMENSION_COVERAGE_CONTRACT = Object.freeze({
   purpose: "§10/§14 — Boussole completeness across the 15 strategic V360 dimensions; grounds each in the compass (PR-anchored) + the real module/consumer graph; names blind/thin spots honestly; a lens, not a second roadmap",
   reuses: Object.freeze(["odg-v360-compass.buildCompass (PR-anchored tracked capabilities)", "injected real module-exists + has-consumer checks (the bin supplies them from change-impact-graph + odg-consumer-scan)"]),
   invariants: Object.freeze([
-    "a dimension is COVERED only with a real backing module: TRACKED (merged-PR compass capability) OR OPERATIONAL_UNTRACKED (exists + real non-test consumer)",
+    "a dimension is COVERED only with a real backing module: TRACKED (merged-PR compass capability — drift-validated when the bin passes the real hasConsumer to buildCompass) OR OPERATIONAL_UNTRACKED (exists + real non-test consumer)",
     "a module that merely EXISTS with no consumer is EXISTS_ORPHAN (does NOT make a dimension covered); THIN = only orphans; BLIND = no backing module",
     "coverage is never claimed without a real backing module; blind/thin spots are reported honestly",
     "PURE/deterministic/frozen READ-ONLY lens over odg-v360-compass + the real module/consumer graph; no second roadmap/compass",
