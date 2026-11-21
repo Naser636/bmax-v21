@@ -49,9 +49,22 @@ function main(): void {
   const d4 = M.decide(r1.state, tueNight + 30 * 60000); // 30 min later, same slot/week
   check("(4) same slot twice this week ⇒ refused (duplicate prevented)", d4.trigger === false && /already ran this week/.test(d4.reason));
 
-  // (5) a cycle already running → no overlap
-  const d5 = M.decide({ running: true }, tueNight);
-  check("(5) cycle already running ⇒ no overlap (rejected)", d5.trigger === false && /no overlap/.test(d5.reason));
+  // (5) a cycle already running (fresh lock) → no overlap
+  const d5 = M.decide({ running: true, lockAtMs: tueNight }, tueNight);
+  check("(5) cycle already running (fresh lock) ⇒ no overlap (rejected)", d5.trigger === false && /no overlap/.test(d5.reason));
+  const d5b = M.decide({ running: true }, tueNight); // running:true, no timestamp ⇒ treated as fresh (fail-closed) ⇒ rejected
+  check("(5b) running with no timestamp ⇒ still rejected (fail-closed)", d5b.trigger === false);
+  // (5c) STALE lock (prior process crashed > 3h ago) ⇒ self-heal, trigger allowed again (no deadlock)
+  const d5c = M.decide({ running: true, lockAtMs: tueNight - 4 * 3600000 }, tueNight);
+  check("(5c) STALE lock (>3h) ⇒ self-heal, trigger allowed (no deadlock)", d5c.trigger === true && d5c.slot.id === "night-A");
+
+  // (5d) REAL cross-process overlap: a persisted acquire() lock makes a concurrent runner's decide() refuse, and execute clears it.
+  const held = M.acquire({}, tueNight);                 // what runner A persists to disk before executing
+  check("acquire persists running:true + lockAtMs", held.running === true && held.lockAtMs === tueNight);
+  const dConcurrent = M.decide(held, tueNight + 60000); // runner B reads A's persisted lock
+  check("(5d) concurrent runner sees the persisted lock ⇒ refused (real overlap protection)", dConcurrent.trigger === false && /no overlap/.test(dConcurrent.reason));
+  const afterExec = M.execute(held, { now: tueNight, slot: d1.slot, cycleFn: okCycle });
+  check("(5d) execute clears the lock (running:false, lockAtMs null)", afterExec.state.running === false && afterExec.state.lockAtMs === null);
 
   // (6)+(7) error during the cycle → state preserved, slot NOT marked done, safe re-run (controlled recovery)
   const rErr = M.run({}, { now: tueNight, cycleFn: () => { throw new Error("boom"); } });

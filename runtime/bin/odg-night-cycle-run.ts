@@ -60,10 +60,21 @@ const forcedLabel = forced ? "FORCED_CONTROLLED_TRIGGER (demonstration — not a
 let state: any = {};
 try { if (fs.existsSync(STATE_PATH)) state = JSON.parse(fs.readFileSync(STATE_PATH, "utf8")); } catch { state = {}; }
 
-const report = SCHED.run(state, { now, cycleFn: () => buildCycleResult() });
+function persist(s: any): void { try { fs.mkdirSync(path.dirname(STATE_PATH), { recursive: true }); fs.writeFileSync(STATE_PATH, JSON.stringify(s, null, 2)); } catch { /* best-effort dev persistence */ } }
 
-// persist the new trigger state (gitignored dev file) only when a run occurred.
-if (report.ran && report.state) { try { fs.mkdirSync(path.dirname(STATE_PATH), { recursive: true }); fs.writeFileSync(STATE_PATH, JSON.stringify(report.state, null, 2)); } catch { /* best-effort dev persistence */ } }
+// REAL cross-process overlap protection: gate, then PERSIST a timestamped lock (running=true) to disk BEFORE executing, so a
+// concurrent odg-night-cycle-run reads the lock and refuses; a crashed run self-heals once the lock goes stale (>3h). After the
+// cycle, persist the final state (running=false). This is the honest reconciliation of overlap-protection with crash-recovery.
+let report: any;
+const gate = SCHED.decide(state, now);
+if (!gate.trigger) {
+  report = { ran: false, lifecycle: "SKIPPED", reason: gate.reason, slot: gate.slot };
+} else {
+  const locked = SCHED.acquire(state, now);
+  persist(locked);                                                   // lock on disk BEFORE executing (cross-process guard)
+  report = SCHED.execute(locked, { now, slot: gate.slot, cycleFn: () => buildCycleResult() });
+  persist(report.state);                                             // release lock + record the slot done
+}
 
 const rt = SCHED.realTriggerStatus();
 process.stdout.write(JSON.stringify({
