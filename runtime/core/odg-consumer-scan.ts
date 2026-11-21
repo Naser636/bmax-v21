@@ -7,18 +7,20 @@
  * An IMPORT reference is matched; a BARE data-string mention is NOT. Three real forms:
  *   (a) path form          — `/name` or `/name.js`         (require("../core/name.js") / require("../core/name"))
  *   (b) path.join segment  — `"name.js"`                   (require(path.join(root,"core","name.js")))
- *   (c) call-arg indirect  — `(` + "name"                  (r("name") / require("name") — the arg is preceded by `(`)
- * A data array element (`["name", …]` / `, "name"`) is preceded by `[` or `,`, NOT `(`, so (c) does not match it — this
- * avoids counting a registry key / priority list / log string as a consumer (which would inflate CONNECTED and hide orphans),
- * while still catching the `r("name")` indirection that the path-only form missed (which would false-flag a real consumer).
+ *   (c) require-alias call — `require|import|r (` + "name" (r("name") / require("name") — a KNOWN require-alias callee)
+ * A data array element (`["name", …]` / `, "name"`) is preceded by `[`/`,`, and a data-registry call like `M("name")`
+ * (a path-string builder, NOT a require) has a non-require callee — so neither matches (c). This avoids counting a registry
+ * key / priority list / path-table / log string as a consumer (which would inflate CONNECTED and hide orphans), while still
+ * catching the `r("name")` require-indirection that the path-only form missed (which would false-flag a real consumer).
+ * (Independent-inspection fix: (c) was `\(` + "name" — any call — and over-matched `M("name")` path-builders.)
  */
 
 function esc(s: string): string { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
 
-/** The import-reference regex for ONE core module basename. */
+/** The import-reference regex for ONE core module basename. Call-arg form restricted to known require-alias callees. */
 function moduleRefRegex(name: string): RegExp {
   const e = esc(name);
-  return new RegExp('(?:/' + e + '(?:\\.js)?["\']|["\']' + e + '\\.js["\']|\\(\\s*["\']' + e + '["\'])');
+  return new RegExp('(?:/' + e + '(?:\\.js)?["\']|["\']' + e + '\\.js["\']|\\b(?:require|import|r)\\s*\\(\\s*["\']' + e + '["\'])');
 }
 
 /** True iff source `src` imports core module `name` (any of the three real forms; a bare data-string mention is rejected). */
@@ -46,7 +48,7 @@ function mergeConsumers(graph: any, scanned: any[]): any {
     for (const m of modules) if (re.get(m)!.test(s.src)) merged[m].push(s.consumer);
   }
   for (const m of Object.keys(merged)) merged[m] = Array.from(new Set(merged[m])).sort();
-  const isTest = (c: string) => /\.test$/.test(c) || /-test$/.test(c);
+  const isTest = (c: string) => /\.test$/.test(c) || /\.test\.(ts|js)$/.test(c); // NOT /-test$/ — would drop real modules like odg-ks-test
   const consumersOf = (m: string) => (merged[m] || []).slice();
   const hasConsumer = (m: string) => (merged[m] || []).some((c) => !isTest(c) && c !== m);
   return { consumersOf, hasConsumer, merged: Object.freeze(merged) };
@@ -56,9 +58,10 @@ const CONSUMER_SCAN_CONTRACT = Object.freeze({
   id: "ODG-CONSUMER-SCAN",
   purpose: "single shared IMPORT-reference scan for coverage + self-improvement cycle; matches real require forms (path / path.join / call-arg indirection) but NOT bare data-string mentions",
   invariants: Object.freeze([
-    "matches path form (/name[.js]), path.join segment (\"name.js\"), and call-arg indirection ((\"name\")) — a real require",
-    "rejects a bare data-string mention ([\"name\"] / , \"name\") — avoids inflating CONNECTED / hiding orphans",
+    "matches path form (/name[.js]), path.join segment (\"name.js\"), and require-alias call (require|import|r(\"name\")) — a real require",
+    "rejects a bare data-string mention ([\"name\"] / , \"name\") AND a non-require data-registry call (M(\"name\")) — avoids inflating CONNECTED / hiding orphans",
     "catches r(\"name\") indirection — avoids false-flagging a real consumer as drift/orphan",
+    "test consumers excluded via \\.test only (NOT -test, which would drop real modules like odg-ks-test)",
     "PURE/deterministic; the ONE place both bins share so coverage and the cycle can't disagree",
   ]),
 });

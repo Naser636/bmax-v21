@@ -20,6 +20,10 @@ function main(): void {
   check("data array element (bracket) rejected", ref('P2: ["agent-governance-harness", "intelligence-loop"]', "agent-governance-harness") === false);
   check("data array second element (comma) rejected", ref('P2: ["agent-governance-harness", "intelligence-loop"]', "intelligence-loop") === false);
   check("bare quoted id rejected", ref('const id = "campaign-engine";', "campaign-engine") === false);
+  // a NON-require data-registry CALL (path-string builder) ⇒ NO match (independent-inspection fix: callee must be a require alias)
+  check("non-require call M(\"name\") rejected (path-builder, not a consumer)", ref('const M=(p)=>"runtime/core/"+p+".ts"; M("capability-attribution")', "capability-attribution") === false);
+  check("arbitrary call foo(\"name\") rejected", ref('foo("market-intelligence")', "market-intelligence") === false);
+  check("require-alias import(\"name\") accepted", ref('const x = import("engineering-executor")', "engineering-executor") === true);
 
   // substring safety ⇒ NO match
   check("substring path not matched (frontier-radar vs frontier-radar-store)", ref('require("../core/frontier-radar-store.js")', "frontier-radar") === false);
@@ -39,10 +43,14 @@ function main(): void {
   check("merge: bare mention of a in app did NOT add app:page as consumer", mm.merged.a.indexOf("app:page") < 0);
   const mm2 = M.mergeConsumers({ modules: ["z"], consumers: { z: ["z.test"] } }, []);
   check("hasConsumer ignores a test-only consumer", mm2.hasConsumer("z") === false);
+  // a REAL module whose name ends in -test (odg-ks-test, a statistical test) must NOT be treated as a test consumer.
+  const mm3 = M.mergeConsumers({ modules: ["m", "odg-ks-test"], consumers: { m: ["odg-ks-test"], "odg-ks-test": [] } }, []);
+  check("a -test-named real module counts as a consumer (odg-ks-test not dropped)", mm3.hasConsumer("m") === true);
 
-  check("contract: matches real require forms, rejects bare mention, catches r() indirection",
-    /call-arg indirection/.test(JSON.stringify(M.CONSUMER_SCAN_CONTRACT.invariants)) &&
+  check("contract: matches real require forms, rejects bare mention + non-require call, catches r() indirection",
+    /require-alias call/.test(JSON.stringify(M.CONSUMER_SCAN_CONTRACT.invariants)) &&
     /rejects a bare data-string/.test(JSON.stringify(M.CONSUMER_SCAN_CONTRACT.invariants)) &&
+    /non-require data-registry call/.test(JSON.stringify(M.CONSUMER_SCAN_CONTRACT.invariants)) &&
     /r\(\\"name\\"\) indirection/.test(JSON.stringify(M.CONSUMER_SCAN_CONTRACT.invariants)));
 
   process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-consumer-scan (shared IMPORT scan: matches path / path.join / r(\"name\") call-arg; REJECTS bare data-string mentions; merge ignores test consumers; the one place coverage + cycle share)" : failures + " FAIL"}\n`);

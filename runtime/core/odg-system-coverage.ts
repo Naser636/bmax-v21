@@ -17,7 +17,7 @@ const CIG = require("./change-impact-graph.js");
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
-function isTestName(m: string): boolean { return /\.test$/.test(m) || /\.test\.ts$/.test(m) || /-test$/.test(m); }
+function isTestName(m: string): boolean { return /\.test$/.test(m) || /\.test\.ts$/.test(m); } // NOT /-test$/ — would drop real modules like odg-ks-test
 
 // capability DOMAINS (name heuristics) — a module is assigned to the FIRST matching domain, else "other".
 const DOMAINS = Object.freeze([

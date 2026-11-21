@@ -94,7 +94,7 @@ function runCycle(input: any, opts: any = {}): any {
     if (cl && cl.decisionChanged === true && typeof cl.verifiedChoice === "string" && approaches.indexOf(cl.verifiedChoice) >= 0) chosenApproach = cl.verifiedChoice;
     else if (cl && typeof cl.baselineChoice === "string" && approaches.indexOf(cl.baselineChoice) >= 0) chosenApproach = cl.baselineChoice;
   } catch { chosenApproach = approaches[0]; }
-  stages.push(freeze({ stage: "LEARN", status: "DECISION", lessonsRetrieved: lessonsRetrieved.length, learningInfluenced, chosenApproach, note: "approaches run through odg-lesson-decision-loop.closeLoop; an UNCONFIRMED radar lesson does NOT change the approach (structural honesty); a corroborated+sealed one would" }));
+  stages.push(freeze({ stage: "LEARN", status: "DECISION", lessonsRetrieved: lessonsRetrieved.length, learningInfluenced, chosenApproach, note: "approaches run through odg-lesson-decision-loop.closeLoop; an UNCONFIRMED radar lesson does NOT change the approach (structural honesty). The corroborated+sealed path is AVAILABLE in closeLoop but is NOT exercised by the current PROPOSED-only wiring (no verifiedPractice source is supplied), so in production chosenApproach is always the baseline approach." }));
 
   // (5) DESIGN — a PROPOSAL to close the selected gap using the chosen approach. PROPOSED-only, no write.
   const ACTION: Record<string, string> = {
