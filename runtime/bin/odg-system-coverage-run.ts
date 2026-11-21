@@ -22,13 +22,18 @@ const graph = CIG.buildGraph(ROOT);
 const coreConsumers: Record<string, string[]> = graph.consumers || {};
 const moduleSet = new Set<string>(graph.modules);
 
-// (2) scan the real CONSUMER surfaces outside core — runtime/bin (entry-points), the Next app (src/) and scripts/ — for a
-// quoted reference to each core module basename. A module referenced by a bin/app/script is a REAL (non-test) consumer, so
-// it is NOT an orphan. This widens CONNECTION beyond the core-only graph ⇒ fewer false orphans, more honest grounding.
+// (2) scan the real CONSUMER surfaces outside core — runtime/bin (entry-points), the Next app (src/) and scripts/ — for an
+// IMPORT reference (path-form or path.join .js segment, NOT a bare data-string mention) to each core module basename. A
+// module imported by a bin/app/script is a REAL (non-test) consumer, so it is NOT an orphan. This widens CONNECTION beyond
+// the core-only graph ⇒ fewer false orphans, without the inverse error of counting textual mentions as calls.
 const merged: Record<string, string[]> = {};
 for (const m of graph.modules) merged[m] = (coreConsumers[m] || []).slice();
+// Match a real IMPORT reference only, not a bare data-string mention. A cross-dir import of a core module always appears
+// EITHER path-form (`/<name>` or `/<name>.js`, e.g. require("../core/<name>.js")) OR as a path.join segment (`"<name>.js"`
+// with the extension). A bare quoted id (`"<name>"` — no leading `/`, no `.js`: a registry key / priority list / log string)
+// is NOT a consumer and is correctly dropped (independent-inspection fix: avoids inflating CONNECTED / hiding real orphans).
 const moduleRe = new Map<string, RegExp>();
-for (const m of graph.modules) moduleRe.set(m, new RegExp('["\'/]' + m.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + '(?:\\.js)?["\']'));
+for (const m of graph.modules) { const e = m.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); moduleRe.set(m, new RegExp('(?:/' + e + '(?:\\.js)?|["\']' + e + '\\.js)["\']')); }
 function walk(dir: string, tag: string, depth: number): void {
   let entries: any[]; try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
   for (const e of entries) {
