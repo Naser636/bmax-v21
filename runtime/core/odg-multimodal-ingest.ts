@@ -57,7 +57,7 @@ function classifyModality(ref: any): string {
 
 /**
  * ingest(items, opts?) -> frozen { items, summary, note }. items: [{ uri|name|path, mimeType?, sizeBytes?, extractedText? }].
- *   opts: { toolPresent(cmd)->bool (probe local CLIs; default all absent), now? }.
+ *   opts: { toolPresent(cmd)->bool (probe local CLIs; default all absent) }.
  * Each item: modality + analyzable/status + the exact missing analyzer + REFERENCE provenance. Media content is NEVER
  * analyzed or fabricated here; only text (or supplied extractedText) is readable.
  */
@@ -65,7 +65,7 @@ function ingest(items: any[], opts: any = {}): any {
   const o = isObj(opts) ? opts : {};
   const toolPresent = typeof o.toolPresent === "function" ? o.toolPresent : () => false; // default: nothing installed (ground truth)
   const videoTools = VID.probeTools(toolPresent); // honest video tool probe (reused)
-  const videoVerdict = VID.assess({ tools: videoTools });
+  const videoVerdict = VID.assess({ toolsPresent: videoTools }); // assess reads `toolsPresent` (not `tools`) — so the probe actually gates
 
   const out = arr(items).map((it: any) => {
     const ref = isObj(it) ? it : {};
@@ -91,7 +91,10 @@ function ingest(items: any[], opts: any = {}): any {
   for (const it of out) byStatus[it.status] = (byStatus[it.status] || 0) + 1;
   return freeze({
     items: freeze(out),
-    summary: freeze({ total: out.length, readable: out.filter((i) => i.analyzable).length, notAnalyzed: out.filter((i) => i.status === "NOT_ANALYZED").length, byStatus: freeze(byStatus), videoCapable: videoVerdict.analyzable === true }),
+    // `textReadable` = content actually available here (text / supplied text). `analyzerAvailable` = a local analyzer exists
+    // but was NOT run by this module (content still not analyzed) — kept SEPARATE so "an analyzer exists" is never conflated
+    // with "content is available".
+    summary: freeze({ total: out.length, textReadable: out.filter((i) => i.status === "TEXT_READABLE" || i.status === "ANALYZABLE_VIA_SUPPLIED_TEXT").length, analyzerAvailable: out.filter((i) => i.status === "ANALYZER_AVAILABLE").length, notAnalyzed: out.filter((i) => i.status === "NOT_ANALYZED").length, byStatus: freeze(byStatus), videoCapable: videoVerdict.analyzable === true }),
     note: "multimodal INGEST: classify modality + gate on the local analyzer + REFERENCE provenance. Media CONTENT is NEVER analyzed or fabricated here — only text (or supplied extractedText) is readable; every other modality with no local analyzer is NOT_ANALYZED with the exact missing tool. Provenance is of the REFERENCE, not the media bytes.",
   });
 }

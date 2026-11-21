@@ -30,7 +30,7 @@ process.stdout.write(JSON.stringify({
   items: r.items.map((i: any) => ({ ref: i.ref, modality: i.modality, status: i.status, analyzable: i.analyzable, missingAnalyzer: i.missingAnalyzer || null, contentAnalyzed: i.contentAnalyzed })),
   summary: r.summary,
 }, null, 2) + "\n");
-process.stdout.write(`\nMULTIMODAL-INGEST: ${r.summary.total} refs; ${r.summary.readable} readable (text/supplied), ${r.summary.notAnalyzed} NOT_ANALYZED; videoCapable=${r.summary.videoCapable}. ` +
+process.stdout.write(`\nMULTIMODAL-INGEST: ${r.summary.total} refs; ${r.summary.textReadable} textReadable (text/supplied), ${r.summary.analyzerAvailable} analyzer-available (NOT run), ${r.summary.notAnalyzed} NOT_ANALYZED; videoCapable=${r.summary.videoCapable}. ` +
   `Media CONTENT is NEVER analyzed or fabricated here — no caption/transcript/OCR is invented; only text (or owner-supplied extractedText) is readable, every other modality with no local analyzer is NOT_ANALYZED with the exact missing tool. Provenance is of the REFERENCE, not the media bytes. SYNTHETIC demonstration.\n`);
 process.exit(0);
 export {};

@@ -25,7 +25,7 @@ function main(): void {
   check("text ⇒ TEXT_READABLE (the only directly readable modality)", byRef(r, "notes.md").status === "TEXT_READABLE" && byRef(r, "notes.md").analyzable === true && byRef(r, "notes.md").contentAnalyzed === false);
   check("unknown ⇒ UNKNOWN_MODALITY (fail-closed)", byRef(r, "weird.zzz").status === "UNKNOWN_MODALITY" && byRef(r, "weird.zzz").analyzable === false);
   check("every item carries REFERENCE provenance (a sha256 digest of the ref, not media bytes)", r.items.every((i: any) => typeof i.provenance === "string" && /^[0-9a-f]{64}$/.test(i.provenance)));
-  check("summary honest: 1 readable (text), rest NOT_ANALYZED/unknown; videoCapable false", r.summary.readable === 1 && r.summary.notAnalyzed === 4 && r.summary.videoCapable === false);
+  check("summary honest: 1 textReadable, 0 analyzerAvailable, 4 NOT_ANALYZED; videoCapable false", r.summary.textReadable === 1 && r.summary.analyzerAvailable === 0 && r.summary.notAnalyzed === 4 && r.summary.videoCapable === false);
 
   // caller-SUPPLIED extracted text ⇒ analyzable via text (the MEDIA itself still not interpreted by us)
   const rs = M.ingest([{ uri: "talk.mp3", extractedText: "owner-provided transcript here" }]);
