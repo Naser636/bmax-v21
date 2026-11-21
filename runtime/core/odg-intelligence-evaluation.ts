@@ -18,6 +18,7 @@ const DP = require("./decomposition-planner.js");          // complexity classif
 const LP = require("./odg-light-path-selector.js");        // tool/path selection under reliability
 const MI = require("./meta-intelligence.js");              // the integrity-inspector (system-under-test for verification)
 const IMV = require("./inspector-meta-validation.js");     // meta-validates the inspector over a seeded defect corpus
+const BR = require("./odg-radar-learning-bridge.js");      // retrieval of relevant lessons (knowledge reuse)
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -88,6 +89,25 @@ function evalIndependentVerification(): any {
   return { cases: cases.length, correct: mv.confusion.TP, accuracy: mv.detectionRate, effective: mv.effective === true, falsePositives: mv.confusion.FP, confusion: mv.confusion };
 }
 
+// AXIS: knowledge reuse — seeded retrieval precision/recall. Given lessons of KNOWN relevance to a query, does retrieval
+// return EXACTLY the relevant set (right domain + keyword + confidence), excluding wrong-domain / no-keyword / low-confidence?
+function evalKnowledgeReuse(): any {
+  const L = [
+    { id: "L1", domain: "agent", principle: "use approach-B", confidence: 0.9 },   // relevant
+    { id: "L2", domain: "agent", principle: "approach-C", confidence: 0.7 },        // relevant
+    { id: "L3", domain: "agent", principle: "unrelated thing", confidence: 0.95 },  // in-domain but NO keyword ⇒ irrelevant
+    { id: "L4", domain: "memory", principle: "approach-X", confidence: 0.9 },        // keyword but WRONG domain ⇒ irrelevant
+    { id: "L5", domain: "agent", principle: "approach-D", confidence: 0.1 },         // relevant terms but BELOW confidence ⇒ excluded
+  ];
+  const ids = (r: any) => JSON.stringify((r.selected || []).map((x: any) => x.id));
+  const cases = [
+    { label: "domain+keyword+confidence ⇒ exactly the 2 relevant, by confidence", topic: { domain: "agent", keyword: "approach" }, opts: { minConfidence: 0.5, k: 5 }, expect: JSON.stringify(["L1", "L2"]) },
+    { label: "specific keyword ⇒ only the matching lesson", topic: { domain: "agent", keyword: "approach-c" }, opts: { minConfidence: 0.5, k: 5 }, expect: JSON.stringify(["L2"]) },
+    { label: "wrong domain ⇒ nothing retrieved (no false knowledge)", topic: { domain: "nonexistent", keyword: "approach" }, opts: { minConfidence: 0.5, k: 5 }, expect: JSON.stringify([]) },
+  ];
+  return runCases(cases, (c) => ids(BR.retrieveLessonsForMission(L, c.topic, c.opts)), (c) => c.expect);
+}
+
 // the 16 axes (§3). measurability: MEASURED (seeded here), MEASURED_ELSEWHERE (another PR), NOT_MEASURED (+ dependency).
 const AXES = Object.freeze([
   freeze({ id: "goal-understanding", label: "Understanding of goals", measurability: "NOT_MEASURED", dependency: "needs real tasked missions + an independent rubric (external benchmark / owner)" }),
@@ -97,7 +117,7 @@ const AXES = Object.freeze([
   freeze({ id: "causal-reasoning", label: "Causal reasoning", measurability: "MEASURED", via: "reasoning" }),
   freeze({ id: "uncertainty-contradiction", label: "Uncertainty & contradiction handling", measurability: "MEASURED", via: "reasoning" }),
   freeze({ id: "learn-from-errors", label: "Learning from errors", measurability: "NOT_MEASURED", dependency: "needs real mission outcomes over time (before/after on live missions)" }),
-  freeze({ id: "knowledge-reuse", label: "Knowledge reuse", measurability: "NOT_MEASURED", dependency: "needs a live retrieval→reuse loop with measured outcome" }),
+  freeze({ id: "knowledge-reuse", label: "Knowledge reuse", measurability: "MEASURED", via: "knowledgeReuse" }),
   freeze({ id: "tool-use", label: "Tool use", measurability: "MEASURED", via: "pathSelection" }),
   freeze({ id: "decomposition", label: "Decomposition & mission conduct", measurability: "MEASURED", via: "decomposition" }),
   freeze({ id: "debugging-repair", label: "Debugging & repair", measurability: "NOT_MEASURED", dependency: "needs real defect corpus with ground-truth fixes (repair-apply is OWNER_GATED)" }),
@@ -110,13 +130,14 @@ const AXES = Object.freeze([
 
 /** evaluate(opts?) -> frozen per-axis report. Runs the seeded evals and attaches accuracy to the MEASURED axes. NO global score. */
 function evaluate(opts: any = {}): any {
-  const results = { reasoning: evalReasoning(), decomposition: evalDecomposition(), pathSelection: evalPathSelection(), independentVerification: evalIndependentVerification() };
+  const results = { reasoning: evalReasoning(), decomposition: evalDecomposition(), pathSelection: evalPathSelection(), independentVerification: evalIndependentVerification(), knowledgeReuse: evalKnowledgeReuse() };
   // per-eval protocol strings name the ACTUAL scope each axis measures (so a broad axis label never over-reads).
   const PROTOCOLS: Record<string, string> = {
     reasoning: "seeded causal/epistemic reasoning incl ≥2-hop transitive chains — known verdicts (FACTUAL/HYPOTHETICAL/UNSOUND/UNGROUNDED)",
     decomposition: "seeded complexity classification — known classes (TRIVIAL/SIMPLE/META/COMPLEX)",
     pathSelection: "seeded path/tool selection under reliability — known tiers (LIGHT_LOCAL/ESCALATE_PROVIDER/DECOMPOSE)",
     independentVerification: "integrity-gaming detection ONLY — inspector recall on seeded benchmark-contamination / evaluator-capture / metric-gaming (hard-marker paths); heuristic SUSPECTED paths NOT exercised, broader verification NOT covered",
+    knowledgeReuse: "seeded retrieval precision/recall — EXACT relevant-set over domain/keyword/confidence (excludes wrong-domain / no-keyword / low-confidence); retrieval relevance ONLY, a MEASURED reuse GAIN still needs a real mission result",
   };
   const axes = AXES.map((a: any) => {
     if (a.measurability === "MEASURED" && a.via && (results as any)[a.via]) {
@@ -145,6 +166,7 @@ const INTELLIGENCE_EVALUATION_CONTRACT = Object.freeze({
     "odg-hybrid-reasoning (causal + uncertainty/contradiction + multi-hop reasoning soundness)",
     "decomposition-planner (complexity classification) + odg-light-path-selector (tool/path decision)",
     "meta-intelligence.assessIntegrity + inspector-meta-validation.metaValidate (independent-verification: the inspector as system-under-test over a seeded defect corpus)",
+    "odg-radar-learning-bridge.retrieveLessonsForMission (knowledge-reuse: seeded retrieval precision/recall)",
     "odg-mission-performance-profile (speed/resource axis, measured in PR #838)",
   ]),
   invariants: Object.freeze([
