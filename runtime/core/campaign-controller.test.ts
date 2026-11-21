@@ -193,4 +193,60 @@ const reg = (items) => ({ version: "t", items });
   ok("real register: 0 stale acceptances (evidence bases all valid)", real.ok && C.staleAcceptances(real.register).length === 0);
 }
 
+// (14) V361-D P3 — DEFERRED→READY promotion gate (deny-by-default authority, enforced at the mutator).
+// The audit showed the promotion mutator was UNGATED: advance(..,{status:READY}) promoted a DEFERRED lot unconditionally.
+{
+  const def = () => reg([{ id: "D", status: "DEFERRED", deps: [], priority: 1 }]);
+  // REFUSE: no authorization ⇒ the DEFERRED lot stays DEFERRED (never auto-promoted), and is NOT selectable.
+  let r = def();
+  const bad = C.advance(r, "D", { status: "READY" });
+  ok("DEFERRED→READY with NO authorization ⇒ refused (AUTHORIZATION_REQUIRED), lot stays DEFERRED", bad.ok === false && bad.code === "AUTHORIZATION_REQUIRED" && r.items[0].status === "DEFERRED");
+  ok("a refused DEFERRED lot is NOT selectable (negative invariant holds too)", C.selectNextLot(r).lot === null);
+  // REFUSE: a self-authoring Radar/evolution actor can NEVER self-promote (even with approved:true).
+  r = def();
+  const self = C.advance(r, "D", { status: "READY", authorization: { authorizedBy: "frontier-radar", approved: true } });
+  ok("self-authoring actor (frontier-radar) CANNOT self-promote", self.ok === false && r.items[0].status === "DEFERRED");
+  // REFUSE: a truthy-but-unapproved / scope-only authorization is rejected (approved must be true; scope ≠ authority).
+  r = def();
+  const unapp = C.advance(r, "D", { status: "READY", authorization: { authorizedBy: "odg", approved: false } });
+  ok("authorizer present but approved:false ⇒ refused (approval required)", unapp.ok === false && r.items[0].status === "DEFERRED");
+  r = def();
+  const strf = C.advance(r, "D", { status: "READY", authorization: "looks-authorized" });
+  ok("a bare string authorization is insufficient (explicit authorizer record required)", strf.ok === false && r.items[0].status === "DEFERRED");
+  // ALLOW: an explicit non-self authorizer with approved:true ⇒ promoted + durable trace stamped; now selectable.
+  r = def();
+  const good = C.advance(r, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true, basis: "owner decision", at: "2026-11-21" } });
+  ok("DEFERRED→READY WITH a valid authorization ⇒ promoted to READY", good.ok === true && r.items[0].status === "READY");
+  ok("promotion stamps a durable readyAuthorization trace (who/basis/promotedFrom)", r.items[0].readyAuthorization && r.items[0].readyAuthorization.authorizedBy === "odg-owner" && r.items[0].readyAuthorization.approved === true && r.items[0].readyAuthorization.promotedFrom === "DEFERRED" && r.items[0].readyAuthorization.basis === "owner decision");
+  ok("once authorized ⇒ the lot becomes selectable", C.selectNextLot(r).lot && C.selectNextLot(r).lot.id === "D");
+  // UNAFFECTED: a NON-DEFERRED READY transition (re-opening a regressed ACCEPTED item) is NOT gated.
+  const r2 = reg([{ id: "A", status: "ACCEPTED", deps: [], evidence: "e" }]);
+  const regress = C.advance(r2, "A", { status: "READY" });
+  ok("ACCEPTED→READY (regression re-open) is NOT gated (only DEFERRED/authorizationRequired activation is)", regress.ok === true && r2.items[0].status === "READY");
+
+  // ANTI-LAUNDERING: IN_PROGRESS is ALSO a selectable OPEN_STATE, so DEFERRED→IN_PROGRESS must be gated too (keying on
+  // READY alone was bypassable). Likewise a DEFERRED→BLOCKED→READY path cannot launder the status past the gate.
+  r = def();
+  const ip = C.advance(r, "D", { status: "IN_PROGRESS" });
+  ok("DEFERRED→IN_PROGRESS without authorization ⇒ refused (IN_PROGRESS is selectable — no laundering)", ip.ok === false && ip.code === "AUTHORIZATION_REQUIRED" && r.items[0].status === "DEFERRED");
+  ok("the un-laundered DEFERRED lot is still NOT selectable", C.selectNextLot(r).lot === null);
+  // DEFERRED→BLOCKED (not selectable) is allowed, but the lot keeps authorizationRequired via its DEFERRED origin flag;
+  // then BLOCKED→READY is still gated because the lot was flagged authorizationRequired.
+  const r3 = reg([{ id: "D", status: "DEFERRED", authorizationRequired: true, deps: [], priority: 1 }]);
+  C.advance(r3, "D", { status: "BLOCKED", blockReason: "waiting" });
+  const laundered = C.advance(r3, "D", { status: "READY" });
+  ok("DEFERRED→BLOCKED→READY cannot launder past the gate (authorizationRequired flag still enforces)", laundered.ok === false && laundered.code === "AUTHORIZATION_REQUIRED" && r3.items[0].status === "BLOCKED");
+
+  // case-insensitive self-actor blocklist: a disguised Radar actor cannot authorize its own activation.
+  r = def();
+  const disguised = C.advance(r, "D", { status: "READY", authorization: { authorizedBy: " Frontier-Radar ", approved: true } });
+  ok("a case/space-disguised self-authoring actor (' Frontier-Radar ') is still blocked", disguised.ok === false && r.items[0].status === "DEFERRED");
+
+  // once authorized (with a valid authorization), a subsequent transition is NOT re-gated (readyAuthorization stamped).
+  r = def();
+  C.advance(r, "D", { status: "IN_PROGRESS", authorization: { authorizedBy: "odg-owner", approved: true } });
+  const reready = C.advance(r, "D", { status: "READY" });
+  ok("after a valid activation ⇒ later transitions are not re-gated (authorization proof persists)", reready.ok === true && r.items[0].status === "READY");
+}
+
 console.log(`\nCAMPAIGN-CONTROLLER suite — ${pass} assertions passed. (dep-aware selection, priority, BLOCKED-skip, fail-closed ACCEPTED, durable persist+resume, cycle-safe; decomposition: blocked-parent never freezes independent prep; NO-REPEAT: failed+unchanged not re-selected; EVIDENCE-VALIDITY: stale acceptances flagged + reconciled; real register drivable)`);

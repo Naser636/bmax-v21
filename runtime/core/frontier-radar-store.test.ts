@@ -88,7 +88,12 @@ function realProposal(): any {
   const sel = CC.selectNextLot(r.register);
   check(sel.lot === null, "selectNextLot NEVER selects the DEFERRED Radar lot (proposition ≠ autorisation)");
   // EXTERNAL authorization the Radar cannot perform: advance DEFERRED → READY, then it becomes admissible.
-  const adv = CC.advance(r.register, "frontier-prop:" + realProposal().candidateId, { status: "READY" });
+  // The promotion is now ENFORCED at the mutator (campaign-controller): an UNAUTHORIZED advance is refused, and only an
+  // explicit non-self owner/ODG authorization admits the lot — the Radar can never self-promote its own discovery.
+  const lotId = "frontier-prop:" + realProposal().candidateId;
+  const unauth = CC.advance(r.register, lotId, { status: "READY" });
+  check(unauth.ok === false && unauth.code === "AUTHORIZATION_REQUIRED", "an UNAUTHORIZED DEFERRED → READY advance is REFUSED (proposition ≠ autorisation, enforced at the mutator)");
+  const adv = CC.advance(r.register, lotId, { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true, basis: "external ODG/owner authorization" } });
   check(adv.ok === true, "an external ODG/owner authorization advances the lot DEFERRED → READY");
   const sel2 = CC.selectNextLot(r.register);
   check(sel2.lot && sel2.lot.id === "frontier-prop:" + realProposal().candidateId, "after authorization the lot is selectable by the EXISTING campaign-controller (no second scheduler)");

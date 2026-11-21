@@ -24,6 +24,19 @@ const STATES = ["READY", "IN_PROGRESS", "BLOCKED", "ACCEPTED", "DEFERRED", "REJE
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function readJsonSafe(f: string): any { try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch { return null; } }
 
+// Activating a DEFERRED / authorization-required lot is an OWNER/ODG authorization, never automatic: it is work the
+// campaign has NOT been authorized to select. A valid authorization is an EXPLICIT record naming a non-self authorizer
+// that has APPROVED it — deny-by-default (mirrors the frontier-pipeline external-authorization rule so the Radar/evolution
+// loop can NEVER self-promote their own discovery, and the MUTATOR — not just the caller — enforces it). Scope ≠ authority.
+// The self-actor blocklist is compared case-insensitively (trimmed + lowercased) so "Frontier-Radar"/" radar " cannot dodge it.
+const SELF_AUTHORING_ACTORS = ["frontier-radar", "evolution-loop", "odg-radar", "radar"]; // lowercase
+function isValidPromotionAuthorization(a: any): boolean {
+  if (!isObj(a)) return false; // a bare string / truthy flag is NOT sufficient — an explicit authorizer record is required
+  const by = typeof a.authorizedBy === "string" ? a.authorizedBy.trim() : "";
+  if (by.length === 0 || a.approved !== true || a.selfAuthored === true) return false; // strict: approved MUST be boolean true
+  return SELF_AUTHORING_ACTORS.indexOf(by.toLowerCase()) < 0; // a self-authoring actor can never authorize its own activation
+}
+
 /** loadRegister(path): durable register {items:[...]} or {ok:false}. */
 function loadRegister(path: string): any {
   const r = readJsonSafe(path);
@@ -186,6 +199,33 @@ function advance(register: any, id: string, change: any = {}): any {
       const hasEv = typeof ev === "string" ? ev.trim().length > 0 : Array.isArray(ev) && ev.length > 0;
       if (!hasEv) return { ok: false, code: "EVIDENCE_REQUIRED", reason: "ACCEPTED requires non-empty evidence (a command succeeding is not acceptance)" };
       it.evidence = ev;
+    }
+    // GATE: a lot that is DEFERRED or flagged authorizationRequired must not ENTER A SELECTABLE/executable state
+    // (READY or IN_PROGRESS — both are OPEN_STATES that selectNextLot can pick) without an explicit authorization —
+    // deny-by-default, enforced at the MUTATOR so NO path can activate unauthorized work, including status-laundering
+    // (DEFERRED→IN_PROGRESS directly, or DEFERRED→BLOCKED→READY). Keying on READY alone was bypassable (IN_PROGRESS is
+    // also selectable). Once authorized the proof is stamped and subsequent transitions are not re-gated. Entering a
+    // NON-selectable state (BLOCKED/REJECTED/DEFERRED) is not an activation and is not gated; reaching ACCEPTED keeps its
+    // own evidence gate above. (Re-opening a regressed ACCEPTED/normal lot carries no authorizationRequired ⇒ not gated.)
+    // requiresAuthorization covers every NON-flowing gate state: DEFERRED (never authorized), BLOCKED (an explicit
+    // owner/external hard-block — dependency-waiting lots stay READY and flow via depsSatisfied, they are NEVER set
+    // BLOCKED, so gating BLOCKED→open impedes no dependency flow), and any lot carrying the authorizationRequired flag
+    // (radar/owner origin — also closes DEFERRED→BLOCKED→READY laundering once the flag is set). Already-authorized lots
+    // (readyAuthorization stamped) are not re-gated.
+    const enteringSelectable = OPEN_STATES.includes(status);
+    const requiresAuthorization = (it.status === "DEFERRED" || it.status === "BLOCKED" || it.authorizationRequired === true) && !it.readyAuthorization;
+    if (enteringSelectable && requiresAuthorization) {
+      if (!isValidPromotionAuthorization(change.authorization)) {
+        return { ok: false, code: "AUTHORIZATION_REQUIRED", reason: `activating a DEFERRED/authorization-required lot (→${status}) requires an explicit authorization (a non-self authorizer with approved:true) — authority, not scope; it is owner/ODG-gated, never auto-activated, and status-laundering via IN_PROGRESS/BLOCKED cannot bypass this` };
+      }
+      // Durable trace on the item (the register IS the persisted ledger via saveRegister): who authorized, on what basis.
+      it.readyAuthorization = {
+        authorizedBy: change.authorization.authorizedBy,
+        approved: true,
+        basis: typeof change.authorization.basis === "string" ? change.authorization.basis : "authorized activation",
+        at: change.authorization.at !== undefined ? change.authorization.at : null,
+        promotedFrom: it.status,
+      };
     }
     it.status = status;
   }

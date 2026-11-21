@@ -54,11 +54,19 @@ function admitProposal(register: any, proposal: any, opts: any): any {
   const objective = OA.declareAuthorization({ goal: "evaluate frontier candidate " + (proposal && proposal.candidateId) + " in an isolated sandbox" });
 
   const auth = isObj(o.authorization) ? o.authorization : {};
-  const externallyAuthorized = isStr(auth.authorizedBy) && auth.authorizedBy !== "frontier-radar" && auth.authorizedBy !== "evolution-loop" && auth.selfAuthored !== true && auth.approved === true;
+  // case-insensitive self-actor exclusion, consistent with campaign-controller.isValidPromotionAuthorization (the
+  // authoritative mutator gate); this pre-check only decides whether to ATTEMPT the advance — the mutator re-enforces.
+  const authBy = isStr(auth.authorizedBy) ? auth.authorizedBy.trim().toLowerCase() : "";
+  const externallyAuthorized = authBy.length > 0 && authBy !== "frontier-radar" && authBy !== "evolution-loop" && authBy !== "odg-radar" && authBy !== "radar" && auth.selfAuthored !== true && auth.approved === true;
   const admitted = policy.decision === AG.DECISION.ALLOW && externallyAuthorized;
 
   let reg = integ.register;
-  if (admitted) { const adv = CC.advance(reg, lotId, { status: "READY" }); reg = adv.register; } // authorization ⇒ DEFERRED→READY
+  if (admitted) {
+    // Pass the SAME external authorization the admission was computed from — campaign-controller.advance now enforces a
+    // deny-by-default DEFERRED→READY gate at the mutator, so the authority is proven at the promotion, not just here.
+    const adv = CC.advance(reg, lotId, { status: "READY", authorization: { authorizedBy: auth.authorizedBy, approved: true, basis: "POLICY ALLOW + external authorization (frontier-pipeline admission)", at: now } });
+    if (adv.ok) reg = adv.register; // fail-closed: a refused promotion leaves the lot DEFERRED (never silently READY)
+  }
 
   return Object.freeze({
     ok: true, lotId, proposal,
