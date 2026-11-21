@@ -22,6 +22,28 @@ function isTest(c: string): boolean { return /\.test$/.test(c); }
 
 const DEMO_RE = /(-demonstrator|-run|-bench|-benchmark|-selftest|-harness|-smoke)$/;
 
+// V361-D P2-B — REVIEWED duplication families. architecture-audit flags any set of modules that share a responsibility
+// signature as a NEEDS_REVIEW duplicationCandidate (the signature is contract-domain + exports; THIS census path passes no
+// contract metadata, so here the grouping is by EXPORTS signature only). That raw finding is CORRECT and KEPT — a
+// similarity never authorizes a fusion. This registry records the per-family JUDGMENT that HAS been made (members audited
+// for behavior-equivalence + consumers + tests) so a reviewed-and-kept overlap is not mistaken for an open/unreviewed issue.
+// A verdict is ONLY added here after an actual audit; the raw duplicationCandidate still appears. Keyed by the sorted member set.
+const REVIEWED_DUPLICATION_FAMILIES = Object.freeze([
+  Object.freeze({
+    members: Object.freeze(["code-check-eval", "generative-repair-eval", "repair-eval"]),
+    verdict: "INTENTIONAL_SPECIALIZATION",
+    reviewedBy: "V361-D P2-B",
+    rationale: "Sealed-corpus eval family: code-check-eval measures the code-CHECKER's syntax/type accuracy; generative-repair-eval " +
+      "measures LOCAL-MODEL generative repair; repair-eval measures DETERMINISTIC repair families. DISTINCT subjects, ground-truth, " +
+      "harnesses and classifications. The shared {CORPUS,CORPUS_VERSION,corpusProvenance,evaluate} shape + sha256(JSON.stringify) " +
+      "seal is a core-wide idiom (~12 modules), not fusable logic — contentDigest produces a DIFFERENT hash so it cannot replace the " +
+      "seal without changing the sealed corpus versions. NOT merged; kept specialized.",
+  }),
+]);
+function reviewKey(members: any[]): string { return arr(members).map((x) => String(x)).sort().join("|"); }
+const REVIEWED_BY_KEY: Record<string, any> = {};
+for (const f of REVIEWED_DUPLICATION_FAMILIES) REVIEWED_BY_KEY[reviewKey(f.members as any)] = f;
+
 /**
  * census(input) -> frozen report. input: {
  *   graph (change-impact-graph.buildGraph result), scanned ([{consumer, src}] out-of-core sources for the shared scan),
@@ -82,12 +104,21 @@ function census(input: any): any {
     return { id: m, deps: arr(graph.deps && graph.deps[m]), consumers: arr(merged[m]).filter((c: any) => !isTest(c) && c !== m), hasTest: hasTest(m) === true, exports };
   });
   const architecture = AA.auditArchitecture({ modules: meta, entrypoints: arr(i.entrypoints) });
+  // Annotate each raw duplicationCandidate with its P2-B review verdict (if the family has been audited). The raw
+  // NEEDS_REVIEW candidate is NOT removed; this only records whether a judgment exists so reviewed overlaps are not
+  // perpetually re-surfaced as if open. UNREVIEWED = no audit yet ⇒ still an actionable finding.
+  const duplicationReviews = arr(architecture.duplicationCandidates).map((d: any) => {
+    const r = REVIEWED_BY_KEY[reviewKey(arr(d.members))];
+    return freeze(r
+      ? { members: d.members, reviewed: true, verdict: r.verdict, reviewedBy: r.reviewedBy, rationale: r.rationale }
+      : { members: d.members, reviewed: false, verdict: "UNREVIEWED", reviewedBy: null, rationale: null });
+  });
 
   return freeze({
     total: modules.length, counts: freeze(counts),
     noConsumerWhy: freeze(whyCounts),
     decisionSurface: freeze(decisionSurface),   // modules with no detected importer + no plausible reason ⇒ per-module judgment
-    architecture: freeze({ circularDeps: architecture.circularDeps, duplicationGroups: architecture.summary.duplicationGroups, trulyUnused: architecture.summary.unused, duplicationCandidates: architecture.duplicationCandidates }),
+    architecture: freeze({ circularDeps: architecture.circularDeps, duplicationGroups: architecture.summary.duplicationGroups, trulyUnused: architecture.summary.unused, duplicationCandidates: architecture.duplicationCandidates, duplicationReviews: freeze(duplicationReviews) }),
     records: freeze(records),
     note: "component census over the REAL require-graph. CONNECTED = a real non-test consumer exists. NO_CONSUMER = NO STATIC LITERAL/alias importer found — it can MISS dynamic/spawn/app-dynamic consumers, so it OVER-reports orphans (not a reliable 'truly dead' set). The `why` is weak HEURISTIC EVIDENCE: EXPORTS_API_NO_CONSUMER means liveness is UNKNOWN (the export convention is near-universal in core — NOT proof of harmlessness), NOT a cleared library. The decisionSurface is the per-module judgment pool (NOT 'no orphans'); nothing is auto-labelled useless, no consumer is fabricated, nothing is auto-activated.",
   });
