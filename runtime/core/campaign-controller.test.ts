@@ -249,4 +249,76 @@ const reg = (items) => ({ version: "t", items });
   ok("after a valid activation ⇒ later transitions are not re-gated (authorization proof persists)", reready.ok === true && r.items[0].status === "READY");
 }
 
+// (15) V361-D P3 HARDENING — IDENTITY-BOUND authorization (Ed25519). When trusted authorizer keys are configured, a
+// DEFERRED→selectable promotion requires a signature by a TRUSTED key over THIS lotId + a single-use nonce — a component
+// can no longer forge `{authorizedBy:"owner",approved:true}`. Composes the existing agent-identity canon (no 2nd crypto).
+{
+  const crypto = require("crypto");
+  const AI = require("./agent-identity.js");
+  const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
+  const ownerPub = publicKey.export({ type: "spki", format: "pem" });
+  const { privateKey: otherPriv } = crypto.generateKeyPairSync("ed25519");
+  const trustedAuthorizers = { "odg-owner": ownerPub };
+  const sign = (priv, lotId, authorizedBy, nonce) => crypto.sign(null, Buffer.from(AI.canon({ action: C.PROMOTION_ACTION, lotId, authorizedBy, nonce })), priv).toString("base64");
+  const def = () => reg([{ id: "D", status: "DEFERRED", authorizationRequired: true, deps: [], priority: 1 }]);
+
+  // ALLOW: a valid owner signature over lotId "D" ⇒ promoted, identityVerified:true.
+  let r = def();
+  const goodSig = sign(privateKey, "D", "odg-owner", "n1");
+  const okAdv = C.advance(r, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true, nonce: "n1", signature: goodSig } }, { trustedAuthorizers });
+  ok("identity-bound: valid Ed25519 owner signature ⇒ promoted, identityVerified TRUE", okAdv.ok === true && r.items[0].status === "READY" && r.items[0].readyAuthorization.identityVerified === true);
+
+  // REFUSE: a forged CLAIM (no signature) when keys are configured ⇒ denied (closes the forge-a-claim gap).
+  r = def();
+  const forged = C.advance(r, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true } }, { trustedAuthorizers });
+  ok("identity-bound: an unsigned CLAIM is REFUSED when keys are configured (no forgery)", forged.ok === false && forged.code === "AUTHORIZATION_REQUIRED" && r.items[0].status === "DEFERRED");
+
+  // REFUSE: signature by a NON-trusted key (attacker's own keypair, claiming to be the owner) ⇒ denied.
+  r = def();
+  const wrongKeySig = sign(otherPriv, "D", "odg-owner", "n2");
+  const wrongKey = C.advance(r, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true, nonce: "n2", signature: wrongKeySig } }, { trustedAuthorizers });
+  ok("identity-bound: signature by a NON-trusted key is REFUSED (authority not proven)", wrongKey.ok === false && r.items[0].status === "DEFERRED");
+
+  // REFUSE: a valid signature for lot "D" cannot be REPLAYED to promote a different lot "E" (payload binds lotId).
+  const r2 = reg([{ id: "D", status: "DEFERRED", authorizationRequired: true, deps: [] }, { id: "E", status: "DEFERRED", authorizationRequired: true, deps: [] }]);
+  const sigForD = sign(privateKey, "D", "odg-owner", "n3");
+  const crossLot = C.advance(r2, "E", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true, nonce: "n3", signature: sigForD } }, { trustedAuthorizers });
+  ok("identity-bound: a signature for lot D cannot promote lot E (payload binds the lotId)", crossLot.ok === false && r2.items[1].status === "DEFERRED");
+
+  // REFUSE: nonce replay (same signature used twice) when a single-use seen-set is supplied.
+  const seenNonces = new Set();
+  const rA = reg([{ id: "D", status: "DEFERRED", authorizationRequired: true, deps: [] }]);
+  const sigR = sign(privateKey, "D", "odg-owner", "n4");
+  const first = C.advance(rA, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true, nonce: "n4", signature: sigR } }, { trustedAuthorizers, seenNonces });
+  const rB = reg([{ id: "D", status: "DEFERRED", authorizationRequired: true, deps: [] }]);
+  const replay = C.advance(rB, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true, nonce: "n4", signature: sigR } }, { trustedAuthorizers, seenNonces });
+  ok("identity-bound: a replayed nonce is REFUSED (single-use)", first.ok === true && replay.ok === false && rB.items[0].status === "DEFERRED");
+
+  // REFUSE: requireSignedAuthorization forces signed even with NO trusted keys (a claim is rejected).
+  r = def();
+  const strict = C.advance(r, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true } }, { requireSignedAuthorization: true });
+  ok("requireSignedAuthorization: a CLAIM is refused (no trusted key for the authorizer)", strict.ok === false && r.items[0].status === "DEFERRED");
+
+  // BACK-COMPAT: with NO opts (claim mode), a valid claim still promotes but is honestly flagged identityVerified:false.
+  r = def();
+  const claim = C.advance(r, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true } });
+  ok("claim mode (no keys): promotes but trace records identityVerified FALSE (honest downgrade)", claim.ok === true && r.items[0].status === "READY" && r.items[0].readyAuthorization.identityVerified === false);
+
+  // direct verifier unit: self-authoring actor still blocked even with a 'signature' field present.
+  const vSelf = C.verifyPromotionAuthorization({ authorizedBy: "frontier-radar", approved: true, nonce: "x", signature: "AAAA" }, { lotId: "D", trustedAuthorizers });
+  ok("verifier: self-authoring actor refused regardless of a signature field", vSelf.ok === false);
+
+  // F1: a lot's OWN persisted requireSignedAuthorization flag forces strict mode even when the caller omits opts (the
+  // caller cannot downgrade to claim mode). A claim is refused; a valid signature (keys passed) promotes.
+  const rStrict = reg([{ id: "D", status: "DEFERRED", authorizationRequired: true, requireSignedAuthorization: true, deps: [] }]);
+  const claimOnStrict = C.advance(rStrict, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true } });
+  ok("F1: per-lot requireSignedAuthorization refuses a claim even with NO opts (caller cannot downgrade)", claimOnStrict.ok === false && rStrict.items[0].status === "DEFERRED");
+  const sigOnStrict = C.advance(rStrict, "D", { status: "READY", authorization: { authorizedBy: "odg-owner", approved: true, nonce: "s1", signature: sign(privateKey, "D", "odg-owner", "s1") } }, { trustedAuthorizers });
+  ok("F1: per-lot strict lot promotes with a valid signature", sigOnStrict.ok === true && rStrict.items[0].status === "READY" && rStrict.items[0].readyAuthorization.identityVerified === true);
+
+  // F3: an authorizer name resolving to an INHERITED property ("__proto__"/"constructor") is NOT accepted as a key.
+  const vProto = C.verifyPromotionAuthorization({ authorizedBy: "__proto__", approved: true, nonce: "p", signature: "AAAA" }, { lotId: "D", trustedAuthorizers });
+  ok("F3: inherited-property authorizer ('__proto__') is refused (own-property key lookup)", vProto.ok === false);
+}
+
 console.log(`\nCAMPAIGN-CONTROLLER suite — ${pass} assertions passed. (dep-aware selection, priority, BLOCKED-skip, fail-closed ACCEPTED, durable persist+resume, cycle-safe; decomposition: blocked-parent never freezes independent prep; NO-REPEAT: failed+unchanged not re-selected; EVIDENCE-VALIDITY: stale acceptances flagged + reconciled; real register drivable)`);
