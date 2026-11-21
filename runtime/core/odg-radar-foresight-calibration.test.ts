@@ -27,7 +27,7 @@ function main(): void {
 
   check("bad source down-weighted (realized hitRate 0 / false signals over time)", prop(r, "down-weight-source", "radar:badsrc"));
   check("bad source confidence discounted (realized OVERCONFIDENT/MISCALIBRATED)", prop(r, "discount-confidence-source", "radar:badsrc"));
-  check("thin source NOT re-weighted (fail-closed NOT_MEASURED under minDecided)", !prop(r, "down-weight-source", "radar:thinsrc") && r.bySource.some((s: any) => s.source === "radar:thinsrc" && s.measurable === false));
+  check("thin source NOT re-weighted (fail-closed NOT_MEASURED under minDecided); hitRate withheld (null)", !prop(r, "down-weight-source", "radar:thinsrc") && r.bySource.some((s: any) => s.source === "radar:thinsrc" && s.measurable === false && s.hitRate === null));
   check("EXPIRED did not inflate decided for the bad source (decided = 6, not 16)", r.bySource.some((s: any) => s.source === "radar:badsrc" && s.decided === 6));
   check("good source measurable with realized hitRate 1.0", r.bySource.some((s: any) => s.source === "radar:goodsrc" && s.measurable === true && s.hitRate === 1));
 

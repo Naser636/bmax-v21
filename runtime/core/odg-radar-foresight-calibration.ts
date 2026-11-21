@@ -47,9 +47,11 @@ function assessForesightCalibration(input: any, opts: any = {}): any {
   for (const src of Object.keys(bySrc).sort()) {
     const rs = bySrc[src];
     const decided = rs.filter((r) => DECIDED.has(r.verdict)).length;
-    const score = FM.scoreForecasts(rs, { minSamples: 1 }); // DECIDED-only inside; calibration over decided
+    // per-source calibration significance is gated by minDecided (NOT the calibration gate's own default 1/20): a CALIBRATED
+    // /OVERCONFIDENT verdict (and the trust/discount proposals keyed off it) must rest on ≥ minDecided resolved forecasts.
+    const score = FM.scoreForecasts(rs, { minSamples: minDecided }); // DECIDED-only inside; calibration over decided
     if (decided < minDecided) {
-      bySource.push(freeze({ source: src, decided, measurable: false, hitRate: score.hitRate, note: `only ${decided} decided forecasts (< minDecided ${minDecided}) ⇒ NOT_MEASURED — not re-weighted on noise` }));
+      bySource.push(freeze({ source: src, decided, measurable: false, hitRate: null, note: `only ${decided} decided forecasts (< minDecided ${minDecided}) ⇒ NOT_MEASURED — not re-weighted on noise (hitRate withheld: not significant)` }));
       continue;
     }
     const entry: any = { source: src, decided, measurable: true, hitRate: score.hitRate, falseSignalRate: score.falseSignalRate, lateRate: score.lateRate, calibration: score.calibration.verdict };
@@ -88,7 +90,7 @@ const FORESIGHT_CALIBRATION_CONTRACT = Object.freeze({
     "frontier-radar-self-improvement.assessRadarCycle (the canonical radar self-eval, meta-intelligence integrity-guarded) — re-grounded on resolved outcomes",
   ]),
   invariants: Object.freeze([
-    "a source is re-weighted ONLY on ≥ minDecided resolved forecasts — fewer ⇒ NOT_MEASURED (never down-weight on noise)",
+    "a source is re-weighted ONLY on ≥ minDecided resolved forecasts — fewer ⇒ NOT_MEASURED (hitRate withheld as null, never down-weight on noise); per-source calibration significance is gated by minDecided",
     "driven by REALIZED (resolved, DECIDED) forecast accuracy over time; EXPIRED/PENDING carry no ground truth and are excluded (no fabrication)",
     "every output is PROPOSED (selfAuthorized:false) — the Radar never self-applies a source weight and never modifies its own authorizations (§6.6)",
     "PURE/deterministic/frozen; composes forecast-memory + frontier-radar-self-improvement; no second radar / self-eval / store",
