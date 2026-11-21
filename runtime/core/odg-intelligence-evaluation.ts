@@ -111,10 +111,17 @@ const AXES = Object.freeze([
 /** evaluate(opts?) -> frozen per-axis report. Runs the seeded evals and attaches accuracy to the MEASURED axes. NO global score. */
 function evaluate(opts: any = {}): any {
   const results = { reasoning: evalReasoning(), decomposition: evalDecomposition(), pathSelection: evalPathSelection(), independentVerification: evalIndependentVerification() };
+  // per-eval protocol strings name the ACTUAL scope each axis measures (so a broad axis label never over-reads).
+  const PROTOCOLS: Record<string, string> = {
+    reasoning: "seeded causal/epistemic reasoning incl ≥2-hop transitive chains — known verdicts (FACTUAL/HYPOTHETICAL/UNSOUND/UNGROUNDED)",
+    decomposition: "seeded complexity classification — known classes (TRIVIAL/SIMPLE/META/COMPLEX)",
+    pathSelection: "seeded path/tool selection under reliability — known tiers (LIGHT_LOCAL/ESCALATE_PROVIDER/DECOMPOSE)",
+    independentVerification: "integrity-gaming detection ONLY — inspector recall on seeded benchmark-contamination / evaluator-capture / metric-gaming (hard-marker paths); heuristic SUSPECTED paths NOT exercised, broader verification NOT covered",
+  };
   const axes = AXES.map((a: any) => {
     if (a.measurability === "MEASURED" && a.via && (results as any)[a.via]) {
       const r = (results as any)[a.via];
-      return freeze({ ...a, accuracy: r.accuracy, cases: r.cases, correct: r.correct, protocol: `seeded ${a.via} eval with KNOWN answers (objective, reproducible)`, reproducible: true });
+      return freeze({ ...a, accuracy: r.accuracy, cases: r.cases, correct: r.correct, protocol: PROTOCOLS[a.via] || `seeded ${a.via} eval with KNOWN answers`, reproducible: true });
     }
     return freeze({ ...a });
   });
