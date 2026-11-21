@@ -53,10 +53,13 @@ function profileMission(input: any, opts: any = {}): any {
   if (baseStages.length) {
     const baseBy: Record<string, any> = {};
     for (const b of baseStages) if (typeof b.stage === "string") baseBy[b.stage] = arr(b.latencyMs);
+    // only compare stages that are themselves MEASURABLE (same minSampleN floor as the top-line verdict), so a credited
+    // improvement is never reported for a stage the profile calls NOT_MEASURED (keep verdict and comparison consistent).
+    const measurableNames = new Set(measured.map((s: any) => s.stage));
     const perStage: any[] = [];
     for (const s of stagesIn) {
       const name = typeof s.stage === "string" ? s.stage : null;
-      if (!name || !baseBy[name]) continue;
+      if (!name || !baseBy[name] || !measurableNames.has(name)) continue;
       const cmp = PERF.compareReproducible({ before: baseBy[name], after: arr(s.latencyMs), minSamples: o.minSamples, maxVarianceRatio: o.maxVarianceRatio });
       perStage.push(freeze({ stage: name, reproducible: cmp.reproducible === true, reductionPct: cmp.reproducible ? cmp.reductionPct : null, beforeP50: cmp.beforeP50, afterP50: cmp.afterP50 }));
     }
@@ -73,7 +76,7 @@ function profileMission(input: any, opts: any = {}): any {
     stages: freeze(stages),
     totals: freeze({ totalMedianMs, totalP95Ms, modelCalls, toolCalls, measuredStages: measured.length, totalStages: stages.length }),
     bottleneck, comparison, verdict,
-    note: "chain-level performance profile: per-stage p50/p95 (latency-measure, thin ⇒ NOT_MEASURED) + call totals + bottleneck; a before/after gain is credited ONLY when reproducible (performance-observability: samples + low variance), a regression is surfaced. totalMedianMs is a SUM-OF-STAGE-MEDIANS model, not a single wall-clock. Cost-only: a profiled speedup must still pass the reliability gate (odg-model-intelligence) before adoption — speed never overrides reliability.",
+    note: "chain-level performance profile: per-stage p50/p95 (latency-measure, thin ⇒ NOT_MEASURED) + call totals + bottleneck; a before/after gain is credited ONLY when reproducible (performance-observability: samples + low variance), a regression is surfaced. totalMedianMs / totalP95Ms are SUM-OF-STAGE models, not a single wall-clock (p95-sum is an even looser proxy). Cost-only: a profiled speedup must still pass the reliability gate (odg-model-intelligence) before adoption — speed never overrides reliability.",
   });
 }
 
