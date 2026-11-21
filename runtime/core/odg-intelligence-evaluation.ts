@@ -34,11 +34,16 @@ function evalReasoning(): any {
   const factual = { entities: { a: ent("OBSERVED"), b: ent("PROVEN"), c: ent("OBSERVED") }, relations: { e1: rel("a", "c", "OBSERVED"), e2: rel("b", "c", "PROVEN") } };
   const hypo = { entities: { h: ent("HYPOTHESIS"), c: ent("OBSERVED") }, relations: { e: rel("h", "c", "OBSERVED") } };
   const contra = { entities: { x: ent("CONTRADICTED"), c: ent("OBSERVED") }, relations: { e: rel("x", "c", "OBSERVED") } };
+  // genuine MULTI-HOP (transitive) chains: a→b→c (the weakest-link status must be caught through the INTERMEDIATE b).
+  const chainFactual = { entities: { a: ent("OBSERVED"), b: ent("OBSERVED"), c: ent("OBSERVED") }, relations: { e1: rel("a", "b", "OBSERVED"), e2: rel("b", "c", "OBSERVED") } };
+  const chainHypoMid = { entities: { a: ent("OBSERVED"), b: ent("HYPOTHESIS"), c: ent("OBSERVED") }, relations: { e1: rel("a", "b", "OBSERVED"), e2: rel("b", "c", "OBSERVED") } };
   const cases = [
-    { label: "all-factual causal chain", model: factual, target: "c", expect: "DEDUCTIVE_FACTUAL" },
+    { label: "all-factual causal (single hop)", model: factual, target: "c", expect: "DEDUCTIVE_FACTUAL" },
     { label: "hypothesis in support", model: hypo, target: "c", expect: "HYPOTHETICAL" },
     { label: "contradicted cause", model: contra, target: "c", expect: "UNSOUND" },
     { label: "absent target", model: factual, target: "ghost", expect: "UNGROUNDED" },
+    { label: "MULTI-HOP all-factual chain a→b→c", model: chainFactual, target: "c", expect: "DEDUCTIVE_FACTUAL" },
+    { label: "MULTI-HOP hypothesis INTERMEDIATE a→b(HYP)→c", model: chainHypoMid, target: "c", expect: "HYPOTHETICAL" },
   ];
   return runCases(cases, (c) => HR.reason(c.model, { mode: "causes", target: c.target }).soundness, (c) => c.expect);
 }
@@ -47,6 +52,7 @@ function evalReasoning(): any {
 function evalDecomposition(): any {
   const cases = [
     { label: "single trivial file", spec: { name: "format", architecture: [{ role: "format", contract: "x" }] }, expect: "TRIVIAL" },
+    { label: "two-file simple project", spec: { name: "s", architecture: [{ role: "a", contract: "x" }, { role: "b", contract: "y" }] }, expect: "SIMPLE" },
     { label: "meta / code-analyzing", spec: { name: "detector", architecture: [{ role: "parse ast tokens", contract: "detect code references" }] }, expect: "META" },
     { label: "4-file project", spec: { name: "m", architecture: [{ role: "a", dependsOn: ["b"] }, { role: "b" }, { role: "c" }, { role: "d" }] }, expect: "COMPLEX" },
   ];
@@ -100,7 +106,9 @@ function evaluate(opts: any = {}): any {
   return freeze({
     axes: freeze(axes),
     seededEvals: freeze(results),
-    counts: freeze({ total: axes.length, measured: measured.length, measuredElsewhere: axes.filter((a: any) => a.measurability === "MEASURED_ELSEWHERE").length, notMeasured: notMeasured.length }),
+    // NOTE: measured axes derive from `distinctEvals` seeded evals (several axes can share ONE eval via the `via` field) —
+    // so `measured` is a count of AXES, not of independent measurements; distinctEvals exposes the real evidence breadth.
+    counts: freeze({ total: axes.length, measured: measured.length, measuredElsewhere: axes.filter((a: any) => a.measurability === "MEASURED_ELSEWHERE").length, notMeasured: notMeasured.length, distinctEvals: Object.keys(results).length }),
     globalScore: null,   // §3: NO artificial global intelligence score — never fabricated
     note: "per-axis intelligence evaluation on SEEDED problems (known answers ⇒ objective, reproducible). NO global score (activity / module count / token count are NEVER evidence of intelligence). An axis needing a real mission over time, learning over time, or an external comparative benchmark is NOT_MEASURED with its exact dependency — never a flattering self-assessment.",
   });

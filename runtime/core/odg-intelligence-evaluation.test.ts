@@ -15,9 +15,11 @@ function main(): void {
   check("NO global intelligence score (never fabricated)", r.globalScore === null && /NO global/.test(r.note));
 
   // the REAL brain solves the seeded reasoning problems correctly (objective, known answers)
-  check("reasoning axis MEASURED with seeded accuracy (real hybrid-reasoning on known verdicts)", r.seededEvals.reasoning.cases === 4 && r.seededEvals.reasoning.accuracy === 1 && axis(r, "causal-reasoning").accuracy === 1 && axis(r, "causal-reasoning").reproducible === true);
+  check("reasoning axis MEASURED incl genuine MULTI-HOP chains (real hybrid-reasoning on known verdicts)", r.seededEvals.reasoning.cases === 6 && r.seededEvals.reasoning.accuracy === 1 && axis(r, "causal-reasoning").accuracy === 1 && axis(r, "causal-reasoning").reproducible === true);
+  check("multi-step-reasoning genuinely tested by ≥2-hop transitive chains (not single-hop only)", r.seededEvals.reasoning.details.some((d: any) => /MULTI-HOP/.test(d.case) && d.ok) && axis(r, "multi-step-reasoning").accuracy === 1);
+  check("counts expose distinctEvals (6 measured axes derive from 3 seeded evals — breadth not overstated)", r.counts.distinctEvals === 3 && r.counts.measured === 6);
   check("uncertainty/contradiction axis MEASURED via the same seeded reasoning eval", axis(r, "uncertainty-contradiction").measurability === "MEASURED" && typeof axis(r, "uncertainty-contradiction").accuracy === "number");
-  check("decomposition axis MEASURED (seeded complexity classes correct)", r.seededEvals.decomposition.accuracy === 1 && axis(r, "decomposition").accuracy === 1);
+  check("decomposition axis MEASURED (seeded TRIVIAL/SIMPLE/META/COMPLEX correct)", r.seededEvals.decomposition.cases === 4 && r.seededEvals.decomposition.accuracy === 1 && axis(r, "decomposition").accuracy === 1);
   check("tool-use / decision axis MEASURED (seeded path selection correct)", r.seededEvals.pathSelection.accuracy === 1 && axis(r, "tool-use").accuracy === 1 && axis(r, "decision-quality").accuracy === 1);
 
   // speed/resource axis is MEASURED_ELSEWHERE (PR #838), not re-claimed here
