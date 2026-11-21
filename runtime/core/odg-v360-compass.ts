@@ -21,6 +21,7 @@ const CAPABILITIES = Object.freeze([
   freeze({ id: "radar-live-collection", priority: 2, module: "odg-radar-live-collect", status: "DONE_OPERATIONAL", pr: 817, note: "governed bounded egress; demonstrated 2 COLLECTED from FR open-data (kill-switch DRY default)" }),
   freeze({ id: "radar-qualification", priority: 2, module: "odg-radar-collect-to-signals", status: "CONNECTED", pr: 818, note: "collection → runRadar qualify → PROPOSAL (proposals, not missions)" }),
   freeze({ id: "radar-governed-integration", priority: 2, module: "odg-radar-to-deferred-lot", status: "CONNECTED", pr: 821, note: "proposals → DEFERRED governed lots; activation owner-gated (never auto-selected)" }),
+  freeze({ id: "radar-tech-sources", priority: 2, module: "odg-radar-tech-sources", status: "DONE_OPERATIONAL", pr: 824, note: "arXiv + GitHub (owner-authorized) integrated; live collection→qualification demonstrated (5+5 signals QUALIFIED); kill-switch DRY default" }),
   freeze({ id: "knowledge-engine", priority: 3, module: "knowledge-engine", status: "CONNECTED", pr: 815, note: "producer → knowledge.json → decision-engine + stage-effect; regenerable via bin" }),
   freeze({ id: "cognitive-drivers", priority: 4, module: "cognitive-campaign-driver", status: "DONE_OPERATIONAL", pr: 815, note: "cognition → campaign-loop mission + P15 workflow (bin); POLICY-deny ⇒ nothing" }),
   freeze({ id: "mission-decomposition", priority: 4, module: "odg-mission-decompose-chain", status: "CONNECTED", pr: 820, note: "decompose → selectNextLot; SIGN_OFF_GATED reserved (human lock)" }),
@@ -31,8 +32,8 @@ const CAPABILITIES = Object.freeze([
 // Owner decisions that gate further progress (not fabricatable); each names the exact dependency.
 const OWNER_GATED = Object.freeze([
   freeze({ id: "aql-definition", status: "BLOCKED", dependency: "owner must provide the canonical AQL definition (0 repo matches; must not be invented)" }),
-  freeze({ id: "radar-tech-sources", status: "OWNER_GATED", dependency: "add arXiv/GitHub to bounded-http-client.ALLOWLIST (owner approval) ⇒ high-value tech signals" }),
   freeze({ id: "deferred-activation", status: "OWNER_GATED", dependency: "DEFERRED → READY activation is an external owner authorization (never auto)" }),
+  // RESOLVED #824: radar-tech-sources (arXiv/GitHub) — owner-authorized + integrated; now a DONE_OPERATIONAL capability above.
   freeze({ id: "proposal-to-mission", status: "OWNER_GATED", dependency: "real mission creation stays deny-by-default / owner-gated" }),
   freeze({ id: "repair-apply", status: "OWNER_GATED", dependency: "self-healing repair application is governed (plan-only until authorized)" }),
   freeze({ id: "resident-driver-level", status: "OWNER_GATED", dependency: "resident-driver L0_OBSERVE → higher execution level needs owner authorization" }),
