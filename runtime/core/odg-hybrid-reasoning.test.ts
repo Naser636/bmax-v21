@@ -46,6 +46,11 @@ function main(): void {
   const u = M.reason(MODEL, { mode: "causes", target: "does-not-exist" });
   check("missing target ⇒ UNGROUNDED (no fabrication)", u.soundness === "UNGROUNDED" && u.epistemicStatus === "UNGROUNDED" && u.result.length === 0);
 
+  // (5b) a result node with NO entity record (relation references an id with no entity) ⇒ PARTIALLY_UNGROUNDED, not factual
+  const MODEL2 = { entities: { T: ent("OBSERVED") }, relations: { r: rel("ghost_cause", "T", "OBSERVED") } }; // ghost_cause has no entity
+  const pg = M.reason(MODEL2, { mode: "causes", target: "T" });
+  check("result node with no entity record ⇒ PARTIALLY_UNGROUNDED, not factual, confidence NONE", pg.factual === false && pg.soundness === "PARTIALLY_UNGROUNDED" && pg.confidence === "NONE");
+
   // (6) effects mode ⇒ factual descendants of A ({C1,C2}); compute provenance reported
   const e = M.reason(MODEL, { mode: "effects", target: "A" });
   check("effects mode: factual descendants of A include C1 + C2", e.mode === "effects" && e.result.indexOf("C1") >= 0 && e.result.indexOf("C2") >= 0);

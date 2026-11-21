@@ -69,7 +69,7 @@ function reason(model: any, query: any, opts: any = {}): any {
 
   // (3) EPISTEMIC PROPAGATION — the weakest link governs.
   const hasContradicted = allStatuses.indexOf("CONTRADICTED") >= 0;
-  const hasSimulation = allStatuses.indexOf("SIMULATION") >= 0; // only possible when includeSimulation
+  const hasSimulation = allStatuses.indexOf("SIMULATION") >= 0; // a SIMULATION edge (only if includeSimulation) OR a SIMULATION-status entity reached via factual edges — either taints
   const hasMissing = nodeStatuses.indexOf("MISSING") >= 0;      // a referenced result node with no entity record
   let epistemicStatus: string; let soundness: string; let factual: boolean; let confidence: string;
   if (hasContradicted) { epistemicStatus = "CONTRADICTED"; soundness = "UNSOUND"; factual = false; confidence = "NONE"; }
@@ -79,7 +79,7 @@ function reason(model: any, query: any, opts: any = {}): any {
     const weakest = allStatuses.reduce((w, s) => (RANK[s] ?? 0) < (RANK[w] ?? 0) ? s : w, allStatuses[0] || "MISSING");
     epistemicStatus = weakest;
     factual = !hasMissing && allStatuses.every((s) => FACTUAL.has(s));
-    soundness = factual ? "DEDUCTIVE_FACTUAL" : (RANK[weakest] ?? 0) >= RANK.INFERRED ? "INFERRED" : "HYPOTHETICAL";
+    soundness = factual ? "DEDUCTIVE_FACTUAL" : hasMissing ? "PARTIALLY_UNGROUNDED" : (RANK[weakest] ?? 0) >= RANK.INFERRED ? "INFERRED" : "HYPOTHETICAL";
     confidence = hasMissing ? "NONE" : (CONF[weakest] || "VERY_LOW");
   }
 
