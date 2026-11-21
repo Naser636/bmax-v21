@@ -64,6 +64,12 @@ async function collectToProposals(src: any, opts: any = {}): Promise<any> {
     enabled: true, decision: "QUALIFIED", signalCount: rawSignals.length,
     byDecision: report.byDecision, quarantined,
     proposals: freeze(arr(report.proposals).map((p: any) => (p && p.title) ? p.title : p).slice(0, 20)),
+    // V360 — the qualified, NON-quarantined signals (with qualification + provenance) for the Radar→Learning bridge.
+    signals: freeze(arr(report.assessed).filter((a: any) => a.untrusted !== true && a.signal).map((a: any) => freeze({
+      sourceId: a.signal.sourceId, title: a.signal.title, claims: a.signal.claims || [], categories: a.signal.categories || [],
+      fingerprint: a.signal.fingerprint, decision: a.decision, reliability: (registry[a.signal.sourceId] || {}).reliability ?? null,
+      provenance: freeze({ sourceId: a.signal.sourceId, host: v.host, fetchedAt: o.now || null }),
+    })).slice(0, 20)),
     provenance: freeze({ host: v.host, records: records.length, sha256: res.sha256 || null, fetchedAt: o.now || null }),
     note: "collection → frontier-radar qualification (normalize/sanitize/qualify/candidate/PROPOSAL); proposals are PROPOSALS — real mission creation stays owner-gated (deny-by-default)",
   });
