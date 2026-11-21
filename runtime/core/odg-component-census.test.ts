@@ -24,19 +24,20 @@ function main(): void {
   check("CONNECTED needs a real non-test consumer", rec(r, "connected").status === "CONNECTED" && r.counts.CONNECTED === 1);
   check("TEST_ONLY: consumed only by a test ⇒ not CONNECTED", rec(r, "testonly").status === "TEST_ONLY");
   check("demonstrator-named NO_CONSUMER ⇒ why DEMONSTRATOR_NAMED", rec(r, "demo-run").status === "NO_CONSUMER" && rec(r, "demo-run").why === "DEMONSTRATOR_NAMED");
-  check("library (exports API) ⇒ why LIBRARY_HEURISTIC", rec(r, "lib-x").why === "LIBRARY_HEURISTIC");
+  check("exports-API-no-consumer ⇒ why EXPORTS_API_NO_CONSUMER (liveness UNKNOWN, NOT 'harmless library')", rec(r, "lib-x").why === "EXPORTS_API_NO_CONSUMER");
   check("producer (writes artifact, no API) ⇒ why PRODUCER_ARTIFACT_HEURISTIC", rec(r, "producer-y").why === "PRODUCER_ARTIFACT_HEURISTIC");
   check("app-referenced ⇒ why APP_REFERENCED_HEURISTIC", rec(r, "app-used").why === "APP_REFERENCED_HEURISTIC");
-  check("no evidence ⇒ GENUINELY_DORMANT_CANDIDATE (the actionable pool)", rec(r, "dormant-z").why === "GENUINELY_DORMANT_CANDIDATE" && r.actionableCandidates.indexOf("dormant-z") >= 0);
-  check("actionableCandidates holds ONLY the genuinely-dormant (not libraries/demos/app)", r.actionableCandidates.length === 1 && r.actionableCandidates.indexOf("lib-x") < 0 && r.actionableCandidates.indexOf("demo-run") < 0);
+  check("no-API no-consumer ⇒ why NO_API_NO_CONSUMER (in the decision surface)", rec(r, "dormant-z").why === "NO_API_NO_CONSUMER" && r.decisionSurface.indexOf("dormant-z") >= 0);
+  check("decisionSurface = exports-api-no-consumer + no-api-no-consumer (NOT a cleared bucket); excludes demo/app/producer", r.decisionSurface.indexOf("lib-x") >= 0 && r.decisionSurface.indexOf("dormant-z") >= 0 && r.decisionSurface.indexOf("demo-run") < 0 && r.decisionSurface.indexOf("app-used") < 0 && r.decisionSurface.indexOf("producer-y") < 0);
   check("test module excluded from the census", rec(r, "connected.test") === undefined && r.total === 7);
   check("noConsumerWhy reconciles (5 NO_CONSUMER modules classified)", Object.values(r.noConsumerWhy).reduce((a: any, b: any) => a + b, 0) === 5);
 
-  check("frozen + contract: no fabricated consumer; heuristic≠verdict; dormant pool needs decision; composes; no 2nd graph",
+  check("frozen + contract: no fabricated consumer; NO_CONSUMER over-reports (misses dynamic); decisionSurface≠cleared-bucket; no auto-activate",
     Object.isFrozen(r) &&
     /NEVER fabricated to inflate connectivity/.test(JSON.stringify(M.COMPONENT_CENSUS_CONTRACT.invariants)) &&
-    /EVIDENCE to support a decision, NOT an authoritative verdict/.test(JSON.stringify(M.COMPONENT_CENSUS_CONTRACT.invariants)) &&
-    /never auto-activated/.test(JSON.stringify(M.COMPONENT_CENSUS_CONTRACT.invariants)) &&
+    /can MISS dynamic\/spawn\/app-dynamic consumers, so it OVER-reports orphans/.test(JSON.stringify(M.COMPONENT_CENSUS_CONTRACT.invariants)) &&
+    /NOT a cleared bucket and NOT 'no orphans'/.test(JSON.stringify(M.COMPONENT_CENSUS_CONTRACT.invariants)) &&
+    /never auto-activates/.test(JSON.stringify(M.COMPONENT_CENSUS_CONTRACT.invariants)) &&
     /change-impact-graph/.test(JSON.stringify(M.COMPONENT_CENSUS_CONTRACT.reuses)));
 
   process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-component-census (V361-A C1: classify core modules CONNECTED/BIN_ENTRY/TEST_ONLY/NO_CONSUMER+heuristic-why over the real require-graph; heuristic=evidence not verdict; GENUINELY_DORMANT=actionable pool needing a decision; no fabricated consumer, no auto-activation; composes graph+scan, no 2nd graph)" : failures + " FAIL"}\n`);

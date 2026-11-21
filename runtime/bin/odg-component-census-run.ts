@@ -3,9 +3,9 @@
 /*
  * V361-A Chantier-1 — COMPONENT CENSUS RUN (runtime entry). Runs the component census over the REAL repo: the real
  * require-graph (change-impact-graph) + the core+bin/app/script import scan (odg-consumer-scan) + per-module source + the
- * concatenated app text, classifying every core module and — for the no-consumer set — WHY it is dormant (heuristic). Also
- * verifies there are no genuinely-broken executable core routes. READ-ONLY. Answers §15: what exists, what is used, what is
- * NOT and why, which are the actionable candidates.
+ * concatenated app text, classifying every core module and — for the no-consumer set — a weak HEURISTIC `why`. READ-ONLY.
+ * Answers §15: what exists, what is used, what is NOT (by STATIC scan — may miss dynamic/spawn consumers) and the per-module
+ * decision surface. Broken routes are evidenced by the passing build + suite, not asserted here (that check is tautological).
  *
  * Usage: npx tsx runtime/bin/odg-component-census-run.ts
  */
@@ -17,8 +17,6 @@ const CENSUS = require(path.join(ROOT, "runtime", "core", "odg-component-census.
 
 const CORE = path.join(ROOT, "runtime", "core");
 const graph = CIG.buildGraph(ROOT);
-const coreNames = new Set<string>();
-for (const f of fs.readdirSync(CORE)) { if (f.endsWith(".ts") && !f.endsWith(".test.ts")) coreNames.add(f.slice(0, -3)); else if (f.endsWith(".js")) coreNames.add(f.slice(0, -3)); }
 
 // out-of-core consumer sources (bin/app/script) + concatenated app text (for the APP_REFERENCED heuristic).
 const scanned: any[] = []; let appText = "";
@@ -33,6 +31,9 @@ function walk(dir: string, tag: string, depth: number): void {
     if (tag === "app") appText += "\n" + src;
   }
 }
+// scan CORE too so dynamic / spawn / path.join references between core modules (e.g. spawnSync of "patch-executor.js") are
+// seen — change-impact-graph only captures LITERAL ./x requires, so core→core non-literal consumers would be missed.
+walk(path.join(ROOT, "runtime", "core"), "core", 0);
 walk(path.join(ROOT, "runtime", "bin"), "bin", 0);
 walk(path.join(ROOT, "src"), "app", 0);
 walk(path.join(ROOT, "scripts"), "script", 0);
@@ -43,20 +44,16 @@ const binExists = (m: string) => { try { return fs.existsSync(path.join(ROOT, "r
 
 const r = CENSUS.census({ graph, scanned, sourceOf, appText, binExists });
 
-// verify no genuinely-broken executable core route (a relative require to a missing core module, outside strings/comments
-// would break the build — the build passing already proves 0; we re-affirm by checking real deps resolve).
-let brokenRoutes = 0;
-for (const m of graph.modules) for (const d of (graph.deps[m] || [])) if (!coreNames.has(d)) brokenRoutes++;
-
 process.stdout.write(JSON.stringify({
-  componentCensus: "V361-A Chantier-1 — real component inventory over the require-graph",
-  total: r.total, counts: r.counts, brokenExecutableRoutes: brokenRoutes,
+  componentCensus: "V361-A Chantier-1 — real component inventory over the require-graph (core+bin+app+script scan)",
+  total: r.total, counts: r.counts,
   noConsumerWhy: r.noConsumerWhy,
-  actionableCandidates: r.actionableCandidates.length,
-  actionableSample: r.actionableCandidates.slice(0, 30),
+  decisionSurface: r.decisionSurface.length,
+  decisionSurfaceSample: r.decisionSurface.slice(0, 30),
+  brokenRoutes: "0 — evidenced by the passing build + full test suite (a dangling literal require would fail them); NOT independently asserted here",
 }, null, 2) + "\n");
-process.stdout.write(`\nCENSUS: ${r.counts.CONNECTED} CONNECTED / ${r.counts.NO_CONSUMER} NO_CONSUMER (of ${r.total}); 0-broken-route check = ${brokenRoutes}. ` +
+process.stdout.write(`\nCENSUS: ${r.counts.CONNECTED} CONNECTED / ${r.counts.NO_CONSUMER} NO_CONSUMER (no STATIC importer; may miss dynamic/spawn/app-dynamic) of ${r.total}. ` +
   `No-consumer WHY: ${Object.entries(r.noConsumerWhy).map(([k, v]) => `${k}=${v}`).join(", ")}. ` +
-  `${r.actionableCandidates.length} GENUINELY_DORMANT_CANDIDATE modules need a per-component connect/activate decision (heuristic — confirm before acting; no consumer fabricated, nothing auto-activated).\n`);
+  `DECISION SURFACE = ${r.decisionSurface.length} modules with no detected importer + no plausible reason — the per-module judgment pool (liveness UNKNOWN; the export convention is near-universal so EXPORTS_API_NO_CONSUMER is NOT proof of harmlessness). This is NOT "no orphans" — it is the set that needs a per-component connect decision. No consumer fabricated, nothing auto-activated. Broken routes: 0 (evidenced by passing build + suite, not independently asserted).\n`);
 process.exit(0);
 export {};
