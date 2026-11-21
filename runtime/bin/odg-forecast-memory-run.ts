@@ -48,7 +48,7 @@ process.stdout.write(JSON.stringify({
   score,
   missedEvents: missed,
 }, null, 2) + "\n");
-process.stdout.write(`\nANTICIPATION: ${score.counts.confirmed} confirmed / ${score.counts.refuted} refuted / ${score.counts.expiredUnresolved} expired-unresolved; hitRate=${score.hitRate}, falseSignalRate=${score.falseSignalRate}, meanLeadDays=${score.anticipationLeadDaysMean}; confidence calibration=${score.calibration.verdict} (Brier=${score.calibration.brier}). ` +
+process.stdout.write(`\nANTICIPATION: ${score.counts.confirmed} confirmed / ${score.counts.confirmedLate} late / ${score.counts.refuted} refuted / ${score.counts.expiredUnresolved} expired-unresolved; hitRate=${score.hitRate}, falseSignalRate=${score.falseSignalRate}, lateRate=${score.lateRate}, resolutionRate=${score.resolutionRate}, meanLeadDays=${score.anticipationLeadDaysMean}; confidence calibration=${score.calibration.verdict} (Brier=${score.calibration.brier}, n=${score.calibration.n}). ` +
   `A forecast is NEVER a fact; PENDING forecasts are NOT_MEASURED; EXPIRED-with-no-evidence is a NON-hit (never auto-confirmed). Signals + observations are SYNTHETIC (mechanism demonstration, not real-world prediction).\n`);
 process.exit(0);
 export {};
