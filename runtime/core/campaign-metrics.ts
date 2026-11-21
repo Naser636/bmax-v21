@@ -133,6 +133,7 @@ module.exports = { MODEL, summarizeRun, isTerminalEvent };
 
 // NOTE (V361-D P2-A — circular-dependency root-cause fix): a `require.main` demo block used to `require("./campaign-loop.js")`
 // here, creating a STATIC campaign-loop ↔ campaign-metrics cycle (backwards layering: metrics is a lower layer than the loop,
-// so it must NOT depend on the loop). The demo never ran in production/tests (nothing executes this module as a script) and
-// campaign-loop has its own `require.main` demo, so the block was removed — the metrics module now has NO dependency on the
-// loop, breaking the cycle. campaign-loop still uses campaign-metrics.summarizeRun (the correct one-directional dependency).
+// so it must NOT depend on the loop). The demo never ran in production/tests (nothing executes this module as a script), and
+// the metrics OUTPUT SHAPE is fully pinned by campaign-metrics.test.ts (20 assertions), so the dev-only demo was removable —
+// the block was removed and the metrics module now has NO dependency on the loop, breaking the cycle. campaign-loop still uses
+// campaign-metrics.summarizeRun (the correct one-directional dependency; campaign-loop keeps its own separate demo).
