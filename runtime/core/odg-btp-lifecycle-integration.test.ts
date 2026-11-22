@@ -112,18 +112,18 @@ function main() {
   const names = full.stages.map((s: any) => s.stage);
   check("FULL journey stage order: CLIENT_INTAKE → QUOTATION … → PROCUREMENT → PRICE_REVISION → RETENUE_GARANTIE → RETENUE_RELEASE", names[0] === "CLIENT_INTAKE" && names[1] === "QUOTATION" && names.indexOf("PROCUREMENT") > 0 && names.indexOf("RETENUE_RELEASE") === names.length - 1);
 
-  // V15.0 — opt-in FR_INVOICE_COMPLIANCE stage: the live journey now exercises odg-fr-invoice-compliance + odg-fr-due-date
+  // V15.0 — opt-in FR_INVOICE_PRECHECK stage: the live journey now exercises odg-fr-invoice-compliance + odg-fr-due-date
   {
     const doc = { sellerName: "ODG BTP (synthetic)", sellerSiret: "73282932000074", buyerName: "Client", invoiceNumber: "F-1", issueDate: "2026-11-22", paymentTermDays: 30, lineItems: [{ qty: 1, unitPriceHTMinor: 35640, vatRateBps: 2000 }], statedTotalVatMinor: 7128, penaltyRateMentionPresent: true, indemnityMentionPresent: true };
     const ok = L.runLifecycle({ ...scenario, frInvoice: { ledgerInvoiceId: "INV-DEP", document: doc } });
-    const st = ok.stages.find((x: any) => x.stage === "FR_INVOICE_COMPLIANCE"); const lk = ok.links.find((x: any) => x.id === "L_FR_DOCUMENT_TRACES_LEDGER");
+    const st = ok.stages.find((x: any) => x.stage === "FR_INVOICE_PRECHECK"); const lk = ok.links.find((x: any) => x.id === "L_FR_DOCUMENT_TRACES_LEDGER");
     check("FR stage runs: pre-check ready, TTC 42768 recomputed, due date 2026-12-22, link L consistent, flow intact", !!st && st.ready === true && st.computedTotalTTCMinor === 42768 && st.dueDate === "2026-12-22" && !!lk && lk.consistent === true && ok.dataFlowIntact === true);
     const mism = L.runLifecycle({ ...scenario, frInvoice: { ledgerInvoiceId: "INV-DEP", document: { ...doc, lineItems: [{ qty: 1, unitPriceHTMinor: 35000, vatRateBps: 2000 }], statedTotalVatMinor: 7000 } } });
     check("document TTC ≠ ledger invoice ⇒ link L broken, dataFlowIntact false (no shadow document)", mism.dataFlowIntact === false && mism.brokenLinks.includes("L_FR_DOCUMENT_TRACES_LEDGER"));
     const nosiret = L.runLifecycle({ ...scenario, frInvoice: { ledgerInvoiceId: "INV-DEP", document: { ...doc, sellerSiret: "12345678901234" } } });
-    const st2 = nosiret.stages.find((x: any) => x.stage === "FR_INVOICE_COMPLIANCE");
+    const st2 = nosiret.stages.find((x: any) => x.stage === "FR_INVOICE_PRECHECK");
     check("invalid seller SIRET ⇒ pre-check not ready (siret-checksum failed), link L broken", !!st2 && st2.ready === false && st2.failedChecks.includes("siret-checksum") && nosiret.brokenLinks.includes("L_FR_DOCUMENT_TRACES_LEDGER"));
-    check("without frInvoice the flow is unchanged (opt-in, no FR stage)", !r.stages.some((x: any) => x.stage === "FR_INVOICE_COMPLIANCE"));
+    check("without frInvoice the flow is unchanged (opt-in, no FR stage)", !r.stages.some((x: any) => x.stage === "FR_INVOICE_PRECHECK"));
   }
   process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-lifecycle-integration (V272 §12 + V330 M2: end-to-end data-flow across V260→V266→V267; 6 stages, 6 consistency links [WP cost 90000=quote, WP selling=quote 118800, contract=sellingHT 118800, milestones 71280≤contract, recon invoiced 42768=ledger, forecast margin 19800=quote]; dataFlowIntact true; fail-closed on over-scheduling [link D broken]; realized margin 25800; SYNTHETIC — integration proven, not traction)" : f + " FAIL") + "\n");
   process.exit(f === 0 ? 0 : 1);

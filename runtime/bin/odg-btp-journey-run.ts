@@ -5,7 +5,7 @@
  * demand (directive §7: "un parcours complet ... reproductible"). It drives odg-btp-lifecycle-integration.runLifecycle with
  * ONE fully-specified SYNTHETIC scenario that exercises every real engine:
  *   CLIENT_INTAKE → QUOTATION → WORK_PACKAGE → PLANNING → PAYMENT_TERMS → CASH_RECONCILIATION → REALIZED_PROFITABILITY →
- *   PROCUREMENT → PRICE_REVISION → RETENUE_GARANTIE → RETENUE_RELEASE  (11 stages, 13 cross-stage consistency links).
+ *   PROCUREMENT → PRICE_REVISION → RETENUE_GARANTIE → RETENUE_RELEASE  (12 stages, 13 cross-stage consistency links).
  * Pure composition of EXISTING engines; it builds nothing new, mutates nothing, opens no network, writes nothing.
  *
  * HONESTY: the scenario is SYNTHETIC — it proves INTEGRATION (the data flows consistently across the real engines), NOT
@@ -40,9 +40,9 @@ process.stdout.write(JSON.stringify({
   stageCount: r.stageCount, linkCount: r.linkCount, dataFlowIntact: r.dataFlowIntact, brokenLinks: r.brokenLinks,
   stages: r.stages.map((s: any) => s.stage),
 }, null, 2) + "\n");
-const ok = r.dataFlowIntact === true && r.stageCount === 11 && r.linkCount === 13;
+const ok = r.dataFlowIntact === true && r.stageCount === 12 && r.linkCount === 14;
 process.stdout.write(ok
-  ? "\nOK — complete M2 BTP parcours ran end-to-end (11 stages / 13 cross-stage consistency links, dataFlowIntact). SYNTHETIC: integration proven, not real traction.\n"
+  ? "\nOK — complete M2 BTP parcours ran end-to-end (12 stages / 14 cross-stage consistency links, dataFlowIntact). SYNTHETIC: integration proven, not real traction.\n"
   : "\nPARTIAL — see brokenLinks above\n");
 process.exit(ok ? 0 : 1);
 export {};
