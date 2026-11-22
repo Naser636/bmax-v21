@@ -9,6 +9,9 @@
 "use strict";
 const GATE = require("./odg-sandbox-integration-gate.js");
 const IC = require("./odg-improvement-chain.js");
+const ATT = require("./odg-knowledge-attestation.js");
+// owner trust anchors for INSPECTION_RECORD, loaded HERE from the git-reviewed file (never from a caller). Empty by design.
+const INSPECTION_ANCHORS: readonly string[] = Object.freeze((() => { try { const j = require("../../docs/odg/evidence/TRUST_ANCHORS.json"); return (j.INSPECTION_RECORD || []).slice(); } catch { return []; } })());
 
 const KEYS: string[] = GATE.CONDITIONS.map((c: any) => c.key);
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -46,14 +49,30 @@ function runMeasuredExperiment(experiment: any, measurements: any, opts?: any): 
   return Object.freeze({ chain: r, derived: d, callerEvidenceIgnored: isObj(x.evidence) });
 }
 
+/* ownerAnchoredReview(record, signed, asOfEpochMs) -> { ok, reason }. signed = { attestation, publicKeyPem } over the
+ * inspection record (purpose INSPECTION_RECORD). ok ONLY if the key fingerprint is anchored in TRUST_ANCHORS.json
+ * INSPECTION_RECORD (owner-controlled) AND the Ed25519 attestation verifies over the exact record. The provider cannot
+ * satisfy this: it holds no anchored key, and the anchor list is empty by design until the owner pins one. */
+function ownerAnchoredReview(record: any, signed: any, asOfEpochMs: number): any {
+  if (!isObj(record)) return Object.freeze({ ok: false, reason: "NO_RECORD" });
+  if (!isObj(signed) || typeof signed.publicKeyPem !== "string" || !isObj(signed.attestation)) return Object.freeze({ ok: false, reason: "NO_OWNER_SIGNATURE (review/inspection by the provider or its subagents never counts)" });
+  const fp = ATT.fingerprint(signed.publicKeyPem);
+  if (!INSPECTION_ANCHORS.includes(fp)) return Object.freeze({ ok: false, reason: "KEY_NOT_OWNER_ANCHORED (TRUST_ANCHORS.INSPECTION_RECORD has " + INSPECTION_ANCHORS.length + " key(s))" });
+  const reg = ATT.createRegistry(); const issuer = String(signed.attestation.header && signed.attestation.header.issuer || "");
+  ATT.registerIssuer(reg, { issuer, publicKeyPem: signed.publicKeyPem });
+  const v = ATT.verifyAttestation(signed.attestation, record, { registry: reg, asOf: asOfEpochMs, purpose: "INSPECTION_RECORD", allowRepeatVerification: true });
+  return Object.freeze({ ok: v.valid === true, reason: v.reason });
+}
+
 const MEASURED_GATE_CONTRACT = Object.freeze({
   id: "V15-MEASURED-GATE-EVIDENCE",
   invariants: Object.freeze([
     "the 12 conditions are the gate's own (GATE.CONDITIONS); no second gate",
     "a condition is true only from a well-formed, passed measurement of THIS run; absent/malformed/conflicting ⇒ false",
     "caller-asserted booleans are ignored",
+    "review / independent inspection count ONLY from an owner-anchored INSPECTION_RECORD signature (anchors loaded in-module; empty by design)",
     "INTEGRATE remains a merge-eligible decision only; deployment stays OWNER_GATED",
   ]),
 });
-module.exports = { deriveEvidence, runMeasuredExperiment, KEYS, MEASURED_GATE_CONTRACT };
+module.exports = { deriveEvidence, runMeasuredExperiment, ownerAnchoredReview, INSPECTION_ANCHORS, KEYS, MEASURED_GATE_CONTRACT };
 export {};

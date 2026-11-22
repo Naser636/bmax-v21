@@ -8,7 +8,7 @@
  * Usage: --ci-commit <sha> [--write <evidence.json>]   (simulation ≠ execution: nothing is installed or deployed) */
 const cp = require("child_process"); const fs = require("fs"); const os = require("os"); const path = require("path"); const crypto = require("crypto");
 const MG = require("../core/odg-gate-measured-evidence.js");
-const EVV = require("../core/odg-evidence-verifier.js");
+const EVV = require("../core/odg-evidence-verifier.js");   // committed-tree reader (origin/main)
 const ROOT = path.resolve(__dirname, "../..");
 const sha = (b: any) => crypto.createHash("sha256").update(b).digest("hex");
 const sh = (cwd: string, script: string, env: any = {}) => cp.spawnSync("bash", ["-c", script], { cwd, env: Object.assign({}, process.env, env), encoding: "utf8", timeout: 240000 });
@@ -44,14 +44,14 @@ function main() {
   const baseline = run(false);
   const baseOpen = baseline.filter((p) => p.open).length;
   add("baselineRecorded", "6 attack-surface probes run UNCONFINED in the throw-away copy before the change", baseline, baseline.length === PROBES.length);
-  add("needDemonstrated", "baseline: number of attack surfaces OPEN to the unconfined tick > 0", baseOpen, baseOpen > 0);
+  add("needDemonstrated", "baseline: attack surfaces AVAILABLE to an unconfined tick (capability by construction, not a demonstrated incident) > 0", baseOpen, baseOpen > 0);
   fs.rmSync(path.join(T, "runtime/logs"), { recursive: true, force: true }); fs.rmSync(path.join(T, "runtime/dist"), { recursive: true, force: true });
   sh(T, "git init -q 2>/dev/null; true"); // (copy is not a repo; the probes above wrote only inside T)
   for (const f of ["runtime/core/odg-resident-driver.ts"]) fs.copyFileSync(path.join(ROOT, f), path.join(T, f));   // undo baseline source write
   const candidate = run(true);
   const candOpen = candidate.filter((p) => p.open).length;
-  add("securityValidated", "same 6 probes inside the confined view: all must be REFUSED (writes, symlink, host socket, non-loopback net)", candidate, candOpen === 0);
-  add("measurableGainOrNewCapability", "open attack surfaces baseline → candidate (strict decrease to 0)", { baseline: baseOpen, candidate: candOpen }, candOpen === 0 && baseOpen > candOpen);
+  add("securityValidated", "confinement of the 6 probed surfaces (writes, symlink, host socket, non-loopback net) — all REFUSED; scope = these probes, NOT a full security validation", candidate, candOpen === 0);
+  add("measurableGainOrNewCapability", "attack surface removed: available surfaces baseline → candidate (strict decrease to 0); not a measured risk reduction", { baseline: baseOpen, candidate: candOpen }, candOpen === 0 && baseOpen > candOpen);
   // functional: the real confined launcher (rebuild path, stop signal, tsx fallback)
   const L = (env: any = {}) => sh(T, `bash scripts/odg-resident-driver-confined.sh "${T}"`, env);
   const f1 = L(), f2 = L({ ODG_SCHEDULER_STOP: "1" });
@@ -63,21 +63,20 @@ function main() {
   add("rollbackAvailable", "rollback = keep the existing ExecStart (normal launcher); measured: it still runs, exit 0, L0 line", rb.status, rb.status === 0 && /level=L0_OBSERVE/.test(rb.stdout));
   // isolation + no contract/permission violation: everything happened in T; real repository unchanged
   const realAfter = fingerprint(ROOT);
-  add("isolatedExperiment", "all runs in a throw-away copy under os.tmpdir() + bubblewrap for the candidate", T.startsWith(fs.realpathSync(os.tmpdir())), T.startsWith(fs.realpathSync(os.tmpdir())));
-  add("noContractOrPermissionViolation", "real repository fingerprint (HEAD + status + index) identical before/after; no systemd/sudo/network action performed", { before: realBefore.slice(0, 16), after: realAfter.slice(0, 16) }, !!realBefore && realBefore === realAfter);
+  add("isolatedExperiment", "runs in a throw-away copy under os.tmpdir() (path check) + bubblewrap for the candidate; see noContractOrPermissionViolation for the repo check", T.startsWith(fs.realpathSync(os.tmpdir())), T.startsWith(fs.realpathSync(os.tmpdir())));
+  add("noContractOrPermissionViolation", "real repository fingerprint (HEAD + status + index; NOT gitignored paths) identical before/after; runner writes only in the throw-away copy; no systemd/sudo action", { before: realBefore.slice(0, 16), after: realAfter.slice(0, 16) }, !!realBefore && realBefore === realAfter);
   // non-regression: the real required CI check of the commit carrying the change
   const full = (cp.spawnSync("git", ["rev-parse", "--verify", ciCommit + "^{commit}"], { cwd: ROOT, encoding: "utf8" }).stdout || "").trim();   // gh needs the FULL sha
   const ci = cp.spawnSync("gh", ["run", "list", "--commit", full || ciCommit, "--json", "name,conclusion,headSha", "--limit", "5"], { cwd: ROOT, encoding: "utf8", timeout: 60000 });
   let runs: any[] = []; try { runs = JSON.parse(ci.stdout || "[]"); } catch {}
   const green = runs.length > 0 && runs.every((r) => r.conclusion === "success");   // pending ("") or failure ⇒ not proven
   add("nonRegressionPass", "GitHub Actions required check on commit " + ciCommit + " (gh run list, read-only)", runs.map((r) => ({ name: r.name, conclusion: r.conclusion || "PENDING" })), green);
-  // review + inspection: ONLY via a VERIFIED WIC on origin/main binding this experiment (G2 verifier, fail-closed)
+  // review + inspection: ONLY via an OWNER-anchored signature over the inspection record read from origin/main
+  // (inspection HIGH: a provider-authored VERIFIED WIC would be self-certification). Signature sidecar: <record>.sig.json.
   const reader = EVV.makeCommittedReader(ROOT, "origin/main"); const EVP = "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json";
-  const evb = reader(EVP);
-  for (const [cond, level] of [["codeAndDepsReviewed", "REVIEWED"], ["independentInspection", "INSPECTED"]]) {
-    const v = evb ? EVV.verifyMaturityEvidence({ missionContract: "WIC-V15-RESIDENT-CONFINEMENT", contractPath: "docs/odg/WIC_V15-RESIDENT-CONFINEMENT.json", evidencePath: EVP, evidenceSha256: sha(evb) }, reader, { claimKey: "exp:V15-EXP-resident-confinement", level }) : { ok: false, reason: "EVIDENCE_NOT_ON_ORIGIN_MAIN" };
-    add(cond, "WIC-V15-RESIDENT-CONFINEMENT on origin/main, VERIFIED, binds exp:V15-EXP-resident-confinement at " + level + " (odg-evidence-verifier)", v.reason, v.ok === true);
-  }
+  let rec: any = null, signed: any = null; try { rec = JSON.parse(String(reader(EVP) || "")); } catch {} try { signed = JSON.parse(String(reader(EVP.replace(/\.json$/, ".sig.json")) || "")); } catch {}
+  const rv = MG.ownerAnchoredReview(rec, signed, Date.now());
+  for (const cond of ["codeAndDepsReviewed", "independentInspection"]) add(cond, "owner-anchored INSPECTION_RECORD signature over " + EVP + " on origin/main (TRUST_ANCHORS.INSPECTION_RECORD)", rec ? rv.reason : "RECORD_NOT_ON_ORIGIN_MAIN", rv.ok === true);
   fs.rmSync(T, { recursive: true, force: true });
   const r = MG.runMeasuredExperiment({ id: "V15-EXP-resident-confinement", v124Link: "CM-V234-RESIDENT-DRIVER", discovery: "1180 organizational Truth-Lock refusals + unconfined resident tick (V375)", significant: true }, M);
   const evidence = { experiment: "V15-EXP-resident-confinement", ciCommit, ranAt: new Date().toISOString(), measurements: M, derived: r.derived, verdict: r.chain.verdict, action: r.chain.action, softMissing: r.chain.softMissing, hardViolations: r.chain.hardViolations, deployed: false, deployStillOwnerGated: true,

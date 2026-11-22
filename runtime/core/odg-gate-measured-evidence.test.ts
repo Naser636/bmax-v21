@@ -13,5 +13,11 @@ check("LEGITIMATE refusal: security measurement failed ⇒ REJECT (hard stop)", 
 check("LEGITIMATE return: one soft measurement missing (inspection) ⇒ RETURN_TO_EXPERIMENT", (() => { const r = MG.runMeasuredExperiment(X, ALL.filter((m: any) => m.condition !== "independentInspection")); return r.chain.verdict === "RETURN_TO_EXPERIMENT" && r.chain.softMissing.includes("independentInspection"); })());
 check("conflicting measurements for a condition ⇒ false (CONFLICTING)", (() => { const d = MG.deriveEvidence([...ALL, { ...ok("functionalTestsPass"), passed: false }]); return d.evidence.functionalTestsPass === false && /CONFLICTING/.test(d.basis.functionalTestsPass); })());
 check("malformed measurements (no method / unknown condition / bad sha / non-boolean passed) are ignored, never count", (() => { const d = MG.deriveEvidence([{ condition: "linkedToV124", passed: true, observed: 1 }, { condition: "made_up", method: "xxxxxxxxxx", observed: 1, passed: true }, { ...ok("baselineRecorded"), artifactSha256: "zz" }, { ...ok("rollbackAvailable"), passed: "yes" }]); return d.malformedIgnored === 4 && d.measuredCount === 0; })());
+const ATT = require("./odg-knowledge-attestation.js");
+const rec = { subject: "x", verdict: "ACCEPT" }; const id = ATT.ephemeralIdentity("provider-made-key"); const now = Date.now();
+const att = ATT.createAttestation({ purpose: "INSPECTION_RECORD", identity: id, payload: rec, issuedAt: now - 1000, expiresAt: now + 86400000, nonce: "nonce-123456" });
+check("owner anchors loaded in-module are EMPTY by design", Array.isArray(MG.INSPECTION_ANCHORS) && MG.INSPECTION_ANCHORS.length === 0);
+check("SELF-CERTIFICATION refused: a valid signature by a provider-made key is NOT owner-anchored", (() => { const r = MG.ownerAnchoredReview(rec, { attestation: att, publicKeyPem: id.publicKeyPem }, now); return r.ok === false && /KEY_NOT_OWNER_ANCHORED/.test(r.reason); })());
+check("no signature at all ⇒ NO_OWNER_SIGNATURE", /NO_OWNER_SIGNATURE/.test(MG.ownerAnchoredReview(rec, null, now).reason));
 process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-gate-measured-evidence (V15)" : f + " FAIL") + "\n"); process.exit(f ? 1 : 0);
 export {};

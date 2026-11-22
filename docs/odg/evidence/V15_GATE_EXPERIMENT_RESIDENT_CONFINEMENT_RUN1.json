@@ -1,7 +1,7 @@
 {
   "experiment": "V15-EXP-resident-confinement",
   "ciCommit": "bd42eaa7",
-  "ranAt": "2026-11-22T15:17:59.336Z",
+  "ranAt": "2026-11-22T15:24:54.511Z",
   "measurements": [
     {
       "condition": "linkedToV124",
@@ -42,13 +42,13 @@
     },
     {
       "condition": "needDemonstrated",
-      "method": "baseline: number of attack surfaces OPEN to the unconfined tick > 0",
+      "method": "baseline: attack surfaces AVAILABLE to an unconfined tick (capability by construction, not a demonstrated incident) > 0",
       "observed": 6,
       "passed": true
     },
     {
       "condition": "securityValidated",
-      "method": "same 6 probes inside the confined view: all must be REFUSED (writes, symlink, host socket, non-loopback net)",
+      "method": "confinement of the 6 probed surfaces (writes, symlink, host socket, non-loopback net) — all REFUSED; scope = these probes, NOT a full security validation",
       "observed": [
         {
           "probe": "writeSource",
@@ -79,7 +79,7 @@
     },
     {
       "condition": "measurableGainOrNewCapability",
-      "method": "open attack surfaces baseline → candidate (strict decrease to 0)",
+      "method": "attack surface removed: available surfaces baseline → candidate (strict decrease to 0); not a measured risk reduction",
       "observed": {
         "baseline": 6,
         "candidate": 0
@@ -104,16 +104,16 @@
     },
     {
       "condition": "isolatedExperiment",
-      "method": "all runs in a throw-away copy under os.tmpdir() + bubblewrap for the candidate",
+      "method": "runs in a throw-away copy under os.tmpdir() (path check) + bubblewrap for the candidate; see noContractOrPermissionViolation for the repo check",
       "observed": true,
       "passed": true
     },
     {
       "condition": "noContractOrPermissionViolation",
-      "method": "real repository fingerprint (HEAD + status + index) identical before/after; no systemd/sudo/network action performed",
+      "method": "real repository fingerprint (HEAD + status + index; NOT gitignored paths) identical before/after; runner writes only in the throw-away copy; no systemd/sudo action",
       "observed": {
-        "before": "864f75cdce00dfd1",
-        "after": "864f75cdce00dfd1"
+        "before": "676d201368be51c7",
+        "after": "676d201368be51c7"
       },
       "passed": true
     },
@@ -130,14 +130,14 @@
     },
     {
       "condition": "codeAndDepsReviewed",
-      "method": "WIC-V15-RESIDENT-CONFINEMENT on origin/main, VERIFIED, binds exp:V15-EXP-resident-confinement at REVIEWED (odg-evidence-verifier)",
-      "observed": "EVIDENCE_NOT_ON_ORIGIN_MAIN",
+      "method": "owner-anchored INSPECTION_RECORD signature over docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json on origin/main (TRUST_ANCHORS.INSPECTION_RECORD)",
+      "observed": "RECORD_NOT_ON_ORIGIN_MAIN",
       "passed": false
     },
     {
       "condition": "independentInspection",
-      "method": "WIC-V15-RESIDENT-CONFINEMENT on origin/main, VERIFIED, binds exp:V15-EXP-resident-confinement at INSPECTED (odg-evidence-verifier)",
-      "observed": "EVIDENCE_NOT_ON_ORIGIN_MAIN",
+      "method": "owner-anchored INSPECTION_RECORD signature over docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json on origin/main (TRUST_ANCHORS.INSPECTION_RECORD)",
+      "observed": "RECORD_NOT_ON_ORIGIN_MAIN",
       "passed": false
     }
   ],
@@ -158,16 +158,16 @@
     },
     "basis": {
       "linkedToV124": "MEASURED_PASS (companion docs/odg/v124-consolidated-roadmap.json lists CM-V234-RESIDENT-DRIVER)",
-      "needDemonstrated": "MEASURED_PASS (baseline: number of attack surfaces OPEN to the unconfined tick > 0)",
-      "codeAndDepsReviewed": "MEASURED_FAIL (WIC-V15-RESIDENT-CONFINEMENT on origin/main, VERIFIED, binds exp:V15-EXP-resident-confinement at REVIEWED (odg-evidence-verifier))",
-      "isolatedExperiment": "MEASURED_PASS (all runs in a throw-away copy under os.tmpdir() + bubblewrap for the candidate)",
+      "needDemonstrated": "MEASURED_PASS (baseline: attack surfaces AVAILABLE to an unconfined tick (capability by construction, not a demonstrated incident) > 0)",
+      "codeAndDepsReviewed": "MEASURED_FAIL (owner-anchored INSPECTION_RECORD signature over docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json on origin/main (TRUST_ANCHORS.INSPECTION_RECORD))",
+      "isolatedExperiment": "MEASURED_PASS (runs in a throw-away copy under os.tmpdir() (path check) + bubblewrap for the candidate; see noContractOrPermissionViolation for the repo check)",
       "baselineRecorded": "MEASURED_PASS (6 attack-surface probes run UNCONFINED in the throw-away copy before the change)",
       "functionalTestsPass": "MEASURED_PASS (confined launcher: L0 tick (rebuild path) exit 0 + writes=0; stop signal ⇒ STOPPED; stale build ⇒ confined tsx fallback)",
       "nonRegressionPass": "MEASURED_PASS (GitHub Actions required check on commit bd42eaa7 (gh run list, read-only))",
-      "measurableGainOrNewCapability": "MEASURED_PASS (open attack surfaces baseline → candidate (strict decrease to 0))",
-      "noContractOrPermissionViolation": "MEASURED_PASS (real repository fingerprint (HEAD + status + index) identical before/after; no systemd/sudo/network action performed)",
-      "securityValidated": "MEASURED_PASS (same 6 probes inside the confined view: all must be REFUSED (writes, symlink, host socket, non-loopback net))",
-      "independentInspection": "MEASURED_FAIL (WIC-V15-RESIDENT-CONFINEMENT on origin/main, VERIFIED, binds exp:V15-EXP-resident-confinement at INSPECTED (odg-evidence-verifier))",
+      "measurableGainOrNewCapability": "MEASURED_PASS (attack surface removed: available surfaces baseline → candidate (strict decrease to 0); not a measured risk reduction)",
+      "noContractOrPermissionViolation": "MEASURED_PASS (real repository fingerprint (HEAD + status + index; NOT gitignored paths) identical before/after; runner writes only in the throw-away copy; no systemd/sudo action)",
+      "securityValidated": "MEASURED_PASS (confinement of the 6 probed surfaces (writes, symlink, host socket, non-loopback net) — all REFUSED; scope = these probes, NOT a full security validation)",
+      "independentInspection": "MEASURED_FAIL (owner-anchored INSPECTION_RECORD signature over docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json on origin/main (TRUST_ANCHORS.INSPECTION_RECORD))",
       "rollbackAvailable": "MEASURED_PASS (rollback = keep the existing ExecStart (normal launcher); measured: it still runs, exit 0, L0 line)"
     },
     "measuredCount": 12,
