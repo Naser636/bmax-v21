@@ -1,0 +1,43 @@
+{
+  "id": "WIC-V15-LAUNCHER-HARDENING",
+  "state": "EXECUTING",
+  "objective": "harden the V15 confined resident-driver launcher against the independent audit findings: inherited fds, unbounded stderr, unbounded tmpfs/processes, no timeout + orphan on launcher SIGKILL, freshness blind to emitted dist .js, implicit >64 KiB truncation",
+  "v124Link": "CM-V234-RESIDENT-DRIVER",
+  "authorization": "ODG — AUTORISATION PERMANENTE DE CONTINUITÉ D'EXÉCUTION + V15 executive order (bounded fix lot, residual MED/LOW audit findings); no systemd, no VPS, no install",
+  "rootCause": "the launcher (1) passed every caller fd > 2 into bwrap (reachable directly or via /proc/<ancestor>/fd/N), (2) streamed confined stderr raw and unbounded to the journal, (3) mounted unsized tmpfs (/tmp, /run, plus the writable bwrap root and /dev tmpfs) and set no NPROC cap, (4) ran the sandbox inside $(...) with no time bound — a launcher SIGKILL left the subshell as bwrap's parent so the sandbox survived, (5) hashed only the .ts closure inputs (a tampered emitted dist .js stayed 'fresh'), (6) signalled >64 KiB stdout only through an incidental exit code (reproduced: 11 new checks FAIL against the origin/main launcher)",
+  "write_set": [
+    "scripts/odg-resident-driver-confined.sh",
+    "scripts/lib/odg-confined-view.sh",
+    "scripts/lib/odg-resident-freshness.sh",
+    "scripts/odg-resident-driver-build.sh",
+    "runtime/core/odg-resident-driver-confined.test.ts",
+    "deploy/odg-resident-driver.service.d/v15-confined-launcher.conf.proposed",
+    "docs/odg/WIC_V15-LAUNCHER-HARDENING.json"
+  ],
+  "invariants": [
+    "no systemd unit / drop-in installed or modified; the drop-in stays a PROPOSAL",
+    "the confined tick still has NO writable host path; --clearenv, no host root, private /proc, stop-signal passthrough, tsx fallback and symlinked-log refusal kept",
+    "the line CONTENT remains the tick's self-report (format-checked, re-stamped) — NOT an attestation",
+    "non-conforming / truncated / timed-out output ⇒ exactly one launcher line (INVALID_TRACE truncated=0|1, or TIMEOUT); never silently dropped",
+    "scripts/odg-resident-driver-run.sh (shared freshness lib) keeps working"
+  ],
+  "acceptance_criteria": [
+    "odg-resident-driver-confined.test.ts ALL PASS (30 checks) incl. fd / stderr / timeout / orphan / truncated / nproc / tmpfs / freshness checks",
+    "the same new checks FAIL against the origin/main launcher (reproduction)",
+    "odg-resident-driver-l1-sandbox.test.ts, odg-resident-driver-tick.test.ts, odg-resident-driver-precompile.test.ts ALL PASS; CI green"
+  ],
+  "rollback": "git revert of the PR; the installed service is untouched (still the normal launcher)",
+  "evidence_required": [
+    "before/after runs of runtime/core/odg-resident-driver-confined.test.ts (PR description)"
+  ],
+  "stateNote": "NOT VERIFIED: provider must not self-certify; review/inspection count only from an OWNER-anchored signature.",
+  "knownLimits": [
+    "RLIMIT_AS (default 4 GiB; precompiled tick measured to need ~800 MB) is NOT applied on the tsx fallback: tsx's WebAssembly lexer reserves > 32 GiB virtual (fails at 32 GiB, runs at 64 GiB) — that path is memory-bounded only by the tmpfs caps, NPROC and the proposed MemoryMax=",
+    "anonymous memory of the tick is not cgroup-bounded by the launcher itself (needs the unit's MemoryMax=/TasksMax= — proposal only)",
+    "the RestrictAddressFamilies/PrivateNetwork interaction with bwrap --unshare-net is NOT reproduced (no systemd touched); owner dry-run required before install",
+    "a launcher SIGKILL leaves its private temp dir (bounded: ≤ 64 KiB stdout + stderr cap) under $TMPDIR",
+    "requires setpriv (util-linux) for the pdeathsig chain; the launcher refuses to run without it",
+    "line CONTENT (e.g. writes=0) remains the tick's self-report; only position in the trace, timestamp and TIMEOUT/truncated markers are launcher-controlled"
+  ],
+  "inspection": "none yet (an owner-anchored signature is required for it to count)"
+}

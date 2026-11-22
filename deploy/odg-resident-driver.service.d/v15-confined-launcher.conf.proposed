@@ -2,11 +2,26 @@
 # manager is fragile on this host: kernel.apparmor_restrict_unprivileged_userns=1). Confinement is instead provided by
 # bubblewrap (own AppArmor profile bwrap-userns-restrict), via scripts/odg-resident-driver-confined.sh — tested end to end
 # WITHOUT systemd by runtime/core/odg-resident-driver-confined.test.ts (rebuild / fresh / tsx-fallback / stop paths;
-# three phases: trusted rebuild BEFORE the sandbox; the tick confined with NO writable host path (runtime/dist, logs incl.
-# its own trace, source, scripts, docs read-only; host Unix sockets unreachable; lo only); then the TRUSTED launcher appends
-# the trace line (strict format, launcher clock) — confined code cannot truncate/rewrite the trace history.
+# three phases: trusted rebuild BEFORE the sandbox (freshness covers sources AND emitted dist .js); the tick confined with
+# NO writable host path (runtime/dist, logs incl. its own trace, source, scripts, docs read-only; host Unix sockets
+# unreachable; lo only; inherited fds > 2 closed; size-capped tmpfs; RLIMIT_FSIZE/NPROC; `timeout`, no orphan on launcher
+# SIGKILL); then the TRUSTED launcher appends the trace line (strict format, launcher clock, TIMEOUT / truncated= markers).
+#
+# OWNER DRY-RUN REQUIRED BEFORE INSTALL (NOT reproduced here — no systemd was touched): if the base unit (or another drop-in)
+# sets RestrictAddressFamilies=AF_UNIX, PrivateNetwork=, RestrictNamespaces=, NoNewPrivileges=/SystemCallFilter= or
+# LockPersonality-style sandboxing, bwrap --unshare-all may FAIL: bringing up `lo` in the new network namespace needs an
+# AF_NETLINK socket (RestrictAddressFamilies must then also list AF_NETLINK), and user/mount/pid namespaces must not be
+# restricted. Dry-run: `systemd-run --user --wait --pipe -p <the unit's sandbox properties> bash scripts/odg-resident-driver-confined.sh`
+# and check exit 0 + one new L0 line before installing.
+#
 # Owner install (user-systemd, no root): copy to ~/.config/systemd/user/odg-resident-driver.service.d/v15-confined-launcher.conf,
 # `systemctl --user daemon-reload`, wait one tick: Result=success + a new L0 line. Rollback: delete the file + daemon-reload.
 [Service]
 ExecStart=
 ExecStart=/bin/bash -lc 'bash scripts/odg-resident-driver-confined.sh'
+# SUGGESTED (owner to size from a measured tick; the precompiled tick peaked ~71 MB RSS, tsx ~113 MB): cgroup caps bound
+# what RLIMIT_AS cannot (the tsx fallback runs WITHOUT an AS cap — its WebAssembly lexer reserves > 32 GiB of virtual space).
+# Needs the memory/pids controllers delegated to the user manager (check `systemctl --user show -p DelegateControllers`).
+# MemoryMax=512M
+# TasksMax=256
+# TimeoutStartSec=120
