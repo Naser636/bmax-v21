@@ -12,7 +12,7 @@
 | Knowledge | 7 statements: 7 SUPPORTED (kept), 0 CORROBORATED, 0 presented as fact | `KI_V2_LOT1_EVIDENCE.json` |
 | Trust | provenance bound to a repo-pinned collection; forgery paths closed | PR #855–#857, 10 falsification scenarios |
 | Operational use | 1 item (SRE "error budget = 1 − SLO") applied to a real journey. It confirmed the canonical formula, made the CI error budget measurable, and showed that the decision depends on the SLO value | `LOT3_SRE_ERROR_BUDGET_EVIDENCE.json` (PR #858) |
-| Side discovery (highest value) | the mission ledger **cannot represent failures** (`failuresRepresentable:false`; 175/175 is survivorship) | `slo-collector` on the real ledger |
+| Side discovery (highest value) | the mission ledger cannot represent failures **by design**: `recordMission` is proven-only (default-deny), so 175/175 is survivorship. The correct outcome source, `mission-attempt-log`, **already exists with real data** — and it revealed the real gap, G0 | `slo-collector` on the real ledger; `runtime/core/mission-attempt-log.ts` |
 
 **Verdict.**
 - Radar's direct knowledge yield is small: one applied item, and **no measured improvement yet**.
@@ -27,7 +27,8 @@ Criteria (V373 §10): autonomy, intelligence, quality, transversality, security,
 
 | # | Gap (evidence) | Score | Risk | Uncertainty | Gate |
 |---|---|---|---|---|---|
-| G1 | Mission ledger records no failures (`slo-collector`): every success rate, SLO and learning signal on native missions is survivorship-biased | **high** | LOW | MEDIUM (root cause not yet traced to the writer) | internal |
+| G0 | **Autonomy availability loss.** In the real `mission-attempt-log` (2566 attempts, 2026-10-21 → 11-22): 1183 STARTUP_REFUSED (Truth Lock: the main worktree was on a non-main branch), 1380 IDLE, 2 BLOCKED, 1 PASS. From 11-16 to 11-21, ≈35 % of daily ticks were refused (≈29/day); on 11-22, after worktree-only discipline, there was 1 | **highest** | LOW | LOW (cause measured) | internal |
+| G1 | (re-characterized) The ledger is proven-only by design (correct); SLO/learning metrics must consume `mission-attempt-log` instead. No SLO consumer reads it yet, and Lot 3 used the wrong source and rejected it correctly | high | LOW | LOW | internal |
 | G2 | Maturity evidence checked by FORMAT only (inspection Lot 2 MEDIUM): a made-up WIC id can lift authorization | high | MEDIUM | LOW | internal |
 | G3 | No configured SLO for the CI journey, so the error budget cannot drive a decision | medium | LOW | LOW | **owner/CTO** |
 | G4 | Corroboration: 5 single-source official statements; no independent second publisher collected | medium | LOW | MEDIUM | internal (grant V372) |
@@ -43,15 +44,17 @@ Criteria (V373 §10): autonomy, intelligence, quality, transversality, security,
 
 | Lot | Chantiers | Depends on | Exit criterion |
 |---|---|---|---|
-| **A (next)** | G1 make the mission ledger represent failed/blocked outcomes (trace the writer, add the states, keep history) · G2 resolve maturity evidence against real WIC files and evidence hashes | — | `slo-collector.failuresRepresentable === true` on new missions; a fabricated WIC id is refused; independent inspection ACCEPT |
+| **A (next)** | G0 autonomy-availability SLI from `mission-attempt-log` (refusal rate, with the Truth Lock cause) plus a guard against branch work in the main worktree · G1 point SLO consumers at the attempt log (not the ledger) · G2 resolve maturity evidence against real WIC files and evidence hashes | — | availability SLI measured with before/after; a fabricated WIC id is refused; independent inspection ACCEPT |
 | B | G4 corroborate the 5 statements via verified independent public domains (grant additions, per-collection overlap check) · re-run KI-V2 | A (none strictly) | each statement CORROBORATED **or** an explicit "no independent source found" |
 | C | G5 close or re-scope orchestration + A–Z scenario (REVIEW → ACCEPTED/REJECTED with evidence) | A (failure states feed the scenarios) | V12.4 F/G statuses reconciled |
 | D | G7 métier baselines (sandbox) composed with the cross-métier brain · G6 consumer judgment refresh | C | per-métier baseline measured, no métier "improved" without evidence |
 | Owner track (parallel, not internal) | G3 choose the CI SLO · G9 resident L1 · G11 deploy + firewall (scripts ready: `~/odg-preservation/V370/odg-owner-finalize.sh`) | — | owner decisions |
 
-**Priority rationale.** G1 comes first because it is transversal. Without failure representation, ODG cannot measure its own autonomy, learning (the four-state lesson metric of V373 §8) or reliability. Every later "improvement" claim would be survivorship-biased.
+**Priority rationale.**
+- G0 comes first: it is a measured, ongoing loss of native-autonomy capacity (about a third of scheduled ticks over six days), and its cause is known.
+- G1 is next because ODG cannot measure autonomy, learning (the four-state lesson metric of V373 §8) or reliability on a survivorship-biased source.
 
 ## 4. Limits
 - The scores are hypotheses and must be calibrated with outcomes.
 - Radar's yield is based on one 6-call campaign.
-- G1's root cause is not yet traced: the symptom is proven, the cause is not.
+- Correction recorded: an earlier draft treated G1 as a missing capability; the attempt log already exists. The survivorship is a proven-only design, not a writer defect.
