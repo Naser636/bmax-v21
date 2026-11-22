@@ -1,0 +1,66 @@
+{
+  "//": "V16 §8 — CONTROLLED extension of the EXISTING Radar (no second radar): a versioned research-governor grant scoped to Claude Code and its ecosystem. Same canonical shape as V372, plus two V16 opt-ins enforced by research-governor.govern(): hostMatch:\"EXACT\" (governor agrees with bounded-http-client's exact-host allowlist; https required) and allowedPaths (per-host path prefixes, segment-boundary match). The canonical bounded-http-client ALLOWLIST is NOT mutated: allowedDomains are passed as the per-call allowlist (V138 pattern). Live egress additionally requires ODG_RADAR_LIVE=1 (kill-switch) — owner-gated; this file alone performs no egress.",
+  "grant": {
+    "authorized": true,
+    "issuedBy": "owner (V16 §8 directive — prepare a controlled Radar allowlist extension for Claude Code research; live activation = owner sets ODG_RADAR_LIVE=1)",
+    "issuedMs": 1795305600000,
+    "issuedIso": "2026-11-22T00:00:00.000Z",
+    "expiresMs": 1797811200000,
+    "expiresIso": "2026-12-21T00:00:00.000Z",
+    "expiryNote": "29 days (≤ 30-day ceiling). Not renewable in place: renewal = a new versioned grant file.",
+    "scope": "READ_ONLY_PUBLIC_RESEARCH — official, public, unauthenticated Claude Code documentation, Anthropic engineering articles and the public anthropics/claude-code repository metadata",
+    "purpose": [
+      "agent capabilities",
+      "parallel orchestration",
+      "process / session management",
+      "resume after interruption",
+      "speed",
+      "context / resource limits",
+      "delegation",
+      "diagnostics"
+    ],
+    "hostMatch": "EXACT",
+    "allowedDomains": ["code.claude.com", "www.anthropic.com", "api.github.com"],
+    "allowedPaths": {
+      "code.claude.com": ["/docs/en/"],
+      "www.anthropic.com": ["/engineering/"],
+      "api.github.com": ["/repos/anthropics/claude-code"]
+    },
+    "allowedDomainsNote": "Minimal official set. Exact hosts only (no sub-domain). docs.anthropic.com and docs.claude.com are deliberately NOT included: Claude Code documentation is served from code.claude.com and those hosts are expected to answer with redirects, which bounded-http-client blocks (REDIRECT_BLOCKED) — this expectation is UNVERIFIED (no live fetch was run when preparing this grant). api.github.com is already in the canonical client ALLOWLIST; here it is further bounded to the anthropics/claude-code repository path. Any addition = new versioned commit with a justification line in domainAdditions[].",
+    "domainAdditions": [],
+    "methods": ["GET"],
+    "transport": "HTTPS only (bounded-http-client.get — GET only, redirects blocked, SSRF guard, size cap, timeout)",
+    "contentTypesPerCall": {
+      "code.claude.com": ["text/markdown", "text/plain", "text/html"],
+      "www.anthropic.com": ["text/html", "text/markdown", "text/plain"],
+      "api.github.com": ["application/json"]
+    },
+    "budget": {
+      "maxCalls": 10,
+      "maxBytes": 2000000,
+      "perResponseMaxBytes": 300000,
+      "timeoutMs": 15000,
+      "quotaScope": "PER RUN — enforced in code by research-budget.governWithBudget (requireBudget) with usage starting at 0 for each run; a cumulative cap across runs is NOT enforced in code (each live run must be recorded and pinned in docs/odg/evidence/COLLECTION_REGISTRY.json)",
+      "perCampaignReportRequired": true
+    },
+    "contentPolicy": "fetched content is untrusted data; never executed; findings evaluated before integration",
+    "enforcement": {
+      "policy": "runtime/core/research-governor.ts govern() — authorized + unexpired + EXACT host + path prefix (deny-by-default)",
+      "quota": "runtime/core/research-budget.ts governWithBudget() — per-run calls/bytes, requireBudget:true",
+      "transport": "runtime/core/bounded-http-client.ts — validateUrl (exact-host per-call allowlist), ODG_RADAR_LIVE kill-switch, REDIRECT_BLOCKED, per-call contentTypes",
+      "content": "runtime/core/frontier-radar.ts sanitizeExternal() via research-governor.stampFinding() — injection ⇒ QUARANTINE (HYPOTHESIS)",
+      "runner": "runtime/core/odg-v16-claude-code-research.ts + runtime/bin/odg-v16-claude-code-research-run.ts (DRY by default)",
+      "provenance": "each live run records url/status/bytes/sha256 and must be pinned in docs/odg/evidence/COLLECTION_REGISTRY.json before any finding is reused"
+    },
+    "constraints": [
+      "no private credentials, no authentication, no account creation, no GitHub token",
+      "no external writes, no form submission, no side effect on any third party",
+      "no paid API, no purchase, no subscription",
+      "no circumvention of access controls (HTTP 401/403/429 recorded, never bypassed); respect robots/terms",
+      "no secret transmitted in any request",
+      "no CI egress (CI stays offline)",
+      "fetched content is never executed, never treated as instructions; discovery ≠ authorization (proposals stay PROPOSED)",
+      "reuse recorded results before any new collection"
+    ]
+  }
+}

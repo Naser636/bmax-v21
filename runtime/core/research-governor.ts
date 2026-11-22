@@ -12,6 +12,8 @@
  *  - govern(request, grant, nowMs) → { decision: ALLOW|DENY, reasons[], plan:{domains[]} }.
  *      DENY (deny-by-default) when: no/!authorized grant (EGRESS_NOT_AUTHORIZED); grant expired (GRANT_EXPIRED);
  *      a requested URL's host is not in grant.allowedDomains (DOMAIN_NOT_ALLOWED); malformed request/url (INVALID_*).
+ *      V16 opt-ins: grant.hostMatch:"EXACT" (host must equal an allowed domain; https required) and grant.allowedPaths
+ *      ({host:[prefix…]} ⇒ PATH_NOT_ALLOWED outside them). Absent ⇒ historical behaviour (suffix match, no path bound).
  *  - stampFinding(content, source) → { ok, finding|reason }. Refuses (ANTI-FABRICATION) unless source has a non-empty
  *      url/name AND a valid ISO date AND content; confidence = source credibility band (unknown ⇒ LOW, fail-closed).
  * LIVE ACTIVATION is an owner/EXT-AUTH frontier: a real grant is issued out-of-band; this module only enforces policy.
@@ -47,14 +49,37 @@ function govern(request: any, grant: any, nowMs: any): any {
   if (g.authorized === true && !isNum(g.expiresMs)) reasons.push("GRANT_EXPIRED");
   if (g.authorized === true && isNum(g.expiresMs) && isNum(nowMs) && nowMs > g.expiresMs) reasons.push("GRANT_EXPIRED");
   const allowed: string[] = Array.isArray(g.allowedDomains) ? g.allowedDomains.filter(isStr).map((d: string) => d.toLowerCase()) : [];
+  // V16 — opt-in EXACT host matching. The default (hostMatch absent) keeps the historical SUFFIX semantics (a sub-domain of an
+  // allowed domain is allowed — V372 relies on it: nasa.gov ⇒ sma.nasa.gov), which is LOOSER than bounded-http-client's
+  // exact-host allowlist. A grant declaring hostMatch:"EXACT" makes the governor agree with the transport (h === d only) and
+  // additionally requires https. Any other declared value is fail-closed (INVALID_HOST_MATCH) — never silently suffix.
+  const hostMatch = g.hostMatch === undefined ? "SUFFIX" : g.hostMatch;
+  if (hostMatch !== "SUFFIX" && hostMatch !== "EXACT") reasons.push("INVALID_HOST_MATCH");
+  const exact = hostMatch === "EXACT";
+  // V16 — optional per-host PATH PREFIXES (allowedPaths: { host: [prefix…] }). When declared, every URL must sit under a
+  // prefix of ITS host, at a path-segment boundary ("/repos/a/b" admits "/repos/a/b" and "/repos/a/b/…", never "/repos/a/bc").
+  // The path is taken from the WHATWG-normalized URL ("/x/../y" ⇒ "/y"), so dot-segments cannot escape a prefix.
+  const pathsDeclared = g.allowedPaths !== undefined;
+  const pathMap: any = pathsDeclared && g.allowedPaths && typeof g.allowedPaths === "object" && !Array.isArray(g.allowedPaths) ? g.allowedPaths : null;
+  if (pathsDeclared && !pathMap) reasons.push("INVALID_ALLOWED_PATHS");
   const planDomains: string[] = [];
   for (const u of urls) {
     const h = hostOf(u);
     if (!h) { reasons.push("INVALID_URL:" + String(u)); continue; }
-    // domain allowed if it equals or is a subdomain of an allowed domain
-    const ok = allowed.some((d) => h === d || h.endsWith("." + d));
-    if (!ok) reasons.push("DOMAIN_NOT_ALLOWED:" + h);
-    else planDomains.push(h);
+    if (exact && !/^https:\/\//i.test(String(u))) { reasons.push("NOT_HTTPS:" + h); continue; }
+    if (exact) { let wh: string | null = null; try { wh = new URL(String(u)).hostname.toLowerCase(); } catch { wh = null; }
+      if (wh !== h) { reasons.push("HOST_PARSE_MISMATCH:" + h); continue; } }   // regex host must equal the WHATWG host the client will use
+    // SUFFIX (default): equals or is a subdomain of an allowed domain. EXACT: equals only.
+    const ok = allowed.some((d) => h === d || (!exact && h.endsWith("." + d)));
+    if (!ok) { reasons.push("DOMAIN_NOT_ALLOWED:" + h); continue; }
+    if (pathMap) {
+      let p: string | null = null;
+      try { p = new URL(String(u)).pathname; } catch { p = null; }
+      const prefixes: string[] = Array.isArray(pathMap[h]) ? pathMap[h].filter(isStr) : [];
+      const under = p !== null && prefixes.some((pre) => { const b = pre.endsWith("/") ? pre.slice(0, -1) : pre; return p === b || p!.startsWith(b + "/"); });
+      if (!under) { reasons.push("PATH_NOT_ALLOWED:" + h + (p === null ? "" : p)); continue; }
+    }
+    planDomains.push(h);
   }
   // D1 FIX — the domain allowlist must bound EVERY authorized request, including a QUERY-ONLY one (the shape the radar emits).
   // Previously the allowlist was consulted only for url-bearing requests, so a query-only request with any authorized grant
