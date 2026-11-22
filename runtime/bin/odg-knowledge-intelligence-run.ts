@@ -7,6 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const K = require("../core/odg-knowledge-intelligence.js");
 const FR = require("../core/frontier-radar.js");
+const ATT = require("../core/odg-knowledge-attestation.js");
 
 const STRUCT: Record<string, any> = {
   // keys AUTHORED from the recorded quotes; VALUE words must appear in each source's citations, SUBJECT words in its
@@ -24,22 +25,29 @@ function main() {
   const argv = process.argv.slice(2); const wi = argv.indexOf("--write"); const out = wi >= 0 ? argv[wi + 1] : null;
   const col = JSON.parse(fs.readFileSync("docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json", "utf8"));
   const asOf = Date.UTC(2026, 10, 22, 12);
-  const byUrl: Record<string, any> = {}; for (const s of col.sources) byUrl[s.url] = s;
+  const registry = JSON.parse(fs.readFileSync("docs/odg/evidence/COLLECTION_REGISTRY.json", "utf8"));
+  const collection = K.attestCollection(col, { pinnedDigests: registry.collections.map((c: any) => c.sha256) });   // V374 trust root
+  if (!collection.attested) throw new Error("collection not authenticated (digest not pinned in COLLECTION_REGISTRY.json)");
+  const byUrl: Record<string, any> = collection.byUrl;
   const quarantined = col.sources.filter((s: any) => FR.sanitizeExternal({ title: s.title, body: (s.quotes || []).join("\n") }).untrusted).map((s: any) => s.url);
-  const results = col.cycles.map((cy: any) => {
+  // sandbox: an EPHEMERAL per-run key attests each record (never persisted, never exported) — proves the wiring only.
+  const REG = ATT.createRegistry(); const ID = ATT.ephemeralIdentity("odg-ki-run"); ATT.registerIssuer(REG, ID);
+  const results = col.cycles.map((cy: any, i: number) => {
     const st = STRUCT[cy.query] || {};
     const a = K.assessClaim({ ...st, nature: "OFFICIAL_DOCUMENTATION", text: cy.claim, sources: (cy.support || []).map((sp: any) => ({ url: sp.url, citation: sp.quote, structured: st })) },
-      { asOfEpochMs: asOf, byUrl, quarantined, missionAuthorization: "DESIGN_PROPOSAL" });
+      { asOfEpochMs: asOf, collection, quarantined, missionAuthorization: "DESIGN_PROPOSAL" });
     const mem = K.toMemory(a, asOf);
+    const recOpts = { attestation: ATT.createAttestation({ purpose: "KNOWLEDGE_RECORD", identity: ID, payload: mem, issuedAt: asOf, expiresAt: asOf + 30 * 86400000, nonce: "ki-run-rec-" + String(i).padStart(4, "0") }), registry: REG, allowRepeatVerification: true };
     return { query: cy.query, claim: cy.claim, structured: a.structured, dimensions: a.dimensions, isFact: a.isFact,
       independentFamilies: a.independentFamilies, verifiedSources: a.sources.filter((s: any) => s.citationVerified).map((s: any) => ({ url: s.url, organization: s.identity.organization, family: s.identity.family })),
-      memory: { status: mem.status, admissibleByTrustGate: K.admissible(mem, asOf).trusted }, reasons: a.reasons };
+      memory: { status: mem.status, retention: mem.retention, admittedAsFactByTrustGate: K.admissible(mem, asOf, { assessment: a }).trusted, usableForDesign: K.usableFor(mem, "DESIGN_PROPOSAL", asOf, { assessment: a }).authorization, usableForIntegrationRequest: K.usableFor(mem, "INTERNAL_INTEGRATION", asOf, { assessment: a }).authorization, sandboxSignatureOnly: K.usableFor(mem, "DESIGN_PROPOSAL", asOf, recOpts).authorization }, reasons: a.reasons };
   });
   const count = (k: string) => results.filter((r: any) => r.dimensions.epistemic === k).length;
   const evidence = {
     lot: "V373 Knowledge Intelligence V2 — Lot 1 (structured claims + source identity + four dimensions)",
     input: "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json (no new network call)",
-    summary: { claims: results.length, CORROBORATED: count("CORROBORATED"), SUPPORTED: count("SUPPORTED"), CANDIDATE: count("CANDIDATE"), UNKNOWN: count("UNKNOWN"), keptInMemory: results.filter((r: any) => r.memory.admissibleByTrustGate).length, presentedAsFact: results.filter((r: any) => r.isFact).length },
+    summary: { claims: results.length, CORROBORATED: count("CORROBORATED"), SUPPORTED: count("SUPPORTED"), CANDIDATE: count("CANDIDATE"), UNKNOWN: count("UNKNOWN"), keptInMemory: results.filter((r: any) => r.memory.retention === "KEPT").length, admittedAsFact: results.filter((r: any) => r.memory.admittedAsFactByTrustGate).length, collectionAuthenticated: collection.via, presentedAsFact: results.filter((r: any) => r.isFact).length },
+    crossFamilyOverlap: K.crossFamilyOverlap(col),
     correctionOfHistory: "step 2 (PR #854) labelled the 2 Toyota statements CORROBORATED by DOMAIN; KI-V2 reclassifies them SUPPORTED because both domains belong to ONE publisher family (Toyota). The step-2 evidence file is preserved unchanged; this file records the correction.",
     results,
     limits: ["structured keys authored from the recorded quotes, not model-inferred", "publisher identity map is explicit and small (6 hosts); unknown hosts never count", "quotes from WebFetch's extractor, not raw HTML"],
