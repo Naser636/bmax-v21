@@ -3,7 +3,7 @@
 /* V15 — REAL measured experiment through the canonical gate (odg-improvement-chain → odg-sandbox-integration-gate):
  * "confine the resident-driver tick". Every one of the 12 conditions is MEASURED here (baseline = unconfined run,
  * candidate = confined launcher), in a THROW-AWAY copy of the repo; nothing is asserted. Review/inspection count only via
- * a VERIFIED WIC on origin/main that binds this experiment (odg-evidence-verifier); non-regression = the real required CI
+ * an OWNER-anchored inspection record on origin/main bound to the candidate commit (V15 closure); non-regression = the real required CI
  * check of the given commit (gh, read-only). The real repository is fingerprinted before/after (must be identical).
  * Usage: --ci-commit <sha> [--write <evidence.json>]   (simulation ≠ execution: nothing is installed or deployed) */
 const cp = require("child_process"); const fs = require("fs"); const os = require("os"); const path = require("path"); const crypto = require("crypto");
@@ -20,11 +20,15 @@ function main() {
   if (!ciCommit || !/^[0-9a-f]{7,40}$/.test(ciCommit)) throw new Error("--ci-commit <sha> required");
   const M: any[] = []; const add = (condition: string, method: string, observed: any, passed: boolean) => M.push({ condition, method, observed, passed });
   const realBefore = fingerprint(ROOT);
-  // throw-away copy
+  // V15 closure (inspection M2): the MEASURED code is exactly the candidate commit's tree (git archive <full sha>), never
+  // the working tree — review binding, CI and the probes all refer to the same commit.
+  const GENV = EVV.gitEnv();   // GIT_* stripped + GIT_NO_REPLACE_OBJECTS=1 (inspection N1: `git replace` could swap the archived tree)
+  const full = (cp.spawnSync("git", ["rev-parse", "--verify", ciCommit + "^{commit}"], { cwd: ROOT, encoding: "utf8", env: GENV }).stdout || "").trim();   // gh needs the FULL sha
+  if (!/^[0-9a-f]{40}$/.test(full)) throw new Error("--ci-commit does not resolve to a commit");
   const T = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "odg-gx-")));
-  for (const d of ["runtime/core", "runtime/bin", "scripts"]) fs.cpSync(path.join(ROOT, d), path.join(T, d), { recursive: true, filter: (s: string) => !s.includes(`${path.sep}dist${path.sep}`) });
-  fs.mkdirSync(path.join(T, "docs/odg"), { recursive: true }); fs.copyFileSync(path.join(ROOT, "docs/odg/v124-consolidated-roadmap.json"), path.join(T, "docs/odg/v124-consolidated-roadmap.json"));
-  fs.copyFileSync(path.join(ROOT, "package.json"), path.join(T, "package.json")); fs.symlinkSync(fs.realpathSync(path.join(ROOT, "node_modules")), path.join(T, "node_modules"));
+  const arc = cp.spawnSync("bash", ["-c", 'git -C "$1" archive "$2" runtime/core runtime/bin scripts docs/odg/v124-consolidated-roadmap.json package.json | tar -x -C "$3"', "_", ROOT, full, T], { encoding: "utf8", env: GENV });
+  if (arc.status !== 0) throw new Error("git archive of the candidate failed");
+  fs.symlinkSync(fs.realpathSync(path.join(ROOT, "node_modules")), path.join(T, "node_modules"));
   // 1. V12.4 link (the companion really lists the mission)
   const comp = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/v124-consolidated-roadmap.json"), "utf8"));
   const link = JSON.stringify(comp).includes('"CM-V234-RESIDENT-DRIVER"');
@@ -67,7 +71,6 @@ function main() {
   add("isolatedExperiment", "runs in a throw-away copy under os.tmpdir() (path check) + bubblewrap for the candidate; see noContractOrPermissionViolation for the repo check", T.startsWith(fs.realpathSync(os.tmpdir())), T.startsWith(fs.realpathSync(os.tmpdir())));
   add("noContractOrPermissionViolation", "real repository fingerprint (HEAD + status + index; NOT gitignored paths) identical before/after; runner writes only in the throw-away copy; no systemd/sudo action", { before: realBefore.slice(0, 16), after: realAfter.slice(0, 16) }, !!realBefore && realBefore === realAfter);
   // non-regression: the real required CI check of the commit carrying the change
-  const full = (cp.spawnSync("git", ["rev-parse", "--verify", ciCommit + "^{commit}"], { cwd: ROOT, encoding: "utf8" }).stdout || "").trim();   // gh needs the FULL sha
   const ci = cp.spawnSync("gh", ["run", "list", "--commit", full || ciCommit, "--json", "name,conclusion,headSha", "--limit", "5"], { cwd: ROOT, encoding: "utf8", timeout: 60000 });
   let runs: any[] = []; try { runs = JSON.parse(ci.stdout || "[]"); } catch {}
   const green = runs.length > 0 && runs.every((r) => r.conclusion === "success");   // pending ("") or failure ⇒ not proven
@@ -76,10 +79,10 @@ function main() {
   // (inspection HIGH: a provider-authored VERIFIED WIC would be self-certification). Signature sidecar: <record>.sig.json.
   const reader = EVV.makeCommittedReader(ROOT, "origin/main"); const EVP = "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json";
   let rec: any = null, signed: any = null; try { rec = JSON.parse(String(reader(EVP) || "")); } catch {} try { signed = JSON.parse(String(reader(EVP.replace(/\.json$/, ".sig.json")) || "")); } catch {}
-  const rv = MG.ownerAnchoredReview(rec, signed, Date.now());
-  for (const cond of ["codeAndDepsReviewed", "independentInspection"]) add(cond, "owner-anchored INSPECTION_RECORD signature over " + EVP + " on origin/main (TRUST_ANCHORS.INSPECTION_RECORD)", rec ? rv.reason : "RECORD_NOT_ON_ORIGIN_MAIN", rv.ok === true);
+  // V15 closure (audit D2/D3): review/inspection are computed INSIDE runMeasuredExperiment from the owner-anchored record,
+  // bound to THIS candidate (record.subjectCommit must equal the full CI commit); no measurement can assert them.
   fs.rmSync(T, { recursive: true, force: true });
-  const r = MG.runMeasuredExperiment({ id: "V15-EXP-resident-confinement", v124Link: "CM-V234-RESIDENT-DRIVER", discovery: "1180 organizational Truth-Lock refusals + unconfined resident tick (V375)", significant: true }, M);
+  const r = MG.runMeasuredExperiment({ ownerReview: { record: rec, signed, candidateCommit: full, experimentId: "V15-EXP-resident-confinement" }, id: "V15-EXP-resident-confinement", v124Link: "CM-V234-RESIDENT-DRIVER", discovery: "1180 organizational Truth-Lock refusals + unconfined resident tick (V375)", significant: true }, M);
   const evidence = { experiment: "V15-EXP-resident-confinement", ciCommit, ranAt: new Date().toISOString(), measurements: M, derived: r.derived, verdict: r.chain.verdict, action: r.chain.action, softMissing: r.chain.softMissing, hardViolations: r.chain.hardViolations, deployed: false, deployStillOwnerGated: true,
     note: "simulation ≠ execution: the experiment ran in a throw-away copy; nothing was installed, enabled or deployed. INTEGRATE would mean merge-eligible only." };
   if (out) fs.writeFileSync(out, JSON.stringify(evidence, null, 2) + "\n");

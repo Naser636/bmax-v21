@@ -9,7 +9,7 @@
  *
  *   fingerprint --pub <owner-public.pem>
  *   inspection  --record <repo-relative record.json> --key <owner-private.pem> [--days N]
- *   maturity    --contract <WIC id> --evidence <repo-relative evidence path> --claim <claimKey> --level <level>
+ *   maturity    --contract-path <repo-relative docs/odg/WIC_*.json> --evidence <repo-relative evidence path> --claim <claimKey> --level <level>
  *               --key <owner-private.pem> [--days N]
  *
  * The public key is re-derived from the private key and written in canonical SPKI-PEM form, so the pinned fingerprint
@@ -40,6 +40,7 @@ function repoFile(rel: string | null, what: string): string {
   const abs = path.resolve(ROOT, rel);
   if (!inside(abs, ROOT) || path.isAbsolute(rel)) fail(what + " must be a repo-relative path inside the repository");
   if (!fs.existsSync(abs) || fs.lstatSync(abs).isSymbolicLink() || !fs.statSync(abs).isFile()) fail(what + " is not a regular file: " + rel);
+  if (fs.realpathSync(abs) !== path.join(fs.realpathSync(ROOT), path.relative(ROOT, abs))) fail(what + " traverses a symlinked directory: " + rel);   // V15 closure (audit LOW)
   return abs;
 }
 function sign(purpose: string, payload: any, priv: any, days: number): any {
@@ -66,19 +67,26 @@ function main(argv: string[]): void {
     const rec = repoFile(arg(argv, "--record"), "--record");
     if (!/\.json$/.test(rec)) fail("--record must be a .json file");
     let record: any; try { record = JSON.parse(fs.readFileSync(rec, "utf8")); } catch { fail("record is not valid JSON"); }
+    // V15 closure: the gate counts a record only if bound to the candidate and ACCEPTed — refuse to sign one that cannot count
+    if (typeof record.subjectCommit !== "string" || !/^[0-9a-f]{40}$/.test(record.subjectCommit)) fail("record.subjectCommit must be the FULL 40-hex sha of the reviewed candidate");
+    if (record.verdict !== "ACCEPT") fail("record.verdict must be \"ACCEPT\" (an owner signature over a non-ACCEPT record is not a review pass)");
     const priv = loadPrivateKey(arg(argv, "--key"));
     writeSidecar(rec.replace(/\.json$/, ".sig.json"), sign("INSPECTION_RECORD", record, priv, days(argv)), fingerprintOf(priv), "INSPECTION_RECORD"); return;
   }
   if (cmd === "maturity") {
     const evRel = arg(argv, "--evidence"); const ev = repoFile(evRel, "--evidence");
-    const contract = arg(argv, "--contract"), claimKey = arg(argv, "--claim"), level = arg(argv, "--level");
-    if (!contract || !claimKey || !level) fail("--contract, --claim and --level required");
+    const cpAbs = repoFile(arg(argv, "--contract-path"), "--contract-path"); const contractPath = path.relative(ROOT, cpAbs).split(path.sep).join("/");
+    if (!/^docs\/odg\/WIC_[^/]+\.json$/.test(contractPath)) fail("--contract-path must be docs/odg/WIC_*.json");
+    const cb = fs.readFileSync(cpAbs); let contract: any; try { contract = JSON.parse(cb.toString("utf8")).id; } catch { fail("contract is not valid JSON"); }
+    if (typeof contract !== "string" || !/^WIC-[A-Z0-9-]+$/.test(contract)) fail("contract has no valid id");
+    const claimKey = arg(argv, "--claim"), level = arg(argv, "--level");
+    if (!claimKey || !level) fail("--claim and --level required");
     const priv = loadPrivateKey(arg(argv, "--key"));
     const evidenceSha256 = crypto.createHash("sha256").update(fs.readFileSync(ev)).digest("hex");
-    const payload = { contract, evidencePath: path.relative(ROOT, ev).split(path.sep).join("/"), evidenceSha256, claimKey, level };
+    const payload = { contract, contractPath, contractSha256: crypto.createHash("sha256").update(cb).digest("hex"), evidencePath: path.relative(ROOT, ev).split(path.sep).join("/"), evidenceSha256, claimKey, level };
     writeSidecar(ev + ".sig.json", sign("MATURITY_EVIDENCE", payload, priv, days(argv)), fingerprintOf(priv), "MATURITY_EVIDENCE"); return;
   }
-  fail("usage: fingerprint --pub P | inspection --record R --key K [--days N] | maturity --contract C --evidence E --claim K --level L --key K [--days N]");
+  fail("usage: fingerprint --pub P | inspection --record R --key K [--days N] | maturity --contract-path W --evidence E --claim K --level L --key K [--days N]");
 }
 main(process.argv.slice(2));
 export {};
