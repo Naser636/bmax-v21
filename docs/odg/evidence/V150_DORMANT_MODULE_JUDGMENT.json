@@ -49,7 +49,6 @@
   ],
   "correction": {
     "date": "2026-11-22",
-    "by": "V150 199-module manual review (batch 4)",
-    "text": "WRONG in the original: P2, P9, P12 and P15 ARE loaded and called by runtime/bin/odg-v137-qualification-run.ts. The real gap is that this runner qualifies 13/15 reference projects and OMITS P5 and P8 — fix = add P5/P8 to the existing qualification runner (not a new campaign consumer)."
+    "text": "P2/P9/P12/P15 ARE loaded and called by runtime/bin/odg-v137-qualification-run.ts. The P5 and P8 MÉTIER slots are ALSO qualified there, by other modules (P5 = golden-path-evidence-bundle, P8 = p8-semver-enforcement). profession-p5-platform-reference and profession-p8-api-reference are ALTERNATIVE reference projects for already-qualified métiers ⇒ no consumer is missing; no wiring (it would be artificial)."
   }
 }

@@ -8,17 +8,17 @@
   "method": "automatic disposition (odg-component-judgment over grounded static signals) + INDIVIDUAL manual read of every module by 4 read-only reviewers (header, exports, every referring line); manual diagnosis is authoritative here",
   "distribution": {
     "MISSING_CONSUMER": 63,
-    "MISSING_INTEGRATION": 35,
     "DOCUMENTARY_ASSET": 34,
+    "MISSING_INTEGRATION": 33,
     "DORMANT_WITHOUT_CONSUMER": 29,
     "EXTERNAL_AUTHORITY_REQUIRED": 12,
     "ALREADY_RESOLVED": 10,
     "DEPENDENCY_BLOCKED": 4,
     "CONTRACT_MISMATCH": 3,
     "OBSOLETE": 3,
+    "DUPLICATE": 3,
     "INVALID_STATUS": 2,
-    "PERMISSION_BLOCKED": 2,
-    "DUPLICATE": 1
+    "PERMISSION_BLOCKED": 2
   },
   "actuallyLoaded": {
     "False": 182,
@@ -37,7 +37,7 @@
     "runtime/bin/odg-local-pipeline.sh loads runtime/core/front-door-attempt.js with plain node — only .ts exists and it is not in dist ⇒ MODULE_NOT_FOUND swallowed ⇒ front-door attempts never recorded",
     "p12 idempotency-guard.admit dedups on the key alone (no request fingerprint)",
     "odg-btp-devis-engine claims to compose renovation-quote-normalize but never requires it",
-    "runtime/bin/odg-v137-qualification-run.ts qualifies 13/15 profession reference projects — P5 and P8 are missing (corrects #880, which wrongly said P2/P9/P12/P15 are never loaded: they are, by this runner)"
+    "(corrected) P2/P9/P12/P15 ARE loaded and called by runtime/bin/odg-v137-qualification-run.ts. The P5 and P8 MÉTIER slots are ALSO qualified there, by other modules (P5 = golden-path-evidence-bundle, P8 = p8-semver-enforcement). profession-p5-platform-reference and profession-p8-api-reference are ALTERNATIVE reference projects for already-qualified métiers ⇒ no consumer is missing; no wiring (it would be artificial)."
   ],
   "items": [
     {
@@ -1803,10 +1803,10 @@
     {
       "module": "profession-p5-platform-reference",
       "path": "runtime/core/profession-p5-platform-reference.ts",
-      "diagnosis": "MISSING_INTEGRATION",
+      "diagnosis": "DUPLICATE",
       "actuallyLoaded": false,
-      "rootCause": "profession campaign (odg-metier-campaign) checks existsSync only; métier frozen (owner); NOT in odg-v137-qualification-run; odg-cto-dashboard only reads the campaign summary",
-      "minimalFix": "make odg-metier-campaign load runReferenceProject (or add P5 to v137 qualification) — métier freeze = owner decision",
+      "rootCause": "alternative reference project for a métier already qualified by another module in odg-v137-qualification-run",
+      "minimalFix": "none (no consumer missing)",
       "autoStatus": "BLOCKED",
       "autoAgreed": false,
       "note": "auto APP_DYNAMIC_CONSUMED WRONG (cto-dashboard line is campaign aggregate)"
@@ -1814,10 +1814,10 @@
     {
       "module": "profession-p8-api-reference",
       "path": "runtime/core/profession-p8-api-reference.ts",
-      "diagnosis": "MISSING_INTEGRATION",
+      "diagnosis": "DUPLICATE",
       "actuallyLoaded": false,
-      "rootCause": "profession campaign (odg-metier-campaign) checks existsSync only; métier frozen (owner); NOT in odg-v137-qualification-run; metier-state maps P8→p8-semver-enforcement instead",
-      "minimalFix": "same as p5 (campaign must load+run reference projects)",
+      "rootCause": "alternative reference project for a métier already qualified by another module in odg-v137-qualification-run",
+      "minimalFix": "none (no consumer missing)",
       "autoStatus": "LEGITIMATE_LIBRARY",
       "autoAgreed": false,
       "note": "auto APP_DYNAMIC_CONSUMED WRONG"
