@@ -92,15 +92,21 @@ function crossFamilyOverlap(collection: any, maxN?: number): any {
  * V374 ROOT FIX for the byUrl trust root: page quotes count only when they come from an AUTHENTICATED collection artefact —
  * its deep-canonical SHA-256 is PINNED in a versioned registry (git-reviewed), OR it carries a valid signed attestation by a
  * registered, non-revoked collector key. Anything else ⇒ attested:false ⇒ every claim built on it is capped at CANDIDATE. */
+const ATTESTED_COLLECTIONS: WeakSet<any> = new WeakSet();   // brand: ONLY attestCollection can mint an attested result
+function deepFreeze(v: any): any { if (v && typeof v === "object") { Object.values(v).forEach(deepFreeze); Object.freeze(v); } return v; }
 function attestCollection(collection: any, o: any): any {
   const opts = isObj(o) ? o : {};
-  const sha = ATT.contentSha256(collection);
+  let copy: any, sha: string;
+  try { copy = deepFreeze(JSON.parse(JSON.stringify(collection))); sha = ATT.contentSha256(collection); if (ATT.contentSha256(copy) !== sha) throw new Error("non-JSON"); }
+  catch { return Object.freeze({ attested: false, via: null, sha256: null, byUrl: Object.freeze({}), reason: "non-canonical collection" }); }
   const byUrl: Record<string, any> = {};
-  for (const s of (isObj(collection) && Array.isArray(collection.sources) ? collection.sources : [])) if (s && typeof s.url === "string") byUrl[s.url] = s;
+  for (const s of (isObj(copy) && Array.isArray(copy.sources) ? copy.sources : [])) if (s && typeof s.url === "string") byUrl[s.url] = s;   // frozen copies: later caller mutation cannot leak in
   let via: string | null = null;
   if (Array.isArray(opts.pinnedDigests) && opts.pinnedDigests.includes(sha)) via = "PINNED_DIGEST";
-  else if (opts.attestation) { const v = ATT.verifyAttestation(opts.attestation, collection, { registry: opts.registry, asOf: opts.asOf, purpose: "COLLECTION_ARTIFACT", seenNonces: opts.seenNonces }); if (v.valid) via = "SIGNED:" + v.provenance.issuer; }
-  return Object.freeze({ attested: via !== null, via, sha256: sha, byUrl: Object.freeze(byUrl) });
+  else if (opts.attestation) { const v = ATT.verifyAttestation(opts.attestation, copy, { registry: opts.registry, asOf: opts.asOf, purpose: "COLLECTION_ARTIFACT", seenNonces: opts.seenNonces, allowRepeatVerification: opts.allowRepeatVerification }); if (v.valid) via = "SIGNED:" + v.provenance.issuer; }
+  const res = Object.freeze({ attested: via !== null, via, sha256: sha, byUrl: Object.freeze(byUrl) });
+  if (res.attested) ATTESTED_COLLECTIONS.add(res);
+  return res;
 }
 
 /*
@@ -119,7 +125,7 @@ function assessClaim(claim: any, opts: any): any {
   if (!Number.isFinite(o.asOfEpochMs)) throw new Error("assessClaim: asOfEpochMs required (deterministic)");
   // trust root (V374): prefer an ATTESTED collection; raw caller-supplied byUrl is accepted but UNATTESTED (capped below).
   const col = isObj(o.collection) ? o.collection : null;
-  const attestedCollection = !!(col && col.attested === true);
+  const attestedCollection = !!(col && ATTESTED_COLLECTIONS.has(col));   // brand check — a self-declared {attested:true} is NOT trusted
   const byUrl = col && isObj(col.byUrl) ? col.byUrl : (isObj(o.byUrl) ? o.byUrl : {});   // unattested pages stay usable but are capped at CANDIDATE
   const quarantined = new Set<string>(Array.isArray(o.quarantined) ? o.quarantined : []);
   const reasons: string[] = [];
@@ -248,18 +254,30 @@ function toMemory(a: any, asOf: number): any {
 }
 /* usableFor(rec, requested, asOf) -> authorization actually granted for THIS use: never above the record's own capped
  * authorization, never above the mission contract's request; INVALID/stale ⇒ BLOCKED / READ_ONLY. Reuse never elevates. */
-function usableFor(rec: any, requested: string, asOf: number): any {
+function usableFor(rec: any, requested: string, asOf: number, o?: any): any {
   const A = (x: string) => AUTHORIZATION.indexOf(x);
+  const opts = isObj(o) ? o : {};
   if (!isObj(rec) || !isObj(rec.dimensions)) return Object.freeze({ authorization: "BLOCKED", reason: "not a KI-V2 record" });
   if (rec.status === "INVALIDATED" || rec.retention === "KEPT_INVALID") return Object.freeze({ authorization: "BLOCKED", reason: "invalidated/contradicted knowledge" });
-  if (Number.isFinite(rec.validUntil) && Number.isFinite(asOf) && asOf > rec.validUntil) return Object.freeze({ authorization: "READ_ONLY_ANALYSIS", reason: "stale knowledge — re-verify before use" });
+  // the record's own fields are trusted ONLY under a valid KNOWLEDGE_RECORD attestation (inspection MEDIUM: re-wrapped
+  // records must not elevate). Unattested ⇒ READ_ONLY_ANALYSIS, never a fact.
+  const v = ATT.verifyAttestation(opts.attestation, rec, { registry: opts.registry, asOf, purpose: "KNOWLEDGE_RECORD", seenNonces: opts.seenNonces, allowRepeatVerification: opts.allowRepeatVerification });
+  if (!v.valid) return Object.freeze({ authorization: "READ_ONLY_ANALYSIS", isFact: false, reason: "record not attested (" + v.reason + ") — read-only, no elevation" });
+  if (!Number.isFinite(rec.validUntil) || !Number.isFinite(asOf) || asOf > rec.validUntil) return Object.freeze({ authorization: "READ_ONLY_ANALYSIS", isFact: false, reason: "stale or undated knowledge — re-verify before use" });
   const req = AUTHORIZATION.includes(requested) ? requested : "READ_ONLY_ANALYSIS";
   const own = rec.dimensions.authorization;
   const granted = A(req) <= A(own) ? req : own;
-  return Object.freeze({ authorization: granted, epistemic: rec.dimensions.epistemic, isFact: rec.isFact === true, reason: granted === req ? "within record + contract" : "capped by the record's own authorization (" + own + ")" });
+  return Object.freeze({ authorization: granted, epistemic: rec.dimensions.epistemic, isFact: rec.isFact === true && rec.dimensions.epistemic === "CORROBORATED", attestedBy: v.provenance.issuer,
+    reason: granted === req ? "within attested record + contract" : "capped by the record's own authorization (" + own + ")" });
 }
-function admissible(rec: any, asOf: number): any {
-  return MTG.assessMemoryTrust(rec, { asOf, trustedAuthors: [ACTOR.EXECUTOR.ODG], minConfidence: 0.5 });
+/* admissible(rec, asOf, {attestation, registry, ...}) -> admission AS FACT: the existing memory-trust-gate verdict AND a
+ * valid KNOWLEDGE_RECORD attestation (a caller cannot re-wrap a record as VERIFIED). */
+function admissible(rec: any, asOf: number, o?: any): any {
+  const g = MTG.assessMemoryTrust(rec, { asOf, trustedAuthors: [ACTOR.EXECUTOR.ODG], minConfidence: 0.5 });
+  if (!g.trusted) return g;
+  const opts = isObj(o) ? o : {};
+  const v = ATT.verifyAttestation(opts.attestation, rec, { registry: opts.registry, asOf, purpose: "KNOWLEDGE_RECORD", seenNonces: opts.seenNonces, allowRepeatVerification: opts.allowRepeatVerification });
+  return v.valid ? g : Object.freeze({ trusted: false, verdict: "UNATTESTED_RECORD", reasons: Object.freeze(["record attestation " + v.reason]), selfAuthorized: false });
 }
 
 const KNOWLEDGE_INTELLIGENCE_CONTRACT = Object.freeze({

@@ -12,12 +12,20 @@ const crypto = require("crypto");
 const AI = require("./agent-identity.js");
 
 const PURPOSES = Object.freeze(["KNOWLEDGE_RECORD", "COLLECTION_ARTIFACT"]);
+const MAX_TTL_MS = 90 * 86400000;   // attestation lifetime cap (inspection LOW)
+// revocation is TERMINAL here, independent of agent-identity.rotateKey (which re-activates a key — pre-existing behaviour).
+const REVOKED: WeakMap<any, Set<string>> = new WeakMap();
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 /* deep canonical JSON (sorted keys at every level) — so a re-ordered but identical record hashes identically. */
 function canonical(v: any): string {
+  // STRICT (inspection LOW): only JSON-plain data — undefined, NaN/Infinity, functions, Dates/Maps/class instances are
+  // REJECTED (they would otherwise collide with null / {}), so a pinned digest cannot be matched by a non-JSON variant.
+  if (v === null) return "null";
+  if (typeof v === "number") { if (!Number.isFinite(v)) throw new Error("canonical: non-finite number"); return JSON.stringify(v); }
+  if (typeof v === "string" || typeof v === "boolean") return JSON.stringify(v);
   if (Array.isArray(v)) return "[" + v.map(canonical).join(",") + "]";
-  if (isObj(v)) return "{" + Object.keys(v).sort().map((k) => JSON.stringify(k) + ":" + canonical(v[k])).join(",") + "}";
-  return JSON.stringify(v === undefined ? null : v);
+  if (isObj(v) && Object.getPrototypeOf(v) === Object.prototype) return "{" + Object.keys(v).sort().map((k) => JSON.stringify(k) + ":" + canonical(v[k])).join(",") + "}";
+  throw new Error("canonical: non-JSON value (" + (v === undefined ? "undefined" : typeof v) + ")");
 }
 function contentSha256(payload: any): string { return crypto.createHash("sha256").update(canonical(payload)).digest("hex"); }
 
@@ -27,11 +35,12 @@ function ephemeralIdentity(issuer: string): any {
   return Object.freeze({ issuer, publicKeyPem: publicKey.export({ type: "spki", format: "pem" }), privateKey });
 }
 function registerIssuer(reg: any, id: any): void { AI.register(reg, { tenantId: "odg-knowledge", agentId: id.issuer, publicKeyPem: id.publicKeyPem }); }
-function revokeIssuer(reg: any, issuer: string): void { AI.revoke(reg, { tenantId: "odg-knowledge", agentId: issuer }); }
+function revokeIssuer(reg: any, issuer: string): void { AI.revoke(reg, { tenantId: "odg-knowledge", agentId: issuer }); const s = REVOKED.get(reg) || new Set<string>(); s.add(issuer); REVOKED.set(reg, s); }
 
 function createAttestation(o: any): any {
   if (!isObj(o) || !PURPOSES.includes(o.purpose)) throw new Error("createAttestation: unknown purpose");
   if (!Number.isFinite(o.issuedAt) || !Number.isFinite(o.expiresAt) || o.expiresAt <= o.issuedAt) throw new Error("createAttestation: issuedAt < expiresAt required");
+  if (o.expiresAt - o.issuedAt > MAX_TTL_MS) throw new Error("createAttestation: lifetime exceeds 90 days");
   if (typeof o.nonce !== "string" || o.nonce.length < 8) throw new Error("createAttestation: nonce required");
   const header = Object.freeze({ v: 1, purpose: o.purpose, issuer: o.identity.issuer, contentSha256: contentSha256(o.payload), issuedAt: o.issuedAt, expiresAt: o.expiresAt, nonce: o.nonce });
   const signature = crypto.sign(null, Buffer.from(canonical(header)), o.identity.privateKey).toString("base64");
@@ -45,11 +54,15 @@ function verifyAttestation(att: any, payload: any, o: any): any {
   if (!isObj(att) || !isObj(att.header) || typeof att.signature !== "string" || !att.signature) return deny("UNSIGNED");
   const h = att.header; const opts = isObj(o) ? o : {};
   if (!Number.isFinite(opts.asOf)) return deny("NO_CLOCK");
-  if (opts.purpose && h.purpose !== opts.purpose) return deny("WRONG_PURPOSE");
-  if (h.contentSha256 !== contentSha256(payload)) return deny("CONTENT_MODIFIED");
+  if (!PURPOSES.includes(opts.purpose)) return deny("PURPOSE_REQUIRED");                 // purpose binding is MANDATORY
+  if (h.purpose !== opts.purpose) return deny("WRONG_PURPOSE");
+  if (!(opts.seenNonces instanceof Set) && opts.allowRepeatVerification !== true) return deny("REPLAY_POLICY_REQUIRED");   // replay protection explicit
+  if (!Number.isFinite(h.expiresAt) || !Number.isFinite(h.issuedAt) || h.expiresAt - h.issuedAt > MAX_TTL_MS) return deny("LIFETIME_INVALID");
+  let digest: string; try { digest = contentSha256(payload); } catch { return deny("NON_CANONICAL_PAYLOAD"); }
+  if (h.contentSha256 !== digest) return deny("CONTENT_MODIFIED");
   const reg = opts.registry; const k = reg && reg.keys && reg.keys.get("odg-knowledge::" + h.issuer);
   if (!k) return deny("UNKNOWN_KEY");
-  if (k.state !== "active") return deny("REVOKED_KEY");
+  if (k.state !== "active" || (REVOKED.get(reg) && REVOKED.get(reg)!.has(h.issuer))) return deny("REVOKED_KEY");
   let ok = false;
   try { ok = crypto.verify(null, Buffer.from(canonical(h)), crypto.createPublicKey(k.publicKeyPem), Buffer.from(att.signature, "base64")); } catch { ok = false; }
   if (!ok) return deny("BAD_SIGNATURE");

@@ -59,7 +59,8 @@
         "status": "UNVERIFIED",
         "retention": "KEPT",
         "admittedAsFactByTrustGate": false,
-        "usableForDesign": "DESIGN_PROPOSAL"
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (toyota) — supports WHAT THE PUBLISHER STATES, not a general truth",
@@ -106,7 +107,8 @@
         "status": "UNVERIFIED",
         "retention": "KEPT",
         "admittedAsFactByTrustGate": false,
-        "usableForDesign": "DESIGN_PROPOSAL"
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (toyota) — supports WHAT THE PUBLISHER STATES, not a general truth",
@@ -146,7 +148,8 @@
         "status": "UNVERIFIED",
         "retention": "KEPT",
         "admittedAsFactByTrustGate": false,
-        "usableForDesign": "DESIGN_PROPOSAL"
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
@@ -187,7 +190,8 @@
         "status": "UNVERIFIED",
         "retention": "KEPT",
         "admittedAsFactByTrustGate": false,
-        "usableForDesign": "DESIGN_PROPOSAL"
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
@@ -233,7 +237,8 @@
         "status": "UNVERIFIED",
         "retention": "KEPT",
         "admittedAsFactByTrustGate": false,
-        "usableForDesign": "DESIGN_PROPOSAL"
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth"
@@ -274,7 +279,8 @@
         "status": "UNVERIFIED",
         "retention": "KEPT",
         "admittedAsFactByTrustGate": false,
-        "usableForDesign": "DESIGN_PROPOSAL"
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (nasa) — supports WHAT THE PUBLISHER STATES, not a general truth"
@@ -315,7 +321,8 @@
         "status": "UNVERIFIED",
         "retention": "KEPT",
         "admittedAsFactByTrustGate": false,
-        "usableForDesign": "DESIGN_PROPOSAL"
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (nasa) — supports WHAT THE PUBLISHER STATES, not a general truth"
