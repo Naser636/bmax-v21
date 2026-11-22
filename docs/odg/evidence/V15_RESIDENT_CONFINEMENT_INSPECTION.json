@@ -1,0 +1,13 @@
+{
+  "subject": "V15 resident-driver confinement (two-phase bwrap launcher) — independent inspection record",
+  "pr": 864,
+  "mergeCommit": "bd42eaa7",
+  "inspector": "independent inspection subagent (same session, separate context; attacks in throw-away copies)",
+  "rounds": [
+    { "head": "b283c254", "verdict": "REJECT", "findings": ["HIGH: writable runtime/dist let confined code plant JS run by unconfined services", "MEDIUM: symlink planting in runtime/logs followed by unconfined writers", "LOW: ref starting with '-'"] },
+    { "head": "4f68ff6d", "verdict": "ACCEPT", "residualLow": ["trace file growth / self-report", "bad ref fell back to HEAD", "check-to-bind window (unconfined actor only)"] },
+    { "head": "merged", "note": "LOW 1 (RLIMIT_FSIZE cap) and LOW 2 (fail-closed ref) fixed before merge; CI green" }
+  ],
+  "codeAndDepsReviewed": "scripts/odg-resident-driver-confined.sh, scripts/lib/odg-confined-view.sh, scripts/lib/odg-resident-freshness.sh, scripts/odg-resident-driver-run.sh; no new dependency (bubblewrap 0.11.1 system binary)",
+  "notClaimed": "owner ACCEPTANCE; installation under the real systemd unit"
+}

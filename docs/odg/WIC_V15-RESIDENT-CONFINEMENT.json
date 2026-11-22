@@ -1,0 +1,13 @@
+{
+  "id": "WIC-V15-RESIDENT-CONFINEMENT",
+  "state": "VERIFIED",
+  "objective": "confine the resident-driver tick (two-phase bwrap launcher) without systemd changes",
+  "v124Link": "CM-V234-RESIDENT-DRIVER",
+  "write_set": ["scripts/odg-resident-driver-confined.sh", "scripts/lib/odg-confined-view.sh", "scripts/lib/odg-resident-freshness.sh", "scripts/odg-resident-driver-run.sh", "runtime/core/odg-resident-driver-confined.test.ts"],
+  "evidence_required": ["docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json"],
+  "maturityClaims": [
+    { "claimKey": "exp:V15-EXP-resident-confinement", "level": "REVIEWED", "evidencePath": "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json" },
+    { "claimKey": "exp:V15-EXP-resident-confinement", "level": "INSPECTED", "evidencePath": "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json" }
+  ],
+  "stateNote": "VERIFIED = independently inspected (ACCEPT) and merged with green CI (PR #864). NOT owner-ACCEPTED; not installed under systemd."
+}

@@ -1,0 +1,186 @@
+{
+  "experiment": "V15-EXP-resident-confinement",
+  "ciCommit": "bd42eaa7",
+  "ranAt": "2026-11-22T15:17:59.336Z",
+  "measurements": [
+    {
+      "condition": "linkedToV124",
+      "method": "companion docs/odg/v124-consolidated-roadmap.json lists CM-V234-RESIDENT-DRIVER",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "condition": "baselineRecorded",
+      "method": "6 attack-surface probes run UNCONFINED in the throw-away copy before the change",
+      "observed": [
+        {
+          "probe": "writeSource",
+          "open": true
+        },
+        {
+          "probe": "writeDist",
+          "open": true
+        },
+        {
+          "probe": "createInLogs",
+          "open": true
+        },
+        {
+          "probe": "symlinkInLogs",
+          "open": true
+        },
+        {
+          "probe": "hostSocket",
+          "open": true
+        },
+        {
+          "probe": "nonLoopbackNet",
+          "open": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "condition": "needDemonstrated",
+      "method": "baseline: number of attack surfaces OPEN to the unconfined tick > 0",
+      "observed": 6,
+      "passed": true
+    },
+    {
+      "condition": "securityValidated",
+      "method": "same 6 probes inside the confined view: all must be REFUSED (writes, symlink, host socket, non-loopback net)",
+      "observed": [
+        {
+          "probe": "writeSource",
+          "open": false
+        },
+        {
+          "probe": "writeDist",
+          "open": false
+        },
+        {
+          "probe": "createInLogs",
+          "open": false
+        },
+        {
+          "probe": "symlinkInLogs",
+          "open": false
+        },
+        {
+          "probe": "hostSocket",
+          "open": false
+        },
+        {
+          "probe": "nonLoopbackNet",
+          "open": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "condition": "measurableGainOrNewCapability",
+      "method": "open attack surfaces baseline → candidate (strict decrease to 0)",
+      "observed": {
+        "baseline": 6,
+        "candidate": 0
+      },
+      "passed": true
+    },
+    {
+      "condition": "functionalTestsPass",
+      "method": "confined launcher: L0 tick (rebuild path) exit 0 + writes=0; stop signal ⇒ STOPPED; stale build ⇒ confined tsx fallback",
+      "observed": {
+        "normal": 0,
+        "stopped": true,
+        "fallback": 0
+      },
+      "passed": true
+    },
+    {
+      "condition": "rollbackAvailable",
+      "method": "rollback = keep the existing ExecStart (normal launcher); measured: it still runs, exit 0, L0 line",
+      "observed": 0,
+      "passed": true
+    },
+    {
+      "condition": "isolatedExperiment",
+      "method": "all runs in a throw-away copy under os.tmpdir() + bubblewrap for the candidate",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "condition": "noContractOrPermissionViolation",
+      "method": "real repository fingerprint (HEAD + status + index) identical before/after; no systemd/sudo/network action performed",
+      "observed": {
+        "before": "864f75cdce00dfd1",
+        "after": "864f75cdce00dfd1"
+      },
+      "passed": true
+    },
+    {
+      "condition": "nonRegressionPass",
+      "method": "GitHub Actions required check on commit bd42eaa7 (gh run list, read-only)",
+      "observed": [
+        {
+          "name": "CI",
+          "conclusion": "success"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "condition": "codeAndDepsReviewed",
+      "method": "WIC-V15-RESIDENT-CONFINEMENT on origin/main, VERIFIED, binds exp:V15-EXP-resident-confinement at REVIEWED (odg-evidence-verifier)",
+      "observed": "EVIDENCE_NOT_ON_ORIGIN_MAIN",
+      "passed": false
+    },
+    {
+      "condition": "independentInspection",
+      "method": "WIC-V15-RESIDENT-CONFINEMENT on origin/main, VERIFIED, binds exp:V15-EXP-resident-confinement at INSPECTED (odg-evidence-verifier)",
+      "observed": "EVIDENCE_NOT_ON_ORIGIN_MAIN",
+      "passed": false
+    }
+  ],
+  "derived": {
+    "evidence": {
+      "linkedToV124": true,
+      "needDemonstrated": true,
+      "codeAndDepsReviewed": false,
+      "isolatedExperiment": true,
+      "baselineRecorded": true,
+      "functionalTestsPass": true,
+      "nonRegressionPass": true,
+      "measurableGainOrNewCapability": true,
+      "noContractOrPermissionViolation": true,
+      "securityValidated": true,
+      "independentInspection": false,
+      "rollbackAvailable": true
+    },
+    "basis": {
+      "linkedToV124": "MEASURED_PASS (companion docs/odg/v124-consolidated-roadmap.json lists CM-V234-RESIDENT-DRIVER)",
+      "needDemonstrated": "MEASURED_PASS (baseline: number of attack surfaces OPEN to the unconfined tick > 0)",
+      "codeAndDepsReviewed": "MEASURED_FAIL (WIC-V15-RESIDENT-CONFINEMENT on origin/main, VERIFIED, binds exp:V15-EXP-resident-confinement at REVIEWED (odg-evidence-verifier))",
+      "isolatedExperiment": "MEASURED_PASS (all runs in a throw-away copy under os.tmpdir() + bubblewrap for the candidate)",
+      "baselineRecorded": "MEASURED_PASS (6 attack-surface probes run UNCONFINED in the throw-away copy before the change)",
+      "functionalTestsPass": "MEASURED_PASS (confined launcher: L0 tick (rebuild path) exit 0 + writes=0; stop signal ⇒ STOPPED; stale build ⇒ confined tsx fallback)",
+      "nonRegressionPass": "MEASURED_PASS (GitHub Actions required check on commit bd42eaa7 (gh run list, read-only))",
+      "measurableGainOrNewCapability": "MEASURED_PASS (open attack surfaces baseline → candidate (strict decrease to 0))",
+      "noContractOrPermissionViolation": "MEASURED_PASS (real repository fingerprint (HEAD + status + index) identical before/after; no systemd/sudo/network action performed)",
+      "securityValidated": "MEASURED_PASS (same 6 probes inside the confined view: all must be REFUSED (writes, symlink, host socket, non-loopback net))",
+      "independentInspection": "MEASURED_FAIL (WIC-V15-RESIDENT-CONFINEMENT on origin/main, VERIFIED, binds exp:V15-EXP-resident-confinement at INSPECTED (odg-evidence-verifier))",
+      "rollbackAvailable": "MEASURED_PASS (rollback = keep the existing ExecStart (normal launcher); measured: it still runs, exit 0, L0 line)"
+    },
+    "measuredCount": 12,
+    "malformedIgnored": 0
+  },
+  "verdict": "RETURN_TO_EXPERIMENT",
+  "action": "RETURNED",
+  "softMissing": [
+    "codeAndDepsReviewed",
+    "independentInspection"
+  ],
+  "hardViolations": [],
+  "deployed": false,
+  "deployStillOwnerGated": true,
+  "note": "simulation ≠ execution: the experiment ran in a throw-away copy; nothing was installed, enabled or deployed. INTEGRATE would mean merge-eligible only."
+}

@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+"use strict";
+/* V15 — measured gate evidence: legitimate vs unjustified outcomes through the REAL chain/gate. */
+const MG = require("./odg-gate-measured-evidence.js");
+let f = 0; function check(n: string, c: boolean) { process.stdout.write((c ? "ok" : "NOT OK") + " - " + n + "\n"); if (!c) f++; }
+const ok = (k: string) => ({ condition: k, method: "measured by test fixture " + k, observed: 1, passed: true });
+const ALL = MG.KEYS.map(ok); const X = { id: "t", v124Link: "CM-T", significant: true };
+check("the 12 keys are the gate's own conditions", MG.KEYS.length === 12 && MG.KEYS.includes("securityValidated"));
+check("all 12 measured and passed ⇒ INTEGRATE / MERGE_ELIGIBLE (never deployed)", (() => { const r = MG.runMeasuredExperiment(X, ALL); return r.chain.verdict === "INTEGRATE" && r.chain.action === "MERGE_ELIGIBLE" && r.chain.deployed === false; })());
+check("no measurements ⇒ RETURN (nothing asserted), all basis NOT_MEASURED", (() => { const r = MG.runMeasuredExperiment(X, []); return r.chain.verdict === "REJECT" || r.chain.verdict === "RETURN_TO_EXPERIMENT"; })());
+check("UNJUSTIFIED pass attempt: caller-asserted evidence booleans are ignored", (() => { const r = MG.runMeasuredExperiment({ ...X, evidence: Object.fromEntries(MG.KEYS.map((k: string) => [k, true])) }, []); return r.callerEvidenceIgnored === true && r.chain.verdict !== "INTEGRATE"; })());
+check("LEGITIMATE refusal: security measurement failed ⇒ REJECT (hard stop)", MG.runMeasuredExperiment(X, ALL.map((m: any) => m.condition === "securityValidated" ? { ...m, passed: false } : m)).chain.verdict === "REJECT");
+check("LEGITIMATE return: one soft measurement missing (inspection) ⇒ RETURN_TO_EXPERIMENT", (() => { const r = MG.runMeasuredExperiment(X, ALL.filter((m: any) => m.condition !== "independentInspection")); return r.chain.verdict === "RETURN_TO_EXPERIMENT" && r.chain.softMissing.includes("independentInspection"); })());
+check("conflicting measurements for a condition ⇒ false (CONFLICTING)", (() => { const d = MG.deriveEvidence([...ALL, { ...ok("functionalTestsPass"), passed: false }]); return d.evidence.functionalTestsPass === false && /CONFLICTING/.test(d.basis.functionalTestsPass); })());
+check("malformed measurements (no method / unknown condition / bad sha / non-boolean passed) are ignored, never count", (() => { const d = MG.deriveEvidence([{ condition: "linkedToV124", passed: true, observed: 1 }, { condition: "made_up", method: "xxxxxxxxxx", observed: 1, passed: true }, { ...ok("baselineRecorded"), artifactSha256: "zz" }, { ...ok("rollbackAvailable"), passed: "yes" }]); return d.malformedIgnored === 4 && d.measuredCount === 0; })());
+process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-gate-measured-evidence (V15)" : f + " FAIL") + "\n"); process.exit(f ? 1 : 0);
+export {};
