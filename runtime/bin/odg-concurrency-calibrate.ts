@@ -25,7 +25,7 @@ function chooseLevel(measurements: any[], opts?: any): any {
   const eligible = rows.filter((r: any) => r.failures === 0 && r.runs > 0 && Number.isFinite(r.medianMs));
   if (!eligible.length) return Object.freeze({ chosen: null, reason: "NO_FAILURE_FREE_LEVEL", rows });
   const best = Math.min(...eligible.map((r: any) => r.medianMs));
-  const chosen = eligible.find((r: any) => r.medianMs <= best * (1 + minGain));
+  const chosen = eligible.find((r: any) => r.medianMs <= best * (1 + minGain)) || eligible[0];   // the best is always within its own bound
   const base = rows.find((r: any) => r.level === 1);
   return Object.freeze({ chosen: chosen.level, bestMedianMs: best, chosenMedianMs: chosen.medianMs, speedupVsSerial: base && Number.isFinite(base.medianMs) ? +(base.medianMs / chosen.medianMs).toFixed(2) : null,
     reason: "smallest failure-free level within " + Math.round(minGain * 100) + "% of the fastest (diminishing returns ⇒ fewer resources)", rows });
