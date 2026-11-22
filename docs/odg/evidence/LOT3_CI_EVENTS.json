@@ -1,0 +1,7992 @@
+{
+ "//": "V374 Lot 3 \u2014 REAL internal data: GitHub Actions 'CI' workflow runs of this repository (required check 'build + typecheck + parity + tests'), fetched read-only with `gh run list -L 1000 --workflow CI` on 2026-11-22. No external party, no write. 'cancelled' runs are recorded but are NOT decisive events (superseded by a newer push).",
+ "source": "gh run list (repository Actions API)",
+ "fetchedAt": "2026-11-22",
+ "completed": 998,
+ "runs": [
+  {
+   "id": 42529002451,
+   "t": "2026-11-08T22:11:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "68c6b6bd4b9a"
+  },
+  {
+   "id": 42529458327,
+   "t": "2026-11-08T22:17:02Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "1332ed559529"
+  },
+  {
+   "id": 42529819946,
+   "t": "2026-11-08T22:21:18Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "eac3625ca61a"
+  },
+  {
+   "id": 42530280523,
+   "t": "2026-11-08T22:26:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "5ed7099cac34"
+  },
+  {
+   "id": 42530566192,
+   "t": "2026-11-08T22:30:27Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8b5e8c463614"
+  },
+  {
+   "id": 42531378432,
+   "t": "2026-11-08T22:40:13Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "be3071b43fa8"
+  },
+  {
+   "id": 42531725617,
+   "t": "2026-11-08T22:44:28Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "25b762856cef"
+  },
+  {
+   "id": 42532816398,
+   "t": "2026-11-08T22:58:03Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "f023f042553f"
+  },
+  {
+   "id": 42533077781,
+   "t": "2026-11-08T23:01:14Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6cca02071287"
+  },
+  {
+   "id": 42533562501,
+   "t": "2026-11-08T23:06:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "bb146b31a936"
+  },
+  {
+   "id": 42533864176,
+   "t": "2026-11-08T23:10:22Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "582e935888f1"
+  },
+  {
+   "id": 42534330893,
+   "t": "2026-11-08T23:15:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "ac252974e072"
+  },
+  {
+   "id": 42534712523,
+   "t": "2026-11-08T23:20:35Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "dec41ff7f366"
+  },
+  {
+   "id": 42535189201,
+   "t": "2026-11-08T23:26:34Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "fdf8ec1a25ef"
+  },
+  {
+   "id": 42535489625,
+   "t": "2026-11-08T23:30:28Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f8798bee4491"
+  },
+  {
+   "id": 42536132206,
+   "t": "2026-11-08T23:38:23Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "65c1a1a5831c"
+  },
+  {
+   "id": 42536498103,
+   "t": "2026-11-08T23:42:59Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "693a2d93b485"
+  },
+  {
+   "id": 42537076449,
+   "t": "2026-11-08T23:50:17Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "1bcca1978de0"
+  },
+  {
+   "id": 42537410315,
+   "t": "2026-11-08T23:54:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3d80292da4c4"
+  },
+  {
+   "id": 42538835472,
+   "t": "2026-11-09T00:11:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "053a7b764126"
+  },
+  {
+   "id": 42539226406,
+   "t": "2026-11-09T00:15:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "164ac34f7f8f"
+  },
+  {
+   "id": 42540268643,
+   "t": "2026-11-09T00:27:23Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "b9571c20121e"
+  },
+  {
+   "id": 42540672884,
+   "t": "2026-11-09T00:31:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "bfc5a0714bea"
+  },
+  {
+   "id": 42541468937,
+   "t": "2026-11-09T00:40:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "5ca9ccba6f74"
+  },
+  {
+   "id": 42541850588,
+   "t": "2026-11-09T00:44:55Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2f1ab7749245"
+  },
+  {
+   "id": 42542441672,
+   "t": "2026-11-09T00:51:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "662758ed1a35"
+  },
+  {
+   "id": 42542752503,
+   "t": "2026-11-09T00:55:03Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "86240a95bf9d"
+  },
+  {
+   "id": 42543361264,
+   "t": "2026-11-09T01:02:05Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "bcd9d38254b6"
+  },
+  {
+   "id": 42543776626,
+   "t": "2026-11-09T01:06:41Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "26edfc2f9219"
+  },
+  {
+   "id": 42544352225,
+   "t": "2026-11-09T01:12:53Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "4c223683e22a"
+  },
+  {
+   "id": 42544755082,
+   "t": "2026-11-09T01:17:08Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8251bb1465a0"
+  },
+  {
+   "id": 42546325966,
+   "t": "2026-11-09T01:35:06Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "41fe15437cd2"
+  },
+  {
+   "id": 42546707401,
+   "t": "2026-11-09T01:39:23Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d34d29235278"
+  },
+  {
+   "id": 42547313730,
+   "t": "2026-11-09T01:46:24Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "c8090291b2fe"
+  },
+  {
+   "id": 42547705835,
+   "t": "2026-11-09T01:50:59Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8ec5eff26fb0"
+  },
+  {
+   "id": 42549008828,
+   "t": "2026-11-09T02:05:46Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "063acf84528b"
+  },
+  {
+   "id": 42549400946,
+   "t": "2026-11-09T02:10:04Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "670759fed23c"
+  },
+  {
+   "id": 42549993945,
+   "t": "2026-11-09T02:16:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "ef206e7b690e"
+  },
+  {
+   "id": 42550391602,
+   "t": "2026-11-09T02:20:30Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "12542487057d"
+  },
+  {
+   "id": 42551198211,
+   "t": "2026-11-09T02:29:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "dcc7c08c9cae"
+  },
+  {
+   "id": 42551657169,
+   "t": "2026-11-09T02:34:08Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "53a18eae1dc6"
+  },
+  {
+   "id": 42552467544,
+   "t": "2026-11-09T02:43:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "0d50884d6c42"
+  },
+  {
+   "id": 42552856858,
+   "t": "2026-11-09T02:47:31Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "606e90533e10"
+  },
+  {
+   "id": 42553460421,
+   "t": "2026-11-09T02:54:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "6eee9cdac398"
+  },
+  {
+   "id": 42553766629,
+   "t": "2026-11-09T02:58:04Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "712d6a92ba0d"
+  },
+  {
+   "id": 42554495442,
+   "t": "2026-11-09T03:06:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "dab156258dd3"
+  },
+  {
+   "id": 42554935804,
+   "t": "2026-11-09T03:10:46Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "cac629782e3f"
+  },
+  {
+   "id": 42555882178,
+   "t": "2026-11-09T03:20:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "395c8576f581"
+  },
+  {
+   "id": 42556243878,
+   "t": "2026-11-09T03:24:36Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "37713332e0e7"
+  },
+  {
+   "id": 42556696167,
+   "t": "2026-11-09T03:29:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "42bda90e3612"
+  },
+  {
+   "id": 42556998546,
+   "t": "2026-11-09T03:32:54Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f1dbf6c23795"
+  },
+  {
+   "id": 42558443902,
+   "t": "2026-11-09T03:49:11Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "85ad2224a138"
+  },
+  {
+   "id": 42558803699,
+   "t": "2026-11-09T03:53:26Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9ae9867d65ec"
+  },
+  {
+   "id": 42559326376,
+   "t": "2026-11-09T03:59:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "98f038b72a3e"
+  },
+  {
+   "id": 42559683078,
+   "t": "2026-11-09T04:03:41Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b3b490db909c"
+  },
+  {
+   "id": 42560252372,
+   "t": "2026-11-09T04:09:51Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "d449e080d78a"
+  },
+  {
+   "id": 42560566090,
+   "t": "2026-11-09T04:13:04Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "cfd9da9bfd50"
+  },
+  {
+   "id": 42561088054,
+   "t": "2026-11-09T04:18:28Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "925470909271"
+  },
+  {
+   "id": 42561425075,
+   "t": "2026-11-09T04:22:01Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "fec47ec464ea"
+  },
+  {
+   "id": 42592469020,
+   "t": "2026-11-09T09:19:01Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "8ebc8628903d"
+  },
+  {
+   "id": 42593044107,
+   "t": "2026-11-09T09:23:18Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5f3d9dafa975"
+  },
+  {
+   "id": 42593748778,
+   "t": "2026-11-09T09:28:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "03c4d38c6e91"
+  },
+  {
+   "id": 42594223709,
+   "t": "2026-11-09T09:32:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a5586025e150"
+  },
+  {
+   "id": 42596177537,
+   "t": "2026-11-09T09:48:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "ae4d7ba5fc1d"
+  },
+  {
+   "id": 42596705856,
+   "t": "2026-11-09T09:52:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "811eb9f064d1"
+  },
+  {
+   "id": 42597458522,
+   "t": "2026-11-09T09:58:43Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "c14fe9722333"
+  },
+  {
+   "id": 42598034815,
+   "t": "2026-11-09T10:03:20Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "70da4b077a83"
+  },
+  {
+   "id": 42600009001,
+   "t": "2026-11-09T10:19:13Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "7f5d65a2b81a"
+  },
+  {
+   "id": 42600529591,
+   "t": "2026-11-09T10:23:28Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "17ccc883fae7"
+  },
+  {
+   "id": 42601193556,
+   "t": "2026-11-09T10:29:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "3fe93147e253"
+  },
+  {
+   "id": 42601610739,
+   "t": "2026-11-09T10:32:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b57c71167a79"
+  },
+  {
+   "id": 42603712147,
+   "t": "2026-11-09T10:47:09Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "095b67c34a81"
+  },
+  {
+   "id": 42604350532,
+   "t": "2026-11-09T10:51:53Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a7caebc76091"
+  },
+  {
+   "id": 42605881188,
+   "t": "2026-11-09T11:03:24Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "de2c24410430"
+  },
+  {
+   "id": 42606376020,
+   "t": "2026-11-09T11:06:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d2bbc9b4a081"
+  },
+  {
+   "id": 42625468264,
+   "t": "2026-11-09T13:26:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "606d3bb250cc"
+  },
+  {
+   "id": 42625873905,
+   "t": "2026-11-09T13:29:07Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2f5aaffd1800"
+  },
+  {
+   "id": 42627227211,
+   "t": "2026-11-09T13:38:17Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "fa21dfcc748d"
+  },
+  {
+   "id": 42627837773,
+   "t": "2026-11-09T13:42:33Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "aabe3a9396a3"
+  },
+  {
+   "id": 42629441616,
+   "t": "2026-11-09T13:53:27Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "3cde4ccaa1cd"
+  },
+  {
+   "id": 42630129129,
+   "t": "2026-11-09T13:58:06Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "37c01ad960c6"
+  },
+  {
+   "id": 42632632992,
+   "t": "2026-11-09T14:13:53Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "f1b113ba2018"
+  },
+  {
+   "id": 42633286879,
+   "t": "2026-11-09T14:17:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "59e9656f1117"
+  },
+  {
+   "id": 42636176487,
+   "t": "2026-11-09T14:35:29Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "77a05f5ee719"
+  },
+  {
+   "id": 42636925437,
+   "t": "2026-11-09T14:40:07Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "596ef3849c59"
+  },
+  {
+   "id": 42639811323,
+   "t": "2026-11-09T14:57:50Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "0d9ae347a80b"
+  },
+  {
+   "id": 42640408078,
+   "t": "2026-11-09T15:01:25Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "35c84949af96"
+  },
+  {
+   "id": 42642069397,
+   "t": "2026-11-09T15:11:08Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "463cd8d3c0c5"
+  },
+  {
+   "id": 42642809894,
+   "t": "2026-11-09T15:15:24Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e5f3390ef096"
+  },
+  {
+   "id": 42644239352,
+   "t": "2026-11-09T15:23:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "dda192b2a681"
+  },
+  {
+   "id": 42644792557,
+   "t": "2026-11-09T15:27:06Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "0541ca27e949"
+  },
+  {
+   "id": 42646971247,
+   "t": "2026-11-09T15:40:06Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "b684b6b64fde"
+  },
+  {
+   "id": 42647736832,
+   "t": "2026-11-09T15:44:46Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2da98cae6ef5"
+  },
+  {
+   "id": 42649214401,
+   "t": "2026-11-09T15:53:38Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "53661df367a4"
+  },
+  {
+   "id": 42649976939,
+   "t": "2026-11-09T15:58:14Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d7fdad41a61d"
+  },
+  {
+   "id": 42651717051,
+   "t": "2026-11-09T16:08:29Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "e92cf3921a47"
+  },
+  {
+   "id": 42652264967,
+   "t": "2026-11-09T16:11:43Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ec6bdb1d249b"
+  },
+  {
+   "id": 42654160759,
+   "t": "2026-11-09T16:22:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "f9c6dfcfdd66"
+  },
+  {
+   "id": 42654837114,
+   "t": "2026-11-09T16:26:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "72b06e82b95f"
+  },
+  {
+   "id": 42656765934,
+   "t": "2026-11-09T16:38:08Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "1e8937ca54fd"
+  },
+  {
+   "id": 42657521238,
+   "t": "2026-11-09T16:42:45Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b70557b1925f"
+  },
+  {
+   "id": 42658866893,
+   "t": "2026-11-09T16:50:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "d1e24835a178"
+  },
+  {
+   "id": 42659616486,
+   "t": "2026-11-09T16:55:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8e8d14a47e9c"
+  },
+  {
+   "id": 42661702473,
+   "t": "2026-11-09T17:08:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "c2f7e6f1e064"
+  },
+  {
+   "id": 42662315539,
+   "t": "2026-11-09T17:12:21Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "effafc11f901"
+  },
+  {
+   "id": 42663832599,
+   "t": "2026-11-09T17:21:36Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "f9aa21dacc15"
+  },
+  {
+   "id": 42664562602,
+   "t": "2026-11-09T17:26:01Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "50511319b166"
+  },
+  {
+   "id": 42674159073,
+   "t": "2026-11-09T18:27:13Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "f2bd4f8e935e"
+  },
+  {
+   "id": 42674776501,
+   "t": "2026-11-09T18:31:34Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "466b85985bb3"
+  },
+  {
+   "id": 42675754362,
+   "t": "2026-11-09T18:38:11Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "a27a5c6826a1"
+  },
+  {
+   "id": 42676234169,
+   "t": "2026-11-09T18:41:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "7d9dcd8825be"
+  },
+  {
+   "id": 42678776853,
+   "t": "2026-11-09T18:57:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "923aeded9914"
+  },
+  {
+   "id": 42679366931,
+   "t": "2026-11-09T19:01:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "97896a331773"
+  },
+  {
+   "id": 42681094410,
+   "t": "2026-11-09T19:12:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "d293ba698f27"
+  },
+  {
+   "id": 42681616632,
+   "t": "2026-11-09T19:15:35Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "99ecef53ad33"
+  },
+  {
+   "id": 42683645673,
+   "t": "2026-11-09T19:28:19Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "f1f2e5471fcf"
+  },
+  {
+   "id": 42684180381,
+   "t": "2026-11-09T19:31:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "438f1f57b727"
+  },
+  {
+   "id": 42689797964,
+   "t": "2026-11-09T20:06:50Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "bf69e1963a35"
+  },
+  {
+   "id": 42690515685,
+   "t": "2026-11-09T20:11:14Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9f2db2660d23"
+  },
+  {
+   "id": 42691855320,
+   "t": "2026-11-09T20:19:25Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "b3baa8abec08"
+  },
+  {
+   "id": 42692500232,
+   "t": "2026-11-09T20:23:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3852bf0c069f"
+  },
+  {
+   "id": 42694102446,
+   "t": "2026-11-09T20:33:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "31aeee6c4784"
+  },
+  {
+   "id": 42694703858,
+   "t": "2026-11-09T20:37:13Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "19bb6484be4c"
+  },
+  {
+   "id": 42696554046,
+   "t": "2026-11-09T20:49:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "2d0bda04ebe4"
+  },
+  {
+   "id": 42697126747,
+   "t": "2026-11-09T20:52:43Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "cea07b57d1fc"
+  },
+  {
+   "id": 42698522928,
+   "t": "2026-11-09T21:01:34Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "655e5dfef705"
+  },
+  {
+   "id": 42699233158,
+   "t": "2026-11-09T21:05:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9374c6c578da"
+  },
+  {
+   "id": 42701146096,
+   "t": "2026-11-09T21:17:50Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "32403e3ec807"
+  },
+  {
+   "id": 42701738255,
+   "t": "2026-11-09T21:21:31Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "0333073262a8"
+  },
+  {
+   "id": 42703543942,
+   "t": "2026-11-09T21:33:01Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "f488cd52a58a"
+  },
+  {
+   "id": 42704300917,
+   "t": "2026-11-09T21:37:46Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4cf521ccfdc7"
+  },
+  {
+   "id": 42705749247,
+   "t": "2026-11-09T21:47:00Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "c6dd8ebff76d"
+  },
+  {
+   "id": 42706219934,
+   "t": "2026-11-09T21:50:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "95c3fd7cd3c0"
+  },
+  {
+   "id": 42708116972,
+   "t": "2026-11-09T22:02:23Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "30c3f5941cde"
+  },
+  {
+   "id": 42708648139,
+   "t": "2026-11-09T22:05:43Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d75bfb49207b"
+  },
+  {
+   "id": 42710303704,
+   "t": "2026-11-09T22:16:02Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "964fe68e6acc"
+  },
+  {
+   "id": 42710869895,
+   "t": "2026-11-09T22:19:42Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "60f14bdecd5a"
+  },
+  {
+   "id": 42712685165,
+   "t": "2026-11-09T22:31:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "04ed955c764f"
+  },
+  {
+   "id": 42713395747,
+   "t": "2026-11-09T22:36:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "584678c1a635"
+  },
+  {
+   "id": 42715688211,
+   "t": "2026-11-09T22:52:24Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "0ed7031e45b2"
+  },
+  {
+   "id": 42716313684,
+   "t": "2026-11-09T22:56:47Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "059dcd7ce5b7"
+  },
+  {
+   "id": 42718005048,
+   "t": "2026-11-09T23:08:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "4f59ce54688e"
+  },
+  {
+   "id": 42718524192,
+   "t": "2026-11-09T23:12:21Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "520ee2c7b55a"
+  },
+  {
+   "id": 42719932815,
+   "t": "2026-11-09T23:22:31Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "c7622c40b3dd"
+  },
+  {
+   "id": 42720383318,
+   "t": "2026-11-09T23:25:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "aef163c31a6b"
+  },
+  {
+   "id": 42721391015,
+   "t": "2026-11-09T23:33:20Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "430f741ae097"
+  },
+  {
+   "id": 42722040418,
+   "t": "2026-11-09T23:38:03Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d69718cb9b92"
+  },
+  {
+   "id": 42723003365,
+   "t": "2026-11-09T23:45:25Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "dcb0f03b2cc1"
+  },
+  {
+   "id": 42723442060,
+   "t": "2026-11-09T23:48:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4a736908af86"
+  },
+  {
+   "id": 42725168468,
+   "t": "2026-11-10T00:02:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "9f12b5b22bca"
+  },
+  {
+   "id": 42725692138,
+   "t": "2026-11-10T00:06:13Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "65f290f0f652"
+  },
+  {
+   "id": 42726735892,
+   "t": "2026-11-10T00:14:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "393d9a4f72c0"
+  },
+  {
+   "id": 42727259061,
+   "t": "2026-11-10T00:18:13Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3480ad07b05e"
+  },
+  {
+   "id": 42728369825,
+   "t": "2026-11-10T00:26:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "d18d628206fd"
+  },
+  {
+   "id": 42728839011,
+   "t": "2026-11-10T00:30:35Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "81719a69a9e6"
+  },
+  {
+   "id": 42729974328,
+   "t": "2026-11-10T00:39:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "ea348f00679d"
+  },
+  {
+   "id": 42730531860,
+   "t": "2026-11-10T00:43:59Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a0807149f2e6"
+  },
+  {
+   "id": 42731732579,
+   "t": "2026-11-10T00:53:29Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "c2208ffa5063"
+  },
+  {
+   "id": 42732258393,
+   "t": "2026-11-10T00:57:50Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "46ba79c90292"
+  },
+  {
+   "id": 42733440958,
+   "t": "2026-11-10T01:07:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "200a66397aa9"
+  },
+  {
+   "id": 42733983659,
+   "t": "2026-11-10T01:11:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "44042adaba57"
+  },
+  {
+   "id": 42735038066,
+   "t": "2026-11-10T01:20:05Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "f32cab34b7bf"
+  },
+  {
+   "id": 42735442903,
+   "t": "2026-11-10T01:23:25Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "cb0baa6aa408"
+  },
+  {
+   "id": 42737016496,
+   "t": "2026-11-10T01:36:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "4b98e51cfe63"
+  },
+  {
+   "id": 42737408667,
+   "t": "2026-11-10T01:40:09Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "923417009f7e"
+  },
+  {
+   "id": 42738114940,
+   "t": "2026-11-10T01:46:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "fc22e852cef4"
+  },
+  {
+   "id": 42738650223,
+   "t": "2026-11-10T01:50:55Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "0a792c794e49"
+  },
+  {
+   "id": 42815785401,
+   "t": "2026-11-10T12:26:36Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "af2eabaf4f85"
+  },
+  {
+   "id": 42817920934,
+   "t": "2026-11-10T12:41:36Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8ffaedea0b2f"
+  },
+  {
+   "id": 42819809905,
+   "t": "2026-11-10T12:54:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v44-demonstrators-study-20261110",
+   "sha": "3816acbf3bb5"
+  },
+  {
+   "id": 42821657203,
+   "t": "2026-11-10T13:07:32Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/v44-demonstrators-study-20261110",
+   "sha": "711aeb8cc4b5"
+  },
+  {
+   "id": 42822297015,
+   "t": "2026-11-10T13:11:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v44-demonstrators-study-20261110",
+   "sha": "d1f4da553b13"
+  },
+  {
+   "id": 42822989702,
+   "t": "2026-11-10T13:16:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v44-demonstrators-study-20261110",
+   "sha": "ed733457ba67"
+  },
+  {
+   "id": 42823749684,
+   "t": "2026-11-10T13:21:16Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "41e377b97ab1"
+  },
+  {
+   "id": 42932268555,
+   "t": "2026-11-11T00:33:23Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "8118fb0bc7fa"
+  },
+  {
+   "id": 42934006653,
+   "t": "2026-11-11T00:46:44Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "f2c887b0aa47"
+  },
+  {
+   "id": 42936314195,
+   "t": "2026-11-11T01:05:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "22900dd501f8"
+  },
+  {
+   "id": 43063844136,
+   "t": "2026-11-11T17:00:17Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "883c42f5339d"
+  },
+  {
+   "id": 43066196436,
+   "t": "2026-11-11T17:14:24Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "6fc3bdac3fd9"
+  },
+  {
+   "id": 43071071802,
+   "t": "2026-11-11T17:44:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v3-wave3-demonstrators-20261101",
+   "sha": "bdfa6f1817e3"
+  },
+  {
+   "id": 43073583878,
+   "t": "2026-11-11T18:00:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "95661e1cb92e"
+  },
+  {
+   "id": 43078932739,
+   "t": "2026-11-11T18:33:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v133-postdeploy-regression-20261111",
+   "sha": "bc7e526bdf69"
+  },
+  {
+   "id": 43080842733,
+   "t": "2026-11-11T18:45:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v133-postdeploy-regression-20261111",
+   "sha": "5c0c02adf5da"
+  },
+  {
+   "id": 43081651483,
+   "t": "2026-11-11T18:51:05Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "798ce1898353"
+  },
+  {
+   "id": 43082976682,
+   "t": "2026-11-11T18:59:40Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v134-research-enrichment-proposal-20261111",
+   "sha": "ebcdaed46e62"
+  },
+  {
+   "id": 43084259564,
+   "t": "2026-11-11T19:07:40Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f74f3cff6752"
+  },
+  {
+   "id": 43087398775,
+   "t": "2026-11-11T19:27:39Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/v135-seed-recovery-fmea-actiongate-20261111",
+   "sha": "b0295c601712"
+  },
+  {
+   "id": 43088760233,
+   "t": "2026-11-11T19:36:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v135-seed-recovery-fmea-actiongate-20261111",
+   "sha": "4cee9e601e56"
+  },
+  {
+   "id": 43089448620,
+   "t": "2026-11-11T19:40:52Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "51123f7518e6"
+  },
+  {
+   "id": 43094052148,
+   "t": "2026-11-11T20:10:48Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v135b-grant-ownergate-map-20261111",
+   "sha": "ce138fde8fbb"
+  },
+  {
+   "id": 43094953801,
+   "t": "2026-11-11T20:16:30Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "67a29008f554"
+  },
+  {
+   "id": 43095491176,
+   "t": "2026-11-11T20:20:55Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/v135b-boussole-reconcile-20261111",
+   "sha": "5b6dd160c075"
+  },
+  {
+   "id": 43102172720,
+   "t": "2026-11-11T21:20:20Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v136-self-readonly-mission-origination-20261111",
+   "sha": "ad33a000378e"
+  },
+  {
+   "id": 43103676510,
+   "t": "2026-11-11T21:30:42Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v135b-boussole-reconcile-20261111",
+   "sha": "745db4022a6a"
+  },
+  {
+   "id": 43103682104,
+   "t": "2026-11-11T21:30:44Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v137-recover-sh-exhaustion-regression-20261111",
+   "sha": "f673f92d77da"
+  },
+  {
+   "id": 43104528477,
+   "t": "2026-11-11T21:36:22Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b4eb2081d760"
+  },
+  {
+   "id": 43104860056,
+   "t": "2026-11-11T21:38:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v137-recover-sh-exhaustion-regression-20261111",
+   "sha": "7ebaa5efc6b5"
+  },
+  {
+   "id": 43105749582,
+   "t": "2026-11-11T21:44:46Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f3fdf04d56e1"
+  },
+  {
+   "id": 43105950595,
+   "t": "2026-11-11T21:46:08Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v136-self-readonly-mission-origination-20261111",
+   "sha": "6139e7801876"
+  },
+  {
+   "id": 43106554259,
+   "t": "2026-11-11T21:50:19Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "fd397be101ec"
+  },
+  {
+   "id": 43109900136,
+   "t": "2026-11-11T22:13:19Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v137-metier-qualification-20261111",
+   "sha": "eab4df7a062c"
+  },
+  {
+   "id": 43110829418,
+   "t": "2026-11-11T22:19:47Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5efdd0ba544a"
+  },
+  {
+   "id": 43113879251,
+   "t": "2026-11-11T22:41:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v138-research-intelligence-20261111",
+   "sha": "c6d02921beab"
+  },
+  {
+   "id": 43114409155,
+   "t": "2026-11-11T22:45:27Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b8ebaade7e72"
+  },
+  {
+   "id": 43116804051,
+   "t": "2026-11-11T23:03:26Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v139-resilience-fault-injection-20261111",
+   "sha": "87ca06215bd5"
+  },
+  {
+   "id": 43117478695,
+   "t": "2026-11-11T23:08:26Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "80781dc9e695"
+  },
+  {
+   "id": 43120187436,
+   "t": "2026-11-11T23:29:19Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v140-independent-assurance-20261111",
+   "sha": "0ca76795d191"
+  },
+  {
+   "id": 43121626298,
+   "t": "2026-11-11T23:40:32Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/v140-research-to-mission-bridge-20261111",
+   "sha": "49f28afedc1f"
+  },
+  {
+   "id": 43121702707,
+   "t": "2026-11-11T23:41:09Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "133f5fbc0222"
+  },
+  {
+   "id": 43122393296,
+   "t": "2026-11-11T23:46:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v140-research-to-mission-bridge-20261111",
+   "sha": "696fd9d458b1"
+  },
+  {
+   "id": 43123067934,
+   "t": "2026-11-11T23:52:11Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ec1ee507a24c"
+  },
+  {
+   "id": 43123185074,
+   "t": "2026-11-11T23:53:08Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v140-boussole-bridge-reconcile-20261111",
+   "sha": "de7fec9a647e"
+  },
+  {
+   "id": 43125445796,
+   "t": "2026-11-12T00:11:23Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/v141-commercial-intelligence-chain-20261111",
+   "sha": "e47f61581961"
+  },
+  {
+   "id": 43125520071,
+   "t": "2026-11-12T00:12:00Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e1c8b51315bf"
+  },
+  {
+   "id": 43125632132,
+   "t": "2026-11-12T00:12:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v141-commercial-intelligence-chain-20261111",
+   "sha": "be25304c8f89"
+  },
+  {
+   "id": 43126304245,
+   "t": "2026-11-12T00:18:19Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b72e7e269091"
+  },
+  {
+   "id": 43129207341,
+   "t": "2026-11-12T00:42:11Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v142-radar-metier-commercial-20261112",
+   "sha": "b59a038857ba"
+  },
+  {
+   "id": 43129905464,
+   "t": "2026-11-12T00:47:46Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6e28ff1c7bdf"
+  },
+  {
+   "id": 43131655170,
+   "t": "2026-11-12T01:02:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v143-metiers-commercial-offers-20261112",
+   "sha": "ad07d2a3ef79"
+  },
+  {
+   "id": 43132161895,
+   "t": "2026-11-12T01:06:33Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "aabfed6cfbac"
+  },
+  {
+   "id": 43133402070,
+   "t": "2026-11-12T01:16:48Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v144-final-assurance-20261112",
+   "sha": "07998ec2071a"
+  },
+  {
+   "id": 43133846035,
+   "t": "2026-11-12T01:20:33Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1867eb256b6b"
+  },
+  {
+   "id": 43136573859,
+   "t": "2026-11-12T01:44:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v145-five-metiers-commercial-20261112",
+   "sha": "1b9c3fe08d37"
+  },
+  {
+   "id": 43137196734,
+   "t": "2026-11-12T01:50:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "dd50a429eca8"
+  },
+  {
+   "id": 43140058887,
+   "t": "2026-11-12T02:14:57Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v146-five-metier-product-lot2-20261112",
+   "sha": "843ba1bc099d"
+  },
+  {
+   "id": 43140930463,
+   "t": "2026-11-12T02:22:18Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "128ff6af94d1"
+  },
+  {
+   "id": 43143378744,
+   "t": "2026-11-12T02:43:38Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v147-m2-docintel-m1-cra-remediation-20261112",
+   "sha": "150c45dfbd4d"
+  },
+  {
+   "id": 43144060472,
+   "t": "2026-11-12T02:49:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c2504b38aa88"
+  },
+  {
+   "id": 43145625914,
+   "t": "2026-11-12T03:03:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v148-chantier-profitability-roadmap-proposal-20261112",
+   "sha": "791d2745d27e"
+  },
+  {
+   "id": 43146440253,
+   "t": "2026-11-12T03:10:54Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5ace703e7bcd"
+  },
+  {
+   "id": 43148230456,
+   "t": "2026-11-12T03:26:31Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v149-parc-stock-chantier-integration-20261112",
+   "sha": "6bdd26722aaa"
+  },
+  {
+   "id": 43148715384,
+   "t": "2026-11-12T03:30:55Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "cba44fba990a"
+  },
+  {
+   "id": 43150408102,
+   "t": "2026-11-12T03:46:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v150-workforce-labour-chantier-cost-20261112",
+   "sha": "57a5185a9e5b"
+  },
+  {
+   "id": 43151102347,
+   "t": "2026-11-12T03:52:49Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9a313afeae31"
+  },
+  {
+   "id": 43212544723,
+   "t": "2026-11-12T11:50:08Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v151-native-engineering-cockpit-consolidation-20261112",
+   "sha": "c2e541e831c1"
+  },
+  {
+   "id": 43213418696,
+   "t": "2026-11-12T11:56:16Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "21909346e916"
+  },
+  {
+   "id": 43216093156,
+   "t": "2026-11-12T12:14:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v152-native-transform-catalog-20261112",
+   "sha": "a3a306b8382e"
+  },
+  {
+   "id": 43217112555,
+   "t": "2026-11-12T12:21:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "89054b45ba7f"
+  },
+  {
+   "id": 43219501049,
+   "t": "2026-11-12T12:36:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v153-closed-executor-hardening-20261112",
+   "sha": "08c81a6ffba5"
+  },
+  {
+   "id": 43220578662,
+   "t": "2026-11-12T12:43:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6aab85ed2f4a"
+  },
+  {
+   "id": 43223365762,
+   "t": "2026-11-12T13:01:48Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v154-ast-lite-operations-20261112",
+   "sha": "029f5cebe3b7"
+  },
+  {
+   "id": 43224612121,
+   "t": "2026-11-12T13:09:33Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e3c210f49d45"
+  },
+  {
+   "id": 43227617604,
+   "t": "2026-11-12T13:28:26Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v155-duplicate-import-consolidation-20261112",
+   "sha": "c06d7a48821c"
+  },
+  {
+   "id": 43228651927,
+   "t": "2026-11-12T13:34:50Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "fb5d0ed3171b"
+  },
+  {
+   "id": 43231249629,
+   "t": "2026-11-12T13:51:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v156-odg-autonomy-loop-20261112",
+   "sha": "e1c8d2d30848"
+  },
+  {
+   "id": 43232304067,
+   "t": "2026-11-12T13:57:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "59888b1ae7d6"
+  },
+  {
+   "id": 43234882096,
+   "t": "2026-11-12T14:12:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v157-real-provider-governance-20261112",
+   "sha": "853f281c86f3"
+  },
+  {
+   "id": 43236042355,
+   "t": "2026-11-12T14:19:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3df59f54a4ac"
+  },
+  {
+   "id": 43238301975,
+   "t": "2026-11-12T14:32:48Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v158-real-autonomy-journey-20261112",
+   "sha": "432dfdc0b9c4"
+  },
+  {
+   "id": 43239458769,
+   "t": "2026-11-12T14:39:26Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1b1fc649da00"
+  },
+  {
+   "id": 43242095462,
+   "t": "2026-11-12T14:54:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v159-mission-scheduler-bridge-20261112",
+   "sha": "4d769c56bea3"
+  },
+  {
+   "id": 43243247568,
+   "t": "2026-11-12T15:01:14Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a636a1c019cb"
+  },
+  {
+   "id": 43245401347,
+   "t": "2026-11-12T15:13:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v160-campaign-lifecycle-persistence-20261112",
+   "sha": "dae2a818cfef"
+  },
+  {
+   "id": 43246638885,
+   "t": "2026-11-12T15:20:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f65d4ed2b79e"
+  },
+  {
+   "id": 43249638701,
+   "t": "2026-11-12T15:36:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v161-real-closure-register-20261112",
+   "sha": "20bbc05b8910"
+  },
+  {
+   "id": 43251216961,
+   "t": "2026-11-12T15:45:21Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "fd280b9eb45f"
+  },
+  {
+   "id": 43255815338,
+   "t": "2026-11-12T16:10:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v162-audit-integrity-analysis-20261112",
+   "sha": "d8f7700abdc5"
+  },
+  {
+   "id": 43257973203,
+   "t": "2026-11-12T16:22:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e2297e2a54ab"
+  },
+  {
+   "id": 43261758720,
+   "t": "2026-11-12T16:43:26Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v163-broad-it-eval-set-20261112",
+   "sha": "baf2d36fc435"
+  },
+  {
+   "id": 43267031836,
+   "t": "2026-11-12T17:12:57Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "7e05a5a4bd87"
+  },
+  {
+   "id": 43271312785,
+   "t": "2026-11-12T17:36:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v164-open-mission-recovery-20261112",
+   "sha": "7b7337112ffe"
+  },
+  {
+   "id": 43272439830,
+   "t": "2026-11-12T17:43:31Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8cb3dcbba2fb"
+  },
+  {
+   "id": 43276095855,
+   "t": "2026-11-12T18:04:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v165-slice3-governability-20261112",
+   "sha": "5808dbbda558"
+  },
+  {
+   "id": 43276916600,
+   "t": "2026-11-12T18:09:39Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6a66c8c1a784"
+  },
+  {
+   "id": 43279971371,
+   "t": "2026-11-12T18:27:11Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v166-radar-otel-genai-20261112",
+   "sha": "61d3ef81037b"
+  },
+  {
+   "id": 43280686433,
+   "t": "2026-11-12T18:31:19Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "26c36b41cfeb"
+  },
+  {
+   "id": 43283414096,
+   "t": "2026-11-12T18:47:03Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v167-otel-execution-trace-20261112",
+   "sha": "927bfb380335"
+  },
+  {
+   "id": 43284280304,
+   "t": "2026-11-12T18:52:10Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5e2cb252f16a"
+  },
+  {
+   "id": 43286016825,
+   "t": "2026-11-12T19:02:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v167b-mission-orchestrator-20261112",
+   "sha": "31541963b4c6"
+  },
+  {
+   "id": 43286884778,
+   "t": "2026-11-12T19:07:22Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f7635dca6b14"
+  },
+  {
+   "id": 43289630638,
+   "t": "2026-11-12T19:23:14Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v168-owasp-agentic-matrix-20261112",
+   "sha": "664ba0ae7920"
+  },
+  {
+   "id": 43290623945,
+   "t": "2026-11-12T19:29:07Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5b6edf4b94c4"
+  },
+  {
+   "id": 43298610907,
+   "t": "2026-11-12T20:16:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v169-roadmap-reconciliation-20261112",
+   "sha": "b8fd1b55a3a1"
+  },
+  {
+   "id": 43299663350,
+   "t": "2026-11-12T20:22:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f8deb2ffd0fb"
+  },
+  {
+   "id": 43302814063,
+   "t": "2026-11-12T20:41:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v170-crosswalk-economic-20261112",
+   "sha": "f0837d9c4690"
+  },
+  {
+   "id": 43303468818,
+   "t": "2026-11-12T20:45:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "43bdd03b77f7"
+  },
+  {
+   "id": 43305784436,
+   "t": "2026-11-12T20:59:50Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v171-weekly-radar-scheduler-20261112",
+   "sha": "a89a7591f558"
+  },
+  {
+   "id": 43306781316,
+   "t": "2026-11-12T21:05:39Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "337153df01c9"
+  },
+  {
+   "id": 43309132600,
+   "t": "2026-11-12T21:19:34Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v172-business-model-families-20261112",
+   "sha": "f207ced3c936"
+  },
+  {
+   "id": 43310063261,
+   "t": "2026-11-12T21:25:09Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ac0e45ad2180"
+  },
+  {
+   "id": 43312471282,
+   "t": "2026-11-12T21:39:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v173-autonomous-operating-model-20261112",
+   "sha": "4211b022bec4"
+  },
+  {
+   "id": 43313280733,
+   "t": "2026-11-12T21:44:54Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "88f1d46826e0"
+  },
+  {
+   "id": 43315675220,
+   "t": "2026-11-12T21:59:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v174-support-renewal-engine-20261112",
+   "sha": "386f1e601112"
+  },
+  {
+   "id": 43316657230,
+   "t": "2026-11-12T22:05:49Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2ba8e388c4dd"
+  },
+  {
+   "id": 43318574494,
+   "t": "2026-11-12T22:18:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v174a-global-opportunity-radar-20261112",
+   "sha": "2eb5c77e0b64"
+  },
+  {
+   "id": 43319291938,
+   "t": "2026-11-12T22:22:31Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "622e5a769c94"
+  },
+  {
+   "id": 43320500285,
+   "t": "2026-11-12T22:30:18Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v174b-metier-certification-planner-20261112",
+   "sha": "fb039e0ada9f"
+  },
+  {
+   "id": 43321234733,
+   "t": "2026-11-12T22:34:59Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6adbd2411e40"
+  },
+  {
+   "id": 43323328223,
+   "t": "2026-11-12T22:48:45Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v175-iso27001-crosswalk-20261112",
+   "sha": "8c52f33019a9"
+  },
+  {
+   "id": 43324098159,
+   "t": "2026-11-12T22:53:56Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1a352420634a"
+  },
+  {
+   "id": 43326135139,
+   "t": "2026-11-12T23:07:36Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v176-prospect-qualification-20261112",
+   "sha": "3126b38196d9"
+  },
+  {
+   "id": 43326975559,
+   "t": "2026-11-12T23:13:14Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "09e79063d9fb"
+  },
+  {
+   "id": 43328942298,
+   "t": "2026-11-12T23:26:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v177-product-design-engine-20261112",
+   "sha": "fb402d9d2ddc"
+  },
+  {
+   "id": 43329489474,
+   "t": "2026-11-12T23:30:54Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "14c310e12a22"
+  },
+  {
+   "id": 43331324328,
+   "t": "2026-11-12T23:44:06Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v178-product-economics-audit-20261112",
+   "sha": "2459d1850f97"
+  },
+  {
+   "id": 43332086492,
+   "t": "2026-11-12T23:49:39Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3a4c882b9d9d"
+  },
+  {
+   "id": 43334162715,
+   "t": "2026-11-13T00:05:03Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v179-economic-scaling-model-20261112",
+   "sha": "385ed78d2316"
+  },
+  {
+   "id": 43334894626,
+   "t": "2026-11-13T00:10:17Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b1df0deb878a"
+  },
+  {
+   "id": 43336696242,
+   "t": "2026-11-13T00:23:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v180-capability-cross-audit-20261113",
+   "sha": "5f7c9400f85e"
+  },
+  {
+   "id": 43337680778,
+   "t": "2026-11-13T00:31:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "adeda9449708"
+  },
+  {
+   "id": 43339547710,
+   "t": "2026-11-13T00:45:08Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v180a-three-person-economic-model-20261113",
+   "sha": "8774d26b0928"
+  },
+  {
+   "id": 43340362129,
+   "t": "2026-11-13T00:51:18Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "243f78ed099d"
+  },
+  {
+   "id": 43342811970,
+   "t": "2026-11-13T01:10:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v181-bmax-capability-mapping-20261113",
+   "sha": "04b51f6b2285"
+  },
+  {
+   "id": 43343359228,
+   "t": "2026-11-13T01:14:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "44e536e0169e"
+  },
+  {
+   "id": 43345456640,
+   "t": "2026-11-13T01:30:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v182-missing-capabilities-20261113",
+   "sha": "d4e5bce991a6"
+  },
+  {
+   "id": 43346003684,
+   "t": "2026-11-13T01:35:06Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "17b93a067358"
+  },
+  {
+   "id": 43347549413,
+   "t": "2026-11-13T01:47:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v124-extension-parked-20261113",
+   "sha": "35d34debc352"
+  },
+  {
+   "id": 43348220352,
+   "t": "2026-11-13T01:53:41Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c3a17009d93e"
+  },
+  {
+   "id": 43351215290,
+   "t": "2026-11-13T02:18:27Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v183-governance-views-20261113",
+   "sha": "b366093fa7a2"
+  },
+  {
+   "id": 43351943755,
+   "t": "2026-11-13T02:24:25Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "05bf00d40d0c"
+  },
+  {
+   "id": 43353252957,
+   "t": "2026-11-13T02:35:38Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v183c-twenty-metiers-20261113",
+   "sha": "b2280081b8a4"
+  },
+  {
+   "id": 43353934294,
+   "t": "2026-11-13T02:41:42Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "60ae5b0a2fd2"
+  },
+  {
+   "id": 43355549257,
+   "t": "2026-11-13T02:56:18Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v184-radar-to-mission-20261113",
+   "sha": "71e8e2d1e0f3"
+  },
+  {
+   "id": 43356222181,
+   "t": "2026-11-13T03:02:20Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4c8d8280f215"
+  },
+  {
+   "id": 43358481211,
+   "t": "2026-11-13T03:22:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v185-lot1-intelligence-20261113",
+   "sha": "7086d1e418d5"
+  },
+  {
+   "id": 43359209027,
+   "t": "2026-11-13T03:28:36Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "405a4dce0a0b"
+  },
+  {
+   "id": 43360735671,
+   "t": "2026-11-13T03:42:28Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v186-lot2-intelligence-20261113",
+   "sha": "e5aca4f53e90"
+  },
+  {
+   "id": 43361432912,
+   "t": "2026-11-13T03:48:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "7b0fdfd5f975"
+  },
+  {
+   "id": 43363369445,
+   "t": "2026-11-13T04:06:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v187-radar-first-lot3-20261113",
+   "sha": "c3816f85e5c6"
+  },
+  {
+   "id": 43364058330,
+   "t": "2026-11-13T04:13:07Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9a64c11758d3"
+  },
+  {
+   "id": 43365779873,
+   "t": "2026-11-13T04:28:44Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v188-sovereign-delegation-20261113",
+   "sha": "85584455a1e2"
+  },
+  {
+   "id": 43366465819,
+   "t": "2026-11-13T04:35:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "01184cf3da83"
+  },
+  {
+   "id": 43368107921,
+   "t": "2026-11-13T04:50:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v189-sandbox-audit-20261113",
+   "sha": "e7e0c7cb2967"
+  },
+  {
+   "id": 43368757818,
+   "t": "2026-11-13T04:56:47Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8aa9856cdb4f"
+  },
+  {
+   "id": 43369561255,
+   "t": "2026-11-13T05:04:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v189a-improvement-contracts-20261113",
+   "sha": "fb9f967ef5f6"
+  },
+  {
+   "id": 43370288994,
+   "t": "2026-11-13T05:10:43Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2ca5563e114e"
+  },
+  {
+   "id": 43372055163,
+   "t": "2026-11-13T05:26:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v190-provider-isolation-20261113",
+   "sha": "2754fbe8cb6f"
+  },
+  {
+   "id": 43372734284,
+   "t": "2026-11-13T05:32:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d138bb8c1c25"
+  },
+  {
+   "id": 43418017547,
+   "t": "2026-11-13T11:33:29Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v191-continuity-checkpoint-20261113",
+   "sha": "2c05355400cf"
+  },
+  {
+   "id": 43418916733,
+   "t": "2026-11-13T11:40:18Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "dc0f06926fd6"
+  },
+  {
+   "id": 43420699762,
+   "t": "2026-11-13T11:53:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v192-sandbox-net-lot4-20261113",
+   "sha": "1da4762b7a55"
+  },
+  {
+   "id": 43421616890,
+   "t": "2026-11-13T12:00:52Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "682b29a1e263"
+  },
+  {
+   "id": 43423798950,
+   "t": "2026-11-13T12:16:38Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v193-lot5-native-egress-20261113",
+   "sha": "fa8d3f8dd4b7"
+  },
+  {
+   "id": 43424745472,
+   "t": "2026-11-13T12:23:30Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b70fa41a8ac9"
+  },
+  {
+   "id": 43751151706,
+   "t": "2026-11-15T19:12:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v195-master-reconciliation-20261115",
+   "sha": "bcac2475a5ba"
+  },
+  {
+   "id": 43751594245,
+   "t": "2026-11-15T19:17:34Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "671cea692532"
+  },
+  {
+   "id": 43753588907,
+   "t": "2026-11-15T19:38:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v197-ollama-relay-hardening-20261115",
+   "sha": "aa8f39c51e08"
+  },
+  {
+   "id": 43754014043,
+   "t": "2026-11-15T19:43:34Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2d5ac6acb150"
+  },
+  {
+   "id": 43755252942,
+   "t": "2026-11-15T19:57:02Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v198-launcher-ollama-patch-20261115",
+   "sha": "62c5f2ab9311"
+  },
+  {
+   "id": 43755829650,
+   "t": "2026-11-15T20:03:09Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "59f52e09041a"
+  },
+  {
+   "id": 43756801422,
+   "t": "2026-11-15T20:13:05Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v199-lot6-metier-completion-20261115",
+   "sha": "1753c4a0454a"
+  },
+  {
+   "id": 43757366772,
+   "t": "2026-11-15T20:18:56Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1350f3e27dec"
+  },
+  {
+   "id": 43758621755,
+   "t": "2026-11-15T20:32:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v200-wifr04-blocked-contracts-register-20261115",
+   "sha": "55dbe47a5488"
+  },
+  {
+   "id": 43759028631,
+   "t": "2026-11-15T20:36:23Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c8225cc25e79"
+  },
+  {
+   "id": 43760324350,
+   "t": "2026-11-15T20:50:40Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v201-v202-wifr06-radar-robustness-20261115",
+   "sha": "1396d792b76c"
+  },
+  {
+   "id": 43760881702,
+   "t": "2026-11-15T20:56:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6e6f94fad1ae"
+  },
+  {
+   "id": 43762130674,
+   "t": "2026-11-15T21:09:51Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v203-wifr08-compounding-transfer-20261115",
+   "sha": "db6e5b2e872d"
+  },
+  {
+   "id": 43762543295,
+   "t": "2026-11-15T21:14:06Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "bea73890c9e0"
+  },
+  {
+   "id": 43763380000,
+   "t": "2026-11-15T21:23:00Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v204-jetspeed-funnel-economics-20261115",
+   "sha": "36f9f7b7ad81"
+  },
+  {
+   "id": 43763900506,
+   "t": "2026-11-15T21:28:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "11d9b7fc453a"
+  },
+  {
+   "id": 43767430686,
+   "t": "2026-11-15T22:06:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v205-production-gate-matrix-20261115",
+   "sha": "50333ce7780c"
+  },
+  {
+   "id": 43767999249,
+   "t": "2026-11-15T22:12:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "49e7ad6062f7"
+  },
+  {
+   "id": 43769214520,
+   "t": "2026-11-15T22:25:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v206-icp-segment-fit-20261115",
+   "sha": "410e05c9c380"
+  },
+  {
+   "id": 43769813144,
+   "t": "2026-11-15T22:32:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f3a5c5ac677d"
+  },
+  {
+   "id": 43771039918,
+   "t": "2026-11-15T22:45:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v207-16block-lotA-20261115",
+   "sha": "7221b47806f7"
+  },
+  {
+   "id": 43771446642,
+   "t": "2026-11-15T22:49:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6e841f23626d"
+  },
+  {
+   "id": 43771913946,
+   "t": "2026-11-15T22:54:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v207-16block-lotB-20261115",
+   "sha": "f0a91defac14"
+  },
+  {
+   "id": 43772517413,
+   "t": "2026-11-15T23:01:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2c5cabf02f2b"
+  },
+  {
+   "id": 43773044292,
+   "t": "2026-11-15T23:07:11Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v207-16block-lotCD-20261115",
+   "sha": "2f029c14526c"
+  },
+  {
+   "id": 43773597173,
+   "t": "2026-11-15T23:13:06Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "679e4a1ae2f2"
+  },
+  {
+   "id": 43774096047,
+   "t": "2026-11-15T23:18:29Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v207-16block-lotE-20261115",
+   "sha": "2e0a232bee6b"
+  },
+  {
+   "id": 43774621329,
+   "t": "2026-11-15T23:24:23Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b0fb2df63cf3"
+  },
+  {
+   "id": 43776207426,
+   "t": "2026-11-15T23:41:57Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v208-v209-integration-20261115",
+   "sha": "4f0dd2932e9e"
+  },
+  {
+   "id": 43776753404,
+   "t": "2026-11-15T23:48:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8e3bbdf93efd"
+  },
+  {
+   "id": 43777527909,
+   "t": "2026-11-15T23:56:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v210-dashboard-visibility-20261115",
+   "sha": "58a482e4c02b"
+  },
+  {
+   "id": 43777918259,
+   "t": "2026-11-16T00:01:20Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d4df46d6b9a0"
+  },
+  {
+   "id": 43778856580,
+   "t": "2026-11-16T00:11:05Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v211-radar-m5-eaa-refresh-20261116",
+   "sha": "7ea668fd7bdd"
+  },
+  {
+   "id": 43779465386,
+   "t": "2026-11-16T00:17:15Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e767b8941800"
+  },
+  {
+   "id": 43780798318,
+   "t": "2026-11-16T00:30:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v212-eaa-consistency-20261116",
+   "sha": "2c097faa4bd4"
+  },
+  {
+   "id": 43781382810,
+   "t": "2026-11-16T00:36:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1502d9000094"
+  },
+  {
+   "id": 43782499288,
+   "t": "2026-11-16T00:47:57Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v213-radar-video-sources-20261116",
+   "sha": "9e068c906b16"
+  },
+  {
+   "id": 43783048627,
+   "t": "2026-11-16T00:53:49Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3f90bb101587"
+  },
+  {
+   "id": 43784162283,
+   "t": "2026-11-16T01:05:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v214-radar-video-consumer-20261116",
+   "sha": "877b2f712d6b"
+  },
+  {
+   "id": 43784596877,
+   "t": "2026-11-16T01:09:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "04edb7fcbbf9"
+  },
+  {
+   "id": 43787150594,
+   "t": "2026-11-16T01:35:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/sandbox-certification-harness-20261116",
+   "sha": "434909ababae"
+  },
+  {
+   "id": 43787567369,
+   "t": "2026-11-16T01:39:56Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6f15852fdae0"
+  },
+  {
+   "id": 43789297488,
+   "t": "2026-11-16T01:57:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/opportunity-5m-bridge-20261116",
+   "sha": "a26ffd9c0810"
+  },
+  {
+   "id": 43789700090,
+   "t": "2026-11-16T02:02:06Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f5a493e2397c"
+  },
+  {
+   "id": 43792062700,
+   "t": "2026-11-16T02:25:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/data-chain-audit-20261116",
+   "sha": "cb15daa8de8b"
+  },
+  {
+   "id": 43792464187,
+   "t": "2026-11-16T02:29:21Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9f9c7ff82feb"
+  },
+  {
+   "id": 43794929267,
+   "t": "2026-11-16T02:54:13Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/radar-source-provenance-20261116",
+   "sha": "37f6d4ea96fd"
+  },
+  {
+   "id": 43795359203,
+   "t": "2026-11-16T02:58:50Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "7d79ce27092d"
+  },
+  {
+   "id": 43797429008,
+   "t": "2026-11-16T03:18:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/video-analysis-chain-20261116",
+   "sha": "d62da44f5ffe"
+  },
+  {
+   "id": 43797879059,
+   "t": "2026-11-16T03:23:15Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "577dc9b397dd"
+  },
+  {
+   "id": 43799774361,
+   "t": "2026-11-16T03:42:31Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/claim-corroboration-20261116",
+   "sha": "759a13306f8c"
+  },
+  {
+   "id": 43800110301,
+   "t": "2026-11-16T03:46:06Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "11f47d8e2757"
+  },
+  {
+   "id": 43801414155,
+   "t": "2026-11-16T04:00:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/corroboration-temporal-20261116",
+   "sha": "fc3377023482"
+  },
+  {
+   "id": 43801973694,
+   "t": "2026-11-16T04:05:46Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "72edd18fa7ff"
+  },
+  {
+   "id": 43853399533,
+   "t": "2026-11-16T10:57:17Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/opp-contradiction-wiring-20261116",
+   "sha": "956fe334f02c"
+  },
+  {
+   "id": 43854286090,
+   "t": "2026-11-16T11:03:10Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2492024ed11a"
+  },
+  {
+   "id": 43856789620,
+   "t": "2026-11-16T11:19:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/loop-computed-contradiction-20261116",
+   "sha": "5cd1a4a87cfa"
+  },
+  {
+   "id": 43857843018,
+   "t": "2026-11-16T11:26:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b6627dd60e21"
+  },
+  {
+   "id": 43860432277,
+   "t": "2026-11-16T11:44:45Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/budget-provenance-grading-20261116",
+   "sha": "613bb3432269"
+  },
+  {
+   "id": 43861483843,
+   "t": "2026-11-16T11:52:08Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "687d93085457"
+  },
+  {
+   "id": 43863648985,
+   "t": "2026-11-16T12:07:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/video-metadata-oembed-20261116",
+   "sha": "a1bcaa2996cf"
+  },
+  {
+   "id": 43864377465,
+   "t": "2026-11-16T12:11:55Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d4e5a046fade"
+  },
+  {
+   "id": 43867779224,
+   "t": "2026-11-16T12:34:20Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/knowledge-acquisition-20261116",
+   "sha": "6c2f4791c98c"
+  },
+  {
+   "id": 43868577459,
+   "t": "2026-11-16T12:39:33Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f0f3b64b69f9"
+  },
+  {
+   "id": 43871047750,
+   "t": "2026-11-16T12:56:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/deployment-dossier-draft-20261116",
+   "sha": "e23b9949ac31"
+  },
+  {
+   "id": 43871956822,
+   "t": "2026-11-16T13:02:07Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "11535a2c0a26"
+  },
+  {
+   "id": 43903435810,
+   "t": "2026-11-16T16:04:36Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/radar-roadmap-benchmark-20261116",
+   "sha": "1c4125d079fa"
+  },
+  {
+   "id": 43904450259,
+   "t": "2026-11-16T16:10:01Z",
+   "conclusion": "failure",
+   "event": "push",
+   "change": "main",
+   "sha": "1648d6ca5d13"
+  },
+  {
+   "id": 43908055728,
+   "t": "2026-11-16T16:29:27Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/benchmarks-amazon-google-nvidia-20261116",
+   "sha": "3ae55a4e21ea"
+  },
+  {
+   "id": 43909332060,
+   "t": "2026-11-16T16:36:18Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "aedd3e3f72fa"
+  },
+  {
+   "id": 43912866423,
+   "t": "2026-11-16T16:55:46Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/jidoka-completeness-20261116",
+   "sha": "73142faaaff6"
+  },
+  {
+   "id": 43913738763,
+   "t": "2026-11-16T17:00:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "fcec06bc8742"
+  },
+  {
+   "id": 43916610024,
+   "t": "2026-11-16T17:16:20Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/sandbox-integration-gate-20261116",
+   "sha": "5c08054f3eb8"
+  },
+  {
+   "id": 43917643101,
+   "t": "2026-11-16T17:22:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3d1adb381717"
+  },
+  {
+   "id": 43921769928,
+   "t": "2026-11-16T17:45:52Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/improvement-chain-20261116",
+   "sha": "245fb95edd64"
+  },
+  {
+   "id": 43922460432,
+   "t": "2026-11-16T17:49:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "82ddacefe9f0"
+  },
+  {
+   "id": 43925594045,
+   "t": "2026-11-16T18:07:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/continuation-diagnostic-20261116",
+   "sha": "8b3ebc21da68"
+  },
+  {
+   "id": 43927042085,
+   "t": "2026-11-16T18:16:13Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d1c042fc0fd6"
+  },
+  {
+   "id": 43929761741,
+   "t": "2026-11-16T18:31:44Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/observation-currency-20261116",
+   "sha": "9a011f02a956"
+  },
+  {
+   "id": 43930682687,
+   "t": "2026-11-16T18:36:57Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "bd13eefabd8e"
+  },
+  {
+   "id": 43934233321,
+   "t": "2026-11-16T18:57:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/cartography-reconcile-20261116",
+   "sha": "3f9552bd1c37"
+  },
+  {
+   "id": 43935079479,
+   "t": "2026-11-16T19:02:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "389e32ef82e4"
+  },
+  {
+   "id": 43937739949,
+   "t": "2026-11-16T19:17:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/program-continuity-20261116",
+   "sha": "1cb84247fcd7"
+  },
+  {
+   "id": 43938788473,
+   "t": "2026-11-16T19:23:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "0293c8667388"
+  },
+  {
+   "id": 43943663283,
+   "t": "2026-11-16T19:51:17Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v124-consolidation-20261116",
+   "sha": "72e16c573e9d"
+  },
+  {
+   "id": 43944747304,
+   "t": "2026-11-16T19:57:36Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2bd5007acf32"
+  },
+  {
+   "id": 43947312926,
+   "t": "2026-11-16T20:12:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/az-scenario-20261116",
+   "sha": "c76cd8c996ce"
+  },
+  {
+   "id": 43948370985,
+   "t": "2026-11-16T20:18:13Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "477fd91c99d2"
+  },
+  {
+   "id": 43951784531,
+   "t": "2026-11-16T20:37:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/orchestration-scenario-20261116",
+   "sha": "56cce5a10891"
+  },
+  {
+   "id": 43952698136,
+   "t": "2026-11-16T20:43:23Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "94aeb0fd31ea"
+  },
+  {
+   "id": 43956138881,
+   "t": "2026-11-16T21:03:34Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/resident-driver-l0-20261116",
+   "sha": "86d0375ba56d"
+  },
+  {
+   "id": 43957110067,
+   "t": "2026-11-16T21:09:08Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8b2b74f9ebb5"
+  },
+  {
+   "id": 43959728120,
+   "t": "2026-11-16T21:24:12Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/resident-driver-install-20261116",
+   "sha": "c22fd8e59e41"
+  },
+  {
+   "id": 43960936693,
+   "t": "2026-11-16T21:31:25Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/resident-driver-install-20261116",
+   "sha": "581b984a3776"
+  },
+  {
+   "id": 43963174046,
+   "t": "2026-11-16T21:44:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "be73aeebcff1"
+  },
+  {
+   "id": 43966284022,
+   "t": "2026-11-16T22:03:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/benchmark-audit-20261116",
+   "sha": "74bcbf47f775"
+  },
+  {
+   "id": 43966981440,
+   "t": "2026-11-16T22:07:47Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "0297d1b867b9"
+  },
+  {
+   "id": 43971268958,
+   "t": "2026-11-16T22:33:56Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/resident-precompile-20261116",
+   "sha": "45363ad49381"
+  },
+  {
+   "id": 43972242317,
+   "t": "2026-11-16T22:40:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/resident-precompile-20261116",
+   "sha": "798b32b34616"
+  },
+  {
+   "id": 43972999498,
+   "t": "2026-11-16T22:45:00Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ec69357a85e3"
+  },
+  {
+   "id": 43975230503,
+   "t": "2026-11-16T22:59:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/metier-campaign-20261116",
+   "sha": "f6dfa36dc24b"
+  },
+  {
+   "id": 43976150776,
+   "t": "2026-11-16T23:05:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5357bef8569c"
+  },
+  {
+   "id": 43978950104,
+   "t": "2026-11-16T23:24:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/metier-p5-p8-build-20261116",
+   "sha": "9dcf19d72069"
+  },
+  {
+   "id": 43979675666,
+   "t": "2026-11-16T23:29:10Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "fc82e7431657"
+  },
+  {
+   "id": 43982226261,
+   "t": "2026-11-16T23:47:00Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/local-model-capability-20261116",
+   "sha": "bc2df772dc2c"
+  },
+  {
+   "id": 43982809078,
+   "t": "2026-11-16T23:51:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ec076a45bcc0"
+  },
+  {
+   "id": 43985930713,
+   "t": "2026-11-17T00:13:52Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/metier-lot1-p3-p7-m3-20261117",
+   "sha": "88357012e976"
+  },
+  {
+   "id": 43986591644,
+   "t": "2026-11-17T00:18:45Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6311671e928e"
+  },
+  {
+   "id": 43988273526,
+   "t": "2026-11-17T00:31:11Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-engineering-audit-20261117",
+   "sha": "dd3f65a71f63"
+  },
+  {
+   "id": 43989018303,
+   "t": "2026-11-17T00:36:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c8f0c463defe"
+  },
+  {
+   "id": 43991544205,
+   "t": "2026-11-17T00:55:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-engineering-loop-20261117",
+   "sha": "73120326b769"
+  },
+  {
+   "id": 43992161079,
+   "t": "2026-11-17T01:00:24Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "22f91c01d2d4"
+  },
+  {
+   "id": 43994771634,
+   "t": "2026-11-17T01:20:07Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/catalog-real-reach-20261117",
+   "sha": "c524edf25484"
+  },
+  {
+   "id": 43995469234,
+   "t": "2026-11-17T01:25:28Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e319c5cc52aa"
+  },
+  {
+   "id": 43997422126,
+   "t": "2026-11-17T01:40:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p1-wcag22-component-audit-20261117",
+   "sha": "e688c2b78d1f"
+  },
+  {
+   "id": 43998117143,
+   "t": "2026-11-17T01:46:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6103e24d8339"
+  },
+  {
+   "id": 43999087614,
+   "t": "2026-11-17T01:54:38Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p2-nist-selective-abtest-20261117",
+   "sha": "9673366a22fe"
+  },
+  {
+   "id": 43999504000,
+   "t": "2026-11-17T01:58:13Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "25e2c47302c7"
+  },
+  {
+   "id": 44000560988,
+   "t": "2026-11-17T02:06:47Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/p4-prov-openlineage-graph-20261117",
+   "sha": "749cb32d2271"
+  },
+  {
+   "id": 44001061514,
+   "t": "2026-11-17T02:10:50Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p4-prov-openlineage-graph-20261117",
+   "sha": "e623267d6845"
+  },
+  {
+   "id": 44001777170,
+   "t": "2026-11-17T02:16:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f6a331665c5a"
+  },
+  {
+   "id": 44076091484,
+   "t": "2026-11-17T11:40:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p6-significance-mcnemar-wilson-20261117",
+   "sha": "941b052fb9a9"
+  },
+  {
+   "id": 44076795315,
+   "t": "2026-11-17T11:44:59Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4388b4756130"
+  },
+  {
+   "id": 44077921123,
+   "t": "2026-11-17T11:52:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p9-finops-runrate-forecast-20261117",
+   "sha": "8720b0a8c41f"
+  },
+  {
+   "id": 44078789340,
+   "t": "2026-11-17T11:58:22Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2dbf7d7996bd"
+  },
+  {
+   "id": 44079963819,
+   "t": "2026-11-17T12:05:57Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/cm-v237-repo-vps-map-20261117",
+   "sha": "1c028bb70258"
+  },
+  {
+   "id": 44080821459,
+   "t": "2026-11-17T12:11:31Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "42f105eae1b5"
+  },
+  {
+   "id": 44083091398,
+   "t": "2026-11-17T12:26:06Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p10-obligation-evidence-coverage-20261117",
+   "sha": "101d429372e7"
+  },
+  {
+   "id": 44084122125,
+   "t": "2026-11-17T12:32:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f91c0c2602c4"
+  },
+  {
+   "id": 44085229058,
+   "t": "2026-11-17T12:39:43Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p11-batch-stp-exception-queue-20261117",
+   "sha": "6d2dac99f4a5"
+  },
+  {
+   "id": 44086087479,
+   "t": "2026-11-17T12:45:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "04ccbfa51390"
+  },
+  {
+   "id": 44087870319,
+   "t": "2026-11-17T12:56:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p12-event-time-watermark-20261117",
+   "sha": "3c30b7e1fe29"
+  },
+  {
+   "id": 44088683445,
+   "t": "2026-11-17T13:01:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3ebeb6c8e7b8"
+  },
+  {
+   "id": 44092628139,
+   "t": "2026-11-17T13:25:45Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p13-tail-latency-slo-20261117",
+   "sha": "52c515d34c35"
+  },
+  {
+   "id": 44097133342,
+   "t": "2026-11-17T13:52:43Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ebb431273e55"
+  },
+  {
+   "id": 44101811733,
+   "t": "2026-11-17T14:19:18Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p14-golden-path-scorecard-20261117",
+   "sha": "d48ae263c7b7"
+  },
+  {
+   "id": 44118611340,
+   "t": "2026-11-17T15:48:50Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a682c60df586"
+  },
+  {
+   "id": 44118952121,
+   "t": "2026-11-17T15:50:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p15-dag-validation-20261117",
+   "sha": "40d97c429461"
+  },
+  {
+   "id": 44120759798,
+   "t": "2026-11-17T16:00:18Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8cd4e7c56ca1"
+  },
+  {
+   "id": 44121269656,
+   "t": "2026-11-17T16:02:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m1-vex-triage-20261117",
+   "sha": "eacfbc424431"
+  },
+  {
+   "id": 44122398759,
+   "t": "2026-11-17T16:08:52Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f336d00db852"
+  },
+  {
+   "id": 44122858117,
+   "t": "2026-11-17T16:11:14Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m2-extraction-confidence-gate-20261117",
+   "sha": "6616db9554f0"
+  },
+  {
+   "id": 44123764610,
+   "t": "2026-11-17T16:15:55Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e1c388977110"
+  },
+  {
+   "id": 44124125006,
+   "t": "2026-11-17T16:17:48Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m4-incremental-watermark-load-20261117",
+   "sha": "4266194792d1"
+  },
+  {
+   "id": 44125169702,
+   "t": "2026-11-17T16:23:16Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e49f9b463876"
+  },
+  {
+   "id": 44125626968,
+   "t": "2026-11-17T16:25:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m5-wcag-criteria-expansion-20261117",
+   "sha": "2fbfcffadae9"
+  },
+  {
+   "id": 44127917284,
+   "t": "2026-11-17T16:37:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m5-wcag-criteria-expansion-20261117",
+   "sha": "51338d93bbf9"
+  },
+  {
+   "id": 44129292427,
+   "t": "2026-11-17T16:45:00Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3ca145b1d24a"
+  },
+  {
+   "id": 44131874575,
+   "t": "2026-11-17T16:58:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/cm-radar-gate-chain-20261117",
+   "sha": "79f0c896c669"
+  },
+  {
+   "id": 44138840959,
+   "t": "2026-11-17T17:36:25Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4988c34761f5"
+  },
+  {
+   "id": 44147114020,
+   "t": "2026-11-17T18:22:22Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-capability-matrix-20261117",
+   "sha": "a3a1c4288274"
+  },
+  {
+   "id": 44151930326,
+   "t": "2026-11-17T18:49:13Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "31a523727e1c"
+  },
+  {
+   "id": 44153914299,
+   "t": "2026-11-17T19:00:30Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/btp-master-roadmap-artefact-20261117",
+   "sha": "c6b608ababfa"
+  },
+  {
+   "id": 44154609896,
+   "t": "2026-11-17T19:04:22Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-master-roadmap-artefact-20261117",
+   "sha": "c04ab3eeaaa6"
+  },
+  {
+   "id": 44155598759,
+   "t": "2026-11-17T19:09:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6a275f1ca8c4"
+  },
+  {
+   "id": 44157208855,
+   "t": "2026-11-17T19:18:44Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/benchmark-corroboration-20261117",
+   "sha": "1ae34f2ecbe4"
+  },
+  {
+   "id": 44159937000,
+   "t": "2026-11-17T19:33:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ffa3dc9fd30c"
+  },
+  {
+   "id": 44160939896,
+   "t": "2026-11-17T19:39:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v251-repair-reconciliation-20261117",
+   "sha": "5fb7c7ea4d8d"
+  },
+  {
+   "id": 44161918885,
+   "t": "2026-11-17T19:45:01Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "81090eac00f6"
+  },
+  {
+   "id": 44163106063,
+   "t": "2026-11-17T19:51:39Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-devis-engine-20261117",
+   "sha": "468c25f19a73"
+  },
+  {
+   "id": 44164019921,
+   "t": "2026-11-17T19:56:48Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-devis-engine-20261117",
+   "sha": "f253d16acd99"
+  },
+  {
+   "id": 44164804090,
+   "t": "2026-11-17T20:01:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "09ae2a7c240a"
+  },
+  {
+   "id": 44165940860,
+   "t": "2026-11-17T20:07:33Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/btp-canonical-integration-20261117",
+   "sha": "38d7b6952ee6"
+  },
+  {
+   "id": 44167261837,
+   "t": "2026-11-17T20:14:51Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/btp-canonical-integration-20261117",
+   "sha": "b560befca5f8"
+  },
+  {
+   "id": 44168871566,
+   "t": "2026-11-17T20:23:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-canonical-integration-20261117",
+   "sha": "90cee617d512"
+  },
+  {
+   "id": 44169618049,
+   "t": "2026-11-17T20:28:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "43b8748e6896"
+  },
+  {
+   "id": 44170796059,
+   "t": "2026-11-17T20:34:53Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-metre-engine-20261117",
+   "sha": "71c71c7f4f16"
+  },
+  {
+   "id": 44171644699,
+   "t": "2026-11-17T20:39:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b987388a34e0"
+  },
+  {
+   "id": 44172797774,
+   "t": "2026-11-17T20:46:18Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-vision-voice-pipeline-20261117",
+   "sha": "4897996ef3b4"
+  },
+  {
+   "id": 44173592326,
+   "t": "2026-11-17T20:50:54Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c32b9a732c1d"
+  },
+  {
+   "id": 44174964277,
+   "t": "2026-11-17T20:58:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-normative-registry-20261117",
+   "sha": "b4a64f6540ec"
+  },
+  {
+   "id": 44175904586,
+   "t": "2026-11-17T21:04:15Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "088b3c8f1395"
+  },
+  {
+   "id": 44177041268,
+   "t": "2026-11-17T21:10:39Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-communication-capability-matrix-20261117",
+   "sha": "acab7305ed9f"
+  },
+  {
+   "id": 44177989580,
+   "t": "2026-11-17T21:16:00Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d03057fde4c9"
+  },
+  {
+   "id": 44179584208,
+   "t": "2026-11-17T21:25:02Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-project-workflow-20261117",
+   "sha": "bef96ffea425"
+  },
+  {
+   "id": 44180550782,
+   "t": "2026-11-17T21:30:39Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8ba7c3f71164"
+  },
+  {
+   "id": 44182128161,
+   "t": "2026-11-17T21:39:43Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-billing-engine-20261117",
+   "sha": "5220d7ca284b"
+  },
+  {
+   "id": 44183170659,
+   "t": "2026-11-17T21:45:46Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e7fdc4539086"
+  },
+  {
+   "id": 44184882623,
+   "t": "2026-11-17T21:55:46Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-growth-roadmap-phase0-20261117",
+   "sha": "e3adb63c6751"
+  },
+  {
+   "id": 44185877153,
+   "t": "2026-11-17T22:01:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "96a09b2906ea"
+  },
+  {
+   "id": 44187478299,
+   "t": "2026-11-17T22:11:02Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-company-mgmt-coverage-phaseA-20261117",
+   "sha": "8ac17017d55f"
+  },
+  {
+   "id": 44188306124,
+   "t": "2026-11-17T22:15:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e02e0b811584"
+  },
+  {
+   "id": 44190783235,
+   "t": "2026-11-17T22:30:52Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v271-exec-dashboard-decision-20261117",
+   "sha": "d3487ca79272"
+  },
+  {
+   "id": 44191732006,
+   "t": "2026-11-17T22:36:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "753323c05a73"
+  },
+  {
+   "id": 44194222201,
+   "t": "2026-11-17T22:52:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v272-country-ranking-20261117",
+   "sha": "dc78bcd37cc7"
+  },
+  {
+   "id": 44195129090,
+   "t": "2026-11-17T22:58:27Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "eeb34197afa6"
+  },
+  {
+   "id": 44195647591,
+   "t": "2026-11-17T23:01:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v272-lifecycle-integration-20261117",
+   "sha": "8eff13b48dca"
+  },
+  {
+   "id": 44196373550,
+   "t": "2026-11-17T23:06:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e1fb52a51721"
+  },
+  {
+   "id": 44198693196,
+   "t": "2026-11-17T23:21:44Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/v273-v124-canonical-integration-20261117",
+   "sha": "c8496dbbcd63"
+  },
+  {
+   "id": 44200574766,
+   "t": "2026-11-17T23:34:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v273-v124-canonical-integration-20261117",
+   "sha": "b3244def50b0"
+  },
+  {
+   "id": 44201432403,
+   "t": "2026-11-17T23:40:33Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "53a1dedb1589"
+  },
+  {
+   "id": 44201836340,
+   "t": "2026-11-17T23:43:24Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v274-market-entry-decision-20261117",
+   "sha": "b7e6b938f88c"
+  },
+  {
+   "id": 44202498870,
+   "t": "2026-11-17T23:48:03Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3fc5ca5c6815"
+  },
+  {
+   "id": 44203198913,
+   "t": "2026-11-17T23:53:05Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v275-executive-surface-20261117",
+   "sha": "622bd01b8220"
+  },
+  {
+   "id": 44203896860,
+   "t": "2026-11-17T23:58:11Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "7ae5ffdb3f0c"
+  },
+  {
+   "id": 44205384509,
+   "t": "2026-11-18T00:08:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v276-campaign-throughput-20261117",
+   "sha": "e94337c28943"
+  },
+  {
+   "id": 44205974787,
+   "t": "2026-11-18T00:12:57Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ff9c6186f898"
+  },
+  {
+   "id": 44206408681,
+   "t": "2026-11-18T00:16:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v276-p2lot1-assistants-20261117",
+   "sha": "db92ee42ad8b"
+  },
+  {
+   "id": 44207167733,
+   "t": "2026-11-18T00:21:36Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v276-p2lot1-assistants-20261117",
+   "sha": "af67080ff041"
+  },
+  {
+   "id": 44207958401,
+   "t": "2026-11-18T00:27:26Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c6fa92df4335"
+  },
+  {
+   "id": 44208794046,
+   "t": "2026-11-18T00:33:31Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v277-p2lot2-operational-assistants-20261118",
+   "sha": "8dfd8738ef2f"
+  },
+  {
+   "id": 44209281291,
+   "t": "2026-11-18T00:37:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "7f8ae26b69fa"
+  },
+  {
+   "id": 44209703346,
+   "t": "2026-11-18T00:40:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v277-p3-competitor-intelligence-20261118",
+   "sha": "25adc248f617"
+  },
+  {
+   "id": 44210504876,
+   "t": "2026-11-18T00:46:03Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1fe4e5d5a0b7"
+  },
+  {
+   "id": 44211445250,
+   "t": "2026-11-18T00:53:05Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v278-p2lot3-admin-fleet-assistants-20261118",
+   "sha": "572ebbe8bea5"
+  },
+  {
+   "id": 44212066253,
+   "t": "2026-11-18T00:57:45Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ecf2a122b2f0"
+  },
+  {
+   "id": 44212769125,
+   "t": "2026-11-18T01:03:07Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v279-p2lot4-commercial-assistants-20261118",
+   "sha": "e2998b9f5387"
+  },
+  {
+   "id": 44213592787,
+   "t": "2026-11-18T01:09:24Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "630eb23a83b8"
+  },
+  {
+   "id": 44214505536,
+   "t": "2026-11-18T01:16:19Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v281-p2lot5-governance-quality-20261118",
+   "sha": "bfa7cd000e53"
+  },
+  {
+   "id": 44215220738,
+   "t": "2026-11-18T01:21:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v281-p2lot5-governance-quality-20261118",
+   "sha": "11a15967eef2"
+  },
+  {
+   "id": 44216060795,
+   "t": "2026-11-18T01:28:20Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "45ecdc06a786"
+  },
+  {
+   "id": 44216502169,
+   "t": "2026-11-18T01:31:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v281-p2lot6-intelligence-economic-20261118",
+   "sha": "4a854c900246"
+  },
+  {
+   "id": 44217280395,
+   "t": "2026-11-18T01:37:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a231c420bef5"
+  },
+  {
+   "id": 44217653977,
+   "t": "2026-11-18T01:40:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v281-p2lot7-connectors-ux-20261118",
+   "sha": "04b7ccc6a564"
+  },
+  {
+   "id": 44218354329,
+   "t": "2026-11-18T01:46:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "072fbb2c4cd3"
+  },
+  {
+   "id": 44219235605,
+   "t": "2026-11-18T01:53:42Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v282-p4-engine-qualification-20261118",
+   "sha": "e118dd4d9d96"
+  },
+  {
+   "id": 44219826970,
+   "t": "2026-11-18T01:58:42Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e50d37aca46c"
+  },
+  {
+   "id": 44221114686,
+   "t": "2026-11-18T02:09:02Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/v283-pdf-native-adapter-20261118",
+   "sha": "9aa84e01bba9"
+  },
+  {
+   "id": 44221790268,
+   "t": "2026-11-18T02:14:34Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/v283-pdf-native-adapter-20261118",
+   "sha": "2ae25689dbcf"
+  },
+  {
+   "id": 44222825215,
+   "t": "2026-11-18T02:22:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v283a-native-autonomy-demonstration-20261118",
+   "sha": "43b5ba2f9fe8"
+  },
+  {
+   "id": 44223547637,
+   "t": "2026-11-18T02:28:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1a5fabfaab3a"
+  },
+  {
+   "id": 44224797386,
+   "t": "2026-11-18T02:38:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v283bc-ollama-parse-salvage-native-cycle-20261118",
+   "sha": "f9321a3e30a3"
+  },
+  {
+   "id": 44225490966,
+   "t": "2026-11-18T02:44:50Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "184b5f112a7d"
+  },
+  {
+   "id": 44226473698,
+   "t": "2026-11-18T02:53:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v284-local-model-attribution-tier-20261118",
+   "sha": "78d24264326f"
+  },
+  {
+   "id": 44227011166,
+   "t": "2026-11-18T02:57:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6fd0e54b77d7"
+  },
+  {
+   "id": 44228548031,
+   "t": "2026-11-18T03:10:40Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v285-selector-decomposer-tests-20261118",
+   "sha": "1755b3e9d892"
+  },
+  {
+   "id": 44229131485,
+   "t": "2026-11-18T03:15:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "96dd0cd1dcde"
+  },
+  {
+   "id": 44231132550,
+   "t": "2026-11-18T03:32:26Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v287-capability-reuse-path-e2e-20261118",
+   "sha": "f0c72d073676"
+  },
+  {
+   "id": 44231725546,
+   "t": "2026-11-18T03:37:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5a58f75857a4"
+  },
+  {
+   "id": 44232490834,
+   "t": "2026-11-18T03:44:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v288-patch-engine-tests-20261118",
+   "sha": "8ad1225af0b8"
+  },
+  {
+   "id": 44233038058,
+   "t": "2026-11-18T03:49:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8b04c099cd2a"
+  },
+  {
+   "id": 44234043847,
+   "t": "2026-11-18T03:58:09Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v289-recovery-drill-benchmark-tests-20261118",
+   "sha": "e41d2a780728"
+  },
+  {
+   "id": 44234823033,
+   "t": "2026-11-18T04:04:57Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "454ef1e13ba8"
+  },
+  {
+   "id": 44235525683,
+   "t": "2026-11-18T04:10:57Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v290-resource-allocation-engine-tests-20261118",
+   "sha": "16f905d47366"
+  },
+  {
+   "id": 44236285635,
+   "t": "2026-11-18T04:17:23Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "463c26d6a843"
+  },
+  {
+   "id": 44237124035,
+   "t": "2026-11-18T04:24:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v291-capability-reuse-live-integration-20261118",
+   "sha": "32bde0708382"
+  },
+  {
+   "id": 44237915706,
+   "t": "2026-11-18T04:31:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f08588a18683"
+  },
+  {
+   "id": 44239304856,
+   "t": "2026-11-18T04:43:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v292-deployment-qualification-gonogo-20261118",
+   "sha": "41d2ba6bed6f"
+  },
+  {
+   "id": 44239864628,
+   "t": "2026-11-18T04:48:31Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "250aa025f3f0"
+  },
+  {
+   "id": 44297729378,
+   "t": "2026-11-18T11:46:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v293a-artifact-identity-c11-20261118",
+   "sha": "b5898681d5d9"
+  },
+  {
+   "id": 44298601193,
+   "t": "2026-11-18T11:52:22Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f48bd897118a"
+  },
+  {
+   "id": 44300063650,
+   "t": "2026-11-18T12:01:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v294-backup-restore-c7-20261118",
+   "sha": "95e9631dce55"
+  },
+  {
+   "id": 44301148521,
+   "t": "2026-11-18T12:08:54Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b0629b93190c"
+  },
+  {
+   "id": 44302578816,
+   "t": "2026-11-18T12:17:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v295-perf-fault-harness-c8-20261118",
+   "sha": "026a4ecfaa05"
+  },
+  {
+   "id": 44303516937,
+   "t": "2026-11-18T12:23:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "91f573c9b586"
+  },
+  {
+   "id": 44304831543,
+   "t": "2026-11-18T12:32:03Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v296-deployable-package-c9-20261118",
+   "sha": "3d337e970718"
+  },
+  {
+   "id": 44305640913,
+   "t": "2026-11-18T12:37:08Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ef0aed0aa86a"
+  },
+  {
+   "id": 44306695466,
+   "t": "2026-11-18T12:43:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v297-vps-validation-preflight-20261118",
+   "sha": "263c4dd3a6e9"
+  },
+  {
+   "id": 44307490118,
+   "t": "2026-11-18T12:48:47Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1bb9d225d94b"
+  },
+  {
+   "id": 44312763728,
+   "t": "2026-11-18T13:20:46Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v301-c6-certification-ingest-20261118",
+   "sha": "5eaaf8f0c120"
+  },
+  {
+   "id": 44314161855,
+   "t": "2026-11-18T13:29:05Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "eb1760c43f0a"
+  },
+  {
+   "id": 44317010789,
+   "t": "2026-11-18T13:45:46Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v302-relay-socket-cleanup-20261118",
+   "sha": "8a47a05c6484"
+  },
+  {
+   "id": 44317973214,
+   "t": "2026-11-18T13:51:19Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f744d3f8810c"
+  },
+  {
+   "id": 44373391493,
+   "t": "2026-11-18T18:46:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v312-next-security-16.4.6-20261118",
+   "sha": "6a71f1862aba"
+  },
+  {
+   "id": 44374652345,
+   "t": "2026-11-18T18:53:50Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "fc66ef43c07a"
+  },
+  {
+   "id": 44380157396,
+   "t": "2026-11-18T19:24:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/relay-bridge-halfclose-20261118",
+   "sha": "74c517f4f7d4"
+  },
+  {
+   "id": 44381196775,
+   "t": "2026-11-18T19:30:09Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "dd96cec81f70"
+  },
+  {
+   "id": 44386322387,
+   "t": "2026-11-18T20:00:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/c6-gate-wiring-20261118",
+   "sha": "e2add4390fd0"
+  },
+  {
+   "id": 44387197834,
+   "t": "2026-11-18T20:04:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "035dc67a2919"
+  },
+  {
+   "id": 44389192941,
+   "t": "2026-11-18T20:15:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/contracts-gate-wiring-20261118",
+   "sha": "a57780321099"
+  },
+  {
+   "id": 44390469774,
+   "t": "2026-11-18T20:23:11Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "bb9e39287820"
+  },
+  {
+   "id": 44393453476,
+   "t": "2026-11-18T20:40:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v315-prep-dossiers-20261118",
+   "sha": "8fb95d9a9d43"
+  },
+  {
+   "id": 44394243187,
+   "t": "2026-11-18T20:44:52Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2c58f72250fc"
+  },
+  {
+   "id": 44397598517,
+   "t": "2026-11-18T21:04:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v317-e2e-autonomy-20261118",
+   "sha": "48980011d6b9"
+  },
+  {
+   "id": 44398538096,
+   "t": "2026-11-18T21:09:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "30dcb8d24026"
+  },
+  {
+   "id": 44401390217,
+   "t": "2026-11-18T21:25:52Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v318-novel-synthesis-20261118",
+   "sha": "9e9bb02332b5"
+  },
+  {
+   "id": 44402380856,
+   "t": "2026-11-18T21:31:39Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "7c0c2420f0fe"
+  },
+  {
+   "id": 44407308866,
+   "t": "2026-11-18T22:00:42Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-v124-crosswalk-20261118",
+   "sha": "bf8967e91671"
+  },
+  {
+   "id": 44408018983,
+   "t": "2026-11-18T22:04:53Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "00f7dc51cb44"
+  },
+  {
+   "id": 44409587139,
+   "t": "2026-11-18T22:14:11Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-harder-autonomy-20261118",
+   "sha": "638fdc41f215"
+  },
+  {
+   "id": 44410346381,
+   "t": "2026-11-18T22:18:47Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "eef446c91eab"
+  },
+  {
+   "id": 44411834902,
+   "t": "2026-11-18T22:28:00Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/v319b-corpus-taxonomy-20261118",
+   "sha": "a745339769be"
+  },
+  {
+   "id": 44412493073,
+   "t": "2026-11-18T22:32:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319b-corpus-taxonomy-20261118",
+   "sha": "b559589c9a90"
+  },
+  {
+   "id": 44413501095,
+   "t": "2026-11-18T22:38:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6b965e088281"
+  },
+  {
+   "id": 44413917943,
+   "t": "2026-11-18T22:41:09Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-radar-external-campaign-20261118",
+   "sha": "f3f88cfa682a"
+  },
+  {
+   "id": 44414863621,
+   "t": "2026-11-18T22:47:17Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a7edfdb4e7d2"
+  },
+  {
+   "id": 44415502074,
+   "t": "2026-11-18T22:51:25Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-owasp-agentic-2026-20261118",
+   "sha": "08f9c36c21b9"
+  },
+  {
+   "id": 44416429764,
+   "t": "2026-11-18T22:57:35Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e225a20a264c"
+  },
+  {
+   "id": 44416999767,
+   "t": "2026-11-18T23:01:22Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-m2-reference-project-20261118",
+   "sha": "0f05d127edca"
+  },
+  {
+   "id": 44417921816,
+   "t": "2026-11-18T23:07:19Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "67330b5b4c65"
+  },
+  {
+   "id": 44418838321,
+   "t": "2026-11-18T23:13:25Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-btp-intake-core-20261118",
+   "sha": "04c3812f443c"
+  },
+  {
+   "id": 44419672654,
+   "t": "2026-11-18T23:19:01Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-btp-intake-core-20261118",
+   "sha": "5031ea8eaf77"
+  },
+  {
+   "id": 44420418823,
+   "t": "2026-11-18T23:24:03Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a67fe5fe91ed"
+  },
+  {
+   "id": 44420967327,
+   "t": "2026-11-18T23:27:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-btp-quote-revision-20261118",
+   "sha": "e9aff670189a"
+  },
+  {
+   "id": 44421655348,
+   "t": "2026-11-18T23:32:46Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a6f4b7caf3a2"
+  },
+  {
+   "id": 44422205109,
+   "t": "2026-11-18T23:36:34Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-btp-invoice-schedule-20261118",
+   "sha": "7d5577e5ffdf"
+  },
+  {
+   "id": 44422981800,
+   "t": "2026-11-18T23:42:11Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "484791db928f"
+  },
+  {
+   "id": 44423719945,
+   "t": "2026-11-18T23:47:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319addendum-reconciliation-20261118",
+   "sha": "2ed07d6a28b3"
+  },
+  {
+   "id": 44424718875,
+   "t": "2026-11-18T23:54:53Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8950197a4059"
+  },
+  {
+   "id": 44424759486,
+   "t": "2026-11-18T23:55:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-marketing-science-20261118",
+   "sha": "d7a6e55eda29"
+  },
+  {
+   "id": 44425574405,
+   "t": "2026-11-19T00:01:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-marketing-science-20261118",
+   "sha": "ac6784e55f93"
+  },
+  {
+   "id": 44426438133,
+   "t": "2026-11-19T00:07:30Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1998064a3dc3"
+  },
+  {
+   "id": 44427010301,
+   "t": "2026-11-19T00:11:39Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/v319-brand-profile-20261118",
+   "sha": "cf23594840b4"
+  },
+  {
+   "id": 44427394896,
+   "t": "2026-11-19T00:14:27Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-brand-profile-20261118",
+   "sha": "e26a3db1f298"
+  },
+  {
+   "id": 44428495484,
+   "t": "2026-11-19T00:22:39Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6e4c3a0c3acc"
+  },
+  {
+   "id": 44428847588,
+   "t": "2026-11-19T00:25:16Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/v319-content-asset-20261118",
+   "sha": "63c96d6889aa"
+  },
+  {
+   "id": 44429193033,
+   "t": "2026-11-19T00:27:51Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-content-asset-20261118",
+   "sha": "59519f6dcb1b"
+  },
+  {
+   "id": 44430030288,
+   "t": "2026-11-19T00:34:04Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ada02fc43c96"
+  },
+  {
+   "id": 44430423956,
+   "t": "2026-11-19T00:36:57Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-partner-attribution-20261118",
+   "sha": "91756f3dddbc"
+  },
+  {
+   "id": 44431159283,
+   "t": "2026-11-19T00:42:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ddd2f0cc62b8"
+  },
+  {
+   "id": 44431791244,
+   "t": "2026-11-19T00:47:08Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v319-model-router-20261118",
+   "sha": "b5102a8e9f64"
+  },
+  {
+   "id": 44432632311,
+   "t": "2026-11-19T00:53:27Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f3bf96958f17"
+  },
+  {
+   "id": 44433544337,
+   "t": "2026-11-19T01:00:36Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v320-multimodule-routed-20261118",
+   "sha": "34a1471ab7e1"
+  },
+  {
+   "id": 44434406254,
+   "t": "2026-11-19T01:06:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "852bea134db5"
+  },
+  {
+   "id": 44435422612,
+   "t": "2026-11-19T01:14:48Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/autonomy-ladder-scorecard-20261118",
+   "sha": "af1227e8d484"
+  },
+  {
+   "id": 44436156144,
+   "t": "2026-11-19T01:20:29Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/autonomy-ladder-scorecard-20261118",
+   "sha": "4cd4d32f10ec"
+  },
+  {
+   "id": 44436785731,
+   "t": "2026-11-19T01:25:25Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2612d95ceb83"
+  },
+  {
+   "id": 44437469588,
+   "t": "2026-11-19T01:30:55Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "excellence/btp-supplier-commitment-20261119",
+   "sha": "c2e908d0711e"
+  },
+  {
+   "id": 44437993105,
+   "t": "2026-11-19T01:35:03Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-supplier-commitment-20261119",
+   "sha": "1e62efbb60d7"
+  },
+  {
+   "id": 44438595258,
+   "t": "2026-11-19T01:39:56Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5f7ec23b161c"
+  },
+  {
+   "id": 44439107225,
+   "t": "2026-11-19T01:43:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-price-reference-20261119",
+   "sha": "11445d84649b"
+  },
+  {
+   "id": 44439791876,
+   "t": "2026-11-19T01:49:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-price-reference-20261119",
+   "sha": "3abdf42cb5ec"
+  },
+  {
+   "id": 44440487376,
+   "t": "2026-11-19T01:55:17Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2baaf63f2286"
+  },
+  {
+   "id": 44441252125,
+   "t": "2026-11-19T02:01:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-chantier-schedule-20261119",
+   "sha": "5069c88d5c2d"
+  },
+  {
+   "id": 44441910476,
+   "t": "2026-11-19T02:06:54Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "7f459181f040"
+  },
+  {
+   "id": 44442561356,
+   "t": "2026-11-19T02:12:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-schedule-plan-20261119",
+   "sha": "e8403e008df6"
+  },
+  {
+   "id": 44443335467,
+   "t": "2026-11-19T02:18:26Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-schedule-plan-20261119",
+   "sha": "500350fd826f"
+  },
+  {
+   "id": 44443942928,
+   "t": "2026-11-19T02:23:21Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e4dddd89c401"
+  },
+  {
+   "id": 44444608476,
+   "t": "2026-11-19T02:28:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/crm-followup-20261119",
+   "sha": "6b4151714f1b"
+  },
+  {
+   "id": 44445359666,
+   "t": "2026-11-19T02:34:55Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f822ce76a0ce"
+  },
+  {
+   "id": 44445873513,
+   "t": "2026-11-19T02:39:09Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/crm-segmentation-20261119",
+   "sha": "1eed3a70838a"
+  },
+  {
+   "id": 44446594644,
+   "t": "2026-11-19T02:45:19Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "63001884a9b6"
+  },
+  {
+   "id": 44447150566,
+   "t": "2026-11-19T02:50:03Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/crm-account-view-20261119",
+   "sha": "3777984e1278"
+  },
+  {
+   "id": 44447615122,
+   "t": "2026-11-19T02:54:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a2533db6e39f"
+  },
+  {
+   "id": 44448498259,
+   "t": "2026-11-19T03:01:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p3-cvss-score-20261119",
+   "sha": "5a07a19bd093"
+  },
+  {
+   "id": 44449245353,
+   "t": "2026-11-19T03:07:52Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9a7196a86c6b"
+  },
+  {
+   "id": 44449776190,
+   "t": "2026-11-19T03:12:19Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p6-inter-rater-agreement-20261119",
+   "sha": "20f84bb8863b"
+  },
+  {
+   "id": 44450473910,
+   "t": "2026-11-19T03:18:10Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5b872fd128da"
+  },
+  {
+   "id": 44450979683,
+   "t": "2026-11-19T03:22:31Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/concentration-index-20261119",
+   "sha": "5c9d0d03a7cd"
+  },
+  {
+   "id": 44451600759,
+   "t": "2026-11-19T03:27:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2e52550c5daa"
+  },
+  {
+   "id": 44515506960,
+   "t": "2026-11-19T11:30:57Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p4-ks-test-20261119",
+   "sha": "c97b5b7303de"
+  },
+  {
+   "id": 44517255713,
+   "t": "2026-11-19T11:42:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p4-ks-test-20261119",
+   "sha": "730f7ecd811d"
+  },
+  {
+   "id": 44517979834,
+   "t": "2026-11-19T11:47:42Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "49acca8b0c69"
+  },
+  {
+   "id": 44518758823,
+   "t": "2026-11-19T11:52:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p2-passk-estimator-20261119",
+   "sha": "d4ecf30f3e1c"
+  },
+  {
+   "id": 44519360934,
+   "t": "2026-11-19T11:57:04Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "ddd25f0f70f6"
+  },
+  {
+   "id": 44520074338,
+   "t": "2026-11-19T12:01:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p6-rank-correlation-20261119",
+   "sha": "05e8cb28a7e6"
+  },
+  {
+   "id": 44521045027,
+   "t": "2026-11-19T12:08:01Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p6-rank-correlation-20261119",
+   "sha": "2cd5b9b001d4"
+  },
+  {
+   "id": 44522022992,
+   "t": "2026-11-19T12:14:22Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f90c3f936ccf"
+  },
+  {
+   "id": 44523933891,
+   "t": "2026-11-19T12:26:42Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p6-binary-classification-metrics-20261119",
+   "sha": "1425ea4fe523"
+  },
+  {
+   "id": 44524913840,
+   "t": "2026-11-19T12:33:00Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "05c728e00b14"
+  },
+  {
+   "id": 44525647670,
+   "t": "2026-11-19T12:37:45Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/evaluator-agreement-scorecard-20261119",
+   "sha": "d6e585bcf36f"
+  },
+  {
+   "id": 44526560133,
+   "t": "2026-11-19T12:43:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9e8928e1893a"
+  },
+  {
+   "id": 44527263436,
+   "t": "2026-11-19T12:48:06Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/data-drift-view-20261119",
+   "sha": "8f81c325d87b"
+  },
+  {
+   "id": 44528334391,
+   "t": "2026-11-19T12:55:00Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "110cb4c815ee"
+  },
+  {
+   "id": 44529019437,
+   "t": "2026-11-19T12:59:25Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/portfolio-concentration-view-20261119",
+   "sha": "cb1154b1c48d"
+  },
+  {
+   "id": 44530004625,
+   "t": "2026-11-19T13:05:23Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "256394bdf4e5"
+  },
+  {
+   "id": 44530903598,
+   "t": "2026-11-19T13:10:53Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/p6-bland-altman-20261119",
+   "sha": "f777eb1d1541"
+  },
+  {
+   "id": 44531419398,
+   "t": "2026-11-19T13:14:01Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p6-bland-altman-20261119",
+   "sha": "9c74dac0f97d"
+  },
+  {
+   "id": 44532251823,
+   "t": "2026-11-19T13:19:05Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "772f4c69ccac"
+  },
+  {
+   "id": 44533418386,
+   "t": "2026-11-19T13:26:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p6-multiple-testing-correction-20261119",
+   "sha": "2b7a263b3a0d"
+  },
+  {
+   "id": 44534491568,
+   "t": "2026-11-19T13:32:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p6-multiple-testing-correction-20261119",
+   "sha": "a40e0217e286"
+  },
+  {
+   "id": 44535500948,
+   "t": "2026-11-19T13:38:39Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "26dab3cff2eb"
+  },
+  {
+   "id": 44536222040,
+   "t": "2026-11-19T13:43:03Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/eval-statistics-index-20261119",
+   "sha": "8d607b2b08fa"
+  },
+  {
+   "id": 44537766706,
+   "t": "2026-11-19T13:52:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/eval-statistics-index-20261119",
+   "sha": "e4f74baa6763"
+  },
+  {
+   "id": 44538770394,
+   "t": "2026-11-19T13:58:19Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d1af3b800d21"
+  },
+  {
+   "id": 44556554794,
+   "t": "2026-11-19T15:35:42Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/interval-scheduling-20261119",
+   "sha": "eb5151ec304e"
+  },
+  {
+   "id": 44557697275,
+   "t": "2026-11-19T15:41:45Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/interval-scheduling-20261119",
+   "sha": "687fa55d6d1c"
+  },
+  {
+   "id": 44558700820,
+   "t": "2026-11-19T15:47:05Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6ff40525d225"
+  },
+  {
+   "id": 44559407237,
+   "t": "2026-11-19T15:50:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/interval-optimization-20261119",
+   "sha": "da00291ea2eb"
+  },
+  {
+   "id": 44560176166,
+   "t": "2026-11-19T15:55:01Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f822d76ef0ba"
+  },
+  {
+   "id": 44561073152,
+   "t": "2026-11-19T15:59:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/fr-identifier-validation-20261119",
+   "sha": "5f61da784bad"
+  },
+  {
+   "id": 44562872205,
+   "t": "2026-11-19T16:09:21Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4c85baf0c2c7"
+  },
+  {
+   "id": 44563713793,
+   "t": "2026-11-19T16:13:54Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/fr-vat-20261119",
+   "sha": "d889ef599b5a"
+  },
+  {
+   "id": 44564736641,
+   "t": "2026-11-19T16:19:13Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/fr-vat-20261119",
+   "sha": "59bea3b3102b"
+  },
+  {
+   "id": 44566002480,
+   "t": "2026-11-19T16:25:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "cc4ce19d972d"
+  },
+  {
+   "id": 44568380945,
+   "t": "2026-11-19T16:38:31Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/fr-payment-terms-20261119",
+   "sha": "1a2dc262213d"
+  },
+  {
+   "id": 44569366144,
+   "t": "2026-11-19T16:43:47Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "15ccb4c93937"
+  },
+  {
+   "id": 44570422801,
+   "t": "2026-11-19T16:49:27Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/fr-invoice-compliance-20261119",
+   "sha": "0a0618298a66"
+  },
+  {
+   "id": 44571494093,
+   "t": "2026-11-19T16:55:20Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/fr-invoice-compliance-20261119",
+   "sha": "a542d5ba660f"
+  },
+  {
+   "id": 44572453617,
+   "t": "2026-11-19T17:00:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "cf7ff58e7050"
+  },
+  {
+   "id": 44573501915,
+   "t": "2026-11-19T17:06:17Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/gregorian-calendar-20261119",
+   "sha": "44a132da11cf"
+  },
+  {
+   "id": 44574446979,
+   "t": "2026-11-19T17:11:23Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "873548041107"
+  },
+  {
+   "id": 44575515329,
+   "t": "2026-11-19T17:17:11Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/fr-due-date-20261119",
+   "sha": "584267b9a1fe"
+  },
+  {
+   "id": 44576404906,
+   "t": "2026-11-19T17:22:03Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c95b04e0a615"
+  },
+  {
+   "id": 44577080111,
+   "t": "2026-11-19T17:25:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/apportion-20261119",
+   "sha": "cad0f9f9752e"
+  },
+  {
+   "id": 44578127635,
+   "t": "2026-11-19T17:31:40Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "045828bbab26"
+  },
+  {
+   "id": 44586703835,
+   "t": "2026-11-19T18:20:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-multilingual-estimate-ui-20261119",
+   "sha": "7b9331e10fb6"
+  },
+  {
+   "id": 44588454428,
+   "t": "2026-11-19T18:30:05Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-multilingual-estimate-ui-20261119",
+   "sha": "1bdc0516124a"
+  },
+  {
+   "id": 44589664016,
+   "t": "2026-11-19T18:36:50Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e37ecffd0a33"
+  },
+  {
+   "id": 44592626685,
+   "t": "2026-11-19T18:53:53Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/writeset-contention-20261119",
+   "sha": "f72965c53014"
+  },
+  {
+   "id": 44594484286,
+   "t": "2026-11-19T19:04:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/writeset-contention-20261119",
+   "sha": "698c5c7b5b45"
+  },
+  {
+   "id": 44595787221,
+   "t": "2026-11-19T19:11:46Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "40c3bec1fd4d"
+  },
+  {
+   "id": 44597201381,
+   "t": "2026-11-19T19:19:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/calibrated-psuccess-20261119",
+   "sha": "cd654876896d"
+  },
+  {
+   "id": 44598725314,
+   "t": "2026-11-19T19:28:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/calibrated-psuccess-20261119",
+   "sha": "05108c90b2a5"
+  },
+  {
+   "id": 44599922511,
+   "t": "2026-11-19T19:35:35Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5f4a10c8060a"
+  },
+  {
+   "id": 44602703884,
+   "t": "2026-11-19T19:51:50Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/wire-calibrated-psuccess-20261119",
+   "sha": "691b452bb14b"
+  },
+  {
+   "id": 44604022230,
+   "t": "2026-11-19T19:59:43Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "60e42fe38c7c"
+  },
+  {
+   "id": 44605099029,
+   "t": "2026-11-19T20:05:44Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/wire-writeset-orchestrator-20261119",
+   "sha": "2f42a6957bfa"
+  },
+  {
+   "id": 44606554415,
+   "t": "2026-11-19T20:14:08Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1a74a64ef274"
+  },
+  {
+   "id": 44608801902,
+   "t": "2026-11-19T20:27:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/reuse-validity-gate-20261119",
+   "sha": "f1058b39ef4a"
+  },
+  {
+   "id": 44611832390,
+   "t": "2026-11-19T20:45:02Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/reuse-validity-gate-20261119",
+   "sha": "220c2b8054b6"
+  },
+  {
+   "id": 44613013113,
+   "t": "2026-11-19T20:52:07Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "cd892723f1ac"
+  },
+  {
+   "id": 44615727542,
+   "t": "2026-11-19T21:08:24Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/autonomy-maturity-trichotomy-20261119",
+   "sha": "43be1e0f584a"
+  },
+  {
+   "id": 44617051520,
+   "t": "2026-11-19T21:16:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/autonomy-maturity-trichotomy-20261119",
+   "sha": "211d4516a357"
+  },
+  {
+   "id": 44618194002,
+   "t": "2026-11-19T21:22:56Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "226a7b3d7f4a"
+  },
+  {
+   "id": 44618995593,
+   "t": "2026-11-19T21:27:44Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/hypothesis-adjudicator-20261119",
+   "sha": "2691442786d5"
+  },
+  {
+   "id": 44620314420,
+   "t": "2026-11-19T21:35:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/hypothesis-adjudicator-20261119",
+   "sha": "d97d21507cd5"
+  },
+  {
+   "id": 44621764214,
+   "t": "2026-11-19T21:44:19Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "633fbfcf4fcc"
+  },
+  {
+   "id": 44622840467,
+   "t": "2026-11-19T21:50:51Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/autonomy-maturity-report-20261119",
+   "sha": "72b199d0e33d"
+  },
+  {
+   "id": 44624051301,
+   "t": "2026-11-19T21:58:23Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "099a6d0c2f12"
+  },
+  {
+   "id": 44624608188,
+   "t": "2026-11-19T22:01:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/patch-memory-fresh-reuse-20261119",
+   "sha": "2f6b63191506"
+  },
+  {
+   "id": 44625709990,
+   "t": "2026-11-19T22:08:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a4d92c7be791"
+  },
+  {
+   "id": 44626338167,
+   "t": "2026-11-19T22:12:18Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/decision-precedent-fresh-reuse-20261119",
+   "sha": "16cf70480724"
+  },
+  {
+   "id": 44627547589,
+   "t": "2026-11-19T22:19:40Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/decision-precedent-fresh-reuse-20261119",
+   "sha": "fd49c2baa867"
+  },
+  {
+   "id": 44628583679,
+   "t": "2026-11-19T22:26:05Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "277f6eeb34eb"
+  },
+  {
+   "id": 44629305710,
+   "t": "2026-11-19T22:30:45Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/dashboard-autonomy-maturity-20261119",
+   "sha": "ebd269d1a80e"
+  },
+  {
+   "id": 44630302593,
+   "t": "2026-11-19T22:37:03Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f396ef7e1581"
+  },
+  {
+   "id": 44632097913,
+   "t": "2026-11-19T22:48:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/cycle-hypothesis-verdict-20261119",
+   "sha": "8f6d3dfccb85"
+  },
+  {
+   "id": 44633243064,
+   "t": "2026-11-19T22:56:38Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/cycle-hypothesis-verdict-20261119",
+   "sha": "e7200e25ef47"
+  },
+  {
+   "id": 44634174874,
+   "t": "2026-11-19T23:02:52Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4229c9b1be04"
+  },
+  {
+   "id": 44634948120,
+   "t": "2026-11-19T23:07:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/marketing-cycle-latency-20261119",
+   "sha": "3207c8205b78"
+  },
+  {
+   "id": 44635955812,
+   "t": "2026-11-19T23:14:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3ec4974ed760"
+  },
+  {
+   "id": 44637149626,
+   "t": "2026-11-19T23:22:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-retenue-garantie-20261119",
+   "sha": "512be6160e50"
+  },
+  {
+   "id": 44638145204,
+   "t": "2026-11-19T23:29:57Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d923934c8906"
+  },
+  {
+   "id": 44638723501,
+   "t": "2026-11-19T23:33:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-revision-prix-20261119",
+   "sha": "f0b9bf25c000"
+  },
+  {
+   "id": 44639737934,
+   "t": "2026-11-19T23:41:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/btp-revision-prix-20261119",
+   "sha": "989284c25c95"
+  },
+  {
+   "id": 44640579807,
+   "t": "2026-11-19T23:47:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e5fc1a894a5d"
+  },
+  {
+   "id": 44641727172,
+   "t": "2026-11-19T23:56:09Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/amortissement-20261119",
+   "sha": "bd13e047143a"
+  },
+  {
+   "id": 44643102619,
+   "t": "2026-11-20T00:06:13Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/amortissement-20261119",
+   "sha": "6d5dd919f326"
+  },
+  {
+   "id": 44643968680,
+   "t": "2026-11-20T00:12:30Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "821ae0879ea8"
+  },
+  {
+   "id": 44644816629,
+   "t": "2026-11-20T00:18:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/orchestration-plan-20261120",
+   "sha": "a5067fbb83b8"
+  },
+  {
+   "id": 44645751456,
+   "t": "2026-11-20T00:25:30Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b7a6bb99fbd9"
+  },
+  {
+   "id": 44646308819,
+   "t": "2026-11-20T00:29:46Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-engineering-plan-20261120",
+   "sha": "6ae51a5b9f5e"
+  },
+  {
+   "id": 44647352317,
+   "t": "2026-11-20T00:37:34Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-engineering-plan-20261120",
+   "sha": "9b16f6d353f2"
+  },
+  {
+   "id": 44648166143,
+   "t": "2026-11-20T00:43:52Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6292446a1bf7"
+  },
+  {
+   "id": 44649305698,
+   "t": "2026-11-20T00:52:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/connect-orchestrator-cockpit-20261120",
+   "sha": "145e86925d54"
+  },
+  {
+   "id": 44650162234,
+   "t": "2026-11-20T00:59:17Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2c344a7bfc9d"
+  },
+  {
+   "id": 44650765860,
+   "t": "2026-11-20T01:03:53Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/connect-native-next-plan-20261120",
+   "sha": "5a22c3540df0"
+  },
+  {
+   "id": 44651725570,
+   "t": "2026-11-20T01:11:20Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/connect-native-next-plan-20261120",
+   "sha": "6ac6ed0456c3"
+  },
+  {
+   "id": 44652529174,
+   "t": "2026-11-20T01:17:36Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e6315ae0693d"
+  },
+  {
+   "id": 44653116589,
+   "t": "2026-11-20T01:22:17Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/connect-reuse-freshness-20261120",
+   "sha": "6d0ffdcfa297"
+  },
+  {
+   "id": 44654027503,
+   "t": "2026-11-20T01:29:50Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/connect-reuse-freshness-20261120",
+   "sha": "4b438b7a64c9"
+  },
+  {
+   "id": 44654810347,
+   "t": "2026-11-20T01:36:11Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "57fbd5d695ca"
+  },
+  {
+   "id": 44656102112,
+   "t": "2026-11-20T01:46:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/capability-maturity-ladder-20261120",
+   "sha": "179db519a824"
+  },
+  {
+   "id": 44656944838,
+   "t": "2026-11-20T01:54:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/capability-maturity-ladder-20261120",
+   "sha": "e880df64470c"
+  },
+  {
+   "id": 44657677532,
+   "t": "2026-11-20T02:00:29Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5471ceaefd60"
+  },
+  {
+   "id": 44661925446,
+   "t": "2026-11-20T02:35:48Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-execution-provenance-20261120",
+   "sha": "897b83748012"
+  },
+  {
+   "id": 44663129685,
+   "t": "2026-11-20T02:46:13Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-execution-provenance-20261120",
+   "sha": "8dcccd397c14"
+  },
+  {
+   "id": 44663889157,
+   "t": "2026-11-20T02:52:57Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3265fc5eabb9"
+  },
+  {
+   "id": 44664704524,
+   "t": "2026-11-20T03:00:20Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-provenance-runner-20261120",
+   "sha": "5bd34e6f334b"
+  },
+  {
+   "id": 44665396732,
+   "t": "2026-11-20T03:06:11Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-provenance-runner-20261120",
+   "sha": "7af68ed1486e"
+  },
+  {
+   "id": 44666122699,
+   "t": "2026-11-20T03:12:25Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4827c9e5bd23"
+  },
+  {
+   "id": 44666751311,
+   "t": "2026-11-20T03:17:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/git-reuse-freshness-signal-20261120",
+   "sha": "a7a7b3e3a587"
+  },
+  {
+   "id": 44667479581,
+   "t": "2026-11-20T03:24:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/git-reuse-freshness-signal-20261120",
+   "sha": "eab2a1e960d5"
+  },
+  {
+   "id": 44668050403,
+   "t": "2026-11-20T03:29:19Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e7c667e4f34b"
+  },
+  {
+   "id": 44668889246,
+   "t": "2026-11-20T03:36:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-mission-continuation-20261120",
+   "sha": "2ca1a36f2f06"
+  },
+  {
+   "id": 44669465245,
+   "t": "2026-11-20T03:41:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4a213ca53fd1"
+  },
+  {
+   "id": 44670043099,
+   "t": "2026-11-20T03:47:07Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/hypothesis-driven-mission-20261120",
+   "sha": "2057ed991a9b"
+  },
+  {
+   "id": 44670785983,
+   "t": "2026-11-20T03:53:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/hypothesis-driven-mission-20261120",
+   "sha": "b1e049cd2106"
+  },
+  {
+   "id": 44671419366,
+   "t": "2026-11-20T04:00:00Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "de97dd760d6c"
+  },
+  {
+   "id": 44739803302,
+   "t": "2026-11-20T12:55:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-cross-session-continuity-20261120",
+   "sha": "09eca7153d43"
+  },
+  {
+   "id": 44740743514,
+   "t": "2026-11-20T13:01:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8c5c5d515d4b"
+  },
+  {
+   "id": 44741311553,
+   "t": "2026-11-20T13:05:51Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/durable-native-provenance-20261120",
+   "sha": "894b864c9bf2"
+  },
+  {
+   "id": 44743042119,
+   "t": "2026-11-20T13:17:39Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "87d3f208ce6d"
+  },
+  {
+   "id": 44743876150,
+   "t": "2026-11-20T13:23:22Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/continuity-durable-manifest-20261120",
+   "sha": "effe1db08853"
+  },
+  {
+   "id": 44744818791,
+   "t": "2026-11-20T13:29:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "66dacf85db64"
+  },
+  {
+   "id": 44746466398,
+   "t": "2026-11-20T13:41:07Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/local-model-calibrated-psuccess-20261120",
+   "sha": "4e493cc02962"
+  },
+  {
+   "id": 44747340303,
+   "t": "2026-11-20T13:47:00Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "25865a60d6fd"
+  },
+  {
+   "id": 44747704835,
+   "t": "2026-11-20T13:49:29Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/local-model-calibration-evidence-20261120",
+   "sha": "e3458e708ac4"
+  },
+  {
+   "id": 44748540684,
+   "t": "2026-11-20T13:55:05Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "30616131723a"
+  },
+  {
+   "id": 44749692813,
+   "t": "2026-11-20T14:02:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/execution-routing-20261120",
+   "sha": "7e4a711224ea"
+  },
+  {
+   "id": 44750538938,
+   "t": "2026-11-20T14:08:03Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "653f0adb9787"
+  },
+  {
+   "id": 44751895358,
+   "t": "2026-11-20T14:16:39Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/model-choice-experiment-20261120",
+   "sha": "0969c108351e"
+  },
+  {
+   "id": 44753214812,
+   "t": "2026-11-20T14:24:52Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d0a9b6f6ea1a"
+  },
+  {
+   "id": 44756738540,
+   "t": "2026-11-20T14:46:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/repair-depth-experiment-20261120",
+   "sha": "95ca0d93ffe3"
+  },
+  {
+   "id": 44757420387,
+   "t": "2026-11-20T14:51:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a927114bde88"
+  },
+  {
+   "id": 44758455257,
+   "t": "2026-11-20T14:57:32Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/local-model-execution-policy-20261120",
+   "sha": "b8b49946b71a"
+  },
+  {
+   "id": 44758565356,
+   "t": "2026-11-20T14:58:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/local-model-execution-policy-20261120",
+   "sha": "d2ba04255bd7"
+  },
+  {
+   "id": 44759788209,
+   "t": "2026-11-20T15:05:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f001305e257a"
+  },
+  {
+   "id": 44761372537,
+   "t": "2026-11-20T15:15:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/decomposed-execution-20261120",
+   "sha": "e2f5bf9c4389"
+  },
+  {
+   "id": 44762412431,
+   "t": "2026-11-20T15:21:13Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b6ccd46f3264"
+  },
+  {
+   "id": 44763579178,
+   "t": "2026-11-20T15:28:14Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/policy-build-seam-20261120",
+   "sha": "3e1c4cee6015"
+  },
+  {
+   "id": 44763834710,
+   "t": "2026-11-20T15:29:50Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "excellence/policy-build-seam-20261120",
+   "sha": "17f367cbe567"
+  },
+  {
+   "id": 44763955222,
+   "t": "2026-11-20T15:30:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/policy-build-seam-20261120",
+   "sha": "0b480f0ba62f"
+  },
+  {
+   "id": 44765007518,
+   "t": "2026-11-20T15:36:41Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "0efe813ba97e"
+  },
+  {
+   "id": 44765708015,
+   "t": "2026-11-20T15:40:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/adaptive-resource-capstone-20261120",
+   "sha": "dfc2df081ddb"
+  },
+  {
+   "id": 44766509575,
+   "t": "2026-11-20T15:45:43Z",
+   "conclusion": "failure",
+   "event": "push",
+   "change": "main",
+   "sha": "52de6905d89b"
+  },
+  {
+   "id": 44767809913,
+   "t": "2026-11-20T15:53:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-escalation-20261120",
+   "sha": "e463d450fd16"
+  },
+  {
+   "id": 44768795177,
+   "t": "2026-11-20T15:59:33Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4d83f9c90150"
+  },
+  {
+   "id": 44769927036,
+   "t": "2026-11-20T16:06:02Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/execution-feedback-repair-20261120",
+   "sha": "95aaa338c094"
+  },
+  {
+   "id": 44772119882,
+   "t": "2026-11-20T16:18:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "32a2efaa3f30"
+  },
+  {
+   "id": 44772631814,
+   "t": "2026-11-20T16:21:52Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/wire-execution-feedback-20261120",
+   "sha": "4e78ef211212"
+  },
+  {
+   "id": 44773600556,
+   "t": "2026-11-20T16:27:36Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6c321b449e4a"
+  },
+  {
+   "id": 44774414363,
+   "t": "2026-11-20T16:32:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/bounded-exec-20261120",
+   "sha": "37b902166271"
+  },
+  {
+   "id": 44775519457,
+   "t": "2026-11-20T16:39:14Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "dff6e3f81f23"
+  },
+  {
+   "id": 44777718287,
+   "t": "2026-11-20T16:52:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/execution-feedback-ab-evidence-20261120",
+   "sha": "a1a5c6d0b1f7"
+  },
+  {
+   "id": 44778623874,
+   "t": "2026-11-20T16:58:06Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "3dc643b8d428"
+  },
+  {
+   "id": 44780621543,
+   "t": "2026-11-20T17:10:00Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/bounded-exec-deepequal-20261120",
+   "sha": "f469794d2d31"
+  },
+  {
+   "id": 44781645350,
+   "t": "2026-11-20T17:16:10Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c8be8036d64c"
+  },
+  {
+   "id": 44781789313,
+   "t": "2026-11-20T17:17:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/last-frontier-topo-20261120",
+   "sha": "f6c62df52242"
+  },
+  {
+   "id": 44782842677,
+   "t": "2026-11-20T17:23:30Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "541f142bcfce"
+  },
+  {
+   "id": 44783064573,
+   "t": "2026-11-20T17:24:53Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/autonomy-gate-validation-20261120",
+   "sha": "37ed33416921"
+  },
+  {
+   "id": 44783995739,
+   "t": "2026-11-20T17:30:47Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "0aed4d84b8bc"
+  },
+  {
+   "id": 44784903474,
+   "t": "2026-11-20T17:36:27Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/metier-transversal-readiness-20261120",
+   "sha": "4542dfc919d8"
+  },
+  {
+   "id": 44785740403,
+   "t": "2026-11-20T17:41:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "483007e8bd99"
+  },
+  {
+   "id": 44786602948,
+   "t": "2026-11-20T17:47:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/metier-configuration-20261120",
+   "sha": "a28cd387538a"
+  },
+  {
+   "id": 44787928166,
+   "t": "2026-11-20T17:55:43Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1fcd47828142"
+  },
+  {
+   "id": 44789349142,
+   "t": "2026-11-20T18:04:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/intelligent-native-cycle-20261120",
+   "sha": "b06ee64bcff2"
+  },
+  {
+   "id": 44790474689,
+   "t": "2026-11-20T18:11:53Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e617b6b217c5"
+  },
+  {
+   "id": 44790974228,
+   "t": "2026-11-20T18:15:03Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/intelligent-native-run-20261120",
+   "sha": "196b40a49e7c"
+  },
+  {
+   "id": 44791932072,
+   "t": "2026-11-20T18:21:07Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c1b812a3fa04"
+  },
+  {
+   "id": 44792982942,
+   "t": "2026-11-20T18:27:49Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/belief-refresh-20261120",
+   "sha": "c5be79a18ade"
+  },
+  {
+   "id": 44794040550,
+   "t": "2026-11-20T18:34:26Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "fa4ed0283069"
+  },
+  {
+   "id": 44794838618,
+   "t": "2026-11-20T18:39:31Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/belief-staleness-operational-20261120",
+   "sha": "e3681ce620b1"
+  },
+  {
+   "id": 44795686656,
+   "t": "2026-11-20T18:44:58Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "15c237a5db8b"
+  },
+  {
+   "id": 44796406004,
+   "t": "2026-11-20T18:49:34Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/wire-bounded-exec-guard-20261120",
+   "sha": "fdc4322106e9"
+  },
+  {
+   "id": 44797456143,
+   "t": "2026-11-20T18:56:20Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a0cd30b49a23"
+  },
+  {
+   "id": 44797674725,
+   "t": "2026-11-20T18:57:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/hypothesis-mission-run-20261120",
+   "sha": "7f70df8090a5"
+  },
+  {
+   "id": 44798482120,
+   "t": "2026-11-20T19:03:00Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "7ebc64b8d752"
+  },
+  {
+   "id": 44799266680,
+   "t": "2026-11-20T19:07:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/native-outcome-calibration-bridge-20261120",
+   "sha": "627b411a1de8"
+  },
+  {
+   "id": 44800221857,
+   "t": "2026-11-20T19:14:04Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6319a223de87"
+  },
+  {
+   "id": 44801891654,
+   "t": "2026-11-20T19:24:52Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/calibration-key-reconciliation-20261120",
+   "sha": "3f6770e541ed"
+  },
+  {
+   "id": 44803246306,
+   "t": "2026-11-20T19:33:31Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "65e91a030b0a"
+  },
+  {
+   "id": 44804561433,
+   "t": "2026-11-20T19:42:00Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/behavioral-improvement-20261120",
+   "sha": "f02591c09f18"
+  },
+  {
+   "id": 44805621241,
+   "t": "2026-11-20T19:48:52Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "246a218bf88b"
+  },
+  {
+   "id": 44808454617,
+   "t": "2026-11-20T20:07:19Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/generalization-validity-20261120",
+   "sha": "0442f5b77d35"
+  },
+  {
+   "id": 44809410113,
+   "t": "2026-11-20T20:13:39Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9fb4590ca491"
+  },
+  {
+   "id": 44812458795,
+   "t": "2026-11-20T20:33:36Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/reconciliation-v321-v327-20261120",
+   "sha": "518b22a4db2e"
+  },
+  {
+   "id": 44813581212,
+   "t": "2026-11-20T20:41:10Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "0c20babb376a"
+  },
+  {
+   "id": 44814035673,
+   "t": "2026-11-20T20:44:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/dedup-store-mapper-20261120",
+   "sha": "9e9134ce4976"
+  },
+  {
+   "id": 44814905788,
+   "t": "2026-11-20T20:50:07Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "09d198faf823"
+  },
+  {
+   "id": 44815547032,
+   "t": "2026-11-20T20:54:28Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/writeset-safe-parallel-waves-20261120",
+   "sha": "815ea34bda25"
+  },
+  {
+   "id": 44817239698,
+   "t": "2026-11-20T21:05:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1e668fce443d"
+  },
+  {
+   "id": 44819481988,
+   "t": "2026-11-20T21:20:40Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/reuse-impact-graph-20261120",
+   "sha": "467574b8d9ec"
+  },
+  {
+   "id": 44820279333,
+   "t": "2026-11-20T21:26:07Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "724fae9fa37c"
+  },
+  {
+   "id": 44821369714,
+   "t": "2026-11-20T21:33:26Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/mission-completeness-preflight-20261120",
+   "sha": "d0742036da92"
+  },
+  {
+   "id": 44822175949,
+   "t": "2026-11-20T21:38:55Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4d6c138d5f8f"
+  },
+  {
+   "id": 44822700803,
+   "t": "2026-11-20T21:42:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/reuse-demonstrations-bin-20261120",
+   "sha": "6f89d82bf150"
+  },
+  {
+   "id": 44823381905,
+   "t": "2026-11-20T21:47:15Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "becc5fd05c18"
+  },
+  {
+   "id": 44824349390,
+   "t": "2026-11-20T21:54:02Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/registry-v321-v328-final-20261120",
+   "sha": "f9d56663623a"
+  },
+  {
+   "id": 44825192302,
+   "t": "2026-11-20T22:00:08Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1ded93e1ef80"
+  },
+  {
+   "id": 44826694972,
+   "t": "2026-11-20T22:10:26Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m2-btp-lifecycle-revision-retenue-20261120",
+   "sha": "8906c36a5c17"
+  },
+  {
+   "id": 44827596061,
+   "t": "2026-11-20T22:16:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "34a43eec9213"
+  },
+  {
+   "id": 44828488160,
+   "t": "2026-11-20T22:23:00Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m2-btp-procurement-20261120",
+   "sha": "1a3093363a8f"
+  },
+  {
+   "id": 44829385796,
+   "t": "2026-11-20T22:29:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "901902b6d49e"
+  },
+  {
+   "id": 44829794125,
+   "t": "2026-11-20T22:32:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m2-btp-client-intake-full-journey-20261120",
+   "sha": "89a2dfb94fa3"
+  },
+  {
+   "id": 44830409894,
+   "t": "2026-11-20T22:36:57Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c2f17d4ab6a5"
+  },
+  {
+   "id": 44831326884,
+   "t": "2026-11-20T22:43:55Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m2-btp-capability-matrix-reconcile-20261120",
+   "sha": "1c09a406f9ff"
+  },
+  {
+   "id": 44832146336,
+   "t": "2026-11-20T22:50:04Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a2538d77d7b2"
+  },
+  {
+   "id": 44833073301,
+   "t": "2026-11-20T22:57:14Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m2-btp-journey-bin-20261120",
+   "sha": "c9d0a148c4ac"
+  },
+  {
+   "id": 44833633704,
+   "t": "2026-11-20T23:01:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4272dfe400be"
+  },
+  {
+   "id": 44834076013,
+   "t": "2026-11-20T23:04:51Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m2-btp-procurement-reconcile-20261120",
+   "sha": "a1fd1ff99dd7"
+  },
+  {
+   "id": 44834833441,
+   "t": "2026-11-20T23:10:43Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "76322e97a99d"
+  },
+  {
+   "id": 44835367658,
+   "t": "2026-11-20T23:14:57Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/m2-btp-crm-account-view-bin-20261120",
+   "sha": "8d9197e37c8a"
+  },
+  {
+   "id": 44835948125,
+   "t": "2026-11-20T23:19:34Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "85c1c8646dc6"
+  },
+  {
+   "id": 44837677786,
+   "t": "2026-11-20T23:33:36Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-cognitive-radar-inventory-20261120",
+   "sha": "f45bc500552d"
+  },
+  {
+   "id": 44838372253,
+   "t": "2026-11-20T23:39:18Z",
+   "conclusion": "cancelled",
+   "event": "push",
+   "change": "main",
+   "sha": "3b55bef0ab20"
+  },
+  {
+   "id": 44838441405,
+   "t": "2026-11-20T23:39:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-radar-self-eval-wiring-20261120",
+   "sha": "4ed46d4126ba"
+  },
+  {
+   "id": 44838992630,
+   "t": "2026-11-20T23:44:33Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "60961cc3182c"
+  },
+  {
+   "id": 44839512397,
+   "t": "2026-11-20T23:48:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-native-learning-pass-20261120",
+   "sha": "76b095745a4e"
+  },
+  {
+   "id": 44840068891,
+   "t": "2026-11-20T23:53:41Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "570427edea1e"
+  },
+  {
+   "id": 44841892195,
+   "t": "2026-11-21T00:09:23Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-connect-knowledge-cognitive-drivers-20261121",
+   "sha": "7711f9833ef2"
+  },
+  {
+   "id": 44842482433,
+   "t": "2026-11-21T00:14:31Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2be48baea6c7"
+  },
+  {
+   "id": 44843900243,
+   "t": "2026-11-21T00:27:07Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-self-healing-chain-connect-20261121",
+   "sha": "473593a2a3b6"
+  },
+  {
+   "id": 44844568413,
+   "t": "2026-11-21T00:33:06Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "26ec7f3fc015"
+  },
+  {
+   "id": 44845349716,
+   "t": "2026-11-21T00:40:09Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-radar-live-collection-20261121",
+   "sha": "db3830933d12"
+  },
+  {
+   "id": 44845783002,
+   "t": "2026-11-21T00:44:11Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "2999b32e6504"
+  },
+  {
+   "id": 44846348087,
+   "t": "2026-11-21T00:49:27Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-radar-collect-to-signals-20261121",
+   "sha": "55d0fc1c69b5"
+  },
+  {
+   "id": 44846938608,
+   "t": "2026-11-21T00:55:02Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c1b070b6abc5"
+  },
+  {
+   "id": 44847509021,
+   "t": "2026-11-21T01:00:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-cra-remediation-chain-20261121",
+   "sha": "6ef9186b5022"
+  },
+  {
+   "id": 44848021635,
+   "t": "2026-11-21T01:05:24Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9ef6f27648df"
+  },
+  {
+   "id": 44848470601,
+   "t": "2026-11-21T01:09:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-c2-decompose-to-selection-20261121",
+   "sha": "f47aca2f2ec6"
+  },
+  {
+   "id": 44848999320,
+   "t": "2026-11-21T01:14:50Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a9d43c1cccbe"
+  },
+  {
+   "id": 44849507256,
+   "t": "2026-11-21T01:19:39Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-radar-proposals-to-deferred-lots-20261121",
+   "sha": "09c287e694be"
+  },
+  {
+   "id": 44850127936,
+   "t": "2026-11-21T01:25:51Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "edb672201024"
+  },
+  {
+   "id": 44851053160,
+   "t": "2026-11-21T01:35:19Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-compass-boussole-20261121",
+   "sha": "6e694e7b0b31"
+  },
+  {
+   "id": 44851569045,
+   "t": "2026-11-21T01:40:37Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9229d5f6a088"
+  },
+  {
+   "id": 44851934451,
+   "t": "2026-11-21T01:44:23Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-chains-operational-20261121",
+   "sha": "c96b9c9d5828"
+  },
+  {
+   "id": 44852534410,
+   "t": "2026-11-21T01:50:42Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d608a9201ead"
+  },
+  {
+   "id": 44853164538,
+   "t": "2026-11-21T01:57:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-radar-arxiv-github-20261121",
+   "sha": "16bffded5591"
+  },
+  {
+   "id": 44853777124,
+   "t": "2026-11-21T02:04:01Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c46389fdb308"
+  },
+  {
+   "id": 44853958119,
+   "t": "2026-11-21T02:05:51Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-compass-tech-sources-update-20261121",
+   "sha": "f77cc1226d6a"
+  },
+  {
+   "id": 44854420346,
+   "t": "2026-11-21T02:10:45Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "e7495b94a2b8"
+  },
+  {
+   "id": 44855425634,
+   "t": "2026-11-21T02:21:18Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-radar-to-learning-20261121",
+   "sha": "fff2ab54524d"
+  },
+  {
+   "id": 44855922055,
+   "t": "2026-11-21T02:26:42Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c1d70cd7fe08"
+  },
+  {
+   "id": 44856763805,
+   "t": "2026-11-21T02:35:50Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/v360-close-loop-decision-20261121",
+   "sha": "a78b147e3e55"
+  },
+  {
+   "id": 44857324878,
+   "t": "2026-11-21T02:42:15Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "a1b93982e92d"
+  },
+  {
+   "id": 44859073272,
+   "t": "2026-11-21T03:02:52Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/system-coverage-matrix-20261121",
+   "sha": "e1d85594e332"
+  },
+  {
+   "id": 44859667474,
+   "t": "2026-11-21T03:09:46Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/system-coverage-matrix-20261121",
+   "sha": "d0e7b8ababd6"
+  },
+  {
+   "id": 44860216242,
+   "t": "2026-11-21T03:15:57Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "92f8b9ab9fe6"
+  },
+  {
+   "id": 44862643215,
+   "t": "2026-11-21T03:44:20Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/change-impact-graph-js-edge-fix-20261121",
+   "sha": "01eeff8a732b"
+  },
+  {
+   "id": 44863029137,
+   "t": "2026-11-21T03:49:04Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "df5885101816"
+  },
+  {
+   "id": 44864186333,
+   "t": "2026-11-21T04:03:30Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/self-improvement-cycle-20261121",
+   "sha": "9d7cdb66db46"
+  },
+  {
+   "id": 44865406927,
+   "t": "2026-11-21T04:17:53Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/self-improvement-cycle-20261121",
+   "sha": "5eb164c54945"
+  },
+  {
+   "id": 44865885201,
+   "t": "2026-11-21T04:23:35Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "1c016fdc74d5"
+  },
+  {
+   "id": 44904190400,
+   "t": "2026-11-21T12:29:52Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/night-cycle-scheduler-20261121",
+   "sha": "5ce920754317"
+  },
+  {
+   "id": 44905171954,
+   "t": "2026-11-21T12:41:40Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/night-cycle-scheduler-20261121",
+   "sha": "6f0dc315160e"
+  },
+  {
+   "id": 44905552479,
+   "t": "2026-11-21T12:46:21Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d55ecccd3941"
+  },
+  {
+   "id": 44906780492,
+   "t": "2026-11-21T13:01:39Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/forecast-memory-20261121",
+   "sha": "00add59c2559"
+  },
+  {
+   "id": 44907577732,
+   "t": "2026-11-21T13:11:03Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/forecast-memory-20261121",
+   "sha": "fed84599eb2d"
+  },
+  {
+   "id": 44908034493,
+   "t": "2026-11-21T13:16:32Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "d3acfdf5bb83"
+  },
+  {
+   "id": 44908958040,
+   "t": "2026-11-21T13:27:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/radar-foresight-calibration-20261121",
+   "sha": "7fff79d7a463"
+  },
+  {
+   "id": 44909685624,
+   "t": "2026-11-21T13:36:13Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/radar-foresight-calibration-20261121",
+   "sha": "d7ccaf73fcc3"
+  },
+  {
+   "id": 44910094446,
+   "t": "2026-11-21T13:41:15Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "08d37c964991"
+  },
+  {
+   "id": 44911189921,
+   "t": "2026-11-21T13:54:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/model-intelligence-20261121",
+   "sha": "b8dec4c162ed"
+  },
+  {
+   "id": 44911659688,
+   "t": "2026-11-21T14:00:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/model-intelligence-20261121",
+   "sha": "79e235b90696"
+  },
+  {
+   "id": 44912260217,
+   "t": "2026-11-21T14:07:08Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "385eff455dc2"
+  },
+  {
+   "id": 44913580932,
+   "t": "2026-11-21T14:22:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/hybrid-reasoning-20261121",
+   "sha": "7d79a3b5425e"
+  },
+  {
+   "id": 44914163395,
+   "t": "2026-11-21T14:29:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/hybrid-reasoning-20261121",
+   "sha": "10dde9172fa1"
+  },
+  {
+   "id": 44914726017,
+   "t": "2026-11-21T14:35:30Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "520de3fd3e7b"
+  },
+  {
+   "id": 44915957061,
+   "t": "2026-11-21T14:49:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/multimodal-ingest-20261121",
+   "sha": "c2fa1a1a07a7"
+  },
+  {
+   "id": 44916540450,
+   "t": "2026-11-21T14:56:47Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/multimodal-ingest-20261121",
+   "sha": "65146351b3b6"
+  },
+  {
+   "id": 44916974949,
+   "t": "2026-11-21T15:01:49Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c8246042f1e6"
+  },
+  {
+   "id": 44917865097,
+   "t": "2026-11-21T15:11:35Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/dimension-coverage-20261121",
+   "sha": "f2c6b7407fc1"
+  },
+  {
+   "id": 44918480609,
+   "t": "2026-11-21T15:18:33Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/dimension-coverage-20261121",
+   "sha": "3d2df218c60f"
+  },
+  {
+   "id": 44919087704,
+   "t": "2026-11-21T15:25:16Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "6ac7e483a155"
+  },
+  {
+   "id": 44921233687,
+   "t": "2026-11-21T15:49:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/mission-performance-profile-20261121",
+   "sha": "cbaa42dd0ad4"
+  },
+  {
+   "id": 44922004245,
+   "t": "2026-11-21T15:58:38Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/mission-performance-profile-20261121",
+   "sha": "1a6a5a01f3a1"
+  },
+  {
+   "id": 44922492063,
+   "t": "2026-11-21T16:03:57Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "f18b4abd282c"
+  },
+  {
+   "id": 44925097666,
+   "t": "2026-11-21T16:32:09Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/light-path-selector-20261121",
+   "sha": "b14cf161fae7"
+  },
+  {
+   "id": 44926572589,
+   "t": "2026-11-21T16:48:27Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/light-path-selector-20261121",
+   "sha": "e0daf7e9aa32"
+  },
+  {
+   "id": 44927907996,
+   "t": "2026-11-21T17:03:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "dab71a524df9"
+  },
+  {
+   "id": 44930929503,
+   "t": "2026-11-21T17:35:58Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/intelligence-evaluation-20261121",
+   "sha": "30cd63a0c457"
+  },
+  {
+   "id": 44934301089,
+   "t": "2026-11-21T18:13:10Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/intelligence-evaluation-20261121",
+   "sha": "154e47124e18"
+  },
+  {
+   "id": 44938080271,
+   "t": "2026-11-21T18:54:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "4db0a68a1a53"
+  },
+  {
+   "id": 44939389912,
+   "t": "2026-11-21T19:09:16Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/intelligence-eval-verification-axis-20261121",
+   "sha": "5d19b0ed0a82"
+  },
+  {
+   "id": 44940035374,
+   "t": "2026-11-21T19:16:25Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/intelligence-eval-verification-axis-20261121",
+   "sha": "e94a30175981"
+  },
+  {
+   "id": 44940570580,
+   "t": "2026-11-21T19:22:12Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "fc5624718b7b"
+  },
+  {
+   "id": 44941436881,
+   "t": "2026-11-21T19:32:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/intelligence-eval-knowledge-reuse-20261121",
+   "sha": "9038116a3862"
+  },
+  {
+   "id": 44941908728,
+   "t": "2026-11-21T19:37:17Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "344cd9fe3ed4"
+  },
+  {
+   "id": 44943340824,
+   "t": "2026-11-21T19:53:25Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/component-census-20261121",
+   "sha": "073bd0d36bc0"
+  },
+  {
+   "id": 44944540821,
+   "t": "2026-11-21T20:07:04Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/component-census-20261121",
+   "sha": "2d7d43de8f3c"
+  },
+  {
+   "id": 44946963213,
+   "t": "2026-11-21T20:34:07Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/component-census-20261121",
+   "sha": "6394504d265c"
+  },
+  {
+   "id": 44947565804,
+   "t": "2026-11-21T20:40:59Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "465fc788ac5e"
+  },
+  {
+   "id": 44948684998,
+   "t": "2026-11-21T20:53:56Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/census-consumes-architecture-audit-20261121",
+   "sha": "5556e0e721c1"
+  },
+  {
+   "id": 44949934820,
+   "t": "2026-11-21T21:08:07Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/census-consumes-architecture-audit-20261121",
+   "sha": "74abc5f073a8"
+  },
+  {
+   "id": 44950500976,
+   "t": "2026-11-21T21:14:30Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "8a87aa376473"
+  },
+  {
+   "id": 44951756110,
+   "t": "2026-11-21T21:29:01Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/fix-campaign-circular-dep-20261121",
+   "sha": "8c329724a440"
+  },
+  {
+   "id": 44952348998,
+   "t": "2026-11-21T21:35:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/fix-campaign-circular-dep-20261121",
+   "sha": "2358de737842"
+  },
+  {
+   "id": 44953030686,
+   "t": "2026-11-21T21:43:41Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "9adbf308db26"
+  },
+  {
+   "id": 44954289150,
+   "t": "2026-11-21T21:58:41Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p2b-eval-specialization-20261121",
+   "sha": "3ecae9d82216"
+  },
+  {
+   "id": 44954787489,
+   "t": "2026-11-21T22:04:16Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "24aad673bb2e"
+  },
+  {
+   "id": 44956106799,
+   "t": "2026-11-21T22:19:01Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p1-component-judgment-20261121",
+   "sha": "2c957d11de9e"
+  },
+  {
+   "id": 44956597493,
+   "t": "2026-11-21T22:24:33Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "64ab5d7265c1"
+  },
+  {
+   "id": 44957996559,
+   "t": "2026-11-21T22:40:57Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p3-deferred-ready-gate-20261121",
+   "sha": "4869c911997b"
+  },
+  {
+   "id": 44958609150,
+   "t": "2026-11-21T22:48:13Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "5c0d7c95db58"
+  },
+  {
+   "id": 44962128972,
+   "t": "2026-11-21T23:30:32Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "excellence/p3-identity-bound-auth-20261121",
+   "sha": "d1b6e81f3e3a"
+  },
+  {
+   "id": 44962650952,
+   "t": "2026-11-21T23:36:47Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "25946a30f2d3"
+  },
+  {
+   "id": 44972032881,
+   "t": "2026-11-22T01:33:44Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "consolidation/v365-ad8c8965",
+   "sha": "ad8c8965337c"
+  },
+  {
+   "id": 44972434987,
+   "t": "2026-11-22T01:39:03Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "b8b1aaf5cfc4"
+  },
+  {
+   "id": 44977303782,
+   "t": "2026-11-22T02:42:12Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "docs/v371-session-closure",
+   "sha": "d17093ec730d"
+  },
+  {
+   "id": 44977686970,
+   "t": "2026-11-22T02:47:24Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "0ce592c3d3f0"
+  },
+  {
+   "id": 44977853186,
+   "t": "2026-11-22T02:49:37Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "docs/v14-4-proposed-roadmap",
+   "sha": "6a68764f41ad"
+  },
+  {
+   "id": 44979159557,
+   "t": "2026-11-22T03:07:15Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "docs/v14-4-proposed-roadmap",
+   "sha": "0d4cd2b5b9cc"
+  },
+  {
+   "id": 44979482813,
+   "t": "2026-11-22T03:11:25Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "c28dbdb1f234"
+  },
+  {
+   "id": 44980801609,
+   "t": "2026-11-22T03:28:34Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/cm-radar-gate-chain-step1",
+   "sha": "3ec0a2995433"
+  },
+  {
+   "id": 44981325023,
+   "t": "2026-11-22T03:35:21Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/cm-radar-gate-chain-step1",
+   "sha": "ce88cca93508"
+  },
+  {
+   "id": 44981714259,
+   "t": "2026-11-22T03:40:38Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "04f2908ec31f"
+  },
+  {
+   "id": 44982024029,
+   "t": "2026-11-22T03:44:59Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/cm-radar-gate-chain-step2",
+   "sha": "2080ce0df44d"
+  },
+  {
+   "id": 44982406430,
+   "t": "2026-11-22T03:50:14Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/cm-radar-gate-chain-step2",
+   "sha": "5759067bf5d4"
+  },
+  {
+   "id": 44983009435,
+   "t": "2026-11-22T03:59:02Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/cm-radar-gate-chain-step2",
+   "sha": "2c3130e40165"
+  },
+  {
+   "id": 44983401493,
+   "t": "2026-11-22T04:04:17Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/cm-radar-gate-chain-step2",
+   "sha": "f897682d0906"
+  },
+  {
+   "id": 44983738702,
+   "t": "2026-11-22T04:08:44Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "bbdfffe21634"
+  },
+  {
+   "id": 44984049009,
+   "t": "2026-11-22T04:12:54Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "fix/radar-attribution-binding",
+   "sha": "5a38fe612fe0"
+  },
+  {
+   "id": 44984416708,
+   "t": "2026-11-22T04:17:48Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "59f3175f230b"
+  },
+  {
+   "id": 44985296342,
+   "t": "2026-11-22T04:29:48Z",
+   "conclusion": "failure",
+   "event": "pull_request",
+   "change": "feat/knowledge-intelligence-v2",
+   "sha": "7e4176350710"
+  },
+  {
+   "id": 44986006333,
+   "t": "2026-11-22T04:39:24Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/knowledge-intelligence-v2",
+   "sha": "d41fc835f9b8"
+  },
+  {
+   "id": 44986445024,
+   "t": "2026-11-22T04:45:29Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/knowledge-intelligence-v2",
+   "sha": "b92eb834b2f5"
+  },
+  {
+   "id": 44986815137,
+   "t": "2026-11-22T04:50:40Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/knowledge-intelligence-v2",
+   "sha": "1e386a35190c"
+  },
+  {
+   "id": 44987334839,
+   "t": "2026-11-22T04:58:16Z",
+   "conclusion": "success",
+   "event": "push",
+   "change": "main",
+   "sha": "819a2dd146b5"
+  },
+  {
+   "id": 45021579490,
+   "t": "2026-11-22T12:18:19Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/ki-v2-lot2-trust-attestation",
+   "sha": "d3025a5218e2"
+  },
+  {
+   "id": 45022255217,
+   "t": "2026-11-22T12:26:08Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "feat/ki-v2-lot2-trust-attestation",
+   "sha": "5f0ae21b6022"
+  },
+  {
+   "id": 45022551033,
+   "t": "2026-11-22T12:29:42Z",
+   "conclusion": "cancelled",
+   "event": "pull_request",
+   "change": "feat/ki-v2-lot2-trust-attestation",
+   "sha": "042d3525edc7"
+  },
+  {
+   "id": 45022801982,
+   "t": "2026-11-22T12:32:24Z",
+   "conclusion": "success",
+   "event": "pull_request",
+   "change": "feat/ki-v2-lot2-trust-attestation",
+   "sha": "2c5dbb72652e"
+  }
+ ]
+}

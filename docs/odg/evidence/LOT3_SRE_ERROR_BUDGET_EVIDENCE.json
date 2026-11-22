@@ -1,0 +1,172 @@
+{
+  "lot": "V374 Lot 3 — operational use of SRE knowledge (error budget = 1 − SLO) on a real internal journey",
+  "knowledge": {
+    "claim": "An error budget is 1 minus the SLO of the service",
+    "epistemic": "SUPPORTED",
+    "isFact": false,
+    "usage": {
+      "authorization": "DESIGN_PROPOSAL",
+      "epistemic": "SUPPORTED",
+      "isFact": false,
+      "attestedBy": "ASSESSMENT:kc:a7fc8df2306fc6d5",
+      "reason": "within attested record + contract"
+    },
+    "formulaAgreesWithCanonicalModule": true
+  },
+  "rejectedJourney": {
+    "journey": "mission-ledger MISSION_SUCCESS_VERIFIED",
+    "numerator": 175,
+    "denominator": 175,
+    "failuresRepresentable": false,
+    "why": "175/175 looks like 100% but the ledger records no failures (survivorship) — an error budget on it would be meaningless; reported, not used"
+  },
+  "journey": {
+    "name": "required CI check 'build + typecheck + parity + tests'",
+    "events": 982,
+    "cancelledExcluded": 16,
+    "windowDays": 14,
+    "source": "docs/odg/evidence/LOT3_CI_EVENTS.json"
+  },
+  "proposals": [
+    {
+      "sloProposed": 0.97,
+      "sli": {
+        "status": "MEASURED",
+        "value": 0.983707,
+        "good": 966,
+        "total": 982
+      },
+      "errorBudget": {
+        "status": "MEASURED",
+        "sloTarget": 0.97,
+        "allowedBad": 29.46,
+        "actualBad": 16,
+        "remainingFraction": 0.4569,
+        "exhausted": false,
+        "burnRate": 0.5431
+      },
+      "earlyWarning": {
+        "burnAlertFactor": 2,
+        "firstAlertDay": "2026-11-11",
+        "exhaustedOn": null,
+        "alertBeforeExhaustion": true
+      },
+      "incidents": {
+        "count": 16,
+        "unrecovered": 2,
+        "recoveryMinutes": {
+          "p50": 10,
+          "p95": 44,
+          "n": 14
+        },
+        "byChange": {
+          "excellence/v3-wave3-demonstrators-20261101": 3,
+          "excellence/v135-seed-recovery-fmea-actiongate-20261111": 1,
+          "excellence/v140-research-to-mission-bridge-20261111": 1,
+          "main": 2,
+          "excellence/resident-driver-install-20261116": 1,
+          "excellence/resident-precompile-20261116": 1,
+          "excellence/btp-canonical-integration-20261117": 2,
+          "excellence/v273-v124-canonical-integration-20261117": 1,
+          "excellence/v283-pdf-native-adapter-20261118": 2,
+          "excellence/btp-supplier-commitment-20261119": 1,
+          "feat/knowledge-intelligence-v2": 1
+        }
+      },
+      "srePolicySuggestion": "no halt suggested",
+      "canonicalDecision": "CONTINUE",
+      "sloResponsePlan": {
+        "sloId": "CI_REQUIRED_CHECK_SUCCESS (PROPOSED)",
+        "status": "WITHIN",
+        "autoApply": false,
+        "severity": "NONE",
+        "react": false,
+        "gate": "CONTINUE",
+        "actions": [],
+        "reason": "within target — continue"
+      }
+    },
+    {
+      "sloProposed": 0.99,
+      "sli": {
+        "status": "MEASURED",
+        "value": 0.983707,
+        "good": 966,
+        "total": 982
+      },
+      "errorBudget": {
+        "status": "MEASURED",
+        "sloTarget": 0.99,
+        "allowedBad": 9.82,
+        "actualBad": 16,
+        "remainingFraction": -0.6293,
+        "exhausted": true,
+        "burnRate": 1.6293
+      },
+      "earlyWarning": {
+        "burnAlertFactor": 2,
+        "firstAlertDay": "2026-11-11",
+        "exhaustedOn": "2026-11-17",
+        "alertBeforeExhaustion": true
+      },
+      "incidents": {
+        "count": 16,
+        "unrecovered": 2,
+        "recoveryMinutes": {
+          "p50": 10,
+          "p95": 44,
+          "n": 14
+        },
+        "byChange": {
+          "excellence/v3-wave3-demonstrators-20261101": 3,
+          "excellence/v135-seed-recovery-fmea-actiongate-20261111": 1,
+          "excellence/v140-research-to-mission-bridge-20261111": 1,
+          "main": 2,
+          "excellence/resident-driver-install-20261116": 1,
+          "excellence/resident-precompile-20261116": 1,
+          "excellence/btp-canonical-integration-20261117": 2,
+          "excellence/v273-v124-canonical-integration-20261117": 1,
+          "excellence/v283-pdf-native-adapter-20261118": 2,
+          "excellence/btp-supplier-commitment-20261119": 1,
+          "feat/knowledge-intelligence-v2": 1
+        }
+      },
+      "srePolicySuggestion": "SRE EXAMPLE policy would halt non-P0 changes",
+      "canonicalDecision": "CONTINUE",
+      "sloResponsePlan": {
+        "sloId": "CI_REQUIRED_CHECK_SUCCESS (PROPOSED)",
+        "status": "BREACHED",
+        "autoApply": false,
+        "severity": "NONE",
+        "react": false,
+        "gate": "CONTINUE",
+        "actions": [],
+        "reason": "measurement-only — observe, do not gate"
+      }
+    }
+  ],
+  "decisionImpact": [
+    {
+      "slo": 0.97,
+      "exhausted": false,
+      "srePolicySuggestion": "no halt suggested",
+      "canonicalDecision": "CONTINUE",
+      "why": "within target — continue"
+    },
+    {
+      "slo": 0.99,
+      "exhausted": true,
+      "srePolicySuggestion": "SRE EXAMPLE policy would halt non-P0 changes",
+      "canonicalDecision": "CONTINUE",
+      "why": "measurement-only — observe, do not gate"
+    }
+  ],
+  "finding": "the knowledge is correctly applied (formula agrees) and the budget is measurable on real events; the DECISION it would drive depends entirely on the SLO value; ODG's canonical slo-response refuses to gate on an unconfigured SLO (measurement-only) — a freeze needs the CTO to configure the target in slo-targets.",
+  "limits": [
+    "SLO values are PROPOSED (CTO must choose); the decision flips between 0.97 and 0.99 — the policy value matters more than the formula",
+    "14-day window (not the SRE 4-week window) — limited by the fetch cap (gh run list -L 1000), not by the repository history",
+    "CI pass/fail is a proxy for engineering reliability, not product availability; most feature-branch failures are development iterations, so 'incidents' over-count production-relevant failures (2 of 16 are on main)",
+    "edge cases (independent inspection, LOW): sloTarget=1 marks exhaustion with 0 bad events (inherited from sloErrorBudget); days bucketed by the timestamp's own date; same-timestamp ties ordered by string sort",
+    "no live alerting/freeze applied (PREPARE only); benefit on future reliability NOT_MEASURED until the policy runs prospectively"
+  ]
+}
