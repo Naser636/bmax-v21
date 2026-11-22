@@ -11,7 +11,7 @@
  *   - research-governor.stampFinding() + research-cycle.recordFinding() record dated, provenanced, deduped findings.
  * Every finding is labelled LIVE_SOURCE (really fetched) vs INTERNAL_EVIDENCE/FIXTURE/HYPOTHESIS. Standards are distinguished
  * from drafts/proposals from the fetched content. Discovery NEVER authorizes implementation: proposals are PROPOSED only.
- * Live egress runs ONLY when invoked with --live AND the sandbox permits it; otherwise the cycle runs on recorded evidence. */
+ * Live egress runs ONLY when invoked with --live AND the sandbox permits it; otherwise the cycle runs on recorded evidence. */ (V15 closure: real egress additionally requires ODG_RADAR_LIVE=1 — kill-switch enforced in bounded-http-client.)
 const path = require("path"), fs = require("fs");
 const ROOT = path.join(__dirname, "..", ".."), D = path.join(ROOT, "docs", "odg");
 const GOV = require(path.join(ROOT, "runtime", "core", "research-governor.js"));

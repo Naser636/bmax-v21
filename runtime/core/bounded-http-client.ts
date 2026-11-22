@@ -36,6 +36,12 @@ function isPrivateHost(host: string): boolean {
   return false;
 }
 
+/** V15 closure — EGRESS KILL-SWITCH at the single real HTTP client (root cause: the switch ODG_RADAR_LIVE=1 was enforced
+ * per entrypoint, so self-running modules — fr07-live-collection, odg-v360-chains-run, collect-to-signals defaults —
+ * egressed without it). Real network I/O happens ONLY when ODG_RADAR_LIVE=1; an injected httpImpl (tests, recorded
+ * fixtures) is not network I/O and stays allowed. Validation still runs first, so dry runs keep validating URLs. */
+function egressAllowed(opts: any): boolean { return typeof (opts && opts.httpImpl) === "function" || process.env.ODG_RADAR_LIVE === "1"; }
+
 /** validateUrl(url, allowlist?): https-only, allowlisted host, no userinfo, not private. Returns {ok} or {ok:false,code}. */
 function validateUrl(url: any, allowlist: readonly string[] = ALLOWLIST): any {
   let u: any;
@@ -69,6 +75,7 @@ function get(url: any, opts: any = {}): Promise<any> {
   const allowlist = Array.isArray(opts.allowlist) ? opts.allowlist : ALLOWLIST;
   const v = validateUrl(url, allowlist);
   if (!v.ok) return Promise.resolve({ ok: false, code: v.code, host: v.host });
+  if (!egressAllowed(opts)) return Promise.resolve({ ok: false, code: "EGRESS_KILL_SWITCH_OFF", host: v.host });
   const timeoutMs = Number.isInteger(opts.timeoutMs) && opts.timeoutMs > 0 ? opts.timeoutMs : 8000;
   const maxBytes = Number.isInteger(opts.maxBytes) && opts.maxBytes > 0 ? opts.maxBytes : 2_000_000;
   const contentTypes = Array.isArray(opts.contentTypes) && opts.contentTypes.length ? opts.contentTypes : JSON_CONTENT_TYPES;
@@ -104,6 +111,7 @@ function post(url: any, bodyObj: any, opts: any = {}): Promise<any> {
   const allowlist = Array.isArray(opts.allowlist) ? opts.allowlist : ALLOWLIST;
   const v = validateUrl(url, allowlist);
   if (!v.ok) return Promise.resolve({ ok: false, code: v.code, host: v.host });
+  if (!egressAllowed(opts)) return Promise.resolve({ ok: false, code: "EGRESS_KILL_SWITCH_OFF", host: v.host });
   let body: string;
   try { body = JSON.stringify(bodyObj === undefined ? {} : bodyObj); } catch { return Promise.resolve({ ok: false, code: "BAD_REQUEST_BODY" }); }
   const timeoutMs = Number.isInteger(opts.timeoutMs) && opts.timeoutMs > 0 ? opts.timeoutMs : 8000;
@@ -133,6 +141,6 @@ function post(url: any, bodyObj: any, opts: any = {}): Promise<any> {
 }
 
 export { ALLOWLIST, isPrivateHost, validateUrl, validateContentType, enforceSize, get, post };
-module.exports = { ALLOWLIST, isPrivateHost, validateUrl, validateContentType, enforceSize, get, post };
+module.exports = { ALLOWLIST, isPrivateHost, egressAllowed, validateUrl, validateContentType, enforceSize, get, post };
 
 export {};
