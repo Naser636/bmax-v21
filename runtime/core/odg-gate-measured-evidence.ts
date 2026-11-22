@@ -73,7 +73,7 @@ function ownerAnchoredReview(record0: any, signed0: any, candidateCommit: any, e
   const record = snapshot(record0), signed = snapshot(signed0);
   if (!isObj(record)) return Object.freeze({ ok: false, reason: "NO_RECORD" });
   // V15 closure (inspection L2): when the caller names its experiment, the record must name the same one (if it names any)
-  if (experimentId !== undefined && record.experiment !== undefined && record.experiment !== experimentId) return Object.freeze({ ok: false, reason: "RECORD_FOR_ANOTHER_EXPERIMENT (" + String(record.experiment) + ")" });
+  if (experimentId !== undefined && record.experiment !== experimentId) return Object.freeze({ ok: false, reason: "RECORD_FOR_ANOTHER_EXPERIMENT (" + String(record.experiment) + ")" });
   if (typeof candidateCommit !== "string" || !/^[0-9a-f]{40}$/.test(candidateCommit)) return Object.freeze({ ok: false, reason: "NO_CANDIDATE_COMMIT (full 40-hex sha required)" });
   if (record.subjectCommit !== candidateCommit) return Object.freeze({ ok: false, reason: "RECORD_NOT_BOUND_TO_CANDIDATE (subjectCommit " + String(record.subjectCommit) + ")" });
   if (record.verdict !== "ACCEPT") return Object.freeze({ ok: false, reason: "RECORD_VERDICT_NOT_ACCEPT (" + String(record.verdict) + ")" });

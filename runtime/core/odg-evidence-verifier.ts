@@ -27,7 +27,7 @@ function safeRel(p: any, prefix: string): boolean {
 /* gitEnv(): the caller's GIT_* variables (GIT_DIR, GIT_WORK_TREE, GIT_CONFIG_*, GIT_OBJECT_DIRECTORY…) are STRIPPED, so git
  * reads THIS repository, not one chosen through the environment (inspection H1, partial: the local refs themselves stay
  * writable by a local actor — see the module limits). */
-function gitEnv(): any { const e: any = {}; for (const k of Object.keys(process.env)) if (!/^GIT_/.test(k)) e[k] = process.env[k]; return e; }
+function gitEnv(): any { const e: any = {}; for (const k of Object.keys(process.env)) if (!/^GIT_/.test(k)) e[k] = process.env[k]; e.GIT_NO_REPLACE_OBJECTS = "1"; return e; }   // + no `git replace` substitution (inspection N1)
 function makeCommittedReader(root: string, ref?: string): any {
   const cp = require("child_process"); if (ref !== undefined && !(typeof ref === "string" && /^[A-Za-z0-9._\/][A-Za-z0-9._\/-]*$/.test(ref))) return () => null;   // bad ref ⇒ fail-closed (reads nothing)
   const r = typeof ref === "string" ? ref : "HEAD";

@@ -91,12 +91,12 @@ const ANCHOR_REF = "origin/main";
 const ANCHOR_PURPOSES = Object.freeze(["COLLECTION_ARTIFACT", "KNOWLEDGE_RECORD", "INSPECTION_RECORD", "MATURITY_EVIDENCE"]);
 // (inspection L3) the repo root is derived from THIS module's known layout (runtime/core or runtime/dist/core), never by
 // walking up to an arbitrary enclosing repository.
-function repoRoot(): string | null { const d = path.resolve(__dirname, __dirname.split(path.sep).includes("dist") ? "../../.." : "../.."); return fs.existsSync(path.join(d, ".git")) ? d : null; }
+function repoRoot(): string | null { const d = path.resolve(__dirname, path.basename(path.dirname(__dirname)) === "dist" ? "../../.." : "../.."); return fs.existsSync(path.join(d, ".git")) ? d : null; }
 function loadCommittedAnchors(): any {
   const out: any = {}; for (const p of ANCHOR_PURPOSES) out[p] = [];
   const root = repoRoot();
   if (root) { try {
-    const env: any = {}; for (const k of Object.keys(process.env)) if (!/^GIT_/.test(k)) env[k] = process.env[k];   // no GIT_DIR / GIT_CONFIG_* redirection (inspection H1, partial)
+    const env: any = {}; for (const k of Object.keys(process.env)) if (!/^GIT_/.test(k)) env[k] = process.env[k]; env.GIT_NO_REPLACE_OBJECTS = "1";   // no GIT_DIR / GIT_CONFIG_* redirection, no replace objects (inspection H1 partial, N1)
     const b = require("child_process").execFileSync("git", ["show", ANCHOR_REF + ":" + ANCHOR_FILE], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 4 * 1024 * 1024, env });
     const j = JSON.parse(b.toString("utf8"));
     for (const p of ANCHOR_PURPOSES) out[p] = Array.isArray(j[p]) ? j[p].filter((x: any) => typeof x === "string" && /^[0-9a-f]{64}$/.test(x)) : [];

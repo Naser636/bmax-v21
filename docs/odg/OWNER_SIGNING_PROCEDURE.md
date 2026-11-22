@@ -85,7 +85,7 @@ Rerun `runtime/bin/odg-gate-experiment-resident-confinement.ts`. The two review 
 
 ## 5. Re-verify on a clone you control (the trust decision)
 
-A verdict computed on the provider's host is **not** the trust decision. Its local `origin/main` ref is writable by whoever controls that clone (`git update-ref`), and it is only as fresh as its last fetch. A forged or stale ref can therefore produce INTEGRATE, or keep a revoked key alive.
+A verdict computed on the provider's host is **not** the trust decision. Whoever controls that clone controls its local ref and object store (`git update-ref`, `git replace`, a rewritten object directory). The local `origin/main` is also only as fresh as its last fetch. The readers strip `GIT_*` and disable replace objects, but they cannot defend against control of the repository itself. A forged or stale ref can therefore produce INTEGRATE, or keep a revoked key alive.
 
 Before relying on a result:
 1. On your own clone, run `git fetch`.

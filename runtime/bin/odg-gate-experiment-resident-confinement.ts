@@ -22,10 +22,11 @@ function main() {
   const realBefore = fingerprint(ROOT);
   // V15 closure (inspection M2): the MEASURED code is exactly the candidate commit's tree (git archive <full sha>), never
   // the working tree — review binding, CI and the probes all refer to the same commit.
-  const full = (cp.spawnSync("git", ["rev-parse", "--verify", ciCommit + "^{commit}"], { cwd: ROOT, encoding: "utf8" }).stdout || "").trim();   // gh needs the FULL sha
+  const GENV = EVV.gitEnv();   // GIT_* stripped + GIT_NO_REPLACE_OBJECTS=1 (inspection N1: `git replace` could swap the archived tree)
+  const full = (cp.spawnSync("git", ["rev-parse", "--verify", ciCommit + "^{commit}"], { cwd: ROOT, encoding: "utf8", env: GENV }).stdout || "").trim();   // gh needs the FULL sha
   if (!/^[0-9a-f]{40}$/.test(full)) throw new Error("--ci-commit does not resolve to a commit");
   const T = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "odg-gx-")));
-  const arc = cp.spawnSync("bash", ["-c", 'git -C "$1" archive "$2" runtime/core runtime/bin scripts docs/odg/v124-consolidated-roadmap.json package.json | tar -x -C "$3"', "_", ROOT, full, T], { encoding: "utf8" });
+  const arc = cp.spawnSync("bash", ["-c", 'git -C "$1" archive "$2" runtime/core runtime/bin scripts docs/odg/v124-consolidated-roadmap.json package.json | tar -x -C "$3"', "_", ROOT, full, T], { encoding: "utf8", env: GENV });
   if (arc.status !== 0) throw new Error("git archive of the candidate failed");
   fs.symlinkSync(fs.realpathSync(path.join(ROOT, "node_modules")), path.join(T, "node_modules"));
   // 1. V12.4 link (the companion really lists the mission)
