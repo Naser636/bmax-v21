@@ -11,7 +11,7 @@ function main() {
   const argv = process.argv.slice(2); const arg = (k: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : null; };
   const attemptsPath = arg("--attempts") || "runtime/generated/mission-attempt-log.jsonl"; const out = arg("--write");
   const rows = fs.readFileSync(attemptsPath, "utf8").split("\n").filter((l: string) => l.trim()).map((l: string) => JSON.parse(l));
-  const CUTOVER = "2026-11-22T02:00:00Z";   // after the last observed organizational refusal (01:38Z); worktree-only work from then on
+  const CUTOVER = "2026-11-22T02:00:00Z";   // boundary chosen after the last observed STARTUP_REFUSED (01:38Z, a LEGITIMATE one); last ORGANIZATIONAL refusal was 2026-11-21T22:22:43Z; worktree-only work from then on
   const before = AV.summarize(rows, { from: "2026-11-16T00:00:00Z", to: CUTOVER });
   const after = AV.summarize(rows, { from: CUTOVER });
   const all = AV.summarize(rows);

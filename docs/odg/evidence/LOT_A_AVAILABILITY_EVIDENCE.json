@@ -2,11 +2,11 @@
   "lot": "V375 Lot A — autonomy availability (G0) + SLO candidate comparison (G1)",
   "source": {
     "attempts": "runtime/generated/mission-attempt-log.jsonl (local, gitignored; read-only)",
-    "rows": 2567,
+    "rows": 2568,
     "ci": "docs/odg/evidence/LOT3_CI_EVENTS.json"
   },
   "refusalCauses": {
-    "AVAILABLE_IDLE": 1381,
+    "AVAILABLE_IDLE": 1382,
     "AVAILABLE_EXECUTED_PASS": 1,
     "AVAILABLE_EXECUTED_NOT_PASS": 2,
     "REFUSED_ORGANIZATIONAL": 1180,
@@ -37,11 +37,11 @@
     "after": {
       "window": {
         "from": "2026-11-22T02:00:00Z",
-        "to": "2026-11-22T13:13:41.134Z"
+        "to": "2026-11-22T13:29:04.654Z"
       },
-      "total": 45,
+      "total": 46,
       "counts": {
-        "AVAILABLE_IDLE": 45,
+        "AVAILABLE_IDLE": 46,
         "AVAILABLE_EXECUTED_PASS": 0,
         "AVAILABLE_EXECUTED_NOT_PASS": 0,
         "REFUSED_ORGANIZATIONAL": 0,
@@ -59,14 +59,14 @@
     "autonomyAvailability": {
       "window": [
         "2026-11-08T00:08:10.806Z",
-        "2026-11-22T13:13:41.134Z"
+        "2026-11-22T13:29:04.654Z"
       ],
-      "events": 1391,
+      "events": 1392,
       "compare": [
         {
           "slo": 0.97,
-          "sli": 0.580158,
-          "allowedBad": 41.73,
+          "sli": 0.58046,
+          "allowedBad": 41.76,
           "actualBad": 584,
           "remainingFraction": -1,
           "exhausted": true,
@@ -75,8 +75,8 @@
         },
         {
           "slo": 0.98,
-          "sli": 0.580158,
-          "allowedBad": 27.82,
+          "sli": 0.58046,
+          "allowedBad": 27.84,
           "actualBad": 584,
           "remainingFraction": -1,
           "exhausted": true,
@@ -85,8 +85,8 @@
         },
         {
           "slo": 0.985,
-          "sli": 0.580158,
-          "allowedBad": 20.87,
+          "sli": 0.58046,
+          "allowedBad": 20.88,
           "actualBad": 584,
           "remainingFraction": -1,
           "exhausted": true,
@@ -95,8 +95,8 @@
         },
         {
           "slo": 0.99,
-          "sli": 0.580158,
-          "allowedBad": 13.91,
+          "sli": 0.58046,
+          "allowedBad": 13.92,
           "actualBad": 584,
           "remainingFraction": -1,
           "exhausted": true,

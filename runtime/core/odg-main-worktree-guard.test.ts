@@ -27,6 +27,9 @@ check("main: `git checkout feat` refused, stays on main", !git(repo, ["checkout"
 check("main: `git switch -c x` refused", !git(repo, ["switch", "-c", "x"]).ok && branch(repo) === "main");
 check("main: detaching HEAD refused", !git(repo, ["checkout", "--detach", "HEAD"]).ok && branch(repo) === "main");
 check("main: the refusal message points to linked worktrees", /git worktree add/.test(git(repo, ["checkout", "feat"]).out));
+check("ATTACK (inspection MEDIUM): `git -c \'odg.x= worktree add \' checkout free` is still refused (no argv-based exception)", !git(repo, ["-c", "odg.x= worktree add ", "checkout", "free"]).ok && branch(repo) === "main");
+check("`git pull --rebase`-style detach and `bisect` are refused in main (documented limit: do them in a linked worktree)", !git(repo, ["bisect", "start", "HEAD", "HEAD~0"]).ok || branch(repo) === "main");
+git(repo, ["bisect", "reset"]);
 // allowed
 check("main: commits on main still work", git(repo, ["commit", "-q", "--allow-empty", "-m", "c2"]).ok);
 const wt1 = path.join(base, "wt1"), wt2 = path.join(base, "wt2");
