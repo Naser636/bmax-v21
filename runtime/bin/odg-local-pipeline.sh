@@ -50,7 +50,11 @@ _compass_record() {
     _ATT_SIG=""
     [ "$rc" = "130" ] && _ATT_SIG="SIGINT"
     [ "$rc" = "143" ] && _ATT_SIG="SIGTERM"
-    node -e '
+    # V15.0 root-cause fix: since the η3 TS migration only runtime/core/front-door-attempt.ts exists — plain `node`
+    # failed with MODULE_NOT_FOUND (swallowed by the catch below) so NO front-door attempt was ever recorded. Load it
+    # through the repo's local tsx (resolves .js → .ts); plain node only if tsx is absent (then the WARNING is honest).
+    _ODG_TSX="node_modules/.bin/tsx"; [ -x "$_ODG_TSX" ] || _ODG_TSX="node"
+    "$_ODG_TSX" -e '
       try {
         const { recordFrontDoorAttempt } = require("./runtime/core/front-door-attempt.js");
         const a = process.argv;

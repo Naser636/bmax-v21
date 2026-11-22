@@ -5,9 +5,13 @@
  * V260 §5 — ODG BTP INTELLIGENT DEVIS (costing/estimating) ENGINE. PURE, deterministic, integer minor-unit (centimes)
  * arithmetic, fail-closed. It builds the DETERMINISTIC subset of the 20 mandatory devis functions that no existing module
  * covers: line métré → materials → labour → equipment/transport → overhead → MARGIN (≠ markup) → VAT → TTC, plus economic/
- * standard/premium VARIANTS, OMISSION / under-pricing detection, and forecast-vs-actual variance. It COMPOSES — not
- * duplicates — the existing quote.ts (lifecycle: createQuote/approve/accept), chantier-profitability.ts (chantier P&L) and
- * renovation-quote-normalize.ts (normalization). No second engine for those.
+ * standard/premium VARIANTS, OMISSION / under-pricing detection, and forecast-vs-actual variance. It does NOT
+ * duplicate the existing quote.ts (lifecycle: createQuote/approve/accept) or chantier-profitability.ts (chantier P&L):
+ * it covers the costing subset only and leaves lifecycle and P&L to them.
+ * V15.0 correction (199-module reconciliation): this module LOADS NO OTHER MODULE — the former wording "composes quote.ts /
+ * chantier-profitability / renovation-quote-normalize" was false. It is a pure costing engine COMPLEMENTARY to those (no
+ * duplicated lifecycle/P&L logic); renovation-quote-normalize is a separate D8 vertical for THIRD-PARTY renovation quotes.
+ * The claim is corrected rather than faked by artificial wiring.
  *
  * HONESTY (directive §4/§5): measurement provenance is kept STRICTLY distinct — MEASURED / ESTIMATED / ASSUMED /
  * HUMAN_VALIDATED. A devis containing any ESTIMATED or ASSUMED quantity is NOT final (requiresHumanValidation); an uncertain
@@ -148,14 +152,15 @@ function qualifyFunctions(): any {
 const BTP_DEVIS_ENGINE_CONTRACT = Object.freeze({
   id: "V260-ODG-BTP-DEVIS-ENGINE",
   source: "V260 §5 — deterministic BTP intelligent-devis costing engine (the subset no existing module covers)",
-  reuses: Object.freeze(["quote.ts (lifecycle)", "chantier-profitability.ts (chantier P&L)", "renovation-quote-normalize.ts (normalization)"]),
+  reuses: Object.freeze([]),   // V15.0: loads no module (complementary to quote.ts / chantier-profitability, not composing them)
+  complementaryTo: Object.freeze(["quote.ts (lifecycle)", "chantier-profitability.ts (chantier P&L)"]),
   measureStates: MEASURE_STATE,
   invariants: Object.freeze([
     "integer minor-unit arithmetic; COST(HT)→margin→selling→VAT→TTC; MARGIN (margin/cost) and MARKUP (margin/selling) reported separately, never conflated",
     "measurement provenance kept distinct (MEASURED/HUMAN_VALIDATED/ESTIMATED/ASSUMED); any ESTIMATED/ASSUMED ⇒ NOT final (requiresHumanValidation); an uncertain quantity is never promoted to a measurement",
     "fail-closed: no lines / negative / non-integer money ⇒ error; VAT applied from the supplied rate (never invented); omission/under-pricing surfaced, a clean result is not a completeness guarantee",
     "photo/plan/voice devis (fns 1-3) are ABSENT (need vision/STT) and reported as such — a photo alone cannot yield exact dimensions without a metric reference",
-    "composes quote.ts/chantier-profitability/renovation-quote-normalize — no second lifecycle/P&L/normalization engine; no new primitive",
+    "complementary to quote.ts/chantier-profitability (costing only) — no second lifecycle/P&L engine; no new primitive",
   ]),
 });
 
