@@ -33,6 +33,6 @@
   "subjectCommit": null,
   "verdict": null,
   "ownerFields": "OWNER ONLY (V15 closure): after YOUR review, set subjectCommit = the FULL 40-hex sha of the exact candidate you reviewed (the --ci-commit the gate experiment is run with) and verdict = \"ACCEPT\" (or \"REJECT\"), merge, then sign the merged file with runtime/bin/odg-owner-sign.ts (docs/odg/OWNER_SIGNING_PROCEDURE.md). The gate counts review/inspection only if subjectCommit equals the candidate and verdict is ACCEPT; the provider never fills these fields.",
-  "candidateForReview": "to be set by the provider after the launcher-hardening PR merges (suggestion only; the owner decides what to review)",
+  "candidateForReview": "3a88de01a34aae90fcefc34376a4fd79d68bbf51 (main after #873; RUN4 measured this tree) — suggestion only; the owner decides what to review and sets subjectCommit/verdict",
   "experiment": "V15-EXP-resident-confinement"
 }
