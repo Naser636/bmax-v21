@@ -48,6 +48,17 @@
 
 - **Residual limits (inspection LOW).** The confined tick can still rewrite its own trace file, so `writes=0` lines are the driver's **self-report, not an attested record**. File size is capped inside the sandbox by `ulimit -f` (default 10 MiB). Attesting the trace (e.g. signed lines checked by an unconfined verifier) is open work.
 
+## 4c. V15 — measured gate experiment and SLO recommendation
+- **Experiment through the canonical gate** (`odg-gate-measured-evidence` + `runtime/bin/odg-gate-experiment-resident-confinement.ts`). All 12 conditions come from measurements; none is asserted.
+  - RUN1, before merge, and RUN2, after merge on `45e46f3f`, both returned **RETURN_TO_EXPERIMENT, 10/12**.
+  - Measured: 6 → 0 available attack surfaces; functional, stop and fallback paths; rollback; real repository unchanged; CI green.
+  - Missing: `codeAndDepsReviewed` and `independentInspection`. These count **only** from an owner-anchored `INSPECTION_RECORD` signature (`TRUST_ANCHORS.json`, empty by design). The provider and its own inspection subagent cannot satisfy them, so the gate stays at RETURN until the owner signs.
+  - Evidence: `docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN1.json` / `_RUN2.json`.
+- **SLO recommendation** (`docs/odg/evidence/V15_SLO_RECOMMENDATION_EVIDENCE.json`; proposal `docs/odg/PROPOSAL_SLO_TARGETS_V15.json`, NOT applied).
+  - Autonomy availability: **98% provisional**. After the fix, 54/54 ticks were available, but the Wilson lower bound is only 0.934 and supporting 98% needs ≥189 ticks. Re-decide after 14 days.
+  - CI required check: **98%**. SLI 0.9837 over n=982, Wilson [0.9737, 0.9899].
+  - Mission reliability: keep the CTO target of 0.95. It is NOT_MEASURED, with only 3 executed attempts.
+
 ## 5. Recommendation
 **Do not activate L1 yet.** First:
 1. ~~run and independently inspect an L1 simulation cycle in a sandbox~~ (done, Lot B); owner installs and tests the proposed filesystem confinement on the user unit;

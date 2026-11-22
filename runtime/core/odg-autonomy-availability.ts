@@ -55,6 +55,16 @@ function toEvents(rows: any): any[] {
   });
 }
 
+/* wilson(k, n, z=1.96) -> {low, high} 95% score interval for a proportion (honest at small n and near 1). */
+function wilson(k: number, n: number, z?: number): any {
+  if (!Number.isInteger(k) || !Number.isInteger(n) || n <= 0 || k < 0 || k > n) return null;
+  const zz = typeof z === "number" && z > 0 ? z : 1.96, p = k / n, d = 1 + zz * zz / n;
+  const c = (p + zz * zz / (2 * n)) / d, h = (zz * Math.sqrt(p * (1 - p) / n + zz * zz / (4 * n * n))) / d;
+  return Object.freeze({ low: Number(Math.max(0, c - h).toFixed(4)), high: Number(Math.min(1, c + h).toFixed(4)) });
+}
+/* minTicksToSupport(target, z=1.96) -> smallest n such that n good out of n has a Wilson LOWER bound ≥ target. */
+function minTicksToSupport(target: number, z?: number): number { const zz = z || 1.96; return Math.ceil(zz * zz * target / (1 - target)); }
+
 const AUTONOMY_AVAILABILITY_CONTRACT = Object.freeze({
   id: "V375-LOT-A-AUTONOMY-AVAILABILITY", classes: CLASSES,
   invariants: Object.freeze([
@@ -64,5 +74,5 @@ const AUTONOMY_AVAILABILITY_CONTRACT = Object.freeze({
     "mission reliability NOT_MEASURED below 20 executed attempts",
   ]),
 });
-module.exports = { classifyAttempt, summarize, toEvents, CLASSES, AUTONOMY_AVAILABILITY_CONTRACT };
+module.exports = { classifyAttempt, summarize, toEvents, wilson, minTicksToSupport, CLASSES, AUTONOMY_AVAILABILITY_CONTRACT };
 export {};

@@ -22,5 +22,8 @@ const ev = A.toEvents(rows);
 const an = EB.eventBudgetAnalysis(ev, { sloTarget: 0.9, windowDays: 2 });
 check("events feed the canonical error-budget view: 3 bad of 8 at SLO 0.9 ⇒ allowedBad 0.8, exhausted", an.status === "MEASURED" && an.errorBudget.actualBad === 3 && an.errorBudget.allowedBad === 0.8 && an.errorBudget.exhausted === true);
 check("garbage rows are ignored, never counted", A.summarize([null, { status: 1 }, ...rows]).total === 8);
+check("wilson: 0/0 or bad input ⇒ null; 10/10 lower bound < 1 (no certainty from a small sample)", A.wilson(0, 0) === null && A.wilson(10, 10).low < 0.75 && A.wilson(10, 10).high === 1);
+check("wilson known value: 982 trials, 966 good ⇒ interval brackets 0.9837", (() => { const w = A.wilson(966, 982); return w.low < 0.9837 && w.high > 0.9837 && w.low > 0.97; })());
+check("minTicksToSupport: 99% needs ≥ 381 consecutive good ticks, 97% ≥ 125 (Wilson, z=1.96)", A.minTicksToSupport(0.99) === 381 && A.minTicksToSupport(0.97) === 125);
 process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-autonomy-availability (V375 Lot A)" : f + " FAIL") + "\n"); process.exit(f ? 1 : 0);
 export {};

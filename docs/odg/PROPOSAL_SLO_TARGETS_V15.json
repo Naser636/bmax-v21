@@ -1,0 +1,33 @@
+{
+  "//": "PROPOSAL — NOT APPLIED. Entries in runtime/core/slo-targets.ts SLO_TARGETS shape; status PROPOSED. Applying requires an owner/CTO decision (it would become CONFIGURED with owner provenance).",
+  "entries": [
+    {
+      "id": "AUTONOMY_AVAILABILITY",
+      "kind": "rate",
+      "direction": "atLeast",
+      "target": 0.98,
+      "minSampleN": 1344,
+      "status": "PROPOSED",
+      "definition": "fraction of scheduled mission-runner ticks that pass startup (mission-attempt-log; any STARTUP_REFUSED = unavailable), rolling 14 days",
+      "provenance": {
+        "source": "V15 §6 recommendation (provider-prepared)",
+        "authoredBy": "Claude Code (technical provider) — NOT a CTO/owner decision",
+        "declaredAt": "2026-11-22"
+      }
+    },
+    {
+      "id": "CI_REQUIRED_CHECK_SUCCESS",
+      "kind": "rate",
+      "direction": "atLeast",
+      "target": 0.98,
+      "minSampleN": 200,
+      "status": "PROPOSED",
+      "definition": "fraction of decisive runs (success|failure) of the required check 'build + typecheck + parity + tests', rolling 30 days",
+      "provenance": {
+        "source": "V15 §6 recommendation (provider-prepared)",
+        "authoredBy": "Claude Code (technical provider) — NOT a CTO/owner decision",
+        "declaredAt": "2026-11-22"
+      }
+    }
+  ]
+}

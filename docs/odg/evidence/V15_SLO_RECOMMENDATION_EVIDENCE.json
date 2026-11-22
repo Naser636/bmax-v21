@@ -1,0 +1,100 @@
+{
+  "lot": "V15 §6 — SLO recommendation (real data, Wilson intervals)",
+  "availability": {
+    "before": {
+      "n": 1346,
+      "good": 762,
+      "sli": 0.5661,
+      "wilson": {
+        "low": 0.5395,
+        "high": 0.5924
+      }
+    },
+    "after": {
+      "n": 54,
+      "good": 54,
+      "sli": 1,
+      "wilson": {
+        "low": 0.9336,
+        "high": 1
+      },
+      "windowFrom": "2026-11-22T02:00:00Z",
+      "windowTo": "2026-11-22T15:29:41.856Z"
+    }
+  },
+  "ci": {
+    "n": 982,
+    "good": 966,
+    "sli": 0.9837,
+    "wilson": {
+      "low": 0.9737,
+      "high": 0.9899
+    },
+    "window": [
+      "2026-11-08T22:11:44Z",
+      "2026-11-22T12:32:24Z"
+    ]
+  },
+  "candidates": [
+    {
+      "target": 0.97,
+      "minTicksToSupportAvailability": 125,
+      "availabilityAfterFix": "INSUFFICIENT_VOLUME (n=54 < 125)",
+      "ci": {
+        "budgetRemaining": 0.4569,
+        "exhausted": false,
+        "wilsonLowVsTarget": "SUPPORTED"
+      }
+    },
+    {
+      "target": 0.98,
+      "minTicksToSupportAvailability": 189,
+      "availabilityAfterFix": "INSUFFICIENT_VOLUME (n=54 < 189)",
+      "ci": {
+        "budgetRemaining": 0.1853,
+        "exhausted": false,
+        "wilsonLowVsTarget": "INCONCLUSIVE"
+      }
+    },
+    {
+      "target": 0.985,
+      "minTicksToSupportAvailability": 253,
+      "availabilityAfterFix": "INSUFFICIENT_VOLUME (n=54 < 253)",
+      "ci": {
+        "budgetRemaining": -0.0862,
+        "exhausted": true,
+        "wilsonLowVsTarget": "INCONCLUSIVE"
+      }
+    },
+    {
+      "target": 0.99,
+      "minTicksToSupportAvailability": 381,
+      "availabilityAfterFix": "INSUFFICIENT_VOLUME (n=54 < 381)",
+      "ci": {
+        "budgetRemaining": -0.6293,
+        "exhausted": true,
+        "wilsonLowVsTarget": "BELOW"
+      }
+    }
+  ],
+  "recommendation": {
+    "autonomyAvailability": {
+      "recommend": 0.98,
+      "status": "PROPOSED_PROVISIONAL",
+      "why": "post-fix ticks are all available but n=54 is too small to support any candidate (99% needs ≥381 consecutive good ticks ≈ 4 days at 96/day; 98% needs ≥189). The organizational cause (1180/1183 refusals) is now structurally blocked by the main-worktree guard, leaving only legitimate refusals (3 in 33 days ≈ 0.1%), so 98% leaves an error budget for legitimate Truth-Lock stops and outages without masking a regression. Over 14 days (≈1344 ticks) the budget is ≈27 refused ticks at 98% vs ≈13 at 99%: one bad night (e.g. 6 h of refusals = 24 ticks) would exhaust 99% but not 98%. Re-decide after ≥14 days.",
+      "evaluateOn": "mission-attempt-log, ticks from 2026-11-22T02:00:00Z; any STARTUP_REFUSED = bad (organizational and legitimate both count)"
+    },
+    "ciRequiredCheck": {
+      "recommend": 0.98,
+      "status": "PROPOSED",
+      "why": "SLI 0.9837 over 982 decisive runs, Wilson 95% [0.9737, 0.9899]. 97% lies BELOW the lower bound (already met with margin ⇒ too loose to detect a degradation); 98% lies INSIDE the interval with 18.5% budget left ⇒ meaningful but attainable; 98.5% is inside the interval but its budget is already exhausted; 99% lies ABOVE the upper bound ⇒ currently not attainable (would freeze on day one)."
+    },
+    "missionReliability": {
+      "recommend": "KEEP existing CTO target MISSION_SUCCESS_VERIFIED 0.95 (minSampleN 20)",
+      "status": "NOT_MEASURED",
+      "why": "only 3 executed attempts — below minSampleN; no rate is reported"
+    }
+  },
+  "notApplied": "runtime/core/slo-targets.ts unchanged; no freeze policy activated; canonical decision = owner",
+  "proposalFile": "docs/odg/PROPOSAL_SLO_TARGETS_V15.json"
+}
