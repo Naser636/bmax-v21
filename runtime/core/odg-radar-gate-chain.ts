@@ -107,14 +107,29 @@ function traced(name: string, input: any, output: any, note: string): any {
 
 /* toMemoryRecord(knowledgeItem, query, asOf) -> canonical memory record (memory-taxonomy family "semantic"). A record
  * whose sources are not ALL dated gets NO provenance ⇒ memory-taxonomy quality NO_PROVENANCE ⇒ never admitted. */
+/* validSourceDate(date, asOf): a REAL calendar date (YYYY-MM-DD, round-trips through Date.UTC) that is NOT in the future
+ * relative to the injected clock and not before 1990 (implausible for web evidence). Regex alone is not enough (inspection). */
+const MIN_SOURCE_EPOCH = Date.UTC(1990, 0, 1);
+function validSourceDate(date: any, asOf: number): boolean {
+  if (typeof date !== "string") return false;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(date); if (!m) return false;
+  const y = +m[1], mo = +m[2], d = +m[3]; const t = Date.UTC(y, mo - 1, d);
+  const back = new Date(t);
+  if (back.getUTCFullYear() !== y || back.getUTCMonth() !== mo - 1 || back.getUTCDate() !== d) return false;   // e.g. 2026-99-99
+  return t >= MIN_SOURCE_EPOCH && t <= asOf;
+}
+function knowledgeId(query: string, claim: any): string { return "kn:" + sha({ q: query, c: claim }).slice(0, 16); }
+const PROVENANCE_PREFIX = "RADAR_RECORDED_REAL:";
+
 function toMemoryRecord(k: any, query: string, asOf: number): any {
   const srcs = Array.isArray(k && k.sources) ? k.sources : [];
   const urls = srcs.map((s: any) => s.url).filter(Boolean).sort();
-  const dated = srcs.length > 0 && srcs.every((s: any) => typeof s.date === "string" && /^\d{4}-\d{2}-\d{2}/.test(s.date));
+  const dated = srcs.length > 0 && srcs.every((s: any) => validSourceDate(s.date, asOf) && typeof s.url === "string" && /^https:\/\//.test(s.url));
   return Object.freeze({
-    id: "kn:" + sha({ q: query, c: k.claim }).slice(0, 16),
+    id: knowledgeId(query, k.claim),
+    claimType: k.type, corroborationLevel: k.corroborationLevel, independentSupportCount: k.independentSupportCount,
     family: "semantic", query, claim: k.claim, classification: k.classification,
-    provenance: urls.length && dated ? "RADAR_RECORDED_REAL:" + urls.join("|") : undefined,
+    provenance: urls.length && dated ? PROVENANCE_PREFIX + urls.join("|") : undefined,
     sources: Object.freeze(srcs.slice()),
     status: k.verifiedKnowledge ? "VERIFIED" : "UNVERIFIED",
     confidence: k.verifiedKnowledge ? 0.9 : 0.3,
@@ -127,6 +142,28 @@ function trustOf(rec: any, asOf: number): any {
   return MTG.assessMemoryTrust(rec, { asOf, trustedAuthors: [ACTOR.EXECUTOR.ODG], minConfidence: MIN_CONFIDENCE });
 }
 
+/* reusable(rec, query, asOf) -> {ok, reasons}. RETRIEVE-time integrity (fix for inspection HIGH: a caller-supplied record
+ * carrying ODG labels must NOT be reused on labels alone). ALL must hold, else the record is ignored and ACQUIRE runs:
+ * content-bound id (recomputed from query+claim), canonical provenance prefix with https urls matching the sources, every
+ * source dated (real date, not future), FACT_CORROBORATED with ≥2 independent supports, numeric confidence ≥ min,
+ * numeric validUntil (no immortal records), and memory-trust-gate TRUSTED. */
+function reusable(rec: any, query: string, asOf: number): any {
+  const reasons: string[] = [];
+  if (!isObj(rec)) return { ok: false, reasons: ["not a record"] };
+  if (rec.query !== query) reasons.push("different query");
+  if (rec.id !== knowledgeId(query, rec.claim)) reasons.push("id not bound to (query, claim) — possible forgery");
+  const srcs = Array.isArray(rec.sources) ? rec.sources : [];
+  const urls = srcs.map((s: any) => s && s.url).filter((u: any) => typeof u === "string").sort();
+  if (typeof rec.provenance !== "string" || rec.provenance !== PROVENANCE_PREFIX + urls.join("|")) reasons.push("provenance not canonical / not matching sources");
+  if (srcs.length < 2 || !srcs.every((s: any) => s && typeof s.url === "string" && /^https:\/\//.test(s.url) && validSourceDate(s.date, asOf))) reasons.push("sources missing, non-https or not validly dated");
+  if (rec.classification !== "FACT_CORROBORATED" || !(Number.isFinite(rec.independentSupportCount) && rec.independentSupportCount >= 2)) reasons.push("not a corroborated fact (≥2 independent supports)");
+  if (!Number.isFinite(rec.confidence) || rec.confidence < MIN_CONFIDENCE) reasons.push("confidence missing or below minimum");
+  if (!Number.isFinite(rec.validUntil)) reasons.push("no numeric validUntil (immortal record refused)");
+  if (rec.status !== "VERIFIED") reasons.push("status not VERIFIED");
+  if (!reasons.length) { const t = trustOf(rec, asOf); if (!t.trusted) reasons.push("memory-trust-gate: " + t.verdict); }
+  return { ok: reasons.length === 0, reasons };
+}
+
 /* runChain(opts) -> { trace, acquisition, admitted, rejected, reuse, proposal, decision, memoryOut, honesty }.
  * opts.asOfEpochMs (REQUIRED, injected clock) · opts.cycle (default KA.REAL_CYCLE) · opts.memory (prior admitted records)
  * opts.experimentEvidence: gate conditions PROVEN for the downstream experiment (default: only what this chain itself
@@ -136,12 +173,19 @@ function runChain(opts?: any): any {
   if (!Number.isFinite(o.asOfEpochMs)) throw new Error("runChain: asOfEpochMs is required (deterministic, no hidden clock)");
   const asOf: number = o.asOfEpochMs;
   const cycle = isObj(o.cycle) ? o.cycle : KA.REAL_CYCLE;
+  if (typeof cycle.query !== "string" || !cycle.query.trim()) throw new Error("runChain: cycle.query must be a non-empty string");
   const memory = Array.isArray(o.memory) ? o.memory : [];
   const trace: any[] = [];
 
-  const retrieved = memory.filter((m: any) => isObj(m) && m.query === cycle.query && m.status === "VERIFIED" && trustOf(m, asOf).trusted);
-  trace.push(traced("RETRIEVE", { query: cycle.query, memorySize: memory.length }, retrieved.map((m: any) => m.id),
-    retrieved.length ? "reused " + retrieved.length + " trusted admitted item(s); acquisition skipped" : "no trusted prior knowledge; acquire"));
+  const ignoredMemory: any[] = [];
+  const retrieved = memory.filter((m: any) => {
+    if (!isObj(m) || m.query !== cycle.query) return false;
+    const r = reusable(m, cycle.query, asOf);
+    if (!r.ok) ignoredMemory.push(Object.freeze({ id: m.id == null ? null : m.id, reasons: Object.freeze(r.reasons) }));
+    return r.ok;
+  });
+  trace.push(traced("RETRIEVE", { query: cycle.query, memorySize: memory.length }, { reused: retrieved.map((m: any) => m.id), ignored: ignoredMemory },
+    retrieved.length ? "reused " + retrieved.length + " integrity-checked, trusted item(s); acquisition skipped" : "no reusable prior knowledge (" + ignoredMemory.length + " ignored); acquire"));
 
   let acquisition: any = null; const admitted: any[] = []; const rejected: any[] = [];
   if (retrieved.length) { for (const m of retrieved) admitted.push(m); }
@@ -165,12 +209,22 @@ function runChain(opts?: any): any {
   });
   trace.push(traced("PROPOSE", admitted.map((a: any) => a.id), proposal, "experiment linked to " + V124_LINK));
 
+  // Gate evidence. Only linkedToV124 + needDemonstrated are MEASURED by this chain. The two hard conditions are asserted
+  // about THE CHAIN ITSELF (pure/offline composition) — labelled CHAIN_SELF_ONLY in evidenceBasis, NOT a claim about any
+  // downstream experiment; a caller with real experiment evidence must supply its own (experimentEvidence overrides).
   const evidence = Object.assign({
     linkedToV124: true,
-    needDemonstrated: admitted.length > 0,          // a verified, provenanced fact supports the capability
-    noContractOrPermissionViolation: true,          // composition only — no egress/fs/exec
-    securityValidated: true,                        // pure + offline; no secret, no network
+    needDemonstrated: admitted.length > 0,
+    noContractOrPermissionViolation: true,
+    securityValidated: true,
   }, isObj(o.experimentEvidence) ? o.experimentEvidence : {});
+  const evidenceBasis = Object.freeze({
+    linkedToV124: "MEASURED (proposal carries " + V124_LINK + ")",
+    needDemonstrated: "MEASURED (admitted corroborated facts = " + admitted.length + ")",
+    noContractOrPermissionViolation: isObj(o.experimentEvidence) && "noContractOrPermissionViolation" in o.experimentEvidence ? "CALLER_SUPPLIED" : "CHAIN_SELF_ONLY (pure offline composition; says nothing about a downstream experiment)",
+    securityValidated: isObj(o.experimentEvidence) && "securityValidated" in o.experimentEvidence ? "CALLER_SUPPLIED" : "CHAIN_SELF_ONLY (no network/fs/exec/secret in this chain; says nothing about a downstream experiment)",
+    others: isObj(o.experimentEvidence) ? "CALLER_SUPPLIED where present, else unproven (false)" : "unproven (false) ⇒ gate RETURNs",
+  });
   const decision = IC.run({ id: proposal.id, v124Link: proposal.v124Link, significant: true, evidence });
   trace.push(traced("DECIDE", evidence, { verdict: decision.verdict, action: decision.action }, "odg-improvement-chain → odg-sandbox-integration-gate.decide (" + decision.satisfied + ")"));
 
@@ -178,8 +232,8 @@ function runChain(opts?: any): any {
     v124Mission: "CM-RADAR-GATE-CHAIN", asOfEpochMs: asOf,
     trace: Object.freeze(trace), acquisition,
     admitted: Object.freeze(admitted), rejected: Object.freeze(rejected),
-    reuse: Object.freeze({ retrieved: retrieved.length, reacquired: retrieved.length ? 0 : 1 }),
-    proposal, decision,
+    reuse: Object.freeze({ retrieved: retrieved.length, reacquired: retrieved.length ? 0 : 1, ignored: Object.freeze(ignoredMemory) }),
+    proposal, decision, evidenceBasis,
     memoryOut: Object.freeze(retrieved.length ? memory.slice() : memory.concat(admitted)),
     honesty: "REAL_RECORDED sample (" + (Array.isArray(cycle.sources) ? cycle.sources.length : 0) + " sources); live-world knowledge quality NOT_MEASURED; RETURN means the downstream experiment is not yet proven, never a fabricated pass",
   });

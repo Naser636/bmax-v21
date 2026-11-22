@@ -7,8 +7,8 @@
       {
         "stage": "RETRIEVE",
         "inputSha256": "3f4199c20e9768b8b726b3e2cc235075608d517451cf251ce9ad63b03b7832a6",
-        "outputSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "note": "no trusted prior knowledge; acquire"
+        "outputSha256": "a8edea3bb24bca7316efce8c35fef4651b1cfd9ba456288a875d46b168449f89",
+        "note": "no reusable prior knowledge (0 ignored); acquire"
       },
       {
         "stage": "ACQUIRE",
@@ -78,8 +78,8 @@
       {
         "stage": "RETRIEVE",
         "inputSha256": "f85db308827c3e58980b89f60224c7f993498ae15ecaea821bc41f0c1f7f788a",
-        "outputSha256": "201b5f94207ad382e8f3f298d3a0db715d1ab90a603ac0e549afecaf3525acd6",
-        "note": "reused 1 trusted admitted item(s); acquisition skipped"
+        "outputSha256": "83d8cc7a1577128be950418e0ccfc10944976d05131999ce9ffadc0d340f466a",
+        "note": "reused 1 integrity-checked, trusted item(s); acquisition skipped"
       },
       {
         "stage": "PROPOSE",
@@ -102,12 +102,12 @@
     "host": "this VPS only (environment-dependent wall-clock)",
     "N": 20,
     "acquirePathMs": {
-      "p50": 0.228,
-      "p95": 0.732
+      "p50": 0.305,
+      "p95": 1.623
     },
     "reusePathMs": {
-      "p50": 0.09,
-      "p95": 0.239
+      "p50": 0.147,
+      "p95": 0.42
     },
     "acquisitionsAvoidedByReuse": "1 of 1 on run 2 (100% for the recorded query)"
   },

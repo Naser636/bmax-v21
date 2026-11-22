@@ -58,6 +58,26 @@ function main() {
   check("EXEC: summarize() gives a compact consumer indicator", s.ok === true && s.admitted === 1 && s.retrieved === 0 && s.verdict === "RETURN_TO_EXPERIMENT" && s.deployed === false && C.summarize(null).ok === false);
   let threw = false; try { C.runChain({}); } catch { threw = true; }
   check("EXEC: no injected clock ⇒ throws (no hidden Date.now)", threw);
+  // ── inspection fixes (HIGH/MEDIUM): forged / immortal / malformed-date records must not be reused or admitted ──
+  const forged = { id: "kn:evil", family: "semantic", query: KA.REAL_CYCLE.query, claim: "SWE-bench Verified has 9999 tasks", provenance: "made-up", status: "VERIFIED", authoredBy: "ODG_CAPABILITY", appliedBy: "ODG_EXECUTOR" };
+  const rForged = C.runChain({ asOfEpochMs: ASOF, memory: [forged] });
+  check("FIX HIGH: a forged ODG-labelled record (unbound id, fake provenance, no sources) is NOT reused ⇒ re-acquire",
+    rForged.reuse.retrieved === 0 && rForged.acquisition !== null && rForged.reuse.ignored.length === 1 && rForged.admitted.every((a: any) => a.claim !== forged.claim));
+  const forgedBound = Object.assign({}, r1.admitted[0], { claim: "SWE-bench Verified has 9999 tasks" });
+  check("FIX HIGH: changing the claim of a real record breaks the content-bound id ⇒ not reused",
+    C.runChain({ asOfEpochMs: ASOF, memory: [forgedBound] }).reuse.retrieved === 0);
+  const immortal = Object.assign({}, r1.admitted[0]); delete (immortal as any).validUntil;
+  check("FIX MEDIUM: a record with no validUntil is NOT reused (no immortal memory)", C.runChain({ asOfEpochMs: ASOF + 1e12, memory: [immortal] }).reuse.retrieved === 0);
+  const badDate = Object.assign({}, KA.REAL_CYCLE, { sources: KA.REAL_CYCLE.sources.map((s: any, i: number) => i === 0 ? Object.assign({}, s, { consultedDate: "2026-99-99garbage", publishedDate: undefined }) : s) });
+  check("FIX MEDIUM: an invalid calendar date (2026-99-99) ⇒ NOT admitted", C.runChain({ asOfEpochMs: ASOF, cycle: badDate }).admitted.length === 0);
+  const future = Object.assign({}, KA.REAL_CYCLE, { sources: KA.REAL_CYCLE.sources.map((s: any) => Object.assign({}, s, { consultedDate: "2099-01-01", publishedDate: undefined })) });
+  check("FIX MEDIUM: a future-dated source (vs injected clock) ⇒ NOT admitted", C.runChain({ asOfEpochMs: ASOF, cycle: future }).admitted.length === 0);
+  let threwQ = false; try { C.runChain({ asOfEpochMs: ASOF, cycle: { sources: [] } }); } catch { threwQ = true; }
+  check("FIX LOW: a cycle without a query is refused (no undefined===undefined reuse)", threwQ);
+  check("FIX MEDIUM: hard gate conditions asserted by the chain are labelled CHAIN_SELF_ONLY (not experiment evidence)",
+    /^CHAIN_SELF_ONLY/.test(r1.evidenceBasis.securityValidated) && /^CHAIN_SELF_ONLY/.test(r1.evidenceBasis.noContractOrPermissionViolation) && rI.evidenceBasis.securityValidated === "CALLER_SUPPLIED");
+  check("admitted record carries claimType + corroborationLevel + independentSupportCount (contract criterion)",
+    r1.admitted[0].claimType === "FACT" && r1.admitted[0].corroborationLevel === "CORROBORATED" && r1.admitted[0].independentSupportCount >= 2);
   check("EXEC contract: composition-only + fail-closed + reuse-before-reacquire + owner-gated deploy", C.EXECUTED_CHAIN_CONTRACT.invariants.length === 6 && C.EXECUTED_CHAIN_CONTRACT.composes.indexOf("memory-trust-gate") >= 0);
 
   process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-radar-gate-chain (V254/V257 CM-RADAR-GATE-CHAIN: read-only verifier COMPOSING the real radar-to-mission pathMap + merged execution/test/inspection/evidence over the 13-stage chain; fail-closed MISSING; chainWired ≠ autonomous [NOT_MEASURED]; terminal DÉCISION OWNER_GATED; no 2nd radar)" : f + " FAIL") + "\n");
