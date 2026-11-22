@@ -19,6 +19,8 @@ NODE="$(readlink -f "$(command -v node)")"; TSX="$HERE/node_modules/.bin/tsx"; N
 BW=(bwrap --unshare-all --die-with-parent --new-session --clearenv --setenv PATH /usr/bin:/bin --setenv TMPDIR /tmp --setenv HOME /tmp
     --ro-bind /usr /usr --ro-bind /etc /etc --dev /dev --proc /proc --tmpfs /tmp --tmpfs /run)
 for d in /bin /lib /lib64 /sbin; do [ -e "$d" ] && BW+=(--ro-bind "$d" "$d"); done
+NODE_PREFIX="$(dirname "$(dirname "$NODE")")"   # node outside /usr (CI tool cache, nvm) ⇒ bind its install prefix read-only
+case "$NODE_PREFIX" in /usr|/usr/*|/) ;; *) BW+=(--ro-bind "$NODE_PREFIX" "$NODE_PREFIX") ;; esac
 BW+=(--ro-bind "$NM" "$NM" --ro-bind "$HERE" "$HERE"); [ "$REPO" != "$HERE" ] && BW+=(--ro-bind "$REPO" "$REPO")
 out=$("${BW[@]}" --chdir "$REPO" ${ODG_SCHEDULER_STOP:+--setenv ODG_SCHEDULER_STOP "$ODG_SCHEDULER_STOP"} \
         "$NODE" "$TSX" "$HERE/runtime/bin/odg-resident-driver-l1-cycle.ts")
