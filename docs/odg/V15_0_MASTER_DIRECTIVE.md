@@ -13,8 +13,14 @@
 
 ## 0. Text received
 - The directive was pasted in the session on 2026-11-22. **The pasted text ends at "## 37"**, inside Part XXV, after Phase 8 (§36).
-- Everything from §37 onward was not received. Nothing here is inferred for it.
+- §37–§55 were received later (see §0b).
 - The full text is not reproduced here. This record captures its structure and its reconciliation.
+
+## 0b. Complement received (2026-11-22)
+- **"COMMANDE EXÉCUTIVE GLOBALE V15.0".** It asks for the 199 items to be reconciled one by one, root causes fixed, and the Radar used without being modified.
+- **"ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0".** It supplies **§37–§55**, i.e. phases 9–16 (self-healing, Radar & Frontier Lab, performance & routing, multimodality, multi-agent orchestration, automation & continuity, security & simplification, global validation), the A–P demonstration battery (§45), checkpoints (§46), limits (§47), immediate execution (§48), reporting (§49), success criteria (§50), golden rules (§51), technology watch (§52), acceleration (§53), release without deployment (§54) and the fundamental loop (§55).
+
+Both are recorded as **complements to V15.0**, not as a separate roadmap. The status stays PROPOSED, and V12.4/V14.4 remain canonical. Their execution is tracked through evidence files, starting with `docs/odg/evidence/V150_199_RECONCILIATION.json`.
 
 ## 1. Lineage (verified in the repository, 2026-11-22)
 
