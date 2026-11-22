@@ -18,6 +18,8 @@ const { runCensus } = require("./odg-component-census-run.ts");
 function main(argv: string[]): void {
   const out = (() => { const i = argv.indexOf("--write"); return i >= 0 ? argv[i + 1] : null; })();
   const head = (cp.spawnSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).stdout || "").trim();
+  // (inspection L1) the scan reads the WORKING TREE: record whether it differs from HEAD (paths only, sorted ⇒ deterministic)
+  const dirtyPaths = (cp.spawnSync("git", ["status", "--porcelain=v1", "--untracked-files=all", "--", "runtime", "scripts", "src"], { cwd: ROOT, encoding: "utf8" }).stdout || "").split("\n").filter(Boolean).map((l: string) => l.slice(3)).sort();
   const companion = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/v124-consolidated-roadmap.json"), "utf8"));
   const r = runCensus();
   const byId: Record<string, any> = {}; for (const rec of r.records || []) byId[rec.module] = rec;
@@ -38,7 +40,7 @@ function main(argv: string[]): void {
   });
   const tally: Record<string, number> = {}; for (const m of missions) tally[m.summary] = (tally[m.summary] || 0) + 1;
   const report = {
-    workItem: "WIC-V150-PHASE1-CORRESPONDENCE", head, generator: "runtime/bin/odg-v150-correspondence-run.ts",
+    workItem: "WIC-V150-PHASE1-CORRESPONDENCE", head, scannedTree: dirtyPaths.length ? "HEAD + uncommitted changes under runtime/scripts/src" : "HEAD (clean under runtime/scripts/src)", uncommittedScannedPaths: dirtyPaths, generator: "runtime/bin/odg-v150-correspondence-run.ts",
     composes: ["odg-component-census (runCensus: change-impact-graph + odg-consumer-scan + architecture-audit)", "docs/odg/v124-consolidated-roadmap.json"],
     census: { total: r.total, counts: r.counts, noConsumerWhy: r.noConsumerWhy, decisionSurfaceSize: (r.decisionSurface || []).length },
     missionSummary: tally, missions,
@@ -47,6 +49,7 @@ function main(argv: string[]): void {
       "NO_CONSUMER = no STATIC importer — can miss dynamic/spawn/app-dynamic consumers (over-reports orphans); never cite as dead",
       "a consumer count is not proof of real use in a real path (V15.0 §7.6 requires a traced scenario)",
       "mission→component links are those DECLARED in the V12.4 companion; undeclared components are not inferred",
+      "hasTest = an exact <module>.test.ts exists (stricter than the census heuristic, which also accepts <module>-*.test.ts)",
     ],
   };
   const text = JSON.stringify(report, null, 2) + "\n";

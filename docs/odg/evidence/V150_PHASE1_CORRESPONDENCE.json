@@ -1,6 +1,10 @@
 {
   "workItem": "WIC-V150-PHASE1-CORRESPONDENCE",
-  "head": "becbcdda3847a87b230c1f36792811aa48003d20",
+  "head": "5f7921b4158093e5583b0aba5e7e2a9e744c2ed2",
+  "scannedTree": "HEAD + uncommitted changes under runtime/scripts/src",
+  "uncommittedScannedPaths": [
+    "runtime/bin/odg-v150-correspondence-run.ts"
+  ],
   "generator": "runtime/bin/odg-v150-correspondence-run.ts",
   "composes": [
     "odg-component-census (runCensus: change-impact-graph + odg-consumer-scan + architecture-audit)",
@@ -921,6 +925,7 @@
   "limits": [
     "NO_CONSUMER = no STATIC importer — can miss dynamic/spawn/app-dynamic consumers (over-reports orphans); never cite as dead",
     "a consumer count is not proof of real use in a real path (V15.0 §7.6 requires a traced scenario)",
-    "mission→component links are those DECLARED in the V12.4 companion; undeclared components are not inferred"
+    "mission→component links are those DECLARED in the V12.4 companion; undeclared components are not inferred",
+    "hasTest = an exact <module>.test.ts exists (stricter than the census heuristic, which also accepts <module>-*.test.ts)"
   ]
 }
