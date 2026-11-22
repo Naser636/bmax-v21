@@ -77,6 +77,8 @@
   ],
   "decision": {
     "chosen": 8,
+    "atTopOfTestedRange": true,
+    "optimumNote": "chosen = highest level tested — the optimum may lie above it (not shown)",
     "bestMedianMs": 4179,
     "chosenMedianMs": 4179,
     "speedupVsSerial": 6.58,
@@ -111,6 +113,8 @@
   "limits": [
     "one host, one workload class (test suites) — the chosen level is valid for this workload/host only",
     "wall time includes tsx start-up per suite",
-    "no model/provider calls measured here"
-  ]
+    "no model/provider calls measured here",
+    "level 1 uses the serial runner (spawnSync), levels > 1 the async pool with isolated TMPDIR — part of the speed-up may be runner overhead"
+  ],
+  "decisionRecomputedFromStoredMeasurements": true
 }

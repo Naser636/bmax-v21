@@ -27,7 +27,8 @@ function chooseLevel(measurements: any[], opts?: any): any {
   const best = Math.min(...eligible.map((r: any) => r.medianMs));
   const chosen = eligible.find((r: any) => r.medianMs <= best * (1 + minGain)) || eligible[0];   // the best is always within its own bound
   const base = rows.find((r: any) => r.level === 1);
-  return Object.freeze({ chosen: chosen.level, bestMedianMs: best, chosenMedianMs: chosen.medianMs, speedupVsSerial: base && Number.isFinite(base.medianMs) ? +(base.medianMs / chosen.medianMs).toFixed(2) : null,
+  const top = Math.max(...rows.map((r: any) => r.level));
+  return Object.freeze({ chosen: chosen.level, atTopOfTestedRange: chosen.level === top, optimumNote: chosen.level === top ? "chosen = highest level tested — the optimum may lie above it (not shown)" : null, bestMedianMs: best, chosenMedianMs: chosen.medianMs, speedupVsSerial: base && Number.isFinite(base.medianMs) ? +(base.medianMs / chosen.medianMs).toFixed(2) : null,
     reason: "smallest failure-free level within " + Math.round(minGain * 100) + "% of the fastest (diminishing returns ⇒ fewer resources)", rows });
 }
 
@@ -67,7 +68,7 @@ async function main(argv: string[]): Promise<void> {
   const decision = chooseLevel(measurements, { minGain: parseFloat(arg("--min-gain", "0.10")) });
   const report = { scenario: "V15.0 §45 L — adaptive concurrency (measured)", host: { cpus: os.cpus().length, totalMemGb: Math.round(os.totalmem() / 1e9) },
     workload: { suites: files.length, list: files.map((f: string) => path.relative(ROOT, f)), excludedByPreflight: excluded, hermetic: "non-hazard core suites (odg-test-report.suiteIsHazard false), excluding suites that need runtime/dist or live artefacts" }, repeats, measurements, decision,
-    limits: ["one host, one workload class (test suites) — the chosen level is valid for this workload/host only", "wall time includes tsx start-up per suite", "no model/provider calls measured here"] };
+    limits: ["one host, one workload class (test suites) — the chosen level is valid for this workload/host only", "wall time includes tsx start-up per suite", "no model/provider calls measured here", "level 1 uses the serial runner (spawnSync), levels > 1 the async pool with isolated TMPDIR — part of the speed-up may be runner overhead", "--suites is clamped to 2..200 and --levels to 1..32"] };
   const text = JSON.stringify(report, null, 2) + "\n";
   if (out) fs.writeFileSync(path.resolve(ROOT, out), text); else process.stdout.write(text);
 }
