@@ -106,7 +106,7 @@
     {
       "query": "Toyota production: make only what is needed, when it is needed",
       "capability": "V14.4 Phase 4 efficiency — produce only what is needed (lean pipeline)",
-      "claim": "Toyota production makes only what is needed, when it is needed",
+      "claim": "Toyota states: only what is needed, when it is needed",
       "support": [
         {
           "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
@@ -133,7 +133,7 @@
     {
       "query": "SRE example error budget policy: release halt",
       "capability": "V14.4 Phase 4 reliability — change freeze",
-      "claim": "Google SRE's EXAMPLE error budget policy states it will halt all changes and releases other than P0 issues or security fixes",
+      "claim": "Google SRE's EXAMPLE policy states: we will halt all changes and releases other than P0 issues or security fixes",
       "support": [
         {
           "url": "https://sre.google/workbook/error-budget-policy/",
@@ -160,7 +160,7 @@
     {
       "query": "NASA requirements traceability",
       "capability": "V14.4 Phase 0/4 — requirement traceability",
-      "claim": "NASA defines traceability as the ability to trace a requirement/expectation to its parent requirement/expectation",
+      "claim": "NASA's handbook states: the ability to trace any given requirement/expectation to its parent requirement/expectation",
       "support": [
         {
           "url": "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
@@ -172,7 +172,7 @@
     {
       "query": "NASA independent verification and validation",
       "capability": "V14.4 Phase 4/7 — independent inspection",
-      "claim": "NASA policy uses the NASA IV&V Facility as the sole provider of IV&V services",
+      "claim": "NASA policy: use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services",
       "support": [
         {
           "url": "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety",

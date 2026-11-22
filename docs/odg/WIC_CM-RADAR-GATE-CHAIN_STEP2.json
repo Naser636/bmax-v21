@@ -13,7 +13,9 @@
     "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json",
     "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_EVIDENCE.json",
     "runtime/bin/odg-radar-gate-chain-step2-run.ts",
-    "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP2.json"
+    "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP2.json",
+    "runtime/bin/odg-radar-gate-chain-step2-run.test.ts",
+    "package.json (append the new test to test:report only)"
   ],
   "invariants": [
     "egress only after research-governor ALLOW + bounded-http-client validateUrl ok",
@@ -28,7 +30,8 @@
     "single-source claims NOT admitted",
     "second pass reuses admitted facts",
     "honesty limits stated (same-organization corroboration, extractor-model quotes, partial read)",
-    "every admitted claim is supported, per source, by a supportingQuote found verbatim in that source's recorded quotes"
+    "every admitted claim is supported, per source, by a supportingQuote found verbatim in that source's recorded quotes",
+    "claim↔quote binding: quote verbatim on page, ≥4 words/≥20 chars, contained in the claim, and every claim content word covered by that source's quotes or an explicit FRAMING list; inspector attacks are regression tests"
   ],
   "results": {
     "callsUsed": 6,
