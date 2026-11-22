@@ -138,6 +138,12 @@ function runRepairWorkflow(task: any, opts: any = {}): any {
 
   // Snapshot the workspace for exact rollback.
   const snapshot = workspaceDir.replace(/\/+$/, "") + ".snapshot-" + path.basename(workspaceDir);
+  // CRASH SAFETY (V15.0 §45-E): a snapshot left on disk means a prior run was interrupted between apply and
+  // finalize (e.g. killed mid-repair). It MAY be the only clean copy (it can also be partial — crash during the copy); overwriting it would bake a half-applied change into
+  // the new baseline. Refuse (fail-closed) and leave BOTH dirs untouched for a verified rollback by the caller.
+  if (fs.existsSync(snapshot)) {
+    return { ok: false, status: "BLOCKED", code: "INTERRUPTED_PRIOR_RUN", reason: `stale snapshot from an interrupted prior run exists (${snapshot}) — workspace may hold a half-applied change and the snapshot itself may be partial (never restore from it blindly); restore from the verified pre-change reference before retrying`, snapshotPath: snapshot, acceptanceCommand: acceptance.command };
+  }
   const changed: string[] = [];
   let baseline: any = null, post: any = null, applied = false;
   try {

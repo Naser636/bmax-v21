@@ -1,0 +1,806 @@
+{
+  "scenario": "V15.0 §45 E — self-healing, end-to-end + reproducible",
+  "reproduce": "npx tsx runtime/bin/odg-scenario-e-self-healing.ts --write-evidence   (test: npx tsx runtime/bin/odg-scenario-e-self-healing.test.ts)",
+  "composition": {
+    "builtNoSecondRepairEngine": true,
+    "detect": "code-execution.defaultRunner (real node test subprocess) + rce-signal-collector.collect",
+    "diagnose": "repair-planner.planRepair (rce-root-cause-intelligence) over evidence measured from the real failing test output",
+    "authorize": "repair-planner.planRepair over the candidate paths (repair-workflow.makeWriteSetGuard); write-set = src/ (tests are NOT editable)",
+    "checkpoint": "checkpoint-engine.begin/stageRunning/stageDone/stageFailed/complete (state in a per-case control dir) + sha256 whole-tree manifest/copy as the rollback reference",
+    "applyAndTargetedTest": "repair-workflow.runRepairWorkflow (isolated sandbox workspace, reproduce-before-modify, acceptance = targeted test, own snapshot rollback)",
+    "decision": "fdir-engine.runFdir (recover = generate+authorize+runRepairWorkflow; verify = independent verifier) — RECOVERED only on independent PASS",
+    "independentAcceptance": "fresh copy of the workspace; targeted + regression tests; diff vs checkpoint confined to the write-set (SCENARIO_HARNESS glue over code-execution + makeWriteSetGuard)",
+    "rollback": "repair-workflow snapshot restore, or fdir-engine VERIFIED_ROLLBACK (only with a verified reference); checked by whole-tree sha256 (incl. .git)"
+  },
+  "attribution": {
+    "ODG_NATIVE_COMPONENT": "existing runtime/core code made the decision (detect, diagnose, authorize, checkpoint, apply, accept/reject, rollback)",
+    "PROVIDER": "the candidate fix is a deterministic SCRIPTED seam written by the provider (no model). ODG did NOT generate any fix.",
+    "SCENARIO_HARNESS": "glue in this bin: the independent-verifier composition and the simulated crash (fault injection)"
+  },
+  "realDefectFound": {
+    "module": "runtime/core/repair-workflow.ts",
+    "defect": "crash between apply and finalize leaves <ws>.snapshot-<name> (the ONLY clean copy). The next runRepairWorkflow deleted it, re-snapshotted the half-applied workspace and could return NO_REPAIR_NEEDED (ok:true) keeping an UNVERIFIED change. Reproduced with a SIGKILLed child before the fix.",
+    "fix": "minimal (6 lines): if the snapshot already exists ⇒ BLOCKED code INTERRUPTED_PRIOR_RUN, both dirs untouched; caller restores from a verified reference (case 6 does so via fdir VERIFIED_ROLLBACK)",
+    "failBeforeTest": "runtime/bin/odg-scenario-e-self-healing.test.ts section (0) — fails on the pre-fix module, passes after"
+  },
+  "pr885AntiLoopNote": {
+    "checked": "grep maxRepair across runtime/bin + runtime/core callers of native-project-builder.buildProject",
+    "finding": "no live runner uses maxRepair > 1 by default: odg-native-explore/odg-native-calibrate = 1, odg-native-duel = 0|1, odg-native-hardbench default 1 (optional CLI arg), odg-intelligent-native-run supplies a calibrated-reliable history ⇒ policy picks maxRepair 1. Only odg-local-model-execution-policy (maxRepair 3 for medium/low P) and odg-decomposed-execution (default 2) could exceed 1, and no bin reaches those branches today.",
+    "verdict": "integrated, operational benefit not demonstrated",
+    "budgetChanged": false
+  },
+  "limits": [
+    "sandbox is a tiny synthetic JS module + 2 tests with ONE injected defect; not a real-repo repair",
+    "the fix candidate is scripted (PROVIDER); generation quality is not measured here",
+    "single repair attempt per case (fdir BOUNDED_RETRY decided, retry not exercised)",
+    "the crash is a SIGKILL of a child at a fixed point (after apply, before verify), not arbitrary-point power loss",
+    "durations are wall-clock on this host and vary run to run"
+  ],
+  "run": {
+    "node": "v22.22.1",
+    "platform": "linux",
+    "allAsExpected": true,
+    "cases": [
+      {
+        "id": 1,
+        "name": "successful repair",
+        "seam": "good",
+        "outcome": "ACCEPTED",
+        "durationMs": 1972,
+        "decidedBy": "repair-workflow ACCEPTED + independent verifier PASS ⇒ fdir RECOVERED",
+        "steps": [
+          {
+            "step": "detect",
+            "decidedBy": "code-execution.defaultRunner + rce-signal-collector.collect",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "detected": true,
+            "confirmedSignals": 1
+          },
+          {
+            "step": "diagnose",
+            "decidedBy": "repair-planner.planRepair (rce-root-cause-intelligence)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "failingCase": "add(2,3) expected 5 got -1",
+            "file": "src/calc.js",
+            "fn": "add",
+            "rootCause": {
+              "id": "logic-defect:src/calc.js:add",
+              "layer": "ROOT_CAUSE",
+              "confidence": 1
+            },
+            "planVerdict": "PLAN_READY",
+            "regressionBaseline": "PASS"
+          },
+          {
+            "step": "checkpoint",
+            "decidedBy": "checkpoint-engine (stage state) + scenario sha256 tree manifest/copy (rollback reference)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "treeHash": "3c4519f29bf3b8e4b48d6b6eefb49709afc224ea463cdd35f77cd48b1539099c",
+            "fileCount": 33
+          },
+          {
+            "step": "generate",
+            "decidedBy": "scripted seam 'good' (no model)",
+            "attribution": "PROVIDER",
+            "ok": true,
+            "kind": "CANDIDATE",
+            "detail": null,
+            "paths": [
+              "src/calc.js"
+            ]
+          },
+          {
+            "step": "authorize",
+            "decidedBy": "repair-planner.planRepair (repair-workflow.makeWriteSetGuard)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "verdict": "PLAN_READY",
+            "rejected": []
+          },
+          {
+            "step": "apply+targeted-test",
+            "decidedBy": "repair-workflow.runRepairWorkflow",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "status": "ACCEPTED",
+            "code": null,
+            "baseline": {
+              "status": "FAIL",
+              "exitCode": 1
+            },
+            "post": {
+              "status": "PASS",
+              "exitCode": 0
+            },
+            "rolledBack": false,
+            "changedFiles": [
+              "src/calc.js"
+            ]
+          },
+          {
+            "step": "independent-acceptance",
+            "decidedBy": "independent verifier (fresh copy; targeted+regression via code-execution; confined diff via makeWriteSetGuard) consumed as fdir verify",
+            "attribution": "SCENARIO_HARNESS",
+            "ok": true,
+            "target": "PASS",
+            "regression": "PASS",
+            "changed": [
+              "src/calc.js"
+            ],
+            "stray": [],
+            "detail": null
+          },
+          {
+            "step": "decision",
+            "decidedBy": "fdir-engine.runFdir",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "fdirStatus": "RECOVERED",
+            "action": "BOUNDED_RETRY",
+            "verified": true,
+            "operational": true
+          }
+        ],
+        "rollback": {
+          "identical": false,
+          "treeHash": "d9d067ae672c92aa11f17a49940b0dc2a812b5b36dc1f5d1d35f3a4ef0e0085e",
+          "changedVsCheckpoint": [
+            "src/calc.js"
+          ],
+          "by": "no change applied"
+        },
+        "fdir": "RECOVERED",
+        "checkpointFinal": "COMPLETE",
+        "independent": {
+          "target": "PASS",
+          "regression": "PASS"
+        },
+        "repairWorkflow": {
+          "status": "ACCEPTED",
+          "rolledBack": false
+        },
+        "expected": "ACCEPTED"
+      },
+      {
+        "id": 2,
+        "name": "ineffective fix (still failing)",
+        "seam": "ineffective",
+        "outcome": "REJECTED_ROLLED_BACK",
+        "durationMs": 1483,
+        "decidedBy": "repair-workflow ABSTAINED (own snapshot rollback) ⇒ fdir RECOVERY_FAILED",
+        "steps": [
+          {
+            "step": "detect",
+            "decidedBy": "code-execution.defaultRunner + rce-signal-collector.collect",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "detected": true,
+            "confirmedSignals": 1
+          },
+          {
+            "step": "diagnose",
+            "decidedBy": "repair-planner.planRepair (rce-root-cause-intelligence)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "failingCase": "add(2,3) expected 5 got -1",
+            "file": "src/calc.js",
+            "fn": "add",
+            "rootCause": {
+              "id": "logic-defect:src/calc.js:add",
+              "layer": "ROOT_CAUSE",
+              "confidence": 1
+            },
+            "planVerdict": "PLAN_READY",
+            "regressionBaseline": "PASS"
+          },
+          {
+            "step": "checkpoint",
+            "decidedBy": "checkpoint-engine (stage state) + scenario sha256 tree manifest/copy (rollback reference)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "treeHash": "8c6e9aa838e68536a29fe92edd34447a9fc7aa45afb8dd95b8e37ca926ab6d66",
+            "fileCount": 33
+          },
+          {
+            "step": "generate",
+            "decidedBy": "scripted seam 'ineffective' (no model)",
+            "attribution": "PROVIDER",
+            "ok": true,
+            "kind": "CANDIDATE",
+            "detail": null,
+            "paths": [
+              "src/calc.js"
+            ]
+          },
+          {
+            "step": "authorize",
+            "decidedBy": "repair-planner.planRepair (repair-workflow.makeWriteSetGuard)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "verdict": "PLAN_READY",
+            "rejected": []
+          },
+          {
+            "step": "apply+targeted-test",
+            "decidedBy": "repair-workflow.runRepairWorkflow",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "status": "ABSTAINED",
+            "code": null,
+            "baseline": {
+              "status": "FAIL",
+              "exitCode": 1
+            },
+            "post": {
+              "status": "FAIL",
+              "exitCode": 1
+            },
+            "rolledBack": true,
+            "changedFiles": []
+          },
+          {
+            "step": "decision",
+            "decidedBy": "fdir-engine.runFdir",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "fdirStatus": "RECOVERY_FAILED",
+            "action": "BOUNDED_RETRY",
+            "verified": false,
+            "operational": false
+          }
+        ],
+        "rollback": {
+          "identical": true,
+          "treeHash": "8c6e9aa838e68536a29fe92edd34447a9fc7aa45afb8dd95b8e37ca926ab6d66",
+          "changedVsCheckpoint": [],
+          "by": "repair-workflow snapshot restore"
+        },
+        "fdir": "RECOVERY_FAILED",
+        "checkpointFinal": "FAILED",
+        "repairWorkflow": {
+          "status": "ABSTAINED",
+          "rolledBack": true
+        },
+        "expected": "REJECTED_ROLLED_BACK"
+      },
+      {
+        "id": 3,
+        "name": "fix passes target but breaks regression",
+        "seam": "breaksRegression",
+        "outcome": "REJECTED_ROLLED_BACK",
+        "durationMs": 1923,
+        "decidedBy": "independent verifier FAIL ⇒ fdir UNVERIFIED ⇒ fdir VERIFIED_ROLLBACK",
+        "steps": [
+          {
+            "step": "detect",
+            "decidedBy": "code-execution.defaultRunner + rce-signal-collector.collect",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "detected": true,
+            "confirmedSignals": 1
+          },
+          {
+            "step": "diagnose",
+            "decidedBy": "repair-planner.planRepair (rce-root-cause-intelligence)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "failingCase": "add(2,3) expected 5 got -1",
+            "file": "src/calc.js",
+            "fn": "add",
+            "rootCause": {
+              "id": "logic-defect:src/calc.js:add",
+              "layer": "ROOT_CAUSE",
+              "confidence": 1
+            },
+            "planVerdict": "PLAN_READY",
+            "regressionBaseline": "PASS"
+          },
+          {
+            "step": "checkpoint",
+            "decidedBy": "checkpoint-engine (stage state) + scenario sha256 tree manifest/copy (rollback reference)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "treeHash": "62246cc0b9a3dc2a22e458816c1256f80f6ccd5935ea4112b30ee0e11000ca6c",
+            "fileCount": 33
+          },
+          {
+            "step": "generate",
+            "decidedBy": "scripted seam 'breaksRegression' (no model)",
+            "attribution": "PROVIDER",
+            "ok": true,
+            "kind": "CANDIDATE",
+            "detail": null,
+            "paths": [
+              "src/calc.js"
+            ]
+          },
+          {
+            "step": "authorize",
+            "decidedBy": "repair-planner.planRepair (repair-workflow.makeWriteSetGuard)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "verdict": "PLAN_READY",
+            "rejected": []
+          },
+          {
+            "step": "apply+targeted-test",
+            "decidedBy": "repair-workflow.runRepairWorkflow",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "status": "ACCEPTED",
+            "code": null,
+            "baseline": {
+              "status": "FAIL",
+              "exitCode": 1
+            },
+            "post": {
+              "status": "PASS",
+              "exitCode": 0
+            },
+            "rolledBack": false,
+            "changedFiles": [
+              "src/calc.js"
+            ]
+          },
+          {
+            "step": "independent-acceptance",
+            "decidedBy": "independent verifier (fresh copy; targeted+regression via code-execution; confined diff via makeWriteSetGuard) consumed as fdir verify",
+            "attribution": "SCENARIO_HARNESS",
+            "ok": false,
+            "target": "PASS",
+            "regression": "FAIL",
+            "changed": [
+              "src/calc.js"
+            ],
+            "stray": [],
+            "detail": "FAIL regression mul(2,3) expected 6 got 5 [src/calc.js:mul]"
+          },
+          {
+            "step": "decision",
+            "decidedBy": "fdir-engine.runFdir",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "fdirStatus": "UNVERIFIED",
+            "action": "BOUNDED_RETRY",
+            "verified": false,
+            "operational": false
+          },
+          {
+            "step": "rollback",
+            "decidedBy": "fdir-engine.runFdir VERIFIED_ROLLBACK",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "fdirStatus": "RECOVERED",
+            "action": "VERIFIED_ROLLBACK",
+            "verified": true,
+            "referenceVerified": true
+          }
+        ],
+        "rollback": {
+          "identical": true,
+          "treeHash": "62246cc0b9a3dc2a22e458816c1256f80f6ccd5935ea4112b30ee0e11000ca6c",
+          "changedVsCheckpoint": [],
+          "by": "fdir VERIFIED_ROLLBACK"
+        },
+        "fdir": "UNVERIFIED",
+        "checkpointFinal": "FAILED",
+        "independent": {
+          "target": "PASS",
+          "regression": "FAIL"
+        },
+        "repairWorkflow": {
+          "status": "ACCEPTED",
+          "rolledBack": false
+        },
+        "expected": "REJECTED_ROLLED_BACK"
+      },
+      {
+        "id": 4,
+        "name": "generation error (seam returns error)",
+        "seam": "genError",
+        "outcome": "REJECTED_GENERATION_ERROR",
+        "durationMs": 1051,
+        "decidedBy": "code-execution.defaultRunner (seam bounded) ⇒ fdir RECOVERY_FAILED",
+        "steps": [
+          {
+            "step": "detect",
+            "decidedBy": "code-execution.defaultRunner + rce-signal-collector.collect",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "detected": true,
+            "confirmedSignals": 1
+          },
+          {
+            "step": "diagnose",
+            "decidedBy": "repair-planner.planRepair (rce-root-cause-intelligence)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "failingCase": "add(2,3) expected 5 got -1",
+            "file": "src/calc.js",
+            "fn": "add",
+            "rootCause": {
+              "id": "logic-defect:src/calc.js:add",
+              "layer": "ROOT_CAUSE",
+              "confidence": 1
+            },
+            "planVerdict": "PLAN_READY",
+            "regressionBaseline": "PASS"
+          },
+          {
+            "step": "checkpoint",
+            "decidedBy": "checkpoint-engine (stage state) + scenario sha256 tree manifest/copy (rollback reference)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "treeHash": "f5dc56c978aea9fa893855810f5561e78421543851719e02918b2ca1d81be589",
+            "fileCount": 33
+          },
+          {
+            "step": "generate",
+            "decidedBy": "scripted seam 'genError' (no model)",
+            "attribution": "PROVIDER",
+            "ok": false,
+            "kind": "GENERATION_ERROR",
+            "detail": "seam exit 3: seam: generation failed (scripted provider error)",
+            "paths": []
+          },
+          {
+            "step": "decision",
+            "decidedBy": "fdir-engine.runFdir",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "fdirStatus": "RECOVERY_FAILED",
+            "action": "BOUNDED_RETRY",
+            "verified": false,
+            "operational": false
+          }
+        ],
+        "rollback": {
+          "identical": true,
+          "treeHash": "f5dc56c978aea9fa893855810f5561e78421543851719e02918b2ca1d81be589",
+          "changedVsCheckpoint": [],
+          "by": "no change applied"
+        },
+        "fdir": "RECOVERY_FAILED",
+        "checkpointFinal": "FAILED",
+        "expected": "REJECTED_GENERATION_ERROR"
+      },
+      {
+        "id": 5,
+        "name": "timeout (seam hangs, bounded)",
+        "seam": "hang",
+        "outcome": "REJECTED_TIMEOUT",
+        "durationMs": 2385,
+        "decidedBy": "code-execution.defaultRunner (seam bounded) ⇒ fdir RECOVERY_FAILED",
+        "steps": [
+          {
+            "step": "detect",
+            "decidedBy": "code-execution.defaultRunner + rce-signal-collector.collect",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "detected": true,
+            "confirmedSignals": 1
+          },
+          {
+            "step": "diagnose",
+            "decidedBy": "repair-planner.planRepair (rce-root-cause-intelligence)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "failingCase": "add(2,3) expected 5 got -1",
+            "file": "src/calc.js",
+            "fn": "add",
+            "rootCause": {
+              "id": "logic-defect:src/calc.js:add",
+              "layer": "ROOT_CAUSE",
+              "confidence": 1
+            },
+            "planVerdict": "PLAN_READY",
+            "regressionBaseline": "PASS"
+          },
+          {
+            "step": "checkpoint",
+            "decidedBy": "checkpoint-engine (stage state) + scenario sha256 tree manifest/copy (rollback reference)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "treeHash": "7770c13bdacd1f3a17c8e183cc2b802f58253384d3d1d96ad0832e012777f46e",
+            "fileCount": 33
+          },
+          {
+            "step": "generate",
+            "decidedBy": "scripted seam 'hang' (no model)",
+            "attribution": "PROVIDER",
+            "ok": false,
+            "kind": "TIMEOUT",
+            "detail": "seam exceeded 1500ms — killed (bounded)",
+            "paths": []
+          },
+          {
+            "step": "decision",
+            "decidedBy": "fdir-engine.runFdir",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "fdirStatus": "RECOVERY_FAILED",
+            "action": "BOUNDED_RETRY",
+            "verified": false,
+            "operational": false
+          }
+        ],
+        "rollback": {
+          "identical": true,
+          "treeHash": "7770c13bdacd1f3a17c8e183cc2b802f58253384d3d1d96ad0832e012777f46e",
+          "changedVsCheckpoint": [],
+          "by": "no change applied"
+        },
+        "fdir": "RECOVERY_FAILED",
+        "checkpointFinal": "FAILED",
+        "expected": "REJECTED_TIMEOUT"
+      },
+      {
+        "id": 6,
+        "name": "interruption mid-repair (crash between apply and verify)",
+        "seam": "good",
+        "outcome": "INTERRUPTED_RESTORED",
+        "durationMs": 2253,
+        "decidedBy": "checkpoint-engine (resume) + repair-workflow (INTERRUPTED_PRIOR_RUN) + fdir-engine (VERIFIED_ROLLBACK)",
+        "steps": [
+          {
+            "step": "detect",
+            "decidedBy": "code-execution.defaultRunner + rce-signal-collector.collect",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "detected": true,
+            "confirmedSignals": 1
+          },
+          {
+            "step": "diagnose",
+            "decidedBy": "repair-planner.planRepair (rce-root-cause-intelligence)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "failingCase": "add(2,3) expected 5 got -1",
+            "file": "src/calc.js",
+            "fn": "add",
+            "rootCause": {
+              "id": "logic-defect:src/calc.js:add",
+              "layer": "ROOT_CAUSE",
+              "confidence": 1
+            },
+            "planVerdict": "PLAN_READY",
+            "regressionBaseline": "PASS"
+          },
+          {
+            "step": "checkpoint",
+            "decidedBy": "checkpoint-engine (stage state) + scenario sha256 tree manifest/copy (rollback reference)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "treeHash": "610f3b73cff7796caed88db7f0d27ce658a5885f5cc78acad336fa2fcd63cdfb",
+            "fileCount": 33
+          },
+          {
+            "step": "generate",
+            "decidedBy": "scripted seam 'good' (no model)",
+            "attribution": "PROVIDER",
+            "ok": true,
+            "kind": "CANDIDATE",
+            "detail": null,
+            "paths": [
+              "src/calc.js"
+            ]
+          },
+          {
+            "step": "authorize",
+            "decidedBy": "repair-planner.planRepair (repair-workflow.makeWriteSetGuard)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "verdict": "PLAN_READY"
+          },
+          {
+            "step": "apply(crash)",
+            "decidedBy": "simulated fault: child running runRepairWorkflow SIGKILLed after apply, before verify",
+            "attribution": "SCENARIO_HARNESS",
+            "childSignal": "SIGKILL",
+            "childStatus": null,
+            "halfAppliedFiles": [
+              "src/calc.js"
+            ],
+            "staleSnapshotLeft": true
+          },
+          {
+            "step": "restart",
+            "decidedBy": "checkpoint-engine.begin (resume detection) + repair-workflow stale-snapshot guard",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "checkpointStatusBefore": "RUNNING",
+            "stageBefore": "apply",
+            "resumeIndex": 5,
+            "resumeStage": "apply",
+            "retryStatus": "BLOCKED",
+            "retryCode": "INTERRUPTED_PRIOR_RUN"
+          },
+          {
+            "step": "rollback",
+            "decidedBy": "fdir-engine.runFdir VERIFIED_ROLLBACK",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "fdirStatus": "RECOVERED",
+            "action": "VERIFIED_ROLLBACK",
+            "verified": true,
+            "referenceVerified": true
+          }
+        ],
+        "crash": {
+          "childSignal": "SIGKILL",
+          "halfAppliedFiles": [
+            "src/calc.js"
+          ],
+          "resumeStage": "apply",
+          "retryCode": "INTERRUPTED_PRIOR_RUN"
+        },
+        "rollback": {
+          "identical": true,
+          "treeHash": "610f3b73cff7796caed88db7f0d27ce658a5885f5cc78acad336fa2fcd63cdfb",
+          "staleSnapshotRemoved": true
+        },
+        "expected": "INTERRUPTED_RESTORED"
+      },
+      {
+        "id": 7,
+        "name": "permission refused (change outside write-set)",
+        "seam": "outsideWriteSet",
+        "outcome": "REFUSED_WRITE_SET",
+        "durationMs": 940,
+        "decidedBy": "repair-planner WRITE_SET_VIOLATION ⇒ fdir RECOVERY_FAILED",
+        "steps": [
+          {
+            "step": "detect",
+            "decidedBy": "code-execution.defaultRunner + rce-signal-collector.collect",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "detected": true,
+            "confirmedSignals": 1
+          },
+          {
+            "step": "diagnose",
+            "decidedBy": "repair-planner.planRepair (rce-root-cause-intelligence)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "failingCase": "add(2,3) expected 5 got -1",
+            "file": "src/calc.js",
+            "fn": "add",
+            "rootCause": {
+              "id": "logic-defect:src/calc.js:add",
+              "layer": "ROOT_CAUSE",
+              "confidence": 1
+            },
+            "planVerdict": "PLAN_READY",
+            "regressionBaseline": "PASS"
+          },
+          {
+            "step": "checkpoint",
+            "decidedBy": "checkpoint-engine (stage state) + scenario sha256 tree manifest/copy (rollback reference)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "treeHash": "b08b8058e980ec64e9e75a9e71387a6f7f4bc80150bb4208a2d71dc491369fa1",
+            "fileCount": 33
+          },
+          {
+            "step": "generate",
+            "decidedBy": "scripted seam 'outsideWriteSet' (no model)",
+            "attribution": "PROVIDER",
+            "ok": true,
+            "kind": "CANDIDATE",
+            "detail": null,
+            "paths": [
+              "test/target.test.js"
+            ]
+          },
+          {
+            "step": "authorize",
+            "decidedBy": "repair-planner.planRepair (repair-workflow.makeWriteSetGuard)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "verdict": "WRITE_SET_VIOLATION",
+            "rejected": [
+              "test/target.test.js"
+            ]
+          },
+          {
+            "step": "decision",
+            "decidedBy": "fdir-engine.runFdir",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "fdirStatus": "RECOVERY_FAILED",
+            "action": "BOUNDED_RETRY",
+            "verified": false,
+            "operational": false
+          },
+          {
+            "step": "defense-in-depth",
+            "decidedBy": "repair-workflow.runRepairWorkflow (direct)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "status": "REJECTED",
+            "code": "WRITE_SET_VIOLATION"
+          }
+        ],
+        "directRepairWorkflow": {
+          "status": "REJECTED",
+          "code": "WRITE_SET_VIOLATION"
+        },
+        "rollback": {
+          "identical": true,
+          "treeHash": "b08b8058e980ec64e9e75a9e71387a6f7f4bc80150bb4208a2d71dc491369fa1",
+          "changedVsCheckpoint": [],
+          "by": "no change applied"
+        },
+        "fdir": "RECOVERY_FAILED",
+        "checkpointFinal": "FAILED",
+        "expected": "REFUSED_WRITE_SET"
+      },
+      {
+        "id": 8,
+        "name": "rollback verified by hash (rejected repair + tamper control)",
+        "seam": "ineffective",
+        "outcome": "REJECTED_ROLLED_BACK",
+        "durationMs": 1526,
+        "decidedBy": "repair-workflow ABSTAINED (own snapshot rollback) ⇒ fdir RECOVERY_FAILED",
+        "steps": [
+          {
+            "step": "detect",
+            "decidedBy": "code-execution.defaultRunner + rce-signal-collector.collect",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "detected": true,
+            "confirmedSignals": 1
+          },
+          {
+            "step": "diagnose",
+            "decidedBy": "repair-planner.planRepair (rce-root-cause-intelligence)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "failingCase": "add(2,3) expected 5 got -1",
+            "file": "src/calc.js",
+            "fn": "add",
+            "rootCause": {
+              "id": "logic-defect:src/calc.js:add",
+              "layer": "ROOT_CAUSE",
+              "confidence": 1
+            },
+            "planVerdict": "PLAN_READY",
+            "regressionBaseline": "PASS"
+          },
+          {
+            "step": "checkpoint",
+            "decidedBy": "checkpoint-engine (stage state) + scenario sha256 tree manifest/copy (rollback reference)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "treeHash": "f04cffb9ab287f72da720eb71058a56389baab2e93d4092e186dbf571b3389c6",
+            "fileCount": 33
+          },
+          {
+            "step": "generate",
+            "decidedBy": "scripted seam 'ineffective' (no model)",
+            "attribution": "PROVIDER",
+            "ok": true,
+            "kind": "CANDIDATE",
+            "detail": null,
+            "paths": [
+              "src/calc.js"
+            ]
+          },
+          {
+            "step": "authorize",
+            "decidedBy": "repair-planner.planRepair (repair-workflow.makeWriteSetGuard)",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "verdict": "PLAN_READY",
+            "rejected": []
+          },
+          {
+            "step": "apply+targeted-test",
+            "decidedBy": "repair-workflow.runRepairWorkflow",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "status": "ABSTAINED",
+            "code": null,
+            "baseline": {
+              "status": "FAIL",
+              "exitCode": 1
+            },
+            "post": {
+              "status": "FAIL",
+              "exitCode": 1
+            },
+            "rolledBack": true,
+            "changedFiles": []
+          },
+          {
+            "step": "decision",
+            "decidedBy": "fdir-engine.runFdir",
+            "attribution": "ODG_NATIVE_COMPONENT",
+            "fdirStatus": "RECOVERY_FAILED",
+            "action": "BOUNDED_RETRY",
+            "verified": false,
+            "operational": false
+          }
+        ],
+        "rollback": {
+          "identical": true,
+          "treeHash": "f04cffb9ab287f72da720eb71058a56389baab2e93d4092e186dbf571b3389c6",
+          "changedVsCheckpoint": [],
+          "by": "repair-workflow snapshot restore"
+        },
+        "tamperControl": {
+          "detected": true,
+          "differing": [
+            "src/calc.js"
+          ]
+        },
+        "fdir": "RECOVERY_FAILED",
+        "checkpointFinal": "FAILED",
+        "repairWorkflow": {
+          "status": "ABSTAINED",
+          "rolledBack": true
+        },
+        "expected": "REJECTED_ROLLED_BACK"
+      }
+    ]
+  }
+}
