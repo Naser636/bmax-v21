@@ -1,0 +1,39 @@
+{
+  "checkpoint": "V150-CP2 (§46)",
+  "date": "2026-11-22",
+  "headInitial": "07838b18",
+  "headFinal": "0b778070",
+  "prs": {
+    "#884": "FR invoice precheck + due date on the live BTP journey",
+    "#885": "phase-9 anti-loop in native repair (latent: live runners use maxRepair ≤ 1)",
+    "#886": "scenario L measured adaptive concurrency",
+    "#887": "battery A–P map (evidence)"
+  },
+  "batteryAtoP": {
+    "map": "docs/odg/evidence/V150_BATTERY_A_P_MAP.json",
+    "verdicts": {
+      "A": "PARTIAL",
+      "B": "EXISTS",
+      "C": "PARTIAL",
+      "D": "PARTIAL",
+      "E": "PARTIAL",
+      "F": "PARTIAL",
+      "G": "EXISTS",
+      "H": "PARTIAL",
+      "I": "EXISTS",
+      "J": "PARTIAL",
+      "K": "PARTIAL",
+      "L": "NONE",
+      "M": "PARTIAL",
+      "N": "PARTIAL",
+      "O": "EXISTS",
+      "P": "PARTIAL"
+    },
+    "builtThisCheckpoint": [
+      "L (was NONE): measured 1/2/4/8 ⇒ 8 workers, 6.58×, at the top of the tested range (optimum not shown)"
+    ]
+  },
+  "nativeVsProvider": "all construction by the provider (Claude Code) and its sub-agents; ODG-native share of this work = 0 (not claimed)",
+  "boussole": "docs/odg/v124-consolidated-roadmap.json unchanged (last change 53a1dedb); no protected register touched; Radar unchanged",
+  "nextAction": "F/M (integration of conflicting worker outputs + multi-task SIGKILL resume), then J/H (alternative strategy after the anti-loop stop + measured before/after fed to the evolution loop)"
+}
