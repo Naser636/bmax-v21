@@ -5,7 +5,7 @@
  * demand (directive §7: "un parcours complet ... reproductible"). It drives odg-btp-lifecycle-integration.runLifecycle with
  * ONE fully-specified SYNTHETIC scenario that exercises every real engine:
  *   CLIENT_INTAKE → QUOTATION → WORK_PACKAGE → PLANNING → PAYMENT_TERMS → CASH_RECONCILIATION → REALIZED_PROFITABILITY →
- *   PROCUREMENT → PRICE_REVISION → RETENUE_GARANTIE → RETENUE_RELEASE  (12 stages, 13 cross-stage consistency links).
+ *   PROCUREMENT → PRICE_REVISION → RETENUE_GARANTIE → RETENUE_RELEASE → FR_INVOICE_PRECHECK  (12 stages, 14 cross-stage consistency links).
  * Pure composition of EXISTING engines; it builds nothing new, mutates nothing, opens no network, writes nothing.
  *
  * HONESTY: the scenario is SYNTHETIC — it proves INTEGRATION (the data flows consistently across the real engines), NOT
