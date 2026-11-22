@@ -53,6 +53,23 @@ const spoof = { ...perfect, sources: perfect.sources.map((s: any) => ({ ...s, st
 const aS = K.assessClaim(spoof, { asOfEpochMs: ASOF, byUrl, missionAuthorization: "INTERNAL_INTEGRATION" });
 check("ATTACK: a spoofed source-level key not GROUNDED in the citation ⇒ not counted, not a fact", aS.dimensions.epistemic !== "CORROBORATED" && aS.isFact === false && aS.reasons.some((r: string) => /GROUNDED/.test(r)));
 
+// INSPECTOR ROUND-2 ATTACKS: grammar-only keys, ungrounded relation/scope, presented claim text not in any source.
+const SMA = "https://sma.nasa.gov/p"; const byA = { ...byUrl, [SMA]: { title: "Software Assurance and Software Safety", quotes: ["use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services"] } };
+const atk1 = { subject: "it", relation: "is perfect", value: "the", nature: "OFFICIAL_DOCUMENTATION", text: "ODG is perfect",
+  sources: [{ url: SRE, text: "An error budget is 1 minus the SLO of the service", citation: "An error budget is 1 minus the SLO of the service", structured: { subject: "it", relation: "is perfect", value: "the" } },
+            { url: NIST, text: "NIST states it is intended for voluntary use", citation: "is intended for voluntary use", structured: { subject: "it", relation: "is perfect", value: "the" } }] };
+check("ATTACK R2-1: grammar-only key ⇒ never grounded ⇒ not corroborated, not a fact", K.assessClaim(atk1, { asOfEpochMs: ASOF, byUrl, missionAuthorization: "INTERNAL_INTEGRATION" }).isFact === false);
+const atk2 = { subject: "the", relation: "is NOT", value: "is the", nature: "OFFICIAL_DOCUMENTATION", text: "ODG is perfect",
+  sources: [{ url: SRE, text: "An error budget is 1 minus the SLO of the service", citation: "An error budget is 1 minus the SLO of the service", structured: { subject: "the", relation: "is NOT", value: "is the" } },
+            { url: SMA, text: "NASA policy: use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services", citation: "use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services", structured: { subject: "the", relation: "is NOT", value: "is the" } }] };
+check("ATTACK R2-2: free-text relation outside the controlled vocabulary ⇒ not grounded, not a fact", K.assessClaim(atk2, { asOfEpochMs: ASOF, byUrl: byA }).isFact === false);
+const useKey = { subject: "use", relation: "designates", value: "use", scope: "all software" };
+const atk3 = { ...useKey, nature: "OFFICIAL_DOCUMENTATION", text: "use mandates use for all software",
+  sources: [{ url: NIST, text: "NIST states it is intended for voluntary use", citation: "is intended for voluntary use", structured: useKey },
+            { url: SMA, text: "NASA policy: use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services", citation: "use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services", structured: useKey }] };
+check("ATTACK R2-3: one shared content word ('use') ⇒ value needs ≥2 content words ⇒ not a fact", K.assessClaim(atk3, { asOfEpochMs: ASOF, byUrl: byA, missionAuthorization: "INTERNAL_INTEGRATION" }).isFact === false);
+const presented = { ...corro, text: "An error budget proves ODG is perfect", sources: corro.sources.map((s: any) => ({ ...s, text: s.text || "An error budget is 1 minus the SLO of the service" })) };
+check("ATTACK R2-4: keys match but the PRESENTED claim text is not covered by the sources ⇒ not a fact", K.assessClaim(presented, { asOfEpochMs: ASOF, byUrl: byU2 }).isFact === false);
 // 5. forged sources on UNKNOWN domains.
 const evil1 = "https://evil-a.example/x", evil2 = "https://evil-b.example/y";
 const byEvil = { ...byUrl, [evil1]: { quotes: [EBQ] }, [evil2]: { quotes: [EBQ] } };
@@ -81,7 +98,7 @@ check("OPERATIONALLY_DEMONSTRATED requires the full ladder", K.assessClaim(eb, {
 
 // union of one page's citations; no self-corroboration.
 const NQ = "https://www.nist.gov/rmf"; const byN = { ...byUrl, [NQ]: { title: "AI Risk Management Framework | NIST", quotes: ["released on January 26, 2023", "is intended for voluntary use"] } };
-const NK = { subject: "NIST AI RMF", relation: "released on / intended for", value: "released on January 26, 2023 and is intended for voluntary use" };
+const NK = { subject: "NIST AI Risk Management Framework", relation: "released on / intended for", value: "released on January 26, 2023 and is intended for voluntary use" };
 const nistTwo = { ...NK, nature: "OFFICIAL_DOCUMENTATION", text: "The NIST AI RMF page states the framework was released on January 26, 2023 and is intended for voluntary use",
   sources: [{ url: NQ, citation: "released on January 26, 2023", structured: NK }, { url: NQ, citation: "is intended for voluntary use", structured: NK }] };
 const aN = K.assessClaim(nistTwo, { asOfEpochMs: ASOF, byUrl: byN });

@@ -47,7 +47,22 @@ function sha(v: any): string { return crypto.createHash("sha256").update(JSON.st
 function nkey(v: any): string { return String(v == null ? "" : v).toLowerCase().replace(/\s+/g, " ").trim(); }
 /* structured key used for cross-source comparison: subject+relation+value (+scope). Qualifiers/time/version are KEPT and
  * compared separately: a key match with differing qualifiers is reported as a DIVERGENCE, not silently merged. */
-function structuredKey(c: any): string { return [nkey(c.subject), nkey(c.relation), nkey(c.value), nkey(c.scope)].join("|"); }
+function structuredKey(c: any): string { return [nkey(c.subject), nkey(c.relation), nkey(c.value)].join("|"); }   // scope kept as information, not matched (it is not grounded)
+/* controlled RELATION vocabulary (versioned): a relation outside it cannot ground a key (inspection HIGH: free-text relation). */
+const RELATIONS = Object.freeze(["equals", "is defined as", "is described as", "defines traceability as", "makes", "halts", "designates", "released on / intended for", "states"]);
+/* content words: not grammar, not the host's attribution words. */
+function contentWords(text: string, url: string): string[] {
+  const attr = new Set<string>((BIND.HOST_ATTRIBUTION[hostToReg(url)] || []) as string[]);
+  return BIND.words(text).filter((w: string) => !BIND.GRAMMAR.has(w) && !attr.has(w));
+}
+function hostToReg(u: string): string { try { const p = new URL(u).hostname.toLowerCase().split("."); return p.slice(-2).join("."); } catch { return ""; } }
+/* value must appear as a CONTIGUOUS normalized phrase in one citation (or each " and "-joined part in some citation). */
+function contiguousIn(value: string, cits: string[]): boolean {
+  const nv = BIND.norm(value); const nc = cits.map((c: string) => " " + BIND.norm(c) + " ");
+  if (nc.some((c: string) => c.includes(" " + nv + " "))) return true;
+  const parts = nv.split(" and ").map((x: string) => x.trim()).filter(Boolean);
+  return parts.length > 1 && parts.every((p: string) => nc.some((c: string) => c.includes(" " + p + " ")));
+}
 
 /*
  * assessClaim(claim, opts) -> four-dimensional, explainable assessment.
@@ -85,10 +100,16 @@ function assessClaim(claim: any, opts: any): any {
     const own = isObj(s && s.structured) ? s.structured : null;
     const title = byUrl[sp.url] && typeof byUrl[sp.url].title === "string" ? byUrl[sp.url].title : "";
     const cits = citationsOf(sp.url);
-    const grounded = !!own && BIND.covered(String(own.value || ""), cits, sp.url) && BIND.covered(String(own.subject || ""), cits.concat([title]), sp.url)
-      && String(own.value || "").trim().length > 0 && String(own.subject || "").trim().length > 0;
+    const val = String((own && own.value) || ""), subj = String((own && own.subject) || "");
+    // grounding (inspection HIGH x2): value ≥2 content words AND contiguous in the citations; subject ≥1 content word and
+    // covered by citations/title/attribution; relation from the controlled vocabulary. Grammar-only keys never ground.
+    const grounded = !!own && RELATIONS.includes(nkey(own.relation))
+      && contentWords(val, sp.url).length >= 2 && contiguousIn(val, cits)
+      && contentWords(subj, sp.url).length >= 1 && BIND.covered(subj, cits.concat([title]), sp.url);
+    // the PRESENTED claim text itself must be covered by this source's citations to count toward a FACT.
+    const claimCovered = BIND.covered(String(c.text || ""), cits, sp.url);
     const key = own ? structuredKey(own) : null;
-    return Object.freeze({ url: sp.url, identity: id, citationVerified: bound, structuredKey: key, keyGrounded: grounded, quarantined: quarantined.has(sp.url) });
+    return Object.freeze({ url: sp.url, identity: id, citationVerified: bound, structuredKey: key, keyGrounded: grounded, claimTextCovered: claimCovered, quarantined: quarantined.has(sp.url) });
   });
   const seenUrl = new Set<string>();
   const verified = perSource.filter((p: any) => p.citationVerified && !p.quarantined && !seenUrl.has(p.url) && (seenUrl.add(p.url), true));
@@ -103,11 +124,13 @@ function assessClaim(claim: any, opts: any): any {
   const officialPrimary = matching.some((p: any) => p.identity.role === "PRIMARY_OFFICIAL");
 
   // EPISTEMIC (independent of maturity/authorization/risk).
+  const factFamilies = Array.from(new Set(matching.filter((p: any) => p.identity.known && p.claimTextCovered).map((p: any) => p.identity.family)));
+  if (knownFamilies.length >= 2 && factFamilies.length < 2) reasons.push("keys match across families but the PRESENTED claim text is not covered by ≥2 families' citations ⇒ not a fact");
   let epistemic = "UNKNOWN";
   const contradicted = Array.isArray(o.contradictingSources) && o.contradictingSources.some((x: any) => isObj(x && x.structured) && nkey(x.structured.subject) === nkey(c.subject) && BIND.supports({ url: x.url, quote: x.citation }, x.text || x.citation, byUrl, quarantined));
   if (typeof o.invalidatedBy === "string" && o.invalidatedBy) { epistemic = "INVALIDATED"; reasons.push("invalidated by " + o.invalidatedBy); }
   else if (contradicted) { epistemic = "CONTRADICTED"; reasons.push("a verified source contradicts the claim"); }
-  else if (knownFamilies.length >= 2) { epistemic = "CORROBORATED"; reasons.push("matching structured key from " + knownFamilies.length + " independent publisher families: " + knownFamilies.join(", ")); }
+  else if (factFamilies.length >= 2) { epistemic = "CORROBORATED"; reasons.push("matching structured key from " + knownFamilies.length + " independent publisher families: " + knownFamilies.join(", ")); }
   else if (matching.length >= 1 && officialPrimary && c.nature === "OFFICIAL_DOCUMENTATION") { epistemic = "SUPPORTED"; reasons.push("verified OFFICIAL primary source documenting its own statement (" + (knownFamilies[0] || "?") + ") — supports WHAT THE PUBLISHER STATES, not a general truth"); }
   else if (matching.length >= 1) { epistemic = "CANDIDATE"; reasons.push("verified citation, but nature '" + (c.nature || "?") + "' needs " + (c.nature === "PERFORMANCE_CLAIM" ? "an independent reproducible benchmark" : c.nature === "SCIENTIFIC_PUBLICATION" ? "methodology/reproducibility review" : "evidence appropriate to its nature")); }
   else if (perSource.length) { epistemic = "UNKNOWN"; reasons.push("no source citation verified against the recorded page text"); }
@@ -188,5 +211,5 @@ const KNOWLEDGE_INTELLIGENCE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { assessClaim, toMemory, admissible, identityOf, structuredKey, PUBLISHERS, EPISTEMIC, MATURITY, AUTHORIZATION, RISK, NATURE, KNOWLEDGE_INTELLIGENCE_CONTRACT };
+module.exports = { assessClaim, toMemory, admissible, identityOf, structuredKey, RELATIONS, PUBLISHERS, EPISTEMIC, MATURITY, AUTHORIZATION, RISK, NATURE, KNOWLEDGE_INTELLIGENCE_CONTRACT };
 export {};
