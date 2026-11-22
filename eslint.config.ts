@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Provenance-only mission harnesses (byte-identical copies of sandbox drivers; never runtime code).
+    "docs/odg/autonomy/*.js",
   ]),
 ]);
 

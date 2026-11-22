@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 127.0.0.1",
     "build": "next build",
     "build:runtime": "tsx scripts/build-runtime-guard.ts",
     "validate": "npm test && npx tsc --noEmit -p tsconfig.json",
-    "start": "next start",
+    "start": "next start -H 127.0.0.1",
     "lint": "eslint",
     "demo": "tsx src/demo.ts",
     "pretest": "npm run build:runtime",
