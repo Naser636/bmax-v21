@@ -6,8 +6,8 @@
  *     states (AUTHORIZED, EXECUTING, VERIFIED, ACCEPTED) — PROPOSED/REJECTED/ROLLED_BACK/BLOCKED/DEFERRED do not count;
  *   - the evidence file exists under docs/odg/evidence/ and the SHA-256 RECOMPUTED over its bytes equals evidenceSha256;
  *   - the contract cross-references the evidence path (listed in evidence_required / write_set / text) — else WEAK, refused.
- * Paths are repo-relative, no "..", no absolute, confined to their directory. The file reader is INJECTED (makeRepoReader
- * gives a confined fs reader) so the check is testable and cannot be redirected outside the repository.
+ * Paths are repo-relative, no "..", no absolute, prefix-checked (a symlink inside the repo is NOT re-confined to its directory). Reader is INJECTED (KI passes makeCommittedReader
+ * = committed tree only; makeRepoReader = working-tree reader for sandbox tests).
  */
 "use strict";
 const crypto = require("crypto");
@@ -20,7 +20,13 @@ function safeRel(p: any, prefix: string): boolean {
   return typeof p === "string" && p.length > 0 && !path.isAbsolute(p) && !p.split(/[\\/]/).includes("..") && p.startsWith(prefix);
 }
 
-/* makeRepoReader(root) -> (relPath) => Buffer | null, confined to root (symlinks resolved and re-checked). */
+/* makeCommittedReader(root) -> reads from the COMMITTED tree (git show HEAD:<path>) — uncommitted/unreviewed files never
+ * count (inspection MEDIUM). Paths are validated by the caller; git itself confines reads to the repository. */
+function makeCommittedReader(root: string): any {
+  const cp = require("child_process");
+  return (rel: string) => { try { return cp.execFileSync("git", ["show", "HEAD:" + rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 32 * 1024 * 1024 }); } catch { return null; } };
+}
+/* makeRepoReader(root) -> (relPath) => Buffer | null, WORKING-TREE reader confined to root (symlinks resolved and re-checked) — for sandbox tests. */
 function makeRepoReader(root: string): any {
   const base = fs.realpathSync(root);
   return (rel: string) => {
@@ -32,7 +38,10 @@ function makeRepoReader(root: string): any {
   };
 }
 
-function verifyMaturityEvidence(ev: any, reader: any): any {
+/* verifyMaturityEvidence(ev, reader, expect?) — expect = { claimKey, level }: the CONTRACT must declare, in
+ * maturityClaims[], that it supports THIS claim (structured key subject|relation|value) at THIS level (inspection HIGH:
+ * an unrelated verified WIC must not qualify every claim). NOTE: the reader must be the caller's OWN trusted reader. */
+function verifyMaturityEvidence(ev: any, reader: any, expect?: any): any {
   const deny = (reason: string) => Object.freeze({ ok: false, reason });
   if (!isObj(ev)) return deny("NO_EVIDENCE");
   if (typeof reader !== "function") return deny("NO_READER (declared hashes are never accepted on their own)");
@@ -48,9 +57,14 @@ function verifyMaturityEvidence(ev: any, reader: any): any {
   const actual = crypto.createHash("sha256").update(eb).digest("hex");
   if (actual !== ev.evidenceSha256) return deny("EVIDENCE_HASH_MISMATCH (recomputed " + actual.slice(0, 12) + "…)");
   const text = cb.toString("utf8");
-  if (!text.includes(ev.evidencePath) && !text.includes(path.basename(ev.evidencePath))) return deny("NOT_CROSS_REFERENCED (contract does not mention the evidence)");
+  if (!text.includes(ev.evidencePath)) return deny("NOT_CROSS_REFERENCED (contract does not mention the evidence by its full path)");
+  if (isObj(expect)) {
+    const mc = Array.isArray(contract.maturityClaims) ? contract.maturityClaims : [];
+    const hit = mc.some((m: any) => isObj(m) && m.claimKey === expect.claimKey && m.level === expect.level && (!m.evidencePath || m.evidencePath === ev.evidencePath));
+    if (!hit) return deny("NOT_BOUND_TO_CLAIM (contract does not declare maturityClaims[{claimKey, level}] for this claim/level)");
+  }
   return Object.freeze({ ok: true, reason: "VERIFIED_ON_REAL_FILES", contractState: contract.state, evidenceSha256: actual });
 }
 
-module.exports = { verifyMaturityEvidence, makeRepoReader, COUNTING_STATES };
+module.exports = { verifyMaturityEvidence, makeRepoReader, makeCommittedReader, COUNTING_STATES };
 export {};

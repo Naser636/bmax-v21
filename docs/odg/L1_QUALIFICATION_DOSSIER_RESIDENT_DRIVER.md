@@ -27,7 +27,7 @@
 4. **No configured SLO.** There is no target against which L1 could be judged, and choosing one is the owner's decision.
 
 ## 4. Risks and rollback
-- **Risks.** L1 writes plans and simulation artefacts. The risk is mis-scoped writes, which are limited by `ReadWritePaths` and by the write-set contention checks (`odg-writeset-contention`), and higher resource use, which is capped by the drop-in.
+- **Risks.** L1 writes plans and simulation artefacts. The risk is mis-scoped writes: the user unit sets **no** filesystem restriction (no ProtectSystem/ReadWritePaths — the tick may rebuild runtime/dist), so the only limits are the write-set contention checks (`odg-writeset-contention`) and the closed-executor allowlist; a filesystem confinement would have to be added and tested before L1. Higher resource use is capped by the drop-in.
 - **Rollback:**
   - set the level back to L0;
   - engage the emergency stop;

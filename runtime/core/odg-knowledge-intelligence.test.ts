@@ -115,10 +115,11 @@ check("CRITICAL + CORROBORATED but not QUALIFIED ⇒ still capped at SANDBOX_EXP
 const EVV = require("./odg-evidence-verifier.js"); const READER = EVV.makeRepoReader(require("path").resolve(__dirname, "../.."));
 const REAL_EV = { missionContract: "WIC-CM-RADAR-GATE-CHAIN-STEP1", contractPath: "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP1.json", evidencePath: "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP1_EVIDENCE.json",
   evidenceSha256: require("crypto").createHash("sha256").update(READER("docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP1_EVIDENCE.json")).digest("hex") };
-check("maturity: bare booleans / format-only evidence ignored; EXPERIMENTAL only with evidence VERIFIED on the REAL files",
+check("maturity: bare booleans / format-only evidence / evidence not bound to THIS claim are ignored",
   K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), experimentApproved: true }).dimensions.maturity === "USABLE"
   && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: { missionContract: "WIC-TEST-0001", evidenceSha256: "a".repeat(64) } }, evidenceReader: READER }).dimensions.maturity === "USABLE"
-  && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: REAL_EV } }).dimensions.maturity === "EXPERIMENTAL");
+  && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: REAL_EV } }).dimensions.maturity === "USABLE");
+check("an UNRELATED real VERIFIED WIC (radar-gate-chain step 1) cannot qualify the SRE claim (contract does not bind this claim/level)", /NOT_BOUND_TO_CLAIM/.test(K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: REAL_EV, qualification: REAL_EV } }).reasons.join(" ")) && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: REAL_EV, qualification: REAL_EV }, missionAuthorization: "INTERNAL_INTEGRATION" }).dimensions.authorization !== "INTERNAL_INTEGRATION");
 check("a caller-supplied evidenceReader returning FORGED bytes is ignored (module reads the real repo itself)", K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: { ...REAL_EV, evidenceSha256: "b".repeat(64) } }, evidenceReader: () => Buffer.from("forged") }).dimensions.maturity === "USABLE");
 check("OPERATIONALLY_DEMONSTRATED requires the full ladder", K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), demonstratedBenefit: true }).dimensions.maturity === "USABLE");
 

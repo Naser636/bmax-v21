@@ -14,6 +14,7 @@ check("forged contract id (format-valid, no such file content) ⇒ CONTRACT_ID_M
 check("non-existent contract file ⇒ CONTRACT_FILE_MISSING", /CONTRACT_FILE_MISSING/.test(V.verifyMaturityEvidence({ ...real, contractPath: "docs/odg/WIC_NOPE.json" }, R).reason));
 check("declared hash ≠ recomputed hash of the real file ⇒ EVIDENCE_HASH_MISMATCH", /EVIDENCE_HASH_MISMATCH/.test(V.verifyMaturityEvidence({ ...real, evidenceSha256: "0".repeat(64) }, R).reason));
 check("missing evidence file ⇒ EVIDENCE_FILE_MISSING", /EVIDENCE_FILE_MISSING/.test(V.verifyMaturityEvidence({ ...real, evidencePath: "docs/odg/evidence/NOPE.json" }, R).reason));
+check("committed-tree reader: an UNCOMMITTED file does not exist for it", (() => { const g = fs.mkdtempSync(path.join(os.tmpdir(), "odg-evv-git-")); require("child_process").execFileSync("git", ["init", "-q"], { cwd: g }); fs.mkdirSync(path.join(g, "docs/odg"), { recursive: true }); fs.writeFileSync(path.join(g, "docs/odg/WIC_U.json"), "{}"); const ok = V.makeCommittedReader(g)("docs/odg/WIC_U.json") === null; fs.rmSync(g, { recursive: true, force: true }); return ok; })());
 check("evidence not referenced by its contract (step-1 evidence under the step-2 contract) ⇒ NOT_CROSS_REFERENCED",
   /NOT_CROSS_REFERENCED/.test(V.verifyMaturityEvidence({ ...real, missionContract: "WIC-CM-RADAR-GATE-CHAIN-STEP2", contractPath: "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP2.json" }, R).reason));
 check("path traversal / absolute / wrong directory ⇒ refused", /BAD_EVIDENCE_PATH/.test(V.verifyMaturityEvidence({ ...real, evidencePath: "docs/odg/evidence/../../../etc/passwd" }, R).reason) && /BAD_CONTRACT_PATH/.test(V.verifyMaturityEvidence({ ...real, contractPath: "/etc/passwd" }, R).reason) && /BAD_EVIDENCE_PATH/.test(V.verifyMaturityEvidence({ ...real, evidencePath: "package.json" }, R).reason));
@@ -23,8 +24,10 @@ fs.writeFileSync(path.join(tmp, "docs/odg/evidence/E.json"), "{\"x\":1}");
 fs.writeFileSync(path.join(tmp, "docs/odg/WIC_T.json"), JSON.stringify({ id: "WIC-T", state: "PROPOSED", evidence_required: ["docs/odg/evidence/E.json"] }));
 const RT = V.makeRepoReader(tmp); const tEv = { missionContract: "WIC-T", contractPath: "docs/odg/WIC_T.json", evidencePath: "docs/odg/evidence/E.json", evidenceSha256: sha("{\"x\":1}") };
 check("contract still PROPOSED (or REJECTED/ROLLED_BACK) ⇒ CONTRACT_STATE_NOT_COUNTING", /CONTRACT_STATE_NOT_COUNTING/.test(V.verifyMaturityEvidence(tEv, RT).reason));
-fs.writeFileSync(path.join(tmp, "docs/odg/WIC_T.json"), JSON.stringify({ id: "WIC-T", state: "VERIFIED", evidence_required: ["docs/odg/evidence/E.json"] }));
-check("same evidence once the contract is VERIFIED ⇒ accepted", V.verifyMaturityEvidence(tEv, RT).ok === true);
+fs.writeFileSync(path.join(tmp, "docs/odg/WIC_T.json"), JSON.stringify({ id: "WIC-T", state: "VERIFIED", evidence_required: ["docs/odg/evidence/E.json"], maturityClaims: [{ claimKey: "error budget|equals|1 minus the slo", level: "EXPERIMENTAL" }] }));
+check("same evidence once the contract is VERIFIED ⇒ accepted (no claim binding requested)", V.verifyMaturityEvidence(tEv, RT).ok === true);
+check("claim binding: contract declares this claim at this level ⇒ accepted", V.verifyMaturityEvidence(tEv, RT, { claimKey: "error budget|equals|1 minus the slo", level: "EXPERIMENTAL" }).ok === true);
+check("claim binding: another claim, or a higher level ⇒ NOT_BOUND_TO_CLAIM", /NOT_BOUND_TO_CLAIM/.test(V.verifyMaturityEvidence(tEv, RT, { claimKey: "odg|is|perfect", level: "EXPERIMENTAL" }).reason) && /NOT_BOUND_TO_CLAIM/.test(V.verifyMaturityEvidence(tEv, RT, { claimKey: "error budget|equals|1 minus the slo", level: "QUALIFIED" }).reason));
 fs.writeFileSync(path.join(tmp, "docs/odg/evidence/E.json"), "{\"x\":2}");
 check("evidence file REPLACED after the hash was declared ⇒ EVIDENCE_HASH_MISMATCH", /EVIDENCE_HASH_MISMATCH/.test(V.verifyMaturityEvidence(tEv, RT).reason));
 const outside = fs.mkdtempSync(path.join(os.tmpdir(), "odg-evv-out-")); fs.writeFileSync(path.join(outside, "S.json"), "secret");
