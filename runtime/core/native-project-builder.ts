@@ -83,7 +83,13 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
   let verified = runVerify();
   const firstPass = Object.freeze({ buildOk: build.ok === true, verified: build.ok === true && verified === true, error: build.ok ? verifyErr : build.error });  // instrumentation: the pre-repair verdict (no behaviour change)
   let repairs = 0;
+  // V15.0 §37.8 ANTI-LOOP: a repair round that regenerates EXACTLY the same files as the previous state carries no new
+  // information — the next round would be an identical retry (same build, same verdict, another model call). Stop
+  // instead of burning the remaining repair budget; the result stays fail-closed (not accepted) and records why.
+  const snapshot = (): string => JSON.stringify(Object.keys(files).sort().map((k) => [k, files[k]]));
+  let repairStopReason: string | null = null;
   while (!(build.ok && verified) && repairs < maxRepair && fn(deps.generateFile)) {
+    const before = snapshot();
     repairs++;
     // regenerate every file with the FAILURE in context: a build error, or a "builds-but-fails-the-test" verify failure.
     // V327 §3 (Self-Debugging/Reflexion): when the spec provides STRUCTURED repairExamples [{args,expect}], feed the
@@ -97,10 +103,17 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
       try { const fb = RF.buildExecutionFeedback(s.repairExamples, entryFn); if (fb && fb.hasFailure === true && typeof fb.verifyError === "string") verifyHint = fb.verifyError; } catch { /* fail-closed to generic */ }
     }
     const hint = !build.ok ? { buildError: build.error } : { verifyError: verifyHint };
-    for (const fileSpec of arch) { if (!files[fileSpec.path]) continue; const g = await deps.generateFile({ ...fileSpec, ...hint }, builtContracts); if (g && g.ok === true && typeof g.content === "string") files[fileSpec.path] = g.content; }
+    let regenFailed = 0;   // a transient generate failure (e.g. model timeout) keeps the old content — NOT "no progress"
+    for (const fileSpec of arch) { if (!files[fileSpec.path]) continue; const g = await deps.generateFile({ ...fileSpec, ...hint }, builtContracts); if (g && g.ok === true && typeof g.content === "string") files[fileSpec.path] = g.content; else regenFailed++; }
+    // anti-loop: stop ONLY when every file regenerated successfully AND nothing changed (inspection MED: a failed generate
+    // keeps old content and must keep its retry budget). Trade-off (stated): a sampled model fed the identical prompt could
+    // still produce different output; at the default low temperature an identical round is treated as no new information. A timeout-based hang-guard
+    // verdict is not re-run after an identical round (accepted risk: a spurious TIMEOUT then stands — still fail-closed).
+    if (regenFailed === 0 && snapshot() === before) { repairStopReason = "NO_PROGRESS_IDENTICAL_REGENERATION"; break; }
     build = assembleAndLoad(files);
     verified = runVerify();
   }
+  if (repairStopReason === null && !(build.ok && verified) && repairs >= maxRepair && maxRepair > 0) repairStopReason = "REPAIR_BUDGET_EXHAUSTED";
 
   const filesGenerated = Object.keys(files).length;
   return Object.freeze({
@@ -110,6 +123,7 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
     buildOk: build.ok === true,
     buildError: build.ok ? null : build.error,
     repairs,
+    repairStopReason,                                     // V15.0 anti-loop: why the repair loop stopped (null if accepted / no repair)
     verified: build.ok && verified,
     verifyError: verifyErr,
     accepted: build.ok === true && verified === true,     // native build accepted ONLY on independent verification
