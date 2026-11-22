@@ -19,7 +19,8 @@ function main() {
   try {
     const companion = JSON.parse(fs.readFileSync("docs/odg/v124-consolidated-roadmap.json", "utf8"));
     const program = V124.toContinuityProgram(companion);
-    const r = D.observe({ program, context: { asOfEpochMs: Date.now(), currentCommit: "resident" } });
+    // V375 Lot B: inject the canonical stop signal (ODG_SCHEDULER_STOP=1, same as mission-scheduler) — previously never read.
+    const r = D.observe({ program, context: { asOfEpochMs: Date.now(), currentCommit: "resident" }, emergencyStopEngaged: process.env.ODG_SCHEDULER_STOP === "1" });
     line = `[${nowIso()}] L0 tick: level=${r.level} state=${r.state} workAvailable=${r.observation ? r.observation.workAvailable : "n/a"} nextEligible=${r.observation ? r.observation.nextEligible : "n/a"} writes=${r.writes.length} modifiedBusinessState=${r.modifiedBusinessState} executedMission=${r.executedMission}`;
     process.stdout.write(line + "\n");
   } catch (e: any) {

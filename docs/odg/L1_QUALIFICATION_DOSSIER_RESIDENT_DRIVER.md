@@ -15,13 +15,13 @@
 | Authorized missions | L0 reports `nextEligible=CM-RADAR-GATE-CHAIN`; it executes nothing (`executedMission=false`, `writes=0` on every logged tick) | `runtime/logs/resident-driver-l0.log` |
 | Isolation | no network; repo working directory; Truth Lock enforced (`ODG_TRUTH_LOCK_ENFORCE=1`) | unit file |
 | Logging | one line per tick (level, state, workAvailable, nextEligible, writes, modifiedBusinessState, executedMission) | log file |
-| Emergency stop | canonical `emergency-stop` signal honoured: STOPPED, no observation | `odg-resident-driver.ts:39-41` and its tests |
+| Emergency stop | core honours `emergencyStopEngaged` (STOPPED, no observation). **Correction (Lot B):** the L0 tick never passed the signal; it now injects the canonical `ODG_SCHEDULER_STOP=1` (same as mission-scheduler), tested | `odg-resident-driver.ts:39-41`, `odg-resident-driver-tick.ts`, `odg-resident-driver-l1-sandbox.test.ts` |
 | Drift detection | Truth Lock (branch / origin divergence / audit-chain integrity) at each tick; **V375 main-worktree guard** prevents the organizational drift that caused 1180 refusals | PR #860, `mission-attempt-log` |
 | Resume tests | cross-session continuity proven earlier (V325–V326, #766/#767); interruption/recovery of the guard tested (#860) | merged tests |
 | Independent results | L0 cycles independently inspected (V242/V244) | register / compass |
 
 ## 3. Gaps that block a recommendation to activate L1
-1. **No L1 runtime path is tested end to end.** The L1 contract is declared only, and no L1 simulation cycle has been run or inspected.
+1. ~~No L1 cycle run~~ **Lot B:** one L1 SIMULATE cycle ran on the real repository state inside a read-only, no-network bubblewrap sandbox: zero write, `wouldExecute=false`, `canTriggerL2=false`, stop honoured (`docs/odg/evidence/LOT_B_L1_SANDBOX_EVIDENCE.json`). **Still missing:** a cycle under the real systemd unit, and the unit's filesystem confinement (proposed in `deploy/odg-resident-driver.service.d/l1-fs-confinement.conf.proposed`, not installed).
 2. **Mission reliability is NOT_MEASURED.** Only 3 executed attempts exist in `mission-attempt-log`, below n=20, so the value of simulating is unknown.
 3. **Autonomy availability since 2026-11-08 is 0.58,** with every candidate SLO exhausted. The guard (#860) is installed, but its structural benefit still has to be **measured over a full window**.
 4. **No configured SLO.** There is no target against which L1 could be judged, and choosing one is the owner's decision.
@@ -37,7 +37,7 @@
 
 ## 5. Recommendation
 **Do not activate L1 yet.** First:
-1. run and independently inspect an L1 simulation cycle in a sandbox, without touching the unit;
+1. ~~run and independently inspect an L1 simulation cycle in a sandbox~~ (done, Lot B); owner installs and tests the proposed filesystem confinement on the user unit;
 2. measure autonomy availability over ≥14 days with the guard installed;
 3. let the owner choose an availability SLO.
 

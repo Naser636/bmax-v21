@@ -1,0 +1,79 @@
+{
+  "lot": "V375 Lot B — first resident-driver L1 SIMULATE cycle, sandboxed, over the REAL committed repository state",
+  "target": "/home/ubuntu/bmax-v21 @ main 1105f54f (state read-only; code from the Lot B checkout)",
+  "harness": "scripts/odg-resident-driver-l1-sandbox.sh — bwrap --ro-bind / / --unshare-all (whole FS read-only, no network namespace except lo)",
+  "runs": {
+    "normal": {
+      "sandbox": {
+        "fs": "READ_ONLY",
+        "netInterfaces": "lo"
+      },
+      "fingerprintBefore": "4078f91a9f389f6e4a8bae43b75b940f05fd7bd43220edbd910622344d08ae4c",
+      "fingerprintAfter": "4078f91a9f389f6e4a8bae43b75b940f05fd7bd43220edbd910622344d08ae4c",
+      "zeroWrite": true,
+      "cycle": {
+        "asOf": "2026-11-22T14:13:43.831Z",
+        "emergencyStopEngaged": false,
+        "l1": {
+          "level": "L1_SIMULATE",
+          "basedOnObservation": {
+            "workAvailable": true,
+            "nextEligible": "CM-RADAR-GATE-CHAIN",
+            "blocked": [
+              "CM-MULTIMODAL-VIDEO"
+            ],
+            "mustRevalidate": [],
+            "done": 14,
+            "missionsTotal": 24
+          },
+          "simulatedDecision": {
+            "wouldSelect": "CM-RADAR-GATE-CHAIN",
+            "wouldCheckPermissionsAndFreshness": true,
+            "wouldExecute": false
+          },
+          "persisted": false,
+          "modifiedBusinessState": false,
+          "canTriggerL2": false,
+          "note": "L1 SIMULATE: decisions are prepared with NO persistence and NO execution; L1 can NEVER auto-trigger L2 (level transition is owner-gated + independently validated)"
+        }
+      }
+    },
+    "emergencyStop": {
+      "sandbox": {
+        "fs": "READ_ONLY",
+        "netInterfaces": "lo"
+      },
+      "fingerprintBefore": "4078f91a9f389f6e4a8bae43b75b940f05fd7bd43220edbd910622344d08ae4c",
+      "fingerprintAfter": "4078f91a9f389f6e4a8bae43b75b940f05fd7bd43220edbd910622344d08ae4c",
+      "zeroWrite": true,
+      "cycle": {
+        "asOf": "2026-11-22T14:13:45.530Z",
+        "emergencyStopEngaged": true,
+        "l1": {
+          "level": "L1_SIMULATE",
+          "basedOnObservation": null,
+          "simulatedDecision": {
+            "wouldSelect": null,
+            "idle": true
+          },
+          "persisted": false,
+          "modifiedBusinessState": false,
+          "canTriggerL2": false,
+          "note": "L1 SIMULATE: decisions are prepared with NO persistence and NO execution; L1 can NEVER auto-trigger L2 (level transition is owner-gated + independently validated)"
+        }
+      }
+    }
+  },
+  "proven": [
+    "L1 cycle runs on real state: wouldSelect CM-RADAR-GATE-CHAIN, wouldExecute=false, persisted=false, canTriggerL2=false",
+    "write probe inside the same sandbox refused (READ_ONLY); only loopback interface",
+    "repository fingerprint identical before/after (supplementary to the RO mount)",
+    "canonical stop signal ODG_SCHEDULER_STOP=1 ⇒ no observation, idle (L1) / state=STOPPED (L0 tick, newly wired)"
+  ],
+  "notProven": [
+    "L1 under the real systemd user unit (not run: no systemd change in this lot)",
+    "the proposed unit filesystem confinement (deploy/…l1-fs-confinement.conf.proposed) — NOT installed, NOT tested under systemd",
+    "any value of L1 beyond L0: simulate() adds a decision record only; mission reliability still NOT_MEASURED"
+  ],
+  "defectFound": "L0 tick never injected the emergency-stop signal (core honoured it, wrapper did not pass it) — fixed in this lot; previous dossier claim corrected"
+}
