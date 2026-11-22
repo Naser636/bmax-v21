@@ -1,0 +1,221 @@
+{
+  "//": "V16 — first LIVE run of the V16 Claude Code research grant (owner authorization: DIRECTIVE FINALE DE DÉVERROUILLAGE GLOBAL §3). Bodies were hashed only, never persisted or executed; titles sanitised (stampFinding). integrated=false: findings are evaluated before any use.",
+  "grant": "docs/odg/V16_RESEARCH_GRANT_CLAUDE_CODE.json",
+  "ranAt": "2026-11-22",
+  "run": {
+    "ran": "v16-claude-code-research",
+    "grant": "docs/odg/V16_RESEARCH_GRANT_CLAUDE_CODE.json",
+    "expiresIso": "2026-12-21T00:00:00.000Z",
+    "killSwitch": "ON (ODG_RADAR_LIVE=1)",
+    "mode": "LIVE",
+    "egress": 9,
+    "allowed": 10,
+    "denied": 0,
+    "plan": [
+      {
+        "decision": "ALLOW",
+        "url": "https://code.claude.com/docs/en/sub-agents.md",
+        "contentTypes": "text/markdown,text/plain,text/html",
+        "reasons": []
+      },
+      {
+        "decision": "ALLOW",
+        "url": "https://code.claude.com/docs/en/hooks.md",
+        "contentTypes": "text/markdown,text/plain,text/html",
+        "reasons": []
+      },
+      {
+        "decision": "ALLOW",
+        "url": "https://code.claude.com/docs/en/settings.md",
+        "contentTypes": "text/markdown,text/plain,text/html",
+        "reasons": []
+      },
+      {
+        "decision": "ALLOW",
+        "url": "https://code.claude.com/docs/en/iam.md",
+        "contentTypes": "text/markdown,text/plain,text/html",
+        "reasons": []
+      },
+      {
+        "decision": "ALLOW",
+        "url": "https://code.claude.com/docs/en/common-workflows.md",
+        "contentTypes": "text/markdown,text/plain,text/html",
+        "reasons": []
+      },
+      {
+        "decision": "ALLOW",
+        "url": "https://code.claude.com/docs/en/interactive-mode.md",
+        "contentTypes": "text/markdown,text/plain,text/html",
+        "reasons": []
+      },
+      {
+        "decision": "ALLOW",
+        "url": "https://code.claude.com/docs/en/headless.md",
+        "contentTypes": "text/markdown,text/plain,text/html",
+        "reasons": []
+      },
+      {
+        "decision": "ALLOW",
+        "url": "https://code.claude.com/docs/en/troubleshooting.md",
+        "contentTypes": "text/markdown,text/plain,text/html",
+        "reasons": []
+      },
+      {
+        "decision": "ALLOW",
+        "url": "https://www.anthropic.com/engineering/claude-code-best-practices",
+        "contentTypes": "text/html,text/markdown,text/plain",
+        "reasons": []
+      },
+      {
+        "decision": "ALLOW",
+        "url": "https://api.github.com/repos/anthropics/claude-code/releases?per_page=5",
+        "contentTypes": "application/json",
+        "reasons": []
+      }
+    ],
+    "results": [
+      {
+        "url": "https://code.claude.com/docs/en/sub-agents.md",
+        "topics": [
+          "delegation",
+          "agent capabilities",
+          "parallel orchestration"
+        ],
+        "classification": "LIVE_SOURCE",
+        "httpStatus": 200,
+        "contentType": "text/markdown; charset=utf-8",
+        "bytes": 115225,
+        "sha256": "5009da9098bc24888b27a387643a68e7c08b472f7d6e210d6cffe2c556ae4c7a",
+        "title": "Create custom subagents",
+        "untrusted": false,
+        "integrated": false
+      },
+      {
+        "url": "https://code.claude.com/docs/en/hooks.md",
+        "topics": [
+          "process / session management",
+          "diagnostics"
+        ],
+        "classification": "LIVE_SOURCE",
+        "httpStatus": 200,
+        "contentType": "text/markdown; charset=utf-8",
+        "bytes": 293944,
+        "sha256": "157474a4d932ce3a7e784d3e3c1e2819cb27c11c215540d3f0710fe59dc69d07",
+        "title": "Hooks reference",
+        "untrusted": false,
+        "integrated": false
+      },
+      {
+        "url": "https://code.claude.com/docs/en/settings.md",
+        "topics": [
+          "context / resource limits",
+          "agent capabilities"
+        ],
+        "classification": "LIVE_SOURCE",
+        "httpStatus": 200,
+        "contentType": "text/markdown; charset=utf-8",
+        "bytes": 45900,
+        "sha256": "417b611cbc5ab2dc9d566f94c7abf0cb7cc98e210e8b70b5a1cc110e1cad31d7",
+        "title": "Settings files and precedence",
+        "untrusted": false,
+        "integrated": false
+      },
+      {
+        "url": "https://code.claude.com/docs/en/iam.md",
+        "topics": [
+          "agent capabilities",
+          "delegation"
+        ],
+        "classification": "LIVE_SOURCE",
+        "httpStatus": 200,
+        "contentType": "text/markdown; charset=utf-8",
+        "bytes": 38032,
+        "sha256": "4aa31cb81c1cc1509f87635bda9587e0b4e68346d18b7d314b244d91ce051310",
+        "title": "Authentication",
+        "untrusted": false,
+        "integrated": false
+      },
+      {
+        "url": "https://code.claude.com/docs/en/common-workflows.md",
+        "topics": [
+          "parallel orchestration",
+          "resume after interruption"
+        ],
+        "classification": "LIVE_SOURCE",
+        "httpStatus": 200,
+        "contentType": "text/markdown; charset=utf-8",
+        "bytes": 18349,
+        "sha256": "9d44630362418bf644178eacf71479537b4646aba63d56f29940e02c7a47e2e6",
+        "title": "Common workflows",
+        "untrusted": false,
+        "integrated": false
+      },
+      {
+        "url": "https://code.claude.com/docs/en/interactive-mode.md",
+        "topics": [
+          "process / session management",
+          "speed"
+        ],
+        "classification": "LIVE_SOURCE",
+        "httpStatus": 200,
+        "contentType": "text/markdown; charset=utf-8",
+        "bytes": 78698,
+        "sha256": "8c7e3c3b67bfa537534b0ce728d896fd9ad27957582897ad783f048082797991",
+        "title": "Interactive mode",
+        "untrusted": false,
+        "integrated": false
+      },
+      {
+        "url": "https://code.claude.com/docs/en/headless.md",
+        "topics": [
+          "process / session management",
+          "delegation"
+        ],
+        "classification": "LIVE_SOURCE",
+        "httpStatus": 200,
+        "contentType": "text/markdown; charset=utf-8",
+        "bytes": 38894,
+        "sha256": "eae22eba29efbd00b5b2592bd64774ffd337ad0efe7645c4c842954c2d9cbcdd",
+        "title": "Run Claude Code programmatically",
+        "untrusted": false,
+        "integrated": false
+      },
+      {
+        "url": "https://code.claude.com/docs/en/troubleshooting.md",
+        "topics": [
+          "diagnostics",
+          "context / resource limits"
+        ],
+        "classification": "LIVE_SOURCE",
+        "httpStatus": 200,
+        "contentType": "text/markdown; charset=utf-8",
+        "bytes": 16482,
+        "sha256": "2d4ff8345bc6e72a09bccde71014dafbc5be06feeee31d54dfced5f9d477eecc",
+        "title": "Troubleshooting",
+        "untrusted": false,
+        "integrated": false
+      },
+      {
+        "url": "https://www.anthropic.com/engineering/claude-code-best-practices",
+        "classification": "LIVE_UNAVAILABLE",
+        "code": "REDIRECT_BLOCKED",
+        "statusCode": 308
+      },
+      {
+        "url": "https://api.github.com/repos/anthropics/claude-code/releases?per_page=5",
+        "topics": [
+          "agent capabilities",
+          "diagnostics"
+        ],
+        "classification": "LIVE_SOURCE",
+        "httpStatus": 200,
+        "contentType": "application/json; charset=utf-8",
+        "bytes": 226842,
+        "sha256": "07f89f53cb66ffe36654a8d97c1dda5f636ed56004fc2c0392118bf1443eff1a",
+        "title": "v2.1.330",
+        "untrusted": false,
+        "integrated": false
+      }
+    ]
+  }
+}
