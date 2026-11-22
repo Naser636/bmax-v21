@@ -14,6 +14,12 @@
  */
 
 const RTM = require("./odg-radar-to-mission-loop.js");   // the REAL research→mission loop (pathMap, qualify, governanceGate)
+// V372 step 1 (WIC-CM-RADAR-GATE-CHAIN-STEP1): the EXECUTED data path — reuses these canonical components, no new engine.
+const crypto = require("crypto");
+const KA = require("./odg-knowledge-acquisition.js");   // acquire(): corroboration, FACT vs single-source vs contested, 403 recorded
+const MTG = require("./memory-trust-gate.js");          // assessMemoryTrust(): deny-by-default retrieval/admission gate
+const IC = require("./odg-improvement-chain.js");       // run(): consumes odg-sandbox-integration-gate.decide()
+const ACTOR = require("./actor-provenance.js");         // EXECUTOR.ODG attribution
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 
@@ -82,7 +88,128 @@ const RADAR_GATE_CHAIN_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { CANONICAL_CHAIN, STATUS, verifyChain, RADAR_GATE_CHAIN_CONTRACT };
+/* ───────────────── V372 step 1 — EXECUTED chain on REAL recorded Radar data (offline) ─────────────────
+ * verifyChain() proves every stage HAS a component; runChain() makes real data FLOW through them:
+ *   RETRIEVE (memory-trust-gate on prior admitted knowledge) → ACQUIRE (knowledge-acquisition on a REAL recorded cycle)
+ *   → ADMIT (memory-trust-gate, deny-by-default) → PROPOSE (experiment linked to V12.4 §I) → DECIDE (improvement-chain
+ *   consuming sandbox-integration-gate). Every stage is sha256-traced. Pure + deterministic given the injected clock.
+ * HONESTY: without PROVEN downstream experiment evidence the gate RETURNS (never a fabricated pass); the default cycle is
+ * KA.REAL_CYCLE (4 sources consulted 2026-11-16 under the then-valid V141 grant) — live-world quality stays NOT_MEASURED. */
+const DAY_MS = 86400000;
+const KNOWLEDGE_TTL_DAYS = 90;          // admitted knowledge validity window; past it ⇒ STALE ⇒ re-acquire
+const MIN_CONFIDENCE = 0.5;
+const V124_LINK = "V12.4 §I CM-RADAR-GATE-CHAIN";
+
+function sha(v: any): string { return crypto.createHash("sha256").update(JSON.stringify(v === undefined ? null : v)).digest("hex"); }
+function traced(name: string, input: any, output: any, note: string): any {
+  return Object.freeze({ stage: name, inputSha256: sha(input), outputSha256: sha(output), note });
+}
+
+/* toMemoryRecord(knowledgeItem, query, asOf) -> canonical memory record (memory-taxonomy family "semantic"). A record
+ * whose sources are not ALL dated gets NO provenance ⇒ memory-taxonomy quality NO_PROVENANCE ⇒ never admitted. */
+function toMemoryRecord(k: any, query: string, asOf: number): any {
+  const srcs = Array.isArray(k && k.sources) ? k.sources : [];
+  const urls = srcs.map((s: any) => s.url).filter(Boolean).sort();
+  const dated = srcs.length > 0 && srcs.every((s: any) => typeof s.date === "string" && /^\d{4}-\d{2}-\d{2}/.test(s.date));
+  return Object.freeze({
+    id: "kn:" + sha({ q: query, c: k.claim }).slice(0, 16),
+    family: "semantic", query, claim: k.claim, classification: k.classification,
+    provenance: urls.length && dated ? "RADAR_RECORDED_REAL:" + urls.join("|") : undefined,
+    sources: Object.freeze(srcs.slice()),
+    status: k.verifiedKnowledge ? "VERIFIED" : "UNVERIFIED",
+    confidence: k.verifiedKnowledge ? 0.9 : 0.3,
+    learnedAt: asOf, validUntil: asOf + KNOWLEDGE_TTL_DAYS * DAY_MS,
+    authoredBy: "ODG_CAPABILITY", appliedBy: "ODG_EXECUTOR",
+    dataNature: "REAL_RECORDED (not live; see consulted dates)",
+  });
+}
+function trustOf(rec: any, asOf: number): any {
+  return MTG.assessMemoryTrust(rec, { asOf, trustedAuthors: [ACTOR.EXECUTOR.ODG], minConfidence: MIN_CONFIDENCE });
+}
+
+/* runChain(opts) -> { trace, acquisition, admitted, rejected, reuse, proposal, decision, memoryOut, honesty }.
+ * opts.asOfEpochMs (REQUIRED, injected clock) · opts.cycle (default KA.REAL_CYCLE) · opts.memory (prior admitted records)
+ * opts.experimentEvidence: gate conditions PROVEN for the downstream experiment (default: only what this chain itself
+ * demonstrates ⇒ an honest RETURN_TO_EXPERIMENT). */
+function runChain(opts?: any): any {
+  const o = isObj(opts) ? opts : {};
+  if (!Number.isFinite(o.asOfEpochMs)) throw new Error("runChain: asOfEpochMs is required (deterministic, no hidden clock)");
+  const asOf: number = o.asOfEpochMs;
+  const cycle = isObj(o.cycle) ? o.cycle : KA.REAL_CYCLE;
+  const memory = Array.isArray(o.memory) ? o.memory : [];
+  const trace: any[] = [];
+
+  const retrieved = memory.filter((m: any) => isObj(m) && m.query === cycle.query && m.status === "VERIFIED" && trustOf(m, asOf).trusted);
+  trace.push(traced("RETRIEVE", { query: cycle.query, memorySize: memory.length }, retrieved.map((m: any) => m.id),
+    retrieved.length ? "reused " + retrieved.length + " trusted admitted item(s); acquisition skipped" : "no trusted prior knowledge; acquire"));
+
+  let acquisition: any = null; const admitted: any[] = []; const rejected: any[] = [];
+  if (retrieved.length) { for (const m of retrieved) admitted.push(m); }
+  else {
+    acquisition = KA.acquire({ query: cycle.query, capability: cycle.capability, sources: cycle.sources, asOfEpochMs: asOf });
+    trace.push(traced("ACQUIRE", cycle, acquisition, `accessible=${acquisition.accessibleCount} inaccessible=${acquisition.inaccessibleCount} verified=${acquisition.verifiedCount}`));
+    for (const k of acquisition.knowledge) {
+      const rec = toMemoryRecord(k, cycle.query, asOf);
+      const t = trustOf(rec, asOf);
+      if (t.trusted && rec.status === "VERIFIED") admitted.push(rec);
+      else rejected.push(Object.freeze({ id: rec.id, claim: rec.claim, classification: rec.classification, verdict: t.trusted ? "NOT_VERIFIED_KNOWLEDGE" : t.verdict, reasons: t.reasons }));
+    }
+    trace.push(traced("ADMIT", acquisition.knowledge.map((k: any) => k.claim), { admitted: admitted.map((a: any) => a.id), rejected: rejected.map((r: any) => r.id) },
+      "memory-trust-gate deny-by-default: only a FACT_CORROBORATED, dated, fresh, ODG-attributed item is admitted"));
+  }
+
+  const proposal = Object.freeze({
+    id: "rgc:" + sha({ q: cycle.query, k: admitted.map((a: any) => a.id) }).slice(0, 16),
+    v124Link: V124_LINK, discovery: cycle.query, capability: cycle.capability || null,
+    knowledgeIds: Object.freeze(admitted.map((a: any) => a.id)),
+  });
+  trace.push(traced("PROPOSE", admitted.map((a: any) => a.id), proposal, "experiment linked to " + V124_LINK));
+
+  const evidence = Object.assign({
+    linkedToV124: true,
+    needDemonstrated: admitted.length > 0,          // a verified, provenanced fact supports the capability
+    noContractOrPermissionViolation: true,          // composition only — no egress/fs/exec
+    securityValidated: true,                        // pure + offline; no secret, no network
+  }, isObj(o.experimentEvidence) ? o.experimentEvidence : {});
+  const decision = IC.run({ id: proposal.id, v124Link: proposal.v124Link, significant: true, evidence });
+  trace.push(traced("DECIDE", evidence, { verdict: decision.verdict, action: decision.action }, "odg-improvement-chain → odg-sandbox-integration-gate.decide (" + decision.satisfied + ")"));
+
+  return Object.freeze({
+    v124Mission: "CM-RADAR-GATE-CHAIN", asOfEpochMs: asOf,
+    trace: Object.freeze(trace), acquisition,
+    admitted: Object.freeze(admitted), rejected: Object.freeze(rejected),
+    reuse: Object.freeze({ retrieved: retrieved.length, reacquired: retrieved.length ? 0 : 1 }),
+    proposal, decision,
+    memoryOut: Object.freeze(retrieved.length ? memory.slice() : memory.concat(admitted)),
+    honesty: "REAL_RECORDED sample (" + (Array.isArray(cycle.sources) ? cycle.sources.length : 0) + " sources); live-world knowledge quality NOT_MEASURED; RETURN means the downstream experiment is not yet proven, never a fabricated pass",
+  });
+}
+
+/* summarize(result) -> compact consumer indicator (consumed by odg-cto-dashboard). */
+function summarize(r: any): any {
+  if (!isObj(r) || !Array.isArray(r.trace)) return Object.freeze({ ok: false, reason: "no chain result" });
+  return Object.freeze({
+    ok: true, mission: r.v124Mission, stages: Object.freeze(r.trace.map((t: any) => t.stage)),
+    admitted: r.admitted.length, rejected: r.rejected.length, retrieved: r.reuse.retrieved,
+    verdict: r.decision.verdict, action: r.decision.action, deployed: r.decision.deployed,
+  });
+}
+
+const EXECUTED_CHAIN_CONTRACT = Object.freeze({
+  id: "WIC-CM-RADAR-GATE-CHAIN-STEP1",
+  authorizedBy: "owner V372 (2026-11-22)",
+  composes: Object.freeze(["odg-knowledge-acquisition", "memory-trust-gate", "odg-improvement-chain", "odg-sandbox-integration-gate", "actor-provenance"]),
+  invariants: Object.freeze([
+    "composition only — no second radar/memory/gate/orchestrator",
+    "fail-closed admission: undated/unprovenanced/single-source/contested knowledge is NOT admitted",
+    "INACCESSIBLE sources stay recorded, never circumvented",
+    "reuse before re-acquisition: trusted, fresh admitted memory short-circuits ACQUIRE; stale/untrusted memory does not",
+    "the canonical gate decides; INTEGRATE = MERGE_ELIGIBLE only, never deployed",
+    "offline + deterministic: injected clock, no network/fs/exec",
+  ]),
+});
+
+module.exports = { CANONICAL_CHAIN, STATUS, verifyChain, RADAR_GATE_CHAIN_CONTRACT, runChain, summarize, toMemoryRecord, EXECUTED_CHAIN_CONTRACT, KNOWLEDGE_TTL_DAYS };
 
 if (require.main === module) { process.stdout.write(JSON.stringify({ ...RADAR_GATE_CHAIN_CONTRACT, verified: verifyChain() }, null, 2) + "\n"); }
 
