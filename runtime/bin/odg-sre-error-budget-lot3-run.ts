@@ -53,7 +53,8 @@ function main() {
     decisionImpact: proposals.map((p: any) => ({ slo: p.sloProposed, exhausted: p.errorBudget.exhausted, srePolicySuggestion: p.srePolicySuggestion, canonicalDecision: p.canonicalDecision, why: p.sloResponsePlan && p.sloResponsePlan.reason })),
     finding: "the knowledge is correctly applied (formula agrees) and the budget is measurable on real events; the DECISION it would drive depends entirely on the SLO value; ODG's canonical slo-response refuses to gate on an unconfigured SLO (measurement-only) — a freeze needs the CTO to configure the target in slo-targets.",
     limits: ["SLO values are PROPOSED (CTO must choose); the decision flips between 0.97 and 0.99 — the policy value matters more than the formula",
-      "14-day window (not the SRE 4-week window) — limited by available history", "CI pass/fail is a proxy for engineering reliability, not product availability",
+      "14-day window (not the SRE 4-week window) — limited by the fetch cap (gh run list -L 1000), not by the repository history", "CI pass/fail is a proxy for engineering reliability, not product availability; most feature-branch failures are development iterations, so 'incidents' over-count production-relevant failures (2 of 16 are on main)",
+      "edge cases (independent inspection, LOW): sloTarget=1 marks exhaustion with 0 bad events (inherited from sloErrorBudget); days bucketed by the timestamp's own date; same-timestamp ties ordered by string sort",
       "no live alerting/freeze applied (PREPARE only); benefit on future reliability NOT_MEASURED until the policy runs prospectively"],
   };
   const json = JSON.stringify(evidence, null, 2) + "\n";
