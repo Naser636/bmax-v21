@@ -74,61 +74,106 @@ function log(cfg: any, event: any): string {
 // Bridge instances) can create the lock; everyone else gets EEXIST and skips.
 // A stale lock (older than lockTtlMs) is reclaimed so a crashed instance does
 // not block a request forever.
+//
+// V150-M — GENERATION-NUMBERED claims (race-free takeover). The former reclaim
+// unlinked (later: moved aside) the stale lock and re-created it; between the
+// staleness check and the unlink a concurrent reclaimer/newcomer could create a
+// FRESH lock that was then destroyed ⇒ two holders. Now a claim is the file
+// `<id>.lock.<gen>` created with O_EXCL, and a takeover NEVER moves or deletes a
+// lock that might be live: it creates generation top+1 (exactly one winner per
+// generation) after observing generation `top` dead (stale or released).
+//   - a claimant that targeted a superseded generation loses (post-create check);
+//   - release marks the holder's OWN generation released (mtime=epoch ⇒ instantly
+//     stale); it can never touch a successor generation;
+//   - GC removes only generations < current-1 (superseded twice ⇒ dead); the
+//     highest generation is never deleted, so the generation floor never regresses.
 // --------------------------------------------------------------------------
 function lockPath(cfg: any, requestId: string): string {
   return path.join(cfg.locksDir, requestId + ".lock");
 }
 
+// generations of a claim currently on disk, ascending.
+function claimGenerations(cfg: any, requestId: string): number[] {
+  const prefix = requestId + ".lock.";
+  let names: string[] = [];
+  try { names = fs.readdirSync(cfg.locksDir); } catch { return []; }
+  return names
+    .filter((n) => n.startsWith(prefix) && /^\d+$/.test(n.slice(prefix.length)))
+    .map((n) => Number(n.slice(prefix.length)))
+    .sort((x, y) => x - y);
+}
+
+const heldGeneration = new Map<string, number>(); // `${locksDir}\0${requestId}` -> generation THIS process holds
+const holdKey = (cfg: any, requestId: string) => `${path.resolve(cfg.locksDir)}\0${requestId}`;
+
 function tryClaim(cfg: any, requestId: string): boolean {
-  const file = lockPath(cfg, requestId);
+  const base = lockPath(cfg, requestId);
   fs.mkdirSync(cfg.locksDir, { recursive: true });
 
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const gens = claimGenerations(cfg, requestId);
+    const top = gens.length ? gens[gens.length - 1] : 0;
+    if (top > 0) {
+      let st: fs.Stats;
+      try { st = fs.statSync(`${base}.${top}`); } catch { continue; } // superseded + collected meanwhile -> re-read
+      if (!(Date.now() - st.mtimeMs > cfg.lockTtlMs)) return false;  // a live (unexpired, unreleased) holder
+    }
+    const gen = top + 1;
+    const file = `${base}.${gen}`;
+    let fd: number;
     try {
-      // 'wx' == O_CREAT | O_EXCL : atomic, fails if the lock already exists.
-      const fd = fs.openSync(file, "wx");
-      try {
-        fs.writeSync(
-          fd,
-          JSON.stringify({
-            pid: process.pid,
-            host: require("os").hostname(),
-            claimedAt: new Date().toISOString()
-          })
-        );
-      } finally {
-        fs.closeSync(fd); // never leak the descriptor, even on write failure
-      }
-      return true;
+      // 'wx' == O_CREAT | O_EXCL : atomic — exactly one claimant can create generation `gen`.
+      fd = fs.openSync(file, "wx");
     } catch (err: any) {
       if (err.code !== "EEXIST") throw err;
-
-      // Lock exists : reclaim only if stale, then retry the atomic create once.
-      let stale = false;
-      try {
-        const age = Date.now() - fs.statSync(file).mtimeMs;
-        stale = age > cfg.lockTtlMs;
-      } catch {
-        stale = true; // vanished between EEXIST and stat -> race it again
-      }
-      if (!stale) return false;
-      try {
-        fs.unlinkSync(file);
-      } catch {
-        /* another instance reclaimed it first */
-      }
-      // loop: attempt the atomic create again
+      return false; // another claimant won this generation (it is fresh)
     }
+    try {
+      fs.writeSync(
+        fd,
+        JSON.stringify({
+          pid: process.pid,
+          host: require("os").hostname(),
+          claimedAt: new Date().toISOString(),
+          gen,
+          token: require("crypto").randomBytes(8).toString("hex")
+        })
+      );
+    } finally {
+      fs.closeSync(fd); // never leak the descriptor, even on write failure
+    }
+    // A laggard that targeted an already-collected generation must not win: any HIGHER generation ⇒ we lose.
+    const after = claimGenerations(cfg, requestId);
+    if (after.some((g) => g > gen)) {
+      try { fs.utimesSync(file, 0, 0); } catch { /* best-effort: mark our losing generation released */ }
+      return false;
+    }
+    heldGeneration.set(holdKey(cfg, requestId), gen);
+    for (const g of after) if (g < gen - 1) { try { fs.unlinkSync(`${base}.${g}`); } catch { /* already collected */ } }
+    return true;
   }
   return false;
 }
 
 function releaseClaim(cfg: any, requestId: string): void {
+  const key = holdKey(cfg, requestId);
+  const gen = heldGeneration.get(key);
+  if (gen === undefined) return; // this process holds nothing: never release someone else's claim
+  heldGeneration.delete(key);
   try {
-    fs.unlinkSync(lockPath(cfg, requestId));
+    fs.utimesSync(`${lockPath(cfg, requestId)}.${gen}`, 0, 0); // released ⇒ instantly stale; the file stays as the generation floor
   } catch {
-    /* already gone */
+    /* already collected */
   }
+}
+
+// read-only view of the current claim (highest generation): { gen, holder, mtimeMs } | null.
+function currentClaim(cfg: any, requestId: string): any {
+  const gens = claimGenerations(cfg, requestId);
+  if (!gens.length) return null;
+  const gen = gens[gens.length - 1];
+  const file = `${lockPath(cfg, requestId)}.${gen}`;
+  try { return { gen, holder: JSON.parse(fs.readFileSync(file, "utf8")), mtimeMs: fs.statSync(file).mtimeMs }; } catch { return { gen, holder: null, mtimeMs: null }; }
 }
 
 // --------------------------------------------------------------------------
@@ -443,6 +488,7 @@ module.exports = {
   drainOnce,
   tryClaim,
   releaseClaim,
+  currentClaim,
   extractProposal,
   resolveAgentCommand,
   invokeAgent

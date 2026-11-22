@@ -1,0 +1,449 @@
+{
+  "scenario": "V15.0 §45 M — multi-task resume after brutal interruption (real SIGKILL, measured)",
+  "setup": {
+    "missions": 4,
+    "opsPerMission": 4,
+    "opMs": 120,
+    "leaseTtlMs": 1500,
+    "stateDir": "<mkdtemp, discarded>"
+  },
+  "phases": [
+    {
+      "name": "run1-sigkill-mid-op",
+      "pid": 188662,
+      "exitCode": null,
+      "signal": "SIGKILL",
+      "killedAt": 1795389232564,
+      "wallMs": 1214,
+      "toFirstCommitMs": 944,
+      "startupMs": 803,
+      "killPoint": "START:M4.o1",
+      "started": [
+        "M1.o1",
+        "M2.o1",
+        "M3.o1",
+        "M4.o1"
+      ],
+      "committed": [
+        "M1.o1",
+        "M2.o1",
+        "M3.o1"
+      ],
+      "reconciled": [],
+      "takeovers": [],
+      "leaseContentions": 0,
+      "reStartedAlreadyCommitted": [],
+      "integrityBefore": {
+        "registerParses": false,
+        "records": 0,
+        "tornRecords": [],
+        "tmpLeftovers": 0
+      }
+    },
+    {
+      "name": "run2-sigkill-after-commit-before-persist",
+      "pid": 188687,
+      "exitCode": null,
+      "signal": "SIGKILL",
+      "killedAt": 1795389234319,
+      "wallMs": 1751,
+      "toFirstCommitMs": 1605,
+      "startupMs": 737,
+      "killPoint": "COMMIT:M1.o2",
+      "started": [
+        "M4.o1",
+        "M1.o2"
+      ],
+      "committed": [
+        "M4.o1",
+        "M1.o2"
+      ],
+      "reconciled": [],
+      "takeovers": [
+        {
+          "op": "M4.o1",
+          "mission": "M4",
+          "fromPid": 188662,
+          "fromGen": 1,
+          "ageFromClaimedAtMs": 1507
+        }
+      ],
+      "leaseContentions": 28,
+      "reStartedAlreadyCommitted": [],
+      "integrityBefore": {
+        "registerParses": true,
+        "records": 3,
+        "tornRecords": [],
+        "tmpLeftovers": 0
+      }
+    },
+    {
+      "name": "run3-resume-injected-crash",
+      "pid": 188739,
+      "exitCode": 70,
+      "signal": null,
+      "killedAt": null,
+      "wallMs": 921,
+      "toFirstCommitMs": 899,
+      "startupMs": 749,
+      "killPoint": null,
+      "started": [
+        "M2.o2",
+        "M3.o2"
+      ],
+      "committed": [
+        "M2.o2"
+      ],
+      "reconciled": [
+        "M1.o2"
+      ],
+      "takeovers": [],
+      "leaseContentions": 0,
+      "reStartedAlreadyCommitted": [],
+      "integrityBefore": {
+        "registerParses": true,
+        "records": 5,
+        "tornRecords": [],
+        "tmpLeftovers": 0
+      },
+      "stderrTail": ""
+    },
+    {
+      "name": "run4a-concurrent-resumer",
+      "pid": 188763,
+      "exitCode": 0,
+      "signal": null,
+      "killedAt": null,
+      "wallMs": 2780,
+      "toFirstCommitMs": null,
+      "startupMs": 689,
+      "killPoint": null,
+      "started": [],
+      "committed": [],
+      "reconciled": [
+        "M3.o2",
+        "M4.o2",
+        "M1.o3",
+        "M2.o3",
+        "M3.o3",
+        "M4.o3",
+        "M1.o4",
+        "M2.o4",
+        "M3.o4",
+        "M4.o4"
+      ],
+      "takeovers": [],
+      "leaseContentions": 78,
+      "reStartedAlreadyCommitted": [],
+      "integrityBefore": {
+        "registerParses": true,
+        "records": 6,
+        "tornRecords": [],
+        "tmpLeftovers": 1
+      }
+    },
+    {
+      "name": "run4b-concurrent-resumer",
+      "pid": 188764,
+      "exitCode": 0,
+      "signal": null,
+      "killedAt": null,
+      "wallMs": 2762,
+      "toFirstCommitMs": 1605,
+      "startupMs": 833,
+      "killPoint": null,
+      "started": [
+        "M3.o2",
+        "M4.o2",
+        "M1.o3",
+        "M2.o3",
+        "M3.o3",
+        "M4.o3",
+        "M1.o4",
+        "M2.o4",
+        "M3.o4",
+        "M4.o4"
+      ],
+      "committed": [
+        "M3.o2",
+        "M4.o2",
+        "M1.o3",
+        "M2.o3",
+        "M3.o3",
+        "M4.o3",
+        "M1.o4",
+        "M2.o4",
+        "M3.o4",
+        "M4.o4"
+      ],
+      "reconciled": [],
+      "takeovers": [
+        {
+          "op": "M3.o2",
+          "mission": "M3",
+          "fromPid": 188739,
+          "fromGen": 2,
+          "ageFromClaimedAtMs": 1509
+        },
+        {
+          "op": "M1.o3",
+          "mission": "M1",
+          "fromPid": 188687,
+          "fromGen": 2,
+          "ageFromClaimedAtMs": 2805
+        }
+      ],
+      "leaseContentions": 24,
+      "reStartedAlreadyCommitted": [],
+      "integrityBefore": {
+        "registerParses": true,
+        "records": 6,
+        "tornRecords": [],
+        "tmpLeftovers": 1
+      }
+    },
+    {
+      "name": "run5-idempotent-rerun",
+      "pid": 188794,
+      "exitCode": 0,
+      "signal": null,
+      "killedAt": null,
+      "wallMs": 797,
+      "toFirstCommitMs": null,
+      "startupMs": 762,
+      "killPoint": null,
+      "started": [],
+      "committed": [],
+      "reconciled": [],
+      "takeovers": [],
+      "leaseContentions": 0,
+      "reStartedAlreadyCommitted": [],
+      "integrityBefore": {
+        "registerParses": true,
+        "records": 16,
+        "tornRecords": [],
+        "tmpLeftovers": 1
+      }
+    }
+  ],
+  "measurements": {
+    "resumeWallMs": {
+      "run2-sigkill-after-commit-before-persist": 1751,
+      "run3-resume-injected-crash": 921,
+      "run4a-concurrent-resumer": 2780,
+      "run4b-concurrent-resumer": 2762,
+      "run5-idempotent-rerun": 797
+    },
+    "resumeToFirstNewCommitMs": {
+      "run2-sigkill-after-commit-before-persist": 1605,
+      "run3-resume-injected-crash": 899,
+      "run4a-concurrent-resumer": null,
+      "run4b-concurrent-resumer": 1605,
+      "run5-idempotent-rerun": null
+    },
+    "processStartupMs": {
+      "run1-sigkill-mid-op": 803,
+      "run2-sigkill-after-commit-before-persist": 737,
+      "run3-resume-injected-crash": 749,
+      "run4a-concurrent-resumer": 689,
+      "run4b-concurrent-resumer": 833,
+      "run5-idempotent-rerun": 762
+    },
+    "opsRepeatedCompleted": 0,
+    "opsLost": 0,
+    "interruptedAttemptsReRun": 2,
+    "reconciledDuplicates": 11,
+    "concurrentResumers": {
+      "a": {
+        "started": 0,
+        "reconciled": 10,
+        "contentions": 78,
+        "wallMs": 2780
+      },
+      "b": {
+        "started": 10,
+        "reconciled": 0,
+        "contentions": 24,
+        "wallMs": 2762
+      },
+      "reconciledUnderLease": 10
+    },
+    "leaseContentionsWhileUnexpired": 130,
+    "leaseTakeovers": 3,
+    "doubleHeldLeases": 0
+  },
+  "analysis": {
+    "opsTotal": 16,
+    "opsAccepted": 16,
+    "allAccepted": true,
+    "opsRepeatedCompleted": 0,
+    "opsLost": 0,
+    "lost": [],
+    "wrongValues": [],
+    "opsCommittedExactlyOnce": true,
+    "noStartAfterCommit": true,
+    "reconciledUnderLease": 10,
+    "interruptedAttemptsReRun": 2,
+    "reconciledDuplicates": 11,
+    "perMission": {
+      "M1": {
+        "ops": 4,
+        "attempts": 4,
+        "reRunInterruptedOps": 0,
+        "repeatedCompletedOps": 0,
+        "reconciledDuplicates": 3
+      },
+      "M2": {
+        "ops": 4,
+        "attempts": 4,
+        "reRunInterruptedOps": 0,
+        "repeatedCompletedOps": 0,
+        "reconciledDuplicates": 2
+      },
+      "M3": {
+        "ops": 4,
+        "attempts": 5,
+        "reRunInterruptedOps": 1,
+        "repeatedCompletedOps": 0,
+        "reconciledDuplicates": 3
+      },
+      "M4": {
+        "ops": 4,
+        "attempts": 5,
+        "reRunInterruptedOps": 1,
+        "repeatedCompletedOps": 0,
+        "reconciledDuplicates": 3
+      }
+    },
+    "leases": {
+      "ttlMs": 1500,
+      "claims": 28,
+      "orphanedByDeath": [
+        {
+          "op": "M4.o1",
+          "mission": "M4",
+          "pid": 188662
+        },
+        {
+          "op": "M1.o2",
+          "mission": "M1",
+          "pid": 188687
+        },
+        {
+          "op": "M3.o2",
+          "mission": "M3",
+          "pid": 188739
+        }
+      ],
+      "takeovers": [
+        {
+          "op": "M4.o1",
+          "mission": "M4",
+          "fromPid": 188662,
+          "fromGen": 1,
+          "ageFromClaimedAtMs": 1507
+        },
+        {
+          "op": "M3.o2",
+          "mission": "M3",
+          "fromPid": 188739,
+          "fromGen": 2,
+          "ageFromClaimedAtMs": 1509
+        },
+        {
+          "op": "M1.o3",
+          "mission": "M1",
+          "fromPid": 188687,
+          "fromGen": 2,
+          "ageFromClaimedAtMs": 2805
+        }
+      ],
+      "contentionsWhileUnexpired": 130,
+      "doubleHeld": [],
+      "leftHeldAtEnd": []
+    }
+  },
+  "finalIntegrity": {
+    "registerParses": true,
+    "records": 16,
+    "tornRecords": [],
+    "tmpLeftovers": 1
+  },
+  "atomicWriteStress": {
+    "kills": 6,
+    "allIntact": true,
+    "killsLandedWithTornTemp": 0,
+    "results": [
+      {
+        "killAfterMs": 445,
+        "targetIntact": true,
+        "version": null,
+        "tmpLeftovers": 0
+      },
+      {
+        "killAfterMs": 733,
+        "targetIntact": true,
+        "version": null,
+        "tmpLeftovers": 0
+      },
+      {
+        "killAfterMs": 740,
+        "targetIntact": true,
+        "version": null,
+        "tmpLeftovers": 0
+      },
+      {
+        "killAfterMs": 560,
+        "targetIntact": true,
+        "version": null,
+        "tmpLeftovers": 0
+      },
+      {
+        "killAfterMs": 678,
+        "targetIntact": true,
+        "version": 2,
+        "tmpLeftovers": 0
+      },
+      {
+        "killAfterMs": 534,
+        "targetIntact": true,
+        "version": 2,
+        "tmpLeftovers": 0
+      }
+    ]
+  },
+  "verdicts": {
+    "killedTwiceAtDifferentPoints": true,
+    "onlyMissingOpsReRun": true,
+    "noOpExecutedTwice": true,
+    "noLostValidatedResult": true,
+    "noCorruptRecordAtAnyRestart": true,
+    "atomicWriteSurvivesSigkill": true,
+    "leasesOfKilledRunTakenOverNotDoubleHeld": true,
+    "failedResumeRetriedSafely": true,
+    "concurrentResumersNoDoubleEffect": true,
+    "idempotentRerunExecutesNothing": true
+  },
+  "allProven": true,
+  "attribution": {
+    "odgRuntimeCore": [
+      "campaign-loop.runCampaignLoop: which op runs next (dep order + priority), persisting the register after EACH op, never re-running an ACCEPTED op on resume",
+      "campaign-controller.saveRegister: crash-atomic temp+rename for the register AND every per-op record",
+      "idempotency-guard.admit: DUPLICATE decision by op id ⇒ an op committed before the kill is reconciled, not re-applied",
+      "fleet-bridge.tryClaim/releaseClaim: lease exclusivity (O_EXCL) and TTL expiry/takeover of a killed holder's lease (generation-numbered race-free takeover, fixed in this lot)"
+    ],
+    "providerWrittenHarness": [
+      "the scenario itself: missions/ops definition, op effect (hash chain), deriving the idempotency journal from the durable op records, the lease bounded wait, the kill points, the injected crash, and every check/measurement in this file",
+      "the decision to wrap each op in a per-mission lease (the canonical loop has no lease concept of its own)"
+    ]
+  },
+  "limits": [
+    "single host, local filesystem (ext4-class rename atomicity); no fsync of the directory ⇒ power-loss durability NOT measured (only process death)",
+    "two concurrent resumers only (not N>2); they last-writer-win the shared register file — op effects stay exactly-once through the lease + the idempotency check made UNDER the lease, and a later run reconciles the register",
+    "leases are TTL-based with no renewal/heartbeat: an op longer than the TTL could be taken over while alive — ops here are short (opMs << TTL)",
+    "fleet-bridge takeover is TTL-based: a holder that overruns its TTL while alive can be superseded (inherent to TTL leases; no fencing token is checked by the effect)",
+    "the injected resume failure is a process death (exit 70); an execute() THROW is caught by campaign-loop as FAILED and the lot then stalls (no-repeat guard) until its definition changes — by design, not exercised here",
+    "timings are wall-clock on a shared VPS; startup is dominated by node+tsx (~hundreds of ms)"
+  ],
+  "generatedAt": "2026-11-22T23:14:02.664Z"
+}
