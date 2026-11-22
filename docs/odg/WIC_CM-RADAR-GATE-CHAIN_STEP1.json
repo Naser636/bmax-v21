@@ -1,0 +1,52 @@
+{
+  "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
+  "id": "WIC-CM-RADAR-GATE-CHAIN-STEP1",
+  "state": "PROPOSED",
+  "proposedBy": "Claude Code (technical provider) on owner Directive Maître V14.4, 2026-11-22",
+  "authorizationRequired": "human PROPOSED -> AUTHORIZED before any EXECUTING",
+  "v124Anchor": { "mission": "CM-RADAR-GATE-CHAIN", "section": "I", "status": "READY", "objective": "Radar→memory→opportunity→experiment→gate chain, really wired" },
+  "v144Phase": "1 — Radar & knowledge (PROPOSED roadmap docs/odg/V14_4_PROPOSED_ROADMAP.md)",
+  "objective": "Compose the EXISTING components into ONE traced, deterministic chain, run OFFLINE on already-recorded real data: knowledge-acquisition.acquire(REAL_CYCLE) → memory-trust-gate admission (provenance/freshness/confidence) → improvement experiment record → odg-improvement-chain.run() which consumes odg-sandbox-integration-gate.decide() → evidence trace; with a REAL consumer (odg-cto-dashboard surface) and a reuse proof (a second run retrieves the admitted knowledge instead of re-acquiring).",
+  "scope": "Pure composition module + test + a read-only run script. NO egress (REAL_CYCLE = records consulted 2026-11-16 under the then-valid V141 grant), NO execution of integrations, NO deploy, NO métier, NO register edits.",
+  "write_set": [
+    "runtime/core/odg-radar-gate-chain.ts",
+    "runtime/core/odg-radar-gate-chain.test.ts",
+    "runtime/bin/odg-radar-gate-chain-run.ts",
+    "runtime/core/odg-cto-dashboard.ts (one read-only indicator line consuming the chain trace)",
+    "package.json (append the new test to test:report only)",
+    "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP1_EVIDENCE.json"
+  ],
+  "authorized_symbols": ["runChain", "RADAR_GATE_CHAIN_CONTRACT"],
+  "invariants": [
+    "reuse only: odg-knowledge-acquisition, memory-trust-gate, odg-improvement-chain, odg-sandbox-integration-gate, odg-radar-source-provenance — no second radar/memory/gate/orchestrator",
+    "fail-closed: missing provenance/date ⇒ NOT admitted; INACCESSIBLE sources stay recorded as such",
+    "fact ≠ hypothesis ≠ simulation preserved end-to-end; REAL_CYCLE labelled REAL_RECORDED (not live)",
+    "INTEGRATE ⇒ MERGE_ELIGIBLE decision only, never an applied change",
+    "deterministic given injected nowEpochMs; no network, no fs writes except the evidence file via the run script",
+    "9 primitives unchanged; hard registers byte-identical"
+  ],
+  "acceptance_criteria": [
+    "test: admitted knowledge items carry url+consultedDate+claimType+corroboration; 403 sources excluded with reason",
+    "test: chain trace has every stage with input/output hashes; verdict comes from sandbox-integration-gate.decide",
+    "test: second run REUSES admitted knowledge (retrieved count > 0, re-acquired = 0) — reuse proof",
+    "test: tampered/undated item ⇒ rejected (negative control)",
+    "odg-cto-dashboard indicator consumes the trace (real consumer); census marks module CONNECTED",
+    "tsc + build:runtime + targeted tests + full test:report no new failure vs baseline (832/835, 2 known pre-existing)",
+    "independent inspection by a separate agent: ACCEPT"
+  ],
+  "stop_conditions": [
+    "any need for egress, new grant, credential, or system change",
+    "any change required outside write_set",
+    "a hard-register or V12.4 file would change",
+    "a new failing test not explainable as pre-existing"
+  ],
+  "rollback": "single PR; revert the merge commit (all files additive except one dashboard line and one test:report entry)",
+  "evidence_required": [
+    "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP1_EVIDENCE.json (trace, hashes, counts, reuse proof)",
+    "test logs (targeted + full suite summary)",
+    "independent inspection verdict",
+    "census before/after for the new module"
+  ],
+  "measurement": "before/after: retrieved-vs-reacquired knowledge on run 2; stage latencies p50/p95 over N=20 deterministic runs; NO quality claim beyond the recorded sample (n=4 sources, 2 retrieved) — real-world performance stays NOT_MEASURED",
+  "step2_not_in_scope": "live Radar collection — requires an ACCEPTED unexpired grant (V371 grant PROPOSED)"
+}
