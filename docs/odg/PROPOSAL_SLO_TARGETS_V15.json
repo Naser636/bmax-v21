@@ -8,7 +8,7 @@
       "direction": "atLeast",
       "target": 0.98,
       "minSampleN": 1344,
-      "status": "PROPOSED",
+      "status": "WORKING_REFERENCE (owner V16 §6; not enforced)",
       "definition": "LIVENESS SLI — NOT a measure that autonomy works: fraction of epoch-aligned 15-min slots (odg-mission-runner.timer cadence) in which the mission-runner tick fired AND passed startup with the repo on main. A slot is good iff it holds ≥1 mission-attempt-log row and every row in it is an allowlisted post-startup status; empty slot (incl. timer drift slips) or any STARTUP_REFUSED / AUDIT_CHAIN_TAMPERED / unknown-status row ⇒ bad; extra rows never add slots; rolling 14 days",
       "provenance": {
         "source": "V15 §6 recommendation (provider-prepared, V15-SLI-DEFINITIONS-r2)",
@@ -22,7 +22,7 @@
       "direction": "atLeast",
       "target": 0.99,
       "minSampleN": 200,
-      "status": "PROPOSED",
+      "status": "WORKING_REFERENCE (owner V16 §6; not enforced)",
       "definition": "fraction of completed runs of the required check 'build + typecheck + parity + tests' triggered by push to main whose FIRST attempt concluded success; any other completed conclusion (failure, timed_out, startup_failure, action_required, skipped, neutral, …) = bad; cancelled excluded (superseded); pull_request runs excluded (development signal, not an SLO); rolling 30 days. Evidence so far: 2026-10-25T20:24:28Z → 2026-11-22T17:43:52Z (27.89 days), 846 runs — budget figures computed over that window, not over 30 days",
       "provenance": {
         "source": "V15 §6 recommendation (provider-prepared, V15-SLI-DEFINITIONS-r2)",
@@ -56,5 +56,17 @@
       }
     ]
   },
-  "supersedes": "r0 (ac87cd94): AUTONOMY_AVAILABILITY 0.98 on logged rows; CI_REQUIRED_CHECK_SUCCESS 0.98 on mixed push+PR runs. r1 (91659f3d): gap-formula slots; CI main-push from latest-attempt snapshot"
+  "supersedes": "r0 (ac87cd94): AUTONOMY_AVAILABILITY 0.98 on logged rows; CI_REQUIRED_CHECK_SUCCESS 0.98 on mixed push+PR runs. r1 (91659f3d): gap-formula slots; CI main-push from latest-attempt snapshot",
+  "ownerDecision": {
+    "source": "ODG — COMMANDE EXÉCUTIVE UNIQUE V16 §6 (owner directive, 2026-11-22)",
+    "decision": "targets RETAINED as the WORKING REFERENCE: AUTONOMY_AVAILABILITY 0.98 (provisional, liveness SLI), CI_MAIN_PUSH_SUCCESS 0.99 (first attempt), MISSION_SUCCESS_VERIFIED 0.95 (existing CTO target in slo-targets.ts)",
+    "status": "WORKING_REFERENCE — NOT AN ENFORCED POLICY",
+    "notEnforced": "no alert wired, no freeze, no sanction; runtime/core/slo-targets.ts intentionally unchanged (activation as a binding policy is a separate, explicit owner act)",
+    "conclusionRules": {
+      "AUTONOMY_AVAILABILITY": "no conclusion before minSampleN 1344 slots (14 days) AND Wilson low ≥ target; liveness only (timer fired, tick passed startup on main) — NOT proof that autonomy works",
+      "CI_MAIN_PUSH_SUCCESS": "denominator = completed push-to-main runs of the required check, first attempt; window stated with every figure; 0.99 currently INCONCLUSIVE (841/846, Wilson [0.9862, 0.9975]); minSampleN 200",
+      "MISSION_SUCCESS_VERIFIED": "NOT_MEASURED until ≥ 20 executed missions (currently 3: 1 pass, 2 policy-refused); 0.95 is a target, not demonstrated"
+    },
+    "noAutomaticSanction": "insufficient data ⇒ NOT_MEASURED / INCONCLUSIVE, never a freeze"
+  }
 }

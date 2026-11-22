@@ -1,0 +1,2 @@
+# V16 — OWNER SSH signing keys (git allowed-signers format: "<principal> <keytype> <base64-key>"). EMPTY by design.
+# Only the owner adds a line, in an owner-signed commit, through a PR the owner reviews.

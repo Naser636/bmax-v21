@@ -102,6 +102,20 @@ Grounds:
 4. expect `Result=success` and exactly one new L0 line, not INVALID_TRACE/TIMEOUT;
 5. roll back by deleting the file and running `daemon-reload`.
 
+## 4e. V16 — L1 readiness checklist (owner decision of reference: **L1 stays DISABLED**)
+| Item | State |
+|---|---|
+| Demonstrated (sandbox, throw-away copies) | L1 SIMULATE cycle confined: zero write, `wouldExecute=false` (Lot B). Confined launcher 35/35 incl. fd/stderr/memory/timeout/orphan controls (#873). Stop signal passes through the confinement (`ODG_SCHEDULER_STOP=1` ⇒ `state=STOPPED`, tested). Gate RUN4 10/12 |
+| Not demonstrated | any run under the real user unit; owner-anchored review (gate 2/12); ≥ 14 days post-fix availability; mission reliability (n = 3) |
+| New finding (static, V16) | installed `v364-hardening.conf` has `RestrictNamespaces=yes` and the base unit `RestrictAddressFamilies=AF_UNIX`, which would make every confined tick fail (`INVALID_TRACE`). The proposal now resets both to the minimal set bwrap needs and must be installed as `zz-…` so it sorts after v364. Not reproduced: the provider's transient-unit dry-run was refused by its permission policy |
+| Entry conditions (all required) | owner dry-run B = one IDLE line rc 0 and C = STOPPED (`scripts/odg-owner-dropin-dryrun.sh`); confined drop-in installed and 14 days of L0 ticks without INVALID_TRACE/TIMEOUT; gate 12/12 on the candidate, re-verified on the owner's clone; availability Wilson low ≥ 0.98 over 14 days; `scripts/odg-anchor-ci-check.sh` green |
+| Refusal criteria (any) | INVALID_TRACE/TIMEOUT in dry-run or live; any write outside the trace; availability below target; anchor check failing; an unexplained L1 decision in the trace |
+| Supervision | the L0 trace (launcher-stamped lines); `mission-attempt-log` availability SLI; `odg-trust-anchor-audit` |
+| Emergency stop | `ODG_SCHEDULER_STOP=1` in the unit environment ⇒ `STOPPED`, no observation; or stop the timer (owner) |
+| Return to L0 | L1 is a level of the same driver: remove the L1 setting / drop-in, `daemon-reload`; the confined L0 path stays |
+| Evidence required | dry-run output (A/B/C), 14-day trace extract, RUN at 12/12 with owner signature, SLO evidence regenerated |
+| Owner responsibilities | run the dry-run, install/rollback the drop-in, sign the review, decide L1 |
+
 ## 5. Recommendation
 **Do not activate L1 yet.** First:
 1. ~~run and independently inspect an L1 simulation cycle in a sandbox~~ (done, Lot B); owner installs and tests the proposed filesystem confinement on the user unit;

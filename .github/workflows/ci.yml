@@ -82,6 +82,9 @@ jobs:
       - name: Typecheck (tsc --noEmit)
         run: npx tsc --noEmit -p tsconfig.json
 
+      - name: Trust-anchor audit (V16 — any pin must come from an owner-signed commit)
+        run: bash scripts/odg-anchor-ci-check.sh . HEAD
+
       - name: Classified test gate
         # CI-reliability: bound this step well above the ~3.5-min happy path and below the 20-min job timeout, so a
         # residual hang from ANY source fails the step fast instead of running out the whole job as CANCELLED. The
