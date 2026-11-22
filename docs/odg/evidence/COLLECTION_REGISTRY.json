@@ -1,6 +1,23 @@
 {
   "//": "V374 trust root for Radar page quotes: a collection counts as AUTHENTICATED only if its deep-canonical SHA-256 (odg-knowledge-attestation.contentSha256 of the parsed JSON) is pinned here (git-reviewed, PR-protected main) or it carries a valid signed collector attestation. Pinning a NEW collection requires its own reviewed commit; never pin a file you did not collect through research-governor + bounded-http-client.",
   "collections": [
-    { "path": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json", "sha256": "9695c98118c6d0dda53064337eaf0bee545d36876ab2933f08b7063c5628848a", "grant": "docs/odg/V372_RESEARCH_GRANT.json", "collectedAt": "2026-11-22", "calls": 6, "pinnedIn": "V374 (KI-V2 Lot 2)" }
+    {
+      "path": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json",
+      "sha256": "9695c98118c6d0dda53064337eaf0bee545d36876ab2933f08b7063c5628848a",
+      "grant": "docs/odg/V372_RESEARCH_GRANT.json",
+      "collectedAt": "2026-11-22",
+      "calls": 6,
+      "pinnedIn": "V374 (KI-V2 Lot 2)"
+    },
+    {
+      "path": "docs/odg/evidence/V16_RADAR_CLAUDE_CODE_LIVE_RUN1.json",
+      "sha256": "11e40fe24b2bd7724b2374c589029795820fb718d4e3695a9b7199576e1100e8",
+      "grant": "docs/odg/V16_RESEARCH_GRANT_CLAUDE_CODE.json",
+      "collectedAt": "2026-11-22",
+      "calls": 10,
+      "fetched": 9,
+      "redirectBlocked": 1,
+      "pinnedIn": "V16 unlock inventory"
+    }
   ]
 }
