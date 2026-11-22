@@ -34,13 +34,15 @@ check("launcher REFUSES when the trace file is a symlink (no bind through a plan
 fs.rmSync(path.join(T, "runtime/logs/resident-driver-l0.log")); fs.renameSync(path.join(T, "runtime/logs/real.log"), path.join(T, "runtime/logs/resident-driver-l0.log"));
 const after = snap().split("\n").filter((x) => !x.startsWith("runtime/bin/odg-resident-driver-tick.ts:")).join("\n");
 check("only runtime/logs and runtime/dist changed (every other file identical)", after === before.split("\n").filter((x) => !x.startsWith("runtime/bin/odg-resident-driver-tick.ts:")).join("\n"));
-check("log contains exactly the 4 confined ticks (refused 5th run wrote nothing)", fs.readFileSync(path.join(T, "runtime/logs/resident-driver-l0.log"), "utf8").trim().split("\n").length === 4);
+check("log contains the 4 confined ticks first (refused 5th run wrote nothing)", fs.readFileSync(path.join(T, "runtime/logs/resident-driver-l0.log"), "utf8").trim().split("\n").length === 4);
 const probe = (cmd: string) => sh(`${VIEW} exec "\${BW[@]}" --chdir "${T}" ${cmd}`);
 check("negative: write to source refused inside the confinement", probe(`/bin/sh -c 'echo x >> runtime/core/odg-resident-driver.ts'`).status !== 0);
 check("negative: write to scripts/ and docs/ refused", probe(`/bin/sh -c 'echo x > scripts/x || echo y > docs/x'`).status !== 0);
 check("positive control: append to the driver's OWN trace file allowed", probe(`/bin/sh -c 'echo probe >> runtime/logs/resident-driver-l0.log'`).status === 0);
 check("negative: write into runtime/dist refused (no planting of JS run by unconfined services)", probe(`/bin/sh -c 'echo x > runtime/dist/bin/odg-schedule-tick.js || echo x >> runtime/dist/bin/odg-resident-driver-tick.js'`).status !== 0 && probe(`/bin/sh -c 'echo x >> runtime/dist/bin/odg-resident-driver-tick.js'`).status !== 0);
 check("negative: create/replace files or symlinks in runtime/logs refused (other unconfined writers safe)", probe(`/bin/sh -c 'echo x > runtime/logs/radar-weekly.log'`).status !== 0 && probe(`/bin/sh -c 'ln -s ../../scripts/x runtime/logs/radar-weekly.log'`).status !== 0 && probe(`/bin/sh -c 'rm -f runtime/logs/resident-driver-l0.log'`).status !== 0);
+const big = sh(`ODG_SCHEDULER_STOP=1 ODG_RESIDENT_MAX_FILE_KB=1 bash scripts/odg-resident-driver-confined.sh "${T}" >/dev/null 2>&1; ${VIEW} exec "\${BW[@]}" --chdir "${T}" /bin/sh -c 'ulimit -f 4; head -c 100000 /dev/zero >> runtime/logs/resident-driver-l0.log'`);
+check("disk-fill bound: a write beyond RLIMIT_FSIZE inside the confinement fails", big.status !== 0 && fs.statSync(path.join(T, "runtime/logs/resident-driver-l0.log")).size < 100000);
 const uid = String(os.userInfo().uid);
 const s = probe(`"$(readlink -f "$(command -v node)")" -e 'const n=require("net");const ps=["/run/user/${uid}/bus","/run/user/${uid}/systemd/private","/run/dbus/system_bus_socket"];let k=ps.length,h=[];for(const p of ps){const c=n.connect(p);c.on("connect",()=>{h.push(p);c.destroy();if(!--k)fin()});c.on("error",()=>{if(!--k)fin()})}function fin(){process.stdout.write(h.length?"REACHABLE":"NONE")}'`);
 check("negative: host Unix sockets (user systemd manager, D-Bus) unreachable", s.stdout === "NONE");

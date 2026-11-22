@@ -24,7 +24,8 @@ function safeRel(p: any, prefix: string): boolean {
 /* makeCommittedReader(root) -> reads from the COMMITTED tree (git show HEAD:<path>) — uncommitted/unreviewed files never
  * count (inspection MEDIUM). Paths are validated by the caller; git itself confines reads to the repository. */
 function makeCommittedReader(root: string, ref?: string): any {
-  const cp = require("child_process"); const r = typeof ref === "string" && /^[A-Za-z0-9._\/][A-Za-z0-9._\/-]*$/.test(ref) ? ref : "HEAD";
+  const cp = require("child_process"); if (ref !== undefined && !(typeof ref === "string" && /^[A-Za-z0-9._\/][A-Za-z0-9._\/-]*$/.test(ref))) return () => null;   // bad ref ⇒ fail-closed (reads nothing)
+  const r = typeof ref === "string" ? ref : "HEAD";
   return (rel: string) => { try { return cp.execFileSync("git", ["show", r + ":" + rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 32 * 1024 * 1024 }); } catch { return null; } };
 }
 /* makeRepoReader(root) -> (relPath) => Buffer | null, WORKING-TREE reader confined to root (symlinks resolved and re-checked) — for sandbox tests. */

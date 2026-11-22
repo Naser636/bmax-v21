@@ -22,4 +22,7 @@ else echo "[resident-confined] precompiled build unavailable/stale ⇒ tsx fallb
 odg_confined_view "$REPO"
 BW+=(--bind "$REPO/$LOG" "$REPO/$LOG")
 for v in ODG_TRUTH_LOCK_ENFORCE ODG_SCHEDULER_STOP; do [ -n "${!v:-}" ] && BW+=(--setenv "$v" "${!v}"); done
-exec "${BW[@]}" --chdir "$REPO" "${CMD[@]}"
+# disk-fill bound (inspection LOW): the only writable file cannot grow beyond ODG_RESIDENT_MAX_FILE_KB (default 10 MiB)
+# per write session — RLIMIT_FSIZE set inside the sandbox before exec.
+MAXKB="${ODG_RESIDENT_MAX_FILE_KB:-10240}"; case "$MAXKB" in *[!0-9]*|"") MAXKB=10240 ;; esac
+exec "${BW[@]}" --chdir "$REPO" /bin/sh -c 'ulimit -f "$0"; exec "$@"' "$((MAXKB*2))" "${CMD[@]}"

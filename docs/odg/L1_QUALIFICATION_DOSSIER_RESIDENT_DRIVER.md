@@ -46,6 +46,8 @@
 - **npx:** the launcher fallback now calls the local `node_modules/.bin/tsx`. This removes by design the npx-cache dependency under a read-only HOME. It was a risk, not an observed failure: under bwrap HOME is a tmpfs, where npx also works.
 - **Not tested:** the drop-in `deploy/odg-resident-driver.service.d/v15-confined-launcher.conf.proposed` under the real user unit. Installing it is a systemd change, outside this mandate; it is the owner's step.
 
+- **Residual limits (inspection LOW).** The confined tick can still rewrite its own trace file, so `writes=0` lines are the driver's **self-report, not an attested record**. File size is capped inside the sandbox by `ulimit -f` (default 10 MiB). Attesting the trace (e.g. signed lines checked by an unconfined verifier) is open work.
+
 ## 5. Recommendation
 **Do not activate L1 yet.** First:
 1. ~~run and independently inspect an L1 simulation cycle in a sandbox~~ (done, Lot B); owner installs and tests the proposed filesystem confinement on the user unit;
