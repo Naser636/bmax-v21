@@ -1,7 +1,7 @@
 {
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
   "id": "WIC-CM-RADAR-GATE-CHAIN-STEP1",
-  "state": "AUTHORIZED",
+  "state": "VERIFIED",
   "proposedBy": "Claude Code (technical provider) on owner Directive Maître V14.4, 2026-11-22",
   "authorizationRequired": "human PROPOSED -> AUTHORIZED before any EXECUTING",
   "v124Anchor": {
@@ -68,7 +68,44 @@
       "state": "AUTHORIZED",
       "at": "2026-11-22",
       "by": "owner V372"
+    },
+    {
+      "state": "EXECUTING",
+      "at": "2026-11-22",
+      "branch": "feat/cm-radar-gate-chain-step1"
+    },
+    {
+      "state": "VERIFIED",
+      "at": "2026-11-22",
+      "basis": "targeted+full-suite (no new failure), tsc 0, CI pass, independent inspection round 3 ACCEPT"
     }
   ],
-  "reconciliation": "runtime/core/odg-radar-gate-chain.ts pre-existed (V254/V257 coverage verifier, PR #636). Step 1 EXTENDS it (verifyChain + its contract unchanged); tests appended to the existing odg-radar-gate-chain.test.ts (already in test:report, so package.json needs no change)."
+  "reconciliation": "runtime/core/odg-radar-gate-chain.ts pre-existed (V254/V257 coverage verifier, PR #636). Step 1 EXTENDS it (verifyChain + its contract unchanged); tests appended to the existing odg-radar-gate-chain.test.ts (already in test:report, so package.json needs no change).",
+  "scopeReconciliation": {
+    "authorized_symbols_actual": [
+      "runChain",
+      "summarize",
+      "toMemoryRecord",
+      "EXECUTED_CHAIN_CONTRACT",
+      "KNOWLEDGE_TTL_DAYS (exports, additive)",
+      "RADAR_GATE_CHAIN_CONTRACT + verifyChain (pre-existing V254, unchanged)"
+    ],
+    "composes_actual": [
+      "odg-knowledge-acquisition",
+      "memory-trust-gate",
+      "odg-improvement-chain",
+      "odg-sandbox-integration-gate",
+      "actor-provenance (EXECUTOR.ODG attribution)",
+      "odg-claim-corroboration (re-derive corroboration at reuse)"
+    ],
+    "write_set_actual": [
+      "runtime/core/odg-radar-gate-chain.ts (EXTENDED, pre-existing V254)",
+      "runtime/core/odg-radar-gate-chain.test.ts (EXTENDED; already in test:report ⇒ package.json unchanged)",
+      "runtime/bin/odg-radar-gate-chain-run.ts",
+      "runtime/core/odg-cto-dashboard.ts (+require, +2 runChain calls, +1 indicator; additive)",
+      "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP1_EVIDENCE.json",
+      "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP1.json (this reconciliation)"
+    ],
+    "note": "deviations are additive and were flagged by the independent inspector (LOW); recorded here, not hidden"
+  }
 }

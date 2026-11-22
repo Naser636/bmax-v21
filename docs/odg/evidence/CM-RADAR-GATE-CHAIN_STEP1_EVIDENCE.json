@@ -1,0 +1,168 @@
+{
+  "mission": "CM-RADAR-GATE-CHAIN (V12.4 §I) — step 1",
+  "contract": "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP1.json (AUTHORIZED by owner V372, 2026-11-22)",
+  "dataNature": "REAL_RECORDED — odg-knowledge-acquisition.REAL_CYCLE (4 sources consulted 2026-11-16 under the then-valid V141 grant); NO network in this run",
+  "run1": {
+    "trace": [
+      {
+        "stage": "RETRIEVE",
+        "inputSha256": "3f4199c20e9768b8b726b3e2cc235075608d517451cf251ce9ad63b03b7832a6",
+        "outputSha256": "a8edea3bb24bca7316efce8c35fef4651b1cfd9ba456288a875d46b168449f89",
+        "note": "no reusable prior knowledge (0 ignored); acquire"
+      },
+      {
+        "stage": "ACQUIRE",
+        "inputSha256": "d8654a1f06cb8e14f91150aea1fc23dfa174dd51b8da56b3dd21290cf86369fd",
+        "outputSha256": "412f3df73df4169474d686f9d22919cfef5fb66a47fc709e56b869d37361f363",
+        "note": "accessible=2 inaccessible=2 verified=1"
+      },
+      {
+        "stage": "ADMIT",
+        "inputSha256": "977cb4336f2a6422c278730b6ce583942ab62473cf11e4969c280e673d91f930",
+        "outputSha256": "115f2a6104d8522e36604421514e9e5a58b8fd6cb76a6ea81c7f441e157aac2f",
+        "note": "memory-trust-gate deny-by-default: only a FACT_CORROBORATED, dated, fresh, ODG-attributed item is admitted"
+      },
+      {
+        "stage": "PROPOSE",
+        "inputSha256": "201b5f94207ad382e8f3f298d3a0db715d1ab90a603ac0e549afecaf3525acd6",
+        "outputSha256": "a8b9442515fe1fe5ca94dfaec062489192b410fe74edc5c669c19ccebadf8b4a",
+        "note": "experiment linked to V12.4 §I CM-RADAR-GATE-CHAIN"
+      },
+      {
+        "stage": "DECIDE",
+        "inputSha256": "621345ecc77b4077fff805293a30d9fa365d71fc2fd52ef3d20356b140a51425",
+        "outputSha256": "e12c27f609c139c455e510f61e24e542c4508b139a533e8508a42f563271e13e",
+        "note": "odg-improvement-chain → odg-sandbox-integration-gate.decide (4/12)"
+      }
+    ],
+    "accessible": 2,
+    "inaccessible": [
+      {
+        "url": "https://openai.com/index/introducing-swe-bench-verified/",
+        "httpStatus": 403,
+        "note": "recorded INACCESSIBLE — not counted as support, not circumvented"
+      },
+      {
+        "url": "https://capitalandcompute.net/ai-benchmarks/swe-bench-verified/",
+        "httpStatus": 403,
+        "note": "recorded INACCESSIBLE — not counted as support, not circumvented"
+      }
+    ],
+    "admitted": [
+      {
+        "id": "kn:99d31f9ccfa8de3b",
+        "claim": "SWE-bench Verified is a 500-instance human-validated subset",
+        "provenance": "RADAR_RECORDED_REAL:https://www.honeyhive.ai/learn/swe-bench|https://www.layer3labs.io/guides/ai-coding-benchmarks",
+        "validUntil": 1803081600000
+      }
+    ],
+    "rejected": [],
+    "decision": {
+      "verdict": "RETURN_TO_EXPERIMENT",
+      "action": "RETURNED",
+      "softMissing": [
+        "codeAndDepsReviewed",
+        "isolatedExperiment",
+        "baselineRecorded",
+        "functionalTestsPass",
+        "nonRegressionPass",
+        "measurableGainOrNewCapability",
+        "independentInspection",
+        "rollbackAvailable"
+      ],
+      "deployed": false
+    }
+  },
+  "run2ReuseProof": {
+    "trace": [
+      {
+        "stage": "RETRIEVE",
+        "inputSha256": "f85db308827c3e58980b89f60224c7f993498ae15ecaea821bc41f0c1f7f788a",
+        "outputSha256": "83d8cc7a1577128be950418e0ccfc10944976d05131999ce9ffadc0d340f466a",
+        "note": "reused 1 integrity-checked, trusted item(s); acquisition skipped"
+      },
+      {
+        "stage": "PROPOSE",
+        "inputSha256": "201b5f94207ad382e8f3f298d3a0db715d1ab90a603ac0e549afecaf3525acd6",
+        "outputSha256": "a8b9442515fe1fe5ca94dfaec062489192b410fe74edc5c669c19ccebadf8b4a",
+        "note": "experiment linked to V12.4 §I CM-RADAR-GATE-CHAIN"
+      },
+      {
+        "stage": "DECIDE",
+        "inputSha256": "621345ecc77b4077fff805293a30d9fa365d71fc2fd52ef3d20356b140a51425",
+        "outputSha256": "e12c27f609c139c455e510f61e24e542c4508b139a533e8508a42f563271e13e",
+        "note": "odg-improvement-chain → odg-sandbox-integration-gate.decide (4/12)"
+      }
+    ],
+    "retrieved": 1,
+    "reacquired": 0,
+    "sameKnowledgeId": true
+  },
+  "measurements": {
+    "host": "this VPS only (environment-dependent wall-clock)",
+    "N": 20,
+    "acquirePathMs": {
+      "p50": 0.338,
+      "p95": 0.981
+    },
+    "reusePathMs": {
+      "p50": 0.233,
+      "p95": 0.452
+    },
+    "acquisitionsAvoidedByReuse": "1 of 1 on run 2 (100% for the recorded query)"
+  },
+  "notMeasured": [
+    "live-world knowledge quality",
+    "precision/recall beyond the recorded sample (n=4 sources, 1 claim)",
+    "downstream experiment gain (gate RETURNED: baseline/tests/inspection of an actual experiment not yet proven)"
+  ],
+  "governance": {
+    "census": {
+      "before": {
+        "CONNECTED": 552,
+        "NO_CONSUMER": 227
+      },
+      "after": {
+        "CONNECTED": 553,
+        "NO_CONSUMER": 226
+      },
+      "tool": "runtime/bin/odg-component-census-run.ts"
+    },
+    "tests": {
+      "targeted": "odg-radar-gate-chain.test.ts ALL PASS (V254 + exec + 3 rounds of inspection regressions)",
+      "fullSuiteWorktree": "835 · 832 PASS · 3 FAIL, identical set to baseline main 25946a30 run in a worktree. The contract said \"2 known pre-existing\": the 3rd (odg-backup-restore) fails ONLY inside a worktree (script defaults REPO to the canonical clone) and passes on main.",
+      "tsc": 0,
+      "ci": "PR #853 required check passed"
+    },
+    "independentInspection": [
+      {
+        "round": 1,
+        "commit": "1a2d52b4",
+        "verdict": "REJECT",
+        "top": "HIGH forged ODG-labelled memory reused"
+      },
+      {
+        "round": 2,
+        "commit": "16aae081",
+        "verdict": "REJECT",
+        "top": "HIGH reuse trusted declared corroboration counts"
+      },
+      {
+        "round": 3,
+        "commit": "3ec0a299",
+        "verdict": "ACCEPT",
+        "residualLowFixedAfter": [
+          "freshness tied to source dates",
+          "IP-literal hosts rejected",
+          "timezone-aware timestamps"
+        ],
+        "residualLowOpen": [
+          "self-consistent forgery on 2 fabricated domains still passes (needs keyed stamp, owner-gated p0e)",
+          "sources carry no per-claim text",
+          "pre-existing KA/COR: unknown claim type defaults to FACT; no freshness floor at ADMIT beyond 1990"
+        ]
+      }
+    ],
+    "integrityLimit": "self-consistency, not authorship: without a keyed provenance stamp (owner-gated, register p0e-audit-log-keyed-integrity) a forger fabricating sources on 2 distinct domains can still pass reuse; memory must come from ODG's own store."
+  }
+}
