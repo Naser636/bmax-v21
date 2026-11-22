@@ -13,6 +13,7 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const ATT = require("./odg-knowledge-attestation.js");   // V15: owner-anchored MATURITY_EVIDENCE signature
 
 // V15: only INSPECTED states count (VERIFIED/ACCEPTED); AUTHORIZED/EXECUTING mean "allowed/started", not "inspected".
 const COUNTING_STATES = Object.freeze(["VERIFIED", "ACCEPTED"]);
@@ -67,7 +68,14 @@ function verifyMaturityEvidence(ev: any, reader: any, expect?: any): any {
     const hit = mc.some((m: any) => isObj(m) && m.claimKey === expect.claimKey && m.level === expect.level && (!m.evidencePath || m.evidencePath === ev.evidencePath));
     if (!hit) return deny("NOT_BOUND_TO_CLAIM (contract does not declare maturityClaims[{claimKey, level}] for this claim/level)");
   }
-  return Object.freeze({ ok: true, reason: "VERIFIED_ON_REAL_FILES", contractState: contract.state, evidenceSha256: actual });
+  // V15 (inspection): the WIC and evidence are provider-authorable ⇒ on their own they would be self-certification. The
+  // OWNER must sign {contract, evidencePath, evidenceSha256, claimKey, level} (purpose MATURITY_EVIDENCE) with a key
+  // anchored in TRUST_ANCHORS.json; the signature sidecar <evidencePath>.sig.json is read through the same reader.
+  let signed: any = null; try { const sb = reader(ev.evidencePath + ".sig.json"); signed = sb ? JSON.parse(sb.toString("utf8")) : null; } catch { signed = null; }
+  const payload = { contract: ev.missionContract, evidencePath: ev.evidencePath, evidenceSha256: actual, claimKey: expect.claimKey, level: expect.level };
+  const o = ATT.verifyOwnerAnchored("MATURITY_EVIDENCE", payload, signed, typeof expect.asOfEpochMs === "number" ? expect.asOfEpochMs : Date.now());
+  if (!o.ok) return deny("NOT_OWNER_SIGNED (" + o.reason + ")");
+  return Object.freeze({ ok: true, reason: "VERIFIED_ON_REAL_FILES_AND_OWNER_SIGNED", contractState: contract.state, evidenceSha256: actual });
 }
 
 module.exports = { verifyMaturityEvidence, makeRepoReader, makeCommittedReader, COUNTING_STATES };

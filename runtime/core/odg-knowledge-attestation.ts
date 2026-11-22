@@ -11,7 +11,7 @@
 const crypto = require("crypto");
 const AI = require("./agent-identity.js");
 
-const PURPOSES = Object.freeze(["KNOWLEDGE_RECORD", "COLLECTION_ARTIFACT", "INSPECTION_RECORD"]);   // V15: INSPECTION_RECORD = owner-anchored review/inspection
+const PURPOSES = Object.freeze(["KNOWLEDGE_RECORD", "COLLECTION_ARTIFACT", "INSPECTION_RECORD", "MATURITY_EVIDENCE"]);   // V15: owner-anchored review/inspection + maturity evidence
 const MAX_TTL_MS = 90 * 86400000;   // attestation lifetime cap (inspection LOW)
 // revocation is TERMINAL here, independent of agent-identity.rotateKey (which re-activates a key — pre-existing behaviour).
 const REVOKED: WeakMap<any, Set<string>> = new WeakMap();
@@ -75,6 +75,23 @@ function verifyAttestation(att: any, payload: any, o: any): any {
     note: "integrity + declared origin only — NOT the truth of the content" });
 }
 
+// V15 OWNER ANCHORS for owner-only purposes, loaded HERE from the git-reviewed TRUST_ANCHORS.json (never from a caller).
+const OWNER_PURPOSES = Object.freeze(["INSPECTION_RECORD", "MATURITY_EVIDENCE"]);
+const OWNER_ANCHORS: any = Object.freeze((() => { const out: any = {}; let j: any = {}; try { j = require("../../docs/odg/evidence/TRUST_ANCHORS.json"); } catch {}
+  for (const p of OWNER_PURPOSES) out[p] = Object.freeze(Array.isArray(j[p]) ? j[p].slice() : []); return out; })());
+/* verifyOwnerAnchored(purpose, payload, signed={attestation, publicKeyPem}, asOf) -> {ok, reason}. ok ONLY if the key's
+ * fingerprint is pinned for that purpose in TRUST_ANCHORS.json (owner-controlled, empty by design) AND the Ed25519
+ * attestation verifies over exactly this payload. A provider-made key can never pass. */
+function verifyOwnerAnchored(purpose: string, payload: any, signed: any, asOf: number): any {
+  if (!OWNER_PURPOSES.includes(purpose)) return Object.freeze({ ok: false, reason: "NOT_AN_OWNER_PURPOSE" });
+  if (!isObj(signed) || typeof signed.publicKeyPem !== "string" || !isObj(signed.attestation)) return Object.freeze({ ok: false, reason: "NO_OWNER_SIGNATURE (provider-authored evidence never counts on its own)" });
+  const fp = fingerprint(signed.publicKeyPem);
+  if (!OWNER_ANCHORS[purpose].includes(fp)) return Object.freeze({ ok: false, reason: "KEY_NOT_OWNER_ANCHORED (TRUST_ANCHORS." + purpose + " has " + OWNER_ANCHORS[purpose].length + " key(s))" });
+  const reg = AI.createRegistry(); registerIssuer(reg, { issuer: String(signed.attestation.header && signed.attestation.header.issuer || ""), publicKeyPem: signed.publicKeyPem });
+  const v = verifyAttestation(signed.attestation, payload, { registry: reg, asOf, purpose, allowRepeatVerification: true });
+  return Object.freeze({ ok: v.valid === true, reason: v.reason });
+}
+
 const KNOWLEDGE_ATTESTATION_CONTRACT = Object.freeze({
   id: "V374-KI-V2-LOT2-ATTESTATION",
   reuses: Object.freeze(["agent-identity (TEST_ONLY registry: register/revoke/rotateKey)", "node:crypto ed25519"]),
@@ -86,5 +103,5 @@ const KNOWLEDGE_ATTESTATION_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { canonical, contentSha256, fingerprint, ephemeralIdentity, registerIssuer, revokeIssuer, createAttestation, verifyAttestation, PURPOSES, KNOWLEDGE_ATTESTATION_CONTRACT, createRegistry: AI.createRegistry };
+module.exports = { verifyOwnerAnchored, OWNER_ANCHORS, OWNER_PURPOSES, canonical, contentSha256, fingerprint, ephemeralIdentity, registerIssuer, revokeIssuer, createAttestation, verifyAttestation, PURPOSES, KNOWLEDGE_ATTESTATION_CONTRACT, createRegistry: AI.createRegistry };
 export {};
