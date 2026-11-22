@@ -1,0 +1,8 @@
+# V16 — paths whose changes must be reviewed by the OWNER. Effective ONLY with branch protection "Require review from
+# Code Owners" AND a provider identity distinct from the owner (today they share the Naser636 account ⇒ NOT enforced).
+docs/odg/evidence/TRUST_ANCHORS.json @Naser636
+docs/odg/evidence/OWNER_ALLOWED_SIGNERS @Naser636
+scripts/odg-anchor-ci-check.sh @Naser636
+runtime/bin/odg-trust-anchor-audit.ts @Naser636
+.github/CODEOWNERS @Naser636
+.github/workflows/ @Naser636

@@ -14,7 +14,7 @@
 # restricted. Dry-run: `systemd-run --user --wait --pipe -p <the unit's sandbox properties> bash scripts/odg-resident-driver-confined.sh`
 # and check exit 0 + one new L0 line before installing.
 #
-# Owner install (user-systemd, no root): copy to ~/.config/systemd/user/odg-resident-driver.service.d/v15-confined-launcher.conf,
+# Owner install (user-systemd, no root): FIRST run scripts/odg-owner-dropin-dryrun.sh; then copy to ~/.config/systemd/user/odg-resident-driver.service.d/zz-v15-confined-launcher.conf,
 # `systemctl --user daemon-reload`, wait one tick: Result=success + a new L0 line. Rollback: delete the file + daemon-reload.
 [Service]
 ExecStart=
@@ -28,3 +28,17 @@ MemoryMax=512M
 MemorySwapMax=0
 TasksMax=256
 TimeoutStartSec=120
+# V16 — STATIC FINDING (not reproduced under systemd: the provider's transient-unit dry-run was refused by its permission
+# policy; owner runs scripts/odg-owner-dropin-dryrun.sh): the INSTALLED drop-in v364-hardening.conf sets
+# RestrictNamespaces=yes, which forbids the user/mount/pid/net/ipc/uts namespaces that bwrap --unshare-all creates, and the
+# base unit's RestrictAddressFamilies=AF_UNIX forbids the AF_NETLINK socket bwrap uses to bring up lo. Expected without
+# the two lines below: every confined tick fails ⇒ one INVALID_TRACE line per tick (fail-closed, but no observation).
+# Minimal relaxation, scoped to what bwrap needs (cgroup namespace still forbidden):
+# Empty assignment first RESETS what earlier units/drop-ins set (list settings otherwise merge).
+RestrictNamespaces=
+RestrictNamespaces=user mnt pid net ipc uts
+RestrictAddressFamilies=
+RestrictAddressFamilies=AF_UNIX AF_NETLINK
+# INSTALL NAME MATTERS (V16): drop-ins apply in lexical order and the LAST assignment wins — v364-hardening.conf sorts
+# AFTER "v15-…" and would re-impose RestrictNamespaces=yes / MemoryMax=1G / TasksMax=128. Install this file as
+# ~/.config/systemd/user/odg-resident-driver.service.d/zz-v15-confined-launcher.conf (sorts last).
