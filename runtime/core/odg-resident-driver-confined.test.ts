@@ -96,6 +96,32 @@ check("disk-fill bound: a write beyond RLIMIT_FSIZE inside the confinement (priv
     sh(`ODG_RESIDENT_NO_BUILD=1 bash scripts/odg-resident-driver-confined.sh "${T}"`, {}, { timeout: 60000 });
     const m = /forks=(\d+)/.exec(last()); check("nproc: 300 background forks inside the tick are capped (RLIMIT_NPROC) — fork storm fails", !!m && Number(m[1]) < 300);
     reap(); }
+  // MED-2 (inspection) memory outside the tmpfs caps, on the PRECOMPILED path (hostile tick is BUILT, then run by node):
+  // memfd_create with RLIMIT_NOFILE raised to its hard limit, and SysV shm segments (shmget/shmat), via python3.
+  { const py = path.join(T, "runtime/bin/odg-mem-probe.py"); fs.writeFileSync(py, String.raw`import os, resource, ctypes
+try:
+    s, h = resource.getrlimit(resource.RLIMIT_NOFILE); resource.setrlimit(resource.RLIMIT_NOFILE, (h, h))
+except Exception: pass
+fds = []
+try:
+    for i in range(400):
+        fd = os.memfd_create("odg"); os.write(fd, b"\0" * 1048000); fds.append(fd)
+except Exception: pass
+libc = ctypes.CDLL(None, use_errno=True); libc.shmget.restype = ctypes.c_int; libc.shmat.restype = ctypes.c_void_p
+libc.shmat.argtypes = [ctypes.c_int, ctypes.c_void_p, ctypes.c_int]; libc.shmdt.argtypes = [ctypes.c_void_p]
+n = 0
+for i in range(4):
+    sid = libc.shmget(0, 64 << 20, 0o1600)
+    if sid < 0: break
+    p = libc.shmat(sid, None, 0)
+    if p is None or p == ctypes.c_void_p(-1).value: break
+    ctypes.memset(p, 1, 64 << 20); libc.shmdt(p); n += 1
+print("memfdMiB=%d shmMiB=%d" % (len(fds), n * 64))
+`);
+    tick(`const r=require("child_process").spawnSync("/usr/bin/python3",[${JSON.stringify(py)}],{encoding:"utf8"});const o=((r.stdout||"").trim().match(/memfdMiB=\\d+ shmMiB=\\d+/)||["memfdMiB=0 shmMiB=0"])[0];${OKL.replace("writes=0", "writes=0 \" + o + \"")}`);
+    const r = launch(); const mm = /memfdMiB=(\d+) shmMiB=(\d+)/.exec(last());
+    check("memory: precompiled hostile tick cannot hold 400×1 MiB memfd (RLIMIT_NOFILE soft+hard capped, memfd_create refused) nor 256 MiB SysV shm (shmget refused)", r.status === 0 && !/tsx fallback/.test(r.stderr) && !!mm && Number(mm[1]) < 300 && Number(mm[2]) === 0);
+    fs.rmSync(py, { force: true }); reap(); }
   fs.writeFileSync(tp, orig); }
 // 3 MED tmpfs: private /tmp, /dev/shm, /run size-capped; root and /dev read-only (no unbounded RAM-backed write)
 { const fill = (dir: string) => probe(`/bin/sh -c 'ulimit -f 2048; i=0; while [ $i -lt 300 ]; do head -c 1024000 /dev/zero > ${dir}/f$i || exit 1; i=$((i+1)); done; exit 0'`).status;
@@ -112,6 +138,30 @@ check("disk-fill bound: a write beyond RLIMIT_FSIZE inside the confinement (priv
   fs.appendFileSync(path.join(T, "runtime/dist/bin/odg-resident-driver-tick.js"), "\n;globalThis.__ODG_TAMPERED=1;\n");
   const f2 = fresh(); const rr = sh(`bash scripts/odg-resident-driver-run.sh`);
   check("freshness: shared lib keeps scripts/odg-resident-driver-run.sh working (tampered tick.js ⇒ rebuild ⇒ L0 line)", !f2 && rr.status === 0 && /level=L0_OBSERVE/.test(rr.stdout) && !fs.readFileSync(path.join(T, "runtime/dist/bin/odg-resident-driver-tick.js"), "utf8").includes("__ODG_TAMPERED")); }
+// MED-1 (inspection): an ADDED file that shadows a closure require (action-gate.js does require("./state-transition"):
+// Node tries the EXACT extensionless file first) must make the build NOT fresh — both launchers then refuse the build.
+{ const fresh = () => sh(`. scripts/lib/odg-resident-freshness.sh; odg_resident_fresh`).status === 0;
+  launch(); const f0 = fresh(); const plant = path.join(T, "runtime/dist/core/state-transition");
+  fs.writeFileSync(plant, `process.stdout.write("PLANTED-SHADOW\\n");module.exports={};`);
+  const f1 = fresh(); const r = launch(); const rr = sh(`bash scripts/odg-resident-driver-run.sh`);
+  check("freshness: planted extensionless shadow runtime/dist/core/state-transition ⇒ NOT fresh; neither launcher executes it", f0 && !f1 && !/PLANTED/.test(r.stdout + r.stderr) && /level=L0_OBSERVE/.test(r.stdout) && !/PLANTED/.test(rr.stdout + rr.stderr) && /level=L0_OBSERVE/.test(rr.stdout));
+  fs.rmSync(plant, { force: true });
+  check("freshness: unrelated extra files in runtime/dist (other builds) do NOT break freshness (shadow removed ⇒ fresh again)", (fs.writeFileSync(path.join(T, "runtime/dist/core/other-build.js"), "module.exports={};"), fresh())); }
+// LOW (inspection): stale private dirs of killed launchers are reaped (>1 h, own uid, mode 0700, never through a symlink)
+{ const td = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "odg-conf-tmp-"))); const old = new Date(Date.now() - 2 * 3600 * 1000);
+  const mk = (n: string, mode: number, o: boolean) => { const d = path.join(td, n); fs.mkdirSync(d); fs.writeFileSync(path.join(d, "out"), "x"); fs.chmodSync(d, mode); if (o) fs.utimesSync(d, old, old); return d; };
+  const stale = mk("odg-resident-confined.STALE1", 0o700, true), recent = mk("odg-resident-confined.RECENT", 0o700, false), open = mk("odg-resident-confined.OPEN", 0o755, true);
+  const victim = mk("victim", 0o700, true); fs.symlinkSync(victim, path.join(td, "odg-resident-confined.LNK")); fs.lutimesSync?.(path.join(td, "odg-resident-confined.LNK"), old, old);
+  const r = launch({ TMPDIR: td });
+  check("tmp hygiene: stale own 0700 dir reaped; recent / non-0700 / symlinked (and its target) kept", r.status === 0 && !fs.existsSync(stale) && fs.existsSync(recent) && fs.existsSync(open) && fs.existsSync(path.join(victim, "out")) && fs.lstatSync(path.join(td, "odg-resident-confined.LNK")).isSymbolicLink());
+  fs.rmSync(td, { recursive: true, force: true }); }
+// LOW (inspection): `timeout` missing ⇒ explicit REFUSED (no unbounded run, no trace line)
+{ const fb = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "odg-conf-bin-")));
+  for (const e of fs.readdirSync("/usr/bin")) if (e !== "timeout") { try { fs.symlinkSync(path.join("/usr/bin", e), path.join(fb, e)); } catch {} }
+  const lp = path.join(T, "runtime/logs/resident-driver-l0.log"); const n0 = fs.readFileSync(lp, "utf8").length;
+  const r = cp.spawnSync("/usr/bin/bash", ["scripts/odg-resident-driver-confined.sh", T], { cwd: T, env: Object.assign({}, process.env, { PATH: fb }), encoding: "utf8", timeout: 120000 });
+  check("timeout missing on PATH ⇒ explicit REFUSED, non-zero, no trace line appended", r.status !== 0 && /REFUSED.*timeout/.test(r.stderr) && fs.readFileSync(lp, "utf8").length === n0);
+  fs.rmSync(fb, { recursive: true, force: true }); }
 const uid = String(os.userInfo().uid);
 const s = probe(`"$(readlink -f "$(command -v node)")" -e 'const n=require("net");const ps=["/run/user/${uid}/bus","/run/user/${uid}/systemd/private","/run/dbus/system_bus_socket"];let k=ps.length,h=[];for(const p of ps){const c=n.connect(p);c.on("connect",()=>{h.push(p);c.destroy();if(!--k)fin()});c.on("error",()=>{if(!--k)fin()})}function fin(){process.stdout.write(h.length?"REACHABLE":"NONE")}'`);
 check("negative: host Unix sockets (user systemd manager, D-Bus) unreachable", s.stdout === "NONE");

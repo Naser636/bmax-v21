@@ -2,9 +2,10 @@
 # odg_confined_view <repo> [writable-subdir ...] → fills the global array BW with: all namespaces unshared (network:
 # loopback only), cleared env, system dirs + node prefix + node_modules + repo READ-ONLY, the listed repo subdirs
 # WRITABLE, private /tmp and /run (no host Unix socket: systemd user manager, D-Bus, ssh-agent).
-# Memory bound (V15 hardening): every writable tmpfs is SIZE-CAPPED (bwrap --size, needs bubblewrap >= 0.10) —
+# Tmpfs bound (V15 hardening): every writable tmpfs is SIZE-CAPPED (bwrap --size, needs bubblewrap >= 0.10) —
 # /tmp = ODG_CONFINED_TMP_MB MiB (default 64), /run and /dev/shm 1 MiB — and the sandbox root tmpfs and the /dev tmpfs
-# (both unsized) are remounted READ-ONLY, so no RAM-backed write in the sandbox is unbounded.
+# (both unsized) are remounted READ-ONLY. This bounds FILESYSTEM writes only: memfd / SysV shm / anonymous memory are
+# bounded (or refused) by the confined launcher (rlimits + seccomp) and, completely, only by the unit's MemoryMax=.
 odg_confined_view() {
   local repo="$1"; shift
   local node nm prefix d tmpmb

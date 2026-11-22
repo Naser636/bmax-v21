@@ -19,9 +19,12 @@
 [Service]
 ExecStart=
 ExecStart=/bin/bash -lc 'bash scripts/odg-resident-driver-confined.sh'
-# SUGGESTED (owner to size from a measured tick; the precompiled tick peaked ~71 MB RSS, tsx ~113 MB): cgroup caps bound
-# what RLIMIT_AS cannot (the tsx fallback runs WITHOUT an AS cap — its WebAssembly lexer reserves > 32 GiB of virtual space).
-# Needs the memory/pids controllers delegated to the user manager (check `systemctl --user show -p DelegateControllers`).
-# MemoryMax=512M
-# TasksMax=256
-# TimeoutStartSec=120
+# REQUIRED FOR INSTALL (still a proposal — owner to confirm the values from a measured tick; precompiled tick peaked
+# ~71 MB RSS, tsx fallback ~113 MB): the launcher's rlimits + seccomp do NOT bound anonymous memory of the tsx fallback
+# (no RLIMIT_AS there — its WebAssembly lexer reserves > 32 GiB virtual) nor kernel-side buffers; only the cgroup does.
+# Needs the memory/pids controllers delegated to the user manager (check `systemctl --user show -p DelegateControllers`);
+# without them these lines are silently ineffective — verify with `systemctl --user show odg-resident-driver -p MemoryMax`.
+MemoryMax=512M
+MemorySwapMax=0
+TasksMax=256
+TimeoutStartSec=120

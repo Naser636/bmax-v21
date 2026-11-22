@@ -13,7 +13,13 @@
 #      self-report (not an attestation).
 # Usage: scripts/odg-resident-driver-confined.sh [repo]   (ODG_RESIDENT_NO_BUILD=1 skips phase-1 rebuild ⇒ tsx fallback)
 # Tunables (validated decimal, else default): ODG_RESIDENT_TIMEOUT s (60), ODG_RESIDENT_MAX_FILE_KB (1024),
-#   ODG_RESIDENT_TMP_MB (64), ODG_RESIDENT_MAX_PROCS (128), ODG_RESIDENT_MAX_VMEM_KB (4194304), ODG_RESIDENT_STDERR_KB (16).
+#   ODG_RESIDENT_TMP_MB (64), ODG_RESIDENT_MAX_PROCS (128), ODG_RESIDENT_MAX_VMEM_KB (4194304), ODG_RESIDENT_STDERR_KB (16),
+#   ODG_RESIDENT_MAX_FDS (256; RLIMIT_NOFILE soft AND hard — measured need: node tick >= 24, tsx fallback >= 64).
+# Memory actually bounded here: tmpfs writes (size caps), file sizes (RLIMIT_FSIZE, also memfd/ftruncate), fd count
+# (RLIMIT_NOFILE), process count (RLIMIT_NPROC), address space on the precompiled path (RLIMIT_AS); memfd_create /
+# memfd_secret / SysV shmget are REFUSED by a seccomp filter (EPERM), so they cannot hold RAM outside those caps.
+# NOT bounded here: anonymous memory of the tsx fallback (no AS cap, see below) and kernel-side buffers — the unit's
+# MemoryMax= / TasksMax= (drop-in proposal) are REQUIRED for a complete memory bound.
 set -euo pipefail
 # Inherited fds: a caller fd (e.g. `exec 9>>hostfile`) would stay writable inside bwrap (directly, or by reopening
 # /proc/<ancestor>/fd/N) ⇒ close EVERY fd > 2 before anything else runs; stdin from /dev/null.
@@ -30,6 +36,7 @@ LOG="runtime/logs/resident-driver-l0.log"
 mkdir -p runtime/logs; [ -e "$LOG" ] || : > "$LOG"
 if [ -L "$LOG" ] || [ ! -f "$LOG" ]; then echo "[resident-confined] REFUSED: $LOG is not a regular file (symlink?)" >&2; exit 1; fi
 command -v setpriv >/dev/null || { echo "[resident-confined] REFUSED: setpriv (util-linux) missing — cannot tie the sandbox to the launcher" >&2; exit 1; }
+command -v timeout >/dev/null || { echo "[resident-confined] REFUSED: timeout (coreutils) missing — the confined run would be unbounded in time" >&2; exit 1; }
 # phase 1 (trusted)
 if ! odg_resident_fresh && [ "${ODG_RESIDENT_NO_BUILD:-}" != "1" ]; then bash scripts/odg-resident-driver-build.sh >/dev/null 2>&1 || true; fi
 # RLIMIT_AS: the precompiled tick needs ~800 MB of virtual address space (measured: fails at 600 MB, runs at 800 MB)
@@ -46,19 +53,32 @@ MAXKB="$(num "${ODG_RESIDENT_MAX_FILE_KB:-}" 1024 4194304)"; BLOCKS=$(( MAXKB * 
 NPROC="$(num "${ODG_RESIDENT_MAX_PROCS:-}" 128 4096)"   # RLIMIT_NPROC, counted per sandbox user namespace (threads included)
 TO="$(num "${ODG_RESIDENT_TIMEOUT:-}" 60 86400)"
 ERRKB="$(num "${ODG_RESIDENT_STDERR_KB:-}" 16 1024)"
-W="$(mktemp -d "${TMPDIR:-/tmp}/odg-resident-confined.XXXXXX")"; trap 'rm -rf -- "$W"' EXIT
-mkfifo -m 600 "$W/err"
-# stderr: kept visible but bounded (ERRKB) and sanitized below; the excess is DRAINED (the tick never gets EPIPE).
-{ head -c $(( ERRKB * 1024 )); cat >/dev/null; } <"$W/err" >"$W/err.txt" & EPID=$!
+NOFILE="$(num "${ODG_RESIDENT_MAX_FDS:-}" 256 65536)"
+# Stale private dirs of a SIGKILLed launcher: reap only own-uid, mode-0700 DIRECTORIES matching the pattern, older than
+# max(1 h, timeout + 10 min); find -P never follows symlinks (a symlink is not -type d), rm -rf never follows them either.
+TD="${TMPDIR:-/tmp}"; AGE=$(( TO / 60 + 10 )); [ "$AGE" -lt 60 ] && AGE=60
+find "$TD" -mindepth 1 -maxdepth 1 -name 'odg-resident-confined.*' -type d -user "$(id -u)" -perm 0700 -mmin "+$AGE" -exec rm -rf -- {} + 2>/dev/null || true
+W="$(mktemp -d "$TD/odg-resident-confined.XXXXXX")"; trap 'rm -rf -- "$W"' EXIT
+# seccomp (classic BPF, x86_64 only — any other arch / x32 ABI is killed / refused): memfd_create(319), memfd_secret(447)
+# and SysV shmget(29) ⇒ EPERM; everything else allowed. Built here (trusted) and handed to bwrap on a private fd.
+case "$(uname -m)" in x86_64) ;; *) echo "[resident-confined] REFUSED: seccomp filter is x86_64-only" >&2; exit 1 ;; esac
+node -e 'const I=[[0x20,0,0,4],[0x15,1,0,0xc000003e],[0x06,0,0,0x80000000],[0x20,0,0,0],[0x35,5,0,0x40000000],[0x15,3,0,29],[0x15,2,0,319],[0x15,1,0,447],[0x06,0,0,0x7fff0000],[0x06,0,0,0x00050001],[0x06,0,0,0x00050001]];
+  const b=Buffer.alloc(8*I.length);I.forEach(([c,t,f,k],i)=>{b.writeUInt16LE(c,8*i);b.writeUInt8(t,8*i+2);b.writeUInt8(f,8*i+3);b.writeUInt32LE(k>>>0,8*i+4)});require("fs").writeFileSync(process.argv[1],b)' "$W/seccomp.bpf"
+# stderr: kept visible but bounded (ERRKB) and sanitized below; the excess is DRAINED (the tick never gets EPIPE). A plain
+# pipe (process substitution), NOT a fifo: no open() that could block forever if the launcher died before the writer.
+exec {EFD}> >({ head -c $(( ERRKB * 1024 )); cat >/dev/null; } >"$W/err.txt"); EPID=$!
+exec {SFD}<"$W/seccomp.bpf"
 # stdout: 64 KiB + 1 byte kept (the extra byte detects truncation), the excess drained. Process chain: this shell → setpriv
 # (PDEATHSIG=KILL, then execs) timeout → bwrap --die-with-parent (parent = timeout) → sandbox PID namespace. A SIGKILL of the
 # launcher kills timeout, which kills bwrap, which tears down the whole namespace (no orphan); timeout bounds the run.
 START=$SECONDS
 set +e
-setpriv --pdeathsig KILL -- timeout -k 5 "$TO" "${BW[@]}" --chdir "$REPO" /bin/sh -c 'ulimit -f "$1" && ulimit -p "$2" && ulimit -v "$3" || exit 126; shift 3; exec "$@"' sh "$BLOCKS" "$NPROC" "$VMEM" "${CMD[@]}" 2>"$W/err" \
-  | { head -c 65537 >"$W/out"; cat >/dev/null; }
+# (dash `ulimit -n N` sets soft AND hard; the tick cannot raise it back.) bwrap reads and closes the seccomp fd.
+setpriv --pdeathsig KILL -- timeout -k 5 "$TO" "${BW[@]}" --add-seccomp-fd "$SFD" --chdir "$REPO" /bin/sh -c 'ulimit -f "$1" && ulimit -p "$2" && ulimit -v "$3" && ulimit -n "$4" || exit 126; shift 4; exec "$@"' sh "$BLOCKS" "$NPROC" "$VMEM" "$NOFILE" "${CMD[@]}" 2>&"$EFD" {EFD}>&- \
+  | { head -c 65537 >"$W/out"; cat >/dev/null; } {EFD}>&- {SFD}<&-
 RC="${PIPESTATUS[0]}"
 set -e
+exec {EFD}>&- {SFD}<&-
 ELAPSED=$(( SECONDS - START ))
 wait "$EPID" 2>/dev/null || true
 ERRSZ=$(stat -c %s "$W/err.txt"); OUTSZ=$(stat -c %s "$W/out")
