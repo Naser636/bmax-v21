@@ -1,3 +1,4 @@
+# SUPERSEDED (V15) by v15-confined-launcher.conf.proposed — kept for history; do not install.
 # PROPOSAL (V375 Lot B) — NOT INSTALLED, NOT TESTED UNDER SYSTEMD. Owner decision + test before any L1 activation.
 # Filesystem confinement for the resident driver: read-only everywhere except its technical trace and the precompiled
 # build tree its freshness-guarded launcher may rebuild (odg-resident-driver-build.sh writes runtime/dist/bin AND
