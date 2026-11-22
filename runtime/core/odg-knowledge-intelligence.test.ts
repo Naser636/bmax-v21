@@ -118,8 +118,8 @@ const REAL_EV = { missionContract: "WIC-CM-RADAR-GATE-CHAIN-STEP1", contractPath
 check("maturity: bare booleans / format-only evidence ignored; EXPERIMENTAL only with evidence VERIFIED on the REAL files",
   K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), experimentApproved: true }).dimensions.maturity === "USABLE"
   && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: { missionContract: "WIC-TEST-0001", evidenceSha256: "a".repeat(64) } }, evidenceReader: READER }).dimensions.maturity === "USABLE"
-  && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: REAL_EV } }).dimensions.maturity === "USABLE"
-  && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: REAL_EV }, evidenceReader: READER }).dimensions.maturity === "EXPERIMENTAL");
+  && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: REAL_EV } }).dimensions.maturity === "EXPERIMENTAL");
+check("a caller-supplied evidenceReader returning FORGED bytes is ignored (module reads the real repo itself)", K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: { ...REAL_EV, evidenceSha256: "b".repeat(64) } }, evidenceReader: () => Buffer.from("forged") }).dimensions.maturity === "USABLE");
 check("OPERATIONALLY_DEMONSTRATED requires the full ladder", K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), demonstratedBenefit: true }).dimensions.maturity === "USABLE");
 
 // union of one page's citations; no self-corroboration.
