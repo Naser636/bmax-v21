@@ -20,6 +20,9 @@ const MTG = require("./memory-trust-gate.js");
 const ACTOR = require("./actor-provenance.js");
 const BIND = require("./odg-claim-quote-binding.js");
 const ATT = require("./odg-knowledge-attestation.js");   // V374: collection/record attestations (sandbox keys)
+const EVV = require("./odg-evidence-verifier.js");       // V375 G2: maturity evidence verified on REAL files
+// the evidence reader is the module's OWN repo-confined reader — never caller-supplied (same trust-root rule as pins/anchors)
+const REPO_READER = (() => { try { return EVV.makeCommittedReader(require("path").resolve(__dirname, "../..")); } catch { return null; } })();   // COMMITTED tree only
 // TRUST ANCHORS (inspection HIGH r2): authorized issuer key fingerprints PER PURPOSE, loaded HERE from a git-reviewed file —
 // never from the caller. Empty by design (production keys are owner-gated) ⇒ a caller-made key can never authenticate.
 const TRUST_ANCHORS = Object.freeze((() => { try { const j = require("../../docs/odg/evidence/TRUST_ANCHORS.json"); return { COLLECTION_ARTIFACT: Object.freeze((j.COLLECTION_ARTIFACT || []).slice()), KNOWLEDGE_RECORD: Object.freeze((j.KNOWLEDGE_RECORD || []).slice()) }; } catch { return { COLLECTION_ARTIFACT: Object.freeze([]), KNOWLEDGE_RECORD: Object.freeze([]) }; } })());
@@ -213,14 +216,15 @@ function assessClaim(claim: any, opts: any): any {
   // MATURITY (operational, NOT truth): starts at DISCOVERED; USABLE once a citation is verified; higher levels require
   // evidence supplied by a mission (experiment / qualification / demonstrated benefit) — never inferred here.
   let maturity = verified.length ? "USABLE" : "DISCOVERED";
-  // maturity evidence must be BOUND (inspection MEDIUM): a mission contract id + a sha256 of the evidence artefact; a bare
-  // boolean is ignored. (The evidence content itself is not re-verified here — recorded limit: the mission gate owns that.)
+  // maturity evidence (V375 G2): each level needs evidence VERIFIED ON THE REAL FILES (contract exists with that id and a
+  // counting state; evidence file's SHA-256 recomputed and cross-referenced). Declared ids/hashes alone never count.
   const ev = isObj(o.maturityEvidence) ? o.maturityEvidence : {};
-  const bound = (x: any) => isObj(x) && typeof x.missionContract === "string" && /^WIC-/.test(x.missionContract) && typeof x.evidenceSha256 === "string" && /^[0-9a-f]{64}$/.test(x.evidenceSha256);
-  if ((o.experimentApproved === true || o.qualificationEvidence === true || o.demonstratedBenefit === true) && !bound(ev.experiment)) reasons.push("bare maturity booleans ignored — bind evidence {missionContract: 'WIC-…', evidenceSha256}");
-  if (bound(ev.experiment) && verified.length) maturity = "EXPERIMENTAL";
-  if (bound(ev.qualification) && maturity === "EXPERIMENTAL") maturity = "QUALIFIED";
-  if (bound(ev.demonstratedBenefit) && maturity === "QUALIFIED") maturity = "OPERATIONALLY_DEMONSTRATED";
+  const reader = REPO_READER;   // opts.evidenceReader is IGNORED (a caller-supplied reader could return forged bytes)
+  const bound = (x: any, level: string) => { if (!isObj(x)) return false; const v = EVV.verifyMaturityEvidence(x, reader, { claimKey, level }); if (!v.ok) reasons.push("maturity evidence (" + level + ") refused: " + v.reason); return v.ok; };
+  if ((o.experimentApproved === true || o.qualificationEvidence === true || o.demonstratedBenefit === true) && !isObj(ev.experiment)) reasons.push("bare maturity booleans ignored — supply verifiable evidence {missionContract, contractPath, evidencePath, evidenceSha256}");
+  if (bound(ev.experiment, "EXPERIMENTAL") && verified.length) maturity = "EXPERIMENTAL";
+  if (bound(ev.qualification, "QUALIFIED") && maturity === "EXPERIMENTAL") maturity = "QUALIFIED";
+  if (bound(ev.demonstratedBenefit, "OPERATIONALLY_DEMONSTRATED") && maturity === "QUALIFIED") maturity = "OPERATIONALLY_DEMONSTRATED";
 
   // RISK (drives verification/authorization requirements). Default from nature; caller may only RAISE it.
   const natureRisk: Record<string, string> = { SECURITY_CRITICAL: "HIGH", PERFORMANCE_CLAIM: "MEDIUM", STRATEGIC_HYPOTHESIS: "MEDIUM" };
