@@ -76,6 +76,21 @@ function main() {
   check("FIX LOW: a cycle without a query is refused (no undefined===undefined reuse)", threwQ);
   check("FIX MEDIUM: hard gate conditions asserted by the chain are labelled CHAIN_SELF_ONLY (not experiment evidence)",
     /^CHAIN_SELF_ONLY/.test(r1.evidenceBasis.securityValidated) && /^CHAIN_SELF_ONLY/.test(r1.evidenceBasis.noContractOrPermissionViolation) && rI.evidenceBasis.securityValidated === "CALLER_SUPPLIED");
+  const real = r1.admitted[0];
+  const mk = (srcs: any[], extra?: any) => { const urls = srcs.map((x: any) => x.url).sort(); return Object.assign({}, real, { sources: srcs, provenance: "RADAR_RECORDED_REAL:" + urls.join("|") }, extra || {}); };
+  check("FIX2 HIGH: duplicated sources [s0,s0] with matching provenance ⇒ NOT reused", C.runChain({ asOfEpochMs: ASOF, memory: [mk([real.sources[0], real.sources[0]])] }).reuse.retrieved === 0);
+  const fake = [{ url: "https://evil.example/a", stance: "SUPPORTS", date: "2026-11-16" }, { url: "https://evil.example/b", stance: "SUPPORTS", date: "2026-11-16" }];
+  check("FIX2 HIGH: self-consistent forgery on ONE host (count/classification declared) ⇒ NOT reused", C.runChain({ asOfEpochMs: ASOF, memory: [mk(fake)] }).reuse.retrieved === 0);
+  const sub = [{ url: "https://x.evil.example/a", stance: "SUPPORTS", date: "2026-11-16" }, { url: "https://y.evil.example/b", stance: "SUPPORTS", date: "2026-11-16" }];
+  check("FIX2: subdomains of one registrable domain do NOT count as 2 independent sources", C.runChain({ asOfEpochMs: ASOF, memory: [mk(sub)] }).reuse.retrieved === 0);
+  check("FIX2: contradicting sources ⇒ NOT reused", C.runChain({ asOfEpochMs: ASOF, memory: [mk(real.sources.map((x: any) => Object.assign({}, x, { stance: "CONTRADICTS" })))] }).reuse.retrieved === 0);
+  check("FIX2 LOW: trailing garbage after a date ⇒ NOT admitted", C.runChain({ asOfEpochMs: ASOF, cycle: Object.assign({}, KA.REAL_CYCLE, { sources: KA.REAL_CYCLE.sources.map((x: any) => Object.assign({}, x, { consultedDate: "2026-11-16T99:99garbage", publishedDate: undefined })) }) }).admitted.length === 0);
+  check("FIX2 LOW: validUntil beyond learnedAt+TTL (1e300) ⇒ NOT reused", C.runChain({ asOfEpochMs: ASOF, memory: [Object.assign({}, real, { validUntil: 1e300 })] }).reuse.retrieved === 0);
+  check("FIX2: the genuine record is STILL reused after all hardening (no over-blocking)", C.runChain({ asOfEpochMs: ASOF + DAY, memory: [real] }).reuse.retrieved === 1);
+  const subCycle = Object.assign({}, KA.REAL_CYCLE, { sources: [Object.assign({}, KA.REAL_CYCLE.sources[0], { url: "https://a.honeyhive.ai/x" }), Object.assign({}, KA.REAL_CYCLE.sources[1], { url: "https://b.honeyhive.ai/y" })] });
+  const rSub = C.runChain({ asOfEpochMs: ASOF, cycle: subCycle });
+  check("FIX2: ADMIT also refuses 2 subdomains of one registrable domain", rSub.admitted.length === 0 && rSub.rejected.length === 1 && rSub.rejected[0].verdict === "SINGLE_REGISTRABLE_DOMAIN");
+  check("honesty: the self-consistency (not authorship) limit is stated", /NOT who wrote it/.test(r1.integrityLimit));
   check("admitted record carries claimType + corroborationLevel + independentSupportCount (contract criterion)",
     r1.admitted[0].claimType === "FACT" && r1.admitted[0].corroborationLevel === "CORROBORATED" && r1.admitted[0].independentSupportCount >= 2);
   check("EXEC contract: composition-only + fail-closed + reuse-before-reacquire + owner-gated deploy", C.EXECUTED_CHAIN_CONTRACT.invariants.length === 6 && C.EXECUTED_CHAIN_CONTRACT.composes.indexOf("memory-trust-gate") >= 0);

@@ -20,6 +20,7 @@ const KA = require("./odg-knowledge-acquisition.js");   // acquire(): corroborat
 const MTG = require("./memory-trust-gate.js");          // assessMemoryTrust(): deny-by-default retrieval/admission gate
 const IC = require("./odg-improvement-chain.js");       // run(): consumes odg-sandbox-integration-gate.decide()
 const ACTOR = require("./actor-provenance.js");         // EXECUTOR.ODG attribution
+const COR = require("./odg-claim-corroboration.js");    // re-derive corroboration at reuse (never trust a record's declared counts)
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 
@@ -112,13 +113,22 @@ function traced(name: string, input: any, output: any, note: string): any {
 const MIN_SOURCE_EPOCH = Date.UTC(1990, 0, 1);
 function validSourceDate(date: any, asOf: number): boolean {
   if (typeof date !== "string") return false;
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(date); if (!m) return false;
+  // anchored: a bare date, or a full ISO-8601 timestamp that Date.parse accepts (no trailing garbage).
+  const m = /^(\d{4})-(\d{2})-(\d{2})(T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2}))?$/.exec(date); if (!m) return false;
+  if (m[4] && !Number.isFinite(Date.parse(date))) return false;
   const y = +m[1], mo = +m[2], d = +m[3]; const t = Date.UTC(y, mo - 1, d);
   const back = new Date(t);
   if (back.getUTCFullYear() !== y || back.getUTCMonth() !== mo - 1 || back.getUTCDate() !== d) return false;   // e.g. 2026-99-99
   return t >= MIN_SOURCE_EPOCH && t <= asOf;
 }
 function knowledgeId(query: string, claim: any): string { return "kn:" + sha({ q: query, c: claim }).slice(0, 16); }
+/* registrableDomains(urls): approximate eTLD+1 (last two host labels) — so x.a.com and y.a.com are ONE domain. A stricter
+ * independence check than host-distinctness alone (an approximation: multi-label public suffixes like co.uk collapse). */
+function registrableDomains(urls: string[]): Set<string> {
+  const out = new Set<string>();
+  for (const u of urls) { try { const h = new URL(u).hostname.toLowerCase().replace(/\.$/, ""); const p = h.split("."); out.add(p.length >= 2 ? p.slice(-2).join(".") : h); } catch { /* invalid ⇒ not counted */ } }
+  return out;
+}
 const PROVENANCE_PREFIX = "RADAR_RECORDED_REAL:";
 
 function toMemoryRecord(k: any, query: string, asOf: number): any {
@@ -156,9 +166,17 @@ function reusable(rec: any, query: string, asOf: number): any {
   const urls = srcs.map((s: any) => s && s.url).filter((u: any) => typeof u === "string").sort();
   if (typeof rec.provenance !== "string" || rec.provenance !== PROVENANCE_PREFIX + urls.join("|")) reasons.push("provenance not canonical / not matching sources");
   if (srcs.length < 2 || !srcs.every((s: any) => s && typeof s.url === "string" && /^https:\/\//.test(s.url) && validSourceDate(s.date, asOf))) reasons.push("sources missing, non-https or not validly dated");
-  if (rec.classification !== "FACT_CORROBORATED" || !(Number.isFinite(rec.independentSupportCount) && rec.independentSupportCount >= 2)) reasons.push("not a corroborated fact (≥2 independent supports)");
+  if (rec.classification !== "FACT_CORROBORATED") reasons.push("not classified FACT_CORROBORATED");
+  // RE-DERIVE corroboration from the record's OWN sources (never trust its declared counts — inspection HIGH #2).
+  if (new Set(urls).size !== urls.length) reasons.push("duplicate source urls");
+  if (!srcs.every((s: any) => s && s.stance === "SUPPORTS")) reasons.push("a source does not SUPPORT the claim");
+  const cor = COR.corroborate({ claim: rec.claim, evidence: srcs, asOfEpochMs: asOf });
+  if (!(cor && cor.level === "CORROBORATED" && cor.independentSupportCount >= 2)) reasons.push("re-derived corroboration is " + (cor ? cor.level : "NONE") + " (needs CORROBORATED, ≥2 independent hosts)");
+  if (registrableDomains(urls).size < 2) reasons.push("supports come from fewer than 2 distinct registrable domains");
   if (!Number.isFinite(rec.confidence) || rec.confidence < MIN_CONFIDENCE) reasons.push("confidence missing or below minimum");
   if (!Number.isFinite(rec.validUntil)) reasons.push("no numeric validUntil (immortal record refused)");
+  if (!Number.isFinite(rec.learnedAt) || rec.learnedAt > asOf) reasons.push("learnedAt missing or in the future");
+  else if (Number.isFinite(rec.validUntil) && rec.validUntil > rec.learnedAt + KNOWLEDGE_TTL_DAYS * DAY_MS) reasons.push("validUntil exceeds learnedAt + TTL");
   if (rec.status !== "VERIFIED") reasons.push("status not VERIFIED");
   if (!reasons.length) { const t = trustOf(rec, asOf); if (!t.trusted) reasons.push("memory-trust-gate: " + t.verdict); }
   return { ok: reasons.length === 0, reasons };
@@ -195,8 +213,11 @@ function runChain(opts?: any): any {
     for (const k of acquisition.knowledge) {
       const rec = toMemoryRecord(k, cycle.query, asOf);
       const t = trustOf(rec, asOf);
-      if (t.trusted && rec.status === "VERIFIED") admitted.push(rec);
-      else rejected.push(Object.freeze({ id: rec.id, claim: rec.claim, classification: rec.classification, verdict: t.trusted ? "NOT_VERIFIED_KNOWLEDGE" : t.verdict, reasons: t.reasons }));
+      const domains = registrableDomains((rec.sources || []).map((x: any) => x && x.url).filter((u: any) => typeof u === "string"));
+      if (t.trusted && rec.status === "VERIFIED" && domains.size >= 2) admitted.push(rec);
+      else rejected.push(Object.freeze({ id: rec.id, claim: rec.claim, classification: rec.classification,
+        verdict: !t.trusted ? t.verdict : rec.status !== "VERIFIED" ? "NOT_VERIFIED_KNOWLEDGE" : "SINGLE_REGISTRABLE_DOMAIN",
+        reasons: !t.trusted || rec.status !== "VERIFIED" ? t.reasons : Object.freeze(["supports come from fewer than 2 distinct registrable domains (subdomains are not independent)"]) }));
     }
     trace.push(traced("ADMIT", acquisition.knowledge.map((k: any) => k.claim), { admitted: admitted.map((a: any) => a.id), rejected: rejected.map((r: any) => r.id) },
       "memory-trust-gate deny-by-default: only a FACT_CORROBORATED, dated, fresh, ODG-attributed item is admitted"));
@@ -235,6 +256,7 @@ function runChain(opts?: any): any {
     reuse: Object.freeze({ retrieved: retrieved.length, reacquired: retrieved.length ? 0 : 1, ignored: Object.freeze(ignoredMemory) }),
     proposal, decision, evidenceBasis,
     memoryOut: Object.freeze(retrieved.length ? memory.slice() : memory.concat(admitted)),
+    integrityLimit: "reuse proves a record is SELF-CONSISTENT (content-bound id, canonical provenance, re-derived corroboration over ≥2 registrable domains, valid dates, bounded TTL) — NOT who wrote it: without a keyed provenance stamp (memory-trust-gate stamp/key; key strategy is owner-gated, register item p0e-audit-log-keyed-integrity) a forger who fabricates sources on 2 distinct domains can still pass. Memory must come from ODG's own store, not untrusted callers.",
     honesty: "REAL_RECORDED sample (" + (Array.isArray(cycle.sources) ? cycle.sources.length : 0) + " sources); live-world knowledge quality NOT_MEASURED; RETURN means the downstream experiment is not yet proven, never a fabricated pass",
   });
 }
