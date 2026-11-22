@@ -49,6 +49,8 @@
 - **Residual limits (inspection LOW).** The confined tick can still rewrite its own trace file, so `writes=0` lines are the driver's **self-report, not an attested record**. File size is capped inside the sandbox by `ulimit -f` (default 10 MiB). Attesting the trace (e.g. signed lines checked by an unconfined verifier) is open work.
 
 ## 4c. V15 — measured gate experiment and SLO recommendation
+> **SUPERSEDED (2026-11-22, SLI definitions r2, #872):** the availability and CI figures below are the r0 definitions. Current figures: §4d and `V15_CLOSURE_DOSSIER.md` §8 (availability 64/65 scheduled slots; CI main-push first attempt 841/846, proposal 99%).
+
 - **Experiment through the canonical gate** (`odg-gate-measured-evidence` + `runtime/bin/odg-gate-experiment-resident-confinement.ts`). All 12 conditions come from measurements; none is asserted.
   - RUN1, before merge, and RUN2, after merge on `45e46f3f`, both returned **RETURN_TO_EXPERIMENT, 10/12**.
   - Measured: 6 → 0 available attack surfaces; functional, stop and fallback paths; rollback; real repository unchanged; CI green.
