@@ -24,6 +24,15 @@
     "gate experiment RUN3: truncateTrace probe open unconfined, refused confined; CI green"
   ],
   "rollback": "git revert of the PR; the installed service is untouched (still the normal launcher)",
-  "evidence_required": ["docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN3.json"],
-  "stateNote": "NOT VERIFIED: provider must not self-certify; review/inspection count only from an OWNER-anchored signature."
+  "evidence_required": [
+    "docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN3.json"
+  ],
+  "stateNote": "NOT VERIFIED: provider must not self-certify; review/inspection count only from an OWNER-anchored signature.",
+  "knownLimits": [
+    "RUN3 truncateTrace probe measures the confined VIEW; the launcher's phase-3 (re-stamp / INVALID_TRACE) is covered only by the hostile-tick checks in odg-resident-driver-confined.test.ts, not by the gate experiment",
+    "a tick emitting >64 KiB is cut by head -c ⇒ SIGPIPE ⇒ run exits 141 (marked failed); one line is still appended — failed run, not corrupted trace",
+    "the launcher echoes up to 64 KiB of confined stdout to the journal unfiltered (journald escapes control chars)",
+    "line CONTENT (e.g. writes=0) remains the tick's self-report; only position in the trace and timestamp are launcher-controlled"
+  ],
+  "inspection": "provider subagent a135b402: ACCEPT, LOW findings only (recorded for information; does NOT count — owner-anchored signature required)"
 }
