@@ -1,7 +1,9 @@
-# Boussole V14.4 — PROPOSED versioned roadmap (NOT ADOPTED)
+# Boussole V14.4 — versioned roadmap (ADOPTED by owner V372, 2026-11-22)
 
-> **Status: PROPOSED.** It was prepared on the owner's "Directive Maître V14.4" (2026-11-22) and requires an explicit owner adoption decision.
-> Until adopted, **Boussole V12.4 remains the sole canonical authority** (`docs/odg/v124-consolidated-roadmap.json`, sections A–S, 24 missions). This document changes nothing in V12.4.
+> **Status: ADOPTED** as the strategic roadmap by the owner (CTO V372 §2, 2026-11-22), after correction and reconciliation.
+> Adoption is **additive**. Boussole V12.4 is fully preserved: its requirements, its identifiers (sections A–S, 24 missions in `docs/odg/v124-consolidated-roadmap.json`), its 9 primitives, its history and its decisions.
+> V14.4 organises the execution; it does not rewrite V12.4.
+> History: this file was first committed as PROPOSED (`eae59c00`, PR #852); the adoption is recorded here rather than by rewriting that commit.
 
 ## 1. Lineage (verified in the repository, 2026-11-22)
 - **No V14.4 existed before this file.** The repo, the git history and the session memory contain no V14.4 roadmap; the V315 audit had already confirmed "NO V14.4, V12.4 canonical".
@@ -46,6 +48,19 @@ Statuses use the 12-value taxonomy; anything without data is NOT_MEASURED. It is
 
 ## 4. Gates that remain closed
 - Deploy, VPS changes, egress, new accounts, payments and métier activation all remain closed.
-- Radar real collection needs an accepted, unexpired grant. V141 expired on 2026-11-19, and V371 is PROPOSED.
+- Radar real collection needs an accepted, unexpired grant: `V372_RESEARCH_GRANT.json` (accepted V372, expires 2026-12-22). V141 is expired.
 - Every work item needs a WORK_ITEM_CONTRACT authorized by a human (`ODG_AUTONOMOUS_WORK_PROTOCOL.json`).
-- The first contract is `docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP1.json` (PROPOSED).
+- The first contract is `docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP1.json` (AUTHORIZED by owner V372).
+
+## 5. Reconciliation notes (V372)
+- **`CM-RADAR-GATE-CHAIN` was already partially built.**
+  - `runtime/core/odg-radar-gate-chain.ts` (V254/V257, PR #636, 2026-11-17) is a read-only *coverage* verifier: every stage maps to a component.
+  - The V12.4 companion still lists the mission as READY with `commit: null`. That gap is recorded here, and the companion is left unchanged (hard register).
+  - Step 1 (branch `feat/cm-radar-gate-chain-step1`) **extends** that same module with the *executed* data path (acquire → admit → reuse → gate). It is not a duplicate.
+- **Contract.** `WIC-CM-RADAR-GATE-CHAIN-STEP1` was AUTHORIZED by the owner in V372. Its write_set listed the module as new; the extension is reconciled in the contract file.
+- **Radar grant.**
+  - `docs/odg/V372_RESEARCH_GRANT.json` is ACCEPTED (owner V372) and technically verified:
+    - `research-governor.govern`: ALLOW for allowlisted domains and their subdomains; DENY for other domains, after expiry, and for the expired V141 grant;
+    - `bounded-http-client`: `NOT_HTTPS` and SSRF `PRIVATE_HOST_BLOCKED` enforced.
+  - The grant expires on 2026-12-22. V141 remains expired and unused.
+- **Métiers.** Under V372, construction and tests are allowed in development/sandbox only. Real operation still requires a separate owner decision.

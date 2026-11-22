@@ -1,0 +1,33 @@
+{
+  "//": "Canonical research-governor grant shape (same as V141). Accepted by the owner in V372 (2026-11-22): 'J'accepte le principe du grant V371 et autorise son activation après vérification technique'. The V371 grant text itself was never supplied to this repository; this file materializes the V372 conditions verbatim-in-substance. V141 is EXPIRED and is NOT reused.",
+  "grant": {
+    "authorized": true,
+    "issuedBy": "owner (CTO V372 §3 — explicit acceptance of the V371 grant principle + activation after technical verification)",
+    "issuedMs": 1795305600000,
+    "expiresMs": 1797897600000,
+    "expiresIso": "2026-12-22T00:00:00.000Z",
+    "scope": "READ_ONLY_PUBLIC_RESEARCH — public, unauthenticated, official/scientific sources; knowledge integration into ODG canonical memory",
+    "allowedDomains": ["nasa.gov", "global.toyota", "toyota-europe.com", "sre.google", "nist.gov"],
+    "allowedDomainsNote": "initial allowlist = the owner-cited starting sources (sma.nasa.gov is covered as a subdomain of nasa.gov). V372 authorizes ADDING public domains when legitimacy, utility and safety are verified: every addition must be a new versioned commit with a justification line in domainAdditions[] (never a silent widening).",
+    "domainAdditions": [],
+    "methods": ["GET"],
+    "transport": "HTTPS only",
+    "budget": { "maxCalls": 100, "maxBytes": 20000000, "perResponseMaxBytes": 2000000, "timeoutMs": 15000, "perCampaignReportRequired": true },
+    "enforcement": {
+      "policy": "runtime/core/research-governor.ts govern() — authorized + unexpired + domain allowlist (deny-by-default)",
+      "transport": "runtime/core/bounded-http-client.ts — HTTPS-only, host allowlist, no userinfo, SSRF guard (localhost/RFC1918/link-local/IP-literal/metadata), timeout, size cap, bounded redirects, content-type check",
+      "content": "runtime/core/frontier-radar.ts sanitizeExternal() — external text is DATA, prompt-injection ⇒ QUARANTINE",
+      "provenance+dedup": "runtime/core/research-governor.ts stampFinding() (dated source, anti-fabrication) + odg-knowledge-acquisition (claim dedup + corroboration ≥2 independent sources)",
+      "memory": "runtime/core/memory-trust-gate.ts — deny-by-default admission/reuse"
+    },
+    "constraints": [
+      "no private credentials, no authentication, no account creation",
+      "no external writes, no form submission, no side effect on any third party",
+      "no paid API, no purchase, no subscription",
+      "no circumvention of access controls (HTTP 401/403/429 recorded, never bypassed); respect robots/terms",
+      "no secret transmitted in any request",
+      "no CI egress (CI stays offline)",
+      "reuse recorded results before any new collection"
+    ]
+  }
+}
