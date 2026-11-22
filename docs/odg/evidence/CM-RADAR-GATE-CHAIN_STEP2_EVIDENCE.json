@@ -1,0 +1,248 @@
+{
+  "mission": "CM-RADAR-GATE-CHAIN (V12.4 §I) — step 2: first LIVE collection under the V372 grant",
+  "collection": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json",
+  "callsUsed": 6,
+  "budgetMaxCalls": 100,
+  "controls": {
+    "govern": {
+      "decision": "ALLOW",
+      "reasons": [],
+      "domains": [
+        "global.toyota",
+        "sma.nasa.gov",
+        "sre.google",
+        "www.nasa.gov",
+        "www.nist.gov",
+        "www.toyota-europe.com"
+      ]
+    },
+    "transport": [
+      {
+        "url": "https://sre.google/workbook/error-budget-policy/",
+        "ok": true
+      },
+      {
+        "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "ok": true
+      },
+      {
+        "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+        "ok": true
+      },
+      {
+        "url": "https://www.toyota-europe.com/about-us/toyota-quality",
+        "ok": true
+      },
+      {
+        "url": "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
+        "ok": true
+      },
+      {
+        "url": "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety",
+        "ok": true
+      }
+    ],
+    "screening": [
+      {
+        "url": "https://sre.google/workbook/error-budget-policy/",
+        "untrusted": false,
+        "injectionFlags": []
+      },
+      {
+        "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+        "untrusted": false,
+        "injectionFlags": []
+      },
+      {
+        "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+        "untrusted": false,
+        "injectionFlags": []
+      },
+      {
+        "url": "https://www.toyota-europe.com/about-us/toyota-quality",
+        "untrusted": false,
+        "injectionFlags": []
+      },
+      {
+        "url": "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
+        "untrusted": false,
+        "injectionFlags": []
+      },
+      {
+        "url": "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety",
+        "untrusted": false,
+        "injectionFlags": []
+      }
+    ]
+  },
+  "results": [
+    {
+      "query": "Toyota Production System: definition of jidoka",
+      "claim": "Jidoka is automation with a human touch",
+      "capability": "V14.4 Phase 4 reliability — fail-closed / stop-on-defect (jidoka)",
+      "sources": [
+        "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+        "https://www.toyota-europe.com/about-us/toyota-quality"
+      ],
+      "classification": "FACT_CORROBORATED",
+      "corroboration": "CORROBORATED",
+      "independentSupportCount": 2,
+      "admitted": 1,
+      "rejected": [],
+      "verdict": "RETURN_TO_EXPERIMENT",
+      "action": "RETURNED"
+    },
+    {
+      "query": "Toyota Production System: definition of just-in-time",
+      "claim": "Just-in-time means making only what is needed, when it is needed",
+      "capability": "V14.4 Phase 4 efficiency — produce only what is needed (lean pipeline)",
+      "sources": [
+        "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+        "https://www.toyota-europe.com/about-us/toyota-quality"
+      ],
+      "classification": "FACT_CORROBORATED",
+      "corroboration": "CORROBORATED",
+      "independentSupportCount": 2,
+      "admitted": 1,
+      "rejected": [],
+      "verdict": "RETURN_TO_EXPERIMENT",
+      "action": "RETURNED"
+    },
+    {
+      "query": "SRE error budget definition",
+      "claim": "An error budget is 1 minus the SLO of the service",
+      "capability": "V14.4 Phase 4 reliability — SLO / error-budget policy",
+      "sources": [
+        "https://sre.google/workbook/error-budget-policy/"
+      ],
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroboration": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "admitted": 0,
+      "rejected": [
+        "UNVERIFIED"
+      ],
+      "verdict": "RETURN_TO_EXPERIMENT",
+      "action": "RETURNED"
+    },
+    {
+      "query": "SRE error budget exhaustion policy",
+      "claim": "When the error budget is exhausted, changes and releases halt except P0 issues or security fixes",
+      "capability": "V14.4 Phase 4 reliability — change freeze on budget exhaustion",
+      "sources": [
+        "https://sre.google/workbook/error-budget-policy/"
+      ],
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroboration": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "admitted": 0,
+      "rejected": [
+        "UNVERIFIED"
+      ],
+      "verdict": "RETURN_TO_EXPERIMENT",
+      "action": "RETURNED"
+    },
+    {
+      "query": "NIST AI RMF release and nature",
+      "claim": "NIST AI RMF 1.0 was released on January 26, 2023 and is intended for voluntary use",
+      "capability": "V14.4 Phase 4 trust/governance — AI risk management",
+      "sources": [
+        "https://www.nist.gov/itl/ai-risk-management-framework"
+      ],
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroboration": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "admitted": 0,
+      "rejected": [
+        "UNVERIFIED"
+      ],
+      "verdict": "RETURN_TO_EXPERIMENT",
+      "action": "RETURNED"
+    },
+    {
+      "query": "NASA requirements traceability",
+      "claim": "Bidirectional traceability traces a requirement to its parent and to its allocated children",
+      "capability": "V14.4 Phase 0/4 — bidirectional requirement traceability",
+      "sources": [
+        "https://www.nasa.gov/reference/system-engineering-handbook-appendix/"
+      ],
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroboration": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "admitted": 0,
+      "rejected": [
+        "UNVERIFIED"
+      ],
+      "verdict": "RETURN_TO_EXPERIMENT",
+      "action": "RETURNED"
+    },
+    {
+      "query": "NASA independent verification and validation",
+      "claim": "NASA uses its IV&V Facility as the sole provider of IV&V services for selected software",
+      "capability": "V14.4 Phase 4/7 — independent inspection",
+      "sources": [
+        "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety"
+      ],
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroboration": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "admitted": 0,
+      "rejected": [
+        "UNVERIFIED"
+      ],
+      "verdict": "RETURN_TO_EXPERIMENT",
+      "action": "RETURNED"
+    }
+  ],
+  "reuse": [
+    {
+      "query": "Toyota Production System: definition of jidoka",
+      "retrieved": 1,
+      "reacquired": 0
+    },
+    {
+      "query": "Toyota Production System: definition of just-in-time",
+      "retrieved": 1,
+      "reacquired": 0
+    },
+    {
+      "query": "SRE error budget definition",
+      "retrieved": 0,
+      "reacquired": 1
+    },
+    {
+      "query": "SRE error budget exhaustion policy",
+      "retrieved": 0,
+      "reacquired": 1
+    },
+    {
+      "query": "NIST AI RMF release and nature",
+      "retrieved": 0,
+      "reacquired": 1
+    },
+    {
+      "query": "NASA requirements traceability",
+      "retrieved": 0,
+      "reacquired": 1
+    },
+    {
+      "query": "NASA independent verification and validation",
+      "retrieved": 0,
+      "reacquired": 1
+    }
+  ],
+  "summary": {
+    "cycles": 7,
+    "admittedFacts": 2,
+    "singleSourceNotAdmitted": 5,
+    "quarantinedSources": 0,
+    "reuseOnSecondPass": "2/7"
+  },
+  "honesty": [
+    "admitted Toyota facts are corroborated by 2 OFFICIAL Toyota sites on distinct registrable domains — SAME ORGANIZATION (primary-source corroboration), not independent third parties",
+    "SRE / NIST / NASA claims are SINGLE-SOURCE ⇒ recorded but NOT admitted as verified knowledge (fail-closed), even though each is an official primary source",
+    "quotes were extracted by WebFetch's model from page text, not re-verified against raw HTML",
+    "NASA SE handbook page read partially (first 100000 of 253989 chars)",
+    "no downstream experiment evidence ⇒ gate RETURNs; knowledge usefulness for ODG is NOT_MEASURED until a mission applies it"
+  ]
+}
