@@ -46,7 +46,13 @@ Before signing, read the record or evidence. A signature attests that **you** re
 
 Sign **exactly the version merged on `main`** (`git fetch && git checkout origin/main -- <file>` or a clean checkout of main). The checks read `origin/main`, so a working-tree difference such as an uncommitted edit or CRLF conversion causes a hash mismatch and fails closed.
 
-**Gate inspection record** (example: the resident-confinement experiment):
+**Gate inspection record** (example: the resident-confinement experiment).
+
+The record must be **bound to the candidate you reviewed**. Before signing, set its owner fields, then merge:
+- `subjectCommit`: the full 40-hex sha that the gate experiment is run with (`--ci-commit`);
+- `verdict`: `"ACCEPT"`.
+
+The tool refuses to sign a record without them. The gate refuses a signature over a record bound to another commit, so one signature never covers later code.
 
 ```sh
 npx tsx runtime/bin/odg-owner-sign.ts inspection \
@@ -59,15 +65,15 @@ This writes `…_INSPECTION.sig.json`.
 **Maturity evidence:**
 
 ```sh
-npx tsx runtime/bin/odg-owner-sign.ts maturity --contract WIC-ID \
+npx tsx runtime/bin/odg-owner-sign.ts maturity --contract-path docs/odg/WIC_X.json \
   --evidence docs/odg/evidence/X.json --claim 'a|is|b' --level EXPERIMENTAL --key ~/odg-owner/owner.pem
 ```
 
-This writes `X.json.sig.json`.
+This writes `X.json.sig.json`. The signature binds the contract file too (path + sha256 of its bytes): editing or replacing the WIC invalidates it.
 
 ## 4. Commit the sidecar to `main`
 
-The checks read the record and its sidecar from `origin/main`.
+The checks read the record, its sidecar **and `TRUST_ANCHORS.json`** from `origin/main`. An uncommitted local edit of the anchors has no effect. `npx tsx runtime/bin/odg-trust-anchor-audit.ts` lists every pin with its introducing commit, PR and signature status.
 
 Any later edit to the record or evidence invalidates the signature: the check returns `CONTENT_MODIFIED` or a hash mismatch.
 
@@ -76,6 +82,15 @@ Signatures expire after at most 90 days (default 30). After expiry, the gate ret
 Rerun `runtime/bin/odg-gate-experiment-resident-confinement.ts`. The two review conditions then pass, provided that:
 - the key is pinned;
 - the sidecar is on `main`.
+
+## 5. Re-verify on a clone you control (the trust decision)
+
+A verdict computed on the provider's host is **not** the trust decision. Whoever controls that clone controls its local ref and object store (`git update-ref`, `git replace`, a rewritten object directory). The local `origin/main` is also only as fresh as its last fetch. The readers strip `GIT_*` and disable replace objects, but they cannot defend against control of the repository itself. A forged or stale ref can therefore produce INTEGRATE, or keep a revoked key alive.
+
+Before relying on a result:
+1. On your own clone, run `git fetch`.
+2. Re-run the gate experiment, or the verifier, there.
+3. Run `npx tsx runtime/bin/odg-trust-anchor-audit.ts --signer-keys <your key list> --require-signed`.
 
 ## Revocation / rollback
 

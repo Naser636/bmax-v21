@@ -1,0 +1,29 @@
+{
+  "id": "WIC-V15-ATTESTATION-BINDING",
+  "state": "EXECUTING",
+  "objective": "close the six defects found by the independent evidence/attestation audit at their root (owner-anchored evidence path)",
+  "v124Link": "CM-RADAR-GATE-CHAIN",
+  "authorization": "ODG — DIRECTIVE D'AUTORISATION ET DE CLÔTURE COMPLÈTE DE LA SESSION V15 §5.1/§5.3; TRUST_ANCHORS.json untouched",
+  "defects": {
+    "D1 MED": "anchors read from the WORKING TREE (require) while evidence is read from origin/main ⇒ an uncommitted local pin counted. Fix: one loader in odg-knowledge-attestation reading git show origin/main:TRUST_ANCHORS.json (KI reuses it); failure ⇒ empty",
+    "D2 MED": "deriveEvidence accepted caller measurements for codeAndDepsReviewed/independentInspection. Fix: ignored; computed only inside runMeasuredExperiment from experiment.ownerReview",
+    "D3 MED": "inspection signature not bound to the candidate ⇒ one signature counted for later code. Fix: record.subjectCommit must equal the full candidate sha and verdict ACCEPT",
+    "D4 LOW": "verifyOwnerAnchored/ownerAnchoredReview took a caller clock. Fix: wall clock only",
+    "D5 LOW": "maturity payload did not bind the contract file. Fix: contractPath + contractSha256 in the signed payload (tool updated)",
+    "D6 INFO": "committed reader returned tree listings / symlink text. Fix: only regular blobs (ls-tree mode 100644/100755)"
+  },
+  "write_set": [
+    "runtime/core/odg-knowledge-attestation.ts", "runtime/core/odg-knowledge-intelligence.ts", "runtime/core/odg-gate-measured-evidence.ts",
+    "runtime/core/odg-evidence-verifier.ts", "runtime/core/odg-gate-measured-evidence.test.ts", "runtime/core/odg-owner-anchor-success-path.test.ts",
+    "runtime/bin/odg-gate-experiment-resident-confinement.ts", "runtime/bin/odg-owner-sign.ts", "runtime/bin/odg-owner-sign.test.ts",
+    "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json", "docs/odg/OWNER_SIGNING_PROCEDURE.md", "docs/odg/WIC_V15-ATTESTATION-BINDING.json"
+  ],
+  "acceptance_criteria": [
+    "new checks FAIL against origin/main core (11 + 5 reproduced) and PASS after",
+    "odg-evidence-verifier / odg-knowledge-attestation / odg-knowledge-intelligence suites unchanged and passing",
+    "tsc clean; CI green; independent inspection"
+  ],
+  "knownLimits": ["origin/main is a local ref: only as honest as the last fetch (a local update-ref could forge it) — same boundary as before", "pinning remains review-only (shared merging account) — see odg-trust-anchor-audit and OWNER_SIGNING_PROCEDURE.md"],
+  "rollback": "git revert of the PR",
+  "stateNote": "NOT VERIFIED: provider must not self-certify."
+}

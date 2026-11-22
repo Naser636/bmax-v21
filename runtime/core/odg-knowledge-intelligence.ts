@@ -27,7 +27,7 @@ const EVV = require("./odg-evidence-verifier.js");       // V375 G2: maturity ev
 const REPO_READER = (() => { try { return EVV.makeCommittedReader(require("path").resolve(__dirname, "../.."), "origin/main"); } catch { return null; } })();
 // TRUST ANCHORS (inspection HIGH r2): authorized issuer key fingerprints PER PURPOSE, loaded HERE from a git-reviewed file —
 // never from the caller. Empty by design (production keys are owner-gated) ⇒ a caller-made key can never authenticate.
-const TRUST_ANCHORS = Object.freeze((() => { try { const j = require("../../docs/odg/evidence/TRUST_ANCHORS.json"); return { COLLECTION_ARTIFACT: Object.freeze((j.COLLECTION_ARTIFACT || []).slice()), KNOWLEDGE_RECORD: Object.freeze((j.KNOWLEDGE_RECORD || []).slice()) }; } catch { return { COLLECTION_ARTIFACT: Object.freeze([]), KNOWLEDGE_RECORD: Object.freeze([]) }; } })());
+const TRUST_ANCHORS = Object.freeze({ COLLECTION_ARTIFACT: ATT.ANCHORS.COLLECTION_ARTIFACT, KNOWLEDGE_RECORD: ATT.ANCHORS.KNOWLEDGE_RECORD });   // V15 closure (audit D1): ONE loader, committed origin/main file (never the working tree)
 function anchored(purpose: string, v: any): boolean { return !!(v && v.valid && v.provenance && (TRUST_ANCHORS as any)[purpose].includes(v.provenance.keyFingerprint)); }
 const ASSESSMENTS: WeakSet<any> = new WeakSet();   // brand: ONLY assessClaim mints assessments
 // PINNED COLLECTIONS: digests loaded HERE from the git-reviewed COLLECTION_REGISTRY.json (caller-supplied pins are SANDBOX).

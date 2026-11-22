@@ -10,6 +10,8 @@
 "use strict";
 const crypto = require("crypto");
 const AI = require("./agent-identity.js");
+const fs = require("fs");
+const path = require("path");
 
 const PURPOSES = Object.freeze(["KNOWLEDGE_RECORD", "COLLECTION_ARTIFACT", "INSPECTION_RECORD", "MATURITY_EVIDENCE"]);   // V15: owner-anchored review/inspection + maturity evidence
 const MAX_TTL_MS = 90 * 86400000;   // attestation lifetime cap (inspection LOW)
@@ -77,12 +79,38 @@ function verifyAttestation(att: any, payload: any, o: any): any {
 
 // V15 OWNER ANCHORS for owner-only purposes, loaded HERE from the git-reviewed TRUST_ANCHORS.json (never from a caller).
 const OWNER_PURPOSES = Object.freeze(["INSPECTION_RECORD", "MATURITY_EVIDENCE"]);
-const OWNER_ANCHORS: any = Object.freeze((() => { const out: any = {}; let j: any = {}; try { j = require("../../docs/odg/evidence/TRUST_ANCHORS.json"); } catch {}
-  for (const p of OWNER_PURPOSES) out[p] = Object.freeze(Array.isArray(j[p]) ? j[p].slice() : []); return out; })());
-/* verifyOwnerAnchored(purpose, payload, signed={attestation, publicKeyPem}, asOf) -> {ok, reason}. ok ONLY if the key's
+/* V15 closure (audit D1): trust anchors are read from the COMMITTED file on origin/main (git show), never from the working
+ * tree — an uncommitted local edit of TRUST_ANCHORS.json has no effect, so every pin is a merged, reviewable change
+ * (see runtime/bin/odg-trust-anchor-audit.ts for detection/attribution). Any failure ⇒ empty (fail closed).
+ * LIMITS (inspection H1 / M3 — NOT closed here): the local origin/main ref is provider-writable (git update-ref) and only
+ * as fresh as the last fetch, so a LOCAL verdict (INTEGRATE / VERIFIED maturity) can be forged or kept alive after an owner
+ * revocation by whoever controls this clone. A local result is therefore never the trust decision: the owner re-runs the
+ * verification on a clone they control, after `git fetch`, before relying on it (docs/odg/OWNER_SIGNING_PROCEDURE.md). */
+const ANCHOR_FILE = "docs/odg/evidence/TRUST_ANCHORS.json";
+const ANCHOR_REF = "origin/main";
+const ANCHOR_PURPOSES = Object.freeze(["COLLECTION_ARTIFACT", "KNOWLEDGE_RECORD", "INSPECTION_RECORD", "MATURITY_EVIDENCE"]);
+// (inspection L3) the repo root is derived from THIS module's known layout (runtime/core or runtime/dist/core), never by
+// walking up to an arbitrary enclosing repository.
+function repoRoot(): string | null { const d = path.resolve(__dirname, path.basename(path.dirname(__dirname)) === "dist" ? "../../.." : "../.."); return fs.existsSync(path.join(d, ".git")) ? d : null; }
+function loadCommittedAnchors(): any {
+  const out: any = {}; for (const p of ANCHOR_PURPOSES) out[p] = [];
+  const root = repoRoot();
+  if (root) { try {
+    const env: any = {}; for (const k of Object.keys(process.env)) if (!/^GIT_/.test(k)) env[k] = process.env[k]; env.GIT_NO_REPLACE_OBJECTS = "1";   // no GIT_DIR / GIT_CONFIG_* redirection, no replace objects (inspection H1 partial, N1)
+    const b = require("child_process").execFileSync("git", ["show", ANCHOR_REF + ":" + ANCHOR_FILE], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 4 * 1024 * 1024, env });
+    const j = JSON.parse(b.toString("utf8"));
+    for (const p of ANCHOR_PURPOSES) out[p] = Array.isArray(j[p]) ? j[p].filter((x: any) => typeof x === "string" && /^[0-9a-f]{64}$/.test(x)) : [];
+  } catch { for (const p of ANCHOR_PURPOSES) out[p] = []; } }
+  for (const p of ANCHOR_PURPOSES) out[p] = Object.freeze(out[p].slice());
+  return Object.freeze(out);
+}
+const ANCHORS: any = loadCommittedAnchors();
+const OWNER_ANCHORS: any = Object.freeze(Object.fromEntries(OWNER_PURPOSES.map((p: string) => [p, ANCHORS[p]])));
+/* verifyOwnerAnchored(purpose, payload, signed={attestation, publicKeyPem}) -> {ok, reason} (wall clock; no caller clock). ok ONLY if the key's
  * fingerprint is pinned for that purpose in TRUST_ANCHORS.json (owner-controlled, empty by design) AND the Ed25519
  * attestation verifies over exactly this payload. A provider-made key can never pass. */
-function verifyOwnerAnchored(purpose: string, payload: any, signed: any, asOf: number): any {
+function verifyOwnerAnchored(purpose: string, payload: any, signed: any): any {
+  const asOf = Date.now();   // V15 closure (audit D4): WALL CLOCK only — a caller clock could revive an expired owner signature
   if (!OWNER_PURPOSES.includes(purpose)) return Object.freeze({ ok: false, reason: "NOT_AN_OWNER_PURPOSE" });
   if (!isObj(signed) || typeof signed.publicKeyPem !== "string" || !isObj(signed.attestation)) return Object.freeze({ ok: false, reason: "NO_OWNER_SIGNATURE (provider-authored evidence never counts on its own)" });
   const fp = fingerprint(signed.publicKeyPem);
@@ -103,5 +131,5 @@ const KNOWLEDGE_ATTESTATION_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { verifyOwnerAnchored, OWNER_ANCHORS, OWNER_PURPOSES, canonical, contentSha256, fingerprint, ephemeralIdentity, registerIssuer, revokeIssuer, createAttestation, verifyAttestation, PURPOSES, KNOWLEDGE_ATTESTATION_CONTRACT, createRegistry: AI.createRegistry };
+module.exports = { verifyOwnerAnchored, ANCHORS, ANCHOR_FILE, ANCHOR_REF, OWNER_ANCHORS, OWNER_PURPOSES, canonical, contentSha256, fingerprint, ephemeralIdentity, registerIssuer, revokeIssuer, createAttestation, verifyAttestation, PURPOSES, KNOWLEDGE_ATTESTATION_CONTRACT, createRegistry: AI.createRegistry };
 export {};

@@ -22,19 +22,25 @@ const fp = tool(["fingerprint", "--pub", path.join(K, "owner.pub")]).stdout.trim
 check("fingerprint is the SHA-256 of the canonical SPKI PEM", fp === crypto.createHash("sha256").update(pub).digest("hex"));
 check("fingerprint is stable across PEM text variants (CRLF, blank lines)", tool(["fingerprint", "--pub", path.join(K, "variant.pub")]).stdout.trim() === fp);
 fs.writeFileSync(path.join(T, "docs/odg/evidence/TRUST_ANCHORS.json"), JSON.stringify({ COLLECTION_ARTIFACT: [], KNOWLEDGE_RECORD: [], INSPECTION_RECORD: [fp], MATURITY_EVIDENCE: [fp] }));
-const REC = "docs/odg/evidence/INSP.json"; fs.writeFileSync(path.join(T, REC), JSON.stringify({ subject: "PR #0", verdict: "ACCEPT" }));
+const CAND = "c".repeat(40);
+const REC = "docs/odg/evidence/INSP.json"; fs.writeFileSync(path.join(T, REC), JSON.stringify({ subject: "PR #0", subjectCommit: CAND, verdict: "ACCEPT" }));
+fs.writeFileSync(path.join(T, "docs/odg/evidence/NOBIND.json"), JSON.stringify({ subject: "PR #0", verdict: "ACCEPT" }));
+// anchors count only from the COMMITTED origin/main file (V15 closure D1) ⇒ make the copy a git repo with origin/main
+fs.writeFileSync(path.join(T, ".gitignore"), "node_modules\nprobe.ts\n");
+const g = (...a: string[]) => cp.spawnSync("git", ["-C", T, "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "commit.gpgsign=false", ...a], { encoding: "utf8", env: Object.assign({}, process.env, { GIT_CONFIG_GLOBAL: "/dev/null" }) });
+g("init", "-q", "-b", "main"); g("add", "-A"); g("commit", "-q", "-m", "init"); g("update-ref", "refs/remotes/origin/main", "HEAD");
 const s1 = tool(["inspection", "--record", REC, "--key", path.join(K, "owner.pem")]);
 check("inspection: sidecar written, reported as counting (fingerprint pinned)", s1.status === 0 && fs.existsSync(path.join(T, "docs/odg/evidence/INSP.sig.json")) && /"counts": "YES/.test(s1.stdout));
 fs.writeFileSync(path.join(T, "docs/odg/evidence/E.json"), "{\"x\":1}\n");
 fs.writeFileSync(path.join(T, "docs/odg/WIC_T.json"), JSON.stringify({ id: "WIC-T", state: "VERIFIED", evidence_required: ["docs/odg/evidence/E.json"], maturityClaims: [{ claimKey: "a|is|b", level: "EXPERIMENTAL" }] }));
-const s2 = tool(["maturity", "--contract", "WIC-T", "--evidence", "docs/odg/evidence/E.json", "--claim", "a|is|b", "--level", "EXPERIMENTAL", "--key", path.join(K, "owner.pem")]);
+const s2 = tool(["maturity", "--contract-path", "docs/odg/WIC_T.json", "--evidence", "docs/odg/evidence/E.json", "--claim", "a|is|b", "--level", "EXPERIMENTAL", "--key", path.join(K, "owner.pem")]);
 check("maturity: sidecar written", s2.status === 0 && fs.existsSync(path.join(T, "docs/odg/evidence/E.json.sig.json")));
 fs.writeFileSync(path.join(T, "probe.ts"), `
 const MG=require("./runtime/core/odg-gate-measured-evidence.js"); const V=require("./runtime/core/odg-evidence-verifier.js"); const fs=require("fs"),crypto=require("crypto");
 const rec=JSON.parse(fs.readFileSync("${REC}","utf8")); const sig=JSON.parse(fs.readFileSync("docs/odg/evidence/INSP.sig.json","utf8"));
 const sha=crypto.createHash("sha256").update(fs.readFileSync("docs/odg/evidence/E.json")).digest("hex");
 const ev={missionContract:"WIC-T",contractPath:"docs/odg/WIC_T.json",evidencePath:"docs/odg/evidence/E.json",evidenceSha256:sha}; const R=V.makeRepoReader(process.cwd());
-process.stdout.write(JSON.stringify({ review: MG.ownerAnchoredReview(rec,sig,Date.now()).ok, tampered: MG.ownerAnchoredReview({...rec,verdict:"REJECT"},sig,Date.now()).reason,
+process.stdout.write(JSON.stringify({ review: MG.ownerAnchoredReview(rec,sig,"${CAND}").ok, tampered: MG.ownerAnchoredReview({...rec,subject:"other"},sig,"${CAND}").reason,
   mat: V.verifyMaturityEvidence(ev,R,{claimKey:"a|is|b",level:"EXPERIMENTAL"}).reason }));`);
 const pr = cp.spawnSync(process.execPath, [path.join(ROOT, "node_modules/.bin/tsx"), path.join(T, "probe.ts")], { cwd: T, encoding: "utf8", timeout: 120000 });
 let o: any = {}; try { o = JSON.parse(pr.stdout); } catch { process.stdout.write(String(pr.stderr).slice(0, 600) + "\n"); }
@@ -44,6 +50,9 @@ check("EXISTING evidence verifier accepts the tool's maturity sidecar", o.mat ==
 const s3 = tool(["inspection", "--record", REC, "--key", path.join(K, "other.pem")]);
 check("unpinned key: sidecar reported as NOT counting", s3.status === 0 && /NOT YET/.test(s3.stdout));
 fs.copyFileSync(path.join(K, "owner.pem"), path.join(T, "docs/odg/k.pem"));
+check("REFUSED: record not bound to a candidate commit (no subjectCommit) — such a signature could never count", /subjectCommit/.test(tool(["inspection", "--record", "docs/odg/evidence/NOBIND.json", "--key", path.join(K, "owner.pem")]).stderr));
+fs.mkdirSync(path.join(K, "realdir")); fs.writeFileSync(path.join(K, "realdir/R.json"), JSON.stringify({ subjectCommit: CAND, verdict: "ACCEPT" })); fs.symlinkSync(path.join(K, "realdir"), path.join(T, "docs/odg/evidence/linkdir"));
+check("REFUSED: record reached through a symlinked directory", /symlink/.test(tool(["inspection", "--record", "docs/odg/evidence/linkdir/R.json", "--key", path.join(K, "owner.pem")]).stderr));
 check("REFUSED: private key inside the repository", /inside the repository/.test(tool(["inspection", "--record", REC, "--key", path.join(T, "docs/odg/k.pem")]).stderr));
 check("REFUSED: non-Ed25519 key", /Ed25519 key required/.test(tool(["inspection", "--record", REC, "--key", path.join(K, "rsa.pem")]).stderr));
 check("REFUSED: absolute / outside record path", /repo-relative/.test(tool(["inspection", "--record", path.join(K, "owner.pub"), "--key", path.join(K, "owner.pem")]).stderr) && /repo-relative/.test(tool(["inspection", "--record", "../x.json", "--key", path.join(K, "owner.pem")]).stderr));

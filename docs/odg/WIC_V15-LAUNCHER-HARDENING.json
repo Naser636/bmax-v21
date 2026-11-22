@@ -1,0 +1,45 @@
+{
+  "id": "WIC-V15-LAUNCHER-HARDENING",
+  "state": "EXECUTING",
+  "objective": "harden the V15 confined resident-driver launcher against the independent audit findings: inherited fds, unbounded stderr, unbounded tmpfs/processes, no timeout + orphan on launcher SIGKILL, freshness blind to emitted dist .js, implicit >64 KiB truncation; inspection round 2: freshness blind to ADDED shadowing files, memory outside the tmpfs caps (memfd / SysV shm), stale temp dirs, fifo-open hang, missing timeout",
+  "v124Link": "CM-V234-RESIDENT-DRIVER",
+  "authorization": "ODG — AUTORISATION PERMANENTE DE CONTINUITÉ D'EXÉCUTION + V15 executive order (bounded fix lot, residual MED/LOW audit findings); no systemd, no VPS, no install",
+  "rootCause": "the launcher (1) passed every caller fd > 2 into bwrap (reachable directly or via /proc/<ancestor>/fd/N), (2) streamed confined stderr raw and unbounded to the journal, (3) mounted unsized tmpfs (/tmp, /run, plus the writable bwrap root and /dev tmpfs) and set no NPROC cap, (4) ran the sandbox inside $(...) with no time bound — a launcher SIGKILL left the subshell as bwrap's parent so the sandbox survived, (5) hashed only the .ts closure inputs (a tampered emitted dist .js stayed 'fresh'), (6) signalled >64 KiB stdout only through an incidental exit code (reproduced: 11 new checks FAIL against the origin/main launcher); round 2 (inspection MED): (7) the output hash covered only RECORDED files — an added extensionless runtime/dist/core/state-transition shadows state-transition.js for require('./state-transition') and ran while odg_resident_fresh stayed 0; (8) memfd_create (with RLIMIT_NOFILE raised to the 524288 hard limit) and SysV shm held RAM outside every cap (reproduced: memfd 400 MiB + shm 256 MiB on the precompiled path)",
+  "write_set": [
+    "scripts/odg-resident-driver-confined.sh",
+    "scripts/lib/odg-confined-view.sh",
+    "scripts/lib/odg-resident-freshness.sh",
+    "scripts/odg-resident-driver-build.sh",
+    "runtime/core/odg-resident-driver-confined.test.ts",
+    "deploy/odg-resident-driver.service.d/v15-confined-launcher.conf.proposed",
+    "docs/odg/WIC_V15-LAUNCHER-HARDENING.json"
+  ],
+  "invariants": [
+    "no systemd unit / drop-in installed or modified; the drop-in stays a PROPOSAL",
+    "the confined tick still has NO writable host path; --clearenv, no host root, private /proc, stop-signal passthrough, tsx fallback and symlinked-log refusal kept",
+    "the line CONTENT remains the tick's self-report (format-checked, re-stamped) — NOT an attestation",
+    "non-conforming / truncated / timed-out output ⇒ exactly one launcher line (INVALID_TRACE truncated=0|1, or TIMEOUT); never silently dropped",
+    "scripts/odg-resident-driver-run.sh (shared freshness lib) keeps working",
+    "freshness is DRIFT DETECTION, not tamper-proofing: the unkeyed srchash next to dist is rewritable by any same-user unconfined process (confined code cannot write it)"
+  ],
+  "acceptance_criteria": [
+    "odg-resident-driver-confined.test.ts ALL PASS (35 checks) incl. fd / stderr / timeout / orphan / truncated / nproc / tmpfs / freshness (tamper + shadow) / memfd+shm / tmp hygiene / timeout-missing checks",
+    "the same new checks FAIL against the origin/main launcher (reproduction)",
+    "odg-resident-driver-l1-sandbox.test.ts, odg-resident-driver-tick.test.ts, odg-resident-driver-precompile.test.ts ALL PASS; CI green"
+  ],
+  "rollback": "git revert of the PR; the installed service is untouched (still the normal launcher)",
+  "evidence_required": [
+    "before/after runs of runtime/core/odg-resident-driver-confined.test.ts (PR description)"
+  ],
+  "stateNote": "NOT VERIFIED: provider must not self-certify; review/inspection count only from an OWNER-anchored signature.",
+  "knownLimits": [
+    "RLIMIT_AS (default 4 GiB; precompiled tick measured to need ~800 MB) is NOT applied on the tsx fallback: tsx's WebAssembly lexer reserves > 32 GiB virtual (fails at 32 GiB, runs at 64 GiB) — anonymous memory there is bounded only by the unit's MemoryMax= (REQUIRED in the proposal, not installed)",
+    "memfd_create / memfd_secret / shmget are refused by a hand-assembled x86_64 seccomp BPF (other arches: launcher refuses to run); POSIX shm goes to the 1 MiB /dev/shm tmpfs; kernel-side buffers (pipes, sockets) are not bounded by the launcher",
+    "freshness = drift detection over recorded outputs + Node-resolved requires of the closure; not tamper-proof against a same-user unconfined writer (it can rewrite dist and the srchash together)",
+    "the RestrictAddressFamilies/PrivateNetwork interaction with bwrap --unshare-net is NOT reproduced (no systemd touched); owner dry-run required before install",
+    "the fifo-open hang is removed structurally (process-substitution pipe) — no deterministic test for the launcher-death window",
+    "requires setpriv (util-linux) and timeout (coreutils); the launcher refuses to run without them",
+    "line CONTENT (e.g. writes=0) remains the tick's self-report; only position in the trace, timestamp and TIMEOUT/truncated markers are launcher-controlled"
+  ],
+  "inspection": "provider-side independent inspection round 1: ACCEPT with 2 MED (fixed in round 2) — does NOT count; owner-anchored signature required"
+}

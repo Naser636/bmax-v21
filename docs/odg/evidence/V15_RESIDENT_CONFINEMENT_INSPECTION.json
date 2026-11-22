@@ -29,5 +29,10 @@
   ],
   "codeAndDepsReviewed": "scripts/odg-resident-driver-confined.sh, scripts/lib/odg-confined-view.sh, scripts/lib/odg-resident-freshness.sh, scripts/odg-resident-driver-run.sh; no new dependency (bubblewrap 0.11.1 system binary)",
   "notClaimed": "owner ACCEPTANCE; installation under the real systemd unit",
-  "countsForGate": false
+  "countsForGate": false,
+  "subjectCommit": null,
+  "verdict": null,
+  "ownerFields": "OWNER ONLY (V15 closure): after YOUR review, set subjectCommit = the FULL 40-hex sha of the exact candidate you reviewed (the --ci-commit the gate experiment is run with) and verdict = \"ACCEPT\" (or \"REJECT\"), merge, then sign the merged file with runtime/bin/odg-owner-sign.ts (docs/odg/OWNER_SIGNING_PROCEDURE.md). The gate counts review/inspection only if subjectCommit equals the candidate and verdict is ACCEPT; the provider never fills these fields.",
+  "candidateForReview": "to be set by the provider after the launcher-hardening PR merges (suggestion only; the owner decides what to review)",
+  "experiment": "V15-EXP-resident-confinement"
 }
