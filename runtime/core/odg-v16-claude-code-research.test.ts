@@ -81,6 +81,10 @@ const req = (u) => ({ urls: [u] });
   const qi = await R.runResearch(R.TARGETS.slice(0, 1), grant, NOW, true, (u, o) => H.get(u, { ...o, httpImpl: inj }));
   ok("injection-pattern page ⇒ quarantined HYPOTHESIS (untrusted), not LIVE_SOURCE", qi.results[0].classification === "HYPOTHESIS" && qi.results[0].untrusted === true);
 
+  { const GOVX = require("./research-governor.js"); const d = (u) => GOVX.govern({ urls: [u] }, grant, NOW);
+    const r1 = d("https://code.claude.com:8443/docs/en/x"), r2 = d("https://code.claude.com/docs/en/..%2F..%2Fx"), r3 = d("https://www.anthropic.com/engineering/%252e%252e/x"), r0 = d("https://code.claude.com/docs/en/hooks.md");
+    ok("EXACT pins the default port (inspection LOW 1)", r1.decision !== "ALLOW" && /PORT_NOT_ALLOWED/.test(JSON.stringify(r1.reasons)) && r0.decision === "ALLOW");
+    ok("EXACT refuses encoded separators / double-encoding in the path (inspection LOW 2)", r2.decision !== "ALLOW" && r3.decision !== "ALLOW"); }
   console.log(`\nALL PASS — v16 claude-code research grant (${pass} checks, zero network)`);
 })().catch((e) => { console.error("FAIL:", e && e.message); process.exit(1); });
 export {};

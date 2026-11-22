@@ -68,7 +68,11 @@ function govern(request: any, grant: any, nowMs: any): any {
     if (!h) { reasons.push("INVALID_URL:" + String(u)); continue; }
     if (exact && !/^https:\/\//i.test(String(u))) { reasons.push("NOT_HTTPS:" + h); continue; }
     if (exact) { let wh: string | null = null; try { wh = new URL(String(u)).hostname.toLowerCase(); } catch { wh = null; }
-      if (wh !== h) { reasons.push("HOST_PARSE_MISMATCH:" + h); continue; } }   // regex host must equal the WHATWG host the client will use
+      if (wh !== h) { reasons.push("HOST_PARSE_MISMATCH:" + h); continue; }
+      // (inspection LOW 1/2) EXACT also pins the default port and refuses encoded separators / double-encoding in the path
+      let pu: any = null; try { pu = new URL(String(u)); } catch { pu = null; }
+      if (!pu || pu.port !== "") { reasons.push("PORT_NOT_ALLOWED:" + h); continue; }
+      if (/%(2f|5c|25)/i.test(pu.pathname)) { reasons.push("ENCODED_SEPARATOR_IN_PATH:" + h); continue; } }   // regex host must equal the WHATWG host the client will use
     // SUFFIX (default): equals or is a subdomain of an allowed domain. EXACT: equals only.
     const ok = allowed.some((d) => h === d || (!exact && h.endsWith("." + d)));
     if (!ok) { reasons.push("DOMAIN_NOT_ALLOWED:" + h); continue; }

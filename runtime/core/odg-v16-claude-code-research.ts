@@ -76,7 +76,7 @@ async function runResearch(targets: readonly any[], grant: any, nowMs: number, l
   if (!live) return Object.freeze({ mode: "DRY", egress: 0, ...p, results: Object.freeze([]) });
   const b = (grant && grant.budget) || {};
   const results: any[] = [];
-  let calls = 0, bytes = 0;
+  let calls = 0, bytes = 0, fetched = 0;
   const day = new Date(nowMs).toISOString().slice(0, 10);
   for (const item of p.plan) {
     if (item.decision !== "ALLOW") { results.push({ url: item.url, classification: "DENIED", reasons: item.reasons }); continue; }
@@ -87,12 +87,13 @@ async function runResearch(targets: readonly any[], grant: any, nowMs: number, l
     try { res = await fetchImpl(item.url, { allowlist: grant.allowedDomains, timeoutMs: b.timeoutMs || 15000, maxBytes: b.perResponseMaxBytes || 300000, maxRedirects: 0, contentTypes: item.contentTypes, headers: { accept: item.contentTypes.join(",") } }); }
     catch (e: any) { res = { ok: false, code: "FETCH_THREW", detail: (e && e.message) || String(e) }; }
     if (!res || !res.ok) { results.push({ url: item.url, classification: "LIVE_UNAVAILABLE", code: res && res.code, statusCode: res && res.statusCode }); continue; }
-    const body = String(res.body || ""); bytes += Buffer.byteLength(body);
+    fetched++; const body = String(res.body || ""); bytes += Buffer.byteLength(body);
     const sha256 = crypto.createHash("sha256").update(body).digest("hex");
     const stamp = GOV.stampFinding(extractTitle(body, res.contentType || ""), { url: item.url, date: day, credibility: "HIGH", liveFetched: true, httpStatus: res.statusCode, sourceClass: "LIVE_SOURCE" });
     results.push({ url: item.url, topics: item.topics, classification: stamp.ok ? stamp.finding.sourceClass : "UNSTAMPED", httpStatus: res.statusCode, contentType: res.contentType, bytes: Buffer.byteLength(body), sha256, title: stamp.ok ? stamp.finding.content : null, untrusted: stamp.ok ? stamp.finding.untrusted : null, integrated: false });
   }
-  return Object.freeze({ mode: "LIVE", egress: calls, bytes, ...p, results: Object.freeze(results) });
+  // (inspection LOW 3) egress = responses actually received; attempted = calls counted against the quota
+  return Object.freeze({ mode: "LIVE", egress: fetched, attempted: calls, bytes, ...p, results: Object.freeze(results) });
 }
 
 module.exports = { TARGETS, MAX_TARGETS, GRANT_PATH, planRun, runResearch, extractTitle };
