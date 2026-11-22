@@ -1,0 +1,926 @@
+{
+  "workItem": "WIC-V150-PHASE1-CORRESPONDENCE",
+  "head": "becbcdda3847a87b230c1f36792811aa48003d20",
+  "generator": "runtime/bin/odg-v150-correspondence-run.ts",
+  "composes": [
+    "odg-component-census (runCensus: change-impact-graph + odg-consumer-scan + architecture-audit)",
+    "docs/odg/v124-consolidated-roadmap.json"
+  ],
+  "census": {
+    "total": 786,
+    "counts": {
+      "CONNECTED": 562,
+      "BIN_ENTRY": 0,
+      "TEST_ONLY": 0,
+      "NO_CONSUMER": 224
+    },
+    "noConsumerWhy": {
+      "DEMONSTRATOR_NAMED": 19,
+      "EXPORTS_API_NO_CONSUMER": 199,
+      "APP_REFERENCED_HEURISTIC": 6
+    },
+    "decisionSurfaceSize": 199
+  },
+  "missionSummary": {
+    "ALL_CORE_CONNECTED": 20,
+    "NO_CORE_CONNECTED": 4
+  },
+  "missions": [
+    {
+      "id": "CM-V234-CONTINUATION",
+      "section": "D",
+      "status": "ACCEPTED",
+      "commit": "d1c042f",
+      "evidence": "PR #602, gate 675/675, inspection PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-continuation-diagnostic.ts",
+          "path": "runtime/core/odg-continuation-diagnostic.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 2,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-V234-RESIDENT-DRIVER",
+      "section": "E",
+      "status": "IN_PROGRESS",
+      "commit": null,
+      "evidence": "V242: L0 driver INSTALLED + ENABLED as a user-systemd unit (root-free, linger=yes) on the host(=private VPS); real cycles ExecMainStatus=0, writes=0, registers intact. V244 PRECOMPILE: transpile-not-bundle node build + freshness-guarded launcher ⇒ measured (same systemd accounting) cgroup MemoryPeak 111MB→~17MB (~85%), CPU ~2.7s→~0.59s (~78%), RSS ~113MB→~71MB; real systemd cycle on the precompiled path confirmed (single clean L0 line). Reversible (scripts/odg-resident-driver-install.sh uninstall). L1 prepared, L2 declared (not activated).",
+      "components": [
+        {
+          "declared": "runtime/core/odg-resident-driver.ts",
+          "path": "runtime/core/odg-resident-driver.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 4,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "runtime/bin/odg-resident-driver-tick.ts",
+          "path": "runtime/bin/odg-resident-driver-tick.ts",
+          "kind": "BIN_ENTRY",
+          "exists": true,
+          "censusClass": null,
+          "consumers": null,
+          "why": null,
+          "hasTest": null
+        },
+        {
+          "declared": "deploy/odg-resident-driver.service",
+          "path": "deploy/odg-resident-driver.service",
+          "kind": "NON_CODE_ARTIFACT",
+          "exists": true,
+          "censusClass": null,
+          "consumers": null,
+          "why": null,
+          "hasTest": null
+        },
+        {
+          "declared": "deploy/odg-resident-driver.timer",
+          "path": "deploy/odg-resident-driver.timer",
+          "kind": "NON_CODE_ARTIFACT",
+          "exists": true,
+          "censusClass": null,
+          "consumers": null,
+          "why": null,
+          "hasTest": null
+        },
+        {
+          "declared": "scripts/odg-resident-driver-install.sh",
+          "path": "scripts/odg-resident-driver-install.sh",
+          "kind": "NON_CODE_ARTIFACT",
+          "exists": true,
+          "censusClass": null,
+          "consumers": null,
+          "why": null,
+          "hasTest": null
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-V235-OBS-CURRENCY",
+      "section": "B",
+      "status": "ACCEPTED",
+      "commit": "bd13eef",
+      "evidence": "PR #603, gate 676/676, inspection PASS (259k brute-force)",
+      "components": [
+        {
+          "declared": "runtime/core/odg-observation-currency.ts",
+          "path": "runtime/core/odg-observation-currency.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 8,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-V236-CARTOGRAPHY",
+      "section": "C",
+      "status": "ACCEPTED",
+      "commit": "389e32e",
+      "evidence": "PR #604, gate 677/677, inspection PASS_WITH_FINDINGS (fixed)",
+      "components": [
+        {
+          "declared": "runtime/core/odg-cartography-reconcile.ts",
+          "path": "runtime/core/odg-cartography-reconcile.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 8,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-V237-PROGRAM-CONTINUITY",
+      "section": "D",
+      "status": "ACCEPTED",
+      "commit": "0293c86",
+      "evidence": "PR #605, gate 678/678, inspection PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-program-continuity.ts",
+          "path": "runtime/core/odg-program-continuity.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 10,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-V237-AZ-SCENARIO",
+      "section": "G",
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V239: odg-az-scenario built+tested+integrated on the real components (gate green); independent inspection + merge in progress",
+      "components": [
+        {
+          "declared": "runtime/core/odg-az-scenario.ts",
+          "path": "runtime/core/odg-az-scenario.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 2,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "odg-program-continuity",
+          "path": "runtime/core/odg-program-continuity.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 10,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "campaign-controller",
+          "path": "runtime/core/campaign-controller.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 28,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "odg-cartography-reconcile",
+          "path": "runtime/core/odg-cartography-reconcile.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 8,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-V237-ORCHESTRATION",
+      "section": "F",
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V240: odg-orchestration-scenario drives the REAL odg-mission-orchestrator (least-privilege/isolation/independent-eval/parent-closure/blocked≠freeze/resume-no-redo); gate green; independent inspection + merge in progress",
+      "components": [
+        {
+          "declared": "runtime/core/odg-orchestration-scenario.ts",
+          "path": "runtime/core/odg-orchestration-scenario.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 2,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "odg-mission-orchestrator",
+          "path": "runtime/core/odg-mission-orchestrator.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 8,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "campaign-controller",
+          "path": "runtime/core/campaign-controller.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 28,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "delegate-isolation",
+          "path": "runtime/core/delegate-isolation.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 13,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "evaluator-independence",
+          "path": "runtime/core/evaluator-independence.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 13,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-V237-REPO-VPS-MAP",
+      "section": "C",
+      "status": "READY",
+      "commit": null,
+      "evidence": null,
+      "components": [
+        {
+          "declared": "odg-cartography-reconcile",
+          "path": "runtime/core/odg-cartography-reconcile.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 8,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "persistent-impact-graph",
+          "path": "runtime/core/persistent-impact-graph.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 2,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-RADAR-GATE-CHAIN",
+      "section": "I",
+      "status": "READY",
+      "commit": null,
+      "evidence": null,
+      "components": [
+        {
+          "declared": "odg-global-opportunity-radar",
+          "path": "runtime/core/odg-global-opportunity-radar.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 10,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "odg-knowledge-acquisition",
+          "path": "runtime/core/odg-knowledge-acquisition.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 6,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "odg-sandbox-integration-gate",
+          "path": "runtime/core/odg-sandbox-integration-gate.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 6,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "odg-improvement-chain",
+          "path": "runtime/core/odg-improvement-chain.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 6,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-METIER-BASELINES",
+      "section": "L",
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V245: odg-metier-campaign materializes all 20 canonical métiers and drives the REAL campaign-loop over ALL in ONE campaign — 18 INTEGRATED-qualified from real evidence (module+test+gate), P5/P8 real gaps blocked, blocked≠freeze, IDLE_BLOCKED. QUALIFICATION only (maturity classification, not fabricated improvements). gate green; inspection + merge in progress",
+      "components": [
+        {
+          "declared": "runtime/core/odg-metier-campaign.ts",
+          "path": "runtime/core/odg-metier-campaign.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 2,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "campaign-loop",
+          "path": "runtime/core/campaign-loop.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 13,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "odg-metier-certification-planner",
+          "path": "runtime/core/odg-metier-certification-planner.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 12,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-METIER-P5-PLATFORM",
+      "section": "L",
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V246: profession-p5-platform-reference BUILT+tested (config lint/controlled rollout/resource budget/recovery drill) + in gate ⇒ métier campaign now classifies P5 INTEGRATED (gap closed); inspection+merge in progress",
+      "components": [
+        {
+          "declared": "runtime/core/profession-p5-platform-reference.ts",
+          "path": "runtime/core/profession-p5-platform-reference.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "NO_CONSUMER",
+          "consumers": 0,
+          "why": "EXPORTS_API_NO_CONSUMER",
+          "hasTest": true
+        }
+      ],
+      "summary": "NO_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-METIER-P8-API",
+      "section": "L",
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V246: profession-p8-api-reference BUILT+tested (request validation/idempotency/bounded retry/contract-compat) + in gate ⇒ métier campaign now classifies P8 INTEGRATED (gap closed); inspection+merge in progress",
+      "components": [
+        {
+          "declared": "runtime/core/profession-p8-api-reference.ts",
+          "path": "runtime/core/profession-p8-api-reference.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "NO_CONSUMER",
+          "consumers": 0,
+          "why": "EXPORTS_API_NO_CONSUMER",
+          "hasTest": true
+        }
+      ],
+      "summary": "NO_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-BENCHMARK-AUDIT",
+      "section": "K",
+      "status": "REVIEW",
+      "commit": null,
+      "evidence": "V243: odg-benchmark-audit — 8 benchmarks qualified on availability/licence/reproducibility, NO score/ranking; SWE-bench(MIT)/OSWorld(Apache-2.0)/τ-bench(MIT) FACT_CORROBORATED via real WebSearch ⇒ USABLE_AS_REFERENCE; other 5 INSUFFICIENT (fail-closed); gate green; independent inspection + merge in progress",
+      "components": [
+        {
+          "declared": "runtime/core/odg-benchmark-audit.ts",
+          "path": "runtime/core/odg-benchmark-audit.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 4,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "odg-source-authority",
+          "path": "runtime/core/odg-source-authority.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 4,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "CM-MULTIMODAL-VIDEO",
+      "section": "P",
+      "status": "BLOCKED",
+      "commit": null,
+      "evidence": "ffmpeg/ffprobe/yt-dlp/whisper/tesseract ABSENT; Ollama text-only; YouTube ToS on captions",
+      "components": [
+        {
+          "declared": "odg-video-analysis-chain",
+          "path": "runtime/core/odg-video-analysis-chain.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 4,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-DEVIS-ENGINE",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #641, gate 571, inspection PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-btp-devis-engine.ts",
+          "path": "runtime/core/odg-btp-devis-engine.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 12,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-METRE-ENGINE",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #643, inspection PASS (24 exact cases)",
+      "components": [
+        {
+          "declared": "runtime/core/odg-btp-metre-engine.ts",
+          "path": "runtime/core/odg-btp-metre-engine.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 2,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-VISION-VOICE-PIPELINE",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #644, inspection PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-btp-vision-voice-pipeline.ts",
+          "path": "runtime/core/odg-btp-vision-voice-pipeline.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 2,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-NORMATIVE-REGISTRY",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #645, inspection PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-btp-normative-registry.ts",
+          "path": "runtime/core/odg-btp-normative-registry.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 4,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-COMMUNICATION-MATRIX",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #646, inspection PASS (live re-probe)",
+      "components": [
+        {
+          "declared": "runtime/core/odg-btp-communication-capability-matrix.ts",
+          "path": "runtime/core/odg-btp-communication-capability-matrix.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "NO_CONSUMER",
+          "consumers": 0,
+          "why": "EXPORTS_API_NO_CONSUMER",
+          "hasTest": true
+        }
+      ],
+      "summary": "NO_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-PROJECT-WORKFLOW",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #647, inspection PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-btp-project-workflow.ts",
+          "path": "runtime/core/odg-btp-project-workflow.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 10,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-BILLING-ENGINE",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #648, inspection PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-btp-billing-engine.ts",
+          "path": "runtime/core/odg-btp-billing-engine.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 6,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-GROWTH-RECONCILIATION",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #649, inspection PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-btp-growth-roadmap-reconciliation.ts",
+          "path": "runtime/core/odg-btp-growth-roadmap-reconciliation.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "NO_CONSUMER",
+          "consumers": 0,
+          "why": "EXPORTS_API_NO_CONSUMER",
+          "hasTest": true
+        },
+        {
+          "declared": "ODG_BTP_INTERNATIONAL_GROWTH_ROADMAP_V2.md",
+          "path": "ODG_BTP_INTERNATIONAL_GROWTH_ROADMAP_V2.md",
+          "kind": "NON_CODE_ARTIFACT",
+          "exists": true,
+          "censusClass": null,
+          "consumers": null,
+          "why": null,
+          "hasTest": null
+        }
+      ],
+      "summary": "NO_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-COMPANY-COVERAGE",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #650, inspection PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-btp-company-management-coverage.ts",
+          "path": "runtime/core/odg-btp-company-management-coverage.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 4,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "ODG_BTP_AUTONOMOUS_COMPANY_MANAGEMENT_ROADMAP_V1.md",
+          "path": "ODG_BTP_AUTONOMOUS_COMPANY_MANAGEMENT_ROADMAP_V1.md",
+          "kind": "NON_CODE_ARTIFACT",
+          "exists": true,
+          "censusClass": null,
+          "consumers": null,
+          "why": null,
+          "hasTest": null
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    },
+    {
+      "id": "SX-BTP-EXECUTIVE-DASHBOARD-DECISION",
+      "section": "S",
+      "status": "ACCEPTED",
+      "commit": null,
+      "evidence": "PR #651, two independent inspections PASS",
+      "components": [
+        {
+          "declared": "runtime/core/odg-executive-dashboard.ts",
+          "path": "runtime/core/odg-executive-dashboard.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 2,
+          "why": null,
+          "hasTest": true
+        },
+        {
+          "declared": "runtime/core/odg-executive-decision-engine.ts",
+          "path": "runtime/core/odg-executive-decision-engine.ts",
+          "kind": "CORE_MODULE",
+          "exists": true,
+          "censusClass": "CONNECTED",
+          "consumers": 4,
+          "why": null,
+          "hasTest": true
+        }
+      ],
+      "summary": "ALL_CORE_CONNECTED"
+    }
+  ],
+  "dormantCandidates": [
+    "accessibility-applicability",
+    "ai-act-annex-iv-completeness",
+    "ai-assurance-regression",
+    "ai-assurance-report",
+    "architecture-fitness",
+    "autonomous-commercial-cycle",
+    "autonomy-matrix",
+    "broad-it-eval-ingest",
+    "champion-challenger-arbiter",
+    "chantier-cockpit",
+    "code-check-eval",
+    "coldstart-model",
+    "commercial-intelligence-chain",
+    "commercial-offer-builder",
+    "continuous-planner",
+    "cross-metier-assurance",
+    "cross-metier-collaboration",
+    "dashboard-token-provision",
+    "data-connector",
+    "dataset-freshness-volume",
+    "dataset-pii-minimization",
+    "decision-governance",
+    "delivery-batch-coherence",
+    "demand-experiment",
+    "demo-dossier",
+    "dockerfile-lint",
+    "engineering-chain-scenario",
+    "engineering-practices-register",
+    "enterprise-lead-grade",
+    "enterprise-proposal-template",
+    "excellence-coverage",
+    "external-input-intake",
+    "factur-x-extract",
+    "failure-taxonomy",
+    "fairness-eval",
+    "feature-flag-staleness-audit",
+    "field-validation-readiness",
+    "final-report",
+    "finance-ledger-service",
+    "flaky-ci-intelligence",
+    "fleet-stage",
+    "front-door-attempt",
+    "frontier-weekly-report",
+    "gate-e-demonstration",
+    "generative-repair-eval",
+    "golden-evaluation",
+    "intelligence-scorecard",
+    "iso-42001-readiness",
+    "iso-dossier",
+    "iso-readiness",
+    "l4-campaign",
+    "launch-budget",
+    "local-coding-qualification",
+    "market-intelligence",
+    "master-program-integration",
+    "memory-scenario-battery",
+    "metier-baseline",
+    "metier-benchmark-suite",
+    "metier-parcours",
+    "metric-window-integrity",
+    "native-autonomy-scorecard",
+    "niche-scoring",
+    "odg-admin-fleet-assistants",
+    "odg-ai-serving-reference",
+    "odg-amortissement",
+    "odg-artifact-identity",
+    "odg-autonomous-operating-model",
+    "odg-autonomy-ladder-scorecard",
+    "odg-backup-restore-verification",
+    "odg-benchmark-corroboration",
+    "odg-bland-altman",
+    "odg-bmax-capability-mapping",
+    "odg-broad-it-eval-set",
+    "odg-btp-capability-matrix",
+    "odg-btp-communication-capability-matrix",
+    "odg-btp-growth-roadmap-reconciliation",
+    "odg-btp-integration-blocker",
+    "odg-btp-invoice-schedule",
+    "odg-btp-schedule-plan",
+    "odg-campaign-lifecycle",
+    "odg-campaign-throughput-diagnostic",
+    "odg-capability-cross-audit",
+    "odg-cncf-platform-maturity",
+    "odg-commercial-assistants",
+    "odg-component-judgment",
+    "odg-compounding-transfer-demo",
+    "odg-connectors-ux-assistants",
+    "odg-content-asset",
+    "odg-cra-deadline-tracker",
+    "odg-cto-continuity-protocol",
+    "odg-cto-dashboard",
+    "odg-cvss-score",
+    "odg-cycle-hypothesis-verdict",
+    "odg-data-contract-quality",
+    "odg-data-drift-view",
+    "odg-deployable-package",
+    "odg-deployment-qualification",
+    "odg-devex-goldenpath",
+    "odg-digital-distribution",
+    "odg-doc-confidence-calibration",
+    "odg-dora-metrics-view",
+    "odg-eval-heldout-calibration",
+    "odg-eval-statistics-index",
+    "odg-evaluator-agreement-scorecard",
+    "odg-executive-assistants",
+    "odg-finops-kpis",
+    "odg-finops-unit-economics",
+    "odg-fr-due-date",
+    "odg-fr-invoice-compliance",
+    "odg-governance-quality-assistants",
+    "odg-intelligence-economic-assistants",
+    "odg-interval-optimization",
+    "odg-interval-scheduling",
+    "odg-iso27001-evidence-crosswalk",
+    "odg-isolation-egress-allowlist",
+    "odg-isolation-network-review",
+    "odg-marketing-cycle-latency",
+    "odg-marketing-science",
+    "odg-master-directive-reconciliation",
+    "odg-metier-benchmark-lot1",
+    "odg-metier-benchmark-lot2",
+    "odg-metier-benchmark-lot3",
+    "odg-metier-configuration",
+    "odg-mission-crosswalk",
+    "odg-model-router",
+    "odg-multiple-testing-correction",
+    "odg-native-autonomy-audit",
+    "odg-native-autonomy-demonstration",
+    "odg-operational-assistants",
+    "odg-otel-execution-trace",
+    "odg-p4-engine-qualification",
+    "odg-partner-attribution",
+    "odg-passk-estimator",
+    "odg-portfolio-concentration-view",
+    "odg-product-economics-audit",
+    "odg-repo-vps-map",
+    "odg-roadmap-reconciliation",
+    "odg-saga-idempotency-reference",
+    "odg-sandbox-isolation-audit",
+    "odg-slice3-governability",
+    "odg-speed-marketing-chain",
+    "odg-ssdf-slsa-crosswalk",
+    "odg-streaming-reference",
+    "odg-support-renewal-engine",
+    "odg-v251-repair-reconciliation",
+    "odg-vps-validation-preflight",
+    "odg-wcag-accessibility-evidence",
+    "opportunity-eval-set",
+    "optimization-experiment",
+    "p01-billing-sandbox",
+    "p1-differential-property",
+    "p12-dead-letter-quarantine",
+    "p12-idempotency-key-collision",
+    "p8-deprecation-window-enforcement",
+    "p9-budget-burndown-forecast",
+    "pdf-extract",
+    "portfolio-dashboard",
+    "primitive-validation",
+    "profession-p12-streaming-reference",
+    "profession-p15-workflow-reference",
+    "profession-p2-ai-reference",
+    "profession-p5-platform-reference",
+    "profession-p8-api-reference",
+    "profession-p9-finops-reference",
+    "progressive-delivery-gate",
+    "promotion-assurance",
+    "proposal-pipeline",
+    "prospection-compliance",
+    "prospection-registry",
+    "prospection-send-gate",
+    "qualification-plan",
+    "quantization-honesty-gate",
+    "radar-realsignal-demonstration",
+    "rce-assurance-chain",
+    "recurring-offer",
+    "renovation-quote-normalize",
+    "repair-eval",
+    "repair-router",
+    "revenue-channels",
+    "revenue-scenarios",
+    "revenue-target-path",
+    "roadmap-dep-check",
+    "roadmap-deps-preview-validation",
+    "roadmap-schema-proposal",
+    "security-control-plane",
+    "self-improvement-chain",
+    "seo-crawl-consistency",
+    "seo-hreflang-reciprocity",
+    "seo-page-language-declaration",
+    "seo-page-signal-extractor",
+    "seo-strategy",
+    "seo-structured-data-validator",
+    "stage-build-ts-evidence",
+    "study-steps-ledger",
+    "task-add-tests",
+    "task-fix-unused-imports",
+    "ted-connector",
+    "tender-feed-connector",
+    "validation-campaign"
+  ],
+  "limits": [
+    "NO_CONSUMER = no STATIC importer — can miss dynamic/spawn/app-dynamic consumers (over-reports orphans); never cite as dead",
+    "a consumer count is not proof of real use in a real path (V15.0 §7.6 requires a traced scenario)",
+    "mission→component links are those DECLARED in the V12.4 companion; undeclared components are not inferred"
+  ]
+}
