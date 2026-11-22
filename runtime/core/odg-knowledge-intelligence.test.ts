@@ -70,6 +70,16 @@ const atk3 = { ...useKey, nature: "OFFICIAL_DOCUMENTATION", text: "use mandates 
 check("ATTACK R2-3: one shared content word ('use') ⇒ value needs ≥2 content words ⇒ not a fact", K.assessClaim(atk3, { asOfEpochMs: ASOF, byUrl: byA, missionAuthorization: "INTERNAL_INTEGRATION" }).isFact === false);
 const presented = { ...corro, text: "An error budget proves ODG is perfect", sources: corro.sources.map((s: any) => ({ ...s, text: s.text || "An error budget is 1 minus the SLO of the service" })) };
 check("ATTACK R2-4: keys match but the PRESENTED claim text is not covered by the sources ⇒ not a fact", K.assessClaim(presented, { asOfEpochMs: ASOF, byUrl: byU2 }).isFact === false);
+const NIST3 = "https://www.nist.gov/itl/ai-risk-management-framework", NASA3 = "https://www.nasa.gov/reference/x";
+const byR3 = { ...byUrl, [NIST3]: { title: "AI Risk Management Framework | NIST", quotes: ["is intended for voluntary use", "can help organizations identify unique risks posed by generative AI"] },
+  [NASA3]: { title: "System Engineering Handbook: Appendix - NASA", quotes: ["Showing that the use of an end product achieves the individual specified requirement (verification)", "CRM manages risks over the course of the development and the Implementation Phase of the life cycle"] } };
+const andKey = { subject: "risks", relation: "states", value: "use and risks" };
+const andSplit = { ...andKey, nature: "OFFICIAL_DOCUMENTATION", text: "risks use",
+  sources: [{ url: NIST3, text: "NIST states it is intended for voluntary use and can help organizations identify unique risks posed by generative AI", citation: "is intended for voluntary use", structured: andKey },
+            { url: NIST3, citation: "can help organizations identify unique risks posed by generative AI", structured: andKey },
+            { url: NASA3, text: "NASA states: Showing that the use of an end product achieves the individual specified requirement (verification)", citation: "Showing that the use of an end product achieves the individual specified requirement (verification)", structured: andKey },
+            { url: NASA3, citation: "CRM manages risks over the course of the development and the Implementation Phase of the life cycle", structured: andKey }] };
+check("ATTACK R3 andSplitCrossFamily: single shared words joined by ' and ' (real quotes, 2 families) ⇒ NOT a fact", K.assessClaim(andSplit, { asOfEpochMs: ASOF, byUrl: byR3, missionAuthorization: "INTERNAL_INTEGRATION" }).isFact === false);
 // 5. forged sources on UNKNOWN domains.
 const evil1 = "https://evil-a.example/x", evil2 = "https://evil-b.example/y";
 const byEvil = { ...byUrl, [evil1]: { quotes: [EBQ] }, [evil2]: { quotes: [EBQ] } };

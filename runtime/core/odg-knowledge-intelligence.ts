@@ -57,11 +57,13 @@ function contentWords(text: string, url: string): string[] {
 }
 function hostToReg(u: string): string { try { const p = new URL(u).hostname.toLowerCase().split("."); return p.slice(-2).join("."); } catch { return ""; } }
 /* value must appear as a CONTIGUOUS normalized phrase in one citation (or each " and "-joined part in some citation). */
-function contiguousIn(value: string, cits: string[]): boolean {
+function contiguousIn(value: string, cits: string[], url: string): boolean {
   const nv = BIND.norm(value); const nc = cits.map((c: string) => " " + BIND.norm(c) + " ");
   if (nc.some((c: string) => c.includes(" " + nv + " "))) return true;
+  // " and "-joined parts (two sentences of one page): EACH part must itself carry ≥2 content words (inspection HIGH r3:
+  // single shared words like "use and risks" must not ground) and be contiguous in some citation.
   const parts = nv.split(" and ").map((x: string) => x.trim()).filter(Boolean);
-  return parts.length > 1 && parts.every((p: string) => nc.some((c: string) => c.includes(" " + p + " ")));
+  return parts.length > 1 && parts.every((p: string) => contentWords(p, url).length >= 2 && nc.some((c: string) => c.includes(" " + p + " ")));
 }
 
 /*
@@ -104,10 +106,13 @@ function assessClaim(claim: any, opts: any): any {
     // grounding (inspection HIGH x2): value ≥2 content words AND contiguous in the citations; subject ≥1 content word and
     // covered by citations/title/attribution; relation from the controlled vocabulary. Grammar-only keys never ground.
     const grounded = !!own && RELATIONS.includes(nkey(own.relation))
-      && contentWords(val, sp.url).length >= 2 && contiguousIn(val, cits)
+      && contentWords(val, sp.url).length >= 2 && contiguousIn(val, cits, sp.url)
       && contentWords(subj, sp.url).length >= 1 && BIND.covered(subj, cits.concat([title]), sp.url);
     // the PRESENTED claim text itself must be covered by this source's citations to count toward a FACT.
-    const claimCovered = BIND.covered(String(c.text || ""), cits, sp.url);
+    // …and it must CONTAIN the grounded value contiguously and carry ≥3 content words (no meaningless shared-word claims).
+    const ntext = " " + BIND.norm(String(c.text || "")) + " ";
+    const claimCovered = BIND.covered(String(c.text || ""), cits, sp.url) && grounded && contentWords(String(c.text || ""), sp.url).length >= 3
+      && (ntext.includes(" " + BIND.norm(val) + " ") || BIND.norm(val).split(" and ").every((p: string) => ntext.includes(" " + p.trim() + " ")));
     const key = own ? structuredKey(own) : null;
     return Object.freeze({ url: sp.url, identity: id, citationVerified: bound, structuredKey: key, keyGrounded: grounded, claimTextCovered: claimCovered, quarantined: quarantined.has(sp.url) });
   });
