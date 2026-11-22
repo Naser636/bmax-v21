@@ -219,6 +219,195 @@ function tickOnce(opts: any = {}): any {
   return schedulerStep(ctx);
 }
 
-module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, launcherEnforce, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES };
-if (require.main === module) main();
+/* ===================================================================================================================
+ * V15.1 WAVE MODE — OPT-IN ONLY (ODG_TICK_WAVE=1). The DEFAULT path above (main → tickOnce → ONE blocking spawnSync)
+ * is NOT touched and is what the root-owned odg-mission-runner timer runs (its unit does not set ODG_TICK_WAVE). The
+ * wave modules are lazy-loaded INSIDE this mode only, so the default path's module graph is unchanged too.
+ *
+ * It turns ODG's dispatch PLAN into concurrent GOVERNED runs, composing EXISTING decision components (no 2nd scheduler):
+ *   1. admission  — for EACH allowlisted mission, the SAME mission-scheduler.schedulerStep gates as the default tick
+ *                   (stop / bounds / eligibility / dedup-proven / canary read-only authorize / excellence), with a
+ *                   capture-only dispatch seam (nothing runs during admission);
+ *   2. inventory  — admitted missions are projected onto register-shaped records and classified by the canonical
+ *                   odg-open-mission-recovery.classifyOpenMission (which now passes write-sets through, fail-closed);
+ *   3. wave       — odg-mission-orchestrator.buildDispatchPlan → write-safety via odg-writeset-contention; we take the
+ *                   FIRST write-safe sub-wave of the first layer, capped at ODG_TICK_WAVE_MAX (default 2, max 6);
+ *   4. execution  — the SAME governed child (`node runtime/(dist/)bin/odg-run.js <mission>`) per mission, via async
+ *                   cp.spawn, concurrently, each with its own SIGKILL timeout + output cap; Promise.allSettled ⇒ a failing
+ *                   child never stops the others; each attempt recorded via mission-attempt-log.recordAttempt (same row
+ *                   shape as the default path) and appended to the tamper-evident audit chain.
+ *
+ * WRITE-SET HONESTY: a canary mission's write-set for contention = its declared output `write_set`/`writeSet` UNION the
+ * runner's own shared write-set. The REAL odg-run writes the SHARED cwd-relative runtime/generated/ (mission-report.json,
+ * checkpoints, ledger), so with the real runner every pair overlaps on runtime/generated ⇒ serialized (one per wave) —
+ * safe by construction, never optimistically parallel. A mission with NO declared write-set ⇒ UNKNOWN ⇒ serialized.
+ * Genuine concurrency therefore needs a runner whose children write disjoint paths (tests inject one via opts).
+ * =================================================================================================================== */
+const WAVE_DEFAULT_MAX = 2;
+const WAVE_HARD_MAX = 6;                                   // same ceiling as the orchestrator's agentCount (0..6)
+const REAL_RUNNER_SHARED_WRITESET = Object.freeze(["runtime/generated"]); // odg-run writes the shared generated dir
+const WAVE_ADMITTED = "__WAVE_ADMITTED__";                 // capture-only sentinel (admission phase never runs anything)
+
+function waveMaxFromEnv(v: any): number {
+  const n = typeof v === "string" && /^\d+$/.test(v.trim()) ? parseInt(v.trim(), 10) : NaN;
+  return Number.isInteger(n) && n >= 1 ? Math.min(n, WAVE_HARD_MAX) : WAVE_DEFAULT_MAX;
+}
+function loadMissionDef(missionId: string): any {
+  try { return JSON.parse(fs.readFileSync(path.join(ROOT, "runtime", "missions", missionId + ".json"), "utf8")); } catch { return null; }
+}
+// Declared OUTPUT write-set of a read-only mission (distinct from authorized_paths, which a canary must NOT have).
+function declaredWriteSet(m: any): string[] | null {
+  const raw = m && (Array.isArray(m.write_set) ? m.write_set : (Array.isArray(m.writeSet) ? m.writeSet : null));
+  return Array.isArray(raw) && raw.length > 0 && raw.every((x: any) => typeof x === "string") ? raw.slice() : null;
+}
+
+/* selectWave — PURE: admitted ids → canonical classify → canonical dispatch plan → first write-safe sub-wave (capped). */
+function selectWave(admittedIds: string[], o: any): any {
+  const REC = o.REC, MO = o.MO;
+  const shared: string[] = Array.isArray(o.runnerSharedWriteSet) ? o.runnerSharedWriteSet : REAL_RUNNER_SHARED_WRITESET.slice();
+  const records = admittedIds.map((id) => {
+    const decl = declaredWriteSet(o.loadMission(id));
+    const rec: any = { id, status: "READY", title: `canary ${id}`, deps: [], acceptance: "", nextAction: "read-only canary run via the governed odg-run pipeline" };
+    if (decl) rec.writeSet = Array.from(new Set([...decl, ...shared]));   // absent ⇒ no key ⇒ UNKNOWN (fail-closed)
+    return rec;
+  });
+  const statusById: any = {};
+  const inventory = { missions: records.map((r: any) => REC.classifyOpenMission(r, statusById)) };
+  const plan = MO.buildDispatchPlan(inventory);
+  const layer0 = plan.writeSafety && plan.writeSafety.ok === true && plan.writeSafety.layers[0] ? plan.writeSafety.layers[0] : null;
+  const firstWave: string[] = layer0 && layer0.subWaves[0] ? layer0.subWaves[0].slice() : [];
+  const cap = o.waveMax;
+  const wave = firstWave.slice(0, cap);
+  const deferred = admittedIds.filter((id) => wave.indexOf(id) < 0);
+  return { wave, deferred, subWaves: layer0 ? layer0.subWaves.map((w: any) => w.slice()) : [], contentions: layer0 ? layer0.contentions : [], cap, routes: plan.routes };
+}
+
+/* runGovernedChild — async spawn of the governed child; NEVER rejects. Same verification rule as the default dispatch. */
+function runGovernedChild(missionId: string, o: any): Promise<any> {
+  return new Promise((resolve) => {
+    const startedAt = Date.now();
+    let bytes = 0, timedOut = false, overflow = false, settled = false;
+    let timer: any = null;
+    const done = (code: any, signal: any, spawnErr?: any) => {
+      if (settled) return; settled = true; if (timer) clearTimeout(timer);
+      const endedAt = Date.now();
+      let report: any = null;
+      try { report = o.readReport(missionId); } catch { report = null; }
+      const verified = !timedOut && !overflow && !spawnErr && !!(report && report.mission === missionId && report.validated === true && report.status === "SUCCESS" && code === 0);
+      const detail = spawnErr ? `odg-run spawn error: ${(spawnErr && spawnErr.message) || spawnErr}`
+        : timedOut ? `odg-run TIMED OUT after ${o.timeoutMs}ms (killed) — not verified`
+        : overflow ? "odg-run output exceeded cap (killed) — not verified"
+        : (report && report.mission === missionId ? `status ${report.status}` : `odg-run exit ${code}${signal ? " " + signal : ""}`);
+      resolve({ mission: missionId, verified, detail, startedAt, endedAt, exitCode: code, signal });
+    };
+    let child: any;
+    try { child = cp.spawn(o.node || "node", [o.runBin, missionId], { cwd: o.cwd, env: o.env, stdio: ["ignore", "pipe", "pipe"] }); }
+    catch (e) { return done(null, null, e); }
+    timer = setTimeout(() => { timedOut = true; try { child.kill("SIGKILL"); } catch { /* gone */ } }, o.timeoutMs);
+    const drain = (b: any) => { bytes += b.length; if (bytes > o.maxBuffer && !overflow) { overflow = true; try { child.kill("SIGKILL"); } catch { /* gone */ } } };
+    if (child.stdout) child.stdout.on("data", drain);
+    if (child.stderr) child.stderr.on("data", drain);
+    child.on("error", (e: any) => done(null, null, e));
+    child.on("close", (code: any, signal: any) => done(code, signal));
+  });
+}
+
+/* tickWave — one OPT-IN wave tick. All IO injectable (allow/proven/loadMission/assessSafety/runBin/cwd/env/readReport/
+ * logPath/recordAttempt/runnerSharedWriteSet/waveMax/timeoutMs/chain) so tests run in a throw-away state. */
+async function tickWave(opts: any = {}): Promise<any> {
+  const SCHED = require(path.join(ROOT, corePort("runtime/core/mission-scheduler.js")));
+  const REC = opts.REC || require(path.join(ROOT, corePort("runtime/core/odg-open-mission-recovery.js")));
+  const MO = opts.MO || require(path.join(ROOT, corePort("runtime/core/odg-mission-orchestrator.js")));
+  const allow: Set<string> = opts.allow instanceof Set ? opts.allow : ALLOW;
+  const proven: any = opts.proven || provenSet();
+  const logPath: string = opts.logPath || LOG;
+  const loadMission = opts.loadMission || loadMissionDef;
+  const loadSpec = opts.loadSpec || ((id: string) => canarySpecFromMission(loadMission(id), id));
+  const record = opts.recordAttempt || ((d: any) => { try { recordAttempt(logPath, { mission: (d && d.mission) || "(none)", recordedAt: new Date().toISOString(), status: d && d.status, reason: d && d.reason }); } catch { /* best-effort */ } });
+  let chain: any[] = Array.isArray(opts.chain) ? opts.chain : [];
+  const audit = (d: any) => { try { chain = AUDIT.appendEntry(chain, { status: d.status, mission: d.mission, reason: d.reason }); } catch { /* best-effort */ } record(d); };
+  const policy = { maxAttemptsPerMission: 2, maxBudget: 1000, maxDurationMs: 600000, maxConsecutiveFailures: 2 };   // = default tick
+
+  // 1. ADMISSION — the default tick's exact gate chain, per mission, capture-only (no dispatch, no record of admits).
+  const admitted: string[] = [];
+  const refused: any[] = [];
+  for (const id of allow) {
+    const d = SCHED.schedulerStep({
+      queue: { queue: [{ mission: id, status: "PENDING" }] },
+      preAuthorized: [...allow],
+      isProven: (x: string) => (typeof proven.has === "function" ? proven.has(x) : false),
+      authorize: (item: any) => {
+        if (!allow.has(item.mission)) return { ok: false, reason: `NOT_IN_CANARY_ALLOWLIST: ${item.mission}` };
+        const s = (opts.assessSafety || ((x: string) => assessCanarySafety(x, loadSpec)))(item.mission);
+        return s.safe ? { ok: true, reason: s.reason } : { ok: false, reason: s.reason };
+      },
+      policy,
+      dispatch: () => ({ verified: true, detail: WAVE_ADMITTED }),
+      reviewExcellence: opts.reviewExcellence || reviewExcellence,
+    });
+    if (d.status === "PASS" && d.reason === WAVE_ADMITTED) { admitted.push(id); continue; }
+    if (d.status === "IDLE") continue;                               // ineligible (e.g. proven dedup) — skipped as today
+    if (d.mission === null) { audit(d); return { status: d.status, reason: d.reason, wave: [], results: [], refused, deferred: [], auditChain: chain }; } // global stop/bound
+    refused.push(d); audit(d);
+  }
+  if (admitted.length === 0) {
+    if (refused.length > 0) return { status: "BLOCKED", reason: `${refused.length} refused, none admitted`, wave: [], results: [], refused, deferred: [], auditChain: chain };
+    const d = SCHED.schedulerStep({ queue: { queue: [...allow].map((m) => ({ mission: m, status: "PENDING" })) }, preAuthorized: [...allow], isProven: (x: string) => (typeof proven.has === "function" ? proven.has(x) : false), policy });
+    audit(d); return { status: "IDLE", reason: d.reason, wave: [], results: [], refused, deferred: [], auditChain: chain };
+  }
+
+  // 2+3. WAVE SELECTION — canonical classify → canonical dispatch plan → first write-safe sub-wave, capped.
+  const waveMax = typeof opts.waveMax === "number" ? Math.max(1, Math.min(WAVE_HARD_MAX, Math.floor(opts.waveMax))) : waveMaxFromEnv(process.env.ODG_TICK_WAVE_MAX);
+  const sel = selectWave(admitted, { REC, MO, loadMission, runnerSharedWriteSet: opts.runnerSharedWriteSet, waveMax });
+
+  // 4. CONCURRENT GOVERNED EXECUTION — same child per mission; allSettled ⇒ one failure never stops the others.
+  const childOpts = {
+    runBin: opts.runBin || corePort("runtime/bin/odg-run.js"),
+    cwd: opts.cwd || ROOT,
+    env: opts.env || process.env,
+    timeoutMs: typeof opts.timeoutMs === "number" ? opts.timeoutMs : DISPATCH_TIMEOUT_MS,
+    maxBuffer: 16 * 1024 * 1024,
+    readReport: opts.readReport || ((_id: string) => JSON.parse(fs.readFileSync(path.join(ROOT, "runtime", "generated", "mission-report.json"), "utf8"))),
+  };
+  const t0 = Date.now();
+  const settled = await Promise.allSettled(sel.wave.map((id: string) => runGovernedChild(id, childOpts)));
+  const wallMs = Date.now() - t0;
+  const results = settled.map((s: any, i: number) => {
+    const r = s.status === "fulfilled" ? s.value : { mission: sel.wave[i], verified: false, detail: `runner rejected: ${s.reason}` };
+    const c = SCHED.classifyDispatch(r);                              // canonical fail-closed classification
+    const d = { status: c.status, mission: sel.wave[i], reason: c.detail };
+    audit(d);
+    return { ...d, startedAt: r.startedAt, endedAt: r.endedAt, exitCode: r.exitCode };
+  });
+  const allPass = results.length > 0 && results.every((r: any) => r.status === "PASS");
+  return { status: allPass ? "PASS" : "FAIL", reason: `wave ${results.filter((r: any) => r.status === "PASS").length}/${results.length} PASS (cap ${sel.cap}; deferred ${sel.deferred.length})`, wave: sel.wave, subWaves: sel.subWaves, contentions: sel.contentions, deferred: sel.deferred, refused, results, wallMs, auditChain: chain };
+}
+
+// Opt-in CLI entry for wave mode: SAME startup gates as main() (Truth-Lock + audit-chain integrity), then one wave tick.
+async function mainWave(): Promise<void> {
+  const enforce = launcherEnforce();
+  if (enforce) process.env.ODG_TRUTH_LOCK_ENFORCE = "1";
+  if (enforce) {
+    const tl = truthLockGate({ mutating: true, enforce: true, exec: gitExec });
+    if (tl.blocked) {
+      try { recordAttempt(LOG, { mission: "(startup)", recordedAt: new Date().toISOString(), status: "STARTUP_REFUSED", reason: tl.verdict.detail }); } catch { /* audit best-effort */ }
+      console.error("STARTUP_REFUSED: Truth-Lock repo-safety —", tl.verdict.detail);
+      process.exit(2);
+    }
+  }
+  const loadedChain = readAuditChain();
+  const integ = auditIntegrityGate(loadedChain);
+  if (!integ.ok) {
+    try { recordAttempt(LOG, { mission: "(startup)", recordedAt: new Date().toISOString(), status: "AUDIT_CHAIN_TAMPERED", reason: `${integ.reason} @${integ.brokenAt}` }); } catch { /* audit best-effort */ }
+    console.error(`STARTUP_REFUSED: audit-chain integrity — ${integ.reason} (brokenAt ${integ.brokenAt}); refusing to extend an untrusted tamper-evident chain (evidence preserved, not overwritten).`);
+    process.exit(2);
+  }
+  const d = await tickWave({ chain: loadedChain });
+  persistAuditChain(d.auditChain || []);
+  console.log(`[odg-schedule-tick wave] ${d.status} — ${d.reason || ""}${d.wave && d.wave.length ? " (missions " + d.wave.join(",") + ")" : ""}`);
+  process.exit(d.status === "PASS" || d.status === "IDLE" ? 0 : 1);
+}
+
+module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, launcherEnforce, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES, tickWave, selectWave, runGovernedChild, waveMaxFromEnv, declaredWriteSet, WAVE_DEFAULT_MAX, WAVE_HARD_MAX, REAL_RUNNER_SHARED_WRITESET };
+if (require.main === module) { if (process.env.ODG_TICK_WAVE === "1") mainWave(); else main(); }
 export {};
