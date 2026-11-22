@@ -43,6 +43,10 @@ check("negative: write into runtime/dist refused (no planting of JS run by uncon
 check("negative: create/replace files or symlinks in runtime/logs refused (other unconfined writers safe)", probe(`/bin/sh -c 'echo x > runtime/logs/radar-weekly.log'`).status !== 0 && probe(`/bin/sh -c 'ln -s ../../scripts/x runtime/logs/radar-weekly.log'`).status !== 0 && probe(`/bin/sh -c 'rm -f runtime/logs/resident-driver-l0.log'`).status !== 0);
 const big = sh(`ODG_SCHEDULER_STOP=1 ODG_RESIDENT_MAX_FILE_KB=1 bash scripts/odg-resident-driver-confined.sh "${T}" >/dev/null 2>&1; ${VIEW} exec "\${BW[@]}" --chdir "${T}" /bin/sh -c 'ulimit -f 4; head -c 100000 /dev/zero >> runtime/logs/resident-driver-l0.log'`);
 check("disk-fill bound: a write beyond RLIMIT_FSIZE inside the confinement fails", big.status !== 0 && fs.statSync(path.join(T, "runtime/logs/resident-driver-l0.log")).size < 100000);
+{ const lp = path.join(T, "runtime/logs/resident-driver-l0.log"); const keep = fs.readFileSync(lp); fs.writeFileSync(lp, Buffer.concat([keep, Buffer.alloc(3 * 1024 * 1024, 0x2e), Buffer.from("\n")]));
+  const g = sh(`ODG_RESIDENT_MAX_FILE_KB=1 bash scripts/odg-resident-driver-confined.sh "${T}"`);
+  check("a trace ALREADY larger than the per-run cap does not block the tick (cap is relative to current size)", g.status === 0 && /level=L0_OBSERVE/.test(g.stdout) && fs.statSync(lp).size > 3 * 1024 * 1024 + keep.length);
+  fs.writeFileSync(lp, keep); }
 const uid = String(os.userInfo().uid);
 const s = probe(`"$(readlink -f "$(command -v node)")" -e 'const n=require("net");const ps=["/run/user/${uid}/bus","/run/user/${uid}/systemd/private","/run/dbus/system_bus_socket"];let k=ps.length,h=[];for(const p of ps){const c=n.connect(p);c.on("connect",()=>{h.push(p);c.destroy();if(!--k)fin()});c.on("error",()=>{if(!--k)fin()})}function fin(){process.stdout.write(h.length?"REACHABLE":"NONE")}'`);
 check("negative: host Unix sockets (user systemd manager, D-Bus) unreachable", s.stdout === "NONE");

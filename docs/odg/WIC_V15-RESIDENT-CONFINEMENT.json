@@ -1,0 +1,17 @@
+{
+  "id": "WIC-V15-RESIDENT-CONFINEMENT",
+  "state": "EXECUTING",
+  "objective": "confine the resident-driver tick (two-phase bwrap launcher) without systemd changes",
+  "v124Link": "CM-V234-RESIDENT-DRIVER",
+  "write_set": [
+    "scripts/odg-resident-driver-confined.sh",
+    "scripts/lib/odg-confined-view.sh",
+    "scripts/lib/odg-resident-freshness.sh",
+    "scripts/odg-resident-driver-run.sh",
+    "runtime/core/odg-resident-driver-confined.test.ts"
+  ],
+  "evidence_required": [
+    "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json"
+  ],
+  "stateNote": "NOT VERIFIED: the provider must not self-certify. Review/inspection by the provider's own subagent is recorded for information only; the gate counts review/inspection ONLY from an OWNER-anchored signature (TRUST_ANCHORS.INSPECTION_RECORD, empty by design)."
+}

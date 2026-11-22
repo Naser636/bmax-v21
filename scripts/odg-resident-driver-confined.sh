@@ -22,7 +22,8 @@ else echo "[resident-confined] precompiled build unavailable/stale ⇒ tsx fallb
 odg_confined_view "$REPO"
 BW+=(--bind "$REPO/$LOG" "$REPO/$LOG")
 for v in ODG_TRUTH_LOCK_ENFORCE ODG_SCHEDULER_STOP; do [ -n "${!v:-}" ] && BW+=(--setenv "$v" "${!v}"); done
-# disk-fill bound (inspection LOW): the only writable file cannot grow beyond ODG_RESIDENT_MAX_FILE_KB (default 10 MiB)
-# per write session — RLIMIT_FSIZE set inside the sandbox before exec.
-MAXKB="${ODG_RESIDENT_MAX_FILE_KB:-10240}"; case "$MAXKB" in *[!0-9]*|"") MAXKB=10240 ;; esac
-exec "${BW[@]}" --chdir "$REPO" /bin/sh -c 'ulimit -f "$0"; exec "$@"' "$((MAXKB*2))" "${CMD[@]}"
+# disk-fill bound: RLIMIT_FSIZE caps a file's ABSOLUTE size, so the cap is set RELATIVE to the trace's current size —
+# each run may append at most ODG_RESIDENT_MAX_FILE_KB (default 1024 KiB); a large trace never blocks the tick (V15 fix).
+MAXKB="${ODG_RESIDENT_MAX_FILE_KB:-1024}"; case "$MAXKB" in *[!0-9]*|"") MAXKB=1024 ;; esac
+CUR=$(stat -c %s "$LOG"); BLOCKS=$(( (CUR + MAXKB*1024) / 512 + 1 ))   # dash ulimit -f counts 512-byte blocks
+exec "${BW[@]}" --chdir "$REPO" /bin/sh -c 'ulimit -f "$0"; exec "$@"' "$BLOCKS" "${CMD[@]}"

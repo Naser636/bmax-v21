@@ -11,7 +11,7 @@
 const crypto = require("crypto");
 const AI = require("./agent-identity.js");
 
-const PURPOSES = Object.freeze(["KNOWLEDGE_RECORD", "COLLECTION_ARTIFACT"]);
+const PURPOSES = Object.freeze(["KNOWLEDGE_RECORD", "COLLECTION_ARTIFACT", "INSPECTION_RECORD"]);   // V15: INSPECTION_RECORD = owner-anchored review/inspection
 const MAX_TTL_MS = 90 * 86400000;   // attestation lifetime cap (inspection LOW)
 // revocation is TERMINAL here, independent of agent-identity.rotateKey (which re-activates a key — pre-existing behaviour).
 const REVOKED: WeakMap<any, Set<string>> = new WeakMap();
