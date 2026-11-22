@@ -9,8 +9,8 @@
 
   | Status | Count |
   |---|---|
-  | ACCEPTED | 15 |
-  | REVIEW | 5 |
+  | ACCEPTED | 14 |
+  | REVIEW | 6 |
   | READY | 2 |
   | IN_PROGRESS | 1 |
   | BLOCKED | 1 |
