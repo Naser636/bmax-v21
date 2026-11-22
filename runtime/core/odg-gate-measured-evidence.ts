@@ -10,8 +10,7 @@
 const GATE = require("./odg-sandbox-integration-gate.js");
 const IC = require("./odg-improvement-chain.js");
 const ATT = require("./odg-knowledge-attestation.js");
-// owner trust anchors for INSPECTION_RECORD, loaded HERE from the git-reviewed file (never from a caller). Empty by design.
-const INSPECTION_ANCHORS: readonly string[] = Object.freeze((() => { try { const j = require("../../docs/odg/evidence/TRUST_ANCHORS.json"); return (j.INSPECTION_RECORD || []).slice(); } catch { return []; } })());
+const INSPECTION_ANCHORS: readonly string[] = ATT.OWNER_ANCHORS.INSPECTION_RECORD;   // loaded in the attestation module
 
 const KEYS: string[] = GATE.CONDITIONS.map((c: any) => c.key);
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -55,13 +54,7 @@ function runMeasuredExperiment(experiment: any, measurements: any, opts?: any): 
  * satisfy this: it holds no anchored key, and the anchor list is empty by design until the owner pins one. */
 function ownerAnchoredReview(record: any, signed: any, asOfEpochMs: number): any {
   if (!isObj(record)) return Object.freeze({ ok: false, reason: "NO_RECORD" });
-  if (!isObj(signed) || typeof signed.publicKeyPem !== "string" || !isObj(signed.attestation)) return Object.freeze({ ok: false, reason: "NO_OWNER_SIGNATURE (review/inspection by the provider or its subagents never counts)" });
-  const fp = ATT.fingerprint(signed.publicKeyPem);
-  if (!INSPECTION_ANCHORS.includes(fp)) return Object.freeze({ ok: false, reason: "KEY_NOT_OWNER_ANCHORED (TRUST_ANCHORS.INSPECTION_RECORD has " + INSPECTION_ANCHORS.length + " key(s))" });
-  const reg = ATT.createRegistry(); const issuer = String(signed.attestation.header && signed.attestation.header.issuer || "");
-  ATT.registerIssuer(reg, { issuer, publicKeyPem: signed.publicKeyPem });
-  const v = ATT.verifyAttestation(signed.attestation, record, { registry: reg, asOf: asOfEpochMs, purpose: "INSPECTION_RECORD", allowRepeatVerification: true });
-  return Object.freeze({ ok: v.valid === true, reason: v.reason });
+  return ATT.verifyOwnerAnchored("INSPECTION_RECORD", record, signed, asOfEpochMs);   // single implementation (attestation module)
 }
 
 const MEASURED_GATE_CONTRACT = Object.freeze({

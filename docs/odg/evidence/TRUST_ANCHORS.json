@@ -1,6 +1,7 @@
 {
-  "//": "V374 trust anchors for signed knowledge artefacts — SHA-256 fingerprints of SPKI-PEM public keys, PER PURPOSE. Loaded by runtime/core/odg-knowledge-intelligence.ts itself (callers cannot override). EMPTY BY DESIGN: production key management is OWNER-GATED (closure-register item p0e-audit-log-keyed-integrity). Until the owner pins a key here through a reviewed PR, signed collections/records cannot raise confidence; authentication relies on digests pinned in COLLECTION_REGISTRY.json and on assessments minted by assessClaim. V15: INSPECTION_RECORD (empty by design) — fingerprints of OWNER keys whose signature over an inspection record makes the gate's codeAndDepsReviewed/independentInspection true; the provider cannot add one (owner-reviewed PR only).",
+  "//": "V374 trust anchors for signed knowledge artefacts — SHA-256 fingerprints of SPKI-PEM public keys, PER PURPOSE. Loaded by runtime/core/odg-knowledge-intelligence.ts itself (callers cannot override). EMPTY BY DESIGN: production key management is OWNER-GATED (closure-register item p0e-audit-log-keyed-integrity). Until the owner pins a key here through a reviewed PR, signed collections/records cannot raise confidence; authentication relies on digests pinned in COLLECTION_REGISTRY.json and on assessments minted by assessClaim. V15: INSPECTION_RECORD (empty by design) — fingerprints of OWNER keys whose signature over an inspection record makes the gate's codeAndDepsReviewed/independentInspection true; the provider cannot add one (owner-reviewed PR only). V15: MATURITY_EVIDENCE (empty by design) — owner keys whose signature over {contract, evidencePath, evidenceSha256, claimKey, level} lets KI raise maturity; a provider-authored VERIFIED WIC alone never counts.",
   "COLLECTION_ARTIFACT": [],
   "KNOWLEDGE_RECORD": [],
-  "INSPECTION_RECORD": []
+  "INSPECTION_RECORD": [],
+  "MATURITY_EVIDENCE": []
 }

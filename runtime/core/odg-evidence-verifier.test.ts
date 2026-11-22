@@ -31,7 +31,14 @@ const RT = V.makeRepoReader(tmp); const tEv = { missionContract: "WIC-T", contra
 check("contract still PROPOSED (or REJECTED/ROLLED_BACK) ⇒ CONTRACT_STATE_NOT_COUNTING", /CONTRACT_STATE_NOT_COUNTING/.test(V.verifyMaturityEvidence(tEv, RT).reason));
 fs.writeFileSync(path.join(tmp, "docs/odg/WIC_T.json"), JSON.stringify({ id: "WIC-T", state: "VERIFIED", evidence_required: ["docs/odg/evidence/E.json"], maturityClaims: [{ claimKey: "error budget|equals|1 minus the slo", level: "EXPERIMENTAL" }] }));
 check("same evidence once the contract is VERIFIED, without binding ⇒ still refused (NO_CLAIM_BINDING)", /NO_CLAIM_BINDING/.test(V.verifyMaturityEvidence(tEv, RT).reason));
-check("claim binding: contract declares this claim at this level ⇒ accepted", V.verifyMaturityEvidence(tEv, RT, { claimKey: "error budget|equals|1 minus the slo", level: "EXPERIMENTAL" }).ok === true);
+check("claim binding OK but NOT owner-signed ⇒ NOT_OWNER_SIGNED (a provider-authored VERIFIED WIC alone never counts)", /NOT_OWNER_SIGNED \(NO_OWNER_SIGNATURE/.test(V.verifyMaturityEvidence(tEv, RT, { claimKey: "error budget|equals|1 minus the slo", level: "EXPERIMENTAL" }).reason));
+{ const ATT = require("./odg-knowledge-attestation.js"); const idp = ATT.ephemeralIdentity("provider"); const now = Date.now();
+  const payload = { contract: "WIC-T", evidencePath: "docs/odg/evidence/E.json", evidenceSha256: sha("{\"x\":1}"), claimKey: "error budget|equals|1 minus the slo", level: "EXPERIMENTAL" };
+  const att = ATT.createAttestation({ purpose: "MATURITY_EVIDENCE", identity: idp, payload, issuedAt: now - 1000, expiresAt: now + 86400000, nonce: "nonce-abcdef12" });
+  fs.writeFileSync(path.join(tmp, "docs/odg/evidence/E.json.sig.json"), JSON.stringify({ attestation: att, publicKeyPem: idp.publicKeyPem }));
+  check("SELF-CERTIFICATION: a valid MATURITY_EVIDENCE signature by a provider-made key ⇒ KEY_NOT_OWNER_ANCHORED", /KEY_NOT_OWNER_ANCHORED/.test(V.verifyMaturityEvidence(tEv, RT, { claimKey: payload.claimKey, level: "EXPERIMENTAL" }).reason));
+  check("owner MATURITY_EVIDENCE anchors are empty by design (success path is owner-gated)", ATT.OWNER_ANCHORS.MATURITY_EVIDENCE.length === 0);
+  fs.rmSync(path.join(tmp, "docs/odg/evidence/E.json.sig.json")); }
 check("claim binding: another claim, or a higher level ⇒ NOT_BOUND_TO_CLAIM", /NOT_BOUND_TO_CLAIM/.test(V.verifyMaturityEvidence(tEv, RT, { claimKey: "odg|is|perfect", level: "EXPERIMENTAL" }).reason) && /NOT_BOUND_TO_CLAIM/.test(V.verifyMaturityEvidence(tEv, RT, { claimKey: "error budget|equals|1 minus the slo", level: "QUALIFIED" }).reason));
 fs.writeFileSync(path.join(tmp, "docs/odg/evidence/E.json"), "{\"x\":2}");
 for (const st of ["AUTHORIZED", "EXECUTING"]) { fs.writeFileSync(path.join(tmp, "docs/odg/WIC_T.json"), JSON.stringify({ id: "WIC-T", state: st, evidence_required: ["docs/odg/evidence/E.json"], maturityClaims: [{ claimKey: "error budget|equals|1 minus the slo", level: "EXPERIMENTAL" }] }));
