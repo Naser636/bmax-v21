@@ -24,10 +24,22 @@ function safeRel(p: any, prefix: string): boolean {
 
 /* makeCommittedReader(root) -> reads from the COMMITTED tree (git show HEAD:<path>) — uncommitted/unreviewed files never
  * count (inspection MEDIUM). Paths are validated by the caller; git itself confines reads to the repository. */
+/* gitEnv(): the caller's GIT_* variables (GIT_DIR, GIT_WORK_TREE, GIT_CONFIG_*, GIT_OBJECT_DIRECTORY…) are STRIPPED, so git
+ * reads THIS repository, not one chosen through the environment (inspection H1, partial: the local refs themselves stay
+ * writable by a local actor — see the module limits). */
+function gitEnv(): any { const e: any = {}; for (const k of Object.keys(process.env)) if (!/^GIT_/.test(k)) e[k] = process.env[k]; e.GIT_NO_REPLACE_OBJECTS = "1"; return e; }   // + no `git replace` substitution (inspection N1)
 function makeCommittedReader(root: string, ref?: string): any {
   const cp = require("child_process"); if (ref !== undefined && !(typeof ref === "string" && /^[A-Za-z0-9._\/][A-Za-z0-9._\/-]*$/.test(ref))) return () => null;   // bad ref ⇒ fail-closed (reads nothing)
   const r = typeof ref === "string" ? ref : "HEAD";
-  return (rel: string) => { try { return cp.execFileSync("git", ["show", r + ":" + rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 32 * 1024 * 1024 }); } catch { return null; } };
+  // V15 closure (audit D6): only a regular committed FILE is read — a tree (directory) or a committed symlink (mode 120000) ⇒ null.
+  // (inspection L1: a trailing "/" listed a directory's single child) — exact path match via -z, no trailing slash.
+  return (rel: string) => { try {
+    if (typeof rel !== "string" || !rel || rel.endsWith("/") || rel.includes("\0")) return null;
+    const lt = cp.execFileSync("git", ["ls-tree", "-z", r, "--", rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], env: gitEnv() }).toString("utf8");
+    const ents = lt.split("\0").filter(Boolean);
+    const m = ents.length === 1 ? /^(100644|100755) blob [0-9a-f]{40,64}\t([\s\S]*)$/.exec(ents[0]) : null;
+    if (!m || m[2] !== rel) return null;
+    return cp.execFileSync("git", ["show", r + ":" + rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 32 * 1024 * 1024, env: gitEnv() }); } catch { return null; } };
 }
 /* makeRepoReader(root) -> (relPath) => Buffer | null, WORKING-TREE reader confined to root (symlinks resolved and re-checked) — for sandbox tests. */
 function makeRepoReader(root: string): any {
@@ -69,14 +81,16 @@ function verifyMaturityEvidence(ev: any, reader: any, expect?: any): any {
     if (!hit) return deny("NOT_BOUND_TO_CLAIM (contract does not declare maturityClaims[{claimKey, level}] for this claim/level)");
   }
   // V15 (inspection): the WIC and evidence are provider-authorable ⇒ on their own they would be self-certification. The
-  // OWNER must sign {contract, evidencePath, evidenceSha256, claimKey, level} (purpose MATURITY_EVIDENCE) with a key
+  // OWNER must sign {contract, contractPath, contractSha256, evidencePath, evidenceSha256, claimKey, level} (purpose MATURITY_EVIDENCE) with a key
   // anchored in TRUST_ANCHORS.json; the signature sidecar <evidencePath>.sig.json is read through the same reader.
   let signed: any = null; try { const sb = reader(ev.evidencePath + ".sig.json"); signed = sb ? JSON.parse(sb.toString("utf8")) : null; } catch { signed = null; }
-  const payload = { contract: ev.missionContract, evidencePath: ev.evidencePath, evidenceSha256: actual, claimKey: expect.claimKey, level: expect.level };
-  const o = ATT.verifyOwnerAnchored("MATURITY_EVIDENCE", payload, signed, Date.now());   // wall clock only: a caller-supplied past clock could revive an expired signature
+  // V15 closure (audit D5): the signature also binds the contract FILE (path + sha256 of its bytes) — a second WIC with
+  // the same id elsewhere, or an edited/rolled-back contract, no longer matches.
+  const payload = { contract: ev.missionContract, contractPath: ev.contractPath, contractSha256: crypto.createHash("sha256").update(cb).digest("hex"), evidencePath: ev.evidencePath, evidenceSha256: actual, claimKey: expect.claimKey, level: expect.level };
+  const o = ATT.verifyOwnerAnchored("MATURITY_EVIDENCE", payload, signed);   // wall clock only: a caller-supplied past clock could revive an expired signature
   if (!o.ok) return deny("NOT_OWNER_SIGNED (" + o.reason + ")");
   return Object.freeze({ ok: true, reason: "VERIFIED_ON_REAL_FILES_AND_OWNER_SIGNED", contractState: contract.state, evidenceSha256: actual });
 }
 
-module.exports = { verifyMaturityEvidence, makeRepoReader, makeCommittedReader, COUNTING_STATES };
+module.exports = { verifyMaturityEvidence, makeRepoReader, makeCommittedReader, gitEnv, COUNTING_STATES };
 export {};
