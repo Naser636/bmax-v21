@@ -1,0 +1,309 @@
+{
+  "lot": "V373 Knowledge Intelligence V2 — Lot 1 (structured claims + source identity + four dimensions)",
+  "input": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json (no new network call)",
+  "summary": {
+    "claims": 7,
+    "CORROBORATED": 0,
+    "SUPPORTED": 7,
+    "CANDIDATE": 0,
+    "UNKNOWN": 0,
+    "keptInMemory": 7,
+    "presentedAsFact": 0
+  },
+  "correctionOfHistory": "step 2 (PR #854) labelled the 2 Toyota statements CORROBORATED by DOMAIN; KI-V2 reclassifies them SUPPORTED because both domains belong to ONE publisher family (Toyota). The step-2 evidence file is preserved unchanged; this file records the correction.",
+  "results": [
+    {
+      "query": "Toyota quality: 'automation with a human touch'",
+      "claim": "Toyota describes its automation principle as automation with a human touch",
+      "structured": {
+        "subject": "Toyota automation principle",
+        "relation": "is described as",
+        "value": "automation with a human touch",
+        "scope": "Toyota Production System",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "term 'jidoka' named only on global.toyota"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "toyota"
+      ],
+      "verifiedSources": [
+        {
+          "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+          "organization": "Toyota Motor Corporation",
+          "family": "toyota"
+        },
+        {
+          "url": "https://www.toyota-europe.com/about-us/toyota-quality",
+          "organization": "Toyota Motor Europe (Toyota group)",
+          "family": "toyota"
+        }
+      ],
+      "memory": {
+        "status": "SUPPORTED",
+        "admissibleByTrustGate": true
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (toyota) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "repetition within ONE publisher family (toyota) is NOT independent corroboration"
+      ]
+    },
+    {
+      "query": "Toyota production: make only what is needed, when it is needed",
+      "claim": "Toyota states: only what is needed, when it is needed",
+      "structured": {
+        "subject": "Toyota Production System",
+        "relation": "makes",
+        "value": "only what is needed, when it is needed",
+        "scope": "Toyota Production System",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "label 'just-in-time' not in the recorded quotes"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "toyota"
+      ],
+      "verifiedSources": [
+        {
+          "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+          "organization": "Toyota Motor Corporation",
+          "family": "toyota"
+        },
+        {
+          "url": "https://www.toyota-europe.com/about-us/toyota-quality",
+          "organization": "Toyota Motor Europe (Toyota group)",
+          "family": "toyota"
+        }
+      ],
+      "memory": {
+        "status": "SUPPORTED",
+        "admissibleByTrustGate": true
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (toyota) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "1 verified citation(s) without a GROUNDED own structured key — not counted"
+      ]
+    },
+    {
+      "query": "SRE error budget definition",
+      "claim": "An error budget is 1 minus the SLO of the service",
+      "structured": {
+        "subject": "error budget",
+        "relation": "equals",
+        "value": "1 minus the SLO of the service",
+        "scope": "a service",
+        "time": null,
+        "version": null,
+        "qualifiers": []
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "verifiedSources": [
+        {
+          "url": "https://sre.google/workbook/error-budget-policy/",
+          "organization": "Google",
+          "family": "google"
+        }
+      ],
+      "memory": {
+        "status": "SUPPORTED",
+        "admissibleByTrustGate": true
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "SRE example error budget policy: release halt",
+      "claim": "Google SRE's EXAMPLE policy states: we will halt all changes and releases other than P0 issues or security fixes",
+      "structured": {
+        "subject": "Google SRE example error budget policy",
+        "relation": "halts",
+        "value": "all changes and releases other than P0 issues or security fixes",
+        "scope": "Appendix B EXAMPLE policy",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "example policy, not a universal rule"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "verifiedSources": [
+        {
+          "url": "https://sre.google/workbook/error-budget-policy/",
+          "organization": "Google",
+          "family": "google"
+        }
+      ],
+      "memory": {
+        "status": "SUPPORTED",
+        "admissibleByTrustGate": true
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "NIST AI RMF release and nature",
+      "claim": "The NIST AI RMF page states the framework was released on January 26, 2023 and is intended for voluntary use",
+      "structured": {
+        "subject": "NIST AI Risk Management Framework",
+        "relation": "released on / intended for",
+        "value": "released on January 26, 2023 and is intended for voluntary use",
+        "scope": "NIST page statement",
+        "time": "2023-01-26",
+        "version": "1.0",
+        "qualifiers": [
+          "page states AI RMF 1.0 is being revised"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "nist"
+      ],
+      "verifiedSources": [
+        {
+          "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "organization": "NIST (US Dept. of Commerce)",
+          "family": "nist"
+        },
+        {
+          "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "organization": "NIST (US Dept. of Commerce)",
+          "family": "nist"
+        }
+      ],
+      "memory": {
+        "status": "SUPPORTED",
+        "admissibleByTrustGate": true
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "NASA requirements traceability",
+      "claim": "NASA's handbook states: the ability to trace any given requirement/expectation to its parent requirement/expectation",
+      "structured": {
+        "subject": "NASA System Engineering Handbook",
+        "relation": "defines traceability as",
+        "value": "the ability to trace any given requirement/expectation to its parent requirement/expectation",
+        "scope": "NASA systems engineering",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "parent direction only in the recorded quote"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "nasa"
+      ],
+      "verifiedSources": [
+        {
+          "url": "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
+          "organization": "NASA",
+          "family": "nasa"
+        }
+      ],
+      "memory": {
+        "status": "SUPPORTED",
+        "admissibleByTrustGate": true
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (nasa) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "NASA independent verification and validation",
+      "claim": "NASA policy: use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services",
+      "structured": {
+        "subject": "NASA IV&V provider policy",
+        "relation": "designates",
+        "value": "NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services",
+        "scope": "NASA software selected for IV&V",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "page last updated 2014-09-10 (may be stale)"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "nasa"
+      ],
+      "verifiedSources": [
+        {
+          "url": "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety",
+          "organization": "NASA Office of Safety and Mission Assurance",
+          "family": "nasa"
+        }
+      ],
+      "memory": {
+        "status": "SUPPORTED",
+        "admissibleByTrustGate": true
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (nasa) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    }
+  ],
+  "limits": [
+    "structured keys authored from the recorded quotes, not model-inferred",
+    "publisher identity map is explicit and small (6 hosts); unknown hosts never count",
+    "quotes from WebFetch's extractor, not raw HTML"
+  ]
+}
