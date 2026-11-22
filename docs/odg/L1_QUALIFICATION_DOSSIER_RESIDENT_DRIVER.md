@@ -35,6 +35,17 @@
 
   All three are owner actions on user-systemd and need no root.
 
+## 4b. Filesystem confinement — V15 update
+- **Host fact:** `kernel.apparmor_restrict_unprivileged_userns=1`. systemd `ProtectSystem`/`ProtectHome` in a USER unit need an unprivileged user namespace, which this restriction can deny. The earlier drop-in proposal is therefore fragile and is marked SUPERSEDED.
+- **Replacement:** `scripts/odg-resident-driver-confined.sh` runs the normal launcher inside bubblewrap, which has its own AppArmor profile (`bwrap-userns-restrict`). Inside it, only `runtime/logs` and `runtime/dist` are writable; there is no host root and no `/run`, so host Unix sockets are unreachable, and only loopback exists.
+- **Tested end to end without systemd** (`runtime/core/odg-resident-driver-confined.test.ts`, throw-away copy):
+  - rebuild, fresh-build and tsx-fallback paths;
+  - stop signal;
+  - source, `scripts/` and `docs/` writes refused;
+  - sockets and network isolated.
+- **npx:** the launcher fallback now calls the local `node_modules/.bin/tsx`. This removes by design the npx-cache dependency under a read-only HOME. It was a risk, not an observed failure: under bwrap HOME is a tmpfs, where npx also works.
+- **Not tested:** the drop-in `deploy/odg-resident-driver.service.d/v15-confined-launcher.conf.proposed` under the real user unit. Installing it is a systemd change, outside this mandate; it is the owner's step.
+
 ## 5. Recommendation
 **Do not activate L1 yet.** First:
 1. ~~run and independently inspect an L1 simulation cycle in a sandbox~~ (done, Lot B); owner installs and tests the proposed filesystem confinement on the user unit;

@@ -14,7 +14,8 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
-const COUNTING_STATES = Object.freeze(["AUTHORIZED", "EXECUTING", "VERIFIED", "ACCEPTED"]);
+// V15: only INSPECTED states count (VERIFIED/ACCEPTED); AUTHORIZED/EXECUTING mean "allowed/started", not "inspected".
+const COUNTING_STATES = Object.freeze(["VERIFIED", "ACCEPTED"]);
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function safeRel(p: any, prefix: string): boolean {
   return typeof p === "string" && p.length > 0 && !path.isAbsolute(p) && !p.split(/[\\/]/).includes("..") && p.startsWith(prefix);
@@ -22,9 +23,9 @@ function safeRel(p: any, prefix: string): boolean {
 
 /* makeCommittedReader(root) -> reads from the COMMITTED tree (git show HEAD:<path>) — uncommitted/unreviewed files never
  * count (inspection MEDIUM). Paths are validated by the caller; git itself confines reads to the repository. */
-function makeCommittedReader(root: string): any {
-  const cp = require("child_process");
-  return (rel: string) => { try { return cp.execFileSync("git", ["show", "HEAD:" + rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 32 * 1024 * 1024 }); } catch { return null; } };
+function makeCommittedReader(root: string, ref?: string): any {
+  const cp = require("child_process"); const r = typeof ref === "string" && /^[A-Za-z0-9._\/-]+$/.test(ref) ? ref : "HEAD";
+  return (rel: string) => { try { return cp.execFileSync("git", ["show", r + ":" + rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 32 * 1024 * 1024 }); } catch { return null; } };
 }
 /* makeRepoReader(root) -> (relPath) => Buffer | null, WORKING-TREE reader confined to root (symlinks resolved and re-checked) — for sandbox tests. */
 function makeRepoReader(root: string): any {
@@ -58,7 +59,9 @@ function verifyMaturityEvidence(ev: any, reader: any, expect?: any): any {
   if (actual !== ev.evidenceSha256) return deny("EVIDENCE_HASH_MISMATCH (recomputed " + actual.slice(0, 12) + "…)");
   const text = cb.toString("utf8");
   if (!text.includes(ev.evidencePath)) return deny("NOT_CROSS_REFERENCED (contract does not mention the evidence by its full path)");
-  if (isObj(expect)) {
+  // V15: the claim binding is MANDATORY (inspection residual LOW 1) — a verified WIC without it qualifies nothing.
+  if (!isObj(expect) || typeof expect.claimKey !== "string" || !expect.claimKey || typeof expect.level !== "string" || !expect.level) return deny("NO_CLAIM_BINDING (expect {claimKey, level} is required)");
+  {
     const mc = Array.isArray(contract.maturityClaims) ? contract.maturityClaims : [];
     const hit = mc.some((m: any) => isObj(m) && m.claimKey === expect.claimKey && m.level === expect.level && (!m.evidencePath || m.evidencePath === ev.evidencePath));
     if (!hit) return deny("NOT_BOUND_TO_CLAIM (contract does not declare maturityClaims[{claimKey, level}] for this claim/level)");

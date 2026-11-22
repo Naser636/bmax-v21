@@ -22,7 +22,9 @@ const BIND = require("./odg-claim-quote-binding.js");
 const ATT = require("./odg-knowledge-attestation.js");   // V374: collection/record attestations (sandbox keys)
 const EVV = require("./odg-evidence-verifier.js");       // V375 G2: maturity evidence verified on REAL files
 // the evidence reader is the module's OWN repo-confined reader — never caller-supplied (same trust-root rule as pins/anchors)
-const REPO_READER = (() => { try { return EVV.makeCommittedReader(require("path").resolve(__dirname, "../..")); } catch { return null; } })();   // COMMITTED tree only
+// V15: read from origin/main = MERGED through the protected PR flow (required CI + review), not merely committed on a
+// local branch. Limit: the local origin/main ref is only as fresh/honest as the last fetch (a local update-ref could forge it).
+const REPO_READER = (() => { try { return EVV.makeCommittedReader(require("path").resolve(__dirname, "../.."), "origin/main"); } catch { return null; } })();
 // TRUST ANCHORS (inspection HIGH r2): authorized issuer key fingerprints PER PURPOSE, loaded HERE from a git-reviewed file —
 // never from the caller. Empty by design (production keys are owner-gated) ⇒ a caller-made key can never authenticate.
 const TRUST_ANCHORS = Object.freeze((() => { try { const j = require("../../docs/odg/evidence/TRUST_ANCHORS.json"); return { COLLECTION_ARTIFACT: Object.freeze((j.COLLECTION_ARTIFACT || []).slice()), KNOWLEDGE_RECORD: Object.freeze((j.KNOWLEDGE_RECORD || []).slice()) }; } catch { return { COLLECTION_ARTIFACT: Object.freeze([]), KNOWLEDGE_RECORD: Object.freeze([]) }; } })());

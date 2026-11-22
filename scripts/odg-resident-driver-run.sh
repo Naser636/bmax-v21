@@ -24,4 +24,4 @@ if fresh; then exec node "$OUT"; fi
 if bash scripts/odg-resident-driver-build.sh >/dev/null 2>&1 && fresh; then exec node "$OUT"; fi
 # rebuild unavailable (e.g. esbuild missing) ⇒ safe fallback to the TS source via tsx (correctness over speed).
 echo "[resident-driver-run] precompiled build unavailable/stale ⇒ tsx fallback" >&2
-exec npx tsx "$SRC"
+exec "$REPO/node_modules/.bin/tsx" "$SRC"   # local bin: no npx, no ~/.npm cache (V15: works under a read-only HOME)
