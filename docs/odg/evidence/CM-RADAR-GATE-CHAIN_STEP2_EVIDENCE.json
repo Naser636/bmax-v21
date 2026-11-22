@@ -77,13 +77,24 @@
   },
   "results": [
     {
-      "query": "Toyota Production System: definition of jidoka",
-      "claim": "Jidoka is automation with a human touch",
-      "capability": "V14.4 Phase 4 reliability — fail-closed / stop-on-defect (jidoka)",
+      "query": "Toyota quality: 'automation with a human touch'",
+      "claim": "Toyota describes its automation principle as automation with a human touch",
+      "capability": "V14.4 Phase 4 reliability — fail-closed / stop-on-defect (jidoka principle)",
       "sources": [
         "https://global.toyota/en/company/vision-and-philosophy/production-system/",
         "https://www.toyota-europe.com/about-us/toyota-quality"
       ],
+      "supportingQuotes": [
+        {
+          "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+          "quote": "\"automation with a human touch,\""
+        },
+        {
+          "url": "https://www.toyota-europe.com/about-us/toyota-quality",
+          "quote": "automation with a human touch"
+        }
+      ],
+      "droppedSupport": 0,
       "classification": "FACT_CORROBORATED",
       "corroboration": "CORROBORATED",
       "independentSupportCount": 2,
@@ -93,13 +104,24 @@
       "action": "RETURNED"
     },
     {
-      "query": "Toyota Production System: definition of just-in-time",
-      "claim": "Just-in-time means making only what is needed, when it is needed",
+      "query": "Toyota production: make only what is needed, when it is needed",
+      "claim": "Toyota production makes only what is needed, when it is needed",
       "capability": "V14.4 Phase 4 efficiency — produce only what is needed (lean pipeline)",
       "sources": [
         "https://global.toyota/en/company/vision-and-philosophy/production-system/",
         "https://www.toyota-europe.com/about-us/toyota-quality"
       ],
+      "supportingQuotes": [
+        {
+          "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+          "quote": "only what is needed, when it is needed"
+        },
+        {
+          "url": "https://www.toyota-europe.com/about-us/toyota-quality",
+          "quote": "only what is needed, when it is needed"
+        }
+      ],
+      "droppedSupport": 0,
       "classification": "FACT_CORROBORATED",
       "corroboration": "CORROBORATED",
       "independentSupportCount": 2,
@@ -115,6 +137,13 @@
       "sources": [
         "https://sre.google/workbook/error-budget-policy/"
       ],
+      "supportingQuotes": [
+        {
+          "url": "https://sre.google/workbook/error-budget-policy/",
+          "quote": "An error budget is 1 minus the SLO of the service."
+        }
+      ],
+      "droppedSupport": 0,
       "classification": "CLAIM_SINGLE_SOURCE",
       "corroboration": "SINGLE_SOURCE",
       "independentSupportCount": 1,
@@ -126,12 +155,19 @@
       "action": "RETURNED"
     },
     {
-      "query": "SRE error budget exhaustion policy",
-      "claim": "When the error budget is exhausted, changes and releases halt except P0 issues or security fixes",
-      "capability": "V14.4 Phase 4 reliability — change freeze on budget exhaustion",
+      "query": "SRE example error budget policy: release halt",
+      "claim": "Google SRE's EXAMPLE error budget policy states it will halt all changes and releases other than P0 issues or security fixes",
+      "capability": "V14.4 Phase 4 reliability — change freeze",
       "sources": [
         "https://sre.google/workbook/error-budget-policy/"
       ],
+      "supportingQuotes": [
+        {
+          "url": "https://sre.google/workbook/error-budget-policy/",
+          "quote": "we will halt all changes and releases other than P0 issues or security fixes"
+        }
+      ],
+      "droppedSupport": 0,
       "classification": "CLAIM_SINGLE_SOURCE",
       "corroboration": "SINGLE_SOURCE",
       "independentSupportCount": 1,
@@ -144,11 +180,22 @@
     },
     {
       "query": "NIST AI RMF release and nature",
-      "claim": "NIST AI RMF 1.0 was released on January 26, 2023 and is intended for voluntary use",
+      "claim": "The NIST AI RMF page states the framework was released on January 26, 2023 and is intended for voluntary use",
       "capability": "V14.4 Phase 4 trust/governance — AI risk management",
       "sources": [
         "https://www.nist.gov/itl/ai-risk-management-framework"
       ],
+      "supportingQuotes": [
+        {
+          "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "quote": "released on January 26, 2023"
+        },
+        {
+          "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "quote": "is intended for voluntary use"
+        }
+      ],
+      "droppedSupport": 0,
       "classification": "CLAIM_SINGLE_SOURCE",
       "corroboration": "SINGLE_SOURCE",
       "independentSupportCount": 1,
@@ -161,11 +208,18 @@
     },
     {
       "query": "NASA requirements traceability",
-      "claim": "Bidirectional traceability traces a requirement to its parent and to its allocated children",
-      "capability": "V14.4 Phase 0/4 — bidirectional requirement traceability",
+      "claim": "NASA defines traceability as the ability to trace a requirement/expectation to its parent requirement/expectation",
+      "capability": "V14.4 Phase 0/4 — requirement traceability",
       "sources": [
         "https://www.nasa.gov/reference/system-engineering-handbook-appendix/"
       ],
+      "supportingQuotes": [
+        {
+          "url": "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
+          "quote": "The ability to trace any given requirement/expectation to its parent requirement/expectation"
+        }
+      ],
+      "droppedSupport": 0,
       "classification": "CLAIM_SINGLE_SOURCE",
       "corroboration": "SINGLE_SOURCE",
       "independentSupportCount": 1,
@@ -178,11 +232,18 @@
     },
     {
       "query": "NASA independent verification and validation",
-      "claim": "NASA uses its IV&V Facility as the sole provider of IV&V services for selected software",
+      "claim": "NASA policy uses the NASA IV&V Facility as the sole provider of IV&V services",
       "capability": "V14.4 Phase 4/7 — independent inspection",
       "sources": [
         "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety"
       ],
+      "supportingQuotes": [
+        {
+          "url": "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety",
+          "quote": "use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services"
+        }
+      ],
+      "droppedSupport": 0,
       "classification": "CLAIM_SINGLE_SOURCE",
       "corroboration": "SINGLE_SOURCE",
       "independentSupportCount": 1,
@@ -196,12 +257,12 @@
   ],
   "reuse": [
     {
-      "query": "Toyota Production System: definition of jidoka",
+      "query": "Toyota quality: 'automation with a human touch'",
       "retrieved": 1,
       "reacquired": 0
     },
     {
-      "query": "Toyota Production System: definition of just-in-time",
+      "query": "Toyota production: make only what is needed, when it is needed",
       "retrieved": 1,
       "reacquired": 0
     },
@@ -211,7 +272,7 @@
       "reacquired": 1
     },
     {
-      "query": "SRE error budget exhaustion policy",
+      "query": "SRE example error budget policy: release halt",
       "retrieved": 0,
       "reacquired": 1
     },
@@ -239,9 +300,10 @@
     "reuseOnSecondPass": "2/7"
   },
   "honesty": [
-    "admitted Toyota facts are corroborated by 2 OFFICIAL Toyota sites on distinct registrable domains — SAME ORGANIZATION (primary-source corroboration), not independent third parties",
+    "admitted Toyota statements (no term↔definition claim) are corroborated by 2 OFFICIAL Toyota sites on distinct registrable domains — SAME ORGANIZATION (primary-source corroboration), not independent third parties",
     "SRE / NIST / NASA claims are SINGLE-SOURCE ⇒ recorded but NOT admitted as verified knowledge (fail-closed), even though each is an official primary source",
-    "quotes were extracted by WebFetch's model from page text, not re-verified against raw HTML",
+    "quotes were extracted by WebFetch's model from page text, not re-verified against raw HTML; each claim is limited to what its per-source supportingQuote shows (verbatim-checked against the recorded quotes)",
+    "live-time egress gating (govern ALLOW + validateUrl before the fetch) is asserted by the provider and RE-CHECKED here; it is not reproducible from the repo alone",
     "NASA SE handbook page read partially (first 100000 of 253989 chars)",
     "no downstream experiment evidence ⇒ gate RETURNs; knowledge usefulness for ODG is NOT_MEASURED until a mission applies it"
   ]

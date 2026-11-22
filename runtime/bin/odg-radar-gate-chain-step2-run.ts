@@ -28,14 +28,20 @@ function main() {
 
   let memory: any[] = [];
   const results = col.cycles.map((cy: any) => {
-    const sources = cy.supportingUrls.filter((u: string) => byUrl[u] && !quarantined.has(u)).map((u: string) => ({
+    // QUOTE CHECK (inspection HIGH): a source supports the claim ONLY if its supportingQuote appears VERBATIM in that
+    // source's recorded quotes; otherwise it is dropped (never assert support the page text does not show).
+    const supportOk = (cy.support || []).filter((sp: any) => byUrl[sp.url] && !quarantined.has(sp.url) && typeof sp.quote === "string" && sp.quote.length > 0
+      && (byUrl[sp.url].quotes || []).some((q: string) => q.includes(sp.quote)));
+    const droppedSupport = (cy.support || []).length - supportOk.length;
+    const urls = Array.from(new Set(supportOk.map((sp: any) => sp.url)));
+    const sources = urls.map((u: any) => ({
       url: u, status: byUrl[u].status, publishedDate: byUrl[u].publishedDate || undefined, consultedDate: col.consultedDate,
       claims: [{ text: cy.claim, type: "FACT" }],
     }));
     const r = C.runChain({ asOfEpochMs: asOf, cycle: { query: cy.query, capability: cy.capability, sources }, memory });
     memory = r.memoryOut as any[];
     const k = r.acquisition ? r.acquisition.knowledge[0] : null;
-    return { query: cy.query, claim: cy.claim, capability: cy.capability, sources: sources.map((s: any) => s.url),
+    return { query: cy.query, claim: cy.claim, capability: cy.capability, sources: sources.map((s: any) => s.url), supportingQuotes: supportOk, droppedSupport,
       classification: k ? k.classification : null, corroboration: k ? k.corroborationLevel : null, independentSupportCount: k ? k.independentSupportCount : null,
       admitted: r.admitted.length, rejected: r.rejected.map((x: any) => x.verdict), verdict: r.decision.verdict, action: r.decision.action };
   });
@@ -51,9 +57,10 @@ function main() {
     summary: { cycles: results.length, admittedFacts: admittedTotal, singleSourceNotAdmitted: results.filter((x: any) => x.admitted === 0).length, quarantinedSources: quarantined.size,
       reuseOnSecondPass: reuse.filter((x: any) => x.retrieved > 0).length + "/" + reuse.length },
     honesty: [
-      "admitted Toyota facts are corroborated by 2 OFFICIAL Toyota sites on distinct registrable domains — SAME ORGANIZATION (primary-source corroboration), not independent third parties",
+      "admitted Toyota statements (no term↔definition claim) are corroborated by 2 OFFICIAL Toyota sites on distinct registrable domains — SAME ORGANIZATION (primary-source corroboration), not independent third parties",
       "SRE / NIST / NASA claims are SINGLE-SOURCE ⇒ recorded but NOT admitted as verified knowledge (fail-closed), even though each is an official primary source",
-      "quotes were extracted by WebFetch's model from page text, not re-verified against raw HTML",
+      "quotes were extracted by WebFetch's model from page text, not re-verified against raw HTML; each claim is limited to what its per-source supportingQuote shows (verbatim-checked against the recorded quotes)",
+      "live-time egress gating (govern ALLOW + validateUrl before the fetch) is asserted by the provider and RE-CHECKED here; it is not reproducible from the repo alone",
       "NASA SE handbook page read partially (first 100000 of 253989 chars)",
       "no downstream experiment evidence ⇒ gate RETURNs; knowledge usefulness for ODG is NOT_MEASURED until a mission applies it",
     ],

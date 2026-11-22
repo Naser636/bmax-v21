@@ -5,27 +5,181 @@
   "callsUsed": 6,
   "extraction": "WebFetch (page→markdown→quote extraction by a small model); quotes are verbatim per the extractor, not independently re-verified against raw HTML",
   "sources": [
-    { "url": "https://sre.google/workbook/error-budget-policy/", "status": "RETRIEVED", "title": "Google SRE - Error Budget Policy for Service Reliability (Appendix B - Example Error Budget Policy)", "publishedDate": "2018-02-19",
-      "quotes": ["An error budget is 1 minus the SLO of the service.", "A 99.9% SLO service has a 0.1% error budget.", "the tool SRE uses to balance service reliability with the pace of innovation", "The error budget forms a control mechanism for diverting attention to stability as needed.", "we will halt all changes and releases other than P0 issues or security fixes"] },
-    { "url": "https://www.nist.gov/itl/ai-risk-management-framework", "status": "RETRIEVED", "title": "AI Risk Management Framework | NIST", "publishedDate": null,
-      "quotes": ["released on January 26, 2023", "is intended for voluntary use", "The AI RMF 1.0 is being revised as part of the White House AI Action Plan.", "companion NIST AI RMF Playbook", "can help organizations identify unique risks posed by generative AI"],
-      "note": "core functions appear only in an image caption ('Govern, Measure, Manage, Map') — NOT recorded as page-text evidence" },
-    { "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/", "status": "RETRIEVED", "title": "Toyota Production System | Toyota Motor Corporation Official Global Website", "publishedDate": null,
-      "quotes": ["The objective is to thoroughly eliminate waste and shorten lead times", "The basic philosophy of the Toyota Production System is based on two pillars.", "Jidoka in the TPS is \"automation with a human touch,\" where human wisdom is added to automation.", "Making only what is needed, when it is needed, and in the amount needed", "It is based on the premise of making work easier for workers."] },
-    { "url": "https://www.toyota-europe.com/about-us/toyota-quality", "status": "RETRIEVED", "title": "Quality everywhere, in everything | Toyota Europe", "publishedDate": null,
-      "quotes": ["maximum quality, minimum waste, and better overall efficiency", "automation with a human touch", "every stage of production makes only what is needed, when it is needed", "to ensure that defects are never passed on to the next process", "ask why five times"] },
-    { "url": "https://www.nasa.gov/reference/system-engineering-handbook-appendix/", "status": "RETRIEVED", "title": "System Engineering Handbook: Appendix - NASA", "publishedDate": "2023-07-26", "partialRead": "first 100000 of 253989 characters",
-      "quotes": ["The ability to trace any given requirement/expectation to its parent requirement/expectation", "Showing that the use of an end product achieves the individual specified requirement (verification)", "A review that demonstrates that the maturity of the design is appropriate to support proceeding", "CRM manages risks over the course of the development and the Implementation Phase of the life cycle", "An evaluation of a risk item that determines (1) what can go wrong, (2) how likely it is to occur"] },
-    { "url": "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety", "status": "RETRIEVED", "title": "Software Assurance and Software Safety", "publishedDate": "2014-09-10",
-      "quotes": ["Software safety is a systematic approach to identifying, analyzing, tracking, mitigating and controlling software", "to define the requirements to implement a systematic approach to Software Assurance", "provides assurance that safety- and mission-critical systems and software will operate reliably, safely and securely", "use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services", "Ensuring the software systems are safe and the software safety-critical requirements are followed."] }
+    {
+      "url": "https://sre.google/workbook/error-budget-policy/",
+      "status": "RETRIEVED",
+      "title": "Google SRE - Error Budget Policy for Service Reliability (Appendix B - Example Error Budget Policy)",
+      "publishedDate": "2018-02-19",
+      "quotes": [
+        "An error budget is 1 minus the SLO of the service.",
+        "A 99.9% SLO service has a 0.1% error budget.",
+        "the tool SRE uses to balance service reliability with the pace of innovation",
+        "The error budget forms a control mechanism for diverting attention to stability as needed.",
+        "we will halt all changes and releases other than P0 issues or security fixes"
+      ]
+    },
+    {
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "status": "RETRIEVED",
+      "title": "AI Risk Management Framework | NIST",
+      "publishedDate": null,
+      "quotes": [
+        "released on January 26, 2023",
+        "is intended for voluntary use",
+        "The AI RMF 1.0 is being revised as part of the White House AI Action Plan.",
+        "companion NIST AI RMF Playbook",
+        "can help organizations identify unique risks posed by generative AI"
+      ],
+      "note": "core functions appear only in an image caption ('Govern, Measure, Manage, Map') — NOT recorded as page-text evidence"
+    },
+    {
+      "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+      "status": "RETRIEVED",
+      "title": "Toyota Production System | Toyota Motor Corporation Official Global Website",
+      "publishedDate": null,
+      "quotes": [
+        "The objective is to thoroughly eliminate waste and shorten lead times",
+        "The basic philosophy of the Toyota Production System is based on two pillars.",
+        "Jidoka in the TPS is \"automation with a human touch,\" where human wisdom is added to automation.",
+        "Making only what is needed, when it is needed, and in the amount needed",
+        "It is based on the premise of making work easier for workers."
+      ]
+    },
+    {
+      "url": "https://www.toyota-europe.com/about-us/toyota-quality",
+      "status": "RETRIEVED",
+      "title": "Quality everywhere, in everything | Toyota Europe",
+      "publishedDate": null,
+      "quotes": [
+        "maximum quality, minimum waste, and better overall efficiency",
+        "automation with a human touch",
+        "every stage of production makes only what is needed, when it is needed",
+        "to ensure that defects are never passed on to the next process",
+        "ask why five times"
+      ]
+    },
+    {
+      "url": "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
+      "status": "RETRIEVED",
+      "title": "System Engineering Handbook: Appendix - NASA",
+      "publishedDate": "2023-07-26",
+      "partialRead": "first 100000 of 253989 characters",
+      "quotes": [
+        "The ability to trace any given requirement/expectation to its parent requirement/expectation",
+        "Showing that the use of an end product achieves the individual specified requirement (verification)",
+        "A review that demonstrates that the maturity of the design is appropriate to support proceeding",
+        "CRM manages risks over the course of the development and the Implementation Phase of the life cycle",
+        "An evaluation of a risk item that determines (1) what can go wrong, (2) how likely it is to occur"
+      ]
+    },
+    {
+      "url": "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety",
+      "status": "RETRIEVED",
+      "title": "Software Assurance and Software Safety",
+      "publishedDate": "2014-09-10",
+      "quotes": [
+        "Software safety is a systematic approach to identifying, analyzing, tracking, mitigating and controlling software",
+        "to define the requirements to implement a systematic approach to Software Assurance",
+        "provides assurance that safety- and mission-critical systems and software will operate reliably, safely and securely",
+        "use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services",
+        "Ensuring the software systems are safe and the software safety-critical requirements are followed."
+      ]
+    }
   ],
   "cycles": [
-    { "query": "Toyota Production System: definition of jidoka", "capability": "V14.4 Phase 4 reliability — fail-closed / stop-on-defect (jidoka)", "claim": "Jidoka is automation with a human touch", "supportingUrls": ["https://global.toyota/en/company/vision-and-philosophy/production-system/", "https://www.toyota-europe.com/about-us/toyota-quality"] },
-    { "query": "Toyota Production System: definition of just-in-time", "capability": "V14.4 Phase 4 efficiency — produce only what is needed (lean pipeline)", "claim": "Just-in-time means making only what is needed, when it is needed", "supportingUrls": ["https://global.toyota/en/company/vision-and-philosophy/production-system/", "https://www.toyota-europe.com/about-us/toyota-quality"] },
-    { "query": "SRE error budget definition", "capability": "V14.4 Phase 4 reliability — SLO / error-budget policy", "claim": "An error budget is 1 minus the SLO of the service", "supportingUrls": ["https://sre.google/workbook/error-budget-policy/"] },
-    { "query": "SRE error budget exhaustion policy", "capability": "V14.4 Phase 4 reliability — change freeze on budget exhaustion", "claim": "When the error budget is exhausted, changes and releases halt except P0 issues or security fixes", "supportingUrls": ["https://sre.google/workbook/error-budget-policy/"] },
-    { "query": "NIST AI RMF release and nature", "capability": "V14.4 Phase 4 trust/governance — AI risk management", "claim": "NIST AI RMF 1.0 was released on January 26, 2023 and is intended for voluntary use", "supportingUrls": ["https://www.nist.gov/itl/ai-risk-management-framework"] },
-    { "query": "NASA requirements traceability", "capability": "V14.4 Phase 0/4 — bidirectional requirement traceability", "claim": "Bidirectional traceability traces a requirement to its parent and to its allocated children", "supportingUrls": ["https://www.nasa.gov/reference/system-engineering-handbook-appendix/"] },
-    { "query": "NASA independent verification and validation", "capability": "V14.4 Phase 4/7 — independent inspection", "claim": "NASA uses its IV&V Facility as the sole provider of IV&V services for selected software", "supportingUrls": ["https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety"] }
-  ]
+    {
+      "query": "Toyota quality: 'automation with a human touch'",
+      "capability": "V14.4 Phase 4 reliability — fail-closed / stop-on-defect (jidoka principle)",
+      "claim": "Toyota describes its automation principle as automation with a human touch",
+      "support": [
+        {
+          "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+          "quote": "\"automation with a human touch,\""
+        },
+        {
+          "url": "https://www.toyota-europe.com/about-us/toyota-quality",
+          "quote": "automation with a human touch"
+        }
+      ],
+      "note": "term↔definition link ('Jidoka is …') appears ONLY on global.toyota (single source) — NOT claimed"
+    },
+    {
+      "query": "Toyota production: make only what is needed, when it is needed",
+      "capability": "V14.4 Phase 4 efficiency — produce only what is needed (lean pipeline)",
+      "claim": "Toyota production makes only what is needed, when it is needed",
+      "support": [
+        {
+          "url": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+          "quote": "only what is needed, when it is needed"
+        },
+        {
+          "url": "https://www.toyota-europe.com/about-us/toyota-quality",
+          "quote": "only what is needed, when it is needed"
+        }
+      ],
+      "note": "the label 'just-in-time' is NOT in the recorded quotes — NOT claimed"
+    },
+    {
+      "query": "SRE error budget definition",
+      "capability": "V14.4 Phase 4 reliability — SLO / error-budget policy",
+      "claim": "An error budget is 1 minus the SLO of the service",
+      "support": [
+        {
+          "url": "https://sre.google/workbook/error-budget-policy/",
+          "quote": "An error budget is 1 minus the SLO of the service."
+        }
+      ]
+    },
+    {
+      "query": "SRE example error budget policy: release halt",
+      "capability": "V14.4 Phase 4 reliability — change freeze",
+      "claim": "Google SRE's EXAMPLE error budget policy states it will halt all changes and releases other than P0 issues or security fixes",
+      "support": [
+        {
+          "url": "https://sre.google/workbook/error-budget-policy/",
+          "quote": "we will halt all changes and releases other than P0 issues or security fixes"
+        }
+      ],
+      "note": "trigger condition not in the recorded quote; page is Appendix B EXAMPLE policy"
+    },
+    {
+      "query": "NIST AI RMF release and nature",
+      "capability": "V14.4 Phase 4 trust/governance — AI risk management",
+      "claim": "The NIST AI RMF page states the framework was released on January 26, 2023 and is intended for voluntary use",
+      "support": [
+        {
+          "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "quote": "released on January 26, 2023"
+        },
+        {
+          "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+          "quote": "is intended for voluntary use"
+        }
+      ]
+    },
+    {
+      "query": "NASA requirements traceability",
+      "capability": "V14.4 Phase 0/4 — requirement traceability",
+      "claim": "NASA defines traceability as the ability to trace a requirement/expectation to its parent requirement/expectation",
+      "support": [
+        {
+          "url": "https://www.nasa.gov/reference/system-engineering-handbook-appendix/",
+          "quote": "The ability to trace any given requirement/expectation to its parent requirement/expectation"
+        }
+      ],
+      "note": "'bidirectional … allocated children' NOT in the recorded quote — not claimed"
+    },
+    {
+      "query": "NASA independent verification and validation",
+      "capability": "V14.4 Phase 4/7 — independent inspection",
+      "claim": "NASA policy uses the NASA IV&V Facility as the sole provider of IV&V services",
+      "support": [
+        {
+          "url": "https://sma.nasa.gov/sma-disciplines/software-assurance-and-software-safety",
+          "quote": "use the NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services"
+        }
+      ]
+    }
+  ],
+  "egressGating": "govern()/validateUrl() were run immediately BEFORE the 6 live fetches (session log 2026-11-22T03:42Z: govern ALLOW, 6/6 transport ok); the replay RE-CHECKS them — the live-time check is asserted by the provider, not reproducible from the repo alone"
 }
