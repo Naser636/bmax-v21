@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 "use strict";
 /* V15 — confined resident-driver launcher (bwrap) tested END TO END without systemd, in a THROW-AWAY copy of the repo:
- * rebuild path, fresh-build path, tsx fallback (esbuild hidden), stop signal, and negative controls (source write refused,
- * host Unix sockets unreachable, only loopback); only runtime/logs + runtime/dist may change. */
+ * rebuild path (TRUSTED, before the sandbox), fresh-build path, tsx fallback, stop signal; negative controls inside the
+ * confinement: source / runtime/dist / runtime/logs (other files, symlink planting) writes refused, ONLY the driver's own
+ * trace file writable, host Unix sockets unreachable, loopback only. */
 const cp = require("child_process"); const fs = require("fs"); const os = require("os"); const path = require("path");
 let f = 0; function check(n: string, c: boolean) { process.stdout.write((c ? "ok" : "NOT OK") + " - " + n + "\n"); if (!c) f++; }
 const ROOT = path.resolve(__dirname, "../..");
@@ -24,16 +25,22 @@ check("fresh-build path: second run uses the precompiled build, exit 0", r2.stat
 const r3 = launch({ ODG_SCHEDULER_STOP: "1" });
 check("stop signal passes through the confinement ⇒ state=STOPPED", r3.status === 0 && /state=STOPPED/.test(r3.stdout));
 fs.writeFileSync(path.join(T, "runtime/bin/odg-resident-driver-tick.ts"), fs.readFileSync(path.join(T, "runtime/bin/odg-resident-driver-tick.ts"), "utf8") + "\n// touch\n");
-const VIEW = `. scripts/lib/odg-confined-view.sh; odg_confined_view "${T}" runtime/logs runtime/dist;`;
-const r4 = sh(`${VIEW} BW+=(--ro-bind /dev/null "$(readlink -f node_modules)/.bin/esbuild"); exec "\${BW[@]}" --chdir "${T}" /bin/bash scripts/odg-resident-driver-run.sh`);
-check("tsx fallback (stale build + esbuild unavailable): local tsx works under read-only HOME (no npx cache), exit 0", r4.status === 0 && /tsx fallback/.test(r4.stderr) && /level=L0_OBSERVE/.test(r4.stdout));
+const r4 = launch({ ODG_RESIDENT_NO_BUILD: "1" });
+check("tsx fallback (stale build, rebuild skipped): local tsx runs CONFINED under read-only HOME (no npx), exit 0", r4.status === 0 && /tsx fallback/.test(r4.stderr) && /level=L0_OBSERVE/.test(r4.stdout));
+const VIEW = `. scripts/lib/odg-confined-view.sh; odg_confined_view "${T}"; BW+=(--bind "${T}/runtime/logs/resident-driver-l0.log" "${T}/runtime/logs/resident-driver-l0.log");`;
+fs.renameSync(path.join(T, "runtime/logs/resident-driver-l0.log"), path.join(T, "runtime/logs/real.log")); fs.symlinkSync("real.log", path.join(T, "runtime/logs/resident-driver-l0.log"));
+const r6 = launch();
+check("launcher REFUSES when the trace file is a symlink (no bind through a planted link)", r6.status !== 0 && /not a regular file/.test(r6.stderr));
+fs.rmSync(path.join(T, "runtime/logs/resident-driver-l0.log")); fs.renameSync(path.join(T, "runtime/logs/real.log"), path.join(T, "runtime/logs/resident-driver-l0.log"));
 const after = snap().split("\n").filter((x) => !x.startsWith("runtime/bin/odg-resident-driver-tick.ts:")).join("\n");
 check("only runtime/logs and runtime/dist changed (every other file identical)", after === before.split("\n").filter((x) => !x.startsWith("runtime/bin/odg-resident-driver-tick.ts:")).join("\n"));
-check("log contains exactly the 4 confined ticks", fs.readFileSync(path.join(T, "runtime/logs/resident-driver-l0.log"), "utf8").trim().split("\n").length === 4);
+check("log contains exactly the 4 confined ticks (refused 5th run wrote nothing)", fs.readFileSync(path.join(T, "runtime/logs/resident-driver-l0.log"), "utf8").trim().split("\n").length === 4);
 const probe = (cmd: string) => sh(`${VIEW} exec "\${BW[@]}" --chdir "${T}" ${cmd}`);
 check("negative: write to source refused inside the confinement", probe(`/bin/sh -c 'echo x >> runtime/core/odg-resident-driver.ts'`).status !== 0);
 check("negative: write to scripts/ and docs/ refused", probe(`/bin/sh -c 'echo x > scripts/x || echo y > docs/x'`).status !== 0);
-check("positive control: write to runtime/logs allowed", probe(`/bin/sh -c 'echo x > runtime/logs/probe'`).status === 0);
+check("positive control: append to the driver's OWN trace file allowed", probe(`/bin/sh -c 'echo probe >> runtime/logs/resident-driver-l0.log'`).status === 0);
+check("negative: write into runtime/dist refused (no planting of JS run by unconfined services)", probe(`/bin/sh -c 'echo x > runtime/dist/bin/odg-schedule-tick.js || echo x >> runtime/dist/bin/odg-resident-driver-tick.js'`).status !== 0 && probe(`/bin/sh -c 'echo x >> runtime/dist/bin/odg-resident-driver-tick.js'`).status !== 0);
+check("negative: create/replace files or symlinks in runtime/logs refused (other unconfined writers safe)", probe(`/bin/sh -c 'echo x > runtime/logs/radar-weekly.log'`).status !== 0 && probe(`/bin/sh -c 'ln -s ../../scripts/x runtime/logs/radar-weekly.log'`).status !== 0 && probe(`/bin/sh -c 'rm -f runtime/logs/resident-driver-l0.log'`).status !== 0);
 const uid = String(os.userInfo().uid);
 const s = probe(`"$(readlink -f "$(command -v node)")" -e 'const n=require("net");const ps=["/run/user/${uid}/bus","/run/user/${uid}/systemd/private","/run/dbus/system_bus_socket"];let k=ps.length,h=[];for(const p of ps){const c=n.connect(p);c.on("connect",()=>{h.push(p);c.destroy();if(!--k)fin()});c.on("error",()=>{if(!--k)fin()})}function fin(){process.stdout.write(h.length?"REACHABLE":"NONE")}'`);
 check("negative: host Unix sockets (user systemd manager, D-Bus) unreachable", s.stdout === "NONE");

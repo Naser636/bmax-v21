@@ -2,7 +2,8 @@
 # manager is fragile on this host: kernel.apparmor_restrict_unprivileged_userns=1). Confinement is instead provided by
 # bubblewrap (own AppArmor profile bwrap-userns-restrict), via scripts/odg-resident-driver-confined.sh — tested end to end
 # WITHOUT systemd by runtime/core/odg-resident-driver-confined.test.ts (rebuild / fresh / tsx-fallback / stop paths;
-# source+scripts+docs write refused; only runtime/logs + runtime/dist writable; host Unix sockets unreachable; lo only).
+# two phases: trusted rebuild BEFORE the sandbox, then the tick confined with ONLY its own trace file writable —
+# runtime/dist, other logs, source, scripts, docs read-only; host Unix sockets unreachable; lo only).
 # Owner install (user-systemd, no root): copy to ~/.config/systemd/user/odg-resident-driver.service.d/v15-confined-launcher.conf,
 # `systemctl --user daemon-reload`, wait one tick: Result=success + a new L0 line. Rollback: delete the file + daemon-reload.
 [Service]

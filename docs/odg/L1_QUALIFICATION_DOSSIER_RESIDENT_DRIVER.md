@@ -37,7 +37,7 @@
 
 ## 4b. Filesystem confinement — V15 update
 - **Host fact:** `kernel.apparmor_restrict_unprivileged_userns=1`. systemd `ProtectSystem`/`ProtectHome` in a USER unit need an unprivileged user namespace, which this restriction can deny. The earlier drop-in proposal is therefore fragile and is marked SUPERSEDED.
-- **Replacement:** `scripts/odg-resident-driver-confined.sh` runs the normal launcher inside bubblewrap, which has its own AppArmor profile (`bwrap-userns-restrict`). Inside it, only `runtime/logs` and `runtime/dist` are writable; there is no host root and no `/run`, so host Unix sockets are unreachable, and only loopback exists.
+- **Replacement:** `scripts/odg-resident-driver-confined.sh` runs the normal launcher inside bubblewrap, which has its own AppArmor profile (`bwrap-userns-restrict`). It runs in two phases. First, outside the sandbox, the trusted launcher checks freshness and rebuilds if needed. Then the tick runs confined, where **only its own trace file** (`runtime/logs/resident-driver-l0.log`, bound alone; refused if it is a symlink) is writable. `runtime/dist`, the rest of `runtime/logs`, the sources, scripts and docs are read-only, so confined code can no longer plant JS that unconfined services (the mission runner, odg-run) execute, nor plant symlinks for other log writers. That closes an independent-inspection HIGH. There is no host root and no `/run`, so host Unix sockets are unreachable, and only loopback exists.
 - **Tested end to end without systemd** (`runtime/core/odg-resident-driver-confined.test.ts`, throw-away copy):
   - rebuild, fresh-build and tsx-fallback paths;
   - stop signal;

@@ -13,6 +13,6 @@ odg_confined_view() {
   case "$prefix" in /usr|/usr/*|/) ;; *) BW+=(--ro-bind "$prefix" "$prefix") ;; esac
   BW+=(--ro-bind "$repo" "$repo")
   [ "${nm#"$repo"/}" = "$nm" ] && BW+=(--ro-bind "$nm" "$nm")
-  for d in "$@"; do mkdir -p "$repo/$d"; BW+=(--bind "$repo/$d" "$repo/$d"); done
+  for d in "$@"; do mkdir -p "$repo/$d"; BW+=(--bind "$repo/$d" "$repo/$d"); done   # callers: prefer binding single files (no shared dirs)
   return 0
 }
