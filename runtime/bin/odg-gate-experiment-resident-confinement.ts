@@ -35,22 +35,23 @@ function main() {
     ["writeSource", `/bin/sh -c 'echo x >> runtime/core/odg-resident-driver.ts'`],
     ["writeDist", `/bin/sh -c 'mkdir -p runtime/dist/bin && echo x > runtime/dist/bin/odg-schedule-tick.js'`],
     ["createInLogs", `/bin/sh -c 'mkdir -p runtime/logs; echo x > runtime/logs/radar-weekly.log'`],
+    ["truncateTrace", `/bin/sh -c ': > runtime/logs/resident-driver-l0.log'`],
     ["symlinkInLogs", `/bin/sh -c 'ln -sf ../../scripts/x runtime/logs/planted.lnk'`],
     ["hostSocket", `${NODE} -e 'const n=require("net");const c=n.connect("/run/user/${uid}/systemd/private");c.on("connect",()=>{c.destroy();process.exit(0)});c.on("error",()=>process.exit(1))'`],
     ["nonLoopbackNet", `${NODE} -e 'process.exit(Object.keys(require("os").networkInterfaces()).some(k=>k!=="lo")?0:1)'`],
   ];
-  const VIEW = `. scripts/lib/odg-confined-view.sh; mkdir -p runtime/logs; touch runtime/logs/resident-driver-l0.log; odg_confined_view "${T}"; BW+=(--bind "${T}/runtime/logs/resident-driver-l0.log" "${T}/runtime/logs/resident-driver-l0.log");`;
+  const VIEW = `. scripts/lib/odg-confined-view.sh; mkdir -p runtime/logs; touch runtime/logs/resident-driver-l0.log; odg_confined_view "${T}";`;   // V15 trace integrity: nothing writable (the launcher writes the trace after the sandbox)
   const run = (confined: boolean) => PROBES.map(([k, c]) => ({ probe: k, open: (confined ? sh(T, `${VIEW} exec "\${BW[@]}" --chdir "${T}" ${c}`) : sh(T, c)).status === 0 }));
   const baseline = run(false);
   const baseOpen = baseline.filter((p) => p.open).length;
-  add("baselineRecorded", "6 attack-surface probes run UNCONFINED in the throw-away copy before the change", baseline, baseline.length === PROBES.length);
+  add("baselineRecorded", "7 attack-surface probes run UNCONFINED in the throw-away copy before the change", baseline, baseline.length === PROBES.length);
   add("needDemonstrated", "baseline: attack surfaces AVAILABLE to an unconfined tick (capability by construction, not a demonstrated incident) > 0", baseOpen, baseOpen > 0);
   fs.rmSync(path.join(T, "runtime/logs"), { recursive: true, force: true }); fs.rmSync(path.join(T, "runtime/dist"), { recursive: true, force: true });
   sh(T, "git init -q 2>/dev/null; true"); // (copy is not a repo; the probes above wrote only inside T)
   for (const f of ["runtime/core/odg-resident-driver.ts"]) fs.copyFileSync(path.join(ROOT, f), path.join(T, f));   // undo baseline source write
   const candidate = run(true);
   const candOpen = candidate.filter((p) => p.open).length;
-  add("securityValidated", "confinement of the 6 probed surfaces (writes, symlink, host socket, non-loopback net) — all REFUSED; scope = these probes, NOT a full security validation", candidate, candOpen === 0);
+  add("securityValidated", "confinement of the 7 probed surfaces (writes, trace truncation, symlink, host socket, non-loopback net) — all REFUSED; scope = these probes, NOT a full security validation", candidate, candOpen === 0);
   add("measurableGainOrNewCapability", "attack surface removed: available surfaces baseline → candidate (strict decrease to 0); not a measured risk reduction", { baseline: baseOpen, candidate: candOpen }, candOpen === 0 && baseOpen > candOpen);
   // functional: the real confined launcher (rebuild path, stop signal, tsx fallback)
   const L = (env: any = {}) => sh(T, `bash scripts/odg-resident-driver-confined.sh "${T}"`, env);

@@ -1,0 +1,29 @@
+{
+  "id": "WIC-V15-TRACE-INTEGRITY",
+  "state": "EXECUTING",
+  "objective": "the resident-driver L0 trace is written by the TRUSTED launcher after the sandbox; the confined tick has NO writable host path",
+  "v124Link": "CM-V234-RESIDENT-DRIVER",
+  "authorization": "ODG — AUTORISATION PERMANENTE DE CONTINUITÉ D'EXÉCUTION + V15 executive order (continue Lot B / residual LOWs); no systemd, no VPS, no install",
+  "rootCause": "V15 launcher bound runtime/logs/resident-driver-l0.log WRITABLE into the sandbox: a bind mount does not enforce O_APPEND, so confined code could truncate or rewrite the whole trace history and forge line timestamps (reproduced: the new hostile-tick checks FAIL against the origin/main launcher)",
+  "write_set": [
+    "scripts/odg-resident-driver-confined.sh",
+    "runtime/core/odg-resident-driver-confined.test.ts",
+    "runtime/bin/odg-gate-experiment-resident-confinement.ts",
+    "deploy/odg-resident-driver.service.d/v15-confined-launcher.conf.proposed",
+    "docs/odg/WIC_V15-TRACE-INTEGRITY.json",
+    "docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN3.json"
+  ],
+  "invariants": [
+    "no systemd unit / drop-in installed or modified; the drop-in stays a PROPOSAL",
+    "the line CONTENT remains the tick's self-report (format-checked, re-stamped) — NOT an attestation",
+    "non-conforming output ⇒ exactly one INVALID_TRACE line written by the launcher; never silently dropped"
+  ],
+  "acceptance_criteria": [
+    "odg-resident-driver-confined.test.ts ALL PASS (incl. hostile-tick truncate / back-date / control-char checks)",
+    "the same test FAILS the hostile-tick checks against the previous launcher (reproduction)",
+    "gate experiment RUN3: truncateTrace probe open unconfined, refused confined; CI green"
+  ],
+  "rollback": "git revert of the PR; the installed service is untouched (still the normal launcher)",
+  "evidence_required": ["docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN3.json"],
+  "stateNote": "NOT VERIFIED: provider must not self-certify; review/inspection count only from an OWNER-anchored signature."
+}
