@@ -1,0 +1,18 @@
+{
+  "checkpoint": "V150-CP3 (§46) — after V15.1/V15.2 agent recovery",
+  "date": "2026-11-22",
+  "headInitial": "0729d6c7",
+  "headFinal": "2065feb4",
+  "agentReconciliation": {
+    "reported": ["SLO-SLI agent (7m35)", "scenario E (9m34)", "scenario M lease (26m29)", "closure-register inspection (3m33)", "3 shells"],
+    "real": "1 agent RUNNING (C3) at reconciliation time, all others COMPLETED with work recovered (#872 merged hours earlier; #889 merged; #890 fix pushed, CI green); 0 shells/processes active; 0 agents STALLED",
+    "rootCauseOfMissingReports": "sub-agents end their turn while waiting on their own background CI-wait shell; the harness marks them completed and the final report can be lost — recovery from the pushed branch/PR is the reliable source (harness behaviour, not ODG code)"
+  },
+  "prs": {"#889": "scenario E self-healing (8 real cases) + repair-workflow interrupted-run fix", "#890": "scenario M resume after real SIGKILL + fleet-bridge generation-numbered lease (first fix REJECTED, second ACCEPTED)", "#891": "C3 opt-in wave dispatch in odg-schedule-tick + write-set pass-through (default path byte-identical)"},
+  "measured": {"E": "8/8 cases as expected; rollback verified by whole-tree sha256", "M": "0 completed ops repeated, 0 lost, 0 double-held leases; stress 6 procs × 8 s: 342 holds, 0 double holds", "C3": "3 stub missions: 3 sequential ticks 2084 ms vs 1 wave tick 716 ms (2.9×) — STUB workload"},
+  "nativeVsProvider": "decisions (detect/authorize/accept/rollback, lease ownership, admission/wave selection) are ODG core components; fix candidates and workloads are provider-written stubs; no real mission executed in parallel",
+  "c3RealConcurrencyBlocked": "0/12 open register missions and 0 canary missions declare write-sets; odg-run writes shared runtime/generated ⇒ real waves = 1 by construction. Needs: per-run output isolation in odg-run + declared write-sets",
+  "residualLows": ["fleet-bridge: no renew, token not checked at completion; future-mtime lock blocks until clock catches up; mixed old/new builds during rollout", "wave mode: SIGKILL reaches only the direct child; readOnly:true register records run in parallel (trusts register data)"],
+  "boussole": "v124 companion unchanged (53a1dedb); Radar unchanged; Truth Lock 928/928",
+  "nextAction": "per-run output isolation in odg-run (so real waves > 1), then provider capability registry from MEASURED runs (Ollama local; external providers only within already-authorized budget — none authorized explicitly yet)"
+}
