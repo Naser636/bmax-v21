@@ -83,7 +83,13 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
   let verified = runVerify();
   const firstPass = Object.freeze({ buildOk: build.ok === true, verified: build.ok === true && verified === true, error: build.ok ? verifyErr : build.error });  // instrumentation: the pre-repair verdict (no behaviour change)
   let repairs = 0;
+  // V15.0 §37.8 ANTI-LOOP: a repair round that regenerates EXACTLY the same files as the previous state carries no new
+  // information — the next round would be an identical retry (same build, same verdict, another model call). Stop
+  // instead of burning the remaining repair budget; the result stays fail-closed (not accepted) and records why.
+  const snapshot = (): string => JSON.stringify(Object.keys(files).sort().map((k) => [k, files[k]]));
+  let repairStopReason: string | null = null;
   while (!(build.ok && verified) && repairs < maxRepair && fn(deps.generateFile)) {
+    const before = snapshot();
     repairs++;
     // regenerate every file with the FAILURE in context: a build error, or a "builds-but-fails-the-test" verify failure.
     // V327 §3 (Self-Debugging/Reflexion): when the spec provides STRUCTURED repairExamples [{args,expect}], feed the
@@ -98,9 +104,11 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
     }
     const hint = !build.ok ? { buildError: build.error } : { verifyError: verifyHint };
     for (const fileSpec of arch) { if (!files[fileSpec.path]) continue; const g = await deps.generateFile({ ...fileSpec, ...hint }, builtContracts); if (g && g.ok === true && typeof g.content === "string") files[fileSpec.path] = g.content; }
+    if (snapshot() === before) { repairStopReason = "NO_PROGRESS_IDENTICAL_REGENERATION"; break; }   // anti-loop: nothing changed
     build = assembleAndLoad(files);
     verified = runVerify();
   }
+  if (repairStopReason === null && !(build.ok && verified) && repairs >= maxRepair && maxRepair > 0) repairStopReason = "REPAIR_BUDGET_EXHAUSTED";
 
   const filesGenerated = Object.keys(files).length;
   return Object.freeze({
@@ -110,6 +118,7 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
     buildOk: build.ok === true,
     buildError: build.ok ? null : build.error,
     repairs,
+    repairStopReason,                                     // V15.0 anti-loop: why the repair loop stopped (null if accepted / no repair)
     verified: build.ok && verified,
     verifyError: verifyErr,
     accepted: build.ok === true && verified === true,     // native build accepted ONLY on independent verification
