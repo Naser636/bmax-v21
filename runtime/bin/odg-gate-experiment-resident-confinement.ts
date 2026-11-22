@@ -3,7 +3,7 @@
 /* V15 — REAL measured experiment through the canonical gate (odg-improvement-chain → odg-sandbox-integration-gate):
  * "confine the resident-driver tick". Every one of the 12 conditions is MEASURED here (baseline = unconfined run,
  * candidate = confined launcher), in a THROW-AWAY copy of the repo; nothing is asserted. Review/inspection count only via
- * a VERIFIED WIC on origin/main that binds this experiment (odg-evidence-verifier); non-regression = the real required CI
+ * an OWNER-anchored inspection record on origin/main bound to the candidate commit (V15 closure); non-regression = the real required CI
  * check of the given commit (gh, read-only). The real repository is fingerprinted before/after (must be identical).
  * Usage: --ci-commit <sha> [--write <evidence.json>]   (simulation ≠ execution: nothing is installed or deployed) */
 const cp = require("child_process"); const fs = require("fs"); const os = require("os"); const path = require("path"); const crypto = require("crypto");
@@ -76,10 +76,10 @@ function main() {
   // (inspection HIGH: a provider-authored VERIFIED WIC would be self-certification). Signature sidecar: <record>.sig.json.
   const reader = EVV.makeCommittedReader(ROOT, "origin/main"); const EVP = "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json";
   let rec: any = null, signed: any = null; try { rec = JSON.parse(String(reader(EVP) || "")); } catch {} try { signed = JSON.parse(String(reader(EVP.replace(/\.json$/, ".sig.json")) || "")); } catch {}
-  const rv = MG.ownerAnchoredReview(rec, signed, Date.now());
-  for (const cond of ["codeAndDepsReviewed", "independentInspection"]) add(cond, "owner-anchored INSPECTION_RECORD signature over " + EVP + " on origin/main (TRUST_ANCHORS.INSPECTION_RECORD)", rec ? rv.reason : "RECORD_NOT_ON_ORIGIN_MAIN", rv.ok === true);
+  // V15 closure (audit D2/D3): review/inspection are computed INSIDE runMeasuredExperiment from the owner-anchored record,
+  // bound to THIS candidate (record.subjectCommit must equal the full CI commit); no measurement can assert them.
   fs.rmSync(T, { recursive: true, force: true });
-  const r = MG.runMeasuredExperiment({ id: "V15-EXP-resident-confinement", v124Link: "CM-V234-RESIDENT-DRIVER", discovery: "1180 organizational Truth-Lock refusals + unconfined resident tick (V375)", significant: true }, M);
+  const r = MG.runMeasuredExperiment({ ownerReview: { record: rec, signed, candidateCommit: full }, id: "V15-EXP-resident-confinement", v124Link: "CM-V234-RESIDENT-DRIVER", discovery: "1180 organizational Truth-Lock refusals + unconfined resident tick (V375)", significant: true }, M);
   const evidence = { experiment: "V15-EXP-resident-confinement", ciCommit, ranAt: new Date().toISOString(), measurements: M, derived: r.derived, verdict: r.chain.verdict, action: r.chain.action, softMissing: r.chain.softMissing, hardViolations: r.chain.hardViolations, deployed: false, deployStillOwnerGated: true,
     note: "simulation ≠ execution: the experiment ran in a throw-away copy; nothing was installed, enabled or deployed. INTEGRATE would mean merge-eligible only." };
   if (out) fs.writeFileSync(out, JSON.stringify(evidence, null, 2) + "\n");
