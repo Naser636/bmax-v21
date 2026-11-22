@@ -1,0 +1,200 @@
+#!/usr/bin/env node
+// @ts-nocheck — runs under tsx. V15.1 WAVE MODE of odg-schedule-tick (opt-in ODG_TICK_WAVE=1), in a THROW-AWAY state.
+//
+// ATTRIBUTION (honest): the DECISIONS exercised here are ODG core components — admission = mission-scheduler.schedulerStep
+// + canary-decision-pack read-only authorize + proven-dedup; inventory = odg-open-mission-recovery.classifyOpenMission;
+// wave = odg-mission-orchestrator.buildDispatchPlan → odg-writeset-contention; outcome = mission-scheduler.classifyDispatch;
+// audit = mission-attempt-log.recordAttempt + audit-log chain. The real async cp.spawn path (runGovernedChild) is used.
+// The WORKLOAD is a PROVIDER-WRITTEN STUB standing in for odg-run (sleeps, stamps its own [start,end], writes its own
+// report) — NO real odg-run / mission is executed, nothing is written under the repo's runtime/generated.
+"use strict";
+const assert = require("assert");
+const path = require("path");
+const fs = require("fs");
+const os = require("os");
+const cp = require("child_process");
+const tick = require("./odg-schedule-tick.js");
+const AUDIT = require("../core/audit-log.js");
+
+let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); pass++; };
+const TMP = fs.mkdtempSync(path.join(os.tmpdir(), "odg-wave-"));
+const STUB = path.join(TMP, "stub-odg-run.js");
+fs.writeFileSync(STUB, `
+const fs = require("fs"), path = require("path");
+const id = process.argv[2], dir = process.env.STUB_DIR;
+const start = Date.now();
+const ms = parseInt(process.env["STUB_SLEEP_" + id] || process.env.STUB_SLEEP_MS || "300", 10);
+const fail = (process.env.STUB_FAIL || "").split(",").includes(id);
+setTimeout(() => {
+  const end = Date.now();
+  fs.writeFileSync(path.join(dir, "ts-" + id + ".json"), JSON.stringify({ id, start, end, pid: process.pid }));
+  fs.writeFileSync(path.join(dir, "report-" + id + ".json"), JSON.stringify({ mission: id, validated: !fail, status: fail ? "FAIL" : "SUCCESS" }));
+  process.exit(fail ? 1 : 0);
+}, ms);
+`);
+
+let runN = 0;
+function freshDir() { const d = path.join(TMP, "run-" + (++runN)); fs.mkdirSync(d); return d; }
+const defs = (spec) => (id) => (spec[id] ? { mission: id, mode: "AUDIT", ...spec[id] } : null);
+function waveOpts(dir, spec, extra = {}) {
+  return {
+    allow: new Set(Object.keys(spec)), proven: new Set(), loadMission: defs(spec),
+    runBin: STUB, cwd: TMP, env: { ...process.env, STUB_DIR: dir, ...(extra.env || {}) },
+    readReport: (id) => JSON.parse(fs.readFileSync(path.join(dir, "report-" + id + ".json"), "utf8")),
+    logPath: path.join(dir, "attempts.jsonl"), runnerSharedWriteSet: [], chain: [], timeoutMs: 20000,
+    ...extra, env: { ...process.env, STUB_DIR: dir, ...(extra.env || {}) },
+  };
+}
+const stamps = (dir, id) => JSON.parse(fs.readFileSync(path.join(dir, "ts-" + id + ".json"), "utf8"));
+const rows = (dir) => fs.readFileSync(path.join(dir, "attempts.jsonl"), "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l));
+const ran = (dir, id) => fs.existsSync(path.join(dir, "ts-" + id + ".json"));
+
+// Default-mode golden captured from origin/main @876a8ee5 (pre-change odg-schedule-tick.ts) with these exact scenarios.
+const GOLDEN = {"out":[{"status":"IDLE","mission":null,"reason":"no eligible pre-authorized PENDING mission (empty queue)","chainLen":1},{"status":"PASS","mission":"M1","reason":"ok","excellence":{"verdict":"MEETS","staleReferences":[],"openGaps":0,"recommendation":"current practices meet the selected references' adopted principles and all pre-fixed thresholds; keep evidence + re-review at nextReviewDate","admit":true},"chainLen":1},{"status":"IDLE","mission":null,"reason":"no eligible pre-authorized PENDING mission [M1: ALREADY_PROVEN (dedup): M1]","chainLen":1},{"status":"FAIL","mission":"M1","reason":"status FAIL","excellence":{"verdict":"MEETS","staleReferences":[],"openGaps":0,"recommendation":"current practices meet the selected references' adopted principles and all pre-fixed thresholds; keep evidence + re-review at nextReviewDate","admit":true},"chainLen":1},{"status":"FAIL","mission":"M1","reason":"dispatch threw: boom","excellence":{"verdict":"MEETS","staleReferences":[],"openGaps":0,"recommendation":"current practices meet the selected references' adopted principles and all pre-fixed thresholds; keep evidence + re-review at nextReviewDate","admit":true},"chainLen":1},{"status":"BLOCKED","mission":"M1","reason":"AUTHORIZATION_DENIED: CANARY_REFUSES_NON_READONLY: mission id 'M1' is not a valid canonical id; mission is NOT read-only (requiresEngineering/authorizedPaths present) — out of canary scope","chainLen":1},{"status":"BLOCKED","mission":"M1","reason":"AUTHORIZATION_DENIED: CANARY_SPEC_UNAVAILABLE: M1 (no mission definition — refused fail-closed)","chainLen":1}],"rows":[{"mission":"(none)","status":"IDLE","reason":"no eligible pre-authorized PENDING mission (empty queue)"},{"mission":"M1","status":"PASS","reason":"ok"},{"mission":"(none)","status":"IDLE","reason":"no eligible pre-authorized PENDING mission [M1: ALREADY_PROVEN (dedup): M1]"},{"mission":"M1","status":"FAIL","reason":"status FAIL"},{"mission":"M1","status":"FAIL","reason":"dispatch threw: boom"},{"mission":"M1","status":"BLOCKED","reason":"AUTHORIZATION_DENIED: CANARY_REFUSES_NON_READONLY: mission id 'M1' is not a valid canonical id; mission is NOT read-only (requiresEngineering/authorizedPaths present) — out of canary scope"},{"mission":"M1","status":"BLOCKED","reason":"AUTHORIZATION_DENIED: CANARY_SPEC_UNAVAILABLE: M1 (no mission definition — refused fail-closed)"}]};
+
+(async () => {
+  // (1) CONCURRENCY: 2 independent read-only canary missions, disjoint declared write-sets ⇒ ONE wave, overlapping intervals.
+  {
+    const dir = freshDir();
+    const d = await tick.tickWave(waveOpts(dir, { W9001: { write_set: ["out/a"] }, W9002: { write_set: ["out/b"] } }, { env: { STUB_SLEEP_MS: "600" } }));
+    const a = stamps(dir, "W9001"), b = stamps(dir, "W9002");
+    ok("wave: disjoint write-sets ⇒ both in ONE write-safe sub-wave", JSON.stringify(d.wave) === '["W9001","W9002"]' && d.deferred.length === 0);
+    ok(`wave: [start,end] intervals OVERLAP (max start ${Math.max(a.start, b.start) - Math.min(a.start, b.start)}ms after min start < min end) ⇒ ran CONCURRENTLY in 2 distinct processes`, Math.max(a.start, b.start) < Math.min(a.end, b.end) && a.pid !== b.pid);
+    ok("wave: both PASS via canonical classifyDispatch; tick PASS", d.status === "PASS" && d.results.every((r) => r.status === "PASS"));
+    const r = rows(dir);
+    ok("wave: each attempt recorded in the REDIRECTED attempt log with the default row shape {mission,recordedAt,status,reason}", r.length === 2 && r.every((x) => JSON.stringify(Object.keys(x)) === '["mission","recordedAt","status","reason"]' && x.status === "PASS"));
+    ok("wave: decisions hash-chained + verifiable", d.auditChain.length === 2 && AUDIT.verifyChain(d.auditChain).ok === true);
+  }
+
+  // (2) CONFLICT: overlapping write-sets (ancestor containment) ⇒ serialized across ticks, never concurrent.
+  {
+    const dir = freshDir();
+    const spec = { W9003: { write_set: ["out/c"] }, W9004: { write_set: ["out/c/x.json"] } };
+    const d1 = await tick.tickWave(waveOpts(dir, spec, { env: { STUB_SLEEP_MS: "200" } }));
+    ok("conflict: overlapping pair ⇒ first tick runs ONLY W9003, W9004 deferred (not spawned)", JSON.stringify(d1.wave) === '["W9003"]' && JSON.stringify(d1.deferred) === '["W9004"]' && !ran(dir, "W9004"));
+    ok("conflict: contention reported by odg-writeset-contention (WRITESET_OVERLAP)", d1.contentions.length === 1 && d1.contentions[0].reason === "WRITESET_OVERLAP" && JSON.stringify(d1.subWaves) === '[["W9003"],["W9004"]]');
+    const d2 = await tick.tickWave(waveOpts(dir, spec, { proven: new Set(["W9003"]), env: { STUB_SLEEP_MS: "200" } }));
+    const a = stamps(dir, "W9003"), b = stamps(dir, "W9004");
+    ok("conflict: proven W9003 is skipped (dedup as today); next tick runs W9004; intervals DISJOINT (serialized)", JSON.stringify(d2.wave) === '["W9004"]' && a.end <= b.start);
+  }
+
+  // (3) FAILURE ISOLATION: a failing child does not affect the other.
+  {
+    const dir = freshDir();
+    const d = await tick.tickWave(waveOpts(dir, { W9005: { write_set: ["out/e"] }, W9006: { write_set: ["out/f"] } }, { env: { STUB_FAIL: "W9005", STUB_SLEEP_W9005: "50", STUB_SLEEP_W9006: "400" } }));
+    const byId = Object.fromEntries(d.results.map((r) => [r.mission, r]));
+    ok("isolation: failing W9005 ⇒ FAIL, concurrent W9006 still ran to completion ⇒ PASS; tick FAIL (non-zero, no false success)", byId.W9005.status === "FAIL" && byId.W9006.status === "PASS" && ran(dir, "W9006") && d.status === "FAIL");
+    const r = rows(dir);
+    ok("isolation: both attempts recorded", r.length === 2 && r.some((x) => x.mission === "W9005" && x.status === "FAIL") && r.some((x) => x.mission === "W9006" && x.status === "PASS"));
+  }
+
+  // (4) TIMEOUT: a hung child is SIGKILLed at its own timeout; the sibling is unaffected.
+  {
+    const dir = freshDir();
+    const d = await tick.tickWave(waveOpts(dir, { W9007: { write_set: ["out/g"] }, W9008: { write_set: ["out/h"] } }, { timeoutMs: 700, env: { STUB_SLEEP_W9007: "8000", STUB_SLEEP_W9008: "100" } }));
+    const byId = Object.fromEntries(d.results.map((r) => [r.mission, r]));
+    ok("timeout: hung W9007 killed ⇒ FAIL 'TIMED OUT'; W9008 PASS; tick bounded (<5s)", byId.W9007.status === "FAIL" && /TIMED OUT/.test(byId.W9007.reason) && byId.W9008.status === "PASS" && d.wallMs < 5000);
+  }
+
+  // (5) FAIL-CLOSED write-set: REAL runner shared write-set (runtime/generated) or undeclared write-set ⇒ serialized.
+  {
+    const dir = freshDir();
+    const spec = { W9009: { write_set: ["out/i"] }, W9010: { write_set: ["out/j"] } };
+    const o = waveOpts(dir, spec, { env: { STUB_SLEEP_MS: "50" } }); delete o.runnerSharedWriteSet;   // default = REAL odg-run shared dir
+    const d = await tick.tickWave(o);
+    ok("fail-closed: with the REAL odg-run's shared runtime/generated write-set, disjoint declared outputs STILL serialize (wave of 1)", JSON.stringify(d.wave) === '["W9009"]' && d.contentions.length === 1);
+    const dir2 = freshDir();
+    const d2 = await tick.tickWave(waveOpts(dir2, { W9011: {}, W9012: {} }, { env: { STUB_SLEEP_MS: "50" } }));
+    ok("fail-closed: undeclared write-sets ⇒ UNKNOWN ⇒ serialized (wave of 1)", d2.wave.length === 1 && d2.contentions.length === 1 && d2.contentions[0].reason === "UNKNOWN_WRITESET");
+  }
+
+  // (6) ADMISSION = the default tick's gates: non-read-only refused + recorded, proven skipped, neither spawned.
+  {
+    const dir = freshDir();
+    const spec = { W9013: { write_set: ["out/k"] }, W9014: { mode: "ENGINEERING", write_set: ["out/l"] }, W9015: { write_set: ["out/m"] } };
+    const d = await tick.tickWave(waveOpts(dir, spec, { proven: new Set(["W9015"]), env: { STUB_SLEEP_MS: "50" } }));
+    ok("admission: ENGINEERING mission BLOCKED by canary read-only authorize, never spawned", d.refused.length === 1 && d.refused[0].mission === "W9014" && /CANARY_REFUSES_NON_READONLY/.test(d.refused[0].reason) && !ran(dir, "W9014"));
+    ok("admission: proven W9015 skipped (dedup), never spawned; W9013 ran", !ran(dir, "W9015") && JSON.stringify(d.wave) === '["W9013"]' && ran(dir, "W9013"));
+    const dI = await tick.tickWave(waveOpts(freshDir(), {}, {}));
+    ok("admission: empty allowlist ⇒ IDLE, same reason as the default tick, nothing spawned", dI.status === "IDLE" && dI.reason === "no eligible pre-authorized PENDING mission (empty queue)" && dI.wave.length === 0);
+    process.env.ODG_SCHEDULER_STOP = "1";
+    const dS = await tick.tickWave(waveOpts(freshDir(), spec, {}));
+    delete process.env.ODG_SCHEDULER_STOP;
+    ok("admission: emergency stop ⇒ STOPPED, nothing spawned", dS.status === "STOPPED" && dS.wave.length === 0);
+  }
+
+  // (7) CAP: ODG_TICK_WAVE_MAX bounds concurrency (default 2, hard max 6).
+  {
+    ok("cap: env parse — unset/garbage ⇒ 2, '3' ⇒ 3, '99' ⇒ 6, '0' ⇒ 2", tick.waveMaxFromEnv(undefined) === 2 && tick.waveMaxFromEnv("x") === 2 && tick.waveMaxFromEnv("3") === 3 && tick.waveMaxFromEnv("99") === 6 && tick.waveMaxFromEnv("0") === 2);
+    const dir = freshDir();
+    const o = waveOpts(dir, { W9016: { write_set: ["o/1"] }, W9017: { write_set: ["o/2"] }, W9018: { write_set: ["o/3"] } }, { env: { STUB_SLEEP_MS: "50" } }); delete o.waveMax;
+    const prev = process.env.ODG_TICK_WAVE_MAX; delete process.env.ODG_TICK_WAVE_MAX;
+    const d = await tick.tickWave(o);
+    if (prev !== undefined) process.env.ODG_TICK_WAVE_MAX = prev;
+    ok("cap: 3 write-safe missions, default cap 2 ⇒ 2 launched, 1 deferred (not spawned)", d.wave.length === 2 && JSON.stringify(d.deferred) === '["W9018"]' && !ran(dir, "W9018"));
+  }
+
+  // (8) MEASURED: sequential (default-style: one blocking spawnSync per tick) vs one wave tick, SAME 3 stub missions.
+  {
+    const SLEEP = 500;
+    const spec = { W9021: { write_set: ["p/1"] }, W9022: { write_set: ["p/2"] }, W9023: { write_set: ["p/3"] } };
+    const dirS = freshDir();
+    const envS = { ...process.env, STUB_DIR: dirS, STUB_SLEEP_MS: String(SLEEP) };
+    const proven = new Set();
+    const t0 = Date.now();
+    for (let i = 0; i < 3; i++) {
+      const d = tick.tickOnce({ allow: new Set(Object.keys(spec)), proven, recordAttempt: () => {}, chain: [], loadSpec: (id) => tick.canarySpecFromMission({ mission: id, mode: "AUDIT" }, id),
+        dispatch: (item) => { const r = cp.spawnSync("node", [STUB, item.mission], { cwd: TMP, env: envS, encoding: "utf8" }); proven.add(item.mission); return { verified: r.status === 0, detail: "stub" }; } });
+      assert.ok(d.status === "PASS");
+    }
+    const seqMs = Date.now() - t0;
+    const dirW = freshDir();
+    const t1 = Date.now();
+    const d = await tick.tickWave(waveOpts(dirW, spec, { waveMax: 3, env: { STUB_SLEEP_MS: String(SLEEP) } }));
+    const waveMs = Date.now() - t1;
+    console.log(`  MEASURED (3 stub missions × ${SLEEP}ms): sequential default-style ticks = ${seqMs}ms ; one wave tick (cap 3) = ${waveMs}ms ; speedup ×${(seqMs / waveMs).toFixed(2)}`);
+    ok("measured: wave of 3 finishes all 3 PASS and is markedly faster than 3 sequential ticks (< 0.7×)", d.status === "PASS" && d.wave.length === 3 && waveMs < seqMs * 0.7);
+  }
+
+  // (9) DEFAULT MODE UNCHANGED — golden comparison of the non-wave tickOnce path vs origin/main @876a8ee5.
+  {
+    const out = []; const rowsG = [];
+    const rec = (d) => rowsG.push({ mission: (d && d.mission) || "(none)", status: d && d.status, reason: d && d.reason });
+    const safe = () => ({ safe: true, reason: "golden: read-only" });
+    const sc = [
+      { allow: new Set(), proven: new Set(), dispatch: () => ({ verified: true }) },
+      { allow: new Set(["M1"]), proven: new Set(), dispatch: () => ({ verified: true, detail: "ok" }), assessSafety: safe },
+      { allow: new Set(["M1"]), proven: new Set(["M1"]), dispatch: () => ({ verified: true }), assessSafety: safe },
+      { allow: new Set(["M1", "M2"]), proven: new Set(), dispatch: () => ({ verified: false, detail: "status FAIL" }), assessSafety: safe },
+      { allow: new Set(["M1"]), proven: new Set(), dispatch: () => { throw new Error("boom"); }, assessSafety: safe },
+      { allow: new Set(["M1"]), proven: new Set(), dispatch: () => ({ verified: true }), loadSpec: (id) => ({ mission: id, requiresEngineering: true, authorizedPaths: ["x"] }) },
+      { allow: new Set(["M1"]), proven: new Set(), dispatch: () => ({ verified: true }), loadSpec: () => null },
+    ];
+    for (const o of sc) { const d = tick.tickOnce({ ...o, recordAttempt: rec, reviewExcellence: undefined, chain: [] }); const { auditChain, ...rest } = d; out.push({ ...rest, chainLen: (auditChain || []).length }); }
+    ok("default: tickOnce decisions + log rows byte-identical to the origin/main golden (7 scenarios)", JSON.stringify({ out, rows: rowsG }) === JSON.stringify(GOLDEN));
+
+    // CLI in a throw-away ROOT (dist symlinked; its own runtime/generated) — default vs ODG_TICK_WAVE=0 vs unset.
+    const distBin = path.join(__dirname, "..", "dist", "bin", "odg-schedule-tick.js");
+    if (fs.existsSync(distBin)) {
+      const runCli = (extraEnv) => {
+        const root = fs.mkdtempSync(path.join(TMP, "root-"));
+        fs.mkdirSync(path.join(root, "runtime", "generated"), { recursive: true });
+        fs.symlinkSync(path.resolve(__dirname, "..", "dist"), path.join(root, "runtime", "dist"));
+        const env = { ...process.env, ODG_TRUTH_LOCK_ENFORCE: "0", ODG_CANARY_ALLOWLIST: "", ...extraEnv };
+        delete env.ODG_SCHEDULER_STOP; if (extraEnv.ODG_TICK_WAVE === undefined) delete env.ODG_TICK_WAVE;
+        const r = cp.spawnSync("node", [distBin], { cwd: root, env, encoding: "utf8" });
+        const log = fs.readFileSync(path.join(root, "runtime", "generated", "mission-attempt-log.jsonl"), "utf8").split("\n").filter(Boolean).map((l) => { const x = JSON.parse(l); delete x.recordedAt; return x; });
+        return { status: r.status, stdout: r.stdout, log };
+      };
+      const unset = runCli({ ODG_TICK_WAVE: undefined }), zero = runCli({ ODG_TICK_WAVE: "0" });
+      ok("default CLI (unit-like env, ODG_TICK_WAVE unset): exit 0, golden stdout line, one IDLE row in its OWN throw-away log", unset.status === 0 && unset.stdout === "[odg-schedule-tick] IDLE — no eligible pre-authorized PENDING mission (empty queue)\n" && JSON.stringify(unset.log) === '[{"mission":"(none)","status":"IDLE","reason":"no eligible pre-authorized PENDING mission (empty queue)"}]');
+      ok("default CLI: ODG_TICK_WAVE=0 ≡ unset (only the exact value '1' opts in)", JSON.stringify(zero) === JSON.stringify(unset));
+      const wave = runCli({ ODG_TICK_WAVE: "1" });
+      ok("opt-in CLI ODG_TICK_WAVE=1: wave entry taken, same IDLE row shape", wave.status === 0 && /^\[odg-schedule-tick wave\] IDLE/.test(wave.stdout) && JSON.stringify(wave.log) === JSON.stringify(unset.log));
+    } else console.log("  (skip CLI checks: runtime/dist not built)");
+  }
+
+  fs.rmSync(TMP, { recursive: true, force: true });
+  console.log(`\nODG-SCHEDULE-TICK WAVE — ${pass} assertions passed. (stub workload only; NO real odg-run/mission executed; throw-away state.)`);
+})().catch((e) => { console.error(e); process.exit(1); });
+export {};

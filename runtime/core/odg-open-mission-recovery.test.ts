@@ -37,6 +37,28 @@ function main() {
   check("every classified mission carries statusChangeAllowed=false (provider cannot self-promote/close)", inv.missions.every((m: any) => m.statusChangeAllowed === false));
   check("contract: read-only, grounded, honest precedence, surfaces realizable subset", /READ-ONLY/.test(R.OPEN_MISSION_RECOVERY_CONTRACT.invariants[0]) && /GROUNDED/.test(R.OPEN_MISSION_RECOVERY_CONTRACT.invariants[1]) && R.OPEN_MISSION_RECOVERY_CONTRACT.invariants.some((x: string) => /DEPENDENCY_BLOCKED > EXTERNAL_BLOCKED/.test(x)));
 
+  // ---- V15.1 write-set pass-through (fail-closed) ----
+  {
+    const base = { status: "READY", deps: [], nextAction: "read-only diagnostic", acceptance: "" };
+    const a = R.classifyOpenMission({ ...base, id: "A", authorizedPaths: ["src/a"] }, {});
+    const w = R.classifyOpenMission({ ...base, id: "W", writeSet: ["out/w.json"] }, {});
+    const ro = R.classifyOpenMission({ ...base, id: "RO", readOnly: true }, {});
+    const none = R.classifyOpenMission({ ...base, id: "N" }, {});
+    const bad = R.classifyOpenMission({ ...base, id: "B", authorizedPaths: [], writeSet: ["ok", 3], readOnly: "true" }, {});
+    check("pass-through: authorizedPaths carried verbatim (frozen copy)", JSON.stringify(a.authorizedPaths) === '["src/a"]' && Object.isFrozen(a.authorizedPaths));
+    check("pass-through: writeSet carried verbatim", JSON.stringify(w.writeSet) === '["out/w.json"]' && w.authorizedPaths === undefined);
+    check("pass-through: readOnly only when strictly true", ro.readOnly === true && bad.readOnly === undefined);
+    check("fail-closed: absent declarations ⇒ NO keys emitted (shape unchanged ⇒ UNKNOWN downstream)", !("authorizedPaths" in none) && !("writeSet" in none) && !("readOnly" in none));
+    check("fail-closed: empty / non-string-element arrays are NOT carried", !("authorizedPaths" in bad) && !("writeSet" in bad));
+    check("the REAL register's 12 open missions declare no write-set today ⇒ none carried (honest: all UNKNOWN)", inv.missions.every((m: any) => !("authorizedPaths" in m) && !("writeSet" in m) && !("readOnly" in m)));
+    // downstream effect through the REAL orchestrator: disjoint declared write-sets ⇒ one write-safe sub-wave of 2; overlap ⇒ serialized; undeclared ⇒ serialized
+    const MO = require("./odg-mission-orchestrator.js");
+    const wave = (recs: any[]) => { const plan = MO.buildDispatchPlan({ missions: recs.map((r: any) => R.classifyOpenMission({ ...base, ...r }, {})) }); return plan.writeSafety.layers[0].subWaves.map((x: any) => x.slice()); };
+    check("orchestrator: disjoint carried write-sets ⇒ ONE sub-wave [X,Y] (was 2 serialized waves before pass-through)", JSON.stringify(wave([{ id: "X", writeSet: ["out/x"] }, { id: "Y", writeSet: ["out/y"] }])) === '[["X","Y"]]');
+    check("orchestrator: overlapping carried write-sets ⇒ serialized [[X],[Y]]", JSON.stringify(wave([{ id: "X", writeSet: ["out"] }, { id: "Y", writeSet: ["out/y"] }])) === '[["X"],["Y"]]');
+    check("orchestrator: undeclared write-sets stay UNKNOWN ⇒ serialized [[X],[Y]]", JSON.stringify(wave([{ id: "X" }, { id: "Y" }])) === '[["X"],["Y"]]');
+  }
+
   // ---- determinism / fail-closed ----
   check("inventory is frozen + reproducible", Object.isFrozen(inv) && JSON.stringify(R.inventoryOpenMissions().byClass) === JSON.stringify(inv.byClass));
 

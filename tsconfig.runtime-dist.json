@@ -173,6 +173,12 @@
     "runtime/core/odg-fr-vat.ts",
     "runtime/core/odg-language-management.ts",
     "runtime/core/odg-writeset-contention.ts",
+    "runtime/core/odg-mission-orchestrator.ts",
+    "runtime/core/odg-open-mission-recovery.ts",
+    "runtime/core/dep-planner.ts",
+    "runtime/core/provider-capability-contract.ts",
+    "runtime/core/evaluator-independence.ts",
+    "runtime/core/meta-intelligence.ts",
     "runtime/core/odg-reuse-validity-gate.ts"
   ]
 }

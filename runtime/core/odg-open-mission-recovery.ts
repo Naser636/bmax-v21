@@ -51,10 +51,23 @@ function classifyOpenMission(item: any, statusById: any): any {
   else if (EXTERNAL.test(textBlob) || EXTERNAL.test(title)) { klass = "EXTERNAL_BLOCKED"; blocker = "acceptance names an EXTERNAL data/corpus/real-world dependency (outside the provider perimeter)"; }
   else if (unmetDeps.length === 0 && next.length > 0) { klass = "REALIZABLE_LOCAL"; blocker = "none — deps are ACCEPTED and a concrete local next-action exists with no owner/external/definition gate"; }
 
+  // V15.1 WRITE-SET PASS-THROUGH (fail-closed). The orchestrator's write-safety analysis (odg-writeset-contention) reads
+  // authorizedPaths / writeSet / readOnly off each inventoried mission, but this classifier used to DROP them ⇒ every
+  // mission was UNKNOWN ⇒ conflicted with everything ⇒ at most one mission per wave. Carry them through VERBATIM from the
+  // register record — ONLY when well-formed (a non-empty array of strings; readOnly strictly === true). Absent/malformed
+  // ⇒ the key is simply not emitted ⇒ the mission stays UNKNOWN (fail-closed, never optimistically isolated), and the
+  // output shape for a record without these fields is unchanged.
+  const wellFormedPaths = (v: any) => Array.isArray(v) && v.length > 0 && v.every((x: any) => typeof x === "string");
+  const writeDecl: any = {};
+  if (wellFormedPaths(item.authorizedPaths)) writeDecl.authorizedPaths = Object.freeze(item.authorizedPaths.slice());
+  if (wellFormedPaths(item.writeSet)) writeDecl.writeSet = Object.freeze(item.writeSet.slice());
+  if (item.readOnly === true) writeDecl.readOnly = true;
+
   return Object.freeze({
     id: item.id,
     status: item.status,
     class: klass,
+    ...writeDecl,
     deps: Object.freeze(deps.slice()),
     unmetDeps: Object.freeze(unmetDeps.slice()),
     blocker,
