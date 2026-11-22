@@ -12,10 +12,12 @@ AUDIT=(npx --no-install tsx "$REPO/runtime/bin/odg-trust-anchor-audit.ts" --repo
 if [ -s "$SIGNERS" ] && grep -qv '^\s*\(#\|$\)' "$SIGNERS"; then
   W="$(mktemp -d)"; trap 'rm -rf "$W"' EXIT
   : > "$W/keys"
-  while read -r principal kt kb _; do
-    case "$principal" in ''|\#*) continue ;; esac
-    printf '%s %s\n' "$kt" "$kb" > "$W/k.pub"; ssh-keygen -lf "$W/k.pub" | awk '{print $2}' >> "$W/keys"
-  done < "$SIGNERS"
+  # allowed-signers line: <principals> [options] <keytype> <base64> [comment] — locate the key type token (options allowed)
+  while read -r line; do
+    case "$line" in ''|\#*) continue ;; esac
+    printf '%s\n' "$line" | awk '{for(i=2;i<=NF;i++) if ($i ~ /^(ssh-|ecdsa-|sk-)/) {print $i, $(i+1); exit}}' > "$W/k.pub"
+    ssh-keygen -lf "$W/k.pub" | awk '{print $2}' >> "$W/keys"
+  done < <(sed 's/^[[:space:]]*//' "$SIGNERS")
   GIT_CONFIG_COUNT=2 GIT_CONFIG_KEY_0=gpg.format GIT_CONFIG_VALUE_0=ssh GIT_CONFIG_KEY_1=gpg.ssh.allowedSignersFile GIT_CONFIG_VALUE_1="$SIGNERS" \
     "${AUDIT[@]}" --signer-keys "$W/keys" --require-signed
 else

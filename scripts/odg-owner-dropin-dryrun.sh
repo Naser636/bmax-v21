@@ -17,7 +17,7 @@ COMMON=(-p PrivateNetwork=yes -p NoNewPrivileges=yes -p ProtectControlGroups=yes
         -p MemoryMax=512M -p MemorySwapMax=0 -p TasksMax=256 -p RuntimeMaxSec=120
         -E PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin -E ODG_TRUTH_LOCK_ENFORCE=1)
 run() { local label="$1"; shift
-  local n0; n0=$(wc -l < "$T/runtime/logs/resident-driver-l0.log" 2>/dev/null || echo 0)
+  local n0; n0=0; [ -f "$T/runtime/logs/resident-driver-l0.log" ] && n0=$(wc -l < "$T/runtime/logs/resident-driver-l0.log")
   set +e; systemd-run --user --wait --collect --pipe --quiet -p WorkingDirectory="$T" "${COMMON[@]}" "$@" \
     /bin/bash -lc "bash scripts/odg-resident-driver-confined.sh '$T'" >"$T/$label.out" 2>&1; local rc=$?; set -e
   echo "== $label rc=$rc"; tail -n +$((n0+1)) "$T/runtime/logs/resident-driver-l0.log" 2>/dev/null | cut -c1-200; tail -2 "$T/$label.out" | cut -c1-200; }
