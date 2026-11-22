@@ -28,6 +28,8 @@ const scenario = {
   costEntries: [{ phase: "PAID", category: "MATERIAL", amountMinor: 52000, evidenceRef: "f" }],
   procurement: { catalog: [{ itemRef: "CIM-42.5", unit: "sac", supplier: "SupA", unitPriceMinor: 850, priceSource: "bordereau-2026", validFrom: "2026-01-01" }], requestedLines: [{ itemRef: "CIM-42.5", qty: 100 }], asOfDate: "2026-06-01", kind: "PURCHASE_ORDER" },
   revision: { fixedTermCoeff: 0.15, indexedTerms: [{ coeff: 0.85, baseIndex: 100, currentIndex: 110 }] },
+  // V15.0 — the FR invoice DOCUMENT behind ledger invoice INV-DEP (35 640 HT + 20 % VAT = 42 768 TTC), pre-checked + due date
+  frInvoice: { ledgerInvoiceId: "INV-DEP", document: { sellerName: "ODG BTP (synthetic)", sellerSiret: "73282932000074", buyerName: "Client démo", invoiceNumber: "F-2026-0001", issueDate: "2026-11-22", paymentTermDays: 30, lineItems: [{ label: "Acompte 30 %", qty: 1, unitPriceHTMinor: 35640, vatRateBps: 2000 }], statedTotalVatMinor: 7128, penaltyRateMentionPresent: true, indemnityMentionPresent: true } },
   retenue: { retentionRate: 0.05, release: { receptionDate: "2026-01-15", warrantyPeriodDays: 365, reservesLifted: true, asOfDate: "2027-06-01" } },
 };
 
