@@ -49,6 +49,8 @@
 - **Residual limits (inspection LOW).** The confined tick can still rewrite its own trace file, so `writes=0` lines are the driver's **self-report, not an attested record**. File size is capped inside the sandbox by `ulimit -f` (default 10 MiB). Attesting the trace (e.g. signed lines checked by an unconfined verifier) is open work.
 
 ## 4c. V15 — measured gate experiment and SLO recommendation
+> **SUPERSEDED (2026-11-22, SLI definitions r2, #872):** the availability and CI figures below are the r0 definitions. Current figures: §4d and `V15_CLOSURE_DOSSIER.md` §8 (availability 64/65 scheduled slots; CI main-push first attempt 841/846, proposal 99%).
+
 - **Experiment through the canonical gate** (`odg-gate-measured-evidence` + `runtime/bin/odg-gate-experiment-resident-confinement.ts`). All 12 conditions come from measurements; none is asserted.
   - RUN1, before merge, and RUN2, after merge on `45e46f3f`, both returned **RETURN_TO_EXPERIMENT, 10/12**.
   - Measured: 6 → 0 available attack surfaces; functional, stop and fallback paths; rollback; real repository unchanged; CI green.
@@ -58,6 +60,47 @@
   - Autonomy availability: **98% provisional**. After the fix, 54/54 ticks were available, but the Wilson lower bound is only 0.934 and supporting 98% needs ≥189 ticks. Re-decide after 14 days.
   - CI required check: **98%**. SLI 0.9837 over n=982, Wilson [0.9737, 0.9899].
   - Mission reliability: keep the CTO target of 0.95. It is NOT_MEASURED, with only 3 executed attempts.
+
+## 4d. V15 closure — launcher hardening, trace integrity, attestation (2026-11-22)
+- **Trace integrity (#868).** The confined tick has no writable host path. The trusted launcher appends the line, checks its format and stamps it with its own clock. The line *content* (e.g. `writes=0`) is still the tick's self-report, not an attestation.
+- **Launcher hardening (#873).** All 7 findings of an independent escape audit are fixed, each with a test that fails before the fix and passes after; the confined launcher test passes 35/35. The fixes:
+  - fds > 2 closed, stdin from `/dev/null`;
+  - stderr bounded and sanitised;
+  - tmpfs sized; root and `/dev` read-only;
+  - `ulimit -n/-p`, plus `-v` on the precompiled path;
+  - x86_64 seccomp filter denying memfd/SysV shm;
+  - `timeout -k` with `pdeathsig`; `TIMEOUT` and `truncated=1` lines;
+  - freshness covers the emitted dist `.js` and their resolved requires (drift detection, not tamper-proof).
+  Independent re-inspection: ACCEPT.
+- **Gate (#871).** Review and inspection count only from an owner-anchored record bound to the exact candidate commit and experiment. Anchors are read from `origin/main`, the measured code is `git archive <candidate>`, and replace objects and `GIT_*` are neutralised.
+- **RUN4** on candidate `3a88de01`: `RETURN_TO_EXPERIMENT` 10/12. 7 probed surfaces 7 → 0. The only missing conditions are the owner review/inspection (`subjectCommit` not set by the owner).
+
+**Remaining residual risks:**
+- the tsx fallback has no virtual-memory cap (bounded only by the proposed `MemoryMax=`);
+- the seccomp filter is x86_64-only;
+- the bwrap ⇄ `RestrictAddressFamilies`/`PrivateNetwork` interaction under the real unit is NOT reproduced;
+- a same-user unconfined writer can DoS the tick via `runtime/dist/package.json` (LOW);
+- the local `origin/main` is provider-writable, so a local gate verdict is never the trust decision (owner re-verifies on own clone).
+
+**Technical decision (provider's recommendation, owner decides): L1 stays NOT ACTIVATED.**
+Grounds:
+- (a) no owner-anchored review exists;
+- (b) the proposed drop-in has never run under the real unit;
+- (c) post-fix availability has < 1 day of data (64/65 slots, scheduled-slot SLI r2), short of the ≥ 14 days required;
+- (d) mission reliability is NOT_MEASURED (1 pass, 2 policy-refused, n = 3 < 20).
+
+**Refusal criteria (any one ⇒ do not activate):**
+- an INVALID_TRACE or TIMEOUT line in the dry-run;
+- any write outside the trace;
+- availability Wilson low < the chosen SLO over 14 days;
+- `odg-trust-anchor-audit --require-signed` not passing on the owner's clone.
+
+**Owner dry-run procedure for the drop-in (isolated, user systemd, no root):**
+1. copy the proposal to `~/.config/systemd/user/odg-resident-driver.service.d/`;
+2. `systemctl --user daemon-reload`;
+3. `systemctl --user start odg-resident-driver.service` once;
+4. expect `Result=success` and exactly one new L0 line, not INVALID_TRACE/TIMEOUT;
+5. roll back by deleting the file and running `daemon-reload`.
 
 ## 5. Recommendation
 **Do not activate L1 yet.** First:
