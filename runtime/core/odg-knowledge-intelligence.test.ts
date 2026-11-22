@@ -112,7 +112,14 @@ check("risk can only be RAISED by opts (LOW requested on SECURITY_CRITICAL stays
 check("CRITICAL + CORROBORATED but not QUALIFIED ⇒ still capped at SANDBOX_EXPERIMENT", K.assessClaim(corro, { asOfEpochMs: ASOF, collection: C(byU2), risk: "CRITICAL", missionAuthorization: "INTERNAL_INTEGRATION" }).dimensions.authorization === "SANDBOX_EXPERIMENT");
 
 // maturity not inferred from truth.
-check("maturity: bare booleans ignored; EXPERIMENTAL only with BOUND evidence (WIC id + sha256)", a1.dimensions.maturity === "USABLE" && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), experimentApproved: true }).dimensions.maturity === "USABLE" && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: { missionContract: "WIC-TEST-0001", evidenceSha256: "a".repeat(64) } } }).dimensions.maturity === "EXPERIMENTAL");
+const EVV = require("./odg-evidence-verifier.js"); const READER = EVV.makeRepoReader(require("path").resolve(__dirname, "../.."));
+const REAL_EV = { missionContract: "WIC-CM-RADAR-GATE-CHAIN-STEP1", contractPath: "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP1.json", evidencePath: "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP1_EVIDENCE.json",
+  evidenceSha256: require("crypto").createHash("sha256").update(READER("docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP1_EVIDENCE.json")).digest("hex") };
+check("maturity: bare booleans / format-only evidence ignored; EXPERIMENTAL only with evidence VERIFIED on the REAL files",
+  K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), experimentApproved: true }).dimensions.maturity === "USABLE"
+  && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: { missionContract: "WIC-TEST-0001", evidenceSha256: "a".repeat(64) } }, evidenceReader: READER }).dimensions.maturity === "USABLE"
+  && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: REAL_EV } }).dimensions.maturity === "USABLE"
+  && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: REAL_EV }, evidenceReader: READER }).dimensions.maturity === "EXPERIMENTAL");
 check("OPERATIONALLY_DEMONSTRATED requires the full ladder", K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), demonstratedBenefit: true }).dimensions.maturity === "USABLE");
 
 // union of one page's citations; no self-corroboration.
