@@ -84,7 +84,7 @@
 Grounds:
 - (a) no owner-anchored review exists;
 - (b) the proposed drop-in has never run under the real unit;
-- (c) post-fix availability has < 1 day of data (64/64 slots), short of the ≥ 14 days required;
+- (c) post-fix availability has < 1 day of data (64/65 slots, scheduled-slot SLI r2), short of the ≥ 14 days required;
 - (d) mission reliability is NOT_MEASURED (1 pass, 2 policy-refused, n = 3 < 20).
 
 **Refusal criteria (any one ⇒ do not activate):**
