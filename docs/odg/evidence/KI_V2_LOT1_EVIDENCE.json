@@ -8,7 +8,14 @@
     "CANDIDATE": 0,
     "UNKNOWN": 0,
     "keptInMemory": 7,
+    "admittedAsFact": 0,
+    "collectionAuthenticated": "PINNED_DIGEST",
     "presentedAsFact": 0
+  },
+  "crossFamilyOverlap": {
+    "sharedPhrases": [],
+    "count": 0,
+    "note": "no substantive phrase shared across publisher families"
   },
   "correctionOfHistory": "step 2 (PR #854) labelled the 2 Toyota statements CORROBORATED by DOMAIN; KI-V2 reclassifies them SUPPORTED because both domains belong to ONE publisher family (Toyota). The step-2 evidence file is preserved unchanged; this file records the correction.",
   "results": [
@@ -49,8 +56,10 @@
         }
       ],
       "memory": {
-        "status": "SUPPORTED",
-        "admissibleByTrustGate": true
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (toyota) — supports WHAT THE PUBLISHER STATES, not a general truth",
@@ -94,8 +103,10 @@
         }
       ],
       "memory": {
-        "status": "SUPPORTED",
-        "admissibleByTrustGate": true
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (toyota) — supports WHAT THE PUBLISHER STATES, not a general truth",
@@ -132,8 +143,10 @@
         }
       ],
       "memory": {
-        "status": "SUPPORTED",
-        "admissibleByTrustGate": true
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
@@ -171,8 +184,10 @@
         }
       ],
       "memory": {
-        "status": "SUPPORTED",
-        "admissibleByTrustGate": true
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
@@ -215,8 +230,10 @@
         }
       ],
       "memory": {
-        "status": "SUPPORTED",
-        "admissibleByTrustGate": true
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth"
@@ -254,8 +271,10 @@
         }
       ],
       "memory": {
-        "status": "SUPPORTED",
-        "admissibleByTrustGate": true
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (nasa) — supports WHAT THE PUBLISHER STATES, not a general truth"
@@ -293,8 +312,10 @@
         }
       ],
       "memory": {
-        "status": "SUPPORTED",
-        "admissibleByTrustGate": true
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL"
       },
       "reasons": [
         "verified OFFICIAL primary source documenting its own statement (nasa) — supports WHAT THE PUBLISHER STATES, not a general truth"
