@@ -1,0 +1,82 @@
+{
+  "lot": "V375 Lot B — first resident-driver L1 SIMULATE cycle, sandboxed, over the REAL committed repository state",
+  "target": "/home/ubuntu/bmax-v21 @ main 1105f54f (state read-only; code from the Lot B checkout)",
+  "harness": "scripts/odg-resident-driver-l1-sandbox.sh — bwrap --unshare-all --clearenv with a MINIMAL read-only view (/usr,/etc,/bin,/lib*, node_modules, code + target repo); NO host root, NO /run (tmpfs) ⇒ no host Unix socket",
+  "runs": {
+    "normal": {
+      "sandbox": {
+        "fs": "READ_ONLY",
+        "hostSockets": "NONE_REACHABLE",
+        "netInterfaces": "lo"
+      },
+      "fingerprintBefore": "21e57e40a105a5b62d6e7de5ad250a558ffa087e96cb91d474ac0a5fb1ffdee7",
+      "fingerprintAfter": "21e57e40a105a5b62d6e7de5ad250a558ffa087e96cb91d474ac0a5fb1ffdee7",
+      "zeroWrite": true,
+      "cycle": {
+        "asOf": "2026-11-22T14:21:18.528Z",
+        "emergencyStopEngaged": false,
+        "l1": {
+          "level": "L1_SIMULATE",
+          "basedOnObservation": {
+            "workAvailable": true,
+            "nextEligible": "CM-RADAR-GATE-CHAIN",
+            "blocked": [
+              "CM-MULTIMODAL-VIDEO"
+            ],
+            "mustRevalidate": [],
+            "done": 14,
+            "missionsTotal": 24
+          },
+          "simulatedDecision": {
+            "wouldSelect": "CM-RADAR-GATE-CHAIN",
+            "wouldCheckPermissionsAndFreshness": true,
+            "wouldExecute": false
+          },
+          "persisted": false,
+          "modifiedBusinessState": false,
+          "canTriggerL2": false,
+          "note": "L1 SIMULATE: decisions are prepared with NO persistence and NO execution; L1 can NEVER auto-trigger L2 (level transition is owner-gated + independently validated)"
+        }
+      }
+    },
+    "emergencyStop": {
+      "sandbox": {
+        "fs": "READ_ONLY",
+        "hostSockets": "NONE_REACHABLE",
+        "netInterfaces": "lo"
+      },
+      "fingerprintBefore": "21e57e40a105a5b62d6e7de5ad250a558ffa087e96cb91d474ac0a5fb1ffdee7",
+      "fingerprintAfter": "21e57e40a105a5b62d6e7de5ad250a558ffa087e96cb91d474ac0a5fb1ffdee7",
+      "zeroWrite": true,
+      "cycle": {
+        "asOf": "2026-11-22T14:21:20.601Z",
+        "emergencyStopEngaged": true,
+        "l1": {
+          "level": "L1_SIMULATE",
+          "basedOnObservation": null,
+          "simulatedDecision": {
+            "wouldSelect": null,
+            "idle": true
+          },
+          "persisted": false,
+          "modifiedBusinessState": false,
+          "canTriggerL2": false,
+          "note": "L1 SIMULATE: decisions are prepared with NO persistence and NO execution; L1 can NEVER auto-trigger L2 (level transition is owner-gated + independently validated)"
+        }
+      }
+    }
+  },
+  "proven": [
+    "L1 cycle runs on real state: wouldSelect CM-RADAR-GATE-CHAIN, wouldExecute=false, persisted=false, canTriggerL2=false",
+    "negative controls in the SAME sandbox: repo write refused (READ_ONLY); host sockets (/run/user/<uid>/bus, systemd/private, system D-Bus, snapd) NOT reachable; only loopback — the socket control is sensitive (same probe outside the sandbox connects)",
+    "repository fingerprint identical before/after (supplementary)",
+    "canonical stop signal ODG_SCHEDULER_STOP=1 ⇒ no observation, idle (L1) / state=STOPPED (L0 tick, newly wired)"
+  ],
+  "notProven": [
+    "L1 under the real systemd user unit (not run: no systemd change in this lot)",
+    "the proposed unit filesystem confinement (deploy/…l1-fs-confinement.conf.proposed) — NOT installed, NOT tested under systemd",
+    "any value of L1 beyond L0: simulate() adds a decision record only; mission reliability still NOT_MEASURED"
+  ],
+  "defectFound": "L0 tick never injected the emergency-stop signal (core honoured it, wrapper did not pass it) — fixed in this lot; previous dossier claim corrected",
+  "inspectionHistory": "first harness (--ro-bind / /) REJECTED: host Unix sockets incl. the systemd user manager were reachable ⇒ not a zero-write proof; replaced by the minimal view above"
+}

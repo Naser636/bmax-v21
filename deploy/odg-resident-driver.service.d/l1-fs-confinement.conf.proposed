@@ -1,0 +1,13 @@
+# PROPOSAL (V375 Lot B) — NOT INSTALLED, NOT TESTED UNDER SYSTEMD. Owner decision + test before any L1 activation.
+# Filesystem confinement for the resident driver: read-only everywhere except its technical trace and the precompiled
+# build tree its freshness-guarded launcher may rebuild (odg-resident-driver-build.sh writes runtime/dist/bin AND
+# runtime/dist/core via --outdir=runtime/dist). CAVEATS: ProtectSystem/ProtectHome in a USER manager rely on unprivileged
+# user namespaces; the launcher's `npx tsx` fallback may need a writable npm cache (~/.npm) under ProtectHome=read-only —
+# both must be checked on the first owner test tick. The ".proposed" suffix keeps systemd from loading it.
+# Install (owner, user-systemd, no root): cp to ~/.config/systemd/user/odg-resident-driver.service.d/l1-fs-confinement.conf,
+# systemctl --user daemon-reload, run one tick, check Result=success + the log line; rollback = delete the file + reload.
+[Service]
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/bmax-v21/runtime/logs /home/ubuntu/bmax-v21/runtime/dist
+PrivateTmp=yes
