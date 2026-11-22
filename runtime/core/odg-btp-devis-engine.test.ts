@@ -54,10 +54,10 @@ function main() {
   check("qualifyFunctions: 20 functions; photo/plan/voice (1,2,3) ABSENT; built+partial+absent = 20", q.total === 20 && [1, 2, 3].every((n) => q.functions.find((x: any) => x.n === n).status === "ABSENT") && q.built + q.partial + q.absent === 20);
   check("qualifyFunctions honest: nothing claimed OPERATIONAL end-to-end; >=1 ABSENT (not all built)", q.absent >= 3 && /Nothing claimed OPERATIONAL/i.test(q.note));
 
-  check("contract: reuses quote.ts/chantier-profitability/normalize (no 2nd engine); margin≠markup; measurement distinct; photo-not-exact", D.BTP_DEVIS_ENGINE_CONTRACT.invariants.some((i: string) => /MARGIN.*MARKUP.*never conflated/.test(i)) && D.BTP_DEVIS_ENGINE_CONTRACT.invariants.some((i: string) => /no second lifecycle/.test(i)) && D.BTP_DEVIS_ENGINE_CONTRACT.invariants.some((i: string) => /photo alone cannot yield exact dimensions/.test(i)));
+  check("contract: complementary to quote.ts/chantier-profitability (no 2nd engine); margin≠markup; measurement distinct; photo-not-exact", D.BTP_DEVIS_ENGINE_CONTRACT.invariants.some((i: string) => /MARGIN.*MARKUP.*never conflated/.test(i)) && D.BTP_DEVIS_ENGINE_CONTRACT.invariants.some((i: string) => /no second lifecycle/.test(i)) && D.BTP_DEVIS_ENGINE_CONTRACT.invariants.some((i: string) => /photo alone cannot yield exact dimensions/.test(i)));
   check("deterministic + frozen", JSON.stringify(D.computeDevis(req)) === JSON.stringify(r) && Object.isFrozen(r) && Object.isFrozen(r.lines));
 
-  process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-devis-engine (V260 §5: deterministic BTP devis costing — exact integer-minor COST→margin→VAT→TTC; MARGIN≠MARKUP; measurement-state gating [ESTIMATED/ASSUMED ⇒ not final]; omission/under-pricing detection; variants; forecast-vs-actual [estimated≠realized margin]; fail-closed; honest 20-fn map [photo/plan/voice ABSENT]; composes quote/profitability/normalize — no 2nd engine)" : f + " FAIL") + "\n");
+  process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-btp-devis-engine (V260 §5: deterministic BTP devis costing — exact integer-minor COST→margin→VAT→TTC; MARGIN≠MARKUP; measurement-state gating [ESTIMATED/ASSUMED ⇒ not final]; omission/under-pricing detection; variants; forecast-vs-actual [estimated≠realized margin]; fail-closed; honest 20-fn map [photo/plan/voice ABSENT]; complementary to quote/profitability — no 2nd engine)" : f + " FAIL") + "\n");
   process.exit(f === 0 ? 0 : 1);
 }
 main();

@@ -6,7 +6,7 @@
  * odg-metier-improvement-index and its downstream improvements — but had NO bin/route/caller, so that whole chain never
  * ran outside tests. READ-ONLY: build() is a pure projection over committed sources; this entry writes nothing unless
  * --write <path> is given. A section that cannot be computed renders NOT_MEASURED (dashboard contract).
- * Usage: npx tsx runtime/bin/odg-cto-dashboard-run.ts [--summary] [--write <file>]
+ * Usage: npx tsx runtime/bin/odg-cto-dashboard-run.ts [--summary] [--write <file>]   (<file> is resolved against the REPO ROOT)
  */
 const fs = require("fs");
 const path = require("path");
