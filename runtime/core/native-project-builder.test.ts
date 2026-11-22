@@ -52,6 +52,10 @@ const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "
   let n = 0; const drifting = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "module.exports={add:(a,b)=>a-b+" + (0 * (n++)) + "*" + n + "};" : "const ops=require('./ops.js');module.exports=(a,b)=>ops.add(a,b);" });
   const rdr = await B.buildProject(spec, { generateFile: drifting, maxRepair: 3 });
   check(rdr.accepted === false && rdr.repairs === 3 && rdr.repairStopReason === "REPAIR_BUDGET_EXHAUSTED", "a generator whose output CHANGES each round keeps its full budget (3 repairs) ⇒ REPAIR_BUDGET_EXHAUSTED");
+  // inspection MED: a TRANSIENT generate failure during a repair keeps the old content — it must NOT be read as "no progress"
+  let k = 0; const transient = async (f: any) => { k++; if (k <= 2) return staysWrong(f); if (k <= 4) return { ok: false }; return good(f); };
+  const rtr = await B.buildProject(spec, { generateFile: transient, maxRepair: 3 });
+  check(rtr.accepted === true && rtr.repairs === 2 && rtr.repairStopReason === null, "transient generate failure in a repair round ⇒ retried (not NO_PROGRESS), then accepted");
 
   // write-set confinement: a file outside the write-set is refused.
   const outSpec = { ...spec, architecture: [{ path: "src/secrets.js", contract: "x" }] };

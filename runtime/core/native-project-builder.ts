@@ -103,8 +103,13 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
       try { const fb = RF.buildExecutionFeedback(s.repairExamples, entryFn); if (fb && fb.hasFailure === true && typeof fb.verifyError === "string") verifyHint = fb.verifyError; } catch { /* fail-closed to generic */ }
     }
     const hint = !build.ok ? { buildError: build.error } : { verifyError: verifyHint };
-    for (const fileSpec of arch) { if (!files[fileSpec.path]) continue; const g = await deps.generateFile({ ...fileSpec, ...hint }, builtContracts); if (g && g.ok === true && typeof g.content === "string") files[fileSpec.path] = g.content; }
-    if (snapshot() === before) { repairStopReason = "NO_PROGRESS_IDENTICAL_REGENERATION"; break; }   // anti-loop: nothing changed
+    let regenFailed = 0;   // a transient generate failure (e.g. model timeout) keeps the old content — NOT "no progress"
+    for (const fileSpec of arch) { if (!files[fileSpec.path]) continue; const g = await deps.generateFile({ ...fileSpec, ...hint }, builtContracts); if (g && g.ok === true && typeof g.content === "string") files[fileSpec.path] = g.content; else regenFailed++; }
+    // anti-loop: stop ONLY when every file regenerated successfully AND nothing changed (inspection MED: a failed generate
+    // keeps old content and must keep its retry budget). Trade-off (stated): a sampled model fed the identical prompt could
+    // still produce different output; at the default low temperature an identical round is treated as no new information. A timeout-based hang-guard
+    // verdict is not re-run after an identical round (accepted risk: a spurious TIMEOUT then stands — still fail-closed).
+    if (regenFailed === 0 && snapshot() === before) { repairStopReason = "NO_PROGRESS_IDENTICAL_REGENERATION"; break; }
     build = assembleAndLoad(files);
     verified = runVerify();
   }
