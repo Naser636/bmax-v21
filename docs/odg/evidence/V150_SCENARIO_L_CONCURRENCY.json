@@ -1,0 +1,116 @@
+{
+  "scenario": "V15.0 §45 L — adaptive concurrency (measured)",
+  "host": {
+    "cpus": 8,
+    "totalMemGb": 25
+  },
+  "workload": {
+    "suites": 24,
+    "list": [
+      "runtime/core/acceptance-evidence-demonstrator.test.ts",
+      "runtime/core/accessibility-applicability.test.ts",
+      "runtime/core/accessibility-check.test.ts",
+      "runtime/core/action-gate.test.ts",
+      "runtime/core/actor-provenance.test.ts",
+      "runtime/core/agent-factory.test.ts",
+      "runtime/core/agent-governance-harness.test.ts",
+      "runtime/core/agent-identity.test.ts",
+      "runtime/core/ai-act-annex-iv-completeness.test.ts",
+      "runtime/core/ai-act-in-force.test.ts",
+      "runtime/core/ai-act-role-classifier.test.ts",
+      "runtime/core/ai-assurance-assessment.test.ts",
+      "runtime/core/ai-assurance-regression.test.ts",
+      "runtime/core/ai-assurance-report.test.ts",
+      "runtime/core/api-contract.test.ts",
+      "runtime/core/architecture-audit.test.ts",
+      "runtime/core/architecture-fitness.test.ts",
+      "runtime/core/assurance-pilot-metrics.test.ts",
+      "runtime/core/assurance-pilot-runner.test.ts",
+      "runtime/core/audit-log.test.ts",
+      "runtime/core/autonomous-commercial-cycle.test.ts",
+      "runtime/core/autonomous-execution-policy.test.ts",
+      "runtime/core/autonomy-claim-guard.test.ts",
+      "runtime/core/autonomy-eval-harness.test.ts"
+    ],
+    "excludedByPreflight": [
+      {
+        "suite": "runtime/core/artifact-state.test.ts",
+        "cls": "FAIL"
+      }
+    ],
+    "hermetic": "non-hazard core suites (odg-test-report.suiteIsHazard false), excluding suites that need runtime/dist or live artefacts"
+  },
+  "repeats": 2,
+  "measurements": [
+    {
+      "level": 1,
+      "wallMs": [
+        27539,
+        27417
+      ],
+      "failures": 0
+    },
+    {
+      "level": 2,
+      "wallMs": [
+        13744,
+        14718
+      ],
+      "failures": 0
+    },
+    {
+      "level": 4,
+      "wallMs": [
+        6893,
+        6755
+      ],
+      "failures": 0
+    },
+    {
+      "level": 8,
+      "wallMs": [
+        4128,
+        4230
+      ],
+      "failures": 0
+    }
+  ],
+  "decision": {
+    "chosen": 8,
+    "bestMedianMs": 4179,
+    "chosenMedianMs": 4179,
+    "speedupVsSerial": 6.58,
+    "reason": "smallest failure-free level within 10% of the fastest (diminishing returns ⇒ fewer resources)",
+    "rows": [
+      {
+        "level": 1,
+        "medianMs": 27478,
+        "failures": 0,
+        "runs": 2
+      },
+      {
+        "level": 2,
+        "medianMs": 14231,
+        "failures": 0,
+        "runs": 2
+      },
+      {
+        "level": 4,
+        "medianMs": 6824,
+        "failures": 0,
+        "runs": 2
+      },
+      {
+        "level": 8,
+        "medianMs": 4179,
+        "failures": 0,
+        "runs": 2
+      }
+    ]
+  },
+  "limits": [
+    "one host, one workload class (test suites) — the chosen level is valid for this workload/host only",
+    "wall time includes tsx start-up per suite",
+    "no model/provider calls measured here"
+  ]
+}
