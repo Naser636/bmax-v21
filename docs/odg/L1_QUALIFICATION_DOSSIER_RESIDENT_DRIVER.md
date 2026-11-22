@@ -21,7 +21,7 @@
 | Independent results | L0 cycles independently inspected (V242/V244) | register / compass |
 
 ## 3. Gaps that block a recommendation to activate L1
-1. ~~No L1 cycle run~~ **Lot B:** one L1 SIMULATE cycle ran on the real repository state inside a read-only, no-network bubblewrap sandbox: zero write, `wouldExecute=false`, `canTriggerL2=false`, stop honoured (`docs/odg/evidence/LOT_B_L1_SANDBOX_EVIDENCE.json`). **Still missing:** a cycle under the real systemd unit, and the unit's filesystem confinement (proposed in `deploy/odg-resident-driver.service.d/l1-fs-confinement.conf.proposed`, not installed).
+1. ~~No L1 cycle run~~ **Lot B:** one L1 SIMULATE cycle ran on the real repository state inside a bubblewrap sandbox with a minimal read-only view (no host root, no /run ⇒ host Unix sockets such as the systemd user manager unreachable, checked by negative controls), no network: zero write, `wouldExecute=false`, `canTriggerL2=false`, stop honoured (`docs/odg/evidence/LOT_B_L1_SANDBOX_EVIDENCE.json`). **Still missing:** a cycle under the real systemd unit, and the unit's filesystem confinement (proposed in `deploy/odg-resident-driver.service.d/l1-fs-confinement.conf.proposed`, not installed).
 2. **Mission reliability is NOT_MEASURED.** Only 3 executed attempts exist in `mission-attempt-log`, below n=20, so the value of simulating is unknown.
 3. **Autonomy availability since 2026-11-08 is 0.58,** with every candidate SLO exhausted. The guard (#860) is installed, but its structural benefit still has to be **measured over a full window**.
 4. **No configured SLO.** There is no target against which L1 could be judged, and choosing one is the owner's decision.
