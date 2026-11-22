@@ -45,6 +45,7 @@ function parse(text: string): any {
   return { ok: true, anchors };
 }
 function blobText(repo: string, blob: string): string { return git(repo, ["cat-file", "-p", blob]).out; }
+function anchorsOf(repo: string, rev: string): Record<string, string[]> | null { const r = git(repo, ["show", rev + ":" + FILE]); if (!r.ok) return null; const q = parse(r.out); return q.ok ? q.anchors : null; }
 function commitInfo(repo: string, sha: string): any {
   const [sig, key, author, committer, date, subject, parents] = git(repo, ["show", "-s", "--format=%G?%x1f%GK%x1f%an <%ae>%x1f%cn <%ce>%x1f%cI%x1f%s%x1f%P", sha]).out.replace(/\n$/, "").split("\x1f");
   return { sha, signature: sig, signingKey: key || null, author, committer, date, subject, parents: (parents || "").split(" ").filter(Boolean) };
@@ -95,7 +96,11 @@ function audit(repo: string, ref: string, signerKeys: string[] | null): any {
   const pinned: any[] = [];
   if (final && final.ok) for (const k of Object.keys(final.anchors)) for (const fp of final.anchors[k]) {
     const intro = pinIntro[k + "\u0000" + fp] || null;
-    const allOwner = !!(intro && intro.authors.length && intro.authors.every(ownerSigned));
+    // (re-inspection MED E5) every author owner-signed AND at least one owner-signed author's OWN diff (vs its first
+    // parent) adds this exact fingerprint — a provider pin carried in history under an owner commit is not credited.
+    const addsIt = (ci: any) => { const p0 = ci.parents[0]; const before = p0 ? anchorsOf(repo, p0) : null; const after = anchorsOf(repo, ci.sha);
+      return !!(after && (after[k] || []).includes(fp) && !(before && (before[k] || []).includes(fp))); };
+    const allOwner = !!(intro && intro.authors.length && intro.authors.every(ownerSigned) && intro.authors.some((ci: any) => ownerSigned(ci) && addsIt(ci)));
     pinned.push({ purpose: k, fingerprint: fp, introducedAt: intro ? { step: intro.step.sha, pr: intro.pr, authoredBy: intro.authors.map((a: any) => ({ sha: a.sha, signature: a.signature, signingKey: a.signingKey })) } : null, ownerSigned: allOwner });
   }
   const malformed = !!(final && !final.ok);

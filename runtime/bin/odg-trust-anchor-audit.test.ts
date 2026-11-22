@@ -59,6 +59,17 @@ if (sshOk) {
   a = j(run(["--signer-keys", SK]));
   const pe = (a.pinned || []).find((x: any) => x.fingerprint === "e".repeat(64)) || {};
   check("E1: a pin written only by an UNSIGNED merge resolution is NOT owner-signed (merge counted as author)", pe.ownerSigned === false && a.verdict === "PINS_NOT_OWNER_SIGNED" && run(["--signer-keys", SK, "--require-signed"]).status === 1);
+  // re-inspection MED (E5): provider commit P adds Z (dropped by its merge); owner branches from P and signs O adding only W
+  g("checkout", "-q", "-b", "b1"); put({ MATURITY_EVIDENCE: ["d".repeat(64), "e".repeat(64), "f".repeat(64)] }); commit("P adds F (unsigned)");
+  g("checkout", "-q", "main"); g("merge", "-q", "--no-ff", "--no-commit", "b1"); g("checkout", "main", "--", "docs/odg/evidence/TRUST_ANCHORS.json"); g("add", "-A");
+  cp.spawnSync("git", ["-C", R, "commit", "-q", "-m", "Merge pull request #91 from x/b1"], { encoding: "utf8", env: ENV });
+  g("checkout", "-q", "-b", "ob", "b1"); put({ MATURITY_EVIDENCE: ["d".repeat(64), "e".repeat(64), "f".repeat(64), "9".repeat(64)] }); commit("owner adds 9 (signed)", true);
+  g("checkout", "-q", "main"); g("merge", "-q", "--no-ff", "--no-commit", "ob"); g("checkout", "ob", "--", "docs/odg/evidence/TRUST_ANCHORS.json"); g("add", "-A");
+  cp.spawnSync("git", ["-C", R, "commit", "-q", "-m", "Merge pull request #92 from x/ob"], { encoding: "utf8", env: ENV });
+  a = j(run(["--signer-keys", SK]));
+  const pf = (a.pinned || []).find((x: any) => x.fingerprint === "f".repeat(64)) || {};
+  const p9 = (a.pinned || []).find((x: any) => x.fingerprint === "9".repeat(64)) || {};
+  check("E5: a provider pin carried under an owner-signed commit whose own diff does not add it is NOT owner-signed (the owner's own pin is)", pf.fingerprint && pf.ownerSigned === false && p9.ownerSigned === true);
 } else process.stdout.write("skip - ssh-keygen unavailable (signed paths not exercised)\n");
 // HIGH-2: string-valued purpose (substring-matchable by a naive consumer) ⇒ MALFORMED
 fs.writeFileSync(FILE, JSON.stringify({ COLLECTION_ARTIFACT: "c".repeat(64), KNOWLEDGE_RECORD: [], INSPECTION_RECORD: [], MATURITY_EVIDENCE: [] })); commit("string-valued purpose");
