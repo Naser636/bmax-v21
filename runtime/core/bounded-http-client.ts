@@ -36,10 +36,15 @@ function isPrivateHost(host: string): boolean {
   return false;
 }
 
-/** V15 closure — EGRESS KILL-SWITCH at the single real HTTP client (root cause: the switch ODG_RADAR_LIVE=1 was enforced
+/** V15 closure — EGRESS KILL-SWITCH at the RADAR/research HTTP client (root cause: the switch ODG_RADAR_LIVE=1 was enforced
  * per entrypoint, so self-running modules — fr07-live-collection, odg-v360-chains-run, collect-to-signals defaults —
  * egressed without it). Real network I/O happens ONLY when ODG_RADAR_LIVE=1; an injected httpImpl (tests, recorded
- * fixtures) is not network I/O and stays allowed. Validation still runs first, so dry runs keep validating URLs. */
+ * fixtures) is not network I/O and stays allowed. Validation still runs first, so dry runs keep validating URLs.
+ * SCOPE (inspection MED-3): this is not the only egress path in the repo — finance-data-connector.ts (https.get default
+ * fetcher), capability-executors.ts (runAudit HEAD probes, research http-get worker gated by research-governor),
+ * odg-client.ts (IMAP) and `gh` CLI calls bypass it; none runs under an installed timer (V15 audit). A caller passing a
+ * real client as httpImpl also bypasses it — in-repo code could equally set the env var, so this is a switch, not a
+ * sandbox boundary; network confinement is the bwrap/systemd layer's job. */
 function egressAllowed(opts: any): boolean { return typeof (opts && opts.httpImpl) === "function" || process.env.ODG_RADAR_LIVE === "1"; }
 
 /** validateUrl(url, allowlist?): https-only, allowlisted host, no userinfo, not private. Returns {ok} or {ok:false,code}. */

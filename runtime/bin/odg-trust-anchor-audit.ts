@@ -1,92 +1,123 @@
 #!/usr/bin/env node
 "use strict";
 /*
- * V15 closure — TRUST_ANCHORS.json audit: DETECTION + ATTRIBUTION of every change to the owner trust anchors on a ref
- * (default origin/main). READ-ONLY (git plumbing only). For every pinned fingerprint it reports the commit that introduced
- * it, its author/committer, its Git signature status (%G?), and the PR merge that brought it in; it also lists every
- * historical add/remove.
+ * V15 closure — TRUST_ANCHORS.json audit: DETECTION + ATTRIBUTION of every change to the owner trust anchors that LANDED
+ * on a ref (default origin/main). READ-ONLY (git plumbing only).
  *
- * What it is NOT: an enforcing control. The provider's gh uses the same GitHub account that merges PRs, so attribution
- * by author name proves nothing (the provider commits as "ODG Runtime"). The only technically meaningful field is the
- * commit SIGNATURE: a provider cannot produce a valid signature with a key it does not hold. `--require-signed` exits 1
- * when any CURRENTLY pinned fingerprint was introduced by a commit whose signature is not "G" (good) — usable as a CI
- * check if the owner decides to sign anchor commits (owner decision; repository settings are not changed here).
+ * Method (inspection HIGH-1 fix): walk the ref's FIRST-PARENT chain — exactly the sequence of states main went through —
+ * and compare the anchor file's blob at each step with the previous step (`git cat-file --batch-check`, one call). Every
+ * step whose blob differs is a change: a direct commit, or a merge (PR #N from its "Merge pull request #N" subject). For a
+ * merge, the commits that touched the file on the merged side (p0..merge, --full-history) are listed with their
+ * signature status. No history simplification: a revoke followed by a re-pin through a merge is always visible.
  *
- *   node runtime/bin/odg-trust-anchor-audit.ts [--repo DIR] [--ref origin/main] [--require-signed] [--json]
+ * Strict parsing (inspection HIGH-2): any purpose whose value is not an array of strings ⇒ ANCHOR_FILE_MALFORMED.
+ *
+ * Signatures (inspection MED-1): %G? = G only means "signed by a key the AUDITOR's git trusts" (allowedSignersFile / gpg
+ * keyring — configured by whoever runs the audit). A pin counts as OWNER-SIGNED only if every commit that introduced it
+ * is G AND its signing key (%GK) is in --signer-keys <file> (one key id / fingerprint per line), which the owner keeps.
+ * `--require-signed` without --signer-keys is refused (exit 2): it would prove nothing.
+ *
+ * What it is NOT: an enforcing control by itself (shared merging account); it makes every pin visible and attributable.
+ *   npx tsx runtime/bin/odg-trust-anchor-audit.ts [--repo DIR] [--ref origin/main] [--signer-keys FILE] [--require-signed] [--json]
  */
 const cp = require("child_process");
+const fs = require("fs");
 const path = require("path");
 const FILE = "docs/odg/evidence/TRUST_ANCHORS.json";
 const PURPOSES = ["COLLECTION_ARTIFACT", "KNOWLEDGE_RECORD", "INSPECTION_RECORD", "MATURITY_EVIDENCE"];
 
-function git(repo: string, args: string[]): { ok: boolean; out: string } {
-  const r = cp.spawnSync("git", ["-C", repo, ...args], { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 });
+function git(repo: string, args: string[], input?: string): { ok: boolean; out: string } {
+  const r = cp.spawnSync("git", ["-C", repo, ...args], { encoding: "utf8", maxBuffer: 256 * 1024 * 1024, input });
   return { ok: r.status === 0, out: r.stdout || "" };
 }
-function anchorsAt(repo: string, rev: string): Record<string, string[]> | null {
-  const r = git(repo, ["show", rev + ":" + FILE]); if (!r.ok) return null;
-  let j: any; try { j = JSON.parse(r.out); } catch { return { __MALFORMED__: [] }; }
-  const out: Record<string, string[]> = {};
-  for (const p of PURPOSES) out[p] = Array.isArray(j[p]) ? j[p].map(String) : [];
-  for (const k of Object.keys(j)) if (k !== "//" && !PURPOSES.includes(k)) out[k] = Array.isArray(j[k]) ? j[k].map(String) : [];
-  return out;
+/* parse(text) -> { ok, anchors } | { ok:false } — strict: every non-comment key must be an array of strings. A UTF-8 BOM
+ * is stripped (consumers that require() the file strip it too — inspection LOW-3). */
+function parse(text: string): any {
+  let j: any; try { j = JSON.parse(text.replace(/^﻿/, "")); } catch { return { ok: false, why: "INVALID_JSON" }; }
+  if (j === null || typeof j !== "object" || Array.isArray(j)) return { ok: false, why: "NOT_AN_OBJECT" };
+  const anchors: Record<string, string[]> = {};
+  for (const k of Object.keys(j)) {
+    if (k === "//") continue;
+    if (!Array.isArray(j[k]) || !j[k].every((x: any) => typeof x === "string")) return { ok: false, why: "NON_ARRAY_OR_NON_STRING_VALUE (" + k + ")" };
+    anchors[k] = j[k].slice();
+  }
+  for (const p of PURPOSES) if (!anchors[p]) anchors[p] = [];
+  return { ok: true, anchors };
 }
-function prOf(repo: string, sha: string, ref: string): string | null {
-  // the EARLIEST "Merge pull request" commit descending from sha (the PR that brought it in)
-  const r = git(repo, ["log", "--merges", "--ancestry-path", "--reverse", "--format=%H %s", sha + ".." + ref]);
-  const m = r.out.split("\n").map((l: string) => /^([0-9a-f]{40}) Merge pull request #(\d+)/.exec(l)).find(Boolean);
-  return m ? "#" + m[2] + " (" + m[1].slice(0, 8) + ")" : null;
+function blobText(repo: string, blob: string): string { return git(repo, ["cat-file", "-p", blob]).out; }
+function commitInfo(repo: string, sha: string): any {
+  const [sig, key, author, committer, date, subject, parents] = git(repo, ["show", "-s", "--format=%G?%x1f%GK%x1f%an <%ae>%x1f%cn <%ce>%x1f%cI%x1f%s%x1f%P", sha]).out.replace(/\n$/, "").split("\x1f");
+  return { sha, signature: sig, signingKey: key || null, author, committer, date, subject, parents: (parents || "").split(" ").filter(Boolean) };
 }
 
-function audit(repo: string, ref: string): any {
+function audit(repo: string, ref: string, signerKeys: string[] | null): any {
   const v = git(repo, ["rev-parse", "--verify", ref + "^{commit}"]);
   if (!v.ok) return { ok: false, reason: "REF_NOT_FOUND " + ref };
   const head = v.out.trim();
-  const log = git(repo, ["log", "--reverse", "--format=%H%x1f%G?%x1f%GK%x1f%an <%ae>%x1f%cn <%ce>%x1f%cI%x1f%s", head, "--", FILE]);
-  const changes: any[] = []; const introducedBy: Record<string, any> = {};
-  for (const line of log.out.split("\n").filter(Boolean)) {
-    const [sha, sig, sigKey, author, committer, date, subject] = line.split("\x1f");
-    const parents = git(repo, ["rev-list", "--parents", "-n", "1", sha]).out.trim().split(" ").slice(1);
-    const before = parents.length ? anchorsAt(repo, parents[0]) || {} : {};
-    const after = anchorsAt(repo, sha) || {};
-    const keys = Array.from(new Set([...Object.keys(before), ...Object.keys(after)]));
+  const chain = git(repo, ["rev-list", "--first-parent", "--reverse", head]).out.split("\n").filter(Boolean);
+  const blobs = git(repo, ["cat-file", "--batch-check=%(objectname) %(objecttype)"], chain.map((c: string) => c + ":" + FILE).join("\n") + "\n").out.split("\n");
+  const ownerSigned = (ci: any) => ci.signature === "G" && !!signerKeys && !!ci.signingKey && signerKeys.includes(ci.signingKey);
+  let prevBlob: string | null = null; let prev: any = { ok: true, anchors: Object.fromEntries(PURPOSES.map((p) => [p, []])) };
+  const changes: any[] = []; const pinIntro: Record<string, any> = {}; let malformedAt: string | null = null;
+  for (let i = 0; i < chain.length; i++) {
+    const m = /^([0-9a-f]{40,64}) blob$/.exec(blobs[i] || ""); const blob = m ? m[1] : null;
+    if (blob === prevBlob) continue;
+    const step = commitInfo(repo, chain[i]);
+    const cur = blob ? parse(blobText(repo, blob)) : { ok: true, anchors: Object.fromEntries(PURPOSES.map((p) => [p, []])), absent: true };
+    const pr = /^Merge pull request #(\d+)/.exec(step.subject || "");
+    // commits that actually authored the change: the step itself if direct, else every commit on the merged side touching the file
+    const authors = step.parents.length > 1
+      ? git(repo, ["log", "--full-history", "--format=%H", step.parents[0] + ".." + chain[i], "--", FILE]).out.split("\n").filter((s: string) => s && s !== chain[i]).map((s: string) => commitInfo(repo, s))
+      : [step];
     const added: any[] = [], removed: any[] = [];
-    for (const k of keys) {
-      const b = new Set(before[k] || []), a = new Set(after[k] || []);
-      for (const fp of a) if (!b.has(fp)) { added.push({ purpose: k, fingerprint: fp }); introducedBy[k + ":" + fp] = { sha, sig, sigKey, author, committer, date }; }
-      for (const fp of b) if (!a.has(fp)) removed.push({ purpose: k, fingerprint: fp });
+    if (!cur.ok) { if (!malformedAt) malformedAt = chain[i]; }
+    else {
+      const keys = Array.from(new Set([...Object.keys(prev.ok ? prev.anchors : {}), ...Object.keys(cur.anchors)]));
+      for (const k of keys) {
+        const b = new Set(prev.ok ? prev.anchors[k] || [] : []), a = new Set(cur.anchors[k] || []);
+        for (const fp of a) if (!b.has(fp)) { added.push({ purpose: k, fingerprint: fp }); pinIntro[k + "\u0000" + fp] = { step, authors, pr: pr ? "#" + pr[1] : "DIRECT" }; }
+        for (const fp of b) if (!a.has(fp)) { removed.push({ purpose: k, fingerprint: fp }); delete pinIntro[k + "\u0000" + fp]; }
+      }
     }
-    changes.push({ sha, signature: sig, signingKey: sigKey || null, author, committer, date, subject, pr: prOf(repo, sha, head), added, removed });
+    changes.push({ sha: step.sha, kind: step.parents.length > 1 ? "MERGE" : "DIRECT", pr: pr ? "#" + pr[1] : (step.parents.length > 1 ? "MERGE_WITHOUT_PR_SUBJECT" : "DIRECT"),
+      stepSignature: step.signature, subject: step.subject, date: step.date, malformed: !cur.ok ? cur.why : null, added, removed,
+      authoredBy: authors.map((a: any) => ({ sha: a.sha, signature: a.signature, signingKey: a.signingKey, author: a.author, ownerSigned: ownerSigned(a) })) });
+    prevBlob = blob; if (cur.ok) prev = cur;
   }
-  const current = anchorsAt(repo, head);
+  const finalBlobLine = blobs[chain.length - 1] || ""; const present = /blob$/.test(finalBlobLine);
+  const final = present ? parse(blobText(repo, finalBlobLine.split(" ")[0])) : null;
   const pinned: any[] = [];
-  if (current) for (const k of Object.keys(current)) for (const fp of current[k]) {
-    const by = introducedBy[k + ":" + fp] || null;
-    pinned.push({ purpose: k, fingerprint: fp, introducedBy: by ? { sha: by.sha, signature: by.sig, signingKey: by.sigKey || null, author: by.author, committer: by.committer, date: by.date, pr: prOf(repo, by.sha, head) } : null,
-      signedIntroduction: !!(by && by.sig === "G") });
+  if (final && final.ok) for (const k of Object.keys(final.anchors)) for (const fp of final.anchors[k]) {
+    const intro = pinIntro[k + "\u0000" + fp] || null;
+    const allOwner = !!(intro && intro.authors.length && intro.authors.every(ownerSigned));
+    pinned.push({ purpose: k, fingerprint: fp, introducedAt: intro ? { step: intro.step.sha, pr: intro.pr, authoredBy: intro.authors.map((a: any) => ({ sha: a.sha, signature: a.signature, signingKey: a.signingKey })) } : null, ownerSigned: allOwner });
   }
-  const malformed = !!(current && current.__MALFORMED__);
-  return { ok: true, ref, head, file: FILE, present: !!current, malformed, pinnedCount: pinned.length, pinned, changes,
-    unknownPurposes: current ? Object.keys(current).filter((k) => !PURPOSES.includes(k)) : [],
-    unsignedPins: pinned.filter((p) => !p.signedIntroduction).length,
-    verdict: !current ? "ANCHOR_FILE_ABSENT" : malformed ? "ANCHOR_FILE_MALFORMED" : pinned.length === 0 ? "NO_ANCHORS_PINNED" : pinned.every((p) => p.signedIntroduction) ? "ALL_PINS_SIGNED_COMMITS" : "PINS_FROM_UNSIGNED_COMMITS",
-    limits: "attribution by author/committer name proves nothing (provider and owner share the merging account); only a good commit signature (%G?=G) by an owner key is meaningful, and which keys are the owner's is itself an owner decision" };
+  const malformed = !!(final && !final.ok);
+  return { ok: true, ref, head, file: FILE, present, malformed, malformedReason: malformed ? final.why : null, malformedInHistory: malformedAt,
+    pinnedCount: pinned.length, pinned, changes, signerKeysProvided: !!signerKeys,
+    unknownPurposes: final && final.ok ? Object.keys(final.anchors).filter((k) => !PURPOSES.includes(k)) : [],
+    pinsNotOwnerSigned: pinned.filter((p) => !p.ownerSigned).length,
+    verdict: !present ? "ANCHOR_FILE_ABSENT" : malformed ? "ANCHOR_FILE_MALFORMED" : pinned.length === 0 ? "NO_ANCHORS_PINNED" : !signerKeys ? "PINS_PRESENT_SIGNERS_UNVERIFIED" : pinned.every((p) => p.ownerSigned) ? "ALL_PINS_OWNER_SIGNED" : "PINS_NOT_OWNER_SIGNED",
+    limits: "author/committer names prove nothing (shared merging account); a pin is OWNER_SIGNED only if each introducing commit has a good signature (%G?=G) by a key listed in --signer-keys — the list and the auditor's git trust configuration are the owner's" };
 }
 
 function main(argv: string[]): void {
   const a = (k: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : null; };
   const repo = path.resolve(a("--repo") || path.resolve(__dirname, __dirname.split(path.sep).includes("dist") ? "../../.." : "../.."));
-  const r = audit(repo, a("--ref") || "origin/main");
+  const sk = a("--signer-keys"); let signerKeys: string[] | null = null;
+  if (sk) { try { signerKeys = fs.readFileSync(sk, "utf8").split("\n").map((l: string) => l.trim()).filter((l: string) => l && !l.startsWith("#")); } catch { process.stderr.write("[trust-anchor-audit] cannot read --signer-keys\n"); process.exit(2); } }
+  if (argv.includes("--require-signed") && !signerKeys) { process.stderr.write("[trust-anchor-audit] REFUSED: --require-signed needs --signer-keys <owner key list> (a bare %G?=G proves only 'signed by a key this git trusts')\n"); process.exit(2); }
+  const r = audit(repo, a("--ref") || "origin/main", signerKeys);
   if (argv.includes("--json")) process.stdout.write(JSON.stringify(r, null, 2) + "\n");
   else if (!r.ok) process.stdout.write("[trust-anchor-audit] " + r.reason + "\n");
   else {
-    process.stdout.write(`[trust-anchor-audit] ${r.ref}@${r.head.slice(0, 8)} verdict=${r.verdict} pinned=${r.pinnedCount} unsignedPins=${r.unsignedPins} changes=${r.changes.length}\n`);
-    for (const p of r.pinned) process.stdout.write(`  PIN ${p.purpose} ${p.fingerprint.slice(0, 16)}… by ${p.introducedBy ? p.introducedBy.sha.slice(0, 8) + " sig=" + p.introducedBy.signature + " " + (p.introducedBy.pr || "no PR") : "UNKNOWN"}\n`);
-    for (const c of r.changes) process.stdout.write(`  ${c.sha.slice(0, 8)} sig=${c.signature} +${c.added.length}/-${c.removed.length} ${c.pr || ""} ${c.subject.slice(0, 70)}\n`);
+    process.stdout.write(`[trust-anchor-audit] ${r.ref}@${r.head.slice(0, 8)} verdict=${r.verdict} pinned=${r.pinnedCount} notOwnerSigned=${r.pinsNotOwnerSigned} changes=${r.changes.length}\n`);
+    for (const p of r.pinned) process.stdout.write(`  PIN ${p.purpose} ${p.fingerprint.slice(0, 16)}… at ${p.introducedAt ? p.introducedAt.step.slice(0, 8) + " " + p.introducedAt.pr : "UNKNOWN"} ownerSigned=${p.ownerSigned}\n`);
+    for (const c of r.changes) process.stdout.write(`  ${c.sha.slice(0, 8)} ${c.kind} ${c.pr} +${c.added.length}/-${c.removed.length}${c.malformed ? " MALFORMED" : ""} ${String(c.subject).slice(0, 60)}\n`);
   }
   if (!r.ok || r.malformed) process.exit(1);
-  if (argv.includes("--require-signed") && r.unsignedPins > 0) process.exit(1);
+  if (argv.includes("--require-signed") && r.pinsNotOwnerSigned > 0) process.exit(1);
 }
 if (require.main === module) main(process.argv.slice(2));
-module.exports = { audit, FILE, PURPOSES };
+module.exports = { audit, parse, FILE, PURPOSES };
 export {};
