@@ -90,6 +90,11 @@ function main() {
   const subCycle = Object.assign({}, KA.REAL_CYCLE, { sources: [Object.assign({}, KA.REAL_CYCLE.sources[0], { url: "https://a.honeyhive.ai/x" }), Object.assign({}, KA.REAL_CYCLE.sources[1], { url: "https://b.honeyhive.ai/y" })] });
   const rSub = C.runChain({ asOfEpochMs: ASOF, cycle: subCycle });
   check("FIX2: ADMIT also refuses 2 subdomains of one registrable domain", rSub.admitted.length === 0 && rSub.rejected.length === 1 && rSub.rejected[0].verdict === "SINGLE_REGISTRABLE_DOMAIN");
+  const relabel = Object.assign({}, real, { learnedAt: ASOF + 400 * DAY, validUntil: ASOF + 400 * DAY + C.KNOWLEDGE_TTL_DAYS * DAY });
+  check("FIX3: relabelled learnedAt cannot refresh old sources (freshness tied to source dates)", C.runChain({ asOfEpochMs: ASOF + 400 * DAY, memory: [relabel] }).reuse.retrieved === 0);
+  const ipSrc = [{ url: "https://10.0.3.4/a", stance: "SUPPORTS", date: "2026-11-16" }, { url: "https://10.0.3.5/b", stance: "SUPPORTS", date: "2026-11-16" }];
+  check("FIX3: IP-literal hosts never count as independent registrable domains", C.runChain({ asOfEpochMs: ASOF, memory: [mk(ipSrc)] }).reuse.retrieved === 0);
+  check("FIX3: a timestamp after asOf (timezone-aware) ⇒ NOT admitted", C.runChain({ asOfEpochMs: ASOF, cycle: Object.assign({}, KA.REAL_CYCLE, { sources: KA.REAL_CYCLE.sources.map((y: any) => Object.assign({}, y, { consultedDate: "2026-11-22T23:00:00-11:00", publishedDate: undefined })) }) }).admitted.length === 0);
   check("honesty: the self-consistency (not authorship) limit is stated", /NOT who wrote it/.test(r1.integrityLimit));
   check("admitted record carries claimType + corroborationLevel + independentSupportCount (contract criterion)",
     r1.admitted[0].claimType === "FACT" && r1.admitted[0].corroborationLevel === "CORROBORATED" && r1.admitted[0].independentSupportCount >= 2);

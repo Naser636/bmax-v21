@@ -1,7 +1,7 @@
 {
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
   "id": "WIC-CM-RADAR-GATE-CHAIN-STEP1",
-  "state": "EXECUTING",
+  "state": "VERIFIED",
   "proposedBy": "Claude Code (technical provider) on owner Directive Maître V14.4, 2026-11-22",
   "authorizationRequired": "human PROPOSED -> AUTHORIZED before any EXECUTING",
   "v124Anchor": {
@@ -73,6 +73,11 @@
       "state": "EXECUTING",
       "at": "2026-11-22",
       "branch": "feat/cm-radar-gate-chain-step1"
+    },
+    {
+      "state": "VERIFIED",
+      "at": "2026-11-22",
+      "basis": "targeted+full-suite (no new failure), tsc 0, CI pass, independent inspection round 3 ACCEPT"
     }
   ],
   "reconciliation": "runtime/core/odg-radar-gate-chain.ts pre-existed (V254/V257 coverage verifier, PR #636). Step 1 EXTENDS it (verifyChain + its contract unchanged); tests appended to the existing odg-radar-gate-chain.test.ts (already in test:report, so package.json needs no change).",

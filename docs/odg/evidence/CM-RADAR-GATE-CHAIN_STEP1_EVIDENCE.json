@@ -102,12 +102,12 @@
     "host": "this VPS only (environment-dependent wall-clock)",
     "N": 20,
     "acquirePathMs": {
-      "p50": 0.317,
-      "p95": 0.884
+      "p50": 0.338,
+      "p95": 0.981
     },
     "reusePathMs": {
-      "p50": 0.194,
-      "p95": 0.396
+      "p50": 0.233,
+      "p95": 0.452
     },
     "acquisitionsAvoidedByReuse": "1 of 1 on run 2 (100% for the recorded query)"
   },
@@ -126,13 +126,13 @@
         "CONNECTED": 553,
         "NO_CONSUMER": 226
       },
-      "tool": "runtime/bin/odg-component-census-run.ts",
-      "note": "module gained a real consumer (odg-cto-dashboard radarGateChain)"
+      "tool": "runtime/bin/odg-component-census-run.ts"
     },
     "tests": {
-      "targeted": "runtime/core/odg-radar-gate-chain.test.ts ALL PASS (9 pre-existing V254 + exec + 2 rounds of inspection regressions)",
-      "fullSuiteWorktree": "835 total · 832 PASS · 3 FAIL — identical set to baseline main 25946a30 in a worktree (odg-cto-dashboard + odg-health: live-ledger dependent; odg-backup-restore: canonical-repo default). No new failure.",
-      "tsc": 0
+      "targeted": "odg-radar-gate-chain.test.ts ALL PASS (V254 + exec + 3 rounds of inspection regressions)",
+      "fullSuiteWorktree": "835 · 832 PASS · 3 FAIL, identical set to baseline main 25946a30 run in a worktree. The contract said \"2 known pre-existing\": the 3rd (odg-backup-restore) fails ONLY inside a worktree (script defaults REPO to the canonical clone) and passes on main.",
+      "tsc": 0,
+      "ci": "PR #853 required check passed"
     },
     "independentInspection": [
       {
@@ -149,10 +149,20 @@
       },
       {
         "round": 3,
-        "commit": "(this PR head)",
-        "verdict": "PENDING at evidence write time — see PR"
+        "commit": "3ec0a299",
+        "verdict": "ACCEPT",
+        "residualLowFixedAfter": [
+          "freshness tied to source dates",
+          "IP-literal hosts rejected",
+          "timezone-aware timestamps"
+        ],
+        "residualLowOpen": [
+          "self-consistent forgery on 2 fabricated domains still passes (needs keyed stamp, owner-gated p0e)",
+          "sources carry no per-claim text",
+          "pre-existing KA/COR: unknown claim type defaults to FACT; no freshness floor at ADMIT beyond 1990"
+        ]
       }
     ],
-    "integrityLimit": "self-consistency, not authorship: without a keyed provenance stamp (owner-gated key strategy, register item p0e-audit-log-keyed-integrity) a forger fabricating sources on 2 distinct domains can still pass reuse; memory must come from ODG's own store."
+    "integrityLimit": "self-consistency, not authorship: without a keyed provenance stamp (owner-gated, register p0e-audit-log-keyed-integrity) a forger fabricating sources on 2 distinct domains can still pass reuse; memory must come from ODG's own store."
   }
 }

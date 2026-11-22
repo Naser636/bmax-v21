@@ -115,7 +115,7 @@ function validSourceDate(date: any, asOf: number): boolean {
   if (typeof date !== "string") return false;
   // anchored: a bare date, or a full ISO-8601 timestamp that Date.parse accepts (no trailing garbage).
   const m = /^(\d{4})-(\d{2})-(\d{2})(T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2}))?$/.exec(date); if (!m) return false;
-  if (m[4] && !Number.isFinite(Date.parse(date))) return false;
+  if (m[4]) { const tp = Date.parse(date); if (!Number.isFinite(tp) || tp > asOf) return false; }   // timestamp: exact instant must not be after asOf
   const y = +m[1], mo = +m[2], d = +m[3]; const t = Date.UTC(y, mo - 1, d);
   const back = new Date(t);
   if (back.getUTCFullYear() !== y || back.getUTCMonth() !== mo - 1 || back.getUTCDate() !== d) return false;   // e.g. 2026-99-99
@@ -126,7 +126,7 @@ function knowledgeId(query: string, claim: any): string { return "kn:" + sha({ q
  * independence check than host-distinctness alone (an approximation: multi-label public suffixes like co.uk collapse). */
 function registrableDomains(urls: string[]): Set<string> {
   const out = new Set<string>();
-  for (const u of urls) { try { const h = new URL(u).hostname.toLowerCase().replace(/\.$/, ""); const p = h.split("."); out.add(p.length >= 2 ? p.slice(-2).join(".") : h); } catch { /* invalid ⇒ not counted */ } }
+  for (const u of urls) { try { const h = new URL(u).hostname.toLowerCase().replace(/\.$/, ""); if (/^\[.*\]$/.test(h) || /^\d{1,3}(\.\d{1,3}){3}$/.test(h)) continue; const p = h.split("."); out.add(p.length >= 2 ? p.slice(-2).join(".") : h); } catch { /* invalid ⇒ not counted */ } }
   return out;
 }
 const PROVENANCE_PREFIX = "RADAR_RECORDED_REAL:";
@@ -177,6 +177,8 @@ function reusable(rec: any, query: string, asOf: number): any {
   if (!Number.isFinite(rec.validUntil)) reasons.push("no numeric validUntil (immortal record refused)");
   if (!Number.isFinite(rec.learnedAt) || rec.learnedAt > asOf) reasons.push("learnedAt missing or in the future");
   else if (Number.isFinite(rec.validUntil) && rec.validUntil > rec.learnedAt + KNOWLEDGE_TTL_DAYS * DAY_MS) reasons.push("validUntil exceeds learnedAt + TTL");
+  const srcDays = srcs.map((x: any) => (x && typeof x.date === "string" ? Date.UTC(+x.date.slice(0, 4), +x.date.slice(5, 7) - 1, +x.date.slice(8, 10)) : NaN));
+  if (srcDays.length && (srcDays.some((t: number) => !Number.isFinite(t)) || Math.min(...srcDays) + KNOWLEDGE_TTL_DAYS * DAY_MS < asOf)) reasons.push("sources older than TTL (freshness tied to source dates, not to relabelled learnedAt)");
   if (rec.status !== "VERIFIED") reasons.push("status not VERIFIED");
   if (!reasons.length) { const t = trustOf(rec, asOf); if (!t.trusted) reasons.push("memory-trust-gate: " + t.verdict); }
   return { ok: reasons.length === 0, reasons };
