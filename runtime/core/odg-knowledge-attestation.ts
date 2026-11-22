@@ -82,16 +82,22 @@ const OWNER_PURPOSES = Object.freeze(["INSPECTION_RECORD", "MATURITY_EVIDENCE"])
 /* V15 closure (audit D1): trust anchors are read from the COMMITTED file on origin/main (git show), never from the working
  * tree — an uncommitted local edit of TRUST_ANCHORS.json has no effect, so every pin is a merged, reviewable change
  * (see runtime/bin/odg-trust-anchor-audit.ts for detection/attribution). Any failure ⇒ empty (fail closed).
- * Limit: the local origin/main ref is only as honest as the last fetch (a local update-ref could forge it). */
+ * LIMITS (inspection H1 / M3 — NOT closed here): the local origin/main ref is provider-writable (git update-ref) and only
+ * as fresh as the last fetch, so a LOCAL verdict (INTEGRATE / VERIFIED maturity) can be forged or kept alive after an owner
+ * revocation by whoever controls this clone. A local result is therefore never the trust decision: the owner re-runs the
+ * verification on a clone they control, after `git fetch`, before relying on it (docs/odg/OWNER_SIGNING_PROCEDURE.md). */
 const ANCHOR_FILE = "docs/odg/evidence/TRUST_ANCHORS.json";
 const ANCHOR_REF = "origin/main";
 const ANCHOR_PURPOSES = Object.freeze(["COLLECTION_ARTIFACT", "KNOWLEDGE_RECORD", "INSPECTION_RECORD", "MATURITY_EVIDENCE"]);
-function repoRoot(): string | null { let d = __dirname; for (let i = 0; i < 8; i++) { if (fs.existsSync(path.join(d, ".git"))) return d; const u = path.dirname(d); if (u === d) break; d = u; } return null; }
+// (inspection L3) the repo root is derived from THIS module's known layout (runtime/core or runtime/dist/core), never by
+// walking up to an arbitrary enclosing repository.
+function repoRoot(): string | null { const d = path.resolve(__dirname, __dirname.split(path.sep).includes("dist") ? "../../.." : "../.."); return fs.existsSync(path.join(d, ".git")) ? d : null; }
 function loadCommittedAnchors(): any {
   const out: any = {}; for (const p of ANCHOR_PURPOSES) out[p] = [];
   const root = repoRoot();
   if (root) { try {
-    const b = require("child_process").execFileSync("git", ["show", ANCHOR_REF + ":" + ANCHOR_FILE], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 4 * 1024 * 1024 });
+    const env: any = {}; for (const k of Object.keys(process.env)) if (!/^GIT_/.test(k)) env[k] = process.env[k];   // no GIT_DIR / GIT_CONFIG_* redirection (inspection H1, partial)
+    const b = require("child_process").execFileSync("git", ["show", ANCHOR_REF + ":" + ANCHOR_FILE], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 4 * 1024 * 1024, env });
     const j = JSON.parse(b.toString("utf8"));
     for (const p of ANCHOR_PURPOSES) out[p] = Array.isArray(j[p]) ? j[p].filter((x: any) => typeof x === "string" && /^[0-9a-f]{64}$/.test(x)) : [];
   } catch { for (const p of ANCHOR_PURPOSES) out[p] = []; } }

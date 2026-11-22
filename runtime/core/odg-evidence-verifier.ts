@@ -24,14 +24,22 @@ function safeRel(p: any, prefix: string): boolean {
 
 /* makeCommittedReader(root) -> reads from the COMMITTED tree (git show HEAD:<path>) — uncommitted/unreviewed files never
  * count (inspection MEDIUM). Paths are validated by the caller; git itself confines reads to the repository. */
+/* gitEnv(): the caller's GIT_* variables (GIT_DIR, GIT_WORK_TREE, GIT_CONFIG_*, GIT_OBJECT_DIRECTORY…) are STRIPPED, so git
+ * reads THIS repository, not one chosen through the environment (inspection H1, partial: the local refs themselves stay
+ * writable by a local actor — see the module limits). */
+function gitEnv(): any { const e: any = {}; for (const k of Object.keys(process.env)) if (!/^GIT_/.test(k)) e[k] = process.env[k]; return e; }
 function makeCommittedReader(root: string, ref?: string): any {
   const cp = require("child_process"); if (ref !== undefined && !(typeof ref === "string" && /^[A-Za-z0-9._\/][A-Za-z0-9._\/-]*$/.test(ref))) return () => null;   // bad ref ⇒ fail-closed (reads nothing)
   const r = typeof ref === "string" ? ref : "HEAD";
   // V15 closure (audit D6): only a regular committed FILE is read — a tree (directory) or a committed symlink (mode 120000) ⇒ null.
+  // (inspection L1: a trailing "/" listed a directory's single child) — exact path match via -z, no trailing slash.
   return (rel: string) => { try {
-    const lt = cp.execFileSync("git", ["ls-tree", r, "--", rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"] }).toString("utf8");
-    if (!/^(100644|100755) blob [0-9a-f]{40,64}\t/.test(lt) || lt.trim().split("\n").length !== 1) return null;
-    return cp.execFileSync("git", ["show", r + ":" + rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 32 * 1024 * 1024 }); } catch { return null; } };
+    if (typeof rel !== "string" || !rel || rel.endsWith("/") || rel.includes("\0")) return null;
+    const lt = cp.execFileSync("git", ["ls-tree", "-z", r, "--", rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], env: gitEnv() }).toString("utf8");
+    const ents = lt.split("\0").filter(Boolean);
+    const m = ents.length === 1 ? /^(100644|100755) blob [0-9a-f]{40,64}\t([\s\S]*)$/.exec(ents[0]) : null;
+    if (!m || m[2] !== rel) return null;
+    return cp.execFileSync("git", ["show", r + ":" + rel], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 32 * 1024 * 1024, env: gitEnv() }); } catch { return null; } };
 }
 /* makeRepoReader(root) -> (relPath) => Buffer | null, WORKING-TREE reader confined to root (symlinks resolved and re-checked) — for sandbox tests. */
 function makeRepoReader(root: string): any {
@@ -84,5 +92,5 @@ function verifyMaturityEvidence(ev: any, reader: any, expect?: any): any {
   return Object.freeze({ ok: true, reason: "VERIFIED_ON_REAL_FILES_AND_OWNER_SIGNED", contractState: contract.state, evidenceSha256: actual });
 }
 
-module.exports = { verifyMaturityEvidence, makeRepoReader, makeCommittedReader, COUNTING_STATES };
+module.exports = { verifyMaturityEvidence, makeRepoReader, makeCommittedReader, gitEnv, COUNTING_STATES };
 export {};

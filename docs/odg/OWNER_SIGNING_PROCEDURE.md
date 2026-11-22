@@ -83,6 +83,15 @@ Rerun `runtime/bin/odg-gate-experiment-resident-confinement.ts`. The two review 
 - the key is pinned;
 - the sidecar is on `main`.
 
+## 5. Re-verify on a clone you control (the trust decision)
+
+A verdict computed on the provider's host is **not** the trust decision. Its local `origin/main` ref is writable by whoever controls that clone (`git update-ref`), and it is only as fresh as its last fetch. A forged or stale ref can therefore produce INTEGRATE, or keep a revoked key alive.
+
+Before relying on a result:
+1. On your own clone, run `git fetch`.
+2. Re-run the gate experiment, or the verifier, there.
+3. Run `npx tsx runtime/bin/odg-trust-anchor-audit.ts --signer-keys <your key list> --require-signed`.
+
 ## Revocation / rollback
 
 To revoke, remove the fingerprint from `TRUST_ANCHORS.json`. Every signature made with that key stops counting immediately.

@@ -51,7 +51,8 @@ function deriveEvidence(measurements: any): any {
 function runMeasuredExperiment(experiment: any, measurements: any, opts?: any): any {
   const x = isObj(experiment) ? experiment : {};
   const d0 = deriveEvidence(measurements);
-  const orv = isObj(x.ownerReview) ? ownerAnchoredReview(x.ownerReview.record, x.ownerReview.signed, x.ownerReview.candidateCommit) : Object.freeze({ ok: false, reason: "NO_OWNER_REVIEW" });
+  const orvIn = snapshot(x.ownerReview);
+  const orv = isObj(orvIn) ? ownerAnchoredReview(orvIn.record, orvIn.signed, orvIn.candidateCommit, orvIn.experimentId) : Object.freeze({ ok: false, reason: "NO_OWNER_REVIEW" });
   const evidence: Record<string, boolean> = { ...d0.evidence }; const basis: Record<string, string> = { ...d0.basis };
   for (const k of REVIEW_KEYS) { evidence[k] = orv.ok === true; basis[k] = (orv.ok ? "OWNER_REVIEW_PASS" : "OWNER_REVIEW_FAIL") + " (" + orv.reason + ")"; }
   const d = Object.freeze({ ...d0, evidence: Object.freeze(evidence), basis: Object.freeze(basis), ownerReview: orv });
@@ -65,8 +66,14 @@ function runMeasuredExperiment(experiment: any, measurements: any, opts?: any): 
  * inspection record (purpose INSPECTION_RECORD). ok ONLY if the key fingerprint is anchored in TRUST_ANCHORS.json
  * INSPECTION_RECORD (owner-controlled) AND the Ed25519 attestation verifies over the exact record. The provider cannot
  * satisfy this: it holds no anchored key, and the anchor list is empty by design until the owner pins one. */
-function ownerAnchoredReview(record: any, signed: any, candidateCommit: any): any {
+/* snapshot(v): plain-JSON deep copy (inspection M1: a getter could return the candidate on the binding check and the
+ * signed commit on the signature check — every check below runs on ONE frozen plain copy). Non-JSON ⇒ null. */
+function snapshot(v: any): any { try { return v === undefined ? undefined : JSON.parse(JSON.stringify(v)); } catch { return null; } }
+function ownerAnchoredReview(record0: any, signed0: any, candidateCommit: any, experimentId?: any): any {
+  const record = snapshot(record0), signed = snapshot(signed0);
   if (!isObj(record)) return Object.freeze({ ok: false, reason: "NO_RECORD" });
+  // V15 closure (inspection L2): when the caller names its experiment, the record must name the same one (if it names any)
+  if (experimentId !== undefined && record.experiment !== undefined && record.experiment !== experimentId) return Object.freeze({ ok: false, reason: "RECORD_FOR_ANOTHER_EXPERIMENT (" + String(record.experiment) + ")" });
   if (typeof candidateCommit !== "string" || !/^[0-9a-f]{40}$/.test(candidateCommit)) return Object.freeze({ ok: false, reason: "NO_CANDIDATE_COMMIT (full 40-hex sha required)" });
   if (record.subjectCommit !== candidateCommit) return Object.freeze({ ok: false, reason: "RECORD_NOT_BOUND_TO_CANDIDATE (subjectCommit " + String(record.subjectCommit) + ")" });
   if (record.verdict !== "ACCEPT") return Object.freeze({ ok: false, reason: "RECORD_VERDICT_NOT_ACCEPT (" + String(record.verdict) + ")" });

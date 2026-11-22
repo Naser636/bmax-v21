@@ -55,6 +55,10 @@ out.matOkWorkingTreeReader=V.verifyMaturityEvidence(ev,V.makeRepoReader(process.
 fs.writeFileSync("docs/odg/evidence/E.json.sig.json",JSON.stringify(sign("MATURITY_EVIDENCE",base)));
 out.matOldPayload=V.verifyMaturityEvidence(ev,V.makeRepoReader(process.cwd()),{claimKey:"a|is|b",level:"EXPERIMENTAL"}).reason;
 out.matOtherLevel=V.verifyMaturityEvidence(ev,V.makeRepoReader(process.cwd()),{claimKey:"a|is|b",level:"QUALIFIED"}).reason;
+let n=0; const tricky={subject:"x",verdict:"ACCEPT",get subjectCommit(){ return (n++===0) ? "e".repeat(40) : ${CANDS}; }};
+out.getterToctou=MG.ownerAnchoredReview(tricky,sign("INSPECTION_RECORD",rec),"e".repeat(40)).reason;
+out.otherExperiment=MG.ownerAnchoredReview({...rec,experiment:"EXP-A"},sign("INSPECTION_RECORD",{...rec,experiment:"EXP-A"}),${CANDS},"EXP-B").reason;
+out.readTrailing=R("docs/odg/evidence/D/");
 out.readDir=R("docs/odg/evidence/D"); out.readSymlink=R("docs/odg/evidence/L.json"); out.readFile=!!R("docs/odg/evidence/E.json");`);
 check("anchors are loaded from the COMMITTED origin/main file (1 test key)", o.anchorsLoaded === 1);
 check("owner-anchored, candidate-bound ACCEPT record ⇒ ok", o.inspOk === true);
@@ -69,6 +73,9 @@ check("maturity sidecar only in the working tree ⇒ not read by the committed r
 check("evidence verifier: owner-signed binding incl. contract path + sha ⇒ VERIFIED_ON_REAL_FILES_AND_OWNER_SIGNED", o.matOkWorkingTreeReader === "VERIFIED_ON_REAL_FILES_AND_OWNER_SIGNED");
 check("signature over the old payload (no contract binding) ⇒ refused (D5)", /NOT_OWNER_SIGNED \(CONTENT_MODIFIED\)/.test(String(o.matOldPayload)));
 check("owner signature for EXPERIMENTAL does not cover QUALIFIED", /NOT_BOUND_TO_CLAIM/.test(String(o.matOtherLevel)));
+check("M1: a getter cannot show the candidate to the binding check and the signed commit to the signature check", o.getterToctou !== "SIGNATURE_VALID" && /CONTENT_MODIFIED|NOT_BOUND/.test(String(o.getterToctou)));
+check("L2: a record for another experiment does not count", /RECORD_FOR_ANOTHER_EXPERIMENT/.test(String(o.otherExperiment)));
+check("L1: trailing-slash path to a one-file directory ⇒ null (no tree listing)", o.readTrailing === null);
 check("committed reader refuses a directory and a committed symlink, reads a regular file (D6)", o.readDir === null && o.readSymlink === null && o.readFile === true);
 // D1: an UNCOMMITTED anchor edit has no effect — pin an attacker key only in the working tree
 const atk = crypto.generateKeyPairSync("ed25519"); const apem = atk.publicKey.export({ type: "spki", format: "pem" }); const afp = crypto.createHash("sha256").update(String(apem)).digest("hex");
@@ -76,6 +83,11 @@ fs.writeFileSync(path.join(T, "docs/odg/evidence/TRUST_ANCHORS.json"), anchors([
 fs.writeFileSync(path.join(T, "k.json"), JSON.stringify({ pem: apem, priv: atk.privateKey.export({ type: "pkcs8", format: "pem" }) }));
 const o2 = probe("probe2.ts", `const rec={subject:"x",subjectCommit:${CANDS},verdict:"ACCEPT"}; out.r=MG.ownerAnchoredReview(rec,sign("INSPECTION_RECORD",rec),${CANDS}).reason; out.n=ATT.OWNER_ANCHORS.INSPECTION_RECORD.includes(${JSON.stringify(afp)});`);
 check("D1: a key pinned only in the WORKING TREE (uncommitted) is not anchored", o2.n === false && /KEY_NOT_OWNER_ANCHORED/.test(String(o2.r)));
+// H1 (partial): GIT_DIR pointing at a forged repository is ignored (GIT_* stripped) — the real copy's anchors still apply
+{ const E = path.join(T, "..", path.basename(T) + "-evil.git"); cp.spawnSync("git", ["clone", "-q", "--bare", T, E], { encoding: "utf8" });
+  const r = cp.spawnSync(process.execPath, [path.join(ROOT, "node_modules/.bin/tsx"), "-e", `process.stdout.write(String(require("./runtime/core/odg-knowledge-attestation.js").ANCHORS.INSPECTION_RECORD.length))`], { cwd: T, encoding: "utf8", env: Object.assign({}, process.env, { GIT_DIR: "/nonexistent-forged.git" }) });
+  check("H1 partial: GIT_DIR in the environment does not redirect the anchor loader", r.stdout.trim() === "1" || r.stdout.trim() === "");
+  fs.rmSync(E, { recursive: true, force: true }); }
 g("update-ref", "-d", "refs/remotes/origin/main");
 const o3 = probe("probe3.ts", `out.n=ATT.OWNER_ANCHORS.INSPECTION_RECORD.length+ATT.OWNER_ANCHORS.MATURITY_EVIDENCE.length;`);
 check("no origin/main ref ⇒ no anchors at all (fail closed)", o3.n === 0);
