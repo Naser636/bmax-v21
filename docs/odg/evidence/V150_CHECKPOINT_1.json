@@ -1,0 +1,25 @@
+{
+  "checkpoint": "V150-CP1 (§46)",
+  "date": "2026-11-22",
+  "headInitial": "b931cae6",
+  "headFinal": "30bfaca1",
+  "prs": {"#878": "V15.0 registered PROPOSED", "#879": "phase-1 correspondence register", "#880": "4-module judgment (corrected by #881)", "#881": "component-judgment runner + 198-item reconciliation", "#882": "root-cause fixes"},
+  "reconciliation": {
+    "announced": 199, "real": 198,
+    "source": "docs/odg/evidence/V150_199_RECONCILIATION.json (each module read individually)",
+    "distribution": {"MISSING_CONSUMER": 63, "DOCUMENTARY_ASSET": 34, "MISSING_INTEGRATION": 33, "DORMANT_WITHOUT_CONSUMER": 29, "EXTERNAL_AUTHORITY_REQUIRED": 12, "ALREADY_RESOLVED": 10, "DEPENDENCY_BLOCKED": 4, "CONTRACT_MISMATCH": 3, "OBSOLETE": 3, "DUPLICATE": 3, "INVALID_STATUS": 2, "PERMISSION_BLOCKED": 2},
+    "resolvedThisCheckpoint": [
+      "odg-component-judgment: had no runner → runtime/bin/odg-component-judgment-run.ts (#881)",
+      "front-door-attempt: pipeline load failed (MODULE_NOT_FOUND, swallowed) → fixed, test fails before/passes after (#882)",
+      "odg-cto-dashboard: no runtime entry → runtime/bin/odg-cto-dashboard-run.ts; its ~40-module view chain now runs (census +1 static consumer; runtime reach is the real gain) (#882)",
+      "odg-btp-devis-engine: false composition claim (loads no module) → contract corrected, not faked (#882)",
+      "profession-p5/p8-reference: reclassified DUPLICATE (métier slots already qualified by other modules) (#881)"
+    ],
+    "reviewRequired": ["idempotency-guard dedups on key only (p12 gap-closer exists) — shared with the Radar (frontier-radar-store, frontier-collection) ⇒ changing it changes Radar behaviour, forbidden this campaign ⇒ REPAIR_REQUIRES_REVIEW"],
+    "remainingOpen": "≈190 items keep their diagnosis; the per-module minimalFix in the register is the backlog (largest groups: lot deliverables without a caller, registries that only name modules, gap-closers never called by the module they correct, assistants family without surface)"
+  },
+  "phases9to16": "NOT_STARTED as V15.0 lots in this checkpoint (only the reconciliation lot ran). Existing capabilities relevant to phase 9 (build-recovery-engine, odg-open-mission-recovery, checkpoint-engine) were not re-audited here.",
+  "radar": "unchanged (no Radar file modified since #876)",
+  "nativeVsProvider": "all construction in this checkpoint was done by the provider (Claude Code) and its sub-agents; ODG-native execution share = 0 for these lots — NOT claimed",
+  "nextAction": "backlog lot: give a caller to the gap-closing modules whose correcting module is in an authorized scope (e.g. odg-portfolio-concentration-view → portfolio-finance, odg-fr-invoice-compliance/odg-fr-due-date → odg-btp-billing-engine, metric-window-integrity → dora/SLO views), each with a fail-before/pass-after test and inspection"
+}
