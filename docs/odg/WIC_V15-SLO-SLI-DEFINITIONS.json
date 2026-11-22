@@ -28,8 +28,8 @@
     "LOT_A evidence history kept: previous-definition headline numbers carried in .history, not silently overwritten"
   ],
   "acceptance_criteria": [
-    "odg-autonomy-availability.test.ts ALL PASS (25 checks incl. D1 producer-grounding, D2 slots/edges, D3 split, D4 breakdown, D6 validation)",
-    "the same test FAILS against the origin/main module (18 of 25 NOT OK — reproduction)",
+    "odg-autonomy-availability.test.ts ALL PASS (34 checks)",
+    "r2 checks (MED-1/2/3, LOW) FAIL against 91659f3d (10 NOT OK) and the r1 checks FAIL against origin/main (18 NOT OK) — reproduction",
     "tsc: no errors in touched files; CI green"
   ],
   "rollback": "git revert of the PR (data/evidence files return to the previous definitions)",
@@ -39,11 +39,26 @@
   ],
   "stateNote": "NOT VERIFIED: provider must not self-certify; review/inspection count only from an OWNER-anchored signature.",
   "knownLimits": [
-    "missing-slot formula floor(gap/cadence)−1 for gaps > 1.5× cadence is lenient for gaps in (22.5, 30) min (0 missing); window edges treat the boundary as a virtual tick (≤ 1 slot lenient per edge)",
-    "off-schedule rows (manual / retried runs < 0.5× cadence apart) are counted, not de-duplicated (7 in the pre-cutover window)",
-    "cadence 15 min is a constant read from /etc/systemd/system/odg-mission-runner.timer (OnUnitActiveSec=15min), not parsed at runtime; a cadence change requires updating SCHEDULE_CADENCE_MS",
-    "CI numbers come from the static LOT3_CI_EVENTS.json snapshot (fetched 2026-11-22, gh run list -L 1000); main-push window 2026-11-08T22:11:44Z → 2026-11-22T04:58:16Z, 452 decisive runs",
+    "timer drift (OnUnitActiveSec=15min + default AccuracySec) leaves some grid slots without a tick (≈0.71% of slots since 2026-11-08); charged as unavailable (fail-closed) and reported as driftSlips",
+    "cadence 15 min is a constant read from /etc/systemd/system/odg-mission-runner.timer, not parsed at runtime",
+    "CI main-push window 2026-10-25T20:24:28Z → 2026-11-22T17:43:52Z (27.89 days, 846 counted runs, 18 cancelled excluded); PR signal still from the latest-attempt LOT3 snapshot (flagged)",
+    "cancelled main-push runs are excluded on the assumption a newer push's run covers the same tree",
     "residual availability (organizational refusals removed) is a counterfactual ESTIMATE, not a post-fix measurement",
     "earliest-support dates assume every future slot/run is good at the current rate"
-  ]
+  ],
+  "inspectionRound1": {
+    "verdict": "REJECT (independent inspection of 91659f3d)",
+    "findings": [
+      "MED-1 ciSplit fail-open: only success|failure counted — timed_out/startup_failure/action_required dropped out (98 success + 1 timed_out + 1 startup_failure ⇒ n=98, sli=1)",
+      "MED-2 slot SLI fail-open: gap formula let extra/manual rows add good slots (100 manual IDLE rows in a 3 h outage moved 0.154 → 0.919)",
+      "MED-3 CI re-runs: snapshot has no attempt field ⇒ red-then-green re-runs count green, unstated",
+      "LOW: 22.5–30 min gaps counted 0 missing; no clamp at asOf; proposal did not say availability is a liveness signal; CI budget window/-L 1000 cap not stated"
+    ],
+    "fixes": [
+      "ciSplit: completed non-success non-cancelled ⇒ BAD (skipped/neutral included: the required check did not verify main); cancelled excluded (superseded by a newer push), pending excluded; both counted",
+      "true slot grid: epoch-aligned 15-min slots, good iff ≥1 row and every row available; extra/duplicate rows never add slots; rows after asOf excluded",
+      "CI main-push re-fetched read-only via GitHub API with run_attempt (864 runs = total_count, 2026-10-25 → 2026-11-22, 0 runs with run_attempt > 1); first-attempt outcome counted; fetch embedded in the evidence (re-run without --ci-main-push reproduces byte-identical evidence)",
+      "proposal + evidence state the availability SLI is a LIVENESS signal; CI budget figures name their 27.89-day window"
+    ]
+  }
 }

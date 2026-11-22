@@ -16,15 +16,15 @@ function main() {
   const asOf = arg("--as-of") || new Date().toISOString();
   const rows = fs.readFileSync(attemptsPath, "utf8").split("\n").filter((l: string) => l.trim()).map((l: string) => JSON.parse(l));
   const CUTOVER = "2026-11-22T02:00:00Z";   // boundary chosen after the last observed STARTUP_REFUSED (01:38Z, a LEGITIMATE one); last ORGANIZATIONAL refusal was 2026-11-21T22:22:43Z; worktree-only work from then on
-  const before = AV.summarize(rows, { from: "2026-11-16T00:00:00Z", to: CUTOVER });
+  const before = AV.summarize(rows, { from: "2026-11-16T00:00:00Z", to: CUTOVER, asOf });
   const after = AV.summarize(rows, { from: CUTOVER, asOf });
   const all = AV.summarize(rows, { asOf });
   const SLOS = [0.97, 0.98, 0.985, 0.99];
   const AV_FROM = "2026-11-08T00:00:00Z";
-  const avEv = AV.toEvents(rows.filter((r: any) => r.recordedAt >= AV_FROM), { includeMissing: true, from: AV_FROM, asOf });
+  const avEv = AV.toEvents(rows.filter((r: any) => r.recordedAt >= AV_FROM), { slots: true, from: AV_FROM, asOf });
   const ci = JSON.parse(fs.readFileSync("docs/odg/evidence/LOT3_CI_EVENTS.json", "utf8"));
   const split = AV.ciSplit(ci.runs);
-  const ciEv = ci.runs.filter((r: any) => r.event === "push" && r.change === "main" && (r.conclusion === "success" || r.conclusion === "failure")).map((r: any) => ({ t: r.t, good: r.conclusion === "success", change: r.sha }));
+  const ciEv = split.mainPush.events;   // fail-closed: every completed non-success, non-cancelled conclusion is bad (snapshot = latest attempt only — flagged)
   const days = (ev: any[]) => Math.max(1, Math.round((Date.parse(ev[ev.length - 1].t) - Date.parse(ev[0].t)) / 86400000));
   const compare = (ev: any[]) => SLOS.map((slo) => { const a = EB.eventBudgetAnalysis(ev, { sloTarget: slo, windowDays: days(ev) });
     return { slo, sli: a.sli.value, allowedBad: a.errorBudget.allowedBad, actualBad: a.errorBudget.actualBad, remainingFraction: a.errorBudget.remainingFraction, exhausted: a.errorBudget.exhausted, exhaustedOn: a.earlyWarning.exhaustedOn, firstBurnAlert: a.earlyWarning.firstAlertDay }; });
@@ -33,6 +33,12 @@ function main() {
     try {
       const prev = JSON.parse(fs.readFileSync(out, "utf8"));
       if (Array.isArray(prev.history)) history = prev.history;
+      if (prev.definitionVersion && prev.definitionVersion !== AV.AUTONOMY_AVAILABILITY_CONTRACT.definitionVersion) history = history.concat([{ definitionVersion: prev.definitionVersion, generatedAt: prev.asOf,
+        beforeSlotSli: prev.beforeAfter && prev.beforeAfter.before && prev.beforeAfter.before.scheduledSlot && prev.beforeAfter.before.scheduledSlot.sli,
+        afterSlotSli: prev.beforeAfter && prev.beforeAfter.after && prev.beforeAfter.after.scheduledSlot && prev.beforeAfter.after.scheduledSlot.sli,
+        afterSlots: prev.beforeAfter && prev.beforeAfter.after && prev.beforeAfter.after.scheduledSlot && prev.beforeAfter.after.scheduledSlot.slots,
+        ciMainPushEvents: prev.sloCandidates && prev.sloCandidates.ciMainPush && prev.sloCandidates.ciMainPush.events,
+        note: "superseded by " + AV.AUTONOMY_AVAILABILITY_CONTRACT.definitionVersion + " after inspection REJECT: gap-formula slots let extra rows add good slots (MED-2); CI dropped non-failure bad conclusions (MED-1)" }]);
       if (!prev.definitionVersion) history = history.concat([{ definitionVersion: "V375-original (logged-row SLI, status denylist, mixed CI)", generatedAt: "≤ origin/main ac87cd94",
         rows: prev.source && prev.source.rows, refusalCauses: prev.refusalCauses,
         beforeAvailability: prev.beforeAfter && prev.beforeAfter.before && prev.beforeAfter.before.availability, afterAvailability: prev.beforeAfter && prev.beforeAfter.after && prev.beforeAfter.after.availability,
@@ -48,10 +54,11 @@ function main() {
     refusalCauses: all.counts,
     beforeAfter: { cutover: CUTOVER, before, after,
       note: "before = 2026-11-16 → cutover (development sessions switched branches in the main worktree); after = worktree-only work. 'after' is a SHORT window — the main-worktree guard is what makes it structural. Both logged-row (availability) and scheduled-slot (scheduledSlot.sli) SLIs are reported; the scheduled-slot one is the SLO candidate." },
-    sloCandidates: { autonomyAvailabilityScheduledSlot: { window: [AV_FROM, asOf], events: avEv.length, missingTickEvents: avEv.filter((e: any) => e.change === "UNAVAILABLE_MISSING_TICK").length, compare: compare(avEv) },
+    sloCandidates: { autonomyAvailabilityScheduledSlot: { window: [AV_FROM, asOf], events: avEv.length, missingTickEvents: avEv.filter((e: any) => /^UNAVAILABLE_MISSING_TICK/.test(e.change)).length, compare: compare(avEv) },
       ciMainPush: { window: [split.mainPush.window.from, split.mainPush.window.to], events: ciEv.length, compare: compare(ciEv) },
+      ciMainPushAttemptInfo: split.mainPush.attemptInfo + " — " + split.mainPush.attemptBias + " (the V15 recommendation uses a fresh API fetch with run_attempt instead)",
       ciPullRequestSignal: { role: split.pullRequest.role, n: split.pullRequest.n, good: split.pullRequest.good, sli: split.pullRequest.sli, window: split.pullRequest.window } },
-    separation: { availability: "tick passed startup (allowlisted post-startup status); refusals, integrity, unknown statuses and missing slots = unavailable", missionReliability: all.missionReliabilityNote, missionBreakdown: all.missionBreakdown, ci: "push-to-main decisive runs (PR runs = development signal, not an SLO)" },
+    separation: { availability: "LIVENESS signal (timer fired, tick passed startup with the repo on main) — NOT 'autonomy works'; slot good iff ≥1 row and every row allowlisted post-startup; empty slot / refusal / integrity / unknown status = unavailable; extra rows never add slots", missionReliability: all.missionReliabilityNote, missionBreakdown: all.missionBreakdown, ci: "push-to-main decisive runs (PR runs = development signal, not an SLO)" },
     notConfigured: "no SLO written to slo-targets; no freeze policy activated — owner decision",
     history,
   };
