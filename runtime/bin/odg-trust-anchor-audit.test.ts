@@ -51,6 +51,14 @@ if (sshOk) {
   a = j(run(["--signer-keys", SK]));
   const reb = (a.changes || []).filter((c: any) => c.pr === "#78");
   check("HIGH-1: revoke then UNSIGNED re-pin via merge is VISIBLE (revoke + re-add both in changes) and NOT owner-signed", (a.changes || []).some((c: any) => c.removed.some((r: any) => r.fingerprint === "b".repeat(64))) && reb.length === 1 && reb[0].added.some((x: any) => x.fingerprint === "b".repeat(64)) && a.verdict === "PINS_NOT_OWNER_SIGNED" && run(["--signer-keys", SK, "--require-signed"]).status === 1);
+  // re-inspection HIGH (E1): owner-signed side commit pins X; the UNSIGNED merge resolution adds Y ⇒ Y must NOT be owner-signed
+  g("checkout", "-q", "-b", "ownerbr"); put({ MATURITY_EVIDENCE: ["d".repeat(64)] }); commit("owner pins D (signed)", true);
+  g("checkout", "-q", "main"); g("merge", "-q", "--no-ff", "--no-commit", "ownerbr");
+  put({ MATURITY_EVIDENCE: ["d".repeat(64), "e".repeat(64)] }); g("add", "-A");
+  cp.spawnSync("git", ["-C", R, "commit", "-q", "-m", "Merge pull request #90 from x/ownerbr"], { encoding: "utf8", env: ENV });
+  a = j(run(["--signer-keys", SK]));
+  const pe = (a.pinned || []).find((x: any) => x.fingerprint === "e".repeat(64)) || {};
+  check("E1: a pin written only by an UNSIGNED merge resolution is NOT owner-signed (merge counted as author)", pe.ownerSigned === false && a.verdict === "PINS_NOT_OWNER_SIGNED" && run(["--signer-keys", SK, "--require-signed"]).status === 1);
 } else process.stdout.write("skip - ssh-keygen unavailable (signed paths not exercised)\n");
 // HIGH-2: string-valued purpose (substring-matchable by a naive consumer) ⇒ MALFORMED
 fs.writeFileSync(FILE, JSON.stringify({ COLLECTION_ARTIFACT: "c".repeat(64), KNOWLEDGE_RECORD: [], INSPECTION_RECORD: [], MATURITY_EVIDENCE: [] })); commit("string-valued purpose");
@@ -60,6 +68,8 @@ fs.writeFileSync(FILE, "{not json"); commit("corrupt");
 check("invalid JSON ⇒ ANCHOR_FILE_MALFORMED, exit 1", j(run([])).verdict === "ANCHOR_FILE_MALFORMED" && run([]).status === 1);
 fs.writeFileSync(FILE, "﻿" + JSON.stringify({ COLLECTION_ARTIFACT: [], KNOWLEDGE_RECORD: [], INSPECTION_RECORD: [], MATURITY_EVIDENCE: [] })); commit("bom");
 check("UTF-8 BOM is tolerated like require() does (no false MALFORMED)", j(run([])).verdict === "NO_ANCHORS_PINNED");
+g("rm", "-q", "docs/odg/evidence/TRUST_ANCHORS.json"); commit("remove anchors");
+if (sshOk) check("absent anchor file ⇒ --require-signed exits 1 (absence is not a pass)", run(["--signer-keys", SK, "--require-signed"]).status === 1);
 check("unknown ref ⇒ exit 1 (fail closed)", cp.spawnSync(process.execPath, [path.join(ROOT, "node_modules/.bin/tsx"), path.join(ROOT, "runtime/bin/odg-trust-anchor-audit.ts"), "--repo", R, "--ref", "no-such-ref"], { encoding: "utf8", env: ENV }).status === 1);
 const real = cp.spawnSync(process.execPath, [path.join(ROOT, "node_modules/.bin/tsx"), path.join(ROOT, "runtime/bin/odg-trust-anchor-audit.ts"), "--repo", ROOT, "--ref", "HEAD", "--json"], { encoding: "utf8" });
 check("the real repository (HEAD) pins no anchor", j(real).verdict === "NO_ANCHORS_PINNED");

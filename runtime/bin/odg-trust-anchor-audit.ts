@@ -69,6 +69,12 @@ function audit(repo: string, ref: string, signerKeys: string[] | null): any {
     const authors = step.parents.length > 1
       ? git(repo, ["log", "--full-history", "--format=%H", step.parents[0] + ".." + chain[i], "--", FILE]).out.split("\n").filter((s: string) => s && s !== chain[i]).map((s: string) => commitInfo(repo, s))
       : [step];
+    // (re-inspection HIGH) a merge whose file blob equals NO parent's blob wrote content itself (conflict resolution /
+    // octopus): the merge commit is then an AUTHOR too, so an unsigned merge can never launder a pin under a signed side.
+    if (step.parents.length > 1 && blob) {
+      const pb = git(repo, ["cat-file", "--batch-check=%(objectname)"], step.parents.map((q: string) => q + ":" + FILE).join("\n") + "\n").out.split("\n").filter(Boolean);
+      if (!pb.includes(blob)) authors.push(step);
+    }
     const added: any[] = [], removed: any[] = [];
     if (!cur.ok) { if (!malformedAt) malformedAt = chain[i]; }
     else {
@@ -116,7 +122,7 @@ function main(argv: string[]): void {
     for (const c of r.changes) process.stdout.write(`  ${c.sha.slice(0, 8)} ${c.kind} ${c.pr} +${c.added.length}/-${c.removed.length}${c.malformed ? " MALFORMED" : ""} ${String(c.subject).slice(0, 60)}\n`);
   }
   if (!r.ok || r.malformed) process.exit(1);
-  if (argv.includes("--require-signed") && r.pinsNotOwnerSigned > 0) process.exit(1);
+  if (argv.includes("--require-signed") && (r.pinsNotOwnerSigned > 0 || !r.present)) process.exit(1);   // absent file ⇒ not a pass (re-inspection MED)
 }
 if (require.main === module) main(process.argv.slice(2));
 module.exports = { audit, parse, FILE, PURPOSES };
