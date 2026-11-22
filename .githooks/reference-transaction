@@ -1,0 +1,38 @@
+#!/bin/sh
+# ODG MAIN-WORKTREE GUARD (V375 Lot A, G0). Installed ONLY into the canonical clone's .git/hooks by
+# scripts/odg-main-worktree-guard.sh. Purpose: the scheduled mission runner and the resident driver execute IN the main
+# worktree under Truth Lock (branch must be 'main'); every time a development session switched that worktree to another
+# branch, autonomy ticks were refused (1180 of 1183 refusals in mission-attempt-log, 2026-10-21 → 11-22).
+# Rule: in the MAIN worktree, HEAD may only point at refs/heads/main. Branch switches, new branches and detached HEAD
+# are REFUSED there. Linked worktrees (git worktree add <path> -b <branch>) are unaffected and are the supported way
+# to work. Commits / fast-forward merges on main are unaffected (they move refs/heads/main, not HEAD).
+# This hook does NOT weaken Truth Lock: it prevents the organizational cause; Truth Lock still checks everything.
+# KNOWN LIMITS (independent inspection, not covered by design — a hook is a guard rail, not a security boundary):
+#   - bypassable by `git -c core.hooksPath=/dev/null …`, by writing .git/HEAD directly, or by ODG_MAIN_GUARD_OFF=1;
+#   - `reset --hard <other>` / `checkout -B main <other>` move refs/heads/main itself (HEAD stays on main): allowed here,
+#     and Truth Lock then refuses ("HEAD diverges from origin/main") — classified LEGITIMATE;
+#   - operations that DETACH HEAD in the main worktree are refused too: `pull --rebase`, `bisect`, `rebase` (do them in a
+#     linked worktree); a deliberately forged worktrees/*/locked "initializing" file would open the worktree-add exception.
+[ "$1" = "prepared" ] || exit 0
+[ "${ODG_MAIN_GUARD_OFF:-}" = "1" ] && { echo "ODG main-worktree guard: DISABLED by ODG_MAIN_GUARD_OFF=1 (owner override)" >&2; exit 0; }
+gd=$(git rev-parse --absolute-git-dir 2>/dev/null) || exit 0
+common=$(cd "$(git rev-parse --git-common-dir 2>/dev/null)" 2>/dev/null && pwd -P) || exit 0
+[ "$(cd "$gd" 2>/dev/null && pwd -P)" = "$common" ] || exit 0      # running inside a LINKED worktree ⇒ never interfere
+# `git worktree add` writes the NEW worktree's HEAD in a transaction that looks like the main one; git marks that worktree
+# with worktrees/<name>/locked = "initializing" while creating it. Use that repository state (NOT process arguments,
+# which `git -c 'x= worktree add ' checkout …` could spoof) to recognise worktree creation.
+adding=0
+for l in "$common"/worktrees/*/locked; do [ -f "$l" ] && grep -q '^initializing' "$l" 2>/dev/null && adding=1; done
+while read -r old new ref; do
+  [ "$ref" = "HEAD" ] || continue
+  case "$new" in
+    ref:refs/heads/main) ;;                                          # staying on / returning to main: allowed
+    *)
+      [ "$adding" = "1" ] && continue                                # writing the NEW linked worktree's HEAD: allowed
+      echo "ODG main-worktree guard: refusing to move the MAIN worktree's HEAD off 'main' (to: $new)." >&2
+      echo "  The mission runner + resident driver run here under Truth Lock. Work in a linked worktree instead:" >&2
+      echo "  git worktree add ../<name> -b <branch>    (owner override: ODG_MAIN_GUARD_OFF=1)" >&2
+      exit 1 ;;
+  esac
+done
+exit 0
