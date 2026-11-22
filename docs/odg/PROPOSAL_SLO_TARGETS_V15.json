@@ -1,5 +1,6 @@
 {
-  "//": "PROPOSAL — NOT APPLIED. Entries in runtime/core/slo-targets.ts SLO_TARGETS shape; status PROPOSED. Applying requires an owner/CTO decision (it would become CONFIGURED with owner provenance).",
+  "//": "PROPOSAL — NOT APPLIED. Entries in runtime/core/slo-targets.ts SLO_TARGETS shape; status PROPOSED. Applying requires an owner/CTO decision (it would become CONFIGURED with owner provenance). AUTONOMY_AVAILABILITY is a LIVENESS signal (timer fired, tick passed startup with the repo on main) — it does not say autonomy works. Alert thresholds and freeze rules are PROPOSALS too — nothing is wired or active.",
+  "definitionVersion": "V15-SLI-DEFINITIONS-r2",
   "entries": [
     {
       "id": "AUTONOMY_AVAILABILITY",
@@ -8,26 +9,52 @@
       "target": 0.98,
       "minSampleN": 1344,
       "status": "PROPOSED",
-      "definition": "fraction of scheduled mission-runner ticks that pass startup (mission-attempt-log; any STARTUP_REFUSED = unavailable), rolling 14 days",
+      "definition": "LIVENESS SLI — NOT a measure that autonomy works: fraction of epoch-aligned 15-min slots (odg-mission-runner.timer cadence) in which the mission-runner tick fired AND passed startup with the repo on main. A slot is good iff it holds ≥1 mission-attempt-log row and every row in it is an allowlisted post-startup status; empty slot (incl. timer drift slips) or any STARTUP_REFUSED / AUDIT_CHAIN_TAMPERED / unknown-status row ⇒ bad; extra rows never add slots; rolling 14 days",
       "provenance": {
-        "source": "V15 §6 recommendation (provider-prepared)",
+        "source": "V15 §6 recommendation (provider-prepared, V15-SLI-DEFINITIONS-r2)",
         "authoredBy": "Claude Code (technical provider) — NOT a CTO/owner decision",
         "declaredAt": "2026-11-22"
       }
     },
     {
-      "id": "CI_REQUIRED_CHECK_SUCCESS",
+      "id": "CI_MAIN_PUSH_SUCCESS",
       "kind": "rate",
       "direction": "atLeast",
-      "target": 0.98,
+      "target": 0.99,
       "minSampleN": 200,
       "status": "PROPOSED",
-      "definition": "fraction of decisive runs (success|failure) of the required check 'build + typecheck + parity + tests', rolling 30 days",
+      "definition": "fraction of completed runs of the required check 'build + typecheck + parity + tests' triggered by push to main whose FIRST attempt concluded success; any other completed conclusion (failure, timed_out, startup_failure, action_required, skipped, neutral, …) = bad; cancelled excluded (superseded); pull_request runs excluded (development signal, not an SLO); rolling 30 days. Evidence so far: 2026-10-25T20:24:28Z → 2026-11-22T17:43:52Z (27.89 days), 846 runs — budget figures computed over that window, not over 30 days",
       "provenance": {
-        "source": "V15 §6 recommendation (provider-prepared)",
+        "source": "V15 §6 recommendation (provider-prepared, V15-SLI-DEFINITIONS-r2)",
         "authoredBy": "Claude Code (technical provider) — NOT a CTO/owner decision",
         "declaredAt": "2026-11-22"
       }
     }
-  ]
+  ],
+  "alertAndFreezeProposals": {
+    "status": "PROPOSED — NOT APPLIED (no alert wired, no freeze active; owner decision)",
+    "alerts": [
+      {
+        "slo": "AUTONOMY_AVAILABILITY",
+        "rule": "alert if ≥ 4 consecutive unavailable slots (1 h) OR ≥ 4 unavailable slots in one UTC day (burn ≥ 2× at 98%: 2 × 0.02 × 96 = 3.84)",
+        "basis": "odg-slo-error-budget-view burnAlertFactor 2; drift slips (isolated single empty slots) make the daily rule fire occasionally — tune after the 14-day window"
+      },
+      {
+        "slo": "CI_MAIN_PUSH_SUCCESS",
+        "rule": "alert on every bad push-to-main run (at ~30.33 runs/day one bad run already burns > 2× the daily 99% budget, so a per-day burn alert degenerates to 'any failure')",
+        "basis": "volume-derived"
+      }
+    ],
+    "freezeRules": [
+      {
+        "slo": "AUTONOMY_AVAILABILITY",
+        "rule": "if the rolling 14-day budget is exhausted: no change to mission-runner / Truth-Lock / scheduler code other than availability fixes, until the budget is positive again"
+      },
+      {
+        "slo": "CI_MAIN_PUSH_SUCCESS",
+        "rule": "if the rolling 30-day budget is exhausted: merges to main restricted to CI/reliability fixes until the budget is positive again"
+      }
+    ]
+  },
+  "supersedes": "r0 (ac87cd94): AUTONOMY_AVAILABILITY 0.98 on logged rows; CI_REQUIRED_CHECK_SUCCESS 0.98 on mixed push+PR runs. r1 (91659f3d): gap-formula slots; CI main-push from latest-attempt snapshot"
 }

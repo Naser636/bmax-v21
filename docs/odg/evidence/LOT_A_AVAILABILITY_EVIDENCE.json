@@ -1,17 +1,22 @@
 {
   "lot": "V375 Lot A — autonomy availability (G0) + SLO candidate comparison (G1)",
+  "definitionVersion": "V15-SLI-DEFINITIONS-r2",
+  "asOf": "2026-11-22T18:25:00Z",
   "source": {
     "attempts": "runtime/generated/mission-attempt-log.jsonl (local, gitignored; read-only)",
-    "rows": 2568,
-    "ci": "docs/odg/evidence/LOT3_CI_EVENTS.json"
+    "rows": 2587,
+    "ci": "docs/odg/evidence/LOT3_CI_EVENTS.json (static snapshot, fetchedAt 2026-11-22)",
+    "cadence": "15 min (/etc/systemd/system/odg-mission-runner.timer OnUnitActiveSec=15min)"
   },
   "refusalCauses": {
-    "AVAILABLE_IDLE": 1382,
+    "AVAILABLE_IDLE": 1401,
     "AVAILABLE_EXECUTED_PASS": 1,
-    "AVAILABLE_EXECUTED_NOT_PASS": 2,
+    "AVAILABLE_EXECUTED_FAIL": 0,
+    "AVAILABLE_POLICY_REFUSED": 2,
     "REFUSED_ORGANIZATIONAL": 1180,
     "REFUSED_LEGITIMATE": 3,
-    "UNCLASSIFIED": 0
+    "REFUSED_INTEGRITY": 0,
+    "UNCLASSIFIED_FAIL_CLOSED": 0
   },
   "beforeAfter": {
     "cutover": "2026-11-22T02:00:00Z",
@@ -24,50 +29,139 @@
       "counts": {
         "AVAILABLE_IDLE": 405,
         "AVAILABLE_EXECUTED_PASS": 0,
-        "AVAILABLE_EXECUTED_NOT_PASS": 0,
+        "AVAILABLE_EXECUTED_FAIL": 0,
+        "AVAILABLE_POLICY_REFUSED": 0,
         "REFUSED_ORGANIZATIONAL": 171,
         "REFUSED_LEGITIMATE": 1,
-        "UNCLASSIFIED": 0
+        "REFUSED_INTEGRITY": 0,
+        "UNCLASSIFIED_FAIL_CLOSED": 0
       },
       "availability": 0.7019,
       "availabilityExcludingLegitimate": 0.7036,
+      "scheduledSlot": {
+        "cadenceMin": 15,
+        "slots": 584,
+        "good": 405,
+        "missingTicks": 7,
+        "driftSlips": 5,
+        "refusedSlots": 172,
+        "sli": 0.6935,
+        "extraRowsIgnored": 0,
+        "edgeRowsExcluded": 0,
+        "futureRowsExcluded": 0,
+        "missingRuns": [
+          {
+            "from": "2026-11-16T12:30:00.000Z",
+            "to": "2026-11-16T12:45:00.000Z",
+            "slots": 1
+          },
+          {
+            "from": "2026-11-17T17:45:00.000Z",
+            "to": "2026-11-17T18:00:00.000Z",
+            "slots": 1
+          },
+          {
+            "from": "2026-11-18T18:15:00.000Z",
+            "to": "2026-11-18T18:30:00.000Z",
+            "slots": 1
+          },
+          {
+            "from": "2026-11-18T20:15:00.000Z",
+            "to": "2026-11-18T20:30:00.000Z",
+            "slots": 1
+          },
+          {
+            "from": "2026-11-19T23:00:00.000Z",
+            "to": "2026-11-19T23:15:00.000Z",
+            "slots": 1
+          },
+          {
+            "from": "2026-11-20T21:30:00.000Z",
+            "to": "2026-11-20T21:45:00.000Z",
+            "slots": 1
+          },
+          {
+            "from": "2026-11-21T02:15:00.000Z",
+            "to": "2026-11-21T02:30:00.000Z",
+            "slots": 1
+          }
+        ],
+        "definition": "epoch-aligned 15-min slots, full slots inside [from, min(to, asOf)); slot good iff ≥1 row and every row in it available; empty slot = UNAVAILABLE_MISSING_TICK (driftSlips = empty slot whose bracketing rows are ≤1.5× cadence apart — still bad)"
+      },
+      "missionBreakdown": {
+        "pass": 0,
+        "fail": 0,
+        "policyRefused": 0,
+        "reached": 0
+      },
+      "missionMinSampleN": 20,
       "missionReliability": null,
-      "missionReliabilityNote": "NOT_MEASURED — only 0 executed attempt(s) (< 20)"
+      "missionReliabilityNote": "NOT_MEASURED — only 0 mission attempt(s) (< minSampleN 20 from slo-targets MISSION_SUCCESS_VERIFIED)"
     },
     "after": {
       "window": {
         "from": "2026-11-22T02:00:00Z",
-        "to": "2026-11-22T13:29:04.654Z"
+        "to": "2026-11-22T18:25:00Z"
       },
-      "total": 46,
+      "total": 65,
       "counts": {
-        "AVAILABLE_IDLE": 46,
+        "AVAILABLE_IDLE": 65,
         "AVAILABLE_EXECUTED_PASS": 0,
-        "AVAILABLE_EXECUTED_NOT_PASS": 0,
+        "AVAILABLE_EXECUTED_FAIL": 0,
+        "AVAILABLE_POLICY_REFUSED": 0,
         "REFUSED_ORGANIZATIONAL": 0,
         "REFUSED_LEGITIMATE": 0,
-        "UNCLASSIFIED": 0
+        "REFUSED_INTEGRITY": 0,
+        "UNCLASSIFIED_FAIL_CLOSED": 0
       },
       "availability": 1,
       "availabilityExcludingLegitimate": 1,
+      "scheduledSlot": {
+        "cadenceMin": 15,
+        "slots": 65,
+        "good": 64,
+        "missingTicks": 1,
+        "driftSlips": 1,
+        "refusedSlots": 0,
+        "sli": 0.9846,
+        "extraRowsIgnored": 0,
+        "edgeRowsExcluded": 1,
+        "futureRowsExcluded": 0,
+        "missingRuns": [
+          {
+            "from": "2026-11-22T16:00:00.000Z",
+            "to": "2026-11-22T16:15:00.000Z",
+            "slots": 1
+          }
+        ],
+        "definition": "epoch-aligned 15-min slots, full slots inside [from, min(to, asOf)); slot good iff ≥1 row and every row in it available; empty slot = UNAVAILABLE_MISSING_TICK (driftSlips = empty slot whose bracketing rows are ≤1.5× cadence apart — still bad)"
+      },
+      "missionBreakdown": {
+        "pass": 0,
+        "fail": 0,
+        "policyRefused": 0,
+        "reached": 0
+      },
+      "missionMinSampleN": 20,
       "missionReliability": null,
-      "missionReliabilityNote": "NOT_MEASURED — only 0 executed attempt(s) (< 20)"
+      "missionReliabilityNote": "NOT_MEASURED — only 0 mission attempt(s) (< minSampleN 20 from slo-targets MISSION_SUCCESS_VERIFIED)"
     },
-    "note": "before = 2026-11-16 → cutover (development sessions switched branches in the main worktree); after = worktree-only work. 'after' is a SHORT window — the main-worktree guard (this PR) is what makes it structural."
+    "note": "before = 2026-11-16 → cutover (development sessions switched branches in the main worktree); after = worktree-only work. 'after' is a SHORT window — the main-worktree guard is what makes it structural. Both logged-row (availability) and scheduled-slot (scheduledSlot.sli) SLIs are reported; the scheduled-slot one is the SLO candidate."
   },
   "sloCandidates": {
-    "autonomyAvailability": {
+    "autonomyAvailabilityScheduledSlot": {
       "window": [
-        "2026-11-08T00:08:10.806Z",
-        "2026-11-22T13:29:04.654Z"
+        "2026-11-08T00:00:00Z",
+        "2026-11-22T18:25:00Z"
       ],
-      "events": 1392,
+      "events": 1417,
+      "missingTickEvents": 14,
       "compare": [
         {
           "slo": 0.97,
-          "sli": 0.58046,
-          "allowedBad": 41.76,
-          "actualBad": 584,
+          "sli": 0.579393,
+          "allowedBad": 42.51,
+          "actualBad": 596,
           "remainingFraction": -1,
           "exhausted": true,
           "exhaustedOn": "2026-11-08",
@@ -75,9 +169,9 @@
         },
         {
           "slo": 0.98,
-          "sli": 0.58046,
-          "allowedBad": 27.84,
-          "actualBad": 584,
+          "sli": 0.579393,
+          "allowedBad": 28.34,
+          "actualBad": 596,
           "remainingFraction": -1,
           "exhausted": true,
           "exhaustedOn": "2026-11-08",
@@ -85,9 +179,9 @@
         },
         {
           "slo": 0.985,
-          "sli": 0.58046,
-          "allowedBad": 20.88,
-          "actualBad": 584,
+          "sli": 0.579393,
+          "allowedBad": 21.26,
+          "actualBad": 596,
           "remainingFraction": -1,
           "exhausted": true,
           "exhaustedOn": "2026-11-08",
@@ -95,9 +189,9 @@
         },
         {
           "slo": 0.99,
-          "sli": 0.58046,
-          "allowedBad": 13.92,
-          "actualBad": 584,
+          "sli": 0.579393,
+          "allowedBad": 14.17,
+          "actualBad": 596,
           "remainingFraction": -1,
           "exhausted": true,
           "exhaustedOn": "2026-11-08",
@@ -105,60 +199,108 @@
         }
       ]
     },
-    "ciRequiredCheck": {
+    "ciMainPush": {
       "window": [
         "2026-11-08T22:11:44Z",
-        "2026-11-22T12:32:24Z"
+        "2026-11-22T04:58:16Z"
       ],
-      "events": 982,
+      "events": 452,
       "compare": [
         {
           "slo": 0.97,
-          "sli": 0.983707,
-          "allowedBad": 29.46,
-          "actualBad": 16,
-          "remainingFraction": 0.4569,
+          "sli": 0.995575,
+          "allowedBad": 13.56,
+          "actualBad": 2,
+          "remainingFraction": 0.8525,
           "exhausted": false,
           "exhaustedOn": null,
-          "firstBurnAlert": "2026-11-11"
+          "firstBurnAlert": null
         },
         {
           "slo": 0.98,
-          "sli": 0.983707,
-          "allowedBad": 19.64,
-          "actualBad": 16,
-          "remainingFraction": 0.1853,
+          "sli": 0.995575,
+          "allowedBad": 9.04,
+          "actualBad": 2,
+          "remainingFraction": 0.7788,
           "exhausted": false,
           "exhaustedOn": null,
-          "firstBurnAlert": "2026-11-11"
+          "firstBurnAlert": null
         },
         {
           "slo": 0.985,
-          "sli": 0.983707,
-          "allowedBad": 14.73,
-          "actualBad": 16,
-          "remainingFraction": -0.0862,
-          "exhausted": true,
-          "exhaustedOn": "2026-11-20",
-          "firstBurnAlert": "2026-11-11"
+          "sli": 0.995575,
+          "allowedBad": 6.78,
+          "actualBad": 2,
+          "remainingFraction": 0.705,
+          "exhausted": false,
+          "exhaustedOn": null,
+          "firstBurnAlert": null
         },
         {
           "slo": 0.99,
-          "sli": 0.983707,
-          "allowedBad": 9.82,
-          "actualBad": 16,
-          "remainingFraction": -0.6293,
-          "exhausted": true,
-          "exhaustedOn": "2026-11-17",
-          "firstBurnAlert": "2026-11-11"
+          "sli": 0.995575,
+          "allowedBad": 4.52,
+          "actualBad": 2,
+          "remainingFraction": 0.5575,
+          "exhausted": false,
+          "exhaustedOn": null,
+          "firstBurnAlert": "2026-11-16"
         }
       ]
+    },
+    "ciMainPushAttemptInfo": "LATEST_ATTEMPT_ONLY — data has no attempt field: the conclusion is the LATEST attempt, so a red-then-green re-run counts green (bias toward success, size unknown) (the V15 recommendation uses a fresh API fetch with run_attempt instead)",
+    "ciPullRequestSignal": {
+      "role": "DEVELOPMENT_SIGNAL_NOT_SLO",
+      "n": 530,
+      "good": 516,
+      "sli": 0.9736,
+      "window": {
+        "from": "2026-11-08T22:17:02Z",
+        "to": "2026-11-22T12:32:24Z",
+        "days": 13.59
+      }
     }
   },
   "separation": {
-    "availability": "tick passed startup (any refusal = unavailable)",
-    "missionReliability": "NOT_MEASURED — only 3 executed attempt(s) (< 20)",
-    "ci": "required check success among decisive runs"
+    "availability": "LIVENESS signal (timer fired, tick passed startup with the repo on main) — NOT 'autonomy works'; slot good iff ≥1 row and every row allowlisted post-startup; empty slot / refusal / integrity / unknown status = unavailable; extra rows never add slots",
+    "missionReliability": "NOT_MEASURED — only 3 mission attempt(s) (< minSampleN 20 from slo-targets MISSION_SUCCESS_VERIFIED)",
+    "missionBreakdown": {
+      "pass": 1,
+      "fail": 0,
+      "policyRefused": 2,
+      "reached": 3
+    },
+    "ci": "push-to-main decisive runs (PR runs = development signal, not an SLO)"
   },
-  "notConfigured": "no SLO written to slo-targets; no freeze policy activated — owner decision"
+  "notConfigured": "no SLO written to slo-targets; no freeze policy activated — owner decision",
+  "history": [
+    {
+      "definitionVersion": "V375-original (logged-row SLI, status denylist, mixed CI)",
+      "generatedAt": "≤ origin/main ac87cd94",
+      "rows": 2568,
+      "refusalCauses": {
+        "AVAILABLE_IDLE": 1382,
+        "AVAILABLE_EXECUTED_PASS": 1,
+        "AVAILABLE_EXECUTED_NOT_PASS": 2,
+        "REFUSED_ORGANIZATIONAL": 1180,
+        "REFUSED_LEGITIMATE": 3,
+        "UNCLASSIFIED": 0
+      },
+      "beforeAvailability": 0.7019,
+      "afterAvailability": 1,
+      "afterTotal": 46,
+      "ciEvents": 982,
+      "ciSli": 0.983707,
+      "note": "superseded by V15-SLI-DEFINITIONS: UNCLASSIFIED was 0 on the real log (no AUDIT_CHAIN_TAMPERED row exists), so D1 does not change the real-data availability; D2 adds missing scheduled slots; D3 removes pull_request runs from the CI SLI; AVAILABLE_EXECUTED_NOT_PASS is split into AVAILABLE_EXECUTED_FAIL + AVAILABLE_POLICY_REFUSED."
+    },
+    {
+      "definitionVersion": "V15-SLI-DEFINITIONS",
+      "generatedAt": "2026-11-22T18:03:49Z",
+      "beforeSlotSli": 0.6995,
+      "afterSlotSli": 1,
+      "afterSlots": 64,
+      "ciMainPushEvents": 452,
+      "note": "superseded by V15-SLI-DEFINITIONS-r2 after inspection REJECT: gap-formula slots let extra rows add good slots (MED-2); CI dropped non-failure bad conclusions (MED-1)"
+    }
+  ]
 }
