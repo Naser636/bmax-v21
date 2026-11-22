@@ -5,7 +5,7 @@
  * demand (directive §7: "un parcours complet ... reproductible"). It drives odg-btp-lifecycle-integration.runLifecycle with
  * ONE fully-specified SYNTHETIC scenario that exercises every real engine:
  *   CLIENT_INTAKE → QUOTATION → WORK_PACKAGE → PLANNING → PAYMENT_TERMS → CASH_RECONCILIATION → REALIZED_PROFITABILITY →
- *   PROCUREMENT → PRICE_REVISION → RETENUE_GARANTIE → RETENUE_RELEASE  (11 stages, 13 cross-stage consistency links).
+ *   PROCUREMENT → PRICE_REVISION → RETENUE_GARANTIE → RETENUE_RELEASE → FR_INVOICE_PRECHECK  (12 stages, 14 cross-stage consistency links).
  * Pure composition of EXISTING engines; it builds nothing new, mutates nothing, opens no network, writes nothing.
  *
  * HONESTY: the scenario is SYNTHETIC — it proves INTEGRATION (the data flows consistently across the real engines), NOT
@@ -28,6 +28,8 @@ const scenario = {
   costEntries: [{ phase: "PAID", category: "MATERIAL", amountMinor: 52000, evidenceRef: "f" }],
   procurement: { catalog: [{ itemRef: "CIM-42.5", unit: "sac", supplier: "SupA", unitPriceMinor: 850, priceSource: "bordereau-2026", validFrom: "2026-01-01" }], requestedLines: [{ itemRef: "CIM-42.5", qty: 100 }], asOfDate: "2026-06-01", kind: "PURCHASE_ORDER" },
   revision: { fixedTermCoeff: 0.15, indexedTerms: [{ coeff: 0.85, baseIndex: 100, currentIndex: 110 }] },
+  // V15.0 — the FR invoice DOCUMENT behind ledger invoice INV-DEP (35 640 HT + 20 % VAT = 42 768 TTC), pre-checked + due date
+  frInvoice: { ledgerInvoiceId: "INV-DEP", document: { sellerName: "ODG BTP (synthetic)", sellerSiret: "73282932000074", buyerName: "Client démo", invoiceNumber: "F-2026-0001", issueDate: "2026-11-22", paymentTermDays: 30, lineItems: [{ label: "Acompte 30 %", qty: 1, unitPriceHTMinor: 35640, vatRateBps: 2000 }], statedTotalVatMinor: 7128, penaltyRateMentionPresent: true, indemnityMentionPresent: true } },
   retenue: { retentionRate: 0.05, release: { receptionDate: "2026-01-15", warrantyPeriodDays: 365, reservesLifted: true, asOfDate: "2027-06-01" } },
 };
 
@@ -38,9 +40,9 @@ process.stdout.write(JSON.stringify({
   stageCount: r.stageCount, linkCount: r.linkCount, dataFlowIntact: r.dataFlowIntact, brokenLinks: r.brokenLinks,
   stages: r.stages.map((s: any) => s.stage),
 }, null, 2) + "\n");
-const ok = r.dataFlowIntact === true && r.stageCount === 11 && r.linkCount === 13;
+const ok = r.dataFlowIntact === true && r.stageCount === 12 && r.linkCount === 14;
 process.stdout.write(ok
-  ? "\nOK — complete M2 BTP parcours ran end-to-end (11 stages / 13 cross-stage consistency links, dataFlowIntact). SYNTHETIC: integration proven, not real traction.\n"
+  ? "\nOK — complete M2 BTP parcours ran end-to-end (12 stages / 14 cross-stage consistency links, dataFlowIntact). SYNTHETIC: integration proven, not real traction.\n"
   : "\nPARTIAL — see brokenLinks above\n");
 process.exit(ok ? 0 : 1);
 export {};
