@@ -1,0 +1,186 @@
+{
+  "experiment": "V15-EXP-resident-confinement",
+  "ciCommit": "45e46f3f",
+  "ranAt": "2026-11-22T15:40:04.683Z",
+  "measurements": [
+    {
+      "condition": "linkedToV124",
+      "method": "companion docs/odg/v124-consolidated-roadmap.json lists CM-V234-RESIDENT-DRIVER",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "condition": "baselineRecorded",
+      "method": "6 attack-surface probes run UNCONFINED in the throw-away copy before the change",
+      "observed": [
+        {
+          "probe": "writeSource",
+          "open": true
+        },
+        {
+          "probe": "writeDist",
+          "open": true
+        },
+        {
+          "probe": "createInLogs",
+          "open": true
+        },
+        {
+          "probe": "symlinkInLogs",
+          "open": true
+        },
+        {
+          "probe": "hostSocket",
+          "open": true
+        },
+        {
+          "probe": "nonLoopbackNet",
+          "open": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "condition": "needDemonstrated",
+      "method": "baseline: attack surfaces AVAILABLE to an unconfined tick (capability by construction, not a demonstrated incident) > 0",
+      "observed": 6,
+      "passed": true
+    },
+    {
+      "condition": "securityValidated",
+      "method": "confinement of the 6 probed surfaces (writes, symlink, host socket, non-loopback net) — all REFUSED; scope = these probes, NOT a full security validation",
+      "observed": [
+        {
+          "probe": "writeSource",
+          "open": false
+        },
+        {
+          "probe": "writeDist",
+          "open": false
+        },
+        {
+          "probe": "createInLogs",
+          "open": false
+        },
+        {
+          "probe": "symlinkInLogs",
+          "open": false
+        },
+        {
+          "probe": "hostSocket",
+          "open": false
+        },
+        {
+          "probe": "nonLoopbackNet",
+          "open": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "condition": "measurableGainOrNewCapability",
+      "method": "attack surface removed: available surfaces baseline → candidate (strict decrease to 0); not a measured risk reduction",
+      "observed": {
+        "baseline": 6,
+        "candidate": 0
+      },
+      "passed": true
+    },
+    {
+      "condition": "functionalTestsPass",
+      "method": "confined launcher: L0 tick (rebuild path) exit 0 + writes=0; stop signal ⇒ STOPPED; stale build ⇒ confined tsx fallback",
+      "observed": {
+        "normal": 0,
+        "stopped": true,
+        "fallback": 0
+      },
+      "passed": true
+    },
+    {
+      "condition": "rollbackAvailable",
+      "method": "rollback = keep the existing ExecStart (normal launcher); measured: it still runs, exit 0, L0 line",
+      "observed": 0,
+      "passed": true
+    },
+    {
+      "condition": "isolatedExperiment",
+      "method": "runs in a throw-away copy under os.tmpdir() (path check) + bubblewrap for the candidate; see noContractOrPermissionViolation for the repo check",
+      "observed": true,
+      "passed": true
+    },
+    {
+      "condition": "noContractOrPermissionViolation",
+      "method": "real repository fingerprint (HEAD + status + index; NOT gitignored paths) identical before/after; runner writes only in the throw-away copy; no systemd/sudo action",
+      "observed": {
+        "before": "8ddf86e667536cd5",
+        "after": "8ddf86e667536cd5"
+      },
+      "passed": true
+    },
+    {
+      "condition": "nonRegressionPass",
+      "method": "GitHub Actions required check on commit 45e46f3f (gh run list, read-only)",
+      "observed": [
+        {
+          "name": "CI",
+          "conclusion": "success"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "condition": "codeAndDepsReviewed",
+      "method": "owner-anchored INSPECTION_RECORD signature over docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json on origin/main (TRUST_ANCHORS.INSPECTION_RECORD)",
+      "observed": "NO_OWNER_SIGNATURE (review/inspection by the provider or its subagents never counts)",
+      "passed": false
+    },
+    {
+      "condition": "independentInspection",
+      "method": "owner-anchored INSPECTION_RECORD signature over docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json on origin/main (TRUST_ANCHORS.INSPECTION_RECORD)",
+      "observed": "NO_OWNER_SIGNATURE (review/inspection by the provider or its subagents never counts)",
+      "passed": false
+    }
+  ],
+  "derived": {
+    "evidence": {
+      "linkedToV124": true,
+      "needDemonstrated": true,
+      "codeAndDepsReviewed": false,
+      "isolatedExperiment": true,
+      "baselineRecorded": true,
+      "functionalTestsPass": true,
+      "nonRegressionPass": true,
+      "measurableGainOrNewCapability": true,
+      "noContractOrPermissionViolation": true,
+      "securityValidated": true,
+      "independentInspection": false,
+      "rollbackAvailable": true
+    },
+    "basis": {
+      "linkedToV124": "MEASURED_PASS (companion docs/odg/v124-consolidated-roadmap.json lists CM-V234-RESIDENT-DRIVER)",
+      "needDemonstrated": "MEASURED_PASS (baseline: attack surfaces AVAILABLE to an unconfined tick (capability by construction, not a demonstrated incident) > 0)",
+      "codeAndDepsReviewed": "MEASURED_FAIL (owner-anchored INSPECTION_RECORD signature over docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json on origin/main (TRUST_ANCHORS.INSPECTION_RECORD))",
+      "isolatedExperiment": "MEASURED_PASS (runs in a throw-away copy under os.tmpdir() (path check) + bubblewrap for the candidate; see noContractOrPermissionViolation for the repo check)",
+      "baselineRecorded": "MEASURED_PASS (6 attack-surface probes run UNCONFINED in the throw-away copy before the change)",
+      "functionalTestsPass": "MEASURED_PASS (confined launcher: L0 tick (rebuild path) exit 0 + writes=0; stop signal ⇒ STOPPED; stale build ⇒ confined tsx fallback)",
+      "nonRegressionPass": "MEASURED_PASS (GitHub Actions required check on commit 45e46f3f (gh run list, read-only))",
+      "measurableGainOrNewCapability": "MEASURED_PASS (attack surface removed: available surfaces baseline → candidate (strict decrease to 0); not a measured risk reduction)",
+      "noContractOrPermissionViolation": "MEASURED_PASS (real repository fingerprint (HEAD + status + index; NOT gitignored paths) identical before/after; runner writes only in the throw-away copy; no systemd/sudo action)",
+      "securityValidated": "MEASURED_PASS (confinement of the 6 probed surfaces (writes, symlink, host socket, non-loopback net) — all REFUSED; scope = these probes, NOT a full security validation)",
+      "independentInspection": "MEASURED_FAIL (owner-anchored INSPECTION_RECORD signature over docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json on origin/main (TRUST_ANCHORS.INSPECTION_RECORD))",
+      "rollbackAvailable": "MEASURED_PASS (rollback = keep the existing ExecStart (normal launcher); measured: it still runs, exit 0, L0 line)"
+    },
+    "measuredCount": 12,
+    "malformedIgnored": 0
+  },
+  "verdict": "RETURN_TO_EXPERIMENT",
+  "action": "RETURNED",
+  "softMissing": [
+    "codeAndDepsReviewed",
+    "independentInspection"
+  ],
+  "hardViolations": [],
+  "deployed": false,
+  "deployStillOwnerGated": true,
+  "note": "simulation ≠ execution: the experiment ran in a throw-away copy; nothing was installed, enabled or deployed. INTEGRATE would mean merge-eligible only."
+}
