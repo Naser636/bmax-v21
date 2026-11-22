@@ -21,7 +21,14 @@ const colAtt = mk("nonce-col-0001", pages);
 const signedCol = K.attestCollection(pages, { attestation: colAtt, registry: reg, asOf: T0 + DAY, allowRepeatVerification: true });
 check("baseline: a VALID signature by a registered but NON-ANCHORED key authenticates nothing (anchors are repo-pinned, empty)", signedCol.attested === false && signedCol.signature === "VALID_BUT_UNANCHORED" && K.TRUST_ANCHORS.COLLECTION_ARTIFACT.length === 0 && A.verifyAttestation(colAtt, pages, { purpose: "COLLECTION_ARTIFACT", allowRepeatVerification: true, registry: reg, asOf: T0 + DAY }).provesTruth === false);
 const pinnedCol = K.attestCollection(pages, { pinnedDigests: [A.contentSha256(pages)] });
-check("baseline: the authenticated path is a git-pinned digest", pinnedCol.attested === true && pinnedCol.via === "PINNED_DIGEST");
+check("baseline: CALLER-pinned pages are SANDBOX only (attested for experiments, never production)", pinnedCol.attested === true && pinnedCol.via === "SANDBOX_PINNED" && pinnedCol.sandbox === true);
+const realCol = JSON.parse(require("fs").readFileSync("docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json", "utf8"));
+const prodCol = K.attestCollection(realCol, {});
+check("production path: the REAL step-2 collection is authenticated by the REPO-pinned digest (COLLECTION_REGISTRY.json, loaded by the module)", prodCol.attested === true && prodCol.via === "PINNED_DIGEST" && prodCol.sandbox === false);
+const realEB = { subject: "error budget", relation: "equals", value: "1 minus the SLO of the service", nature: "OFFICIAL_DOCUMENTATION", text: "An error budget is 1 minus the SLO of the service",
+  sources: [{ url: SRE, citation: "An error budget is 1 minus the SLO of the service", structured: { subject: "error budget", relation: "equals", value: "1 minus the SLO of the service" } }] };
+const aReal = K.assessClaim(realEB, { asOfEpochMs: T0, collection: prodCol, missionAuthorization: "INTERNAL_INTEGRATION" });
+check("production path: real SRE claim ⇒ SUPPORTED, capped INTERNAL_IMPLEMENTATION, not a fact, not sandbox", aReal.dimensions.epistemic === "SUPPORTED" && aReal.dimensions.authorization === "INTERNAL_IMPLEMENTATION" && aReal.isFact === false && aReal.sandbox === false);
 const EBK = { subject: "error budget", relation: "equals", value: "1 minus the SLO" };
 const eb = { ...EBK, nature: "OFFICIAL_DOCUMENTATION", text: "An error budget is 1 minus the SLO of the service", sources: [{ url: SRE, citation: "An error budget is 1 minus the SLO of the service", structured: EBK }] };
 
@@ -58,7 +65,7 @@ const a5p = K.assessClaim({ ...eb, sources: [{ url: "https://evil-a.example/x", 
 check("S5 two same-origin fake domains: signed-unanchored ⇒ not authenticated; even if pinned ⇒ unknown publishers ⇒ CANDIDATE, not a fact", evilCol.attested === false && a5.dimensions.epistemic === "CANDIDATE" && a5p.dimensions.epistemic === "CANDIDATE" && a5p.isFact === false);
 // 6. two genuinely INDEPENDENT sources with different wordings.
 const a6 = K.assessClaim({ ...eb, sources: [eb.sources[0], { url: NIST, text: "NIST states an error budget is 1 minus the SLO of a service, as SRE defines it", citation: "An error budget is 1 minus the SLO of a service, as SRE defines it", structured: EBK }] }, { asOfEpochMs: T0, collection: pinnedCol });
-check("S6 two independent publisher families, attested collection, grounded keys ⇒ CORROBORATED (structured, explainable)", a6.dimensions.epistemic === "CORROBORATED" && a6.independentFamilies.length === 2);
+check("S6 two independent publisher families, grounded keys ⇒ CORROBORATED logic (sandbox: wouldBeFact, never presented as fact)", a6.dimensions.epistemic === "CORROBORATED" && a6.independentFamilies.length === 2 && a6.wouldBeFact === true && a6.isFact === false && a6.sandbox === true);
 // 7. exact citation but claim taken OUT OF CONTEXT.
 const a7 = K.assessClaim({ ...eb, text: "An error budget is 1 minus the SLO of the service so ODG needs no tests", sources: a6.sources.map((s: any, i: number) => ({ url: s.url, citation: i ? "An error budget is 1 minus the SLO of a service, as SRE defines it" : "An error budget is 1 minus the SLO of the service", structured: EBK, text: i ? "NIST states an error budget is 1 minus the SLO of a service, as SRE defines it" : undefined })) }, { asOfEpochMs: T0, collection: pinnedCol });
 check("S7 exact quote, extended claim (out of context) ⇒ NOT a fact", a7.isFact === false);
@@ -111,6 +118,16 @@ require("./agent-identity.js").rotateKey(reg3, { tenantId: "odg-knowledge", agen
 check("revocation is terminal: rotateKey cannot silently revive a revoked issuer", A.verifyAttestation(zAtt, pages, { purpose: "COLLECTION_ARTIFACT", registry: reg3, asOf: T0 + DAY, allowRepeatVerification: true }).reason === "REVOKED_KEY");
 let canonThrew = false; try { A.contentSha256({ a: undefined }); } catch { canonThrew = true; }
 check("strict canonical: undefined / NaN / non-plain objects rejected (no null-collision)", canonThrew && (() => { try { A.contentSha256({ a: NaN }); return false; } catch { return true; } })() && (() => { try { A.contentSha256({ a: new Date(0) }); return false; } catch { return true; } })());
+const callerPinnedForge = K.attestCollection(forgedPages, { pinnedDigests: [A.contentSha256(forgedPages)] });
+const aCP = K.assessClaim({ ...eb, sources: [eb.sources[0], { url: "https://www.nist.gov/fake", text: "NIST states an error budget is 1 minus the SLO of a service, as SRE defines it", citation: "An error budget is 1 minus the SLO of a service, as SRE defines it", structured: EBK }] }, { asOfEpochMs: T0, collection: callerPinnedForge, missionAuthorization: "INTERNAL_INTEGRATION" });
+check("ATTACK R3: forged collection with a CALLER-supplied pin ⇒ sandbox only ⇒ never a fact, ≤ SANDBOX_EXPERIMENT", aCP.isFact === false && aCP.sandbox === true && aCP.dimensions.authorization === "SANDBOX_EXPERIMENT");
+const rCP = K.toMemory(aCP, T0);
+check("ATTACK R3b: sandbox CORROBORATED ⇒ toMemory status NOT VERIFIED and NOT admissible as fact", rCP.status === "UNVERIFIED" && K.admissible(rCP, T0, { assessment: aCP }).trusted === false);
+const redated = { ...K.toMemory(aReal, T0 + 400 * DAY) };
+check("ATTACK R3c: record re-dated to renew freshness ⇒ learnedAt≠assessment time ⇒ read-only", K.usableFor(redated, "INTERNAL_IMPLEMENTATION", T0 + 400 * DAY, { assessment: aReal }).authorization === "READ_ONLY_ANALYSIS");
+const future = K.assessClaim(realEB, { asOfEpochMs: T0 + 30 * DAY, collection: prodCol });
+check("ATTACK R3c: assessment dated in the future ⇒ read-only", K.usableFor(K.toMemory(future, T0 + 30 * DAY), "INTERNAL_IMPLEMENTATION", T0, { assessment: future }).authorization === "READ_ONLY_ANALYSIS");
+check("ATTACK R3d: bare maturity booleans cannot lift the cap (QUALIFIED by assertion)", K.assessClaim(realEB, { asOfEpochMs: T0, collection: prodCol, experimentApproved: true, qualificationEvidence: true, missionAuthorization: "INTERNAL_INTEGRATION" }).dimensions.authorization === "INTERNAL_IMPLEMENTATION");
 check("contract: signature never proves truth", A.KNOWLEDGE_ATTESTATION_CONTRACT.invariants.some((i: string) => /NEVER truth/.test(i)));
 
 process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-knowledge-attestation (V374 Lot 2: 10 falsification scenarios)" : f + " FAIL") + "\n"); process.exit(f ? 1 : 0);

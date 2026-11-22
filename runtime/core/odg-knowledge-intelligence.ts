@@ -24,7 +24,9 @@ const ATT = require("./odg-knowledge-attestation.js");   // V374: collection/rec
 // never from the caller. Empty by design (production keys are owner-gated) ⇒ a caller-made key can never authenticate.
 const TRUST_ANCHORS = Object.freeze((() => { try { const j = require("../../docs/odg/evidence/TRUST_ANCHORS.json"); return { COLLECTION_ARTIFACT: Object.freeze((j.COLLECTION_ARTIFACT || []).slice()), KNOWLEDGE_RECORD: Object.freeze((j.KNOWLEDGE_RECORD || []).slice()) }; } catch { return { COLLECTION_ARTIFACT: Object.freeze([]), KNOWLEDGE_RECORD: Object.freeze([]) }; } })());
 function anchored(purpose: string, v: any): boolean { return !!(v && v.valid && v.provenance && (TRUST_ANCHORS as any)[purpose].includes(v.provenance.keyFingerprint)); }
-const ASSESSMENTS: WeakSet<any> = new WeakSet();   // brand: ONLY assessClaim mints assessments   // reuse the step-2 claim↔quote binding (supports/covered)
+const ASSESSMENTS: WeakSet<any> = new WeakSet();   // brand: ONLY assessClaim mints assessments
+// PINNED COLLECTIONS: digests loaded HERE from the git-reviewed COLLECTION_REGISTRY.json (caller-supplied pins are SANDBOX).
+const REPO_PINS = Object.freeze((() => { try { return (require("../../docs/odg/evidence/COLLECTION_REGISTRY.json").collections || []).map((c: any) => c.sha256).filter((x: any) => typeof x === "string"); } catch { return []; } })());   // reuse the step-2 claim↔quote binding (supports/covered)
 
 const EPISTEMIC = Object.freeze(["UNKNOWN", "CANDIDATE", "SUPPORTED", "CORROBORATED", "CONTRADICTED", "INVALIDATED"]);
 const MATURITY = Object.freeze(["DISCOVERED", "USABLE", "EXPERIMENTAL", "QUALIFIED", "OPERATIONALLY_DEMONSTRATED"]);
@@ -107,14 +109,16 @@ function attestCollection(collection: any, o: any): any {
   const byUrl: Record<string, any> = {};
   for (const s of (isObj(copy) && Array.isArray(copy.sources) ? copy.sources : [])) if (s && typeof s.url === "string") byUrl[s.url] = s;   // frozen copies: later caller mutation cannot leak in
   let via: string | null = null;
-  if (Array.isArray(opts.pinnedDigests) && opts.pinnedDigests.includes(sha)) via = "PINNED_DIGEST";
+  let sandbox = false;
+  if (REPO_PINS.includes(sha)) via = "PINNED_DIGEST";                                            // production path (repo-pinned)
+  else if (Array.isArray(opts.pinnedDigests) && opts.pinnedDigests.includes(sha)) { via = "SANDBOX_PINNED"; sandbox = true; }   // caller pins ⇒ SANDBOX only
   let signature: any = null;
   if (!via && opts.attestation) {
     const v = ATT.verifyAttestation(opts.attestation, copy, { registry: opts.registry, asOf: opts.asOf, purpose: "COLLECTION_ARTIFACT", seenNonces: opts.seenNonces, allowRepeatVerification: opts.allowRepeatVerification });
     signature = v.valid ? (anchored("COLLECTION_ARTIFACT", v) ? "ANCHORED" : "VALID_BUT_UNANCHORED") : v.reason;
     if (anchored("COLLECTION_ARTIFACT", v)) via = "SIGNED_ANCHORED:" + v.provenance.issuer;   // a valid signature by a NON-anchored key authenticates nothing
   }
-  const res = Object.freeze({ attested: via !== null, via, signature, sha256: sha, byUrl: Object.freeze(byUrl) });
+  const res = Object.freeze({ attested: via !== null, via, sandbox, signature, sha256: sha, byUrl: Object.freeze(byUrl) });
   if (res.attested) ATTESTED_COLLECTIONS.add(res);
   return res;
 }
@@ -204,12 +208,19 @@ function assessClaim(claim: any, opts: any): any {
     reasons.push("page quotes not from an AUTHENTICATED collection (no pinned digest / valid collector attestation) ⇒ capped at CANDIDATE");
     epistemic = "CANDIDATE";
   }
+  const sandboxCollection = attestedCollection && col.sandbox === true;
+  if (sandboxCollection) reasons.push("SANDBOX collection (caller-pinned): result is never a fact and authorization ≤ SANDBOX_EXPERIMENT");
   // MATURITY (operational, NOT truth): starts at DISCOVERED; USABLE once a citation is verified; higher levels require
   // evidence supplied by a mission (experiment / qualification / demonstrated benefit) — never inferred here.
   let maturity = verified.length ? "USABLE" : "DISCOVERED";
-  if (o.experimentApproved === true && verified.length) maturity = "EXPERIMENTAL";
-  if (o.qualificationEvidence === true && maturity === "EXPERIMENTAL") maturity = "QUALIFIED";
-  if (o.demonstratedBenefit === true && maturity === "QUALIFIED") maturity = "OPERATIONALLY_DEMONSTRATED";
+  // maturity evidence must be BOUND (inspection MEDIUM): a mission contract id + a sha256 of the evidence artefact; a bare
+  // boolean is ignored. (The evidence content itself is not re-verified here — recorded limit: the mission gate owns that.)
+  const ev = isObj(o.maturityEvidence) ? o.maturityEvidence : {};
+  const bound = (x: any) => isObj(x) && typeof x.missionContract === "string" && /^WIC-/.test(x.missionContract) && typeof x.evidenceSha256 === "string" && /^[0-9a-f]{64}$/.test(x.evidenceSha256);
+  if ((o.experimentApproved === true || o.qualificationEvidence === true || o.demonstratedBenefit === true) && !bound(ev.experiment)) reasons.push("bare maturity booleans ignored — bind evidence {missionContract: 'WIC-…', evidenceSha256}");
+  if (bound(ev.experiment) && verified.length) maturity = "EXPERIMENTAL";
+  if (bound(ev.qualification) && maturity === "EXPERIMENTAL") maturity = "QUALIFIED";
+  if (bound(ev.demonstratedBenefit) && maturity === "QUALIFIED") maturity = "OPERATIONALLY_DEMONSTRATED";
 
   // RISK (drives verification/authorization requirements). Default from nature; caller may only RAISE it.
   const natureRisk: Record<string, string> = { SECURITY_CRITICAL: "HIGH", PERFORMANCE_CLAIM: "MEDIUM", STRATEGIC_HYPOTHESIS: "MEDIUM" };
@@ -229,15 +240,19 @@ function assessClaim(claim: any, opts: any): any {
     if (epistemic === "CANDIDATE") cap = "SANDBOX_EXPERIMENT";
     else if (epistemic === "SUPPORTED") cap = (maturity === "QUALIFIED" || maturity === "OPERATIONALLY_DEMONSTRATED") ? "INTERNAL_INTEGRATION" : "INTERNAL_IMPLEMENTATION";
     if ((risk === "HIGH" && epistemic !== "CORROBORATED") || (risk === "CRITICAL" && !(maturity === "QUALIFIED" || maturity === "OPERATIONALLY_DEMONSTRATED"))) cap = A(cap) < A("SANDBOX_EXPERIMENT") ? cap : "SANDBOX_EXPERIMENT";
+    if (sandboxCollection && A(cap) > A("SANDBOX_EXPERIMENT")) cap = "SANDBOX_EXPERIMENT";
     if (A(requested) > A(cap)) { authorization = cap; reasons.push("authorization capped at " + cap + " (epistemic " + epistemic + ", maturity " + maturity + ", risk " + risk + ")"); }
   }
 
   const assessment = Object.freeze({
+    asOfEpochMs: o.asOfEpochMs,
     id: "kc:" + sha({ k: claimKey, t: c.text }).slice(0, 16),   // always content-bound (caller id ignored)
     structured: Object.freeze({ subject: c.subject, relation: c.relation, value: c.value, scope: c.scope || null, time: c.time || null, version: c.version || null, qualifiers: Object.freeze((c.qualifiers || []).slice()) }),
     text: c.text, nature: c.nature || null,
     dimensions: Object.freeze({ epistemic, maturity, authorization, risk }),
-    isFact: epistemic === "CORROBORATED",          // only corroborated knowledge may be presented as an established fact
+    isFact: epistemic === "CORROBORATED" && !sandboxCollection,   // only corroborated knowledge on a REPO-authenticated collection is a fact
+    wouldBeFact: epistemic === "CORROBORATED",                    // logic outcome (for sandbox experiments), never presented as fact
+    sandbox: sandboxCollection,
     sources: Object.freeze(perSource), independentFamilies: Object.freeze(knownFamilies),
     reasons: Object.freeze(reasons),
   });
@@ -257,8 +272,8 @@ function toMemory(a: any, asOf: number): any {
     id: a.id, family: "semantic", claim: a.text, structured: a.structured, dimensions: a.dimensions, epistemic: e,
     retention: e === "INVALIDATED" || e === "CONTRADICTED" ? "KEPT_INVALID" : "KEPT",
     provenance: urls.length ? "KI_V2_VERIFIED_CITATION:" + urls.join("|") : undefined,
-    status: e === "CORROBORATED" ? "VERIFIED" : (e === "INVALIDATED" || e === "CONTRADICTED") ? "INVALIDATED" : "UNVERIFIED",
-    confidence: e === "CORROBORATED" ? 0.9 : e === "SUPPORTED" ? 0.7 : 0.3,
+    status: (e === "CORROBORATED" && a.isFact === true) ? "VERIFIED" : (e === "INVALIDATED" || e === "CONTRADICTED") ? "INVALIDATED" : "UNVERIFIED",   // sandbox CORROBORATED is NOT VERIFIED
+    confidence: (e === "CORROBORATED" && a.isFact === true) ? 0.9 : e === "SUPPORTED" ? 0.7 : 0.3,
     learnedAt: asOf, validUntil: asOf + 90 * 86400000,
     authoredBy: "ODG_CAPABILITY", appliedBy: "ODG_EXECUTOR",
     isFact: a.isFact === true && e === "CORROBORATED",
@@ -269,7 +284,10 @@ function recordProvenance(rec: any, opts: any): any {
   if (opts && opts.assessment) {
     if (!ASSESSMENTS.has(opts.assessment)) return { ok: false, reason: "assessment not minted by assessClaim" };
     let a: string, b: string;
-    try { a = ATT.contentSha256(toMemory(opts.assessment, rec.learnedAt)); b = ATT.contentSha256(rec); } catch { return { ok: false, reason: "non-canonical record" }; }
+    const t0 = opts.assessment.asOfEpochMs;   // learnedAt is BOUND to the assessment's own clock (no re-dating / future dating)
+    if (!Number.isFinite(t0) || rec.learnedAt !== t0) return { ok: false, reason: "learnedAt does not match the assessment time (re-dated record)" };
+    if (Number.isFinite(opts.asOf) && t0 > opts.asOf) return { ok: false, reason: "assessment dated in the future" };
+    try { a = ATT.contentSha256(toMemory(opts.assessment, t0)); b = ATT.contentSha256(rec); } catch { return { ok: false, reason: "non-canonical record" }; }
     return a === b ? { ok: true, via: "ASSESSMENT:" + opts.assessment.id } : { ok: false, reason: "record differs from what its assessment produces (re-wrapped/inflated)" };
   }
   if (opts && opts.attestation) {
@@ -302,6 +320,7 @@ function usableFor(rec: any, requested: string, asOf: number, o?: any): any {
 /* admissible(rec, asOf, {attestation, registry, ...}) -> admission AS FACT: the existing memory-trust-gate verdict AND a
  * valid KNOWLEDGE_RECORD attestation (a caller cannot re-wrap a record as VERIFIED). */
 function admissible(rec: any, asOf: number, o?: any): any {
+  if (!isObj(rec) || rec.isFact !== true || rec.status !== "VERIFIED") return Object.freeze({ trusted: false, verdict: "NOT_A_FACT", reasons: Object.freeze(["only a REPO-authenticated CORROBORATED fact is admissible as fact"]), selfAuthorized: false });
   const g = MTG.assessMemoryTrust(rec, { asOf, trustedAuthors: [ACTOR.EXECUTOR.ODG], minConfidence: 0.5 });
   if (!g.trusted) return g;
   const opts = isObj(o) ? { ...o, asOf } : { asOf };
@@ -319,7 +338,9 @@ const KNOWLEDGE_INTELLIGENCE_CONTRACT = Object.freeze({
     "only CORROBORATED is presented as a fact (isFact); SUPPORTED/CANDIDATE are kept, usable with reservations",
     "authorization comes from the mission contract, capped by epistemic level and risk — never from confidence",
     "structured keys are authored PER SOURCE, must be grounded in that source's citations/title, compared exactly; divergent keys kept",
-    "trust root: byUrl must be a recorded governed collection (forged byUrl for a known host is out of scope — documented)",
+    "trust root: page quotes authenticate only via digests pinned in COLLECTION_REGISTRY.json or signatures by keys anchored in TRUST_ANCHORS.json — both loaded by this module, never from the caller; caller pins ⇒ SANDBOX (never a fact, ≤ SANDBOX_EXPERIMENT)",
+    "records are trusted only when reproduced from a branded assessment at its own time, or signed by an anchored key; maturity needs bound evidence",
+    "LIMITS: in-process code can poison the require cache / monkeypatch (process boundary is the real security boundary); allowRepeatVerification is an explicit replay opt-out for re-verifying stored artefacts",
     "layer over existing memory/trust-gate/binding — no second memory/radar/orchestrator",
   ]),
 });

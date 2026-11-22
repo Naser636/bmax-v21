@@ -48,7 +48,7 @@ const NIST2 = "https://www.nist.gov/sp";
 const byU2 = { ...byUrl, [NIST2]: { title: "NIST SLO note", quotes: ["An error budget is 1 minus the SLO of a service, as SRE defines it"] } };
 const corro = { ...eb, sources: [eb.sources[0], { url: NIST2, text: "NIST states an error budget is 1 minus the SLO of a service, as SRE defines it", citation: "An error budget is 1 minus the SLO of a service, as SRE defines it", structured: EBK }] };
 const aC = K.assessClaim(corro, { asOfEpochMs: ASOF, collection: C(byU2) });
-check("two INDEPENDENT publisher families (google, nist), each with a GROUNDED identical key ⇒ CORROBORATED, isFact", aC.dimensions.epistemic === "CORROBORATED" && aC.isFact === true && aC.independentFamilies.length === 2);
+check("two INDEPENDENT publisher families, GROUNDED identical keys ⇒ CORROBORATED (sandbox collection ⇒ wouldBeFact, not presented as fact)", aC.dimensions.epistemic === "CORROBORATED" && aC.wouldBeFact === true && aC.isFact === false && aC.independentFamilies.length === 2);
 const sameKeyClaim = { ...eb, sources: [{ url: SRE, citation: "An error budget is 1 minus the SLO of the service", structured: NISTK }] };
 check("a source cannot claim a VALUE it does not show (SRE quote vs 'one minus the service level objective') ⇒ not counted",
   K.assessClaim({ ...sameKeyClaim, ...NISTK }, { asOfEpochMs: ASOF, collection: C(byUrl) }).independentFamilies.length === 0);
@@ -103,7 +103,7 @@ check("an unrelated contradicting citation (different subject) does NOT block th
   K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), contradictingSources: [{ url: NIST, citation: "is intended for voluntary use", text: "NIST states it is intended for voluntary use", structured: { subject: "AI RMF" } }] }).dimensions.epistemic === "SUPPORTED");
 
 // authorization caps (inspection MEDIUM).
-check("SUPPORTED + INTERNAL_INTEGRATION requested ⇒ capped at INTERNAL_IMPLEMENTATION (not yet QUALIFIED)", K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), missionAuthorization: "INTERNAL_INTEGRATION" }).dimensions.authorization === "INTERNAL_IMPLEMENTATION");
+check("SUPPORTED + INTERNAL_INTEGRATION requested on a SANDBOX collection ⇒ capped at SANDBOX_EXPERIMENT", K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), missionAuthorization: "INTERNAL_INTEGRATION" }).dimensions.authorization === "SANDBOX_EXPERIMENT");
 check("CANDIDATE (performance claim) ⇒ at most SANDBOX_EXPERIMENT", K.assessClaim({ ...eb, nature: "PERFORMANCE_CLAIM" }, { asOfEpochMs: ASOF, collection: C(byUrl), missionAuthorization: "INTERNAL_INTEGRATION" }).dimensions.authorization === "SANDBOX_EXPERIMENT");
 const bogus = K.assessClaim({ ...eb, nature: "WHATEVER" }, { asOfEpochMs: ASOF, collection: C(byUrl), missionAuthorization: "INTERNAL_INTEGRATION" });
 check("unknown nature ⇒ MEDIUM risk, never SUPPORTED, capped", bogus.dimensions.risk === "MEDIUM" && bogus.dimensions.epistemic === "CANDIDATE" && bogus.dimensions.authorization === "SANDBOX_EXPERIMENT");
@@ -112,7 +112,7 @@ check("risk can only be RAISED by opts (LOW requested on SECURITY_CRITICAL stays
 check("CRITICAL + CORROBORATED but not QUALIFIED ⇒ still capped at SANDBOX_EXPERIMENT", K.assessClaim(corro, { asOfEpochMs: ASOF, collection: C(byU2), risk: "CRITICAL", missionAuthorization: "INTERNAL_INTEGRATION" }).dimensions.authorization === "SANDBOX_EXPERIMENT");
 
 // maturity not inferred from truth.
-check("maturity stays USABLE without mission evidence; EXPERIMENTAL only with an approved experiment", a1.dimensions.maturity === "USABLE" && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), experimentApproved: true }).dimensions.maturity === "EXPERIMENTAL");
+check("maturity: bare booleans ignored; EXPERIMENTAL only with BOUND evidence (WIC id + sha256)", a1.dimensions.maturity === "USABLE" && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), experimentApproved: true }).dimensions.maturity === "USABLE" && K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), maturityEvidence: { experiment: { missionContract: "WIC-TEST-0001", evidenceSha256: "a".repeat(64) } } }).dimensions.maturity === "EXPERIMENTAL");
 check("OPERATIONALLY_DEMONSTRATED requires the full ladder", K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl), demonstratedBenefit: true }).dimensions.maturity === "USABLE");
 
 // union of one page's citations; no self-corroboration.
