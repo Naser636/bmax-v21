@@ -16,6 +16,8 @@ const CIG = require(path.join(ROOT, "runtime", "core", "change-impact-graph.js")
 const CENSUS = require(path.join(ROOT, "runtime", "core", "odg-component-census.js"));
 
 const CORE = path.join(ROOT, "runtime", "core");
+/* runCensus() — V150 Phase 1: the census run is exported so other read-only runners COMPOSE it (no second scan). */
+function runCensus(): any {
 const graph = CIG.buildGraph(ROOT);
 
 // out-of-core consumer sources (bin/app/script) + concatenated app text (for the APP_REFERENCED heuristic).
@@ -45,7 +47,11 @@ const binExists = (m: string) => { try { return fs.existsSync(path.join(ROOT, "r
 const TEST_FILES = (() => { try { return fs.readdirSync(CORE).filter((f: string) => f.endsWith(".test.ts")); } catch { return []; } })();
 const hasTest = (m: string) => TEST_FILES.some((f: string) => f === m + ".test.ts" || f.startsWith(m + "-") && f.endsWith(".test.ts") || f.startsWith(m + ".") && f.endsWith(".test.ts"));
 
-const r = CENSUS.census({ graph, scanned, sourceOf, appText, binExists, hasTest });
+return CENSUS.census({ graph, scanned, sourceOf, appText, binExists, hasTest });
+}
+module.exports = { runCensus };
+if (require.main === module) {
+const r = runCensus();
 
 process.stdout.write(JSON.stringify({
   componentCensus: "V361-A Chantier-1 — real component inventory over the require-graph (core+bin+app+script scan)",
@@ -61,4 +67,5 @@ process.stdout.write(`\nCENSUS: ${r.counts.CONNECTED} CONNECTED / ${r.counts.NO_
   `DECISION SURFACE = ${r.decisionSurface.length} modules with no detected importer + no plausible reason — the per-module judgment pool (liveness UNKNOWN; the export convention is near-universal so EXPORTS_API_NO_CONSUMER is NOT proof of harmlessness). This is NOT "no orphans" — it is the set that needs a per-component connect decision. No consumer fabricated, nothing auto-activated. ` +
   `ARCHITECTURE AUDIT (now consumed — previously dormant): ${r.architecture.circularDeps.length} circular-dependency cycle(s), ${r.architecture.duplicationGroups} responsibility-duplication group(s), ${r.architecture.trulyUnused} truly-unused (no consumer + no test). All findings NEEDS_REVIEW (read-only). Broken routes: 0 (evidenced by passing build + suite).\n`);
 process.exit(0);
+}
 export {};
