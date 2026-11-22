@@ -34,6 +34,7 @@ function ephemeralIdentity(issuer: string): any {
   const { publicKey, privateKey } = crypto.generateKeyPairSync("ed25519");
   return Object.freeze({ issuer, publicKeyPem: publicKey.export({ type: "spki", format: "pem" }), privateKey });
 }
+function fingerprint(publicKeyPem: string): string { return crypto.createHash("sha256").update(String(publicKeyPem)).digest("hex"); }
 function registerIssuer(reg: any, id: any): void { AI.register(reg, { tenantId: "odg-knowledge", agentId: id.issuer, publicKeyPem: id.publicKeyPem }); }
 function revokeIssuer(reg: any, issuer: string): void { AI.revoke(reg, { tenantId: "odg-knowledge", agentId: issuer }); const s = REVOKED.get(reg) || new Set<string>(); s.add(issuer); REVOKED.set(reg, s); }
 
@@ -70,7 +71,7 @@ function verifyAttestation(att: any, payload: any, o: any): any {
   if (opts.asOf >= h.expiresAt) return deny("EXPIRED");
   if (opts.seenNonces instanceof Set) { const nk = h.issuer + ":" + h.nonce; if (opts.seenNonces.has(nk)) return deny("REPLAYED"); opts.seenNonces.add(nk); }
   return Object.freeze({ valid: true, reason: "SIGNATURE_VALID", provesTruth: false,
-    provenance: Object.freeze({ issuer: h.issuer, keyVersion: k.keyVersion, contentSha256: h.contentSha256, issuedAt: h.issuedAt, expiresAt: h.expiresAt, purpose: h.purpose }),
+    provenance: Object.freeze({ issuer: h.issuer, keyFingerprint: fingerprint(k.publicKeyPem), keyVersion: k.keyVersion, contentSha256: h.contentSha256, issuedAt: h.issuedAt, expiresAt: h.expiresAt, purpose: h.purpose }),
     note: "integrity + declared origin only — NOT the truth of the content" });
 }
 
@@ -85,5 +86,5 @@ const KNOWLEDGE_ATTESTATION_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { canonical, contentSha256, ephemeralIdentity, registerIssuer, revokeIssuer, createAttestation, verifyAttestation, PURPOSES, KNOWLEDGE_ATTESTATION_CONTRACT, createRegistry: AI.createRegistry };
+module.exports = { canonical, contentSha256, fingerprint, ephemeralIdentity, registerIssuer, revokeIssuer, createAttestation, verifyAttestation, PURPOSES, KNOWLEDGE_ATTESTATION_CONTRACT, createRegistry: AI.createRegistry };
 export {};

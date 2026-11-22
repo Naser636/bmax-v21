@@ -40,7 +40,7 @@ function main() {
     const recOpts = { attestation: ATT.createAttestation({ purpose: "KNOWLEDGE_RECORD", identity: ID, payload: mem, issuedAt: asOf, expiresAt: asOf + 30 * 86400000, nonce: "ki-run-rec-" + String(i).padStart(4, "0") }), registry: REG, allowRepeatVerification: true };
     return { query: cy.query, claim: cy.claim, structured: a.structured, dimensions: a.dimensions, isFact: a.isFact,
       independentFamilies: a.independentFamilies, verifiedSources: a.sources.filter((s: any) => s.citationVerified).map((s: any) => ({ url: s.url, organization: s.identity.organization, family: s.identity.family })),
-      memory: { status: mem.status, retention: mem.retention, admittedAsFactByTrustGate: K.admissible(mem, asOf, recOpts).trusted, usableForDesign: K.usableFor(mem, "DESIGN_PROPOSAL", asOf, recOpts).authorization, usableForIntegrationRequest: K.usableFor(mem, "INTERNAL_INTEGRATION", asOf, recOpts).authorization }, reasons: a.reasons };
+      memory: { status: mem.status, retention: mem.retention, admittedAsFactByTrustGate: K.admissible(mem, asOf, { assessment: a }).trusted, usableForDesign: K.usableFor(mem, "DESIGN_PROPOSAL", asOf, { assessment: a }).authorization, usableForIntegrationRequest: K.usableFor(mem, "INTERNAL_INTEGRATION", asOf, { assessment: a }).authorization, sandboxSignatureOnly: K.usableFor(mem, "DESIGN_PROPOSAL", asOf, recOpts).authorization }, reasons: a.reasons };
   });
   const count = (k: string) => results.filter((r: any) => r.dimensions.epistemic === k).length;
   const evidence = {

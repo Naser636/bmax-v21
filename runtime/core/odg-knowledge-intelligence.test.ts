@@ -28,8 +28,8 @@ check("single verified OFFICIAL source with a GROUNDED own key ⇒ SUPPORTED, is
 check("four dimensions are separate fields", a1.dimensions.maturity === "USABLE" && a1.dimensions.authorization === "READ_ONLY_ANALYSIS" && a1.dimensions.risk === "LOW");
 const m1 = K.toMemory(a1, ASOF);
 check("V374: SUPPORTED is KEPT (retention) but NOT admitted as fact by the existing trust gate", m1.retention === "KEPT" && m1.status === "UNVERIFIED" && K.admissible(m1, ASOF).trusted === false && m1.isFact === false);
-check("V374: usableFor caps at the record's own authorization and the contract request", K.usableFor(m1, "INTERNAL_INTEGRATION", ASOF, att(m1, "nonce-m1-0001")).authorization === "READ_ONLY_ANALYSIS" && K.usableFor(m1, "READ_ONLY_ANALYSIS", ASOF, att(m1, "nonce-m1-0002")).authorization === "READ_ONLY_ANALYSIS");
-let mr = m1; for (let i = 0; i < 5; i++) { const u = K.usableFor(mr, "INTERNAL_INTEGRATION", ASOF + i * 86400000, att(mr, "nonce-loop-000" + i)); mr = Object.assign({}, mr); if (u.epistemic !== "SUPPORTED" || u.isFact) mr = null as any; }
+check("V374: usableFor caps at the record's own authorization and the contract request", K.usableFor(m1, "INTERNAL_INTEGRATION", ASOF, { assessment: a1 }).authorization === "READ_ONLY_ANALYSIS" && K.usableFor(m1, "READ_ONLY_ANALYSIS", ASOF, { assessment: a1 }).authorization === "READ_ONLY_ANALYSIS");
+let mr = m1; for (let i = 0; i < 5; i++) { const u = K.usableFor(mr, "INTERNAL_INTEGRATION", ASOF + i * 86400000, { assessment: a1 }); mr = Object.assign({}, mr); if (u.epistemic !== "SUPPORTED" || u.isFact) mr = null as any; }
 check("V374: repeated reuse NEVER elevates confidence (epistemic stays SUPPORTED, never a fact)", mr !== null);
 check("V374: raw caller-supplied pages (unattested) ⇒ capped at CANDIDATE", K.assessClaim(eb, { asOfEpochMs: ASOF, byUrl }).dimensions.epistemic === "CANDIDATE");
 

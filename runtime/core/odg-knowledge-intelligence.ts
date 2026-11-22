@@ -19,7 +19,12 @@ const crypto = require("crypto");
 const MTG = require("./memory-trust-gate.js");
 const ACTOR = require("./actor-provenance.js");
 const BIND = require("./odg-claim-quote-binding.js");
-const ATT = require("./odg-knowledge-attestation.js");   // V374: collection/record attestations (sandbox keys)   // reuse the step-2 claim↔quote binding (supports/covered)
+const ATT = require("./odg-knowledge-attestation.js");   // V374: collection/record attestations (sandbox keys)
+// TRUST ANCHORS (inspection HIGH r2): authorized issuer key fingerprints PER PURPOSE, loaded HERE from a git-reviewed file —
+// never from the caller. Empty by design (production keys are owner-gated) ⇒ a caller-made key can never authenticate.
+const TRUST_ANCHORS = Object.freeze((() => { try { const j = require("../../docs/odg/evidence/TRUST_ANCHORS.json"); return { COLLECTION_ARTIFACT: Object.freeze((j.COLLECTION_ARTIFACT || []).slice()), KNOWLEDGE_RECORD: Object.freeze((j.KNOWLEDGE_RECORD || []).slice()) }; } catch { return { COLLECTION_ARTIFACT: Object.freeze([]), KNOWLEDGE_RECORD: Object.freeze([]) }; } })());
+function anchored(purpose: string, v: any): boolean { return !!(v && v.valid && v.provenance && (TRUST_ANCHORS as any)[purpose].includes(v.provenance.keyFingerprint)); }
+const ASSESSMENTS: WeakSet<any> = new WeakSet();   // brand: ONLY assessClaim mints assessments   // reuse the step-2 claim↔quote binding (supports/covered)
 
 const EPISTEMIC = Object.freeze(["UNKNOWN", "CANDIDATE", "SUPPORTED", "CORROBORATED", "CONTRADICTED", "INVALIDATED"]);
 const MATURITY = Object.freeze(["DISCOVERED", "USABLE", "EXPERIMENTAL", "QUALIFIED", "OPERATIONALLY_DEMONSTRATED"]);
@@ -103,8 +108,13 @@ function attestCollection(collection: any, o: any): any {
   for (const s of (isObj(copy) && Array.isArray(copy.sources) ? copy.sources : [])) if (s && typeof s.url === "string") byUrl[s.url] = s;   // frozen copies: later caller mutation cannot leak in
   let via: string | null = null;
   if (Array.isArray(opts.pinnedDigests) && opts.pinnedDigests.includes(sha)) via = "PINNED_DIGEST";
-  else if (opts.attestation) { const v = ATT.verifyAttestation(opts.attestation, copy, { registry: opts.registry, asOf: opts.asOf, purpose: "COLLECTION_ARTIFACT", seenNonces: opts.seenNonces, allowRepeatVerification: opts.allowRepeatVerification }); if (v.valid) via = "SIGNED:" + v.provenance.issuer; }
-  const res = Object.freeze({ attested: via !== null, via, sha256: sha, byUrl: Object.freeze(byUrl) });
+  let signature: any = null;
+  if (!via && opts.attestation) {
+    const v = ATT.verifyAttestation(opts.attestation, copy, { registry: opts.registry, asOf: opts.asOf, purpose: "COLLECTION_ARTIFACT", seenNonces: opts.seenNonces, allowRepeatVerification: opts.allowRepeatVerification });
+    signature = v.valid ? (anchored("COLLECTION_ARTIFACT", v) ? "ANCHORED" : "VALID_BUT_UNANCHORED") : v.reason;
+    if (anchored("COLLECTION_ARTIFACT", v)) via = "SIGNED_ANCHORED:" + v.provenance.issuer;   // a valid signature by a NON-anchored key authenticates nothing
+  }
+  const res = Object.freeze({ attested: via !== null, via, signature, sha256: sha, byUrl: Object.freeze(byUrl) });
   if (res.attested) ATTESTED_COLLECTIONS.add(res);
   return res;
 }
@@ -222,7 +232,7 @@ function assessClaim(claim: any, opts: any): any {
     if (A(requested) > A(cap)) { authorization = cap; reasons.push("authorization capped at " + cap + " (epistemic " + epistemic + ", maturity " + maturity + ", risk " + risk + ")"); }
   }
 
-  return Object.freeze({
+  const assessment = Object.freeze({
     id: "kc:" + sha({ k: claimKey, t: c.text }).slice(0, 16),   // always content-bound (caller id ignored)
     structured: Object.freeze({ subject: c.subject, relation: c.relation, value: c.value, scope: c.scope || null, time: c.time || null, version: c.version || null, qualifiers: Object.freeze((c.qualifiers || []).slice()) }),
     text: c.text, nature: c.nature || null,
@@ -231,6 +241,8 @@ function assessClaim(claim: any, opts: any): any {
     sources: Object.freeze(perSource), independentFamilies: Object.freeze(knownFamilies),
     reasons: Object.freeze(reasons),
   });
+  ASSESSMENTS.add(assessment);
+  return assessment;
 }
 
 /* toMemory(assessment, asOf) -> record in the EXISTING memory shape (family "semantic"); kept even when not a fact.
@@ -252,17 +264,34 @@ function toMemory(a: any, asOf: number): any {
     isFact: a.isFact === true && e === "CORROBORATED",
   });
 }
+/* recordProvenance(rec, {assessment?, attestation?, registry?, ...}) -> {ok, via, reason}. */
+function recordProvenance(rec: any, opts: any): any {
+  if (opts && opts.assessment) {
+    if (!ASSESSMENTS.has(opts.assessment)) return { ok: false, reason: "assessment not minted by assessClaim" };
+    let a: string, b: string;
+    try { a = ATT.contentSha256(toMemory(opts.assessment, rec.learnedAt)); b = ATT.contentSha256(rec); } catch { return { ok: false, reason: "non-canonical record" }; }
+    return a === b ? { ok: true, via: "ASSESSMENT:" + opts.assessment.id } : { ok: false, reason: "record differs from what its assessment produces (re-wrapped/inflated)" };
+  }
+  if (opts && opts.attestation) {
+    const v = ATT.verifyAttestation(opts.attestation, rec, { registry: opts.registry, asOf: opts.asOf, purpose: "KNOWLEDGE_RECORD", seenNonces: opts.seenNonces, allowRepeatVerification: opts.allowRepeatVerification });
+    if (!v.valid) return { ok: false, reason: "attestation " + v.reason };
+    return anchored("KNOWLEDGE_RECORD", v) ? { ok: true, via: "ANCHORED:" + v.provenance.issuer } : { ok: false, reason: "signed by a NON-anchored key (signature proves only that the signer approved it)" };
+  }
+  return { ok: false, reason: "no assessment and no anchored attestation" };
+}
 /* usableFor(rec, requested, asOf) -> authorization actually granted for THIS use: never above the record's own capped
  * authorization, never above the mission contract's request; INVALID/stale ⇒ BLOCKED / READ_ONLY. Reuse never elevates. */
 function usableFor(rec: any, requested: string, asOf: number, o?: any): any {
   const A = (x: string) => AUTHORIZATION.indexOf(x);
-  const opts = isObj(o) ? o : {};
+  const opts = isObj(o) ? { ...o, asOf } : { asOf };
   if (!isObj(rec) || !isObj(rec.dimensions)) return Object.freeze({ authorization: "BLOCKED", reason: "not a KI-V2 record" });
   if (rec.status === "INVALIDATED" || rec.retention === "KEPT_INVALID") return Object.freeze({ authorization: "BLOCKED", reason: "invalidated/contradicted knowledge" });
-  // the record's own fields are trusted ONLY under a valid KNOWLEDGE_RECORD attestation (inspection MEDIUM: re-wrapped
-  // records must not elevate). Unattested ⇒ READ_ONLY_ANALYSIS, never a fact.
-  const v = ATT.verifyAttestation(opts.attestation, rec, { registry: opts.registry, asOf, purpose: "KNOWLEDGE_RECORD", seenNonces: opts.seenNonces, allowRepeatVerification: opts.allowRepeatVerification });
-  if (!v.valid) return Object.freeze({ authorization: "READ_ONLY_ANALYSIS", isFact: false, reason: "record not attested (" + v.reason + ") — read-only, no elevation" });
+  // the record's own fields are trusted ONLY if (a) it is EXACTLY what toMemory() produces from a BRANDED assessment
+  // (minted by assessClaim, which caps everything not built on an authenticated collection), or (b) it carries a valid
+  // KNOWLEDGE_RECORD attestation by an ANCHORED issuer. Caller-made keys / re-wrapped records never elevate.
+  const prov = recordProvenance(rec, opts);
+  if (!prov.ok) return Object.freeze({ authorization: "READ_ONLY_ANALYSIS", isFact: false, reason: "record not grounded (" + prov.reason + ") — read-only, no elevation" });
+  const v = { provenance: { issuer: prov.via } };
   if (!Number.isFinite(rec.validUntil) || !Number.isFinite(asOf) || asOf > rec.validUntil) return Object.freeze({ authorization: "READ_ONLY_ANALYSIS", isFact: false, reason: "stale or undated knowledge — re-verify before use" });
   const req = AUTHORIZATION.includes(requested) ? requested : "READ_ONLY_ANALYSIS";
   const own = rec.dimensions.authorization;
@@ -275,9 +304,9 @@ function usableFor(rec: any, requested: string, asOf: number, o?: any): any {
 function admissible(rec: any, asOf: number, o?: any): any {
   const g = MTG.assessMemoryTrust(rec, { asOf, trustedAuthors: [ACTOR.EXECUTOR.ODG], minConfidence: 0.5 });
   if (!g.trusted) return g;
-  const opts = isObj(o) ? o : {};
-  const v = ATT.verifyAttestation(opts.attestation, rec, { registry: opts.registry, asOf, purpose: "KNOWLEDGE_RECORD", seenNonces: opts.seenNonces, allowRepeatVerification: opts.allowRepeatVerification });
-  return v.valid ? g : Object.freeze({ trusted: false, verdict: "UNATTESTED_RECORD", reasons: Object.freeze(["record attestation " + v.reason]), selfAuthorized: false });
+  const opts = isObj(o) ? { ...o, asOf } : { asOf };
+  const prov = recordProvenance(rec, opts);
+  return prov.ok ? g : Object.freeze({ trusted: false, verdict: "UNGROUNDED_RECORD", reasons: Object.freeze([prov.reason]), selfAuthorized: false });
 }
 
 const KNOWLEDGE_INTELLIGENCE_CONTRACT = Object.freeze({
@@ -295,5 +324,5 @@ const KNOWLEDGE_INTELLIGENCE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { assessClaim, attestCollection, crossFamilyOverlap, toMemory, usableFor, admissible, identityOf, structuredKey, RELATIONS, PUBLISHERS, EPISTEMIC, MATURITY, AUTHORIZATION, RISK, NATURE, KNOWLEDGE_INTELLIGENCE_CONTRACT };
+module.exports = { TRUST_ANCHORS, assessClaim, attestCollection, crossFamilyOverlap, toMemory, usableFor, admissible, identityOf, structuredKey, RELATIONS, PUBLISHERS, EPISTEMIC, MATURITY, AUTHORIZATION, RISK, NATURE, KNOWLEDGE_INTELLIGENCE_CONTRACT };
 export {};

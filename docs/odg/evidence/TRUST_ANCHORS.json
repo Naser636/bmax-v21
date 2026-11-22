@@ -1,0 +1,5 @@
+{
+  "//": "V374 trust anchors for signed knowledge artefacts — SHA-256 fingerprints of SPKI-PEM public keys, PER PURPOSE. Loaded by runtime/core/odg-knowledge-intelligence.ts itself (callers cannot override). EMPTY BY DESIGN: production key management is OWNER-GATED (closure-register item p0e-audit-log-keyed-integrity). Until the owner pins a key here through a reviewed PR, signed collections/records cannot raise confidence; authentication relies on digests pinned in COLLECTION_REGISTRY.json and on assessments minted by assessClaim.",
+  "COLLECTION_ARTIFACT": [],
+  "KNOWLEDGE_RECORD": []
+}
