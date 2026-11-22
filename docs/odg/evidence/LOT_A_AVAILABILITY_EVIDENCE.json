@@ -1,0 +1,164 @@
+{
+  "lot": "V375 Lot A — autonomy availability (G0) + SLO candidate comparison (G1)",
+  "source": {
+    "attempts": "runtime/generated/mission-attempt-log.jsonl (local, gitignored; read-only)",
+    "rows": 2567,
+    "ci": "docs/odg/evidence/LOT3_CI_EVENTS.json"
+  },
+  "refusalCauses": {
+    "AVAILABLE_IDLE": 1381,
+    "AVAILABLE_EXECUTED_PASS": 1,
+    "AVAILABLE_EXECUTED_NOT_PASS": 2,
+    "REFUSED_ORGANIZATIONAL": 1180,
+    "REFUSED_LEGITIMATE": 3,
+    "UNCLASSIFIED": 0
+  },
+  "beforeAfter": {
+    "cutover": "2026-11-22T02:00:00Z",
+    "before": {
+      "window": {
+        "from": "2026-11-16T00:00:00Z",
+        "to": "2026-11-22T02:00:00Z"
+      },
+      "total": 577,
+      "counts": {
+        "AVAILABLE_IDLE": 405,
+        "AVAILABLE_EXECUTED_PASS": 0,
+        "AVAILABLE_EXECUTED_NOT_PASS": 0,
+        "REFUSED_ORGANIZATIONAL": 171,
+        "REFUSED_LEGITIMATE": 1,
+        "UNCLASSIFIED": 0
+      },
+      "availability": 0.7019,
+      "availabilityExcludingLegitimate": 0.7036,
+      "missionReliability": null,
+      "missionReliabilityNote": "NOT_MEASURED — only 0 executed attempt(s) (< 20)"
+    },
+    "after": {
+      "window": {
+        "from": "2026-11-22T02:00:00Z",
+        "to": "2026-11-22T13:13:41.134Z"
+      },
+      "total": 45,
+      "counts": {
+        "AVAILABLE_IDLE": 45,
+        "AVAILABLE_EXECUTED_PASS": 0,
+        "AVAILABLE_EXECUTED_NOT_PASS": 0,
+        "REFUSED_ORGANIZATIONAL": 0,
+        "REFUSED_LEGITIMATE": 0,
+        "UNCLASSIFIED": 0
+      },
+      "availability": 1,
+      "availabilityExcludingLegitimate": 1,
+      "missionReliability": null,
+      "missionReliabilityNote": "NOT_MEASURED — only 0 executed attempt(s) (< 20)"
+    },
+    "note": "before = 2026-11-16 → cutover (development sessions switched branches in the main worktree); after = worktree-only work. 'after' is a SHORT window — the main-worktree guard (this PR) is what makes it structural."
+  },
+  "sloCandidates": {
+    "autonomyAvailability": {
+      "window": [
+        "2026-11-08T00:08:10.806Z",
+        "2026-11-22T13:13:41.134Z"
+      ],
+      "events": 1391,
+      "compare": [
+        {
+          "slo": 0.97,
+          "sli": 0.580158,
+          "allowedBad": 41.73,
+          "actualBad": 584,
+          "remainingFraction": -1,
+          "exhausted": true,
+          "exhaustedOn": "2026-11-08",
+          "firstBurnAlert": "2026-11-08"
+        },
+        {
+          "slo": 0.98,
+          "sli": 0.580158,
+          "allowedBad": 27.82,
+          "actualBad": 584,
+          "remainingFraction": -1,
+          "exhausted": true,
+          "exhaustedOn": "2026-11-08",
+          "firstBurnAlert": "2026-11-08"
+        },
+        {
+          "slo": 0.985,
+          "sli": 0.580158,
+          "allowedBad": 20.87,
+          "actualBad": 584,
+          "remainingFraction": -1,
+          "exhausted": true,
+          "exhaustedOn": "2026-11-08",
+          "firstBurnAlert": "2026-11-08"
+        },
+        {
+          "slo": 0.99,
+          "sli": 0.580158,
+          "allowedBad": 13.91,
+          "actualBad": 584,
+          "remainingFraction": -1,
+          "exhausted": true,
+          "exhaustedOn": "2026-11-08",
+          "firstBurnAlert": "2026-11-08"
+        }
+      ]
+    },
+    "ciRequiredCheck": {
+      "window": [
+        "2026-11-08T22:11:44Z",
+        "2026-11-22T12:32:24Z"
+      ],
+      "events": 982,
+      "compare": [
+        {
+          "slo": 0.97,
+          "sli": 0.983707,
+          "allowedBad": 29.46,
+          "actualBad": 16,
+          "remainingFraction": 0.4569,
+          "exhausted": false,
+          "exhaustedOn": null,
+          "firstBurnAlert": "2026-11-11"
+        },
+        {
+          "slo": 0.98,
+          "sli": 0.983707,
+          "allowedBad": 19.64,
+          "actualBad": 16,
+          "remainingFraction": 0.1853,
+          "exhausted": false,
+          "exhaustedOn": null,
+          "firstBurnAlert": "2026-11-11"
+        },
+        {
+          "slo": 0.985,
+          "sli": 0.983707,
+          "allowedBad": 14.73,
+          "actualBad": 16,
+          "remainingFraction": -0.0862,
+          "exhausted": true,
+          "exhaustedOn": "2026-11-20",
+          "firstBurnAlert": "2026-11-11"
+        },
+        {
+          "slo": 0.99,
+          "sli": 0.983707,
+          "allowedBad": 9.82,
+          "actualBad": 16,
+          "remainingFraction": -0.6293,
+          "exhausted": true,
+          "exhaustedOn": "2026-11-17",
+          "firstBurnAlert": "2026-11-11"
+        }
+      ]
+    }
+  },
+  "separation": {
+    "availability": "tick passed startup (any refusal = unavailable)",
+    "missionReliability": "NOT_MEASURED — only 3 executed attempt(s) (< 20)",
+    "ci": "required check success among decisive runs"
+  },
+  "notConfigured": "no SLO written to slo-targets; no freeze policy activated — owner decision"
+}
