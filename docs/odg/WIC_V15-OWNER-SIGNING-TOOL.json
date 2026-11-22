@@ -4,14 +4,29 @@
   "objective": "give the owner an offline tool + procedure to produce the INSPECTION_RECORD / MATURITY_EVIDENCE sidecars the existing checks already read (the only missing gate conditions)",
   "v124Link": "CM-RADAR-GATE-CHAIN",
   "authorization": "ODG — AUTORISATION PERMANENTE DE CONTINUITÉ D'EXÉCUTION + V15 executive order; owner-gated items are documented, not performed",
-  "write_set": ["runtime/bin/odg-owner-sign.ts", "runtime/bin/odg-owner-sign.test.ts", "docs/odg/OWNER_SIGNING_PROCEDURE.md", "docs/odg/WIC_V15-OWNER-SIGNING-TOOL.json"],
+  "write_set": [
+    "runtime/bin/odg-owner-sign.ts",
+    "runtime/bin/odg-owner-sign.test.ts",
+    "docs/odg/OWNER_SIGNING_PROCEDURE.md",
+    "docs/odg/WIC_V15-OWNER-SIGNING-TOOL.json"
+  ],
   "invariants": [
     "no new trust path: sidecars count only through the existing verifyOwnerAnchored and only once the owner pins the key",
     "TRUST_ANCHORS.json untouched (still empty); the tool never writes it",
     "the tool never generates a key and refuses a private key inside the repository",
     "the provider never runs the tool with a real key"
   ],
-  "acceptance_criteria": ["odg-owner-sign.test.ts ALL PASS (existing gate review + evidence verifier accept the tool's sidecars in a throw-away copy; refusals)", "tsc clean", "CI green"],
+  "acceptance_criteria": [
+    "odg-owner-sign.test.ts ALL PASS (existing gate review + evidence verifier accept the tool's sidecars in a throw-away copy; refusals)",
+    "tsc clean",
+    "CI green"
+  ],
   "rollback": "git revert (additive files only)",
-  "stateNote": "NOT VERIFIED: provider must not self-certify."
+  "stateNote": "NOT VERIFIED: provider must not self-certify.",
+  "knownLimits": [
+    "MEDIUM (pre-existing, documented): pinning a key in TRUST_ANCHORS.json is controlled ONLY by owner review; provider gh = same account that merges ⇒ not technically enforced; enforcing control (distinct account + branch protection, or owner-GPG-signed commits) is an OWNER decision",
+    "'key inside repo' refusal covers only the checkout the tool runs from",
+    "record symlink check covers the final path only (risk = owner signs the wrong file)"
+  ],
+  "inspection": "provider subagent a135b402: ACCEPT (1 MEDIUM pre-existing documented, LOWs folded into the procedure) — information only, does not count"
 }

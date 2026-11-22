@@ -14,12 +14,16 @@ The tool adds no new trust path. It only writes the signature sidecars that the 
 ## 1. Key (once, outside any repository checkout)
 
 ```sh
+mkdir -p ~/odg-owner && chmod 700 ~/odg-owner
 openssl genpkey -algorithm ed25519 -out ~/odg-owner/owner.pem   # keep private, offline backup
+chmod 600 ~/odg-owner/owner.pem
 openssl pkey -in ~/odg-owner/owner.pem -pubout -out ~/odg-owner/owner.pub
 npx tsx runtime/bin/odg-owner-sign.ts fingerprint --pub ~/odg-owner/owner.pub
 ```
 
-The tool refuses a private key located inside the repository.
+Run `npx tsx` from a checkout with `node_modules` installed.
+
+The tool refuses a private key located inside the checkout it runs from, but not one in another checkout or worktree. Keep the key in `~/odg-owner`.
 
 ## 2. Pin the fingerprint (owner-reviewed PR)
 
@@ -29,9 +33,18 @@ Add the printed hex fingerprint to `TRUST_ANCHORS.json`:
 
 Pinning a key is the trust decision itself. Review it as such.
 
+> **NOT TECHNICALLY ENFORCED (inspection MEDIUM).** The owner-reviewed PR is the **only** control on this file.
+> The provider's `gh` uses the same GitHub account (Naser636) that merges PRs. A provider could therefore generate its own key, sign with this tool, and pin that key in a PR it merges itself.
+> Until the owner adds an enforcing control, a pinned key proves only what the owner's own review of `TRUST_ANCHORS.json` proves. Possible controls (owner decision; repository settings are not changed by the provider):
+> - a distinct provider account plus branch protection requiring owner review of this path;
+> - a required owner-GPG-signed commit for this path.
+> **Owner check:** `git log -p -- docs/odg/evidence/TRUST_ANCHORS.json` must show only fingerprints **you** added.
+
 ## 3. Sign
 
 Before signing, read the record or evidence. A signature attests that **you** reviewed it.
+
+Sign **exactly the version merged on `main`** (`git fetch && git checkout origin/main -- <file>` or a clean checkout of main). The checks read `origin/main`, so a working-tree difference such as an uncommitted edit or CRLF conversion causes a hash mismatch and fails closed.
 
 **Gate inspection record** (example: the resident-confinement experiment):
 
@@ -58,7 +71,7 @@ The checks read the record and its sidecar from `origin/main`.
 
 Any later edit to the record or evidence invalidates the signature: the check returns `CONTENT_MODIFIED` or a hash mismatch.
 
-Signatures expire after at most 90 days (default 30).
+Signatures expire after at most 90 days (default 30). After expiry, the gate returns to `RETURN_TO_EXPERIMENT`, so you must sign again.
 
 Rerun `runtime/bin/odg-gate-experiment-resident-confinement.ts`. The two review conditions then pass, provided that:
 - the key is pinned;
