@@ -10,13 +10,13 @@
   "phases": [
     {
       "name": "run1-sigkill-mid-op",
-      "pid": 177752,
+      "pid": 188662,
       "exitCode": null,
       "signal": "SIGKILL",
-      "killedAt": 1795388085097,
-      "wallMs": 1176,
-      "toFirstCommitMs": 908,
-      "startupMs": 769,
+      "killedAt": 1795389232564,
+      "wallMs": 1214,
+      "toFirstCommitMs": 944,
+      "startupMs": 803,
       "killPoint": "START:M4.o1",
       "started": [
         "M1.o1",
@@ -42,13 +42,13 @@
     },
     {
       "name": "run2-sigkill-after-commit-before-persist",
-      "pid": 177794,
+      "pid": 188687,
       "exitCode": null,
       "signal": "SIGKILL",
-      "killedAt": 1795388086871,
-      "wallMs": 1773,
-      "toFirstCommitMs": 1630,
-      "startupMs": 636,
+      "killedAt": 1795389234319,
+      "wallMs": 1751,
+      "toFirstCommitMs": 1605,
+      "startupMs": 737,
       "killPoint": "COMMIT:M1.o2",
       "started": [
         "M4.o1",
@@ -63,11 +63,12 @@
         {
           "op": "M4.o1",
           "mission": "M4",
-          "fromPid": 177752,
-          "lockAgeMs": 1527.97216796875
+          "fromPid": 188662,
+          "fromGen": 1,
+          "ageFromClaimedAtMs": 1507
         }
       ],
-      "leaseContentions": 33,
+      "leaseContentions": 28,
       "reStartedAlreadyCommitted": [],
       "integrityBefore": {
         "registerParses": true,
@@ -78,13 +79,13 @@
     },
     {
       "name": "run3-resume-injected-crash",
-      "pid": 177859,
+      "pid": 188739,
       "exitCode": 70,
       "signal": null,
       "killedAt": null,
-      "wallMs": 973,
-      "toFirstCommitMs": 941,
-      "startupMs": 796,
+      "wallMs": 921,
+      "toFirstCommitMs": 899,
+      "startupMs": 749,
       "killPoint": null,
       "started": [
         "M2.o2",
@@ -108,14 +109,48 @@
       "stderrTail": ""
     },
     {
-      "name": "run4-resume-to-completion",
-      "pid": 177903,
+      "name": "run4a-concurrent-resumer",
+      "pid": 188763,
       "exitCode": 0,
       "signal": null,
       "killedAt": null,
-      "wallMs": 2745,
-      "toFirstCommitMs": 1604,
-      "startupMs": 676,
+      "wallMs": 2780,
+      "toFirstCommitMs": null,
+      "startupMs": 689,
+      "killPoint": null,
+      "started": [],
+      "committed": [],
+      "reconciled": [
+        "M3.o2",
+        "M4.o2",
+        "M1.o3",
+        "M2.o3",
+        "M3.o3",
+        "M4.o3",
+        "M1.o4",
+        "M2.o4",
+        "M3.o4",
+        "M4.o4"
+      ],
+      "takeovers": [],
+      "leaseContentions": 78,
+      "reStartedAlreadyCommitted": [],
+      "integrityBefore": {
+        "registerParses": true,
+        "records": 6,
+        "tornRecords": [],
+        "tmpLeftovers": 1
+      }
+    },
+    {
+      "name": "run4b-concurrent-resumer",
+      "pid": 188764,
+      "exitCode": 0,
+      "signal": null,
+      "killedAt": null,
+      "wallMs": 2762,
+      "toFirstCommitMs": 1605,
+      "startupMs": 833,
       "killPoint": null,
       "started": [
         "M3.o2",
@@ -146,17 +181,19 @@
         {
           "op": "M3.o2",
           "mission": "M3",
-          "fromPid": 177859,
-          "lockAgeMs": 1513.968994140625
+          "fromPid": 188739,
+          "fromGen": 2,
+          "ageFromClaimedAtMs": 1509
         },
         {
           "op": "M1.o3",
           "mission": "M1",
-          "fromPid": 177794,
-          "lockAgeMs": 2846.97021484375
+          "fromPid": 188687,
+          "fromGen": 2,
+          "ageFromClaimedAtMs": 2805
         }
       ],
-      "leaseContentions": 30,
+      "leaseContentions": 24,
       "reStartedAlreadyCommitted": [],
       "integrityBefore": {
         "registerParses": true,
@@ -167,13 +204,13 @@
     },
     {
       "name": "run5-idempotent-rerun",
-      "pid": 177978,
+      "pid": 188794,
       "exitCode": 0,
       "signal": null,
       "killedAt": null,
-      "wallMs": 736,
+      "wallMs": 797,
       "toFirstCommitMs": null,
-      "startupMs": 715,
+      "startupMs": 762,
       "killPoint": null,
       "started": [],
       "committed": [],
@@ -191,29 +228,47 @@
   ],
   "measurements": {
     "resumeWallMs": {
-      "run2-sigkill-after-commit-before-persist": 1773,
-      "run3-resume-injected-crash": 973,
-      "run4-resume-to-completion": 2745,
-      "run5-idempotent-rerun": 736
+      "run2-sigkill-after-commit-before-persist": 1751,
+      "run3-resume-injected-crash": 921,
+      "run4a-concurrent-resumer": 2780,
+      "run4b-concurrent-resumer": 2762,
+      "run5-idempotent-rerun": 797
     },
     "resumeToFirstNewCommitMs": {
-      "run2-sigkill-after-commit-before-persist": 1630,
-      "run3-resume-injected-crash": 941,
-      "run4-resume-to-completion": 1604,
+      "run2-sigkill-after-commit-before-persist": 1605,
+      "run3-resume-injected-crash": 899,
+      "run4a-concurrent-resumer": null,
+      "run4b-concurrent-resumer": 1605,
       "run5-idempotent-rerun": null
     },
     "processStartupMs": {
-      "run1-sigkill-mid-op": 769,
-      "run2-sigkill-after-commit-before-persist": 636,
-      "run3-resume-injected-crash": 796,
-      "run4-resume-to-completion": 676,
-      "run5-idempotent-rerun": 715
+      "run1-sigkill-mid-op": 803,
+      "run2-sigkill-after-commit-before-persist": 737,
+      "run3-resume-injected-crash": 749,
+      "run4a-concurrent-resumer": 689,
+      "run4b-concurrent-resumer": 833,
+      "run5-idempotent-rerun": 762
     },
     "opsRepeatedCompleted": 0,
     "opsLost": 0,
     "interruptedAttemptsReRun": 2,
-    "reconciledDuplicates": 1,
-    "leaseContentionsWhileUnexpired": 63,
+    "reconciledDuplicates": 11,
+    "concurrentResumers": {
+      "a": {
+        "started": 0,
+        "reconciled": 10,
+        "contentions": 78,
+        "wallMs": 2780
+      },
+      "b": {
+        "started": 10,
+        "reconciled": 0,
+        "contentions": 24,
+        "wallMs": 2762
+      },
+      "reconciledUnderLease": 10
+    },
+    "leaseContentionsWhileUnexpired": 130,
     "leaseTakeovers": 3,
     "doubleHeldLeases": 0
   },
@@ -226,79 +281,84 @@
     "lost": [],
     "wrongValues": [],
     "opsCommittedExactlyOnce": true,
+    "noStartAfterCommit": true,
+    "reconciledUnderLease": 10,
     "interruptedAttemptsReRun": 2,
-    "reconciledDuplicates": 1,
+    "reconciledDuplicates": 11,
     "perMission": {
       "M1": {
         "ops": 4,
         "attempts": 4,
         "reRunInterruptedOps": 0,
         "repeatedCompletedOps": 0,
-        "reconciledDuplicates": 1
+        "reconciledDuplicates": 3
       },
       "M2": {
         "ops": 4,
         "attempts": 4,
         "reRunInterruptedOps": 0,
         "repeatedCompletedOps": 0,
-        "reconciledDuplicates": 0
+        "reconciledDuplicates": 2
       },
       "M3": {
         "ops": 4,
         "attempts": 5,
         "reRunInterruptedOps": 1,
         "repeatedCompletedOps": 0,
-        "reconciledDuplicates": 0
+        "reconciledDuplicates": 3
       },
       "M4": {
         "ops": 4,
         "attempts": 5,
         "reRunInterruptedOps": 1,
         "repeatedCompletedOps": 0,
-        "reconciledDuplicates": 0
+        "reconciledDuplicates": 3
       }
     },
     "leases": {
       "ttlMs": 1500,
-      "claims": 18,
+      "claims": 28,
       "orphanedByDeath": [
         {
           "op": "M4.o1",
           "mission": "M4",
-          "pid": 177752
+          "pid": 188662
         },
         {
           "op": "M1.o2",
           "mission": "M1",
-          "pid": 177794
+          "pid": 188687
         },
         {
           "op": "M3.o2",
           "mission": "M3",
-          "pid": 177859
+          "pid": 188739
         }
       ],
       "takeovers": [
         {
           "op": "M4.o1",
           "mission": "M4",
-          "fromPid": 177752,
-          "lockAgeMs": 1527.97216796875
+          "fromPid": 188662,
+          "fromGen": 1,
+          "ageFromClaimedAtMs": 1507
         },
         {
           "op": "M3.o2",
           "mission": "M3",
-          "fromPid": 177859,
-          "lockAgeMs": 1513.968994140625
+          "fromPid": 188739,
+          "fromGen": 2,
+          "ageFromClaimedAtMs": 1509
         },
         {
           "op": "M1.o3",
           "mission": "M1",
-          "fromPid": 177794,
-          "lockAgeMs": 2846.97021484375
+          "fromPid": 188687,
+          "fromGen": 2,
+          "ageFromClaimedAtMs": 2805
         }
       ],
-      "contentionsWhileUnexpired": 63,
+      "contentionsWhileUnexpired": 130,
       "doubleHeld": [],
       "leftHeldAtEnd": []
     }
@@ -312,43 +372,43 @@
   "atomicWriteStress": {
     "kills": 6,
     "allIntact": true,
-    "killsLandedWithTornTemp": 1,
+    "killsLandedWithTornTemp": 0,
     "results": [
       {
-        "killAfterMs": 449,
+        "killAfterMs": 445,
         "targetIntact": true,
         "version": null,
         "tmpLeftovers": 0
       },
       {
-        "killAfterMs": 774,
+        "killAfterMs": 733,
         "targetIntact": true,
         "version": null,
         "tmpLeftovers": 0
       },
       {
-        "killAfterMs": 738,
+        "killAfterMs": 740,
         "targetIntact": true,
-        "version": 4,
+        "version": null,
         "tmpLeftovers": 0
       },
       {
-        "killAfterMs": 664,
+        "killAfterMs": 560,
         "targetIntact": true,
-        "version": 4,
+        "version": null,
         "tmpLeftovers": 0
       },
       {
-        "killAfterMs": 498,
+        "killAfterMs": 678,
         "targetIntact": true,
-        "version": 4,
+        "version": 2,
         "tmpLeftovers": 0
       },
       {
-        "killAfterMs": 783,
+        "killAfterMs": 534,
         "targetIntact": true,
-        "version": 7,
-        "tmpLeftovers": 1
+        "version": 2,
+        "tmpLeftovers": 0
       }
     ]
   },
@@ -361,6 +421,7 @@
     "atomicWriteSurvivesSigkill": true,
     "leasesOfKilledRunTakenOverNotDoubleHeld": true,
     "failedResumeRetriedSafely": true,
+    "concurrentResumersNoDoubleEffect": true,
     "idempotentRerunExecutesNothing": true
   },
   "allProven": true,
@@ -369,7 +430,7 @@
       "campaign-loop.runCampaignLoop: which op runs next (dep order + priority), persisting the register after EACH op, never re-running an ACCEPTED op on resume",
       "campaign-controller.saveRegister: crash-atomic temp+rename for the register AND every per-op record",
       "idempotency-guard.admit: DUPLICATE decision by op id ⇒ an op committed before the kill is reconciled, not re-applied",
-      "fleet-bridge.tryClaim/releaseClaim: lease exclusivity (O_EXCL) and TTL expiry/takeover of a killed holder's lease (TOCTOU reclaim fixed in this lot)"
+      "fleet-bridge.tryClaim/releaseClaim: lease exclusivity (O_EXCL) and TTL expiry/takeover of a killed holder's lease (generation-numbered race-free takeover, fixed in this lot)"
     ],
     "providerWrittenHarness": [
       "the scenario itself: missions/ops definition, op effect (hash chain), deriving the idempotency journal from the durable op records, the lease bounded wait, the kill points, the injected crash, and every check/measurement in this file",
@@ -378,11 +439,11 @@
   },
   "limits": [
     "single host, local filesystem (ext4-class rename atomicity); no fsync of the directory ⇒ power-loss durability NOT measured (only process death)",
-    "one resumer at a time; concurrent resumers on the same register would last-writer-win the register file (op effects stay idempotent through the guard + lease) — not exercised end-to-end here, only the lease-reclaim race (deterministic unit test)",
+    "two concurrent resumers only (not N>2); they last-writer-win the shared register file — op effects stay exactly-once through the lease + the idempotency check made UNDER the lease, and a later run reconciles the register",
     "leases are TTL-based with no renewal/heartbeat: an op longer than the TTL could be taken over while alive — ops here are short (opMs << TTL)",
-    "fleet-bridge reclaim residual: a 3-party race inside the restore window (rename-aside → link-back) is not closed",
+    "fleet-bridge takeover is TTL-based: a holder that overruns its TTL while alive can be superseded (inherent to TTL leases; no fencing token is checked by the effect)",
     "the injected resume failure is a process death (exit 70); an execute() THROW is caught by campaign-loop as FAILED and the lot then stalls (no-repeat guard) until its definition changes — by design, not exercised here",
     "timings are wall-clock on a shared VPS; startup is dominated by node+tsx (~hundreds of ms)"
   ],
-  "generatedAt": "2026-11-22T22:54:55.456Z"
+  "generatedAt": "2026-11-22T23:14:02.664Z"
 }

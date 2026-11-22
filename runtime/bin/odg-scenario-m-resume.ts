@@ -81,19 +81,28 @@ function runWorker(dir: string): void {
       ev({ e: "DUP_RECONCILED", op: lot.id });
       return { status: "ACCEPTED", evidence: `reconciled (idempotency DUPLICATE) value=${adm.reconciledResult.value.slice(0, 12)}` };
     }
-    // per-mission lease (canonical O_EXCL claim with TTL expiry). Bounded wait = 4×TTL.
+    // per-mission lease (canonical O_EXCL generation claim with TTL expiry). Bounded wait = 4×TTL.
     const deadline = Date.now() + 4 * LEASE_TTL_MS;
-    const lockFile = path.join(P.leases, lot.mission + ".lock");
-    let contended = 0, prevHolder: any = null;
+    let contended = 0, prevClaim: any = null;
     for (;;) {
-      try { prevHolder = JSON.parse(fs.readFileSync(lockFile, "utf8")); prevHolder.mtimeMs = fs.statSync(lockFile).mtimeMs; } catch { prevHolder = null; }
+      prevClaim = FB.currentClaim(leaseCfg, lot.mission);
       if (FB.tryClaim(leaseCfg, lot.mission)) break;
       contended++;
       if (Date.now() > deadline) { ev({ e: "LEASE_UNAVAILABLE", op: lot.id, mission: lot.mission, contended }); return { status: "WAITING_EXTERNAL", reason: "lease held" }; }
       sleepSync(25);
     }
-    const takeover = prevHolder && prevHolder.pid !== pid ? { fromPid: prevHolder.pid, lockAgeMs: Date.now() - prevHolder.mtimeMs } : null;
+    // takeover = the previous claim belonged to another pid and was NEVER released (released claims carry mtime=epoch).
+    // Its age is measured from the claimedAt the dead holder wrote INTO the lock (independent of the TTL/mtime test).
+    const takeover = prevClaim && prevClaim.holder && prevClaim.holder.pid !== pid && prevClaim.mtimeMs !== 0
+      ? { fromPid: prevClaim.holder.pid, fromGen: prevClaim.gen, ageFromClaimedAtMs: Date.now() - Date.parse(prevClaim.holder.claimedAt) } : null;
     ev({ e: "CLAIM", op: lot.id, mission: lot.mission, contended, takeover });
+    // AUTHORITATIVE idempotency check UNDER the lease (another resumer may have committed this op while we waited).
+    const adm2 = IG.admit({ actionId: lot.id, idempotencyKey: lot.id }, journal());
+    if (adm2.decision === IG.DECISION.DUPLICATE) {
+      ev({ e: "DUP_RECONCILED", op: lot.id, underLease: true });
+      ev({ e: "RELEASE", op: lot.id, mission: lot.mission }); FB.releaseClaim(leaseCfg, lot.mission);
+      return { status: "ACCEPTED", evidence: `reconciled under lease (idempotency DUPLICATE) value=${adm2.reconciledResult.value.slice(0, 12)}` };
+    }
     starts++;
     ev({ e: "START", op: lot.id, mission: lot.mission });
     const recPath = path.join(P.ops, lot.id + ".json");
@@ -104,18 +113,18 @@ function runWorker(dir: string): void {
     }
     const dep = (lot.deps || [])[0];
     const prev = dep ? (j[dep] && j[dep].value) : GENESIS;
-    if (typeof prev !== "string") { FB.releaseClaim(leaseCfg, lot.mission); return { status: "FAILED", reason: `dependency ${dep} has no durable result` }; }
+    if (typeof prev !== "string") { ev({ e: "RELEASE", op: lot.id, mission: lot.mission }); FB.releaseClaim(leaseCfg, lot.mission); return { status: "FAILED", reason: `dependency ${dep} has no durable result` }; }
     sleepSync(OP_MS);                                        // the op's work (a kill can land here = mid-op)
     const record = { opId: lot.id, mission: lot.mission, value: sha(prev + "|" + lot.id), prev, pid, at: Date.now() };
-    if (!CC.saveRegister(recPath, record)) { FB.releaseClaim(leaseCfg, lot.mission); return { status: "FAILED", reason: "durable op record write failed" }; }
+    if (!CC.saveRegister(recPath, record)) { ev({ e: "RELEASE", op: lot.id, mission: lot.mission }); FB.releaseClaim(leaseCfg, lot.mission); return { status: "FAILED", reason: "durable op record write failed" }; }
     commits++;
     ev({ e: "COMMIT", op: lot.id, mission: lot.mission, sha: sha(fs.readFileSync(recPath, "utf8")) });
     if (pauseAfterCommit && commits === pauseAfterCommit) {  // window: op committed, lease held, register NOT yet persisted
       fs.writeFileSync(path.join(dir, `pause-${pid}.marker`), lot.id);
       sleepSync(10000);
     }
-    FB.releaseClaim(leaseCfg, lot.mission);
     ev({ e: "RELEASE", op: lot.id, mission: lot.mission });
+    FB.releaseClaim(leaseCfg, lot.mission);
     return { status: "ACCEPTED", evidence: `op ${lot.id} value=${record.value.slice(0, 12)}` };
   };
   const r = CL.runCampaignLoop({ registerPath: P.register, execute, maxIterations: 200 });
@@ -206,7 +215,7 @@ async function atomicWriteStress(dir: string, kills: number): Promise<any> {
 
 /** analyse(dir, phases): the verification over the durable trail (events + records + register). */
 function analyse(dir: string, phases: any[]): any {
-  const evs = readEvents(dir);
+  const evs = readEvents(dir).map((e, i) => ({ ...e, i })).sort((x, y) => x.t - y.t || x.i - y.i);
   const ids = opIds();
   const exp = expectedValues();
   const commitsBy: Record<string, number> = {}, startsBy: Record<string, number> = {};
@@ -253,6 +262,8 @@ function analyse(dir: string, phases: any[]): any {
     opsRepeatedCompleted: Object.values(commitsBy).reduce((n: number, c: number) => n + Math.max(0, c - 1), 0),
     opsLost: lost.length, lost, wrongValues: wrong,
     opsCommittedExactlyOnce: ids.every((id) => commitsBy[id] === 1),
+    noStartAfterCommit: ids.every((id) => { const c = evs.find((e) => e.e === "COMMIT" && e.op === id); return !c || !evs.some((e) => e.e === "START" && e.op === id && e.t > c.t); }),
+    reconciledUnderLease: evs.filter((e) => e.e === "DUP_RECONCILED" && e.underLease).length,
     interruptedAttemptsReRun: Object.values(startsBy).reduce((n: number, c: number) => n + Math.max(0, c - 1), 0),
     reconciledDuplicates: evs.filter((e) => e.e === "DUP_RECONCILED").length,
     perMission,
@@ -261,7 +272,7 @@ function analyse(dir: string, phases: any[]): any {
       orphanedByDeath: orphaned.map((c) => ({ op: c.op, mission: c.mission, pid: c.pid })),
       takeovers: evs.filter((e) => e.e === "CLAIM" && e.takeover).map((e) => ({ op: e.op, mission: e.mission, ...e.takeover })),
       contentionsWhileUnexpired: evs.reduce((n, e) => n + (e.e === "CLAIM" ? e.contended : 0), 0),
-      doubleHeld, leftHeldAtEnd: fs.existsSync(paths(dir).leases) ? fs.readdirSync(paths(dir).leases).filter((f: string) => f.endsWith(".lock")) : [],
+      doubleHeld, leftHeldAtEnd: MISSIONS.filter((m) => { const c = FB.currentClaim({ locksDir: paths(dir).leases, lockTtlMs: LEASE_TTL_MS }, m); return c && c.mtimeMs !== 0; }),
     },
   };
 }
@@ -275,8 +286,8 @@ async function runScenario(opts: any = {}): Promise<any> {
   phases.push(await runPhase(dir, "run2-sigkill-after-commit-before-persist", { ODG_SCENARIO_M_PAUSE_AFTER_COMMIT: "2" }, (_evs, pid) => fs.existsSync(path.join(dir, `pause-${pid}.marker`))));
   // R1: a resume that itself FAILS (injected: torn temp write, then the process dies with exit 70).
   phases.push(await runPhase(dir, "run3-resume-injected-crash", { ODG_SCENARIO_M_CRASH_AT_START: "2" }, null));
-  // R2: the retried resume, to completion.
-  phases.push(await runPhase(dir, "run4-resume-to-completion", {}, null));
+  // R2: the retried resume, to completion — as TWO CONCURRENT resumers (multi-claimant: same register, same leases).
+  phases.push(...await Promise.all([runPhase(dir, "run4a-concurrent-resumer", {}, null), runPhase(dir, "run4b-concurrent-resumer", {}, null)]));
   // R3: an idempotent re-run on the completed state ⇒ must execute nothing.
   phases.push(await runPhase(dir, "run5-idempotent-rerun", {}, null));
   const finalIntegrity = integrity(dir);
@@ -284,6 +295,7 @@ async function runScenario(opts: any = {}): Promise<any> {
   const atomic = await atomicWriteStress(dir, opts.atomicKills || 6);
   const killed = phases.filter((p) => p.signal === "SIGKILL");
   const resumes = phases.slice(1);
+  const [run3, run4a, run4b, run5] = [phases[2], phases[3], phases[4], phases[5]];
   const verdicts = {
     killedTwiceAtDifferentPoints: killed.length >= 2 && new Set(killed.map((p) => p.killPoint && p.killPoint.split(":")[0])).size >= 2,
     onlyMissingOpsReRun: resumes.every((p) => p.reStartedAlreadyCommitted.length === 0),
@@ -291,9 +303,10 @@ async function runScenario(opts: any = {}): Promise<any> {
     noLostValidatedResult: analysis.opsLost === 0 && analysis.wrongValues.length === 0 && analysis.allAccepted,
     noCorruptRecordAtAnyRestart: phases.every((p) => p.integrityBefore.tornRecords.length === 0 && (p.name === "run1-sigkill-mid-op" || p.integrityBefore.registerParses)) && finalIntegrity.tornRecords.length === 0,
     atomicWriteSurvivesSigkill: atomic.allIntact,
-    leasesOfKilledRunTakenOverNotDoubleHeld: analysis.leases.takeovers.length >= 1 && analysis.leases.takeovers.every((t: any) => t.lockAgeMs > LEASE_TTL_MS) && analysis.leases.contentionsWhileUnexpired >= 1 && analysis.leases.doubleHeld.length === 0 && analysis.leases.leftHeldAtEnd.length === 0,
-    failedResumeRetriedSafely: phases[2].exitCode === 70 && phases[3].exitCode === 0 && analysis.opsRepeatedCompleted === 0,
-    idempotentRerunExecutesNothing: phases[4].exitCode === 0 && phases[4].started.length === 0,
+    leasesOfKilledRunTakenOverNotDoubleHeld: analysis.leases.takeovers.length >= 1 && analysis.leases.takeovers.every((t: any) => t.ageFromClaimedAtMs > LEASE_TTL_MS) && analysis.leases.contentionsWhileUnexpired >= 1 && analysis.leases.doubleHeld.length === 0 && analysis.leases.leftHeldAtEnd.length === 0,
+    failedResumeRetriedSafely: run3.exitCode === 70 && run4a.exitCode === 0 && run4b.exitCode === 0 && analysis.opsRepeatedCompleted === 0,
+    concurrentResumersNoDoubleEffect: run4a.exitCode === 0 && run4b.exitCode === 0 && analysis.opsRepeatedCompleted === 0 && analysis.noStartAfterCommit && analysis.leases.doubleHeld.length === 0,
+    idempotentRerunExecutesNothing: run5.exitCode === 0 && run5.started.length === 0,
   };
   const out = {
     scenario: "V15.0 §45 M — multi-task resume after brutal interruption (real SIGKILL, measured)",
@@ -305,6 +318,7 @@ async function runScenario(opts: any = {}): Promise<any> {
       processStartupMs: Object.fromEntries(phases.map((p) => [p.name, p.startupMs])),
       opsRepeatedCompleted: analysis.opsRepeatedCompleted, opsLost: analysis.opsLost,
       interruptedAttemptsReRun: analysis.interruptedAttemptsReRun, reconciledDuplicates: analysis.reconciledDuplicates,
+      concurrentResumers: { a: { started: run4a.started.length, reconciled: run4a.reconciled.length, contentions: run4a.leaseContentions, wallMs: run4a.wallMs }, b: { started: run4b.started.length, reconciled: run4b.reconciled.length, contentions: run4b.leaseContentions, wallMs: run4b.wallMs }, reconciledUnderLease: analysis.reconciledUnderLease },
       leaseContentionsWhileUnexpired: analysis.leases.contentionsWhileUnexpired, leaseTakeovers: analysis.leases.takeovers.length, doubleHeldLeases: analysis.leases.doubleHeld.length,
     },
     analysis, finalIntegrity: { ...finalIntegrity, tmpLeftovers: finalIntegrity.tmpLeftovers.length }, atomicWriteStress: atomic,
@@ -314,7 +328,7 @@ async function runScenario(opts: any = {}): Promise<any> {
         "campaign-loop.runCampaignLoop: which op runs next (dep order + priority), persisting the register after EACH op, never re-running an ACCEPTED op on resume",
         "campaign-controller.saveRegister: crash-atomic temp+rename for the register AND every per-op record",
         "idempotency-guard.admit: DUPLICATE decision by op id ⇒ an op committed before the kill is reconciled, not re-applied",
-        "fleet-bridge.tryClaim/releaseClaim: lease exclusivity (O_EXCL) and TTL expiry/takeover of a killed holder's lease (TOCTOU reclaim fixed in this lot)",
+        "fleet-bridge.tryClaim/releaseClaim: lease exclusivity (O_EXCL) and TTL expiry/takeover of a killed holder's lease (generation-numbered race-free takeover, fixed in this lot)",
       ],
       providerWrittenHarness: [
         "the scenario itself: missions/ops definition, op effect (hash chain), deriving the idempotency journal from the durable op records, the lease bounded wait, the kill points, the injected crash, and every check/measurement in this file",
@@ -323,9 +337,9 @@ async function runScenario(opts: any = {}): Promise<any> {
     },
     limits: [
       "single host, local filesystem (ext4-class rename atomicity); no fsync of the directory ⇒ power-loss durability NOT measured (only process death)",
-      "one resumer at a time; concurrent resumers on the same register would last-writer-win the register file (op effects stay idempotent through the guard + lease) — not exercised end-to-end here, only the lease-reclaim race (deterministic unit test)",
+      "two concurrent resumers only (not N>2); they last-writer-win the shared register file — op effects stay exactly-once through the lease + the idempotency check made UNDER the lease, and a later run reconciles the register",
       "leases are TTL-based with no renewal/heartbeat: an op longer than the TTL could be taken over while alive — ops here are short (opMs << TTL)",
-      "fleet-bridge reclaim residual: a 3-party race inside the restore window (rename-aside → link-back) is not closed",
+      "fleet-bridge takeover is TTL-based: a holder that overruns its TTL while alive can be superseded (inherent to TTL leases; no fencing token is checked by the effect)",
       "the injected resume failure is a process death (exit 70); an execute() THROW is caught by campaign-loop as FAILED and the lot then stalls (no-repeat guard) until its definition changes — by design, not exercised here",
       "timings are wall-clock on a shared VPS; startup is dominated by node+tsx (~hundreds of ms)",
     ],

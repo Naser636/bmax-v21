@@ -20,6 +20,8 @@ function check(c: any, l: string): void { if (!c) { failures++; process.stderr.w
   check(v.atomicWriteSurvivesSigkill, "canonical saveRegister stays intact under repeated SIGKILL mid-write");
   check(v.leasesOfKilledRunTakenOverNotDoubleHeld, "killed run's leases refused while unexpired, taken over only after TTL, never double-held");
   check(v.failedResumeRetriedSafely, "an injected failing resume (exit 70) is retried safely to completion");
+  check(v.concurrentResumersNoDoubleEffect, "two CONCURRENT resumers (multi-claimant) finish with no op executed twice and no lease double-held");
+  check(out.analysis.leases.takeovers.every((t: any) => t.ageFromClaimedAtMs > out.setup.leaseTtlMs), "every takeover happened after the TTL, measured from the claimedAt the dead holder wrote");
   check(v.idempotentRerunExecutesNothing, "a re-run on the completed state executes nothing");
   for (const k of Object.keys(a.perMission)) check(a.perMission[k].repeatedCompletedOps === 0, `mission ${k}: 0 completed ops repeated`);
   check(out.allProven === true, "allProven");
