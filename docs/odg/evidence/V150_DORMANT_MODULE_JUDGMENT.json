@@ -7,17 +7,17 @@
       "module": "profession-p5-platform-reference",
       "mission": "CM-METIER-P5-PLATFORM (REVIEW)",
       "facts": "pure synthetic reference project (config validation, rollout gate, resource budget, recovery drill); tested; referenced by odg-metier-campaign ONLY through fs.existsSync (line 131) and listed by odg-cto-dashboard — never loaded",
-      "systemicCause": "6 of 15 profession-p*-reference modules have no loading consumer (P2, P5, P8, P9, P12, P15). Their siblings are consumed ad hoc (metier-parcours, metier-benchmark-multidim, cross-metier-collaboration). odg-metier-campaign enumerates all 15 but only checks that the files exist — the uniform consumer that would run runReferenceProject() does not exist",
-      "decision": "KEEP (library / reference project). Do NOT wire now: the 20 métiers are FROZEN and only M2 BTP is authorized (V330) — wiring the profession campaign to execute reference projects is a métier-scope change = OWNER decision",
-      "ifAuthorized": "make odg-metier-campaign call runReferenceProject() for each profession module (one uniform consumer for all 15) instead of existsSync — fixes the 6 at the root, not P5/P8 individually"
+      "systemicCause": "(corrected) the métier slot is already qualified by another module in runtime/bin/odg-v137-qualification-run.ts (P5 = golden-path-evidence-bundle, P8 = p8-semver-enforcement); this reference project is an ALTERNATIVE, not a missing consumer",
+      "decision": "KEEP (alternative reference project; DUPLICATE of an already-qualified métier slot) — no wiring",
+      "ifAuthorized": "nothing required"
     },
     {
       "module": "profession-p8-api-reference",
       "mission": "CM-METIER-P8-API (REVIEW)",
       "facts": "pure synthetic API/integration reference (request validation, idempotency dedup, bounded retry, contract compat); tested; same existsSync-only reference",
-      "systemicCause": "same as P5",
-      "decision": "KEEP — same owner gate",
-      "ifAuthorized": "same uniform consumer"
+      "systemicCause": "(corrected) the métier slot is already qualified by another module in runtime/bin/odg-v137-qualification-run.ts (P5 = golden-path-evidence-bundle, P8 = p8-semver-enforcement); this reference project is an ALTERNATIVE, not a missing consumer",
+      "decision": "KEEP (alternative reference project; DUPLICATE of an already-qualified métier slot) — no wiring",
+      "ifAuthorized": "nothing required"
     },
     {
       "module": "odg-btp-communication-capability-matrix",
@@ -39,7 +39,6 @@
     "kept": 4,
     "removed": 0,
     "ownerDecisions": [
-      "unfreeze the profession campaign to give the 15 reference projects one uniform consumer (fixes 6 unconsumed modules at the root)",
       "optionally reclassify SX-BTP-COMMUNICATION-MATRIX as dossier-only in the V12.4 companion"
     ]
   },
