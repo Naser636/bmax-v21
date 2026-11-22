@@ -102,12 +102,12 @@
     "host": "this VPS only (environment-dependent wall-clock)",
     "N": 20,
     "acquirePathMs": {
-      "p50": 0.305,
-      "p95": 1.623
+      "p50": 0.317,
+      "p95": 0.884
     },
     "reusePathMs": {
-      "p50": 0.147,
-      "p95": 0.42
+      "p50": 0.194,
+      "p95": 0.396
     },
     "acquisitionsAvoidedByReuse": "1 of 1 on run 2 (100% for the recorded query)"
   },
@@ -115,5 +115,44 @@
     "live-world knowledge quality",
     "precision/recall beyond the recorded sample (n=4 sources, 1 claim)",
     "downstream experiment gain (gate RETURNED: baseline/tests/inspection of an actual experiment not yet proven)"
-  ]
+  ],
+  "governance": {
+    "census": {
+      "before": {
+        "CONNECTED": 552,
+        "NO_CONSUMER": 227
+      },
+      "after": {
+        "CONNECTED": 553,
+        "NO_CONSUMER": 226
+      },
+      "tool": "runtime/bin/odg-component-census-run.ts",
+      "note": "module gained a real consumer (odg-cto-dashboard radarGateChain)"
+    },
+    "tests": {
+      "targeted": "runtime/core/odg-radar-gate-chain.test.ts ALL PASS (9 pre-existing V254 + exec + 2 rounds of inspection regressions)",
+      "fullSuiteWorktree": "835 total · 832 PASS · 3 FAIL — identical set to baseline main 25946a30 in a worktree (odg-cto-dashboard + odg-health: live-ledger dependent; odg-backup-restore: canonical-repo default). No new failure.",
+      "tsc": 0
+    },
+    "independentInspection": [
+      {
+        "round": 1,
+        "commit": "1a2d52b4",
+        "verdict": "REJECT",
+        "top": "HIGH forged ODG-labelled memory reused"
+      },
+      {
+        "round": 2,
+        "commit": "16aae081",
+        "verdict": "REJECT",
+        "top": "HIGH reuse trusted declared corroboration counts"
+      },
+      {
+        "round": 3,
+        "commit": "(this PR head)",
+        "verdict": "PENDING at evidence write time — see PR"
+      }
+    ],
+    "integrityLimit": "self-consistency, not authorship: without a keyed provenance stamp (owner-gated key strategy, register item p0e-audit-log-keyed-integrity) a forger fabricating sources on 2 distinct domains can still pass reuse; memory must come from ODG's own store."
+  }
 }
