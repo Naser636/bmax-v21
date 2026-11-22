@@ -65,6 +65,20 @@ function mockImpl(body, { statusCode = 200, contentType = "application/json" } =
   const postBlocked = await H.post("https://evil.example.com/x", { q: 1 }, { httpImpl: mockPost("{}") });
   ok("post rejects non-allowlisted host before any request", postBlocked.ok === false && postBlocked.code === "HOST_NOT_ALLOWLISTED");
 
+  // V15 closure — egress kill-switch at the client (root cause: switch enforced per entrypoint only). Spy on the REAL
+  // https.get/request: with ODG_RADAR_LIVE unset and no injected httpImpl, no socket call may happen.
+  { const https = require("https"); const og = https.get, orq = https.request; let calls = 0; const saved = process.env.ODG_RADAR_LIVE;
+    https.get = (...a) => { calls++; const e = new (require("events"))(); e.destroy = () => {}; setImmediate(() => e.emit("error", new Error("spy"))); return e; };
+    https.request = (...a) => { calls++; const e = new (require("events"))(); e.destroy = () => {}; e.write = () => {}; e.end = () => setImmediate(() => e.emit("error", new Error("spy"))); return e; };
+    try {
+      delete process.env.ODG_RADAR_LIVE;
+      const g0 = await H.get("https://boamp-datadila.opendatasoft.com/x"); const p0 = await H.post("https://api.ted.europa.eu/v3/notices/search", { q: 1 });
+      ok("kill-switch OFF (ODG_RADAR_LIVE unset): get/post refuse with EGRESS_KILL_SWITCH_OFF and make NO network call", g0.code === "EGRESS_KILL_SWITCH_OFF" && p0.code === "EGRESS_KILL_SWITCH_OFF" && calls === 0);
+      const bad = await H.get("https://evil.example.com/x"); ok("kill-switch OFF still validates first (non-allowlisted ⇒ HOST_NOT_ALLOWLISTED)", bad.code === "HOST_NOT_ALLOWLISTED");
+      process.env.ODG_RADAR_LIVE = "1"; await H.get("https://boamp-datadila.opendatasoft.com/x");
+      ok("kill-switch ON (ODG_RADAR_LIVE=1): the real client is used", calls === 1);
+    } finally { https.get = og; https.request = orq; if (saved === undefined) delete process.env.ODG_RADAR_LIVE; else process.env.ODG_RADAR_LIVE = saved; } }
+
   console.log(`\nBOUNDED-HTTP-CLIENT suite — ${pass} assertions passed. (https-only allowlist; SSRF guard; content-type/size/redirect/timeout; GET+POST; injected mock, zero network)`);
   if (pass < 20) process.exit(1);   // guard: all async assertions must have run (not a silent callback skip)
 })();
