@@ -1,0 +1,82 @@
+{
+  "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
+  "id": "WIC-CM-RADAR-GATE-CHAIN-STEP2",
+  "state": "VERIFIED",
+  "authorizedBy": "owner — CTO V372 §1/§3/§4 global authorization (Radar Internet research + knowledge integration under an accepted grant)",
+  "v124Anchor": {
+    "mission": "CM-RADAR-GATE-CHAIN",
+    "section": "I"
+  },
+  "v144Phase": "1 — Radar & knowledge (docs/odg/V14_4_ROADMAP.md)",
+  "objective": "First LIVE Radar collection under docs/odg/V372_RESEARCH_GRANT.json on the owner-cited official sources, routed through the canonical controls and the step-1 executed chain; record what is and is not admitted, with reuse proof.",
+  "write_set": [
+    "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json",
+    "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_EVIDENCE.json",
+    "runtime/bin/odg-radar-gate-chain-step2-run.ts",
+    "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP2.json",
+    "runtime/bin/odg-radar-gate-chain-step2-run.test.ts",
+    "package.json (append the new test to test:report only)"
+  ],
+  "invariants": [
+    "egress only after research-governor ALLOW + bounded-http-client validateUrl ok",
+    "HTTPS GET only; 6 calls ≤ budget 100; no auth, no write, no circumvention",
+    "content screened by frontier-radar.sanitizeExternal; DATA never instruction",
+    "admission unchanged from step 1 (≥2 registrable domains, re-derived corroboration)",
+    "no runtime module change"
+  ],
+  "acceptance_criteria": [
+    "govern ALLOW for all 6 urls; transport ok",
+    "every source recorded with url, title, consulted/published date or null",
+    "single-source claims NOT admitted",
+    "second pass reuses admitted facts",
+    "honesty limits stated (same-organization corroboration, extractor-model quotes, partial read)",
+    "every admitted claim is supported, per source, by a supportingQuote found verbatim in that source's recorded quotes",
+    "claim↔quote binding: quote verbatim on page, ≥4 words/≥20 chars, contained in the claim, and every claim content word covered by that source's quotes or an explicit FRAMING list; inspector attacks are regression tests"
+  ],
+  "results": {
+    "callsUsed": 6,
+    "admittedFacts": 2,
+    "singleSourceNotAdmitted": 5,
+    "quarantined": 0,
+    "reuseSecondPass": "2/7 (= the 2 admitted)"
+  },
+  "incident": "2026-11-22 ~03:43Z the provider briefly ran `git checkout -b` in the MAIN worktree (where the Truth-Lock-enforced resident driver runs); reverted to main within seconds, no file changed, no tick affected (ticks 02:54Z and 03:25Z / next 03:56Z). Corrective: all work in a separate worktree.",
+  "rollback": "revert the PR (all files additive)",
+  "next": "corroborate the 5 single-source claims via ≥1 additional legitimate public domain each (V372 allows verified domain additions, recorded in domainAdditions[]), then apply admitted knowledge in a real ODG mission to measure usefulness",
+  "stateHistory": [
+    {
+      "state": "EXECUTING",
+      "at": "2026-11-22",
+      "note": "self-declared VERIFIED withdrawn after inspection round 1 (REJECT)"
+    },
+    {
+      "state": "VERIFIED",
+      "at": "2026-11-22",
+      "basis": "independent inspection round 3 ACCEPT (rounds 1-2 REJECT, fixed); CI pass; tsc 0; replay byte-identical"
+    }
+  ],
+  "independentInspection": [
+    {
+      "round": 1,
+      "verdict": "REJECT",
+      "top": "admitted JIT claim named a term absent from quotes; claim text injected as support"
+    },
+    {
+      "round": 2,
+      "verdict": "REJECT",
+      "top": "bare substring quote check (trivial quote / unrelated claim / cross-source)"
+    },
+    {
+      "round": 3,
+      "commit": "2c3130e4",
+      "verdict": "ACCEPT"
+    }
+  ],
+  "residualOpen": [
+    "MEDIUM: attribution names (FRAMING list) are not bound to the source host — e.g. \"NASA policy states: <SRE quote>\" passes; fix: per-host allowed attribution words",
+    "LOW: qualifiers on FRAMING (example/policy/handbook…) can be dropped silently",
+    "LOW: bag-of-words coverage allows recombination of quote words",
+    "LOW: ad-hoc FRAMING list allows meaningless padding",
+    "KNOWN: extractor-model quotes; provider-asserted live gating; same-organization Toyota corroboration"
+  ]
+}
