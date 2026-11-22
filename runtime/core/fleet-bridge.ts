@@ -105,17 +105,32 @@ function tryClaim(cfg: any, requestId: string): boolean {
 
       // Lock exists : reclaim only if stale, then retry the atomic create once.
       let stale = false;
+      let seen: fs.Stats | null = null;
       try {
-        const age = Date.now() - fs.statSync(file).mtimeMs;
-        stale = age > cfg.lockTtlMs;
+        seen = fs.statSync(file);
+        stale = Date.now() - seen.mtimeMs > cfg.lockTtlMs;
       } catch {
         stale = true; // vanished between EEXIST and stat -> race it again
       }
       if (!stale) return false;
-      try {
-        fs.unlinkSync(file);
-      } catch {
-        /* another instance reclaimed it first */
+      if (seen) {
+        // V150-M — TOCTOU-safe reclaim. A blind unlink(file) could delete a FRESH lock that a concurrent reclaimer
+        // created after our stat (both would then "hold" the claim ⇒ double effect). Instead atomically MOVE the lock
+        // aside and discard it only if it is the very inode we judged stale; otherwise put it back and lose the race.
+        const aside = `${file}.reclaim-${process.pid}-${Date.now()}-${attempt}`;
+        try {
+          fs.renameSync(file, aside);
+        } catch {
+          continue; // vanished (released / reclaimed by another) -> attempt the atomic create again
+        }
+        let movedIno = -1;
+        try { movedIno = fs.statSync(aside).ino; } catch { /* treat as not-ours */ }
+        if (movedIno !== seen.ino) {
+          try { fs.linkSync(aside, file); } catch { /* a third claimant re-created it meanwhile */ }
+          try { fs.unlinkSync(aside); } catch { /* best-effort */ }
+          return false; // we moved someone else's fresh lock: restored it, we lose
+        }
+        try { fs.unlinkSync(aside); } catch { /* best-effort */ }
       }
       // loop: attempt the atomic create again
     }

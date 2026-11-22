@@ -54,6 +54,29 @@ try {
   const f = tryClaim(staleCfg, "REQ-STALE"); // prior lock is stale (ttl 0) ⇒ reclaimed ⇒ succeeds
   ok("stale lock is reclaimed so a crashed instance never deadlocks a request", e === true && f === true);
   releaseClaim(staleCfg, "REQ-STALE");
+
+  console.log("Case 5 — V150-M: two reclaimers racing on the SAME stale lock never BOTH hold it (TOCTOU)");
+  // Deterministic interleaving: reclaimer B stats the stale lock; BEFORE B acts, reclaimer A reclaims it (fresh lock).
+  // The pre-fix reclaim did a blind unlink(file) ⇒ B deleted A's FRESH lock and created its own ⇒ both returned true
+  // (double-held lease = double effect after a crash takeover). Fixed: B must lose and A's lock must survive.
+  const raceCfg = { locksDir: path.join(dir, "locks"), lockTtlMs: 50 };
+  ok("seed claim (the 'crashed' holder)", tryClaim(raceCfg, "REQ-RACE") === true);
+  const old = (Date.now() - 10000) / 1000; fs.utimesSync(path.join(raceCfg.locksDir, "REQ-RACE.lock"), old, old); // make it stale
+  const origStat = fs.statSync;
+  let aGot = null; let hooked = false;
+  fs.statSync = function (p, ...rest) {
+    const st = origStat.call(fs, p, ...rest);
+    if (!hooked && String(p).endsWith("REQ-RACE.lock")) { hooked = true; fs.statSync = origStat; aGot = tryClaim(raceCfg, "REQ-RACE"); }
+    return st;
+  };
+  let bGot;
+  try { bGot = tryClaim(raceCfg, "REQ-RACE"); } finally { fs.statSync = origStat; }
+  ok("the interleaving was exercised (A reclaimed between B's stat and B's action)", hooked === true && aGot === true);
+  ok("the late reclaimer B LOSES — the stale lease is never double-held", bGot === false);
+  const holder = JSON.parse(fs.readFileSync(path.join(raceCfg.locksDir, "REQ-RACE.lock"), "utf8"));
+  ok("A's fresh lock survives (not deleted by B)", holder && holder.pid === process.pid);
+  ok("no reclaim tombstone is left behind", fs.readdirSync(raceCfg.locksDir).every((f) => !f.includes(".reclaim-")));
+  releaseClaim(raceCfg, "REQ-RACE");
 } finally {
   fs.rmSync(dir, { recursive: true, force: true });
 }
