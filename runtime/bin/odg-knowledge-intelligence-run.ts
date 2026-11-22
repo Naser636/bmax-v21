@@ -9,13 +9,15 @@ const K = require("../core/odg-knowledge-intelligence.js");
 const FR = require("../core/frontier-radar.js");
 
 const STRUCT: Record<string, any> = {
-  "Toyota quality: 'automation with a human touch'": { subject: "Toyota automation principle (jidoka)", relation: "is described as", value: "automation with a human touch", scope: "Toyota Production System", qualifiers: ["term 'jidoka' named only on global.toyota"] },
+  // keys AUTHORED from the recorded quotes; VALUE words must appear in each source's citations, SUBJECT words in its
+  // citations / page title / host attribution words (grounding enforced by assessClaim).
+  "Toyota quality: 'automation with a human touch'": { subject: "Toyota automation principle", relation: "is described as", value: "automation with a human touch", scope: "Toyota Production System", qualifiers: ["term 'jidoka' named only on global.toyota"] },
   "Toyota production: make only what is needed, when it is needed": { subject: "Toyota production", relation: "makes", value: "only what is needed, when it is needed", scope: "Toyota Production System", qualifiers: ["label 'just-in-time' not in the recorded quotes"] },
-  "SRE error budget definition": { subject: "error budget", relation: "equals", value: "1 - SLO", scope: "a service", qualifiers: [] },
-  "SRE example error budget policy: release halt": { subject: "Google SRE example error budget policy", relation: "halts on budget exhaustion", value: "all changes and releases except P0 issues or security fixes", scope: "Appendix B EXAMPLE policy", qualifiers: ["example policy, not a universal rule"] },
-  "NIST AI RMF release and nature": { subject: "NIST AI RMF 1.0", relation: "released on / intended for", value: "2023-01-26 / voluntary use", scope: "NIST page statement", time: "2023-01-26", version: "1.0", qualifiers: ["page states AI RMF 1.0 is being revised"] },
-  "NASA requirements traceability": { subject: "traceability (NASA SE handbook)", relation: "is defined as", value: "ability to trace a requirement/expectation to its parent", scope: "NASA systems engineering", qualifiers: ["parent direction only in the recorded quote"] },
-  "NASA independent verification and validation": { subject: "NASA IV&V provider policy", relation: "designates", value: "NASA IV&V Facility as sole provider of IV&V services", scope: "NASA software selected for IV&V", qualifiers: ["page last updated 2014-09-10 (may be stale)"] },
+  "SRE error budget definition": { subject: "error budget", relation: "equals", value: "1 minus the SLO of the service", scope: "a service", qualifiers: [] },
+  "SRE example error budget policy: release halt": { subject: "Google SRE example error budget policy", relation: "halts", value: "all changes and releases other than P0 issues or security fixes", scope: "Appendix B EXAMPLE policy", qualifiers: ["example policy, not a universal rule"] },
+  "NIST AI RMF release and nature": { subject: "NIST AI RMF", relation: "released on / intended for", value: "released on January 26, 2023 and is intended for voluntary use", scope: "NIST page statement", time: "2023-01-26", version: "1.0", qualifiers: ["page states AI RMF 1.0 is being revised"] },
+  "NASA requirements traceability": { subject: "NASA System Engineering Handbook", relation: "defines traceability as", value: "the ability to trace any given requirement/expectation to its parent requirement/expectation", scope: "NASA systems engineering", qualifiers: ["parent direction only in the recorded quote"] },
+  "NASA independent verification and validation": { subject: "NASA IV&V provider policy", relation: "designates", value: "NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services", scope: "NASA software selected for IV&V", qualifiers: ["page last updated 2014-09-10 (may be stale)"] },
 };
 
 function main() {
@@ -26,7 +28,7 @@ function main() {
   const quarantined = col.sources.filter((s: any) => FR.sanitizeExternal({ title: s.title, body: (s.quotes || []).join("\n") }).untrusted).map((s: any) => s.url);
   const results = col.cycles.map((cy: any) => {
     const st = STRUCT[cy.query] || {};
-    const a = K.assessClaim({ ...st, nature: "OFFICIAL_DOCUMENTATION", text: cy.claim, sources: (cy.support || []).map((sp: any) => ({ url: sp.url, citation: sp.quote })) },
+    const a = K.assessClaim({ ...st, nature: "OFFICIAL_DOCUMENTATION", text: cy.claim, sources: (cy.support || []).map((sp: any) => ({ url: sp.url, citation: sp.quote, structured: st })) },
       { asOfEpochMs: asOf, byUrl, quarantined, missionAuthorization: "DESIGN_PROPOSAL" });
     const mem = K.toMemory(a, asOf);
     return { query: cy.query, claim: cy.claim, structured: a.structured, dimensions: a.dimensions, isFact: a.isFact,

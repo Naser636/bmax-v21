@@ -14,6 +14,7 @@
  * HONESTY: structured keys are AUTHORED (by the caller/extractor), not inferred by a model; a matching key is a controlled
  * comparison, not proof of truth. Unknown publisher ⇒ UNKNOWN identity ⇒ cannot count toward independence.
  */
+"use strict";
 const crypto = require("crypto");
 const MTG = require("./memory-trust-gate.js");
 const ACTOR = require("./actor-provenance.js");
@@ -52,7 +53,9 @@ function structuredKey(c: any): string { return [nkey(c.subject), nkey(c.relatio
  * assessClaim(claim, opts) -> four-dimensional, explainable assessment.
  * claim: { id?, subject, relation, value, scope?, time?, version?, qualifiers?: string[], nature, text,
  *          sources: [{ url, citation, text?: the source's own statement, structured?: {subject, relation, value, scope} }] }
- * opts:  { asOfEpochMs (required), byUrl: { [url]: {quotes[]} } (recorded page quotes), quarantined?: string[],
+ * opts:  { asOfEpochMs (required), byUrl: { [url]: {quotes[], title?} } — TRUST ROOT: must come from a RECORDED, governed
+ *          collection (research-governor ALLOW + bounded-http-client), never from an untrusted caller; a caller who forges
+ *          byUrl for a known host can forge support (documented limit), quarantined?: string[],
  *          missionAuthorization?: one of AUTHORIZATION (granted by the mission contract), risk?: one of RISK,
  *          contradictingSources?: [{url, citation}], invalidatedBy?: string }
  */
@@ -76,23 +79,32 @@ function assessClaim(claim: any, opts: any): any {
     // source's wording. Cross-source agreement is then decided by the structured key, not by lexical similarity.
     const ownText = typeof (s && s.text) === "string" && s.text ? s.text : c.text;
     const bound = BIND.supports(sp, ownText, byUrl, quarantined) && BIND.covered(ownText, citationsOf(sp.url), sp.url);
-    const key = isObj(s && s.structured) ? structuredKey(s.structured) : structuredKey(c);
-    return Object.freeze({ url: sp.url, identity: id, citationVerified: bound, structuredKey: key, quarantined: quarantined.has(sp.url) });
+    // FIX (inspection HIGH): a source counts only with ITS OWN structured key (no inheritance from the claim), and that key
+    // must be GROUNDED in what the source shows: every VALUE word in its citations, every SUBJECT word in its citations,
+    // its recorded page title, or the host's attribution words. A key a source does not show cannot be borrowed.
+    const own = isObj(s && s.structured) ? s.structured : null;
+    const title = byUrl[sp.url] && typeof byUrl[sp.url].title === "string" ? byUrl[sp.url].title : "";
+    const cits = citationsOf(sp.url);
+    const grounded = !!own && BIND.covered(String(own.value || ""), cits, sp.url) && BIND.covered(String(own.subject || ""), cits.concat([title]), sp.url)
+      && String(own.value || "").trim().length > 0 && String(own.subject || "").trim().length > 0;
+    const key = own ? structuredKey(own) : null;
+    return Object.freeze({ url: sp.url, identity: id, citationVerified: bound, structuredKey: key, keyGrounded: grounded, quarantined: quarantined.has(sp.url) });
   });
   const seenUrl = new Set<string>();
   const verified = perSource.filter((p: any) => p.citationVerified && !p.quarantined && !seenUrl.has(p.url) && (seenUrl.add(p.url), true));
   const claimKey = structuredKey(c);
 
   // 4-7. independence by ORGANIZATION FAMILY among verified sources whose structured key matches the claim.
-  const matching = verified.filter((p: any) => p.structuredKey === claimKey);
-  const divergent = verified.filter((p: any) => p.structuredKey !== claimKey);
+  const matching = verified.filter((p: any) => p.keyGrounded && p.structuredKey === claimKey);
+  const divergent = verified.filter((p: any) => p.keyGrounded && p.structuredKey !== claimKey);
+  const ungrounded = verified.filter((p: any) => !p.keyGrounded).length;
   const knownFamilies = Array.from(new Set(matching.filter((p: any) => p.identity.known).map((p: any) => p.identity.family)));
   const unknownIdentity = matching.filter((p: any) => !p.identity.known).length;
   const officialPrimary = matching.some((p: any) => p.identity.role === "PRIMARY_OFFICIAL");
 
   // EPISTEMIC (independent of maturity/authorization/risk).
   let epistemic = "UNKNOWN";
-  const contradicted = Array.isArray(o.contradictingSources) && o.contradictingSources.some((x: any) => BIND.supports({ url: x.url, quote: x.citation }, x.text || x.citation, byUrl, quarantined));
+  const contradicted = Array.isArray(o.contradictingSources) && o.contradictingSources.some((x: any) => isObj(x && x.structured) && nkey(x.structured.subject) === nkey(c.subject) && BIND.supports({ url: x.url, quote: x.citation }, x.text || x.citation, byUrl, quarantined));
   if (typeof o.invalidatedBy === "string" && o.invalidatedBy) { epistemic = "INVALIDATED"; reasons.push("invalidated by " + o.invalidatedBy); }
   else if (contradicted) { epistemic = "CONTRADICTED"; reasons.push("a verified source contradicts the claim"); }
   else if (knownFamilies.length >= 2) { epistemic = "CORROBORATED"; reasons.push("matching structured key from " + knownFamilies.length + " independent publisher families: " + knownFamilies.join(", ")); }
@@ -101,6 +113,7 @@ function assessClaim(claim: any, opts: any): any {
   else if (perSource.length) { epistemic = "UNKNOWN"; reasons.push("no source citation verified against the recorded page text"); }
   if (matching.length >= 2 && knownFamilies.length < 2) reasons.push("repetition within ONE publisher family (" + (knownFamilies.join(",") || "unknown") + ") is NOT independent corroboration");
   if (unknownIdentity) reasons.push(unknownIdentity + " source(s) with UNKNOWN publisher identity — not counted for independence");
+  if (ungrounded) reasons.push(ungrounded + " verified citation(s) without a GROUNDED own structured key — not counted");
   if (divergent.length) reasons.push(divergent.length + " verified source(s) with a DIFFERENT structured key kept as divergence (not merged)");
 
   // MATURITY (operational, NOT truth): starts at DISCOVERED; USABLE once a citation is verified; higher levels require
@@ -112,19 +125,27 @@ function assessClaim(claim: any, opts: any): any {
 
   // RISK (drives verification/authorization requirements). Default from nature; caller may only RAISE it.
   const natureRisk: Record<string, string> = { SECURITY_CRITICAL: "HIGH", PERFORMANCE_CLAIM: "MEDIUM", STRATEGIC_HYPOTHESIS: "MEDIUM" };
-  const base = natureRisk[c.nature] || "LOW";
+  const natureValid = NATURE.includes(c.nature);
+  if (!natureValid) reasons.push("unknown nature '" + String(c.nature) + "' ⇒ treated as MEDIUM risk, never SUPPORTED");
+  const base = !natureValid ? "MEDIUM" : (natureRisk[c.nature] || "LOW");
   const risk = RISK.indexOf(o.risk) > RISK.indexOf(base) ? o.risk : base;
 
   // AUTHORIZATION — from the MISSION CONTRACT (permissions/risk), never from confidence. Capped by epistemic+risk:
   const requested = AUTHORIZATION.includes(o.missionAuthorization) ? o.missionAuthorization : "READ_ONLY_ANALYSIS";
   let authorization = requested;
   if (epistemic === "INVALIDATED" || epistemic === "CONTRADICTED" || epistemic === "UNKNOWN") authorization = epistemic === "UNKNOWN" ? "READ_ONLY_ANALYSIS" : "BLOCKED";
-  else if ((risk === "HIGH" || risk === "CRITICAL") && epistemic !== "CORROBORATED" && AUTHORIZATION.indexOf(requested) > AUTHORIZATION.indexOf("SANDBOX_EXPERIMENT")) {
-    authorization = "SANDBOX_EXPERIMENT"; reasons.push("high-risk + not corroborated ⇒ capped at SANDBOX_EXPERIMENT");
+  else {
+    // caps (FIX inspection MEDIUM): authorization never exceeds what the epistemic level, maturity and risk allow.
+    const A = (x: string) => AUTHORIZATION.indexOf(x);
+    let cap = "INTERNAL_INTEGRATION";
+    if (epistemic === "CANDIDATE") cap = "SANDBOX_EXPERIMENT";
+    else if (epistemic === "SUPPORTED") cap = (maturity === "QUALIFIED" || maturity === "OPERATIONALLY_DEMONSTRATED") ? "INTERNAL_INTEGRATION" : "INTERNAL_IMPLEMENTATION";
+    if ((risk === "HIGH" && epistemic !== "CORROBORATED") || (risk === "CRITICAL" && !(maturity === "QUALIFIED" || maturity === "OPERATIONALLY_DEMONSTRATED"))) cap = A(cap) < A("SANDBOX_EXPERIMENT") ? cap : "SANDBOX_EXPERIMENT";
+    if (A(requested) > A(cap)) { authorization = cap; reasons.push("authorization capped at " + cap + " (epistemic " + epistemic + ", maturity " + maturity + ", risk " + risk + ")"); }
   }
 
   return Object.freeze({
-    id: c.id || "kc:" + sha({ k: claimKey, t: c.text }).slice(0, 16),
+    id: "kc:" + sha({ k: claimKey, t: c.text }).slice(0, 16),   // always content-bound (caller id ignored)
     structured: Object.freeze({ subject: c.subject, relation: c.relation, value: c.value, scope: c.scope || null, time: c.time || null, version: c.version || null, qualifiers: Object.freeze((c.qualifiers || []).slice()) }),
     text: c.text, nature: c.nature || null,
     dimensions: Object.freeze({ epistemic, maturity, authorization, risk }),
@@ -161,7 +182,8 @@ const KNOWLEDGE_INTELLIGENCE_CONTRACT = Object.freeze({
     "single verified official primary source ⇒ SUPPORTED at most (what the publisher states), never CORROBORATED",
     "only CORROBORATED is presented as a fact (isFact); SUPPORTED/CANDIDATE are kept, usable with reservations",
     "authorization comes from the mission contract, capped by epistemic level and risk — never from confidence",
-    "structured keys are authored, compared exactly; divergent qualifiers/keys are kept, not merged",
+    "structured keys are authored PER SOURCE, must be grounded in that source's citations/title, compared exactly; divergent keys kept",
+    "trust root: byUrl must be a recorded governed collection (forged byUrl for a known host is out of scope — documented)",
     "layer over existing memory/trust-gate/binding — no second memory/radar/orchestrator",
   ]),
 });

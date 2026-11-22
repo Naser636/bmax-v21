@@ -16,7 +16,7 @@
       "query": "Toyota quality: 'automation with a human touch'",
       "claim": "Toyota describes its automation principle as automation with a human touch",
       "structured": {
-        "subject": "Toyota automation principle (jidoka)",
+        "subject": "Toyota automation principle",
         "relation": "is described as",
         "value": "automation with a human touch",
         "scope": "Toyota Production System",
@@ -108,7 +108,7 @@
       "structured": {
         "subject": "error budget",
         "relation": "equals",
-        "value": "1 - SLO",
+        "value": "1 minus the SLO of the service",
         "scope": "a service",
         "time": null,
         "version": null,
@@ -144,8 +144,8 @@
       "claim": "Google SRE's EXAMPLE policy states: we will halt all changes and releases other than P0 issues or security fixes",
       "structured": {
         "subject": "Google SRE example error budget policy",
-        "relation": "halts on budget exhaustion",
-        "value": "all changes and releases except P0 issues or security fixes",
+        "relation": "halts",
+        "value": "all changes and releases other than P0 issues or security fixes",
         "scope": "Appendix B EXAMPLE policy",
         "time": null,
         "version": null,
@@ -182,9 +182,9 @@
       "query": "NIST AI RMF release and nature",
       "claim": "The NIST AI RMF page states the framework was released on January 26, 2023 and is intended for voluntary use",
       "structured": {
-        "subject": "NIST AI RMF 1.0",
+        "subject": "NIST AI RMF",
         "relation": "released on / intended for",
-        "value": "2023-01-26 / voluntary use",
+        "value": "released on January 26, 2023 and is intended for voluntary use",
         "scope": "NIST page statement",
         "time": "2023-01-26",
         "version": "1.0",
@@ -226,9 +226,9 @@
       "query": "NASA requirements traceability",
       "claim": "NASA's handbook states: the ability to trace any given requirement/expectation to its parent requirement/expectation",
       "structured": {
-        "subject": "traceability (NASA SE handbook)",
-        "relation": "is defined as",
-        "value": "ability to trace a requirement/expectation to its parent",
+        "subject": "NASA System Engineering Handbook",
+        "relation": "defines traceability as",
+        "value": "the ability to trace any given requirement/expectation to its parent requirement/expectation",
         "scope": "NASA systems engineering",
         "time": null,
         "version": null,
@@ -267,7 +267,7 @@
       "structured": {
         "subject": "NASA IV&V provider policy",
         "relation": "designates",
-        "value": "NASA IV&V Facility as sole provider of IV&V services",
+        "value": "NASA Independent Verification and Validation (IV&V) Facility as the sole provider of IV&V services",
         "scope": "NASA software selected for IV&V",
         "time": null,
         "version": null,

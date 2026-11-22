@@ -4,6 +4,7 @@
  * contained in the claim, and every claim content word is covered by that source's quotes or by grammar/host-bound
  * attribution words. PURE. Limits (recorded): bag-of-words coverage; trusts the extractor's recorded quotes.
  */
+"use strict";
 // FRAMING (inspection MEDIUM): grammar words are global; ATTRIBUTION words (organization names, document qualifiers) are
 // allowed ONLY for the source host they belong to — "NASA policy states: <an SRE quote>" no longer passes.
 const GRAMMAR = new Set(["page", "states", "state", "describes", "defines", "define", "says", "on", "was", "the", "a", "an", "is", "as", "to", "of", "and", "it", "will", "that", "its"]);
