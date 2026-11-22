@@ -3,23 +3,53 @@
   "method": "read-only: module header + exports, every non-dist reference (grep over runtime/src/scripts), sibling pattern comparison; NO code changed, NO mission status changed",
   "head": "2838b5a1",
   "judgments": [
-    {"module": "profession-p5-platform-reference", "mission": "CM-METIER-P5-PLATFORM (REVIEW)",
-     "facts": "pure synthetic reference project (config validation, rollout gate, resource budget, recovery drill); tested; referenced by odg-metier-campaign ONLY through fs.existsSync (line 131) and listed by odg-cto-dashboard — never loaded",
-     "systemicCause": "6 of 15 profession-p*-reference modules have no loading consumer (P2, P5, P8, P9, P12, P15). Their siblings are consumed ad hoc (metier-parcours, metier-benchmark-multidim, cross-metier-collaboration). odg-metier-campaign enumerates all 15 but only checks that the files exist — the uniform consumer that would run runReferenceProject() does not exist",
-     "decision": "KEEP (library / reference project). Do NOT wire now: the 20 métiers are FROZEN and only M2 BTP is authorized (V330) — wiring the profession campaign to execute reference projects is a métier-scope change = OWNER decision",
-     "ifAuthorized": "make odg-metier-campaign call runReferenceProject() for each profession module (one uniform consumer for all 15) instead of existsSync — fixes the 6 at the root, not P5/P8 individually"},
-    {"module": "profession-p8-api-reference", "mission": "CM-METIER-P8-API (REVIEW)",
-     "facts": "pure synthetic API/integration reference (request validation, idempotency dedup, bounded retry, contract compat); tested; same existsSync-only reference",
-     "systemicCause": "same as P5", "decision": "KEEP — same owner gate", "ifAuthorized": "same uniform consumer"},
-    {"module": "odg-btp-communication-capability-matrix", "mission": "SX-BTP-COMMUNICATION-MATRIX (ACCEPTED)",
-     "facts": "static capability matrix + a provenance-tagged READ-ONLY Ollama snapshot (V265); only its own test references it",
-     "decision": "ACCEPTED ≠ USED. It is a measured snapshot/dossier, not a runtime capability. KEEP; candidate consumer = the BTP executive dashboard view (M2 BTP is authorized), but wiring adds value only if the dashboard must show communication-capability status — not wired without that need (V15.0 §0.2: no consumer built just to have one)",
-     "statusNote": "the V12.4 companion status (ACCEPTED) is a hard register — not changed; reclassifying it as DOSSIER_ONLY is an owner decision"},
-    {"module": "odg-btp-growth-roadmap-reconciliation", "mission": "SX-BTP-GROWTH-RECONCILIATION (ACCEPTED)",
-     "facts": "Phase-0 reconciliation deliverable of the owner's BTP growth roadmap V2 (V268); referenced by name in odg-btp-company-management-coverage ('REUSE odg-btp-growth-roadmap-reconciliation, do NOT build a parallel marketing map') and by tests",
-     "decision": "KEEP as a dossier generator. Its value is the reconciliation itself (a one-off document), and it is reused as the anti-duplication reference — a runtime consumer is not expected. ACCEPTED is consistent with a dossier mission",
-     "statusNote": "no change"}
+    {
+      "module": "profession-p5-platform-reference",
+      "mission": "CM-METIER-P5-PLATFORM (REVIEW)",
+      "facts": "pure synthetic reference project (config validation, rollout gate, resource budget, recovery drill); tested; referenced by odg-metier-campaign ONLY through fs.existsSync (line 131) and listed by odg-cto-dashboard — never loaded",
+      "systemicCause": "6 of 15 profession-p*-reference modules have no loading consumer (P2, P5, P8, P9, P12, P15). Their siblings are consumed ad hoc (metier-parcours, metier-benchmark-multidim, cross-metier-collaboration). odg-metier-campaign enumerates all 15 but only checks that the files exist — the uniform consumer that would run runReferenceProject() does not exist",
+      "decision": "KEEP (library / reference project). Do NOT wire now: the 20 métiers are FROZEN and only M2 BTP is authorized (V330) — wiring the profession campaign to execute reference projects is a métier-scope change = OWNER decision",
+      "ifAuthorized": "make odg-metier-campaign call runReferenceProject() for each profession module (one uniform consumer for all 15) instead of existsSync — fixes the 6 at the root, not P5/P8 individually"
+    },
+    {
+      "module": "profession-p8-api-reference",
+      "mission": "CM-METIER-P8-API (REVIEW)",
+      "facts": "pure synthetic API/integration reference (request validation, idempotency dedup, bounded retry, contract compat); tested; same existsSync-only reference",
+      "systemicCause": "same as P5",
+      "decision": "KEEP — same owner gate",
+      "ifAuthorized": "same uniform consumer"
+    },
+    {
+      "module": "odg-btp-communication-capability-matrix",
+      "mission": "SX-BTP-COMMUNICATION-MATRIX (ACCEPTED)",
+      "facts": "static capability matrix + a provenance-tagged READ-ONLY Ollama snapshot (V265); only its own test references it",
+      "decision": "ACCEPTED ≠ USED. It is a measured snapshot/dossier, not a runtime capability. KEEP; candidate consumer = the BTP executive dashboard view (M2 BTP is authorized), but wiring adds value only if the dashboard must show communication-capability status — not wired without that need (V15.0 §0.2: no consumer built just to have one)",
+      "statusNote": "the V12.4 companion status (ACCEPTED) is a hard register — not changed; reclassifying it as DOSSIER_ONLY is an owner decision"
+    },
+    {
+      "module": "odg-btp-growth-roadmap-reconciliation",
+      "mission": "SX-BTP-GROWTH-RECONCILIATION (ACCEPTED)",
+      "facts": "Phase-0 reconciliation deliverable of the owner's BTP growth roadmap V2 (V268); referenced by name in odg-btp-company-management-coverage ('REUSE odg-btp-growth-roadmap-reconciliation, do NOT build a parallel marketing map') and by tests",
+      "decision": "KEEP as a dossier generator. Its value is the reconciliation itself (a one-off document), and it is reused as the anti-duplication reference — a runtime consumer is not expected. ACCEPTED is consistent with a dossier mission",
+      "statusNote": "no change"
+    }
   ],
-  "summary": {"wired": 0, "kept": 4, "removed": 0, "ownerDecisions": ["unfreeze the profession campaign to give the 15 reference projects one uniform consumer (fixes 6 unconsumed modules at the root)", "optionally reclassify SX-BTP-COMMUNICATION-MATRIX as dossier-only in the V12.4 companion"]},
-  "limits": ["consumer detection is static (literal requires + name grep); dynamic consumers could exist", "no runtime trace was captured — 'never loaded' is from static analysis"]
+  "summary": {
+    "wired": 0,
+    "kept": 4,
+    "removed": 0,
+    "ownerDecisions": [
+      "unfreeze the profession campaign to give the 15 reference projects one uniform consumer (fixes 6 unconsumed modules at the root)",
+      "optionally reclassify SX-BTP-COMMUNICATION-MATRIX as dossier-only in the V12.4 companion"
+    ]
+  },
+  "limits": [
+    "consumer detection is static (literal requires + name grep); dynamic consumers could exist",
+    "no runtime trace was captured — 'never loaded' is from static analysis"
+  ],
+  "correction": {
+    "date": "2026-11-22",
+    "by": "V150 199-module manual review (batch 4)",
+    "text": "WRONG in the original: P2, P9, P12 and P15 ARE loaded and called by runtime/bin/odg-v137-qualification-run.ts. The real gap is that this runner qualifies 13/15 reference projects and OMITS P5 and P8 — fix = add P5/P8 to the existing qualification runner (not a new campaign consumer)."
+  }
 }

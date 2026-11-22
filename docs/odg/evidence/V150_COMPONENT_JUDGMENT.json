@@ -1,0 +1,4752 @@
+{
+  "generator": "runtime/bin/odg-component-judgment-run.ts",
+  "head": "3a09bab42d8f26596815503d98c11ed868a949b5",
+  "composes": [
+    "odg-component-census (runCensus)",
+    "odg-component-judgment.judge (V361-D, #847)"
+  ],
+  "surfaceSize": 198,
+  "distribution": {
+    "LEGITIMATE_LIBRARY": 57,
+    "MISSING_CONSUMER": 85,
+    "BLOCKED": 52,
+    "APP_DYNAMIC_CONSUMED": 3,
+    "EXPERIMENTAL": 1
+  },
+  "actionable": [
+    "ai-act-annex-iv-completeness",
+    "ai-assurance-regression",
+    "ai-assurance-report",
+    "architecture-fitness",
+    "autonomy-matrix",
+    "coldstart-model",
+    "continuous-planner",
+    "cross-metier-assurance",
+    "dataset-pii-minimization",
+    "decision-governance",
+    "delivery-batch-coherence",
+    "demo-dossier",
+    "engineering-practices-register",
+    "enterprise-proposal-template",
+    "external-input-intake",
+    "failure-taxonomy",
+    "feature-flag-staleness-audit",
+    "field-validation-readiness",
+    "finance-ledger-service",
+    "flaky-ci-intelligence",
+    "golden-evaluation",
+    "iso-42001-readiness",
+    "iso-readiness",
+    "l4-campaign",
+    "launch-budget",
+    "local-coding-qualification",
+    "master-program-integration",
+    "memory-scenario-battery",
+    "metier-benchmark-suite",
+    "metier-parcours",
+    "native-autonomy-scorecard",
+    "odg-admin-fleet-assistants",
+    "odg-amortissement",
+    "odg-artifact-identity",
+    "odg-autonomy-ladder-scorecard",
+    "odg-benchmark-corroboration",
+    "odg-btp-schedule-plan",
+    "odg-compounding-transfer-demo",
+    "odg-cvss-score",
+    "odg-cycle-hypothesis-verdict",
+    "odg-deployable-package",
+    "odg-deployment-qualification",
+    "odg-eval-statistics-index",
+    "odg-governance-quality-assistants",
+    "odg-intelligence-economic-assistants",
+    "odg-interval-optimization",
+    "odg-interval-scheduling",
+    "odg-marketing-cycle-latency",
+    "odg-marketing-science",
+    "odg-metier-benchmark-lot1",
+    "odg-metier-benchmark-lot3",
+    "odg-metier-configuration",
+    "odg-model-router",
+    "odg-p4-engine-qualification",
+    "odg-portfolio-concentration-view",
+    "odg-slice3-governability",
+    "odg-speed-marketing-chain",
+    "odg-vps-validation-preflight",
+    "opportunity-eval-set",
+    "optimization-experiment",
+    "p1-differential-property",
+    "p12-dead-letter-quarantine",
+    "p12-idempotency-key-collision",
+    "p8-deprecation-window-enforcement",
+    "p9-budget-burndown-forecast",
+    "promotion-assurance",
+    "proposal-pipeline",
+    "prospection-compliance",
+    "prospection-registry",
+    "prospection-send-gate",
+    "quantization-honesty-gate",
+    "recurring-offer",
+    "repair-router",
+    "revenue-channels",
+    "revenue-scenarios",
+    "revenue-target-path",
+    "roadmap-schema-proposal",
+    "seo-crawl-consistency",
+    "seo-hreflang-reciprocity",
+    "seo-page-language-declaration",
+    "seo-page-signal-extractor",
+    "seo-strategy",
+    "seo-structured-data-validator",
+    "study-steps-ledger",
+    "validation-campaign"
+  ],
+  "dispositions": [
+    {
+      "module": "accessibility-applicability",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-commercial-metier-matrix.ts",
+          "runtime/core/odg-metier-campaign.ts"
+        ]
+      }
+    },
+    {
+      "module": "ai-act-annex-iv-completeness",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "ai-assurance-regression",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "ai-assurance-report",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "architecture-fitness",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "autonomous-commercial-cycle",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-btp-capability-matrix.ts",
+          "runtime/core/odg-btp-growth-roadmap-reconciliation.ts"
+        ]
+      }
+    },
+    {
+      "module": "autonomy-matrix",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "broad-it-eval-ingest",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-data-chain-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "champion-challenger-arbiter",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-architecture-audit-run.ts",
+          "runtime/bin/odg-p9-world-intelligence-matrix.ts"
+        ]
+      }
+    },
+    {
+      "module": "chantier-cockpit",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-btp-capability-matrix.ts",
+          "runtime/core/odg-btp-company-management-coverage.ts"
+        ]
+      }
+    },
+    {
+      "module": "code-check-eval",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-component-census.ts"
+        ]
+      }
+    },
+    {
+      "module": "coldstart-model",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "commercial-intelligence-chain",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-v144-final-assurance.ts",
+          "runtime/core/odg-btp-capability-matrix.ts",
+          "runtime/core/odg-btp-company-management-coverage.ts",
+          "runtime/core/odg-btp-growth-roadmap-reconciliation.ts"
+        ]
+      }
+    },
+    {
+      "module": "commercial-offer-builder",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-v144-final-assurance.ts",
+          "runtime/core/odg-btp-capability-matrix.ts",
+          "runtime/core/odg-btp-growth-roadmap-reconciliation.ts"
+        ]
+      }
+    },
+    {
+      "module": "continuous-planner",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "cross-metier-assurance",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "cross-metier-collaboration",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "dashboard-token-provision",
+      "status": "APP_DYNAMIC_CONSUMED",
+      "confidence": "HIGH",
+      "actionable": false,
+      "evidence": [
+        "explicit dynamic-use signal (spawn/require(var)/registry) names this module"
+      ],
+      "signals": {
+        "dynamicUse": true,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [
+          "scripts/provision-dashboard-token.sh"
+        ],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "data-connector",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-commercial-metier-matrix.ts",
+          "runtime/core/odg-connectors-ux-assistants.ts",
+          "runtime/core/odg-data-chain-audit.ts",
+          "runtime/core/odg-metier-business-matrix.ts",
+          "runtime/core/odg-metier-campaign.ts"
+        ]
+      }
+    },
+    {
+      "module": "dataset-freshness-volume",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-p9-world-intelligence-matrix.ts"
+        ]
+      }
+    },
+    {
+      "module": "dataset-pii-minimization",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "decision-governance",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "delivery-batch-coherence",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "demand-experiment",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/seo-strategy.ts"
+        ]
+      }
+    },
+    {
+      "module": "demo-dossier",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "dockerfile-lint",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "engineering-chain-scenario",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "engineering-practices-register",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "enterprise-lead-grade",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/opportunity-detector.ts"
+        ]
+      }
+    },
+    {
+      "module": "enterprise-proposal-template",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "excellence-coverage",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/iso-27001-clause-matrix.ts",
+          "runtime/core/iso-42001-readiness.ts",
+          "runtime/core/iso-readiness.ts"
+        ]
+      }
+    },
+    {
+      "module": "external-input-intake",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "factur-x-extract",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-data-chain-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "failure-taxonomy",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "fairness-eval",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/failures-register.ts"
+        ]
+      }
+    },
+    {
+      "module": "feature-flag-staleness-audit",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "field-validation-readiness",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "final-report",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/pipeline-builder.ts"
+        ]
+      }
+    },
+    {
+      "module": "finance-ledger-service",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "flaky-ci-intelligence",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "fleet-stage",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/pipeline-builder.ts"
+        ]
+      }
+    },
+    {
+      "module": "front-door-attempt",
+      "status": "APP_DYNAMIC_CONSUMED",
+      "confidence": "HIGH",
+      "actionable": false,
+      "evidence": [
+        "explicit dynamic-use signal (spawn/require(var)/registry) names this module"
+      ],
+      "signals": {
+        "dynamicUse": true,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [
+          "runtime/bin/odg-local-pipeline.sh"
+        ],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "frontier-weekly-report",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-program-register.ts",
+          "runtime/bin/odg-radar-loop-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "gate-e-demonstration",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "generative-repair-eval",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-component-census.ts"
+        ]
+      }
+    },
+    {
+      "module": "golden-evaluation",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "intelligence-scorecard",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-radar-loop-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "iso-42001-readiness",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "iso-dossier",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/capability-taxonomy.ts"
+        ]
+      }
+    },
+    {
+      "module": "iso-readiness",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "l4-campaign",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "launch-budget",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "local-coding-qualification",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "market-intelligence",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-capability-attribution-v108-run.ts",
+          "runtime/core/odg-btp-company-management-coverage.ts",
+          "runtime/core/odg-btp-growth-roadmap-reconciliation.ts"
+        ]
+      }
+    },
+    {
+      "module": "master-program-integration",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "memory-scenario-battery",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "metier-baseline",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/qualification-plan.ts"
+        ]
+      }
+    },
+    {
+      "module": "metier-benchmark-suite",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "metier-parcours",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "metric-window-integrity",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-p9-world-intelligence-matrix.ts"
+        ]
+      }
+    },
+    {
+      "module": "native-autonomy-scorecard",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "niche-scoring",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-capability-cross-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-admin-fleet-assistants",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-ai-serving-reference",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-amortissement",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-artifact-identity",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-autonomous-operating-model",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-autonomy-ladder-scorecard",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-backup-restore-verification",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-benchmark-corroboration",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-bland-altman",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-eval-statistics-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-bmax-capability-mapping",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-broad-it-eval-set",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-business-matrix.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-btp-capability-matrix",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-btp-communication-capability-matrix",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-btp-growth-roadmap-reconciliation",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-btp-company-management-coverage.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-btp-integration-blocker",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-btp-invoice-schedule",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-configuration.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-btp-schedule-plan",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-campaign-lifecycle",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-improvement-contracts.ts",
+          "runtime/core/odg-metier-benchmark-lot3.ts",
+          "runtime/core/odg-metier-business-matrix.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-campaign-throughput-diagnostic",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-capability-cross-audit",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-cncf-platform-maturity",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-commercial-assistants",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-compounding-transfer-demo",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-connectors-ux-assistants",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-content-asset",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-cra-deadline-tracker",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-cto-continuity-protocol",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-cto-dashboard",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-btp-company-management-coverage.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-cvss-score",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-cycle-hypothesis-verdict",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-data-contract-quality",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-data-drift-view",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-eval-statistics-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-deployable-package",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-deployment-qualification",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-devex-goldenpath",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-digital-distribution",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-doc-confidence-calibration",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-dora-metrics-view",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-eval-heldout-calibration",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-eval-statistics-index",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-evaluator-agreement-scorecard",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-eval-statistics-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-executive-assistants",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-finops-kpis",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-finops-unit-economics",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-fr-due-date",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-transversal-readiness.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-fr-invoice-compliance",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-transversal-readiness.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-governance-quality-assistants",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-intelligence-economic-assistants",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-interval-optimization",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-interval-scheduling",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-iso27001-evidence-crosswalk",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-business-matrix.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-isolation-egress-allowlist",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-isolation-network-review",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-marketing-cycle-latency",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-marketing-science",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-master-directive-reconciliation",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-metier-benchmark-lot1",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-metier-benchmark-lot2",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-metier-benchmark-lot3",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-metier-configuration",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-mission-crosswalk",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-btp-growth-roadmap-reconciliation.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-model-router",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-multiple-testing-correction",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-eval-statistics-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-native-autonomy-audit",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-native-autonomy-demonstration",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-operational-assistants",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-otel-execution-trace",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-improvement-contracts.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-p4-engine-qualification",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-partner-attribution",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-passk-estimator",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-eval-statistics-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-portfolio-concentration-view",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-product-economics-audit",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-business-matrix.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-repo-vps-map",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-roadmap-reconciliation",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-btp-growth-roadmap-reconciliation.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-saga-idempotency-reference",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-sandbox-isolation-audit",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-slice3-governability",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-speed-marketing-chain",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-ssdf-slsa-crosswalk",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-streaming-reference",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-support-renewal-engine",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-v251-repair-reconciliation",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-v360-compass.ts"
+        ]
+      }
+    },
+    {
+      "module": "odg-vps-validation-preflight",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "odg-wcag-accessibility-evidence",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-improvement-index.ts"
+        ]
+      }
+    },
+    {
+      "module": "opportunity-eval-set",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "optimization-experiment",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "p01-billing-sandbox",
+      "status": "EXPERIMENTAL",
+      "confidence": "LOW",
+      "actionable": false,
+      "evidence": [
+        "name hints an experiment (-poc/-prototype/-wip/…) — LOW-confidence lexical signal only"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/external-input-ingestion.ts"
+        ]
+      }
+    },
+    {
+      "module": "p1-differential-property",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "p12-dead-letter-quarantine",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "p12-idempotency-key-collision",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "p8-deprecation-window-enforcement",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "p9-budget-burndown-forecast",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "pdf-extract",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-data-chain-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "portfolio-dashboard",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "primitive-validation",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/failures-register.ts",
+          "runtime/core/gates-ledger.ts"
+        ]
+      }
+    },
+    {
+      "module": "profession-p12-streaming-reference",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-capability-attribution-v108-run.ts",
+          "runtime/bin/odg-v137-qualification-run.ts",
+          "runtime/core/metier-state.ts",
+          "runtime/core/odg-metier-campaign.ts"
+        ]
+      }
+    },
+    {
+      "module": "profession-p15-workflow-reference",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-capability-attribution-v108-run.ts",
+          "runtime/bin/odg-v137-qualification-run.ts",
+          "runtime/core/metier-state.ts",
+          "runtime/core/odg-metier-campaign.ts"
+        ]
+      }
+    },
+    {
+      "module": "profession-p2-ai-reference",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-capability-attribution-v108-run.ts",
+          "runtime/bin/odg-v137-qualification-run.ts",
+          "runtime/core/metier-state.ts",
+          "runtime/core/odg-metier-campaign.ts"
+        ]
+      }
+    },
+    {
+      "module": "profession-p5-platform-reference",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-campaign.ts"
+        ]
+      }
+    },
+    {
+      "module": "profession-p8-api-reference",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-metier-campaign.ts"
+        ]
+      }
+    },
+    {
+      "module": "profession-p9-finops-reference",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-capability-attribution-v108-run.ts",
+          "runtime/bin/odg-v137-qualification-run.ts",
+          "runtime/core/metier-state.ts",
+          "runtime/core/odg-btp-capability-matrix.ts",
+          "runtime/core/odg-metier-campaign.ts"
+        ]
+      }
+    },
+    {
+      "module": "progressive-delivery-gate",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "promotion-assurance",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "proposal-pipeline",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "prospection-compliance",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "prospection-registry",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "prospection-send-gate",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "qualification-plan",
+      "status": "APP_DYNAMIC_CONSUMED",
+      "confidence": "HIGH",
+      "actionable": false,
+      "evidence": [
+        "explicit dynamic-use signal (spawn/require(var)/registry) names this module"
+      ],
+      "signals": {
+        "dynamicUse": true,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [
+          "deploy/odg-qualify.sh"
+        ],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "quantization-honesty-gate",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "radar-realsignal-demonstration",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-radar-loop-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "rce-assurance-chain",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-successor-referential.ts"
+        ]
+      }
+    },
+    {
+      "module": "recurring-offer",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "renovation-quote-normalize",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-btp-capability-matrix.ts",
+          "runtime/core/odg-data-chain-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "repair-eval",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-component-census.ts"
+        ]
+      }
+    },
+    {
+      "module": "repair-router",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "revenue-channels",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "revenue-scenarios",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "revenue-target-path",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "roadmap-dep-check",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/failures-register.ts"
+        ]
+      }
+    },
+    {
+      "module": "roadmap-deps-preview-validation",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "roadmap-schema-proposal",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "security-control-plane",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-capability-attribution-v108-run.ts",
+          "runtime/core/odg-btp-company-management-coverage.ts"
+        ]
+      }
+    },
+    {
+      "module": "self-improvement-chain",
+      "status": "BLOCKED",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "source declares/mentions an OWNER_GATED / owner-decision activation gate (text-marker ⇒ candidate, not verified)"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": true,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": true
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/bin/odg-radar-loop-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "seo-crawl-consistency",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "seo-hreflang-reciprocity",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "seo-page-language-declaration",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "seo-page-signal-extractor",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "seo-strategy",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "seo-structured-data-validator",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "stage-build-ts-evidence",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/pipeline-builder.ts"
+        ]
+      }
+    },
+    {
+      "module": "study-steps-ledger",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    },
+    {
+      "module": "task-add-tests",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/coding-mission-resolver.ts"
+        ]
+      }
+    },
+    {
+      "module": "task-fix-unused-imports",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/odg-native-engineering-audit.ts"
+        ]
+      }
+    },
+    {
+      "module": "ted-connector",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": false,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/capability-taxonomy.ts",
+          "runtime/core/odg-connectors-ux-assistants.ts"
+        ]
+      }
+    },
+    {
+      "module": "tender-feed-connector",
+      "status": "LEGITIMATE_LIBRARY",
+      "confidence": "MEDIUM",
+      "actionable": false,
+      "evidence": [
+        "listed in a documented index/registry as a reusable library"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": true,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": [
+          "runtime/core/capability-taxonomy.ts",
+          "runtime/core/odg-connectors-ux-assistants.ts"
+        ]
+      }
+    },
+    {
+      "module": "validation-campaign",
+      "status": "MISSING_CONSUMER",
+      "confidence": "MEDIUM",
+      "actionable": true,
+      "evidence": [
+        "exports an API with NO detected consumer (static core + app/bin scan) ⇒ a caller is missing OR it is an un-indexed reusable library (not upgraded to LEGITIMATE_LIBRARY without positive index/registry evidence — honest conservative default)",
+        "has a test (behaviour pinned) — wiring a consumer is low-risk"
+      ],
+      "signals": {
+        "dynamicUse": false,
+        "indexMember": false,
+        "ownerGated": false,
+        "hasRequireMain": true,
+        "exportsApi": true,
+        "hasTest": true,
+        "binWired": false
+      },
+      "refs": {
+        "dynamicRefs": [],
+        "nameRefs": []
+      }
+    }
+  ],
+  "limits": [
+    "comment lines and references to <module>.test.* are ignored; package.json counts only for binWired",
+    "signals are static text evidence: dynamicUse/indexMember can be triggered by a comment or a list that never loads the module (false positive), and miss computed names (false negative)",
+    "ORPHANED_CONFIRMED is unreachable here by design — only an owner confirmation can produce it",
+    "no module is activated, wired, retired or merged by this run"
+  ]
+}
