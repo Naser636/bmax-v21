@@ -13,8 +13,20 @@ const H = require("../core/bounded-http-client.js");
 const FR = require("../core/frontier-radar.js");
 const C = require("../core/odg-radar-gate-chain.js");
 
-const FRAMING = new Set(["toyota", "toyotas", "nasa", "nist", "google", "sre", "sres", "page", "states", "state", "describes", "defines", "define",
-  "policy", "example", "its", "principle", "production", "framework", "handbook", "says", "on", "ai", "rmf", "was", "the", "a", "an", "is", "as", "to", "of", "and", "it", "will", "that"]);
+// FRAMING (inspection MEDIUM): grammar words are global; ATTRIBUTION words (organization names, document qualifiers) are
+// allowed ONLY for the source host they belong to — "NASA policy states: <an SRE quote>" no longer passes.
+const GRAMMAR = new Set(["page", "states", "state", "describes", "defines", "define", "says", "on", "was", "the", "a", "an", "is", "as", "to", "of", "and", "it", "will", "that", "its"]);
+const HOST_ATTRIBUTION: Record<string, string[]> = {
+  "global.toyota": ["toyota", "toyotas", "principle", "production"],
+  "toyota-europe.com": ["toyota", "toyotas", "principle", "production"],
+  "sre.google": ["google", "sre", "sres", "policy", "example"],
+  "nasa.gov": ["nasa", "policy", "handbook"],
+  "nist.gov": ["nist", "ai", "rmf", "framework"],
+};
+// qualifiers that must NOT be dropped: the sre.google page is an EXAMPLE policy (Appendix B) ⇒ a claim about its policy says so.
+const HOST_REQUIRES: Record<string, Array<{ ifWord: string; thenWord: string }>> = { "sre.google": [{ ifWord: "policy", thenWord: "example" }] };
+function regDomain(u: string): string { try { const p = new URL(u).hostname.toLowerCase().split("."); return p.slice(-2).join("."); } catch { return ""; } }
+const FRAMING = GRAMMAR;   // kept as an export name for backward compatibility (grammar only)
 function norm(t: any): string { return String(t || "").toLowerCase().replace(/['’]s\b/g, "").replace(/[^a-z0-9/%&.]+/g, " ").replace(/\.(?=\s|$)/g, " ").replace(/\s+/g, " ").trim(); }
 function words(t: any): string[] { return norm(t).split(" ").filter(Boolean); }
 function supports(sp: any, claim: string, byUrl: Record<string, any>, quarantined: Set<string>): boolean {
@@ -27,9 +39,14 @@ function supports(sp: any, claim: string, byUrl: Record<string, any>, quarantine
 }
 /* coverage(claim, quotes): (d) every content word of the claim is covered by the UNION of that source's valid supporting
  * quotes (a source may contribute several quotes to one claim) or by the explicit FRAMING list. */
-function covered(claim: string, quotes: string[]): boolean {
+function covered(claim: string, quotes: string[], url?: string): boolean {
   const qw = new Set(([] as string[]).concat(...quotes.map((q: string) => words(q))));
-  return words(claim).every((w: string) => qw.has(w) || FRAMING.has(w));
+  const host = url ? regDomain(url) : "";
+  const attribution = new Set(HOST_ATTRIBUTION[host] || []);
+  const cw = words(claim);
+  if (!cw.every((w: string) => qw.has(w) || GRAMMAR.has(w) || attribution.has(w))) return false;
+  for (const r of HOST_REQUIRES[host] || []) if (cw.includes(r.ifWord) && !cw.includes(r.thenWord) && !qw.has(r.ifWord)) return false;
+  return true;
 }
 
 function main() {
@@ -55,7 +72,7 @@ function main() {
     // This bounds a claim to its quote; it still trusts the extractor's quotes (recorded limit).
     const valid = (cy.support || []).filter((sp: any) => supports(sp, cy.claim, byUrl, quarantined));
     const byUrlQuotes: Record<string, string[]> = {}; for (const sp of valid) (byUrlQuotes[sp.url] = byUrlQuotes[sp.url] || []).push(sp.quote);
-    const supportOk = valid.filter((sp: any) => covered(cy.claim, byUrlQuotes[sp.url]));
+    const supportOk = valid.filter((sp: any) => covered(cy.claim, byUrlQuotes[sp.url], sp.url));
     const droppedSupport = (cy.support || []).length - supportOk.length;
     const urls = Array.from(new Set(supportOk.map((sp: any) => sp.url)));
     const sources = urls.map((u: any) => ({
@@ -94,5 +111,5 @@ function main() {
   process.stdout.write(JSON.stringify(evidence.summary) + "\n" + results.map((x: any) => `${x.admitted ? "ADMITTED" : "not-admitted"} ${x.corroboration} ${x.claim}`).join("\n") + "\n");
 }
 if (require.main === module) main();
-module.exports = { supports, covered, norm, words, FRAMING };
+module.exports = { supports, covered, norm, words, FRAMING, GRAMMAR, HOST_ATTRIBUTION };
 export {};
