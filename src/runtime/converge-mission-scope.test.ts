@@ -320,6 +320,11 @@ console.log("F. Mission Ledger — no proven entry while the delegated patch is 
 function ledgerSandbox(verifyMode: string | null): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "v161-ledger-"));
   fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
+  // read-only COPIES of the constitution/policies/state-machine the real ledger loads (the repo is never written)
+  for (const sub of ["constitution", "policies", "governance"]) {
+    const src = path.join(REPO, "runtime", sub);
+    if (fs.existsSync(src)) fs.cpSync(src, path.join(dir, "runtime", sub), { recursive: true });
+  }
   fs.writeFileSync(path.join(dir, "runtime", "generated", "mission-report.json"), JSON.stringify({ mission: "LM", validated: true, status: "SUCCESS" }));
   const verify: Record<string, unknown> = { build: true, typescript: true, gitClean: false, mission: "LM" };
   if (verifyMode) verify.gitCleanScope = { mode: verifyMode, provenInScope: ["docs/a.md"], residualDirty: [] };
@@ -341,14 +346,42 @@ function ledgerRun(dir: string, marker: boolean) {
   fs.rmSync(d, { recursive: true, force: true });
 }
 {
+  // #923 re-inspection: a STALE DELEGATED_PATCH runtime-verify.json (left by a delegate run awaiting commit) must NOT
+  // block a later NORMAL mission's ledger stage.
   const d = ledgerSandbox("DELEGATED_PATCH"); const r = ledgerRun(d, false);
-  check(/delegated patch is UNCOMMITTED/.test(r.out) && !r.entries.some((e) => e.mission === "LM"), "F2. verify evidence in DELEGATED_PATCH mode ⇒ ledger REFUSES (no entry)");
+  check(!/delegated patch is UNCOMMITTED/.test(r.out) && r.entries.some((e) => e.mission === "LM"), "F2. stale DELEGATED_PATCH verify file + NORMAL ledger stage (no marker) ⇒ RECORDED");
+  fs.rmSync(d, { recursive: true, force: true });
+}
+{
+  const d = ledgerSandbox("DELEGATED_PATCH"); const r = ledgerRun(d, true);
+  check(/delegated patch is UNCOMMITTED/.test(r.out) && !r.entries.some((e) => e.mission === "LM"), "F3. env marker still refuses (no entry), whatever the verify file says");
   fs.rmSync(d, { recursive: true, force: true });
 }
 {
   const d = ledgerSandbox(null); const r = ledgerRun(d, false);
-  check(!/delegated patch is UNCOMMITTED/.test(r.out), "F3. no marker + default verify evidence ⇒ the delegated gate is inert (other gates decide, unchanged)");
+  check(!/delegated patch is UNCOMMITTED/.test(r.out) && r.entries.some((e) => e.mission === "LM"), "F4. no marker + default verify evidence ⇒ recorded (unchanged)");
   fs.rmSync(d, { recursive: true, force: true });
+}
+{
+  // Build/TS Evidence stage rewrites runtime-verify.json as {...prior, …}: it must DROP the delegated markers.
+  for (const engineering of [true, false]) {
+    const d = fs.mkdtempSync(path.join(os.tmpdir(), "v161-bts-"));
+    fs.mkdirSync(path.join(d, "runtime", "generated"), { recursive: true });
+    const plan: Record<string, unknown> = { mission: "NM", objectives: [{ id: "o", goal: "g", done_when: ["d"] }] };
+    if (engineering) { plan.authorizedPaths = ["src/x.ts"]; plan.requiresEngineering = true; } else { plan.mode = "AUDIT"; }
+    fs.writeFileSync(path.join(d, "runtime", "generated", "mission-plan.json"), JSON.stringify(plan));
+    fs.writeFileSync(path.join(d, "runtime", "generated", "runtime-verify.json"), JSON.stringify({ gitClean: false, delegatedPatchClean: true, gitCleanScope: { mode: "DELEGATED_PATCH", provenInScope: ["docs/a.md"], residualDirty: [] }, keep: "prior-field" }));
+    const prev = process.cwd(); process.chdir(d);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const bts = require(path.join(REPO, "runtime", "dist", "core", "stage-build-ts-evidence.js"));
+      bts.runBuildTsEvidence({ buildFn: () => true, tscFn: () => true });
+    } finally { process.chdir(prev); }
+    const v = JSON.parse(fs.readFileSync(path.join(d, "runtime", "generated", "runtime-verify.json"), "utf8"));
+    check(!("gitCleanScope" in v) && !("delegatedPatchClean" in v) && v.keep === "prior-field" && v.mission === "NM",
+      `F5. Build/TS Evidence (${engineering ? "engineering" : "read-only"}) drops gitCleanScope/delegatedPatchClean, keeps other prior fields`);
+    fs.rmSync(d, { recursive: true, force: true });
+  }
 }
 
 console.log(failures === 0 ? "\nALL PASS — V16.1 mission-scoped delegate converge" : `\nFAILURES: ${failures}`);
