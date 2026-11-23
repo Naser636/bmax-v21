@@ -9,6 +9,7 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
 
 const good = (over: any = {}) => ({
   host: "www.rfc-editor.org", scheme: "https", access: "ANONYMOUS_PUBLIC_HTML", tier: "T1", termsVerified: true,
+  requiresAuth: false, paid: false, termsForbidAutomation: false, botChallengeObserved: false,
   termsUrl: "https://www.rfc-editor.org/policy.html", rateLimitPerHour: 600,
   prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true }], ...over,
 });
@@ -58,8 +59,19 @@ check("redirect behaviour unknown ⇒ DEFER", deferredFor({ prefixes: [{ path: "
 check("prefix not sampled 200 ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE" }] }, /NOT_SAMPLED/));
 check("owner decision required (terms allow vs robots disallow) ⇒ DEFER", deferredFor({ ownerDecisionRequired: "robots Disallow:/ vs API terms" }, /OWNER_DECISION/));
 check("robots Crawl-delay without per-host pacing ⇒ DEFER", deferredFor({ crawlDelaySeconds: 15 }, /CRAWL_DELAY_15s_NOT_ENFORCEABLE/));
-check("hourly limit below one run's budget ⇒ DEFER", deferredFor({ rateLimitPerHour: 20 }, /BELOW_RUN_BUDGET/));
+check("hourly limit below one run's budget ⇒ DEFER", deferredFor({ rateLimitPerHour: 20 }, /TOO_CLOSE_TO_RUN_BUDGET/));
 check("crawl-delay admitted only if the policy declares per-host pacing enforced", A.decideCandidate(good({ crawlDelaySeconds: 15 }), { ...A.DEFAULT_POLICY, perHostPacingEnforced: true }).decision === "ADMIT");
+// ── #905 inspection regressions
+check("#905 HIGH: absent hard-violation flag ⇒ DEFER (never read as clean)", ["requiresAuth", "paid", "termsForbidAutomation", "botChallengeObserved"].every((k) => deferredFor({ [k]: undefined }, new RegExp(k.toUpperCase() + "_NOT_VERIFIED"))));
+check("#905 HIGH: non-boolean truthy flag (\"true\", 1) ⇒ not ADMIT", [["requiresAuth", "true"], ["paid", 1], ["termsForbidAutomation", "yes"], ["botChallengeObserved", "true"]].every(([k, v]) => dec(good({ [k as string]: v })).decision !== "ADMIT"));
+check("#905 HIGH: crawlDelaySeconds as string ⇒ DEFER (malformed)", deferredFor({ crawlDelaySeconds: "10" }, /CRAWL_DELAY_MALFORMED/));
+check("#905 HIGH: rateLimitPerHour Infinity / NaN / -5 ⇒ DEFER", [Infinity, NaN, -5].every((v) => deferredFor({ rateLimitPerHour: v, rateLimitDocumented: false }, /RATE_LIMIT_MALFORMED/)));
+check("#905 MED: prefix containing robots-disallowed sub-paths ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: ["/rfc/authors/"] }] }, /ROBOTS_DISALLOWED_SUBPATHS/));
+check("#905 MED: per-second / concurrency limits without pacing ⇒ DEFER", deferredFor({ maxRequestsPerSecond: 1 }, /PER_SECOND/) && deferredFor({ maxConcurrency: 1 }, /CONCURRENCY/));
+check("#905 MED: hourly limit that <4 runs would exhaust (60/h vs 30/run) ⇒ DEFER", deferredFor({ rateLimitPerHour: 60 }, /TOO_CLOSE_TO_RUN_BUDGET/));
+check("#905 LOW: non-GET endpoint ⇒ DEFER", deferredFor({ prefixes: [{ path: "/v1/query", robots: "ALLOW", redirect: "NONE", sampled200: true, method: "POST" }] }, /NON_GET/));
+check("#905 LOW: expected content type not grantable (PDF) ⇒ DEFER", deferredFor({ expectedContentTypes: ["application/pdf"] }, /CONTENT_TYPE_NOT_GRANTABLE/));
+check("sampled200 truthy non-boolean ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: "yes" }] }, /NOT_SAMPLED/));
 check("one bad prefix among good ones ⇒ whole host not ADMITTED (no partial admit)", dec(good({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true }, { path: "/x/", robots: "UNKNOWN", redirect: "NONE", sampled200: true }] })).decision === "DEFER");
 check("garbage candidate (null) ⇒ REFUSE, no throw", dec(null).decision === "REFUSE");
 

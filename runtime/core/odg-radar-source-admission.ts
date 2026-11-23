@@ -78,21 +78,42 @@ function decideCandidate(c: any, policy: any = DEFAULT_POLICY): any {
   const hv = validHost(x.host);
   if (!hv.ok) refuse.push(hv.reason as string);
   if (x.scheme !== "https") refuse.push("NOT_HTTPS");
-  if (x.requiresAuth === true) refuse.push("REQUIRES_AUTHENTICATION");
-  if (x.paid === true) refuse.push("PAID_ACCESS");
-  if (x.termsForbidAutomation === true) refuse.push("TERMS_FORBID_AUTOMATED_ACCESS");
-  if (x.botChallengeObserved === true) refuse.push("BOT_CHALLENGE_OR_CAPTCHA_OBSERVED (never bypassed)");
+  // Hard-violation flags are TRI-STATE and STRICTLY typed: exactly `false` is the only verified-clean value; exactly `true`
+  // ⇒ REFUSE; ABSENT or any other type ("true", 1, null…) ⇒ unverified ⇒ DEFER (deny-by-default never reads absence as clean).
+  const FLAGS: [string, string][] = [["requiresAuth", "REQUIRES_AUTHENTICATION"], ["paid", "PAID_ACCESS"], ["termsForbidAutomation", "TERMS_FORBID_AUTOMATED_ACCESS"], ["botChallengeObserved", "BOT_CHALLENGE_OR_CAPTCHA_OBSERVED (never bypassed)"]];
+  for (const [k, why] of FLAGS) {
+    if (x[k] === true) refuse.push(why);
+    else if (x[k] !== false) defer.push(`${k.toUpperCase()}_NOT_VERIFIED (must be explicitly false)`);
+  }
   if (!ACCESS_OK.includes(x.access)) (x.access === undefined ? defer : refuse).push("ACCESS_TYPE_NOT_ANONYMOUS_PUBLIC:" + String(x.access));
   if (!TIERS.includes(x.tier)) defer.push("REPUTATION_TIER_UNKNOWN");
   if (x.termsVerified !== true) defer.push("TERMS_NOT_VERIFIED");
   if (!isStr(x.termsUrl)) defer.push("TERMS_URL_MISSING");
-  if (!(typeof x.rateLimitPerHour === "number" && x.rateLimitPerHour > 0) && x.rateLimitDocumented !== false) defer.push("RATE_LIMIT_UNDOCUMENTED");
+  const finitePos = (v: any): boolean => typeof v === "number" && Number.isFinite(v) && v > 0;
+  // Rate limit: either a finite positive hourly figure, or rateLimitDocumented === false (verified: none published). Any
+  // other shape (NaN, Infinity, negative, string, a non-boolean "documented" flag) ⇒ DEFER.
+  if (x.rateLimitPerHour !== undefined && !finitePos(x.rateLimitPerHour)) defer.push("RATE_LIMIT_MALFORMED:" + String(x.rateLimitPerHour));
+  else if (x.rateLimitPerHour === undefined && x.rateLimitDocumented !== false) defer.push("RATE_LIMIT_UNDOCUMENTED");
+  if (x.rateLimitDocumented !== undefined && typeof x.rateLimitDocumented !== "boolean") defer.push("RATE_LIMIT_DOCUMENTED_FLAG_MALFORMED");
   if (isStr(x.ownerDecisionRequired)) defer.push("OWNER_DECISION_REQUIRED: " + x.ownerDecisionRequired);
   // Politeness that the transport cannot enforce today must not be promised: the chain enforces only a PER-RUN call budget,
-  // not per-host pacing. A robots Crawl-delay, or a documented hourly limit below one run's budget, ⇒ DEFER until per-host
-  // pacing exists (never admit a source we would knowingly over-call).
-  if (typeof x.crawlDelaySeconds === "number" && x.crawlDelaySeconds > 0 && policy.perHostPacingEnforced !== true) defer.push(`CRAWL_DELAY_${x.crawlDelaySeconds}s_NOT_ENFORCEABLE (no per-host pacing in the transport)`);
-  if (typeof x.rateLimitPerHour === "number" && x.rateLimitPerHour > 0 && x.rateLimitPerHour < policy.budget.maxCalls && policy.perHostPacingEnforced !== true) defer.push(`RATE_LIMIT_${x.rateLimitPerHour}/h_BELOW_RUN_BUDGET_${policy.budget.maxCalls}`);
+  // not per-host pacing and not a cumulative cap. Any Crawl-delay, any per-second or concurrency limit, or an hourly limit
+  // that fewer than 4 runs would exhaust ⇒ DEFER until per-host pacing exists (never admit a source we would over-call).
+  const pacing = policy.perHostPacingEnforced === true;
+  if (x.crawlDelaySeconds !== undefined) {
+    if (!(typeof x.crawlDelaySeconds === "number" && Number.isFinite(x.crawlDelaySeconds) && x.crawlDelaySeconds >= 0)) defer.push("CRAWL_DELAY_MALFORMED:" + String(x.crawlDelaySeconds));
+    else if (x.crawlDelaySeconds > 0 && !pacing) defer.push(`CRAWL_DELAY_${x.crawlDelaySeconds}s_NOT_ENFORCEABLE (no per-host pacing in the transport)`);
+  }
+  if (x.maxRequestsPerSecond !== undefined && !pacing) defer.push(`PER_SECOND_LIMIT_${String(x.maxRequestsPerSecond)}_NOT_ENFORCEABLE`);
+  if (x.maxConcurrency !== undefined && !pacing) defer.push(`CONCURRENCY_LIMIT_${String(x.maxConcurrency)}_NOT_ENFORCEABLE`);
+  if (finitePos(x.rateLimitPerHour) && x.rateLimitPerHour < 4 * policy.budget.maxCalls && !pacing) defer.push(`RATE_LIMIT_${x.rateLimitPerHour}/h_TOO_CLOSE_TO_RUN_BUDGET_${policy.budget.maxCalls} (no cumulative cap enforced)`);
+  // Content types: the host's expected response types must all be grantable for its tier, else the host would be unusable
+  // (or tempt a hand-widening). Absent ⇒ the tier default is assumed (recorded).
+  const tierTypes: string[] = (policy.contentTypes[x.tier] || []) as string[];
+  if (x.expectedContentTypes !== undefined) {
+    if (!Array.isArray(x.expectedContentTypes) || !x.expectedContentTypes.every(isStr)) defer.push("EXPECTED_CONTENT_TYPES_MALFORMED");
+    else for (const ct of x.expectedContentTypes) if (!tierTypes.includes(ct)) defer.push("CONTENT_TYPE_NOT_GRANTABLE:" + ct);
+  }
   const prefixes: any[] = Array.isArray(x.prefixes) ? x.prefixes : [];
   if (prefixes.length === 0) refuse.push("NO_PATH_PREFIX (a host is never admitted without narrow paths)");
   if (prefixes.length > policy.maxPrefixesPerHost) refuse.push("TOO_MANY_PREFIXES");
@@ -102,6 +123,11 @@ function decideCandidate(c: any, policy: any = DEFAULT_POLICY): any {
     const pv = validPrefix(p.path);
     if (!pv.ok) { refuse.push(`${pv.reason}:${String(p.path)}`); continue; }
     if (p.robots === ROBOTS.DISALLOW) { refuse.push("ROBOTS_DISALLOWS:" + p.path); continue; }
+    if (p.method !== undefined && p.method !== "GET") { defer.push(`NON_GET_ENDPOINT_${String(p.method)}:${p.path} (grant is GET-only)`); continue; }
+    // The governor matches a prefix and EVERYTHING below it: a prefix that contains robots-disallowed sub-paths cannot be
+    // admitted as is (the governor would ALLOW the disallowed sub-paths). Malformed list ⇒ unknown ⇒ DEFER.
+    if (p.robotsDisallowedWithin !== undefined && !(Array.isArray(p.robotsDisallowedWithin) && p.robotsDisallowedWithin.every(isStr))) { defer.push("ROBOTS_DISALLOWED_WITHIN_MALFORMED:" + p.path); continue; }
+    if (Array.isArray(p.robotsDisallowedWithin) && p.robotsDisallowedWithin.length > 0) { defer.push(`PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:${p.path} ⊃ ${p.robotsDisallowedWithin.join(",")} (governor cannot exclude sub-paths — narrow the prefix)`); continue; }
     if (p.robots !== ROBOTS.ALLOW && p.robots !== ROBOTS.NO_ROBOTS_4XX) { defer.push(`ROBOTS_${p.robots === undefined ? "UNKNOWN" : p.robots}:${p.path} (RFC 9309: 5xx/unreachable ⇒ disallow; redirected robots ⇒ unknown)`); continue; }
     if (p.redirect === REDIRECT.OFF_HOST) { refuse.push("OFF_HOST_REDIRECT_ON_PREFIX:" + p.path); continue; }
     if (p.redirect === REDIRECT.SAME_HOST) { defer.push("PREFIX_NOT_CANONICAL (same-host redirect; transport blocks redirects — use the canonical form):" + p.path); continue; }

@@ -4,25 +4,21 @@
   "issuedIso": "2026-11-23T00:00:00.000Z",
   "summary": {
     "candidates": 28,
-    "admitted": 16,
-    "deferred": 10,
+    "admitted": 10,
+    "deferred": 16,
     "refused": 2
   },
   "grantRefusedReason": null,
   "decisions": [
     {
       "host": "api.github.com",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/repos/anthropics/claude-code",
-        "/repos/ggml-org/llama.cpp",
-        "/repos/google/osv.dev",
-        "/repos/ollama/ollama",
-        "/repos/stripe/smokescreen"
+      "admittedPrefixes": [],
+      "reasons": [
+        "RATE_LIMIT_60/h_TOO_CLOSE_TO_RUN_BUDGET_30 (no cumulative cap enforced)"
       ],
-      "reasons": [],
-      "evidenceSha256": "07798e594c5cd5983b4d7ac96734bd621d2a96932aedcb9996c70401d087ec6a"
+      "evidenceSha256": "3ab2a29b3509da3163b831ac8f984c09050e32f2d98e0292bfd04079bd4b4aa4"
     },
     {
       "host": "export.arxiv.org",
@@ -31,6 +27,10 @@
       "admittedPrefixes": [],
       "reasons": [
         "ROBOTS_DISALLOWS:/api/query",
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED",
         "OWNER_DECISION_REQUIRED: CONDITIONAL_OWNER_DECISION: CONTRADICTION robots vs ToU. RFC 9309: robots is not access authorization; ToU explicitly licenses API use. Owner must decide which instrument governs; log it."
       ],
@@ -44,17 +44,18 @@
       "reasons": [
         "CRAWL_DELAY_15s_NOT_ENFORCEABLE (no per-host pacing in the transport)"
       ],
-      "evidenceSha256": "4afaa79868afcb528649f16ec90971a5ca1585b913dfabf151e19e3763c8cf04"
+      "evidenceSha256": "d034f7d6cac97591e2986cc88023bab8bef6b5ae0af5044e62a1160388a33b81"
     },
     {
       "host": "api.crossref.org",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/works"
+      "admittedPrefixes": [],
+      "reasons": [
+        "PER_SECOND_LIMIT_1_NOT_ENFORCEABLE",
+        "CONCURRENCY_LIMIT_1_NOT_ENFORCEABLE"
       ],
-      "reasons": [],
-      "evidenceSha256": "d14a82a0c68d9b95aabc51d818f4205cbaaf6c0bf09e83dd5d24d03534baaf63"
+      "evidenceSha256": "2ac97caf8646f0e4b2558ddd29869e23ce026f130683f437e961d54367166a1b"
     },
     {
       "host": "api.openalex.org",
@@ -62,6 +63,10 @@
       "tier": "T2",
       "admittedPrefixes": [],
       "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED",
         "RATE_LIMIT_UNDOCUMENTED",
         "OWNER_DECISION_REQUIRED: CONDITIONAL_LOW_BUDGET: Usage-priced service; keyless budget ~100 req/day. Key = registration (owner-gated)."
@@ -74,6 +79,10 @@
       "tier": "T2",
       "admittedPrefixes": [],
       "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED",
         "RATE_LIMIT_UNDOCUMENTED",
         "OWNER_DECISION_REQUIRED: CONDITIONAL_UNRELIABLE: Anonymous pool frequently exhausted; treat 429 as normal; license agreement governs API use."
@@ -82,24 +91,23 @@
     },
     {
       "host": "www.rfc-editor.org",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/rfc/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:/rfc/ ⊃ /rfc/authors/,/rfc/rerendered/,/rfc/v3test/ (governor cannot exclude sub-paths — narrow the prefix)"
       ],
-      "reasons": [],
-      "evidenceSha256": "f2f356dc41ead1819dd2324d9a915ea6ef9fa20f843e53f2e1e0486fe504486c"
+      "evidenceSha256": "a1ce5e4cd2c815e81fce1a5dba86f146f18fc6f2ed52666145e1daec040b6646"
     },
     {
       "host": "datatracker.ietf.org",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/api/v1/doc/",
-        "/doc/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:/doc/ ⊃ /doc/pdf/ (governor cannot exclude sub-paths — narrow the prefix)"
       ],
-      "reasons": [],
-      "evidenceSha256": "61e561a3be26591fa3c922e0a02ccd17d74ab07604ba2b3cd50f8bc0a24a61ec"
+      "evidenceSha256": "1524d9b81efc304714668aa5e6cd261754e24be709e49e5d2f2013733b3cee6a"
     },
     {
       "host": "www.w3.org",
@@ -109,7 +117,7 @@
         "/TR/"
       ],
       "reasons": [],
-      "evidenceSha256": "a43cf6b6fb4b32a26f70924ec590476471fa3f0b2e13d86488bb586d591231b1"
+      "evidenceSha256": "69fea3e52051b70cd1ff26c9715411d0afe119925bfcb2ab021fcde993011f40"
     },
     {
       "host": "csrc.nist.gov",
@@ -119,17 +127,17 @@
         "/pubs/"
       ],
       "reasons": [],
-      "evidenceSha256": "a0907c89c0645a58a507be9a1ed28f196f5b673ba4ef7a694e526e181f3a8553"
+      "evidenceSha256": "e4cb9ff757a2c1025f3e42ff291ea7116510c727ed83a05bad40ead6a206aa6f"
     },
     {
       "host": "nvlpubs.nist.gov",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/nistpubs/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "CONTENT_TYPE_NOT_GRANTABLE:application/pdf"
       ],
-      "reasons": [],
-      "evidenceSha256": "904e1252320a3437879bcae1804d8aedee4845b9ba3bb195ab3d3ad294392bda"
+      "evidenceSha256": "3ec9497df423fe60c97f1c72cb4446638ad4808afd8b903f566dd1b9dda8eef1"
     },
     {
       "host": "services.nvd.nist.gov",
@@ -137,6 +145,10 @@
       "tier": "T1",
       "admittedPrefixes": [],
       "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED",
         "RATE_LIMIT_UNDOCUMENTED"
       ],
@@ -144,14 +156,13 @@
     },
     {
       "host": "api.osv.dev",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/v1/query",
-        "/v1/vulns/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "NON_GET_ENDPOINT_POST:/v1/query (grant is GET-only)"
       ],
-      "reasons": [],
-      "evidenceSha256": "91cff8cc15b6ecb04dd32d19cafc722a4476051e6fc50b25753451ab24e75042"
+      "evidenceSha256": "155def043cfbe77b762a0a4714834ec29b58c9ba18ca00e990769e9fadca7339"
     },
     {
       "host": "www.cisa.gov",
@@ -161,7 +172,7 @@
         "/sites/default/files/feeds/known_exploited_vulnerabilities.json"
       ],
       "reasons": [],
-      "evidenceSha256": "644da813562752abf4436a0ce4f2f846f32c8f19925e55b45f36a793c8bc9178"
+      "evidenceSha256": "fc2bcc5e98c3f539217758ff9f324118b259eba970f3c9603d1bbbbb38920430"
     },
     {
       "host": "cheatsheetseries.owasp.org",
@@ -169,6 +180,10 @@
       "tier": "T2",
       "admittedPrefixes": [],
       "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED"
       ],
       "evidenceSha256": "beaa9bb32d014a5486e1c0283f5c300b8a539e79a61d37d5bdfb9365b6acbfde"
@@ -179,6 +194,10 @@
       "tier": "T2",
       "admittedPrefixes": [],
       "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED",
         "REDIRECT_BEHAVIOUR_UNKNOWN:/llmrisk/llm01-prompt-injection/",
         "REDIRECT_BEHAVIOUR_UNKNOWN:/llm-top-10/"
@@ -193,7 +212,7 @@
         "/docs/specs/otel/"
       ],
       "reasons": [],
-      "evidenceSha256": "a76d0bccf5e5dd23ced9ae1523ed02855d5f91568f60d8e1a7f60ebb587d29dd"
+      "evidenceSha256": "9b0309486fe03a87c5d5040819600e782c23a90666386ee1754ffbece6c41ca7"
     },
     {
       "host": "kubernetes.io",
@@ -201,6 +220,10 @@
       "tier": "T1",
       "admittedPrefixes": [],
       "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED",
         "REDIRECT_BEHAVIOUR_UNKNOWN:/docs/concepts/"
       ],
@@ -214,18 +237,17 @@
         "/docs/current/"
       ],
       "reasons": [],
-      "evidenceSha256": "86b723541ef973bcb139b1e93538b085bfe6b7a7629d710d5ae6f8bac825435b"
+      "evidenceSha256": "a01bb573cb997fa961f0fb7076deeb5a1fa991a6043d086bfa392fb85ef63ab1"
     },
     {
       "host": "www.sqlite.org",
       "decision": "ADMIT",
       "tier": "T1",
       "admittedPrefixes": [
-        "/docs.html",
-        "/lang.html"
+        "/docs.html"
       ],
       "reasons": [],
-      "evidenceSha256": "c12d44ddc7b90afcf1a8f281931e77b94a524c12efafa3e5fb1b43ef9e1412d1"
+      "evidenceSha256": "188990843093c764adcedf2c655f3fb6f4e61641e7b36b0110f2ded45a7ec13a"
     },
     {
       "host": "docs.python.org",
@@ -233,6 +255,10 @@
       "tier": "T1",
       "admittedPrefixes": [],
       "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED",
         "REDIRECT_BEHAVIOUR_UNKNOWN:/3/library/",
         "REDIRECT_BEHAVIOUR_UNKNOWN:/3/reference/"
@@ -247,7 +273,7 @@
         "/pypi/"
       ],
       "reasons": [],
-      "evidenceSha256": "6d36089d69f547cf53f8663757154eef08f9a22bac6ccfb992a591b04826302e"
+      "evidenceSha256": "c6ff2dfb9de6198bd620f0ca685f4278d0d987826d46abaf3b9839934173d4cd"
     },
     {
       "host": "registry.npmjs.org",
@@ -258,7 +284,7 @@
         "/react"
       ],
       "reasons": [],
-      "evidenceSha256": "70f4e3b9fb7e50c8ddaa340192c82bc40ce7ec5d27c7b3d5c21c5362f659cbc5"
+      "evidenceSha256": "d17c91712fc31433a0efcc11e41e0fa998d438c056f522da2b69f16de1e813c9"
     },
     {
       "host": "huggingface.co",
@@ -269,7 +295,7 @@
         "/api/models"
       ],
       "reasons": [],
-      "evidenceSha256": "f25335a2db8ce682c45cdc846bd4600af565533ec5e0699ebdd30570f747b8ee"
+      "evidenceSha256": "283dfa735dd8cbb818d10fcd44c7ae8cae8049572d287844edae4dac81bf8401"
     },
     {
       "host": "www.anthropic.com",
@@ -280,7 +306,7 @@
         "OFF_HOST_REDIRECT_ON_PREFIX:/engineering/",
         "REDIRECT_BEHAVIOUR_UNKNOWN:/research/"
       ],
-      "evidenceSha256": "fc92bc1197a47ed8e1678fffaaa668e19a6358b1544dd0daeb110f5f88b1ebdb"
+      "evidenceSha256": "2cac0afa3272ab0348e2bea5b0d68de4225e3e781f42e59479e1be58d1633aaf"
     },
     {
       "host": "code.claude.com",
@@ -290,7 +316,7 @@
         "/docs/en/"
       ],
       "reasons": [],
-      "evidenceSha256": "e2ade0ae11e11b9fc2e900aa09e38e116824fccf1def923513873eb29ac61467"
+      "evidenceSha256": "2231aa2b72ccbd23c27b014f74c3d4642d0cbb081104d1eb45c1126048b0fed6"
     },
     {
       "host": "bair.berkeley.edu",
@@ -298,6 +324,10 @@
       "tier": "T2",
       "admittedPrefixes": [],
       "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED"
       ],
       "evidenceSha256": "ae78b1389757a530c3a1063b43c09eeaabd035056bad6ec8eec6f52cfb8b918a"
@@ -308,6 +338,10 @@
       "tier": "T1",
       "admittedPrefixes": [],
       "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
         "TERMS_NOT_VERIFIED",
         "CRAWL_DELAY_10s_NOT_ENFORCEABLE (no per-host pacing in the transport)"
       ],

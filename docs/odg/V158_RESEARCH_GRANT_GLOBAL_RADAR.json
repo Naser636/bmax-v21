@@ -11,53 +11,23 @@
     "scope": "READ_ONLY_PUBLIC_RESEARCH — admitted public, unauthenticated sources only (each host+prefix admitted with fetched robots/redirect/terms evidence)",
     "hostMatch": "EXACT",
     "allowedDomains": [
-      "api.crossref.org",
-      "api.github.com",
-      "api.osv.dev",
       "code.claude.com",
       "csrc.nist.gov",
-      "datatracker.ietf.org",
       "huggingface.co",
-      "nvlpubs.nist.gov",
       "opentelemetry.io",
       "pypi.org",
       "registry.npmjs.org",
       "www.cisa.gov",
       "www.postgresql.org",
-      "www.rfc-editor.org",
       "www.sqlite.org",
       "www.w3.org"
     ],
     "allowedPaths": {
-      "api.github.com": [
-        "/repos/anthropics/claude-code",
-        "/repos/ggml-org/llama.cpp",
-        "/repos/google/osv.dev",
-        "/repos/ollama/ollama",
-        "/repos/stripe/smokescreen"
-      ],
-      "api.crossref.org": [
-        "/works"
-      ],
-      "www.rfc-editor.org": [
-        "/rfc/"
-      ],
-      "datatracker.ietf.org": [
-        "/api/v1/doc/",
-        "/doc/"
-      ],
       "www.w3.org": [
         "/TR/"
       ],
       "csrc.nist.gov": [
         "/pubs/"
-      ],
-      "nvlpubs.nist.gov": [
-        "/nistpubs/"
-      ],
-      "api.osv.dev": [
-        "/v1/query",
-        "/v1/vulns/"
       ],
       "www.cisa.gov": [
         "/sites/default/files/feeds/known_exploited_vulnerabilities.json"
@@ -69,8 +39,7 @@
         "/docs/current/"
       ],
       "www.sqlite.org": [
-        "/docs.html",
-        "/lang.html"
+        "/docs.html"
       ],
       "pypi.org": [
         "/pypi/"
@@ -92,38 +61,6 @@
     ],
     "transport": "HTTPS only (bounded-http-client.get — GET only, redirects blocked, SSRF guard, size cap, timeout)",
     "contentTypesPerCall": {
-      "api.github.com": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "api.crossref.org": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "www.rfc-editor.org": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "datatracker.ietf.org": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
       "www.w3.org": [
         "application/json",
         "application/atom+xml",
@@ -133,22 +70,6 @@
         "text/markdown"
       ],
       "csrc.nist.gov": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "nvlpubs.nist.gov": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "api.osv.dev": [
         "application/json",
         "application/atom+xml",
         "application/xml",
@@ -228,10 +149,10 @@
     "contentPolicy": "fetched content is untrusted data; never executed; never treated as instructions; findings evaluated before integration",
     "admission": {
       "mechanism": "runtime/core/odg-radar-source-admission.ts admitSources()",
-      "admitted": 16,
-      "deferred": 10,
+      "admitted": 10,
+      "deferred": 16,
       "refused": 2,
-      "decisionsSha256": "1d7b2a0369bfe20cdb6835958488ec17eb2b7c677403721baf0946d4a7063a00"
+      "decisionsSha256": "a708b9e81187be2bf6d47561ca0d7b90ab5addfb7f159f1dc6dd818963864081"
     },
     "constraints": [
       "no private credentials, no authentication, no account creation, no API key/token",

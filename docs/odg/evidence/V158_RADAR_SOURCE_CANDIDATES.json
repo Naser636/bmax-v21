@@ -81,7 +81,12 @@
     "notes": "Already in canonical client ALLOWLIST. Keep repo-scoped prefixes; 60/h budget is tight - cache with ETag.",
     "probed": "2026-11-23"
    },
-   "rateLimitPerHour": 60
+   "rateLimitPerHour": 60,
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "export.arxiv.org",
@@ -137,7 +142,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitPerHour": 240,
-   "crawlDelaySeconds": 15
+   "crawlDelaySeconds": 15,
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "api.crossref.org",
@@ -164,7 +174,14 @@
     "notes": "Do NOT use the polite pool (requires an email = personal data).",
     "probed": "2026-11-23"
    },
-   "rateLimitPerHour": 3600
+   "rateLimitPerHour": 3600,
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "maxRequestsPerSecond": 1,
+   "maxConcurrency": 1
   },
   {
    "host": "api.openalex.org",
@@ -232,7 +249,12 @@
      "path": "/rfc/",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [
+      "/rfc/authors/",
+      "/rfc/rerendered/",
+      "/rfc/v3test/"
+     ]
     }
    ],
    "raw": {
@@ -246,7 +268,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "datatracker.ietf.org",
@@ -260,7 +287,10 @@
      "path": "/doc/",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [
+      "/doc/pdf/"
+     ]
     },
     {
      "path": "/api/v1/doc/",
@@ -280,7 +310,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "www.w3.org",
@@ -308,7 +343,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "csrc.nist.gov",
@@ -336,7 +376,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "nvlpubs.nist.gov",
@@ -364,7 +409,15 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "expectedContentTypes": [
+    "application/pdf"
+   ]
   },
   {
    "host": "services.nvd.nist.gov",
@@ -410,7 +463,8 @@
      "path": "/v1/query",
      "robots": "NO_ROBOTS_4XX",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "method": "POST"
     }
    ],
    "raw": {
@@ -424,7 +478,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "www.cisa.gov",
@@ -452,7 +511,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "cheatsheetseries.owasp.org",
@@ -542,7 +606,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "kubernetes.io",
@@ -604,7 +673,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "www.sqlite.org",
@@ -616,12 +690,6 @@
    "prefixes": [
     {
      "path": "/docs.html",
-     "robots": "ALLOW",
-     "redirect": "NONE",
-     "sampled200": true
-    },
-    {
-     "path": "/lang.html",
      "robots": "ALLOW",
      "redirect": "NONE",
      "sampled200": true
@@ -638,7 +706,13 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "narrowingNote": "/lang.html dropped: raw notes say it was not probed"
   },
   {
    "host": "docs.python.org",
@@ -700,7 +774,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "registry.npmjs.org",
@@ -733,7 +812,12 @@
     "notes": "Admit per-package paths only.",
     "probed": "2026-11-23"
    },
-   "rateLimitPerHour": 6944
+   "rateLimitPerHour": 6944,
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "huggingface.co",
@@ -766,7 +850,12 @@
     "notes": "User-generated content platform: highest injection risk; metadata only, never model cards into planner context unfiltered.",
     "probed": "2026-11-23"
    },
-   "rateLimitPerHour": 6000
+   "rateLimitPerHour": 6000,
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "www.anthropic.com",
@@ -801,7 +890,12 @@
    },
    "rateLimitDocumented": false,
    "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
-   "note": "/engineering/ 308 -> /engineering and at least one article 308 -> code.claude.com (cross-host): REFUSED; also explains V16 REDIRECT_BLOCKED"
+   "note": "/engineering/ 308 -> /engineering and at least one article 308 -> code.claude.com (cross-host): REFUSED; also explains V16 REDIRECT_BLOCKED",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "code.claude.com",
@@ -829,7 +923,12 @@
     "probed": "2026-11-23"
    },
    "rateLimitDocumented": false,
-   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
   },
   {
    "host": "bair.berkeley.edu",
