@@ -147,12 +147,14 @@ async function main(): Promise<void> {
   const h3b = tmp(); const c3b = ctxOf(h3b);
   S.assign({ id: "D", workItem: "WI-D", writeSet: ["src/d"], owner: "agent-D" }, Object.assign({ now: NOW }, c3b));
   check("HIGH3: stale heartbeat (dead) STILL holds its write-set — staleness never frees it", S.assign({ id: "E", workItem: "WI-E", writeSet: ["src/d/x"], owner: "e" }, Object.assign({ now: NOW + 60 * MIN }, c3b)).outcome === "REFUSED_WRITESET_CONFLICT");
-  check("HIGH3: renew API refreshes the heartbeat", S.renew("D", Object.assign({ now: NOW + 60 * MIN }, c3b), { progress: true }).outcome === "RENEWED" && JSON.parse(fs.readFileSync(path.join(h3b, "hb", "D.json"), "utf8")).heartbeatAt === new Date(NOW + 60 * MIN).toISOString());
+  check("HIGH3: renew API refreshes the heartbeat", S.renew("D", Object.assign({ now: NOW + 60 * MIN }, c3b), { progress: true, owner: "agent-D" }).outcome === "RENEWED" && JSON.parse(fs.readFileSync(path.join(h3b, "hb", "D.json"), "utf8")).heartbeatAt === new Date(NOW + 60 * MIN).toISOString());
   const s3 = S.snapshot(base({ now: NOW + 61 * MIN, heartbeats: S.readHeartbeats(path.join(h3b, "hb")) }));
   check("HIGH3: renewed agent classifies RUNNING", stateOf(s3, "D").state === "RUNNING");
-  check("HIGH3: renew refuses write-set change and unknown agent", S.renew("D", c3b, { writeSet: ["x"] }).outcome === "REFUSED_IMMUTABLE" && S.renew("nope", c3b).outcome === "REFUSED_UNKNOWN_AGENT");
-  S.renew("D", c3b, { pid: 4321 });
-  check("HIGH3: renew with a different pid than recorded ⇒ REFUSED_PID_MISMATCH", S.renew("D", c3b, { pid: 999 }).outcome === "REFUSED_PID_MISMATCH");
+  check("HIGH3: renew refuses write-set change and unknown agent", S.renew("D", c3b, { writeSet: ["x"], owner: "agent-D" }).outcome === "REFUSED_IMMUTABLE" && S.renew("nope", c3b).outcome === "REFUSED_UNKNOWN_AGENT");
+  check("RESID-e: renew sets pid on first renew by the owner", S.renew("D", c3b, { pid: 4321, owner: "agent-D" }).outcome === "RENEWED");
+  check("HIGH3: renew with a different pid than recorded ⇒ REFUSED_PID_MISMATCH", S.renew("D", c3b, { pid: 999, owner: "agent-D" }).outcome === "REFUSED_PID_MISMATCH");
+  check("RESID-e: renew without the recorded pid ⇒ REFUSED_PID_MISMATCH", S.renew("D", c3b, { owner: "agent-D" }).outcome === "REFUSED_PID_MISMATCH");
+  check("RESID-e: renew by a non-owner (or no owner given) ⇒ REFUSED_OWNER_MISMATCH", S.renew("D", c3b, { pid: 4321, owner: "intruder" }).outcome === "REFUSED_OWNER_MISMATCH" && S.renew("D", c3b, { pid: 4321 }).outcome === "REFUSED_OWNER_MISMATCH");
   check("HIGH3: no repo/evidence and heartbeatOnly not asserted ⇒ REFUSED_EVIDENCE_UNKNOWN", S.assign({ id: "N", workItem: "WI-N", writeSet: ["n"], owner: "n" }, { heartbeatDir: path.join(h3b, "hb"), locksDir: path.join(h3b, "locks") }).outcome === "REFUSED_EVIDENCE_UNKNOWN");
   const obsEv = { repoRoot: "/r", worktrees: [{ path: "/r", branch: "main" }, { path: "/wt/w", branch: "f/w" }], branches: [{ name: "f/w", head: H, ahead: 1, writeSet: ["src/w/file.ts"] }], procs: [{ pid: 1, cwd: "/wt/w" }] };
   const obs = S.assign({ id: "O", workItem: "WI-O", writeSet: ["src/w"], owner: "o" }, ctxOf(tmp(), { heartbeatOnly: false, evidence: obsEv }));
@@ -178,6 +180,26 @@ async function main(): Promise<void> {
   check("MED5: main-checkout task carries the dirty write-set", JSON.stringify(tm.write_set) === JSON.stringify(["src/edited.ts"]));
   check("MED5: fixture main-checkout report task ⇒ COMPLETED_NO_RESULT", st("task:t-main-report") === "COMPLETED_NO_RESULT");
 
+  // ---- RESIDUAL MED: unowned dirty work holds its paths, whatever the unit's state ----------------------------------
+  const rm = ctxOf(tmp(), { heartbeatOnly: false, now: NOW, evidence: { repoRoot: "/r", worktrees: [{ path: "/r", branch: "main" }], worktreeStatus: { "/r": { dirty: 1, dirtyPaths: ["src/q/a.ts"], lastActivityMs: NOW - 99 * MIN } }, tasks: [{ id: "tq", sessionId: "s", present: true, mtimeMs: NOW - 99 * MIN, tail: { finalReport: true, cwd: "/r" } }] } });
+  const rmSnap = S.snapshot(Object.assign(base(), rm.evidence, { now: NOW }));
+  check("RESID-MED: fixture is a stale COMPLETED_NO_RESULT main-checkout task with dirty src/q/a.ts", stateOf(rmSnap, "task:tq").state === "COMPLETED_NO_RESULT" && stateOf(rmSnap, "task:tq").dirty_paths[0] === "src/q/a.ts");
+  const rmR = S.assign({ id: "Q", workItem: "WI-Q", writeSet: ["src/q"], owner: "q" }, rm);
+  check("RESID-MED: assign over its dirty path ⇒ REFUSED_WRITESET_CONFLICT (unowned dirty work held)", rmR.outcome === "REFUSED_WRITESET_CONFLICT" && rmR.conflicts[0].with === "task:tq");
+  check("RESID-MED: a disjoint path is still assignable (only the dirty paths are held)", S.assign({ id: "Q2", workItem: "WI-Q2", writeSet: ["src/other"], owner: "q" }, rm).outcome === "ASSIGNED");
+  const orphDirty = ctxOf(tmp(), { heartbeatOnly: false, now: NOW, evidence: { repoRoot: "/r", worktrees: [{ path: "/r", branch: "main" }, { path: "/wt/od", branch: "f/od" }], branches: [{ name: "f/od", head: H, ahead: 0, writeSet: [] }], worktreeStatus: { "/wt/od": { dirty: 1, dirtyPaths: ["src/od/x.ts"], lastActivityMs: NOW - 99 * MIN } } } });
+  check("RESID-MED: ORPHAN with integrated branch but dirty paths holds them (fail-closed)", S.assign({ id: "OD", workItem: "WI-OD", writeSet: ["src/od"], owner: "o" }, orphDirty).outcome === "REFUSED_WRITESET_CONFLICT");
+
+  // ---- RESIDUAL LOW a/b: heartbeat integrity ------------------------------------------------------------------------
+  const la = tmp();
+  fs.writeFileSync(path.join(la, "other-name.json"), JSON.stringify({ id: "real-id", workItem: "w", writeSet: ["src/x"] }));
+  check("RESID-a: filename/id mismatch ⇒ corrupt", S.readHeartbeats(la)[0].corrupt === true && /filename/.test(S.readHeartbeats(la)[0].reason));
+  const lb = tmp();
+  writeHb(lb, { id: "ro", workItem: "w", readOnly: true, writeSet: ["src/x"] });
+  writeHb(lb, { id: "ro2", workItem: "w2", readOnly: true });
+  const lbr = S.readHeartbeats(lb);
+  check("RESID-b: readOnly + non-empty writeSet ⇒ corrupt; plain readOnly ⇒ valid", lbr.find((h: any) => h.file === "ro.json").corrupt === true && lbr.find((h: any) => h.id === "ro2") && !lbr.find((h: any) => h.id === "ro2").corrupt);
+
   // ---- MED6: close re-classifies; owner required; inspector independent ---------------------------------------------
   const m6 = tmp(); const hb6 = path.join(m6, "hb");
   writeHb(hb6, { id: "R", workItem: "WI-R", owner: "agent-R", parentId: "lead", worktree: "/wt/r", writeSet: ["src/r"], heartbeatAt: new Date(NOW - 99 * MIN).toISOString(), finalReport: true, testEvidence: { passed: true } });
@@ -202,6 +224,11 @@ async function main(): Promise<void> {
   const goneM = S.snapshot(base({ heartbeats: [{ id: "g", workItem: "w", owner: "o", branch: "f/gone", writeSet: ["x"], heartbeatAt: new Date(NOW - 99 * MIN).toISOString(), finalReport: true }], prs: S.normalizePrs([{ number: 8, headRefName: "f/gone", headRefOid: H, mergeCommit: { oid: H2 }, state: "MERGED", statusCheckRollup: [{ conclusion: "SUCCESS" }] }]), integratedOids: [H2] }));
   check("MED7: branch gone locally, squash/rebase merge ⇒ trusted via its merge commit integrated into origin/main", stateOf(goneM, "g").state === "COMPLETED_WITH_RESULT");
   check("MED7: branch gone locally ⇒ merged PR trusted ONLY if its oid is integrated into origin/main", stateOf(gone([H]), "g").state === "COMPLETED_WITH_RESULT" && stateOf(gone([]), "g").state === "COMPLETED_NO_RESULT");
+
+  // ---- RESIDUAL LOW c: PR without headRefOid ------------------------------------------------------------------------
+  const pc = (ahead: number) => S.snapshot(base({ branches: [{ name: "f/c", head: H, ahead, behind: 1, writeSet: ahead ? ["src/c.ts"] : [] }], prs: [{ number: 11, headRefName: "f/c", state: "MERGED", mergeCommitOid: H2, checks: "SUCCESS" }], integratedOids: [H2] }));
+  check("RESID-c: PR with no headRefOid, local branch MOVED (ahead>0) ⇒ not trusted, not COMPLETED_WITH_RESULT", stateOf(pc(2), "branch:f/c").delivery.prs[0].trusted === false && stateOf(pc(2), "branch:f/c").state !== "COMPLETED_WITH_RESULT");
+  check("RESID-c: PR with no headRefOid, local branch not moved + merge commit integrated ⇒ trusted", stateOf(pc(0), "branch:f/c").delivery.prs[0].trusted === true);
 
   // ---- LOW8: mutex TTL budget — abort before writing ------------------------------------------------------------------
   const l8 = tmp(); let t = 0; const clock = () => (t += 20000);

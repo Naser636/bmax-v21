@@ -233,10 +233,13 @@ function correlate(ev: any, opts: any = {}): any[] {
     const st = u.worktree && ev.worktreeStatus ? ev.worktreeStatus[u.worktree] : null;
     const prs = (u.branch ? (prsByBranch.get(u.branch) || []) : []).map((p: any) => {
       const tipMatch = b && b.head && p.headRefOid ? b.head === p.headRefOid : null;
-      const trusted = tipMatch === true || (tipMatch === null && p.state === "MERGED" && ((!!p.headRefOid && integratedOids.has(p.headRefOid)) || (!!p.mergeCommitOid && integratedOids.has(p.mergeCommitOid))));
+      const integrated = p.state === "MERGED" && ((!!p.headRefOid && integratedOids.has(p.headRefOid)) || (!!p.mergeCommitOid && integratedOids.has(p.mergeCommitOid)));
+      // local branch exists but the PR carries no head oid ⇒ the tip cannot be compared: trusted only if the branch has
+      // NOT moved past origin/main (ahead === 0) and the PR is integrated; a moved branch is never trusted.
+      const trusted = tipMatch === true || (tipMatch === null && integrated && (!b || (!p.headRefOid && b.ahead === 0)));
       return { number: p.number, state: p.state, checks: p.checks || "UNKNOWN", headRefOid: p.headRefOid || null, tipMatch, trusted };
     });
-    u.r = { worktreeExists: !!(u.worktree && (wts.some((w: any) => w.path === u.worktree) || (u.mainCheckout && isMain(u.worktree)))), dirty: st ? st.dirty : 0, ahead: b ? b.ahead : null, behind: b ? b.behind : null, pushed: b ? !!b.pushed : false, integrated: b ? b.ahead === 0 : null, prs };
+    u.r = { worktreeExists: !!(u.worktree && (wts.some((w: any) => w.path === u.worktree) || (u.mainCheckout && isMain(u.worktree)))), dirty: st ? st.dirty : 0, dirtyPaths: st && Array.isArray(st.dirtyPaths) ? st.dirtyPaths.slice() : [], ahead: b ? b.ahead : null, behind: b ? b.behind : null, pushed: b ? !!b.pushed : false, integrated: b ? b.ahead === 0 : null, prs };
     if (!u.write_set && b && Array.isArray(b.writeSet) && b.writeSet.length) { u.write_set = b.writeSet.slice(); u.writeSetSource = "OBSERVED_DIFF"; }
     else u.writeSetSource = u.write_set ? "DECLARED" : "UNKNOWN";
     if (st && Array.isArray(st.dirtyPaths) && st.dirtyPaths.length) { u.write_set = [...new Set([...(u.write_set || []), ...st.dirtyPaths])]; if (u.writeSetSource === "UNKNOWN") u.writeSetSource = "OBSERVED_DIRTY"; }
@@ -306,7 +309,7 @@ function classify(u: any, now: number): any {
   const recoverable = state === "INTERRUPTED" && partialWork && !u.mainCheckout;
   return freeze({
     id: u.id, kind: u.kind, state, reasons: freeze(reasons), parent_id: u.parent_id, child_ids: freeze(u.child_ids.slice()), mission: u.mission, owner: u.owner,
-    worktree: u.worktree, branch: u.branch, mainCheckout: !!u.mainCheckout, write_set: u.write_set ? freeze(u.write_set.slice()) : null, writeSetSource: u.writeSetSource, readOnly: u.readOnly,
+    worktree: u.worktree, branch: u.branch, mainCheckout: !!u.mainCheckout, write_set: u.write_set ? freeze(u.write_set.slice()) : null, writeSetSource: u.writeSetSource, readOnly: u.readOnly, dirty_paths: freeze(u.r.dirtyPaths.slice()),
     created_at: iso(u.created_at), last_progress_at: iso(u.last_progress_at), heartbeat: iso(u.heartbeat), deadline: iso(u.deadline), relaunchOf: u.relaunchOf,
     timedOut, action: timedOut && state === "RUNNING" ? "CANCEL_PROPOSED" : null,
     recoverable, delivery: freeze({ ahead: u.r.ahead, dirty: u.r.dirty, pushed: u.r.pushed, integrated: u.r.integrated, prs: freeze(u.r.prs.map((p: any) => freeze({ number: p.number, state: p.state, checks: p.checks, tipMatch: p.tipMatch, trusted: p.trusted }))) }),
@@ -340,14 +343,24 @@ function metrics(agents: any[], now: number): any {
   });
 }
 
-// does an observed (non-heartbeat) unit hold its write-set? HOLDING states, plus an ORPHAN with unintegrated work.
-function observedHolds(a: any): boolean {
-  if (a.kind === "CLAIM" || a.kind === "HEARTBEAT_AGENT") return false;
+// does an observed (non-heartbeat) unit hold its FULL write-set? HOLDING states, plus an ORPHAN with unintegrated work
+// (commits ahead OR uncommitted paths — fail-closed: unowned dirty work is never overwritable).
+function holdsFull(a: any): boolean {
   if (a.kind === "HEARTBEAT_CORRUPT") return true;
   if (HOLDING.includes(a.state)) return true;
   return a.state === "ORPHAN" && !(a.delivery.integrated === true && (a.delivery.dirty || 0) === 0);
 }
-function contentionRecord(a: any): any { return { id: a.id, authorizedPaths: holderKeys(a.write_set) || undefined, readOnly: a.readOnly === true }; }
+// ANY observed unit with uncommitted paths (whatever its state — e.g. a stale COMPLETED_NO_RESULT main-checkout task)
+// holds at least those dirty paths, so a new assignment can never overwrite unowned uncommitted work.
+function observedHolds(a: any): boolean {
+  if (a.kind === "CLAIM" || a.kind === "HEARTBEAT_AGENT") return false;
+  return holdsFull(a) || (a.delivery.dirty || 0) > 0;
+}
+function contentionRecord(a: any): any {
+  const dirtyOnly = a.kind !== "HEARTBEAT_AGENT" && !holdsFull(a) && (a.delivery.dirty || 0) > 0;
+  const ws = dirtyOnly ? (a.dirty_paths && a.dirty_paths.length ? a.dirty_paths : null) : a.write_set;
+  return { id: a.id, authorizedPaths: holderKeys(ws) || undefined, readOnly: !dirtyOnly && a.readOnly === true };
+}
 
 // write-set conflicts among agents that currently hold their write-set (reuses computeLayerContention, fail-closed UNKNOWN)
 function holdingContention(agents: any[]): any {
@@ -393,8 +406,10 @@ function readHeartbeats(dir: string): any[] {
     let mtimeMs: number | null = null; try { mtimeMs = fs.statSync(p).mtimeMs; } catch { mtimeMs = null; }
     try {
       const o = JSON.parse(fs.readFileSync(p, "utf8"));
-      const wsOk = o && (o.readOnly === true || (Array.isArray(o.writeSet) && canonList(o.writeSet).ok));
-      if (!o || typeof o !== "object" || typeof o.id !== "string" || !o.id || !wsOk) { out.push({ corrupt: true, file: n, mtimeMs, reason: "invalid id or write-set" }); continue; }
+      const hasWs = o && o.writeSet !== undefined && o.writeSet !== null && !(Array.isArray(o.writeSet) && o.writeSet.length === 0);
+      const wsOk = o && (o.readOnly === true ? !hasWs : (Array.isArray(o.writeSet) && canonList(o.writeSet).ok));
+      if (!o || typeof o !== "object" || typeof o.id !== "string" || !o.id || !wsOk) { out.push({ corrupt: true, file: n, mtimeMs, reason: o && o.readOnly === true && hasWs ? "readOnly with a non-empty write-set" : "invalid id or write-set" }); continue; }
+      if (safeId(o.id) + ".json" !== n) { out.push({ corrupt: true, file: n, mtimeMs, reason: "filename does not match heartbeat id" }); continue; }
       o.mtimeMs = mtimeMs; out.push(o);
     } catch { out.push({ corrupt: true, file: n, mtimeMs, reason: "unparseable" }); }
   }
@@ -431,7 +446,8 @@ const MUTEX_EXPIRED = freeze({ outcome: "REFUSED_MUTEX_EXPIRED", reason: "superv
  * process.kill(pid,0)) — a caller cannot make a live agent look dead by omitting alivePids. Non-heartbeat evidence:
  *   - ctx.repo given  ⇒ collectEvidence(repo) (worktrees, branches + observed write-sets, process cwds, task outputs)
  *   - ctx.evidence    ⇒ injected evidence (tests)
- *   - ctx.heartbeatOnly === true ⇒ the caller asserts every agent in scope is supervisor-assigned (heartbeat-backed)
+ *   - ctx.heartbeatOnly === true ⇒ TEST-ONLY: the caller asserts every agent in scope is supervisor-assigned
+ *     (heartbeat-backed); non-heartbeat evidence is skipped. Production callers must pass ctx.repo.
  *   - none of these   ⇒ REFUSED_EVIDENCE_UNKNOWN (unknown non-heartbeat agents could hold any path)
  * Non-heartbeat agents whose write-set is UNKNOWN (e.g. a RUNNING task in the main checkout with no dirty paths) conflict
  * with every assignment — fail-closed, by design.
@@ -498,7 +514,8 @@ function assign(request: any, ctx: any): any {
 /*
  * renew(id, ctx, patch?) — the heartbeat renewal API. Refreshes heartbeatAt (and progressAt when patch.progress), and may
  * record { pid, finalReport, testEvidence, status: "BLOCKED"|"CANCELLED", reason }. Write-set / work item are immutable.
- * If the heartbeat records a pid, patch.pid (when given) must match it.
+ * The caller must prove it is the agent: patch.owner must equal the recorded owner, and if a pid is recorded patch.pid is
+ * REQUIRED and must match it.
  */
 function renew(id: string, ctx: any, patch: any = {}): any {
   return withMutex(ctx, (stillHeld) => {
@@ -507,7 +524,8 @@ function renew(id: string, ctx: any, patch: any = {}): any {
     try { o = JSON.parse(fs.readFileSync(file, "utf8")); } catch { return freeze({ outcome: "REFUSED_UNKNOWN_AGENT", id }); }
     if (!o || o.id !== id) return freeze({ outcome: "REFUSED_UNKNOWN_AGENT", id });
     if (TERMINAL_HB.includes(o.status)) return freeze({ outcome: "REFUSED_TERMINAL", id, status: o.status });
-    if (Number.isInteger(o.pid) && patch.pid !== undefined && patch.pid !== o.pid) return freeze({ outcome: "REFUSED_PID_MISMATCH", id });
+    if ((o.owner ?? null) !== (patch.owner ?? null)) return freeze({ outcome: "REFUSED_OWNER_MISMATCH", id });
+    if (Number.isInteger(o.pid) && patch.pid !== o.pid) return freeze({ outcome: "REFUSED_PID_MISMATCH", id });
     if (patch.writeSet !== undefined || patch.workItem !== undefined) return freeze({ outcome: "REFUSED_IMMUTABLE", id, reason: "write-set / work item cannot change on renew" });
     const now = num(ctx.now) ?? Date.now();
     o.heartbeatAt = iso(now);
