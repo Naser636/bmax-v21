@@ -123,7 +123,8 @@ function scopeSummary(scope: any): any {
  * args?: [plain tokens], writeSet: [repo-relative paths] } with command and every writeSet path ⊆ WORK_ITEM_CONTRACT.write_set.
  * The target is part of the contract entry, hence bound to the inspected contractSha256. No declared/valid target ⇒
  * NO_DISPATCH_TARGET (fail-closed; NEVER a fallback to `odg-run <id>`). Plain AUTHORIZED contracts keep the existing path. */
-const DISPATCH_TARGET_RULE = "GO-DT-1 (provider rule): a scoped execution step is dispatched only to contract.authorization.dispatchTargets[step] = { command, args?, writeSet } (command + writeSet ⊆ WORK_ITEM_CONTRACT.write_set, repo-relative, no '..'); absent/invalid ⇒ NO_DISPATCH_TARGET fail-closed, never a fallback to odg-run <id>; plain AUTHORIZED contracts keep the existing odg-run path";
+const DISPATCH_TARGET_RULE = "GO-DT-1 (provider rule): a scoped execution step is dispatched only to contract.authorization.dispatchTargets[step] = { command, args?, writeSet } (command + writeSet ⊆ WORK_ITEM_CONTRACT.write_set, repo-relative, no '..'); absent/invalid ⇒ NO_DISPATCH_TARGET fail-closed, never a fallback to odg-run <id>; plain AUTHORIZED contracts keep the existing odg-run path. LIMIT (stated, not hidden): the target runs on the host (not under bwrap — the provider-sandbox profile cannot bind the /home scratch + node_modules without widening its confidential-prefix guard), so only writes INSIDE the scratch are confined (git status --ignored, every entry ⊆ target writeSet, pristine scratch required); out-of-scratch writes ($HOME, /tmp, main repo) are NOT confined ⇒ dispatch is fail-closed by default (UNSANDBOXED_TARGET_NOT_OPTED_IN) and runs only with the explicit opt-in allowUnsandboxedTarget (CLI --allow-unsandboxed-target), recorded in the trace";
+const SANDBOX_LIMIT = Object.freeze({ sandboxed: false, scratchWrites: "CONFINED (git status --porcelain=v1 -z --untracked-files=all --ignored ⊆ target writeSet; pristine scratch required)", outOfScratchWrites: "NOT CONFINED (host process, no bwrap)" });
 function relPathOk(p: any): boolean { return typeof p === "string" && p.length > 0 && p.length <= 300 && !p.startsWith("/") && !/\\|\0/.test(p) && !p.replace(/\/$/, "").split("/").some((seg: string) => seg === ".." || seg === "." || seg === "") && /^[A-Za-z0-9._\/-]+$/.test(p); }
 function withinWriteSet(p: string, ws: string[]): boolean { return ws.some((w: string) => p === w || (w.endsWith("/") && p.startsWith(w))); }
 function resolveDispatchTarget(contract: any, step: string | null): any {
@@ -133,9 +134,9 @@ function resolveDispatchTarget(contract: any, step: string | null): any {
   const t = a && isObj(a.dispatchTargets) ? a.dispatchTargets[step] : null;
   if (!isObj(t)) return why("NO_DISPATCH_TARGET", `contract ${contract.scenario} declares no authorization.dispatchTargets.${step} — a future owner-authorized, inspected revision must declare one (no fallback to odg-run ${contract.scenario})`);
   const ws = arr(contract.WORK_ITEM_CONTRACT && contract.WORK_ITEM_CONTRACT.write_set).map(String);
-  if (!relPathOk(t.command) || String(t.command).endsWith("/")) return why("INVALID_DISPATCH_TARGET", "command must be a repo-relative path (no '..', no absolute path)");
+  if (!relPathOk(t.command) || String(t.command).endsWith("/") || String(t.command).startsWith("-")) return why("INVALID_DISPATCH_TARGET", "command must be a repo-relative path (no '..', no absolute path)");
   const args = t.args === undefined ? [] : t.args;
-  if (!Array.isArray(args) || !args.every((x: any) => typeof x === "string" && /^[A-Za-z0-9._=:\/-]{1,200}$/.test(x) && !x.split("/").includes(".."))) return why("INVALID_DISPATCH_TARGET", "args must be plain tokens");
+  if (!Array.isArray(args) || !args.every((x: any) => typeof x === "string" && /^[A-Za-z0-9._=:\/-]{1,200}$/.test(x) && !x.split("/").includes("..") && !x.startsWith("-"))) return why("INVALID_DISPATCH_TARGET", "args must be plain positional tokens (none may start with '-')");
   const tws = arr(t.writeSet);
   if (!tws.length || !tws.every(relPathOk)) return why("INVALID_DISPATCH_TARGET", "writeSet must be a non-empty list of repo-relative paths");
   const outside = [t.command, ...tws].filter((x: string) => !withinWriteSet(x, ws));
@@ -381,7 +382,9 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     let isolationSeen: any = null;
     // GO-DT-1: a SCOPED (not plain AUTHORIZED) execution approval dispatches only to the contract-declared target
     const scopedExec = !!item && ctx.loopAuthorized && !declaredAuthorization(ctx.contract) && !!ctx.scope && ctx.scope.executionAuthorized === true;
-    const dt = scopedExec ? resolveDispatchTarget(ctx.contract, ctx.scope.currentStep) : null;
+    const dt0 = scopedExec ? resolveDispatchTarget(ctx.contract, ctx.scope.currentStep) : null;
+    const optIn = o.allowUnsandboxedTarget === true;
+    const dt = dt0 && dt0.ok && !optIn ? { ...dt0, ok: false, code: "UNSANDBOXED_TARGET_NOT_OPTED_IN", reason: `UNSANDBOXED_TARGET_NOT_OPTED_IN: declared target ${dt0.target.command} would run on the host (out-of-scratch writes not confined); explicit opt-in allowUnsandboxedTarget / --allow-unsandboxed-target required` } : dt0;
     ctx.dispatchTarget = dt;
     const authorize = (next: any) => {
       const isSelected = !!item && next.mission === item.id;
@@ -400,7 +403,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       if (mode !== "EXECUTE") return { detail: `${DRY_MARK}: would dispatch ${next.mission} ${tgt ? `via its declared target ${tgt.command}` : "via the governed pipeline"} in ${isolationSeen && isolationSeen.workspace}` };
       counters.dispatchCalls++; counters.dispatchedMissions.push(next.mission);
       append({ kind: "DISPATCHED", mission: next.mission, workspace: isolationSeen && isolationSeen.workspace, dispatchTarget: tgt, at: iso(now()) });
-      return ports.dispatchNative(tgt ? { ...next, dispatchTarget: tgt } : next, { workspace: isolationSeen && isolationSeen.workspace, dispatchTarget: tgt });
+      return ports.dispatchNative(tgt ? { ...next, dispatchTarget: tgt } : next, { workspace: isolationSeen && isolationSeen.workspace, dispatchTarget: tgt, allowUnsandboxedTarget: !!tgt && optIn });
     };
     const d = SCHED.schedulerStep({ queue: ctx.queue, preAuthorized: [...allow, ...(item && ctx.loopAuthorized ? [item.id] : [])], isProven: (id: string) => proven.has(id) || already.has(id), stopSignal: () => { const s = stopCheck("EXECUTE/dispatch"); return !!s && s.reason !== "MAX_STEPS"; }, authorize, dispatch, policy: { maxAttemptsPerMission: 3 } });
     const dry = mode !== "EXECUTE" && d.status === "NOT_MEASURABLE" && String(d.reason).startsWith(DRY_MARK);
@@ -408,7 +411,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     if (d.status === "FAIL" && ctx.strategy) failureNext = SM.nextStrategyAfterFailure({ mode: ctx.strategy.mode, strategy: "DEFAULT" }, { accepted: false, stopReason: "VERIFICATION_FAILED" });
     const status = d.status === "PASS" || d.status === "FAIL" ? `EXECUTED_${d.status}` : dry ? "WOULD_DISPATCH" : d.status === "STOPPED" ? "STOPPED" : gateHeld || d.status === "IDLE" || d.status === "BLOCKED" ? "NOTHING_EXECUTED" : d.status;
     return { status, inputs: { queue: ctx.queue, mode },
-      decision: { scheduler: { status: d.status, mission: d.mission, reason: d.reason }, dispatchTarget: dt ? { ok: dt.ok, code: dt.code || null, step: dt.step, target: dt.target || null, reason: dt.reason || null, rule: DISPATCH_TARGET_RULE } : null, mode, dispatchCalls: counters.dispatchCalls, providerLaunched: false, delegationRecords: delegation, nextStrategyAfterFailure: failureNext ? { next: failureNext.next, rule: failureNext.rule } : null, commitOrMerge: "NONE (GO never commits/merges)" },
+      decision: { scheduler: { status: d.status, mission: d.mission, reason: d.reason }, dispatchTarget: dt ? { ok: dt.ok, code: dt.code || null, step: dt.step, target: dt.target || null, reason: dt.reason || null, rule: DISPATCH_TARGET_RULE, sandbox: SANDBOX_LIMIT, unsandboxedOptIn: optIn } : null, mode, dispatchCalls: counters.dispatchCalls, providerLaunched: false, delegationRecords: delegation, nextStrategyAfterFailure: failureNext ? { next: failureNext.next, rule: failureNext.rule } : null, commitOrMerge: "NONE (GO never commits/merges)" },
       rationale: status === "NOTHING_EXECUTED" ? (dt && !dt.ok ? `scoped execution step ${dt.step} authorized but ${dt.reason} — fail-closed, nothing dispatched` : `authorization gate held: ${d.reason}`) : status === "WOULD_DISPATCH" ? "dry run: an authorized native isolated mission would be dispatched (not executed)" : `scheduler ${d.status}: ${d.reason}` };
   });
   if (stopped(r)) return stopped(r);

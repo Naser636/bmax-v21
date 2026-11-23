@@ -131,16 +131,22 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     check("GO-DT-1: committed G declares no dispatch target ⇒ NO_DISPATCH_TARGET, 0 dispatch even with a runnable isolated scratch (G.json present ⇒ no fallback to odg-run G)", ok.calls.dispatch === 0 && ok.calls.isolation === 0 && ex.dispatchTarget && ex.dispatchTarget.ok === false && ex.dispatchTarget.code === "NO_DISPATCH_TARGET" && r.status === "HALTED_AT_AUTHORIZATION_GATE" && /NO_DISPATCH_TARGET/.test(stepIn(ok.trace, "EXECUTE").rationale) && stepIn(ok.trace, "NEXT_SELECTION").decision.preparedMission.dispatchTarget.code === "NO_DISPATCH_TARGET");
     // a FIXTURE revision of G declaring a target (sha re-bound in the fixture inspection — never committed)
     const withTarget = (tgt: any) => { const s = focusG(BASE_LIVE); const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "G"); c.authorization.dispatchTargets = { RUN_CONTROLLED_EXPERIMENTS: tgt }; s.authorizationEvidence = { G: { inspection: rec({ contractSha256: AS.contractSha256(c) }), experiment: null } }; return s; };
-    const good = { command: "runtime/bin/odg-v166-scenario-g-experiment.ts", args: ["--out", "docs/odg/evidence/V166_G_EXPERIMENT.json"], writeSet: ["docs/odg/evidence/V166_G_EXPERIMENT.json"] };
+    const good = { command: "runtime/bin/odg-v166-scenario-g-experiment.ts", args: ["docs/odg/evidence/V166_G_EXPERIMENT.json"], writeSet: ["docs/odg/evidence/V166_G_EXPERIMENT.json"] };
+    {
+      const p = mkPorts({ state: withTarget(good) });
+      const rr = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
+      const dt = stepIn(p.trace, "EXECUTE").decision.dispatchTarget;
+      check("GO-DT-1: declared target WITHOUT the unsandboxed opt-in ⇒ UNSANDBOXED_TARGET_NOT_OPTED_IN, 0 dispatch, limit recorded (out-of-scratch writes NOT CONFINED)", p.calls.dispatch === 0 && rr.status === "HALTED_AT_AUTHORIZATION_GATE" && dt.code === "UNSANDBOXED_TARGET_NOT_OPTED_IN" && dt.unsandboxedOptIn === false && /NOT CONFINED/.test(dt.sandbox.outOfScratchWrites) && /out-of-scratch writes/.test(GO.DISPATCH_TARGET_RULE));
+    }
     for (const mode of ["DRY", "EXECUTE"]) {
       const p = mkPorts({ state: withTarget(good) });
-      const rr = await GO.runGoCycle({ mode }, p.ports);
+      const rr = await GO.runGoCycle({ mode, allowUnsandboxedTarget: true }, p.ports);
       const d = (p.calls as any).dispatched || [];
       check(`GO-DT-1 ${mode}: declared target ⇒ exactly that command dispatched (NATIVE + isolated)`, mode === "DRY" ? (p.calls.dispatch === 0 && rr.status === "DRY_COMPLETE" && /declared target runtime\/bin\/odg-v166-scenario-g-experiment\.ts/.test(stepIn(p.trace, "EXECUTE").decision.scheduler.reason)) : (p.calls.dispatch === 1 && d.length === 1 && d[0].mission === "G" && d[0].target.command === good.command && d[0].target.args.join(" ") === good.args.join(" ") && rr.status === "EXECUTED_PASS" && p.trace.some((e: any) => e.kind === "DISPATCHED" && e.dispatchTarget && e.dispatchTarget.command === good.command)));
     }
-    for (const [name, tgt] of [["command outside write_set", { ...good, command: "runtime/bin/odg-run.ts" }], ["target writeSet outside write_set", { ...good, writeSet: ["runtime/generated/x.json"] }], ["'..' escape", { ...good, command: "runtime/bin/../bin/odg-run.ts" }], ["absolute command", { ...good, command: "/usr/bin/env" }]] as any[]) {
+    for (const [name, tgt] of [["command outside write_set", { ...good, command: "runtime/bin/odg-run.ts" }], ["target writeSet outside write_set", { ...good, writeSet: ["runtime/generated/x.json"] }], ["'..' escape", { ...good, command: "runtime/bin/../bin/odg-run.ts" }], ["absolute command", { ...good, command: "/usr/bin/env" }], ["arg starting with '-'", { ...good, args: ["--eval"] }], ["command starting with '-'", { ...good, command: "-e" }]] as any[]) {
       const p = mkPorts({ state: withTarget(tgt) });
-      const rr = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
+      const rr = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true }, p.ports);
       const dt = stepIn(p.trace, "EXECUTE").decision.dispatchTarget;
       check(`GO-DT-1: ${name} ⇒ refused, 0 dispatch`, p.calls.dispatch === 0 && rr.status === "HALTED_AT_AUTHORIZATION_GATE" && dt && dt.ok === false && /OUTSIDE_WRITE_SET|INVALID_DISPATCH_TARGET/.test(dt.code));
     }
