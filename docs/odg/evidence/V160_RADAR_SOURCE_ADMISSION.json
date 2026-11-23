@@ -1,0 +1,323 @@
+{
+  "generatedBy": "runtime/bin/odg-radar-source-admission-run.ts (deterministic, no network)",
+  "candidatesFile": "docs/odg/evidence/V160_RADAR_SOURCE_CANDIDATES.json",
+  "issuedIso": "2026-11-23T00:00:00.000Z",
+  "summary": {
+    "candidates": 23,
+    "admitted": 6,
+    "deferred": 17,
+    "refused": 0
+  },
+  "grantRefusedReason": null,
+  "decisions": [
+    {
+      "host": "research.google",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/blog/",
+        "/pubs/"
+      ],
+      "reasons": [],
+      "termsCondition": null,
+      "evidenceSha256": "b8d90f3153a826cacde50d37f592f6b55480dfbad927f2d5b9f66676abdeff47"
+    },
+    {
+      "host": "sre.google",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/sre-book/ (Disallow: /*authuser* | Disallow: /*cache*)",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/workbook/ (Disallow: /*authuser* | Disallow: /*cache*)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "8dc580ef2d65de03fa10a2836ef8ade6e168b5741ef1fff953341fb832d105d0"
+    },
+    {
+      "host": "google.github.io",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/eng-practices/"
+      ],
+      "reasons": [],
+      "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
+      "evidenceSha256": "362910dccc9b62cc891986f7fcfdd57d5a052c49dc2182102537f67211a7c628"
+    },
+    {
+      "host": "abseil.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "3164d992b7b8e6bcb223de567c6ce2f512172632797acd5cfe7af004b5e47d21"
+    },
+    {
+      "host": "deepmind.google",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/blog/",
+        "/research/publications/"
+      ],
+      "reasons": [],
+      "termsCondition": null,
+      "evidenceSha256": "c1b00904b1db4761982b193b862fdc9be17aa9eb51271b779575dea9577e6989"
+    },
+    {
+      "host": "www.nasa.gov",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/reference/systems-engineering-handbook/"
+      ],
+      "reasons": [],
+      "termsCondition": null,
+      "evidenceSha256": "698ee538053e8a49dd83078929f7026142e9941bb2629bc8ca844d3e2da66e58"
+    },
+    {
+      "host": "llis.nasa.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "766365d429b5f68bd7a2ee5726bdda11d3ce1f31fcdfbad43c0f0a8cabb1e46f"
+    },
+    {
+      "host": "standards.nasa.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/standard/nasa/ (Disallow: /*/media/oembed)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "e35975cb051eaaef9d84bad0bd3f99d9c4195b183534aa16b18e305ab796bcd7"
+    },
+    {
+      "host": "nodis3.gsfc.nasa.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "PREFIX_NOT_CANONICAL (same-host redirect; transport blocks redirects — use the canonical form):/displayDir.cfm"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "021751a1f5d83bfb546b655083bf8d042415ffbf0f649edbf51a3d6a5e0fa527"
+    },
+    {
+      "host": "ntrs.nasa.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "ROBOTS_UNKNOWN:/api/citations/ (RFC 9309: 5xx/unreachable ⇒ disallow; redirected robots ⇒ unknown)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "4a8a08bafbcc2b67fe9cb1aa4b7e83b5504ea7a07a604c7936c118f47a28e632"
+    },
+    {
+      "host": "global.toyota",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_REDIRECTED:/en/company/vision-and-philosophy/production-system/ (RFC 9309: 5xx/unreachable ⇒ disallow; redirected robots ⇒ unknown)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "0b01603dc0a15078eb3862ee4a3c679417e9ccb87d8465efb60c540218f3980e"
+    },
+    {
+      "host": "learn.microsoft.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/en-us/azure/well-architected/ (Disallow: /*/answers/accounts/ | Disallow: /*/answers/users/ | Disallow: /*/answers/revisions/ …)",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/en-us/security/engineering/ (Disallow: /*/answers/accounts/ | Disallow: /*/answers/users/ | Disallow: /*/answers/revisions/ …)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "33396a6d5a7b25ee29638e0c006d541a29e492a4ce8ba5f4ba7f4cf5679c9cd0"
+    },
+    {
+      "host": "www.microsoft.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/en-us/securityengineering/sdl/ (Disallow: /*?*ep_* | Disallow: /*&ep_* | Disallow: /*/store/locations/store-locations-sitemap.xml …)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "ad2675192c09d2efc46b4ce27d854c9ff4f6c78bb1586ba154f6dfeb5e18b763"
+    },
+    {
+      "host": "microsoft.github.io",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/code-with-engineering-playbook/"
+      ],
+      "reasons": [],
+      "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
+      "evidenceSha256": "c5ae3601315706f062c5105f3b955e3e640381f74bf66c849be5cf6aa9a88145"
+    },
+    {
+      "host": "github.blog",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/engineering/"
+      ],
+      "reasons": [],
+      "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
+      "evidenceSha256": "448f7b040d397421cf1d31f1ea4230b8ee938ab5fadeffe13170fbd8e4e04e40"
+    },
+    {
+      "host": "stripe.dev",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "44fec61719381372a7917aaa13e10592b74be2c2d420a4b73d00528ee80bd767"
+    },
+    {
+      "host": "research.ibm.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "7db5508cb2e9b3b65c96822ce5a5002a8d104b8e59bef8f15152a9c28f9c9aca"
+    },
+    {
+      "host": "www.ibm.com",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/think (Disallow: /*.ssi$)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "d6cafb015bbe1e0555118c85a6cd03c5b687bf54fc3a0594467fdeb8e89fe021"
+    },
+    {
+      "host": "developer.nvidia.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: NVIDIA ToS forbids robots on covered sites; coverage of developer.nvidia.com is indirect (via legal-info link) — treat as forbidden unless owner/legal decides otherwise",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/blog/ (Allow: /*/llms.txt$ | Allow: /*.md$ | Disallow: /*[?&]AMJnQtSpH=* …)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "05d40d18bcb8851f5d532572a0bdba1a9238e27d4a16beeb41513c39462b942e"
+    },
+    {
+      "host": "www.bosch.com",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "e9d885e2d78d49e020a76a9286de64f90936527e0ac3a1f054e3a61e153a823b"
+    },
+    {
+      "host": "www.asml.com",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: ASML terms restrict copying 'to any other computer ... for any commercial enterprise' without consent — ambiguous for automated retrieval; legal reading required",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/en/technology (Disallow: /*?job_country= | Disallow: /*?job_type= | Disallow: /*?job_teams= …)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "53460e06fbb4738b13baaa90545cd15668803afe18c8a9a22d4740b55b7383de"
+    },
+    {
+      "host": "www.sei.cmu.edu",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: SEI ToU restricts use to personal non-commercial display",
+        "PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:/library/ ⊃ /library/search/ (governor cannot exclude sub-paths — narrow the prefix)",
+        "PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:/blog/ ⊃ /blog/search/ (governor cannot exclude sub-paths — narrow the prefix)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "6ae98ee9822d22f62d1fdb8c6be07f42f18bfc4d5293ae37d002b40521165509"
+    },
+    {
+      "host": "www.spacex.com",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "deb7d2606589bdc66998bf4bd2de1fc2c3a1ef0a0f74c855f0c03a1b3e10c0c5"
+    }
+  ],
+  "honesty": [
+    "admission evidence (robots/redirect/terms/rate limits) was FETCHED by a provider research agent on 2026-11-23 and normalized by the coordinating session; it is a point-in-time observation — re-run admission before renewal",
+    "an ADMIT means 'allowed to be fetched by the governed chain', not 'trusted content': every finding is still stamped and sanitized as untrusted data",
+    "built by the Claude Code provider (coordinating session), not ODG-native construction"
+  ]
+}

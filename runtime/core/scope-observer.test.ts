@@ -195,4 +195,34 @@ delete process.env.CONTRACTONDEMAND_ENABLED;
 ok("source performs no process.env access (property/index), only mentions it in a comment",
   !/process\.env[.[]/.test(fs.readFileSync("runtime/dist/core/scope-observer.js", "utf8"))); // ZERO-JS: inspect the compiled dist port
 
+// V16.0 protectedClean: protected roots refused regardless of write-set (ancestor glob runtime/** cannot authorize them)
+{
+  const so = require("./scope-observer.js");
+  ok("protectedClean: change under runtime/governance/ refused even though runtime/** would authorize it", so.scopeClean(["runtime/**"], ["runtime/governance/ROADMAP.json"]).ok === true && so.protectedClean(["runtime/governance/ROADMAP.json"]).ok === false);
+  ok("protectedClean: .git/ and .github/ refused; closure register refused", so.protectedClean([".git/hooks/pre-commit"]).ok === false && so.protectedClean([".github/workflows/x.yml"]).ok === false && so.protectedClean(["docs/odg/closure-register.json"]).ok === false);
+  ok("protectedClean: ordinary paths accepted; extra protected file honoured", so.protectedClean(["runtime/core/a.ts", "docs/odg/evidence/x.json"]).ok === true && so.protectedClean(["docs/x.json"], undefined, ["docs/x.json"]).ok === false);
+  ok("protectedClean: observer failure ⇒ refuse (fail-closed)", so.protectedClean(undefined, () => ({ ok: false })).ok === false);
+}
+
+// V16.0 (#917 REJECT): porcelain -z parsing exposes BOTH sides of renames and unquoted names; REAL git repo probes.
+{
+  const so = require("./scope-observer.js");
+  const cp2 = require("child_process"); const os2 = require("os"); const path2 = require("path");
+  ok("parsePorcelainZ: rename record yields new AND old path", JSON.stringify(so.parsePorcelainZ("R  runtime/governance/NEW.json\0runtime/core/a.ts\0 M x.ts\0")) === JSON.stringify(["runtime/governance/NEW.json", "runtime/core/a.ts", "x.ts"]));
+  const repo = fs.mkdtempSync(path2.join(os2.tmpdir(), "so917-"));
+  const g = (...a: string[]) => cp2.execFileSync("git", a, { cwd: repo, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+  g("init", "-q"); g("config", "user.email", "t@example.invalid"); g("config", "user.name", "t");
+  fs.mkdirSync(path2.join(repo, "runtime/core"), { recursive: true }); fs.writeFileSync(path2.join(repo, "runtime/core/a.ts"), "x");
+  g("add", "-A"); g("commit", "-qm", "init");
+  fs.mkdirSync(path2.join(repo, "runtime/governance"), { recursive: true });
+  g("mv", "runtime/core/a.ts", "runtime/governance/NEW.json");
+  fs.writeFileSync(path2.join(repo, "runtime/governance/\u00e9t\u00e9 \"q\".md"), "y");
+  const cwd0 = process.cwd(); process.chdir(repo);
+  let obs: any; try { obs = so.gitChangedPathsChecked(); } finally { process.chdir(cwd0); }
+  ok("real git: staged rename INTO runtime/governance/ is visible as its destination", obs.ok === true && obs.paths.includes("runtime/governance/NEW.json") && obs.paths.includes("runtime/core/a.ts"));
+  ok("real git: protectedClean refuses the staged rename into a protected root (the #917 bypass)", so.protectedClean(obs.paths).ok === false);
+  ok("real git: non-ASCII/space/quote name arrives UNQUOTED and is refused", obs.paths.some((p: string) => p === "runtime/governance/\u00e9t\u00e9 \"q\".md") && so.protectedClean(obs.paths).ok === false);
+  fs.rmSync(repo, { recursive: true, force: true });
+}
+
 console.log(`\nSCOPE OBSERVER — ${passed} assertions passed.`);
