@@ -28,7 +28,12 @@ const ids = ev.missions.map((m: any) => m.id);
 for (const want of ["V159/v159-bugfix-median", "V159/v159-repair-total-length", "V159/v159-refactor-even-squares", "V159/v159-implement-parse-range", "J/v159-implement-parse-range", "J/rle-codec", "J/csv-typed-validator", "J/range-clamp-pipeline", "v161-scenario-f-invoice-pipeline"])
   check(`mission present: ${want}`, ids.includes(want));
 check("16 A–P contracts present", ev.missions.filter((m: any) => m.family === "AP").length === 16);
-check("A–P (PROPOSED) ⇒ DECISION_REQUIRED (selector never authorizes)", ev.missions.filter((m: any) => m.family === "AP").every((m: any) => m.current.mode === "DECISION_REQUIRED"));
+{
+  const apC = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8")).contracts;
+  const stateOf = (id: string) => (apC.find((c: any) => "AP-" + c.scenario === id) || {}).state;
+  check("A–P PROPOSED ⇒ DECISION_REQUIRED (selector never authorizes)", ev.missions.filter((m: any) => m.family === "AP" && stateOf(m.id) !== "AUTHORIZED").every((m: any) => m.current.mode === "DECISION_REQUIRED"));
+  check("A–P AUTHORIZED (owner) ⇒ not M0 (the owner's authorization, never the selector's)", ev.missions.filter((m: any) => m.family === "AP" && stateOf(m.id) === "AUTHORIZED").every((m: any) => m.current.rule !== "M0" && m.current.authorizationRequired === false));
+}
 const sels = ev.missions.flatMap((m: any) => [m.prior, m.current].filter(Boolean));
 check("every PROVIDER/HYBRID selection: auth+budget required, not executable, not launched", sels.filter((x: any) => ["PROVIDER", "HYBRID"].includes(x.mode)).every((x: any) => x.authorizationRequired && x.budgetRequired && !x.providerExecutable && x.launchedBySelector === false));
 check("every HYBRID selection: decomposable + disjoint + native & delegated parts", sels.filter((x: any) => x.mode === "HYBRID").every((x: any) => x.inputs.decomposable && x.inputs.writeSetDisjoint && x.hybrid.nativeParts.length && x.hybrid.delegatedParts.length));

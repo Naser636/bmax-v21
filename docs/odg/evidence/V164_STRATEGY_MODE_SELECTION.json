@@ -2,7 +2,7 @@
   "schema": "V164_STRATEGY_MODE_SELECTION_EVIDENCE",
   "directive": "owner V16.4 §4 sélecteur de stratégie (MODE NATIF / HYBRIDE / FOURNISSEUR) + §7 gap 'absence de mode hybride dans le sélecteur' + §10 scenario D",
   "gapRef": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (\"'hybrid' is not an option of the component\")",
-  "head": "cdd6efd0ccfde545d0d024b9e9d4fba1064dca62",
+  "head": "e2f76f9d691da725561543ed52b133f8e6e98bf3",
   "evaluationInstant": "2026-11-23T18:56:03.582Z",
   "evaluationInstantNote": "pinned = latest timestamp among the source evidence files (deterministic; registry freshness checked against it)",
   "sources": {
@@ -28,7 +28,7 @@
     },
     "AP": {
       "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "e56797b02d0b4d2110669ca6c72746a9b2715f8cb241adedecb890c6546a5cc0"
+      "sha256": "d40c2776a97596d43cc54ff2ad5c4cf2df59d2b3b9102029ea4928837a7a059e"
     },
     "CP8": {
       "path": "docs/odg/evidence/V163_CHECKPOINT_8.json",
@@ -1934,10 +1934,10 @@
       "observedOutcome": null,
       "prior": null,
       "current": {
-        "mode": "DECISION_REQUIRED",
+        "mode": "NATIVE",
         "tentativeMode": "NATIVE",
-        "rule": "M0",
-        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-G:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (AP-G:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH",
         "uncertainty": {
           "level": "HIGH",
           "because": [
@@ -1945,7 +1945,7 @@
             "risk NOT_MEASURED"
           ]
         },
-        "authorizationRequired": true,
+        "authorizationRequired": false,
         "budgetRequired": false,
         "providerExecutable": false,
         "launchedBySelector": false,
@@ -2625,10 +2625,10 @@
       "PROVIDER": 4
     },
     "current": {
-      "NATIVE": 4,
+      "NATIVE": 5,
       "PROVIDER": 2,
       "HYBRID": 3,
-      "DECISION_REQUIRED": 16
+      "DECISION_REQUIRED": 15
     }
   },
   "jStrategyReplay": [

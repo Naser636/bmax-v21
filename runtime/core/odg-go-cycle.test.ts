@@ -25,6 +25,18 @@ const BASE = (() => {
     measured: POL.loadMeasuredRegistry("docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json", { root: ROOT }), strategyNow: SMR.loadSources().now,
   };
 })();
+/* V165: the committed contract G is now AUTHORIZED (owner directive V165 §1). The gate tests below need the
+ * UNAUTHORIZED case, so they run on an explicit fixture: G PROPOSED/authorizedBy null, and the committed strategy
+ * evidence entry for AP-G set to what the selector returns for a PROPOSED contract (M0 DECISION_REQUIRED, tentative NATIVE). */
+const BASE_LIVE = BASE;
+const BASE_UNAUTH = (() => {
+  const s = clone(BASE); s.measured = BASE.measured;
+  const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
+  c.state = "PROPOSED"; c.authorizedBy = null; delete c.authorization;
+  const m = s.strategyEvidence.missions.find((x: any) => x.id === "AP-G");
+  m.current = { ...m.current, mode: "DECISION_REQUIRED", tentativeMode: "NATIVE", rule: "M0", authorizationRequired: true };
+  return s;
+})();
 const KNOW = { ok: true, collection: "pinned", claims: [{ id: "K1", epistemic: "SUPPORTED", isFact: false, useAuthorization: "DESIGN_PROPOSAL", admissible: { trusted: false, verdict: "NOT_A_FACT" } }] };
 const TL_PASS = { status: "PASS", ok: true, blocked: false, enforce: true, gitState: { isRepo: true, branch: "main", head: "h", originMain: "h", staged: 0 }, verdict: { detail: "ok" } };
 const TL_FAIL = { status: "BLOCKED", ok: false, blocked: true, enforce: true, gitState: { isRepo: true, branch: "feat/x", head: "h", originMain: "h", staged: 0 }, verdict: { detail: "REFUSED — unexpected branch" } };
@@ -42,7 +54,7 @@ function mkPorts(o: any = {}): any {
   const ports: any = {
     now: o.now || (() => (t += 5)),
     truthLock: () => o.tl || TL_PASS,
-    readState: () => { calls.readState++; return o.state || BASE; },
+    readState: () => { calls.readState++; return o.state || BASE_UNAUTH; },
     knowledge: () => KNOW,
     stopRequested: o.stopRequested || (() => ({ stop: false })),
     trace: { append: (e: any) => trace.push(JSON.parse(JSON.stringify(e))), readPrior: () => trace.slice() },
@@ -79,6 +91,15 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     check("next-after-current selection recorded (selector, not id order)", typeof nx.nextAfterCurrent.decision === "string" && nx.nextAfterCurrent.selected !== "G");
     check("summary written through the confined writer", calls.writes.length === 1);
   }
+  // 1b. committed state after V165: contract G AUTHORIZED by the owner ⇒ the gate opens on the owner's authorization only
+  {
+    const { ports, trace, calls } = mkPorts({ state: BASE_LIVE });
+    await GO.runGoCycle({ mode: "DRY" }, ports);
+    const au = stepIn(trace, "AUTHORIZE");
+    const g = BASE_LIVE.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
+    check("committed contract G is AUTHORIZED by the owner (V165 §1), not by ODG", g.state === "AUTHORIZED" && /V165/.test(String(g.authorizedBy)) && /^OWNER/.test(String(g.authorizedBy)));
+    check("committed state ⇒ AUTHORIZE passes on the external authorization, selfAuthorized false, no dispatch in DRY", au.decision.selectedAuthorized === true && au.decision.selfAuthorized === false && calls.dispatch === 0 && calls.provider === 0);
+  }
   // 2. --execute on unauthorized work: still no dispatch
   {
     const { ports, trace, calls } = mkPorts();
@@ -110,7 +131,7 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
   {
     const shared: any[] = [];
     const r1 = await GO.runGoCycle({ mode: "DRY" }, mkPorts({ trace: shared }).ports);
-    const s2 = clone(BASE); s2.measured = BASE.measured; s2.attempts = { count: 9999, last: { status: "IDLE" } };   // volatile attempt-log growth
+    const s2 = clone(BASE_UNAUTH); s2.measured = BASE.measured; s2.attempts = { count: 9999, last: { status: "IDLE" } };   // volatile attempt-log growth
     const r2 = await GO.runGoCycle({ mode: "DRY" }, mkPorts({ trace: shared, state: s2 }).ports);
     check("re-run on the same state ⇒ same runId + decisionsDigest, idempotent=true, duplicateOf set", r2.runId === r1.runId && r2.decisionsDigest === r1.decisionsDigest && r2.idempotent === true && r2.duplicateOf && r2.duplicateOf.cycleSeq === 1 && r2.cycleSeq === 2);
     const s3 = authorizeG(BASE);
@@ -142,7 +163,7 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
   }
   // 6. DECISION_REQUIRED (uncertainty above max) ⇒ no pick, downstream steps skipped
   {
-    const s = clone(BASE); s.measured = BASE.measured;
+    const s = clone(BASE_UNAUTH); s.measured = BASE.measured;
     s.sources.v150.data.summary.top10NextInternal = []; s.sources.v150.data.summary.alsoInternal = [];   // strategic criteria unmeasured ⇒ uncertainty > max
     const a = mkPorts({ state: s });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, a.ports);
