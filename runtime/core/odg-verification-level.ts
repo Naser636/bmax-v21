@@ -191,10 +191,16 @@ function scanEdges(reader: any): any {
       try { specs = parseRequiresFromSource(src).literal.slice(); } catch { unreadable.push(rel); continue; }
       const imp = /\bimport\s+(?:[^"'`;]+?\s+from\s+)?["']([^"']+)["']/g; let m;
       while ((m = imp.exec(src))) specs.push(m[1]);
+      // ALIASED loads (e.g. a Next page's createRequire alias `require_("../../runtime/dist/core/x.js")`) are invisible to
+      // the require parser: also take ANY relative string literal that points into runtime/(dist/)?(core|bin)/.
+      const lit = /["'`](\.{1,2}\/[^"'`\s]*runtime\/(?:dist\/)?(?:core|bin)\/[^"'`\s]+)["'`]/g;
+      while ((m = lit.exec(src))) specs.push(m[1]);
       const out = new Set<string>();
       for (const sp of specs) {
         if (!sp.startsWith(".")) continue;
-        const r = path.posix.normalize(path.posix.join(dir, sp)).replace(/\.(js|ts|tsx|mjs|cjs)$/, "") + ".ts";
+        let r = path.posix.normalize(path.posix.join(dir, sp)).replace(/\.(js|ts|tsx|mjs|cjs)$/, "") + ".ts";
+        // A compiled-dist target is the dist image of its runtime source: runtime/dist/core/x.js ⇒ runtime/core/x.ts.
+        if (r.startsWith("runtime/dist/")) r = "runtime/" + r.slice("runtime/dist/".length);
         out.add(r);
       }
       files[rel] = [...out].sort();

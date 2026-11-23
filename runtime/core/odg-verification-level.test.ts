@@ -128,6 +128,9 @@ function main(): void {
   check("an unread doc JSON stays DOCS_ONLY", plan(["docs/odg/evidence/X.json"]).level === "DOCS_ONLY");
   p = plan(["runtime/core/ui-shared.ts"]);
   check("#902 LOW: a runtime module imported from src/app ⇒ L3 (CONSUMED_OUTSIDE_RUNTIME)", p.level === "L3" && p.reasons.some((r: string) => /CONSUMED_OUTSIDE_RUNTIME: src\/app\/page\.tsx/.test(r)));
+  // re-inspection LOW: a Next page loading the COMPILED dist through a createRequire alias (real case: src/app/[lang]/estimate/page.tsx)
+  p = plan(["runtime/core/lone.ts"], { files: { "src/app/est/page.tsx": 'const require_ = createRequire(import.meta.url);\nconst V = require_("../../../runtime/dist/core/lone.js");' } });
+  check("re-inspection LOW: a runtime/dist alias load (require_(\"…/runtime/dist/core/x.js\")) maps to runtime/core/x.ts ⇒ L3 CONSUMED_OUTSIDE_RUNTIME", p.level === "L3" && p.reasons.some((r: string) => /CONSUMED_OUTSIDE_RUNTIME: .*src\/app\/est\/page\.tsx/.test(r)));
   p = plan(["runtime/core/c.ts"], { noWalk: true });
   check("extra trees not scannable ⇒ unresolved ⇒ escalate (fail closed)", p.level === "L2" && p.unresolved.some((u: any) => /tree not scannable/.test(u.path)));
   p = plan(["runtime/core/notest.ts"]);
