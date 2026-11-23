@@ -30,6 +30,34 @@ const TARGETS = Object.freeze([
   { url: "https://www.sqlite.org/docs.html", topics: ["embedded storage", "documentation index"] },
 ]);
 
+/** summarize(out, live): PURE verdict over a runResearch() result — never a false success.
+ *  DENIED (exit 2): a planned target was refused by governor/quota/transport. LIVE_NO_RESPONSE (exit 3): live run, zero
+ *  responses received. LIVE_PARTIAL (exit 4): live, some targets unavailable (403/429/5xx/timeout/redirect blocked…).
+ *  LIVE_OK / DRY_OK (exit 0). Per-host attribution and failure counts by transport code are always reported. */
+function summarize(out: any, live: boolean): any {
+  const plan: any[] = Array.isArray(out && out.plan) ? out.plan : [];
+  const results: any[] = Array.isArray(out && out.results) ? out.results : [];
+  const hostOf = (u: string): string | null => { try { return new URL(u).hostname; } catch { return null; } };
+  const perHost: any = {}; const failuresByCode: any = {};
+  for (const r of results) {
+    const h = hostOf(r && r.url) || "(invalid-url)";
+    const e = perHost[h] || (perHost[h] = { received: 0, unavailable: 0, denied: 0 });
+    if (r.classification === "DENIED") e.denied++;
+    else if (r.classification === "LIVE_UNAVAILABLE" || r.classification === "UNSTAMPED") { e.unavailable++; const k = String(r.code || (r.statusCode ? "HTTP_" + r.statusCode : "UNKNOWN")); failuresByCode[k] = (failuresByCode[k] || 0) + 1; }
+    else e.received++;
+  }
+  const denied = Number(out && out.denied) || 0;
+  const received = results.filter((r: any) => r && r.classification !== "DENIED" && r.classification !== "LIVE_UNAVAILABLE" && r.classification !== "UNSTAMPED").length;
+  const planned = plan.filter((p: any) => p.decision === "ALLOW").length;
+  let verdict: string, exitCode: number;
+  if (denied > 0) { verdict = "DENIED"; exitCode = 2; }
+  else if (!live) { verdict = "DRY_OK"; exitCode = 0; }
+  else if (received === 0) { verdict = "LIVE_NO_RESPONSE"; exitCode = 3; }
+  else if (received < planned) { verdict = "LIVE_PARTIAL"; exitCode = 4; }
+  else { verdict = "LIVE_OK"; exitCode = 0; }
+  return Object.freeze({ verdict, exitCode, planned, received, perHost, failuresByCode });
+}
+
 async function main(): Promise<void> {
   let grant: any;
   try { grant = JSON.parse(fs.readFileSync(path.join(ROOT, GRANT_PATH), "utf8")).grant; }
@@ -44,15 +72,18 @@ async function main(): Promise<void> {
     distinctHostsAllowed: Array.from(new Set(out.plan.filter((p: any) => p.decision === "ALLOW").map((p: any) => p.host))).length,
     plan: out.plan.map((p: any) => ({ decision: p.decision, url: p.url, host: p.host, reasons: p.reasons })),
     results: out.results,
+    verdict: null as any,
     honesty: [
       "run executed by the coordinating Claude Code session (provider) through ODG's canonical Radar chain; the chain's decisions are ODG-native, the run itself is provider-initiated",
       "fetched content is untrusted data: hashed + sanitized title only; nothing executed; nothing integrated as a finding until pinned in COLLECTION_REGISTRY.json and evaluated",
     ],
   };
+  const sum = summarize(out, live);
+  record.verdict = sum;
   if (process.argv.includes("--evidence")) fs.writeFileSync(path.join(ROOT, EVIDENCE_PATH), JSON.stringify(record, null, 2) + "\n");
-  process.stdout.write(JSON.stringify({ mode: record.mode, egress: record.egress, allowed: record.allowed, denied: record.denied, distinctHostsAllowed: record.distinctHostsAllowed, results: (record.results as any[]).map((r: any) => [r.classification, r.httpStatus || r.code || "", r.url]) }, null, 2) + "\n");
-  process.exit(out.denied === 0 ? 0 : 2);
+  process.stdout.write(JSON.stringify({ verdict: sum.verdict, failuresByCode: sum.failuresByCode, mode: record.mode, egress: record.egress, allowed: record.allowed, denied: record.denied, distinctHostsAllowed: record.distinctHostsAllowed, results: (record.results as any[]).map((r: any) => [r.classification, r.httpStatus || r.code || "", r.url]) }, null, 2) + "\n");
+  process.exit(sum.exitCode);
 }
 if (require.main === module) main().catch((e) => { process.stderr.write("v158 research run error: " + ((e && e.message) || e) + "\n"); process.exit(1); });
-module.exports = { TARGETS, GRANT_PATH, EVIDENCE_PATH };
+module.exports = { TARGETS, GRANT_PATH, EVIDENCE_PATH, summarize };
 export {};

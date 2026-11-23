@@ -22,6 +22,18 @@ check("deferred/refused hosts and out-of-prefix paths are DENIED", extra.allowed
   check("runResearch(live=false) never calls fetch and reports egress 0", dry.mode === "DRY" && dry.egress === 0);
   const ev = path.join(ROOT, RUN.EVIDENCE_PATH);
   if (fs.existsSync(ev)) { const t = fs.readFileSync(ev, "utf8"); check("committed live-run evidence holds no e-mail addresses and no page bodies", !/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,}/.test(t) && !/"body"/.test(t)); }
+  // V15.9 §3: a live run that receives nothing is an explicit failure, never a success; partial is distinguishable.
+  const S = RUN.summarize;
+  const pl = [{ decision: "ALLOW", url: "https://a.example/x" }, { decision: "ALLOW", url: "https://b.example/y" }];
+  const none = S({ denied: 0, plan: pl, results: [{ url: "https://a.example/x", classification: "LIVE_UNAVAILABLE", code: "TIMEOUT" }, { url: "https://b.example/y", classification: "LIVE_UNAVAILABLE", statusCode: 429 }] }, true);
+  check("live + zero responses ⇒ LIVE_NO_RESPONSE, exit 3, failures by code (TIMEOUT, HTTP_429)", none.verdict === "LIVE_NO_RESPONSE" && none.exitCode === 3 && none.failuresByCode.TIMEOUT === 1 && none.failuresByCode.HTTP_429 === 1);
+  const part = S({ denied: 0, plan: pl, results: [{ url: "https://a.example/x", classification: "LIVE_SOURCE", httpStatus: 200 }, { url: "https://b.example/y", classification: "LIVE_UNAVAILABLE", code: "REDIRECT_BLOCKED" }] }, true);
+  check("live + some unavailable ⇒ LIVE_PARTIAL, exit 4, attributed to the right host", part.verdict === "LIVE_PARTIAL" && part.exitCode === 4 && part.perHost["a.example"].received === 1 && part.perHost["b.example"].unavailable === 1);
+  const ok = S({ denied: 0, plan: pl, results: [{ url: "https://a.example/x", classification: "LIVE_SOURCE" }, { url: "https://b.example/y", classification: "HYPOTHESIS" }] }, true);
+  check("live + all received ⇒ LIVE_OK exit 0", ok.verdict === "LIVE_OK" && ok.exitCode === 0);
+  check("any denial ⇒ DENIED exit 2 (even live)", S({ denied: 1, plan: pl, results: [] }, true).exitCode === 2);
+  check("DRY ⇒ DRY_OK exit 0", S({ denied: 0, plan: pl, results: [] }, false).verdict === "DRY_OK");
+  check("garbage input ⇒ no throw, live ⇒ LIVE_NO_RESPONSE (never success)", S(null, true).verdict === "LIVE_NO_RESPONSE");
   process.stdout.write(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}\n`);
   process.exit(failures === 0 ? 0 : 1);
 })();
