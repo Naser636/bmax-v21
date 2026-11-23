@@ -11,8 +11,6 @@
     "scope": "READ_ONLY_PUBLIC_RESEARCH — admitted public, unauthenticated sources only (each host+prefix admitted with fetched robots/redirect/terms evidence)",
     "hostMatch": "EXACT",
     "allowedDomains": [
-      "datatracker.ietf.org",
-      "devblogs.microsoft.com",
       "github.blog",
       "kubernetes.io",
       "microsoft.github.io",
@@ -31,9 +29,6 @@
       "microsoft.github.io": [
         "/autogen/stable/"
       ],
-      "devblogs.microsoft.com": [
-        "/engineering-at-microsoft/"
-      ],
       "netflix.github.io": [
         "/chaosmonkey/"
       ],
@@ -45,9 +40,6 @@
       ],
       "kubernetes.io": [
         "/docs/concepts/"
-      ],
-      "datatracker.ietf.org": [
-        "/doc/html/"
       ]
     },
     "methods": [
@@ -79,14 +71,6 @@
         "text/plain",
         "text/markdown"
       ],
-      "devblogs.microsoft.com": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
       "netflix.github.io": [
         "application/json",
         "application/atom+xml",
@@ -118,14 +102,6 @@
         "text/html",
         "text/plain",
         "text/markdown"
-      ],
-      "datatracker.ietf.org": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
       ]
     },
     "budget": {
@@ -144,10 +120,10 @@
     },
     "admission": {
       "mechanism": "runtime/core/odg-radar-source-admission.ts admitSources()",
-      "admitted": 9,
-      "deferred": 34,
+      "admitted": 7,
+      "deferred": 36,
       "refused": 3,
-      "decisionsSha256": "26510cbbf0f4b1ad63c57f78e4c075328cfd3c26b8ecbc313acd03bd65ad6000"
+      "decisionsSha256": "d1ba145f17e8387b14705c38907a9cefd9fd323e4e8762be92d34082788158f0"
     },
     "constraints": [
       "no private credentials, no authentication, no account creation, no API key/token",

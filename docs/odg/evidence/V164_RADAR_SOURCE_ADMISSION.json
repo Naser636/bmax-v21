@@ -4,8 +4,8 @@
   "issuedIso": "2026-11-23T00:00:00.000Z",
   "summary": {
     "candidates": 46,
-    "admitted": 9,
-    "deferred": 34,
+    "admitted": 7,
+    "deferred": 36,
     "refused": 3
   },
   "grantRefusedReason": null,
@@ -161,14 +161,14 @@
     },
     {
       "host": "devblogs.microsoft.com",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/engineering-at-microsoft/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: devblogs.microsoft.com: Microsoft ToU 'Documents' clause (informational and non-commercial or personal use only; no copying onto any network computer) — do blog articles fall under it, and is ODG internal research compatible? (also bears on V160's reading of learn.microsoft.com / www.microsoft.com, both deferred for other reasons)"
       ],
-      "reasons": [],
-      "termsCondition": null,
-      "evidenceSha256": "7d28771bdd608112336c8032d1c978fe86332a88a1817a1ccc0d12adca0dd76e"
+      "termsCondition": "Microsoft Terms of Use 'Documents' clause: use for 'informational and non-commercial or personal use only'; not to be 'copied or posted on any network computer or broadcast in any media'; no modifications; copyright notice retained",
+      "evidenceSha256": "a63f982e294a7986c5890a4b864f4b7106773043de3cc6fb11a4c3e9fcbb384d"
     },
     {
       "host": "openai.github.io",
@@ -388,14 +388,15 @@
     },
     {
       "host": "datatracker.ietf.org",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/doc/html/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED"
       ],
-      "reasons": [],
-      "termsCondition": null,
-      "evidenceSha256": "305930e6ace1e4c9d284abe250a704adb67af006eb724d9bd6aed04d2b24e8f8"
+      "termsCondition": "IETF Trust Legal Provisions 5.0 (PDF) not read/quoted in this run; datatracker website access terms not established",
+      "evidenceSha256": "942109af39f1ee3e1061729234ef6568dd9371a123981fe212bf5be5706e3528"
     },
     {
       "host": "www.w3.org",

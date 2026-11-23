@@ -747,7 +747,6 @@
    "termsUrl": "https://www.microsoft.com/en-us/legal/terms-of-use",
    "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsClause": "Microsoft Terms of Use (footer 'Terms of use' → go.microsoft.com/fwlink/?LinkID=206977; fetched 2026-11-23): relevant clauses only 'Harvest or otherwise collect information about others, including e-mail addresses' and the AI-services reverse-engineering/scraping restriction (AI services only) ⇒ reading public engineering articles is not forbidden — same reading as V160 learn.microsoft.com",
    "prefixes": [
     {
      "path": "/engineering-at-microsoft/",
@@ -811,7 +810,26 @@
       "Privacy at Microsoft"
      ]
     ]
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://www.microsoft.com/en-us/legal/terms-of-use",
+    "finalUrl": "https://www.microsoft.com/en-us/legal/terms-of-use",
+    "httpStatus": 200,
+    "bytes": 158613,
+    "sha256": "b846961eee96abf6643ec0a6fbbbc7d55e7fb21b39e220be8ec5e3a23f43b4d9",
+    "fetchedAt": "2026-11-23T19:40:01Z",
+    "method": "one GET, UA ODG-Radar-probe/0.1, same path as the other terms reads; keyword scan robot|spider|scrap|crawl|data mining|mine|harvest|automat|extract|artificial intelligence|AI|machine learning|bot over the full text",
+    "lastUpdatedShown": "February 7 (year not captured)"
+   },
+   "termsClausesVerbatim": [
+    "Documents Permission to use Documents (such as white papers, press releases, datasheets and FAQs) from the Services is granted, provided that (1) the below copyright notice appears in all copies and that both the copyright notice and this permission notice appear, (2) unless explicitly covered by another license or agreement, use of such Documents from the Services is for informational and non-commercial or personal use only and will not be copied or posted on any network computer or broadcast in any media, and (3) no modifications of any Documents are made.",
+    "Harvest or otherwise collect information about others, including e-mail addresses.",
+    "Extracting Data. You may not use web scraping, web harvesting, or web data extraction methods to extract data from the AI services.",
+    "Limits on use of data from the AI Services. You may not use the AI services, or data from the AI services, to create, train, or improve (directly or indirectly) any other AI service."
+   ],
+   "termsFinding": "Read verbatim (above): NO general robots/crawler/scraper/data-mining prohibition — the only scraping clause is limited to 'the AI services'. BUT the 'Documents' clause limits use of Documents from the Services to 'informational and non-commercial or personal use only' and forbids copying them 'on any network computer'; whether engineering blog articles are 'Documents' is a legal reading ⇒ DEFER (same class as SEI/Stanford/CMU personal non-commercial clauses).",
+   "termsCondition": "Microsoft Terms of Use 'Documents' clause: use for 'informational and non-commercial or personal use only'; not to be 'copied or posted on any network computer or broadcast in any media'; no modifications; copyright notice retained",
+   "ownerDecisionRequired": "devblogs.microsoft.com: Microsoft ToU 'Documents' clause (informational and non-commercial or personal use only; no copying onto any network computer) — do blog articles fall under it, and is ODG internal research compatible? (also bears on V160's reading of learn.microsoft.com / www.microsoft.com, both deferred for other reasons)"
   },
   {
    "host": "openai.github.io",
@@ -1694,11 +1712,9 @@
    ],
    "whyPrimary": "IETF Datatracker document pages (RFCs + drafts)",
    "priorOutcome": "V158 DEFER (robots sub-paths not analysed) — re-analysed",
-   "termsVerified": true,
+   "termsVerified": false,
    "termsUrl": "https://trustee.ietf.org/documents/trust-legal-provisions/",
-   "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsClause": "reused from V158 evidence (IETF Trust Legal Provisions, verified in the V158 admission); RFC pages link trustee.ietf.org/license-info (observed 2026-11-23)",
    "prefixes": [
     {
      "path": "/doc/html/",
@@ -1742,7 +1758,23 @@
       "https://trustee.ietf.org/license-info"
      ]
     ]
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://trustee.ietf.org/documents/trust-legal-provisions/",
+    "finalUrl": "https://trustee.ietf.org/documents/trust-legal-provisions/",
+    "httpStatus": 200,
+    "bytes": 44753,
+    "sha256": "0fec62449d9568727d7111fcb325e8a490406f5e5345a0e2d4edd95fcf222653",
+    "fetchedAt": "2026-11-23T19:40:01Z",
+    "method": "one GET, UA ODG-Radar-probe/0.1"
+   },
+   "termsClausesVerbatim": [
+    "These Legal Provisions describe the rights and licenses that the IETF Trust grants to others with respect to such IETF Contributions and IETF Documents; as well as certain restrictions, limitations and notices relating to IETF Documents. The standardized license text referred to in RFC 5378 is included in the Trust Legal Provisions, linked below.",
+    "Current TLP Corrected Trust Legal Provisions 5.0 ( PDF )"
+   ],
+   "termsFinding": "The recorded terms URL is an INDEX page: it contains no provision text (no automation/scraping/AI clause, and no permission either) and links the actual TLP 5.0 as a PDF (/wp-content/uploads/Corrected-TLP-5.0-legal-provsions.pdf), not fetched under the one-fetch-per-terms-page rule. The TLP is a copyright licence for IETF Documents, not website terms of use; the V158 'verified' reading was a paraphrase. Cannot quote ⇒ DEFER.",
+   "termsCondition": "IETF Trust Legal Provisions 5.0 (PDF) not read/quoted in this run; datatracker website access terms not established",
+   "termsNote": "V164 inspection fix: V158-reused terms reading downgraded to unverified (paraphrase, not quote)"
   },
   {
    "host": "www.w3.org",
@@ -2826,7 +2858,7 @@
   "ntrs.nasa.gov": "V160: robots.txt unreachable (timeouts). V164: robots.txt 200 PARSED, /api/citations/ ALLOW, no rules inside; terms now read (sti.nasa.gov) ⇒ eligible",
   "kubernetes.io": "V158: terms not verified. V164: footer explicitly points to lfprojects.org/policies; LF Projects Terms of Use read ⇒ eligible",
   "netflix.github.io": "V160: '/' too broad. V164: narrow project prefix /chaosmonkey/",
-  "datatracker.ietf.org": "V158: robots sub-paths not analysed for /doc/. V164: /doc/ contains Disallow /doc/pdf/ ⇒ narrowed to /doc/html/ (no rules inside)",
+  "datatracker.ietf.org": "V158: robots sub-paths not analysed for /doc/. V164: narrowed to /doc/html/ (robots clean) — but still DEFER: V158 terms reading was a paraphrase and the TLP index page holds no provision text",
   "www.w3.org": "V158: /TR/ ⊃ /TR/? . V164: narrowed to /TR/trace-context/ — still DEFER (wildcards '/*,*' may match inside)",
   "others re-probed (sre.google, abseil.io, research.ibm.com, stripe.dev, global.toyota, opentelemetry.io, owasp, usenix, bair, rfc-editor)": "reason UNCHANGED ⇒ still DEFER (recorded, not re-admitted)"
  },
@@ -2837,7 +2869,7 @@
   "Toyota": "PARTIAL: TRI publications (www.tri.global; no website terms, wildcard robots) and TPS overview (global.toyota; robots.txt still redirects). Both DEFER.",
   "Google": "Admitted earlier (research.google, google.github.io). New: SRE book canonical prefixes (terms still not linked ⇒ DEFER), Cloud Well-Architected (moved off-host to docs.cloud.google.com ⇒ REFUSE as probed).",
   "Amazon": "Amazon Science publications exist but Amazon Conditions of Use forbid robots/data mining ⇒ REFUSE (same as AWS in V160).",
-  "Microsoft": "AutoGen docs + Engineering@Microsoft blog eligible; Microsoft Research publications DEFER (robots wildcards on www.microsoft.com).",
+  "Microsoft": "AutoGen docs eligible (GitHub AUP). Engineering@Microsoft blog DEFER (Microsoft ToU 'Documents' clause: non-commercial/personal use only — owner question). Microsoft Research publications DEFER (robots wildcards on www.microsoft.com).",
   "OpenAI": "Only GitHub-hosted Agents SDK docs; owner decision (GitHub AUP vs OpenAI terms). openai.com still REFUSED.",
   "Anthropic": "LITTLE ADMISSIBLE MATERIAL: anthropic.com refused / code.claude.com deferred (V160, unchanged). MCP specification (Anthropic-originated, now LF-governed) DEFER (same-host redirect + no terms). No knowledge of internal methods is claimed.",
   "NVIDIA": "Research publications REFUSE (ToS forbids robots, linked from footer); TensorRT-LLM GitHub docs owner decision (NVIDIA ToS linked).",
@@ -2851,9 +2883,10 @@
   "Bosch": "LITTLE PUBLIC MATERIAL: Bosch Center for AI site has an invalid TLS certificate for www.bosch-ai.com ⇒ DEFER; corporate research pages DEFER (V160).",
   "ASML": "LITTLE PUBLIC MATERIAL: technology overview pages only; restrictive copy clause — V160 owner decision still pending; no new source.",
   "Meta": "Meta-owned blogs REFUSED (Meta Terms, V160). PyTorch (Meta-originated, now PyTorch Foundation/LF): pytorch.org /blog/ eligible; docs.pytorch.org DEFER (robots wildcards).",
-  "Higher-value others": "Eligible: kubernetes.io concepts, IETF datatracker /doc/html/. DEFER: OpenTelemetry, SLSA, A2A, vLLM (no terms linked), RFC Editor (/rfc/ contains disallowed sub-paths), W3C Trace Context + NIST AI RMF (robots wildcards), OWASP (no terms), USENIX + CMU (Crawl-delay 10), Temporal/LangGraph/MCP/Ollama docs (redirect or terms), Stanford HAI/CMU (personal non-commercial terms), Jepsen (anti-LLM-scraper decoy page), martinfowler.com/BAIR/CRFM (no terms)."
+  "Higher-value others": "Eligible: kubernetes.io concepts. DEFER: IETF datatracker /doc/html/ (terms URL is an index; TLP PDF not quoted), OpenTelemetry, SLSA, A2A, vLLM (no terms linked), RFC Editor (/rfc/ contains disallowed sub-paths), W3C Trace Context + NIST AI RMF (robots wildcards), OWASP (no terms), USENIX + CMU (Crawl-delay 10), Temporal/LangGraph/MCP/Ollama docs (redirect or terms), Stanford HAI/CMU (personal non-commercial terms), Jepsen (anti-LLM-scraper decoy page), martinfowler.com/BAIR/CRFM (no terms)."
  },
  "ownerQuestions": [
+  "devblogs.microsoft.com: Microsoft ToU 'Documents' clause (informational and non-commercial or personal use only; no copying onto any network computer) — do blog articles fall under it, and is ODG internal research compatible? (also bears on V160's reading of learn.microsoft.com / www.microsoft.com, both deferred for other reasons)",
   "openai.github.io: GitHub AUP (research use permitted) vs OpenAI Terms ('Automatically or programmatically extracting data') — do OpenAI's terms cover its GitHub-hosted SDK docs? openai.com remains REFUSED (V160)",
   "nvidia.github.io: GitHub AUP (research use permitted) vs NVIDIA ToS linked from the docs footer (robots/scrapers prohibited) — which governs?",
   "IBM Terms: robots.txt-compliant crawling permitted vs 'robot ... data mine' conduct prohibition and 'non-commercial' use — and does it cover research.ibm.com?",
@@ -2862,7 +2895,8 @@
   "CMU legal notice: personal viewing / non-commercial use only — compatible with ODG internal research?",
   "Stanford ToU: download only for 'personal, non-commercial use' — compatible with ODG internal research?",
   "Linux-Foundation project sites without a linked terms page (opentelemetry.io, slsa.dev, a2a-protocol.org, docs.vllm.ai): may the LF / LF Projects Terms of Use be taken as governing them (as kubernetes.io states explicitly)?",
-  "Per-host pacing: www.amazon.science, www.usenix.org and www.cs.cmu.edu publish Crawl-delay 10 — DEFERRED until the transport enforces per-host pacing (transport gap already listed in V160_ARXIV_PYPI_ACCESS_ANALYSIS)."
+  "Per-host pacing: www.amazon.science, www.usenix.org and www.cs.cmu.edu publish Crawl-delay 10 — DEFERRED until the transport enforces per-host pacing (transport gap already listed in V160_ARXIV_PYPI_ACCESS_ANALYSIS).",
+  "IETF: may the IETF Trust Legal Provisions 5.0 (PDF; copyright licence) be fetched and quoted as the basis for datatracker.ietf.org / www.rfc-editor.org access, or is a separate website-terms basis required?"
  ],
  "counts": {
   "candidates": 46,
@@ -2917,5 +2951,6 @@
    "RESOURCE_OPTIMISATION": 10,
    "SWE_AUTOMATION": 8
   }
- }
+ },
+ "inspectionFix": "#928 inspection (MED): ADMIT must not rest on a paraphrased terms reading. devblogs.microsoft.com and datatracker.ietf.org re-read once each with verbatim quotes + sha256 ⇒ both DEFER."
 }
