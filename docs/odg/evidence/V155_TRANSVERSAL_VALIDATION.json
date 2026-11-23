@@ -1,7 +1,7 @@
 {
   "schema": "odg.evidence.v1",
   "id": "V155_TRANSVERSAL_VALIDATION",
-  "directive": "CTO V15.5 Step 6 \u2014 transversal validation (scenarios A\u2013L)",
+  "directive": "CTO V15.5 Step 6 — transversal validation (scenarios A–L)",
   "recordedAt": "2026-11-23T10:25:36.642Z",
   "provider": "Claude Code (TECHNICAL_PROVIDER_ONLY) - not an authority; acceptance belongs to ODG governance / owner",
   "base": {
@@ -9,7 +9,7 @@
     "originMain": "c6949b09f313557b3c821fca34e96dfb00f571ab",
     "branch": "feat/v155-transversal-validation",
     "worktree": "linked git worktree (node_modules symlinked read-only from the main repo; dist built in-worktree)",
-    "mainRepo": "/home/ubuntu/bmax-v21"
+    "mainRepo": "<main checkout> (path redacted)"
   },
   "environment": {
     "node": "v22.22.1",
@@ -19,7 +19,7 @@
       0.91,
       1.09
     ],
-    "truthLock": "ODG_TRUTH_LOCK_ENFORCE=0 process-scoped for sandbox ticks (the enforced launcher refuses any branch != main \u2014 measured in A)",
+    "truthLock": "ODG_TRUTH_LOCK_ENFORCE=0 process-scoped for sandbox ticks (the enforced launcher refuses any branch != main — measured in A)",
     "state": "the worktree's OWN gitignored runtime/generated, reset before A, before each round and before the claim variant; the main repo's runtime/generated and runtime/dist were never written",
     "ollama": "loopback 127.0.0.1:11434 models=qwen2.5-coder:7b,qwen2.5-coder:3b,qwen2.5:0.5b"
   },
@@ -59,10 +59,10 @@
     "L": 27226,
     "total": 217453
   },
-  "verdictRules": "classifyScenario (runtime/bin/odg-v155-transversal-validation.ts) \u2014 PURE; re-derived from facts by the test. injected fake \u21d2 SIMULATED; partial coverage \u21d2 PARTIAL; never inflated",
+  "verdictRules": "classifyScenario (runtime/bin/odg-v155-transversal-validation.ts) — PURE. verdict == classifyScenario(facts) is INTERNAL CONSISTENCY (the verdict follows from the recorded facts), NOT anti-fabrication: it cannot prove the facts were measured. This harness has no injection path, so it never yields SIMULATED; harness-built/harness-emitted parts are capped at PARTIAL.",
   "tally": {
-    "REAL": 10,
-    "PARTIAL": 2
+    "REAL": 8,
+    "PARTIAL": 4
   },
   "scenarios": {
     "A": {
@@ -77,18 +77,18 @@
         "build": {
           "exitCode": 0,
           "tail": [
-            "build-dist-closure: OK \u2014 emitted=134 copied=0 total-closure=134",
+            "build-dist-closure: OK — emitted=134 copied=0 total-closure=134",
             "build-dist-closure: manifest -> runtime/dist/dist-closure-manifest.json"
           ]
         },
         "truthLockEnforced": {
           "exitCode": 2,
-          "stdout": "STARTUP_REFUSED: Truth-Lock repo-safety \u2014 REFUSED \u2014 unexpected branch \"feat/v155-transversal-validation\" (expected \"main\"); HEAD 919496d5 diverges from origin/main c6949b09",
+          "stdout": "STARTUP_REFUSED: Truth-Lock repo-safety — REFUSED — unexpected branch \"feat/v155-transversal-validation\" (expected \"main\"); HEAD 919496d5 diverges from origin/main c6949b09",
           "ms": 236
         },
         "defaultTick": {
           "exitCode": 0,
-          "stdout": "[odg-schedule-tick] PASS \u2014 status SUCCESS",
+          "stdout": "[odg-schedule-tick] PASS — status SUCCESS",
           "ms": 5234
         }
       }
@@ -135,7 +135,7 @@
     "C": {
       "verdict": "REAL",
       "reasons": [
-        "real CLI wave = cap 3 of 5 admitted, 0 contentions, rest deferred; canonical selectWave contrast: isolated 5 vs non-isolated 1 (shared runtime/generated \u21d2 serialized)"
+        "real CLI wave = cap 3 of 5 admitted, 0 contentions, rest deferred; canonical selectWave contrast: isolated 5 vs non-isolated 1 (shared runtime/generated ⇒ serialized)"
       ],
       "facts": {
         "executed": true,
@@ -267,7 +267,7 @@
     "D": {
       "verdict": "REAL",
       "reasons": [
-        "4 real waves: children simultaneous (common instant + \u22652 live pids), tick write-set enforcement OK for every completed child, independent post-run check OK, no undeclared shared write"
+        "4 real waves: children simultaneous (common instant + ≥2 live pids), tick write-set enforcement OK for every completed child, independent post-run check OK, no undeclared shared write"
       ],
       "facts": {
         "executed": true,
@@ -482,7 +482,7 @@
     "E": {
       "verdict": "PARTIAL",
       "reasons": [
-        "assign/renew/snapshot ran on every REAL child (real pid + write-set), but in the TEST-ONLY ctx.heartbeatOnly scope. Production repo-evidence mode was probed once: ASSIGNED (supervising worktree dirty paths: 0, 1132 ms) \u2014 the supervising worktree is an unowned live worktree whose write-set the supervisor approximates from git-observed paths only (branch diff vs origin/main / dirty paths; with neither it is UNKNOWN \u21d2 refused, fail-closed): the gitignored runtime/generated writes of its processes are invisible to it; a repo-mode assign is a ~1.1-1.3 s SYNC call. Heartbeats are emitted by the harness on each child's behalf: odg-run has no in-process heartbeat and the tick is not wired to the supervisor"
+        "assign/renew/snapshot ran on every REAL child (real pid + write-set), but in the TEST-ONLY ctx.heartbeatOnly scope. Production repo-evidence mode was probed once: ASSIGNED (supervising worktree dirty paths: 0, 1132 ms) — the supervising worktree is an unowned live worktree whose write-set the supervisor approximates from git-observed paths only (branch diff vs origin/main / dirty paths; with neither it is UNKNOWN ⇒ refused, fail-closed): the gitignored runtime/generated writes of its processes are invisible to it; a repo-mode assign is a ~1.1-1.3 s SYNC call. Heartbeats are emitted by the harness on each child's behalf: odg-run has no in-process heartbeat and the tick is not wired to the supervisor"
       ],
       "facts": {
         "executed": true,
@@ -681,9 +681,10 @@
       }
     },
     "F": {
-      "verdict": "REAL",
+      "verdict": "PARTIAL",
       "reasons": [
-        "every round: SIGKILL mid-run \u21d2 attempt FAIL (no false success) and the supervisor re-classified the child INTERRUPTED from evidence (dead pid + stale heartbeat)"
+        "tick part REAL: every round SIGKILL mid-run ⇒ pid dead, attempt FAIL (no false success), 0 ledger entries",
+        "supervisor part PARTIAL: INTERRUPTED (dead pid + stale heartbeat) on every round, but from harness-written heartbeats in heartbeatOnly scope (see E)"
       ],
       "facts": {
         "executed": true,
@@ -766,13 +767,14 @@
               }
             ]
           }
-        ]
+        ],
+        "supervisorMode": "heartbeatOnly"
       }
     },
     "G": {
       "verdict": "REAL",
       "reasons": [
-        "only the interrupted mission re-ran, each ledger id exactly once, seal OK, no orphan claim; dead-holder claim reclaimed at TTL (gen 1 \u2192 2, 121535 ms after the kill)"
+        "only the interrupted mission re-ran, each ledger id exactly once, seal OK, no orphan claim; dead-holder claim reclaimed at TTL (gen 1 → 2, 121535 ms after the kill)"
       ],
       "facts": {
         "executed": true,
@@ -850,12 +852,12 @@
           "withinTtlTick": {
             "exitCode": 1,
             "ms": 65110,
-            "out": "[odg-schedule-tick wave] FAIL \u2014 wave 0/1 PASS (cap 1; deferred 0) (missions M0002)"
+            "out": "[odg-schedule-tick wave] FAIL — wave 0/1 PASS (cap 1; deferred 0) (missions M0002)"
           },
           "acrossTtlTick": {
             "exitCode": 0,
             "ms": 5547,
-            "out": "[odg-schedule-tick wave] PASS \u2014 wave 1/1 PASS (cap 1; deferred 0) (missions M0002)"
+            "out": "[odg-schedule-tick wave] PASS — wave 1/1 PASS (cap 1; deferred 0) (missions M0002)"
           },
           "newGen": 2,
           "reclaimed": true,
@@ -870,7 +872,7 @@
     "H": {
       "verdict": "PARTIAL",
       "reasons": [
-        "close() refused the owner and the parent as inspector and accepted a distinct inspector \u2014 but the inspector is a free-form STRING, not identity-bound: the same harness process supplied owner and inspector strings and an arbitrary string was accepted (independence is declared, not proven)"
+        "close() refused the owner and the parent as inspector and accepted a distinct inspector — but the inspector is a free-form STRING, not identity-bound: the same harness process supplied owner and inspector strings and an arbitrary string was accepted (independence is declared, not proven)"
       ],
       "facts": {
         "executed": true,
@@ -878,15 +880,15 @@
           {
             "agent": "r1-t1-M0001",
             "state": "COMPLETED_NO_RESULT",
-            "self": "REFUSED: inspector is the owner/parent \u2014 not independent",
-            "parent": "REFUSED: inspector is the owner/parent \u2014 not independent",
+            "self": "REFUSED: inspector is the owner/parent — not independent",
+            "parent": "REFUSED: inspector is the owner/parent — not independent",
             "distinct": "CLOSED_NO_RESULT"
           },
           {
             "agent": "r2-t1-M0001",
             "state": "COMPLETED_NO_RESULT",
-            "self": "REFUSED: inspector is the owner/parent \u2014 not independent",
-            "parent": "REFUSED: inspector is the owner/parent \u2014 not independent",
+            "self": "REFUSED: inspector is the owner/parent — not independent",
+            "parent": "REFUSED: inspector is the owner/parent — not independent",
             "distinct": "CLOSED_NO_RESULT"
           }
         ],
@@ -899,7 +901,7 @@
     "I": {
       "verdict": "REAL",
       "reasons": [
-        "8 task classes routed by selectMeasured over the COMMITTED measured registry + live availability; 7 LOCAL (QUALIFIED only), 1 not LOCAL (flagged). Task classes \u2260 the read-only canary missions (those make no model call)"
+        "8 task classes routed by selectMeasured over the COMMITTED measured registry + live availability; 7 LOCAL (QUALIFIED only), 1 not LOCAL (flagged). Task classes ≠ the read-only canary missions (those make no model call)"
       ],
       "facts": {
         "executed": true,
@@ -998,9 +1000,9 @@
       }
     },
     "J": {
-      "verdict": "REAL",
+      "verdict": "PARTIAL",
       "reasons": [
-        "live: qwen2.5-coder:14b \u21d2 unavailable (daemon 404) \u21d2 qwen2.5:0.5b answered; 'implement' \u21d2 NO_QUALIFIED_LOCAL_MODEL \u21d2 runWithFallback REFUSED. The primary=absent decision is constructed (the registry never selects an absent model)"
+        "live: qwen2.5-coder:14b ⇒ unavailable (daemon 404) ⇒ qwen2.5:0.5b answered; 'implement' ⇒ NO_QUALIFIED_LOCAL_MODEL ⇒ runWithFallback REFUSED — but the primary=absent LOCAL decision was CONSTRUCTED by the harness (selectMeasured never picks an absent model itself), so the router-chosen path to an unavailable model is not demonstrated"
       ],
       "facts": {
         "executed": true,
@@ -1049,8 +1051,9 @@
             "qwen2.5-coder:7b"
           ],
           "run": "REFUSED",
-          "reason": "decision 'NO_QUALIFIED_LOCAL_MODEL' requires authorization \u2014 nothing executed"
-        }
+          "reason": "decision 'NO_QUALIFIED_LOCAL_MODEL' requires authorization — nothing executed"
+        },
+        "constructedDecision": true
       }
     },
     "K": {
@@ -1128,7 +1131,7 @@
         {
           "label": "r1-tick1",
           "exitCode": 1,
-          "stdout": "[odg-schedule-tick wave] FAIL \u2014 wave 2/3 PASS (cap 3; deferred 2) (missions M0001,G10_READONLY_AUTONOMY_PROBE,M0002)",
+          "stdout": "[odg-schedule-tick wave] FAIL — wave 2/3 PASS (cap 3; deferred 2) (missions M0001,G10_READONLY_AUTONOMY_PROBE,M0002)",
           "wallMs": 5695,
           "wave": [
             "M0001",
@@ -1158,7 +1161,7 @@
         {
           "label": "r1-tick2",
           "exitCode": 0,
-          "stdout": "[odg-schedule-tick wave] PASS \u2014 wave 3/3 PASS (cap 3; deferred 0) (missions M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB)",
+          "stdout": "[odg-schedule-tick wave] PASS — wave 3/3 PASS (cap 3; deferred 0) (missions M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB)",
           "wallMs": 5544,
           "wave": [
             "M0002",
@@ -1178,7 +1181,7 @@
         {
           "label": "r1-tick3",
           "exitCode": 0,
-          "stdout": "[odg-schedule-tick wave] IDLE \u2014 no eligible pre-authorized PENDING mission [M0001: ALREADY_PROVEN (dedup): M0001; G10_READONLY_AUTONOMY_PROBE: ALREADY_PROVEN (dedup): G10_READONLY_AUTONOMY_PROBE; M0002: ALREADY_PROVEN (dedup): M0002; RUNTIME_SELF_AUDIT: ALREADY_PROVEN (dedup): RUNTIME_SELF_AUDIT; QUAL_CLEAN_GATEB: ALREADY_PROVEN (dedup): QUAL_CLEAN_GATEB]",
+          "stdout": "[odg-schedule-tick wave] IDLE — no eligible pre-authorized PENDING mission [M0001: ALREADY_PROVEN (dedup): M0001; G10_READONLY_AUTONOMY_PROBE: ALREADY_PROVEN (dedup): G10_READONLY_AUTONOMY_PROBE; M0002: ALREADY_PROVEN (dedup): M0002; RUNTIME_SELF_AUDIT: ALREADY_PROVEN (dedup): RUNTIME_SELF_AUDIT; QUAL_CLEAN_GATEB: ALREADY_PROVEN (dedup): QUAL_CLEAN_GATEB]",
           "wallMs": 315,
           "wave": [],
           "deferred": [],
@@ -1195,7 +1198,7 @@
         {
           "label": "r2-tick1",
           "exitCode": 1,
-          "stdout": "[odg-schedule-tick wave] FAIL \u2014 wave 2/3 PASS (cap 3; deferred 2) (missions M0001,G10_READONLY_AUTONOMY_PROBE,M0002)",
+          "stdout": "[odg-schedule-tick wave] FAIL — wave 2/3 PASS (cap 3; deferred 2) (missions M0001,G10_READONLY_AUTONOMY_PROBE,M0002)",
           "wallMs": 5430,
           "wave": [
             "M0001",
@@ -1225,7 +1228,7 @@
         {
           "label": "r2-tick2",
           "exitCode": 0,
-          "stdout": "[odg-schedule-tick wave] PASS \u2014 wave 3/3 PASS (cap 3; deferred 0) (missions M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB)",
+          "stdout": "[odg-schedule-tick wave] PASS — wave 3/3 PASS (cap 3; deferred 0) (missions M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB)",
           "wallMs": 5525,
           "wave": [
             "M0002",
@@ -1245,7 +1248,7 @@
         {
           "label": "r2-tick3",
           "exitCode": 0,
-          "stdout": "[odg-schedule-tick wave] IDLE \u2014 no eligible pre-authorized PENDING mission [M0001: ALREADY_PROVEN (dedup): M0001; G10_READONLY_AUTONOMY_PROBE: ALREADY_PROVEN (dedup): G10_READONLY_AUTONOMY_PROBE; M0002: ALREADY_PROVEN (dedup): M0002; RUNTIME_SELF_AUDIT: ALREADY_PROVEN (dedup): RUNTIME_SELF_AUDIT; QUAL_CLEAN_GATEB: ALREADY_PROVEN (dedup): QUAL_CLEAN_GATEB]",
+          "stdout": "[odg-schedule-tick wave] IDLE — no eligible pre-authorized PENDING mission [M0001: ALREADY_PROVEN (dedup): M0001; G10_READONLY_AUTONOMY_PROBE: ALREADY_PROVEN (dedup): G10_READONLY_AUTONOMY_PROBE; M0002: ALREADY_PROVEN (dedup): M0002; RUNTIME_SELF_AUDIT: ALREADY_PROVEN (dedup): RUNTIME_SELF_AUDIT; QUAL_CLEAN_GATEB: ALREADY_PROVEN (dedup): QUAL_CLEAN_GATEB]",
           "wallMs": 297,
           "wave": [],
           "deferred": [],
@@ -1257,7 +1260,7 @@
       ]
     }
   ],
-  "postRunNote": "measured at harness commit base.head; afterwards only the WORDING of scenario E's PARTIAL reason was corrected (the repo-mode probe was ASSIGNED via the branch-diff approximation, not refused) and every reasons[] was re-derived from the unchanged facts with classifyScenario \u2014 no fact or verdict changed",
+  "postRunNote": "measured at harness commit base.head; afterwards only the WORDING of scenario E's PARTIAL reason was corrected (the repo-mode probe was ASSIGNED via the branch-diff approximation, not refused) and every reasons[] was re-derived from the unchanged facts with classifyScenario — no fact or verdict changed",
   "findings": [
     "odg-agent-supervisor repo-evidence mode approximates an unowned live worktree's write-set from git-observed paths (branch diff / dirty); gitignored runtime/generated writes of its live processes are invisible, and with no observed path it is UNKNOWN => every assign refused. Outcome therefore depends on git state, not on what the processes write. Not changed (design trade-off; owner decision).",
     "renew(status CANCELLED) refreshes heartbeatAt, so a dead agent looks RUNNING for staleMs and close() is refused until it goes stale (measured: closeRightAfterCancel REFUSED (state RUNNING), CLOSED_REJECTED after staleMs). Not changed.",
@@ -1265,5 +1268,21 @@
     "a SIGKILL that lands after the ledger stage leaves a PROVEN ledger entry while the attempt log says FAIL; the next tick dedups it (no re-run, no duplicate). The harness only counts a kill as an interruption when the child had no report and no ledger entry (killedLedgerAfterTick1 = 0).",
     "a dead ledger-claim holder blocks recording until the 120 s TTL (within-TTL tick fails closed after the 60 s claim timeout); reclaim at TTL is correct (re-measured here, same as #896).",
     "odg-run has no in-process heartbeat and the tick is not wired to the supervisor: supervision of wave children is harness-bridged."
-  ]
+  ],
+  "inspectionRevision": {
+    "reason": "independent inspection of #900 REJECT (verdict honesty)",
+    "changes": [
+      "A: enforced Truth-Lock refusal (exit 2) is now mandatory",
+      "F: split into tick part (REAL) and supervisor part (PARTIAL in heartbeatOnly scope: harness-written heartbeats) => overall PARTIAL",
+      "J: constructedDecision fact => PARTIAL (the router never picks an absent model itself)",
+      "dead SIMULATED rule removed (no injection path)",
+      "safety: --worktree + per-worktree marker; all ODG_* env vars scrubbed from children",
+      "redacted absolute main-repo path"
+    ],
+    "method": "NO live re-run: the recorded facts are unchanged except the two added facts (F.supervisorMode copied from E.mode; J.constructedDecision=true, true by construction of the harness), and every verdict/reason/tally was re-derived with the pure classifier",
+    "previousTally": {
+      "REAL": 10,
+      "PARTIAL": 2
+    }
+  }
 }

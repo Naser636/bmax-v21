@@ -16,11 +16,14 @@
  *     (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json) + ONE tiny live loopback Ollama call;
  *   - mission-ledger.verifyLedger and fleet-bridge.currentClaim (dist, the code the children run).
  *
- * SAFETY (fail-closed): refuses to run unless cwd is a LINKED worktree (never the main checkout — its runtime/generated
+ * SAFETY (fail-closed): refuses to run unless cwd is the top of a LINKED worktree that it was started FOR (--worktree
+ * equal to the toplevel + a marker in that worktree's private git-dir), and scrubs every ODG_* variable (path redirects
+ * included) from the children's env. Never the main checkout — its runtime/generated
  * and runtime/dist are never touched); the only state it resets is <worktree>/runtime/generated (gitignored, checked to
  * be a real directory inside the worktree). No systemd / cron / sudo / deploy / provider key / network beyond loopback.
  *
- * Usage: npx tsx runtime/bin/odg-v155-transversal-validation.ts [--rounds 2] [--wave-max 3] [--kill-after-ms 1500]
+ * Usage (once):  npx tsx runtime/bin/odg-v155-transversal-validation.ts --worktree "$PWD" --create-marker
+ *        (run):   npx tsx runtime/bin/odg-v155-transversal-validation.ts --worktree "$PWD" [--rounds 2] [--wave-max 3] [--kill-after-ms 1500]
  *        [--skip-claim-variant] [--skip-build] [--out docs/odg/evidence/V155_TRANSVERSAL_VALIDATION.json] [--no-write]
  * Exit 0 = harness ran to completion (verdicts are in the evidence, a FAIL verdict is data, not a crash); 1 = refused.
  */
@@ -79,18 +82,23 @@ const all = (xs: any[], f: (x: any) => boolean) => Array.isArray(xs) && xs.lengt
 
 /**
  * classifyScenario(id, f) — PURE, strict. f = the facts measured for that scenario (see main()). Rules:
- *   - no facts / not executed ⇒ NOT_MEASURABLE;  f.injected ⇒ SIMULATED (an injected runner/fake never counts as REAL);
- *   - every required property held on every repeat ⇒ REAL; only some ⇒ PARTIAL; the core property failed ⇒ FAIL.
+ *   - no facts / not executed ⇒ NOT_MEASURABLE;
+ *   - every required property held on every repeat ⇒ REAL; only some ⇒ PARTIAL; the core property failed ⇒ FAIL;
+ *   - SIMULATED: this harness has NO injection path (it only spawns the real dist CLI and calls the real modules), so it
+ *     never produces SIMULATED; parts that are harness-built or harness-emitted (constructed router decision,
+ *     heartbeatOnly heartbeats written by the harness) are capped at PARTIAL instead.
+ * verdict == classifyScenario(facts) is an INTERNAL-CONSISTENCY property (the verdict follows from the recorded facts);
+ * it is NOT anti-fabrication — it cannot prove the facts themselves were measured rather than written.
  */
 function classifyScenario(id: string, f: any): { verdict: string; reasons: string[] } {
   if (!f || f.executed !== true) return v("NOT_MEASURABLE", [f && f.reason ? String(f.reason) : "not executed"]);
-  if (f.injected === true) return v("SIMULATED", ["ran with an injected runner/fake — not the real system"]);
   switch (id) {
     case "A": {
       if (f.build.exitCode !== 0) return v("FAIL", [`npm run build:runtime exit ${f.build.exitCode}`]);
+      if (!(f.truthLockEnforced && f.truthLockEnforced.exitCode === 2)) return v("FAIL", [`Truth-Lock-enforced tick did not refuse (STARTUP_REFUSED exit 2) off main: exit ${f.truthLockEnforced ? f.truthLockEnforced.exitCode : "not run"}`]);
       if (!(f.defaultTick.exitCode === 0 && /\bPASS\b/.test(f.defaultTick.stdout || ""))) return v("FAIL", [`default tick exit ${f.defaultTick.exitCode}: ${f.defaultTick.stdout}`]);
       const r = ["dist built in the worktree", "real default (non-wave) tick PASS on reset state"];
-      if (f.truthLockEnforced && f.truthLockEnforced.exitCode === 2) r.push("Truth-Lock-enforced tick STARTUP_REFUSED on the feature branch (expected; hence ODG_TRUTH_LOCK_ENFORCE=0 for the sandbox)");
+      r.push("Truth-Lock-enforced tick STARTUP_REFUSED on the feature branch (expected; hence ODG_TRUTH_LOCK_ENFORCE=0 for the sandbox)");
       return v("REAL", r);
     }
     case "B": {
@@ -116,9 +124,15 @@ function classifyScenario(id: string, f: any): { verdict: string; reasons: strin
       return v("REAL", ["every real child assigned in production evidence mode, renewed, seen RUNNING"]);
     }
     case "F": {
-      const ok = (x: any) => x.killedPidDead === true && x.killedLedgerAfterTick1 === 0 && x.attemptStatus === "FAIL" && x.supervisorState === "INTERRUPTED";
-      if (all(f.perRound, ok)) return v("REAL", ["every round: SIGKILL mid-run ⇒ attempt FAIL (no false success) and the supervisor re-classified the child INTERRUPTED from evidence (dead pid + stale heartbeat)"]);
-      return f.perRound.some(ok) ? v("PARTIAL", ["interruption classified on some rounds only"]) : v("FAIL", ["interruption not classified INTERRUPTED"]);
+      // two parts: the TICK part (real child, real kill, real attempt log + ledger) and the SUPERVISOR part (INTERRUPTED from
+      // heartbeats). In heartbeatOnly mode those heartbeats are WRITTEN BY THE HARNESS ⇒ the supervisor part is PARTIAL.
+      const tickOk = (x: any) => x.killedPidDead === true && x.killedLedgerAfterTick1 === 0 && x.attemptStatus === "FAIL";
+      const supOk = (x: any) => x.supervisorState === "INTERRUPTED";
+      if (!all(f.perRound, tickOk)) return f.perRound.some(tickOk) ? v("PARTIAL", ["tick part held on some rounds only"]) : v("FAIL", ["mid-run kill not recorded as an attempt FAIL with a dead pid and 0 ledger entries"]);
+      const tickPart = "tick part REAL: every round SIGKILL mid-run ⇒ pid dead, attempt FAIL (no false success), 0 ledger entries";
+      if (!all(f.perRound, supOk)) return v("PARTIAL", [tickPart, "supervisor part FAIL/PARTIAL: INTERRUPTED not seen on every round"]);
+      if (f.supervisorMode !== "repo") return v("PARTIAL", [tickPart, `supervisor part PARTIAL: INTERRUPTED (dead pid + stale heartbeat) on every round, but from harness-written heartbeats in ${f.supervisorMode || "heartbeatOnly"} scope (see E)`]);
+      return v("REAL", [tickPart, "supervisor part REAL: INTERRUPTED in production evidence mode"]);
     }
     case "G": {
       const ok = (x: any) => x.reranInterrupted === true && x.reranCompleted.length === 0 && x.recoveredPass === true && x.ledgerEachOnce === true && x.ledgerSealOk === true && x.orphanClaimsAfter === 0;
@@ -142,7 +156,8 @@ function classifyScenario(id: string, f: any): { verdict: string; reasons: strin
       const a = f.fallback || {};
       const okFb = a.outcome === "OK" && a.attempts && a.attempts[0] && a.attempts[0].unavailable === true && a.attempts.length >= 2 && a.model !== ABSENT_MODEL;
       const okRef = f.noQualified && f.noQualified.decision === "NO_QUALIFIED_LOCAL_MODEL" && f.noQualified.run === "REFUSED";
-      if (okFb && okRef) return v("REAL", [`live: ${ABSENT_MODEL} ⇒ unavailable (daemon 404) ⇒ ${a.model} answered; '${NO_QUALIFIED_CLASS}' ⇒ NO_QUALIFIED_LOCAL_MODEL ⇒ runWithFallback REFUSED. The primary=absent decision is constructed (the registry never selects an absent model)`]);
+      if (okFb && okRef && f.constructedDecision !== false) return v("PARTIAL", [`live: ${ABSENT_MODEL} ⇒ unavailable (daemon 404) ⇒ ${a.model} answered; '${NO_QUALIFIED_CLASS}' ⇒ NO_QUALIFIED_LOCAL_MODEL ⇒ runWithFallback REFUSED — but the primary=absent LOCAL decision was CONSTRUCTED by the harness (selectMeasured never picks an absent model itself), so the router-chosen path to an unavailable model is not demonstrated`]);
+      if (okFb && okRef) return v("REAL", [`live: router-selected model unavailable ⇒ ${a.model} answered; NO_QUALIFIED refused`]);
       return okFb || okRef ? v("PARTIAL", ["only one of fallback / refusal demonstrated"]) : v("FAIL", ["fallback and refusal both failed"]);
     }
     case "K": {
@@ -204,6 +219,8 @@ function sharedListing(gen: string): Record<string, string> {
   return o;
 }
 
+// evidence redaction: no absolute home paths in the committed file
+function redactHome(_k: string, val: any): any { return typeof val === "string" ? val.split(os.homedir()).join("~") : val; }
 function requireDist(relCore: string): any { return require(path.join(ROOT, "runtime", "dist", "core", relCore)); }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -220,6 +237,14 @@ async function main(): Promise<number> {
   const commonDir = git(["rev-parse", "--path-format=absolute", "--git-common-dir"]);
   const top = git(["rev-parse", "--show-toplevel"]);
   if (!isLinkedWorktree(gitDir, commonDir) || !top || path.resolve(top) !== path.resolve(ROOT)) { log(`REFUSED: cwd must be the top of a LINKED git worktree (git-dir ${gitDir}, common ${commonDir}, top ${top})`); return 1; }
+  // must be started FOR this worktree: --worktree <path> == toplevel AND a per-worktree marker in its private git-dir
+  // (<git-dir>/odg-v155-transversal.sandbox holding the toplevel path; created only by --create-marker with a matching --worktree)
+  const wantWt = arg("worktree", null);
+  if (!wantWt || path.resolve(wantWt) !== path.resolve(top)) { log(`REFUSED: --worktree <path> is required and must equal this worktree's toplevel (${top}); got ${wantWt}`); return 1; }
+  const marker = path.join(gitDir as string, "odg-v155-transversal.sandbox");
+  if (flag("create-marker")) { fs.writeFileSync(marker, path.resolve(top) + "\n"); log("marker created: " + marker); return 0; }
+  let mk: string | null = null; try { mk = fs.readFileSync(marker, "utf8").trim(); } catch { mk = null; }
+  if (mk !== path.resolve(top)) { log(`REFUSED: sandbox marker missing or for another worktree (${marker}); run once with --worktree ${top} --create-marker`); return 1; }
   const MAIN_REPO = path.dirname(commonDir as string);
   const GEN = path.join(ROOT, "runtime", "generated");
   const resetState = () => {
@@ -235,7 +260,10 @@ async function main(): Promise<number> {
   const commands: string[] = [];
   const timings: Record<string, number> = {};
   const facts: any = {};
-  const baseEnv: any = { ...process.env, ODG_TRUTH_LOCK_ENFORCE: "0" };
+  // scrub EVERY ODG_* var (path redirects such as ODG_ATTEMPTS_LOG / ODG_RUNTIME_STATE_DIR / ODG_RUN_OUTPUT_DIR, wave knobs,
+  // allowlists) so a child can never be redirected outside this worktree; then set only what each tick needs
+  const baseEnv: any = Object.fromEntries(Object.entries(process.env).filter(([k]) => !/^ODG_/.test(k)));
+  baseEnv.ODG_TRUTH_LOCK_ENFORCE = "0";
   for (const k of ["ODG_TICK_WAVE", "ODG_TICK_WAVE_MAX", "ODG_TICK_WAVE_ISOLATE", "ODG_RUN_OUTPUT_DIR", "ODG_RUN_OUTPUT_ROOT", "ODG_CANARY_ALLOWLIST"]) delete baseEnv[k];
   const TICK = "runtime/dist/bin/odg-schedule-tick.js";
   const declaredOf = (id: string): string[] => { const m = readJson(path.join(ROOT, "runtime", "missions", id + ".json")); return m && Array.isArray(m.write_set) ? m.write_set : []; };
@@ -530,7 +558,7 @@ async function main(): Promise<number> {
     try { await P.unloadModel(fb.model); } catch { /* best-effort */ }
     const nq = ROUTER.selectMeasured({ taskClass: NO_QUALIFIED_CLASS, registry, available });
     const nqRun = await ROUTER.runWithFallback(nq, async () => ({ ok: true }));
-    facts.J = { executed: true, liveProbe: true, primaryClassForFallback: "extract", decision, fallback: { outcome: fb.outcome, model: fb.model, attempts: fb.attempts, result: fb.result ? { text: fb.result.text, correct: fb.result.correct, totalMs: fb.result.totalMs } : null },
+    facts.J = { executed: true, liveProbe: true, constructedDecision: true, primaryClassForFallback: "extract", decision, fallback: { outcome: fb.outcome, model: fb.model, attempts: fb.attempts, result: fb.result ? { text: fb.result.text, correct: fb.result.correct, totalMs: fb.result.totalMs } : null },
       noQualified: { taskClass: NO_QUALIFIED_CLASS, decision: nq.decision, probationCandidates: nq.probationCandidates, run: nqRun.outcome, reason: nqRun.reason } };
   } else facts.J = { executed: true, liveProbe: false, reason: live.reason || "registry missing" };
   timings.IJ = Date.now() - t;
@@ -541,7 +569,7 @@ async function main(): Promise<number> {
   facts.D = { executed: true, perTick: roundFacts.flatMap((r) => r.D) };
   const allAgents = roundFacts.flatMap((r) => r.E.flatMap((e: any) => e.assignModes));
   facts.E = { executed: true, mode: allAgents.length && allAgents.every((m: string) => m === "repo") ? "repo" : "heartbeatOnly", assignModes: allAgents, repoModeOutcome, repoProbe, staleMs: STALE_MS, perTick: roundFacts.flatMap((r) => r.E) };
-  facts.F = { executed: true, perRound: roundFacts.map((r) => r.F) };
+  facts.F = { executed: true, supervisorMode: facts.E.mode, perRound: roundFacts.map((r) => r.F) };
   facts.G = { executed: true, perRound: roundFacts.map((r) => r.G), claimVariant };
   facts.H = roundFacts.every((r) => r.H) ? { executed: true, perRound: roundFacts.map((r) => r.H), selfRefused: roundFacts.every((r) => /^REFUSED: inspector is the owner/.test(r.H.self)), parentRefused: roundFacts.every((r) => /^REFUSED: inspector is the owner\/parent/.test(r.H.parent)), distinctAccepted: roundFacts.every((r) => /^CLOSED_/.test(r.H.distinct)), identityBound: false } : { executed: false, reason: "no completed child to inspect" };
   facts.K = { executed: true, perRound: roundFacts.map((r) => r.K) };
@@ -569,14 +597,14 @@ async function main(): Promise<number> {
   const evidence = {
     schema: "odg.evidence.v1", id: "V155_TRANSVERSAL_VALIDATION", directive: "CTO V15.5 Step 6 — transversal validation (scenarios A–L)",
     recordedAt: new Date().toISOString(), provider: "Claude Code (TECHNICAL_PROVIDER_ONLY) - not an authority; acceptance belongs to ODG governance / owner",
-    base: { head: git(["rev-parse", "HEAD"]), originMain: git(["rev-parse", "origin/main"]), branch: git(["rev-parse", "--abbrev-ref", "HEAD"]), worktree: "linked git worktree (node_modules symlinked read-only from the main repo; dist built in-worktree)", mainRepo: MAIN_REPO },
+    base: { head: git(["rev-parse", "HEAD"]), originMain: git(["rev-parse", "origin/main"]), branch: git(["rev-parse", "--abbrev-ref", "HEAD"]), worktree: "linked git worktree (node_modules symlinked read-only from the main repo; dist built in-worktree)", mainRepo: "<main checkout> (path redacted)" },
     environment: { node: process.version, cpus: os.cpus().length, loadavgStart: os.loadavg().map((x: number) => Math.round(x * 100) / 100), truthLock: "ODG_TRUTH_LOCK_ENFORCE=0 process-scoped for sandbox ticks (the enforced launcher refuses any branch != main — measured in A)", state: "the worktree's OWN gitignored runtime/generated, reset before A, before each round and before the claim variant; the main repo's runtime/generated and runtime/dist were never written", ollama: available ? `loopback 127.0.0.1:11434 models=${available.join(",")}` : "not reachable" },
     parameters: { rounds, waveMax, killAfterMs, missions, staleMs: STALE_MS, renewMs: RENEW_MS, absentModel: ABSENT_MODEL, noQualifiedClass: NO_QUALIFIED_CLASS },
     commands, timingsMs: { ...timings, total: Date.now() - tStart },
     verdictRules: "classifyScenario (runtime/bin/odg-v155-transversal-validation.ts) — PURE; re-derived from facts by the test. injected fake ⇒ SIMULATED; partial coverage ⇒ PARTIAL; never inflated",
     tally, scenarios, rounds: roundFacts.map((r) => ({ round: r.round, ticks: r.ticks })),
   };
-  if (!flag("no-write")) { fs.mkdirSync(path.dirname(out), { recursive: true }); fs.writeFileSync(out, JSON.stringify(evidence, null, 2) + "\n"); log("wrote " + rel(out)); }
+  if (!flag("no-write")) { fs.mkdirSync(path.dirname(out), { recursive: true }); fs.writeFileSync(out, JSON.stringify(evidence, redactHome, 2) + "\n"); log("wrote " + rel(out)); }
   for (const id of SCENARIOS) log(`${id}: ${scenarios[id].verdict} — ${scenarios[id].reasons.join("; ").slice(0, 220)}`);
   process.stdout.write(JSON.stringify({ tally, verdicts: Object.fromEntries(SCENARIOS.map((id) => [id, scenarios[id].verdict])) }) + "\n");
   return 0;

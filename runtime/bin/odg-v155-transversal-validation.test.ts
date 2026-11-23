@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 "use strict";
 /* Fixture test for odg-v155-transversal-validation: the PURE helpers + the strict verdict rules (classifyScenario), and a
- * re-derivation of every verdict recorded in the committed evidence from its own facts (anti-inflation). Hermetic: no
+ * re-derivation of every verdict recorded in the committed evidence from its own facts. That re-derivation is INTERNAL
+ * CONSISTENCY (verdict follows from the recorded facts), NOT anti-fabrication: it cannot prove the facts were measured. Hermetic: no
  * process spawned, nothing written, no network. The live run is the harness itself (see the evidence file). */
 const fs = require("fs");
 const path = require("path");
@@ -26,11 +27,11 @@ const GOOD: any = {
   C: { executed: true, perRound: [waveC, waveC], contrast: { isolatedWave: 5, nonIsolatedWave: 1 } },
   D: { executed: true, perTick: [tickD, tickD] },
   E: { executed: true, mode: "repo", perTick: [tickE, tickE] },
-  F: { executed: true, perRound: [roundF, roundF] },
+  F: { executed: true, supervisorMode: "repo", perRound: [roundF, roundF] },
   G: { executed: true, perRound: [roundG, roundG], claimVariant: claimOk },
   H: { executed: true, selfRefused: true, parentRefused: true, distinctAccepted: true, identityBound: false },
   I: { executed: true, liveProbe: true, perClass: [{ decision: "LOCAL", chosenStatus: "QUALIFIED" }, { decision: "NO_QUALIFIED_LOCAL_MODEL", chosenStatus: null }] },
-  J: { executed: true, liveProbe: true, fallback: { outcome: "OK", model: "qwen2.5:0.5b", attempts: [{ model: H.ABSENT_MODEL, unavailable: true }, { model: "qwen2.5:0.5b", ok: true }] }, noQualified: { decision: "NO_QUALIFIED_LOCAL_MODEL", run: "REFUSED" } },
+  J: { executed: true, liveProbe: true, constructedDecision: false, fallback: { outcome: "OK", model: "qwen2.5:0.5b", attempts: [{ model: H.ABSENT_MODEL, unavailable: true }, { model: "qwen2.5:0.5b", ok: true }] }, noQualified: { decision: "NO_QUALIFIED_LOCAL_MODEL", run: "REFUSED" } },
   K: { executed: true, perRound: [roundK, roundK] },
   L: { executed: true, historical: { verified: 928, missing: 0, changed: 0, line: "verified=928 missing=0 changed=0" }, roadmapUnchanged: true, mainCheckout: { ok: true }, evidenceWritable: true },
 };
@@ -50,10 +51,12 @@ function main(): void {
   for (const id of H.SCENARIOS) check(`good facts ⇒ ${id} ${want[id]}`, C(id, GOOD[id]) === want[id]);
   // universal rules
   check("every scenario: absent facts ⇒ NOT_MEASURABLE", H.SCENARIOS.every((id: string) => C(id, undefined) === "NOT_MEASURABLE" && C(id, { executed: false }) === "NOT_MEASURABLE"));
-  check("every scenario: injected runner/fake ⇒ SIMULATED (never REAL)", H.SCENARIOS.every((id: string) => C(id, { ...GOOD[id], injected: true }) === "SIMULATED"));
+  check("no SIMULATED path: the harness has no injection seam, so the classifier never yields SIMULATED (harness-built parts are capped at PARTIAL)", H.SCENARIOS.every((id: string) => C(id, { ...GOOD[id], injected: true }) !== "SIMULATED"));
   check("verdicts are always one of the 5 classes", H.SCENARIOS.every((id: string) => H.VERDICTS.includes(C(id, GOOD[id]))));
   // degradations ⇒ PARTIAL / FAIL (strict)
-  let f = clone(GOOD.A); f.defaultTick = { exitCode: 1, stdout: "[odg-schedule-tick] FAIL" }; check("A: default tick FAIL ⇒ FAIL", C("A", f) === "FAIL");
+  let f = clone(GOOD.A); delete f.truthLockEnforced; check("A: enforced Truth-Lock refusal (exit 2) missing ⇒ FAIL", C("A", f) === "FAIL");
+  f = clone(GOOD.A); f.truthLockEnforced.exitCode = 0; check("A: enforced Truth-Lock did NOT refuse off main ⇒ FAIL", C("A", f) === "FAIL");
+  f = clone(GOOD.A); f.defaultTick = { exitCode: 1, stdout: "[odg-schedule-tick] FAIL" }; check("A: default tick FAIL ⇒ FAIL", C("A", f) === "FAIL");
   f = clone(GOOD.A); f.build.exitCode = 2; check("A: build failure ⇒ FAIL", C("A", f) === "FAIL");
   f = clone(GOOD.B); f.perRound[1].physicalDisjoint = false; check("B: one round with overlapping physical write-sets ⇒ PARTIAL", C("B", f) === "PARTIAL");
   f = clone(GOOD.B); f.perRound.forEach((r: any) => { r.admitted = ["a"]; }); check("B: <2 admitted everywhere ⇒ FAIL", C("B", f) === "FAIL");
@@ -65,6 +68,9 @@ function main(): void {
   f = clone(GOOD.E); f.perTick[1].renewedWhileAlive = 2; check("E: a child never renewed in one wave ⇒ PARTIAL", C("E", f) === "PARTIAL");
   f = clone(GOOD.F); f.perRound.forEach((r: any) => { r.killedLedgerAfterTick1 = 1; }); check("F: kill landed after the ledger entry (not mid-run) ⇒ FAIL", C("F", f) === "FAIL");
   f = clone(GOOD.F); f.perRound[0].supervisorState = "RUNNING"; check("F: supervisor did not see INTERRUPTED in one round ⇒ PARTIAL", C("F", f) === "PARTIAL");
+  f = clone(GOOD.F); f.supervisorMode = "heartbeatOnly"; check("F: harness-written heartbeatOnly evidence ⇒ supervisor part PARTIAL ⇒ overall PARTIAL", C("F", f) === "PARTIAL" && /tick part REAL/.test(H.classifyScenario("F", f).reasons[0]));
+  f = clone(GOOD.J); f.constructedDecision = true; check("J: harness-constructed primary=absent decision ⇒ PARTIAL (router never picks an absent model)", C("J", f) === "PARTIAL");
+  f = clone(GOOD.J); delete f.constructedDecision; check("J: constructedDecision unknown ⇒ PARTIAL (fail-closed)", C("J", f) === "PARTIAL");
   f = clone(GOOD.G); f.claimVariant = { executed: false, reason: "--skip-claim-variant" }; check("G: no dead-holder claim reclaim ⇒ PARTIAL", C("G", f) === "PARTIAL");
   f = clone(GOOD.G); f.perRound.forEach((r: any) => { r.ledgerEachOnce = false; }); check("G: ledger duplication/loss ⇒ FAIL", C("G", f) === "FAIL");
   f = clone(GOOD.G); f.perRound.forEach((r: any) => { r.reranCompleted = ["a"]; }); check("G: completed work re-run ⇒ FAIL", C("G", f) === "FAIL");
@@ -83,9 +89,11 @@ function main(): void {
   if (fs.existsSync(evPath)) {
     const ev = JSON.parse(fs.readFileSync(evPath, "utf8"));
     check("evidence: all 12 scenarios present", H.SCENARIOS.every((id: string) => ev.scenarios && ev.scenarios[id]));
-    check("evidence: each recorded verdict == classifyScenario(facts) (re-derived, not asserted)", H.SCENARIOS.every((id: string) => ev.scenarios[id].verdict === H.classifyScenario(id, ev.scenarios[id].facts).verdict));
+    check("evidence: each recorded verdict == classifyScenario(facts) (internal consistency only — not anti-fabrication)", H.SCENARIOS.every((id: string) => ev.scenarios[id].verdict === H.classifyScenario(id, ev.scenarios[id].facts).verdict));
     check("evidence: tally sums to 12 and matches the verdicts", Object.values(ev.tally).reduce((a: number, b: any) => a + b, 0) === 12 && H.SCENARIOS.every((id: string) => ev.tally[ev.scenarios[id].verdict] > 0));
     check("evidence: H is not REAL (inspector string, not identity-bound)", ev.scenarios.H.verdict !== "REAL" && ev.scenarios.H.facts.identityBound === false);
+    check("evidence: harness-emitted parts not REAL (E heartbeatOnly ⇒ E,F PARTIAL; constructed J ⇒ PARTIAL)", (ev.scenarios.E.facts.mode === "repo" || (ev.scenarios.E.verdict !== "REAL" && ev.scenarios.F.verdict !== "REAL")) && (ev.scenarios.J.facts.constructedDecision !== true || ev.scenarios.J.verdict !== "REAL"));
+    check("evidence: no absolute home path (redacted)", !/\/home\//.test(fs.readFileSync(evPath, "utf8")));
     check("evidence: ≥2 rounds of the wave scenario", Array.isArray(ev.rounds) && ev.rounds.length >= 2 && ev.parameters.rounds >= 2);
     check("evidence: records HEAD + commands + timings", typeof ev.base.head === "string" && ev.base.head.length === 40 && Array.isArray(ev.commands) && ev.commands.length > 0 && typeof ev.timingsMs.total === "number");
   } else check("evidence file absent ⇒ re-derivation skipped (fixture rules above still ran)", true);
