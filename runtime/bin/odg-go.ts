@@ -212,6 +212,9 @@ function isolationCheck(scratch: string | null, missionId: string, repo: string,
   return { ok: true, workspace: s };
 }
 
+/* registerSources(src) — the register input of the canonical bin: every key of SS.loadSources except `inputs`. */
+function registerSources(src: any): any { const { inputs: _inputs, ...rest } = src; return rest; }
+
 /* readState(repo) — canonical evidence + registers + ledger/attempt-log, all READ-ONLY. */
 function readState(repo: string): any {
   const src = SS.loadSources(repo);
@@ -236,7 +239,9 @@ function readState(repo: string): any {
   const smr = SMR.loadSources();   // canonical strategy-mode evaluation instant (code tree; parity recorded below)
   const parity = (Object.values(F) as string[]).concat(["docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json", "docs/odg/evidence/V161_SCENARIO_J.json"]).map((rel: string) => ({ file: rel, codeTreeEqualsRepo: sha256File(path.join(ROOT, rel)) === sha256File(path.join(repo, rel)) }));
   return {
-    repo, inputs, sources: { contracts: src.contracts, v150: src.v150, cp8: src.cp8, scenarioEvidence: src.scenarioEvidence },
+    // EXACTLY the canonical loader's sources (odg-strategic-select.loadSources minus its inputs list, which is merged above):
+    // no hand-picked subset, so LAND-1 laterEvidence and the BLK-2/REL-2/DEP-2 benefitEvidence reach the in-cycle register.
+    repo, inputs, sources: registerSources(src),
     registerEvidence, strategyEvidence, radar: { grant, admission }, authorizationEvidence,
     ledger: { proven, integrity }, attempts: { count: att.length, last: last ? { mission: last.mission, status: last.status, recordedAt: last.recordedAt } : null },
     allowlist: readAllowlist(), measured: POL.loadMeasuredRegistry(F.MEASURED, { root: repo }), strategyNow: smr.now, codeTreeParity: parity,
@@ -481,7 +486,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);

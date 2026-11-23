@@ -22,6 +22,25 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "odg-go-test-"));
   check("out dir in a temp dir ⇒ allowed", B.validateOutDir(path.join(tmp, "out"), ROOT).ok === true);
 
+  // GO's in-cycle register is built from EXACTLY the canonical loader's sources ⇒ equals the committed register record
+  {
+    const REG = require("../core/odg-strategic-register.js");
+    const SS = require("./odg-strategic-select.ts");
+    const st = B.readState(ROOT);
+    const canon = SS.loadSources(ROOT);
+    check("GO register sources = canonical loadSources keys minus inputs (no hand-picked subset)", JSON.stringify(Object.keys(st.sources).sort()) === JSON.stringify(Object.keys(canon).filter((k) => k !== "inputs").sort()));
+    const inCycle = JSON.parse(JSON.stringify(REG.buildRegister(st.sources)));
+    const committedPath = path.join(ROOT, SS.OUT_REL);
+    const committed = JSON.parse(fs.readFileSync(committedPath, "utf8"));
+    check("GO in-cycle register (items + criteria scores + sources) equals the committed V164_STRATEGIC_REGISTER register", JSON.stringify(inCycle) === JSON.stringify(committed.register));
+    check("GO in-cycle register items equal the committed items (scores included)", JSON.stringify(inCycle.items) === JSON.stringify(committed.register.items));
+    const dropped = Object.keys(st.sources).filter((k) => {
+      const { [k]: _gone, ...rest } = st.sources;
+      try { return JSON.stringify(REG.buildRegister(rest)) === JSON.stringify(inCycle); } catch { return false; }
+    });
+    check("dropping ANY source key (incl. laterEvidence / benefitEvidence) is detected (register differs or build refuses)", dropped.length === 0 && ["laterEvidence", "benefitEvidence"].every((k) => k in st.sources));
+  }
+
   // a refused out dir exits 2 and writes nothing
   const bad = path.join(main, "runtime", "generated", "odg-go-should-not-exist");
   const rb = await B.runOnce(["--repo", ROOT, "--out", bad]);
