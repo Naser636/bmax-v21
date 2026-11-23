@@ -110,10 +110,11 @@
       "tier": "T1",
       "admittedPrefixes": [],
       "reasons": [
+        "TERMS_NOT_VERIFIED",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/rfc/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
       "termsCondition": null,
-      "evidenceSha256": "a1ce5e4cd2c815e81fce1a5dba86f146f18fc6f2ed52666145e1daec040b6646"
+      "evidenceSha256": "8560a6edfda39188bb7587bdffe755fbf37d122d05d6efd1813b93bbff8af954"
     },
     {
       "host": "datatracker.ietf.org",
@@ -121,11 +122,12 @@
       "tier": "T1",
       "admittedPrefixes": [],
       "reasons": [
+        "TERMS_NOT_VERIFIED",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/doc/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/api/v1/doc/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
       "termsCondition": null,
-      "evidenceSha256": "1524d9b81efc304714668aa5e6cd261754e24be709e49e5d2f2013733b3cee6a"
+      "evidenceSha256": "1f08ee85dd6862e0fa466b677f05e86dfacf02256fc89292c3adf5aef71774ba"
     },
     {
       "host": "www.w3.org",
