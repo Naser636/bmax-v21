@@ -334,10 +334,24 @@
       "/TR/?"
      ],
      "robotsWildcardRulesInside": [
-      "Disallow: /*,*",
       "Disallow: /*/wp-admin/",
+      "Disallow: /*/wp-includes/",
+      "Disallow: /*/wp-content/plugins/",
+      "Disallow: /*/wp-content/cache/",
+      "Disallow: /*/wp-content/themes/",
+      "Disallow: /*/wiki/index.php?",
+      "Disallow: /*/wiki/index.php/Help",
+      "Disallow: /*/wiki/index.php/MediaWiki",
+      "Disallow: /*/wiki/index.php/Special:",
+      "Disallow: /*/wiki/index.php/Template",
+      "Disallow: /*/wiki/Special:",
+      "Disallow: /*/wiki/Help:",
+      "Disallow: /*/wiki/Talk:",
+      "Disallow: /*/wiki/skins/",
+      "Disallow: /*/wiki/*/info",
       "Disallow: /*/wiki/*/edit",
-      "(+15 more /*/wp-*|/*/wiki/* wildcards)"
+      "Disallow: /*/wiki/*/history",
+      "Disallow: /*,*"
      ],
      "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
@@ -358,7 +372,9 @@
    "paid": false,
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
-   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "robotsTxtSha256": "444079f3a1dade59d593ff5968013596b910f004fcfb0d33eef897f322f914ab",
+   "robotsTxtBytes": 3844
   },
   {
    "host": "csrc.nist.gov",
@@ -394,7 +410,9 @@
    "paid": false,
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
-   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "robotsTxtSha256": "be7b36a827b1d451f9b06502e3f154bef668a6ae06c2eeb95c0731f06c5ae5fc",
+   "robotsTxtBytes": 1239
   },
   {
    "host": "nvlpubs.nist.gov",
@@ -534,7 +552,9 @@
    "paid": false,
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
-   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "robotsTxtSha256": "6a476baa135f1070ab218181af50ae957a07a7d29607f9dc78c1579fa266198a",
+   "robotsTxtBytes": 2174
   },
   {
    "host": "cheatsheetseries.owasp.org",
@@ -700,7 +720,9 @@
    "paid": false,
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
-   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "robotsTxtSha256": "44d41cd563a231327036a3b84ea0c78a05c66807b5f62c43158213448d28e308",
+   "robotsTxtBytes": 273
   },
   {
    "host": "www.sqlite.org",
@@ -737,7 +759,9 @@
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
    "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
-   "narrowingNote": "/lang.html dropped: raw notes say it was not probed"
+   "narrowingNote": "/lang.html dropped: raw notes say it was not probed",
+   "robotsTxtSha256": "d27eaea4fea46b12221de632623b6f96697e264a7816d9db02c98d4830fd51ac",
+   "robotsTxtBytes": 100
   },
   {
    "host": "docs.python.org",
@@ -813,7 +837,9 @@
    "botChallengeObserved": false,
    "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
    "ownerDecisionRequired": "robots Disallow /pypi/*/json (wildcard) vs documented JSON API (docs.pypi.org/api) — same conflict class as export.arxiv.org",
-   "robotsCorrection": "first research pass read /pypi/ as allowed (stdlib robotparser ignores wildcards) — corrected after full-file RFC 9309 analysis"
+   "robotsCorrection": "first research pass read /pypi/ as allowed (stdlib robotparser ignores wildcards) — corrected after full-file RFC 9309 analysis",
+   "robotsTxtSha256": "fd0059b266de42bdf36a90dabb5dc5dbb91bfdf1580bd950be234b7634b13821",
+   "robotsTxtBytes": 325
   },
   {
    "host": "registry.npmjs.org",
@@ -858,7 +884,10 @@
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
    "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
-   "robotsNote": "/robots.txt is not a robots file (JSON document of an npm package named robots.txt): no parseable rules ⇒ no restriction under RFC 9309; body contains third-party personal data — not stored"
+   "robotsNote": "/robots.txt is not a robots file (JSON document of an npm package named robots.txt): no parseable rules ⇒ no restriction under RFC 9309; body contains third-party personal data — not stored",
+   "robotsTxtSha256": "c64a5b4be2b97300c4a8036084ba082046f9f4c562febfe66c95419f193882d9",
+   "robotsTxtBytes": 7462,
+   "robotsTxtSha256Note": "hash of the served body (an npm package JSON, contains third-party personal data — body NOT stored)"
   },
   {
    "host": "huggingface.co",
@@ -902,7 +931,9 @@
    "paid": false,
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
-   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "robotsTxtSha256": "045c12bc2b5f1820752a5c149d2c96030ecfb8f32c42dd034cead715be277193",
+   "robotsTxtBytes": 68
   },
   {
    "host": "www.anthropic.com",
@@ -978,7 +1009,9 @@
    "paid": false,
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
-   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "robotsTxtSha256": "2916f7b4de0705dbb485dd4f5271d4909e482e6ebc12634349ea2373ca65a0fa",
+   "robotsTxtBytes": 176
   },
   {
    "host": "bair.berkeley.edu",

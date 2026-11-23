@@ -127,7 +127,7 @@
       "reasons": [
         "PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:/TR/ ⊃ /TR/? (governor cannot exclude sub-paths — narrow the prefix)"
       ],
-      "evidenceSha256": "69fea3e52051b70cd1ff26c9715411d0afe119925bfcb2ab021fcde993011f40"
+      "evidenceSha256": "4e54dffadd34084a849ac951ab9f2101dc77e93d1081cf2d5c6c29fb7d2070d2"
     },
     {
       "host": "csrc.nist.gov",
@@ -137,7 +137,7 @@
         "/pubs/"
       ],
       "reasons": [],
-      "evidenceSha256": "e4cb9ff757a2c1025f3e42ff291ea7116510c727ed83a05bad40ead6a206aa6f"
+      "evidenceSha256": "41fcddf2360c3a36d40efd1500f778b1f61f82c5adf39369cc46765fb433c05b"
     },
     {
       "host": "nvlpubs.nist.gov",
@@ -185,7 +185,7 @@
       "reasons": [
         "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/sites/default/files/feeds/known_exploited_vulnerabilities.json (Disallow: /*/media/oembed)"
       ],
-      "evidenceSha256": "fc2bcc5e98c3f539217758ff9f324118b259eba970f3c9603d1bbbbb38920430"
+      "evidenceSha256": "a2a30a3e07f124583e528d1d16bf63211a53b230edd766d59b995fdc908cce0f"
     },
     {
       "host": "cheatsheetseries.owasp.org",
@@ -253,7 +253,7 @@
         "/docs/current/"
       ],
       "reasons": [],
-      "evidenceSha256": "a01bb573cb997fa961f0fb7076deeb5a1fa991a6043d086bfa392fb85ef63ab1"
+      "evidenceSha256": "0b6bdad1a6c80779dc9001492108d9665cbfdfb8c24adc3009b7dc3e80d334d7"
     },
     {
       "host": "www.sqlite.org",
@@ -263,7 +263,7 @@
         "/docs.html"
       ],
       "reasons": [],
-      "evidenceSha256": "188990843093c764adcedf2c655f3fb6f4e61641e7b36b0110f2ded45a7ec13a"
+      "evidenceSha256": "c19b447f572d50f158b1bdeccaaf63c59d3d603e2692b79a811083b3c547e479"
     },
     {
       "host": "docs.python.org",
@@ -290,7 +290,7 @@
         "OWNER_DECISION_REQUIRED: robots Disallow /pypi/*/json (wildcard) vs documented JSON API (docs.pypi.org/api) — same conflict class as export.arxiv.org",
         "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/pypi/ (Disallow: /pypi/*/json | Disallow: /pypi/*/*/json | Disallow: /pypi*?)"
       ],
-      "evidenceSha256": "cbd284e441ecfc3b1ab6dcda9145a38f517477dadfaa09753c4a910eff82dbca"
+      "evidenceSha256": "9ddceea49625919232e68e4f095d2486eddef6c2c0ab3f5aa04736435a5fd6eb"
     },
     {
       "host": "registry.npmjs.org",
@@ -301,7 +301,7 @@
         "/react"
       ],
       "reasons": [],
-      "evidenceSha256": "c580f50807fea23f5d4a1f1c9554a7d8039c6b4e336803c2bc38cd28e64f516c"
+      "evidenceSha256": "8134070f46a9569c08806791c5531ec2bf87c4c0c5530c22de2b09ee74ed10ea"
     },
     {
       "host": "huggingface.co",
@@ -312,7 +312,7 @@
         "/api/models"
       ],
       "reasons": [],
-      "evidenceSha256": "283dfa735dd8cbb818d10fcd44c7ae8cae8049572d287844edae4dac81bf8401"
+      "evidenceSha256": "a5d29d32d06a711f493041124c978434ab192eeea20b084e1283ca2b21337b49"
     },
     {
       "host": "www.anthropic.com",
@@ -333,7 +333,7 @@
         "/docs/en/"
       ],
       "reasons": [],
-      "evidenceSha256": "2231aa2b72ccbd23c27b014f74c3d4642d0cbb081104d1eb45c1126048b0fed6"
+      "evidenceSha256": "b910d72121327118e2b412b0081987961928ce43479b3685253ffccf669a3663"
     },
     {
       "host": "bair.berkeley.edu",
