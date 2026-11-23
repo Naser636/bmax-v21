@@ -52,6 +52,10 @@
     {
       "source": "docs/odg/evidence/V161_SCENARIO_J.json",
       "sha256": "11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff"
+    },
+    {
+      "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+      "sha256": "41f2c693b3b4580121c80e47549f6f584f63faf5ad4e1d070fa78abaa8810144"
     }
   ],
   "register": {
@@ -65,7 +69,8 @@
       "BLOCKED": "next step is owner-gated / external (V150 summary.ownerGated)",
       "FAILED": "executed and graded FAIL",
       "NOT_MEASURED": "current state cannot be derived from the evidence (overlap or completion not stated by any field)",
-      "PROPOSED": "listed as next work by a canonical source; no contract; not executed per the evidence"
+      "PROPOSED": "listed as next work by a canonical source; no contract; not executed per the evidence",
+      "NOT_IMPLEMENTED": "CP8 odgCapabilityAudit status NOT_IMPLEMENTED (capability absent, possibly by design)"
     },
     "criteria": [
       {
@@ -116,7 +121,7 @@
       {
         "name": "evidenceLevel",
         "direction": "HIGHER_IS_BETTER",
-        "rule": "EVD-1: value = min(1, k/4) where k = |initialState.evidence| (contracts) + 1 if an executed scenario evidence file references the item + 1 if CP8 grades it + 1 if CP8.v150Matrix.note lists it executed; items with no pointer ⇒ k = 0 (a count, measured)"
+        "rule": "EVD-1: value = min(1, k/4) where k = |initialState.evidence| (contracts) + 1 if an executed scenario evidence file references the item + 1 if CP8 grades it + 1 if CP8.v150Matrix.note lists it executed; items with no pointer ⇒ k = 0 (a count, measured); CP8 capability-gap items: k = 1 per CP8 pointer (odgCapabilityAudit entry, gaps entry) + 1 per merged later evidence file whose gapRef cites the item (LAND-1)"
       }
     ],
     "weights": {
@@ -133,10 +138,86 @@
     },
     "weightsNote": "equal weights (1 each) DECLARED by the provider — no canonical source weights these criteria; owner may replace",
     "ownerRule": "OWN-1: requiresOwnerAuthorization iff /owner-gated|owner-authorized|owner decision|spend|budget|billing|paid|egress|systemd|deploy|production|ROADMAP.json|governance|Boussole/i matches the item's objective, acceptance_criteria or initialState.missingForPass (contracts) or its own text (other items), ignoring matches directly preceded by no/without/not/never; contract `scope` and `stop_conditions` are NOT scanned (they are negative lists / identical boilerplate on all 16 contracts)",
+    "capabilityGapRules": {
+      "dedupe": "DEDUP-1: provider-authored pairing table GAP_LINKS — a CP8.gaps entry matching a link's gapRe is the same gap as that link's odgCapabilityAudit entry (one item, both cited); a CP8.gaps entry matching no link becomes its own item (status PROPOSED, CP8 lists it open without an audit status)",
+      "owner": "OWN-2 (capability-gap items only; prior items keep OWN-1): requiresOwnerAuthorization iff the item's cited CP8 text matches /cryptograph|provider launch|launch a provider|billed|spend|auto-commit|commit/merge|human/coordinator-gated|\bhost\b|systemd|sudo|deploy/i (negation guard as OWN-1), OR OWN-1 matches, OR a CP8.ownerQuestions entry is linked (open owner question). No authorization is created or inferred.",
+      "landed": "LAND-1: later evidence is reflected ONLY when a merged evidence file (V164+ other than this register's own output) carries a top-level gapRef naming 'odgCapabilityAudit.<key>' of the item; it is cited (landedEvidence) and counted in EVD-1, but the CP8 status is kept unless that file states a new status field for the gap (none does)",
+      "links": [
+        {
+          "id": "CP8-GAP-1-selectNextMission",
+          "audit": "1_selectNextMission",
+          "gapRe": null,
+          "ownerQuestionRe": null
+        },
+        {
+          "id": "CP8-GAP-2-setPriorities",
+          "audit": "2_setPriorities",
+          "gapRe": "/mission register/i",
+          "ownerQuestionRe": "/mission-priority-selector/i"
+        },
+        {
+          "id": "CP8-GAP-3-chooseMode",
+          "audit": "3_chooseMode",
+          "gapRe": null,
+          "ownerQuestionRe": null
+        },
+        {
+          "id": "CP8-GAP-4-authorizeProvider",
+          "audit": "4_authorizeProvider",
+          "gapRe": "/launch a provider/i",
+          "ownerQuestionRe": "/provider spend ceiling/i"
+        },
+        {
+          "id": "CP8-GAP-5-superviseExecution",
+          "audit": "5_superviseExecution",
+          "gapRe": "/supervisor cannot assign/i",
+          "ownerQuestionRe": null
+        },
+        {
+          "id": "CP8-GAP-6-recoverResults",
+          "audit": "6_recoverResults",
+          "gapRe": null,
+          "ownerQuestionRe": null
+        },
+        {
+          "id": "CP8-GAP-7-validateIndependently",
+          "audit": "7_validateIndependently",
+          "gapRe": null,
+          "ownerQuestionRe": null
+        },
+        {
+          "id": "CP8-GAP-8-integrateResult",
+          "audit": "8_integrateResult",
+          "gapRe": "/integration is human/i",
+          "ownerQuestionRe": null
+        },
+        {
+          "id": "CP8-GAP-9-chooseFollowing",
+          "audit": "9_chooseFollowing",
+          "gapRe": null,
+          "ownerQuestionRe": null
+        },
+        {
+          "id": "CP8-GAP-executedPartialMapping",
+          "audit": null,
+          "gapRe": "/EXECUTED_PARTIAL/",
+          "ownerQuestionRe": "/mission-priority-selector/i"
+        },
+        {
+          "id": "CP8-GAP-canonicalDefectsJ",
+          "audit": null,
+          "gapRe": "/decomposed-execution/i",
+          "ownerQuestionRe": "/canonical defects found by J/i"
+        }
+      ]
+    },
     "sourcesUsed": {
       "contracts": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
       "v150": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
       "cp8": "docs/odg/evidence/V163_CHECKPOINT_8.json",
+      "laterEvidence": [
+        "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json"
+      ],
       "scenarioEvidence": [
         {
           "scenario": "F",
@@ -158,17 +239,18 @@
       ],
       "scenarioEvidenceRule": "SCN-1: a scenario evidence file (contractRef/contract '#X' or scenario field naming X) counts as executed against contract X only if its basename version V<n>_ ≥ the contracts file's version; earlier files are pre-contract evidence already cited in initialState.evidence"
     },
-    "itemCount": 45,
+    "itemCount": 56,
     "statusCounts": {
       "ACCEPTED": 1,
       "PASS_IN_SCOPE": 2,
       "EXECUTED_PARTIAL": 3,
-      "PARTIAL": 11,
+      "PARTIAL": 19,
       "NOT_ADOPTED": 1,
       "BLOCKED": 14,
       "FAILED": 0,
       "NOT_MEASURED": 1,
-      "PROPOSED": 12
+      "PROPOSED": 14,
+      "NOT_IMPLEMENTED": 1
     },
     "items": [
       {
@@ -4143,6 +4225,1100 @@
         }
       },
       {
+        "id": "CP8-GAP-1-selectNextMission",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "1_selectNextMission: live root tick selects via mission-scheduler (ALLOWLIST=M0001 ⇒ IDLE, ALREADY_PROVEN dedup); session observation of mission-priority-selector.selectNext on the A–P contracts with the inputs recorded in selectorRun ⇒ 9-way tie at 0.51 broken by id ⇒ 'C'",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.1_selectNextMission.status"
+        ],
+        "cp8Status": "PARTIAL",
+        "cp8Gaps": [],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "live root tick selects via mission-scheduler (ALLOWLIST=M0001 ⇒ IDLE, ALREADY_PROVEN dedup); session observation of mission-priority-selector.selectNext on the A–P contracts with the inputs recorded in selectorRun ⇒ 9-way tie at 0.51 broken by id ⇒ 'C'",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.1_selectNextMission.status"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.25,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.1_selectNextMission.status"
+            ],
+            "basis": "k=1 (audit entry)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-2-setPriorities",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "2_setPriorities: selector scoring exists; no canonical register supplies strategicImportance/roadmapPriority/deps for V15.0 items (contracts have none)",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.2_setPriorities.status",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[0]"
+        ],
+        "cp8Status": "PARTIAL",
+        "cp8Gaps": [
+          "no canonical V15.0 mission register carrying priority attributes and dependencies"
+        ],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "selector scoring exists; no canonical register supplies strategicImportance/roadmapPriority/deps for V15.0 items (contracts have none)",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.2_setPriorities.status"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[0]",
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.2_setPriorities.status",
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[0]"
+            ],
+            "basis": "k=2 (audit entry + 1 gaps entry)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-3-chooseMode",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "3_chooseMode: odg-local-model-execution-policy chooses local tier or escalation (exercised in J); 'hybrid' is not an option of the component",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode.status"
+        ],
+        "cp8Status": "PARTIAL",
+        "cp8Gaps": [],
+        "landedEvidence": [
+          {
+            "path": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+            "field": "gapRef",
+            "gapRef": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (\"'hybrid' is not an option of the component\")"
+          }
+        ],
+        "landedNote": "later merged evidence cites this gap (LAND-1); CP8 status kept — no file states a new status for it",
+        "nextStep": {
+          "text": "odg-local-model-execution-policy chooses local tier or escalation (exercised in J); 'hybrid' is not an option of the component",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode.status"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode.status",
+              "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json#gapRef"
+            ],
+            "basis": "k=2 (audit entry + 1 landed evidence)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-4-authorizeProvider",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "4_authorizeProvider: odg-sovereign-delegation creates deny-by-default records (8 CREATED in J); real provider launch NOT_IMPLEMENTED (billed, no verifiable spend ceiling)",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.4_authorizeProvider.status",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[3]"
+        ],
+        "cp8Status": "PARTIAL",
+        "cp8Gaps": [
+          "ODG cannot launch a provider"
+        ],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "odg-sovereign-delegation creates deny-by-default records (8 CREATED in J); real provider launch NOT_IMPLEMENTED (billed, no verifiable spend ceiling)",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.4_authorizeProvider.status"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "OWN-2 matched [provider launch, billed, spend, launch a provider, spend] in the cited CP8 text; open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[1]",
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.4_authorizeProvider.status",
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[3]"
+            ],
+            "basis": "k=2 (audit entry + 1 gaps entry)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-5-superviseExecution",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "5_superviseExecution: odg-agent-supervisor refuses repo-mode assign on the real repo (fail-closed); works only on throw-away workspaces; closures CLOSED_NO_RESULT",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.5_superviseExecution.status",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[2]"
+        ],
+        "cp8Status": "PARTIAL",
+        "cp8Gaps": [
+          "supervisor cannot assign on the real repo"
+        ],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "odg-agent-supervisor refuses repo-mode assign on the real repo (fail-closed); works only on throw-away workspaces; closures CLOSED_NO_RESULT",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.5_superviseExecution.status"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.5_superviseExecution.status",
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[2]"
+            ],
+            "basis": "k=2 (audit entry + 1 gaps entry)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-6-recoverResults",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "6_recoverResults: odg-delegate→odg-verify→mission-scoped converge proven on real runs (#923); provider launched by the coordinator",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.6_recoverResults.status"
+        ],
+        "cp8Status": "PARTIAL",
+        "cp8Gaps": [],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "odg-delegate→odg-verify→mission-scoped converge proven on real runs (#923); provider launched by the coordinator",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.6_recoverResults.status"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "OWN-2 matched [provider launch] in the cited CP8 text",
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.25,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.6_recoverResults.status"
+            ],
+            "basis": "k=1 (audit entry)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-7-validateIndependently",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "7_validateIndependently: pipeline gates operational in live ticks; independent inspections performed by provider agents; inspector identity not cryptographically bound",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.7_validateIndependently.status"
+        ],
+        "cp8Status": "PARTIAL",
+        "cp8Gaps": [],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "pipeline gates operational in live ticks; independent inspections performed by provider agents; inspector identity not cryptographically bound",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.7_validateIndependently.status"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "OWN-2 matched [cryptograph] in the cited CP8 text",
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.25,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.7_validateIndependently.status"
+            ],
+            "basis": "k=1 (audit entry)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-8-integrateResult",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "8_integrateResult: commit/merge is human/coordinator-gated ('ODG never auto-commits')",
+        "status": "NOT_IMPLEMENTED",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.8_integrateResult.status",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[4]"
+        ],
+        "cp8Status": "NOT_IMPLEMENTED (by design)",
+        "cp8Gaps": [
+          "integration is human"
+        ],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "commit/merge is human/coordinator-gated ('ODG never auto-commits')",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.8_integrateResult.status"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "OWN-2 matched [commit/merge, human/coordinator-gated, auto-commit] in the cited CP8 text",
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.8_integrateResult.status",
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[4]"
+            ],
+            "basis": "k=2 (audit entry + 1 gaps entry)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-9-chooseFollowing",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "9_chooseFollowing: same as #1; loop closed only for M0001",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.9_chooseFollowing.status"
+        ],
+        "cp8Status": "PARTIAL",
+        "cp8Gaps": [],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "same as #1; loop closed only for M0001",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.9_chooseFollowing.status"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.25,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.9_chooseFollowing.status"
+            ],
+            "basis": "k=1 (audit entry)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-executedPartialMapping",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "no EXECUTED_PARTIAL status in the candidate mapping: the selector only knows status==='ACCEPTED', so callers must either re-offer executed-PARTIAL items or wrongly exclude them as accepted",
+        "status": "PROPOSED",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[1]"
+        ],
+        "cp8Status": null,
+        "cp8Gaps": [
+          "no EXECUTED_PARTIAL status in the candidate mapping: the selector only knows status==='ACCEPTED', so callers must either re-offer executed-PARTIAL items or wrongly exclude them as accepted"
+        ],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "no EXECUTED_PARTIAL status in the candidate mapping: the selector only knows status==='ACCEPTED', so callers must either re-offer executed-PARTIAL items or wrongly exclude them as accepted",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[1]"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[0]",
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.25,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[1]"
+            ],
+            "basis": "k=1 ( + 1 gaps entry)"
+          }
+        }
+      },
+      {
+        "id": "CP8-GAP-canonicalDefectsJ",
+        "kind": "CP8_CAPABILITY_GAP",
+        "title": "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results",
+        "status": "PROPOSED",
+        "statusSource": [
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
+        ],
+        "cp8Status": null,
+        "cp8Gaps": [
+          "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results"
+        ],
+        "landedEvidence": [],
+        "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+        "nextStep": {
+          "text": "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
+        },
+        "deps": [],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[2]",
+        "sectionsAdvanced": [],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "AUT-1",
+            "source": [],
+            "reason": "no V150 section mapping for a CP8 capability gap"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [],
+            "reason": "not referenced by any V150 top10NextInternal item"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [],
+            "reason": "absent from V150 top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CRC-1",
+            "source": [],
+            "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [],
+            "reason": "no dependency stated in the cited CP8 text ⇒ deps []"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0.25,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
+            ],
+            "basis": "k=1 ( + 1 gaps entry)"
+          }
+        }
+      },
+      {
         "id": "MC-CR-APPROVAL-STANDARD",
         "kind": "CP8_METHOD_CARD",
         "title": "MC-CR-APPROVAL-STANDARD (Google)",
@@ -5120,6 +6296,10 @@
       "I",
       "V150-T10",
       "V150-T09",
+      "CP8-GAP-3-chooseMode",
+      "CP8-GAP-5-superviseExecution",
+      "CP8-GAP-1-selectNextMission",
+      "CP8-GAP-9-chooseFollowing",
       "V150-AI4",
       "MC-CI-BEFORE-REVIEW",
       "MC-CR-APPROVAL-STANDARD",
@@ -5129,7 +6309,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'G': evidence score 0.35 (uncertainty 0.5 ≤ 0.5); tie of 2 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 22 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, H, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, V150-T09, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'G': evidence score 0.35 (uncertainty 0.5 ≤ 0.5); tie of 2 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, H, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -6820,6 +8000,952 @@
         "autoSelectable": true
       },
       {
+        "id": "CP8-GAP-2-setPriorities",
+        "status": "PARTIAL",
+        "evidenceScore": 0.05,
+        "upperBound": 0.95,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[0]",
+        "autoSelectable": false
+      },
+      {
+        "id": "CP8-GAP-3-chooseMode",
+        "status": "PARTIAL",
+        "evidenceScore": 0.05,
+        "upperBound": 0.95,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "CP8-GAP-4-authorizeProvider",
+        "status": "PARTIAL",
+        "evidenceScore": 0.05,
+        "upperBound": 0.95,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "OWN-2 matched [provider launch, billed, spend, launch a provider, spend] in the cited CP8 text; open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[1]",
+        "autoSelectable": false
+      },
+      {
+        "id": "CP8-GAP-5-superviseExecution",
+        "status": "PARTIAL",
+        "evidenceScore": 0.05,
+        "upperBound": 0.95,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "CP8-GAP-8-integrateResult",
+        "status": "NOT_IMPLEMENTED",
+        "evidenceScore": 0.05,
+        "upperBound": 0.95,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "OWN-2 matched [commit/merge, human/coordinator-gated, auto-commit] in the cited CP8 text",
+        "autoSelectable": false
+      },
+      {
+        "id": "CP8-GAP-1-selectNextMission",
+        "status": "PARTIAL",
+        "evidenceScore": 0.025,
+        "upperBound": 0.925,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.025,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "CP8-GAP-6-recoverResults",
+        "status": "PARTIAL",
+        "evidenceScore": 0.025,
+        "upperBound": 0.925,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.025,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "OWN-2 matched [provider launch] in the cited CP8 text",
+        "autoSelectable": false
+      },
+      {
+        "id": "CP8-GAP-7-validateIndependently",
+        "status": "PARTIAL",
+        "evidenceScore": 0.025,
+        "upperBound": 0.925,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.025,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "OWN-2 matched [cryptograph] in the cited CP8 text",
+        "autoSelectable": false
+      },
+      {
+        "id": "CP8-GAP-9-chooseFollowing",
+        "status": "PARTIAL",
+        "evidenceScore": 0.025,
+        "upperBound": 0.925,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.025,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "CP8-GAP-canonicalDefectsJ",
+        "status": "PROPOSED",
+        "evidenceScore": 0.025,
+        "upperBound": 0.925,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.025,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[2]",
+        "autoSelectable": false
+      },
+      {
+        "id": "CP8-GAP-executedPartialMapping",
+        "status": "PROPOSED",
+        "evidenceScore": 0.025,
+        "upperBound": 0.925,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.025,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[0]",
+        "autoSelectable": false
+      },
+      {
         "id": "V150-AI4",
         "status": "PROPOSED",
         "evidenceScore": 0.005,
@@ -7622,6 +9748,41 @@
         "id": "A",
         "evidenceScore": 0.1,
         "ownerReason": "OWN-1 matched [owner-authorized, owner-authorized] in objective/acceptance_criteria/missingForPass"
+      },
+      {
+        "id": "CP8-GAP-2-setPriorities",
+        "evidenceScore": 0.05,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[0]"
+      },
+      {
+        "id": "CP8-GAP-4-authorizeProvider",
+        "evidenceScore": 0.05,
+        "ownerReason": "OWN-2 matched [provider launch, billed, spend, launch a provider, spend] in the cited CP8 text; open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[1]"
+      },
+      {
+        "id": "CP8-GAP-8-integrateResult",
+        "evidenceScore": 0.05,
+        "ownerReason": "OWN-2 matched [commit/merge, human/coordinator-gated, auto-commit] in the cited CP8 text"
+      },
+      {
+        "id": "CP8-GAP-6-recoverResults",
+        "evidenceScore": 0.025,
+        "ownerReason": "OWN-2 matched [provider launch] in the cited CP8 text"
+      },
+      {
+        "id": "CP8-GAP-7-validateIndependently",
+        "evidenceScore": 0.025,
+        "ownerReason": "OWN-2 matched [cryptograph] in the cited CP8 text"
+      },
+      {
+        "id": "CP8-GAP-canonicalDefectsJ",
+        "evidenceScore": 0.025,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[2]"
+      },
+      {
+        "id": "CP8-GAP-executedPartialMapping",
+        "evidenceScore": 0.025,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[0]"
       }
     ],
     "isProposalOnly": true,
@@ -7636,7 +9797,7 @@
       "J"
     ],
     "resolvedBy": "R3_LOWER_RISK",
-    "justification": "ODG proposes 'G': evidence score 0.35 (uncertainty 0.5 ≤ 0.5); tie of 2 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 22 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, H, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, V150-T09, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'G': evidence score 0.35 (uncertainty 0.5 ≤ 0.5); tie of 2 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, H, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
       "remainingCriteria": [
@@ -7654,7 +9815,14 @@
     "ownerAuthorizationRequired": [
       "K",
       "C",
-      "A"
+      "A",
+      "CP8-GAP-2-setPriorities",
+      "CP8-GAP-4-authorizeProvider",
+      "CP8-GAP-8-integrateResult",
+      "CP8-GAP-6-recoverResults",
+      "CP8-GAP-7-validateIndependently",
+      "CP8-GAP-canonicalDefectsJ",
+      "CP8-GAP-executedPartialMapping"
     ],
     "authorizationState": "PROPOSAL — not authorized, not executed"
   },
@@ -7698,7 +9866,7 @@
         "b3": true,
         "b4": false
       },
-      "meanMeasuredWeightShareOverSelectable": 0.3087
+      "meanMeasuredWeightShareOverSelectable": 0.2778
     },
     "C": {
       "grade": "PASS",
@@ -7724,7 +9892,8 @@
     "CP8 is read from the unmerged branch origin/docs/v163-checkpoint-8 when it is not on main; its sha256 is in inputs, so a CP8 change is detected as drift",
     "dependency edges between items: none are stated in the evidence, so R1 (unblocking) never discriminates",
     "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
+    "CP8_CAPABILITY_GAP items (ODG's own capability gaps): only evidenceLevel is derivable, every other criterion is NOT_MEASURED (uncertainty 0.9), so under uncertaintyMax 0.5 none can be the choice until benefit criteria are measured; the GAP_LINKS dedupe table and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change"
   ],
-  "generatedAtHead": "4816db015a9e6ddf88151bb7ae8c66b3d8f6f804"
+  "generatedAtHead": "a1eee034344c8f36ffd78c8b4f45450b326dfd4f"
 }

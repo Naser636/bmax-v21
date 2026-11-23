@@ -82,6 +82,28 @@ check("register → selector: never selects an owner-gated or non-selectable ite
 check("register → selector: deterministic", JSON.stringify(d) === JSON.stringify(SEL.selectNextExplained(REG.toSelectorCandidates(REG.buildRegister(sources())), { weights: REG.WEIGHTS, directions: REG.DIRECTIONS })));
 check("malformed sources throw explicitly (no silent empty register)", (() => { try { REG.buildRegister({}); return false; } catch { return true; } })());
 
+// ── CP8 capability gaps (V16.4 §3/§7) ──
+const cp8g = Object.assign({}, cp8, {
+  odgCapabilityAudit: { "1_selectNextMission": { status: "PARTIAL", evidence: "live tick selects M0001 only" }, "3_chooseMode": { status: "PARTIAL", evidence: "'hybrid' is not an option" }, "4_authorizeProvider": { status: "PARTIAL", evidence: "real provider launch NOT_IMPLEMENTED (billed, no verifiable spend ceiling)" }, "7_validateIndependently": { status: "PARTIAL", evidence: "inspector identity not cryptographically bound" }, "8_integrateResult": { status: "NOT_IMPLEMENTED (by design)", evidence: "commit/merge is human/coordinator-gated" }, "X_done": { status: "OPERATIONAL", evidence: "works" } },
+  gaps: ["ODG cannot launch a provider", "integration is human", "something new and unlinked"],
+  ownerQuestions: ["provider spend ceiling for pilot arm C?"],
+});
+const later = [{ path: "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json", data: { gapRef: "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (x)" } }];
+const RG = REG.buildRegister(Object.assign(sources({ cp8: cp8g }), { laterEvidence: later }));
+const gi = (id: string) => RG.items.find((x: any) => x.id === id);
+const gapItems = RG.items.filter((x: any) => x.kind === "CP8_CAPABILITY_GAP");
+check("gaps: one item per audit entry ≠ OPERATIONAL (OPERATIONAL entry dropped)", !gapItems.some((x: any) => /X_done/.test(x.id + x.title)) && ["1_selectNextMission", "3_chooseMode", "4_authorizeProvider", "7_validateIndependently", "8_integrateResult"].every((k) => gapItems.some((x: any) => x.statusSource.some((s: string) => s.endsWith(`odgCapabilityAudit.${k}.status`)))));
+check("gaps: DEDUP-1 merges 'cannot launch a provider' into 4_authorizeProvider and 'integration is human' into 8 (both cited)", gi("CP8-GAP-4-authorizeProvider").cp8Gaps.length === 1 && gi("CP8-GAP-8-integrateResult").statusSource.some((s: string) => /gaps\[1\]/.test(s)));
+check("gaps: an unlinked CP8 gap is never dropped ⇒ own PROPOSED item", gapItems.some((x: any) => x.status === "PROPOSED" && /something new/.test(x.title)));
+check("gaps: status from the audit (PARTIAL / NOT_IMPLEMENTED), with source", gi("CP8-GAP-8-integrateResult").status === "NOT_IMPLEMENTED" && gi("CP8-GAP-1-selectNextMission").status === "PARTIAL" && RG.statusCounts.NOT_IMPLEMENTED === 1);
+check("gaps: owner flags — spend/provider launch, crypto identity (negated text still flags), commit/merge, linked owner question", gi("CP8-GAP-4-authorizeProvider").requiresOwnerAuthorization && /ownerQuestions\[0\]/.test(gi("CP8-GAP-4-authorizeProvider").ownerReason) && gi("CP8-GAP-7-validateIndependently").requiresOwnerAuthorization && gi("CP8-GAP-8-integrateResult").requiresOwnerAuthorization && !gi("CP8-GAP-1-selectNextMission").requiresOwnerAuthorization && !gi("CP8-GAP-3-chooseMode").requiresOwnerAuthorization);
+check("gaps: LAND-1 — gapRef in a later file is cited + counted, CP8 status kept", gi("CP8-GAP-3-chooseMode").landedEvidence.length === 1 && gi("CP8-GAP-3-chooseMode").status === "PARTIAL" && gi("CP8-GAP-3-chooseMode").criteria.evidenceLevel.value === 0.5 && gi("CP8-GAP-1-selectNextMission").criteria.evidenceLevel.value === 0.25);
+check("gaps: no default fill — every criterion except evidenceLevel NOT_MEASURED with value null", gapItems.every((x: any) => Object.entries(x.criteria).every(([k, c]: any) => k === "evidenceLevel" ? c.status === "MEASURED" : c.status === "NOT_MEASURED" && c.value === null)));
+check("gaps: no authorization created (authorizedBy absent, deps [])", gapItems.every((x: any) => !x.authorizedBy && x.deps.length === 0));
+check("gaps: prior items byte-identical with or without the gap source", JSON.stringify(R.items) === JSON.stringify(RG.items.filter((x: any) => x.kind !== "CP8_CAPABILITY_GAP")) || JSON.stringify(REG.buildRegister(sources({ cp8: cp8g })).items.filter((x: any) => x.kind !== "CP8_CAPABILITY_GAP")) === JSON.stringify(RG.items.filter((x: any) => x.kind !== "CP8_CAPABILITY_GAP")));
+const dg = SEL.selectNextExplained(REG.toSelectorCandidates(RG), { weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
+check("gaps: owner-gated gap items never selected; selectable gap items appear in ranking", !dg.selected || !gi(dg.selected.id) || !gi(dg.selected.id).requiresOwnerAuthorization && dg.ranking.some((r: any) => r.id === "CP8-GAP-3-chooseMode" && r.autoSelectable));
+
 process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-strategic-register + selectNextExplained (taxonomy, EXECUTED_PARTIAL≠ACCEPTED, NOT_MEASURED⇒uncertainty, no id tie-break, owner-gated never auto-selected)" : f + " FAIL") + "\n");
 process.exit(f === 0 ? 0 : 1);
 export {};

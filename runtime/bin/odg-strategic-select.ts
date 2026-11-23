@@ -70,7 +70,18 @@ function loadSources(root: string): any {
     inputs.push({ source: rel, sha256: sha256(fs.readFileSync(path.join(root, rel), "utf8")) });
     scenarioEvidence.push({ path: rel, data });
   }
-  return { contracts, v150, cp8, scenarioEvidence, inputs };
+  // LAND-1 inputs: merged V164+ evidence files (not this register's own output) carrying a top-level gapRef.
+  const laterEvidence: any[] = [];
+  for (const f of fs.readdirSync(path.join(root, EVIDENCE_DIR_REL)).filter((f: string) => /^V(16[4-9]|1[7-9]\d)_.*\.json$/.test(f)).sort()) {
+    const rel = `${EVIDENCE_DIR_REL}/${f}`;
+    if (rel === OUT_REL) continue;
+    let txt: string, data: any;
+    try { txt = fs.readFileSync(path.join(root, rel), "utf8"); data = JSON.parse(txt); } catch { continue; }
+    if (!data || typeof data.gapRef !== "string") continue;
+    inputs.push({ source: rel, sha256: sha256(txt) });
+    laterEvidence.push({ path: rel, data: { gapRef: data.gapRef } });
+  }
+  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, inputs };
 }
 
 const SELECTOR_OPTIONS = Object.freeze({ weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
@@ -160,6 +171,7 @@ function compute(sources: any): any {
       "CP8 is read from the unmerged branch origin/docs/v163-checkpoint-8 when it is not on main; its sha256 is in inputs, so a CP8 change is detected as drift",
       "dependency edges between items: none are stated in the evidence, so R1 (unblocking) never discriminates",
       "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
+      "CP8_CAPABILITY_GAP items (ODG's own capability gaps): only evidenceLevel is derivable, every other criterion is NOT_MEASURED (uncertainty 0.9), so under uncertaintyMax 0.5 none can be the choice until benefit criteria are measured; the GAP_LINKS dedupe table and OWN-2 were written by the provider; no authorization was created or inferred",
       "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
     ],
   };

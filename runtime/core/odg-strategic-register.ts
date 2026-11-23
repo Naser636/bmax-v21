@@ -25,6 +25,7 @@ const STATUS = Object.freeze({
   FAILED: "executed and graded FAIL",
   NOT_MEASURED: "current state cannot be derived from the evidence (overlap or completion not stated by any field)",
   PROPOSED: "listed as next work by a canonical source; no contract; not executed per the evidence",
+  NOT_IMPLEMENTED: "CP8 odgCapabilityAudit status NOT_IMPLEMENTED (capability absent, possibly by design)",
 });
 
 const CRITERIA = Object.freeze([
@@ -37,7 +38,7 @@ const CRITERIA = Object.freeze([
   { name: "strategicValue", direction: "HIGHER_IS_BETTER", rule: "STR-1: value = (11 - rank)/10 for the best V150 summary.top10NextInternal rank that references the item; listed only in summary.alsoInternal (unranked, after the top 10) ⇒ 0.05; absent from both ⇒ NOT_MEASURED (absence is not evidence of low value)" },
   { name: "costRiskComplexity", direction: "LOWER_IS_BETTER", rule: "CRC-1: contracts only: value = min(1, (|acceptance_criteria| + |write_set|)/10 + (0.3 if an owner-gated step is stated)); items without a WORK_ITEM_CONTRACT ⇒ NOT_MEASURED (no declared scope to size)" },
   { name: "dependencyAvailability", direction: "HIGHER_IS_BETTER", rule: "DEP-1: only when the evidence STATES a dependency: value = satisfied/stated (an owner-authorization dependency is unsatisfied while contract.authorizedBy is null; an 'IN_PROGRESS elsewhere' dependency is satisfied only if a field states it landed); no stated dependency ⇒ deps [] and NOT_MEASURED" },
-  { name: "evidenceLevel", direction: "HIGHER_IS_BETTER", rule: "EVD-1: value = min(1, k/4) where k = |initialState.evidence| (contracts) + 1 if an executed scenario evidence file references the item + 1 if CP8 grades it + 1 if CP8.v150Matrix.note lists it executed; items with no pointer ⇒ k = 0 (a count, measured)" },
+  { name: "evidenceLevel", direction: "HIGHER_IS_BETTER", rule: "EVD-1: value = min(1, k/4) where k = |initialState.evidence| (contracts) + 1 if an executed scenario evidence file references the item + 1 if CP8 grades it + 1 if CP8.v150Matrix.note lists it executed; items with no pointer ⇒ k = 0 (a count, measured); CP8 capability-gap items: k = 1 per CP8 pointer (odgCapabilityAudit entry, gaps entry) + 1 per merged later evidence file whose gapRef cites the item (LAND-1)" },
 ]);
 
 const WEIGHTS = Object.freeze(Object.fromEntries(CRITERIA.map((c) => [c.name, 1])));
@@ -239,6 +240,9 @@ function buildRegister(sources: any): any {
     items.push({ id: "V150-OG" + String(i + 1).padStart(2, "0"), kind: "V150_OWNER_GATED", title: g, status: "BLOCKED", statusSource: [ptr], nextStep: { text: "owner decision", source: ptr }, deps: [], depsNote: "owner-gated", depsStated: [{ kind: "OWNER_AUTHORIZATION", text: g, satisfied: false, source: ptr }], requiresOwnerAuthorization: true, ownerReason: "listed in V150 summary.ownerGated", sectionsAdvanced: [], criteria: crit });
   });
 
+  // ── 6. CP8 capability gaps (odgCapabilityAudit entries ≠ OPERATIONAL + CP8.gaps, deduplicated by GAP_LINKS) ─────────
+  if (P8) for (const g of capabilityGapItems(P8, Array.isArray(sources.laterEvidence) ? sources.laterEvidence : [])) items.push(g);
+
   // ── 5. CP8 method-card matrix ⇒ PROPOSED (EXPERIMENT) / NOT_ADOPTED (DEFER) ─────────────────────────────────────────
   const mc: any[] = P8 && P8.data.globalResearch && Array.isArray(P8.data.globalResearch.matrix) ? P8.data.globalResearch.matrix : [];
   mc.forEach((m: any, i: number) => {
@@ -255,9 +259,98 @@ function buildRegister(sources: any): any {
     schema: "ODG_STRATEGIC_REGISTER/1",
     statusTaxonomy: STATUS,
     criteria: CRITERIA, weights: WEIGHTS, weightsNote: WEIGHTS_NOTE, ownerRule: OWNER_RULE,
-    sourcesUsed: { contracts: cf, v150: vf, cp8: pf, scenarioEvidence: Object.keys(scen).sort().map((k) => ({ scenario: k, path: scen[k].path })), preContractEvidenceIgnored: ignoredEvidence, scenarioEvidenceRule: SCN_RULE },
+    capabilityGapRules: { dedupe: GAP_DEDUP_RULE, owner: OWNER_RULE_GAP, landed: LAND_RULE, links: GAP_LINKS.map((l: any) => ({ id: l.id, audit: l.audit, gapRe: l.gapRe ? String(l.gapRe) : null, ownerQuestionRe: l.oqRe ? String(l.oqRe) : null })) },
+    sourcesUsed: { contracts: cf, v150: vf, cp8: pf, laterEvidence: (Array.isArray(sources.laterEvidence) ? sources.laterEvidence : []).map((e: any) => e.path).sort(), scenarioEvidence: Object.keys(scen).sort().map((k) => ({ scenario: k, path: scen[k].path })), preContractEvidenceIgnored: ignoredEvidence, scenarioEvidenceRule: SCN_RULE },
     itemCount: items.length, statusCounts, items,
   });
+}
+
+/*
+ * CP8 CAPABILITY GAPS — one item per CP8.odgCapabilityAudit entry whose status ≠ OPERATIONAL and one per CP8.gaps entry
+ * NOT linked to an audit entry. GAP_LINKS is a PROVIDER-AUTHORED, declared pairing table (DEDUP-1): a gap whose text
+ * matches gapRe is the SAME gap as that audit entry (merged into one item, both cited); oqRe links a CP8.ownerQuestions
+ * entry (an open owner question ⇒ owner authorization required). Criteria use the SAME rules as every other item.
+ */
+const GAP_LINKS: any[] = [
+  { id: "CP8-GAP-1-selectNextMission", audit: "1_selectNextMission" },
+  { id: "CP8-GAP-2-setPriorities", audit: "2_setPriorities", gapRe: /mission register/i, oqRe: /mission-priority-selector/i },
+  { id: "CP8-GAP-3-chooseMode", audit: "3_chooseMode" },
+  { id: "CP8-GAP-4-authorizeProvider", audit: "4_authorizeProvider", gapRe: /launch a provider/i, oqRe: /provider spend ceiling/i },
+  { id: "CP8-GAP-5-superviseExecution", audit: "5_superviseExecution", gapRe: /supervisor cannot assign/i },
+  { id: "CP8-GAP-6-recoverResults", audit: "6_recoverResults" },
+  { id: "CP8-GAP-7-validateIndependently", audit: "7_validateIndependently" },
+  { id: "CP8-GAP-8-integrateResult", audit: "8_integrateResult", gapRe: /integration is human/i },
+  { id: "CP8-GAP-9-chooseFollowing", audit: "9_chooseFollowing" },
+  { id: "CP8-GAP-executedPartialMapping", audit: null, gapRe: /EXECUTED_PARTIAL/, oqRe: /mission-priority-selector/i },
+  { id: "CP8-GAP-canonicalDefectsJ", audit: null, gapRe: /decomposed-execution/i, oqRe: /canonical defects found by J/i },
+];
+const GAP_DEDUP_RULE = "DEDUP-1: provider-authored pairing table GAP_LINKS — a CP8.gaps entry matching a link's gapRe is the same gap as that link's odgCapabilityAudit entry (one item, both cited); a CP8.gaps entry matching no link becomes its own item (status PROPOSED, CP8 lists it open without an audit status)";
+const OWNER_RULE_GAP = "OWN-2 (capability-gap items only; prior items keep OWN-1): requiresOwnerAuthorization iff the item's cited CP8 text matches /cryptograph|provider launch|launch a provider|billed|spend|auto-commit|commit\/merge|human\/coordinator-gated|\bhost\b|systemd|sudo|deploy/i (negation guard as OWN-1), OR OWN-1 matches, OR a CP8.ownerQuestions entry is linked (open owner question). No authorization is created or inferred.";
+const LAND_RULE = "LAND-1: later evidence is reflected ONLY when a merged evidence file (V164+ other than this register's own output) carries a top-level gapRef naming 'odgCapabilityAudit.<key>' of the item; it is cited (landedEvidence) and counted in EVD-1, but the CP8 status is kept unless that file states a new status field for the gap (none does)";
+const OWN2_RE = /cryptograph|provider launch|launch a provider|billed|\bspend\b|auto-commit|commit\/merge|human\/coordinator-gated|\bhost\b|\bsystemd\b|\bsudo\b|\bdeploy/gi;
+function own2Matches(text: string): string[] {
+  const out: string[] = [];
+  const re = new RegExp(OWN2_RE.source, "gi");
+  let m: any;
+  // NO negation guard here: CP8 audit text describes what is MISSING ("not cryptographically bound"), so a negated
+  // match still names the owner-gated capability the gap needs.
+  while ((m = re.exec(text)) !== null) out.push(m[0]);
+  return out.concat(ownerMatches(text));
+}
+
+function capabilityGapItems(P8: any, later: any[]): any[] {
+  const pf = P8.path, d = P8.data;
+  const audit: any = isObj(d.odgCapabilityAudit) ? d.odgCapabilityAudit : {};
+  const gaps: string[] = Array.isArray(d.gaps) ? d.gaps.map(String) : [];
+  const oqs: string[] = Array.isArray(d.ownerQuestions) ? d.ownerQuestions.map(String) : [];
+  const usedGaps = new Set<number>();
+  const out: any[] = [];
+  const mk = (id: string, auditKey: string | null, gi: number[], oi: number[], fallbackStatus: string) => {
+    const a = auditKey ? audit[auditKey] : null;
+    const rawStatus = a ? String(a.status) : null;
+    const status = rawStatus ? (/^OPERATIONAL/.test(rawStatus) ? null : /^NOT_IMPLEMENTED/.test(rawStatus) ? "NOT_IMPLEMENTED" : /^PARTIAL/.test(rawStatus) ? "PARTIAL" : "NOT_MEASURED") : fallbackStatus;
+    if (!status) return;
+    const statusSource = (a ? [`${pf}#odgCapabilityAudit.${auditKey}.status`] : []).concat(gi.map((i) => `${pf}#gaps[${i}]`));
+    const landed = later.filter((e: any) => auditKey && typeof e.data.gapRef === "string" && e.data.gapRef.includes("odgCapabilityAudit." + auditKey)).map((e: any) => ({ path: e.path, field: "gapRef", gapRef: e.data.gapRef }));
+    const text = [a ? String(a.evidence) : "", ...gi.map((i) => gaps[i])].join(" \u2016 ");
+    const om = own2Matches(text);
+    const owner = om.length > 0 || oi.length > 0;
+    const ownerReason = owner ? [om.length ? `OWN-2 matched [${om.join(", ")}] in the cited CP8 text` : null, oi.length ? `open owner question: ${oi.map((i) => `${pf}#ownerQuestions[${i}]`).join(", ")}` : null].filter(Boolean).join("; ") : null;
+    const k = (a ? 1 : 0) + gi.length + landed.length;
+    const nm = (rule: string, reason: string) => notMeasured(rule, reason);
+    const crit: any = {
+      autonomyBenefit: nm("AUT-1", "no V150 section mapping for a CP8 capability gap"),
+      capabilityGain: nm("CAP-1", "not referenced by any V150 top10NextInternal item"),
+      blockerRepetitionReduction: nm("BLK-0", "no canonical field links this item to blockers/repetitions removed"),
+      reliabilityQuality: nm("REL-0", "no evidence field records it"),
+      speedEfficiency: nm("SPD-0", "no evidence field records it"),
+      reusability: nm("REU-0", "no evidence field records it"),
+      strategicValue: nm("STR-1", "absent from V150 top10NextInternal and alsoInternal"),
+      costRiskComplexity: nm("CRC-1", "no WORK_ITEM_CONTRACT ⇒ no declared scope to size"),
+      dependencyAvailability: nm("DEP-1", "no dependency stated in the cited CP8 text ⇒ deps []"),
+      evidenceLevel: measured(k / 4, "EVD-1", statusSource.concat(landed.map((l: any) => `${l.path}#gapRef`)), `k=${k} (${a ? "audit entry" : ""}${gi.length ? ` + ${gi.length} gaps entr${gi.length > 1 ? "ies" : "y"}` : ""}${landed.length ? ` + ${landed.length} landed evidence` : ""})`),
+    };
+    out.push({
+      id, kind: "CP8_CAPABILITY_GAP", title: a ? `${auditKey}: ${a.evidence}` : gaps[gi[0]], status, statusSource,
+      cp8Status: rawStatus, cp8Gaps: gi.map((i) => gaps[i]), landedEvidence: landed,
+      landedNote: landed.length ? "later merged evidence cites this gap (LAND-1); CP8 status kept — no file states a new status for it" : "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
+      nextStep: { text: a ? String(a.evidence) : gaps[gi[0]], source: statusSource[0] },
+      deps: [], depsNote: "no dependency stated in the evidence ⇒ []", depsStated: [],
+      requiresOwnerAuthorization: owner, ownerReason, sectionsAdvanced: [], criteria: crit,
+    });
+  };
+  for (const L of GAP_LINKS) {
+    const gi = L.gapRe ? gaps.map((g, i) => (L.gapRe.test(g) ? i : -1)).filter((i) => i >= 0) : [];
+    const oi = L.oqRe ? oqs.map((q, i) => (L.oqRe.test(q) ? i : -1)).filter((i) => i >= 0) : [];
+    if (L.audit && !audit[L.audit]) continue;
+    if (!L.audit && gi.length === 0) continue;
+    gi.forEach((i) => usedGaps.add(i));
+    mk(L.id, L.audit, gi, oi, "PROPOSED");
+  }
+  // audit entries / gaps not covered by the table (CP8 changed) ⇒ own items, never dropped.
+  Object.keys(audit).sort().forEach((key) => { if (!GAP_LINKS.some((L) => L.audit === key)) mk("CP8-GAP-" + key, key, [], [], "PROPOSED"); });
+  gaps.forEach((g, i) => { if (!usedGaps.has(i) && !GAP_LINKS.some((L) => L.gapRe && L.gapRe.test(g))) mk("CP8-GAP-g" + (i + 1), null, [i], [], "PROPOSED"); });
+  return out;
 }
 
 /* toSelectorCandidates(register) — the exact candidate shape mission-priority-selector.selectNextExplained consumes. */
@@ -279,6 +372,6 @@ const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, STATUS, CRITERIA, SCN_RULE, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
+module.exports = { buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(STRATEGIC_REGISTER_CONTRACT, null, 2) + "\n"); }
 export {};
