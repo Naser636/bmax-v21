@@ -1,0 +1,529 @@
+{
+  "schema": "V159_MEASURED_MODEL_POLICY_EVIDENCE",
+  "directive": "CTO V15.9 §6 — measured local-model registry ACTUALLY USED by the execution policy (monotone-safe overlay)",
+  "startedAt": "2026-11-23T12:33:19.116Z",
+  "generatedAt": "2026-11-23T12:38:49.170Z",
+  "head": "5be27612ece8fe58f7535a611b23bbb1a85eaba6",
+  "note_head": "HEAD of the worktree when measured (the committed overlay code is the PR commit that includes this file)",
+  "ollama": {
+    "version": "0.35.1",
+    "endpoint": "http://127.0.0.1:11434 (loopback only)",
+    "installed": [
+      "qwen2.5-coder:7b",
+      "qwen2.5-coder:3b",
+      "qwen2.5:0.5b"
+    ]
+  },
+  "options": {
+    "temperature": 0,
+    "seed": 42,
+    "num_predict": 400
+  },
+  "trialsPerCondition": 2,
+  "parallelism": 1,
+  "warmLoadMs": {
+    "qwen2.5-coder:3b": 9072,
+    "qwen2.5-coder:7b": 15071
+  },
+  "host": {
+    "cpus": 8,
+    "loadavgAtEnd": [
+      7.61,
+      5.61,
+      2.94
+    ],
+    "note": "shared host; wall time includes contention"
+  },
+  "registry": {
+    "source": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json",
+    "sha256": "288f46b7686e04f28df8d520610f211defd4f30b5e609f884aa374f8c4c567fc",
+    "generatedAt": "2026-11-23T09:45:54.705Z",
+    "taskSetVersion": "V155-TASKSET-2",
+    "evidenceHead": "facb71dfd9bdad743b4cb6e0708cbee781e0407f"
+  },
+  "mapping": {
+    "implement": "implement",
+    "bugfix": "bugfix",
+    "bug-fix": "bugfix",
+    "repair": "repair",
+    "refactor": "refactor",
+    "test-writing": "test-writing",
+    "write-tests": "test-writing"
+  },
+  "history": "empty ⇒ calibrated policy = PROBE (qwen2.5-coder:3b, maxRepair 1) for every mission (BEFORE)",
+  "missions": [
+    {
+      "id": "v159-bugfix-median",
+      "type": "bugfix",
+      "taskClass": "bugfix",
+      "contract": "module.exports = function median(xs) — xs is a non-empty array of numbers; return the median using NUMERIC order; for an even length return the mean of the two middle values; must NOT mutate xs."
+    },
+    {
+      "id": "v159-repair-total-length",
+      "type": "repair",
+      "taskClass": "repair",
+      "contract": "module.exports = function totalNameLength(items) — return the sum of item.name.length over the array; an item that is null or whose name is not a string counts 0; null/undefined/non-array input returns 0."
+    },
+    {
+      "id": "v159-refactor-even-squares",
+      "type": "refactor",
+      "taskClass": "refactor",
+      "contract": "module.exports = function evenSquares(xs) — return a NEW array with the squares of the even numbers of xs, in their original order; behaviour identical to the original; no for/while loops; must not mutate xs."
+    },
+    {
+      "id": "v159-implement-parse-range",
+      "type": "implement",
+      "taskClass": "implement",
+      "contract": "module.exports = function parseRange(s) — s is a string like \"1-3,5,7-8\"; return the sorted array of UNIQUE integers it denotes (e.g. [1,2,3,5,7,8]); whitespace around parts is allowed; an empty string returns []; a reversed range (\"5-3\"), a non-integer part, or a negative number throws a RangeError."
+    }
+  ],
+  "graderSelfTest": [
+    {
+      "id": "v159-bugfix-median",
+      "referencePasses": true,
+      "originalFails": true
+    },
+    {
+      "id": "v159-repair-total-length",
+      "referencePasses": true,
+      "originalFails": true
+    },
+    {
+      "id": "v159-refactor-even-squares",
+      "referencePasses": true,
+      "originalFails": true
+    },
+    {
+      "id": "v159-implement-parse-range",
+      "referencePasses": true,
+      "originalFails": true
+    }
+  ],
+  "runs": [
+    {
+      "mission": "v159-bugfix-median",
+      "type": "bugfix",
+      "condition": "BEFORE_calibrated",
+      "trial": 1,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": null,
+      "escalated": false,
+      "measured": null,
+      "generations": 1,
+      "wallMs": 13981,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-bugfix-median",
+      "type": "bugfix",
+      "condition": "BEFORE_calibrated",
+      "trial": 2,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": null,
+      "escalated": false,
+      "measured": null,
+      "generations": 1,
+      "wallMs": 25783,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-repair-total-length",
+      "type": "repair",
+      "condition": "BEFORE_calibrated",
+      "trial": 1,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": null,
+      "escalated": false,
+      "measured": null,
+      "generations": 1,
+      "wallMs": 22386,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-repair-total-length",
+      "type": "repair",
+      "condition": "BEFORE_calibrated",
+      "trial": 2,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": null,
+      "escalated": false,
+      "measured": null,
+      "generations": 1,
+      "wallMs": 10874,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-refactor-even-squares",
+      "type": "refactor",
+      "condition": "BEFORE_calibrated",
+      "trial": 1,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": null,
+      "escalated": false,
+      "measured": null,
+      "generations": 1,
+      "wallMs": 5728,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-refactor-even-squares",
+      "type": "refactor",
+      "condition": "BEFORE_calibrated",
+      "trial": 2,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": null,
+      "escalated": false,
+      "measured": null,
+      "generations": 1,
+      "wallMs": 3171,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-refactor-even-squares",
+      "type": "refactor",
+      "condition": "AFTER_measured",
+      "trial": 1,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": false,
+      "escalated": false,
+      "measured": {
+        "status": "CONSULTED",
+        "taskClass": "refactor",
+        "decision": "LOCAL",
+        "qualifiedModel": "qwen2.5-coder:3b",
+        "raised": false,
+        "escalateSet": false
+      },
+      "generations": 1,
+      "wallMs": 3419,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-refactor-even-squares",
+      "type": "refactor",
+      "condition": "AFTER_measured",
+      "trial": 2,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": false,
+      "escalated": false,
+      "measured": {
+        "status": "CONSULTED",
+        "taskClass": "refactor",
+        "decision": "LOCAL",
+        "qualifiedModel": "qwen2.5-coder:3b",
+        "raised": false,
+        "escalateSet": false
+      },
+      "generations": 1,
+      "wallMs": 2675,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-implement-parse-range",
+      "type": "implement",
+      "condition": "BEFORE_calibrated",
+      "trial": 1,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": false,
+      "cycleOutcome": "FAILURE",
+      "escalateIfStillFails": null,
+      "escalated": false,
+      "measured": null,
+      "generations": 6,
+      "wallMs": 43811,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-implement-parse-range",
+      "type": "implement",
+      "condition": "BEFORE_calibrated",
+      "trial": 2,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": false,
+      "cycleOutcome": "FAILURE",
+      "escalateIfStillFails": null,
+      "escalated": false,
+      "measured": null,
+      "generations": 6,
+      "wallMs": 42346,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-implement-parse-range",
+      "type": "implement",
+      "condition": "AFTER_measured",
+      "trial": 1,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": false,
+      "cycleOutcome": "FAILURE",
+      "escalateIfStillFails": true,
+      "escalated": true,
+      "measured": {
+        "status": "CONSULTED",
+        "taskClass": "implement",
+        "decision": "NO_QUALIFIED_LOCAL_MODEL",
+        "qualifiedModel": null,
+        "raised": false,
+        "escalateSet": true
+      },
+      "generations": 6,
+      "wallMs": 42550,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-implement-parse-range",
+      "type": "implement",
+      "condition": "AFTER_measured",
+      "trial": 2,
+      "model": "qwen2.5-coder:3b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": false,
+      "cycleOutcome": "FAILURE",
+      "escalateIfStillFails": true,
+      "escalated": true,
+      "measured": {
+        "status": "CONSULTED",
+        "taskClass": "implement",
+        "decision": "NO_QUALIFIED_LOCAL_MODEL",
+        "qualifiedModel": null,
+        "raised": false,
+        "escalateSet": true
+      },
+      "generations": 6,
+      "wallMs": 42392,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-bugfix-median",
+      "type": "bugfix",
+      "condition": "AFTER_measured",
+      "trial": 1,
+      "model": "qwen2.5-coder:7b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": false,
+      "escalated": false,
+      "measured": {
+        "status": "CONSULTED",
+        "taskClass": "bugfix",
+        "decision": "LOCAL",
+        "qualifiedModel": "qwen2.5-coder:7b",
+        "raised": true,
+        "escalateSet": false
+      },
+      "generations": 1,
+      "wallMs": 16212,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-bugfix-median",
+      "type": "bugfix",
+      "condition": "AFTER_measured",
+      "trial": 2,
+      "model": "qwen2.5-coder:7b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": false,
+      "escalated": false,
+      "measured": {
+        "status": "CONSULTED",
+        "taskClass": "bugfix",
+        "decision": "LOCAL",
+        "qualifiedModel": "qwen2.5-coder:7b",
+        "raised": true,
+        "escalateSet": false
+      },
+      "generations": 1,
+      "wallMs": 10066,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-repair-total-length",
+      "type": "repair",
+      "condition": "AFTER_measured",
+      "trial": 1,
+      "model": "qwen2.5-coder:7b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": false,
+      "escalated": false,
+      "measured": {
+        "status": "CONSULTED",
+        "taskClass": "repair",
+        "decision": "LOCAL",
+        "qualifiedModel": "qwen2.5-coder:7b",
+        "raised": true,
+        "escalateSet": false
+      },
+      "generations": 1,
+      "wallMs": 11774,
+      "status": "MEASURED"
+    },
+    {
+      "mission": "v159-repair-total-length",
+      "type": "repair",
+      "condition": "AFTER_measured",
+      "trial": 2,
+      "model": "qwen2.5-coder:7b",
+      "maxRepair": 1,
+      "tier": "PROBE",
+      "accepted": true,
+      "cycleOutcome": "SUCCESS",
+      "escalateIfStillFails": false,
+      "escalated": false,
+      "measured": {
+        "status": "CONSULTED",
+        "taskClass": "repair",
+        "decision": "LOCAL",
+        "qualifiedModel": "qwen2.5-coder:7b",
+        "raised": true,
+        "escalateSet": false
+      },
+      "generations": 1,
+      "wallMs": 8542,
+      "status": "MEASURED"
+    }
+  ],
+  "before": {
+    "perMission": {
+      "v159-bugfix-median": {
+        "model": "qwen2.5-coder:3b",
+        "passes": 2,
+        "n": 2,
+        "passRate": 1,
+        "wallMsMean": 19882,
+        "escalatedOnFailure": 0
+      },
+      "v159-repair-total-length": {
+        "model": "qwen2.5-coder:3b",
+        "passes": 2,
+        "n": 2,
+        "passRate": 1,
+        "wallMsMean": 16630,
+        "escalatedOnFailure": 0
+      },
+      "v159-refactor-even-squares": {
+        "model": "qwen2.5-coder:3b",
+        "passes": 2,
+        "n": 2,
+        "passRate": 1,
+        "wallMsMean": 4450,
+        "escalatedOnFailure": 0
+      },
+      "v159-implement-parse-range": {
+        "model": "qwen2.5-coder:3b",
+        "passes": 0,
+        "n": 2,
+        "passRate": 0,
+        "wallMsMean": 43079,
+        "escalatedOnFailure": 0
+      }
+    },
+    "overall": {
+      "passes": 6,
+      "n": 8,
+      "passRate": 0.75,
+      "wallMsTotal": 168080
+    }
+  },
+  "after": {
+    "perMission": {
+      "v159-bugfix-median": {
+        "model": "qwen2.5-coder:7b",
+        "passes": 2,
+        "n": 2,
+        "passRate": 1,
+        "wallMsMean": 13139,
+        "escalatedOnFailure": 0
+      },
+      "v159-repair-total-length": {
+        "model": "qwen2.5-coder:7b",
+        "passes": 2,
+        "n": 2,
+        "passRate": 1,
+        "wallMsMean": 10158,
+        "escalatedOnFailure": 0
+      },
+      "v159-refactor-even-squares": {
+        "model": "qwen2.5-coder:3b",
+        "passes": 2,
+        "n": 2,
+        "passRate": 1,
+        "wallMsMean": 3047,
+        "escalatedOnFailure": 0
+      },
+      "v159-implement-parse-range": {
+        "model": "qwen2.5-coder:3b",
+        "passes": 0,
+        "n": 2,
+        "passRate": 0,
+        "wallMsMean": 42471,
+        "escalatedOnFailure": 2
+      }
+    },
+    "overall": {
+      "passes": 6,
+      "n": 8,
+      "passRate": 0.75,
+      "wallMsTotal": 137630
+    }
+  },
+  "honesty": [
+    "every number comes from the runs above (this host, this run); an absent measurement is NOT_MEASURED, never 0",
+    "tiny set (4 missions × 2 trials per condition): it shows what the overlay changes on THESE missions only — not a general capability claim",
+    "temperature 0 + seed 42 ⇒ near-deterministic outputs; wall time is real and includes shared-host contention and model warm state",
+    "model-generated code ran in-process via native-project-builder (same path as runtime/bin/odg-intelligent-native-run.ts), NOT in the bwrap sandbox",
+    "escalation on failure only CREATES a sovereign-delegation record (no provider was called)"
+  ],
+  "interpretation": {
+    "passRate": "UNCHANGED on this set: before 6/8 (0.75) → after 6/8 (0.75). NO quality improvement is claimed — qwen2.5-coder:3b already passed the bugfix/repair missions here (unlike the V155 benchmark tasks where it was DEMOTED), and implement failed under both conditions.",
+    "modelChoice": "after: bugfix + repair raised 3b→7b (measured QUALIFIED); refactor stays 3b (measured-best agrees); implement stays 3b (NO_QUALIFIED ⇒ no model is raised to).",
+    "escalation": "implement (NO_QUALIFIED) failures: before 0/2 escalated (PROBE policy keeps probing), after 2/2 escalated (evidence-gated sovereign-delegation record CREATED, no provider called) — the measured registry changed the failure handling.",
+    "wallTime": "bugfix/repair mean wall time was LOWER with 7b in this run (13.1s/10.2s vs 19.9s/16.6s with 3b), each with a single generation; the cause is NOT established (shared host, 3b runs executed first, output length not compared) ⇒ n=2 per cell is indicative only — NO speed-up is claimed."
+  }
+}
