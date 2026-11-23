@@ -1,0 +1,51 @@
+{
+  "checkpoint": "CP5 — CTO directives V15.5 (seven steps), V15.6 (resume after disconnect), V15.7 (performance engineering)",
+  "date": "2026-11-23",
+  "headInitial": "537cd110",
+  "headAtCheckpoint": "a0053fa7",
+  "prsMerged": {
+    "895": "native agent supervisor (odg-agent-supervisor) — REJECT x1 -> fix -> ACCEPT",
+    "897": "supervisor residuals (dirty-path holds, renew owner/pid) — ACCEPT",
+    "896": "mission write_sets (M0001, G10_READONLY_AUTONOMY_PROBE, M0000, M0002, RUNTIME_SELF_AUDIT, QUAL_CLEAN_GATEB) enforced in wave mode — ACCEPT with MED (symlink/hardlink) fixed before merge, re-ACCEPT",
+    "899": "native autonomy maturity measure — REJECT (provider counted as native) -> fix -> ACCEPT",
+    "898": "measured local-model capability registry (Ollama) — REJECT (grader foolable, probation fallback, no memory bound, n=1 qualification) -> fix + benchmark re-run -> ACCEPT",
+    "900": "transversal validation A-L — REJECT (verdict honesty) -> relabel -> ACCEPT",
+    "901": "supervisor fail-open on gitignored/main-checkout writes, CANCELLED close, worktree-less recovery — REJECT -> fix -> ACCEPT"
+  },
+  "openAtCheckpoint": { "902": "V15.7 verification levels L1/L2/L3 + adaptive concurrency policy — inspection + CI running in parallel" },
+  "steps": {
+    "1_runtime_rebuild": "DONE — runtime/dist rebuilt with `npm run build:runtime` right after live ticks (fingerprints 60b0162f -> b41bfe44 -> f0362812 -> 06600f3f); the root unit ExecStart = runtime/dist/bin/odg-schedule-tick.js (the rebuilt artifact); every live tick since rebuild IDLE (M0001 ALREADY_PROVEN dedup) — normal; dist contains fleet-bridge ledger claim + run-output-isolation + write-set enforcement.",
+    "2_write_sets": "DONE (code) — 6 read-only missions declare write_set measured by strace; malformed => WRITE_SET_MALFORMED; post-run lstat check => WRITE_SET_VIOLATION / UNVERIFIABLE / LEDGER_FOREIGN_APPEND (wave mode only; default path byte-identical, inspector-verified).",
+    "3_real_waves": "DONE in sandbox worktree — real wave of 5 missions: median 5.55 s vs 28.21 s sequential (x5.08, 8 CPUs, 3 repeats); 0 lost/duplicated ledger entries; SIGKILL child and SIGKILL claim-holder recovery measured (claim reclaim at 120 s TTL). PRODUCTION waves NOT active: live unit allowlists only M0001 and does not set ODG_TICK_WAVE (owner-gated), and all 6 missions are already proven in the live ledger.",
+    "4_supervisor": "DONE — 7 evidence-based states, write-set conflict gate via odg-writeset-contention + fleet-bridge claims, dedup, recovery only for INTERRUPTED with provenance, independent inspector required for close. LIMITS: inspector/owner are strings (not identity-bound); no agent writes heartbeats natively yet; on the live host the main checkout is always RUNNING so repo-mode assign refuses everything (safe direction).",
+    "5_ollama_registry": "DONE — 99 real trials x2 runs (TASKSET-1, TASKSET-2), temp 0 seed 42: qwen2.5-coder:7b overall 0.909 (8.1 tok/s), 3b 0.545 (16 tok/s), 0.5b 0.273 (61 tok/s); selection: 7b bugfix/repair/strict-json/test-writing, 3b refactor/risk, 0.5b json-extraction, implement = NO_QUALIFIED (escalate, no fallback); live 404 fallback proven. Registry recommends only — not wired into a live mission path.",
+    "6_transversal": "DONE — 8 REAL (A,B,C,D,G,I,K,L), 4 PARTIAL (E supervision heartbeatOnly scope, F supervisor part, H inspector not identity-bound, J harness-constructed decision); Truth Lock 928 + Boussole byte-identical verified in-run.",
+    "7_native_autonomy": "MEASURED HONESTLY — 30-day window: 1314/1315 commits and 522/522 PRs are provider work; native-built code changes = 0; native runtime decisions 2404 rows but only 3 meaningful (1199 identical dedup no-ops); ladder 20 caps: 8 EXERCISED_LIVE (only prioritise + execute live under the timer), 11 WIRED_TESTED, 1 BUILT_NOT_WIRED."
+  },
+  "incidentFound": "RUNNER_OUTAGE_MAIN_CHECKOUT_OFF_MAIN — 1180 of 1182 live truth-lock refusals (2026-10-25 -> 2026-11-21, 324 branches) were the main checkout left on feature branches: a provider-caused outage of ODG's only unattended loop. Mitigation in force: worktrees only, main checkout always on main.",
+  "performanceV157": {
+    "measured": "CI 218-374 s per run, 2-3 runs per PR; PR open->merge 6-50 min (median ~32); 6/7 PRs REJECTed at first inspection; 364-min session disconnect 03:06->09:10 > all PR time combined; full local gate ~461 s vs L1/L2 1-61 s.",
+    "applied": "builders self-check the recurring REJECT patterns before PR; builders report at PR creation, coordinator runs inspection and CI watch in parallel; one Git integration at a time from the main checkout; dist rebuild only right after a live tick.",
+    "gainNotYetMeasured": "before/after comparison pending on PRs >= #902"
+  },
+  "truthLock": "verify-historical.sh verified=928 missing=0 changed=0 (2026-11-23)",
+  "boussole": "docs/odg/v124-consolidated-roadmap.json unchanged (last change 53a1dedb); V15.0 remains PROPOSED",
+  "residualRisks": [
+    "killed ledger-claim holder blocks wave/default ledger writes up to 120 s (fail-closed)",
+    "write-set post-run check cannot see files written-then-deleted, empty dirs, or writes by non-node descendants",
+    "ledger foreign-append rule is count-based (content swap undetected; relies on the ledger seal chain)",
+    "concurrent root-timer tick during a manual wave => false LEDGER_FOREIGN_APPEND (fail-closed)",
+    "completion-evidence provenance, inspector and renew identity are caller-declared strings",
+    "M0000 fails on fresh state (ledger stage expects an existing ledger) — pre-existing, not fixed",
+    "runtime/bin/odg-backup-restore.test.ts reported failing in a linked worktree (CI on main passes) — under inspection"
+  ],
+  "ownerGated": [
+    "production waves: unit env ODG_TICK_WAVE + wider ODG_CANARY_ALLOWLIST (systemd, owner only)",
+    "external model providers: no verifiable spend ceiling",
+    "Radar widening beyond the V16 3-source security allowlist",
+    "identity-bound native provenance for ODG-built code (agent-identity Ed25519 signing key decision)",
+    "gate 10/12 owner signature, distinct GitHub identity, drop-in dry-run, V15.0 adoption"
+  ],
+  "nativeVsProvider": "All construction in this checkpoint is provider (Claude Code) work; ODG-native = runtime decisions (tick admission/dedup/refusals, wave selection, write-set refusals, supervisor gate decisions when invoked).",
+  "nextAction": "merge #902 after inspection ACCEPT + green CI; then wire the supervisor heartbeat into the wave tick children (so E/F become REAL in repo mode) and persist inspection verdicts with agent-identity signatures (H); then measure before/after throughput on the next PRs."
+}
