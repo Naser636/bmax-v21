@@ -81,20 +81,20 @@ try {
 
   // A — in-scope uncommitted patch passes (build/tsc stubbed green).
   let r = runCli(d, ["--delegated-path=docs/new/note.md"]);
-  ok("A: in-scope uncommitted patch ⇒ gitClean=true", r.v.gitClean === true && r.v.build === true && r.v.typescript === true);
+  ok("A: in-scope uncommitted patch ⇒ delegatedPatchClean=true, persisted gitClean stays FALSE (tree state, #922 MED), exit 0", r.v.delegatedPatchClean === true && r.v.gitClean === false && r.v.build === true && r.v.typescript === true && r.status === 0);
   ok("A: exit 0 (verify passes on the delegated patch)", r.status === 0);
   ok("A: evidence records DELEGATED_PATCH scope + proven list", r.v.gitCleanScope && r.v.gitCleanScope.mode === "DELEGATED_PATCH" && r.v.gitCleanScope.provenInScope.join() === "docs/new/note.md" && r.v.gitCleanScope.residualDirty.length === 0);
 
   // B — a sibling untracked file in the same NEW directory (collapsed as 'docs/new/' by default porcelain) is NOT tolerated.
   fs.writeFileSync(path.join(d, "docs", "new", "smuggled.md"), "x\n");
   r = runCli(d, ["--delegated-path=docs/new/note.md"]);
-  ok("B: unproven sibling in the same untracked dir ⇒ gitClean=false, exit 1", r.v.gitClean === false && r.status === 1 && r.v.gitCleanScope.residualDirty.includes("docs/new/smuggled.md"));
+  ok("B: unproven sibling in the same untracked dir ⇒ gitClean=false, exit 1", r.v.delegatedPatchClean === false && r.v.gitClean === false && r.status === 1 && r.v.gitCleanScope.residualDirty.includes("docs/new/smuggled.md"));
   fs.unlinkSync(path.join(d, "docs", "new", "smuggled.md"));
 
   // C — an out-of-scope TRACKED edit still fails.
   fs.writeFileSync(path.join(d, "src", "x.ts"), "export const x = 2;\n");
   r = runCli(d, ["--delegated-path=docs/new/note.md"]);
-  ok("C: out-of-scope tracked edit ⇒ gitClean=false, exit 1", r.v.gitClean === false && r.status === 1 && r.v.gitCleanScope.residualDirty.includes("src/x.ts"));
+  ok("C: out-of-scope tracked edit ⇒ gitClean=false, exit 1", r.v.delegatedPatchClean === false && r.v.gitClean === false && r.status === 1 && r.v.gitCleanScope.residualDirty.includes("src/x.ts"));
 
   // D — other callers (no flag): unchanged default gate — same verdict as the default porcelain, same keys, no scope field.
   r = runCli(d, []);
@@ -113,11 +113,11 @@ try {
   fs.writeFileSync(path.join(d, "ODG_PROJECT_STATE.md"), "compass\n");
   fs.writeFileSync(path.join(d, "docs.md"), "x\n");
   r = runCli(d, ["--delegated-path=docs.md"]);
-  ok("F: delegated mode keeps the standard artifact excludes (compass ignored) ⇒ clean", r.v.gitClean === true);
+  ok("F: delegated mode keeps the standard artifact excludes (compass ignored) ⇒ delegatedPatchClean", r.v.delegatedPatchClean === true && r.v.gitClean === false);
 
   // G — empty flag value tolerates nothing.
   r = runCli(d, ["--delegated-path="]);
-  ok("G: --delegated-path= (empty) ⇒ gitClean=false (tolerates nothing)", r.v.gitClean === false && r.status === 1);
+  ok("G: --delegated-path= (empty) ⇒ not clean (tolerates nothing)", r.v.delegatedPatchClean === false && r.v.gitClean === false && r.status === 1);
 
   // H — git failure ⇒ fail-closed, in delegated mode.
   const nogit = fs.mkdtempSync(path.join(os.tmpdir(), "delegated-gitclean-nogit-")); dirs.push(nogit);
@@ -132,4 +132,6 @@ try {
   for (const x of dirs) { try { fs.rmSync(x, { recursive: true, force: true }); } catch { /* best-effort */ } }
 }
 
+// #922 MED: a consumer reading ONLY `gitClean` from runtime-verify.json never sees "clean" while a delegated patch is uncommitted
+ok("verifyExitCode: delegated mode uses delegatedPatchClean; default mode uses gitClean", V.verifyExitCode({ build: true, typescript: true, gitClean: false, delegatedPatchClean: true, gitCleanScope: { mode: "DELEGATED_PATCH" } }) === 0 && V.verifyExitCode({ build: true, typescript: true, gitClean: false, delegatedPatchClean: false, gitCleanScope: { mode: "DELEGATED_PATCH" } }) === 1 && V.verifyExitCode({ build: true, typescript: true, gitClean: true, delegatedPatchClean: false }) === 0 && V.verifyExitCode({ build: true, typescript: true, gitClean: false, delegatedPatchClean: true }) === 1);
 console.log(`\nodg-verify delegated gitClean — ${passed} assertions passed.`);

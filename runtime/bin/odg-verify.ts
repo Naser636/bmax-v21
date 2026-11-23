@@ -159,10 +159,15 @@ function runVerify(explicitMission?: any, opts?: { delegatedPaths?: string[] }):
     try {
       const z = cp.execFileSync("git", ["status", "--porcelain=v1", "-z", "--untracked-files=all", "--", ...ARTIFACT_EXCLUDES], { encoding: "utf8" });
       const d = delegatedGitClean(String(z), delegatedPaths);
-      verify.gitClean = d.gitClean;
-      verify.gitCleanScope = { mode: "DELEGATED_PATCH", provenInScope: delegatedPaths.slice().sort(), residualDirty: d.residual };
+      // #922 inspection MED: the PERSISTED gitClean keeps its default meaning (the tree is NOT clean while the delegated
+      // patch is uncommitted) because other consumers (acceptance-facts → mechanical-acceptance, stage-build-ts-evidence)
+      // read only `gitClean`. The delegated verdict is a SEPARATE field; only verifyExitCode in delegated mode uses it.
+      verify.gitClean = false;
+      verify.delegatedPatchClean = d.gitClean;
+      verify.gitCleanScope = { mode: "DELEGATED_PATCH", provenInScope: delegatedPaths.slice().sort(), residualDirty: d.residual, note: "gitClean=false is the tree state; delegatedPatchClean is the delegate's verdict (exact proven paths only)" };
     } catch {
       verify.gitClean = false;   // git unavailable ⇒ the tree cannot be proven clean — fail closed (same as default)
+      verify.delegatedPatchClean = false;
       verify.gitCleanScope = { mode: "DELEGATED_PATCH", provenInScope: delegatedPaths.slice().sort(), residualDirty: ["<git status failed>"] };
     }
   } else try {
@@ -206,7 +211,9 @@ function parseDelegatedPaths(argv: string[]): string[] | null {
 
 function verifyExitCode(verify: any, reportOnly?: any): number {
   if(reportOnly)return 0;
-  const green = !!verify && verify.build===true && verify.typescript===true && verify.gitClean===true;
+  // delegated mode (gitCleanScope.mode === DELEGATED_PATCH): the clean verdict is delegatedPatchClean; default: gitClean.
+  const clean = verify && verify.gitCleanScope && verify.gitCleanScope.mode === "DELEGATED_PATCH" ? verify.delegatedPatchClean === true : verify && verify.gitClean === true;
+  const green = !!verify && verify.build===true && verify.typescript===true && clean;
   return green?0:1;
 }
 

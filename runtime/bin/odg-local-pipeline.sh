@@ -16,6 +16,9 @@ set -euo pipefail
 #
 
 MISSION="${1:-default}"
+# #922 inspection LOW: a mission id is a plain identifier — never an option (e.g. '--delegated-path=…' would be parsed by
+# odg-verify as a flag). Refuse anything outside [A-Za-z0-9_.-] or starting with '-'.
+case "$MISSION" in -*|*[!A-Za-z0-9_.-]*) echo "odg-local-pipeline: invalid mission id '$MISSION'" >&2; exit 2;; esac
 DATE=$(date -Iseconds)
 COMMIT=$(git rev-parse --short HEAD)
 BRANCH=$(git branch --show-current)
