@@ -26,8 +26,12 @@ function fn(v: any): boolean { return typeof v === "function"; }
 // not reach the host. They may require (1) another GENERATED file of the same project, or (2) a PURE built-in from this
 // list. Everything else — fs, child_process, net/http(s), worker_threads, vm, module, os, process bindings, and any
 // relative/absolute path that is not a generated file (which previously resolved against runtime/core = ODG internals) —
-// throws REQUIRE_DENIED ⇒ the build fails (fail-closed). HONEST LIMIT: this is NOT a sandbox — `process`/`globalThis`
-// remain reachable in-process; real isolation of untrusted execution is an outer bwrap process (separate work item).
+// throws REQUIRE_DENIED ⇒ the build fails (fail-closed). It blocks ACCIDENTAL / NAIVE host requires only.
+// HONEST LIMIT — NOT ISOLATION. Known in-process escapes (verified by independent inspection of #913) still reach the host:
+// require.cache[..].require, module.constructor._load / .prototype.require / .createRequire(abs), process.mainModule.require,
+// process.getBuiltinModule, Function("return process")(), dynamic import(), process.binding. Shadowing module/process or a
+// vm context does not fix this (prototype/constructor chains). Real isolation of untrusted model code = an OUTER bwrap
+// process (provider-sandbox) — separate work item; until then, run native builds only on trusted local models/specs.
 const GENERATED_REQUIRE_ALLOW: readonly string[] = Object.freeze(["assert", "assert/strict", "util", "events", "string_decoder"]);
 function allowedBuiltin(req: string): boolean {
   const r = typeof req === "string" ? req.replace(/^node:/, "") : "";
