@@ -39,7 +39,7 @@ function summarize(out: any, live: boolean): any {
   const results: any[] = Array.isArray(out && out.results) ? out.results : [];
   // FAIL-CLOSED: "received" needs POSITIVE evidence — a numeric 2xx httpStatus AND a content digest. Any other shape
   // (unknown classification, missing status, non-2xx) counts as unavailable, never as success.
-  const isReceived = (r: any): boolean => !!r && typeof r.httpStatus === "number" && r.httpStatus >= 200 && r.httpStatus < 300 && typeof r.sha256 === "string" && /^[0-9a-f]{64}$/.test(r.sha256);
+  const isReceived = (r: any): boolean => !!r && r.classification !== "UNSTAMPED" && typeof r.httpStatus === "number" && r.httpStatus >= 200 && r.httpStatus < 300 && typeof r.sha256 === "string" && /^[0-9a-f]{64}$/.test(r.sha256);
   const hostOf = (u: string): string | null => { try { return new URL(u).hostname; } catch { return null; } };
   const perHost: any = {}; const failuresByCode: any = {};
   for (const r of results) {
@@ -50,8 +50,11 @@ function summarize(out: any, live: boolean): any {
     else { e.unavailable++; const k = String((r && r.code) || (r && (r.statusCode || r.httpStatus) ? "HTTP_" + (r.statusCode || r.httpStatus) : (r && r.classification ? "CLASS_" + r.classification : "UNKNOWN"))); failuresByCode[k] = (failuresByCode[k] || 0) + 1; }
   }
   const denied = Number(out && out.denied) || 0;
-  const received = results.filter((r: any) => r && r.classification !== "DENIED" && isReceived(r)).length;
-  const planned = plan.filter((p: any) => p.decision === "ALLOW").length;
+  // count DISTINCT planned URLs that were received (duplicates of one URL can never mask a missing one)
+  const plannedUrls = new Set(plan.filter((p: any) => p && p.decision === "ALLOW").map((p: any) => String(p.url)));
+  const receivedUrls = new Set(results.filter((r: any) => r && r.classification !== "DENIED" && isReceived(r) && plannedUrls.has(String(r.url))).map((r: any) => String(r.url)));
+  const received = receivedUrls.size;
+  const planned = plannedUrls.size;
   let verdict: string, exitCode: number;
   if (denied > 0) { verdict = "DENIED"; exitCode = 2; }
   else if (!live) { verdict = "DRY_OK"; exitCode = 0; }

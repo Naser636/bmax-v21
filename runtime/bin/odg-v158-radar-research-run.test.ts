@@ -36,6 +36,10 @@ check("deferred/refused hosts and out-of-prefix paths are DENIED", extra.allowed
   check("garbage input ⇒ no throw, live ⇒ LIVE_NO_RESPONSE (never success)", S(null, true).verdict === "LIVE_NO_RESPONSE");
   const weird = S({ denied: 0, plan: pl, results: [{ url: "https://a.example/x", classification: "SOMETHING_NEW" }, { url: "https://b.example/y", classification: "LIVE_SOURCE", httpStatus: 503, sha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] }, true);
   check("unknown classification / non-2xx ⇒ NOT received (fail-closed) ⇒ LIVE_NO_RESPONSE", weird.verdict === "LIVE_NO_RESPONSE" && weird.failuresByCode.CLASS_SOMETHING_NEW === 1 && weird.failuresByCode.HTTP_503 === 1);
+  const dup = S({ denied: 0, plan: pl, results: [{ url: "https://a.example/x", classification: "LIVE_SOURCE", httpStatus: 200, sha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }, { url: "https://a.example/x", classification: "LIVE_SOURCE", httpStatus: 200, sha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }, { url: "https://b.example/y", classification: "LIVE_UNAVAILABLE", code: "TIMEOUT" }] }, true);
+  check("two results for one URL cannot mask a missing URL ⇒ LIVE_PARTIAL", dup.verdict === "LIVE_PARTIAL" && dup.received === 1);
+  const uns = S({ denied: 0, plan: pl, results: [{ url: "https://a.example/x", classification: "UNSTAMPED", httpStatus: 200, sha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }, { url: "https://b.example/y", classification: "LIVE_SOURCE", httpStatus: 200, sha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }] }, true);
+  check("UNSTAMPED (200 + sha) is NOT received ⇒ LIVE_PARTIAL", uns.verdict === "LIVE_PARTIAL" && uns.failuresByCode.HTTP_200 === 1);
   process.stdout.write(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}\n`);
   process.exit(failures === 0 ? 0 : 1);
 })();
