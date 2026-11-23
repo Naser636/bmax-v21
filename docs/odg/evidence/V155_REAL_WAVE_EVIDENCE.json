@@ -1,0 +1,589 @@
+{
+  "schema": "odg.evidence.v1",
+  "id": "V155_REAL_WAVE_EVIDENCE",
+  "directive": "CTO V15.5 Steps 2+3 (declared + enforced mission write-sets; real wave)",
+  "recordedAt": "2026-11-23",
+  "provider": "Claude Code (TECHNICAL_PROVIDER_ONLY) - not an authority; acceptance belongs to ODG governance / owner",
+  "base": {
+    "origin_main_head": "537cd11092ed285d999d51b8d26e358da1d1df61",
+    "branch": "feat/v155-mission-write-sets",
+    "worktree": "../wt-v155-writesets (isolated git worktree; node_modules symlinked read-only from the main repo; dist built in-worktree with npm run build:runtime)"
+  },
+  "environment": {
+    "host_cpus": 8,
+    "node": "v22.22.1",
+    "truth_lock": "ODG_TRUTH_LOCK_ENFORCE=0 (process-scoped opt-out). The launcher's Truth-Lock refuses any branch != main (STARTUP_REFUSED reproduced on this feature branch); the opt-out is the documented one for throw-away fixtures and only affected these worktree runs.",
+    "state": "the worktree's OWN gitignored runtime/generated, reset (rm -rf) before each measured repeat; the main repo's runtime/generated and runtime/dist were never written"
+  },
+  "step1_measured_footprint": {
+    "method": "strace -f (openat/open/creat/rename*/unlink*/mkdir*/link*/symlink*/truncate) over ONE real isolated wave tick per mission (ODG_TICK_WAVE=1 ODG_TICK_WAVE_MAX=1 ODG_CANARY_ALLOWLIST=<id>); successful write-mode syscalls classified by path; plus the final listing of each run dir",
+    "measured_missions": [
+      "M0001",
+      "G10_READONLY_AUTONOMY_PROBE",
+      "M0000",
+      "M0002",
+      "RUNTIME_SELF_AUDIT",
+      "QUAL_CLEAN_GATEB",
+      "PREPARE_ENGINEERING_BRIEF",
+      "G9G10_PRECEDENT_REUSE_PROOF"
+    ],
+    "per_run_dir_files_common_18": [
+      "capability-registry.json",
+      "decision.json",
+      "execution-plan.json",
+      "fidelity-verdict.json",
+      "knowledge.json",
+      "mission-context.json",
+      "mission-interpretation.json",
+      "mission-lifecycle.json",
+      "mission-plan.json",
+      "mission-report.json",
+      "patch-execution.json",
+      "patch-plan.json",
+      "pipeline-checkpoint.json",
+      "project-context.json",
+      "runtime-context.json",
+      "runtime-pipeline.json",
+      "runtime-verify.json",
+      "truth-lock.json"
+    ],
+    "per_mission_extra": {
+      "G10_READONLY_AUTONOMY_PROBE": [
+        "clean-workspace-scan.json"
+      ],
+      "QUAL_CLEAN_GATEB": [
+        "clean-workspace-coverage.json",
+        "clean-workspace-report.json",
+        "clean-workspace-scan.json"
+      ],
+      "G9G10_PRECEDENT_REUSE_PROOF (measured, NOT declared)": [
+        "precedent-consultation.json"
+      ]
+    },
+    "per_mission_named": [
+      "logs/<ID>.run.log",
+      "reports/<ID>.final-report.md"
+    ],
+    "transient_in_run_dir": [
+      "pipeline-checkpoint.json.tmp-<pid> (renamed onto pipeline-checkpoint.json)",
+      "empty dirs fleet/ and fleet/locks/ (overlay mkdir of an INPUT path; directories are not outputs)"
+    ],
+    "writes_outside_run_dir_by_children": [
+      "runtime/generated/mission-ledger.json (+ .tmp-<pid>-<n>, rename): SHARED_STATE, lock-serialized; NOT written by M0000 (the ledger refuses controlled M0000: mechanical acceptance UNKNOWN)",
+      "runtime/generated/fleet/locks/mission-ledger.lock.<gen>: fleet-bridge generation claim (+ unlink of an older generation)"
+    ],
+    "writes_by_the_tick_process_itself": [
+      "runtime/generated/mission-attempt-log.jsonl",
+      "runtime/generated/scheduler-audit-chain.json (+tmp, rename)",
+      "runtime/generated/wave-runs/<tick>/ (run dirs base) + wave-summary.json (new V15.5 evidence file)"
+    ],
+    "excluded_after_measurement": {
+      "PREPARE_ENGINEERING_BRIEF": "PASS, but a descendant runs tsx and writes its transpile cache under /tmp/tsx-1000/ (outside the overlay, unattributable per child) - NOT qualified",
+      "G9G10_PRECEDENT_REUSE_PROOF": "measured clean; not declared (qualified set kept at WAVE_HARD_MAX = 6)"
+    }
+  },
+  "step2_declared_write_sets": {
+    "semantics": "top-level mission `write_set`, paths RELATIVE TO THE RUN-OUTPUT ROOT; projected for contention onto the child's PHYSICAL root: its own run dir under isolation (distinct per mission => disjoint, as the measured writes are), runtime/generated without isolation (same logical names => WRITESET_OVERLAP => serialized). The one genuinely shared physical write (mission-ledger.json) is NOT faked away: it is runner SHARED_STATE under the ledger claim and is enforced separately (<= 1 entry per run).",
+    "no_collision_with_existing_semantics": "mechanical-acceptance's write_set comes from authorized_paths (acceptance-facts.gatherAcceptanceFacts), not from the top-level key; G10's nested work_item_contract.write_set (repo files of its original work item) is unchanged",
+    "declared": {
+      "M0001": [
+        "capability-registry.json",
+        "decision.json",
+        "execution-plan.json",
+        "fidelity-verdict.json",
+        "knowledge.json",
+        "mission-context.json",
+        "mission-interpretation.json",
+        "mission-lifecycle.json",
+        "mission-plan.json",
+        "mission-report.json",
+        "patch-execution.json",
+        "patch-plan.json",
+        "pipeline-checkpoint.json",
+        "project-context.json",
+        "runtime-context.json",
+        "runtime-pipeline.json",
+        "runtime-verify.json",
+        "truth-lock.json",
+        "logs/M0001.run.log",
+        "reports/M0001.final-report.md"
+      ],
+      "G10_READONLY_AUTONOMY_PROBE": [
+        "capability-registry.json",
+        "clean-workspace-scan.json",
+        "decision.json",
+        "execution-plan.json",
+        "fidelity-verdict.json",
+        "knowledge.json",
+        "mission-context.json",
+        "mission-interpretation.json",
+        "mission-lifecycle.json",
+        "mission-plan.json",
+        "mission-report.json",
+        "patch-execution.json",
+        "patch-plan.json",
+        "pipeline-checkpoint.json",
+        "project-context.json",
+        "runtime-context.json",
+        "runtime-pipeline.json",
+        "runtime-verify.json",
+        "truth-lock.json",
+        "logs/G10_READONLY_AUTONOMY_PROBE.run.log",
+        "reports/G10_READONLY_AUTONOMY_PROBE.final-report.md"
+      ],
+      "M0000": [
+        "capability-registry.json",
+        "decision.json",
+        "execution-plan.json",
+        "fidelity-verdict.json",
+        "knowledge.json",
+        "mission-context.json",
+        "mission-interpretation.json",
+        "mission-lifecycle.json",
+        "mission-plan.json",
+        "mission-report.json",
+        "patch-execution.json",
+        "patch-plan.json",
+        "pipeline-checkpoint.json",
+        "project-context.json",
+        "runtime-context.json",
+        "runtime-pipeline.json",
+        "runtime-verify.json",
+        "truth-lock.json",
+        "logs/M0000.run.log",
+        "reports/M0000.final-report.md"
+      ],
+      "M0002": [
+        "capability-registry.json",
+        "decision.json",
+        "execution-plan.json",
+        "fidelity-verdict.json",
+        "knowledge.json",
+        "mission-context.json",
+        "mission-interpretation.json",
+        "mission-lifecycle.json",
+        "mission-plan.json",
+        "mission-report.json",
+        "patch-execution.json",
+        "patch-plan.json",
+        "pipeline-checkpoint.json",
+        "project-context.json",
+        "runtime-context.json",
+        "runtime-pipeline.json",
+        "runtime-verify.json",
+        "truth-lock.json",
+        "logs/M0002.run.log",
+        "reports/M0002.final-report.md"
+      ],
+      "RUNTIME_SELF_AUDIT": [
+        "capability-registry.json",
+        "decision.json",
+        "execution-plan.json",
+        "fidelity-verdict.json",
+        "knowledge.json",
+        "mission-context.json",
+        "mission-interpretation.json",
+        "mission-lifecycle.json",
+        "mission-plan.json",
+        "mission-report.json",
+        "patch-execution.json",
+        "patch-plan.json",
+        "pipeline-checkpoint.json",
+        "project-context.json",
+        "runtime-context.json",
+        "runtime-pipeline.json",
+        "runtime-verify.json",
+        "truth-lock.json",
+        "logs/RUNTIME_SELF_AUDIT.run.log",
+        "reports/RUNTIME_SELF_AUDIT.final-report.md"
+      ],
+      "QUAL_CLEAN_GATEB": [
+        "capability-registry.json",
+        "clean-workspace-coverage.json",
+        "clean-workspace-report.json",
+        "clean-workspace-scan.json",
+        "decision.json",
+        "execution-plan.json",
+        "fidelity-verdict.json",
+        "knowledge.json",
+        "mission-context.json",
+        "mission-interpretation.json",
+        "mission-lifecycle.json",
+        "mission-plan.json",
+        "mission-report.json",
+        "patch-execution.json",
+        "patch-plan.json",
+        "pipeline-checkpoint.json",
+        "project-context.json",
+        "runtime-context.json",
+        "runtime-pipeline.json",
+        "runtime-verify.json",
+        "truth-lock.json",
+        "logs/QUAL_CLEAN_GATEB.run.log",
+        "reports/QUAL_CLEAN_GATEB.final-report.md"
+      ]
+    }
+  },
+  "step3_enforcement": {
+    "where": "runtime/bin/odg-schedule-tick.ts tickWave (wave mode only; default path untouched)",
+    "rules": [
+      "validateWriteSet: ABSENT => UNKNOWN => serialized; MALFORMED (non-array, empty array, non-string, blank/padded, absolute, drive letter, backslash, NUL, '.'/'..' segment, write_set != writeSet) => BLOCKED WRITE_SET_MALFORMED, never dispatched",
+      "after each ISOLATED child: listRunFiles(runDir) subset-of declared (exact file or 'dir/' prefix) AND that mission's ledger delta in {0,1}; otherwise WRITE_SET_VIOLATION => verified=false => classifyDispatch FAIL, recorded in mission-attempt-log + audit chain + wave-summary.json",
+      "non-isolated wave: NOT_ENFORCED_NON_ISOLATED (stated; no attributable per-child dir)",
+      "no declaration: UNDECLARED (serialized; nothing to enforce against)"
+    ],
+    "tests": "runtime/bin/odg-schedule-tick-wave.test.ts section (9): 18 new assertions (19 malformed shapes, overlap => serialized, projection, absent => serialized even with isolation, undeclared write => VIOLATION, duplicate ledger entry => VIOLATION, malformed refusal, non-isolated not-enforced); runtime/bin/odg-run-output-isolation.test.ts: the REAL governed sandbox runs now declare their measured footprint and assert writeSetCheck OK + ledgerDelta 1"
+  },
+  "step4_real_wave": {
+    "commands": {
+      "parallel": "ODG_TRUTH_LOCK_ENFORCE=0 ODG_CANARY_ALLOWLIST=\"M0001,G10_READONLY_AUTONOMY_PROBE,M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB\" ODG_TICK_WAVE=1 ODG_TICK_WAVE_MAX=5 /usr/bin/time -v node runtime/dist/bin/odg-schedule-tick.js",
+      "sequential": "same env with ODG_TICK_WAVE_MAX=1, 6 successive ticks (5 PASS, one mission each, + a 6th IDLE: all 5 ALREADY_PROVEN (dedup))"
+    },
+    "admission_and_provenSet": "admission = the default tick's schedulerStep gate chain per mission; missions already proven in the mission-ledger are skipped (IDLE, dedup) and never re-spawned - hence the state reset before each repeat. In the MAIN repo ledger all 6 qualified missions are already proven (read-only check: M0001 x10, G10 x2, M0000 x14, M0002 x7, RUNTIME_SELF_AUDIT x27, QUAL_CLEAN_GATEB x76) => a wave there admits NONE (IDLE). The wave proves capacity, not new production throughput.",
+    "wave_size_achieved": 5,
+    "M0000_note": "M0000 is declared and enforcement-clean but excluded from the timed wave: on a PRISTINE state its Mission Ledger stage records nothing (controlled mission, mechanical acceptance UNKNOWN), and the stage-effect check then requires runtime/generated/mission-ledger.json to exist. Reproduced on the DEFAULT (non-wave) path too: fresh state + ODG_CANARY_ALLOWLIST=M0000 => '[odg-schedule-tick] FAIL - status SUCCESS'. In a 6-wave on pristine state it failed 2 of 8 runs (when it reached that stage before any sibling had created the ledger). Pre-existing ordering dependence, not caused by waves; not fixed here (outside the write-set). M0000 is also never deduped on pristine state (never proven).",
+    "repeats": 3,
+    "parallel_wall_s": [
+      5.55,
+      5.36,
+      5.67
+    ],
+    "parallel_median_s": 5.55,
+    "sequential_wall_s_sum_of_5_ticks": [
+      28.4,
+      28.04,
+      28.21
+    ],
+    "sequential_median_s": 28.21,
+    "speedup_median": 5.08,
+    "cpu_seconds_user_plus_sys": {
+      "parallel": [
+        27.37,
+        26.63,
+        27.88
+      ],
+      "sequential": [
+        33.7,
+        33.09,
+        33.44
+      ]
+    },
+    "cpu_percent": {
+      "parallel_tick": [
+        492,
+        496,
+        491
+      ],
+      "sequential_ticks_range": "106-119"
+    },
+    "max_rss_kb_largest_single_process": {
+      "parallel": [
+        81808,
+        82160,
+        81760
+      ],
+      "sequential": [
+        81880,
+        81992,
+        81964
+      ],
+      "note": "GNU time -v reports the max RSS of the largest single process in the tree, not the sum"
+    },
+    "wave_wallMs_inside_tick": [
+      5231,
+      5051,
+      5364
+    ],
+    "per_child_writeSetCheck_parallel": {
+      "columns": [
+        "mission",
+        "status",
+        "writeSetCheck",
+        "undeclared",
+        "ledgerDelta",
+        "files"
+      ],
+      "rows": [
+        [
+          [
+            "M0001",
+            "PASS",
+            "OK",
+            0,
+            1,
+            20
+          ],
+          [
+            "G10_READONLY_AUTONOMY_PROBE",
+            "PASS",
+            "OK",
+            0,
+            1,
+            21
+          ],
+          [
+            "M0002",
+            "PASS",
+            "OK",
+            0,
+            1,
+            20
+          ],
+          [
+            "RUNTIME_SELF_AUDIT",
+            "PASS",
+            "OK",
+            0,
+            1,
+            20
+          ],
+          [
+            "QUAL_CLEAN_GATEB",
+            "PASS",
+            "OK",
+            0,
+            1,
+            23
+          ]
+        ],
+        [
+          [
+            "M0001",
+            "PASS",
+            "OK",
+            0,
+            1,
+            20
+          ],
+          [
+            "G10_READONLY_AUTONOMY_PROBE",
+            "PASS",
+            "OK",
+            0,
+            1,
+            21
+          ],
+          [
+            "M0002",
+            "PASS",
+            "OK",
+            0,
+            1,
+            20
+          ],
+          [
+            "RUNTIME_SELF_AUDIT",
+            "PASS",
+            "OK",
+            0,
+            1,
+            20
+          ],
+          [
+            "QUAL_CLEAN_GATEB",
+            "PASS",
+            "OK",
+            0,
+            1,
+            23
+          ]
+        ],
+        [
+          [
+            "M0001",
+            "PASS",
+            "OK",
+            0,
+            1,
+            20
+          ],
+          [
+            "G10_READONLY_AUTONOMY_PROBE",
+            "PASS",
+            "OK",
+            0,
+            1,
+            21
+          ],
+          [
+            "M0002",
+            "PASS",
+            "OK",
+            0,
+            1,
+            20
+          ],
+          [
+            "RUNTIME_SELF_AUDIT",
+            "PASS",
+            "OK",
+            0,
+            1,
+            20
+          ],
+          [
+            "QUAL_CLEAN_GATEB",
+            "PASS",
+            "OK",
+            0,
+            1,
+            23
+          ]
+        ]
+      ]
+    },
+    "integrity_each_repeat": {
+      "par-1": {
+        "ledgerCount": 5,
+        "ledger.count": 5,
+        "perMission": {
+          "M0002": 1,
+          "M0001": 1,
+          "QUAL_CLEAN_GATEB": 1,
+          "RUNTIME_SELF_AUDIT": 1,
+          "G10_READONLY_AUTONOMY_PROBE": 1
+        },
+        "sealVerify": true,
+        "attempts": [
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS"
+        ]
+      },
+      "par-2": {
+        "ledgerCount": 5,
+        "ledger.count": 5,
+        "perMission": {
+          "M0002": 1,
+          "RUNTIME_SELF_AUDIT": 1,
+          "QUAL_CLEAN_GATEB": 1,
+          "G10_READONLY_AUTONOMY_PROBE": 1,
+          "M0001": 1
+        },
+        "sealVerify": true,
+        "attempts": [
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS"
+        ]
+      },
+      "par-3": {
+        "ledgerCount": 5,
+        "ledger.count": 5,
+        "perMission": {
+          "QUAL_CLEAN_GATEB": 1,
+          "M0001": 1,
+          "RUNTIME_SELF_AUDIT": 1,
+          "M0002": 1,
+          "G10_READONLY_AUTONOMY_PROBE": 1
+        },
+        "sealVerify": true,
+        "attempts": [
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS"
+        ]
+      },
+      "seq-1": {
+        "ledgerCount": 5,
+        "ledger.count": 5,
+        "perMission": {
+          "M0001": 1,
+          "G10_READONLY_AUTONOMY_PROBE": 1,
+          "M0002": 1,
+          "RUNTIME_SELF_AUDIT": 1,
+          "QUAL_CLEAN_GATEB": 1
+        },
+        "sealVerify": true,
+        "attempts": [
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS",
+          "IDLE"
+        ]
+      },
+      "seq-2": {
+        "ledgerCount": 5,
+        "ledger.count": 5,
+        "perMission": {
+          "M0001": 1,
+          "G10_READONLY_AUTONOMY_PROBE": 1,
+          "M0002": 1,
+          "RUNTIME_SELF_AUDIT": 1,
+          "QUAL_CLEAN_GATEB": 1
+        },
+        "sealVerify": true,
+        "attempts": [
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS",
+          "IDLE"
+        ]
+      },
+      "seq-3": {
+        "ledgerCount": 5,
+        "ledger.count": 5,
+        "perMission": {
+          "M0001": 1,
+          "G10_READONLY_AUTONOMY_PROBE": 1,
+          "M0002": 1,
+          "RUNTIME_SELF_AUDIT": 1,
+          "QUAL_CLEAN_GATEB": 1
+        },
+        "sealVerify": true,
+        "attempts": [
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS",
+          "PASS",
+          "IDLE"
+        ]
+      }
+    },
+    "lock_waits": "strace -f -tt of a 5-wave: 5 successful O_EXCL ledger claims (one per run), 0 EEXIST polls - no claim contention observed (ledger stages landed at different instants)",
+    "cross_write_check": "each of the 5 run dirs: mission-report / mission-plan / pipeline-checkpoint all carry their OWN mission id; every run dir's files are within its declared write_set (writeSetCheck OK x5 per repeat); errors 0"
+  },
+  "step4_interruption": {
+    "A_sigkill_mid_run": {
+      "how": "5-wave started; SIGKILL to odg-run M0002 and its current stage child (fleet-stage.js) ~2.5 s in",
+      "tick": "FAIL - wave 4/5 PASS; M0002 attempt FAIL 'odg-run exit null SIGKILL' (no false success); its run dir held 12 partial files, all within its write_set; ledger 4 entries, M0002 0, seal OK",
+      "next_tick": "same allowlist: only M0002 admitted (others deduped), fresh run dir, PASS; ledger 5 entries, each mission exactly once, seal OK"
+    },
+    "B_sigkill_ledger_claim_holder": {
+      "how": "SIGSTOP/SIGCONT stepping of the M0002 Mission Ledger stage until it held fleet/locks/mission-ledger.lock.2 (its pid in the file, live mtime), then SIGKILL holder + odg-run",
+      "tick": "FAIL (M0002 not recorded; M0001 1 entry; seal OK); stale claim lock.2 left held by a dead pid",
+      "next_tick_within_TTL": "M0002 admitted; its ledger stage waited the full 60 s claim timeout => 'LEDGER_CLAIM_TIMEOUT ... holder pid <dead> - NOT recorded' => attempt FAIL (fail-closed; 65.3 s tick)",
+      "next_tick_across_TTL": "started 02:21:08; claim reclaimed at 02:21:44.585 (= lock.2 mtime + 120 s TTL) as generation 3; M0002 PASS; ledger 2 entries (each once); seal OK; lock.1 collected",
+      "finding": "a crashed claim holder blocks ledger recording for up to the 120 s TTL (no dead-pid fast path): recovery is correct but slow; stated, not changed"
+    }
+  },
+  "PROVEN": [
+    "real write footprint measured (strace) for 8 read-only canaries; 6 qualified and declared",
+    "declared write_set validated fail-closed (malformed => refused, absent => serialized)",
+    "write-set enforced on the real isolated wave path: undeclared write / duplicate ledger entry => WRITE_SET_VIOLATION => not verified (hermetic tests); OK on every real governed child (real runs)",
+    "real wave of 5 distinct real canary missions via the real CLI, all PASS, 3 repeats: median 5.55 s vs 28.21 s sequential (x5.08 on 8 CPUs)",
+    "no lost / duplicated ledger entry, seal chain verifies, no cross-write, after every repeat and after both interruptions",
+    "SIGKILL recovery: next tick re-admits only the unproven mission and proceeds; a dead holder's ledger claim is reclaimed at TTL",
+    "default (non-wave) path untouched: the golden byte-identity test still passes"
+  ],
+  "NOT_PROVEN": [
+    "production waves: the repo unit deploy/odg-mission-runner.service sets ODG_CANARY_ALLOWLIST= (empty) and no ODG_TICK_WAVE; per the caller the installed live root unit allowlists only M0001 - not inspected (systemctl access denied) and NOT changed; production waves stay OWNER-GATED",
+    "writes OUTSIDE a run dir by a non-node descendant are not attributable per child at runtime (measured absent via strace for the declared missions only)",
+    "a violating child's own ledger append is not retracted (append-only ledger); the attempt log records FAIL",
+    "lock-wait behaviour under real claim contention (0 waits observed)",
+    "M0000 pristine-state ledger-stage ordering dependence (pre-existing) - not fixed",
+    "a live wave with these missions admits nothing today (all already proven in the main ledger)",
+    "Truth-Lock-enforced wave run (only possible on branch main)"
+  ]
+}

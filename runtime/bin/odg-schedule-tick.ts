@@ -251,6 +251,16 @@ function tickOnce(opts: any = {}): any {
  * OWN run dir instead of runtime/generated; the report is read from that dir. The ledger is NOT in the write-set: it
  * is lock-serialized (micro-critical-section), not wave-serialized. The UNKNOWN rule is unchanged: a mission with NO
  * declared write-set is still serialized (fail-closed), isolation or not.
+ *
+ * V15.5 DECLARED + ENFORCED WRITE-SETS (wave mode only): a mission's `write_set` lists its MEASURED outputs RELATIVE TO
+ * THE RUN-OUTPUT ROOT (validateWriteSet; malformed ⇒ REFUSED, absent ⇒ UNKNOWN ⇒ serialized). For contention it is
+ * projected onto the physical root the child writes (its own run dir under isolation; the shared runtime/generated
+ * without ⇒ same names overlap ⇒ serialized). After each ISOLATED child exits, the files it actually left in its run dir
+ * must ⊆ the declared set and its ledger delta must be 0 or 1 (auditRunWrites); otherwise the attempt is recorded as
+ * WRITE_SET_VIOLATION ⇒ NOT verified (fail-closed). The per-tick verdicts are written to <runOutputBase>/wave-summary.json.
+ * LIMITS (stated): writes OUTSIDE the run dir by a non-node descendant bypass the overlay and are not attributable per
+ * child at runtime (measured absent for the declared canaries via strace); a violating child's own ledger append (done
+ * inside the child before the audit) is NOT retracted — the append-only ledger keeps it, the attempt log says FAIL.
  * =================================================================================================================== */
 const WAVE_DEFAULT_MAX = 2;
 const WAVE_HARD_MAX = 6;                                   // same ceiling as the orchestrator's agentCount (0..6)
@@ -267,10 +277,75 @@ function waveMaxFromEnv(v: any): number {
 function loadMissionDef(missionId: string): any {
   try { return JSON.parse(fs.readFileSync(path.join(ROOT, "runtime", "missions", missionId + ".json"), "utf8")); } catch { return null; }
 }
-// Declared OUTPUT write-set of a read-only mission (distinct from authorized_paths, which a canary must NOT have).
+/* V15.5 DECLARED OUTPUT WRITE-SET of a read-only mission (distinct from authorized_paths, which a canary must NOT have).
+ * Paths are RELATIVE TO THE RUN-OUTPUT ROOT (the per-run ODG_RUN_OUTPUT_DIR under isolation; runtime/generated without):
+ * a file ("mission-report.json") or a directory prefix ending in "/" ("reports/"). validateWriteSet is PURE + fail-closed:
+ *   ABSENT    — neither write_set nor writeSet ⇒ UNKNOWN ⇒ serialized (unchanged rule);
+ *   MALFORMED — present but not a non-empty array of non-empty relative POSIX strings (non-array, non-string, empty
+ *               array/entry, absolute path, drive letter, backslash, NUL, "." / ".." segment), or write_set and writeSet
+ *               BOTH present and different ⇒ the wave REFUSES the mission (BLOCKED, never dispatched);
+ *   DECLARED  — normalised (duplicate slashes collapsed), de-duplicated paths.
+ * The shared mission-ledger is NOT declared here: it is the runner's SHARED_STATE, lock-serialized by the ledger stage. */
+function validateWriteSet(m: any): { kind: "ABSENT" } | { kind: "MALFORMED"; reason: string } | { kind: "DECLARED"; paths: string[] } {
+  if (m === null || typeof m !== "object") return { kind: "ABSENT" };
+  const hasS = Object.prototype.hasOwnProperty.call(m, "write_set"), hasC = Object.prototype.hasOwnProperty.call(m, "writeSet");
+  if (!hasS && !hasC) return { kind: "ABSENT" };
+  if (hasS && hasC && JSON.stringify(m.write_set) !== JSON.stringify(m.writeSet)) return { kind: "MALFORMED", reason: "write_set and writeSet both present and different (ambiguous)" };
+  const raw = hasS ? m.write_set : m.writeSet;
+  if (!Array.isArray(raw)) return { kind: "MALFORMED", reason: `write_set is not an array (${raw === null ? "null" : typeof raw})` };
+  if (raw.length === 0) return { kind: "MALFORMED", reason: "write_set is empty (a read-only governed run always writes its run artifacts)" };
+  const out: string[] = [];
+  for (const x of raw) {
+    if (typeof x !== "string") return { kind: "MALFORMED", reason: `write_set entry is not a string (${x === null ? "null" : typeof x})` };
+    if (x.trim() === "" || x !== x.trim()) return { kind: "MALFORMED", reason: `write_set entry empty or padded: ${JSON.stringify(x)}` };
+    if (x.indexOf("\0") >= 0 || x.indexOf("\\") >= 0) return { kind: "MALFORMED", reason: `write_set entry has NUL/backslash: ${JSON.stringify(x)}` };
+    if (x.startsWith("/") || /^[A-Za-z]:/.test(x)) return { kind: "MALFORMED", reason: `write_set entry is absolute: ${JSON.stringify(x)}` };
+    const isDir = x.endsWith("/");
+    const segs = x.split("/").filter((g) => g !== "");
+    if (segs.length === 0 || segs.some((g) => g === "." || g === "..")) return { kind: "MALFORMED", reason: `write_set entry has a '.'/'..' segment: ${JSON.stringify(x)}` };
+    const n = segs.join("/") + (isDir ? "/" : "");
+    if (out.indexOf(n) < 0) out.push(n);
+  }
+  return { kind: "DECLARED", paths: out };
+}
 function declaredWriteSet(m: any): string[] | null {
-  const raw = m && (Array.isArray(m.write_set) ? m.write_set : (Array.isArray(m.writeSet) ? m.writeSet : null));
-  return Array.isArray(raw) && raw.length > 0 && raw.every((x: any) => typeof x === "string") ? raw.slice() : null;
+  const v = validateWriteSet(m);
+  return v.kind === "DECLARED" ? v.paths.slice() : null;
+}
+/* writeSetCovers — PURE: is the run-relative file `rel` inside the declared write-set (exact file or "dir/" prefix)? */
+function writeSetCovers(declared: string[], rel: string): boolean {
+  return declared.some((d) => (d.endsWith("/") ? rel.startsWith(d) : rel === d));
+}
+/* listRunFiles — every NON-directory entry (files, symlinks, …) under a run dir, run-relative POSIX paths, sorted.
+ * Directories themselves are not outputs (the overlay may create empty parents such as fleet/locks). */
+function listRunFiles(dir: string): string[] {
+  const res: string[] = [];
+  const walk = (d: string, pre: string) => {
+    let ents: any[] = [];
+    try { ents = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
+    for (const e of ents) { const rel = pre ? pre + "/" + e.name : e.name; if (e.isDirectory()) walk(path.join(d, e.name), rel); else res.push(rel); }
+  };
+  walk(dir, "");
+  return res.sort();
+}
+/* ledgerCounts — entries per mission in the shared mission-ledger (append-only); {} when absent/unreadable. */
+function ledgerCounts(ledgerPath: string): any {
+  try {
+    const l = JSON.parse(fs.readFileSync(ledgerPath, "utf8"));
+    const e = Array.isArray(l) ? l : (l.entries || l.missions || []);
+    const c: any = {}; for (const x of e) if (x && typeof x.mission === "string") c[x.mission] = (c[x.mission] || 0) + 1;
+    return c;
+  } catch { return {}; }
+}
+/* auditRunWrites — PURE over (declared, actual files, ledger delta): the V15.5 write-set ENFORCEMENT verdict.
+ *   UNDECLARED — mission declares no write-set: nothing to enforce against (it was serialized, UNKNOWN);
+ *   VIOLATION  — an actual file in the run dir is outside the declared set, OR the mission appended >1 ledger entry;
+ *   OK         — every actual file is declared and the ledger delta is 0 or 1. */
+function auditRunWrites(declared: string[] | null, actual: string[], ledgerDelta: number): any {
+  if (!declared) return { status: "UNDECLARED", undeclared: [], actual, ledgerDelta };
+  const undeclared = actual.filter((f) => !writeSetCovers(declared, f));
+  const ledgerOk = ledgerDelta === 0 || ledgerDelta === 1;
+  return { status: undeclared.length === 0 && ledgerOk ? "OK" : "VIOLATION", undeclared, actual, ledgerDelta, ...(ledgerOk ? {} : { ledgerViolation: `ledger delta ${ledgerDelta} (expected 0 or 1)` }) };
 }
 
 /* selectWave — PURE: admitted ids → canonical classify → canonical dispatch plan → first write-safe sub-wave (capped). */
@@ -281,7 +356,11 @@ function selectWave(admittedIds: string[], o: any): any {
     const decl = declaredWriteSet(o.loadMission(id));
     const rec: any = { id, status: "READY", title: `canary ${id}`, deps: [], acceptance: "", nextAction: "read-only canary run via the governed odg-run pipeline" };
     const own: string[] = typeof o.runnerWriteSetFor === "function" ? o.runnerWriteSetFor(id) : [];   // isolated run dir
-    if (decl) rec.writeSet = Array.from(new Set([...decl, ...shared, ...own]));   // absent ⇒ no key ⇒ UNKNOWN (fail-closed)
+    // V15.5: declared paths are run-root-relative ⇒ projected onto the PHYSICAL root this child writes: its own run dir
+    // under isolation (distinct per mission ⇒ the same logical file name is a DIFFERENT physical file), the shared
+    // runtime/generated without (same name ⇒ same physical file ⇒ overlap ⇒ serialized). Never faked disjoint.
+    const root: string = typeof o.writeRootFor === "function" ? o.writeRootFor(id) : "runtime/generated";
+    if (decl) rec.writeSet = Array.from(new Set([...decl.map((p) => root.replace(/\/+$/, "") + "/" + p), ...shared, ...own]));   // absent ⇒ no key ⇒ UNKNOWN (fail-closed)
     return rec;
   });
   const statusById: any = {};
@@ -358,7 +437,12 @@ async function tickWave(opts: any = {}): Promise<any> {
       dispatch: () => ({ verified: true, detail: WAVE_ADMITTED }),
       reviewExcellence: opts.reviewExcellence || reviewExcellence,
     });
-    if (d.status === "PASS" && d.reason === WAVE_ADMITTED) { admitted.push(id); continue; }
+    if (d.status === "PASS" && d.reason === WAVE_ADMITTED) {
+      // V15.5: a MALFORMED declared write-set is a governance defect ⇒ REFUSED (never dispatched, never "UNKNOWN-and-run").
+      const v = validateWriteSet(loadMission(id));
+      if (v.kind === "MALFORMED") { const r = { status: "BLOCKED", mission: id, reason: `WRITE_SET_MALFORMED: ${v.reason}` }; refused.push(r); audit(r); continue; }
+      admitted.push(id); continue;
+    }
     if (d.status === "IDLE") continue;                               // ineligible (e.g. proven dedup) — skipped as today
     if (d.mission === null) { audit(d); return { status: d.status, reason: d.reason, wave: [], results: [], refused, deferred: [], auditChain: chain }; } // global stop/bound
     refused.push(d); audit(d);
@@ -380,7 +464,8 @@ async function tickWave(opts: any = {}): Promise<any> {
   const relToCwd = (p: string) => { const r = path.relative(runCwd, p); return r && !r.startsWith("..") && !path.isAbsolute(r) ? r.split(path.sep).join("/") : p; };
   const sel = selectWave(admitted, { REC, MO, loadMission, waveMax,
     runnerSharedWriteSet: isolate ? (Array.isArray(opts.runnerSharedWriteSet) ? opts.runnerSharedWriteSet : ISOLATED_RUNNER_SHARED_WRITESET.slice()) : opts.runnerSharedWriteSet,
-    runnerWriteSetFor: isolate ? (id: string) => [relToCwd(runDirFor(id))] : undefined });
+    runnerWriteSetFor: isolate ? (id: string) => [relToCwd(runDirFor(id))] : undefined,
+    writeRootFor: isolate ? (id: string) => relToCwd(runDirFor(id)) : undefined });
 
   // 4. CONCURRENT GOVERNED EXECUTION — same child per mission; allSettled ⇒ one failure never stops the others.
   const childOpts = {
@@ -397,17 +482,34 @@ async function tickWave(opts: any = {}): Promise<any> {
     env: { ...childOpts.env, ODG_RUN_OUTPUT_DIR: runDirFor(id), ODG_RUN_OUTPUT_ROOT: path.resolve(runCwd) },
     readReport: opts.readReport || ((mid: string) => JSON.parse(fs.readFileSync(path.join(runDirFor(mid), "mission-report.json"), "utf8"))),
   };
+  // V15.5 ENFORCEMENT inputs: the shared ledger's per-mission entry counts BEFORE the wave (lock-serialized SHARED_STATE).
+  const ledgerPath = path.join(runCwd, "runtime", "generated", "mission-ledger.json");
+  const ledgerBefore = isolate ? ledgerCounts(ledgerPath) : null;
   const t0 = Date.now();
   const settled = await Promise.allSettled(sel.wave.map((id: string) => runGovernedChild(id, optsFor(id))));
   const wallMs = Date.now() - t0;
+  const ledgerAfter = isolate ? ledgerCounts(ledgerPath) : null;
   const results = settled.map((s: any, i: number) => {
-    const r = s.status === "fulfilled" ? s.value : { mission: sel.wave[i], verified: false, detail: `runner rejected: ${s.reason}` };
+    const id = sel.wave[i];
+    let r = s.status === "fulfilled" ? s.value : { mission: id, verified: false, detail: `runner rejected: ${s.reason}` };
+    // V15.5 WRITE-SET ENFORCEMENT (isolated wave only — the only mode with an attributable per-child output dir): the
+    // files the child ACTUALLY left in its run dir must ⊆ its declared write-set and it may append at most ONE ledger
+    // entry. Otherwise the attempt is a WRITE_SET_VIOLATION ⇒ NOT verified (fail-closed), whatever the child reported.
+    const writeSetCheck = !isolate ? { status: "NOT_ENFORCED_NON_ISOLATED" }
+      : auditRunWrites(declaredWriteSet(loadMission(id)), listRunFiles(runDirFor(id)), ((ledgerAfter as any)[id] || 0) - ((ledgerBefore as any)[id] || 0));
+    if (writeSetCheck.status === "VIOLATION") {
+      const why = [writeSetCheck.undeclared.length ? `undeclared writes ${JSON.stringify(writeSetCheck.undeclared)}` : "", writeSetCheck.ledgerViolation || ""].filter(Boolean).join("; ");
+      r = { ...r, verified: false, detail: `WRITE_SET_VIOLATION: ${why} (child said: ${r.detail})` };
+    }
     const c = SCHED.classifyDispatch(r);                              // canonical fail-closed classification
-    const d = { status: c.status, mission: sel.wave[i], reason: c.detail };
+    const d = { status: c.status, mission: id, reason: c.detail };
     audit(d);
-    return { ...d, startedAt: r.startedAt, endedAt: r.endedAt, exitCode: r.exitCode };
+    return { ...d, startedAt: r.startedAt, endedAt: r.endedAt, exitCode: r.exitCode, writeSetCheck };
   });
   const allPass = results.length > 0 && results.every((r: any) => r.status === "PASS");
+  if (isolate) {   // V15.5 evidence: per-tick write-set verdicts next to the run dirs (best-effort; never changes the outcome)
+    try { fs.mkdirSync(runOutputBase as string, { recursive: true }); fs.writeFileSync(path.join(runOutputBase as string, "wave-summary.json"), JSON.stringify({ wave: sel.wave, deferred: sel.deferred, contentions: sel.contentions, refused, wallMs, ledgerBefore, ledgerAfter, results }, null, 2)); } catch { /* best-effort */ }
+  }
   return { status: allPass ? "PASS" : "FAIL", reason: `wave ${results.filter((r: any) => r.status === "PASS").length}/${results.length} PASS (cap ${sel.cap}; deferred ${sel.deferred.length})`, wave: sel.wave, subWaves: sel.subWaves, contentions: sel.contentions, deferred: sel.deferred, refused, results, wallMs, isolated: isolate, runDirs: isolate ? Object.fromEntries(sel.wave.map((id: string) => [id, runDirFor(id)])) : null, auditChain: chain };
 }
 
@@ -436,6 +538,6 @@ async function mainWave(): Promise<void> {
   process.exit(d.status === "PASS" || d.status === "IDLE" ? 0 : 1);
 }
 
-module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, launcherEnforce, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES, tickWave, selectWave, runGovernedChild, waveMaxFromEnv, declaredWriteSet, WAVE_DEFAULT_MAX, WAVE_HARD_MAX, REAL_RUNNER_SHARED_WRITESET, ISOLATED_RUNNER_SHARED_WRITESET };
+module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, launcherEnforce, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES, tickWave, selectWave, runGovernedChild, waveMaxFromEnv, declaredWriteSet, validateWriteSet, writeSetCovers, listRunFiles, ledgerCounts, auditRunWrites, WAVE_DEFAULT_MAX, WAVE_HARD_MAX, REAL_RUNNER_SHARED_WRITESET, ISOLATED_RUNNER_SHARED_WRITESET };
 if (require.main === module) { if (process.env.ODG_TICK_WAVE === "1") mainWave(); else main(); }
 export {};

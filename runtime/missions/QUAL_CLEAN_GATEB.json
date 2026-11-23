@@ -39,5 +39,31 @@
   "definition_of_done": [
     "Evidence generated",
     "Report generated"
-  ]
+  ],
+  "write_set": [
+    "capability-registry.json",
+    "clean-workspace-coverage.json",
+    "clean-workspace-report.json",
+    "clean-workspace-scan.json",
+    "decision.json",
+    "execution-plan.json",
+    "fidelity-verdict.json",
+    "knowledge.json",
+    "mission-context.json",
+    "mission-interpretation.json",
+    "mission-lifecycle.json",
+    "mission-plan.json",
+    "mission-report.json",
+    "patch-execution.json",
+    "patch-plan.json",
+    "pipeline-checkpoint.json",
+    "project-context.json",
+    "runtime-context.json",
+    "runtime-pipeline.json",
+    "runtime-verify.json",
+    "truth-lock.json",
+    "logs/QUAL_CLEAN_GATEB.run.log",
+    "reports/QUAL_CLEAN_GATEB.final-report.md"
+  ],
+  "write_set_basis": "V15.5 MEASURED output write-set (strace -f of a real governed isolated wave run, 2026-11-23; see docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json). Paths are relative to the RUN-OUTPUT ROOT (per-run ODG_RUN_OUTPUT_DIR under wave isolation; runtime/generated otherwise). Enforced in isolated wave mode: an actual file outside this set => WRITE_SET_VIOLATION (not verified). NOT listed: the shared mission-ledger.json (+ its fleet/locks claim), which is runner SHARED_STATE, lock-serialized, at most one entry per run."
 }
