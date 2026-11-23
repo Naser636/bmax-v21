@@ -1,0 +1,70 @@
+{
+  "mission": "V160_CP7_AP_CONTRACTS",
+  "priority": "P0",
+  "mode": "IMPLEMENT",
+  "requires_engineering": true,
+  "description": "Produce checkpoint CP7 (facts for PRs #909-#914 + the native-build bwrap isolation work, from GitHub/evidence only) and commit the A-P WORK_ITEM_CONTRACTs with explicit initial state (PROPOSED). Docs/evidence only.",
+  "authorized_paths": [
+    "docs/odg/evidence/V160_CHECKPOINT_7.json",
+    "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"
+  ],
+  "authorizedPaths": [
+    "docs/odg/evidence/V160_CHECKPOINT_7.json",
+    "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"
+  ],
+  "objectives": [
+    {
+      "id": "CP7",
+      "goal": "Write docs/odg/evidence/V160_CHECKPOINT_7.json from verified facts only.",
+      "done_when": [
+        "every PR #909-#914 listed with merge commit + inspected head",
+        "bwrap state recorded as merged or IN_PROGRESS (never claimed done before merge)",
+        "owner questions listed"
+      ],
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    },
+    {
+      "id": "AP_CONTRACTS",
+      "goal": "Commit docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json (16 contracts, state PROPOSED, initial state from V150_TRACEABILITY_MATRIX.json).",
+      "done_when": [
+        "16 contracts in the protocol work_item_contract_schema shape",
+        "no contract marked AUTHORIZED or PASS without execution"
+      ],
+      "authorization": {
+        "eligible": true,
+        "authorized": true
+      }
+    }
+  ],
+  "definition_of_done": [
+    "both files present, valid JSON, docs-only diff",
+    "independent inspection ACCEPT on the exact head; CI green"
+  ],
+  "status": "AUTHORIZED",
+  "authorization": {
+    "state": "AUTHORIZED",
+    "authorized": true,
+    "authorized_by": "owner (human)",
+    "authorization_source": "owner directives 'DIRECTIVE DE REPRISE CONTINUE — ODG V15.0 / BWRAP / CP7' §7 and 'DIRECTIVE EXÉCUTIVE COMPLÉMENTAIRE' §5 (session messages, 2026-11-23)",
+    "recorded_at": "2026-11-23T16:25:00Z",
+    "note": "Recorded by the provider from the owner's message; not self-authorized."
+  },
+  "permissions": {
+    "engineering": true,
+    "authorizedPaths": [
+      "docs/odg/evidence/V160_CHECKPOINT_7.json",
+      "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"
+    ],
+    "network": false
+  },
+  "policies": [
+    "DETERMINISM_FIRST",
+    "REUSE_BEFORE_CREATE",
+    "NO_SCOPE_EXPANSION"
+  ],
+  "source": "owner-directive",
+  "generatedBy": "claude-code (provider) — mission definition transcribed from the owner directive; executed through odg-delegate (ODG supervises)"
+}
