@@ -55,7 +55,16 @@ const PUBLISHERS: Record<string, any> = Object.freeze({
   "www.postgresql.org": { organization: "PostgreSQL Global Development Group", family: "postgresql", role: "PRIMARY_OFFICIAL" },
   "code.claude.com": { organization: "Anthropic", family: "anthropic", role: "PRIMARY_OFFICIAL" },
   "www.sqlite.org": { organization: "SQLite project (Hwaci)", family: "sqlite", role: "PRIMARY_OFFICIAL" },
-  "registry.npmjs.org": { organization: "npm, Inc. (GitHub, Microsoft)", family: "github", role: "PRIMARY_OFFICIAL" },   // family = owning organisation: a future github.com entry must share it
+  // V16.0 — family = ULTIMATE owning organisation (fail-closed for independence): npm and GitHub are Microsoft subsidiaries,
+  // so registry.npmjs.org, github.blog and microsoft.github.io are ONE family ("microsoft") and never corroborate each other.
+  "registry.npmjs.org": { organization: "npm, Inc. (GitHub, Microsoft)", family: "microsoft", role: "PRIMARY_OFFICIAL" },
+  // V16.0 — hosts of the V160 engineering-practices grant (exact host; publisher, NOT hosting provider, decides identity).
+  // DeepMind is part of Google (Alphabet) ⇒ family "google", like sre.google / research.google / google.github.io.
+  "research.google": { organization: "Google Research", family: "google", role: "PRIMARY_OFFICIAL" },
+  "google.github.io": { organization: "Google (Engineering Practices, served by GitHub Pages)", family: "google", role: "PRIMARY_OFFICIAL" },   // exact host only: other *.github.io sites stay UNKNOWN
+  "deepmind.google": { organization: "Google DeepMind", family: "google", role: "PRIMARY_OFFICIAL" },
+  "microsoft.github.io": { organization: "Microsoft (Code With Engineering Playbook, served by GitHub Pages)", family: "microsoft", role: "PRIMARY_OFFICIAL" },
+  "github.blog": { organization: "GitHub (Microsoft)", family: "microsoft", role: "PRIMARY_OFFICIAL" },
 });
 function hostOf(u: any): string { try { return new URL(String(u)).hostname.toLowerCase(); } catch { return ""; } }
 function identityOf(url: string): any {

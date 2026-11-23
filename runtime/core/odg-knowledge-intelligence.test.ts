@@ -145,7 +145,16 @@ const idA = K.identityOf("https://csrc.nist.gov/pubs/x"), idB = K.identityOf("ht
 check("V15.9: csrc.nist.gov and www.nist.gov share the 'nist' family (not independent)", idA.known && idB.known && idA.family === "nist" && idB.family === "nist");
 check("V15.9: the 5 V158 hosts are PRIMARY_OFFICIAL with distinct organisation families", ["https://www.postgresql.org/docs/", "https://code.claude.com/docs/", "https://www.sqlite.org/docs.html", "https://registry.npmjs.org/next", "https://csrc.nist.gov/pubs/"].every((u) => K.identityOf(u).role === "PRIMARY_OFFICIAL") && new Set(["https://www.postgresql.org/docs/", "https://code.claude.com/docs/", "https://www.sqlite.org/docs.html", "https://registry.npmjs.org/next", "https://csrc.nist.gov/pubs/"].map((u) => K.identityOf(u).family)).size === 5);
 check("V15.9: an unlisted look-alike host stays UNKNOWN (exact-host match, no suffix)", K.identityOf("https://evil.code.claude.com/x").known === false && K.identityOf("https://postgresql.org/x").known === false);
-check("V15.9: registry.npmjs.org family is 'github' (owning organisation)", K.identityOf("https://registry.npmjs.org/next").family === "github");
+check("V16.0: registry.npmjs.org family is the ULTIMATE owner 'microsoft' (npm ⊂ GitHub ⊂ Microsoft)", K.identityOf("https://registry.npmjs.org/next").family === "microsoft");
+{ // V16.0 — V160 engineering-practices hosts: exact-host publisher identities, families by ultimate owning organisation
+  const V160 = ["https://research.google/pubs/x/", "https://google.github.io/eng-practices/review/", "https://deepmind.google/blog/", "https://www.nasa.gov/reference/systems-engineering-handbook/", "https://microsoft.github.io/code-with-engineering-playbook/", "https://github.blog/engineering/"];
+  check("V16.0: the 6 V160 hosts are known PRIMARY_OFFICIAL publishers", V160.every((u) => K.identityOf(u).known === true && K.identityOf(u).role === "PRIMARY_OFFICIAL"));
+  check("V16.0: research.google, google.github.io, deepmind.google and sre.google are ONE family (google)", ["https://research.google/", "https://google.github.io/eng-practices/", "https://deepmind.google/blog/", "https://sre.google/"].every((u) => K.identityOf(u).family === "google"));
+  check("V16.0: github.blog, microsoft.github.io and registry.npmjs.org are ONE family (microsoft) — never independent of each other", ["https://github.blog/engineering/", "https://microsoft.github.io/code-with-engineering-playbook/", "https://registry.npmjs.org/react"].every((u) => K.identityOf(u).family === "microsoft"));
+  check("V16.0: V160 corpus spans exactly 3 independent families (google, nasa, microsoft)", new Set(V160.map((u) => K.identityOf(u).family)).size === 3);
+  check("V16.0: identity is EXACT-host — another *.github.io site or a google.github.io look-alike stays UNKNOWN", !K.identityOf("https://evil.github.io/eng-practices/").known && !K.identityOf("https://google.github.io.evil.example/").known && !K.identityOf("https://github.io/").known);
+  check("V16.0: GitHub Pages hosting does not make a page GitHub's — microsoft.github.io is published by Microsoft", /^Microsoft/.test(K.identityOf("https://microsoft.github.io/code-with-engineering-playbook/").organization));
+}
 // V15.9 (#911 MED): the same SUPPORTED claim marked as a FRAGMENT is capped at CANDIDATE (never unlocks implementation use);
 // a truthy non-boolean marker counts as a fragment too (fail-closed); fragment:false changes nothing.
 const fr = K.assessClaim({ ...eb, fragment: true }, { asOfEpochMs: ASOF, collection: C(byUrl) });
