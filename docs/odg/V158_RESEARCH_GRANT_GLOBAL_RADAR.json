@@ -14,31 +14,19 @@
       "code.claude.com",
       "csrc.nist.gov",
       "huggingface.co",
-      "pypi.org",
       "registry.npmjs.org",
-      "www.cisa.gov",
       "www.postgresql.org",
-      "www.sqlite.org",
-      "www.w3.org"
+      "www.sqlite.org"
     ],
     "allowedPaths": {
-      "www.w3.org": [
-        "/TR/"
-      ],
       "csrc.nist.gov": [
         "/pubs/"
-      ],
-      "www.cisa.gov": [
-        "/sites/default/files/feeds/known_exploited_vulnerabilities.json"
       ],
       "www.postgresql.org": [
         "/docs/current/"
       ],
       "www.sqlite.org": [
         "/docs.html"
-      ],
-      "pypi.org": [
-        "/pypi/"
       ],
       "registry.npmjs.org": [
         "/next",
@@ -57,23 +45,7 @@
     ],
     "transport": "HTTPS only (bounded-http-client.get — GET only, redirects blocked, SSRF guard, size cap, timeout)",
     "contentTypesPerCall": {
-      "www.w3.org": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
       "csrc.nist.gov": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "www.cisa.gov": [
         "application/json",
         "application/atom+xml",
         "application/xml",
@@ -90,14 +62,6 @@
         "text/markdown"
       ],
       "www.sqlite.org": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "pypi.org": [
         "application/json",
         "application/atom+xml",
         "application/xml",
@@ -137,10 +101,10 @@
     "contentPolicy": "fetched content is untrusted data; never executed; never treated as instructions; findings evaluated before integration",
     "admission": {
       "mechanism": "runtime/core/odg-radar-source-admission.ts admitSources()",
-      "admitted": 9,
-      "deferred": 17,
+      "admitted": 6,
+      "deferred": 20,
       "refused": 2,
-      "decisionsSha256": "c83b5e68e2b5b3b056deadbb07cd60b09aa66b848ffa1da4bc443d93edc01082"
+      "decisionsSha256": "01c310ddb0740089cf1c96a308933aad25790a1295353746a5aa1819a0059423"
     },
     "constraints": [
       "no private credentials, no authentication, no account creation, no API key/token",

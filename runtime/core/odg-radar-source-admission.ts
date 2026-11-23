@@ -124,12 +124,16 @@ function decideCandidate(c: any, policy: any = DEFAULT_POLICY): any {
     if (!pv.ok) { refuse.push(`${pv.reason}:${String(p.path)}`); continue; }
     if (p.robots === ROBOTS.DISALLOW) { refuse.push("ROBOTS_DISALLOWS:" + p.path); continue; }
     if (p.method !== undefined && p.method !== "GET") { defer.push(`NON_GET_ENDPOINT_${String(p.method)}:${p.path} (grant is GET-only)`); continue; }
-    // The governor matches a prefix and EVERYTHING below it: a prefix that contains robots-disallowed sub-paths cannot be
-    // admitted as is (the governor would ALLOW the disallowed sub-paths). Malformed list ⇒ unknown ⇒ DEFER.
-    if (p.robotsDisallowedWithin !== undefined && !(Array.isArray(p.robotsDisallowedWithin) && p.robotsDisallowedWithin.every(isStr))) { defer.push("ROBOTS_DISALLOWED_WITHIN_MALFORMED:" + p.path); continue; }
-    if (Array.isArray(p.robotsDisallowedWithin) && p.robotsDisallowedWithin.length > 0) { defer.push(`PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:${p.path} ⊃ ${p.robotsDisallowedWithin.join(",")} (governor cannot exclude sub-paths — narrow the prefix)`); continue; }
     if (p.robots !== ROBOTS.ALLOW && p.robots !== ROBOTS.NO_ROBOTS_4XX) { defer.push(`ROBOTS_${p.robots === undefined ? "UNKNOWN" : p.robots}:${p.path} (RFC 9309: 5xx/unreachable ⇒ disallow; redirected robots ⇒ unknown)`); continue; }
     if (p.redirect === REDIRECT.OFF_HOST) { refuse.push("OFF_HOST_REDIRECT_ON_PREFIX:" + p.path); continue; }
+    // The governor matches a prefix and EVERYTHING below it: a prefix that contains robots-disallowed sub-paths cannot be
+    // admitted as is (the governor would ALLOW the disallowed sub-paths). 
+    // The FULL robots.txt must have been analysed for this prefix (RFC 9309 group merging, wildcards honoured): both lists
+    // are REQUIRED and explicit — absent ⇒ not analysed ⇒ DEFER (a "prefix allowed" line says nothing about rules INSIDE it).
+    const listOk = (v: any): boolean => Array.isArray(v) && v.every(isStr);
+    if (!listOk(p.robotsDisallowedWithin) || !listOk(p.robotsWildcardRulesInside)) { defer.push("ROBOTS_SUBPATHS_NOT_ANALYSED:" + p.path + " (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"); continue; }
+    if (p.robotsDisallowedWithin.length > 0) { defer.push(`PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:${p.path} ⊃ ${p.robotsDisallowedWithin.join(",")} (governor cannot exclude sub-paths — narrow the prefix)`); continue; }
+    if (p.robotsWildcardRulesInside.length > 0) { defer.push(`ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:${p.path} (${p.robotsWildcardRulesInside.slice(0, 3).join(" | ")}${p.robotsWildcardRulesInside.length > 3 ? " …" : ""})`); continue; }
     if (p.redirect === REDIRECT.SAME_HOST) { defer.push("PREFIX_NOT_CANONICAL (same-host redirect; transport blocks redirects — use the canonical form):" + p.path); continue; }
     if (p.redirect !== REDIRECT.NONE) { defer.push("REDIRECT_BEHAVIOUR_UNKNOWN:" + p.path); continue; }
     if (p.sampled200 !== true) { defer.push("PREFIX_NOT_SAMPLED_200:" + p.path); continue; }

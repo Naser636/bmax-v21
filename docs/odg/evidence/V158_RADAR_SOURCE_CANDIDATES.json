@@ -329,7 +329,17 @@
      "path": "/TR/",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [
+      "/TR/?"
+     ],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*,*",
+      "Disallow: /*/wp-admin/",
+      "Disallow: /*/wiki/*/edit",
+      "(+15 more /*/wp-*|/*/wiki/* wildcards)"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
    ],
    "raw": {
@@ -362,7 +372,10 @@
      "path": "/pubs/",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
    ],
    "raw": {
@@ -497,7 +510,12 @@
      "path": "/sites/default/files/feeds/known_exploited_vulnerabilities.json",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*/media/oembed"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
    ],
    "raw": {
@@ -660,7 +678,10 @@
      "path": "/docs/current/",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
    ],
    "raw": {
@@ -693,7 +714,10 @@
      "path": "/docs.html",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
    ],
    "raw": {
@@ -761,7 +785,14 @@
      "path": "/pypi/",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /pypi/*/json",
+      "Disallow: /pypi/*/*/json",
+      "Disallow: /pypi*?"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
    ],
    "raw": {
@@ -780,7 +811,9 @@
    "paid": false,
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
-   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "ownerDecisionRequired": "robots Disallow /pypi/*/json (wildcard) vs documented JSON API (docs.pypi.org/api) — same conflict class as export.arxiv.org",
+   "robotsCorrection": "first research pass read /pypi/ as allowed (stdlib robotparser ignores wildcards) — corrected after full-file RFC 9309 analysis"
   },
   {
    "host": "registry.npmjs.org",
@@ -794,13 +827,19 @@
      "path": "/next",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     },
     {
      "path": "/react",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
    ],
    "raw": {
@@ -818,7 +857,8 @@
    "paid": false,
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
-   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "robotsNote": "/robots.txt is not a robots file (JSON document of an npm package named robots.txt): no parseable rules ⇒ no restriction under RFC 9309; body contains third-party personal data — not stored"
   },
   {
    "host": "huggingface.co",
@@ -832,13 +872,19 @@
      "path": "/api/daily_papers",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     },
     {
      "path": "/api/models",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
    ],
    "raw": {
@@ -910,7 +956,10 @@
      "path": "/docs/en/",
      "robots": "ALLOW",
      "redirect": "NONE",
-     "sampled200": true
+     "sampled200": true,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T12:01:49Z–12:02:11Z (RFC 9309 group merging, wildcards honoured; provider research agent)"
     }
    ],
    "raw": {

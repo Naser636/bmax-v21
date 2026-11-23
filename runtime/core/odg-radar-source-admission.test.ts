@@ -11,7 +11,7 @@ const good = (over: any = {}) => ({
   host: "www.rfc-editor.org", scheme: "https", access: "ANONYMOUS_PUBLIC_HTML", tier: "T1", termsVerified: true,
   requiresAuth: false, paid: false, termsForbidAutomation: false, botChallengeObserved: false,
   termsUrl: "https://www.rfc-editor.org/policy.html", rateLimitPerHour: 600,
-  prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true }], ...over,
+  prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }], ...over,
 });
 const dec = (c: any) => A.decideCandidate(c);
 
@@ -19,7 +19,7 @@ const dec = (c: any) => A.decideCandidate(c);
 let d = dec(good());
 check("fully evidenced T1 candidate ⇒ ADMIT with its prefix", d.decision === "ADMIT" && d.admittedPrefixes.join() === "/rfc/");
 check("evidence hash present (64 hex)", /^[0-9a-f]{64}$/.test(d.evidenceSha256));
-check("4xx robots (no robots.txt) counts as allow (RFC 9309)", dec(good({ prefixes: [{ path: "/rfc/", robots: "NO_ROBOTS_4XX", redirect: "NONE", sampled200: true }] })).decision === "ADMIT");
+check("4xx robots (no robots.txt) counts as allow (RFC 9309)", dec(good({ prefixes: [{ path: "/rfc/", robots: "NO_ROBOTS_4XX", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] })).decision === "ADMIT");
 
 // ── REFUSE: hard violations
 const refusedFor = (over: any, re: RegExp) => { const r = dec(good(over)); return r.decision === "REFUSE" && r.reasons.some((x: string) => re.test(x)) && r.admittedPrefixes.length === 0; };
@@ -34,14 +34,14 @@ check("auth required ⇒ REFUSE", refusedFor({ requiresAuth: true }, /AUTHENTICA
 check("paid ⇒ REFUSE", refusedFor({ paid: true }, /PAID/));
 check("bot challenge observed ⇒ REFUSE (never bypassed)", refusedFor({ botChallengeObserved: true }, /BOT_CHALLENGE/));
 check("terms forbid automation ⇒ REFUSE", refusedFor({ termsForbidAutomation: true }, /TERMS_FORBID/));
-check("robots DISALLOW on the prefix ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc/", robots: "DISALLOW", redirect: "NONE", sampled200: true }] }, /ROBOTS_DISALLOWS/));
-check("off-host redirect on the prefix ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "OFF_HOST", sampled200: true }] }, /OFF_HOST_REDIRECT/));
+check("robots DISALLOW on the prefix ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc/", robots: "DISALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /ROBOTS_DISALLOWS/));
+check("off-host redirect on the prefix ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "OFF_HOST", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /OFF_HOST_REDIRECT/));
 check("bare host (no prefix) ⇒ REFUSE", refusedFor({ prefixes: [] }, /NO_PATH_PREFIX/));
-check("prefix '/' ⇒ REFUSE (too broad)", refusedFor({ prefixes: [{ path: "/", robots: "ALLOW", redirect: "NONE", sampled200: true }] }, /TOO_BROAD/));
-check("prefix with '..' ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc/../admin/", robots: "ALLOW", redirect: "NONE", sampled200: true }] }, /NOT_NORMALIZED/));
-check("prefix with encoded separator ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc%2fx/", robots: "ALLOW", redirect: "NONE", sampled200: true }] }, /ENCODED/));
-check("prefix with query ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc/?q=1", robots: "ALLOW", redirect: "NONE", sampled200: true }] }, /QUERY/));
-check("non-WHATWG-canonical prefix (space/backslash) ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc\\x/", robots: "ALLOW", redirect: "NONE", sampled200: true }] }, /QUERY_FRAGMENT_OR_SPACE|CANONICAL/));
+check("prefix '/' ⇒ REFUSE (too broad)", refusedFor({ prefixes: [{ path: "/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /TOO_BROAD/));
+check("prefix with '..' ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc/../admin/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /NOT_NORMALIZED/));
+check("prefix with encoded separator ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc%2fx/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /ENCODED/));
+check("prefix with query ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc/?q=1", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /QUERY/));
+check("non-WHATWG-canonical prefix (space/backslash) ⇒ REFUSE", refusedFor({ prefixes: [{ path: "/rfc\\x/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /QUERY_FRAGMENT_OR_SPACE|CANONICAL/));
 check("non-anonymous access type ⇒ REFUSE", refusedFor({ access: "FREE_OAUTH" }, /ACCESS_TYPE/));
 
 // ── DEFER: missing / unknown evidence never admits
@@ -51,12 +51,12 @@ check("terms URL missing ⇒ DEFER", deferredFor({ termsUrl: undefined }, /TERMS
 check("undocumented rate limit ⇒ DEFER", deferredFor({ rateLimitPerHour: undefined }, /RATE_LIMIT_UNDOCUMENTED/));
 check("unknown tier ⇒ DEFER", deferredFor({ tier: "T9" }, /TIER_UNKNOWN/));
 check("missing access field ⇒ DEFER (unknown, not assumed anonymous)", deferredFor({ access: undefined }, /ACCESS_TYPE/));
-check("robots unknown ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", redirect: "NONE", sampled200: true }] }, /ROBOTS_UNKNOWN/));
-check("robots 5xx/unreachable ⇒ DEFER (RFC 9309 treats as disallow — never admit)", deferredFor({ prefixes: [{ path: "/rfc/", robots: "UNREACHABLE_5XX", redirect: "NONE", sampled200: true }] }, /UNREACHABLE/));
-check("redirected robots.txt ⇒ DEFER (dossier contradiction #1)", deferredFor({ prefixes: [{ path: "/rfc/", robots: "REDIRECTED", redirect: "NONE", sampled200: true }] }, /ROBOTS_REDIRECTED/));
-check("same-host redirect (non-canonical prefix) ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc", robots: "ALLOW", redirect: "SAME_HOST", sampled200: true }] }, /NOT_CANONICAL/));
-check("redirect behaviour unknown ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", sampled200: true }] }, /REDIRECT_BEHAVIOUR_UNKNOWN/));
-check("prefix not sampled 200 ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE" }] }, /NOT_SAMPLED/));
+check("robots unknown ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /ROBOTS_UNKNOWN/));
+check("robots 5xx/unreachable ⇒ DEFER (RFC 9309 treats as disallow — never admit)", deferredFor({ prefixes: [{ path: "/rfc/", robots: "UNREACHABLE_5XX", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /UNREACHABLE/));
+check("redirected robots.txt ⇒ DEFER (dossier contradiction #1)", deferredFor({ prefixes: [{ path: "/rfc/", robots: "REDIRECTED", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /ROBOTS_REDIRECTED/));
+check("same-host redirect (non-canonical prefix) ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc", robots: "ALLOW", redirect: "SAME_HOST", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /NOT_CANONICAL/));
+check("redirect behaviour unknown ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /REDIRECT_BEHAVIOUR_UNKNOWN/));
+check("prefix not sampled 200 ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /NOT_SAMPLED/));
 check("owner decision required (terms allow vs robots disallow) ⇒ DEFER", deferredFor({ ownerDecisionRequired: "robots Disallow:/ vs API terms" }, /OWNER_DECISION/));
 check("robots Crawl-delay without per-host pacing ⇒ DEFER", deferredFor({ crawlDelaySeconds: 15 }, /CRAWL_DELAY_15s_NOT_ENFORCEABLE/));
 check("hourly limit below one run's budget ⇒ DEFER", deferredFor({ rateLimitPerHour: 20 }, /TOO_CLOSE_TO_RUN_BUDGET/));
@@ -66,18 +66,20 @@ check("#905 HIGH: absent hard-violation flag ⇒ DEFER (never read as clean)", [
 check("#905 HIGH: non-boolean truthy flag (\"true\", 1) ⇒ not ADMIT", [["requiresAuth", "true"], ["paid", 1], ["termsForbidAutomation", "yes"], ["botChallengeObserved", "true"]].every(([k, v]) => dec(good({ [k as string]: v })).decision !== "ADMIT"));
 check("#905 HIGH: crawlDelaySeconds as string ⇒ DEFER (malformed)", deferredFor({ crawlDelaySeconds: "10" }, /CRAWL_DELAY_MALFORMED/));
 check("#905 HIGH: rateLimitPerHour Infinity / NaN / -5 ⇒ DEFER", [Infinity, NaN, -5].every((v) => deferredFor({ rateLimitPerHour: v, rateLimitDocumented: false }, /RATE_LIMIT_MALFORMED/)));
-check("#905 MED: prefix containing robots-disallowed sub-paths ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: ["/rfc/authors/"] }] }, /ROBOTS_DISALLOWED_SUBPATHS/));
+check("#905 MED: prefix containing robots-disallowed sub-paths ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsWildcardRulesInside: [], robotsDisallowedWithin: ["/rfc/authors/"] }] }, /ROBOTS_DISALLOWED_SUBPATHS/));
 check("#905 MED: per-second / concurrency limits without pacing ⇒ DEFER", deferredFor({ maxRequestsPerSecond: 1 }, /PER_SECOND/) && deferredFor({ maxConcurrency: 1 }, /CONCURRENCY/));
 check("#905 MED: hourly limit that <4 runs would exhaust (60/h vs 30/run) ⇒ DEFER", deferredFor({ rateLimitPerHour: 60 }, /TOO_CLOSE_TO_RUN_BUDGET/));
-check("#905 LOW: non-GET endpoint ⇒ DEFER", deferredFor({ prefixes: [{ path: "/v1/query", robots: "ALLOW", redirect: "NONE", sampled200: true, method: "POST" }] }, /NON_GET/));
+check("#905 LOW: non-GET endpoint ⇒ DEFER", deferredFor({ prefixes: [{ path: "/v1/query", robots: "ALLOW", redirect: "NONE", sampled200: true, method: "POST", robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /NON_GET/));
 check("#905 LOW: expected content type not grantable (PDF) ⇒ DEFER", deferredFor({ expectedContentTypes: ["application/pdf"] }, /CONTENT_TYPE_NOT_GRANTABLE/));
-check("sampled200 truthy non-boolean ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: "yes" }] }, /NOT_SAMPLED/));
-check("one bad prefix among good ones ⇒ whole host not ADMITTED (no partial admit)", dec(good({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true }, { path: "/x/", robots: "UNKNOWN", redirect: "NONE", sampled200: true }] })).decision === "DEFER");
+check("sampled200 truthy non-boolean ⇒ DEFER", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: "yes", robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] }, /NOT_SAMPLED/));
+check("robots sub-path analysis absent ⇒ DEFER (ROBOTS_SUBPATHS_NOT_ANALYSED)", deferredFor({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true }] }, /ROBOTS_SUBPATHS_NOT_ANALYSED/));
+check("robots wildcard rule that may match inside the prefix (e.g. /pypi/*/json) ⇒ DEFER", deferredFor({ prefixes: [{ path: "/pypi/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: ["Disallow: /pypi/*/json"] }] }, /WILDCARD_RULES_MAY_MATCH_INSIDE/));
+check("one bad prefix among good ones ⇒ whole host not ADMITTED (no partial admit)", dec(good({ prefixes: [{ path: "/rfc/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }, { path: "/x/", robots: "UNKNOWN", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] })).decision === "DEFER");
 check("garbage candidate (null) ⇒ REFUSE, no throw", dec(null).decision === "REFUSE");
 
 // ── admitSources + grant
 const NOW = Date.UTC(2026, 10, 23);
-const second = good({ host: "datatracker.ietf.org", termsUrl: "https://www.ietf.org/privacy-statement/", prefixes: [{ path: "/doc/", robots: "ALLOW", redirect: "NONE", sampled200: true }] });
+const second = good({ host: "datatracker.ietf.org", termsUrl: "https://www.ietf.org/privacy-statement/", prefixes: [{ path: "/doc/", robots: "ALLOW", redirect: "NONE", sampled200: true, robotsDisallowedWithin: [], robotsWildcardRulesInside: [] }] });
 let r = A.admitSources([good(), second, good({ host: "export.arxiv.org", ownerDecisionRequired: "robots vs terms" }), good({ host: "dl.acm.org", botChallengeObserved: true })], { issuedMs: NOW, issuedBy: "owner (V15.8 §3.3 directive) — test" });
 check("summary counts 2 admit / 1 defer / 1 refuse", r.summary.admitted === 2 && r.summary.deferred === 1 && r.summary.refused === 1);
 check("grant: EXACT, GET only, admitted hosts only, sorted", r.grant && r.grant.hostMatch === "EXACT" && r.grant.methods.join() === "GET" && r.grant.allowedDomains.join() === "datatracker.ietf.org,www.rfc-editor.org");
