@@ -52,6 +52,12 @@ function main() {
   check("outputs are frozen (scoreMission + selectNext)", Object.isFrozen(S.scoreMission(baseM(), [])) && Object.isFrozen(r));
   check("contract: deterministic + DEFERRED-on-unmet-dep + no-repeat + ODG-selects invariants present", S.MISSION_PRIORITY_SELECTOR_CONTRACT.invariants.some((i: string) => /DEFERRED/.test(i)) && S.MISSION_PRIORITY_SELECTOR_CONTRACT.invariants.some((i: string) => /no repeat/.test(i)) && S.MISSION_PRIORITY_SELECTOR_CONTRACT.invariants.some((i: string) => /ODG selects/.test(i)));
 
+  // ---- V16.4 additive: explained entry point (selectNext above is unchanged) ----
+  const ec = (id: string, v: any) => ({ id, status: "PARTIAL", deps: [], criteria: { a: v === null ? { status: "NOT_MEASURED", value: null } : { status: "MEASURED", value: v } } });
+  check("V16.4: selectNext still breaks ties by id (backward compat) while selectNextExplained refuses to", S.selectNext([baseM({ id: "A-z" }), baseM({ id: "A-a" })], []).selected.id === "A-a" && S.selectNextExplained([ec("A-z", 0.5), ec("A-a", 0.5)], { weights: { a: 1 } }).decision === "DECISION_REQUIRED");
+  check("V16.4: selectNextExplained NOT_MEASURED ⇒ uncertainty 1, evidence 0 (no 0.5 default)", (() => { const r = S.scoreExplained(ec("X", null), { a: 1 }, {}); return r.evidenceScore === 0 && r.uncertainty === 1; })());
+  check("V16.4: original contract object unchanged (no new invariant injected into V76 contract)", S.MISSION_PRIORITY_SELECTOR_CONTRACT.invariants.length === 4 && S.MISSION_PRIORITY_SELECTOR_CONTRACT.id === "V76-MISSION-PRIORITY-SELECTOR");
+
   process.stdout.write("\n" + (f === 0 ? "ALL PASS — mission-priority-selector (V285 direct contract tests: eligibility gates [malformed/accepted/unmet-dep], deterministic weighted scoring [strategic↑ risk↓ clamp01 unblocks-cap defaults strict-booleans], selectNext ranking + id tie-break + empty/invalid handling; frozen; real component, no mocks)" : f + " FAIL") + "\n");
   process.exit(f === 0 ? 0 : 1);
 }
