@@ -2,7 +2,7 @@
   "checkpoint": "CP8",
   "date": "2026-11-23",
   "headAtCheckpoint": "55a83728",
-  "previous": "docs/odg/evidence/V160_CHECKPOINT_7.json (head e0c51ad6)",
+  "previous": "docs/odg/evidence/V160_CHECKPOINT_7.json (CP7 headAtCheckpoint 2a855713; merged as e0c51ad6)",
   "producedVia": "PROVIDER (Claude Code, coordinating session) consolidating merged evidence; no new capability built; ODG did NOT select this work (see odgCapabilityAudit #1)",
   "truthLock": {
     "verifyHistorical": "verified=928 missing=0 changed=0",
@@ -40,7 +40,7 @@
       "pr": 919,
       "merge": "e0c51ad6",
       "what": "CP7 + A–P WORK_ITEM_CONTRACTs (PROPOSED)",
-      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+      "gates": "CI green on merged head; independent inspection ACCEPT on the inspected head (244d493b) + merge-only delta"
     },
     {
       "pr": 920,
@@ -52,7 +52,7 @@
       "pr": 921,
       "merge": "bc64cb1e",
       "what": "scenario G REAL → NOT_ADOPTED (borderline)",
-      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+      "gates": "CI green on merged head; independent inspection ACCEPT on the inspected head (23f97db1) + merge-only delta + a one-word wording fix (no delta inspection recorded)"
     },
     {
       "pr": 922,
@@ -83,7 +83,7 @@
   "scenarios": {
     "B": {
       "status": "PASS (within scope)",
-      "evidence": "V150_SCENARIO_M_RESUME.json / CP7"
+      "evidence": "V150_SCENARIO_M_RESUME.json, odg-native-continuity-run (two-process resume), V155 transversal G — per V160_AP_WORK_ITEM_CONTRACTS.json"
     },
     "M": {
       "status": "PASS (within scope)",
@@ -103,15 +103,15 @@
       "status": "PARTIAL",
       "evidence": "docs/odg/evidence/V160_SCENARIO_G.json (#921)",
       "criteria": {
-        "SUPPORTED + admissible item from pinned collection": "MET",
-        "used by a real mission decision; utility measured vs without it": "PARTIAL — used in a real decision on 400 real PRs ⇒ NOT_ADOPTED (borderline); utility vs the same decision without the item NOT_MEASURED"
+        "used by a real mission decision; utility measured vs without it": "PARTIAL — used in a real decision on 400 real PRs ⇒ NOT_ADOPTED (borderline); utility vs the same decision without the item NOT_MEASURED",
+        "SUPPORTED/CORROBORATED item with admissible() true": "PARTIAL — the item is SUPPORTED and usableFor(DESIGN_PROPOSAL) is met; admissible() (facts only ⇒ NOT_A_FACT for a SUPPORTED item) is false and scenario G never calls it ⇒ the criterion as worded cannot be met by a SUPPORTED item"
       }
     },
     "J": {
       "status": "PARTIAL",
       "evidence": "docs/odg/evidence/V161_SCENARIO_J.json (#925)",
       "criteria": {
-        "stop by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task": "NOT MET as worded — the 8 default stops are REPAIR_BUDGET_EXHAUSTED (maxRepair 1 = one repair attempted); NO_PROGRESS occurred only in the 7b alternative arm on parse-range",
+        "stop by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task": "NOT MET as worded for the trigger — the alternatives were triggered by the 8 default stops, all REPAIR_BUDGET_EXHAUSTED (maxRepair 1 = one repair attempted). Both named signals WERE observed: NO_PROGRESS_IDENTICAL_REGENERATION in the 7b alternative on parse-range and in the decomposed alternative on range-clamp-pipeline (both trials); the parse-range policy rows record measuredDecision NO_QUALIFIED_LOCAL_MODEL",
         "alternative actually executed": "MET (rule R0–R5 fixed in code before the run; decomposition ×6, 7b/maxRepair3 ×2)",
         "outcome compared on same task with n": "MET — 0/8 default vs 0/8 alternative (n=2 per task, temperature 0 ⇒ near-repeats); 8 escalation records CREATED, 0 provider calls"
       },
@@ -183,7 +183,7 @@
           ]
         },
         "decision": "DEFER",
-        "basis": "tested by scenario G under a pre-registered rule ⇒ NOT_ADOPTED (ρ(size,minutes)=0.293 < 0.3; CI95 [0.20,0.384]); re-test only with new data"
+        "basis": "tested by scenario G under a stated rule (not externally timestamped, per #921) ⇒ NOT_ADOPTED (ρ(size,minutes)=0.293 < 0.3; CI95 [0.20,0.384]); re-test only with new data"
       },
       {
         "card": "MC-REVIEW-FOCUS",
@@ -274,7 +274,7 @@
   "odgCapabilityAudit": {
     "1_selectNextMission": {
       "status": "PARTIAL",
-      "evidence": "live root tick selects via mission-scheduler (ALLOWLIST=M0001 ⇒ IDLE, ALREADY_PROVEN dedup); mission-priority-selector over the 16 A–P contracts ⇒ 9-way tie at 0.51 broken by id ⇒ 'C'"
+      "evidence": "live root tick selects via mission-scheduler (ALLOWLIST=M0001 ⇒ IDLE, ALREADY_PROVEN dedup); session observation of mission-priority-selector.selectNext on the A–P contracts with the inputs recorded in selectorRun ⇒ 9-way tie at 0.51 broken by id ⇒ 'C'"
     },
     "2_setPriorities": {
       "status": "PARTIAL",
@@ -311,7 +311,7 @@
   },
   "gaps": [
     "no canonical V15.0 mission register carrying priority attributes and dependencies",
-    "selector has no EXECUTED_PARTIAL state (treats executed PARTIAL scenarios as ACCEPTED)",
+    "no EXECUTED_PARTIAL status in the candidate mapping: the selector only knows status==='ACCEPTED', so callers must either re-offer executed-PARTIAL items or wrongly exclude them as accepted",
     "supervisor cannot assign on the real repo",
     "ODG cannot launch a provider",
     "integration is human",
@@ -334,5 +334,192 @@
     "docs-only missions blocked by two pipeline gates (#923 finding)",
     "still open from CP7: V360 ALLOWLIST bypass (export.arxiv.org); code.claude.com terms; per-host pacing; robots-vs-API (arXiv/PyPI); production waves; external providers; gate 10/12; V15.0 adoption"
   ],
-  "nextAction": "OWNER decision on ownerQuestions[0]; until then ODG can autonomously select only M0001 (already proven ⇒ IDLE)"
+  "nextAction": "OWNER decision on ownerQuestions[0]; until then ODG can autonomously select only M0001 (already proven ⇒ IDLE)",
+  "selectorRun": {
+    "kind": "SESSION_OBSERVATION (provider-derived inputs, reproducible from this block)",
+    "component": "runtime/core/mission-priority-selector.ts selectNext(candidates, acceptedIds)",
+    "derivation": {
+      "status": "ACCEPTED iff initialState.status==PASS",
+      "acceptedIds": [
+        "B",
+        "M",
+        "F",
+        "G",
+        "J"
+      ],
+      "acceptedIdsNote": "F/G/J were passed as acceptedIds only because they were EXECUTED this window (PARTIAL, not accepted) — this input mapping, not the selector, conflates executed-PARTIAL with ACCEPTED",
+      "immediatelyExecutable": "false iff initialState.missingForPass mentions 'owner' (A, K)",
+      "risk": "0.6 if owner-mentioned else 0.2",
+      "closureWithProof": "evidence_required non-empty",
+      "deps/unblocks": "[] (contracts declare none)",
+      "strategicImportance/roadmapPriority/operationalValue": "omitted ⇒ selector default 0.5 (NO canonical source)"
+    },
+    "candidates": [
+      {
+        "id": "A",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.6,
+        "immediatelyExecutable": false,
+        "closureWithProof": true
+      },
+      {
+        "id": "B",
+        "status": "ACCEPTED",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "C",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "D",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "E",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "F",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "G",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "H",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "I",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "J",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "K",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.6,
+        "immediatelyExecutable": false,
+        "closureWithProof": true
+      },
+      {
+        "id": "L",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "M",
+        "status": "ACCEPTED",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "N",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "O",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      },
+      {
+        "id": "P",
+        "status": "OPEN",
+        "deps": [],
+        "unblocks": [],
+        "risk": 0.2,
+        "immediatelyExecutable": true,
+        "closureWithProof": true
+      }
+    ],
+    "result": {
+      "selected": "C",
+      "eligible": 11,
+      "tieAt0_51": [
+        "C",
+        "D",
+        "E",
+        "H",
+        "I",
+        "L",
+        "N",
+        "O",
+        "P"
+      ],
+      "at0_30": [
+        "A",
+        "K"
+      ],
+      "tieBreak": "id ascending"
+    },
+    "sensitivity": "result depends on the input mapping: PASS-only exclusion ⇒ 14-way tie ⇒ A; excluding executed F/G/J without the owner heuristic ⇒ 11-way tie ⇒ A (independent inspector reproduction)"
+  }
 }
