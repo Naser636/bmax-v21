@@ -22,7 +22,7 @@ function main(){
   check("candidate is a CANDIDATE (not auto-enabled) — documents owner/operator install",/CANDIDATE/.test(svc)&&/NOT (installed|enabled)/i.test(svc));
   // 2 — backup script produces a VERIFIABLE bundle in an ISOLATED vault (no real /var touch)
   const tmp=fs.mkdtempSync(path.join(os.tmpdir(),"odg-r3t-"));
-  const runOut=sh(`bash ${path.join(ROOT,"scripts/odg-backup-vault.sh")}`,{ODG_VAULT:tmp,ODG_BACKUP_REF:"HEAD"});
+  const runOut=sh(`bash ${path.join(ROOT,"scripts/odg-backup-vault.sh")}`,{ODG_REPO:ROOT,ODG_VAULT:tmp,ODG_BACKUP_REF:"HEAD"});
   check("backup script runs OK and reports a verified bundle",/OK .*odg-main\.bundle/.test(runOut));
   const bundles=sh(`ls ${tmp}/*/odg-main.bundle 2>/dev/null`).split("\n").filter(Boolean);
   check("script wrote a git bundle into the isolated vault",bundles.length>=1);

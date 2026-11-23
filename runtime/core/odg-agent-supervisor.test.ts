@@ -185,7 +185,7 @@ async function main(): Promise<void> {
   const rmSnap = S.snapshot(Object.assign(base(), rm.evidence, { now: NOW }));
   check("RESID-MED: fixture is a stale COMPLETED_NO_RESULT main-checkout task with dirty src/q/a.ts", stateOf(rmSnap, "task:tq").state === "COMPLETED_NO_RESULT" && stateOf(rmSnap, "task:tq").dirty_paths[0] === "src/q/a.ts");
   const rmR = S.assign({ id: "Q", workItem: "WI-Q", writeSet: ["src/q"], owner: "q" }, rm);
-  check("RESID-MED: assign over its dirty path ⇒ REFUSED_WRITESET_CONFLICT (unowned dirty work held)", rmR.outcome === "REFUSED_WRITESET_CONFLICT" && rmR.conflicts[0].with === "task:tq");
+  check("RESID-MED: assign over its dirty path ⇒ REFUSED_WRITESET_CONFLICT (unowned dirty work held)", rmR.outcome === "REFUSED_WRITESET_CONFLICT" && rmR.conflicts.some((c: any) => c.with === "task:tq") && rmR.conflicts.some((c: any) => c.with === "main-checkout:/r"));
   check("RESID-MED: a disjoint path is still assignable (only the dirty paths are held)", S.assign({ id: "Q2", workItem: "WI-Q2", writeSet: ["src/other"], owner: "q" }, rm).outcome === "ASSIGNED");
   const orphDirty = ctxOf(tmp(), { heartbeatOnly: false, now: NOW, evidence: { repoRoot: "/r", worktrees: [{ path: "/r", branch: "main" }, { path: "/wt/od", branch: "f/od" }], branches: [{ name: "f/od", head: H, ahead: 0, writeSet: [] }], worktreeStatus: { "/wt/od": { dirty: 1, dirtyPaths: ["src/od/x.ts"], lastActivityMs: NOW - 99 * MIN } } } });
   check("RESID-MED: ORPHAN with integrated branch but dirty paths holds them (fail-closed)", S.assign({ id: "OD", workItem: "WI-OD", writeSet: ["src/od"], owner: "o" }, orphDirty).outcome === "REFUSED_WRITESET_CONFLICT");
@@ -229,6 +229,69 @@ async function main(): Promise<void> {
   const pc = (ahead: number) => S.snapshot(base({ branches: [{ name: "f/c", head: H, ahead, behind: 1, writeSet: ahead ? ["src/c.ts"] : [] }], prs: [{ number: 11, headRefName: "f/c", state: "MERGED", mergeCommitOid: H2, checks: "SUCCESS" }], integratedOids: [H2] }));
   check("RESID-c: PR with no headRefOid, local branch MOVED (ahead>0) ⇒ not trusted, not COMPLETED_WITH_RESULT", stateOf(pc(2), "branch:f/c").delivery.prs[0].trusted === false && stateOf(pc(2), "branch:f/c").state !== "COMPLETED_WITH_RESULT");
   check("RESID-c: PR with no headRefOid, local branch not moved + merge commit integrated ⇒ trusted", stateOf(pc(0), "branch:f/c").delivery.prs[0].trusted === true);
+
+  // ---- FIX-1: unowned worktree with no observed write-set (gitignored writes invisible) ---------------------------------
+  const f1 = (extra: any) => ctxOf(tmp(), { heartbeatOnly: false, now: NOW, evidence: Object.assign({ repoRoot: "/r", worktrees: [{ path: "/r", branch: "main" }, { path: "/wt/gen", head: H, detached: true }], worktreeStatus: { "/wt/gen": { dirty: 0, dirtyPaths: [], lastActivityMs: NOW - 99 * MIN, headAhead: 0, headDiff: [] } } }, extra) });
+  check("FIX-1: idle (> staleMs) unowned detached worktree, no diff, no process ⇒ holds nothing (assign proceeds)", S.assign({ id: "G1", workItem: "WI-G1", writeSet: ["src/g"], owner: "o" }, f1({})).outcome === "ASSIGNED");
+  const g2 = S.assign({ id: "G2", workItem: "WI-G2", writeSet: ["src/g"], owner: "o" }, f1({ procs: [{ pid: 7, cwd: "/wt/gen/runtime/generated" }] }));
+  check("FIX-1: same worktree with a LIVE process inside ⇒ UNKNOWN write-set blocks (fail-closed)", g2.outcome === "REFUSED_WRITESET_CONFLICT" && g2.conflicts[0].reason === "UNKNOWN_WRITESET");
+  const g3 = S.assign({ id: "G3", workItem: "WI-G3", writeSet: ["src/g"], owner: "o" }, f1({ worktreeStatus: { "/wt/gen": { dirty: 0, dirtyPaths: [], lastActivityMs: NOW - 2 * MIN, headAhead: 0, headDiff: [] } } }));
+  check("FIX-1: recent activity within staleMs, no diff ⇒ still UNKNOWN ⇒ blocks", g3.outcome === "REFUSED_WRITESET_CONFLICT");
+  const g4 = S.assign({ id: "G4", workItem: "WI-G4", writeSet: ["src/g"], owner: "o" }, f1({ worktreeStatus: { "/wt/gen": { dirty: 0, dirtyPaths: [], lastActivityMs: NOW - 99 * MIN, headAhead: 1, headDiff: ["src/g/committed.ts"] } } }));
+  check("FIX-1: detached worktree with its own commits ⇒ observed diff held (src/g/committed.ts blocks src/g)", g4.outcome === "REFUSED_WRITESET_CONFLICT" && g4.conflicts[0].reason === "WRITESET_OVERLAP");
+
+  const g5 = S.assign({ id: "G5", workItem: "WI-G5", writeSet: ["runtime/generated/out"], owner: "o" }, f1({ procs: [{ pid: 7, cwd: "/wt/gen" }], worktreeStatus: { "/wt/gen": { dirty: 0, dirtyPaths: [], lastActivityMs: NOW - MIN, headAhead: 1, headDiff: ["src/only-this.ts"] } } }));
+  check("FIX-1 (#900 fail-open): live unowned worktree WITH a diff elsewhere ⇒ assign of runtime/generated refused as UNKNOWN", g5.outcome === "REFUSED_WRITESET_CONFLICT" && g5.conflicts[0].reason === "UNKNOWN_WRITESET");
+
+  // ---- FIX-2: CANCELLED is closable once the pid is dead (or none recorded), without waiting for staleness ----------
+  const f2 = tmp(); const c2x = ctxOf(f2, { heartbeatOnly: false, evidence: { repoRoot: "/r", worktrees: [{ path: "/r", branch: "main" }] } });
+  writeHb(path.join(f2, "hb"), { id: "CX", workItem: "WI-CX", owner: "agent-CX", writeSet: ["src/cx"], heartbeatAt: new Date(NOW - 99 * MIN).toISOString() });
+  check("FIX-2: renew(CANCELLED) by the owner", S.renew("CX", Object.assign({}, c2x, { now: NOW }), { owner: "agent-CX", status: "CANCELLED", reason: "operator cancel" }).outcome === "RENEWED");
+  check("FIX-2: fresh heartbeat + CANCELLED + no pid ⇒ COMPLETED_NO_RESULT immediately", stateOf(S.snapshot(base({ now: NOW + MIN, heartbeats: S.readHeartbeats(path.join(f2, "hb")) })), "CX").state === "COMPLETED_NO_RESULT");
+  check("FIX-2: close() right after cancellation (no staleness wait) ⇒ closed (REJECT verdict ⇒ CLOSED_REJECTED)", S.close("CX", { inspector: "insp", verdict: "REJECT" }, Object.assign({}, c2x, { now: NOW + MIN })).outcome === "CLOSED_REJECTED");
+  writeHb(path.join(f2, "hb2"), { id: "CY", workItem: "WI-CY", owner: "agent-CY", writeSet: ["src/cy"], heartbeatAt: new Date(NOW).toISOString(), status: "CANCELLED", pid: process.pid });
+  const cy = (alive: boolean) => stateOf(S.snapshot(base({ now: NOW + MIN, alivePids: alive ? [process.pid] : [], heartbeats: S.readHeartbeats(path.join(f2, "hb2")) })), "CY").state;
+  check("FIX-2: CANCELLED with its pid still alive ⇒ RUNNING (not closable yet); pid dead ⇒ COMPLETED_NO_RESULT", cy(true) === "RUNNING" && cy(false) === "COMPLETED_NO_RESULT");
+
+  // ---- FIX-3 (+ #901 MED): worktree-less child with a recovery handle; completion evidence WITH provenance ---------
+  const f3 = tmp(); const hb3 = path.join(f3, "hb");
+  const CE = (ids: string[], at = NOW) => ({ source: "mission-ledger", checkedAt: new Date(at).toISOString(), ids });
+  writeHb(hb3, { id: "W1", workItem: "M-1", owner: "wave", writeSet: ["runtime/missions/m1"], heartbeatAt: new Date(NOW - 99 * MIN).toISOString(), pid: 2147483646, recovery: { kind: "MISSION_RERUN", missionId: "m-1" } });
+  const w1 = (extra: any) => stateOf(S.snapshot(Object.assign(base({ now: NOW, heartbeats: S.readHeartbeats(hb3) }), extra)), "W1");
+  check("FIX-3: killed worktree-less child (pid recorded, dead) + ledger evidence w/ provenance, not completed ⇒ INTERRUPTED + recoverable (ids case-insensitive)", w1({ completionEvidence: CE([]) }).state === "INTERRUPTED" && w1({ completionEvidence: CE([]) }).recoverable === true && S.decideRecovery(w1({ completionEvidence: CE([]) })).decision === "RELAUNCH" && S.decideRecovery(w1({ completionEvidence: CE([]) })).missionId === "m-1");
+  check("FIX-3: ledger lists the mission (other case) ⇒ NOT recoverable", w1({ completionEvidence: CE(["M-1"]) }).recoverable === false && S.decideRecovery(w1({ completionEvidence: CE(["M-1"]) })).decision === "NOT_RECOVERABLE");
+  check("#901 MED: a bare list / empty array is NOT evidence of a check ⇒ NOT recoverable", w1({}).recoverable === false && w1({ completedMissionIds: [] }).recoverable === false && w1({ completionEvidence: [] }).recoverable === false);
+  check("#901 MED: evidence without provenance (bad source / no checkedAt) ⇒ NOT recoverable", w1({ completionEvidence: { source: "guess", checkedAt: new Date(NOW).toISOString(), ids: [] } }).recoverable === false && w1({ completionEvidence: { source: "mission-ledger", ids: [] } }).recoverable === false);
+  check("#901 MED: evidence checked BEFORE the child's last heartbeat ⇒ NOT recoverable", w1({ completionEvidence: CE([], NOW - 200 * MIN) }).recoverable === false);
+  const f3m = tmp();
+  writeHb(path.join(f3m, "hb"), { id: "WM", workItem: "M-9", owner: "wave", writeSet: ["q/wm"], heartbeatAt: new Date(NOW - 99 * MIN).toISOString(), pid: 2147483646, recovery: { kind: "MISSION_RERUN", missionId: "M-OTHER" } });
+  writeHb(path.join(f3m, "hb"), { id: "WN", workItem: "M-8", owner: "wave", writeSet: ["q/wn"], heartbeatAt: new Date(NOW - 99 * MIN).toISOString(), recovery: { kind: "MISSION_RERUN", missionId: "M-8" } });
+  const sm = S.snapshot(base({ now: NOW, completionEvidence: CE([]), heartbeats: S.readHeartbeats(path.join(f3m, "hb")) }));
+  check("#901 MED: missionId ≠ heartbeat workItem ⇒ NOT recoverable", stateOf(sm, "WM").recoverable === false && /workItem/.test(stateOf(sm, "WM").recoveryHandle.reason));
+  check("#901 MED: no recorded pid ⇒ NOT recoverable (killed not provable)", stateOf(sm, "WN").recoverable === false && /no pid/.test(stateOf(sm, "WN").recoveryHandle.reason));
+  const c3x = ctxOf(f3, { completionEvidence: CE([]), now: NOW });
+  check("FIX-3: governed relaunch via assign(relaunchOf) ⇒ ASSIGNED, original SUPERSEDED", S.assign({ id: "W1-r", workItem: "M-1", writeSet: ["runtime/missions/m1"], owner: "wave", relaunchOf: "W1" }, c3x).outcome === "ASSIGNED" && JSON.parse(fs.readFileSync(path.join(hb3, "W1.json"), "utf8")).status === "SUPERSEDED");
+  const f3b = tmp();
+  writeHb(path.join(f3b, "hb"), { id: "W2", workItem: "M-2", owner: "wave", writeSet: ["x/w2"], heartbeatAt: new Date(NOW - 99 * MIN).toISOString(), pid: process.pid, recovery: { kind: "MISSION_RERUN", missionId: "M-2" } });
+  const w2 = S.assign({ id: "W2-r", workItem: "M-2", writeSet: ["x/w2"], owner: "wave", relaunchOf: "W2" }, ctxOf(f3b, { completionEvidence: CE([]), now: NOW, pidAlive: undefined }));
+  check("FIX-3: handle present but pid ALIVE ⇒ RUNNING ⇒ relaunch refused (never relaunch RUNNING)", w2.outcome === "REFUSED_NOT_RECOVERABLE" && w2.state === "RUNNING");
+
+  // ---- #901 LOW: CANCELLED without pid but a live process in its worktree stays RUNNING -----------------------------
+  const cz = S.snapshot(base({ now: NOW, worktrees: [{ path: "/r", branch: "main" }, { path: "/wt/cz", branch: "f/cz" }], branches: [{ name: "f/cz", head: H, ahead: 1, writeSet: ["src/cz"] }], procs: [{ pid: 55, cwd: "/wt/cz" }], heartbeats: [{ id: "CZ", workItem: "WI-CZ", owner: "o", worktree: "/wt/cz", writeSet: ["src/cz"], heartbeatAt: new Date(NOW).toISOString(), status: "CANCELLED" }] }));
+  check("#901 LOW: CANCELLED, no pid, live process in its worktree ⇒ RUNNING (not closable)", stateOf(cz, "CZ").state === "RUNNING");
+  // ---- #901 LOW: detached worktree git observation failure ⇒ UNKNOWN (holds/blocks), not integrated ------------------
+  const df = ctxOf(tmp(), { heartbeatOnly: false, now: NOW, evidence: { repoRoot: "/r", worktrees: [{ path: "/r", branch: "main" }, { path: "/wt/df", head: H, detached: true }], worktreeStatus: { "/wt/df": { dirty: 0, dirtyPaths: [], lastActivityMs: NOW - 99 * MIN, headAhead: null, headDiff: null, headObserveOk: false } } } });
+  const dfr = S.assign({ id: "DF", workItem: "WI-DF", writeSet: ["src/anything"], owner: "o" }, df);
+  const dfs = S.snapshot(Object.assign(base(), df.evidence, { now: NOW })).agents.find((a: any) => a.worktree === "/wt/df");
+  check("#901 LOW: detached rev-list/diff failure ⇒ observeFailed, integrated null, assign refused UNKNOWN", dfs.observeFailed === true && dfs.delivery.integrated === null && dfr.outcome === "REFUSED_WRITESET_CONFLICT" && dfr.conflicts[0].reason === "UNKNOWN_WRITESET");
+
+  // ---- #901 HIGH: the MAIN checkout is observed (live process / fresh ignored write ⇒ RUNNING-unknown ⇒ blocks) -------
+  const mc = (ws: any, procs: any[] = []) => ctxOf(tmp(), { heartbeatOnly: false, now: NOW, evidence: { repoRoot: "/r", worktrees: [{ path: "/r", branch: "main" }], worktreeStatus: { "/r": ws }, procs } });
+  const mcIdle = S.assign({ id: "M0", workItem: "WI-M0", writeSet: ["gen/out.json"], owner: "o" }, mc({ dirty: 0, dirtyPaths: [], lastActivityMs: NOW - 99 * MIN }));
+  const mcFresh = S.assign({ id: "M1", workItem: "WI-M1", writeSet: ["gen/out.json"], owner: "o" }, mc({ dirty: 0, dirtyPaths: [], lastActivityMs: NOW - MIN }));
+  const mcProc = S.assign({ id: "M2", workItem: "WI-M2", writeSet: ["gen/out.json"], owner: "o" }, mc({ dirty: 0, dirtyPaths: [], lastActivityMs: NOW - 99 * MIN }, [{ pid: 9, cwd: "/r/runtime" }]));
+  const mcUnk = S.assign({ id: "M3", workItem: "WI-M3", writeSet: ["gen/out.json"], owner: "o" }, mc({ dirty: 0, dirtyPaths: [], lastActivityMs: NOW - 99 * MIN, activityUnknown: true }));
+  check("#901 HIGH: idle main checkout ⇒ ASSIGNED; fresh activity / live process / UNKNOWN activity in MAIN ⇒ refused UNKNOWN", mcIdle.outcome === "ASSIGNED" && [mcFresh, mcProc, mcUnk].every((r: any) => r.outcome === "REFUSED_WRITESET_CONFLICT" && r.conflicts[0].with === "main-checkout:/r" && r.conflicts[0].reason === "UNKNOWN_WRITESET"));
 
   // ---- LOW8: mutex TTL budget — abort before writing ------------------------------------------------------------------
   const l8 = tmp(); let t = 0; const clock = () => (t += 20000);
@@ -286,14 +349,72 @@ async function main(): Promise<void> {
   const wt1 = path.join(g, "wt1"); sh(["worktree", "add", "-q", wt1, "-b", "f/one"], repo);
   fs.writeFileSync(path.join(wt1, "b.txt"), "b\n"); sh(["add", "."], wt1); sh(["commit", "-qm", "b"], wt1);
   fs.writeFileSync(path.join(wt1, "c.txt"), "dirty\n");
+  const wt2 = path.join(g, "wt2"); sh(["worktree", "add", "-q", "--detach", wt2], repo);
+  fs.writeFileSync(path.join(wt2, "d.txt"), "d\n"); sh(["add", "."], wt2); sh(["commit", "-qm", "d"], wt2);
   const real = S.collectEvidence({ repo, now: Date.now() });
+  const dt = S.snapshot(real).agents.find((a: any) => a.worktree === fs.realpathSync(wt2) || a.worktree === wt2);
+  check("FIX-1 collector: DETACHED worktree's own commits observed (write-set d.txt, ahead=1)", !!dt && JSON.stringify(dt.write_set) === JSON.stringify(["d.txt"]) && dt.delivery.ahead === 1);
   const o = S.snapshot(real).agents.find((a: any) => a.branch === "f/one");
   check("collector: real worktree ahead=1, dirty=1, observed write-set b.txt + c.txt, RUNNING by recent activity", !!o && o.delivery.ahead === 1 && o.delivery.dirty === 1 && JSON.stringify(o.write_set) === JSON.stringify(["b.txt", "c.txt"]) && o.state === "RUNNING");
   const o2 = S.snapshot(Object.assign({}, real, { now: Date.now() + 2 * 3600000, procs: [] })).agents.find((a: any) => a.branch === "f/one");
   check("collector: 2h later ⇒ ORPHAN with unintegrated work", !!o2 && o2.state === "ORPHAN");
   const rr = S.assign({ id: "RR", workItem: "WI-RR", writeSet: ["b.txt"], owner: "o" }, { heartbeatDir: path.join(g, "hb"), locksDir: path.join(g, "locks"), repo });
   check("assign(ctx.repo): real observed worktree write-set (b.txt) blocks an overlapping assignment", rr.outcome === "REFUSED_WRITESET_CONFLICT");
-  check("assign(ctx.repo): disjoint path ⇒ ASSIGNED", S.assign({ id: "RR2", workItem: "WI-RR2", writeSet: ["z/new.txt"], owner: "o" }, { heartbeatDir: path.join(g, "hb"), locksDir: path.join(g, "locks"), repo }).outcome === "ASSIGNED");
+  const rr2 = S.assign({ id: "RR2", workItem: "WI-RR2", writeSet: ["z/new.txt"], owner: "o" }, { heartbeatDir: path.join(g, "hb"), locksDir: path.join(g, "locks"), repo });
+  check("assign(ctx.repo): a just-written (RUNNING) unowned worktree holds UNKNOWN ⇒ even a disjoint path is refused", rr2.outcome === "REFUSED_WRITESET_CONFLICT" && rr2.conflicts.some((c: any) => c.reason === "UNKNOWN_WRITESET"));
+  const idleEv = Object.assign({}, S.collectEvidence({ repo, now: Date.now() + 2 * 3600000 }), { procs: [] });
+  check("assign(evidence 2h later, no process): idle worktrees ⇒ disjoint path ASSIGNED, overlap with committed b.txt still refused", S.assign({ id: "RR3", workItem: "WI-RR3", writeSet: ["z/new.txt"], owner: "o" }, { heartbeatDir: path.join(g, "hb5"), locksDir: path.join(g, "locks5"), evidence: idleEv, now: Date.now() + 2 * 3600000 }).outcome === "ASSIGNED" && S.assign({ id: "RR4", workItem: "WI-RR4", writeSet: ["b.txt"], owner: "o" }, { heartbeatDir: path.join(g, "hb5"), locksDir: path.join(g, "locks5"), evidence: idleEv, now: Date.now() + 2 * 3600000 }).outcome === "REFUSED_WRITESET_CONFLICT");
+
+  // #901 HIGH on a REAL repo: a fresh gitignored write in the MAIN checkout blocks
+  const gm = tmp(); const repoM = path.join(gm, "repo"); fs.mkdirSync(repoM); sh(["init", "-q", "-b", "main"], repoM);
+  fs.writeFileSync(path.join(repoM, ".gitignore"), "gen/\nnode_modules/\n"); sh(["add", "."], repoM); sh(["commit", "-qm", "init"], repoM); sh(["update-ref", "refs/remotes/origin/main", "HEAD"], repoM);
+  const laterM = Date.now() + 2 * 3600000;
+  const evM0 = Object.assign({}, S.collectEvidence({ repo: repoM, now: laterM }), { procs: [] });
+  const m0 = S.assign({ id: "MM0", workItem: "WI-MM0", writeSet: ["gen/out.json"], owner: "o" }, { heartbeatDir: path.join(gm, "h0"), locksDir: path.join(gm, "l0"), evidence: evM0, now: laterM });
+  fs.mkdirSync(path.join(repoM, "gen"), { recursive: true }); fs.writeFileSync(path.join(repoM, "gen", "tick.json"), "{}");
+  const freshM = new Date(laterM - 60000); fs.utimesSync(path.join(repoM, "gen", "tick.json"), freshM, freshM);
+  const evM1 = Object.assign({}, S.collectEvidence({ repo: repoM, now: laterM }), { procs: [] });
+  const m1 = S.assign({ id: "MM1", workItem: "WI-MM1", writeSet: ["gen/out.json"], owner: "o" }, { heartbeatDir: path.join(gm, "h1"), locksDir: path.join(gm, "l1"), evidence: evM1, now: laterM });
+  check("#901 HIGH (real repo): idle main ⇒ gen/out.json ASSIGNED; fresh gen/tick.json in MAIN ⇒ refused UNKNOWN", m0.outcome === "ASSIGNED" && m1.outcome === "REFUSED_WRITESET_CONFLICT" && m1.conflicts.some((c: any) => /^main-checkout:/.test(c.with) && c.reason === "UNKNOWN_WRITESET"));
+  // #901 MED walk: nested node_modules inside an ignored output root is walked; budget truncation / unreadable ⇒ ACTIVE
+  const oldM = new Date(laterM - 99 * MIN); fs.utimesSync(path.join(repoM, "gen", "tick.json"), oldM, oldM); fs.utimesSync(path.join(repoM, "gen"), oldM, oldM);
+  fs.mkdirSync(path.join(repoM, "gen", "node_modules", "pkg"), { recursive: true }); fs.writeFileSync(path.join(repoM, "gen", "node_modules", "pkg", "fresh.js"), "x");
+  for (const pth of [path.join(repoM, "gen", "node_modules"), path.join(repoM, "gen", "node_modules", "pkg")]) fs.utimesSync(pth, oldM, oldM);
+  fs.utimesSync(path.join(repoM, "gen", "node_modules", "pkg", "fresh.js"), freshM, freshM); fs.utimesSync(path.join(repoM, "gen"), oldM, oldM);
+  const nm = S.snapshot(Object.assign({}, S.collectEvidence({ repo: repoM, now: laterM }), { procs: [] })).agents.find((a: any) => a.kind === "MAIN_CHECKOUT");
+  check("#901 MED: fresh write under gen/node_modules (not skipped by name inside an output root) ⇒ main RUNNING", !!nm && nm.state === "RUNNING");
+  fs.utimesSync(path.join(repoM, "gen", "node_modules", "pkg", "fresh.js"), oldM, oldM);
+  fs.mkdirSync(path.join(repoM, "node_modules", "dep"), { recursive: true }); fs.writeFileSync(path.join(repoM, "node_modules", "dep", "i.js"), "x");
+  const idleNm = S.snapshot(Object.assign({}, S.collectEvidence({ repo: repoM, now: laterM }), { procs: [] })).agents.find((a: any) => a.kind === "MAIN_CHECKOUT");
+  check("#901 MED: ROOT-level node_modules of the main checkout is skipped (npm-managed) — fresh install there alone does not mark main active", !idleNm);
+  const full = S.collectEvidence({ repo: repoM, now: laterM });
+  const saved = S.DEFAULTS.ignoredScanBudget;
+  check("#901 MED: complete scan ⇒ activityUnknown false", full.worktreeStatus[repoM].activityUnknown === false || full.worktreeStatus[fs.realpathSync(repoM)].activityUnknown === false);
+  const trunc = S.ignoredActivity(repoM, true, 2);
+  check("#901 MED: budget exhausted ⇒ complete:false (caller treats as ACTIVE)", trunc.complete === false && saved > 2);
+  fs.chmodSync(path.join(repoM, "gen", "node_modules", "pkg"), 0o000);
+  const unread = S.ignoredActivity(repoM, true);
+  fs.chmodSync(path.join(repoM, "gen", "node_modules", "pkg"), 0o755);
+  check("#901 MED: unreadable directory ⇒ complete:false", process.getuid && process.getuid() === 0 ? true : unread.complete === false);
+  check("#901 MED: git ls-files failure (not a repo) ⇒ complete:false", S.ignoredActivity(path.join(gm, "not-a-repo-dir"), false).complete === false);
+  const evU = Object.assign({}, full, { procs: [], worktreeStatus: Object.assign({}, full.worktreeStatus) }); for (const k of Object.keys(evU.worktreeStatus)) evU.worktreeStatus[k] = Object.assign({}, evU.worktreeStatus[k], { activityUnknown: true });
+  check("#901 MED: activityUnknown ⇒ main RUNNING ⇒ assign refused", S.assign({ id: "MU", workItem: "WI-MU", writeSet: ["gen/out.json"], owner: "o" }, { heartbeatDir: path.join(gm, "h2"), locksDir: path.join(gm, "l2"), evidence: evU, now: laterM }).outcome === "REFUSED_WRITESET_CONFLICT");
+  fs.rmSync(gm, { recursive: true, force: true });
+
+  // #900 regression on a REAL repo: gitignored writes in an otherwise idle unowned worktree
+  const g9 = tmp(); const repo9 = path.join(g9, "repo"); fs.mkdirSync(repo9); sh(["init", "-q", "-b", "main"], repo9);
+  fs.writeFileSync(path.join(repo9, ".gitignore"), "gen/\n"); sh(["add", "."], repo9); sh(["commit", "-qm", "init"], repo9); sh(["update-ref", "refs/remotes/origin/main", "HEAD"], repo9);
+  const wt9 = path.join(g9, "wt9"); sh(["worktree", "add", "-q", "--detach", wt9], repo9);
+  const later = Date.now() + 2 * 3600000; // the worktree's tracked files / index are older than staleMs at this instant
+  const ev9a = Object.assign({}, S.collectEvidence({ repo: repo9, now: later }), { procs: [] });
+  const i1 = S.assign({ id: "I1", workItem: "WI-I1", writeSet: ["gen/x.json"], owner: "o" }, { heartbeatDir: path.join(g9, "hbA"), locksDir: path.join(g9, "lA"), evidence: ev9a, now: later });
+  fs.mkdirSync(path.join(wt9, "gen"), { recursive: true }); fs.writeFileSync(path.join(wt9, "gen", "tick.json"), "{}");
+  const fresh = new Date(later - 60000); fs.utimesSync(path.join(wt9, "gen", "tick.json"), fresh, fresh);
+  const ev9b = Object.assign({}, S.collectEvidence({ repo: repo9, now: later }), { procs: [] });
+  const w9 = S.snapshot(ev9b).agents.find((a: any) => a.kind === "WORKTREE");
+  const i2 = S.assign({ id: "I2", workItem: "WI-I2", writeSet: ["gen/x.json"], owner: "o" }, { heartbeatDir: path.join(g9, "hbB"), locksDir: path.join(g9, "lB"), evidence: ev9b, now: later });
+  check("FIX-1 (#900 real repo): idle worktree ⇒ gen/ ASSIGNED; a FRESH gitignored write (gen/tick.json) ⇒ RUNNING + assign refused UNKNOWN", i1.outcome === "ASSIGNED" && !!w9 && w9.state === "RUNNING" && i2.outcome === "REFUSED_WRITESET_CONFLICT" && i2.conflicts.some((c: any) => c.reason === "UNKNOWN_WRITESET"));
+  fs.rmSync(g9, { recursive: true, force: true });
   const mainOid = sh(["rev-parse", "main"], repo).stdout.trim(), oneOid = sh(["rev-parse", "f/one"], repo).stdout.trim();
   check("collectIntegratedOids: only ancestors of origin/main", JSON.stringify(S.collectIntegratedOids(repo, [{ state: "MERGED", headRefOid: mainOid }, { state: "MERGED", headRefOid: oneOid }])) === JSON.stringify([mainOid]));
   check("normalizePrs: rollup → SUCCESS / FAILURE / PENDING / UNKNOWN", JSON.stringify(S.normalizePrs([{ number: 1, statusCheckRollup: [{ conclusion: "SUCCESS" }] }, { number: 2, statusCheckRollup: [{ conclusion: "FAILURE" }] }, { number: 3, statusCheckRollup: [{ status: "IN_PROGRESS" }] }, { number: 4 }]).map((p: any) => p.checks)) === JSON.stringify(["SUCCESS", "FAILURE", "PENDING", "UNKNOWN"]));
