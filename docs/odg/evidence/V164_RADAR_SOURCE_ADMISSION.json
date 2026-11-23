@@ -4,22 +4,22 @@
   "issuedIso": "2026-11-23T00:00:00.000Z",
   "summary": {
     "candidates": 46,
-    "admitted": 7,
-    "deferred": 36,
+    "admitted": 3,
+    "deferred": 40,
     "refused": 3
   },
   "grantRefusedReason": null,
   "decisions": [
     {
       "host": "nasa.github.io",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/fprime/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
       ],
-      "reasons": [],
-      "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-      "evidenceSha256": "b7e5882c816db540a9ecb50b815dae4df89b5ec747f5006ee80c292e10680774"
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "ea4ecf9f542b8372d82c1c081c1289302d3930f4951e3d24e6bf844866e56243"
     },
     {
       "host": "swehb.nasa.gov",
@@ -47,8 +47,8 @@
         "/api/citations/"
       ],
       "reasons": [],
-      "termsCondition": null,
-      "evidenceSha256": "a8540f2e87e203a4fcd24e03f39da3e6c16800ed66ed0d6a9af36edb9cb91d74"
+      "termsCondition": "NASA STI terms: copyright status is per document (metadata); copyrighted third-party works must not be modified, reproduced or redistributed without the copyright owner's permission; NASA to be acknowledged as source",
+      "evidenceSha256": "bf43584d0d84e74dcf1d679cafbb8b14924775d041c7e2640f347a2f0fc79e4d"
     },
     {
       "host": "www.tri.global",
@@ -150,14 +150,14 @@
     },
     {
       "host": "microsoft.github.io",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/autogen/stable/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
       ],
-      "reasons": [],
-      "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-      "evidenceSha256": "98356b3c122c723c265e2e624805bf6b6b0f54879cb95d6374acb960bf8323fc"
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "f56d8b810896341b0adbf135c36ebae5a86fa95254a5d94dd1b1ed09bcc85b5b"
     },
     {
       "host": "devblogs.microsoft.com",
@@ -262,25 +262,25 @@
     },
     {
       "host": "netflix.github.io",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/chaosmonkey/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
       ],
-      "reasons": [],
-      "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-      "evidenceSha256": "55051f98c6293013a669e99dcb4acfe35f347f8cebf65a897d390b45ff7fd614"
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "ca2428694a3de9f4b75a6b9ed8bc516ade2ea493114e5ef563867c59d0a96e8e"
     },
     {
       "host": "github.blog",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/ai-and-ml/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
       ],
-      "reasons": [],
-      "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-      "evidenceSha256": "1629f63bbfe6c78d3e09e10b9ad588ef67a266595ab499a0ae9e43a5c9b4e65b"
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "7d4d723cb05db94baa2e9bcd25e3ad7576b5524ace97cd1f4dd72be76d898bd4"
     },
     {
       "host": "stripe.dev",
@@ -323,7 +323,7 @@
       ],
       "reasons": [],
       "termsCondition": null,
-      "evidenceSha256": "33a17d91ab8fc91b6dce5ab5c7916eaf37d8439b6eed09099f453e0dfebcd99f"
+      "evidenceSha256": "ec9de1381b19fb01cd5743c0dbd62b464922748135af389e17ae7960d1a8ebde"
     },
     {
       "host": "docs.pytorch.org",
@@ -359,7 +359,7 @@
       ],
       "reasons": [],
       "termsCondition": null,
-      "evidenceSha256": "224dfbc5893dbe03e5bf717f5e3e71ba77e9e6c4a45c16bda430a57e137b0142"
+      "evidenceSha256": "ac8971167e595cd2664a82597b8ba9d85086d89254c55245dc9f1449b0bc886c"
     },
     {
       "host": "slsa.dev",
@@ -516,10 +516,11 @@
       "tier": "T1",
       "admittedPrefixes": [],
       "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer.",
         "PREFIX_NOT_SAMPLED_200:/langgraph/"
       ],
-      "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-      "evidenceSha256": "314bc2a1fe6a94a829d5d6af586618adb6718c6f7538c2f2a2e111814f972d67"
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "c4a8861c11d584500642452a7e9f269e5e8ca449dfd41f378638c3489035192e"
     },
     {
       "host": "docs.langchain.com",

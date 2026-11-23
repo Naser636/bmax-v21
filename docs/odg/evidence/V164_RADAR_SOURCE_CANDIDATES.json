@@ -35,8 +35,7 @@
    "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
    "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
    "prefixes": [
     {
      "path": "/fprime/",
@@ -71,7 +70,152 @@
     "probeUserAgent": "ODG-Radar-probe/0.1",
     "redirectsFollowed": false,
     "footerLegalLinksObserved": []
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "finalUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "httpStatus": 200,
+    "bytes": 172053,
+    "sha256": "d343690d118ff5bae23aef1cf9b6ccbf90c214c4b38b0f4bc42a2103535a47f8",
+    "fetchedAt": "2026-11-23T19:44:15Z",
+    "method": "one GET (re-pin: earlier read not kept), UA ODG-Radar-probe/0.1; sha256 of raw HTML at fetchedAt",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot|non-commercial|noncommercial|personal use|reproduc|copy|redistribut|download|collect (case-insensitive regex over the tag-stripped full text, script/style removed; context = 160 chars either side)",
+    "textChars": 12720,
+    "keywordHits": 25,
+    "hitsVerbatim": [
+     {
+      "keyword": "AI",
+      "offset": 1323,
+      "context": "licy Sexually Obscene Content Threats of Violence and Gratuitously Violent Content Terrorism and Violent Extremism Content CSAM Policy NCII Synthetic Media and AI Tools GitHub Appeal and Reinstatement Privacy Policies GitHub General Privacy Statement GitHub Subprocessors GitHub Cookies GitHub Global Data Privacy Notice f"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 2331,
+      "context": "hild Labor GitHub Anti-Bribery Statement GitHub GPL Cooperation Commitment GitHub Gifts and Entertainment Policy In this article GitHub Acceptable Use Policies Copy markdown In this article 1. Compliance with Laws and Regulations 2. User Safety 3. Intellectual Property, Authenticity, and Private Information 4. Spam and Ina"
+     },
+     {
+      "keyword": "copy",
+      "offset": 4967,
+      "context": "rivate Information We do not allow content or activity on GitHub that: infringes any proprietary right of any party, including patent, trademark, trade secret, copyright, right of publicity, or other right; unlawfully shares unauthorized product licensing keys, software for generating unauthorized product licensing keys, o"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5675,
+      "context": "osting another person's personal information without consent. 4. Spam and Inauthentic Activity on GitHub We do not allow content or activity on GitHub that is: automated excessive bulk activity and coordinated inauthentic activity, such as spamming cryptocurrency mining; bulk distribution of promotions and advertising prohibi"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5928,
+      "context": "tocurrency mining; bulk distribution of promotions and advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the prolifera"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5980,
+      "context": "nd advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the proliferation of inauthentic activity; using GitHub as a plat"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6273,
+      "context": "c activity; using GitHub as a platform for propagating abuse on other platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our serv"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6343,
+      "context": "platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our servers, such as get-rich-quick schemes; incentivized by (or incentivizes "
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 7481,
+      "context": "re not considered “unauthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. "
+     },
+     {
+      "keyword": "copy",
+      "offset": 7503,
+      "context": "uthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. Information Usage "
+     },
+     {
+      "keyword": "scrap",
+      "offset": 7790,
+      "context": "ten permission. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any p"
+     },
+     {
+      "keyword": "collect",
+      "offset": 7799,
+      "context": "ssion. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8092,
+      "context": "purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of inform"
+     },
+     {
+      "keyword": "extract",
+      "offset": 8111,
+      "context": "ny publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API"
+     },
+     {
+      "keyword": "automat",
+      "offset": 8158,
+      "context": "e open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service "
+     },
+     {
+      "keyword": "bot",
+      "offset": 8187,
+      "context": "y use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You ma"
+     },
+     {
+      "keyword": "crawl",
+      "offset": 8197,
+      "context": "ic information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use in"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8206,
+      "context": "ation from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8237,
+      "context": "ival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scrape"
+     },
+     {
+      "keyword": "scrap",
+      "offset": 8398,
+      "context": "ollection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling person"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8407,
+      "context": " of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling personal informat"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8808,
+      "context": "mation from the Service must comply with the GitHub Privacy Statement . 8. Privacy Misuse of personal information is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any "
+     },
+     {
+      "keyword": "collect",
+      "offset": 8920,
+      "context": "n is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpos"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8963,
+      "context": "vice collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpose for which that User has authorized it. Yo"
+     },
+     {
+      "keyword": "automat",
+      "offset": 11149,
+      "context": " not promote or distribute content or activity that is illegal or otherwise prohibited by our Terms of Service or Acceptable Use Policies , including excessive automated bulk activity (for example, spamming), get-rich-quick schemes, and misrepresentation or deception related to your promotion. If you decide to post any promot"
+     }
+    ]
+   },
+   "termsClausesVerbatim": [
+    "6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission.",
+    "You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler."
+   ],
+   "termsFinding": "Extended scan: s.7 explicitly permits research use of scraped information (conditional), but s.6 forbids reproducing/copying 'any portion of the Service' without express written permission — a copy limitation of the class that deferred devblogs ⇒ DEFER (owner reading). Other hits: spam/inauthentic automated activity, excessive bulk activity, personal-data collection (non-applicable: no bulk, no personal data).",
+   "ownerDecisionRequired": "GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
   },
   {
    "host": "swehb.nasa.gov",
@@ -137,7 +281,6 @@
    "termsUrl": "https://sti.nasa.gov/disclaimers/",
    "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsClause": "NASA STI 'Disclaimers, Copyright Notice, and Terms and Conditions of Use' (linked from the NTRS footer; fetched 2026-11-23): 'NASA does not grant exclusive use rights with respect to NASA material. NASA should be acknowledged as the source of its material' — no restriction on automated access; the STI site itself publishes a 'Data Harvesting' help section. Terms page read: no rate limit published (NTRS API documentation itself not reviewed)",
    "prefixes": [
     {
      "path": "/api/citations/",
@@ -188,7 +331,278 @@
       "NASA Web Privacy Policy and Important No"
      ]
     ]
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://sti.nasa.gov/disclaimers/",
+    "finalUrl": "https://sti.nasa.gov/disclaimers/",
+    "httpStatus": 200,
+    "bytes": 26210,
+    "sha256": "15c5732f49dd2eafe9c610ed61f7052b9565000e24be71ac55bc6b9a415e3b3b",
+    "fetchedAt": "2026-11-23T19:44:15Z",
+    "method": "one GET (re-pin: earlier read not kept), UA ODG-Radar-probe/0.1; sha256 of raw HTML at fetchedAt",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot|non-commercial|noncommercial|personal use|reproduc|copy|redistribut|download|collect (case-insensitive regex over the tag-stripped full text, script/style removed; context = 160 chars either side)",
+    "textChars": 9513,
+    "keywordHits": 50,
+    "hitsVerbatim": [
+     {
+      "keyword": "Harvest",
+      "offset": 623,
+      "context": "rrow_drop_down About Public Access Submit to PubSpace FAQ NASA PubSpace NASA's Data Portal Tools arrow_drop_down For the General Public For STI Publishers Data Harvesting Contact/Help search Repository Search Site Search Home About arrow_drop_up arrow_drop_down NASA STI Compliance and Distribution Services STI Repository (NTR"
+     },
+     {
+      "keyword": "Harvest",
+      "offset": 1192,
+      "context": " About Public Access Submit to PubSpace FAQ NASA PubSpace NASA's Data Portal Tools arrow_drop_up arrow_drop_down For the General Public For STI Publishers Data Harvesting Contact/Help Close Use of NASA STI Disclaimers, Copyright Notice, and Terms and Conditions of Use DISCLAIMERS Disclaimer of Liability: With respect to mater"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 1251,
+      "context": "ASA's Data Portal Tools arrow_drop_up arrow_drop_down For the General Public For STI Publishers Data Harvesting Contact/Help Close Use of NASA STI Disclaimers, Copyright Notice, and Terms and Conditions of Use DISCLAIMERS Disclaimer of Liability: With respect to materials (e.g., documents, photographs, audio recordings, vi"
+     },
+     {
+      "keyword": "download",
+      "offset": 1490,
+      "context": "bility: With respect to materials (e.g., documents, photographs, audio recordings, video recordings, tools, data products, or services) on or available through download from this Web site, neither the U.S. Government, NASA, nor any of its employees or contractors make any representations or warranties, express, implied, or sta"
+     },
+     {
+      "keyword": "download",
+      "offset": 2490,
+      "context": "nt, recommendation, or favoring by the U.S. Government or NASA. The views and opinions of authors expressed on NASA Web sites or in materials available through download from this site do not necessarily state or reflect those of the U.S. Government or NASA, and they may not be used for advertising or product endorsement purpos"
+     },
+     {
+      "keyword": "COPY",
+      "offset": 2662,
+      "context": "m this site do not necessarily state or reflect those of the U.S. Government or NASA, and they may not be used for advertising or product endorsement purposes. COPYRIGHT NOTICE General Generally, United States government works (works prepared by officers and employees of the U.S. Government as part of their official duties"
+     },
+     {
+      "keyword": "copy",
+      "offset": 2849,
+      "context": "nerally, United States government works (works prepared by officers and employees of the U.S. Government as part of their official duties) are not protected by copyright in the U.S. (17 U.S.C. §105) and may be used without obtaining permission from NASA. However, U.S. government works may contain privately created, copyrig"
+     },
+     {
+      "keyword": "copy",
+      "offset": 3006,
+      "context": "by copyright in the U.S. (17 U.S.C. §105) and may be used without obtaining permission from NASA. However, U.S. government works may contain privately created, copyrighted works (e.g., quote, photograph, chart, drawing, etc.) used under license or with permission of the copyright owner. Incorporation in a U.S. government w"
+     },
+     {
+      "keyword": "copy",
+      "offset": 3117,
+      "context": " government works may contain privately created, copyrighted works (e.g., quote, photograph, chart, drawing, etc.) used under license or with permission of the copyright owner. Incorporation in a U.S. government work does not place the private work in the public domain. Moreover, not all materials on or available through d"
+     },
+     {
+      "keyword": "download",
+      "offset": 3280,
+      "context": "yright owner. Incorporation in a U.S. government work does not place the private work in the public domain. Moreover, not all materials on or available through download from this Web site are U.S. government works. Some materials available from this Web site may be protected by copyrights owned by private individuals or organi"
+     },
+     {
+      "keyword": "copy",
+      "offset": 3399,
+      "context": "ot all materials on or available through download from this Web site are U.S. government works. Some materials available from this Web site may be protected by copyrights owned by private individuals or organizations and may be subject to restrictions on use. For example, contractors and grantees are not considered Governm"
+     },
+     {
+      "keyword": "copy",
+      "offset": 3599,
+      "context": "or organizations and may be subject to restrictions on use. For example, contractors and grantees are not considered Government employees; generally, they hold copyright to works they produce for the Government. Other materials may be the result of joint authorship due to collaboration between a Government employee and a p"
+     },
+     {
+      "keyword": "copy",
+      "offset": 3824,
+      "context": "ls may be the result of joint authorship due to collaboration between a Government employee and a private individual wherein the private individual will hold a copyright to the work jointly with U.S. Government. The Government is granted a worldwide license to use, modify, reproduce, release, perform, display, or disclose "
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 3938,
+      "context": "al wherein the private individual will hold a copyright to the work jointly with U.S. Government. The Government is granted a worldwide license to use, modify, reproduce, release, perform, display, or disclose these works by or on behalf of the Government. While NASA may publicly release copyrighted works in which it has gover"
+     },
+     {
+      "keyword": "copy",
+      "offset": 4067,
+      "context": "ldwide license to use, modify, reproduce, release, perform, display, or disclose these works by or on behalf of the Government. While NASA may publicly release copyrighted works in which it has government purpose licenses or specific permission to release, such licenses or permission do not necessarily transfer to others. "
+     },
+     {
+      "keyword": "copy",
+      "offset": 4271,
+      "context": " purpose licenses or specific permission to release, such licenses or permission do not necessarily transfer to others. Thus, such works are still protected by copyright, and recipients of the works must comply with the copyright law (Title 17 United States Code). Such copyrighted works may not be modified, reproduced, or "
+     },
+     {
+      "keyword": "copy",
+      "offset": 4331,
+      "context": "censes or permission do not necessarily transfer to others. Thus, such works are still protected by copyright, and recipients of the works must comply with the copyright law (Title 17 United States Code). Such copyrighted works may not be modified, reproduced, or redistributed without permission of the copyright owner. If "
+     },
+     {
+      "keyword": "copy",
+      "offset": 4381,
+      "context": "o others. Thus, such works are still protected by copyright, and recipients of the works must comply with the copyright law (Title 17 United States Code). Such copyrighted works may not be modified, reproduced, or redistributed without permission of the copyright owner. If a recognizable person appears in a photograph or v"
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 4420,
+      "context": "otected by copyright, and recipients of the works must comply with the copyright law (Title 17 United States Code). Such copyrighted works may not be modified, reproduced, or redistributed without permission of the copyright owner. If a recognizable person appears in a photograph or video recording, or the talent (such as a pe"
+     },
+     {
+      "keyword": "redistribut",
+      "offset": 4435,
+      "context": "right, and recipients of the works must comply with the copyright law (Title 17 United States Code). Such copyrighted works may not be modified, reproduced, or redistributed without permission of the copyright owner. If a recognizable person appears in a photograph or video recording, or the talent (such as a performance or narra"
+     },
+     {
+      "keyword": "copy",
+      "offset": 4475,
+      "context": "comply with the copyright law (Title 17 United States Code). Such copyrighted works may not be modified, reproduced, or redistributed without permission of the copyright owner. If a recognizable person appears in a photograph or video recording, or the talent (such as a performance or narration) of a known individual is in"
+     },
+     {
+      "keyword": "copy",
+      "offset": 5121,
+      "context": " and magazines reporting facts of historical significance), then such uses will generally not be considered an infringement of such personal rights. Additional copyright information concerning copyright status is given in the metadata for the documents and other STI. Documents Documents available from this Web site are not"
+     },
+     {
+      "keyword": "copy",
+      "offset": 5154,
+      "context": " historical significance), then such uses will generally not be considered an infringement of such personal rights. Additional copyright information concerning copyright status is given in the metadata for the documents and other STI. Documents Documents available from this Web site are not protected by copyright unless no"
+     },
+     {
+      "keyword": "copy",
+      "offset": 5299,
+      "context": "ion concerning copyright status is given in the metadata for the documents and other STI. Documents Documents available from this Web site are not protected by copyright unless noted. If not copyrighted, documents may be reproduced and distributed, without further permission from NASA. However, some documents or portions o"
+     },
+     {
+      "keyword": "copy",
+      "offset": 5330,
+      "context": " is given in the metadata for the documents and other STI. Documents Documents available from this Web site are not protected by copyright unless noted. If not copyrighted, documents may be reproduced and distributed, without further permission from NASA. However, some documents or portions of documents available from this"
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 5360,
+      "context": "the documents and other STI. Documents Documents available from this Web site are not protected by copyright unless noted. If not copyrighted, documents may be reproduced and distributed, without further permission from NASA. However, some documents or portions of documents available from this site may have been contributed by"
+     },
+     {
+      "keyword": "copy",
+      "offset": 5577,
+      "context": "om NASA. However, some documents or portions of documents available from this site may have been contributed by private individuals or organizations and may be copyrighted. If copyrighted, permission should be obtained from the copyright owner prior to use (e.g., modification, reproduction, or redistribution). Photography "
+     },
+     {
+      "keyword": "copy",
+      "offset": 5593,
+      "context": ", some documents or portions of documents available from this site may have been contributed by private individuals or organizations and may be copyrighted. If copyrighted, permission should be obtained from the copyright owner prior to use (e.g., modification, reproduction, or redistribution). Photography Photographs avai"
+     },
+     {
+      "keyword": "copy",
+      "offset": 5645,
+      "context": "from this site may have been contributed by private individuals or organizations and may be copyrighted. If copyrighted, permission should be obtained from the copyright owner prior to use (e.g., modification, reproduction, or redistribution). Photography Photographs available from this Web site are not protected by copyri"
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 5695,
+      "context": "e individuals or organizations and may be copyrighted. If copyrighted, permission should be obtained from the copyright owner prior to use (e.g., modification, reproduction, or redistribution). Photography Photographs available from this Web site are not protected by copyright unless noted. If not copyrighted, photographs may "
+     },
+     {
+      "keyword": "redistribut",
+      "offset": 5712,
+      "context": "organizations and may be copyrighted. If copyrighted, permission should be obtained from the copyright owner prior to use (e.g., modification, reproduction, or redistribution). Photography Photographs available from this Web site are not protected by copyright unless noted. If not copyrighted, photographs may be reproduced and di"
+     },
+     {
+      "keyword": "copy",
+      "offset": 5803,
+      "context": "e copyright owner prior to use (e.g., modification, reproduction, or redistribution). Photography Photographs available from this Web site are not protected by copyright unless noted. If not copyrighted, photographs may be reproduced and distributed without further permission from NASA. If copyrighted, permission should be"
+     },
+     {
+      "keyword": "copy",
+      "offset": 5834,
+      "context": "(e.g., modification, reproduction, or redistribution). Photography Photographs available from this Web site are not protected by copyright unless noted. If not copyrighted, photographs may be reproduced and distributed without further permission from NASA. If copyrighted, permission should be obtained from the copyright ow"
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 5866,
+      "context": "n, or redistribution). Photography Photographs available from this Web site are not protected by copyright unless noted. If not copyrighted, photographs may be reproduced and distributed without further permission from NASA. If copyrighted, permission should be obtained from the copyright owner prior to use. If a recognizable "
+     },
+     {
+      "keyword": "copy",
+      "offset": 5934,
+      "context": "eb site are not protected by copyright unless noted. If not copyrighted, photographs may be reproduced and distributed without further permission from NASA. If copyrighted, permission should be obtained from the copyright owner prior to use. If a recognizable person appears in a photograph, use for commercial purposes may "
+     },
+     {
+      "keyword": "copy",
+      "offset": 5986,
+      "context": " If not copyrighted, photographs may be reproduced and distributed without further permission from NASA. If copyrighted, permission should be obtained from the copyright owner prior to use. If a recognizable person appears in a photograph, use for commercial purposes may infringe a right of privacy or publicity and permiss"
+     },
+     {
+      "keyword": "copy",
+      "offset": 6291,
+      "context": "blicity and permission should be obtained from the recognizable person. Audio Recordings Audiotape recordings available from this Web site are not protected by copyright unless noted. If not copyrighted, audio recordings may be excerpted or reproduced and distributed, without further permission from NASA. If copyrighted, p"
+     },
+     {
+      "keyword": "copy",
+      "offset": 6322,
+      "context": "e obtained from the recognizable person. Audio Recordings Audiotape recordings available from this Web site are not protected by copyright unless noted. If not copyrighted, audio recordings may be excerpted or reproduced and distributed, without further permission from NASA. If copyrighted, permission should be obtained fr"
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 6372,
+      "context": "ordings Audiotape recordings available from this Web site are not protected by copyright unless noted. If not copyrighted, audio recordings may be excerpted or reproduced and distributed, without further permission from NASA. If copyrighted, permission should be obtained from the copyright owner prior to use. Use for a commerc"
+     },
+     {
+      "keyword": "copy",
+      "offset": 6441,
+      "context": "tected by copyright unless noted. If not copyrighted, audio recordings may be excerpted or reproduced and distributed, without further permission from NASA. If copyrighted, permission should be obtained from the copyright owner prior to use. Use for a commercial purpose of a portion or segment of an audio recording that in"
+     },
+     {
+      "keyword": "copy",
+      "offset": 6493,
+      "context": ", audio recordings may be excerpted or reproduced and distributed, without further permission from NASA. If copyrighted, permission should be obtained from the copyright owner prior to use. Use for a commercial purpose of a portion or segment of an audio recording that incorporates the talent (such as narration or music) o"
+     },
+     {
+      "keyword": "copy",
+      "offset": 6937,
+      "context": "eo Recordings Video recordings (videotape and motion picture recordings) available from this Web site, including audio recordings therein, are not protected by copyright unless noted. If not copyrighted, video recordings may be reproduced and distributed, without further permission from NASA. If a video recording is copyri"
+     },
+     {
+      "keyword": "copy",
+      "offset": 6968,
+      "context": "(videotape and motion picture recordings) available from this Web site, including audio recordings therein, are not protected by copyright unless noted. If not copyrighted, video recordings may be reproduced and distributed, without further permission from NASA. If a video recording is copyrighted in its entirety or a port"
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 7005,
+      "context": "ngs) available from this Web site, including audio recordings therein, are not protected by copyright unless noted. If not copyrighted, video recordings may be reproduced and distributed, without further permission from NASA. If a video recording is copyrighted in its entirety or a portion of a recording contains copyrighted m"
+     },
+     {
+      "keyword": "copy",
+      "offset": 7095,
+      "context": "y copyright unless noted. If not copyrighted, video recordings may be reproduced and distributed, without further permission from NASA. If a video recording is copyrighted in its entirety or a portion of a recording contains copyrighted material, such as music or video footage, permission should be obtained from the copyri"
+     },
+     {
+      "keyword": "copy",
+      "offset": 7160,
+      "context": "y be reproduced and distributed, without further permission from NASA. If a video recording is copyrighted in its entirety or a portion of a recording contains copyrighted material, such as music or video footage, permission should be obtained from the copyright owner prior to use. Use for a commercial purpose of any porti"
+     },
+     {
+      "keyword": "copy",
+      "offset": 7253,
+      "context": "s copyrighted in its entirety or a portion of a recording contains copyrighted material, such as music or video footage, permission should be obtained from the copyright owner prior to use. Use for a commercial purpose of any portion or segment of a video recording that displays a recognizable person, or the talent (such a"
+     },
+     {
+      "keyword": "copy",
+      "offset": 8006,
+      "context": "A does not grant exclusive use rights with respect to NASA material. NASA should be acknowledged as the source of its material. It is unlawful to falsely claim copyright or other rights in NASA material. Material available from this Web site may include visible NASA identifiers (NASA name and initials, NASA Insignia, NASA "
+     },
+     {
+      "keyword": "copy",
+      "offset": 9022,
+      "context": "g symbol by organizations other than NASA is strictly prohibited. NASA does not indemnify nor hold harmless users of NASA material, nor release such users from copyright infringement. NASA personnel are not authorized to sign indemnity or hold harmless statements, releases from copyright infringement, or documents granting"
+     },
+     {
+      "keyword": "copy",
+      "offset": 9141,
+      "context": "SA material, nor release such users from copyright infringement. NASA personnel are not authorized to sign indemnity or hold harmless statements, releases from copyright infringement, or documents granting exclusive use rights. keyboard_arrow_up FOIA | No Fear Act | Office of Inspector General | Agency Financial Reports Bu"
+     }
+    ]
+   },
+   "termsClausesVerbatim": [
+    "Generally, United States government works (works prepared by officers and employees of the U.S. Government as part of their official duties) are not protected by copyright in the U.S. (17 U.S.C. §105) and may be used without obtaining permission from NASA.",
+    "Documents available from this Web site are not protected by copyright unless noted. If not copyrighted, documents may be reproduced and distributed, without further permission from NASA. However, some documents or portions of documents available from this site may have been contributed by private individuals or organizations and may be copyrighted. If copyrighted, permission should be obtained from the copyright owner prior to use (e.g., modification, reproduction, or redistribution).",
+    "Such copyrighted works may not be modified, reproduced, or redistributed without permission of the copyright owner."
+   ],
+   "termsFinding": "Extended scan: no personal/non-commercial limitation and no prohibition on automated access or collection; 'Data Harvesting' hits are the site's own navigation (a harvesting help section). Reproduction limits apply ONLY to third-party copyrighted works (status given per document in metadata); US-government works and uncopyrighted documents 'may be reproduced and distributed, without further permission' ⇒ non-restrictive for citation metadata; condition recorded.",
+   "termsCondition": "NASA STI terms: copyright status is per document (metadata); copyrighted third-party works must not be modified, reproduced or redistributed without the copyright owner's permission; NASA to be acknowledged as source"
   },
   {
    "host": "www.tri.global",
@@ -685,8 +1099,7 @@
    "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
    "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
    "prefixes": [
     {
      "path": "/autogen/stable/",
@@ -730,7 +1143,152 @@
       "Consumer Health Privacy"
      ]
     ]
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "finalUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "httpStatus": 200,
+    "bytes": 172053,
+    "sha256": "d343690d118ff5bae23aef1cf9b6ccbf90c214c4b38b0f4bc42a2103535a47f8",
+    "fetchedAt": "2026-11-23T19:44:15Z",
+    "method": "one GET (re-pin: earlier read not kept), UA ODG-Radar-probe/0.1; sha256 of raw HTML at fetchedAt",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot|non-commercial|noncommercial|personal use|reproduc|copy|redistribut|download|collect (case-insensitive regex over the tag-stripped full text, script/style removed; context = 160 chars either side)",
+    "textChars": 12720,
+    "keywordHits": 25,
+    "hitsVerbatim": [
+     {
+      "keyword": "AI",
+      "offset": 1323,
+      "context": "licy Sexually Obscene Content Threats of Violence and Gratuitously Violent Content Terrorism and Violent Extremism Content CSAM Policy NCII Synthetic Media and AI Tools GitHub Appeal and Reinstatement Privacy Policies GitHub General Privacy Statement GitHub Subprocessors GitHub Cookies GitHub Global Data Privacy Notice f"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 2331,
+      "context": "hild Labor GitHub Anti-Bribery Statement GitHub GPL Cooperation Commitment GitHub Gifts and Entertainment Policy In this article GitHub Acceptable Use Policies Copy markdown In this article 1. Compliance with Laws and Regulations 2. User Safety 3. Intellectual Property, Authenticity, and Private Information 4. Spam and Ina"
+     },
+     {
+      "keyword": "copy",
+      "offset": 4967,
+      "context": "rivate Information We do not allow content or activity on GitHub that: infringes any proprietary right of any party, including patent, trademark, trade secret, copyright, right of publicity, or other right; unlawfully shares unauthorized product licensing keys, software for generating unauthorized product licensing keys, o"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5675,
+      "context": "osting another person's personal information without consent. 4. Spam and Inauthentic Activity on GitHub We do not allow content or activity on GitHub that is: automated excessive bulk activity and coordinated inauthentic activity, such as spamming cryptocurrency mining; bulk distribution of promotions and advertising prohibi"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5928,
+      "context": "tocurrency mining; bulk distribution of promotions and advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the prolifera"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5980,
+      "context": "nd advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the proliferation of inauthentic activity; using GitHub as a plat"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6273,
+      "context": "c activity; using GitHub as a platform for propagating abuse on other platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our serv"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6343,
+      "context": "platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our servers, such as get-rich-quick schemes; incentivized by (or incentivizes "
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 7481,
+      "context": "re not considered “unauthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. "
+     },
+     {
+      "keyword": "copy",
+      "offset": 7503,
+      "context": "uthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. Information Usage "
+     },
+     {
+      "keyword": "scrap",
+      "offset": 7790,
+      "context": "ten permission. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any p"
+     },
+     {
+      "keyword": "collect",
+      "offset": 7799,
+      "context": "ssion. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8092,
+      "context": "purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of inform"
+     },
+     {
+      "keyword": "extract",
+      "offset": 8111,
+      "context": "ny publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API"
+     },
+     {
+      "keyword": "automat",
+      "offset": 8158,
+      "context": "e open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service "
+     },
+     {
+      "keyword": "bot",
+      "offset": 8187,
+      "context": "y use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You ma"
+     },
+     {
+      "keyword": "crawl",
+      "offset": 8197,
+      "context": "ic information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use in"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8206,
+      "context": "ation from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8237,
+      "context": "ival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scrape"
+     },
+     {
+      "keyword": "scrap",
+      "offset": 8398,
+      "context": "ollection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling person"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8407,
+      "context": " of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling personal informat"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8808,
+      "context": "mation from the Service must comply with the GitHub Privacy Statement . 8. Privacy Misuse of personal information is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any "
+     },
+     {
+      "keyword": "collect",
+      "offset": 8920,
+      "context": "n is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpos"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8963,
+      "context": "vice collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpose for which that User has authorized it. Yo"
+     },
+     {
+      "keyword": "automat",
+      "offset": 11149,
+      "context": " not promote or distribute content or activity that is illegal or otherwise prohibited by our Terms of Service or Acceptable Use Policies , including excessive automated bulk activity (for example, spamming), get-rich-quick schemes, and misrepresentation or deception related to your promotion. If you decide to post any promot"
+     }
+    ]
+   },
+   "termsClausesVerbatim": [
+    "6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission.",
+    "You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler."
+   ],
+   "termsFinding": "Extended scan: s.7 explicitly permits research use of scraped information (conditional), but s.6 forbids reproducing/copying 'any portion of the Service' without express written permission — a copy limitation of the class that deferred devblogs ⇒ DEFER (owner reading). Other hits: spam/inauthentic automated activity, excessive bulk activity, personal-data collection (non-applicable: no bulk, no personal data).",
+   "ownerDecisionRequired": "GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
   },
   {
    "host": "devblogs.microsoft.com",
@@ -1171,8 +1729,7 @@
    "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
    "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
    "prefixes": [
     {
      "path": "/chaosmonkey/",
@@ -1207,7 +1764,152 @@
     "probeUserAgent": "ODG-Radar-probe/0.1",
     "redirectsFollowed": false,
     "footerLegalLinksObserved": []
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "finalUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "httpStatus": 200,
+    "bytes": 172053,
+    "sha256": "d343690d118ff5bae23aef1cf9b6ccbf90c214c4b38b0f4bc42a2103535a47f8",
+    "fetchedAt": "2026-11-23T19:44:15Z",
+    "method": "one GET (re-pin: earlier read not kept), UA ODG-Radar-probe/0.1; sha256 of raw HTML at fetchedAt",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot|non-commercial|noncommercial|personal use|reproduc|copy|redistribut|download|collect (case-insensitive regex over the tag-stripped full text, script/style removed; context = 160 chars either side)",
+    "textChars": 12720,
+    "keywordHits": 25,
+    "hitsVerbatim": [
+     {
+      "keyword": "AI",
+      "offset": 1323,
+      "context": "licy Sexually Obscene Content Threats of Violence and Gratuitously Violent Content Terrorism and Violent Extremism Content CSAM Policy NCII Synthetic Media and AI Tools GitHub Appeal and Reinstatement Privacy Policies GitHub General Privacy Statement GitHub Subprocessors GitHub Cookies GitHub Global Data Privacy Notice f"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 2331,
+      "context": "hild Labor GitHub Anti-Bribery Statement GitHub GPL Cooperation Commitment GitHub Gifts and Entertainment Policy In this article GitHub Acceptable Use Policies Copy markdown In this article 1. Compliance with Laws and Regulations 2. User Safety 3. Intellectual Property, Authenticity, and Private Information 4. Spam and Ina"
+     },
+     {
+      "keyword": "copy",
+      "offset": 4967,
+      "context": "rivate Information We do not allow content or activity on GitHub that: infringes any proprietary right of any party, including patent, trademark, trade secret, copyright, right of publicity, or other right; unlawfully shares unauthorized product licensing keys, software for generating unauthorized product licensing keys, o"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5675,
+      "context": "osting another person's personal information without consent. 4. Spam and Inauthentic Activity on GitHub We do not allow content or activity on GitHub that is: automated excessive bulk activity and coordinated inauthentic activity, such as spamming cryptocurrency mining; bulk distribution of promotions and advertising prohibi"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5928,
+      "context": "tocurrency mining; bulk distribution of promotions and advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the prolifera"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5980,
+      "context": "nd advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the proliferation of inauthentic activity; using GitHub as a plat"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6273,
+      "context": "c activity; using GitHub as a platform for propagating abuse on other platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our serv"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6343,
+      "context": "platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our servers, such as get-rich-quick schemes; incentivized by (or incentivizes "
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 7481,
+      "context": "re not considered “unauthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. "
+     },
+     {
+      "keyword": "copy",
+      "offset": 7503,
+      "context": "uthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. Information Usage "
+     },
+     {
+      "keyword": "scrap",
+      "offset": 7790,
+      "context": "ten permission. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any p"
+     },
+     {
+      "keyword": "collect",
+      "offset": 7799,
+      "context": "ssion. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8092,
+      "context": "purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of inform"
+     },
+     {
+      "keyword": "extract",
+      "offset": 8111,
+      "context": "ny publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API"
+     },
+     {
+      "keyword": "automat",
+      "offset": 8158,
+      "context": "e open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service "
+     },
+     {
+      "keyword": "bot",
+      "offset": 8187,
+      "context": "y use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You ma"
+     },
+     {
+      "keyword": "crawl",
+      "offset": 8197,
+      "context": "ic information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use in"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8206,
+      "context": "ation from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8237,
+      "context": "ival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scrape"
+     },
+     {
+      "keyword": "scrap",
+      "offset": 8398,
+      "context": "ollection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling person"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8407,
+      "context": " of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling personal informat"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8808,
+      "context": "mation from the Service must comply with the GitHub Privacy Statement . 8. Privacy Misuse of personal information is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any "
+     },
+     {
+      "keyword": "collect",
+      "offset": 8920,
+      "context": "n is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpos"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8963,
+      "context": "vice collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpose for which that User has authorized it. Yo"
+     },
+     {
+      "keyword": "automat",
+      "offset": 11149,
+      "context": " not promote or distribute content or activity that is illegal or otherwise prohibited by our Terms of Service or Acceptable Use Policies , including excessive automated bulk activity (for example, spamming), get-rich-quick schemes, and misrepresentation or deception related to your promotion. If you decide to post any promot"
+     }
+    ]
+   },
+   "termsClausesVerbatim": [
+    "6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission.",
+    "You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler."
+   ],
+   "termsFinding": "Extended scan: s.7 explicitly permits research use of scraped information (conditional), but s.6 forbids reproducing/copying 'any portion of the Service' without express written permission — a copy limitation of the class that deferred devblogs ⇒ DEFER (owner reading). Other hits: spam/inauthentic automated activity, excessive bulk activity, personal-data collection (non-applicable: no bulk, no personal data).",
+   "ownerDecisionRequired": "GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
   },
   {
    "host": "github.blog",
@@ -1225,8 +1927,7 @@
    "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
    "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
    "prefixes": [
     {
      "path": "/ai-and-ml/",
@@ -1261,7 +1962,152 @@
     "probeUserAgent": "ODG-Radar-probe/0.1",
     "redirectsFollowed": false,
     "footerLegalLinksObserved": null
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "finalUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "httpStatus": 200,
+    "bytes": 172053,
+    "sha256": "d343690d118ff5bae23aef1cf9b6ccbf90c214c4b38b0f4bc42a2103535a47f8",
+    "fetchedAt": "2026-11-23T19:44:15Z",
+    "method": "one GET (re-pin: earlier read not kept), UA ODG-Radar-probe/0.1; sha256 of raw HTML at fetchedAt",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot|non-commercial|noncommercial|personal use|reproduc|copy|redistribut|download|collect (case-insensitive regex over the tag-stripped full text, script/style removed; context = 160 chars either side)",
+    "textChars": 12720,
+    "keywordHits": 25,
+    "hitsVerbatim": [
+     {
+      "keyword": "AI",
+      "offset": 1323,
+      "context": "licy Sexually Obscene Content Threats of Violence and Gratuitously Violent Content Terrorism and Violent Extremism Content CSAM Policy NCII Synthetic Media and AI Tools GitHub Appeal and Reinstatement Privacy Policies GitHub General Privacy Statement GitHub Subprocessors GitHub Cookies GitHub Global Data Privacy Notice f"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 2331,
+      "context": "hild Labor GitHub Anti-Bribery Statement GitHub GPL Cooperation Commitment GitHub Gifts and Entertainment Policy In this article GitHub Acceptable Use Policies Copy markdown In this article 1. Compliance with Laws and Regulations 2. User Safety 3. Intellectual Property, Authenticity, and Private Information 4. Spam and Ina"
+     },
+     {
+      "keyword": "copy",
+      "offset": 4967,
+      "context": "rivate Information We do not allow content or activity on GitHub that: infringes any proprietary right of any party, including patent, trademark, trade secret, copyright, right of publicity, or other right; unlawfully shares unauthorized product licensing keys, software for generating unauthorized product licensing keys, o"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5675,
+      "context": "osting another person's personal information without consent. 4. Spam and Inauthentic Activity on GitHub We do not allow content or activity on GitHub that is: automated excessive bulk activity and coordinated inauthentic activity, such as spamming cryptocurrency mining; bulk distribution of promotions and advertising prohibi"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5928,
+      "context": "tocurrency mining; bulk distribution of promotions and advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the prolifera"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5980,
+      "context": "nd advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the proliferation of inauthentic activity; using GitHub as a plat"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6273,
+      "context": "c activity; using GitHub as a platform for propagating abuse on other platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our serv"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6343,
+      "context": "platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our servers, such as get-rich-quick schemes; incentivized by (or incentivizes "
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 7481,
+      "context": "re not considered “unauthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. "
+     },
+     {
+      "keyword": "copy",
+      "offset": 7503,
+      "context": "uthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. Information Usage "
+     },
+     {
+      "keyword": "scrap",
+      "offset": 7790,
+      "context": "ten permission. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any p"
+     },
+     {
+      "keyword": "collect",
+      "offset": 7799,
+      "context": "ssion. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8092,
+      "context": "purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of inform"
+     },
+     {
+      "keyword": "extract",
+      "offset": 8111,
+      "context": "ny publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API"
+     },
+     {
+      "keyword": "automat",
+      "offset": 8158,
+      "context": "e open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service "
+     },
+     {
+      "keyword": "bot",
+      "offset": 8187,
+      "context": "y use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You ma"
+     },
+     {
+      "keyword": "crawl",
+      "offset": 8197,
+      "context": "ic information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use in"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8206,
+      "context": "ation from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8237,
+      "context": "ival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scrape"
+     },
+     {
+      "keyword": "scrap",
+      "offset": 8398,
+      "context": "ollection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling person"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8407,
+      "context": " of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling personal informat"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8808,
+      "context": "mation from the Service must comply with the GitHub Privacy Statement . 8. Privacy Misuse of personal information is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any "
+     },
+     {
+      "keyword": "collect",
+      "offset": 8920,
+      "context": "n is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpos"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8963,
+      "context": "vice collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpose for which that User has authorized it. Yo"
+     },
+     {
+      "keyword": "automat",
+      "offset": 11149,
+      "context": " not promote or distribute content or activity that is illegal or otherwise prohibited by our Terms of Service or Acceptable Use Policies , including excessive automated bulk activity (for example, spamming), get-rich-quick schemes, and misrepresentation or deception related to your promotion. If you decide to post any promot"
+     }
+    ]
+   },
+   "termsClausesVerbatim": [
+    "6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission.",
+    "You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler."
+   ],
+   "termsFinding": "Extended scan: s.7 explicitly permits research use of scraped information (conditional), but s.6 forbids reproducing/copying 'any portion of the Service' without express written permission — a copy limitation of the class that deferred devblogs ⇒ DEFER (owner reading). Other hits: spam/inauthentic automated activity, excessive bulk activity, personal-data collection (non-applicable: no bulk, no personal data).",
+   "ownerDecisionRequired": "GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
   },
   {
    "host": "stripe.dev",
@@ -1433,16 +2279,78 @@
     "bytes": 86827,
     "sha256": "8272bd0f1c5ac91b9867d5d860cd0b3dc6c6264c71ac91ae534702a02f0f608b",
     "fetchedAt": "2026-11-23T19:42:18Z",
-    "method": "one GET, UA ODG-Radar-probe/0.1, same path as the devblogs/datatracker re-reads; sha256 is of the raw HTML response at fetchedAt (a later fetch of a dynamic page may hash differently)",
-    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot (case-insensitive regex over the tag-stripped full text, script/style removed)",
+    "method": "one GET, UA ODG-Radar-probe/0.1, same path as the devblogs/datatracker re-reads; extended re-scan of the SAME pinned response (no refetch); sha256 is of the raw HTML at fetchedAt",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot|non-commercial|noncommercial|personal use|reproduc|copy|redistribut|download|collect (case-insensitive regex over the tag-stripped full text, script/style removed; context = 160 chars either side)",
     "textChars": 12394,
-    "keywordHits": 0
+    "keywordHits": 12,
+    "hitsVerbatim": [
+     {
+      "keyword": "copy",
+      "offset": 1331,
+      "context": " agreeing to be bound by the following terms and conditions here. Here’s the basic idea: Don’t violate anyone’s intellectual property and/or post anyone else’s copyrighted or confidential material you don’t have permission to use. Don’t post anything vulgar, inflammatory, pornographic, etc. Don’t post spam. Too many metali"
+     },
+     {
+      "keyword": "copy",
+      "offset": 3597,
+      "context": "this Web site (“Content”) may be used solely under the following terms and conditions (“Terms of Use”). This Web site may contain other proprietary notices and copyright information, the terms of which must be observed and followed. The Content on this Web site may contain technical inaccuracies or typographical errors and"
+     },
+     {
+      "keyword": "copy",
+      "offset": 4782,
+      "context": "licy can be found here . Except as otherwise expressly stated, by providing the Content, neither the Linux Foundation nor the Members grant any licenses to any copyrights, patents or any other intellectual property rights. Users Submissions Users are solely responsible for all materials, whether publicly posted or privatel"
+     },
+     {
+      "keyword": "collect",
+      "offset": 9746,
+      "context": "ess or account holder to this Web site. Privacy The Linux Foundation is committed to protecting your privacy and the privacy of your personal data which we may collect, use and otherwise process. For more information regarding our data privacy practices, including details on our compliance with the European Union’s General Da"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 9990,
+      "context": "practices, including details on our compliance with the European Union’s General Data Protection Regulation, please see our Privacy Policy . Digital Millennium Copyright Act The Linux Foundation respects the intellectual property of others, and we ask users of our Web sites to do the same. In accordance with the Digital Mi"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 10163,
+      "context": " The Linux Foundation respects the intellectual property of others, and we ask users of our Web sites to do the same. In accordance with the Digital Millennium Copyright Act (DMCA) and other applicable law, we have adopted a policy of terminating, in appropriate circumstances and at our sole discretion, subscribers or acco"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 10657,
+      "context": "e any intellectual property rights of others, whether or not there is any repeat infringement. Notice and Procedure for Notifying Designated Agent of Claims of Copyright Infringement If you believe that any material on this Web site infringes upon any copyright which you own or control, or that any link on this Web site di"
+     },
+     {
+      "keyword": "copy",
+      "offset": 10749,
+      "context": "t. Notice and Procedure for Notifying Designated Agent of Claims of Copyright Infringement If you believe that any material on this Web site infringes upon any copyright which you own or control, or that any link on this Web site directs users to another Web site that contains material that infringes upon any copyright whi"
+     },
+     {
+      "keyword": "copy",
+      "offset": 10900,
+      "context": "upon any copyright which you own or control, or that any link on this Web site directs users to another Web site that contains material that infringes upon any copyright which you own or control, you may file a notification of such infringement with our Designated Agent as set forth below. Notifications of claimed copyrigh"
+     },
+     {
+      "keyword": "copy",
+      "offset": 11056,
+      "context": "any copyright which you own or control, you may file a notification of such infringement with our Designated Agent as set forth below. Notifications of claimed copyright infringement must be sent to The Linux Foundation Designated Agent for notice of claims of copyright infringement. Our Designated Agent may be reached as "
+     },
+     {
+      "keyword": "copy",
+      "offset": 11157,
+      "context": "ignated Agent as set forth below. Notifications of claimed copyright infringement must be sent to The Linux Foundation Designated Agent for notice of claims of copyright infringement. Our Designated Agent may be reached as follows: Legal Department The Linux Foundation 548 Market St PMB 57274 San Francisco, California 9410"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 12101,
+      "context": "en Source Guides Webinars Case Studies LF EVENTS Home Events Calendar Sponsor an Event Submit a Talk Code of Conduct LF EDUCATION Home Course Catalog Resources Copyright © 2026 The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For more information, including ter"
+     }
+    ]
    },
    "termsClausesVerbatim": [
     "By using Linux Foundation websites you are agreeing to be bound by the following terms and conditions here.",
     "Revised November 16, 2020"
    ],
-   "termsFinding": "0 hits for the scanned keyword list in the full terms text ⇒ no clause restricting robots, crawling, scraping, data mining, automated access or AI use; scope sentence quoted verbatim above (pytorch.org footer 'Policies' → linuxfoundation.org/legal/policies → this page)"
+   "termsFinding": "Extended scan of the pinned LF Terms of Use: 12 hits, all non-restrictive — users must not POST others' copyrighted material; proprietary/copyright notices must be observed; no licence to IP is granted by providing Content; privacy (data the site collects about users); DMCA notice procedure; footer copyright. No personal/non-commercial limitation, no prohibition on copying/collecting site content, robots, scraping, data mining or AI use."
   },
   {
    "host": "docs.pytorch.org",
@@ -1610,16 +2518,73 @@
     "bytes": 142415,
     "sha256": "046e429dba5110d817be36e81d2b2f350d23d01dc643ee68a3c2b7db39adc855",
     "fetchedAt": "2026-11-23T19:42:18Z",
-    "method": "one GET, UA ODG-Radar-probe/0.1, same path as the devblogs/datatracker re-reads; sha256 is of the raw HTML response at fetchedAt (a later fetch of a dynamic page may hash differently)",
-    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot (case-insensitive regex over the tag-stripped full text, script/style removed)",
+    "method": "one GET, UA ODG-Radar-probe/0.1, same path as the devblogs/datatracker re-reads; extended re-scan of the SAME pinned response (no refetch); sha256 is of the raw HTML at fetchedAt",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot|non-commercial|noncommercial|personal use|reproduc|copy|redistribut|download|collect (case-insensitive regex over the tag-stripped full text, script/style removed; context = 160 chars either side)",
     "textChars": 11240,
-    "keywordHits": 0
+    "keywordHits": 11,
+    "hitsVerbatim": [
+     {
+      "keyword": "collect",
+      "offset": 638,
+      "context": ", hardware and networking and other technologies and the collaborative development, availability and adoption of open protocols and standards (individually and collectively, “Open Technology”); host various projects pursuing the development of Open Technology and other technical assets, materials and processes (each such proj"
+     },
+     {
+      "keyword": "copy",
+      "offset": 1835,
+      "context": "y Project, you are agreeing to be bound by the following terms and conditions here. Users cannot: violate anyone’s intellectual property and post anyone else’s copyrighted or confidential material you don’t have permission to use. post anything vulgar, inflammatory, pornographic, etc. post spam. abuse the system using meta"
+     },
+     {
+      "keyword": "copy",
+      "offset": 4017,
+      "context": "this Web site (“Content”) may be used solely under the following terms and conditions (“Terms of Use”). This Web site may contain other proprietary notices and copyright information, the terms of which must be observed and followed. The Content on this Web site may contain technical inaccuracies or typographical errors and"
+     },
+     {
+      "keyword": "copy",
+      "offset": 5443,
+      "context": "ocumentation or other artifacts to Projects are governed by the terms of the charter for each Project. Contributors do not grant any additional licenses to any copyrights, patents or any other intellectual property beyond the requirements of the charter. User Submissions Users are solely responsible for all materials, whet"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 9738,
+      "context": "ase see the Privacy Policy of LF Projects available at https://lfprojects.org/policies/privacy-policy for information on our privacy policy. Digital Millennium Copyright Act LF Projects respects the intellectual property of others, and we ask users of our Web sites to do the same. In accordance with the Digital Millennium "
+     },
+     {
+      "keyword": "Copy",
+      "offset": 9902,
+      "context": "right Act LF Projects respects the intellectual property of others, and we ask users of our Web sites to do the same. In accordance with the Digital Millennium Copyright Act (DMCA) and other applicable law, we have adopted a policy of terminating, in appropriate circumstances and at our sole discretion, subscribers or acco"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 10396,
+      "context": "e any intellectual property rights of others, whether or not there is any repeat infringement. Notice and Procedure for Notifying Designated Agent of Claims of Copyright Infringement If you believe that any material on this Web site infringes upon any copyright which you own or control, or that any link on this Web site di"
+     },
+     {
+      "keyword": "copy",
+      "offset": 10488,
+      "context": "t. Notice and Procedure for Notifying Designated Agent of Claims of Copyright Infringement If you believe that any material on this Web site infringes upon any copyright which you own or control, or that any link on this Web site directs users to another Web site that contains material that infringes upon any copyright whi"
+     },
+     {
+      "keyword": "copy",
+      "offset": 10639,
+      "context": "upon any copyright which you own or control, or that any link on this Web site directs users to another Web site that contains material that infringes upon any copyright which you own or control, you may file a notification of such infringement with our Designated Agent as set forth below. Notifications of claimed copyrigh"
+     },
+     {
+      "keyword": "copy",
+      "offset": 10795,
+      "context": "any copyright which you own or control, you may file a notification of such infringement with our Designated Agent as set forth below. Notifications of claimed copyright infringement must be sent to The LF Projects Designated Agent for notice of claims of copyright infringement. Our Designated Agent may be reached as follo"
+     },
+     {
+      "keyword": "copy",
+      "offset": 10891,
+      "context": "r Designated Agent as set forth below. Notifications of claimed copyright infringement must be sent to The LF Projects Designated Agent for notice of claims of copyright infringement. Our Designated Agent may be reached as follows: Designated Agent: Attn: Manager, DMCA LF Projects, LLC 3500 South DuPont Highway Suite AA-10"
+     }
+    ]
    },
    "termsClausesVerbatim": [
     "These terms of use apply to your use of the web sites of LF Project and the Projects.",
     "Effective: September 14, 2017"
    ],
-   "termsFinding": "0 hits for the scanned keyword list in the full terms text ⇒ no clause restricting robots, crawling, scraping, data mining, automated access or AI use; scope sentence quoted verbatim above (kubernetes.io footer: 'For website terms of use, trademark policy and other project policies please see https://lfprojects.org/policies/')"
+   "termsFinding": "Extended scan of the pinned LF Projects Terms of Use: 11 hits, all non-restrictive — users must not POST others' copyrighted material; proprietary/copyright notices must be observed; no licence to IP is granted by providing Content; privacy (data the site collects about users); DMCA notice procedure; footer copyright. No personal/non-commercial limitation, no prohibition on copying/collecting site content, robots, scraping, data mining or AI use."
   },
   {
    "host": "slsa.dev",
@@ -2275,8 +3240,7 @@
    "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
    "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
    "prefixes": [
     {
      "path": "/langgraph/",
@@ -2311,7 +3275,152 @@
     "probeUserAgent": "ODG-Radar-probe/0.1",
     "redirectsFollowed": false,
     "footerLegalLinksObserved": null
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "finalUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+    "httpStatus": 200,
+    "bytes": 172053,
+    "sha256": "d343690d118ff5bae23aef1cf9b6ccbf90c214c4b38b0f4bc42a2103535a47f8",
+    "fetchedAt": "2026-11-23T19:44:15Z",
+    "method": "one GET (re-pin: earlier read not kept), UA ODG-Radar-probe/0.1; sha256 of raw HTML at fetchedAt",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot|non-commercial|noncommercial|personal use|reproduc|copy|redistribut|download|collect (case-insensitive regex over the tag-stripped full text, script/style removed; context = 160 chars either side)",
+    "textChars": 12720,
+    "keywordHits": 25,
+    "hitsVerbatim": [
+     {
+      "keyword": "AI",
+      "offset": 1323,
+      "context": "licy Sexually Obscene Content Threats of Violence and Gratuitously Violent Content Terrorism and Violent Extremism Content CSAM Policy NCII Synthetic Media and AI Tools GitHub Appeal and Reinstatement Privacy Policies GitHub General Privacy Statement GitHub Subprocessors GitHub Cookies GitHub Global Data Privacy Notice f"
+     },
+     {
+      "keyword": "Copy",
+      "offset": 2331,
+      "context": "hild Labor GitHub Anti-Bribery Statement GitHub GPL Cooperation Commitment GitHub Gifts and Entertainment Policy In this article GitHub Acceptable Use Policies Copy markdown In this article 1. Compliance with Laws and Regulations 2. User Safety 3. Intellectual Property, Authenticity, and Private Information 4. Spam and Ina"
+     },
+     {
+      "keyword": "copy",
+      "offset": 4967,
+      "context": "rivate Information We do not allow content or activity on GitHub that: infringes any proprietary right of any party, including patent, trademark, trade secret, copyright, right of publicity, or other right; unlawfully shares unauthorized product licensing keys, software for generating unauthorized product licensing keys, o"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5675,
+      "context": "osting another person's personal information without consent. 4. Spam and Inauthentic Activity on GitHub We do not allow content or activity on GitHub that is: automated excessive bulk activity and coordinated inauthentic activity, such as spamming cryptocurrency mining; bulk distribution of promotions and advertising prohibi"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5928,
+      "context": "tocurrency mining; bulk distribution of promotions and advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the prolifera"
+     },
+     {
+      "keyword": "automat",
+      "offset": 5980,
+      "context": "nd advertising prohibited by GitHub terms and policies; inauthentic interactions, such as fake accounts and automated inauthentic activity; rank abuse, such as automated starring or following; creation of or participation in secondary markets for the purpose of the proliferation of inauthentic activity; using GitHub as a plat"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6273,
+      "context": "c activity; using GitHub as a platform for propagating abuse on other platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our serv"
+     },
+     {
+      "keyword": "automat",
+      "offset": 6343,
+      "context": "platforms; phishing or attempted phishing; or using our servers for any form of excessive automated bulk activity, to place undue burden on our servers through automated means, or to relay any form of unsolicited advertising or solicitation through our servers, such as get-rich-quick schemes; incentivized by (or incentivizes "
+     },
+     {
+      "keyword": "reproduc",
+      "offset": 7481,
+      "context": "re not considered “unauthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. "
+     },
+     {
+      "keyword": "copy",
+      "offset": 7503,
+      "context": "uthorized,” but must only affect the organization whose bug bounty program authorized the activity. 6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission. 7. Information Usage "
+     },
+     {
+      "keyword": "scrap",
+      "offset": 7790,
+      "context": "ten permission. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any p"
+     },
+     {
+      "keyword": "collect",
+      "offset": 7799,
+      "context": "ssion. 7. Information Usage Restrictions You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8092,
+      "context": "purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of inform"
+     },
+     {
+      "keyword": "extract",
+      "offset": 8111,
+      "context": "ny publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API"
+     },
+     {
+      "keyword": "automat",
+      "offset": 8158,
+      "context": "e open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service "
+     },
+     {
+      "keyword": "bot",
+      "offset": 8187,
+      "context": "y use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You ma"
+     },
+     {
+      "keyword": "crawl",
+      "offset": 8197,
+      "context": "ic information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use in"
+     },
+     {
+      "keyword": "Scrap",
+      "offset": 8206,
+      "context": "ation from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8237,
+      "context": "ival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler. Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scrape"
+     },
+     {
+      "keyword": "scrap",
+      "offset": 8398,
+      "context": "ollection of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling person"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8407,
+      "context": " of information through our API. Please see Section H of our Terms of Service for our API Terms. You may not use information from the Service (whether scraped, collected through our API, or obtained otherwise) for spamming purposes, including for the purposes of sending unsolicited emails to users or selling personal informat"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8808,
+      "context": "mation from the Service must comply with the GitHub Privacy Statement . 8. Privacy Misuse of personal information is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any "
+     },
+     {
+      "keyword": "collect",
+      "offset": 8920,
+      "context": "n is prohibited. Any person, entity, or service collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpos"
+     },
+     {
+      "keyword": "collect",
+      "offset": 8963,
+      "context": "vice collecting data from the Service must comply with the GitHub Privacy Statement , particularly in regards to the collection of personal information. If you collect any personal information from the Service, you agree that you will only use that personal information for the purpose for which that User has authorized it. Yo"
+     },
+     {
+      "keyword": "automat",
+      "offset": 11149,
+      "context": " not promote or distribute content or activity that is illegal or otherwise prohibited by our Terms of Service or Acceptable Use Policies , including excessive automated bulk activity (for example, spamming), get-rich-quick schemes, and misrepresentation or deception related to your promotion. If you decide to post any promot"
+     }
+    ]
+   },
+   "termsClausesVerbatim": [
+    "6. Services Usage Limits You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission.",
+    "You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access . Archivists may use public information from the Service for archival purposes. Scraping refers to extracting information from our Service via an automated process, such as a bot or webcrawler."
+   ],
+   "termsFinding": "Extended scan: s.7 explicitly permits research use of scraped information (conditional), but s.6 forbids reproducing/copying 'any portion of the Service' without express written permission — a copy limitation of the class that deferred devblogs ⇒ DEFER (owner reading). Other hits: spam/inauthentic automated activity, excessive bulk activity, personal-data collection (non-applicable: no bulk, no personal data).",
+   "ownerDecisionRequired": "GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
   },
   {
    "host": "docs.langchain.com",
@@ -2895,21 +4004,21 @@
   "others re-probed (sre.google, abseil.io, research.ibm.com, stripe.dev, global.toyota, opentelemetry.io, owasp, usenix, bair, rfc-editor)": "reason UNCHANGED ⇒ still DEFER (recorded, not re-admitted)"
  },
  "per_org_primary_source": {
-  "NASA": "STRONG: F´ flight-software docs (nasa.github.io), NTRS citation API (ntrs.nasa.gov) — both eligible; Software Engineering Handbook (swehb.nasa.gov) returns 403 to anonymous probes.",
+  "NASA": "NTRS citation API (ntrs.nasa.gov) eligible; F´ docs (nasa.github.io) DEFER (GitHub AUP s.6 copy limitation — owner); Software Engineering Handbook (swehb.nasa.gov) 403.",
   "SpaceX": "LITTLE PUBLIC MATERIAL: no primary engineering-method source exists publicly (www.spacex.com = news/updates JS shell, V160). No candidate — not padded.",
   "Tesla": "LITTLE PUBLIC MATERIAL: no engineering blog/docs; www.tesla.com refused at V160 (403 block). No candidate.",
   "Toyota": "PARTIAL: TRI publications (www.tri.global; no website terms, wildcard robots) and TPS overview (global.toyota; robots.txt still redirects). Both DEFER.",
   "Google": "Admitted earlier (research.google, google.github.io). New: SRE book canonical prefixes (terms still not linked ⇒ DEFER), Cloud Well-Architected (moved off-host to docs.cloud.google.com ⇒ REFUSE as probed).",
   "Amazon": "Amazon Science publications exist but Amazon Conditions of Use forbid robots/data mining ⇒ REFUSE (same as AWS in V160).",
-  "Microsoft": "AutoGen docs eligible (GitHub AUP). Engineering@Microsoft blog DEFER (Microsoft ToU 'Documents' clause: non-commercial/personal use only — owner question). Microsoft Research publications DEFER (robots wildcards on www.microsoft.com).",
+  "Microsoft": "AutoGen docs DEFER (GitHub AUP s.6 — owner); Engineering@Microsoft blog DEFER (Microsoft ToU 'Documents' non-commercial clause — owner); Microsoft Research publications DEFER (robots wildcards).",
   "OpenAI": "Only GitHub-hosted Agents SDK docs; owner decision (GitHub AUP vs OpenAI terms). openai.com still REFUSED.",
   "Anthropic": "LITTLE ADMISSIBLE MATERIAL: anthropic.com refused / code.claude.com deferred (V160, unchanged). MCP specification (Anthropic-originated, now LF-governed) DEFER (same-host redirect + no terms). No knowledge of internal methods is claimed.",
   "NVIDIA": "Research publications REFUSE (ToS forbids robots, linked from footer); TensorRT-LLM GitHub docs owner decision (NVIDIA ToS linked).",
   "Google DeepMind": "Already admitted in V160 (deepmind.google /blog/, /research/publications/); no new host needed.",
   "IBM": "IBM Research blog/publications DEFER (terms ambiguous: crawler-permitted vs 'data mine' + non-commercial clauses).",
   "Palantir": "LITTLE PUBLIC MATERIAL: public Foundry product docs only (terms page JS-only ⇒ DEFER); engineering blog is bot-challenged (V160 REFUSE).",
-  "Netflix": "Chaos Monkey docs (netflix.github.io/chaosmonkey/) eligible; tech blog remains bot-challenged (V160 REFUSE).",
-  "GitHub": "github.blog /ai-and-ml/ eligible (new prefix on V160-admitted host).",
+  "Netflix": "Chaos Monkey docs (netflix.github.io) DEFER (GitHub AUP s.6 — owner); tech blog remains bot-challenged (V160 REFUSE).",
+  "GitHub": "github.blog /ai-and-ml/ DEFER (GitHub AUP s.6 copy limitation vs s.7 research permission — owner; also bears on the V160 grant in force).",
   "Stripe": "stripe.dev blog still DEFER (no website terms found).",
   "Siemens": "LITTLE ADMISSIBLE MATERIAL: terms forbid text/data mining (V160 REFUSE); no new source.",
   "Bosch": "LITTLE PUBLIC MATERIAL: Bosch Center for AI site has an invalid TLS certificate for www.bosch-ai.com ⇒ DEFER; corporate research pages DEFER (V160).",
@@ -2918,6 +4027,7 @@
   "Higher-value others": "Eligible: kubernetes.io concepts. DEFER: IETF datatracker /doc/html/ (terms URL is an index; TLP PDF not quoted), OpenTelemetry, SLSA, A2A, vLLM (no terms linked), RFC Editor (/rfc/ contains disallowed sub-paths), W3C Trace Context + NIST AI RMF (robots wildcards), OWASP (no terms), USENIX + CMU (Crawl-delay 10), Temporal/LangGraph/MCP/Ollama docs (redirect or terms), Stanford HAI/CMU (personal non-commercial terms), Jepsen (anti-LLM-scraper decoy page), martinfowler.com/BAIR/CRFM (no terms)."
  },
  "ownerQuestions": [
+  "GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer.",
   "devblogs.microsoft.com: Microsoft ToU 'Documents' clause (informational and non-commercial or personal use only; no copying onto any network computer) — do blog articles fall under it, and is ODG internal research compatible? (also bears on V160's reading of learn.microsoft.com / www.microsoft.com, both deferred for other reasons)",
   "openai.github.io: GitHub AUP (research use permitted) vs OpenAI Terms ('Automatically or programmatically extracting data') — do OpenAI's terms cover its GitHub-hosted SDK docs? openai.com remains REFUSED (V160)",
   "nvidia.github.io: GitHub AUP (research use permitted) vs NVIDIA ToS linked from the docs footer (robots/scrapers prohibited) — which governs?",
@@ -2984,7 +4094,7 @@
    "SWE_AUTOMATION": 8
   }
  },
- "inspectionFix": "#928 inspection (MED): ADMIT must not rest on a paraphrased terms reading. devblogs.microsoft.com and datatracker.ietf.org re-read once each with verbatim quotes + sha256 ⇒ both DEFER. Second inspection: pytorch.org and kubernetes.io terms re-read once each with retrieval record (sha256) + keyword scan (0 hits) ⇒ ADMIT stands on recorded evidence.",
+ "inspectionFix": "#928 inspection (MED): ADMIT must not rest on a paraphrased terms reading. devblogs.microsoft.com and datatracker.ietf.org re-read once each with verbatim quotes + sha256 ⇒ both DEFER. Second inspection: pytorch.org and kubernetes.io terms re-read once each with retrieval record (sha256) + keyword scan (0 hits) ⇒ ADMIT stands on recorded evidence. Third inspection: extended keyword class (non-commercial|personal use|reproduc|copy|redistribut|download|collect) applied to every ADMIT's pinned terms text; GitHub AUP s.6 copy limitation ⇒ GitHub-hosted hosts DEFERRED; LF/LF Projects/NASA STI hits non-restrictive (explained per host).",
  "ownerFollowUps": [
   "V158 evidence docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json labels the IETF terms reading (trustee.ietf.org Trust Legal Provisions) for www.rfc-editor.org and datatracker.ietf.org as termsVerified=true, but it was a paraphrase: the TLP URL is an index page with no provision text (V164 re-read, sha256 0fec6244…222653). No grant in force relies on it (both hosts DEFERRED in V158 and V164). Owner: correct the V158 record in a separate change (outside this mission's write-set), or accept the TLP 5.0 PDF as the reference to be quoted."
  ]

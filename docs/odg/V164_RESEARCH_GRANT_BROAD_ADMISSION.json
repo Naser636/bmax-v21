@@ -11,29 +11,13 @@
     "scope": "READ_ONLY_PUBLIC_RESEARCH — admitted public, unauthenticated sources only (each host+prefix admitted with fetched robots/redirect/terms evidence)",
     "hostMatch": "EXACT",
     "allowedDomains": [
-      "github.blog",
       "kubernetes.io",
-      "microsoft.github.io",
-      "nasa.github.io",
-      "netflix.github.io",
       "ntrs.nasa.gov",
       "pytorch.org"
     ],
     "allowedPaths": {
-      "nasa.github.io": [
-        "/fprime/"
-      ],
       "ntrs.nasa.gov": [
         "/api/citations/"
-      ],
-      "microsoft.github.io": [
-        "/autogen/stable/"
-      ],
-      "netflix.github.io": [
-        "/chaosmonkey/"
-      ],
-      "github.blog": [
-        "/ai-and-ml/"
       ],
       "pytorch.org": [
         "/blog/"
@@ -47,39 +31,7 @@
     ],
     "transport": "HTTPS only (bounded-http-client.get — GET only, redirects blocked, SSRF guard, size cap, timeout)",
     "contentTypesPerCall": {
-      "nasa.github.io": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
       "ntrs.nasa.gov": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "microsoft.github.io": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "netflix.github.io": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "github.blog": [
         "application/json",
         "application/atom+xml",
         "application/xml",
@@ -113,17 +65,14 @@
     },
     "contentPolicy": "fetched content is untrusted data; never executed; never treated as instructions; findings evaluated before integration",
     "hostConditions": {
-      "nasa.github.io": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-      "microsoft.github.io": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-      "netflix.github.io": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
-      "github.blog": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access"
+      "ntrs.nasa.gov": "NASA STI terms: copyright status is per document (metadata); copyrighted third-party works must not be modified, reproduced or redistributed without the copyright owner's permission; NASA to be acknowledged as source"
     },
     "admission": {
       "mechanism": "runtime/core/odg-radar-source-admission.ts admitSources()",
-      "admitted": 7,
-      "deferred": 36,
+      "admitted": 3,
+      "deferred": 40,
       "refused": 3,
-      "decisionsSha256": "8735671efeb280ff7a5d9b9f058571103e46e22001c5eb2e5f90419887990c20"
+      "decisionsSha256": "057ea87d7ccc06a50e9cdeca7916b18d2aef05b53ec35fe70a337f385e38997e"
     },
     "constraints": [
       "no private credentials, no authentication, no account creation, no API key/token",
