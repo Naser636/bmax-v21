@@ -18,6 +18,16 @@
       "fetched": 9,
       "redirectBlocked": 1,
       "pinnedIn": "V16 unlock inventory"
+    },
+    {
+      "path": "docs/odg/evidence/V158_RADAR_COLLECTION.json",
+      "sha256": "73a085073962c7c623ceb018f9cbb615528754ff6ccdf14bd41969717345b609",
+      "grant": "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json",
+      "collectedAt": "2026-11-23",
+      "calls": 6,
+      "fetched": 6,
+      "collector": "runtime/bin/odg-v158-collection-run.ts (research-governor + bounded-http-client, deterministic extractor)",
+      "pinnedIn": "V15.9 §10 (V158 collection)"
     }
   ]
 }
