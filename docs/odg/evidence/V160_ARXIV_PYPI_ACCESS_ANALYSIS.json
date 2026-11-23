@@ -1,10 +1,11 @@
 {
   "//": "V16.0 §6 — official-terms analysis of the two Radar sources blocked on robots.txt vs documented API (export.arxiv.org, pypi.org). RECOMMENDATION ONLY: no grant, admission, candidate or Radar code is changed by this file. Research performed by a provider research agent (WebSearch/WebFetch, 2026-11-23); quotes came through a summarising fetcher — re-verify against the live pages before using them in a governance decision. Prior evidence reused: docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json, V158_RADAR_SOURCE_ADMISSION.json.",
   "status": "RECOMMENDATION_ONLY",
-  "inconsistencyFlagged": "runtime/core/bounded-http-client.ts ALLOWLIST already contains export.arxiv.org with the comment 'V360 — arXiv API … owner-authorized tech source', while V158 admission REFUSES export.arxiv.org (robots Disallow: /). Effective egress still requires a grant (research-governor) + ODG_RADAR_LIVE; no change made here — owner to confirm whether the V360 entry remains valid.",
+  "inconsistencyFlagged": "runtime/core/bounded-http-client.ts ALLOWLIST contains export.arxiv.org ('V360 — arXiv API … owner-authorized tech source'), while V158 admission REFUSES export.arxiv.org (robots 'Disallow: /'). CORRECTION (#914 inspection): egress to it does NOT always require a grant — the V360 path runtime/bin/odg-radar-tech-run.ts → odg-radar-tech-sources → odg-radar-collect-to-signals checks only bounded-http-client.validateUrl(url, HTTP.ALLOWLIST) + the ODG_RADAR_LIVE kill-switch (no research-governor / grant / per-host pacing), so with ODG_RADAR_LIVE=1 it can fetch https://export.arxiv.org/api/query?… despite robots 'Disallow: /'. The V158 runner does not use this path (EXACT per-call grant allowlist). No code changed here.",
   "ownerQuestions": [
     "arXiv: should the arXiv API Terms of Use govern export.arxiv.org/api/query (with enforced ≥3 s pacing, single connection, daily cache), or should ODG use only oaipmh.arxiv.org/oai and rss.arxiv.org (both robots 404) — and is the V360 transport ALLOWLIST entry for export.arxiv.org still valid?",
-    "PyPI: should the PyPI API documentation govern /pypi/<pkg>/json at low volume (unique User-Agent, ETag), despite robots 'Disallow: /pypi/*/json', or should ODG stay on pypi.org/rss/ only — and which non-personal contact should the ODG User-Agent carry?"
+    "PyPI: should the PyPI API documentation govern /pypi/<pkg>/json at low volume (unique User-Agent, ETag), despite robots 'Disallow: /pypi/*/json', or should ODG stay on pypi.org/rss/ only — and which non-personal contact should the ODG User-Agent carry?",
+    "Remove export.arxiv.org (and review api.github.com) from the canonical bounded-http-client ALLOWLIST, or route the V360 tech run through research-governor.govern() with a grant + pacing? Either is a Radar code change — owner decision; nothing changed by this PR."
   ],
   "transportGaps": [
     "per-host pacing + per-host connection limit",
@@ -359,5 +360,13 @@
         "whether arXiv requires a contact in User-Agent (not found in ToU)"
       ]
     }
+  },
+  "preExistingDefect": {
+    "id": "RADAR-V360-ALLOWLIST-BYPASSES-GOVERNOR",
+    "severity": "MEDIUM (egress policy, gated only by the kill-switch)",
+    "path": "runtime/bin/odg-radar-tech-run.ts → runtime/core/odg-radar-tech-sources.ts → runtime/core/odg-radar-collect-to-signals.ts (validateUrl against the canonical ALLOWLIST only)",
+    "effect": "with ODG_RADAR_LIVE=1, export.arxiv.org/api/query (robots Disallow: /, ToU 1 req/3 s, single connection) and api.github.com can be fetched without a versioned grant, governor decision or per-host pacing",
+    "ownerQuestion": "Remove export.arxiv.org (and review api.github.com) from the canonical bounded-http-client ALLOWLIST, or route the V360 tech run through research-governor.govern() with a grant + pacing? Either is a Radar code change — owner decision; nothing changed by this PR.",
+    "verifiedBy": "independent inspection of #914 + coordinator code read (odg-radar-collect-to-signals.ts:34,41)"
   }
 }
