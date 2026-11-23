@@ -335,7 +335,11 @@ module.exports = { recordMission, verifyLedger, sealFor };
 if (require.main === module) {
   const mission = process.argv[2] || "BUILD_RUNTIME";
   try {
-    const result = recordMission(mission);
+    // V15.1: under OPT-IN run-output isolation (ODG_RUN_OUTPUT_DIR) concurrent runs may reach this stage at once; the
+    // ledger stays SHARED (proven-dedup reads it), so its read-modify-write is SERIALIZED by an O_EXCL lock — no lost
+    // update, the seal chain stays linear. Default (unset) path: called directly, exactly as before.
+    const iso = process.env.ODG_RUN_OUTPUT_DIR ? require("./run-output-isolation") : null;
+    const result = iso && iso.isActive() ? iso.withExclusiveLock(LEDGER_FILE + ".lock", () => recordMission(mission)) : recordMission(mission);
     console.log("======================================");
     console.log("MISSION LEDGER");
     console.log("======================================");

@@ -242,10 +242,22 @@ function tickOnce(opts: any = {}): any {
  * checkpoints, ledger), so with the real runner every pair overlaps on runtime/generated ⇒ serialized (one per wave) —
  * safe by construction, never optimistically parallel. A mission with NO declared write-set ⇒ UNKNOWN ⇒ serialized.
  * Genuine concurrency therefore needs a runner whose children write disjoint paths (tests inject one via opts).
+ *
+ * V15.1 RUN-OUTPUT ISOLATION (wave mode only; ODG_TICK_WAVE_ISOLATE=0 restores the serialized behaviour above): each
+ * child gets a DISTINCT ODG_RUN_OUTPUT_DIR = <runOutputBase>/<mission> (default runtime/generated/wave-runs/<tick>/),
+ * honoured by odg-run as a copy-on-write overlay (runtime/core/run-output-isolation): every per-run output lands in
+ * that dir, the shared runtime/generated is only READ — except the mission-ledger (SHARED_STATE), whose read-modify-
+ * write the ledger stage serializes under an O_EXCL lock. The runner's write-set for contention is then the child's
+ * OWN run dir instead of runtime/generated; the report is read from that dir. The ledger is NOT in the write-set: it
+ * is lock-serialized (micro-critical-section), not wave-serialized. The UNKNOWN rule is unchanged: a mission with NO
+ * declared write-set is still serialized (fail-closed), isolation or not.
  * =================================================================================================================== */
 const WAVE_DEFAULT_MAX = 2;
 const WAVE_HARD_MAX = 6;                                   // same ceiling as the orchestrator's agentCount (0..6)
 const REAL_RUNNER_SHARED_WRITESET = Object.freeze(["runtime/generated"]); // odg-run writes the shared generated dir
+// Isolated runner (ODG_RUN_OUTPUT_DIR per child): per-run outputs go to the child's own dir (added per mission); the only
+// remaining shared write is the lock-serialized mission-ledger ⇒ nothing shared needs wave-level serialization.
+const ISOLATED_RUNNER_SHARED_WRITESET: readonly string[] = Object.freeze([]);
 const WAVE_ADMITTED = "__WAVE_ADMITTED__";                 // capture-only sentinel (admission phase never runs anything)
 
 function waveMaxFromEnv(v: any): number {
@@ -268,7 +280,8 @@ function selectWave(admittedIds: string[], o: any): any {
   const records = admittedIds.map((id) => {
     const decl = declaredWriteSet(o.loadMission(id));
     const rec: any = { id, status: "READY", title: `canary ${id}`, deps: [], acceptance: "", nextAction: "read-only canary run via the governed odg-run pipeline" };
-    if (decl) rec.writeSet = Array.from(new Set([...decl, ...shared]));   // absent ⇒ no key ⇒ UNKNOWN (fail-closed)
+    const own: string[] = typeof o.runnerWriteSetFor === "function" ? o.runnerWriteSetFor(id) : [];   // isolated run dir
+    if (decl) rec.writeSet = Array.from(new Set([...decl, ...shared, ...own]));   // absent ⇒ no key ⇒ UNKNOWN (fail-closed)
     return rec;
   });
   const statusById: any = {};
@@ -358,19 +371,34 @@ async function tickWave(opts: any = {}): Promise<any> {
 
   // 2+3. WAVE SELECTION — canonical classify → canonical dispatch plan → first write-safe sub-wave, capped.
   const waveMax = typeof opts.waveMax === "number" ? Math.max(1, Math.min(WAVE_HARD_MAX, Math.floor(opts.waveMax))) : waveMaxFromEnv(process.env.ODG_TICK_WAVE_MAX);
-  const sel = selectWave(admitted, { REC, MO, loadMission, runnerSharedWriteSet: opts.runnerSharedWriteSet, waveMax });
+  // V15.1 isolation: ON in wave mode unless ODG_TICK_WAVE_ISOLATE=0 / opts.isolate===false. An injected runner (opts.runBin)
+  // without an explicit opts.isolate keeps the previous contract (tests' stubs do not honour ODG_RUN_OUTPUT_DIR).
+  const isolate: boolean = typeof opts.isolate === "boolean" ? opts.isolate : (!opts.runBin && process.env.ODG_TICK_WAVE_ISOLATE !== "0");
+  const runCwd: string = opts.cwd || ROOT;
+  const runOutputBase: string | null = isolate ? path.resolve(runCwd, opts.runOutputBase || path.join("runtime", "generated", "wave-runs", new Date().toISOString().replace(/[:.]/g, "-") + "-" + process.pid)) : null;
+  const runDirFor = (id: string) => path.join(runOutputBase as string, id.replace(/[^A-Za-z0-9_.-]/g, "_"));
+  const relToCwd = (p: string) => { const r = path.relative(runCwd, p); return r && !r.startsWith("..") && !path.isAbsolute(r) ? r.split(path.sep).join("/") : p; };
+  const sel = selectWave(admitted, { REC, MO, loadMission, waveMax,
+    runnerSharedWriteSet: isolate ? (Array.isArray(opts.runnerSharedWriteSet) ? opts.runnerSharedWriteSet : ISOLATED_RUNNER_SHARED_WRITESET.slice()) : opts.runnerSharedWriteSet,
+    runnerWriteSetFor: isolate ? (id: string) => [relToCwd(runDirFor(id))] : undefined });
 
   // 4. CONCURRENT GOVERNED EXECUTION — same child per mission; allSettled ⇒ one failure never stops the others.
   const childOpts = {
     runBin: opts.runBin || corePort("runtime/bin/odg-run.js"),
-    cwd: opts.cwd || ROOT,
+    cwd: runCwd,
     env: opts.env || process.env,
     timeoutMs: typeof opts.timeoutMs === "number" ? opts.timeoutMs : DISPATCH_TIMEOUT_MS,
     maxBuffer: 16 * 1024 * 1024,
     readReport: opts.readReport || ((_id: string) => JSON.parse(fs.readFileSync(path.join(ROOT, "runtime", "generated", "mission-report.json"), "utf8"))),
   };
+  // Isolated: a DISTINCT ODG_RUN_OUTPUT_DIR per child; its report is read from its OWN run dir (never the shared one).
+  const optsFor = (id: string) => !isolate ? childOpts : {
+    ...childOpts,
+    env: { ...childOpts.env, ODG_RUN_OUTPUT_DIR: runDirFor(id), ODG_RUN_OUTPUT_ROOT: path.resolve(runCwd) },
+    readReport: opts.readReport || ((mid: string) => JSON.parse(fs.readFileSync(path.join(runDirFor(mid), "mission-report.json"), "utf8"))),
+  };
   const t0 = Date.now();
-  const settled = await Promise.allSettled(sel.wave.map((id: string) => runGovernedChild(id, childOpts)));
+  const settled = await Promise.allSettled(sel.wave.map((id: string) => runGovernedChild(id, optsFor(id))));
   const wallMs = Date.now() - t0;
   const results = settled.map((s: any, i: number) => {
     const r = s.status === "fulfilled" ? s.value : { mission: sel.wave[i], verified: false, detail: `runner rejected: ${s.reason}` };
@@ -380,7 +408,7 @@ async function tickWave(opts: any = {}): Promise<any> {
     return { ...d, startedAt: r.startedAt, endedAt: r.endedAt, exitCode: r.exitCode };
   });
   const allPass = results.length > 0 && results.every((r: any) => r.status === "PASS");
-  return { status: allPass ? "PASS" : "FAIL", reason: `wave ${results.filter((r: any) => r.status === "PASS").length}/${results.length} PASS (cap ${sel.cap}; deferred ${sel.deferred.length})`, wave: sel.wave, subWaves: sel.subWaves, contentions: sel.contentions, deferred: sel.deferred, refused, results, wallMs, auditChain: chain };
+  return { status: allPass ? "PASS" : "FAIL", reason: `wave ${results.filter((r: any) => r.status === "PASS").length}/${results.length} PASS (cap ${sel.cap}; deferred ${sel.deferred.length})`, wave: sel.wave, subWaves: sel.subWaves, contentions: sel.contentions, deferred: sel.deferred, refused, results, wallMs, isolated: isolate, runDirs: isolate ? Object.fromEntries(sel.wave.map((id: string) => [id, runDirFor(id)])) : null, auditChain: chain };
 }
 
 // Opt-in CLI entry for wave mode: SAME startup gates as main() (Truth-Lock + audit-chain integrity), then one wave tick.
@@ -408,6 +436,6 @@ async function mainWave(): Promise<void> {
   process.exit(d.status === "PASS" || d.status === "IDLE" ? 0 : 1);
 }
 
-module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, launcherEnforce, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES, tickWave, selectWave, runGovernedChild, waveMaxFromEnv, declaredWriteSet, WAVE_DEFAULT_MAX, WAVE_HARD_MAX, REAL_RUNNER_SHARED_WRITESET };
+module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, launcherEnforce, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES, tickWave, selectWave, runGovernedChild, waveMaxFromEnv, declaredWriteSet, WAVE_DEFAULT_MAX, WAVE_HARD_MAX, REAL_RUNNER_SHARED_WRITESET, ISOLATED_RUNNER_SHARED_WRITESET };
 if (require.main === module) { if (process.env.ODG_TICK_WAVE === "1") mainWave(); else main(); }
 export {};

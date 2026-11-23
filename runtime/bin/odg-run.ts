@@ -19,6 +19,25 @@ const { spawnSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
+// V15.1 RUN-OUTPUT ISOLATION — OPT-IN ONLY (ODG_RUN_OUTPUT_DIR=<dir>). Installed FIRST, before any module that reads or
+// writes runtime/generated, so this process and (via STAGE_ENV) every stage descendant write per-run outputs into <dir>
+// as a copy-on-write overlay over the shared runtime/generated (see runtime/core/run-output-isolation). The isolation
+// env (NODE_OPTIONS --require preload, pinned root, GIT_OPTIONAL_LOCKS=0) is stamped onto process.env so EVERY node
+// descendant inherits it — the stage spawns AND indirect ones (e.g. runtime-context-loader → project-context-engine).
+// UNSET ⇒ the module is never loaded, process.env is untouched and every spawn below is the default path, unchanged.
+if (typeof process.env.ODG_RUN_OUTPUT_DIR === "string" && process.env.ODG_RUN_OUTPUT_DIR.trim() !== "") {
+  const isoPath = path.resolve(__dirname, "..", "core", "run-output-isolation.js");
+  try {
+    const iso = require("../core/run-output-isolation"); // compiled sibling (dist/core); self-installs when the env is set
+    const ctx = iso.install();
+    Object.assign(process.env, iso.childEnv(process.env, ctx, isoPath));
+    console.log("Output dir : ISOLATED per-run →", ctx.out, "(shared state passthrough:", iso.SHARED_STATE.join(", ") + ")");
+  } catch (e: any) {
+    console.error("STOP: ODG_RUN_OUTPUT_DIR refused —", e && e.message);
+    process.exit(1);
+  }
+}
+
 // Lot 1R: this entry is COMPILED (tsc) to a distinct output dir (runtime/dist) and run with plain
 // `node` — no tsx, no node_modules. The compiled helpers (checkpoint-engine/stage-effect/
 // pipeline-builder) are emitted ALONGSIDE this file under dist/core, so they stay relative requires.
