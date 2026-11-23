@@ -118,6 +118,30 @@ function scopeSummary(scope: any): any {
   return { scenario: scope.scenario, contractSha256: scope.contractSha256, currentStep: scope.currentStep, currentStepKind: scope.currentStepKind, currentStepAuthorized: scope.currentStepAuthorized, nextStep: scope.nextStep, nextStepAuthorized: scope.nextStepAuthorized, authorizedSteps: scope.authorizedSteps, derivedSteps: scope.derivedSteps.map((d: any) => ({ step: d.step, rule: d.rule })), validatedSteps: scope.validatedSteps.map((v: any) => v.step), executionAuthorized: scope.executionAuthorized, reason: scope.reason,
     report: scope.executionAuthorized ? `${scope.currentStep} AUTHORIZED (execution step, derived) — dispatch still needs NATIVE + isolated` : scope.currentStepAuthorized ? `${scope.currentStep} AUTHORIZED — provider/docs work, not native dispatch` : `${scope.currentStep} NOT authorized` };
 }
+/* V166 GO-DT-1 (provider-authored rule; #936 inspection MED): a SCOPED execution step dispatches ONLY to the target the
+ * contract itself declares for that step — authorization.dispatchTargets[step] = { command: repo-relative runner path,
+ * args?: [plain tokens], writeSet: [repo-relative paths] } with command and every writeSet path ⊆ WORK_ITEM_CONTRACT.write_set.
+ * The target is part of the contract entry, hence bound to the inspected contractSha256. No declared/valid target ⇒
+ * NO_DISPATCH_TARGET (fail-closed; NEVER a fallback to `odg-run <id>`). Plain AUTHORIZED contracts keep the existing path. */
+const DISPATCH_TARGET_RULE = "GO-DT-1 (provider rule): a scoped execution step is dispatched only to contract.authorization.dispatchTargets[step] = { command, args?, writeSet } (command + writeSet ⊆ WORK_ITEM_CONTRACT.write_set, repo-relative, no '..'); absent/invalid ⇒ NO_DISPATCH_TARGET fail-closed, never a fallback to odg-run <id>; plain AUTHORIZED contracts keep the existing odg-run path";
+function relPathOk(p: any): boolean { return typeof p === "string" && p.length > 0 && p.length <= 300 && !p.startsWith("/") && !/\\|\0/.test(p) && !p.replace(/\/$/, "").split("/").some((seg: string) => seg === ".." || seg === "." || seg === "") && /^[A-Za-z0-9._\/-]+$/.test(p); }
+function withinWriteSet(p: string, ws: string[]): boolean { return ws.some((w: string) => p === w || (w.endsWith("/") && p.startsWith(w))); }
+function resolveDispatchTarget(contract: any, step: string | null): any {
+  const why = (code: string, reason: string) => ({ ok: false, code, step, rule: DISPATCH_TARGET_RULE, reason: `${code}: ${reason}` });
+  if (!contract || !step) return why("NO_DISPATCH_TARGET", "no contract/step");
+  const a = isObj(contract.authorization) ? contract.authorization : null;
+  const t = a && isObj(a.dispatchTargets) ? a.dispatchTargets[step] : null;
+  if (!isObj(t)) return why("NO_DISPATCH_TARGET", `contract ${contract.scenario} declares no authorization.dispatchTargets.${step} — a future owner-authorized, inspected revision must declare one (no fallback to odg-run ${contract.scenario})`);
+  const ws = arr(contract.WORK_ITEM_CONTRACT && contract.WORK_ITEM_CONTRACT.write_set).map(String);
+  if (!relPathOk(t.command) || String(t.command).endsWith("/")) return why("INVALID_DISPATCH_TARGET", "command must be a repo-relative path (no '..', no absolute path)");
+  const args = t.args === undefined ? [] : t.args;
+  if (!Array.isArray(args) || !args.every((x: any) => typeof x === "string" && /^[A-Za-z0-9._=:\/-]{1,200}$/.test(x) && !x.split("/").includes(".."))) return why("INVALID_DISPATCH_TARGET", "args must be plain tokens");
+  const tws = arr(t.writeSet);
+  if (!tws.length || !tws.every(relPathOk)) return why("INVALID_DISPATCH_TARGET", "writeSet must be a non-empty list of repo-relative paths");
+  const outside = [t.command, ...tws].filter((x: string) => !withinWriteSet(x, ws));
+  if (outside.length) return why("DISPATCH_TARGET_OUTSIDE_WRITE_SET", `${outside.join(", ")} ⊄ WORK_ITEM_CONTRACT.write_set`);
+  return { ok: true, step, rule: DISPATCH_TARGET_RULE, target: { step, command: String(t.command), args: args.map(String), writeSet: tws.map(String) } };
+}
 const SPEC_RULE = "GO-DEC-1 (provider rule): spec.architecture = one entry per WORK_ITEM_CONTRACT.write_set path (role = objective, contract = acceptance_criteria joined); no contract ⇒ NOT_MEASURED";
 
 function selectorOptions(): any { return { weights: REG.WEIGHTS, directions: REG.DIRECTIONS }; }
@@ -355,21 +379,28 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       delegation.push({ state: rec.state, missionId: rec.missionId, authority: rec.authority, providerLaunched: false });
     }
     let isolationSeen: any = null;
+    // GO-DT-1: a SCOPED (not plain AUTHORIZED) execution approval dispatches only to the contract-declared target
+    const scopedExec = !!item && ctx.loopAuthorized && !declaredAuthorization(ctx.contract) && !!ctx.scope && ctx.scope.executionAuthorized === true;
+    const dt = scopedExec ? resolveDispatchTarget(ctx.contract, ctx.scope.currentStep) : null;
+    ctx.dispatchTarget = dt;
     const authorize = (next: any) => {
       const isSelected = !!item && next.mission === item.id;
       if (isSelected && !ctx.loopAuthorized) return { ok: false, reason: "selected item NOT AUTHORIZED (PROPOSED; no external authorization)" };
       if (isSelected && !strategyNative) return { ok: false, reason: `strategy mode ${ctx.strategy ? ctx.strategy.mode : "UNKNOWN"} ≠ NATIVE ⇒ native execution refused (PROVIDER/HYBRID parts are delegation RECORDS only)` };
+      if (isSelected && dt && !dt.ok) return { ok: false, reason: dt.reason };
       if (!isSelected && !allow.includes(next.mission)) return { ok: false, reason: "not on the canonical pre-authorized allowlist" };
-      const iso2 = (() => { try { return ports.isolation(next); } catch (e: any) { return { ok: false, reason: String((e && e.message) || e) }; } })();
+      const isoArg = isSelected && dt && dt.ok ? { ...next, dispatchTarget: dt.target } : next;
+      const iso2 = (() => { try { return ports.isolation(isoArg); } catch (e: any) { return { ok: false, reason: String((e && e.message) || e) }; } })();
       isolationSeen = iso2;
       if (!iso2 || iso2.ok !== true) return { ok: false, reason: `NO_ISOLATED_WORKSPACE: ${iso2 && iso2.reason}` };
       return { ok: true, reason: "authorized + native + isolated" };
     };
     const dispatch = (next: any) => {
-      if (mode !== "EXECUTE") return { detail: `${DRY_MARK}: would dispatch ${next.mission} via the governed pipeline in ${isolationSeen && isolationSeen.workspace}` };
+      const tgt = !!item && next.mission === item.id && dt && dt.ok ? dt.target : null;
+      if (mode !== "EXECUTE") return { detail: `${DRY_MARK}: would dispatch ${next.mission} ${tgt ? `via its declared target ${tgt.command}` : "via the governed pipeline"} in ${isolationSeen && isolationSeen.workspace}` };
       counters.dispatchCalls++; counters.dispatchedMissions.push(next.mission);
-      append({ kind: "DISPATCHED", mission: next.mission, workspace: isolationSeen && isolationSeen.workspace, at: iso(now()) });
-      return ports.dispatchNative(next, { workspace: isolationSeen && isolationSeen.workspace });
+      append({ kind: "DISPATCHED", mission: next.mission, workspace: isolationSeen && isolationSeen.workspace, dispatchTarget: tgt, at: iso(now()) });
+      return ports.dispatchNative(tgt ? { ...next, dispatchTarget: tgt } : next, { workspace: isolationSeen && isolationSeen.workspace, dispatchTarget: tgt });
     };
     const d = SCHED.schedulerStep({ queue: ctx.queue, preAuthorized: [...allow, ...(item && ctx.loopAuthorized ? [item.id] : [])], isProven: (id: string) => proven.has(id) || already.has(id), stopSignal: () => { const s = stopCheck("EXECUTE/dispatch"); return !!s && s.reason !== "MAX_STEPS"; }, authorize, dispatch, policy: { maxAttemptsPerMission: 3 } });
     const dry = mode !== "EXECUTE" && d.status === "NOT_MEASURABLE" && String(d.reason).startsWith(DRY_MARK);
@@ -377,8 +408,8 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     if (d.status === "FAIL" && ctx.strategy) failureNext = SM.nextStrategyAfterFailure({ mode: ctx.strategy.mode, strategy: "DEFAULT" }, { accepted: false, stopReason: "VERIFICATION_FAILED" });
     const status = d.status === "PASS" || d.status === "FAIL" ? `EXECUTED_${d.status}` : dry ? "WOULD_DISPATCH" : d.status === "STOPPED" ? "STOPPED" : gateHeld || d.status === "IDLE" || d.status === "BLOCKED" ? "NOTHING_EXECUTED" : d.status;
     return { status, inputs: { queue: ctx.queue, mode },
-      decision: { scheduler: { status: d.status, mission: d.mission, reason: d.reason }, mode, dispatchCalls: counters.dispatchCalls, providerLaunched: false, delegationRecords: delegation, nextStrategyAfterFailure: failureNext ? { next: failureNext.next, rule: failureNext.rule } : null, commitOrMerge: "NONE (GO never commits/merges)" },
-      rationale: status === "NOTHING_EXECUTED" ? `authorization gate held: ${d.reason}` : status === "WOULD_DISPATCH" ? "dry run: an authorized native isolated mission would be dispatched (not executed)" : `scheduler ${d.status}: ${d.reason}` };
+      decision: { scheduler: { status: d.status, mission: d.mission, reason: d.reason }, dispatchTarget: dt ? { ok: dt.ok, code: dt.code || null, step: dt.step, target: dt.target || null, reason: dt.reason || null, rule: DISPATCH_TARGET_RULE } : null, mode, dispatchCalls: counters.dispatchCalls, providerLaunched: false, delegationRecords: delegation, nextStrategyAfterFailure: failureNext ? { next: failureNext.next, rule: failureNext.rule } : null, commitOrMerge: "NONE (GO never commits/merges)" },
+      rationale: status === "NOTHING_EXECUTED" ? (dt && !dt.ok ? `scoped execution step ${dt.step} authorized but ${dt.reason} — fail-closed, nothing dispatched` : `authorization gate held: ${d.reason}`) : status === "WOULD_DISPATCH" ? "dry run: an authorized native isolated mission would be dispatched (not executed)" : `scheduler ${d.status}: ${d.reason}` };
   });
   if (stopped(r)) return stopped(r);
   if (r.status === "STOPPED") return finish("STOPPED", { stop: { reason: "EMERGENCY_STOP", source: "schedulerStep stopSignal" } });
@@ -401,6 +432,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const prepared = item ? { id: item.id, title: item.title, status: item.status, nextStep: item.nextStep, contract: w ? { objective: w.objective, write_set: w.write_set, acceptance_criteria: w.acceptance_criteria, stop_conditions: w.stop_conditions, evidence_required: w.evidence_required } : null,
       decomposition: ctx.decomposition ? { strategy: ctx.decomposition.strategy, complexity: ctx.decomposition.complexity, parts: arr(ctx.decomposition.architecture).map((a: any) => a.path) } : null,
       strategy: ctx.strategy ? { mode: ctx.strategy.mode, tentativeMode: ctx.strategy.tentativeMode || null, rule: ctx.strategy.rule } : null,
+      dispatchTarget: ctx.dispatchTarget ? (ctx.dispatchTarget.ok ? { ok: true, target: ctx.dispatchTarget.target } : { ok: false, code: ctx.dispatchTarget.code, reason: ctx.dispatchTarget.reason }) : null,
       authorizationNeeded: ctx.loopAuthorized ? null : ctx.scope ? `scoped: current step ${ctx.scope.currentStep} (${ctx.scope.currentStepKind}${ctx.scope.currentStepAuthorized ? ", AUTHORIZED — provider/docs work, not native dispatch" : ", NOT authorized"}); next ${ctx.scope.nextStep} ${ctx.scope.nextStepAuthorized ? "authorized" : "NOT authorized until " + ctx.scope.currentStep + " is validated by its evidence"}` : `owner: contract ${item.id} PROPOSED → AUTHORIZED (authorizedBy) — ODG cannot self-authorize`, executed: execStatus } : null;
     return { status: "DONE", inputs: rest.map((c: any) => c.id),
       decision: { preparedMission: prepared, ownerRequest: ctx.ownerRequest || null, strategicItem: ctx.strategicItem ? ctx.strategicItem.id : null, nextAfterCurrent: { decision: nd.decision, selected: nd.selected ? nd.selected.id : null, proposed: nd.proposed ? nd.proposed.id : null, tiedSet: arr(nd.tiedSet), resolvedBy: nd.resolvedBy || null, justification: nd.justification } },
@@ -434,6 +466,7 @@ const GO_CYCLE_CONTRACT = Object.freeze({
     "V166 GO-ACT-1 (provider-authored): " + ACTIONABLE_RULE + " — strategicSelection kept verbatim; actionableSelection = same selector with unauthorized items excluded (no new scoring); owner-gated never actionable; PROPOSED never authorized; owner request recorded for an unauthorized strategic item",
     "ODG never self-authorizes: execution only through schedulerStep with an external authorization or the canonical pre-authorized allowlist",
     "V166 scoped authorization: an owner-scoped contract dispatches only when its CURRENT step is an execution step derived-authorized by odg-authorization-scope from committed evidence (inspection ACCEPT bound to the contract sha256); non-execution steps are reported, never dispatched",
+    "V166 GO-DT-1: a scoped execution step dispatches only to the contract-declared authorization.dispatchTargets[step] (⊆ write_set, bound to the inspected contract sha); none ⇒ NO_DISPATCH_TARGET, never a fallback to odg-run <id>",
     "dispatch only in mode EXECUTE, only for NATIVE work in an isolated workspace; PROVIDER/HYBRID ⇒ delegation RECORD only; no provider launch",
     "no commit, no merge, no write outside the out dir (writer guard); ledger/attempt-log read-only",
     "stop between every step: ODG_SCHEDULER_STOP=1, STOP file / signal port, deadline, max steps — each recorded in the trace",
@@ -441,5 +474,5 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
+module.exports = { resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};

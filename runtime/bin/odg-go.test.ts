@@ -94,6 +94,15 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     check("main checkout as scratch ⇒ refused", B.isolationCheck(repo, "MX", ROOT).ok === false);
     check("this code tree as scratch ⇒ refused", B.isolationCheck(ROOT, "MX", ROOT).ok === false);
     check("missing mission file ⇒ NOT_RUNNABLE", /NOT_RUNNABLE/.test(B.isolationCheck(wt, "NOPE", ROOT).reason));
+    // GO-DT-1: a declared dispatch target replaces the missions/<id>.json runnability check; odg-run is never the fallback
+    const T1 = { command: "runtime/bin/exp.ts", args: ["--out", "out/e.json"], writeSet: ["out/e.json"] };
+    check("GO-DT-1: declared target absent in scratch ⇒ NOT_RUNNABLE even though runtime/missions/MX.json exists", /NOT_RUNNABLE: declared dispatch target/.test(B.isolationCheck(wt, "MX", ROOT, T1).reason));
+    check("GO-DT-1: dispatchArgv with target ⇒ exactly the declared command; without ⇒ odg-run <id> (plain AUTHORIZED path)", B.dispatchArgv({ mission: "G" }, { dispatchTarget: T1 }).join(" ") === "tsx runtime/bin/exp.ts --out out/e.json" && B.dispatchArgv({ mission: "MX" }, {}).join(" ") === "tsx runtime/bin/odg-run.ts MX");
+    fs.mkdirSync(path.join(wt, "out")); fs.writeFileSync(path.join(wt, "out", "e.json"), "{}");
+    check("GO-DT-1: writes ⊆ target writeSet ⇒ confined", B.targetWriteConfinement(wt, T1).ok === true);
+    fs.writeFileSync(path.join(wt, "out", "other.json"), "{}");
+    check("GO-DT-1: write outside the target writeSet ⇒ WRITE_OUTSIDE_TARGET_WRITE_SET", /WRITE_OUTSIDE_TARGET_WRITE_SET: out\/other\.json/.test(B.targetWriteConfinement(wt, T1).reason));
+    fs.rmSync(path.join(wt, "out"), { recursive: true });
     fs.writeFileSync(path.join(wt, "dirty.txt"), "x");
     check("dirty (untracked) scratch ⇒ refused (shared/used)", /not clean/.test(B.isolationCheck(wt, "MX", ROOT).reason));
     fs.rmSync(path.join(wt, "dirty.txt"));

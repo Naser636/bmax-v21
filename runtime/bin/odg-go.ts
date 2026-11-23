@@ -156,10 +156,24 @@ function readAllowlist(o: any = {}): any {
   return { ids: base.filter((id) => want.includes(id)), source: `${source} ∩ env ODG_CANARY_ALLOWLIST (env may only narrow)`, refusedWidening: want.filter((id) => !base.includes(id)) };
 }
 
+/* dispatchArgv(next, ctx) — npx argv: the contract-declared target for a scoped execution step, else odg-run <id>. */
+function dispatchArgv(next: any, c: any): string[] {
+  const t = c && c.dispatchTarget;
+  return t ? ["tsx", String(t.command), ...(Array.isArray(t.args) ? t.args.map(String) : [])] : ["tsx", "runtime/bin/odg-run.ts", next.mission];
+}
+/* targetWriteConfinement(workspace, target) — every changed/untracked path in the scratch ⊆ target.writeSet. */
+function targetWriteConfinement(ws: string, target: any): any {
+  const tracked = git(ws, ["diff", "--name-only", "HEAD"]), untracked = git(ws, ["ls-files", "--others", "--exclude-standard"]);
+  if (tracked === null || untracked === null) return { ok: false, reason: "WRITE_CONFINEMENT_UNVERIFIABLE: git diff/ls-files failed" };
+  const allowed = (Array.isArray(target.writeSet) ? target.writeSet : []).map(String);
+  const changed = [...tracked.split("\n"), ...untracked.split("\n")].filter(Boolean);
+  const outside = changed.filter((p: string) => !allowed.some((w: string) => p === w || (w.endsWith("/") && p.startsWith(w))));
+  return outside.length ? { ok: false, reason: `WRITE_OUTSIDE_TARGET_WRITE_SET: ${outside.join(", ")}` } : { ok: true, changed };
+}
 /* isolationCheck — the --execute scratch worktree must be FRESH and UNSHARED: a registered LINKED worktree (not a main
  * checkout, not the state repo, not this code tree), detached HEAD (no branch = nobody's working branch), clean status
  * incl. untracked, no runtime/generated (never used by a run), no symlink in its path, and the mission is runnable there. */
-function isolationCheck(scratch: string | null, missionId: string, repo: string): any {
+function isolationCheck(scratch: string | null, missionId: string, repo: string, dispatchTarget?: any): any {
   if (!scratch) return { ok: false, reason: "no --scratch isolated worktree given" };
   if (symlinkComponent(scratch)) return { ok: false, reason: "scratch path has a symlink component" };
   const s = realOr(scratch);
@@ -175,6 +189,8 @@ function isolationCheck(scratch: string | null, missionId: string, repo: string)
   const st = git(s, ["status", "--porcelain", "--untracked-files=all"]);
   if (st === null || st !== "") return { ok: false, reason: "scratch worktree is not clean (shared/used)" };
   if (fs.existsSync(path.join(s, "runtime", "generated"))) return { ok: false, reason: "scratch already has runtime/generated (used by a previous run) — not fresh" };
+  // GO-DT-1: a scoped execution step runs ONLY its contract-declared runner (never runtime/missions/<id>.json via odg-run)
+  if (dispatchTarget) return fs.existsSync(path.join(s, String(dispatchTarget.command))) && !symlinkComponent(path.join(s, String(dispatchTarget.command))) ? { ok: true, workspace: s } : { ok: false, reason: `NOT_RUNNABLE: declared dispatch target ${dispatchTarget.command} absent in the scratch worktree` };
   if (!fs.existsSync(path.join(s, "runtime", "missions", `${missionId}.json`))) return { ok: false, reason: `NOT_RUNNABLE: no runtime/missions/${missionId}.json in the scratch worktree` };
   return { ok: true, workspace: s };
 }
@@ -255,10 +271,16 @@ function buildPorts(o: any): any {
       readPrior: () => { try { return fs.readFileSync(tracePath, "utf8").split("\n").filter(Boolean).map((l: string) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { return []; } },
     },
     writeSummary: (s: any) => { const p = path.join(physOut, "go-cycle.json"); const tmp = `${p}.tmp-${process.pid}`; w(tmp, JSON.stringify(s, null, 2) + "\n", "exclusive"); GO.assertConfinedWrite(p, physOut, forb, path); try { if (fs.lstatSync(p).isSymbolicLink()) throw new Error(`SYMLINK_TARGET_REFUSED: ${p}`); } catch (e: any) { if (e && e.code !== "ENOENT") { fs.rmSync(tmp, { force: true }); throw e; } } fs.renameSync(tmp, p); if (!writes.includes(p)) writes.push(p); },
-    isolation: (next: any) => isolationCheck(scratch, next.mission, repo),
+    isolation: (next: any) => isolationCheck(scratch, next.mission, repo, next.dispatchTarget),
     dispatchNative: (next: any, c: any) => {
+      if (c && c.dispatchTarget) {
+        // GO-DT-1: exactly the contract-declared runner, no shell, bounded; writes confined to the target writeSet
+        const r = cp.spawnSync("npx", dispatchArgv(next, c), { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
+        const conf = targetWriteConfinement(c.workspace, c.dispatchTarget);
+        return { verified: r.status === 0 && conf.ok, detail: `declared target ${c.dispatchTarget.command} exit ${r.status} in ${c.workspace}; ${conf.ok ? "writes ⊆ target writeSet" : conf.reason}` };
+      }
       // governed pipeline in the ISOLATED worktree only (never the main checkout); bounded; nothing committed/merged.
-      const r = cp.spawnSync("npx", ["tsx", "runtime/bin/odg-run.ts", next.mission], { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
+      const r = cp.spawnSync("npx", dispatchArgv(next, c), { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
       let report: any = null; try { report = readJson(path.join(c.workspace, "runtime", "generated", "mission-report.json")); } catch { report = null; }
       const verified = r.status === 0 && !!report && report.mission === next.mission && report.validated === true && report.status === "SUCCESS";
       return { verified, detail: report ? `odg-run status ${report.status} (exit ${r.status}) in ${c.workspace}` : `odg-run exit ${r.status} (no report) in ${c.workspace}` };
@@ -441,7 +463,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
