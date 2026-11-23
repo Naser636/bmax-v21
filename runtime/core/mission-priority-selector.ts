@@ -73,6 +73,154 @@ const MISSION_PRIORITY_SELECTOR_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { scoreMission, selectNext, MISSION_PRIORITY_SELECTOR_CONTRACT };
+/*
+ * V16.4 §3 — EXPLAINED STRATEGIC SELECTION (additive, opt-in). selectNext/scoreMission above are UNCHANGED (every existing
+ * caller keeps its exact behaviour, including the documented id tie-break). selectNextExplained() is a second ENTRY POINT
+ * of the SAME selector (not a second engine): it reuses scoreMission's eligibility gates (malformed / ACCEPTED / unmet
+ * dependency) and adds, for callers that supply per-criterion evidence (e.g. odg-strategic-register):
+ *   - INTERVAL scoring: a NOT_MEASURED criterion never defaults to 0.5 — it contributes 0 to the evidence score (lower
+ *     bound) and its full weight to `uncertainty` (upper bound = lower + uncertainty);
+ *   - NO id tie-break: candidates within `epsilon` of the leader form a tied set; declared secondary rules are applied in
+ *     order; if none isolates one candidate ⇒ DECISION_REQUIRED (no choice is made by id);
+ *   - high uncertainty (> uncertaintyMax) on the would-be choice ⇒ DECISION_REQUIRED with a PROPOSED candidate;
+ *   - items with requiresOwnerAuthorization (financial / budget / external access / governance) are ranked but NEVER
+ *     auto-selected; non-selectable statuses are excluded with a reason.
+ * Output is a PROPOSAL record: selection ≠ authorization (the work item still needs PROPOSED → AUTHORIZED).
+ */
+const EXPLAINED_DEFAULTS = Object.freeze({
+  epsilon: 0.02,
+  uncertaintyMax: 0.5,
+  nonSelectableStatuses: Object.freeze({
+    ACCEPTED: "already ACCEPTED (no repeat)",
+    PASS_IN_SCOPE: "acceptance criteria met within the contract scope; remaining items are recorded extensions, not this contract",
+    BLOCKED: "blocked on an owner-gated / external condition",
+    NOT_ADOPTED: "tested under a stated rule and not adopted; re-test only with new data",
+    FAILED: "failed; a re-attempt needs a new strategy decision, not an automatic re-selection",
+    NOT_MEASURED: "current state not measured; it must be measured before it can be selected",
+  }),
+  secondaryRules: Object.freeze(["R1_MORE_UNBLOCKING", "R2_LOWER_UNCERTAINTY", "R3_LOWER_RISK", "R4_HIGHER_EVIDENCE"]),
+  riskCriterion: "costRiskComplexity",
+  evidenceCriterion: "evidenceLevel",
+});
+
+const SECONDARY_RULE_TEXT: any = Object.freeze({
+  R1_MORE_UNBLOCKING: "prefer the candidate that more OTHER register items depend on (deps edges stated in evidence)",
+  R2_LOWER_UNCERTAINTY: "prefer the candidate with the lower uncertainty (less criterion weight NOT_MEASURED)",
+  R3_LOWER_RISK: "prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED)",
+  R4_HIGHER_EVIDENCE: "prefer the candidate with the higher MEASURED evidence level (not applicable if any tied candidate has it NOT_MEASURED)",
+});
+
+function r4(n: number): number { return Number(n.toFixed(4)); }
+
+/* scoreExplained(m, weights, directions) -> { evidenceScore, upperBound, uncertainty, breakdown, measuredWeightShare }. */
+function scoreExplained(m: any, weights: any, directions: any): any {
+  const names = Object.keys(weights).sort();
+  const total = names.reduce((s, k) => s + num(weights[k], 0), 0) || 1;
+  let lower = 0, unc = 0;
+  const breakdown: any[] = [];
+  for (const k of names) {
+    const w = num(weights[k], 0) / total;
+    const c = isObj(m.criteria) && isObj(m.criteria[k]) ? m.criteria[k] : null;
+    const measured = !!c && c.status === "MEASURED" && typeof c.value === "number" && isFinite(c.value);
+    if (!measured) { unc += w; breakdown.push({ criterion: k, status: "NOT_MEASURED", weight: r4(w), contribution: 0, uncertaintyContribution: r4(w) }); continue; }
+    const v = clamp01(c.value);
+    const eff = directions && directions[k] === "LOWER_IS_BETTER" ? 1 - v : v;
+    lower += w * eff;
+    breakdown.push({ criterion: k, status: "MEASURED", value: v, direction: directions && directions[k] === "LOWER_IS_BETTER" ? "LOWER_IS_BETTER" : "HIGHER_IS_BETTER", weight: r4(w), contribution: r4(w * eff), uncertaintyContribution: 0 });
+  }
+  return Object.freeze({ evidenceScore: r4(lower), upperBound: r4(lower + unc), uncertainty: r4(unc), measuredWeightShare: r4(1 - unc), breakdown: Object.freeze(breakdown) });
+}
+
+function measuredValue(m: any, k: string): number | null {
+  const c = isObj(m.criteria) && isObj(m.criteria[k]) ? m.criteria[k] : null;
+  return c && c.status === "MEASURED" && typeof c.value === "number" && isFinite(c.value) ? clamp01(c.value) : null;
+}
+
+/*
+ * selectNextExplained(candidates, options) -> frozen decision record. candidates: { id, status, deps:[ids],
+ * requiresOwnerAuthorization:bool, ownerReason, criteria:{ name:{ status:"MEASURED"|"NOT_MEASURED", value } } }.
+ * options: { weights (required, name→w), directions (name→"LOWER_IS_BETTER"), acceptedIds, epsilon, uncertaintyMax,
+ * nonSelectableStatuses, secondaryRules, riskCriterion, evidenceCriterion }.
+ */
+function selectNextExplained(candidates: any, options: any): any {
+  const o = Object.assign({}, EXPLAINED_DEFAULTS, isObj(options) ? options : {});
+  const weights = isObj(o.weights) ? o.weights : {};
+  const list = (Array.isArray(candidates) ? candidates : []).filter((m: any) => isObj(m) && typeof m.id === "string");
+  const accepted = (Array.isArray(o.acceptedIds) ? o.acceptedIds : []).map(String).concat(list.filter((m: any) => m.status === "ACCEPTED").map((m: any) => m.id));
+  const unblockCount = (id: string) => list.filter((x: any) => Array.isArray(x.deps) && x.deps.map(String).includes(id)).length;
+  const excluded: any[] = [];
+  const ranked: any[] = [];
+  for (const m of list) {
+    const gate = scoreMission({ id: m.id, deps: m.deps, status: m.status }, accepted); // REUSED eligibility gates
+    if (!gate.eligible) { excluded.push({ id: m.id, status: m.status, reason: gate.reason }); continue; }
+    if (Object.prototype.hasOwnProperty.call(o.nonSelectableStatuses, m.status)) { excluded.push({ id: m.id, status: m.status, reason: o.nonSelectableStatuses[m.status] }); continue; }
+    const s = scoreExplained(m, weights, o.directions);
+    ranked.push({ id: m.id, status: m.status, evidenceScore: s.evidenceScore, upperBound: s.upperBound, uncertainty: s.uncertainty, measuredWeightShare: s.measuredWeightShare, breakdown: s.breakdown, unblocks: unblockCount(m.id), requiresOwnerAuthorization: m.requiresOwnerAuthorization === true, ownerReason: m.requiresOwnerAuthorization === true ? (m.ownerReason || "owner authorization required") : null, autoSelectable: m.requiresOwnerAuthorization !== true, _m: m });
+  }
+  // display order: evidence score desc; equal scores are listed by id for READABILITY ONLY — the decision below never uses id.
+  ranked.sort((a, b) => (b.evidenceScore - a.evidenceScore) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  const pool = ranked.filter((r) => r.autoSelectable);
+  const ownerGatedRanked = ranked.filter((r) => !r.autoSelectable).map((r) => ({ id: r.id, evidenceScore: r.evidenceScore, ownerReason: r.ownerReason }));
+  const clean = (r: any) => { if (!r) return null; const { _m, ...rest } = r; return rest; };
+  const base = { thresholds: { epsilon: o.epsilon, uncertaintyMax: o.uncertaintyMax }, secondaryRulesDeclared: o.secondaryRules.map((k: string) => ({ rule: k, text: SECONDARY_RULE_TEXT[k] || "unknown rule (ignored)" })), ranking: ranked.map(clean), excluded, ownerAuthorizationRequired: ownerGatedRanked, isProposalOnly: true, selectionIsNotAuthorization: "the selected item is a PROPOSAL: it still needs PROPOSED → AUTHORIZED before EXECUTING" };
+  if (pool.length === 0) return deepFreeze({ decision: "NO_ELIGIBLE", selected: null, proposed: null, tiedSet: [], justification: "no auto-selectable candidate (all excluded, deferred or owner-gated)", ...base });
+  const top = pool[0].evidenceScore;
+  let tied = pool.filter((r) => top - r.evidenceScore < o.epsilon);
+  const steps: any[] = [];
+  let resolvedBy: string | null = null;
+  if (tied.length > 1) {
+    for (const rule of o.secondaryRules) {
+      let vals: any[] | null = null;
+      let better: (a: number, b: number) => boolean = (a, b) => a > b;
+      if (rule === "R1_MORE_UNBLOCKING") vals = tied.map((r) => r.unblocks);
+      else if (rule === "R2_LOWER_UNCERTAINTY") { vals = tied.map((r) => r.uncertainty); better = (a, b) => a < b; }
+      else if (rule === "R3_LOWER_RISK") { vals = tied.map((r) => measuredValue(r._m, o.riskCriterion)); better = (a, b) => a < b; }
+      else if (rule === "R4_HIGHER_EVIDENCE") vals = tied.map((r) => measuredValue(r._m, o.evidenceCriterion));
+      if (!vals) { steps.push({ rule, outcome: "UNKNOWN_RULE_IGNORED" }); continue; }
+      if (vals.some((v) => v === null)) { steps.push({ rule, outcome: "NOT_APPLICABLE (a tied candidate has this value NOT_MEASURED)" }); continue; }
+      const best = vals.reduce((b, v) => (better(v, b) ? v : b), vals[0]);
+      const keep = tied.filter((_, i) => vals![i] === best);
+      steps.push({ rule, values: tied.map((r, i) => ({ id: r.id, value: vals![i] })), kept: keep.map((r) => r.id), outcome: keep.length === tied.length ? "NO_DISCRIMINATION" : keep.length === 1 ? "RESOLVED" : "NARROWED" });
+      tied = keep;
+      if (tied.length === 1) { resolvedBy = rule; break; }
+    }
+  }
+  const tiedIds = pool.filter((r) => top - r.evidenceScore < o.epsilon).map((r) => r.id);
+  const proposedRule = "PROPOSED resolution (needs OWNER/ODG decision): measure the NOT_MEASURED criteria of the tied candidates (it is their unmeasured weight that keeps them tied or uncertain), or have the owner set an explicit priority in an owner-controlled field; never break by id";
+  const couldOvertake = (leader: any) => pool.filter((r) => r.id !== leader.id && r.upperBound > leader.evidenceScore).map((r) => r.id);
+  if (tied.length > 1) {
+    return deepFreeze({ decision: "DECISION_REQUIRED", selected: null, proposed: null, tiedSet: tiedIds, remainingAfterRules: tied.map((r) => r.id), tieExplanation: `${tiedIds.length} candidates have evidence scores within epsilon ${o.epsilon} of the leader (${top}); declared secondary rules did not isolate one`, resolutionSteps: steps, proposedResolutionRule: proposedRule, justification: "ODG does not choose among the tied set by id; OWNER/ODG decision required", ...base });
+  }
+  const winner = tied[0];
+  const overtake = couldOvertake(winner);
+  const tieInfo = tiedIds.length > 1 ? { tiedSet: tiedIds, tieExplanation: `${tiedIds.length} candidates within epsilon ${o.epsilon} of the leader (${top})`, resolutionSteps: steps, resolvedBy, resolvedByText: SECONDARY_RULE_TEXT[resolvedBy as string] } : { tiedSet: [] };
+  if (winner.uncertainty > o.uncertaintyMax) {
+    return deepFreeze({ decision: "DECISION_REQUIRED", selected: null, proposed: { id: winner.id, evidenceScore: winner.evidenceScore, upperBound: winner.upperBound, uncertainty: winner.uncertainty }, ...tieInfo, couldOvertakeIfUnmeasuredWereFavourable: overtake, uncertaintyExplanation: `the would-be choice '${winner.id}' has uncertainty ${winner.uncertainty} > uncertaintyMax ${o.uncertaintyMax}: more than the declared share of criterion weight is NOT_MEASURED`, proposedResolutionRule: proposedRule, justification: `'${winner.id}' leads on measured evidence but the decision is not robust; OWNER/ODG decision required`, ...base });
+  }
+  return deepFreeze({
+    decision: tiedIds.length > 1 ? "TIE_EXPLAINED" : "SELECTED",
+    selected: { id: winner.id, evidenceScore: winner.evidenceScore, upperBound: winner.upperBound, uncertainty: winner.uncertainty, breakdown: winner.breakdown },
+    proposed: null, ...tieInfo,
+    couldOvertakeIfUnmeasuredWereFavourable: overtake,
+    justification: `ODG proposes '${winner.id}': evidence score ${winner.evidenceScore} (uncertainty ${winner.uncertainty} ≤ ${o.uncertaintyMax})` + (tiedIds.length > 1 ? `; tie of ${tiedIds.length} resolved by ${resolvedBy}: ${SECONDARY_RULE_TEXT[resolvedBy as string]}` : `; next best is ≥ epsilon ${o.epsilon} lower`) + (overtake.length ? `; ${overtake.length} candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: ${overtake.join(", ")}` : ""),
+    ...base,
+  });
+}
+
+function deepFreeze(o: any): any { if (o && typeof o === "object" && !Object.isFrozen(o)) { Object.freeze(o); for (const k of Object.keys(o)) deepFreeze(o[k]); } return o; }
+
+const STRATEGIC_SELECTION_CONTRACT = Object.freeze({
+  id: "V164-EXPLAINED-STRATEGIC-SELECTION", source: "owner directive V16.4 §3 — explicit criteria, no alphabetical choice",
+  entryPoint: "selectNextExplained (opt-in); selectNext/scoreMission unchanged",
+  invariants: Object.freeze([
+    "NOT_MEASURED never defaults to a numeric value: it adds 0 to the evidence score and its weight to uncertainty",
+    "no id tie-break: a tie within epsilon is resolved only by a declared secondary rule, else DECISION_REQUIRED",
+    "uncertainty above uncertaintyMax on the would-be choice ⇒ DECISION_REQUIRED (proposed, not selected)",
+    "requiresOwnerAuthorization items are ranked but never auto-selected",
+    "eligibility gates are scoreMission's (reused, not duplicated); output is a PROPOSAL, never an authorization",
+  ]),
+});
+
+module.exports = { scoreMission, selectNext, MISSION_PRIORITY_SELECTOR_CONTRACT, scoreExplained, selectNextExplained, EXPLAINED_DEFAULTS, SECONDARY_RULE_TEXT, STRATEGIC_SELECTION_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(MISSION_PRIORITY_SELECTOR_CONTRACT, null, 2) + "\n"); }
 export {};
