@@ -102,6 +102,43 @@ const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contrac
   check("R5b: same inspector/author session ⇒ not validated", run(val({ experimentInspection: { verdict: "ACCEPT", inspectorSessionId: "same-session-01", authorSessionId: "same-session-01" } })).currentStep === "VALIDATE_CRITERIA");
   check("R5b: missing session ids ⇒ not validated", run(val({ experimentInspection: { verdict: "ACCEPT" } })).currentStep === "VALIDATE_CRITERIA");
 }
+// V16.8 — per-scenario owner source (G ⇒ V165, H ⇒ V168) + STEP_SEQUENCES.H derived exactly like G
+{
+  const H = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8")).contracts.find((c: any) => c.scenario === "H");
+  const HSHA = AS.contractSha256(H);
+  const HSID = H.revisionHistory[H.revisionHistory.length - 1].revisionAuthorSessionId;
+  const hInsp = (o: any = {}) => ({ scenario: "H", verdict: "ACCEPT", contractSha256: HSHA, inspector: "independent inspector (fixture)", inspectorSessionId: "inspector-sid-h-0001", authorSessionId: HSID, inspectedHeadSha: HEAD, inspectedPr: 998, ...o });
+  check("STEP_SEQUENCES.H = the same 4 steps as G", AS.STEP_SEQUENCES.H.join(",") === AS.STEP_SEQUENCES.G.join(","));
+  const s0 = AS.deriveAuthorizationScope(H, {});
+  check("committed H: owner authorization recognized (by OWNER…, source V168_OWNER_AUTHORIZATION_H.json)", s0.applicable === true && /^OWNER/.test(s0.owner.by) && /V168_OWNER_AUTHORIZATION_H\.json/.test(s0.owner.source));
+  check("committed H: REVISE_CONTRACT validated (revisionHistory + preRegistration), INSPECT current, experiments NOT authorized", s0.validatedSteps.map((v: any) => v.step).join(",") === "REVISE_CONTRACT" && s0.currentStep === "INSPECT_REVISED_CONTRACT" && s0.executionAuthorized === false && !AS.isStepAuthorized(s0, "RUN_CONTROLLED_EXPERIMENTS"));
+  check("committed H: revisionAuthorSessionId recorded, state not rewritten", HSID === "h-reviser-v168" && H.state === "AUTHORIZED_FOR_REVISION" && s0.contractStateRewritten === false);
+  const s1 = AS.deriveAuthorizationScope(H, { inspection: hInsp() });
+  check("H: inspection ACCEPT sha-bound ⇒ RUN_CONTROLLED_EXPERIMENTS derived (R4, covered by V168), execution authorized", s1.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && s1.executionAuthorized === true && s1.derivedSteps.some((d: any) => d.step === "RUN_CONTROLLED_EXPERIMENTS" && d.rule === "R4" && /V168/.test(d.coveredBy)));
+  const edited = clone(H); edited.WORK_ITEM_CONTRACT.preRegistration.thresholds.PASS += " (edited)";
+  check("H: contract edited after inspection ⇒ experiments NOT authorized", AS.deriveAuthorizationScope(edited, { inspection: hInsp() }).executionAuthorized === false);
+  check("H: inspection record of scenario G ⇒ NOT authorized", AS.deriveAuthorizationScope(H, { inspection: hInsp({ scenario: "G" }) }).executionAuthorized === false);
+  const exp = { contractSha256: HSHA, outcome: "FAIL" }; const xs = AS.experimentSha256(exp);
+  const s2 = AS.deriveAuthorizationScope(H, { inspection: hInsp(), experiment: exp });
+  check("H: experiment record ⇒ VALIDATE_CRITERIA current, never auto-validated", s2.currentStep === "VALIDATE_CRITERIA" && s2.currentStepAuthorized === true && !s2.validatedSteps.some((v: any) => v.step === "VALIDATE_CRITERIA"));
+  const val = (o: any = {}) => ({ contractSha256: HSHA, experimentEvidence: { experimentSha256: xs }, experimentInspection: { verdict: "ACCEPT", inspectorSessionId: "insp-session-h-02", authorSessionId: "exp-author-h-03" }, scenarioGrade: "FAIL", ...o });
+  check("H R5b: bound validation record ⇒ all steps validated; upgrade (PASS on FAIL) refused", AS.deriveAuthorizationScope(H, { inspection: hInsp(), experiment: exp, validation: val() }).currentStep === null && AS.deriveAuthorizationScope(H, { inspection: hInsp(), experiment: exp, validation: val({ scenarioGrade: "PASS" }) }).currentStep === "VALIDATE_CRITERIA");
+  // an authorization is never reused for another mission
+  const hV165 = clone(H); hV165.authorization.source = "docs/odg/V165_OWNER_AUTHORIZATION.json#missionG";
+  const r1 = AS.deriveAuthorizationScope(hV165, { inspection: hInsp({ contractSha256: AS.contractSha256(hV165) }) });
+  check("H with a V165 source ⇒ refused (nothing derived)", r1.applicable === false && r1.executionAuthorized === false && /R0/.test(r1.reason) && /V168/.test(r1.reason));
+  const hBoth = clone(H); hBoth.authorization.source = "docs/odg/V168_OWNER_AUTHORIZATION_H.json + V165";
+  check("H source citing BOTH V168 and V165 ⇒ refused (foreign directive)", AS.deriveAuthorizationScope(hBoth, {}).applicable === false);
+  const gV168 = clone(G); gV168.authorization.source = "docs/odg/V168_OWNER_AUTHORIZATION_H.json (V168)";
+  const r2 = AS.deriveAuthorizationScope(gV168, { inspection: inspection({ contractSha256: AS.contractSha256(gV168) }) });
+  check("G with a V168 source ⇒ refused (nothing derived)", r2.applicable === false && r2.executionAuthorized === false && /R0/.test(r2.reason));
+  const gBoth = clone(G); gBoth.authorization.source = "docs/odg/V165_OWNER_AUTHORIZATION.json#missionG; docs/odg/V168_OWNER_AUTHORIZATION_H.json";
+  check("G source citing BOTH ⇒ refused", AS.deriveAuthorizationScope(gBoth, {}).applicable === false);
+  check("ownerSourceCheck: unknown scenario ⇒ refused", AS.ownerSourceCheck("J", "V165 V168_OWNER_AUTHORIZATION_H.json").ok === false);
+  check("G unchanged: committed G still derives with its V165 source", AS.deriveAuthorizationScope(G, { inspection: inspection() }).executionAuthorized === true);
+  check("H frozen dataset: committed file sha256 = preRegistration.dataset.sha256", require("crypto").createHash("sha256").update(fs.readFileSync(path.join(ROOT, H.WORK_ITEM_CONTRACT.preRegistration.dataset.file))).digest("hex") === H.WORK_ITEM_CONTRACT.preRegistration.dataset.sha256);
+  check("H declares dispatchTargets.RUN_CONTROLLED_EXPERIMENTS with command + writeSet ⊆ write_set", (() => { const t = H.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS; const ws = H.WORK_ITEM_CONTRACT.write_set; return ws.includes(t.command) && t.writeSet.length > 0 && t.writeSet.every((x: string) => ws.includes(x)); })());
+}
 if (failures) { process.stdout.write(`${failures} FAILED\n`); process.exit(1); }
 process.stdout.write("all odg-authorization-scope tests passed\n");
 export {};

@@ -1,0 +1,58 @@
+{
+  "//": "OWNER authorization record for mission H — verbatim transcription of the owner's decision (2026-11-23, directive 'AUTORISATION PROPRIÉTAIRE H — PARCOURS COMPLET EN UNE SEULE DÉCISION') by the PROVIDER (Claude Code coordinating session). Grants NOTHING beyond the quoted text; applies to H ONLY.",
+  "schema": "odg-owner-authorization/1",
+  "directive": "CTO V168 — mission H",
+  "date": "2026-11-23",
+  "issuer": "OWNER (CTO)",
+  "appliesTo": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#H",
+  "dossier": {
+    "path": "docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json",
+    "sha256": "503bf71a21de598809717d5e33ecaf4388a53f01086c1bdc529498ab24106538",
+    "section": "A_H_authorizationRequest"
+  },
+  "quote": [
+    "J'autorise explicitement la mission H dans son périmètre exact, tel qu'il est défini dans le dossier : docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json",
+    "Cette autorisation couvre l'intégralité du parcours H, sans nouvelle demande d'approbation entre ses étapes :",
+    "1. Révision du contrat H.",
+    "2. Inspection indépendante du contrat révisé.",
+    "3. Expériences hors ligne prévues par le contrat.",
+    "4. Inspection indépendante des résultats.",
+    "5. Validation des critères sur preuves.",
+    "6. Clôture de H et enregistrement de son résultat réel.",
+    "Ne pas confondre cette autorisation avec une permission générale applicable aux autres missions.",
+    "Ne pas modifier artificiellement les critères pour faciliter la réussite.",
+    "La validation finale n'est pas automatique sur la seule base de la réussite des étapes précédentes.",
+    "Ne jamais annoncer PASS si les mesures ne le justifient pas.",
+    "Les expériences doivent respecter le protocole fixé avant leur exécution, notamment les risques de faible échantillon et de fuite entre données de test et mécanisme."
+  ],
+  "conditionsPerStep": {
+    "quote": [
+      "inspection indépendante ACCEPT ;",
+      "CI verte sur le commit exact inspecté ;",
+      "empreintes et preuves cohérentes ;",
+      "périmètre d'écriture conforme ;",
+      "tests et contrôles adaptés réussis."
+    ]
+  },
+  "exclusions": {
+    "quote": [
+      "dépense ou abonnement supplémentaire ;",
+      "accès externe ou collecte GitHub ;",
+      "activation des huit sources Radar différées ;",
+      "modification de la politique GitHub ;",
+      "signature du gate 10/12 ;",
+      "modification de la Boussole canonique ;",
+      "action sur VPS, production ou hôte ;",
+      "extension du périmètre de H sans décision correspondante."
+    ]
+  },
+  "finalGrading": {
+    "quote": [
+      "Tous les critères satisfaits : résultat PASS et validation de H.",
+      "Résultat partiel : PARTIAL, sans promotion artificielle.",
+      "Critère non satisfait : FAIL ou NOT_ADOPTED selon le contrat.",
+      "Preuve insuffisante : NOT_MEASURED ou BLOCKED."
+    ]
+  },
+  "machineState": "contract H state AUTHORIZED_FOR_REVISION; authorization.scope covers REVISE_CONTRACT → INSPECT_REVISED_CONTRACT → RUN_CONTROLLED_EXPERIMENTS → VALIDATE_CRITERIA; executionAuthorized false until a sha-bound inspection ACCEPT of the revised contract is recorded (same evidence-bound derivation as G); the source of this authorization is bound to scenario H only"
+}

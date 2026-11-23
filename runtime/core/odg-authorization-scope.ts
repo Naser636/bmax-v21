@@ -14,9 +14,11 @@
  * odg-go-cycle keeps the only execution path (intelligence-loop + mission-scheduler + isolation).
  *
  * Rules (each objective and evidence-bound):
- *   R0 owner first: `authorization.by` starts with "OWNER" AND `authorization.source` cites V165 — else NOTHING is derived
- *      (ODG never self-authorizes).
- *   R1 step sequence is fixed per scenario (G: REVISE_CONTRACT → INSPECT_REVISED_CONTRACT → RUN_CONTROLLED_EXPERIMENTS →
+ *   R0 owner first: `authorization.by` starts with "OWNER" AND `authorization.source` cites THE owner directive bound to
+ *      that scenario (OWNER_SOURCES: G ⇒ V165, H ⇒ V168 / docs/odg/V168_OWNER_AUTHORIZATION_H.json) and cites no other
+ *      scenario's directive — else NOTHING is derived (ODG never self-authorizes; an authorization is never reused for
+ *      another mission).
+ *   R1 step sequence is fixed per scenario (G and H: REVISE_CONTRACT → INSPECT_REVISED_CONTRACT → RUN_CONTROLLED_EXPERIMENTS →
  *      VALIDATE_CRITERIA). A step outside the sequence (provider spend, governance change, …) is NEVER derived.
  *   R2 REVISE_CONTRACT validated ⇔ the contract carries a revisionHistory entry with author, originalCriteria (non-empty),
  *      change, justification, and the WORK_ITEM_CONTRACT carries a preRegistration (metric, baseline, dataset,
@@ -41,6 +43,8 @@ const crypto = require("crypto");
 
 const STEP_SEQUENCES: any = Object.freeze({
   G: Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  // V16.8 (owner V168, docs/odg/V168_OWNER_AUTHORIZATION_H.json): H follows exactly the same evidence-bound sequence
+  H: Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
 });
 const EXECUTION_STEPS = Object.freeze(["RUN_CONTROLLED_EXPERIMENTS"]);
 const STEP_KIND: any = Object.freeze({
@@ -50,7 +54,20 @@ const STEP_KIND: any = Object.freeze({
   VALIDATE_CRITERIA: "GRADING",
 });
 const INDEPENDENCE_LEVEL = "DECLARED_SESSION_INDEPENDENCE";   // declared opaque session ids — NOT cryptographic
-const OWNER_SOURCE_RE = /V165/;
+/* R0 — the owner directive bound to each scenario. An authorization source must cite ITS scenario's directive and no
+ * other scenario's (so the V165 authorization of G can never cover H, nor the V168 authorization of H cover G). */
+const OWNER_SOURCES: any = Object.freeze({
+  G: Object.freeze({ re: /V165/, label: "V165 (docs/odg/V165_OWNER_AUTHORIZATION.json)" }),
+  H: Object.freeze({ re: /V168_OWNER_AUTHORIZATION_H\.json/, label: "V168 (docs/odg/V168_OWNER_AUTHORIZATION_H.json)" }),
+});
+function ownerSourceCheck(scenario: string, source: string): any {
+  const own = OWNER_SOURCES[scenario];
+  if (!own) return { ok: false, reason: `no owner directive is bound to scenario ${scenario}` };
+  if (!own.re.test(source)) return { ok: false, reason: `authorization.source does not cite the owner directive ${own.label} bound to scenario ${scenario}` };
+  const foreign = Object.keys(OWNER_SOURCES).filter((k) => k !== scenario && OWNER_SOURCES[k].re.test(source));
+  if (foreign.length) return { ok: false, reason: `authorization.source cites the owner directive of scenario ${foreign.join(", ")} — an authorization is never reused for another mission` };
+  return { ok: true };
+}
 const SHA40 = /^[0-9a-f]{40}$/;
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -71,7 +88,9 @@ function ownerAuthorization(contract: any): any {
   const a = contract && isObj(contract.authorization) ? contract.authorization : null;
   if (!a) return { ok: false, reason: "no authorization block on the contract" };
   if (!str(a.by) || !String(a.by).trim().toUpperCase().startsWith("OWNER")) return { ok: false, reason: `authorization.by '${a.by}' is not an OWNER authorization — ODG never self-authorizes` };
-  if (!str(a.source) || !OWNER_SOURCE_RE.test(String(a.source))) return { ok: false, reason: "authorization.source does not cite the owner directive V165" };
+  if (!str(a.source)) return { ok: false, reason: "authorization.source missing" };
+  const src = ownerSourceCheck(String(contract.scenario), String(a.source));
+  if (!src.ok) return { ok: false, reason: src.reason };
   return { ok: true, by: String(a.by), source: String(a.source), scope: arr(a.scope).map(String), executionAuthorized: a.executionAuthorized === true, executionCondition: str(a.executionCondition) ? String(a.executionCondition) : null };
 }
 
@@ -199,16 +218,17 @@ function isStepAuthorized(scope: any, step: string): boolean {
 
 const AUTHORIZATION_SCOPE_CONTRACT = Object.freeze({
   id: "V166-ODG-AUTHORIZATION-SCOPE",
-  source: "owner directive V166 §3–§4 over V165 §1 (docs/odg/V165_OWNER_AUTHORIZATION.json#missionG)",
+  source: "owner directive V166 §3–§4 over V165 §1 (docs/odg/V165_OWNER_AUTHORIZATION.json#missionG); H: owner directive V168 (docs/odg/V168_OWNER_AUTHORIZATION_H.json)",
+  ownerSources: Object.freeze({ G: OWNER_SOURCES.G.label, H: OWNER_SOURCES.H.label }),
   steps: STEP_SEQUENCES, executionSteps: EXECUTION_STEPS, stepKind: STEP_KIND,
   invariants: Object.freeze([
     "PURE derivation: no write, no contract-state rewrite, no authorization minted",
-    "owner authorization (by OWNER…, source V165) must exist first — otherwise nothing is derived",
+    "owner authorization (by OWNER…, source = the directive bound to the scenario: G ⇒ V165, H ⇒ V168; citing another scenario's directive ⇒ refused) must exist first — otherwise nothing is derived",
     "steps outside the declared sequence (provider spend, governance, …) are never derived",
     "inspection validates only with verdict ACCEPT, contractSha256 = sha256(canon(current contract entry)), distinct opaque inspector/author session ids bound to the revision's revisionAuthorSessionId (DECLARED_SESSION_INDEPENDENCE, not cryptographic), inspected head SHA",
     "a validated step is DONE, never PASS: no outcome is graded or upgraded here",
   ]),
 });
 
-module.exports = { deriveAuthorizationScope, isStepAuthorized, contractSha256, experimentSha256, canon, STEP_SEQUENCES, EXECUTION_STEPS, STEP_KIND, INDEPENDENCE_LEVEL, AUTHORIZATION_SCOPE_CONTRACT };
+module.exports = { deriveAuthorizationScope, isStepAuthorized, contractSha256, experimentSha256, canon, ownerSourceCheck, OWNER_SOURCES, STEP_SEQUENCES, EXECUTION_STEPS, STEP_KIND, INDEPENDENCE_LEVEL, AUTHORIZATION_SCOPE_CONTRACT };
 export {};

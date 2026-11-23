@@ -1,0 +1,5188 @@
+{
+ "//": "V16.8 scenario H — FROZEN pre-registered dataset (built by runtime/bin/odg-v168-scenario-h-heldout-build.ts --write BEFORE any H experiment or metric; its file sha256 is pinned in docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#H WORK_ITEM_CONTRACT.preRegistration.dataset.sha256). Labels were written by the builder without being printed or inspected. Any edit of this file ⇒ the experiment is NOT_MEASURED.",
+ "schema": "odg-v168-h-heldout/1",
+ "sources": {
+  "history": {
+   "path": "docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json",
+   "sha256": "09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea"
+  },
+  "changedFiles": "local git: git diff --name-only M^1...M for the unique first-parent commit of ba9b77e8455b1793ffbaff8e30fa8635777f0b18 whose subject is 'Merge pull request #N …' or ends with '(#N)'"
+ },
+ "baseCommit": "ba9b77e8455b1793ffbaff8e30fa8635777f0b18",
+ "labelRule": "HIGH_ITERATION iff commits >= 2 (commit count = the V160 proxy for fix cycles), else LOW_ITERATION",
+ "splitRule": "rows sorted by PR number ascending; DEV = first ceil(n/2) rows, HELDOUT = the remaining rows",
+ "counts": {
+  "rows": 399,
+  "dev": 200,
+  "heldout": 199,
+  "excluded": 1
+ },
+ "excluded": [
+  {
+   "number": 913,
+   "reason": "NO_LOCAL_MERGE_COMMIT"
+  }
+ ],
+ "rows": [
+  {
+   "number": 519,
+   "mergeCommit": "59888b1ae7d66975f4f8faa4abc64c7f03f1d6f5",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V156_AUTONOMY_CAMPAIGN.json",
+    "package.json",
+    "runtime/core/odg-autonomy-loop.test.ts",
+    "runtime/core/odg-autonomy-loop.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 520,
+   "mergeCommit": "3df59f54a4ac97fde76153679d86cbcd6cad403c",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V157_PROVIDER_GOVERNANCE.json",
+    "package.json",
+    "runtime/core/odg-provider-governance.test.ts",
+    "runtime/core/odg-provider-governance.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 521,
+   "mergeCommit": "1b1fc649da00ba046cddbb4d400d670ba52f4deb",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V158_REAL_AUTONOMY_JOURNEY.json",
+    "package.json",
+    "runtime/core/odg-real-autonomy-journey.test.ts",
+    "runtime/core/odg-real-autonomy-journey.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 522,
+   "mergeCommit": "a636a1c019cb3db6c6506790a77bc5a5cefe6a37",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V159_CAMPAIGN_STATUS.json",
+    "package.json",
+    "runtime/core/odg-mission-scheduler.test.ts",
+    "runtime/core/odg-mission-scheduler.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 523,
+   "mergeCommit": "f65d4ed2b79e5a2c66bb1878be14129b8ed177d0",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V160_CAMPAIGN_LIFECYCLE.json",
+    "package.json",
+    "runtime/core/odg-campaign-lifecycle.test.ts",
+    "runtime/core/odg-campaign-lifecycle.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 524,
+   "mergeCommit": "fd280b9eb45fdd0bf9e0ae5196cfe207fe7b7ede",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V161_CLOSURE_REGISTER.json",
+    "package.json",
+    "runtime/core/odg-closure-register-ops.test.ts",
+    "runtime/core/odg-closure-register-ops.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 525,
+   "mergeCommit": "e2297e2a54ab70d467980e44c029e756c5784a61",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V162_AUDIT_INTEGRITY.json",
+    "package.json",
+    "runtime/core/odg-audit-integrity-analysis.test.ts",
+    "runtime/core/odg-audit-integrity-analysis.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 526,
+   "mergeCommit": "7e05a5a4bd87d22e2e1e52b49eac2710d1a50199",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V163_BROAD_IT_EVAL.json",
+    "package.json",
+    "runtime/core/odg-broad-it-eval-set.test.ts",
+    "runtime/core/odg-broad-it-eval-set.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 527,
+   "mergeCommit": "8cb3dcbba2fbc1f8293c61eaf9f398097c527afb",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V164_OPEN_MISSION_RECOVERY.json",
+    "package.json",
+    "runtime/core/odg-delegate-provenance-smoke.test.ts",
+    "runtime/core/odg-delegate-provenance-smoke.ts",
+    "runtime/core/odg-open-mission-recovery.test.ts",
+    "runtime/core/odg-open-mission-recovery.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 528,
+   "mergeCommit": "6a66c8c1a78453dd4cdef76c7615b8eb709ec84c",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V165_SLICE3_GOVERNABILITY.json",
+    "package.json",
+    "runtime/core/odg-slice3-governability.test.ts",
+    "runtime/core/odg-slice3-governability.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 529,
+   "mergeCommit": "26c36b41cfebeb66b3fe1c857008d9d71ca61490",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V166_RADAR_MATRIX_OTEL.json",
+    "package.json",
+    "runtime/core/odg-otel-genai-trace.test.ts",
+    "runtime/core/odg-otel-genai-trace.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 530,
+   "mergeCommit": "5e2cb252f16a618abc548aa15190e4d8cde4ee51",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V167_OTEL_EXECUTION_TRACE.json",
+    "package.json",
+    "runtime/core/odg-otel-execution-trace.test.ts",
+    "runtime/core/odg-otel-execution-trace.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 531,
+   "mergeCommit": "f7635dca6b14af0cfe6af014e25a6b4770bc35dd",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V167A_MISSION_ORCHESTRATOR.json",
+    "package.json",
+    "runtime/core/odg-mission-orchestrator.test.ts",
+    "runtime/core/odg-mission-orchestrator.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 532,
+   "mergeCommit": "5b6edf4b94c4b14f315397e027ccbe1d3d391ef8",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V168_OWASP_AGENTIC_MATRIX.json",
+    "package.json",
+    "runtime/core/odg-owasp-agentic-matrix.test.ts",
+    "runtime/core/odg-owasp-agentic-matrix.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 533,
+   "mergeCommit": "f8deb2ffd0fb356aca194ad8b517b510cc8c46f9",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V169_ROADMAP_RECONCILIATION.json",
+    "package.json",
+    "runtime/core/odg-roadmap-reconciliation.test.ts",
+    "runtime/core/odg-roadmap-reconciliation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 534,
+   "mergeCommit": "43bdd03b77f749d7addde6c2fff64c7c556cce22",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V170_CROSSWALK_ECONOMIC_MODEL.json",
+    "package.json",
+    "runtime/core/odg-economic-model.test.ts",
+    "runtime/core/odg-economic-model.ts",
+    "runtime/core/odg-mission-crosswalk.test.ts",
+    "runtime/core/odg-mission-crosswalk.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 535,
+   "mergeCommit": "337153df01c98f27c360ec6e5d0b8d0c74b29ae6",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V171_WEEKLY_RADAR_SCHEDULER.json",
+    "package.json",
+    "runtime/core/odg-weekly-radar-scheduler.test.ts",
+    "runtime/core/odg-weekly-radar-scheduler.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 536,
+   "mergeCommit": "ac0e45ad2180d963a8379098c68789fe6eed5414",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V172_BUSINESS_MODEL_FAMILIES.json",
+    "package.json",
+    "runtime/core/odg-business-model-families.test.ts",
+    "runtime/core/odg-business-model-families.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 537,
+   "mergeCommit": "88f1d46826e0b80b9f4e748f821236ae73610528",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V173_AUTONOMOUS_OPERATING_MODEL.json",
+    "package.json",
+    "runtime/core/odg-autonomous-operating-model.test.ts",
+    "runtime/core/odg-autonomous-operating-model.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 538,
+   "mergeCommit": "2ba8e388c4dd9c5236eb408b5aa6d946740db61e",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V174_SUPPORT_RENEWAL_ENGINE.json",
+    "package.json",
+    "runtime/core/odg-support-renewal-engine.test.ts",
+    "runtime/core/odg-support-renewal-engine.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 539,
+   "mergeCommit": "622e5a769c94fb8228d5f062abdb3c6e761fb5aa",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V174A_GLOBAL_OPPORTUNITY_RADAR.json",
+    "package.json",
+    "runtime/core/odg-global-opportunity-radar.test.ts",
+    "runtime/core/odg-global-opportunity-radar.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 540,
+   "mergeCommit": "6adbd2411e40c546cbde90f5934cfa742659fa44",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V174B_METIER_CERTIFICATION_PLANNER.json",
+    "package.json",
+    "runtime/core/odg-metier-certification-planner.test.ts",
+    "runtime/core/odg-metier-certification-planner.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 541,
+   "mergeCommit": "1a352420634a32c0a084efddce9e91dac41f706c",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V175_ISO27001_EVIDENCE_CROSSWALK.json",
+    "package.json",
+    "runtime/core/odg-iso27001-evidence-crosswalk.test.ts",
+    "runtime/core/odg-iso27001-evidence-crosswalk.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 542,
+   "mergeCommit": "09e79063d9fb743eec3300de452c104859ebf187",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V176_PROSPECT_QUALIFICATION.json",
+    "package.json",
+    "runtime/core/odg-prospect-qualification.test.ts",
+    "runtime/core/odg-prospect-qualification.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 543,
+   "mergeCommit": "14c310e12a22f1fd9134117e413d5404938dd3c7",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V177_PRODUCT_DESIGN_ENGINE.json",
+    "package.json",
+    "runtime/core/odg-product-design-engine.test.ts",
+    "runtime/core/odg-product-design-engine.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 544,
+   "mergeCommit": "3a4c882b9d9d6596665e6b021e06d3b969fb493f",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V178_PRODUCT_ECONOMICS_AUDIT.json",
+    "package.json",
+    "runtime/core/odg-product-design-engine.test.ts",
+    "runtime/core/odg-product-design-engine.ts",
+    "runtime/core/odg-product-economics-audit.test.ts",
+    "runtime/core/odg-product-economics-audit.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 545,
+   "mergeCommit": "b1df0deb878abc9c588063b489b91046c55ec378",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V179_ECONOMIC_SCALING_MODEL.json",
+    "package.json",
+    "runtime/core/odg-economic-scaling-model.test.ts",
+    "runtime/core/odg-economic-scaling-model.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 546,
+   "mergeCommit": "adeda9449708a4d6c86870d96052189a6d3fad0c",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V180_CAPABILITY_CROSS_AUDIT.json",
+    "package.json",
+    "runtime/core/odg-capability-cross-audit.test.ts",
+    "runtime/core/odg-capability-cross-audit.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 547,
+   "mergeCommit": "243f78ed099d33bf0e3f3189643508a6e01beb1a",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V180A_THREE_PERSON_ECONOMIC_MODEL.json",
+    "package.json",
+    "runtime/core/odg-three-person-economic-model.test.ts",
+    "runtime/core/odg-three-person-economic-model.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 548,
+   "mergeCommit": "44e536e0169e9f8fe435c1d30f3dc2ca584edc38",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V181_BMAX_ASSET_INTELLIGENCE.json",
+    "package.json",
+    "runtime/core/odg-bmax-capability-mapping.test.ts",
+    "runtime/core/odg-bmax-capability-mapping.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 549,
+   "mergeCommit": "17b93a067358b45d8c44ae2815ec203186f4eaee",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V182_MISSING_CAPABILITIES_BUILD.json",
+    "package.json",
+    "runtime/core/odg-digital-distribution.test.ts",
+    "runtime/core/odg-digital-distribution.ts",
+    "runtime/core/odg-language-management.test.ts",
+    "runtime/core/odg-language-management.ts",
+    "runtime/core/odg-marketing-engine.test.ts",
+    "runtime/core/odg-marketing-engine.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 550,
+   "mergeCommit": "c3a17009d93eacf489c672f1c86f122c4b7ed0b4",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V124_EXTENSION_PARKED_ROADMAP.json",
+    "package.json",
+    "runtime/core/odg-v124-extension-registry.test.ts",
+    "runtime/core/odg-v124-extension-registry.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 551,
+   "mergeCommit": "05bf00d40d0ce4bccb409cc0288b88d35333c2cc",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/CTO_CONTINUITY_PROTOCOL.md",
+    "docs/odg/V183_GOVERNANCE_VIEWS.json",
+    "package.json",
+    "runtime/core/odg-cto-continuity-protocol.test.ts",
+    "runtime/core/odg-cto-continuity-protocol.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-metier-business-matrix.test.ts",
+    "runtime/core/odg-metier-business-matrix.ts",
+    "runtime/core/odg-primitive-metier-matrix.test.ts",
+    "runtime/core/odg-primitive-metier-matrix.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 552,
+   "mergeCommit": "60ae5b0a2fd2c557d6dfc601593b86779b455b7c",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/CTO_CONTINUITY_PROTOCOL.md",
+    "docs/odg/V183C_TWENTY_METIER_RECONCILIATION.json",
+    "package.json",
+    "runtime/core/odg-commercial-metier-matrix.test.ts",
+    "runtime/core/odg-commercial-metier-matrix.ts",
+    "runtime/core/odg-cto-continuity-protocol.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 553,
+   "mergeCommit": "4c8d8280f215146940b39219e4ed42059bd235a7",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V184_RADAR_TO_MISSION_LOOP.json",
+    "package.json",
+    "runtime/core/odg-radar-to-mission-loop.test.ts",
+    "runtime/core/odg-radar-to-mission-loop.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 554,
+   "mergeCommit": "405a4dce0a0bc303f22a24e1566a584e67704a88",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V185_LOT1_INTELLIGENCE_CAMPAIGN.json",
+    "package.json",
+    "runtime/core/odg-metier-benchmark-lot1.test.ts",
+    "runtime/core/odg-metier-benchmark-lot1.ts",
+    "runtime/core/odg-program-metier-matrix.test.ts",
+    "runtime/core/odg-program-metier-matrix.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 555,
+   "mergeCommit": "7b0fdfd5f975ce9b1ff2b7b8e6d174eb4f97e214",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V186_LOT2_INTELLIGENCE_CAMPAIGN.json",
+    "package.json",
+    "runtime/core/odg-metier-benchmark-lot2.test.ts",
+    "runtime/core/odg-metier-benchmark-lot2.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 556,
+   "mergeCommit": "9a64c11758d38f839cfb78d06c8133e6fae054f6",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V187_RADAR_FIRST_LOT3.json",
+    "package.json",
+    "runtime/core/odg-metier-benchmark-lot3.test.ts",
+    "runtime/core/odg-metier-benchmark-lot3.ts",
+    "runtime/core/odg-radar-collection-adapter.test.ts",
+    "runtime/core/odg-radar-collection-adapter.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 557,
+   "mergeCommit": "01184cf3da83b765844818c4eb4000c6dca7dda6",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V188_SOVEREIGN_DELEGATION.json",
+    "package.json",
+    "runtime/core/odg-sovereign-delegation.test.ts",
+    "runtime/core/odg-sovereign-delegation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 558,
+   "mergeCommit": "8aa9856cdb4f868d5542fca4e464ec327ba1b30c",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V189_SANDBOX_ISOLATION_AUDIT.json",
+    "package.json",
+    "runtime/core/odg-sandbox-isolation-audit.test.ts",
+    "runtime/core/odg-sandbox-isolation-audit.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 559,
+   "mergeCommit": "2ca5563e114e62013f529c931de41313e67e9452",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V189A_IMPROVEMENT_CONTRACTS.json",
+    "package.json",
+    "runtime/core/odg-improvement-contracts.test.ts",
+    "runtime/core/odg-improvement-contracts.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 560,
+   "mergeCommit": "d138bb8c1c25b07e5108bbf63d8d29ed235c4247",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V190_PROVIDER_SESSION_ISOLATION.json",
+    "package.json",
+    "runtime/core/odg-provider-session-isolation.test.ts",
+    "runtime/core/odg-provider-session-isolation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 561,
+   "mergeCommit": "dc0f06926fd645a49efe36154049b243128b302d",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V191_CONTINUITY_CHECKPOINT.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 562,
+   "mergeCommit": "682b29a1e26341ac477e3cdaf5bba24987bcb9f1",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V192_SANDBOX_NET_AND_LOT4.json",
+    "package.json",
+    "runtime/core/odg-improvement-contracts.test.ts",
+    "runtime/core/odg-improvement-contracts.ts",
+    "runtime/core/odg-isolation-network-review.test.ts",
+    "runtime/core/odg-isolation-network-review.ts",
+    "runtime/core/odg-metier-benchmark-lot4.test.ts",
+    "runtime/core/odg-metier-benchmark-lot4.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 563,
+   "mergeCommit": "b70fa41a8ac9ad67de5727ce4fd0379a6c0eb732",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V193_LOT5_NATIVE_AND_EGRESS.json",
+    "package.json",
+    "runtime/core/odg-isolation-egress-allowlist.test.ts",
+    "runtime/core/odg-isolation-egress-allowlist.ts",
+    "runtime/core/odg-metier-benchmark-lot5.test.ts",
+    "runtime/core/odg-metier-benchmark-lot5.ts",
+    "runtime/core/odg-native-autonomy-audit.test.ts",
+    "runtime/core/odg-native-autonomy-audit.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 564,
+   "mergeCommit": "671cea69253287b1daaddb4ec87ac3843daa07fc",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V195_MASTER_DIRECTIVE_RECONCILIATION.json",
+    "package.json",
+    "runtime/core/odg-master-directive-reconciliation.test.ts",
+    "runtime/core/odg-master-directive-reconciliation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 565,
+   "mergeCommit": "2d5ac6acb1504d19fea3e4d6e820f27e40110dcf",
+   "changedFiles": [
+    "scripts/odg-ollama-relay.py",
+    "scripts/odg-ollama-relay.test.py"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 566,
+   "mergeCommit": "59f52e09041a388b4a88152d5b91cf636cbb528e",
+   "changedFiles": [
+    "docs/odg/V198_LAUNCHER_INTEGRATION.json",
+    "docs/odg/V198_launcher_ollama_integration.patch",
+    "scripts/odg-ollama-launcher-integration.test.py"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 567,
+   "mergeCommit": "1350f3e27dece2fb952ced49ffc0889f153e150e",
+   "changedFiles": [
+    "docs/odg/V199_LOT6_METIER_COMPLETION.json",
+    "package.json",
+    "runtime/core/odg-metier-benchmark-lot6.test.ts",
+    "runtime/core/odg-metier-benchmark-lot6.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 568,
+   "mergeCommit": "c8225cc25e79b348d56bb9c74aeb624bf13b2e6d",
+   "changedFiles": [
+    "docs/odg/V200_WIFR04_BLOCKED_CONTRACTS_REGISTER.json",
+    "package.json",
+    "runtime/core/odg-blocked-contracts-register.test.ts",
+    "runtime/core/odg-blocked-contracts-register.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 569,
+   "mergeCommit": "6e6f94fad1ae27bdba1483234df74a8fb228940c",
+   "changedFiles": [
+    "docs/odg/V201_V202_WIFR06_RADAR_ROBUSTNESS.json",
+    "package.json",
+    "runtime/core/odg-radar-collection-adapter.robustness.test.ts",
+    "runtime/core/odg-radar-collection-adapter.ts",
+    "runtime/core/wi-fr-06-runtime-failpaths.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 570,
+   "mergeCommit": "bea73890c9e047c53ce555cb31ea6f895a0d6a8b",
+   "changedFiles": [
+    "docs/odg/V203_WIFR08_COMPOUNDING_TRANSFER.json",
+    "package.json",
+    "runtime/core/odg-compounding-transfer-demo.test.ts",
+    "runtime/core/odg-compounding-transfer-demo.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 571,
+   "mergeCommit": "11d9b7fc453a99df2aba7db0f849d312f61f2cc1",
+   "changedFiles": [
+    "docs/odg/V204_JETSPEED_FUNNEL_ECONOMICS.json",
+    "package.json",
+    "runtime/core/odg-jetspeed-funnel-economics.test.ts",
+    "runtime/core/odg-jetspeed-funnel-economics.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 572,
+   "mergeCommit": "49e7ad6062f717e31058764c04308cc39779ed07",
+   "changedFiles": [
+    "docs/odg/V205_PRODUCTION_GATE_MATRIX.json",
+    "package.json",
+    "runtime/core/odg-production-gate-matrix.test.ts",
+    "runtime/core/odg-production-gate-matrix.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 573,
+   "mergeCommit": "f3a5c5ac677d9553d39936bc11b24c547fbc6a8e",
+   "changedFiles": [
+    "docs/odg/V206_ICP_SEGMENT_FIT.json",
+    "package.json",
+    "runtime/core/odg-icp-segment-fit.test.ts",
+    "runtime/core/odg-icp-segment-fit.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 574,
+   "mergeCommit": "6e841f23626d9b71ff966ccaa1cea04635b21ec7",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-blocked-contracts-register.test.ts",
+    "runtime/core/odg-blocked-contracts-register.ts",
+    "runtime/core/odg-dora-metrics-view.test.ts",
+    "runtime/core/odg-dora-metrics-view.ts",
+    "runtime/core/odg-finops-kpis.test.ts",
+    "runtime/core/odg-finops-kpis.ts",
+    "runtime/core/odg-slo-error-budget-view.test.ts",
+    "runtime/core/odg-slo-error-budget-view.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 575,
+   "mergeCommit": "2c5cabf02f2b3603c2de188c37411089adcc2bca",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cncf-platform-maturity.test.ts",
+    "runtime/core/odg-cncf-platform-maturity.ts",
+    "runtime/core/odg-cra-deadline-tracker.test.ts",
+    "runtime/core/odg-cra-deadline-tracker.ts",
+    "runtime/core/odg-ssdf-slsa-crosswalk.test.ts",
+    "runtime/core/odg-ssdf-slsa-crosswalk.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 576,
+   "mergeCommit": "679e4a1ae2f206ab299384f3ea8ab02f5da450dd",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-ai-serving-reference.test.ts",
+    "runtime/core/odg-ai-serving-reference.ts",
+    "runtime/core/odg-api-security-posture.test.ts",
+    "runtime/core/odg-api-security-posture.ts",
+    "runtime/core/odg-doc-confidence-calibration.test.ts",
+    "runtime/core/odg-doc-confidence-calibration.ts",
+    "runtime/core/odg-eval-heldout-calibration.test.ts",
+    "runtime/core/odg-eval-heldout-calibration.ts",
+    "runtime/core/odg-saga-idempotency-reference.test.ts",
+    "runtime/core/odg-saga-idempotency-reference.ts",
+    "runtime/core/odg-streaming-reference.test.ts",
+    "runtime/core/odg-streaming-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 577,
+   "mergeCommit": "b0fb2df63cf395a863fa45d17ef67a84f0ceb72a",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-data-contract-quality.test.ts",
+    "runtime/core/odg-data-contract-quality.ts",
+    "runtime/core/odg-devex-goldenpath.test.ts",
+    "runtime/core/odg-devex-goldenpath.ts",
+    "runtime/core/odg-finops-unit-economics.test.ts",
+    "runtime/core/odg-finops-unit-economics.ts",
+    "runtime/core/odg-wcag-accessibility-evidence.test.ts",
+    "runtime/core/odg-wcag-accessibility-evidence.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 578,
+   "mergeCommit": "8e3bbdf93efdd434b422b40d0b60145775d32652",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-metier-improvement-index.test.ts",
+    "runtime/core/odg-metier-improvement-index.ts",
+    "runtime/core/odg-speed-marketing-chain.test.ts",
+    "runtime/core/odg-speed-marketing-chain.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 579,
+   "mergeCommit": "d4df46d6b9a0590add7e1384820a7b42ce2b229f",
+   "changedFiles": [
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 580,
+   "mergeCommit": "e767b8941800b10d926b2635ac19ab04fd2c4254",
+   "changedFiles": [
+    "runtime/core/odg-wcag-accessibility-evidence.test.ts",
+    "runtime/core/odg-wcag-accessibility-evidence.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 581,
+   "mergeCommit": "1502d9000094a31f3ed482b10410bc05544a73ec",
+   "changedFiles": [
+    "runtime/core/odg-metier-benchmark-lot6.test.ts",
+    "runtime/core/odg-metier-benchmark-lot6.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 582,
+   "mergeCommit": "3f90bb1015879551cd1c1be76b06aa1303ede528",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-radar-video-sources.test.ts",
+    "runtime/core/odg-radar-video-sources.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 583,
+   "mergeCommit": "04edb7fcbbf963e193de4ed6cd9e93c750d30b85",
+   "changedFiles": [
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 584,
+   "mergeCommit": "6f15852fdae01c5ceb19d857f3f47d03de55b4e1",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-sandbox-certification-harness.test.ts",
+    "runtime/core/odg-sandbox-certification-harness.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 585,
+   "mergeCommit": "f5a493e2397c3077933a4599970892c2c8d87589",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-opportunity-5m-bridge.test.ts",
+    "runtime/core/odg-opportunity-5m-bridge.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 586,
+   "mergeCommit": "9f9c7ff82febcf12309c2f163df4ef1886e4e637",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-data-chain-audit.test.ts",
+    "runtime/core/odg-data-chain-audit.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 587,
+   "mergeCommit": "7d79ce27092d68902b9e74649f7bfd6b1773933e",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-radar-source-provenance.test.ts",
+    "runtime/core/odg-radar-source-provenance.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 588,
+   "mergeCommit": "577dc9b397dd924793b663bd58b8afc549743264",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-video-analysis-chain.test.ts",
+    "runtime/core/odg-video-analysis-chain.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 589,
+   "mergeCommit": "11f47d8e27570c8e0f707bb50a8ff5b56bdbfb00",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-claim-corroboration.test.ts",
+    "runtime/core/odg-claim-corroboration.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/source-registry.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 590,
+   "mergeCommit": "72edd18fa7ffb721e67a4db703c74b4fa10f06fa",
+   "changedFiles": [
+    "runtime/core/odg-claim-corroboration.test.ts",
+    "runtime/core/odg-claim-corroboration.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 591,
+   "mergeCommit": "2492024ed11a8a9298ec616d3bbf34521e52cd0b",
+   "changedFiles": [
+    "runtime/core/opportunity-detector.test.ts",
+    "runtime/core/opportunity-detector.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 592,
+   "mergeCommit": "b6627dd60e2114b6bcac32b7123fdc7bed55f053",
+   "changedFiles": [
+    "runtime/core/odg-radar-to-mission-loop.test.ts",
+    "runtime/core/odg-radar-to-mission-loop.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 593,
+   "mergeCommit": "687d930854576c8f66fd6628e373e39ff16de980",
+   "changedFiles": [
+    "runtime/core/opportunity-detector.test.ts",
+    "runtime/core/opportunity-detector.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 594,
+   "mergeCommit": "d4e5a046fadeb5c2087d7f8a5dd34edf5138861e",
+   "changedFiles": [
+    "runtime/core/odg-radar-video-sources.test.ts",
+    "runtime/core/odg-radar-video-sources.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 595,
+   "mergeCommit": "f0f3b64b69f95e08a3f22766ec09146354563c43",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-knowledge-acquisition.test.ts",
+    "runtime/core/odg-knowledge-acquisition.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 596,
+   "mergeCommit": "11535a2c0a263fcd10139720556fef08c4fabcf0",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-deployment-dossier.test.ts",
+    "runtime/core/odg-deployment-dossier.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 597,
+   "mergeCommit": "1648d6ca5d134e8fd11dd78cdab9648c1a51569c",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-radar-roadmap.test.ts",
+    "runtime/core/odg-radar-roadmap.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 598,
+   "mergeCommit": "aedd3e3f72fa55a52f5a345926ee617101dc2308",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-radar-roadmap.test.ts",
+    "runtime/core/odg-radar-roadmap.ts",
+    "runtime/core/odg-source-authority.test.ts",
+    "runtime/core/odg-source-authority.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 599,
+   "mergeCommit": "fcec06bc87427edef66ec83391c9467f9a142af8",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-jidoka-completeness.test.ts",
+    "runtime/core/odg-jidoka-completeness.ts",
+    "runtime/core/odg-radar-roadmap.test.ts",
+    "runtime/core/odg-radar-roadmap.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 600,
+   "mergeCommit": "3d1adb381717964fa8208a511a1c6d93747f8489",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-sandbox-integration-gate.test.ts",
+    "runtime/core/odg-sandbox-integration-gate.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 601,
+   "mergeCommit": "82ddacefe9f0ac5e83c8399c13618ad0ae4441e7",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-improvement-chain.test.ts",
+    "runtime/core/odg-improvement-chain.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 602,
+   "mergeCommit": "d1c042fc0fd672068a05338885e0478eb90c3d00",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-continuation-diagnostic.test.ts",
+    "runtime/core/odg-continuation-diagnostic.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 603,
+   "mergeCommit": "bd13eefabd8e9234009aefe11b454ce6834cf508",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-observation-currency.test.ts",
+    "runtime/core/odg-observation-currency.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 604,
+   "mergeCommit": "389e32ef82e418777a4a04ae9d9b5cb294c254c1",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cartography-reconcile.test.ts",
+    "runtime/core/odg-cartography-reconcile.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 605,
+   "mergeCommit": "0293c866738899775e41ab329fa427935a632426",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-program-continuity.test.ts",
+    "runtime/core/odg-program-continuity.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 606,
+   "mergeCommit": "2bd5007acf323e2ef965714818be6c61a4ec1d9a",
+   "changedFiles": [
+    "docs/odg/v124-consolidated-roadmap.json",
+    "package.json",
+    "runtime/core/odg-cto-continuity-protocol.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-v124-consolidation.test.ts",
+    "runtime/core/odg-v124-consolidation.ts",
+    "runtime/governance/ROADMAP.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 607,
+   "mergeCommit": "477fd91c99d2d6acccdece37be07ec2e2914403c",
+   "changedFiles": [
+    "docs/odg/v124-consolidated-roadmap.json",
+    "package.json",
+    "runtime/core/odg-az-scenario.test.ts",
+    "runtime/core/odg-az-scenario.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 608,
+   "mergeCommit": "94aeb0fd31ea30728b3d3d4673234de0861c4fad",
+   "changedFiles": [
+    "docs/odg/v124-consolidated-roadmap.json",
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-mission-orchestrator.ts",
+    "runtime/core/odg-orchestration-scenario.test.ts",
+    "runtime/core/odg-orchestration-scenario.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 609,
+   "mergeCommit": "8b2b74f9ebb524ad68ed21ee1b6c27dc197ee852",
+   "changedFiles": [
+    "docs/odg/v124-consolidated-roadmap.json",
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-resident-driver.test.ts",
+    "runtime/core/odg-resident-driver.ts",
+    "runtime/core/odg-v124-consolidation.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 610,
+   "mergeCommit": "be73aeebcff1df259fadc3773fbe5abd00108f69",
+   "changedFiles": [
+    ".gitignore",
+    "deploy/odg-resident-driver.service",
+    "deploy/odg-resident-driver.timer",
+    "docs/odg/v124-consolidated-roadmap.json",
+    "package.json",
+    "runtime/bin/odg-resident-driver-tick.test.ts",
+    "runtime/bin/odg-resident-driver-tick.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "scripts/odg-resident-driver-install.sh"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 611,
+   "mergeCommit": "0297d1b867b9af1652b0f9928a6f48a76d07a410",
+   "changedFiles": [
+    "docs/odg/v124-consolidated-roadmap.json",
+    "package.json",
+    "runtime/core/odg-benchmark-audit.test.ts",
+    "runtime/core/odg-benchmark-audit.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 612,
+   "mergeCommit": "ec69357a85e33ca5c312f898d8ad46a8c0845c90",
+   "changedFiles": [
+    "deploy/odg-resident-driver.service",
+    "docs/odg/v124-consolidated-roadmap.json",
+    "package.json",
+    "runtime/bin/odg-resident-driver-precompile.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "scripts/odg-resident-driver-build.sh",
+    "scripts/odg-resident-driver-install.sh",
+    "scripts/odg-resident-driver-run.sh"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 613,
+   "mergeCommit": "5357bef8569ce836897711594ceea318ea4dd93a",
+   "changedFiles": [
+    "docs/odg/v124-consolidated-roadmap.json",
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-metier-campaign.test.ts",
+    "runtime/core/odg-metier-campaign.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 614,
+   "mergeCommit": "fc82e7431657e8c2609c185db39bf54791ff99b5",
+   "changedFiles": [
+    "docs/odg/v124-consolidated-roadmap.json",
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-metier-campaign.test.ts",
+    "runtime/core/profession-p5-platform-reference.test.ts",
+    "runtime/core/profession-p5-platform-reference.ts",
+    "runtime/core/profession-p8-api-reference.test.ts",
+    "runtime/core/profession-p8-api-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 615,
+   "mergeCommit": "ec076a45bcc0aa93763c00232367e447ad6b340f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-local-model-capability.test.ts",
+    "runtime/core/odg-local-model-capability.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 616,
+   "mergeCommit": "6311671e928e5f60e002879f75c5e863ef1bdc77",
+   "changedFiles": [
+    "runtime/core/finops-analyzer.test.ts",
+    "runtime/core/finops-analyzer.ts",
+    "runtime/core/profession-p3-security-reference.test.ts",
+    "runtime/core/profession-p3-security-reference.ts",
+    "runtime/core/profession-p7-sre-reference.test.ts",
+    "runtime/core/profession-p7-sre-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 617,
+   "mergeCommit": "c8f0c463defe9da0b3566342a1983d17e7ba75be",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-native-engineering-audit.test.ts",
+    "runtime/core/odg-native-engineering-audit.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 618,
+   "mergeCommit": "22f91c01d2d46ff8ddab5d09860aad020243d081",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-native-engineering-loop.test.ts",
+    "runtime/core/odg-native-engineering-loop.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 619,
+   "mergeCommit": "e319c5cc52aab4df13b2697d13b90793d660cb12",
+   "changedFiles": [
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-native-engineering-loop.test.ts",
+    "runtime/core/odg-native-engineering-loop.ts",
+    "runtime/core/odg-transform-catalog.test.ts",
+    "runtime/core/odg-transform-catalog.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 620,
+   "mergeCommit": "6103e24d83396ac12b4ac594f5bddf5e8528291b",
+   "changedFiles": [
+    "runtime/core/profession-p1-fullstack-reference.test.ts",
+    "runtime/core/profession-p1-fullstack-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 621,
+   "mergeCommit": "25e2c47302c7f8ca35830ac1e2984fd75fe2364d",
+   "changedFiles": [
+    "runtime/core/profession-p2-ai-reference.test.ts",
+    "runtime/core/profession-p2-ai-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 622,
+   "mergeCommit": "f6a331665c5adcbdb686f81dc03673ee0e7f4204",
+   "changedFiles": [
+    "runtime/core/profession-p4-data-reference.test.ts",
+    "runtime/core/profession-p4-data-reference.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 623,
+   "mergeCommit": "4388b47561306bde9a3e013bddb3a824c198bdc7",
+   "changedFiles": [
+    "runtime/core/profession-p6-eval-reference.test.ts",
+    "runtime/core/profession-p6-eval-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 624,
+   "mergeCommit": "2dbf7d7996bdf7b3cbf43ffc5ed5aa7e0f3a6d80",
+   "changedFiles": [
+    "runtime/core/profession-p9-finops-reference.test.ts",
+    "runtime/core/profession-p9-finops-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 625,
+   "mergeCommit": "42f105eae1b5dafd38f90b5afee5f1c24e3b91ce",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-repo-vps-map.test.ts",
+    "runtime/core/odg-repo-vps-map.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 626,
+   "mergeCommit": "f91c0c2602c4b8a44ab622c4eca78df931a19bf6",
+   "changedFiles": [
+    "runtime/core/profession-p10-regulatory-reference.test.ts",
+    "runtime/core/profession-p10-regulatory-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 627,
+   "mergeCommit": "04ccbfa5139046cc339686235b6dc0c13509f7c9",
+   "changedFiles": [
+    "runtime/core/profession-p11-document-reference.test.ts",
+    "runtime/core/profession-p11-document-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 628,
+   "mergeCommit": "3ebeb6c8e7b856522ec3f08e314171a91c11266f",
+   "changedFiles": [
+    "runtime/core/profession-p12-streaming-reference.test.ts",
+    "runtime/core/profession-p12-streaming-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 629,
+   "mergeCommit": "ebb431273e55eaf3819a901b3c4d607f42dee495",
+   "changedFiles": [
+    "runtime/core/profession-p13-aiinfra-reference.test.ts",
+    "runtime/core/profession-p13-aiinfra-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 630,
+   "mergeCommit": "a682c60df586935a526f2d2487833eb75ad3e9a0",
+   "changedFiles": [
+    "runtime/core/profession-p14-devex-reference.test.ts",
+    "runtime/core/profession-p14-devex-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 631,
+   "mergeCommit": "8cd4e7c56ca1dd4087f41e7f2982a2622329de71",
+   "changedFiles": [
+    "runtime/core/profession-p15-workflow-reference.test.ts",
+    "runtime/core/profession-p15-workflow-reference.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 632,
+   "mergeCommit": "f336d00db852889f75767584f41968352f01e527",
+   "changedFiles": [
+    "runtime/core/cra-remediation-engine.test.ts",
+    "runtime/core/cra-remediation-engine.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 633,
+   "mergeCommit": "e1c388977110d5348bfeb9934c802b229b259974",
+   "changedFiles": [
+    "runtime/core/document-intelligence.test.ts",
+    "runtime/core/document-intelligence.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 634,
+   "mergeCommit": "e49f9b463876ed306989470dddee730ed651fa7c",
+   "changedFiles": [
+    "runtime/core/data-connector.test.ts",
+    "runtime/core/data-connector.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 635,
+   "mergeCommit": "3ca145b1d24a7b6717c7f631996b21be327c36ef",
+   "changedFiles": [
+    "runtime/core/accessibility-check.test.ts",
+    "runtime/core/accessibility-check.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 636,
+   "mergeCommit": "4988c34761f5edfe1e88b6972a4c65ae289cd519",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-radar-gate-chain.test.ts",
+    "runtime/core/odg-radar-gate-chain.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 637,
+   "mergeCommit": "31a523727e1ca161b5409d64da218112a4ce23b2",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-capability-matrix.test.ts",
+    "runtime/core/odg-btp-capability-matrix.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 638,
+   "mergeCommit": "6a275f1ca8c4db5e70f081184b3802a18d77961b",
+   "changedFiles": [
+    "ODG_BTP_WORLD_CLASS_V12_4_ROADMAP.md",
+    "runtime/core/odg-btp-capability-matrix.test.ts",
+    "runtime/core/odg-btp-capability-matrix.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 639,
+   "mergeCommit": "ffa3dc9fd30c4be1f7affefb079e8ea3955b1927",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-benchmark-corroboration.test.ts",
+    "runtime/core/odg-benchmark-corroboration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 640,
+   "mergeCommit": "81090eac00f61e752c5f4824988bd33f532b15df",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-v251-repair-reconciliation.test.ts",
+    "runtime/core/odg-v251-repair-reconciliation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 641,
+   "mergeCommit": "09ae2a7c240a47965c04c4f2944ac30e517a067b",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-devis-engine.test.ts",
+    "runtime/core/odg-btp-devis-engine.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 642,
+   "mergeCommit": "43b8748e68967d8c2ea29edb144005074faa4f58",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-integration-blocker.test.ts",
+    "runtime/core/odg-btp-integration-blocker.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 643,
+   "mergeCommit": "b987388a34e0553973c336a822bc02f83350d7f6",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-metre-engine.test.ts",
+    "runtime/core/odg-btp-metre-engine.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 644,
+   "mergeCommit": "c32b9a732c1de886b996d6e7ad0696fc9f671a7f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-vision-voice-pipeline.test.ts",
+    "runtime/core/odg-btp-vision-voice-pipeline.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 645,
+   "mergeCommit": "088b3c8f1395ad3528cbd5816a88ba39c0f9ab85",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-normative-registry.test.ts",
+    "runtime/core/odg-btp-normative-registry.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 646,
+   "mergeCommit": "d03057fde4c9d3a14b20f912694f3e0f5ef1ba34",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-communication-capability-matrix.test.ts",
+    "runtime/core/odg-btp-communication-capability-matrix.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 647,
+   "mergeCommit": "8ba7c3f7116481ffd3b18614ef328d1e74c38bf1",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-project-workflow.test.ts",
+    "runtime/core/odg-btp-project-workflow.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 648,
+   "mergeCommit": "e7fdc4539086fc919b26d66f17442a0617f04901",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-billing-engine.test.ts",
+    "runtime/core/odg-btp-billing-engine.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 649,
+   "mergeCommit": "96a09b2906ea702cb98b33500ec58a34b11b1cd2",
+   "changedFiles": [
+    "ODG_BTP_INTERNATIONAL_GROWTH_ROADMAP_V2.md",
+    "package.json",
+    "runtime/core/odg-btp-growth-roadmap-reconciliation.test.ts",
+    "runtime/core/odg-btp-growth-roadmap-reconciliation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 650,
+   "mergeCommit": "e02e0b811584093cac630f4d7695a47694052b69",
+   "changedFiles": [
+    "ODG_BTP_AUTONOMOUS_COMPANY_MANAGEMENT_ROADMAP_V1.md",
+    "package.json",
+    "runtime/core/odg-btp-company-management-coverage.test.ts",
+    "runtime/core/odg-btp-company-management-coverage.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 651,
+   "mergeCommit": "753323c05a73f28b1f27b64056724fe52f50ee32",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-executive-dashboard.test.ts",
+    "runtime/core/odg-executive-dashboard.ts",
+    "runtime/core/odg-executive-decision-engine.test.ts",
+    "runtime/core/odg-executive-decision-engine.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 652,
+   "mergeCommit": "eeb34197afa6323395459e077a82c97921703b10",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-country-ranking.test.ts",
+    "runtime/core/odg-country-ranking.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 653,
+   "mergeCommit": "e1fb52a51721d4de2f2d5f4c7fcdc67ed2849559",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-lifecycle-integration.test.ts",
+    "runtime/core/odg-btp-lifecycle-integration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 654,
+   "mergeCommit": "53a1dedb1589349f05473bee07f60cd723ea8955",
+   "changedFiles": [
+    "docs/odg/v124-consolidated-roadmap.json",
+    "runtime/core/odg-btp-company-management-coverage.test.ts",
+    "runtime/core/odg-btp-growth-roadmap-reconciliation.test.ts",
+    "runtime/core/odg-btp-integration-blocker.test.ts",
+    "runtime/core/odg-btp-integration-blocker.ts",
+    "runtime/core/odg-v124-consolidation.test.ts",
+    "runtime/core/odg-v124-consolidation.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 655,
+   "mergeCommit": "3fc5ca5c68150ae8c3b79047645de2245d03956c",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-market-entry-decision.test.ts",
+    "runtime/core/odg-market-entry-decision.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 656,
+   "mergeCommit": "7ae5ffdb3f0cbece15ac8a6d0bcf85df170fafc3",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-executive-surface.test.ts",
+    "runtime/core/odg-executive-surface.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 657,
+   "mergeCommit": "ff9c6186f898250a0815e872b289c15034473466",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-campaign-throughput-diagnostic.test.ts",
+    "runtime/core/odg-campaign-throughput-diagnostic.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 658,
+   "mergeCommit": "c6fa92df433546780119a789bf0882da8b8204b9",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-executive-assistants.test.ts",
+    "runtime/core/odg-executive-assistants.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 659,
+   "mergeCommit": "7f8ae26b69fa1f4529eb4752db8d5727b7cd67e3",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-operational-assistants.test.ts",
+    "runtime/core/odg-operational-assistants.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 660,
+   "mergeCommit": "1fe4e5d5a0b7fa4c94831211eec04ec2bb6cf523",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-competitor-intelligence.test.ts",
+    "runtime/core/odg-btp-competitor-intelligence.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 661,
+   "mergeCommit": "ecf2a122b2f04f1d22d1e0deaf9f943199967d00",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-admin-fleet-assistants.test.ts",
+    "runtime/core/odg-admin-fleet-assistants.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 662,
+   "mergeCommit": "630eb23a83b8d57a1b2ee903f3fd2100f0e2c14f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-commercial-assistants.test.ts",
+    "runtime/core/odg-commercial-assistants.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 663,
+   "mergeCommit": "45ecdc06a786d0d2b0566c82d2281b059b5b0592",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-governance-quality-assistants.test.ts",
+    "runtime/core/odg-governance-quality-assistants.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 664,
+   "mergeCommit": "a231c420bef555aa05be25153e3b32fcb6d9c0ce",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-intelligence-economic-assistants.test.ts",
+    "runtime/core/odg-intelligence-economic-assistants.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 665,
+   "mergeCommit": "072fbb2c4cd3bedfeb5d29f1c82a87d90786b738",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-connectors-ux-assistants.test.ts",
+    "runtime/core/odg-connectors-ux-assistants.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 666,
+   "mergeCommit": "e50d37aca46c7a26f1d5071295e52892388c566a",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-p4-engine-qualification.test.ts",
+    "runtime/core/odg-p4-engine-qualification.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 668,
+   "mergeCommit": "1a5fabfaab3ac2504680baf77043cd8d9f47f33c",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-native-autonomy-demonstration.test.ts",
+    "runtime/core/odg-native-autonomy-demonstration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 669,
+   "mergeCommit": "184b5f112a7d99f788cb19530490f865cc38bccc",
+   "changedFiles": [
+    "runtime/core/ollama-provider.test.ts",
+    "runtime/core/ollama-provider.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 670,
+   "mergeCommit": "6fd0e54b77d78b7919f4e21978fcd68eb7b1392d",
+   "changedFiles": [
+    "runtime/core/odg-native-engineering.test.ts",
+    "runtime/core/odg-native-engineering.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 671,
+   "mergeCommit": "96dd0cd1dcde23c8388265b5727f4580c0b42392",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/mission-decomposer.test.ts",
+    "runtime/core/mission-priority-selector.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 672,
+   "mergeCommit": "5a58f75857a4166e48cbc28e95318675de21b9dc",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-capability-reuse-path.test.ts",
+    "runtime/core/odg-capability-reuse-path.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 673,
+   "mergeCommit": "8b04c099cd2ab7e829bc9c6b50d5f1b27f81093d",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/patch-engine.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 674,
+   "mergeCommit": "454ef1e13ba895f25e4ba6743ae2964412134651",
+   "changedFiles": [
+    "runtime/core/recovery-drill-benchmark.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 675,
+   "mergeCommit": "463c26d6a84366e6ef69b0b9572b077cc1603180",
+   "changedFiles": [
+    "package.json",
+    "src/runtime/vnext-resource-allocation-engine.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 676,
+   "mergeCommit": "f08588a18683ef72182bdca5ed4facfd01776738",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/decision-engine-capability-reuse.integration.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 677,
+   "mergeCommit": "250aa025f3f0bcb02906b426cd2e9b3936b2bb58",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-deployment-qualification.test.ts",
+    "runtime/core/odg-deployment-qualification.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 678,
+   "mergeCommit": "f48bd897118af729c9f294b40ed821dbb8cba59f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-artifact-identity.test.ts",
+    "runtime/core/odg-artifact-identity.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 679,
+   "mergeCommit": "b0629b93190c6e4af5e899150bf7644813fe10a4",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-backup-restore-verification.test.ts",
+    "runtime/core/odg-backup-restore-verification.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 680,
+   "mergeCommit": "91f573c9b58623a66f05e8d23d20bb797c01eec3",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-perf-fault-harness.test.ts",
+    "runtime/core/odg-perf-fault-harness.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 681,
+   "mergeCommit": "ef0aed0aa86a39778827e445d365665d29689458",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-deployable-package.test.ts",
+    "runtime/core/odg-deployable-package.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 682,
+   "mergeCommit": "1bb9d225d94b9ab5392de8b635b4a06021bcec6f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-vps-validation-preflight.test.ts",
+    "runtime/core/odg-vps-validation-preflight.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 683,
+   "mergeCommit": "eb1760c43f0a1920f5beb7827af8f4643a4556f1",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-c6-certification-ingest.test.ts",
+    "runtime/core/odg-c6-certification-ingest.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 684,
+   "mergeCommit": "f744d3f8810c1d0b28acbffb3c6aa931584b4c2d",
+   "changedFiles": [
+    "scripts/odg-ollama-relay.py",
+    "scripts/odg-ollama-relay.test.py"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 685,
+   "mergeCommit": "fc66ef43c07a1ac4b3ff9089abc92c2bfa1fca44",
+   "changedFiles": [
+    "docs/odg/supply-chain-authorized-deltas.json",
+    "package-lock.json",
+    "package.json",
+    "runtime/bin/v97-forensic-release-selection.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 686,
+   "mergeCommit": "dd96cec81f7073a5d7e95f90ecfb0e2baf72dc26",
+   "changedFiles": [
+    "scripts/odg-ollama-relay.py",
+    "scripts/odg-ollama-relay.test.py"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 687,
+   "mergeCommit": "035dc67a29192a710f2fdec181776385307d8e12",
+   "changedFiles": [
+    "docs/odg/c6-certification-evidence.json",
+    "runtime/core/odg-production-gate-matrix.test.ts",
+    "runtime/core/odg-production-gate-matrix.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 688,
+   "mergeCommit": "bb9e392878201e77dce0f57a20616338778a55c2",
+   "changedFiles": [
+    "runtime/core/odg-production-gate-matrix.test.ts",
+    "runtime/core/odg-production-gate-matrix.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 689,
+   "mergeCommit": "2c58f72250fc08fe15d1c4c27f353a6faefcd998",
+   "changedFiles": [
+    "docs/odg/deploy/DASHBOARD_EXPOSURE_PREP_AUDIT.md",
+    "docs/odg/deploy/RELEASE_16.4.6_DOSSIER.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 690,
+   "mergeCommit": "30dcb8d240265cb8665de90cff1c0d29439808fa",
+   "changedFiles": [
+    "docs/odg/autonomy/V317_E2E_AUTONOMY_EVIDENCE.json",
+    "docs/odg/autonomy/V317_E2E_AUTONOMY_MISSION.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 691,
+   "mergeCommit": "7c0c2420f0feedf8dc8dda0218d25ce8e71bc931",
+   "changedFiles": [
+    "docs/odg/autonomy/V318_NOVEL_SYNTHESIS_EVIDENCE.json",
+    "docs/odg/autonomy/V318_NOVEL_SYNTHESIS_MISSION.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 692,
+   "mergeCommit": "00f7dc51cb443ed1fadaff2247c898dc8945e854",
+   "changedFiles": [
+    "docs/odg/V319_PROGRAM_V124_CROSSWALK.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 693,
+   "mergeCommit": "eef446c91eab696977d4e6b97731c6654e0e1e64",
+   "changedFiles": [
+    "docs/odg/autonomy/V319_HARDER_AUTONOMY_EVIDENCE.json",
+    "docs/odg/autonomy/V319_HARDER_AUTONOMY_MISSION.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 694,
+   "mergeCommit": "6b965e088281280c8411dfa5237e13b69a8c0ce3",
+   "changedFiles": [
+    "docs/odg/autonomy/V319B_CORPUS_TAXONOMY.md",
+    "docs/odg/autonomy/V319B_CORPUS_TAXONOMY_EVIDENCE.json",
+    "docs/odg/autonomy/V319B_DRIVER.js"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 695,
+   "mergeCommit": "a7edfdb4e7d26c02b7340dd5274eb85e408f42f1",
+   "changedFiles": [
+    "docs/odg/radar/V319_RADAR_EXTERNAL_CAMPAIGN.md",
+    "docs/odg/radar/V319_RADAR_EXTERNAL_CAMPAIGN_EVIDENCE.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 696,
+   "mergeCommit": "e225a20a264cd93565c051429fa9e86a78acaa9b",
+   "changedFiles": [
+    "docs/odg/security/V319_OWASP_AGENTIC_2026_REVIEW.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 697,
+   "mergeCommit": "67330b5b4c652199fea2af27d96eb4cbee2b05ba",
+   "changedFiles": [
+    "docs/odg/metiers/V319_M2_BTP_REFERENCE_PROJECT.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 698,
+   "mergeCommit": "a67fe5fe91ed3851a4a292f53f14fa4e2db5bf66",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-client-intake.test.ts",
+    "runtime/core/odg-btp-client-intake.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 699,
+   "mergeCommit": "a6f4b7caf3a2784a90787ac66e7f7718493a29bc",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-quote-revision.test.ts",
+    "runtime/core/odg-btp-quote-revision.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 700,
+   "mergeCommit": "484791db928ffe9bc52d6c33e8870762ea54e0e6",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-invoice-schedule.test.ts",
+    "runtime/core/odg-btp-invoice-schedule.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 701,
+   "mergeCommit": "8950197a40592870a8df91035bb8f9a0eb078e07",
+   "changedFiles": [
+    "docs/odg/program/V319_ADDENDUM_RECONCILIATION.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 702,
+   "mergeCommit": "1998064a3dc3cadabd696117c7c9e3428d9c9315",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-marketing-science.test.ts",
+    "runtime/core/odg-marketing-science.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 703,
+   "mergeCommit": "6e4c3a0c3acc3f7cdeb3f8fb5d39b7ebf253a812",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-brand-profile.test.ts",
+    "runtime/core/odg-brand-profile.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 704,
+   "mergeCommit": "ada02fc43c965824fc9b299874ca8112b6b0f5e7",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-content-asset.test.ts",
+    "runtime/core/odg-content-asset.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 705,
+   "mergeCommit": "ddd2f0cc62b82a038b89cad5d7cb1835172cee96",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-partner-attribution.test.ts",
+    "runtime/core/odg-partner-attribution.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 706,
+   "mergeCommit": "f3bf96958f17c23e982369b57332a41e6f99e84f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-model-router.test.ts",
+    "runtime/core/odg-model-router.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 707,
+   "mergeCommit": "852bea134db5e550d5664862b794cfb79a19c090",
+   "changedFiles": [
+    "docs/odg/autonomy/V320_MULTIMODULE_ROUTED_EVIDENCE.json",
+    "docs/odg/autonomy/V320_MULTIMODULE_ROUTED_MISSION.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 708,
+   "mergeCommit": "2612d95ceb83899d1fef63dc7b5b8b069f83145f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-autonomy-ladder-scorecard.test.ts",
+    "runtime/core/odg-autonomy-ladder-scorecard.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 709,
+   "mergeCommit": "5f7ec23b161c5404785d31ac81f356b671cdebeb",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-supplier-commitment.test.ts",
+    "runtime/core/odg-btp-supplier-commitment.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 710,
+   "mergeCommit": "2baaf63f228684949f60a9589b634f966af21788",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-price-reference.test.ts",
+    "runtime/core/odg-btp-price-reference.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 711,
+   "mergeCommit": "7f459181f0400a7e8ccd12166df240fa23dfacd1",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-chantier-schedule.test.ts",
+    "runtime/core/odg-btp-chantier-schedule.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 712,
+   "mergeCommit": "e4dddd89c401dcf5f94715a603ada1e5a5ec8a61",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-schedule-plan.test.ts",
+    "runtime/core/odg-btp-schedule-plan.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 713,
+   "mergeCommit": "f822ce76a0cedf51b1cfdadb563790ddb55d95fc",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-crm-followup.test.ts",
+    "runtime/core/odg-crm-followup.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 714,
+   "mergeCommit": "63001884a9b6c061b8a119154fa77be1ed44ee51",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-crm-segmentation.test.ts",
+    "runtime/core/odg-crm-segmentation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 715,
+   "mergeCommit": "a2533db6e39f0c12d4dcad25deec681864233054",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-crm-account-view.test.ts",
+    "runtime/core/odg-crm-account-view.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 716,
+   "mergeCommit": "9a7196a86c6b92bcad3600e955c0ce4e99afad28",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cvss-score.test.ts",
+    "runtime/core/odg-cvss-score.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 717,
+   "mergeCommit": "5b872fd128da65fc0c46541e9955001420055708",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-inter-rater-agreement.test.ts",
+    "runtime/core/odg-inter-rater-agreement.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 718,
+   "mergeCommit": "2e52550c5daa6f8c5f72b2b5f2d5dd632d45b6d8",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-concentration-index.test.ts",
+    "runtime/core/odg-concentration-index.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 719,
+   "mergeCommit": "49acca8b0c6901edfadf204bfe01bd11cdf33b2e",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-ks-test.test.ts",
+    "runtime/core/odg-ks-test.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "DEV"
+  },
+  {
+   "number": 720,
+   "mergeCommit": "ddd25f0f70f6d509e3746cb191bd5bb407f4bcc2",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-passk-estimator.test.ts",
+    "runtime/core/odg-passk-estimator.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 721,
+   "mergeCommit": "f90c3f936ccf83187e6d18f3f4ed93d34901498c",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-rank-correlation.test.ts",
+    "runtime/core/odg-rank-correlation.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 722,
+   "mergeCommit": "05c728e00b14c38f70f33c464bd0e53e9ba4b115",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-binary-classification-metrics.test.ts",
+    "runtime/core/odg-binary-classification-metrics.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 723,
+   "mergeCommit": "9e8928e1893a1fa22a687a153082caff460ca2ec",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-evaluator-agreement-scorecard.test.ts",
+    "runtime/core/odg-evaluator-agreement-scorecard.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 724,
+   "mergeCommit": "110cb4c815eec0e2b8d70d364143060c9b7319ca",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-data-drift-view.test.ts",
+    "runtime/core/odg-data-drift-view.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 725,
+   "mergeCommit": "256394bdf4e59fd643a14e791a2478dcd28a1cb4",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-portfolio-concentration-view.test.ts",
+    "runtime/core/odg-portfolio-concentration-view.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 726,
+   "mergeCommit": "772f4c69ccac33c5a5679b00176251ed01da06bc",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-bland-altman.test.ts",
+    "runtime/core/odg-bland-altman.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 727,
+   "mergeCommit": "26dab3cff2eb3112c19e11dd44841596a830d7d0",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-multiple-testing-correction.test.ts",
+    "runtime/core/odg-multiple-testing-correction.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 728,
+   "mergeCommit": "d1af3b800d212a610b3ab3a3283674462d7a80df",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-eval-statistics-index.test.ts",
+    "runtime/core/odg-eval-statistics-index.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 729,
+   "mergeCommit": "6ff40525d225319f48aeb99d79988f721ed2cb32",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-interval-scheduling.test.ts",
+    "runtime/core/odg-interval-scheduling.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 730,
+   "mergeCommit": "f822d76ef0bac226974353b9f2b16cbdb2245e3f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-interval-optimization.test.ts",
+    "runtime/core/odg-interval-optimization.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 731,
+   "mergeCommit": "4c85baf0c2c738d615fb3ebf9ed279eff589e427",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-fr-identifier-validation.test.ts",
+    "runtime/core/odg-fr-identifier-validation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 732,
+   "mergeCommit": "cc4ce19d972da05dd74379006853fcb5279544ff",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-fr-vat.test.ts",
+    "runtime/core/odg-fr-vat.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 733,
+   "mergeCommit": "15ccb4c93937fb1ed8fbdb4f2bf0cc58e1d658af",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-fr-payment-terms.test.ts",
+    "runtime/core/odg-fr-payment-terms.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 734,
+   "mergeCommit": "cf7ff58e7050e4bac52641907065426103927f37",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-fr-invoice-compliance.test.ts",
+    "runtime/core/odg-fr-invoice-compliance.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 735,
+   "mergeCommit": "873548041107d1da440190d3315cc305c6cec432",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-gregorian-calendar.test.ts",
+    "runtime/core/odg-gregorian-calendar.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 736,
+   "mergeCommit": "c95b04e0a615dc24a8d6f49034a22868bc0d073b",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-fr-due-date.test.ts",
+    "runtime/core/odg-fr-due-date.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 737,
+   "mergeCommit": "045828bbab2606284e2f520bf64947bbf661e702",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-apportion.test.ts",
+    "runtime/core/odg-apportion.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 738,
+   "mergeCommit": "e37ecffd0a3321d2d8a6023dad27263d0429fb21",
+   "changedFiles": [
+    "src/app/[lang]/estimate/page.tsx",
+    "src/app/[lang]/layout.tsx",
+    "src/lib/estimate-i18n.ts",
+    "tsconfig.runtime-dist.json"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 739,
+   "mergeCommit": "40c3bec1fd4d5a211353569d9b2d0cf03a458334",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-writeset-contention.test.ts",
+    "runtime/core/odg-writeset-contention.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 740,
+   "mergeCommit": "5f4a10c8060af4dac98df36ad739b2e42c2ad8d0",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-calibrated-psuccess.test.ts",
+    "runtime/core/odg-calibrated-psuccess.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 741,
+   "mergeCommit": "60e42fe38c7cafc4a2c4752b9c48003b37f9f0e7",
+   "changedFiles": [
+    "runtime/core/continuous-planner.test.ts",
+    "runtime/core/continuous-planner.ts",
+    "runtime/core/odg-calibrated-psuccess.test.ts",
+    "runtime/core/odg-calibrated-psuccess.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 742,
+   "mergeCommit": "1a74a64ef27416649285dbde4880b36c43cd790f",
+   "changedFiles": [
+    "runtime/core/odg-mission-orchestrator.test.ts",
+    "runtime/core/odg-mission-orchestrator.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 743,
+   "mergeCommit": "cd892723f1ac78166641a7150a21088c67544fb7",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-reuse-validity-gate.test.ts",
+    "runtime/core/odg-reuse-validity-gate.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 744,
+   "mergeCommit": "226a7b3d7f4ac8213a6b5dad2b505320158bf561",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-autonomy-maturity-trichotomy.test.ts",
+    "runtime/core/odg-autonomy-maturity-trichotomy.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 745,
+   "mergeCommit": "633fbfcf4fcc9a0bae01174248dadf0d74891abe",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-hypothesis-adjudicator.test.ts",
+    "runtime/core/odg-hypothesis-adjudicator.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 746,
+   "mergeCommit": "099a6d0c2f128f4c4ddd3a8db9df9ff07356e0ed",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-autonomy-maturity-report.test.ts",
+    "runtime/core/odg-autonomy-maturity-report.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 747,
+   "mergeCommit": "a4d92c7be7913d72d4960a614b6921be24803694",
+   "changedFiles": [
+    "runtime/core/patch-memory.test.ts",
+    "runtime/core/patch-memory.ts",
+    "tsconfig.runtime-dist.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 748,
+   "mergeCommit": "277f6eeb34eba851844bb62daa4d44a9e96f14a6",
+   "changedFiles": [
+    "runtime/core/decision-precedent.test.ts",
+    "runtime/core/decision-precedent.ts",
+    "runtime/core/odg-reuse-validity-gate.test.ts",
+    "runtime/core/odg-reuse-validity-gate.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 749,
+   "mergeCommit": "f396ef7e158100b218cf5962f1863d17a1fa78bd",
+   "changedFiles": [
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 750,
+   "mergeCommit": "4229c9b1be049d426e580bcf801d9e9c8ea317da",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cycle-hypothesis-verdict.test.ts",
+    "runtime/core/odg-cycle-hypothesis-verdict.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 751,
+   "mergeCommit": "3ec4974ed76078438e60c9fc7225a826d13ab664",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-marketing-cycle-latency.test.ts",
+    "runtime/core/odg-marketing-cycle-latency.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 752,
+   "mergeCommit": "d923934c8906e7debb18b650e4d41bb7f8eae406",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-retenue-garantie.test.ts",
+    "runtime/core/odg-btp-retenue-garantie.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 753,
+   "mergeCommit": "e5fc1a894a5d9f67acd19f431aec0120ff5fa554",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-btp-revision-prix.test.ts",
+    "runtime/core/odg-btp-revision-prix.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 754,
+   "mergeCommit": "821ae0879ea823549a05565ccba6e7daa3dca50a",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-amortissement.test.ts",
+    "runtime/core/odg-amortissement.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 755,
+   "mergeCommit": "b7a6bb99fbd90ed15a8a4bc4ed4735550438a1fe",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-orchestration-plan.test.ts",
+    "runtime/core/odg-orchestration-plan.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 756,
+   "mergeCommit": "6292446a1bf711ea17e4629dc77c77ba0d7327a6",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-native-engineering-plan.test.ts",
+    "runtime/core/odg-native-engineering-plan.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 757,
+   "mergeCommit": "2c344a7bfc9d6ec925aa0ec7deb675c49f1a8f5c",
+   "changedFiles": [
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-mission-orchestrator.test.ts",
+    "runtime/core/odg-mission-orchestrator.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 758,
+   "mergeCommit": "e6315ae0693d469616acbe3c35c7d0db38df7d74",
+   "changedFiles": [
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 759,
+   "mergeCommit": "57fbd5d695ca4fe1ecf14228fd8f57d2c573c07b",
+   "changedFiles": [
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 760,
+   "mergeCommit": "5471ceaefd60d26eedc1c09320c3d2aa03f11786",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-capability-maturity.test.ts",
+    "runtime/core/odg-capability-maturity.ts",
+    "runtime/core/odg-cto-dashboard.test.ts",
+    "runtime/core/odg-cto-dashboard.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 761,
+   "mergeCommit": "3265fc5eabb9728b7401afc3348155d8be383637",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-native-execution-provenance.test.ts",
+    "runtime/core/odg-native-execution-provenance.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 762,
+   "mergeCommit": "4827c9e5bd23f6a1fcf2c1c64657ee44b52613a2",
+   "changedFiles": [
+    "docs/odg/native-execution-provenance.json",
+    "runtime/bin/odg-native-execution-provenance-run.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 763,
+   "mergeCommit": "e7c667e4f34bbf07b75f47139985bd0fcbabf68e",
+   "changedFiles": [
+    "docs/odg/reuse-freshness.json",
+    "package.json",
+    "runtime/bin/odg-reuse-freshness-check.ts",
+    "runtime/core/odg-git-change-signal.test.ts",
+    "runtime/core/odg-git-change-signal.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 764,
+   "mergeCommit": "4a213ca53fd1f28a3a8c2091ec7c055ba9232c43",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-native-mission-continuation.test.ts",
+    "runtime/core/odg-native-mission-continuation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 765,
+   "mergeCommit": "de97dd760d6c20fda0725ea549780d7e46142980",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-hypothesis-driven-mission.test.ts",
+    "runtime/core/odg-hypothesis-driven-mission.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 766,
+   "mergeCommit": "8c5c5d515d4ba55d1557209c230d1aab26f79de6",
+   "changedFiles": [
+    "runtime/bin/odg-native-continuity-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 767,
+   "mergeCommit": "87d3f208ce6de0e6cb5c43204d761b8d000f3efd",
+   "changedFiles": [
+    "docs/odg/autonomy/ODG_NATIVE_PROVENANCE_SUM_REPAIR_20261120.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 768,
+   "mergeCommit": "66dacf85db6470ecd8b8d094520f5b669fb5f1e9",
+   "changedFiles": [
+    "runtime/bin/odg-native-continuity-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 769,
+   "mergeCommit": "25865a60d6fda111b7d2ead25d3dd94d5266dd92",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-local-model-outcome-calibration.test.ts",
+    "runtime/core/odg-local-model-outcome-calibration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 770,
+   "mergeCommit": "30616131723a51a25c0fa3f8ae0518b00ad1e8d8",
+   "changedFiles": [
+    "docs/odg/autonomy/ODG_LOCAL_MODEL_CALIBRATION_2026-11-20.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 771,
+   "mergeCommit": "653f0adb9787e2a8d8b5180e643f203aec3aa88c",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-execution-routing.test.ts",
+    "runtime/core/odg-execution-routing.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 772,
+   "mergeCommit": "d0a9b6f6ea1a08d9f117e2051efc2d34c0a3438e",
+   "changedFiles": [
+    "docs/odg/autonomy/ODG_LOCAL_MODEL_MODEL_CHOICE_2026-11-20.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 773,
+   "mergeCommit": "a927114bde88570d7ae145f7a9990c183254f00d",
+   "changedFiles": [
+    "docs/odg/autonomy/ODG_LOCAL_MODEL_REPAIR_DEPTH_2026-11-20.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 774,
+   "mergeCommit": "f001305e257a90380b8dd7ca964aec37bcf90f7f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-local-model-execution-policy.test.ts",
+    "runtime/core/odg-local-model-execution-policy.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 775,
+   "mergeCommit": "b6ccd46f3264d68106ec724c24f5f21b3e758b62",
+   "changedFiles": [
+    "docs/odg/autonomy/ODG_DECOMPOSED_EXECUTION_2026-11-20.json",
+    "package.json",
+    "runtime/core/odg-decomposed-execution.test.ts",
+    "runtime/core/odg-decomposed-execution.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 776,
+   "mergeCommit": "0efe813ba97ee11a4d663fc4e0aab9f56c40b659",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-policy-build-seam.test.ts",
+    "runtime/core/odg-policy-build-seam.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 777,
+   "mergeCommit": "52de6905d89b5629f36bd2e7d81e80b01456037c",
+   "changedFiles": [
+    "docs/odg/autonomy/ODG_ADAPTIVE_RESOURCE_CAPSTONE_2026-11-20.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 778,
+   "mergeCommit": "4d83f9c90150347764be7eedb0f01dff0d68d974",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-native-escalation.test.ts",
+    "runtime/core/odg-native-escalation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 779,
+   "mergeCommit": "32a2efaa3f30a1db5e3e0efd2937d382f6d2cca0",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-repair-feedback.test.ts",
+    "runtime/core/odg-repair-feedback.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 780,
+   "mergeCommit": "6c321b449e4a701da04add6b9de794f8ee20e8fb",
+   "changedFiles": [
+    "runtime/core/native-project-builder.test.ts",
+    "runtime/core/native-project-builder.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 781,
+   "mergeCommit": "dff6e3f81f23ed84f19b9a39bda0dd32bd0358f6",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-bounded-exec.test.ts",
+    "runtime/core/odg-bounded-exec.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 782,
+   "mergeCommit": "3dc643b8d428c840a0d82e20b257c3b40509c6b0",
+   "changedFiles": [
+    "docs/odg/autonomy/ODG_EXECUTION_FEEDBACK_AB_2026-11-20.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 783,
+   "mergeCommit": "c8be8036d64c84140dff2ee11527027304a54779",
+   "changedFiles": [
+    "runtime/core/odg-bounded-exec.test.ts",
+    "runtime/core/odg-bounded-exec.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 784,
+   "mergeCommit": "541f142bcfcea76e25d1fddb2d7d681fc8117656",
+   "changedFiles": [
+    "docs/odg/autonomy/ODG_LAST_FRONTIER_TOPO_2026-11-20.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 785,
+   "mergeCommit": "0aed4d84b8bc6d0419593d785c52f8e7fb1fab21",
+   "changedFiles": [
+    "docs/odg/autonomy/ODG_AUTONOMY_GATE_VALIDATION_2026-11-20.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 786,
+   "mergeCommit": "483007e8bd99ffbfd90e210773331eb43acef95f",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-metier-transversal-readiness.test.ts",
+    "runtime/core/odg-metier-transversal-readiness.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 787,
+   "mergeCommit": "1fcd47828142e25662c93a047a2d2db2c7c835bf",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-metier-configuration.test.ts",
+    "runtime/core/odg-metier-configuration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 788,
+   "mergeCommit": "e617b6b217c50c4523b116e61d7b0cdc18788631",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-intelligent-native-cycle.test.ts",
+    "runtime/core/odg-intelligent-native-cycle.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 789,
+   "mergeCommit": "c1b812a3fa0468bf575ed3dda816e2c7839f678b",
+   "changedFiles": [
+    "runtime/bin/odg-intelligent-native-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 790,
+   "mergeCommit": "fa4ed0283069a9c3b53fb6807ddf29c86a3f9cc0",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-belief-refresh.test.ts",
+    "runtime/core/odg-belief-refresh.ts",
+    "runtime/core/odg-native-escalation.test.ts",
+    "runtime/core/odg-native-escalation.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 791,
+   "mergeCommit": "15c237a5db8b5006f2bd2ade8c8d71d531d66d3d",
+   "changedFiles": [
+    "runtime/core/odg-belief-refresh.test.ts",
+    "runtime/core/odg-belief-refresh.ts",
+    "runtime/core/odg-local-model-outcome-calibration.test.ts",
+    "runtime/core/odg-local-model-outcome-calibration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 792,
+   "mergeCommit": "a0cd30b49a23e6f75b03f7217020e2cb9f1cc10f",
+   "changedFiles": [
+    "runtime/core/native-project-builder.test.ts",
+    "runtime/core/native-project-builder.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 793,
+   "mergeCommit": "7ebc64b8d7524e0245e24da3ef707d7030246e65",
+   "changedFiles": [
+    "runtime/bin/odg-hypothesis-mission-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 794,
+   "mergeCommit": "6319a223de87b39d818684f23a4a016da9940325",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-native-outcome-calibration.test.ts",
+    "runtime/core/odg-native-outcome-calibration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 795,
+   "mergeCommit": "65e91a030b0a021dc5e463b85d3958cabddb8a45",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-calibration-key.test.ts",
+    "runtime/core/odg-calibration-key.ts",
+    "runtime/core/odg-intelligent-native-cycle.test.ts",
+    "runtime/core/odg-intelligent-native-cycle.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 796,
+   "mergeCommit": "246a218bf88ba126351b047d1b21054ff1a163dc",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-behavioral-improvement.test.ts",
+    "runtime/core/odg-behavioral-improvement.ts",
+    "runtime/core/odg-intelligent-native-cycle.test.ts",
+    "runtime/core/odg-intelligent-native-cycle.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 797,
+   "mergeCommit": "9fb4590ca491fc26212be3f678610555efa61558",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-generalization-validity.test.ts",
+    "runtime/core/odg-generalization-validity.ts",
+    "runtime/core/odg-intelligent-native-cycle.test.ts",
+    "runtime/core/odg-intelligent-native-cycle.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 798,
+   "mergeCommit": "0c20babb376a7dd016a47428738fc0f7824f19a7",
+   "changedFiles": [
+    "docs/odg/RECONCILIATION_V321_V327_2026-11-20.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 799,
+   "mergeCommit": "09d198faf823565bb3bc74dfba028506f85f027c",
+   "changedFiles": [
+    "runtime/core/odg-calibration-key.ts",
+    "runtime/core/odg-native-outcome-calibration.test.ts",
+    "runtime/core/odg-native-outcome-calibration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 800,
+   "mergeCommit": "1e668fce443d8f789457c081e9a83b9b5e0e5a5a",
+   "changedFiles": [
+    "runtime/core/parallel-execution-planner.test.ts",
+    "runtime/core/parallel-execution-planner.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 801,
+   "mergeCommit": "724fae9fa37c1026247a4191c73da0523f5d360c",
+   "changedFiles": [
+    "runtime/core/campaign-engine.ts",
+    "runtime/core/change-impact-graph.test.ts",
+    "runtime/core/change-impact-graph.ts",
+    "runtime/core/incremental-assurance.ts",
+    "runtime/core/persistent-impact-graph.test.ts",
+    "runtime/core/persistent-impact-graph.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 802,
+   "mergeCommit": "4d6c138d5f8fa0f065ff3dec961a26439fd73db1",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-intelligent-native-cycle.test.ts",
+    "runtime/core/odg-intelligent-native-cycle.ts",
+    "runtime/core/odg-mission-completeness.test.ts",
+    "runtime/core/odg-mission-completeness.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 803,
+   "mergeCommit": "becc5fd05c182f9d0ade53c4fa10ee399e739e36",
+   "changedFiles": [
+    "runtime/bin/odg-reuse-demonstrations-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 804,
+   "mergeCommit": "1ded93e1ef801e5ffee26a6cc2cdfd46dce53dc3",
+   "changedFiles": [
+    "docs/odg/REGISTRY_V321_V328_FINAL_2026-11-20.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 805,
+   "mergeCommit": "34a43eec921399443dd31860ccc97c0c7f1cef09",
+   "changedFiles": [
+    "runtime/core/odg-btp-lifecycle-integration.test.ts",
+    "runtime/core/odg-btp-lifecycle-integration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 806,
+   "mergeCommit": "901902b6d49e6f9902d5e3429630eb29e5b3e6dc",
+   "changedFiles": [
+    "runtime/core/odg-btp-lifecycle-integration.test.ts",
+    "runtime/core/odg-btp-lifecycle-integration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 807,
+   "mergeCommit": "c2f17d4ab6a547ce8ed8d185ad238a0b36b67bfd",
+   "changedFiles": [
+    "runtime/core/odg-btp-lifecycle-integration.test.ts",
+    "runtime/core/odg-btp-lifecycle-integration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 808,
+   "mergeCommit": "a2538d77d7b27133d3c5e40d1e62493589e72043",
+   "changedFiles": [
+    "runtime/core/odg-btp-capability-matrix.test.ts",
+    "runtime/core/odg-btp-capability-matrix.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 809,
+   "mergeCommit": "4272dfe400be45ab050feaec0ab219858710cdc4",
+   "changedFiles": [
+    "runtime/bin/odg-btp-journey-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 810,
+   "mergeCommit": "76322e97a99db0167d22517dce690dc833925e4a",
+   "changedFiles": [
+    "runtime/core/odg-btp-lifecycle-integration.test.ts",
+    "runtime/core/odg-btp-lifecycle-integration.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 811,
+   "mergeCommit": "85c1c8646dc6d54d18504122fb1552e724b830f4",
+   "changedFiles": [
+    "runtime/bin/odg-btp-crm-account-view-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 812,
+   "mergeCommit": "3b55bef0ab20f83e02a0d6cb2f646b1e26ae5962",
+   "changedFiles": [
+    "docs/odg/V360_COGNITIVE_RADAR_INVENTORY_2026-11-20.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 813,
+   "mergeCommit": "60961cc3182c57116a4e970ed6b816a45ecd0218",
+   "changedFiles": [
+    "runtime/core/frontier-pipeline.test.ts",
+    "runtime/core/frontier-pipeline.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 814,
+   "mergeCommit": "570427edea1edd4443e60b229c3b02b70f5c281c",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-native-learning-pass.test.ts",
+    "runtime/core/odg-native-learning-pass.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 815,
+   "mergeCommit": "2be48baea6c72127770ca4dfdcffe9b6ea79739b",
+   "changedFiles": [
+    "runtime/bin/odg-cognitive-drivers-run.ts",
+    "runtime/bin/odg-knowledge-engine-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 816,
+   "mergeCommit": "26ec7f3fc01511b5bc0e85c251d52bed19993608",
+   "changedFiles": [
+    "runtime/bin/odg-self-healing-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 817,
+   "mergeCommit": "2999b32e6504c7ec61505ad9ed13144c823fb2a6",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-radar-live-collect-run.ts",
+    "runtime/core/odg-radar-live-collect.test.ts",
+    "runtime/core/odg-radar-live-collect.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 818,
+   "mergeCommit": "c1b070b6abc57466d16b479c21233b9e3fbb0148",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-radar-collect-to-signals.test.ts",
+    "runtime/core/odg-radar-collect-to-signals.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 819,
+   "mergeCommit": "9ef6f27648dfa5429aab243e4300226e978c5ac9",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-cra-remediation-chain.test.ts",
+    "runtime/core/odg-cra-remediation-chain.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 820,
+   "mergeCommit": "a9d43c1cccbec1e9f92a28420a5a32ba7c1a6acc",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-mission-decompose-chain.test.ts",
+    "runtime/core/odg-mission-decompose-chain.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 821,
+   "mergeCommit": "edb6722010245b1cb3a6a6d84203ab21046a8fc0",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-radar-to-deferred-lot.test.ts",
+    "runtime/core/odg-radar-to-deferred-lot.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 822,
+   "mergeCommit": "9229d5f6a088d00e3a395162055ff711ebb82f2a",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-v360-compass-run.ts",
+    "runtime/core/odg-v360-compass.test.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 823,
+   "mergeCommit": "d608a9201ead15b9b77c8d3d8e02931562a995eb",
+   "changedFiles": [
+    "runtime/bin/odg-v360-chains-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 824,
+   "mergeCommit": "c46389fdb308c2aff193006461a85d1bd9900956",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-radar-tech-run.ts",
+    "runtime/core/bounded-http-client.ts",
+    "runtime/core/odg-radar-collect-to-signals.ts",
+    "runtime/core/odg-radar-tech-sources.test.ts",
+    "runtime/core/odg-radar-tech-sources.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 825,
+   "mergeCommit": "e7495b94a2b8088bf6033eca46178612b60249ff",
+   "changedFiles": [
+    "runtime/core/odg-v360-compass.test.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 826,
+   "mergeCommit": "c1d70cd7fe08f85a287da12c85a43c353f0ca45a",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-radar-collect-to-signals.ts",
+    "runtime/core/odg-radar-learning-bridge.test.ts",
+    "runtime/core/odg-radar-learning-bridge.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 827,
+   "mergeCommit": "a1b93982e92df94f143681b3e909fdbe16c9c9aa",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-lesson-decision-loop.test.ts",
+    "runtime/core/odg-lesson-decision-loop.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 828,
+   "mergeCommit": "92f8b9ab9fe62097a805cd5b52327d989d2d7aa2",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-system-coverage-run.ts",
+    "runtime/core/odg-system-coverage.test.ts",
+    "runtime/core/odg-system-coverage.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 829,
+   "mergeCommit": "df5885101816faf515a801fc9c250d9312817f67",
+   "changedFiles": [
+    "runtime/core/change-impact-graph.test.ts",
+    "runtime/core/change-impact-graph.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 830,
+   "mergeCommit": "1c016fdc74d59b4139911079e6f722d0bd7e5397",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-self-improvement-cycle-run.ts",
+    "runtime/bin/odg-system-coverage-run.ts",
+    "runtime/core/odg-consumer-scan.test.ts",
+    "runtime/core/odg-consumer-scan.ts",
+    "runtime/core/odg-self-improvement-cycle.test.ts",
+    "runtime/core/odg-self-improvement-cycle.ts",
+    "runtime/core/odg-system-coverage.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 831,
+   "mergeCommit": "d55ecccd39413a88ddabcbcd563e6b37dc959648",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-night-cycle-run.ts",
+    "runtime/core/odg-night-cycle-scheduler.test.ts",
+    "runtime/core/odg-night-cycle-scheduler.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 832,
+   "mergeCommit": "d3acfdf5bb83e9a2552bec253294d074d2e843a5",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-forecast-memory-run.ts",
+    "runtime/core/odg-forecast-memory.test.ts",
+    "runtime/core/odg-forecast-memory.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 833,
+   "mergeCommit": "08d37c964991b3d99ee07dfb93a20e9a6242f031",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-radar-foresight-calibration-run.ts",
+    "runtime/core/odg-radar-foresight-calibration.test.ts",
+    "runtime/core/odg-radar-foresight-calibration.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 834,
+   "mergeCommit": "385eff455dc232f472e0ad1f0ec2d0867676cfbc",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-model-intelligence-run.ts",
+    "runtime/core/odg-model-intelligence.test.ts",
+    "runtime/core/odg-model-intelligence.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 835,
+   "mergeCommit": "520de3fd3e7b29f4ebcaa59258aebba6e0bee2c1",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-hybrid-reasoning-run.ts",
+    "runtime/core/odg-hybrid-reasoning.test.ts",
+    "runtime/core/odg-hybrid-reasoning.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 836,
+   "mergeCommit": "c8246042f1e630cbe837fb6f7bdd937fb6597bea",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-multimodal-ingest-run.ts",
+    "runtime/core/odg-multimodal-ingest.test.ts",
+    "runtime/core/odg-multimodal-ingest.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 837,
+   "mergeCommit": "6ac7e483a155cc5364537c4e8dcf2384035941ca",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-v360-dimension-coverage-run.ts",
+    "runtime/core/odg-v360-compass.ts",
+    "runtime/core/odg-v360-dimension-coverage.test.ts",
+    "runtime/core/odg-v360-dimension-coverage.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 838,
+   "mergeCommit": "f18b4abd282ccdfe8c9f88e67fc2a41d69528b81",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-mission-performance-profile-run.ts",
+    "runtime/core/odg-mission-performance-profile.test.ts",
+    "runtime/core/odg-mission-performance-profile.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 839,
+   "mergeCommit": "dab71a524df9a5952bcf831b0c0f29976992da03",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-light-path-selector-run.ts",
+    "runtime/core/odg-light-path-selector.test.ts",
+    "runtime/core/odg-light-path-selector.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 840,
+   "mergeCommit": "4db0a68a1a535cf5fc2a3d943c40adb8f11c5e95",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-intelligence-evaluation-run.ts",
+    "runtime/core/odg-intelligence-evaluation.test.ts",
+    "runtime/core/odg-intelligence-evaluation.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 841,
+   "mergeCommit": "fc5624718b7bf3deab9d207c6827f0c53cd1f7b6",
+   "changedFiles": [
+    "runtime/core/odg-intelligence-evaluation.test.ts",
+    "runtime/core/odg-intelligence-evaluation.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 842,
+   "mergeCommit": "344cd9fe3ed45214bfa4f79bf41f82ba143df68c",
+   "changedFiles": [
+    "runtime/core/odg-intelligence-evaluation.test.ts",
+    "runtime/core/odg-intelligence-evaluation.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 843,
+   "mergeCommit": "465fc788ac5ef1edfaf5656748f17b2daad49e78",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-component-census-run.ts",
+    "runtime/core/odg-component-census.test.ts",
+    "runtime/core/odg-component-census.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 844,
+   "mergeCommit": "8a87aa376473d10a6bd37be107759914c1a38252",
+   "changedFiles": [
+    "runtime/bin/odg-component-census-run.ts",
+    "runtime/core/odg-component-census.test.ts",
+    "runtime/core/odg-component-census.ts",
+    "runtime/core/odg-v360-compass.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 845,
+   "mergeCommit": "9adbf308db264c05c5465e608f2fd2cfe4d865a5",
+   "changedFiles": [
+    "runtime/core/campaign-metrics.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 846,
+   "mergeCommit": "24aad673bb2e4bea3489bda283e3c7a51e7116ea",
+   "changedFiles": [
+    "runtime/core/code-check-eval.ts",
+    "runtime/core/generative-repair-eval.ts",
+    "runtime/core/odg-component-census.test.ts",
+    "runtime/core/odg-component-census.ts",
+    "runtime/core/repair-eval.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 847,
+   "mergeCommit": "64ab5d7265c1d57e81a87db1c4a95b9159977090",
+   "changedFiles": [
+    "package.json",
+    "runtime/core/odg-component-judgment.test.ts",
+    "runtime/core/odg-component-judgment.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 848,
+   "mergeCommit": "5c0d7c95db58e910a0827161c38869ebc4da728b",
+   "changedFiles": [
+    "runtime/core/campaign-controller.test.ts",
+    "runtime/core/campaign-controller.ts",
+    "runtime/core/frontier-pipeline.ts",
+    "runtime/core/frontier-radar-store.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 849,
+   "mergeCommit": "25946a30f2d3bea1bc045f47522ff09f4f0075a5",
+   "changedFiles": [
+    "runtime/core/campaign-controller.test.ts",
+    "runtime/core/campaign-controller.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 850,
+   "mergeCommit": "b8b1aaf5cfc49b1dc1f4837bca18b5fb1c7afe21",
+   "changedFiles": [
+    ".gitignore",
+    "ODG_PROJECT_STATE.md",
+    "deploy/odg-resident-driver.service.d/v364-hardening.conf",
+    "docs/odg/C6_PROBE.sh",
+    "docs/odg/autonomy/PROVENANCE_V364.md",
+    "docs/odg/autonomy/V317_MISSION_DRIVER.js",
+    "docs/odg/autonomy/V318_DRIVER.js",
+    "docs/odg/autonomy/V319_DRIVER.js",
+    "docs/odg/autonomy/V320_DRIVER.js",
+    "eslint.config.ts",
+    "package-lock.json",
+    "package.json"
+   ],
+   "commits": 7,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 851,
+   "mergeCommit": "0ce592c3d3f04a24a8f450a9b4beb0b5b161997b",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/CLOSURE_V371_SESSION_CHECKPOINT_2026-11-22.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 852,
+   "mergeCommit": "c28dbdb1f234b1f6a8bb42b67479f17acbd41e49",
+   "changedFiles": [
+    "docs/odg/V14_4_ROADMAP.md",
+    "docs/odg/V372_RESEARCH_GRANT.json",
+    "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP1.json"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 853,
+   "mergeCommit": "04f2908ec31fa4bf238a47457faae7979863425b",
+   "changedFiles": [
+    "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP1.json",
+    "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP1_EVIDENCE.json",
+    "runtime/bin/odg-radar-gate-chain-run.ts",
+    "runtime/core/odg-cto-dashboard.ts",
+    "runtime/core/odg-radar-gate-chain.test.ts",
+    "runtime/core/odg-radar-gate-chain.ts"
+   ],
+   "commits": 5,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 854,
+   "mergeCommit": "bbdfffe21634dee3b5aca382a7a836016b8303d8",
+   "changedFiles": [
+    "docs/odg/WIC_CM-RADAR-GATE-CHAIN_STEP2.json",
+    "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_COLLECTION.json",
+    "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_EVIDENCE.json",
+    "package.json",
+    "runtime/bin/odg-radar-gate-chain-step2-run.test.ts",
+    "runtime/bin/odg-radar-gate-chain-step2-run.ts"
+   ],
+   "commits": 4,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 855,
+   "mergeCommit": "59f3175f230b033beca43fb27d2f827c26f5829c",
+   "changedFiles": [
+    "runtime/bin/odg-radar-gate-chain-step2-run.test.ts",
+    "runtime/bin/odg-radar-gate-chain-step2-run.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 856,
+   "mergeCommit": "819a2dd146b51a4ae8ec4820dfd6b98e5bb676c2",
+   "changedFiles": [
+    "docs/odg/evidence/KI_V2_LOT1_EVIDENCE.json",
+    "package.json",
+    "runtime/bin/odg-knowledge-intelligence-run.ts",
+    "runtime/bin/odg-radar-gate-chain-step2-run.ts",
+    "runtime/core/odg-claim-quote-binding.ts",
+    "runtime/core/odg-knowledge-intelligence.test.ts",
+    "runtime/core/odg-knowledge-intelligence.ts"
+   ],
+   "commits": 4,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 857,
+   "mergeCommit": "b5e1dd0274ebd39d913ca91122658f4bdb4426a5",
+   "changedFiles": [
+    "docs/odg/evidence/COLLECTION_REGISTRY.json",
+    "docs/odg/evidence/KI_V2_LOT1_EVIDENCE.json",
+    "docs/odg/evidence/TRUST_ANCHORS.json",
+    "package.json",
+    "runtime/bin/odg-knowledge-intelligence-run.ts",
+    "runtime/core/odg-knowledge-attestation.test.ts",
+    "runtime/core/odg-knowledge-attestation.ts",
+    "runtime/core/odg-knowledge-intelligence.test.ts",
+    "runtime/core/odg-knowledge-intelligence.ts"
+   ],
+   "commits": 4,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 858,
+   "mergeCommit": "939f9c6059eae67fce2233567921dd7e74004169",
+   "changedFiles": [
+    "docs/odg/evidence/LOT3_CI_EVENTS.json",
+    "docs/odg/evidence/LOT3_SRE_ERROR_BUDGET_EVIDENCE.json",
+    "runtime/bin/odg-sre-error-budget-lot3-run.ts",
+    "runtime/core/odg-slo-error-budget-view.test.ts",
+    "runtime/core/odg-slo-error-budget-view.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 859,
+   "mergeCommit": "3b68acbea075bf8d18acfd6e0b96baa2855dc097",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/V14_4_LOT_PLAN_AND_RADAR_AUDIT.md"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 860,
+   "mergeCommit": "440f25bda4f4d9ee6e724d80150b7fda9eafa35a",
+   "changedFiles": [
+    ".githooks/reference-transaction",
+    "docs/odg/evidence/LOT_A_AVAILABILITY_EVIDENCE.json",
+    "package.json",
+    "runtime/bin/odg-lot-a-availability-run.ts",
+    "runtime/core/odg-autonomy-availability.test.ts",
+    "runtime/core/odg-autonomy-availability.ts",
+    "runtime/core/odg-main-worktree-guard.test.ts",
+    "scripts/odg-main-worktree-guard.sh"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 861,
+   "mergeCommit": "ba14048b3404d0b3e5564cf0b3dc5b8de2df1adc",
+   "changedFiles": [
+    "docs/odg/L1_QUALIFICATION_DOSSIER_RESIDENT_DRIVER.md",
+    "docs/odg/PROPOSAL_V124_COMPANION_CM-RADAR-GATE-CHAIN.md",
+    "package.json",
+    "runtime/core/odg-evidence-verifier.test.ts",
+    "runtime/core/odg-evidence-verifier.ts",
+    "runtime/core/odg-knowledge-intelligence.test.ts",
+    "runtime/core/odg-knowledge-intelligence.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 862,
+   "mergeCommit": "1105f54f34cad4b77b427f626140a0fde0028233",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 863,
+   "mergeCommit": "79783ac6b613a0fbb11acc5f830cfda61a37307a",
+   "changedFiles": [
+    "deploy/odg-resident-driver.service.d/l1-fs-confinement.conf.proposed",
+    "docs/odg/L1_QUALIFICATION_DOSSIER_RESIDENT_DRIVER.md",
+    "docs/odg/evidence/LOT_B_L1_SANDBOX_EVIDENCE.json",
+    "package.json",
+    "runtime/bin/odg-resident-driver-l1-cycle.ts",
+    "runtime/bin/odg-resident-driver-tick.ts",
+    "runtime/core/odg-resident-driver-l1-sandbox.test.ts",
+    "scripts/odg-resident-driver-l1-sandbox.sh"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 864,
+   "mergeCommit": "bd42eaa70e26b0e72d5e1af38d34b90d550adaec",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "deploy/odg-resident-driver.service.d/l1-fs-confinement.conf.proposed",
+    "deploy/odg-resident-driver.service.d/v15-confined-launcher.conf.proposed",
+    "docs/odg/L1_QUALIFICATION_DOSSIER_RESIDENT_DRIVER.md",
+    "package.json",
+    "runtime/core/odg-evidence-verifier.test.ts",
+    "runtime/core/odg-evidence-verifier.ts",
+    "runtime/core/odg-knowledge-intelligence.ts",
+    "runtime/core/odg-resident-driver-confined.test.ts",
+    "scripts/lib/odg-confined-view.sh",
+    "scripts/lib/odg-resident-freshness.sh",
+    "scripts/odg-resident-driver-confined.sh",
+    "scripts/odg-resident-driver-run.sh"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 865,
+   "mergeCommit": "45e46f3f013d05d33afcab13885bfbc347f22bfb",
+   "changedFiles": [
+    "docs/odg/WIC_V15-RESIDENT-CONFINEMENT.json",
+    "docs/odg/evidence/TRUST_ANCHORS.json",
+    "docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN1.json",
+    "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json",
+    "package.json",
+    "runtime/bin/odg-gate-experiment-resident-confinement.ts",
+    "runtime/core/odg-gate-measured-evidence.test.ts",
+    "runtime/core/odg-gate-measured-evidence.ts",
+    "runtime/core/odg-knowledge-attestation.ts",
+    "runtime/core/odg-resident-driver-confined.test.ts",
+    "scripts/odg-resident-driver-confined.sh"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 866,
+   "mergeCommit": "c72d4460a55d39e44764a0230e16a1a9f798d414",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/L1_QUALIFICATION_DOSSIER_RESIDENT_DRIVER.md",
+    "docs/odg/PROPOSAL_SLO_TARGETS_V15.json",
+    "docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN2.json",
+    "docs/odg/evidence/V15_SLO_RECOMMENDATION_EVIDENCE.json",
+    "runtime/bin/odg-v15-slo-recommendation-run.ts",
+    "runtime/core/odg-autonomy-availability.test.ts",
+    "runtime/core/odg-autonomy-availability.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 867,
+   "mergeCommit": "454f2fa9fcff9f2cd336d51705f9ed34de626e77",
+   "changedFiles": [
+    "ODG_PROJECT_STATE.md",
+    "docs/odg/evidence/TRUST_ANCHORS.json",
+    "package.json",
+    "runtime/core/odg-evidence-verifier.test.ts",
+    "runtime/core/odg-evidence-verifier.ts",
+    "runtime/core/odg-gate-measured-evidence.ts",
+    "runtime/core/odg-knowledge-attestation.ts",
+    "runtime/core/odg-owner-anchor-success-path.test.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 868,
+   "mergeCommit": "372736967ff97015154fe402167a8789a62f6d57",
+   "changedFiles": [
+    "deploy/odg-resident-driver.service.d/v15-confined-launcher.conf.proposed",
+    "docs/odg/WIC_V15-TRACE-INTEGRITY.json",
+    "docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN3.json",
+    "runtime/bin/odg-gate-experiment-resident-confinement.ts",
+    "runtime/core/odg-resident-driver-confined.test.ts",
+    "scripts/odg-resident-driver-confined.sh"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 869,
+   "mergeCommit": "ac87cd9420942986803fb5e0acc631eed690fd66",
+   "changedFiles": [
+    "docs/odg/OWNER_SIGNING_PROCEDURE.md",
+    "docs/odg/WIC_V15-OWNER-SIGNING-TOOL.json",
+    "runtime/bin/odg-owner-sign.test.ts",
+    "runtime/bin/odg-owner-sign.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 870,
+   "mergeCommit": "28606f0e42a365a9439ea20782a723d018e5f95e",
+   "changedFiles": [
+    "docs/odg/V138_LIVE_RESEARCH.json",
+    "runtime/bin/odg-trust-anchor-audit.test.ts",
+    "runtime/bin/odg-trust-anchor-audit.ts",
+    "runtime/bin/odg-v138-live-research-run.ts",
+    "runtime/core/bounded-http-client.test.ts",
+    "runtime/core/bounded-http-client.ts"
+   ],
+   "commits": 5,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 871,
+   "mergeCommit": "c205348780489bd30a7dbc39149f48a4a122bfc3",
+   "changedFiles": [
+    "docs/odg/OWNER_SIGNING_PROCEDURE.md",
+    "docs/odg/WIC_V15-ATTESTATION-BINDING.json",
+    "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json",
+    "runtime/bin/odg-gate-experiment-resident-confinement.ts",
+    "runtime/bin/odg-owner-sign.test.ts",
+    "runtime/bin/odg-owner-sign.ts",
+    "runtime/core/odg-evidence-verifier.ts",
+    "runtime/core/odg-gate-measured-evidence.test.ts",
+    "runtime/core/odg-gate-measured-evidence.ts",
+    "runtime/core/odg-knowledge-attestation.ts",
+    "runtime/core/odg-knowledge-intelligence.ts",
+    "runtime/core/odg-owner-anchor-success-path.test.ts"
+   ],
+   "commits": 4,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 872,
+   "mergeCommit": "603d197c396d4987dbf85517025d149de68fb207",
+   "changedFiles": [
+    "docs/odg/PROPOSAL_SLO_TARGETS_V15.json",
+    "docs/odg/WIC_V15-SLO-SLI-DEFINITIONS.json",
+    "docs/odg/evidence/LOT_A_AVAILABILITY_EVIDENCE.json",
+    "docs/odg/evidence/V15_SLO_RECOMMENDATION_EVIDENCE.json",
+    "runtime/bin/odg-lot-a-availability-run.ts",
+    "runtime/bin/odg-v15-slo-recommendation-run.ts",
+    "runtime/core/odg-autonomy-availability.test.ts",
+    "runtime/core/odg-autonomy-availability.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 873,
+   "mergeCommit": "3a88de01a34aae90fcefc34376a4fd79d68bbf51",
+   "changedFiles": [
+    "deploy/odg-resident-driver.service.d/v15-confined-launcher.conf.proposed",
+    "docs/odg/WIC_V15-LAUNCHER-HARDENING.json",
+    "runtime/core/odg-resident-driver-confined.test.ts",
+    "scripts/lib/odg-confined-view.sh",
+    "scripts/lib/odg-resident-freshness.sh",
+    "scripts/odg-resident-driver-build.sh",
+    "scripts/odg-resident-driver-confined.sh"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 874,
+   "mergeCommit": "0573e3afe1dd4f8a11f257f7afde165a4bbd9c90",
+   "changedFiles": [
+    "docs/odg/L1_QUALIFICATION_DOSSIER_RESIDENT_DRIVER.md",
+    "docs/odg/V15_CLOSURE_DOSSIER.md",
+    "docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN4.json",
+    "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 875,
+   "mergeCommit": "6a38a99f2347ae7d28ba534860fbd9e038c3e2c0",
+   "changedFiles": [
+    ".github/CODEOWNERS",
+    ".github/workflows/ci.yml",
+    "deploy/odg-resident-driver.service.d/v15-confined-launcher.conf.proposed",
+    "docs/odg/L1_QUALIFICATION_DOSSIER_RESIDENT_DRIVER.md",
+    "docs/odg/PROPOSAL_SLO_TARGETS_V15.json",
+    "docs/odg/V16_OWNER_REVIEW_PACKET.md",
+    "docs/odg/evidence/OWNER_ALLOWED_SIGNERS",
+    "scripts/odg-anchor-ci-check.sh",
+    "scripts/odg-owner-dropin-dryrun.sh"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 876,
+   "mergeCommit": "c9d8fdfd320931d22f7aa34762fc082c89540119",
+   "changedFiles": [
+    "docs/odg/V16_RESEARCH_GRANT_CLAUDE_CODE.json",
+    "package.json",
+    "runtime/bin/odg-v16-claude-code-research-run.ts",
+    "runtime/core/odg-v16-claude-code-research.test.ts",
+    "runtime/core/odg-v16-claude-code-research.ts",
+    "runtime/core/research-governor.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 877,
+   "mergeCommit": "b931cae64b72785e1ef0d29da7901ce9e2ef152d",
+   "changedFiles": [
+    "docs/odg/V16_PERMISSION_INVENTORY.md",
+    "docs/odg/evidence/COLLECTION_REGISTRY.json",
+    "docs/odg/evidence/V16_RADAR_CLAUDE_CODE_LIVE_RUN1.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 878,
+   "mergeCommit": "becbcdda3847a87b230c1f36792811aa48003d20",
+   "changedFiles": [
+    "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+    "docs/odg/WIC_V150_PHASE1_CORRESPONDENCE.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 879,
+   "mergeCommit": "2838b5a18b3001e3964b8e40c793574641681258",
+   "changedFiles": [
+    "docs/odg/WIC_V150_PHASE1_CORRESPONDENCE.json",
+    "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json",
+    "runtime/bin/odg-component-census-run.ts",
+    "runtime/bin/odg-v150-correspondence-run.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 880,
+   "mergeCommit": "3a09bab42d8f26596815503d98c11ed868a949b5",
+   "changedFiles": [
+    "docs/odg/evidence/V150_DORMANT_MODULE_JUDGMENT.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 881,
+   "mergeCommit": "0cd3acae5c087bd5f2eacc7ae07da09ebad4f248",
+   "changedFiles": [
+    "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+    "docs/odg/evidence/V150_199_RECONCILIATION.json",
+    "docs/odg/evidence/V150_COMPONENT_JUDGMENT.json",
+    "docs/odg/evidence/V150_DORMANT_MODULE_JUDGMENT.json",
+    "runtime/bin/odg-component-judgment-run.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 882,
+   "mergeCommit": "30bfaca1f0a85492124727ad772c5c4ecba559d4",
+   "changedFiles": [
+    "runtime/bin/odg-cto-dashboard-run.test.ts",
+    "runtime/bin/odg-cto-dashboard-run.ts",
+    "runtime/bin/odg-local-pipeline-attempt.test.ts",
+    "runtime/bin/odg-local-pipeline.sh",
+    "runtime/core/odg-btp-devis-engine.test.ts",
+    "runtime/core/odg-btp-devis-engine.ts"
+   ],
+   "commits": 4,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 883,
+   "mergeCommit": "07838b18eb5cb2f7295e65cb2fee48dea137808e",
+   "changedFiles": [
+    "docs/odg/evidence/V150_CHECKPOINT_1.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 884,
+   "mergeCommit": "e0b780fd32a46d45fa2e156963af2ec1a0d1afb3",
+   "changedFiles": [
+    "runtime/bin/odg-btp-journey-run.ts",
+    "runtime/core/odg-btp-lifecycle-integration.test.ts",
+    "runtime/core/odg-btp-lifecycle-integration.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 885,
+   "mergeCommit": "596193246e78ca730251d3bb0b0430fc471c1d41",
+   "changedFiles": [
+    "runtime/core/native-project-builder.test.ts",
+    "runtime/core/native-project-builder.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 886,
+   "mergeCommit": "703782e8c208d58a1785bd2c707e293a5519b2d7",
+   "changedFiles": [
+    "docs/odg/evidence/V150_SCENARIO_L_CONCURRENCY.json",
+    "runtime/bin/odg-concurrency-calibrate.test.ts",
+    "runtime/bin/odg-concurrency-calibrate.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 887,
+   "mergeCommit": "0b7780702985ca1113e94c47ad0393d48dc88f76",
+   "changedFiles": [
+    "docs/odg/evidence/V150_BATTERY_A_P_MAP.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 888,
+   "mergeCommit": "0729d6c7f6820a3ed807007eb981f4f06b8eec63",
+   "changedFiles": [
+    "docs/odg/evidence/V150_CHECKPOINT_2.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 889,
+   "mergeCommit": "876a8ee504a2aee25319ef48d61259e7a4e1d121",
+   "changedFiles": [
+    "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+    "runtime/bin/odg-scenario-e-self-healing.test.ts",
+    "runtime/bin/odg-scenario-e-self-healing.ts",
+    "runtime/core/repair-workflow.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 890,
+   "mergeCommit": "1716b1cb663cceea360f1d239a61631143f1eb0d",
+   "changedFiles": [
+    "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+    "runtime/bin/odg-scenario-m-resume.test.ts",
+    "runtime/bin/odg-scenario-m-resume.ts",
+    "runtime/core/fleet-bridge.test.ts",
+    "runtime/core/fleet-bridge.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 891,
+   "mergeCommit": "2065feb4bd92f49958f5e463400c4792aff1c1f3",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-schedule-tick-wave.test.ts",
+    "runtime/bin/odg-schedule-tick.ts",
+    "runtime/core/odg-open-mission-recovery.test.ts",
+    "runtime/core/odg-open-mission-recovery.ts",
+    "tsconfig.runtime-dist.json"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 892,
+   "mergeCommit": "9ae54e1ba0f742eca966d9a0de533f53cfb1a75f",
+   "changedFiles": [
+    "docs/odg/evidence/V150_CHECKPOINT_3.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 893,
+   "mergeCommit": "593ce11f4351f0e73c516cd9b514dae91f776a7a",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-run-output-isolation.test.ts",
+    "runtime/bin/odg-run.ts",
+    "runtime/bin/odg-schedule-tick.ts",
+    "runtime/core/mission-ledger.ts",
+    "runtime/core/run-output-isolation.ts",
+    "tsconfig.runtime-dist.json"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 894,
+   "mergeCommit": "537cd11092ed285d999d51b8d26e358da1d1df61",
+   "changedFiles": [
+    "docs/odg/evidence/V150_CHECKPOINT_4.json"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 895,
+   "mergeCommit": "c6753dff0078570bc22e2d9dfe5bc86286fa3240",
+   "changedFiles": [
+    "docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json",
+    "package.json",
+    "runtime/bin/odg-agent-supervisor-run.ts",
+    "runtime/core/odg-agent-supervisor.test.ts",
+    "runtime/core/odg-agent-supervisor.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 896,
+   "mergeCommit": "3b20d3632b1620f4b3b84088aa01960124954906",
+   "changedFiles": [
+    "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+    "runtime/bin/odg-run-output-isolation.test.ts",
+    "runtime/bin/odg-schedule-tick-wave.test.ts",
+    "runtime/bin/odg-schedule-tick.ts",
+    "runtime/missions/G10_READONLY_AUTONOMY_PROBE.json",
+    "runtime/missions/M0000.json",
+    "runtime/missions/M0001.json",
+    "runtime/missions/M0002.json",
+    "runtime/missions/QUAL_CLEAN_GATEB.json",
+    "runtime/missions/RUNTIME_SELF_AUDIT.json"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 897,
+   "mergeCommit": "06a108b63b5221af3f40739ba30d5ae339beeb76",
+   "changedFiles": [
+    "docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json",
+    "runtime/core/odg-agent-supervisor.test.ts",
+    "runtime/core/odg-agent-supervisor.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 898,
+   "mergeCommit": "c6949b09f313557b3c821fca34e96dfb00f571ab",
+   "changedFiles": [
+    "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json",
+    "package.json",
+    "runtime/bin/odg-local-model-benchmark.ts",
+    "runtime/core/odg-local-model-benchmark-tasks.v1.json",
+    "runtime/core/odg-local-model-benchmark-tasks.v2.json",
+    "runtime/core/odg-local-model-benchmark.test.ts",
+    "runtime/core/odg-local-model-benchmark.ts",
+    "runtime/core/odg-local-model-capability.ts",
+    "runtime/core/odg-model-router.ts",
+    "runtime/core/ollama-provider.ts",
+    "runtime/core/provider-sandbox.ts"
+   ],
+   "commits": 6,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 899,
+   "mergeCommit": "b7c31f970eafbde3578f8fdf04281c33a8481c6f",
+   "changedFiles": [
+    "docs/odg/evidence/V155_NATIVE_AUTONOMY_MATURITY.json",
+    "package.json",
+    "runtime/bin/odg-native-autonomy-maturity-run.test.ts",
+    "runtime/bin/odg-native-autonomy-maturity-run.ts",
+    "runtime/core/odg-capability-maturity.test.ts",
+    "runtime/core/odg-capability-maturity.ts",
+    "runtime/core/odg-native-autonomy-maturity.test.ts",
+    "runtime/core/odg-native-autonomy-maturity.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 900,
+   "mergeCommit": "1c183ae3a53df927d437c77bede19c6cb1baff49",
+   "changedFiles": [
+    "docs/odg/evidence/V155_TRANSVERSAL_VALIDATION.json",
+    "package.json",
+    "runtime/bin/odg-v155-transversal-validation.test.ts",
+    "runtime/bin/odg-v155-transversal-validation.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 901,
+   "mergeCommit": "a0053fa754dea64476193a869348494d87736b7d",
+   "changedFiles": [
+    "runtime/core/odg-agent-supervisor.test.ts",
+    "runtime/core/odg-agent-supervisor.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 902,
+   "mergeCommit": "a723b64b372da650e6baf6e1432138503995bd1a",
+   "changedFiles": [
+    "docs/odg/evidence/V157_PERFORMANCE_BASELINE.json",
+    "package.json",
+    "runtime/bin/odg-concurrency-policy-run.ts",
+    "runtime/bin/odg-verification-level-run.test.ts",
+    "runtime/bin/odg-verification-level-run.ts",
+    "runtime/core/odg-concurrency-policy.test.ts",
+    "runtime/core/odg-concurrency-policy.ts",
+    "runtime/core/odg-verification-level.test.ts",
+    "runtime/core/odg-verification-level.ts"
+   ],
+   "commits": 4,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 903,
+   "mergeCommit": "8342a1dfbd8408741e04c340baaee4d2eb9298bd",
+   "changedFiles": [
+    "docs/odg/evidence/V155_CHECKPOINT_5.json"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 904,
+   "mergeCommit": "b9c2bf620d16cd2e57846429c93ba8f058ff805d",
+   "changedFiles": [
+    "runtime/bin/odg-backup-restore.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 905,
+   "mergeCommit": "7c3139858baa7dda26deea9853244284647cf6e1",
+   "changedFiles": [
+    "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json",
+    "docs/odg/evidence/V158_RADAR_ADMISSION_REFERENCES.json",
+    "docs/odg/evidence/V158_RADAR_SOURCE_ADMISSION.json",
+    "docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json",
+    "package.json",
+    "runtime/bin/odg-radar-source-admission-run.ts",
+    "runtime/core/odg-radar-source-admission.test.ts",
+    "runtime/core/odg-radar-source-admission.ts"
+   ],
+   "commits": 6,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 906,
+   "mergeCommit": "56eb1ef783ae1d322bc743e226a23b2dc5633837",
+   "changedFiles": [
+    "docs/odg/evidence/V158_DOSSIER_KNOWLEDGE.json",
+    "package.json",
+    "runtime/bin/odg-v158-dossier-knowledge-run.test.ts",
+    "runtime/bin/odg-v158-dossier-knowledge-run.ts",
+    "runtime/core/odg-knowledge-acquisition.test.ts",
+    "runtime/core/odg-knowledge-acquisition.ts"
+   ],
+   "commits": 4,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 907,
+   "mergeCommit": "1bea3875e14e9c26fdcf5c86a0c889143f2d8dba",
+   "changedFiles": [
+    "runtime/core/odg-agent-supervisor.test.ts"
+   ],
+   "commits": 1,
+   "label": "LOW_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 908,
+   "mergeCommit": "5be27612ece8fe58f7535a611b23bbb1a85eaba6",
+   "changedFiles": [
+    "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json",
+    "docs/odg/evidence/V158_RADAR_LIVE_RUN.json",
+    "docs/odg/evidence/V158_RADAR_SOURCE_ADMISSION.json",
+    "docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json",
+    "package.json",
+    "runtime/bin/odg-v158-radar-research-run.test.ts",
+    "runtime/bin/odg-v158-radar-research-run.ts"
+   ],
+   "commits": 6,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 909,
+   "mergeCommit": "c15deeadf8c4a2b0662e2acfebc023b1695bcdd5",
+   "changedFiles": [
+    "docs/odg/evidence/V159_CHECKPOINT_6.json"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 910,
+   "mergeCommit": "548fbecf28257904d82395dbfd16e2607038f2ba",
+   "changedFiles": [
+    "docs/odg/evidence/COLLECTION_REGISTRY.json",
+    "docs/odg/evidence/V158_KNOWLEDGE_ASSESSMENT.json",
+    "docs/odg/evidence/V158_RADAR_COLLECTION.json",
+    "package.json",
+    "runtime/bin/odg-v158-collection-run.test.ts",
+    "runtime/bin/odg-v158-collection-run.ts",
+    "runtime/bin/odg-v158-knowledge-run.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 911,
+   "mergeCommit": "015273cfebf6bf228a5986348564a39df64ff4ab",
+   "changedFiles": [
+    "docs/odg/evidence/V158_KNOWLEDGE_ASSESSMENT.json",
+    "runtime/bin/odg-v158-knowledge-run.ts",
+    "runtime/core/odg-knowledge-intelligence.test.ts",
+    "runtime/core/odg-knowledge-intelligence.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 912,
+   "mergeCommit": "932d66092f978d970b53596e9ad83be10b4dbd96",
+   "changedFiles": [
+    "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json",
+    "runtime/bin/odg-v159-measured-policy-bench.ts",
+    "runtime/core/odg-intelligent-native-cycle.test.ts",
+    "runtime/core/odg-intelligent-native-cycle.ts",
+    "runtime/core/odg-local-model-execution-policy.test.ts",
+    "runtime/core/odg-local-model-execution-policy.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 914,
+   "mergeCommit": "a9145c3af9711d9b4e8dab9684a54d373fe4af93",
+   "changedFiles": [
+    "docs/odg/evidence/V150_CANONICAL_SOURCES.json",
+    "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+    "docs/odg/evidence/V160_ARXIV_PYPI_ACCESS_ANALYSIS.json"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 915,
+   "mergeCommit": "f31956235683bccff4ab0c0dddfcb634a4825e81",
+   "changedFiles": [
+    "package.json",
+    "runtime/bin/odg-delegate-scope.test.ts",
+    "runtime/bin/odg-delegate.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 917,
+   "mergeCommit": "28cade4069868293f262a79be9fadbec29480e8d",
+   "changedFiles": [
+    "runtime/bin/odg-delegate.ts",
+    "runtime/core/scope-observer.test.ts",
+    "runtime/core/scope-observer.ts"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 918,
+   "mergeCommit": "2a855713757fb223e4eb8045f50eb0a5da9bfe5b",
+   "changedFiles": [
+    "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json",
+    "docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json",
+    "docs/odg/evidence/V158_RADAR_SOURCE_ADMISSION.json",
+    "docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json",
+    "docs/odg/evidence/V160_RADAR_SOURCE_ADMISSION.json",
+    "docs/odg/evidence/V160_RADAR_SOURCE_CANDIDATES.json",
+    "runtime/bin/odg-radar-source-admission-run.ts",
+    "runtime/bin/odg-v158-collection-run.test.ts",
+    "runtime/bin/odg-v158-collection-run.ts",
+    "runtime/bin/odg-v158-radar-research-run.ts",
+    "runtime/core/odg-radar-source-admission.test.ts",
+    "runtime/core/odg-radar-source-admission.ts"
+   ],
+   "commits": 2,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 919,
+   "mergeCommit": "e0c51ad6e172c7a8659484ffbde84b7862ba2f65",
+   "changedFiles": [
+    "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+    "docs/odg/evidence/V160_CHECKPOINT_7.json",
+    "runtime/missions/V160_CP7_AP_CONTRACTS.json"
+   ],
+   "commits": 3,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  },
+  {
+   "number": 920,
+   "mergeCommit": "459f8cf8e10b7b66be71a65e0e6c86ebe1b8da11",
+   "changedFiles": [
+    "docs/odg/evidence/COLLECTION_REGISTRY.json",
+    "docs/odg/evidence/V160_METHOD_CARDS.json",
+    "docs/odg/evidence/V160_PRACTICES_COLLECTION.json",
+    "docs/odg/evidence/V160_PRACTICES_KNOWLEDGE.json",
+    "package.json",
+    "runtime/bin/odg-v158-collection-run.ts",
+    "runtime/bin/odg-v158-knowledge-run.ts",
+    "runtime/bin/odg-v160-method-cards-run.ts",
+    "runtime/bin/odg-v160-practices-collection-run.test.ts",
+    "runtime/bin/odg-v160-practices-collection-run.ts",
+    "runtime/bin/odg-v160-practices-knowledge-run.ts",
+    "runtime/core/odg-knowledge-intelligence.test.ts",
+    "runtime/core/odg-knowledge-intelligence.ts"
+   ],
+   "commits": 6,
+   "label": "HIGH_ITERATION",
+   "split": "HELDOUT"
+  }
+ ]
+}

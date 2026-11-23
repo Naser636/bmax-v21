@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "d8b57d497749a9e699658b9015601b9551b669d05a916fecee3dcac0fead0897"
+      "sha256": "726abb4c39e05bdc6f2d2251e8b71ec169cbeb34b749f1b37a494cd3f7ae0055"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "64406de48595d8a6fa71a40391ec026a958577621f559ae3ce2e42c458fbf51c"
+      "sha256": "7e21b16bece202f76c0c0ca79a12c3567e0c4d85f45959af9c3b342242893c18"
     },
     {
       "source": "docs/odg/evidence/V164_GO_CYCLE.json",
@@ -1202,8 +1202,8 @@
         "id": "H",
         "kind": "WORK_ITEM_CONTRACT",
         "title": "H — Amélioration récursive",
-        "contractState": "PROPOSED",
-        "authorizedBy": null,
+        "contractState": "AUTHORIZED_FOR_REVISION",
+        "authorizedBy": "OWNER (CTO) — directive V168 (2026-11-23): \"J'autorise explicitement la mission H dans son périmètre exact, tel qu'il est défini dans le dossier : docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json\" — full path (revise → inspect → offline experiments → inspect results → validate on evidence → close) without re-approval between steps; H only.",
         "status": "PARTIAL",
         "statusSource": [
           "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].initialState.status"
@@ -1287,13 +1287,13 @@
           },
           "costRiskComplexity": {
             "status": "MEASURED",
-            "value": 0.3,
+            "value": 0.9,
             "rule": "CRC-1",
             "source": [
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.acceptance_criteria",
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set"
             ],
-            "basis": "|AC|=2, |write_set|=1, ownerGatedStep=false"
+            "basis": "|AC|=2, |write_set|=7, ownerGatedStep=false"
           },
           "dependencyAvailability": {
             "status": "NOT_MEASURED",
@@ -6321,102 +6321,18 @@
     }
   },
   "decision": {
-    "decision": "TIE_EXPLAINED",
-    "selected": {
-      "id": "H",
-      "evidenceScore": 0.32,
-      "upperBound": 0.82,
-      "uncertainty": 0.5,
-      "breakdown": [
-        {
-          "criterion": "autonomyBenefit",
-          "status": "MEASURED",
-          "value": 0.5,
-          "direction": "HIGHER_IS_BETTER",
-          "weight": 0.1,
-          "contribution": 0.05,
-          "uncertaintyContribution": 0
-        },
-        {
-          "criterion": "blockerRepetitionReduction",
-          "status": "NOT_MEASURED",
-          "weight": 0.1,
-          "contribution": 0,
-          "uncertaintyContribution": 0.1
-        },
-        {
-          "criterion": "capabilityGain",
-          "status": "MEASURED",
-          "value": 0.75,
-          "direction": "HIGHER_IS_BETTER",
-          "weight": 0.1,
-          "contribution": 0.075,
-          "uncertaintyContribution": 0
-        },
-        {
-          "criterion": "costRiskComplexity",
-          "status": "MEASURED",
-          "value": 0.3,
-          "direction": "LOWER_IS_BETTER",
-          "weight": 0.1,
-          "contribution": 0.07,
-          "uncertaintyContribution": 0
-        },
-        {
-          "criterion": "dependencyAvailability",
-          "status": "NOT_MEASURED",
-          "weight": 0.1,
-          "contribution": 0,
-          "uncertaintyContribution": 0.1
-        },
-        {
-          "criterion": "evidenceLevel",
-          "status": "MEASURED",
-          "value": 0.75,
-          "direction": "HIGHER_IS_BETTER",
-          "weight": 0.1,
-          "contribution": 0.075,
-          "uncertaintyContribution": 0
-        },
-        {
-          "criterion": "reliabilityQuality",
-          "status": "NOT_MEASURED",
-          "weight": 0.1,
-          "contribution": 0,
-          "uncertaintyContribution": 0.1
-        },
-        {
-          "criterion": "reusability",
-          "status": "NOT_MEASURED",
-          "weight": 0.1,
-          "contribution": 0,
-          "uncertaintyContribution": 0.1
-        },
-        {
-          "criterion": "speedEfficiency",
-          "status": "NOT_MEASURED",
-          "weight": 0.1,
-          "contribution": 0,
-          "uncertaintyContribution": 0.1
-        },
-        {
-          "criterion": "strategicValue",
-          "status": "MEASURED",
-          "value": 0.5,
-          "direction": "HIGHER_IS_BETTER",
-          "weight": 0.1,
-          "contribution": 0.05,
-          "uncertaintyContribution": 0
-        }
-      ]
-    },
+    "decision": "DECISION_REQUIRED",
+    "selected": null,
     "proposed": null,
     "tiedSet": [
       "J",
-      "G",
-      "H"
+      "G"
     ],
-    "tieExplanation": "3 candidates within epsilon 0.02 of the leader (0.335)",
+    "remainingAfterRules": [
+      "J",
+      "G"
+    ],
+    "tieExplanation": "2 candidates have evidence scores within epsilon 0.02 of the leader (0.335); declared secondary rules did not isolate one",
     "resolutionSteps": [
       {
         "rule": "R1_MORE_UNBLOCKING",
@@ -6428,16 +6344,11 @@
           {
             "id": "G",
             "value": 0
-          },
-          {
-            "id": "H",
-            "value": 0
           }
         ],
         "kept": [
           "J",
-          "G",
-          "H"
+          "G"
         ],
         "outcome": "NO_DISCRIMINATION"
       },
@@ -6451,16 +6362,11 @@
           {
             "id": "G",
             "value": 0.5
-          },
-          {
-            "id": "H",
-            "value": 0.5
           }
         ],
         "kept": [
           "J",
-          "G",
-          "H"
+          "G"
         ],
         "outcome": "NO_DISCRIMINATION"
       },
@@ -6474,49 +6380,35 @@
           {
             "id": "G",
             "value": 0.5
-          },
-          {
-            "id": "H",
-            "value": 0.3
           }
         ],
         "kept": [
-          "H"
+          "J",
+          "G"
         ],
-        "outcome": "RESOLVED"
+        "outcome": "NO_DISCRIMINATION"
+      },
+      {
+        "rule": "R4_HIGHER_EVIDENCE",
+        "values": [
+          {
+            "id": "J",
+            "value": 1
+          },
+          {
+            "id": "G",
+            "value": 1
+          }
+        ],
+        "kept": [
+          "J",
+          "G"
+        ],
+        "outcome": "NO_DISCRIMINATION"
       }
     ],
-    "resolvedBy": "R3_LOWER_RISK",
-    "resolvedByText": "prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED)",
-    "couldOvertakeIfUnmeasuredWereFavourable": [
-      "J",
-      "G",
-      "F",
-      "D",
-      "V150-T02",
-      "L",
-      "P",
-      "O",
-      "N",
-      "V150-T07",
-      "E",
-      "I",
-      "V150-T10",
-      "CP8-GAP-1-selectNextMission",
-      "CP8-GAP-9-chooseFollowing",
-      "V150-T09",
-      "CP8-GAP-3-chooseMode",
-      "CP8-GAP-5-superviseExecution",
-      "V150-AI4",
-      "MC-CI-BEFORE-REVIEW",
-      "MC-CR-APPROVAL-STANDARD",
-      "MC-CR-LATENCY",
-      "MC-LESSONS-LEARNED",
-      "MC-MERGE-QUEUE",
-      "MC-PEER-REVIEW-EVERY-PR",
-      "MC-REVIEW-FOCUS"
-    ],
-    "justification": "ODG proposes 'H': evidence score 0.32 (uncertainty 0.5 ≤ 0.5); tie of 3 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, G, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "proposedResolutionRule": "PROPOSED resolution (needs OWNER/ODG decision): measure the NOT_MEASURED criteria of the tied candidates (it is their unmeasured weight that keeps them tied or uncertain), or have the owner set an explicit priority in an owner-controlled field; never break by id",
+    "justification": "ODG does not choose among the tied set by id; OWNER/ODG decision required",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -6720,100 +6612,6 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.08,
-            "uncertaintyContribution": 0
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": false,
-        "ownerReason": null,
-        "autoSelectable": true
-      },
-      {
-        "id": "H",
-        "status": "PARTIAL",
-        "evidenceScore": 0.32,
-        "upperBound": 0.82,
-        "uncertainty": 0.5,
-        "measuredWeightShare": 0.5,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "MEASURED",
-            "value": 0.75,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.075,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 0.3,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.07,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0.75,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.075,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
             "uncertaintyContribution": 0
           }
         ],
@@ -7098,6 +6896,100 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.08,
+            "uncertaintyContribution": 0
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "H",
+        "status": "PARTIAL",
+        "evidenceScore": 0.26,
+        "upperBound": 0.76,
+        "uncertainty": 0.5,
+        "measuredWeightShare": 0.5,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "MEASURED",
+            "value": 0.75,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.075,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.9,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.01,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.75,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.075,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
             "uncertaintyContribution": 0
           }
         ],
@@ -10012,21 +9904,17 @@
     "selectionIsNotAuthorization": "the selected item is a PROPOSAL: it still needs PROPOSED → AUTHORIZED before EXECUTING"
   },
   "decisionRecord": {
-    "decision": "TIE_EXPLAINED",
-    "selected": "H",
+    "decision": "DECISION_REQUIRED",
+    "selected": null,
     "proposed": null,
     "tiedSet": [
       "J",
-      "G",
-      "H"
+      "G"
     ],
-    "resolvedBy": "R3_LOWER_RISK",
-    "justification": "ODG proposes 'H': evidence score 0.32 (uncertainty 0.5 ≤ 0.5); tie of 3 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, G, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
-    "uncertainty": 0.5,
-    "choiceNextStep": {
-      "text": "demonstrated superiority on independent held-out tests (V159 shows no quality gain; #902 gain not measured)",
-      "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].initialState.missingForPass"
-    },
+    "resolvedBy": null,
+    "justification": "ODG does not choose among the tied set by id; OWNER/ODG decision required",
+    "uncertainty": null,
+    "choiceNextStep": null,
     "ownerAuthorizationRequired": [
       "K",
       "C",
@@ -10046,22 +9934,20 @@
       "epsilon": 0.02,
       "uncertaintyMax": 0.4,
       "decision": "DECISION_REQUIRED",
-      "choice": "H",
+      "choice": null,
       "tiedSet": [
         "J",
-        "G",
-        "H"
+        "G"
       ]
     },
     {
       "epsilon": 0.05,
       "uncertaintyMax": 0.5,
-      "decision": "TIE_EXPLAINED",
-      "choice": "H",
+      "decision": "DECISION_REQUIRED",
+      "choice": null,
       "tiedSet": [
         "J",
         "G",
-        "H",
         "F"
       ]
     },
@@ -10085,17 +9971,17 @@
       "meanMeasuredWeightShareOverSelectable": 0.2852
     },
     "C": {
-      "grade": "PASS",
+      "grade": "PARTIAL",
       "checks": {
         "c1": true,
         "c2": true,
         "c3": true,
         "c4": true,
-        "c5": true
+        "c5": false
       },
       "idInvariance": {
-        "decisionUnderRelabel": "TIE_EXPLAINED",
-        "choiceUnderRelabel": "H",
+        "decisionUnderRelabel": "DECISION_REQUIRED",
+        "choiceUnderRelabel": null,
         "sameDecision": true,
         "sameTiedSet": true
       }
@@ -10112,5 +9998,5 @@
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change"
   ],
-  "generatedAtHead": "f4c3759f7fa37251fe2be68566ff08bf5baa2f94"
+  "generatedAtHead": "587650b000cb31c0dfc49cf0791b96769c7ccac6"
 }

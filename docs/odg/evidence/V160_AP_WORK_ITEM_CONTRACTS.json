@@ -430,8 +430,8 @@
       "scenario": "H",
       "title": "H — Amélioration récursive",
       "ownerText": "ODG améliore un mécanisme de planification ou de vérification et démontre sur des tests indépendants que la nouvelle version est meilleure.",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — directive V168 (2026-11-23): \"J'autorise explicitement la mission H dans son périmètre exact, tel qu'il est défini dans le dossier : docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json\" — full path (revise → inspect → offline experiments → inspect results → validate on evidence → close) without re-approval between steps; H only.",
       "initialState": {
         "status": "PARTIAL",
         "evidence": [
@@ -446,7 +446,13 @@
         "objective": "Improve a planning/verification mechanism and show superiority on independent held-out tests",
         "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
         "write_set": [
-          "docs/odg/evidence/V160_SCENARIO_H.json"
+          "docs/odg/evidence/V160_SCENARIO_H.json",
+          "runtime/bin/odg-v168-scenario-h-heldout-build.ts",
+          "docs/odg/evidence/V168_H_HELDOUT.json",
+          "runtime/core/odg-verification-risk-calibration.ts",
+          "runtime/core/odg-verification-risk-calibration.test.ts",
+          "runtime/bin/odg-v168-scenario-h-experiment.ts",
+          "docs/odg/evidence/V168_H_EXPERIMENT.json"
         ],
         "authorized_symbols": [],
         "invariants": [
@@ -454,11 +460,14 @@
           "Truth Lock 928 verified",
           "no second orchestrator/scheduler/radar/memory/decision engine",
           "provider work never counted as ODG-native",
-          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)",
+          "owner V168 « Ne pas modifier artificiellement les critères pour faciliter la réussite » / « Ne jamais annoncer PASS si les mesures ne le justifient pas »: the outcome is graded only by preRegistration.thresholds on the recorded numbers; a FAIL / PARTIAL / NOT_MEASURED outcome is recorded as such; the earlier H status (initialState PARTIAL: V159 routing 0.75→0.75, #902 gain not measured) is never rewritten",
+          "controls never weakened: the improvement is an ADDITIVE advisory risk score; odg-verification-level.chooseLevel outputs (level, reinforced, independentInspection, mandatoryPreMergeCI=true, selected tests) are never changed by H",
+          "the frozen dataset docs/odg/evidence/V168_H_HELDOUT.json is never edited after this revision (its sha256 is pinned in preRegistration.dataset.sha256)"
         ],
         "acceptance_criteria": [
-          "held-out test set fixed BEFORE the change",
-          "before/after on that set with n; superiority or honest null result"
+          "C1 (kept, operationalized): held-out test set fixed BEFORE the change — operationally: docs/odg/evidence/V168_H_HELDOUT.json (split HELDOUT) is committed with its sha256 pinned in preRegistration.dataset BY THIS REVISION, before the improvement code (runtime/core/odg-verification-risk-calibration.ts) or the runner exists and before any metric is computed; the experiment refuses (NOT_MEASURED) on any sha256 mismatch; the improvement is fitted on the DEV split only and HELDOUT labels are read only after the fitted weights are frozen and recorded (preRegistration.antiLeakage)",
+          "C2 (kept, operationalized): before/after on that set with n; superiority or honest null result — operationally: on the HELDOUT split, baseline B0 (current odg-verification-level ordering) vs the improved score H1, with n, positives/negatives, AUCs, paired-bootstrap CI95 of the differences, graded only by preRegistration.thresholds (PASS = superiority; PARTIAL / FAIL / NOT_MEASURED recorded as such = the honest null or negative result)"
         ],
         "stop_conditions": [
           "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
@@ -471,8 +480,127 @@
           "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
           "independent inspection verdict on the exact head",
           "CI green on the exact head"
-        ]
-      }
+        ],
+        "preRegistration": {
+          "registeredAt": "2026-11-23 (this revision, branch feat/v168-h-authorization-revision; before any H experiment — no H experiment code, improvement code or result exists at registration)",
+          "mechanism": {
+            "canonical": "runtime/core/odg-verification-level.ts (#902) — chooseLevel(changedFiles) → ODG_VERIFICATION_PLAN (DOCS_ONLY/L1/L2/L3 + REINFORCED)",
+            "whyThisOne": "(1) it is judged on historical PRs whose change-sets are reconstructible offline from the local git object store (no egress, no local-model runs), giving n≈400 rows instead of the 4 tasks × 2 trials of the V159 routing evidence; (2) its effect on outcomes was never measured (#902 'gain not measured'); (3) V157_PERFORMANCE_BASELINE.inspectionFixes902 records that after the #902 fixes ALL five measured historical PRs select L3 REINFORCED — the selector is over-inclusive by design, so as an ordering of verification need it barely discriminates; the scenario-G lesson (measured LOCAL calibration from ODG's own data) applies: calibrate an ordering on ODG's own history without lowering any control",
+            "improvement": "H1 = odg-verification-risk-calibration (new pure module COMPOSING chooseLevel — no second selector/graph/parser): an ADDITIVE advisory verification-risk score over the plan; it never changes level/reinforced/independentInspection/mandatoryPreMergeCI/tests. features(plan, changedFiles) = [f1 levelRank (DOCS_ONLY 0, L1 1, L2 2, L3 3), f2 reinforced (0/1), f3 number of DISTINCT sensitive-category labels over plan.files[].sensitive, f4 log1p(#changedFiles), f5 log1p(#plan.tests.L2), f6 log1p(plan.graph.reverseClosure), f7 log1p(#plan.unresolved), f8 (#plan.files with class DOC)/(#plan.files, 0 if none)]. Fit on DEV ONLY: each feature standardized with DEV mean and population sd (sd = 0 ⇒ feature weight fixed at 0); L2-regularized logistic regression of HIGH_ITERATION, loss = mean log-loss + (λ/(2·n_dev))·‖w‖² with λ = 1 (intercept not penalized), batch gradient descent from all-zero weights, learning rate 0.1, 5000 iterations (deterministic, no randomness). score = intercept + w·standardized features. Additions/deletions (the G size feature) are deliberately NOT features.",
+            "adoptionScope": "a PASS makes H1 an ADOPTION CANDIDATE only (advisory verification-risk score); wiring it into chooseLevel's output or any gate is OUT of H's scope and needs a separate decision"
+          },
+          "question": "does a DEV-calibrated risk score over odg-verification-level's own plan rank held-out PRs by rework (HIGH_ITERATION) better than the mechanism's current ordering?",
+          "outcomeLabel": "HIGH_ITERATION iff commits ≥ 2 (commit count = the V160 proxy for fix cycles, same as scenario G), stored per row in the dataset as written by the builder",
+          "dataset": {
+            "file": "docs/odg/evidence/V168_H_HELDOUT.json",
+            "sha256": "d8bf4a3f5e4b3a6bdc0700183b710c38acc2ae0d786aa6303ff7868ddd26fcb1",
+            "builtBy": "npx tsx runtime/bin/odg-v168-scenario-h-heldout-build.ts --write (committed; deterministic from committed inputs)",
+            "sources": "rows + labels: docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json (sha256 09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea, 400 merged PRs #519–#920); changed files: local git, unique first-parent commit of ba9b77e8 per PR ('Merge pull request #N …' or squash subject ending '(#N)'), git diff --name-only M^1...M",
+            "rows": 399,
+            "excluded": "1 row (NO_LOCAL_MERGE_COMMIT) — listed in the file",
+            "split": "rows sorted by PR number ascending; DEV = first 200 rows (#519–#719), HELDOUT = last 199 rows (#720–#920); chronological = a genuine 'future' held-out",
+            "egress": "NONE — committed snapshot + local git only"
+          },
+          "baseline": {
+            "B0_primary": "the CURRENT mechanism's own ordering of verification need: s0 = levelRank + (reinforced ? 1 : 0) (DOCS_ONLY 0 … L3 3, L3 REINFORCED 4), from odg-verification-level.chooseLevel unchanged",
+            "B1_comparator": "change breadth alone, no fitting: s1 = log1p(#changedFiles). H1 itself contains f4 = log1p(#changedFiles), so H1 must be strictly SUPERIOR to B1 (Δ1 > 0 with CI95 lower bound > 0) for a PASS — a gain explained by breadth alone does not PASS"
+          },
+          "featureComputation": "chooseLevel(row.changedFiles, { root: <scratch worktree>, reader: fsReader(root) with memoized read/graph (identical answers) }) on the CURRENT tree for every row (same plan feeds B0, B1-independent, and H1 ⇒ paired); timing probe on 3 synthetic change-sets (not dataset rows) ≈ 0.5–1 s per call ⇒ fits the GO 600 s dispatch bound",
+          "metric": "ROC AUC (Mann–Whitney U / (n_pos·n_neg), ties count 0.5) of each score vs HIGH_ITERATION on the HELDOUT split; Δ0 = AUC(H1) − AUC(B0); Δ1 = AUC(H1) − AUC(B1); n, n_pos, n_neg reported",
+          "uncertainty": "paired bootstrap over HELDOUT rows (same resample for all scores; fitted weights fixed — no refit), 2000 resamples, fixed-seed LCG as in odg-v160-scenario-g-run (st = (Math.imul(st, 1664525) + 1013904223) >>> 0, seed 20261128); a resample with 0 positives or 0 negatives is skipped and counted; CI95 = 2.5/97.5 percentiles of Δ0 and Δ1",
+          "decisionRule": "grade = first matching of NOT_MEASURED, PASS, PARTIAL, FAIL per thresholds, evaluated mechanically on the recorded numbers; no re-tuning of features, λ, learning rate, iterations, label, split or seed after the run",
+          "minimumN": "HELDOUT ≥ 20 HIGH_ITERATION and ≥ 20 LOW_ITERATION rows; DEV ≥ 10 of each (fit needs both classes)",
+          "thresholds": {
+            "NOT_MEASURED": "dataset sha256 ≠ the pinned value, OR minimumN not met, OR chooseLevel throws on any row (no silent drop), OR the fit yields a non-finite weight, OR > 5% of bootstrap resamples skipped",
+            "PASS": "Δ0 ≥ 0.05 AND CI95 lower bound of Δ0 > 0 AND Δ1 > 0 AND CI95 lower bound of Δ1 > 0 AND AUC(H1) ≥ 0.55",
+            "PARTIAL": "Δ0 > 0 but the PASS conditions are not all met — in particular Δ1 ≤ 0 (or CI95 lower bound of Δ1 ≤ 0) with Δ0 > 0 is PARTIAL, never PASS",
+            "FAIL": "Δ0 ≤ 0"
+          },
+          "adoptionDecision": "PASS ⇒ ADOPTION_CANDIDATE (advisory only, see mechanism.adoptionScope); PARTIAL / FAIL / NOT_MEASURED ⇒ NOT_ADOPTED (owner V168: « Critère non satisfait : FAIL ou NOT_ADOPTED selon le contrat ») — explicitly: Δ1 ≤ 0 ⇒ NOT_ADOPTED (outcome PARTIAL if Δ0 > 0, FAIL if Δ0 ≤ 0)",
+          "antiLeakage": {
+            "rule": "H1's functional form, features and hyper-parameters are fixed by THIS text before any mechanism output on a dataset row or any metric exists; the runner passes ONLY DEV rows (features + labels) to the fit, records the fitted weights and their sha256 in the experiment record, and only then reads HELDOUT labels to evaluate; HELDOUT is never used for feature selection, standardization, early stopping or threshold choice",
+            "lookedAtBeforeRegistration": [
+              "contract G's preRegistration text (it states G's chronological label counts TRAIN 20/200, TEST 100/200 HIGH_ITERATION on the same PR history — known label information, recorded; HELDOUT here ≈ G's TEST)",
+              "the first row of V160_SCENARIO_G_PR_HISTORY.json (#519, commits 1) while checking its schema",
+              "the builder's row/exclusion counts (399 rows, DEV 200, HELDOUT 199, 1 excluded NO_LOCAL_MERGE_COMMIT) and PR-number boundaries — no label",
+              "V157_PERFORMANCE_BASELINE.json (5 historical PRs #893–#901 all L3 REINFORCED after the #902 fixes — mechanism output, no label) and V159_MEASURED_MODEL_POLICY.json (routing candidate, rejected for n)",
+              "chooseLevel timing on 3 synthetic change-sets that are not dataset rows"
+            ],
+            "notLookedAt": "no label of V168_H_HELDOUT.json was printed or inspected (the builder writes them without printing); no V166_G_EXPERIMENT.json / V160_SCENARIO_G.json result numbers were read for this design; no chooseLevel output on any dataset row; no AUC or other metric"
+          },
+          "honestLimits": [
+            "small n relative to the effect: ≈199 held-out rows ⇒ the CI95 of a ΔAUC is wide (order ±0.1); an honest null (PARTIAL/FAIL) is a likely outcome",
+            "chronological split ⇒ distribution shift (G's counts show later PRs iterate far more, e.g. through the inspection loop); recorded, not corrected; AUC is rank-based so intercept shift does not affect it",
+            "confounding: later PRs both touch control surfaces/governance more and iterate more (era effect) — a PASS shows held-out discrimination, never causation",
+            "anachronistic reader: historical change-sets are classified against the CURRENT tree (deleted modules ⇒ UNRESOLVED escalation); identical for B0 and H1 (paired), recorded",
+            "commit count is a confounded proxy for rework (task size/difficulty, inspection loop)",
+            "the same PR rows were already analysed by scenario G (size features); H excludes additions/deletions from its features"
+          ],
+          "secondaryRobustness": {
+            "role": "REPORT-ONLY robustness check — never part of PASS/PARTIAL/FAIL",
+            "split": "fixed-seed random split of the same 399 rows: Fisher–Yates shuffle with the same LCG (seed 20261129), first 200 = DEV, last 199 = HELDOUT; H1 refitted on that DEV with the same procedure",
+            "computed": "AUC(B0), AUC(B1), AUC(H1), Δ0, Δ1 with the same bootstrap (seed 20261128); plus AUC of f1 levelRank alone on the primary HELDOUT; reported next to the primary result, cannot change the grade"
+          }
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V168_OWNER_AUTHORIZATION_H.json (V168)",
+        "transcribedBy": "PROVIDER (Claude Code coordinating session) — verbatim transcription",
+        "date": "2026-11-23",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "offline controlled experiments only after an independent inspection ACCEPT of the revised contract is recorded (owner V168: « Expériences hors ligne prévues par le contrat » after « Inspection indépendante du contrat révisé »)",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v168-scenario-h-experiment.ts",
+            "args": [
+              "docs/odg/evidence/V168_H_EXPERIMENT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V168_H_EXPERIMENT.json"
+            ]
+          }
+        }
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-23",
+          "author": "PROVIDER (Claude Code, V168 H-revision session; branch feat/v168-h-authorization-revision)",
+          "authorizedBy": "OWNER (CTO) — directive V168 (docs/odg/V168_OWNER_AUTHORIZATION_H.json), step 1 « Révision du contrat H »",
+          "originalCriteria": [
+            "held-out test set fixed BEFORE the change",
+            "before/after on that set with n; superiority or honest null result"
+          ],
+          "originalObjectiveUnchanged": "Improve a planning/verification mechanism and show superiority on independent held-out tests",
+          "change": [
+            "mechanism fixed: odg-verification-level (#902) + an additive DEV-calibrated advisory risk score (odg-verification-risk-calibration), chosen over V159 routing for sample size (preRegistration.mechanism.whyThisOne)",
+            "C1 kept verbatim in meaning, operationalized: frozen dataset docs/odg/evidence/V168_H_HELDOUT.json committed with its sha256 by this revision, before any improvement code; DEV/HELDOUT split; anti-leakage rule",
+            "C2 kept verbatim in meaning, operationalized by WORK_ITEM_CONTRACT.preRegistration (baseline B0 + comparator B1, metric ROC AUC, paired bootstrap seed 20261128, thresholds PASS/PARTIAL/FAIL/NOT_MEASURED, minimum n, adoption NOT_ADOPTED unless PASS) fixed before any experiment",
+            "invariants added (they constrain grading, not acceptance): no artificial criterion change / no PASS without measures; controls never weakened (advisory score only); frozen dataset never edited",
+            "write_set extended with every file the experiment path writes (dataset builder + frozen dataset, improvement module + its test, runner, experiment record); authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS declared (GO-DT-1); objective, scope, the five original invariants, stop_conditions, rollback, evidence_required unchanged; secondary fixed-seed random split pre-registered as report-only"
+          ],
+          "justification": "The original criteria are coherent but not measurable as worded: no mechanism, dataset, baseline, metric or threshold was fixed, so 'superiority or honest null result' could not be graded (initialState: V159 shows no quality gain on 4 tasks; #902 gain not measured). The dossier (V167_V166_CLOSURE_DOSSIER.json A_H_authorizationRequest.requestedScope.steps[0]) requires fixing the mechanism choice and pre-registering the held-out set, metric, baseline and thresholds, with the write_set extended to the runner + evidence. Its risks are addressed: leakage (dataset frozen + sha before any change; DEV-only fit; record of what was looked at), small n (minimum n, bootstrap CI, honest null expected), selector steering (write_set lists every file the experiment writes, not shrunk).",
+          "priorResultUnchanged": "initialState PARTIAL (V159 routing 0.75→0.75; #902 gain not measured) — untouched",
+          "revisionAuthorSessionId": "h-reviser-v168",
+          "inspectionFixes": {
+            "date": "2026-11-23",
+            "note": "tightened after inspection REJECT, before any metric was computed",
+            "inspection": "independent inspection of #942 @587650b0 REJECT (MED): the sentence 'a PASS cannot come from breadth alone' was false — H1 contains f4 = log1p(#changedFiles) and PASS only required Δ1 ≥ −0.02 (non-inferiority) while B0 may sit near AUC 0.5",
+            "change": [
+              "thresholds.PASS: 'Δ1 ≥ −0.02' (non-inferiority vs B1) ⇒ 'Δ1 > 0 AND CI95 lower bound of Δ1 > 0' (superiority vs B1) — a TIGHTENING (coordinator decision), never a loosening",
+              "baseline.B1_comparator: false sentence replaced by the accurate statement",
+              "thresholds.PARTIAL and adoptionDecision: where Δ1 ≤ 0 lands stated explicitly (PARTIAL if Δ0 > 0, NOT_ADOPTED)"
+            ],
+            "unchanged": "dataset (sha256 d8bf4a3f…), split, features, hyper-parameters, metric, seeds, NOT_MEASURED and FAIL rules, minimum n"
+          }
+        }
+      ]
     },
     {
       "scenario": "I",
