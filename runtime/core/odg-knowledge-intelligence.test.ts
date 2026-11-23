@@ -139,5 +139,17 @@ let threw = false; try { K.assessClaim(eb, { collection: C(byUrl) }); } catch { 
 check("no injected clock ⇒ throws", threw);
 check("deterministic + frozen", JSON.stringify(K.assessClaim(eb, { asOfEpochMs: ASOF, collection: C(byUrl) })) === JSON.stringify(a1) && Object.isFrozen(a1) && Object.isFrozen(a1.dimensions));
 
+// V15.9 publisher identities: an organisation's several hosts are ONE family (never independent), and a new official host
+// can only yield SUPPORTED (what the publisher states), never CORROBORATED, on its own.
+const idA = K.identityOf("https://csrc.nist.gov/pubs/x"), idB = K.identityOf("https://www.nist.gov/y");
+check("V15.9: csrc.nist.gov and www.nist.gov share the 'nist' family (not independent)", idA.known && idB.known && idA.family === "nist" && idB.family === "nist");
+check("V15.9: the 5 V158 hosts are PRIMARY_OFFICIAL with distinct organisation families", ["https://www.postgresql.org/docs/", "https://code.claude.com/docs/", "https://www.sqlite.org/docs.html", "https://registry.npmjs.org/next", "https://csrc.nist.gov/pubs/"].every((u) => K.identityOf(u).role === "PRIMARY_OFFICIAL") && new Set(["https://www.postgresql.org/docs/", "https://code.claude.com/docs/", "https://www.sqlite.org/docs.html", "https://registry.npmjs.org/next", "https://csrc.nist.gov/pubs/"].map((u) => K.identityOf(u).family)).size === 5);
+check("V15.9: an unlisted look-alike host stays UNKNOWN (exact-host match, no suffix)", K.identityOf("https://evil.code.claude.com/x").known === false && K.identityOf("https://postgresql.org/x").known === false);
+check("V15.9: registry.npmjs.org family is 'github' (owning organisation)", K.identityOf("https://registry.npmjs.org/next").family === "github");
+// V15.9 (#911 MED): the same SUPPORTED claim marked as a FRAGMENT is capped at CANDIDATE (never unlocks implementation use);
+// a truthy non-boolean marker counts as a fragment too (fail-closed); fragment:false changes nothing.
+const fr = K.assessClaim({ ...eb, fragment: true }, { asOfEpochMs: ASOF, collection: C(byUrl) });
+check("V15.9: fragment:true caps an otherwise SUPPORTED claim at CANDIDATE, with the reason recorded", fr.dimensions.epistemic === "CANDIDATE" && fr.reasons.some((r: string) => /FRAGMENT citation/.test(r)) && fr.isFact === false);
+check("V15.9: fragment marker 'yes' (non-boolean) ⇒ also capped; fragment:false ⇒ unchanged SUPPORTED", K.assessClaim({ ...eb, fragment: "yes" }, { asOfEpochMs: ASOF, collection: C(byUrl) }).dimensions.epistemic === "CANDIDATE" && K.assessClaim({ ...eb, fragment: false }, { asOfEpochMs: ASOF, collection: C(byUrl) }).dimensions.epistemic === "SUPPORTED");
 process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-knowledge-intelligence (V373 KI-V2 Lot 1)" : f + " FAIL") + "\n"); process.exit(f ? 1 : 0);
 export {};

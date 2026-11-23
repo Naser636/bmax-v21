@@ -8,8 +8,8 @@
     "claims": 15,
     "keysAuthored": 14,
     "CORROBORATED": 0,
-    "SUPPORTED": 0,
-    "CANDIDATE": 14,
+    "SUPPORTED": 6,
+    "CANDIDATE": 8,
     "UNKNOWN": 1,
     "citationsVerified": 15,
     "keptInMemory": 15,
@@ -83,20 +83,22 @@
         ]
       },
       "dimensions": {
-        "epistemic": "CANDIDATE",
+        "epistemic": "SUPPORTED",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "postgresql"
+      ],
       "sources": [
         {
           "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "PostgreSQL Global Development Group"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -111,8 +113,7 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (postgresql) — supports WHAT THE PUBLISHER STATES, not a general truth"
       ]
     },
     {
@@ -130,20 +131,22 @@
         "qualifiers": []
       },
       "dimensions": {
-        "epistemic": "CANDIDATE",
+        "epistemic": "SUPPORTED",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "postgresql"
+      ],
       "sources": [
         {
           "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "PostgreSQL Global Development Group"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -158,8 +161,7 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (postgresql) — supports WHAT THE PUBLISHER STATES, not a general truth"
       ]
     },
     {
@@ -177,20 +179,22 @@
         "qualifiers": []
       },
       "dimensions": {
-        "epistemic": "CANDIDATE",
+        "epistemic": "SUPPORTED",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "postgresql"
+      ],
       "sources": [
         {
           "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "PostgreSQL Global Development Group"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -205,8 +209,7 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (postgresql) — supports WHAT THE PUBLISHER STATES, not a general truth"
       ]
     },
     {
@@ -226,20 +229,22 @@
         ]
       },
       "dimensions": {
-        "epistemic": "CANDIDATE",
+        "epistemic": "SUPPORTED",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "postgresql"
+      ],
       "sources": [
         {
           "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "PostgreSQL Global Development Group"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -254,8 +259,7 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (postgresql) — supports WHAT THE PUBLISHER STATES, not a general truth"
       ]
     },
     {
@@ -281,14 +285,16 @@
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "anthropic"
+      ],
       "sources": [
         {
           "url": "https://code.claude.com/docs/en/sandboxing.md",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "Anthropic"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -303,8 +309,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (anthropic) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -324,20 +330,22 @@
         ]
       },
       "dimensions": {
-        "epistemic": "CANDIDATE",
+        "epistemic": "SUPPORTED",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "anthropic"
+      ],
       "sources": [
         {
           "url": "https://code.claude.com/docs/en/sandboxing.md",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "Anthropic"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -352,8 +360,7 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (anthropic) — supports WHAT THE PUBLISHER STATES, not a general truth"
       ]
     },
     {
@@ -373,20 +380,22 @@
         ]
       },
       "dimensions": {
-        "epistemic": "CANDIDATE",
+        "epistemic": "SUPPORTED",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "anthropic"
+      ],
       "sources": [
         {
           "url": "https://code.claude.com/docs/en/sandboxing.md",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "Anthropic"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -401,8 +410,7 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (anthropic) — supports WHAT THE PUBLISHER STATES, not a general truth"
       ]
     },
     {
@@ -428,14 +436,16 @@
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "anthropic"
+      ],
       "sources": [
         {
           "url": "https://code.claude.com/docs/en/sandboxing.md",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "Anthropic"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -450,8 +460,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (anthropic) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -477,14 +487,16 @@
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "nist"
+      ],
       "sources": [
         {
           "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "NIST Computer Security Resource Center (US Dept. of Commerce)"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -499,8 +511,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -526,14 +538,16 @@
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "nist"
+      ],
       "sources": [
         {
           "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "NIST Computer Security Resource Center (US Dept. of Commerce)"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -548,8 +562,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -575,14 +589,16 @@
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "nist"
+      ],
       "sources": [
         {
           "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "NIST Computer Security Resource Center (US Dept. of Commerce)"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -597,8 +613,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -624,14 +640,16 @@
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "sqlite"
+      ],
       "sources": [
         {
           "url": "https://www.sqlite.org/docs.html",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "SQLite project (Hwaci)"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -646,8 +664,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (sqlite) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -673,14 +691,16 @@
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "sqlite"
+      ],
       "sources": [
         {
           "url": "https://www.sqlite.org/docs.html",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "SQLite project (Hwaci)"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -695,8 +715,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (sqlite) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -722,14 +742,16 @@
         "risk": "LOW"
       },
       "isFact": false,
-      "independentFamilies": [],
+      "independentFamilies": [
+        "sqlite"
+      ],
       "sources": [
         {
           "url": "https://www.sqlite.org/docs.html",
           "citationVerified": true,
           "keyGrounded": true,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "SQLite project (Hwaci)"
         }
       ],
       "consultedDate": "2026-11-23",
@@ -744,8 +766,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
-        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+        "verified OFFICIAL primary source documenting its own statement (sqlite) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -767,8 +789,8 @@
           "url": "https://www.sqlite.org/docs.html",
           "citationVerified": true,
           "keyGrounded": false,
-          "publisherKnown": false,
-          "organization": null
+          "publisherKnown": true,
+          "organization": "SQLite project (Hwaci)"
         }
       ],
       "consultedDate": "2026-11-23",
