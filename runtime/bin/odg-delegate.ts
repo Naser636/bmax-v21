@@ -358,6 +358,11 @@ console.log("Proofs  :", path.join(GENERATED, "runtime-verify.json") + ",", path
 console.log("Brief   :", briefMdPath);
 if (lifecycle) {
   console.log("Lifecycle:", lifecycle.achieved, lifecycle.archived ? "(archived)" : "");
+  // V16.1 — honest terminal: an UNCOMMITTED delegated patch is proven + released by the mission-scoped converge, but the
+  // lifecycle stays capped at VERIFIED until the HUMAN commit gate (ODG never auto-commits) ⇒ markArchived is a no-op.
+  if (!lifecycle.archived && provenPatchPaths.length > 0) {
+    console.log("Archive  : NOT archived — the delegated patch is uncommitted (human commit gate); commit it, then re-run: odg delegate", mission);
+  }
 }
 console.log("======================================");
 
