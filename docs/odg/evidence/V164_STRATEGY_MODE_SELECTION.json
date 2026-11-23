@@ -1,0 +1,2918 @@
+{
+  "schema": "V164_STRATEGY_MODE_SELECTION_EVIDENCE",
+  "directive": "owner V16.4 §4 sélecteur de stratégie (MODE NATIF / HYBRIDE / FOURNISSEUR) + §7 gap 'absence de mode hybride dans le sélecteur' + §10 scenario D",
+  "gapRef": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (\"'hybrid' is not an option of the component\")",
+  "head": "cdd6efd0ccfde545d0d024b9e9d4fba1064dca62",
+  "evaluationInstant": "2026-11-23T18:56:03.582Z",
+  "evaluationInstantNote": "pinned = latest timestamp among the source evidence files (deterministic; registry freshness checked against it)",
+  "sources": {
+    "REG": {
+      "path": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json",
+      "sha256": "288f46b7686e04f28df8d520610f211defd4f30b5e609f884aa374f8c4c567fc"
+    },
+    "V159": {
+      "path": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json",
+      "sha256": "ce9085cb8b5862645a6ad77a7a8ddfd9be5b4df6c515e23acaa3549fb1325985"
+    },
+    "ISO": {
+      "path": "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json",
+      "sha256": "94c7eb999cea757443db398aef3721f95ae089b3c525468f34c08dbd3d650e8b"
+    },
+    "J": {
+      "path": "docs/odg/evidence/V161_SCENARIO_J.json",
+      "sha256": "11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff"
+    },
+    "F": {
+      "path": "docs/odg/evidence/V161_SCENARIO_F.json",
+      "sha256": "02519233db44ff1cc214969f1b45136276d91cc709ebbb954cd707c27f8997ab"
+    },
+    "AP": {
+      "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+      "sha256": "e56797b02d0b4d2110669ca6c72746a9b2715f8cb241adedecb890c6546a5cc0"
+    },
+    "CP8": {
+      "path": "docs/odg/evidence/V163_CHECKPOINT_8.json",
+      "sha256": "7a29ae850f41de89bd0919755deb2bb568216cd2e35421e94cb676242e8d15e6"
+    }
+  },
+  "component": {
+    "id": "V164-STRATEGY-MODE-SELECTOR",
+    "purpose": "V16.4 §4 sélecteur de stratégie — choose NATIVE / HYBRID / PROVIDER / DECISION_REQUIRED from canonical evidence; §7 hybrid gap",
+    "reuses": [
+      "odg-local-model-execution-policy.chooseExecutionPolicy measured overlay (→ odg-model-router.selectMeasured, V155 registry)",
+      "decomposition-planner.chooseStrategy",
+      "odg-writeset-contention.computeLayerContention",
+      "odg-sovereign-delegation.createMission (deny-by-default record)"
+    ],
+    "invariants": [
+      "chooses only: AUTHORIZES nothing, LAUNCHES nothing, calls no model and no provider",
+      "every input is evidence-cited or NOT_MEASURED; NOT_MEASURED is never default-filled and raises uncertainty",
+      "provider ⇒ authorizationRequired always; budgetRequired unless a verifiable budget object; providerExecutable needs budget AND bound OWNER authorization; launchedBySelector=false",
+      "HYBRID only when decomposable (planner DECOMPOSED + ≥2 parts with independent checks) AND write-sets disjoint (UNKNOWN ⇒ conflict) AND ≥1 local + ≥1 delegated part",
+      "strategy change only on an ODG stop; never repeats a tried strategy; bounded by MAX_CHAIN; PURE/deterministic/frozen"
+    ]
+  },
+  "rules": [
+    "Q1 a part with an OBSERVED local ACCEPT (same contract) ⇒ QUALIFIED_OBSERVED (model = the accepting model)",
+    "Q2 a part with OBSERVED local failures only ⇒ QUALIFIED_MEASURED if the registry has a QUALIFIED model strictly larger than every model tried, else NOT_QUALIFIED_OBSERVED",
+    "Q2b a mission-level local failure that no part-level observation localises counts as an observed failure of every part (PROVIDER only after an OBSERVED local failure on that task/part)",
+    "Q3 no part observation ⇒ class registry via chooseExecutionPolicy measured overlay (selectMeasured): LOCAL ⇒ QUALIFIED_MEASURED; NO_QUALIFIED_LOCAL_MODEL with a PROBATION model ⇒ PROBATION_PROBE (€0 local probe first, escalate-after-failure — weak evidence is never treated harsher than none); NO_QUALIFIED without PROBATION ⇒ NOT_QUALIFIED_MEASURED; UNAVAILABLE ⇒ UNAVAILABLE; absent taskClass / unusable registry ⇒ NOT_MEASURED",
+    "Q4 NOT_MEASURED is never default-filled: it is treated as a €0 local PROBE (canonical policy PROBE tier) and raises uncertainty to HIGH",
+    "M0 mission.authorizationState supplied and ≠ AUTHORIZED ⇒ DECISION_REQUIRED (the selector never authorizes); the evidence-derived choice is reported as tentativeMode",
+    "M1 risk HIGH ⇒ authorizationRequired for every mode; risk HIGH with uncertainty HIGH ⇒ DECISION_REQUIRED",
+    "M2 whole mission observed ACCEPTED locally, or every part LOCAL_OK (QUALIFIED_* or NOT_MEASURED probe) ⇒ NATIVE (€0)",
+    "M3 a supplied deadline shorter than the measured local wall time ⇒ DECISION_REQUIRED (speed vs paid-provider trade-off is an owner decision)",
+    "M4 ≥1 LOCAL_OK part AND ≥1 non-local part AND decomposable (planner DECOMPOSED + ≥2 parts each with an independent check) AND write-sets disjoint (odg-writeset-contention, UNKNOWN ⇒ conflict) ⇒ HYBRID: local parts native, others via delegation records, ODG integrates + independent validation",
+    "M5 otherwise (some part not locally qualified) ⇒ PROVIDER: one deny-by-default delegation RECORD (CREATED); HYBRID refused reasons are reported",
+    "C1 local cost = €0 (loopback Ollama); provider cost = UNKNOWN unless a verifiable budget {currency, ceiling>0, enforcedBy, evidenceRef} is supplied ⇒ budgetRequired",
+    "C2 a provider part ALWAYS has authorizationRequired=true; providerExecutable only with a verifiable budget AND an OWNER authorization bound to this mission id; the selector NEVER launches a provider",
+    "U1 uncertainty HIGH if any part qualification is NOT_MEASURED; else MEDIUM if risk is NOT_MEASURED or a multi-part write-set is UNKNOWN; else LOW",
+    "F0..F7 strategy change on failure: see nextStrategyAfterFailure (ODG stop only; never repeats a tried strategy; bounded by MAX_CHAIN)"
+  ],
+  "preRegistration": {
+    "scenario": "D — ODG choisit correctement le mode (V16.4 §10)",
+    "registeredIn": "runtime/bin/odg-strategy-mode-run.ts (same commit as the first evidence write; ordering is NOT cryptographically provable)",
+    "criteria": [
+      {
+        "id": "D1",
+        "name": "PROVIDER_NEVER_EXECUTABLE_WITHOUT_BUDGET_AND_AUTHORIZATION",
+        "test": "every selection whose mode or tentativeMode is PROVIDER/HYBRID has authorizationRequired=true, budgetRequired=true (no verifiable budget exists in any real record), providerExecutable=false, launchedBySelector=false, delegation records only in state CREATED; providerCalls=0"
+      },
+      {
+        "id": "D2",
+        "name": "HYBRID_ONLY_WHEN_DECOMPOSABLE_AND_DISJOINT",
+        "test": "every HYBRID selection has inputs.decomposable=true, inputs.writeSetDisjoint=true, ≥1 native part and ≥1 delegated part"
+      },
+      {
+        "id": "D3",
+        "name": "AVOIDS_OBSERVED_LOCAL_FAILURE (retrospective)",
+        "test": "for missions whose observed local outcome was FAILURE (V159 implement-parse-range, the 4 J tasks), the PRIOR selection is not NATIVE (would not have re-spent the local strategy that failed)"
+      },
+      {
+        "id": "D4",
+        "name": "NO_CONTRADICTION_ON_OBSERVED_SUCCESS (retrospective)",
+        "test": "for missions whose observed local outcome was SUCCESS (V159 bugfix/repair/refactor, F invoice pipeline), the PRIOR selection is NATIVE (would not have delegated what native solved)"
+      },
+      {
+        "id": "D5",
+        "name": "STRATEGY_CHAIN_REPRODUCES_J_AND_IS_BOUNDED",
+        "test": "replaying each J row through nextStrategyAfterFailure from the default reproduces J's recorded alternative (strategy, model, maxRepair); the step after the alternative's failure is HYBRID or PROVIDER; the continued chain terminates within MAX_CHAIN with no repeated strategy"
+      },
+      {
+        "id": "D6",
+        "name": "NOT_MEASURED_NEVER_DEFAULT_FILLED",
+        "test": "every part input (taskClass, writeSet, independentCheck) is cited (source ≠ UNCITED) or NOT_MEASURED; any NOT_MEASURED part qualification without a whole-mission accept ⇒ uncertainty HIGH"
+      },
+      {
+        "id": "D7",
+        "name": "PROSPECTIVE_CONFIRMATION",
+        "test": "a HYBRID or PROVIDER selection was subsequently executed and independently validated — NOT_MEASURED in this mission (no provider call allowed, no hybrid execution run)"
+      }
+    ],
+    "gradingRule": "FAIL if any of D1–D6 fails; PASS only if D1–D6 pass AND D7 passes; otherwise PARTIAL (D7 NOT_MEASURED ⇒ ceiling PARTIAL). Retrospective consistency ≠ prospective correctness."
+  },
+  "missions": [
+    {
+      "id": "V159/v159-bugfix-median",
+      "family": "V159",
+      "observedOutcome": {
+        "local": "SUCCESS",
+        "passes": 4,
+        "n": 4,
+        "source": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#before/after.perMission.v159-bugfix-median"
+      },
+      "prior": {
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (V159/v159-bugfix-median:QUALIFIED_MEASURED) ⇒ NATIVE (€0)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": false,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "V159/v159-bugfix-median",
+            "qualification": "QUALIFIED_MEASURED",
+            "localModel": "qwen2.5-coder:7b",
+            "basis": "Q3 registry QUALIFIED qwen2.5-coder:7b for 'bugfix' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.bugfix (sha256 288f46b7686e))"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "V159/v159-bugfix-median"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      },
+      "current": {
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (V159/v159-bugfix-median:QUALIFIED_OBSERVED) ⇒ NATIVE (€0)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": false,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "V159/v159-bugfix-median",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-bugfix-median,condition=BEFORE_calibrated,trial=1])"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "V159/v159-bugfix-median"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "V159/v159-repair-total-length",
+      "family": "V159",
+      "observedOutcome": {
+        "local": "SUCCESS",
+        "passes": 4,
+        "n": 4,
+        "source": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#before/after.perMission.v159-repair-total-length"
+      },
+      "prior": {
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (V159/v159-repair-total-length:QUALIFIED_MEASURED) ⇒ NATIVE (€0)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": false,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "V159/v159-repair-total-length",
+            "qualification": "QUALIFIED_MEASURED",
+            "localModel": "qwen2.5-coder:7b",
+            "basis": "Q3 registry QUALIFIED qwen2.5-coder:7b for 'repair' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.repair (sha256 288f46b7686e))"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "V159/v159-repair-total-length"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      },
+      "current": {
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (V159/v159-repair-total-length:QUALIFIED_OBSERVED) ⇒ NATIVE (€0)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": false,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "V159/v159-repair-total-length",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-repair-total-length,condition=BEFORE_calibrated,trial=1])"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "V159/v159-repair-total-length"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "V159/v159-refactor-even-squares",
+      "family": "V159",
+      "observedOutcome": {
+        "local": "SUCCESS",
+        "passes": 4,
+        "n": 4,
+        "source": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#before/after.perMission.v159-refactor-even-squares"
+      },
+      "prior": {
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (V159/v159-refactor-even-squares:QUALIFIED_MEASURED) ⇒ NATIVE (€0)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": false,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "V159/v159-refactor-even-squares",
+            "qualification": "QUALIFIED_MEASURED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q3 registry QUALIFIED qwen2.5-coder:3b for 'refactor' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.refactor (sha256 288f46b7686e))"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "V159/v159-refactor-even-squares"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      },
+      "current": {
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (V159/v159-refactor-even-squares:QUALIFIED_OBSERVED) ⇒ NATIVE (€0)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": false,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "V159/v159-refactor-even-squares",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-refactor-even-squares,condition=BEFORE_calibrated,trial=1])"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "V159/v159-refactor-even-squares"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "V159/v159-implement-parse-range",
+      "family": "V159",
+      "observedOutcome": {
+        "local": "FAILURE",
+        "passes": 0,
+        "n": 4,
+        "source": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#before/after.perMission.v159-implement-parse-range"
+      },
+      "prior": {
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (V159/v159-implement-parse-range:PROBATION_PROBE) ⇒ NATIVE (€0) — PROBATION_PROBE parts (V159/v159-implement-parse-range) escalate if they still fail",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "PROBATION-only local evidence (weak): V159/v159-implement-parse-range",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": false,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "V159/v159-implement-parse-range",
+            "qualification": "PROBATION_PROBE",
+            "localModel": null,
+            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' but PROBATION qwen2.5-coder:3b,qwen2.5-coder:7b and no observed failure on this task/part ⇒ €0 local PROBE, escalate if it still fails (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "V159/v159-implement-parse-range"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      },
+      "current": {
+        "mode": "PROVIDER",
+        "tentativeMode": "PROVIDER",
+        "rule": "M5",
+        "rationale": "not locally qualified: V159/v159-implement-parse-range:NOT_QUALIFIED_OBSERVED; HYBRID refused (single part (nothing to split); no locally-qualified part) ⇒ PROVIDER record",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "V159/v159-implement-parse-range",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2 8 observed local failure(s) (docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=BEFORE_calibrated,trial=1]; docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=BEFORE_calibrated,trial=2]; docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=AFTER_measured,trial=1]; docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=AFTER_measured,trial=2]; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range,trial=1].default; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range,trial=1].alternative; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range,trial=2].default; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range,trial=2].alternative); no larger QUALIFIED model untried"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [],
+          "delegatedParts": [
+            "V159/v159-implement-parse-range"
+          ],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no locally-qualified part"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": [
+          {
+            "missionId": "V159/v159-implement-parse-range",
+            "state": "CREATED",
+            "authority": "ODG"
+          }
+        ]
+      }
+    },
+    {
+      "id": "J/v159-implement-parse-range",
+      "family": "J",
+      "observedOutcome": {
+        "local": "FAILURE",
+        "passes": 0,
+        "n": 4,
+        "source": "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.v159-implement-parse-range"
+      },
+      "prior": {
+        "mode": "PROVIDER",
+        "tentativeMode": "PROVIDER",
+        "rule": "M5",
+        "rationale": "not locally qualified: J/v159-implement-parse-range:NOT_QUALIFIED_OBSERVED; HYBRID refused (single part (nothing to split); no locally-qualified part) ⇒ PROVIDER record",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "J/v159-implement-parse-range",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2 4 observed local failure(s) (docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=BEFORE_calibrated,trial=1]; docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=BEFORE_calibrated,trial=2]; docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=AFTER_measured,trial=1]; docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=AFTER_measured,trial=2]); no larger QUALIFIED model untried"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [],
+          "delegatedParts": [
+            "J/v159-implement-parse-range"
+          ],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no locally-qualified part"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_J.json#tasks[0].plannerStrategy"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": [
+          {
+            "missionId": "J/v159-implement-parse-range",
+            "state": "CREATED",
+            "authority": "ODG"
+          }
+        ]
+      },
+      "current": {
+        "mode": "PROVIDER",
+        "tentativeMode": "PROVIDER",
+        "rule": "M5",
+        "rationale": "not locally qualified: J/v159-implement-parse-range:NOT_QUALIFIED_OBSERVED; HYBRID refused (single part (nothing to split); no locally-qualified part) ⇒ PROVIDER record",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "J/v159-implement-parse-range",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2 8 observed local failure(s) (docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=BEFORE_calibrated,trial=1]; docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=BEFORE_calibrated,trial=2]; docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=AFTER_measured,trial=1]; docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#runs[mission=v159-implement-parse-range,condition=AFTER_measured,trial=2]; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range,trial=1].default; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range,trial=1].alternative; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range,trial=2].default; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range,trial=2].alternative); no larger QUALIFIED model untried"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [],
+          "delegatedParts": [
+            "J/v159-implement-parse-range"
+          ],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no locally-qualified part"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_J.json#tasks[0].plannerStrategy"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": [
+          {
+            "missionId": "J/v159-implement-parse-range",
+            "state": "CREATED",
+            "authority": "ODG"
+          }
+        ]
+      }
+    },
+    {
+      "id": "J/rle-codec",
+      "family": "J",
+      "observedOutcome": {
+        "local": "FAILURE",
+        "passes": 0,
+        "n": 4,
+        "source": "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.rle-codec"
+      },
+      "prior": {
+        "mode": "PROVIDER",
+        "tentativeMode": "PROVIDER",
+        "rule": "M5",
+        "rationale": "not locally qualified: parse.js:NOT_QUALIFIED_OBSERVED, encode.js:NOT_QUALIFIED_OBSERVED, decode.js:NOT_QUALIFIED_OBSERVED, report.js:NOT_QUALIFIED_OBSERVED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "parse.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=rle-codec]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "encode.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=rle-codec]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "decode.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=rle-codec]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "report.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=rle-codec]); no larger QUALIFIED model untried"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [],
+          "delegatedParts": [
+            "parse.js",
+            "encode.js",
+            "decode.js",
+            "report.js"
+          ],
+          "refusedBecause": [
+            "no locally-qualified part"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_J.json#tasks[1].plannerStrategy"
+          },
+          "decomposable": true,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": [
+          {
+            "missionId": "J/rle-codec",
+            "state": "CREATED",
+            "authority": "ODG"
+          }
+        ]
+      },
+      "current": {
+        "mode": "HYBRID",
+        "tentativeMode": "HYBRID",
+        "rule": "M4",
+        "rationale": "decomposable (DECOMPOSED, 4 parts with independent checks) + disjoint write-sets; local: parse.js,encode.js,decode.js; delegated: report.js ⇒ HYBRID (ODG pilots + integrates + independent validation)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "HYBRID",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "parse.js",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=rle-codec,trial=1].alternative.subproblems[id=parse.js])"
+          },
+          {
+            "id": "encode.js",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=rle-codec,trial=1].alternative.subproblems[id=encode.js])"
+          },
+          {
+            "id": "decode.js",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=rle-codec,trial=1].alternative.subproblems[id=decode.js])"
+          },
+          {
+            "id": "report.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2 2 observed local failure(s) (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=rle-codec,trial=1].alternative.subproblems[id=report.js]; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=rle-codec,trial=2].alternative.subproblems[id=report.js]); no larger QUALIFIED model untried"
+          }
+        ],
+        "hybrid": {
+          "applicable": true,
+          "nativeParts": [
+            "parse.js",
+            "encode.js",
+            "decode.js"
+          ],
+          "delegatedParts": [
+            "report.js"
+          ],
+          "refusedBecause": []
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_J.json#tasks[1].plannerStrategy"
+          },
+          "decomposable": true,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": [
+          {
+            "missionId": "J/rle-codec::report.js",
+            "state": "CREATED",
+            "authority": "ODG"
+          }
+        ]
+      }
+    },
+    {
+      "id": "J/csv-typed-validator",
+      "family": "J",
+      "observedOutcome": {
+        "local": "FAILURE",
+        "passes": 0,
+        "n": 4,
+        "source": "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.csv-typed-validator"
+      },
+      "prior": {
+        "mode": "PROVIDER",
+        "tentativeMode": "PROVIDER",
+        "rule": "M5",
+        "rationale": "not locally qualified: parse.js:NOT_QUALIFIED_OBSERVED, validate.js:NOT_QUALIFIED_OBSERVED, collect.js:NOT_QUALIFIED_OBSERVED, report.js:NOT_QUALIFIED_OBSERVED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "parse.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=csv-typed-validator]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "validate.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=csv-typed-validator]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "collect.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=csv-typed-validator]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "report.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=csv-typed-validator]); no larger QUALIFIED model untried"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [],
+          "delegatedParts": [
+            "parse.js",
+            "validate.js",
+            "collect.js",
+            "report.js"
+          ],
+          "refusedBecause": [
+            "no locally-qualified part"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_J.json#tasks[2].plannerStrategy"
+          },
+          "decomposable": true,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": [
+          {
+            "missionId": "J/csv-typed-validator",
+            "state": "CREATED",
+            "authority": "ODG"
+          }
+        ]
+      },
+      "current": {
+        "mode": "HYBRID",
+        "tentativeMode": "HYBRID",
+        "rule": "M4",
+        "rationale": "decomposable (DECOMPOSED, 4 parts with independent checks) + disjoint write-sets; local: parse.js,validate.js,report.js; delegated: collect.js ⇒ HYBRID (ODG pilots + integrates + independent validation)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "PROBATION-only local evidence (weak): report.js",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "HYBRID",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "parse.js",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=csv-typed-validator,trial=1].alternative.subproblems[id=parse.js])"
+          },
+          {
+            "id": "validate.js",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=csv-typed-validator,trial=1].alternative.subproblems[id=validate.js])"
+          },
+          {
+            "id": "collect.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2 2 observed local failure(s) (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=csv-typed-validator,trial=1].alternative.subproblems[id=collect.js]; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=csv-typed-validator,trial=2].alternative.subproblems[id=collect.js]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "report.js",
+            "qualification": "PROBATION_PROBE",
+            "localModel": null,
+            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' but PROBATION qwen2.5-coder:3b,qwen2.5-coder:7b and no observed failure on this task/part ⇒ €0 local PROBE, escalate if it still fails (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+          }
+        ],
+        "hybrid": {
+          "applicable": true,
+          "nativeParts": [
+            "parse.js",
+            "validate.js",
+            "report.js"
+          ],
+          "delegatedParts": [
+            "collect.js"
+          ],
+          "refusedBecause": []
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_J.json#tasks[2].plannerStrategy"
+          },
+          "decomposable": true,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": [
+          {
+            "missionId": "J/csv-typed-validator::collect.js",
+            "state": "CREATED",
+            "authority": "ODG"
+          }
+        ]
+      }
+    },
+    {
+      "id": "J/range-clamp-pipeline",
+      "family": "J",
+      "observedOutcome": {
+        "local": "FAILURE",
+        "passes": 0,
+        "n": 4,
+        "source": "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.range-clamp-pipeline"
+      },
+      "prior": {
+        "mode": "PROVIDER",
+        "tentativeMode": "PROVIDER",
+        "rule": "M5",
+        "rationale": "not locally qualified: parse.js:NOT_QUALIFIED_OBSERVED, clamp.js:NOT_QUALIFIED_OBSERVED, flagged.js:NOT_QUALIFIED_OBSERVED, report.js:NOT_QUALIFIED_OBSERVED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "parse.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=range-clamp-pipeline]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "clamp.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=range-clamp-pipeline]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "flagged.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=range-clamp-pipeline]); no larger QUALIFIED model untried"
+          },
+          {
+            "id": "report.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=range-clamp-pipeline]); no larger QUALIFIED model untried"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [],
+          "delegatedParts": [
+            "parse.js",
+            "clamp.js",
+            "flagged.js",
+            "report.js"
+          ],
+          "refusedBecause": [
+            "no locally-qualified part"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_J.json#tasks[3].plannerStrategy"
+          },
+          "decomposable": true,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": [
+          {
+            "missionId": "J/range-clamp-pipeline",
+            "state": "CREATED",
+            "authority": "ODG"
+          }
+        ]
+      },
+      "current": {
+        "mode": "HYBRID",
+        "tentativeMode": "HYBRID",
+        "rule": "M4",
+        "rationale": "decomposable (DECOMPOSED, 4 parts with independent checks) + disjoint write-sets; local: parse.js,clamp.js,flagged.js; delegated: report.js ⇒ HYBRID (ODG pilots + integrates + independent validation)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "HYBRID",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "parse.js",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=range-clamp-pipeline,trial=1].alternative.subproblems[id=parse.js])"
+          },
+          {
+            "id": "clamp.js",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=range-clamp-pipeline,trial=1].alternative.subproblems[id=clamp.js])"
+          },
+          {
+            "id": "flagged.js",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=range-clamp-pipeline,trial=1].alternative.subproblems[id=flagged.js])"
+          },
+          {
+            "id": "report.js",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
+            "localModel": null,
+            "basis": "Q2 2 observed local failure(s) (docs/odg/evidence/V161_SCENARIO_J.json#rows[task=range-clamp-pipeline,trial=1].alternative.subproblems[id=report.js]; docs/odg/evidence/V161_SCENARIO_J.json#rows[task=range-clamp-pipeline,trial=2].alternative.subproblems[id=report.js]); no larger QUALIFIED model untried"
+          }
+        ],
+        "hybrid": {
+          "applicable": true,
+          "nativeParts": [
+            "parse.js",
+            "clamp.js",
+            "flagged.js"
+          ],
+          "delegatedParts": [
+            "report.js"
+          ],
+          "refusedBecause": []
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_J.json#tasks[3].plannerStrategy"
+          },
+          "decomposable": true,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": [
+          {
+            "missionId": "J/range-clamp-pipeline::report.js",
+            "state": "CREATED",
+            "authority": "ODG"
+          }
+        ]
+      }
+    },
+    {
+      "id": "v161-scenario-f-invoice-pipeline",
+      "family": "F",
+      "observedOutcome": {
+        "local": "SUCCESS",
+        "passes": 3,
+        "n": 3,
+        "source": "docs/odg/evidence/V161_SCENARIO_F.json#trials[classification=REAL].accepted"
+      },
+      "prior": {
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (A:NOT_MEASURED, B:NOT_MEASURED, C:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: A,B,C",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": false,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "HYBRID",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "A",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          },
+          {
+            "id": "B",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          },
+          {
+            "id": "C",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "A",
+            "B",
+            "C"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_F.json#trials[0].decomposition.strategy"
+          },
+          "decomposable": true,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      },
+      "current": {
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (A:QUALIFIED_OBSERVED, B:QUALIFIED_OBSERVED, C:QUALIFIED_OBSERVED) ⇒ NATIVE (€0)",
+        "uncertainty": {
+          "level": "MEDIUM",
+          "because": [
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": false,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "HYBRID",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "A",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_F.json#trials[T1].receipt.A.ownAccepted)"
+          },
+          {
+            "id": "B",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:7b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:7b (docs/odg/evidence/V161_SCENARIO_F.json#trials[T1].receipt.B.ownAccepted)"
+          },
+          {
+            "id": "C",
+            "qualification": "QUALIFIED_OBSERVED",
+            "localModel": "qwen2.5-coder:3b",
+            "basis": "Q1 observed ACCEPT by qwen2.5-coder:3b (docs/odg/evidence/V161_SCENARIO_F.json#trials[T1].receipt.C.ownAccepted)"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "A",
+            "B",
+            "C"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "DECOMPOSED",
+            "source": "docs/odg/evidence/V161_SCENARIO_F.json#trials[0].decomposition.strategy"
+          },
+          "decomposable": true,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-A",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-A:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-A",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-A",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-A"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-B",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-B:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-B",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-B",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-B"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-C",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-C:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-C",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-C",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-C"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-D",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-D:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-D",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-D",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-D"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": false,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-E",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-E:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-E",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-E",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-E"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-F",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-F:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-F",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-F",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-F"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-G",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-G:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-G",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-G",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-G"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-H",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-H:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-H",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-H",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-H"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-I",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-I:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-I",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-I",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-I"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-J",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-J:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-J",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-J",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-J"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-K",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-K:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-K",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-K",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-K"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-L",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-L:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-L",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-L",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-L"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-M",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-M:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-M",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-M",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-M"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-N",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-N:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-N",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-N",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-N"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-O",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-O:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-O",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-O",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-O"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-P",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-P:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-P",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-P",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-P"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    }
+  ],
+  "modeCounts": {
+    "prior": {
+      "NATIVE": 5,
+      "PROVIDER": 4
+    },
+    "current": {
+      "NATIVE": 4,
+      "PROVIDER": 2,
+      "HYBRID": 3,
+      "DECISION_REQUIRED": 16
+    }
+  },
+  "jStrategyReplay": [
+    {
+      "task": "v159-implement-parse-range",
+      "trial": 1,
+      "recordedSelection": {
+        "strategy": "LARGER_MODEL_REPAIR_DEPTH",
+        "rule": "R4",
+        "model": "qwen2.5-coder:7b",
+        "maxRepair": 3
+      },
+      "step1": {
+        "key": "NATIVE:LARGER_MODEL_REPAIR_DEPTH:qwen2.5-coder:7b:3",
+        "rule": "F4"
+      },
+      "reproducesJ": true,
+      "step2": {
+        "key": "PROVIDER",
+        "rule": "F5",
+        "reason": "local options exhausted ⇒ PROVIDER delegation RECORD (budget + authorization required; never launched)"
+      },
+      "chainWithHypotheticalContinuedFailures": [
+        "NATIVE:DEFAULT:qwen2.5-coder:3b:1",
+        "NATIVE:LARGER_MODEL_REPAIR_DEPTH:qwen2.5-coder:7b:3",
+        "PROVIDER",
+        "DECISION_REQUIRED"
+      ],
+      "chainLength": 4,
+      "noRepeat": true,
+      "terminatesWithin": 6
+    },
+    {
+      "task": "v159-implement-parse-range",
+      "trial": 2,
+      "recordedSelection": {
+        "strategy": "LARGER_MODEL_REPAIR_DEPTH",
+        "rule": "R4",
+        "model": "qwen2.5-coder:7b",
+        "maxRepair": 3
+      },
+      "step1": {
+        "key": "NATIVE:LARGER_MODEL_REPAIR_DEPTH:qwen2.5-coder:7b:3",
+        "rule": "F4"
+      },
+      "reproducesJ": true,
+      "step2": {
+        "key": "PROVIDER",
+        "rule": "F5",
+        "reason": "local options exhausted ⇒ PROVIDER delegation RECORD (budget + authorization required; never launched)"
+      },
+      "chainWithHypotheticalContinuedFailures": [
+        "NATIVE:DEFAULT:qwen2.5-coder:3b:1",
+        "NATIVE:LARGER_MODEL_REPAIR_DEPTH:qwen2.5-coder:7b:3",
+        "PROVIDER",
+        "DECISION_REQUIRED"
+      ],
+      "chainLength": 4,
+      "noRepeat": true,
+      "terminatesWithin": 6
+    },
+    {
+      "task": "rle-codec",
+      "trial": 1,
+      "recordedSelection": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1
+      },
+      "step1": {
+        "key": "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "rule": "F3"
+      },
+      "reproducesJ": true,
+      "step2": {
+        "key": "HYBRID",
+        "rule": "F5",
+        "reason": "per-part evidence: verified parse.js,encode.js,decode.js / not report.js + decomposable + disjoint ⇒ HYBRID"
+      },
+      "chainWithHypotheticalContinuedFailures": [
+        "NATIVE:DEFAULT:qwen2.5-coder:3b:1",
+        "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "HYBRID",
+        "PROVIDER",
+        "DECISION_REQUIRED"
+      ],
+      "chainLength": 5,
+      "noRepeat": true,
+      "terminatesWithin": 6
+    },
+    {
+      "task": "rle-codec",
+      "trial": 2,
+      "recordedSelection": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1
+      },
+      "step1": {
+        "key": "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "rule": "F3"
+      },
+      "reproducesJ": true,
+      "step2": {
+        "key": "HYBRID",
+        "rule": "F5",
+        "reason": "per-part evidence: verified parse.js,encode.js,decode.js / not report.js + decomposable + disjoint ⇒ HYBRID"
+      },
+      "chainWithHypotheticalContinuedFailures": [
+        "NATIVE:DEFAULT:qwen2.5-coder:3b:1",
+        "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "HYBRID",
+        "PROVIDER",
+        "DECISION_REQUIRED"
+      ],
+      "chainLength": 5,
+      "noRepeat": true,
+      "terminatesWithin": 6
+    },
+    {
+      "task": "csv-typed-validator",
+      "trial": 1,
+      "recordedSelection": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1
+      },
+      "step1": {
+        "key": "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "rule": "F3"
+      },
+      "reproducesJ": true,
+      "step2": {
+        "key": "HYBRID",
+        "rule": "F5",
+        "reason": "per-part evidence: verified parse.js,validate.js / not collect.js,report.js + decomposable + disjoint ⇒ HYBRID"
+      },
+      "chainWithHypotheticalContinuedFailures": [
+        "NATIVE:DEFAULT:qwen2.5-coder:3b:1",
+        "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "HYBRID",
+        "PROVIDER",
+        "DECISION_REQUIRED"
+      ],
+      "chainLength": 5,
+      "noRepeat": true,
+      "terminatesWithin": 6
+    },
+    {
+      "task": "csv-typed-validator",
+      "trial": 2,
+      "recordedSelection": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1
+      },
+      "step1": {
+        "key": "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "rule": "F3"
+      },
+      "reproducesJ": true,
+      "step2": {
+        "key": "HYBRID",
+        "rule": "F5",
+        "reason": "per-part evidence: verified parse.js,validate.js / not collect.js,report.js + decomposable + disjoint ⇒ HYBRID"
+      },
+      "chainWithHypotheticalContinuedFailures": [
+        "NATIVE:DEFAULT:qwen2.5-coder:3b:1",
+        "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "HYBRID",
+        "PROVIDER",
+        "DECISION_REQUIRED"
+      ],
+      "chainLength": 5,
+      "noRepeat": true,
+      "terminatesWithin": 6
+    },
+    {
+      "task": "range-clamp-pipeline",
+      "trial": 1,
+      "recordedSelection": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1
+      },
+      "step1": {
+        "key": "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "rule": "F3"
+      },
+      "reproducesJ": true,
+      "step2": {
+        "key": "HYBRID",
+        "rule": "F5",
+        "reason": "per-part evidence: verified parse.js,clamp.js,flagged.js / not report.js + decomposable + disjoint ⇒ HYBRID"
+      },
+      "chainWithHypotheticalContinuedFailures": [
+        "NATIVE:DEFAULT:qwen2.5-coder:3b:1",
+        "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "HYBRID",
+        "PROVIDER",
+        "DECISION_REQUIRED"
+      ],
+      "chainLength": 5,
+      "noRepeat": true,
+      "terminatesWithin": 6
+    },
+    {
+      "task": "range-clamp-pipeline",
+      "trial": 2,
+      "recordedSelection": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1
+      },
+      "step1": {
+        "key": "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "rule": "F3"
+      },
+      "reproducesJ": true,
+      "step2": {
+        "key": "HYBRID",
+        "rule": "F5",
+        "reason": "per-part evidence: verified parse.js,clamp.js,flagged.js / not report.js + decomposable + disjoint ⇒ HYBRID"
+      },
+      "chainWithHypotheticalContinuedFailures": [
+        "NATIVE:DEFAULT:qwen2.5-coder:3b:1",
+        "NATIVE:DECOMPOSED_INTERMEDIATE_VERIFICATION:qwen2.5-coder:3b:1",
+        "HYBRID",
+        "PROVIDER",
+        "DECISION_REQUIRED"
+      ],
+      "chainLength": 5,
+      "noRepeat": true,
+      "terminatesWithin": 6
+    }
+  ],
+  "sensitivity": {
+    "note": "NOT GRADED. F parts carry NO task-class label in the evidence; if they were labelled 'implement' (hypothetical), the class registry (implement ⇒ NO_QUALIFIED_LOCAL_MODEL) would drive the PRIOR choice:",
+    "mode": "NATIVE",
+    "rule": "M2",
+    "rationale": "every part LOCAL_OK (A:PROBATION_PROBE, B:PROBATION_PROBE, C:PROBATION_PROBE) ⇒ NATIVE (€0) — PROBATION_PROBE parts (A,B,C) escalate if they still fail",
+    "implication": "NATIVE €0 probe (PROBATION_PROBE, escalate if it still fails) — weak class evidence is not treated harsher than none; the selector would NOT have delegated what native solved"
+  },
+  "scenarioD": {
+    "results": {
+      "D1": "PASS",
+      "D2": "PASS",
+      "D3": "FAIL",
+      "D4": "PASS",
+      "D5": "PASS",
+      "D6": "PASS",
+      "D7": "NOT_MEASURED"
+    },
+    "grade": "FAIL",
+    "gradingRule": "FAIL if any of D1–D6 fails; PASS only if D1–D6 pass AND D7 passes; otherwise PARTIAL (D7 NOT_MEASURED ⇒ ceiling PARTIAL). Retrospective consistency ≠ prospective correctness.",
+    "d3Violations": [
+      {
+        "id": "V159/v159-implement-parse-range",
+        "priorMode": "NATIVE",
+        "priorRule": "M2",
+        "parts": [
+          "V159/v159-implement-parse-range:PROBATION_PROBE"
+        ]
+      }
+    ],
+    "d3Note": "post-inspection fix (#929 MED-2): a NO_QUALIFIED class with a PROBATION local model and NO observed failure on that task now gets a €0 local PROBE with escalate-after-failure (canonical V159 policy) instead of PROVIDER. The pre-registered D3 ('PRIOR not NATIVE when the observed outcome was a local failure') then FAILS on every such mission (the probe is the step that was observed to fail, after which V159 escalated). The criterion is NOT amended post hoc; whether D3 or probe-first is the better rule needs a fresh pre-registration and prospective data.",
+    "retrospectiveVsProspective": "D3/D4/D5 are RETROSPECTIVE (consistency of the choice with outcomes observed before/after); no HYBRID or PROVIDER selection was executed (no provider call allowed, no hybrid run) ⇒ prospective correctness NOT_MEASURED ⇒ ceiling PARTIAL"
+  },
+  "providerCalls": 0,
+  "modelCalls": 0,
+  "honestLimits": [
+    "the selector CHOOSES only; nothing was executed by this run (no model, no provider, no network) — evidence is re-read from committed files",
+    "D3 PASS cases rest on OBSERVED prior local failures on the same task (Q2/Q2b); D3 FAIL cases are missions with only class-level PROBATION evidence where the selector probes locally first (by design); in no case is it shown that PROVIDER would have succeeded",
+    "J per-part 'verified' verdicts came from an arm whose repair prompts partly saw expected outputs (V161 J honestLimits #1) ⇒ the HYBRID CURRENT choice for the 3 decomposed J tasks rests on that partly-advantaged evidence",
+    "risk is NOT_MEASURED for every real record (no record declares a risk level) ⇒ uncertainty ≥ MEDIUM everywhere; no deadline was supplied by any record",
+    "A–P contracts are scenario-level work items (state PROPOSED, placeholder write-sets) ⇒ DECISION_REQUIRED by rule M0; their tentativeMode is low-information (no task class, no observation)",
+    "F part write-sets are the scenario's namespaced virtual paths; the real-repo supervisor refused (REFUSED_WRITESET_CONFLICT) — disjointness here is between the parts, not against the live repository",
+    "authorization objects are declared data checked for binding (by/missionId/scope/evidenceRef), not cryptographically verified; no real record supplies one",
+    "pre-registration lives in the same commit as the first evidence write; its precedence over the results is asserted, not cryptographically provable"
+  ]
+}
