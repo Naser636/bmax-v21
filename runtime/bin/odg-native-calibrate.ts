@@ -12,6 +12,7 @@
 
 const CYCLE = require("../core/native-engineering-cycle.js");
 const BUILDER = require("../core/native-project-builder.js");
+const NBS = require("../core/odg-native-build-sandbox.js"); // V15.9: serializable tests ⇒ model code executes ONLY in the bwrap sandbox
 const GEN = require("../core/local-model-generator.js");
 const NBO = require("../core/native-build-outcome.js");
 const READY = require("../core/native-engineering-readiness.js");
@@ -42,7 +43,7 @@ function nowIso(): string { return new Date().toISOString(); }
       { path: "helper.js", role: `primitive for ${task.id}`, contract: task.helper },
       { path: "main.js", role: `${task.id} using the helper`, contract: task.main, dependsOn: ["helper.js"] },
     ];
-    const spec = { name: `simple-${task.id}`, architecture, independentTest: (m: any) => { try { return task.test(m["main.js"]) === true; } catch { return false; } } };
+    const spec = { name: `simple-${task.id}`, architecture, independentTestSource: NBS.testSourceFromFn(task.test, "main.js") };
     const t0 = Date.now(); let bo: any = null, err: any = null, cyc: any = null;
     try {
       cyc = await CYCLE.runNativeCycle(spec, ledger, { build: async (sp: any) => { bo = await buildSeam(sp); return bo; } }, { mode: "explore", exploreAuthorized: true, attempt: 1 });

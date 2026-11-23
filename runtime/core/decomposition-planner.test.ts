@@ -34,7 +34,7 @@ check(/decompos/i.test(JSON.stringify(D.DECOMPOSITION_PLANNER_CONTRACT.invariant
 // (5) INTEGRATION — the decomposed architecture feeds native-project-builder and the INDEPENDENT verifier still arbitrates.
 (async () => {
   const s = D.chooseStrategy({ name: "calc", architecture: [{ path: "src/ops.js", role: "math", contract: "add/sub" }, { path: "src/calc.js", role: "uses ops", contract: "compute via ops.add", dependsOn: ["src/ops.js"] }] });
-  const spec = { name: "calc", writeSet: s.architecture.map((a: any) => a.path), architecture: s.architecture, independentTest: (mods: any) => { const c = mods["src/calc.js"]; return typeof c === "function" && c(2, 3) === 5; } };
+  const spec = { name: "calc", writeSet: s.architecture.map((a: any) => a.path), architecture: s.architecture, independentTestSource: "(mods) => { const c = mods['src/calc.js']; return typeof c === 'function' && c(2, 3) === 5; }" };   // V15.9: sandbox
   const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "module.exports={add:(a,b)=>a+b};" : "const ops=require('./ops.js');module.exports=(a,b)=>ops.add(a,b);" });
   const bad = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "module.exports={add:(a,b)=>a-b};" : "const ops=require('./ops.js');module.exports=(a,b)=>ops.add(a,b);" });
   const okRun = await B.buildProject(spec, { generateFile: good });

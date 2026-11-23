@@ -24,22 +24,22 @@ const OUT = process.argv[3] || path.join(__dirname, "..", "..", "docs", "odg", "
 // --- benchmark projects: real verifiable requirements, inter-file contracts, functional tests ---
 const PROJECTS: any[] = [
   { name: "trivial-add", attempts: 2, architecture: [{ path: "add.js", role: "add two numbers", contract: "module.exports = (a, b) => a + b" }],
-    independentTest: (m: any) => typeof m["add.js"] === "function" && m["add.js"](2, 3) === 5 && m["add.js"](-1, 1) === 0 },
+    independentTestSource: "(m) => typeof m['add.js'] === 'function' && m['add.js'](2, 3) === 5 && m['add.js'](-1, 1) === 0" },
   { name: "simple-calc", attempts: 2,
     architecture: [
       { path: "ops.js", role: "arithmetic operations", contract: "module.exports = { add: (a,b) => a+b, sub: (a,b) => a-b }" },
       { path: "calc.js", role: "a calculator using ops", contract: "const ops = require('./ops.js'); module.exports = { sum: (a,b) => ops.add(a,b), diff: (a,b) => ops.sub(a,b) }", dependsOn: ["ops.js"] }],
-    independentTest: (m: any) => { const c = m["calc.js"]; return c && c.sum(2, 3) === 5 && c.diff(5, 2) === 3; } },
+    independentTestSource: "(m) => { const c = m['calc.js']; return !!c && c.sum(2, 3) === 5 && c.diff(5, 2) === 3; }" },
   { name: "complex-pipeline", attempts: 1,
     architecture: [
       { path: "nums.js", role: "convert a comma string to an array of integers", contract: "module.exports = (s) => String(s).split(',').map((x) => Number(x))" },
       { path: "sum.js", role: "sum the integers", contract: "const nums = require('./nums.js'); module.exports = (s) => nums(s).reduce((a, b) => a + b, 0)", dependsOn: ["nums.js"] },
       { path: "max.js", role: "max of the integers", contract: "const nums = require('./nums.js'); module.exports = (s) => Math.max.apply(null, nums(s))", dependsOn: ["nums.js"] },
       { path: "report.js", role: "combine sum and max", contract: "const sum = require('./sum.js'); const max = require('./max.js'); module.exports = (s) => ({ sum: sum(s), max: max(s) })", dependsOn: ["sum.js", "max.js"] }],
-    independentTest: (m: any) => { const r = m["report.js"]; const o = r && r("1,2,3"); return o && o.sum === 6 && o.max === 3; } },
+    independentTestSource: "(m) => { const r = m['report.js']; const o = r && r('1,2,3'); return !!o && o.sum === 6 && o.max === 3; }" },
   { name: "meta-undefined-detector", attempts: 1,
     architecture: [{ path: "detect.js", role: "analyze code to detect undefined symbols (code-analyzing-code)", contract: "module.exports = (code, declared) => the array of identifier tokens that appear in the string `code` but are not present in the `declared` array" }],
-    independentTest: (m: any) => { const d = m["detect.js"]; if (typeof d !== "function") return false; const out = d("foo + bar + foo", ["foo"]); return Array.isArray(out) && out.indexOf("bar") >= 0 && out.indexOf("foo") < 0; } },
+    independentTestSource: "(m) => { const d = m['detect.js']; if (typeof d !== 'function') return false; const out = d('foo + bar + foo', ['foo']); return Array.isArray(out) && out.indexOf('bar') >= 0 && out.indexOf('foo') < 0; }" },
 ];
 
 function nowIso(): string { return new Date().toISOString(); }
@@ -56,7 +56,7 @@ function nowIso(): string { return new Date().toISOString(); }
   for (const proj of PROJECTS) {
     const strat = DP.chooseStrategy({ name: proj.name, architecture: proj.architecture });
     for (let attempt = 1; attempt <= proj.attempts; attempt++) {
-      const spec = { name: proj.name, architecture: proj.architecture, independentTest: proj.independentTest };
+      const spec = { name: proj.name, architecture: proj.architecture, independentTestSource: proj.independentTestSource };
       const t0 = Date.now();
       let cycle: any = null, err: any = null, buildOutcome: any = null;
       try {

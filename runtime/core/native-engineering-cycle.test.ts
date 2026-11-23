@@ -7,11 +7,11 @@ let failures = 0;
 function check(c: any, l: any): void { if (!c) { failures++; process.stderr.write("FAIL: " + l + "\n"); } }
 
 // a real, buildable 2-file spec; the independent test requires calc(2,3)===5.
-const spec: any = { name: "calc", architecture: [{ path: "src/ops.js", role: "math", contract: "add", dependsOn: [] }, { path: "src/calc.js", role: "uses ops", contract: "ops.add", dependsOn: ["src/ops.js"] }], independentTest: (m: any) => typeof m["src/calc.js"] === "function" && m["src/calc.js"](2, 3) === 5 };
+const spec: any = { name: "calc", architecture: [{ path: "src/ops.js", role: "math", contract: "add", dependsOn: [] }, { path: "src/calc.js", role: "uses ops", contract: "ops.add", dependsOn: ["src/ops.js"] }], independentTestSource: "(m) => typeof m['src/calc.js'] === 'function' && m['src/calc.js'](2, 3) === 5" };   // V15.9: sandbox
 // a build seam backed by the REAL native-project-builder (the independent verifier arbitrates). correct/wrong generators:
 const goodGen = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "module.exports={add:(a,b)=>a+b};" : "const ops=require('./ops.js');module.exports=(a,b)=>ops.add(a,b);" });
 const wrongGen = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "module.exports={add:(a,b)=>a-b};" : "const ops=require('./ops.js');module.exports=(a,b)=>ops.add(a,b);" });
-const buildWith = (gen: any) => (s: any) => B.buildProject({ ...s, independentTest: spec.independentTest }, { generateFile: gen });
+const buildWith = (gen: any) => (s: any) => B.buildProject({ ...s, independentTestSource: spec.independentTestSource }, { generateFile: gen });
 
 (async () => {
   // (1) GOVERNED cold start (no evidence) ⇒ route to PROVIDER, NO native build attempted (fail-closed).
