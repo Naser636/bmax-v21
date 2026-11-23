@@ -1,0 +1,338 @@
+{
+  "checkpoint": "CP8",
+  "date": "2026-11-23",
+  "headAtCheckpoint": "55a83728",
+  "previous": "docs/odg/evidence/V160_CHECKPOINT_7.json (head e0c51ad6)",
+  "producedVia": "PROVIDER (Claude Code, coordinating session) consolidating merged evidence; no new capability built; ODG did NOT select this work (see odgCapabilityAudit #1)",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5,
+    "mainClean": true,
+    "distFingerprint": "2b2aab2f (rebuilt after the 19:12Z IDLE tick)"
+  },
+  "boussole": "V12.4 canonical (unchanged). V15.0 NOT adopted; gate 10/12 NOT signed.",
+  "prs": [
+    {
+      "pr": 915,
+      "merge": "f3195623",
+      "what": "odg-delegate scope filter (contract-authorized new files kept; unsafe paths refused)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 916,
+      "merge": "27fc4eae",
+      "what": "native builds run model code ONLY in outer bwrap sandbox (parity 80/80, 54/54; 8 escapes blocked)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 917,
+      "merge": "28cade40",
+      "what": "protected roots never writable via delegation; porcelain -z rename both sides",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 918,
+      "merge": "2a855713",
+      "what": "V160 governed admission: 6 primary engineering-practice hosts; code.claude.com DEFERRED",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 919,
+      "merge": "e0c51ad6",
+      "what": "CP7 + A–P WORK_ITEM_CONTRACTs (PROPOSED)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 920,
+      "merge": "459f8cf8",
+      "what": "V160 practices collection LIVE pinned (25 quotes, 22 SUPPORTED, 0 facts) + 8 method cards",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 921,
+      "merge": "bc64cb1e",
+      "what": "scenario G REAL → NOT_ADOPTED (borderline)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 922,
+      "merge": "1ec2f2c4",
+      "what": "odg-verify --delegated-path: persisted gitClean stays false, delegatedPatchClean separate",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 923,
+      "merge": "2edcb674",
+      "what": "mission-scoped delegate converge; uncommitted patch ends PROVEN-PENDING-COMMIT (2 HIGH REJECTs fixed: pre-commit ledger record; sticky ledger refusal)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 924,
+      "merge": "66c41c10",
+      "what": "scenario F REAL",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    },
+    {
+      "pr": 925,
+      "merge": "55a83728",
+      "what": "scenario J REAL",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head"
+    }
+  ],
+  "openPRs": [],
+  "scenarios": {
+    "B": {
+      "status": "PASS (within scope)",
+      "evidence": "V150_SCENARIO_M_RESUME.json / CP7"
+    },
+    "M": {
+      "status": "PASS (within scope)",
+      "evidence": "V150_SCENARIO_M_RESUME.json / CP7"
+    },
+    "F": {
+      "status": "PARTIAL",
+      "evidence": "docs/odg/evidence/V161_SCENARIO_F.json (#924)",
+      "criteria": {
+        "decomposition+supervisor assignment": "PARTIAL — real-repo assign REFUSED fail-closed (UNKNOWN write-sets); mechanics shown on a throw-away workspace; closures CLOSED_NO_RESULT (never CLOSED_ACCEPTED)",
+        "two independent outputs received": "MET (3 REAL trials, local 3b/7b)",
+        "incompatibility detected by an ODG check": "MET only for the CONTROLLED perturbation (offending=[A], sandbox+host grading); 0 natural incompatibilities in 3 REAL trials",
+        "integration validated by tests + independent inspection": "MET (held-out set passes all 4 trials; #924 ACCEPT)"
+      }
+    },
+    "G": {
+      "status": "PARTIAL",
+      "evidence": "docs/odg/evidence/V160_SCENARIO_G.json (#921)",
+      "criteria": {
+        "SUPPORTED + admissible item from pinned collection": "MET",
+        "used by a real mission decision; utility measured vs without it": "PARTIAL — used in a real decision on 400 real PRs ⇒ NOT_ADOPTED (borderline); utility vs the same decision without the item NOT_MEASURED"
+      }
+    },
+    "J": {
+      "status": "PARTIAL",
+      "evidence": "docs/odg/evidence/V161_SCENARIO_J.json (#925)",
+      "criteria": {
+        "stop by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task": "NOT MET as worded — the 8 default stops are REPAIR_BUDGET_EXHAUSTED (maxRepair 1 = one repair attempted); NO_PROGRESS occurred only in the 7b alternative arm on parse-range",
+        "alternative actually executed": "MET (rule R0–R5 fixed in code before the run; decomposition ×6, 7b/maxRepair3 ×2)",
+        "outcome compared on same task with n": "MET — 0/8 default vs 0/8 alternative (n=2 per task, temperature 0 ⇒ near-repeats); 8 escalation records CREATED, 0 provider calls"
+      },
+      "honestLimits": [
+        "not equal-information: the decomposed alternative's oracle partly reached repair prompts (disclosed)",
+        "defects found in canonical components: odg-decomposed-execution threads bo.modules that sandboxed builds never return; odg-repair-feedback compares with === (structured results never match) — recorded, NOT fixed"
+      ]
+    },
+    "others": "A,C,D,E,H,I,K,L,N,O,P: PARTIAL as in V160_AP_WORK_ITEM_CONTRACTS.json (unchanged in this window)"
+  },
+  "apContracts": {
+    "file": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+    "state": "all 16 PROPOSED (none AUTHORIZED); F/G/J executed under coordinator direction, not under an authorized contract",
+    "countsNow": {
+      "PASS": 2,
+      "PARTIAL": 14
+    }
+  },
+  "v150Matrix": {
+    "file": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+    "sectionCounts": {
+      "PARTIALLY_VALIDATED": 41,
+      "IN_PROGRESS": 9,
+      "VALIDATED": 1,
+      "TO_BUILD": 5
+    },
+    "note": "section statuses not re-graded in CP8 (no new acceptance item demonstrated for a section beyond the scenario rows above); top10 items 1 (CP7), 4 (F), 5 (J) executed"
+  },
+  "globalResearch": {
+    "admission": "V160 grant 6 hosts (#918)",
+    "collection": "#920 pinned, 25 quotes / 22 SUPPORTED / 0 facts",
+    "methodCards": 8,
+    "matrixRule": "ADOPT = demonstration passed + measured gain; ADAPT = demonstrated with documented adaptation; EXPERIMENT = demonstration test defined + ODG components exist, not yet run; DEFER = tested under a pre-registered rule and not adopted, or dependency owner-gated; REJECT = contradicted by evidence. No score without a run.",
+    "matrix": [
+      {
+        "card": "MC-CR-APPROVAL-STANDARD",
+        "org": "Google",
+        "primitives": {
+          "basis": "HYPOTHESIS",
+          "values": [
+            "POLICY",
+            "EVIDENCE"
+          ]
+        },
+        "decision": "EXPERIMENT",
+        "basis": "demonstrationTest defined + ODG components exist (matrixInput.odgComponentsExist=true) but demonstrated=false ⇒ no ADOPT/ADAPT without a run"
+      },
+      {
+        "card": "MC-CR-LATENCY",
+        "org": "Google",
+        "primitives": {
+          "basis": "HYPOTHESIS",
+          "values": [
+            "ALLOCATOR",
+            "POLICY"
+          ]
+        },
+        "decision": "EXPERIMENT",
+        "basis": "demonstrationTest defined + ODG components exist (matrixInput.odgComponentsExist=true) but demonstrated=false ⇒ no ADOPT/ADAPT without a run"
+      },
+      {
+        "card": "MC-SMALL-CHANGES",
+        "org": "Google",
+        "primitives": {
+          "basis": "HYPOTHESIS",
+          "values": [
+            "CONTRACT",
+            "ALLOCATOR"
+          ]
+        },
+        "decision": "DEFER",
+        "basis": "tested by scenario G under a pre-registered rule ⇒ NOT_ADOPTED (ρ(size,minutes)=0.293 < 0.3; CI95 [0.20,0.384]); re-test only with new data"
+      },
+      {
+        "card": "MC-REVIEW-FOCUS",
+        "org": "Google",
+        "primitives": {
+          "basis": "HYPOTHESIS",
+          "values": [
+            "EVIDENCE",
+            "POLICY"
+          ]
+        },
+        "decision": "EXPERIMENT",
+        "basis": "demonstrationTest defined + ODG components exist (matrixInput.odgComponentsExist=true) but demonstrated=false ⇒ no ADOPT/ADAPT without a run"
+      },
+      {
+        "card": "MC-PEER-REVIEW-EVERY-PR",
+        "org": "Microsoft",
+        "primitives": {
+          "basis": "HYPOTHESIS",
+          "values": [
+            "POLICY",
+            "IDENTITY"
+          ]
+        },
+        "decision": "EXPERIMENT",
+        "basis": "demonstrationTest defined + ODG components exist (matrixInput.odgComponentsExist=true) but demonstrated=false ⇒ no ADOPT/ADAPT without a run"
+      },
+      {
+        "card": "MC-CI-BEFORE-REVIEW",
+        "org": "Microsoft",
+        "primitives": {
+          "basis": "HYPOTHESIS",
+          "values": [
+            "POLICY",
+            "EVIDENCE",
+            "EXECUTOR"
+          ]
+        },
+        "decision": "EXPERIMENT",
+        "basis": "demonstrationTest defined + ODG components exist (matrixInput.odgComponentsExist=true) but demonstrated=false ⇒ no ADOPT/ADAPT without a run"
+      },
+      {
+        "card": "MC-MERGE-QUEUE",
+        "org": "GitHub",
+        "primitives": {
+          "basis": "HYPOTHESIS",
+          "values": [
+            "RESOLVER",
+            "EXECUTOR",
+            "RECOVERY",
+            "STATE"
+          ]
+        },
+        "decision": "EXPERIMENT",
+        "basis": "demonstrationTest defined + ODG components exist (matrixInput.odgComponentsExist=true) but demonstrated=false ⇒ no ADOPT/ADAPT without a run"
+      },
+      {
+        "card": "MC-LESSONS-LEARNED",
+        "org": "NASA",
+        "primitives": {
+          "basis": "HYPOTHESIS",
+          "values": [
+            "EVIDENCE",
+            "RECOVERY"
+          ]
+        },
+        "decision": "EXPERIMENT",
+        "basis": "demonstrationTest defined + ODG components exist (matrixInput.odgComponentsExist=true) but demonstrated=false ⇒ no ADOPT/ADAPT without a run"
+      }
+    ],
+    "counts": {
+      "ADOPT": 0,
+      "ADAPT": 0,
+      "EXPERIMENT": 7,
+      "DEFER": 1,
+      "REJECT": 0
+    },
+    "matrixComputedBy": "PROVIDER applying the declared rule mechanically to card fields — not a canonical ODG component"
+  },
+  "hybridMethod": {
+    "status": "NOT_STARTED as a pilot",
+    "pilotDesign": "A native / B hybrid / C authorized provider on one controlled mission; compare quality, time, cost, correctness, recovery, independence",
+    "blockers": [
+      "C requires a provider launch with a verifiable spend ceiling (claude -p billed) — OWNER decision",
+      "mission selection for the pilot not decidable by ODG (audit #1/#2)"
+    ]
+  },
+  "odgCapabilityAudit": {
+    "1_selectNextMission": {
+      "status": "PARTIAL",
+      "evidence": "live root tick selects via mission-scheduler (ALLOWLIST=M0001 ⇒ IDLE, ALREADY_PROVEN dedup); mission-priority-selector over the 16 A–P contracts ⇒ 9-way tie at 0.51 broken by id ⇒ 'C'"
+    },
+    "2_setPriorities": {
+      "status": "PARTIAL",
+      "evidence": "selector scoring exists; no canonical register supplies strategicImportance/roadmapPriority/deps for V15.0 items (contracts have none)"
+    },
+    "3_chooseMode": {
+      "status": "PARTIAL",
+      "evidence": "odg-local-model-execution-policy chooses local tier or escalation (exercised in J); 'hybrid' is not an option of the component"
+    },
+    "4_authorizeProvider": {
+      "status": "PARTIAL",
+      "evidence": "odg-sovereign-delegation creates deny-by-default records (8 CREATED in J); real provider launch NOT_IMPLEMENTED (billed, no verifiable spend ceiling)"
+    },
+    "5_superviseExecution": {
+      "status": "PARTIAL",
+      "evidence": "odg-agent-supervisor refuses repo-mode assign on the real repo (fail-closed); works only on throw-away workspaces; closures CLOSED_NO_RESULT"
+    },
+    "6_recoverResults": {
+      "status": "PARTIAL",
+      "evidence": "odg-delegate→odg-verify→mission-scoped converge proven on real runs (#923); provider launched by the coordinator"
+    },
+    "7_validateIndependently": {
+      "status": "PARTIAL",
+      "evidence": "pipeline gates operational in live ticks; independent inspections performed by provider agents; inspector identity not cryptographically bound"
+    },
+    "8_integrateResult": {
+      "status": "NOT_IMPLEMENTED (by design)",
+      "evidence": "commit/merge is human/coordinator-gated ('ODG never auto-commits')"
+    },
+    "9_chooseFollowing": {
+      "status": "PARTIAL",
+      "evidence": "same as #1; loop closed only for M0001"
+    }
+  },
+  "gaps": [
+    "no canonical V15.0 mission register carrying priority attributes and dependencies",
+    "selector has no EXECUTED_PARTIAL state (treats executed PARTIAL scenarios as ACCEPTED)",
+    "supervisor cannot assign on the real repo",
+    "ODG cannot launch a provider",
+    "integration is human",
+    "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results"
+  ],
+  "continuity": {
+    "stalledWaitsFound": 3,
+    "rootCauses": [
+      "unbounded until-loops written by provider agents",
+      "pgrep -f self-match completion check",
+      "PR became CONFLICTING after a merge ⇒ CI never started"
+    ],
+    "correction": "all watchers bounded (≤15–20 min deadline); mergeability re-checked on every open PR after each merge"
+  },
+  "nativeVsProvider": "All construction in this window is provider work. ODG-native: gate decisions (Radar admission/governor/transport, delegate scope/conformance/protectedClean/verify/converge, ledger refusal, supervisor classification, sandbox verdicts, builder stop decisions, execution-policy escalation, live ticks). Native-built code changes merged: 0. The ~80% native target is NOT met and NOT claimed.",
+  "ownerQuestions": [
+    "authorize the mission 'feed mission-priority-selector from the A–P contracts' (deps/state derived from evidence; importance/priority set by the owner in an owner-controlled file)?",
+    "provider spend ceiling for pilot arm C?",
+    "fix the two canonical defects found by J (decomposed-execution modules; repair-feedback ===)?",
+    "docs-only missions blocked by two pipeline gates (#923 finding)",
+    "still open from CP7: V360 ALLOWLIST bypass (export.arxiv.org); code.claude.com terms; per-host pacing; robots-vs-API (arXiv/PyPI); production waves; external providers; gate 10/12; V15.0 adoption"
+  ],
+  "nextAction": "OWNER decision on ownerQuestions[0]; until then ODG can autonomously select only M0001 (already proven ⇒ IDLE)"
+}
