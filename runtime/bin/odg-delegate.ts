@@ -331,12 +331,18 @@ if (verify.status !== 0) {
 console.log("--------------------------------------");
 console.log("CONVERGE");
 const convergeBin = resolveRequiredPort(path.join("runtime", "dist", "bin", "odg-converge.js"), path.join(BIN, "odg-converge.js"), (p: string) => fs.existsSync(path.join(ROOT, p)));
-const converge = cp.spawnSync(process.execPath, [convergeBin], { cwd: ROOT, stdio: "inherit" });
+// V16.1 — MISSION-SCOPED converge: exactly THIS mission (no campaign walk over the remaining roadmap), and its
+// release gitClean gate judged on the SAME proven path list from the SAME observation that conformance/protected/verify
+// used. converge recomputes that verdict FRESH (pre-flight + evidence time): any dirty path that is not exactly one of
+// those proven paths — e.g. a file that appeared after verify — ⇒ NO_RELEASE ⇒ non-zero exit ⇒ STOP before archive.
+const convergeArgs = [convergeBin, `--mission=${mission}`, ...provenPatchPaths.map((p) => `--delegated-path=${p}`)];
+const converge = cp.spawnSync(process.execPath, convergeArgs, { cwd: ROOT, stdio: "inherit" });
 if (converge.status !== 0) {
   die(`STOP: converge did not reach convergence for "${mission}".`, converge.status || 1);
 }
 
 // --- Steps 9/10 — proofs + auto-archive via the existing Mission Ledger lifecycle ---------------
+// Reached ONLY after the mission-scoped converge exited 0, i.e. the Release Manager RELEASED exactly this mission.
 let lifecycle = null;
 try {
   const { markArchived } = require(path.join(ROOT, _corePort("runtime/core/mission-lifecycle.js")));

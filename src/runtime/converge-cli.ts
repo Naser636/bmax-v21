@@ -284,11 +284,244 @@ export function runConverge(seams: ConvergeSeams = {}): number {
   return 1;
 }
 
+// ---------------------------------------------------------------------------------------------------
+// V16.1 — MISSION-SCOPED converge (odg-delegate only). `runConverge()` above is the campaign-wide
+// orchestrator and is NOT modified: every existing caller (`odg converge` with no scope flag, mission-cli's
+// routed RUNTIME_FULL_AUTONOMY_EXECUTION) still reaches it unchanged. The scoped path below is entered
+// ONLY when the CLI receives an explicit `--mission=<ID>` (odg-delegate passes it).
+//
+// It reuses the SAME RuntimeAutonomy loop + AutonomyRuntimeAdapter + Release Manager — the decision
+// authority is unchanged — but restricts the work-list to exactly that mission (no roadmap walk, no
+// campaign contract factory). With `--delegated-path=<p>` (the EXACT list odg-delegate proved in-scope +
+// non-protected on its ONE observation), the release gitClean gate is judged with odg-verify's OWN
+// delegatedGitClean over the same porcelain surface: a dirty entry is tolerated only when it is exactly one
+// of those proven paths. That verdict is recomputed FRESH (a) before the pipeline runs and (b) at evidence
+// time — any new dirty path that appeared after delegate's observation (between verify and converge, or
+// produced by the pipeline itself) ⇒ gitClean=false ⇒ NO_RELEASE ⇒ non-zero exit ⇒ no archive.
+// Exit 0 ONLY when the loop reached PLAN_COMPLETE AND the target mission was actually RELEASED this run.
+// ---------------------------------------------------------------------------------------------------
+
+/** Explicit scope for a mission-scoped converge. */
+export interface ConvergeScope {
+  mission: string;
+  /** Proven in-scope uncommitted patch paths (odg-delegate). Empty ⇒ the default gitClean gate. */
+  delegatedPaths: string[];
+}
+
+/** Fresh delegated gitClean verdict for the current tree (same surface as odg-verify's delegated mode). */
+export interface DelegatedVerdict {
+  gitClean: boolean;
+  residual: string[];
+}
+
+/** Seams for the scoped path (in addition to ConvergeSeams). */
+export interface ScopedConvergeSeams extends ConvergeSeams {
+  /** Recompute the delegated verdict over the CURRENT tree (default: odg-verify's delegatedGitClean). */
+  delegatedVerdict?: (provenPaths: string[]) => DelegatedVerdict;
+}
+
+const MISSION_ID_RE = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,199}$/;
+const SAFE_PATH_RE = /^[A-Za-z0-9._\-/]+$/;
+
+/**
+ * PURE argv parser. Returns null when no scope flag is present (⇒ the UNCHANGED campaign-wide converge,
+ * whatever else argv holds — exactly as before, when argv was ignored); `{ error }` on any malformed/unsafe
+ * scoped input (fail-closed — a scoped request is never silently widened to the campaign); otherwise the
+ * scope. `--delegated-path` without `--mission` is an error.
+ */
+export function parseConvergeScope(argv: string[]): ConvergeScope | { error: string } | null {
+  const list = Array.isArray(argv) ? argv.filter((a) => typeof a === "string") : [];
+  const isMission = (a: string) => a.startsWith("--mission=");
+  const isPath = (a: string) => a.startsWith("--delegated-path=");
+  const missions = list.filter(isMission).map((a) => a.slice("--mission=".length));
+  const paths = list.filter(isPath).map((a) => a.slice("--delegated-path=".length));
+  if (missions.length === 0 && paths.length === 0) return null;
+  const unknown = list.filter((a) => !isMission(a) && !isPath(a));
+  if (unknown.length > 0) return { error: `unknown argument(s) with a scoped converge: ${unknown.map((u) => JSON.stringify(u).slice(0, 80)).join(", ")}` };
+  if (missions.length !== 1) return { error: missions.length === 0 ? "--delegated-path requires --mission=<ID>" : "exactly one --mission=<ID> is allowed" };
+  const mission = missions[0];
+  if (!MISSION_ID_RE.test(mission)) return { error: `invalid mission id ${JSON.stringify(mission).slice(0, 80)}` };
+  for (const p of paths) {
+    if (!p || p.length > 300 || !SAFE_PATH_RE.test(p) || p.startsWith("/") || /(^|\/)\.\.(\/|$)/.test(p)) {
+      return { error: `invalid --delegated-path ${JSON.stringify(p).slice(0, 80)}` };
+    }
+  }
+  return { mission, delegatedPaths: Array.from(new Set(paths)).sort() };
+}
+
+/** Default delegated verdict: odg-verify's OWN exported delegatedGitClean + gitCleanExcludes (no re-derivation). */
+function defaultDelegatedVerdict(provenPaths: string[]): DelegatedVerdict {
+  try {
+    const dist = path.resolve("runtime", "dist", "bin", "odg-verify.js");
+    const src = path.resolve("runtime", "bin", "odg-verify.ts");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const v = require(process.env.ODG_RUNTIME !== "js" && fs.existsSync(dist) ? dist : src);
+    const z = spawnSync(
+      "git",
+      ["status", "--porcelain=v1", "-z", "--untracked-files=all", "--", ...v.gitCleanExcludes()],
+      { encoding: "utf8" },
+    );
+    if (z.status !== 0 || typeof z.stdout !== "string") return { gitClean: false, residual: ["<git status failed>"] };
+    const d = v.delegatedGitClean(z.stdout, provenPaths);
+    return { gitClean: d.gitClean === true, residual: Array.isArray(d.residual) ? d.residual : ["<no residual>"] };
+  } catch (e) {
+    return { gitClean: false, residual: [`<verdict failed: ${(e as Error).message}>`] };
+  }
+}
+
+/**
+ * Wrap the real ports so the EXISTING loop sees a one-mission work-list. generateContract/runPipeline are
+ * the real ones; gatherEvidence is the real one with gitClean replaced — ONLY in delegated mode — by the
+ * fresh delegated verdict; archive is the real one (records the ledger) and marks the scope done so the
+ * next selection returns null (PLAN_COMPLETE). readPlanState does NOT call the adapter's campaign
+ * readPlanState (which materialises every roadmap contract): it is the mission alone.
+ */
+export function scopedPorts(
+  inner: AutonomyRuntimePorts,
+  scope: ConvergeScope,
+  delegatedVerdict: (provenPaths: string[]) => DelegatedVerdict,
+  onVerdict: (v: DelegatedVerdict) => void = () => {},
+): AutonomyRuntimePorts {
+  let archived = false;
+  return {
+    readPlanState: () => ({
+      masterPlanObjectives: [scope.mission],
+      missingCapabilities: [scope.mission],
+      completedMissions: archived ? [scope.mission] : [],
+    }),
+    generateContract: (m) => inner.generateContract(m),
+    runPipeline: (m) => inner.runPipeline(m),
+    gatherEvidence: (m) => {
+      const ev = inner.gatherEvidence(m);
+      if (scope.delegatedPaths.length === 0) return ev;
+      const v = delegatedVerdict(scope.delegatedPaths);
+      onVerdict(v);
+      return { ...ev, validation: { ...ev.validation, gitClean: v.gitClean === true } };
+    },
+    archive: (m, record) => {
+      inner.archive(m, record);
+      if (m === scope.mission) archived = true;
+    },
+  };
+}
+
+/** Mission-scoped converge. Exit 0 ⇔ PLAN_COMPLETE AND the scoped mission (and only it) RELEASED this run. */
+export function runScopedConverge(scope: ConvergeScope, seams: ScopedConvergeSeams = {}): number {
+  const log = seams.log ?? console.log;
+  const now = seams.now ?? (() => new Date().toISOString());
+  const startedAt = now();
+  const readJson = seams.readJson ?? defaultReadJson;
+  const writeFile = seams.writeFile ?? defaultWriteFile;
+  const migrationReport = seams.migrationReport ?? (() => renderMigrationReport());
+  const verdictFn = seams.delegatedVerdict ?? defaultDelegatedVerdict;
+  const delegated = scope.delegatedPaths.length > 0;
+  const io = { readJson, now, writeFile, log };
+
+  log("======================================");
+  log("ODG RUNTIME CONVERGENCE — MISSION-SCOPED");
+  log("======================================");
+  log("Mission    :", scope.mission);
+  log("gitClean   :", delegated ? `DELEGATED_PATCH (exactly ${scope.delegatedPaths.length} proven path(s))` : "default gate");
+
+  // Pre-flight (delegated): the tree must STILL be exactly the proven patch before any pipeline runs.
+  const verdicts: DelegatedVerdict[] = [];
+  if (delegated) {
+    const pre = verdictFn(scope.delegatedPaths);
+    verdicts.push(pre);
+    if (pre.gitClean !== true) {
+      log("STOP       : working tree diverged from the proven delegated patch — residual:", pre.residual.join(", "));
+      writeScopedReport(null, scope, verdicts, "PREFLIGHT_DIVERGED", io, startedAt, "");
+      log("======================================");
+      return 2;
+    }
+  }
+
+  const contract: ContractStep = { ok: true, detail: "skipped — mission-scoped converge does not run the campaign contract factory" };
+  const migrationText = migrationReport();
+  const autonomy: AutonomyEngine = seams.autonomy ?? new RuntimeAutonomy();
+  const ports = scopedPorts(seams.ports ?? new AutonomyRuntimeAdapter(), scope, verdictFn, (v) => verdicts.push(v));
+
+  autonomy.initialize();
+  const result = autonomy.run({ autonomyContractVersion: AUTONOMY_CONTRACT_VERSION }, ports);
+  const released = result.completed.some((c) => c.mission === scope.mission);
+  const onlyTarget = result.completed.every((c) => c.mission === scope.mission);
+
+  log("Status     :", result.status);
+  log("Released   :", released ? scope.mission : "(none)");
+  if (result.halt) {
+    log("Halt on    :", result.halt.mission ?? "(plan)");
+    log("Reason     :", result.halt.reason);
+    log("Detail     :", result.halt.message);
+  }
+  writeScopedReport({ result, contract }, scope, verdicts, null, io, startedAt, migrationText);
+  log("======================================");
+
+  if (result.status === "PLAN_COMPLETE" && released && onlyTarget) return 0;
+  if (result.status === "BLOCKED" || result.status === "VALIDATED_PENDING_COMMIT") return 2;
+  return 1;
+}
+
+/** Same convergence-report artifact as the campaign path, plus a `scope` block (best-effort; never throws). */
+function writeScopedReport(
+  run: { result: AutonomyRunResult; contract: ContractStep } | null,
+  scope: ConvergeScope,
+  verdicts: DelegatedVerdict[],
+  preflightStop: string | null,
+  s: {
+    readJson: (rel: string) => unknown;
+    now: () => string;
+    writeFile: (abs: string, c: string) => void;
+    log: (...a: unknown[]) => void;
+  },
+  startedAt: string,
+  migrationText: string,
+): void {
+  try {
+    const base: Record<string, unknown> = run
+      ? buildReport(run.result, run.contract, migrationText, { readJson: s.readJson, now: s.now }, startedAt)
+      : { report: "RUNTIME_CONVERGENCE", generatedAt: s.now(), converged: false, status: preflightStop, releasedThisRun: [], halt: null };
+    const released = run ? run.result.completed.some((c) => c.mission === scope.mission) : false;
+    const gitCleanBasis = scope.delegatedPaths.length ? "DELEGATED_PATCH" : "DEFAULT";
+    const report = {
+      ...base,
+      converged: base.converged === true && released,
+      scope: {
+        mode: "MISSION_SCOPED",
+        mission: scope.mission,
+        released,
+        gitCleanBasis,
+        delegatedPaths: scope.delegatedPaths,
+        delegatedVerdicts: verdicts,
+        preflightStop,
+      },
+    };
+    s.writeFile(REPORT_JSON, JSON.stringify(report, null, 2));
+    if (run) {
+      s.writeFile(REPORT_MD, renderMarkdown(report) + `## Scope\n- MISSION_SCOPED: ${scope.mission} (gitClean basis: ${gitCleanBasis}; released: ${released})\n`);
+    }
+    s.log("Convergence:", report.converged ? "REACHED (mission-scoped)" : "NOT REACHED");
+    s.log("Report     :", REPORT_JSON);
+  } catch (e) {
+    s.log("Report     : (non-blocking error) " + (e as Error).message);
+  }
+}
+
+/** CLI dispatch: no scope flag ⇒ the UNCHANGED campaign runConverge(); malformed scope ⇒ exit 2 (never widened). */
+export function convergeMain(argv: string[], seams: ScopedConvergeSeams = {}): number {
+  const scope = parseConvergeScope(argv);
+  if (scope === null) return runConverge(seams);
+  if ("error" in scope) {
+    (seams.log ?? console.error)(`STOP: converge scope refused — ${scope.error}`);
+    return 2;
+  }
+  return runScopedConverge(scope, seams);
+}
+
 // Only auto-run when invoked directly as a script (not when imported by mission-cli.ts or a test).
 if (
   typeof process !== "undefined" &&
   Array.isArray(process.argv) &&
   /converge-cli\.ts$/.test(process.argv[1] ?? "")
 ) {
-  process.exit(runConverge());
+  process.exit(convergeMain(process.argv.slice(2)));
 }
