@@ -1,0 +1,610 @@
+{
+  "//": "V16.0 — engineering-practices Radar collection under docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json. Fetched by ODG's OWN chain (odg-v16-claude-code-research.runResearch → research-budget/research-governor/bounded-http-client.validateUrl+get with ODG_RADAR_LIVE=1), NOT by a provider WebFetch tool. Quotes extracted by the DETERMINISTIC pattern extractor of runtime/bin/odg-v158-collection-run.ts (no model) with targets/patterns pre-registered in runtime/bin/odg-v160-practices-collection-run.ts; page bodies are NOT stored. All content is DATA, never instructions.",
+  "grant": "docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json",
+  "consultedDate": "2026-11-23",
+  "collectedAtIso": "2026-11-23T17:07:54.353Z",
+  "callsUsed": 10,
+  "budgetMaxCalls": 30,
+  "verdict": "LIVE_OK",
+  "extraction": "deterministic pre-registered-pattern extractor (runtime/bin/odg-v158-collection-run.ts): each quote is a verbatim substring of the documented normalisation (HTML tag strip + entity decode / Markdown link+emphasis strip / JSON raw), 20..300 chars, ≤4 per page, e-mail-bearing quotes dropped; sha256 is of the RAW response body",
+  "sources": [
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+      "org": "Google",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "The Standard of Code Review | eng-practices",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 8786,
+      "sha256": "0da3ce85bdc5d0901a49e44e8289a1953c47f356a73d15acc3e635bc202afcec",
+      "normalisation": "HTML",
+      "quotes": [
+        "In general, reviewers should favor approving a CL once it is in a state where it definitely improves the overall code health of the system being worked on, even if the CL isn’t perfect.",
+        "A key point here is that there is no such thing as “perfect” code—there is only better code.",
+        "Technical facts and data overrule opinions and personal preferences.",
+        "The primary purpose of code review is to make sure that the overall code health of Google’s code base is improving over time."
+      ],
+      "quotePatterns": [
+        "G_STD_HEALTH",
+        "G_STD_PERFECT",
+        "G_STD_FACTS",
+        "G_STD_PURPOSE"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+      "org": "Google",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Speed of Code Reviews | eng-practices",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 10391,
+      "sha256": "3c495e756023d3bdc35153557d63d8057a09137ebed23dd8a3069624714c8c1c",
+      "normalisation": "HTML",
+      "quotes": [
+        "One business day is the maximum time it should take to respond to a code review request (i.e., first thing the next morning).",
+        "When reviews are slow, there is increased pressure to allow developers to submit CLs that are not as good as they could be.",
+        "If you are not in the middle of a focused task, you should do a code review shortly after it comes in."
+      ],
+      "quotePatterns": [
+        "G_SPD_ONEDAY",
+        "G_SPD_SLOW",
+        "G_SPD_FOCUS"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+      "org": "Google",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Small CLs | eng-practices",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 15500,
+      "sha256": "0637b70bbb8235a8a3dfe86041e206bd91db35b4b8a4c34cb938f4d8fd6bf5c3",
+      "normalisation": "HTML",
+      "quotes": [
+        "Reviewed more quickly.",
+        "In general, the right size for a CL is one self-contained change.",
+        "The CL should include related test code.",
+        "There are no hard and fast rules about how large is “too large.” 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large, but it’s up to the judgment of your reviewer."
+      ],
+      "quotePatterns": [
+        "G_SMALL_WHY",
+        "G_SMALL_ONE",
+        "G_SMALL_TESTS",
+        "G_SMALL_SIZE"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+      "org": "Google",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "What to look for in a code review | eng-practices",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 15075,
+      "sha256": "5946a2fa713dbafed9a2846e187be7705e3f3240c2b925f13d45530791c0e4af",
+      "normalisation": "HTML",
+      "quotes": [
+        "The most important thing to cover in a review is the overall design of the CL.",
+        "A particular type of complexity is over-engineering, where developers have made the code more generic than it needs to be, or added functionality that isn’t presently needed by the system.",
+        "Ask for unit, integration, or end-to-end tests as appropriate for the change.",
+        "Does this CL do what the developer intended?"
+      ],
+      "quotePatterns": [
+        "G_LOOK_DESIGN",
+        "G_LOOK_OVERENG",
+        "G_LOOK_TESTS",
+        "G_LOOK_FUNC"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+      "org": "Microsoft",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Code Reviews - Engineering Fundamentals Playbook",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 126573,
+      "sha256": "4db58d3ad154ec6ceedfe65c16313a37686951d2e5e6daf7c90c9b92b618f80b",
+      "normalisation": "HTML",
+      "quotes": [
+        "Developers working on projects should conduct peer code reviews on every pull request (or check-in to a shared branch)."
+      ],
+      "quotePatterns": [
+        "M_CR_PR"
+      ],
+      "unmatchedPatterns": [
+        "M_CR_GOAL",
+        "M_CR_AUTO",
+        "M_CR_TIME"
+      ]
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/",
+      "org": "Microsoft",
+      "practiceArea": "automated testing",
+      "status": "RETRIEVED",
+      "title": "Testing - Engineering Fundamentals Playbook",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 139373,
+      "sha256": "dd2a4a0db52527c14170ede22103411ce259436eb726cb6dc308fae27d06e5d2",
+      "normalisation": "HTML",
+      "quotes": [],
+      "quotePatterns": [],
+      "unmatchedPatterns": [
+        "M_AT_WHY",
+        "M_AT_PYRAMID",
+        "M_AT_UNIT",
+        "M_AT_E2E"
+      ]
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+      "org": "Microsoft",
+      "practiceArea": "continuous integration",
+      "status": "RETRIEVED",
+      "title": "Continuous Integration - Engineering Fundamentals Playbook",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 175463,
+      "sha256": "170b437b20e7c88a9744b29104f17cf1d384047959a3e46a35236e5b6ca79f56",
+      "normalisation": "HTML",
+      "quotes": [
+        "Continuous integration automation is an integral part of the software development lifecycle intended to reduce build integration errors and maximize velocity across a dev crew.",
+        "If the build step happens to fail then the build pipeline run status should be reported as failed including relevant logs and stack traces.",
+        "Protected branch policies should be setup on the main branch to ensure that CI stage(s) have passed prior to starting a code review.",
+        "The Code Review recipes section of the playbook has suggestions for linters and preferred styles for a number of languages."
+      ],
+      "quotePatterns": [
+        "M_CI_DEF",
+        "M_CI_BROKEN",
+        "M_CI_MAIN",
+        "M_CI_GATE"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+      "org": "GitHub",
+      "practiceArea": "delivery engineering",
+      "status": "RETRIEVED",
+      "title": "How GitHub uses merge queue to ship hundreds of changes every day - The GitHub Blog",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "bytes": 182027,
+      "sha256": "02b58c8769c2c5971f155a96958edb74ad6b2e044bddb8553893c66909b9e848",
+      "normalisation": "HTML",
+      "quotes": [
+        "By mid-2021, a few small, internal repositories started testing merge queue, but moving our large monorepo would not happen until the next year for a few reasons.",
+        "By rolling out changes to the process in phases (and sometimes testing and rolling back changes early in the morning before most developers started working) we were able to slowly transition our large monorepo and all of our repositories responsible for production services onto merge queue by 2023.",
+        "Our solution at this time was trains.",
+        "For GitHub and our \"deploy the merge process,\" merge queue dynamically forms groups of pull requests that are candidates for deployment, kicks off builds and tests via GitHub Actions, and ensures our main branch is never updated to a failing commit by enforcing branch protection rules."
+      ],
+      "quotePatterns": [
+        "GH_MQ_WHAT",
+        "GH_MQ_SCALE",
+        "GH_MQ_TRAINS",
+        "GH_MQ_MAIN"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+      "org": "NASA",
+      "practiceArea": "systems engineering",
+      "status": "RETRIEVED",
+      "title": "Systems Engineering Handbook - NASA",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=UTF-8",
+      "bytes": 273665,
+      "sha256": "5d7eada0761cc7cd763ce6be2da9c57c88e79c60f1796c3abd039f4dfca6b98d",
+      "normalisation": "HTML",
+      "quotes": [
+        "Lessons learned on systems engineering were documented in reports such as those by the NASA Integrated Action Team (NIAT), the Columbia Accident Investigation Board (CAIB), and the follow-on Diaz Report."
+      ],
+      "quotePatterns": [
+        "N_LESSONS"
+      ],
+      "unmatchedPatterns": [
+        "N_VV",
+        "N_REVIEW",
+        "N_RISK"
+      ]
+    },
+    {
+      "url": "https://research.google/pubs/modern-code-review-a-case-study-at-google/",
+      "org": "Google",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Modern Code Review: A Case Study at Google",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 145322,
+      "sha256": "96cf5222bc819371dcc389459c8e591a109df1ba03b7aae52f923bb756d216c4",
+      "normalisation": "HTML",
+      "quotes": [],
+      "quotePatterns": [],
+      "unmatchedPatterns": [
+        "R_MCR_WHAT",
+        "R_MCR_FIND",
+        "R_MCR_EDU"
+      ]
+    }
+  ],
+  "cycles": [
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/standard.html :: G_STD_HEALTH",
+      "question": "When does Google's guide say a reviewer should approve a change?",
+      "capability": "ODG review gate — approval standard",
+      "claim": "The page states: In general, reviewers should favor approving a CL once it is in a state where it definitely improves the overall code health of the system being worked on, even if the CL isn’t perfect.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+          "quote": "In general, reviewers should favor approving a CL once it is in a state where it definitely improves the overall code health of the system being worked on, even if the CL isn’t perfect."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/standard.html :: G_STD_PERFECT",
+      "question": "Does Google's guide require perfect code before approval?",
+      "capability": "ODG review gate — approval standard",
+      "claim": "The page states: A key point here is that there is no such thing as “perfect” code—there is only better code.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+          "quote": "A key point here is that there is no such thing as “perfect” code—there is only better code."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/standard.html :: G_STD_FACTS",
+      "question": "What overrules opinions in a Google code review?",
+      "capability": "ODG review gate — approval standard",
+      "claim": "The page states: Technical facts and data overrule opinions and personal preferences.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+          "quote": "Technical facts and data overrule opinions and personal preferences."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/standard.html :: G_STD_PURPOSE",
+      "question": "What is the primary purpose of code review per Google?",
+      "capability": "ODG review gate — approval standard",
+      "claim": "The page states: The primary purpose of code review is to make sure that the overall code health of Google’s code base is improving over time.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+          "quote": "The primary purpose of code review is to make sure that the overall code health of Google’s code base is improving over time."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/speed.html :: G_SPD_ONEDAY",
+      "question": "What maximum response time does Google set for a code review?",
+      "capability": "ODG review gate — review latency",
+      "claim": "The page states: One business day is the maximum time it should take to respond to a code review request (i.e., first thing the next morning).",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+          "quote": "One business day is the maximum time it should take to respond to a code review request (i.e., first thing the next morning)."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/speed.html :: G_SPD_SLOW",
+      "question": "What happens when code reviews are slow (Google)?",
+      "capability": "ODG review gate — review latency",
+      "claim": "The page states: When reviews are slow, there is increased pressure to allow developers to submit CLs that are not as good as they could be.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+          "quote": "When reviews are slow, there is increased pressure to allow developers to submit CLs that are not as good as they could be."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/speed.html :: G_SPD_FOCUS",
+      "question": "Should a reviewer interrupt focused work to review (Google)?",
+      "capability": "ODG review gate — review latency",
+      "claim": "The page states: If you are not in the middle of a focused task, you should do a code review shortly after it comes in.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+          "quote": "If you are not in the middle of a focused task, you should do a code review shortly after it comes in."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SMALL_WHY",
+      "question": "Why does Google prefer small changes?",
+      "capability": "ODG mission sizing — small changes",
+      "claim": "The page states: Reviewed more quickly.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "quote": "Reviewed more quickly."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SMALL_ONE",
+      "question": "How much should one Google CL contain?",
+      "capability": "ODG mission sizing — small changes",
+      "claim": "The page states: In general, the right size for a CL is one self-contained change.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "quote": "In general, the right size for a CL is one self-contained change."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SMALL_TESTS",
+      "question": "Do tests belong in the same CL (Google)?",
+      "capability": "ODG mission sizing — small changes",
+      "claim": "The page states: The CL should include related test code.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "quote": "The CL should include related test code."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SMALL_SIZE",
+      "question": "What size guidance does Google give for a CL?",
+      "capability": "ODG mission sizing — small changes",
+      "claim": "The page states: There are no hard and fast rules about how large is “too large.” 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large, but it’s up to the judgment of your reviewer.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "quote": "There are no hard and fast rules about how large is “too large.” 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large, but it’s up to the judgment of your reviewer."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: G_LOOK_DESIGN",
+      "question": "What is the most important thing to cover in a Google code review?",
+      "capability": "ODG review checklist — what reviewers check",
+      "claim": "The page states: The most important thing to cover in a review is the overall design of the CL.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "quote": "The most important thing to cover in a review is the overall design of the CL."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: G_LOOK_OVERENG",
+      "question": "What does Google's guide say about over-engineering?",
+      "capability": "ODG review checklist — what reviewers check",
+      "claim": "The page states: A particular type of complexity is over-engineering, where developers have made the code more generic than it needs to be, or added functionality that isn’t presently needed by the system.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "quote": "A particular type of complexity is over-engineering, where developers have made the code more generic than it needs to be, or added functionality that isn’t presently needed by the system."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: G_LOOK_TESTS",
+      "question": "What does Google's guide ask of tests in a change?",
+      "capability": "ODG review checklist — what reviewers check",
+      "claim": "The page states: Ask for unit, integration, or end-to-end tests as appropriate for the change.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "quote": "Ask for unit, integration, or end-to-end tests as appropriate for the change."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: G_LOOK_FUNC",
+      "question": "How does a Google reviewer check functionality?",
+      "capability": "ODG review checklist — what reviewers check",
+      "claim": "The page states: Does this CL do what the developer intended?",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "quote": "Does this CL do what the developer intended?"
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/code-reviews/ :: M_CR_PR",
+      "question": "How are reviews tied to pull requests (Microsoft playbook)?",
+      "capability": "ODG review gate — review goals",
+      "claim": "The page states: Developers working on projects should conduct peer code reviews on every pull request (or check-in to a shared branch).",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+          "quote": "Developers working on projects should conduct peer code reviews on every pull request (or check-in to a shared branch)."
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/ :: M_CI_DEF",
+      "question": "How does the Microsoft playbook define continuous integration?",
+      "capability": "ODG CI gate — integration discipline",
+      "claim": "The page states: Continuous integration automation is an integral part of the software development lifecycle intended to reduce build integration errors and maximize velocity across a dev crew.",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+          "quote": "Continuous integration automation is an integral part of the software development lifecycle intended to reduce build integration errors and maximize velocity across a dev crew."
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/ :: M_CI_BROKEN",
+      "question": "What does the Microsoft playbook say about broken builds?",
+      "capability": "ODG CI gate — integration discipline",
+      "claim": "The page states: If the build step happens to fail then the build pipeline run status should be reported as failed including relevant logs and stack traces.",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+          "quote": "If the build step happens to fail then the build pipeline run status should be reported as failed including relevant logs and stack traces."
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/ :: M_CI_MAIN",
+      "question": "What state must the main branch keep (Microsoft playbook)?",
+      "capability": "ODG CI gate — integration discipline",
+      "claim": "The page states: Protected branch policies should be setup on the main branch to ensure that CI stage(s) have passed prior to starting a code review.",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+          "quote": "Protected branch policies should be setup on the main branch to ensure that CI stage(s) have passed prior to starting a code review."
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/ :: M_CI_GATE",
+      "question": "Which quality gates run in CI (Microsoft playbook)?",
+      "capability": "ODG CI gate — integration discipline",
+      "claim": "The page states: The Code Review recipes section of the playbook has suggestions for linters and preferred styles for a number of languages.",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+          "quote": "The Code Review recipes section of the playbook has suggestions for linters and preferred styles for a number of languages."
+        }
+      ]
+    },
+    {
+      "query": "github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/ :: GH_MQ_WHAT",
+      "question": "What does GitHub's merge queue guarantee?",
+      "capability": "ODG delivery — merge queue",
+      "claim": "The page states: By mid-2021, a few small, internal repositories started testing merge queue, but moving our large monorepo would not happen until the next year for a few reasons.",
+      "support": [
+        {
+          "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+          "quote": "By mid-2021, a few small, internal repositories started testing merge queue, but moving our large monorepo would not happen until the next year for a few reasons."
+        }
+      ]
+    },
+    {
+      "query": "github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/ :: GH_MQ_SCALE",
+      "question": "At what scale does GitHub run its merge queue?",
+      "capability": "ODG delivery — merge queue",
+      "claim": "The page states: By rolling out changes to the process in phases (and sometimes testing and rolling back changes early in the morning before most developers started working) we were able to slowly transition our large monorepo and all of our repositories responsible for production services onto merge queue by 2023.",
+      "support": [
+        {
+          "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+          "quote": "By rolling out changes to the process in phases (and sometimes testing and rolling back changes early in the morning before most developers started working) we were able to slowly transition our large monorepo and all of our repositories responsible for production services onto merge queue by 2023."
+        }
+      ]
+    },
+    {
+      "query": "github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/ :: GH_MQ_TRAINS",
+      "question": "What did GitHub's merge queue replace?",
+      "capability": "ODG delivery — merge queue",
+      "claim": "The page states: Our solution at this time was trains.",
+      "support": [
+        {
+          "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+          "quote": "Our solution at this time was trains."
+        }
+      ]
+    },
+    {
+      "query": "github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/ :: GH_MQ_MAIN",
+      "question": "How does GitHub keep its main branch deployable?",
+      "capability": "ODG delivery — merge queue",
+      "claim": "The page states: For GitHub and our \"deploy the merge process,\" merge queue dynamically forms groups of pull requests that are candidates for deployment, kicks off builds and tests via GitHub Actions, and ensures our main branch is never updated to a failing commit by enforcing branch protection rules.",
+      "support": [
+        {
+          "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+          "quote": "For GitHub and our \"deploy the merge process,\" merge queue dynamically forms groups of pull requests that are candidates for deployment, kicks off builds and tests via GitHub Actions, and ensures our main branch is never updated to a failing commit by enforcing branch protection rules."
+        }
+      ]
+    },
+    {
+      "query": "www.nasa.gov/reference/systems-engineering-handbook/ :: N_LESSONS",
+      "question": "Does the NASA SE handbook cover lessons learned?",
+      "capability": "ODG verification / reviews / risk — NASA SE handbook (TOC)",
+      "claim": "The page states: Lessons learned on systems engineering were documented in reports such as those by the NASA Integrated Action Team (NIAT), the Columbia Accident Investigation Board (CAIB), and the follow-on Diaz Report.",
+      "support": [
+        {
+          "url": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+          "quote": "Lessons learned on systems engineering were documented in reports such as those by the NASA Integrated Action Team (NIAT), the Columbia Accident Investigation Board (CAIB), and the follow-on Diaz Report."
+        }
+      ]
+    }
+  ],
+  "screening": [
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://research.google/pubs/modern-code-review-a-case-study-at-google/",
+      "untrusted": false,
+      "injectionFlags": []
+    }
+  ],
+  "egressGating": "govern()+per-run quota (research-budget.governWithBudget) and bounded-http-client.validateUrl ran IN THIS PROCESS immediately before each fetch (runResearch planRun + per-call re-check); bounded-http-client.get was the only egress (ODG_RADAR_LIVE=1, GET, redirects blocked, size cap). This live-time gating is recorded by the collector, not reproducible from the repo alone (the replay re-checks the plan)."
+}
