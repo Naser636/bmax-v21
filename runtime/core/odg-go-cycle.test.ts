@@ -204,6 +204,69 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     check("uncertain leader ⇒ DECISION_REQUIRED kept, selected=null, proposed recorded (no pick)", sel.decision === "DECISION_REQUIRED" && sel.selected === null && sel.proposed === "H");
     check("DECISION_REQUIRED ⇒ HALTED_DECISION_REQUIRED, DECOMPOSE/STRATEGY skipped, no dispatch", r.status === "HALTED_DECISION_REQUIRED" && stepIn(a.trace, "DECOMPOSE").status === "SKIPPED" && stepIn(a.trace, "STRATEGY").status === "SKIPPED" && a.calls.dispatch === 0);
   }
+  // 8. V166 GO-ACT-1: strategic vs actionable selection (authorization = feasibility, priority = ranking)
+  {
+    const AS = require("./odg-authorization-scope.js");
+    const contractIn = (s: any, id: string) => s.sources.contracts.data.contracts.find((x: any) => x.scenario === id);
+    const plainAuth = (s0: any, ids: string[]) => { const s = clone(s0); s.measured = s0.measured; for (const id of ids) { const c = contractIn(s, id); c.state = "AUTHORIZED"; c.authorizedBy = "owner (test fixture)"; delete c.authorization; } return s; };
+    const g = contractIn(BASE_LIVE, "G");
+    const accept = { scenario: "G", verdict: "ACCEPT", contractSha256: AS.contractSha256(g), inspector: "independent inspector (test fixture)", inspectorSessionId: "inspector-sid-test", authorSessionId: g.revisionHistory[g.revisionHistory.length - 1].revisionAuthorSessionId, inspectedHeadSha: "c".repeat(40) };
+    const liveWithAccept = (() => { const s = clone(BASE_LIVE); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { G: { inspection: accept, experiment: null } }; return s; })();
+    // 8a strategic H unauthorized + G scoped-authorized (RUN_CONTROLLED_EXPERIMENTS derived) ⇒ actionable G, owner request for H
+    for (const mode of ["DRY", "EXECUTE"]) {
+      const p = mkPorts({ state: liveWithAccept });
+      const r = await GO.runGoCycle({ mode }, p.ports);
+      const sel = stepIn(p.trace, "SELECT").decision;
+      check(`GO-ACT ${mode}: strategicSelection kept verbatim (TIE_EXPLAINED J/G/H ⇒ H, consistent with committed register)`, sel.selected === "H" && sel.strategicSelection.selected === "H" && sel.strategicSelection.decision === "TIE_EXPLAINED" && sel.consistentWithCommittedRegisterEvidence === true);
+      check(`GO-ACT ${mode}: actionableSelection = G (scoped step authorized), workingOn G, H excluded as NOT_AUTHORIZED_NOW`, sel.actionableSelection.item === "G" && sel.workingOn === "G" && sel.actionableSelection.proceedingWithActionable === true && sel.actionableSelection.basis.basis === "SCOPED_STEP_AUTHORIZED" && sel.actionableSelection.basis.step === "RUN_CONTROLLED_EXPERIMENTS" && sel.actionableSelection.selection.excludedNotAuthorizedNow.includes("H"));
+      check(`GO-ACT ${mode}: owner request recorded for H ("owner — H PROPOSED"), rule text + provider authorship recorded`, !!sel.ownerRequest && sel.ownerRequest.item === "H" && /^owner — H PROPOSED/.test(sel.ownerRequest.authorizationNeeded) && sel.actionableSelection.rule === GO.ACTIONABLE_RULE && /ODG works on the best item it is allowed to do, and asks the owner for the best item overall/.test(sel.actionableSelection.rule) && /provider/.test(sel.actionableSelection.authoredBy) && stepIn(p.trace, "NEXT_SELECTION").decision.ownerRequest.item === "H" && r.selection.ownerRequest.item === "H");
+      check(`GO-ACT ${mode}: G proceeds through STRATEGY (NATIVE) / AUTHORIZE (scoped) / EXECUTE; H never dispatched`, stepIn(p.trace, "STRATEGY").decision.missionId === "AP-G" && stepIn(p.trace, "STRATEGY").decision.mode === "NATIVE" && stepIn(p.trace, "AUTHORIZE").decision.scopedAuthorization.executionAuthorized === true && !p.trace.some((e: any) => e.kind === "DISPATCHED" && e.mission === "H") && p.calls.provider === 0 && (mode === "DRY" ? (p.calls.dispatch === 0 && r.status === "DRY_COMPLETE") : (p.calls.dispatch === 1 && r.status === "EXECUTED_PASS" && p.trace.some((e: any) => e.kind === "DISPATCHED" && e.mission === "G"))));
+    }
+    // 8b committed state (no inspection record yet): G's current step INSPECT_REVISED_CONTRACT is authorized provider/docs work ⇒ G worked on, REPORTED, never dispatched
+    {
+      const p = mkPorts({ state: BASE_LIVE });
+      const r = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
+      const sel = stepIn(p.trace, "SELECT").decision;
+      check("GO-ACT committed state: strategic H, actionable G (INSPECT_REVISED_CONTRACT, provider/docs), owner request H, no dispatch", sel.selected === "H" && sel.workingOn === "G" && sel.actionableSelection.basis.step === "INSPECT_REVISED_CONTRACT" && sel.actionableSelection.basis.executionAuthorized === false && sel.ownerRequest.item === "H" && p.calls.dispatch === 0 && r.status === "HALTED_AT_AUTHORIZATION_GATE" && /not native dispatch/.test(stepIn(p.trace, "AUTHORIZE").decision.scopedAuthorization.report));
+    }
+    // 8c both unauthorized ⇒ halt as today (strategic item kept, owner request recorded, nothing dispatched)
+    {
+      const p = mkPorts({ state: BASE_UNAUTH });
+      const r = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
+      const sel = stepIn(p.trace, "SELECT").decision;
+      check("GO-ACT both unauthorized ⇒ no actionable item, workingOn H, HALTED_AT_AUTHORIZATION_GATE, owner request H, no dispatch", sel.actionableSelection.item === null && sel.workingOn === "H" && sel.actionableSelection.proceedingWithActionable === false && sel.ownerRequest.item === "H" && r.status === "HALTED_AT_AUTHORIZATION_GATE" && p.calls.dispatch === 0 && stepIn(p.trace, "AUTHORIZE").decision.intelligenceLoop.proposedOnly === true);
+    }
+    // 8d strategic authorized ⇒ same as today (actionable = strategic, no owner request)
+    {
+      const S = plainAuth(BASE_UNAUTH, ["H", "G"]);
+      const p = mkPorts({ state: S });
+      const r = await GO.runGoCycle({ mode: "DRY" }, p.ports);
+      const sel = stepIn(p.trace, "SELECT").decision;
+      check("GO-ACT strategic H authorized ⇒ actionable = strategic (sameAsStrategic), no owner request, works on H", sel.selected === "H" && sel.workingOn === "H" && sel.actionableSelection.selection.sameAsStrategic === true && sel.actionableSelection.proceedingWithActionable === false && sel.ownerRequest === null && stepIn(p.trace, "AUTHORIZE").decision.selectedAuthorized === true && r.selection.ownerRequest === null && p.calls.dispatch === 0);
+    }
+    // 8e owner-gated never actionable (even with an AUTHORIZED contract)
+    {
+      const S = plainAuth(BASE_UNAUTH, ["G"]);
+      const cg = contractIn(S, "G"); cg.WORK_ITEM_CONTRACT.objective = String(cg.WORK_ITEM_CONTRACT.objective) + " — requires a production deploy";
+      const reg = require("./odg-strategic-register.js").buildRegister(S.sources);
+      const itG = reg.items.find((it: any) => it.id === "G");
+      const a = GO.actionabilityOf(S, itG);
+      check("GO-ACT owner-gated item (OWN-1) with AUTHORIZED contract ⇒ NOT actionable", itG.requiresOwnerAuthorization === true && a.actionable === false && /owner-gated/.test(a.reason));
+      const p = mkPorts({ state: S });
+      const r = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
+      const sel = stepIn(p.trace, "SELECT").decision;
+      check("GO-ACT owner-gated never auto-selected as actionable ⇒ halt as today, no dispatch", sel.actionableSelection.item !== "G" && sel.workingOn !== "G" && p.calls.dispatch === 0 && r.status === "HALTED_AT_AUTHORIZATION_GATE");
+      check("GO-ACT PROPOSED is never actionable", GO.actionabilityOf(BASE_UNAUTH, { id: "H", requiresOwnerAuthorization: false }).actionable === false);
+    }
+    // 8f ties propagate: J and G both authorized and tied (secondary rules cannot isolate) ⇒ actionable DECISION_REQUIRED kept, no id pick, halt
+    {
+      const S = plainAuth(BASE_UNAUTH, ["J", "G"]);
+      const p = mkPorts({ state: S });
+      const r = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
+      const as = stepIn(p.trace, "SELECT").decision.actionableSelection;
+      check("GO-ACT tie J/G among actionable ⇒ DECISION_REQUIRED propagated verbatim (tiedSet J,G), no pick, H kept, no dispatch", as.selection.decision === "DECISION_REQUIRED" && as.selection.tiedSet.join(",") === "J,G" && as.item === null && stepIn(p.trace, "SELECT").decision.workingOn === "H" && p.calls.dispatch === 0 && r.status === "HALTED_AT_AUTHORIZATION_GATE");
+    }
+  }
   // 7. writer confinement + provider never launched (source scan)
   {
     const t = (fn: () => void) => { try { fn(); return null; } catch (e: any) { return String(e.message); } };

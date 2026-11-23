@@ -10,7 +10,10 @@
  *   2 STATE_READ            canonical evidence/registers + mission-ledger proven set + attempt-log (READ-ONLY port)
  *   3 PROBLEMS_OPPORTUNITIES CP8 gaps + register statuses + Radar grant/admission + knowledge usableFor/admissible
  *   4 SELECT                odg-strategic-register.buildRegister → mission-priority-selector.selectNextExplained
- *                           (TIE_EXPLAINED / DECISION_REQUIRED kept verbatim; never an id pick)
+ *                           (TIE_EXPLAINED / DECISION_REQUIRED kept verbatim; never an id pick) = strategicSelection;
+ *                           V166 GO-ACT-1: + actionableSelection = the SAME selector over the SAME candidates where items
+ *                           without an AUTHORIZED next step are excluded (feasibility, not scoring). The cycle proceeds with
+ *                           the actionable item when the strategic one is unauthorized, and records an owner request for it.
  *   5 DECOMPOSE             decomposition-planner.chooseStrategy on the selected item's contract
  *   6 STRATEGY              odg-strategy-mode-selector.selectStrategyMode (nextStrategyAfterFailure only after a failure)
  *   7 AUTHORIZE             intelligence-loop.runCycle (DISCOVER→AUTHORIZE; halts at PROPOSED without an EXTERNAL
@@ -49,7 +52,7 @@ const DECIDED_BY: any = Object.freeze({
   TRUTH_LOCK: "ODG truth-lock-gate.truthLockGate (evaluateTruthLock policy)",
   STATE_READ: "GO state port (provider-written reader) over canonical files; mission-ledger.verifyLedger + mission-attempt-log.readAttempts (read-only)",
   PROBLEMS_OPPORTUNITIES: "CP8.gaps + odg-strategic-register statuses + Radar grant/admission evidence + odg-knowledge-intelligence.usableFor/admissible",
-  SELECT: "ODG odg-strategic-register.buildRegister + mission-priority-selector.selectNextExplained",
+  SELECT: "ODG odg-strategic-register.buildRegister + mission-priority-selector.selectNextExplained (strategic + actionable — same selector; actionable feasibility filter GO-ACT-1 is a provider rule) + odg-authorization-scope.deriveAuthorizationScope",
   DECOMPOSE: "ODG decomposition-planner.chooseStrategy (contract→spec mapping is a provider rule)",
   STRATEGY: "ODG odg-strategy-mode-selector.selectStrategyMode",
   AUTHORIZE: "ODG intelligence-loop.runCycle (DISCOVER→AUTHORIZE) + mission-scheduler.evaluateEligibility + odg-authorization-scope.deriveAuthorizationScope (V166 scoped steps)",
@@ -118,6 +121,33 @@ function scopeSummary(scope: any): any {
 const SPEC_RULE = "GO-DEC-1 (provider rule): spec.architecture = one entry per WORK_ITEM_CONTRACT.write_set path (role = objective, contract = acceptance_criteria joined); no contract ⇒ NOT_MEASURED";
 
 function selectorOptions(): any { return { weights: REG.WEIGHTS, directions: REG.DIRECTIONS }; }
+
+/* V166 GO-ACT-1 (PROVIDER-AUTHORED rule, Claude Code; owner V165 §2 "sélection et priorisation des missions", V166 §5). */
+const ACTIONABLE_RULE = "authorization is a feasibility constraint, priority is the ranking: ODG works on the best item it is allowed to do, and asks the owner for the best item overall";
+const ACTIONABLE_RULE_DETAIL = "GO-ACT-1 (provider-authored, Claude Code): actionableSelection = mission-priority-selector.selectNextExplained over the SAME register candidates and options, with every item lacking an AUTHORIZED next step mapped to the non-selectable status NOT_AUTHORIZED_NOW (excluded with its reason; still counted for dependency/unblock edges) — no new scoring, same ties semantics. An item has an AUTHORIZED next step iff it is not owner-gated (requiresOwnerAuthorization) AND (its WORK_ITEM_CONTRACT is AUTHORIZED with authorizedBy, OR odg-authorization-scope derives its CURRENT step authorized). PROPOSED is never authorized. Applied only when the strategic decision chose an item (SELECTED/TIE_EXPLAINED) that is itself not actionable; DECISION_REQUIRED stays a halt. Dispatch still only through the existing NATIVE + isolated path; provider/docs steps are reported, not dispatched.";
+const NOT_AUTHORIZED_NOW = "NOT_AUTHORIZED_NOW";
+/* actionabilityOf(state, item) — does this register item currently have an AUTHORIZED next step? (never mints anything) */
+function actionabilityOf(state: any, item: any): any {
+  if (!item) return { actionable: false, basis: null, reason: "no item" };
+  if (item.requiresOwnerAuthorization === true) return { actionable: false, basis: null, reason: `owner-gated (${item.ownerReason || "requiresOwnerAuthorization"}) — never auto-selected` };
+  const contract = contractOf(state, item.id);
+  if (!contract) return { actionable: false, basis: null, reason: "no WORK_ITEM_CONTRACT ⇒ no authorization to act on" };
+  if (declaredAuthorization(contract)) return { actionable: true, basis: "CONTRACT_AUTHORIZED", reason: `contract AUTHORIZED by ${contract.authorizedBy}` };
+  const scope = scopedAuthorization(state, contract);
+  if (scope && scope.currentStepAuthorized === true) return { actionable: true, basis: "SCOPED_STEP_AUTHORIZED", step: scope.currentStep, stepKind: scope.currentStepKind, executionAuthorized: scope.executionAuthorized === true, reason: `scoped step ${scope.currentStep} (${scope.currentStepKind}) authorized by ${scope.owner.by.split(" — ")[0]} (odg-authorization-scope)` };
+  return { actionable: false, basis: null, reason: scope ? `scoped: current step ${scope.currentStep} NOT authorized (${scope.reason})` : `contract ${contract.state || "PROPOSED"} — no authorized next step (ODG never self-authorizes)` };
+}
+function actionableCandidates(state: any, register: any): any[] {
+  const byId = new Map(register.items.map((it: any) => [it.id, it]));
+  return REG.toSelectorCandidates(register).map((c: any) => actionabilityOf(state, byId.get(c.id)).actionable ? c : { ...c, status: NOT_AUTHORIZED_NOW });
+}
+function actionableOptions(): any {
+  const SELX = SEL.EXPLAINED_DEFAULTS || {};
+  return { ...selectorOptions(), nonSelectableStatuses: { ...(SELX.nonSelectableStatuses || {}), [NOT_AUTHORIZED_NOW]: "no AUTHORIZED next step now (GO-ACT-1 feasibility constraint; ranking unchanged)" } };
+}
+function selectionSummary(d: any): any {
+  return { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, justification: d.justification };
+}
 function chosenId(d: any): string | null { return d && (d.decision === "SELECTED" || d.decision === "TIE_EXPLAINED") && d.selected ? d.selected.id : null; }
 
 /*
@@ -226,12 +256,32 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const d = SEL.selectNextExplained(REG.toSelectorCandidates(ctx.register), selectorOptions());
     ctx.selection = d;
     const id = chosenId(d);
-    ctx.item = id ? ctx.register.items.find((it: any) => it.id === id) : null;
+    const strategicItem = id ? ctx.register.items.find((it: any) => it.id === id) : null;
+    // V166 GO-ACT-1: feasibility (authorization) filters, priority (the same selector) ranks.
+    const strategicAct = actionabilityOf(ctx.state, strategicItem);
+    let act: any = null, actItem: any = null;
+    if (strategicItem && strategicAct.actionable) { act = d; actItem = strategicItem; }
+    else if (strategicItem) {
+      act = SEL.selectNextExplained(actionableCandidates(ctx.state, ctx.register), actionableOptions());
+      const aid = chosenId(act);
+      actItem = aid ? ctx.register.items.find((it: any) => it.id === aid) : null;
+      if (actItem && !actionabilityOf(ctx.state, actItem).actionable) actItem = null;   // defensive: never a non-actionable pick
+    }
+    const proceedWithActionable = !!strategicItem && !strategicAct.actionable && !!actItem;
+    ctx.item = proceedWithActionable ? actItem : strategicItem;
+    ctx.strategicItem = strategicItem;
+    ctx.ownerRequest = strategicItem && !strategicAct.actionable ? { item: strategicItem.id, authorizationNeeded: `owner — ${strategicItem.id} ${strategicItem.contractState || "PROPOSED"}${strategicItem.contractState === "AUTHORIZED" ? "" : " → AUTHORIZED (authorizedBy)"}`, reason: strategicAct.reason, requestedBy: "ODG GO (GO-ACT-1) — a REQUEST, not an authorization" } : null;
+    ctx.actionable = { rule: ACTIONABLE_RULE, ruleDetail: ACTIONABLE_RULE_DETAIL, authoredBy: "technical provider (Claude Code) — provider-authored rule; every decision is the selector's",
+      strategicActionable: strategicItem ? strategicAct : null,
+      selection: act ? (act === d ? { sameAsStrategic: true, ...selectionSummary(d) } : { sameAsStrategic: false, ...selectionSummary(act), excludedNotAuthorizedNow: arr(act.excluded).filter((x: any) => x.status === NOT_AUTHORIZED_NOW).map((x: any) => x.id) }) : null,
+      item: actItem ? actItem.id : null, basis: actItem ? actionabilityOf(ctx.state, actItem) : null, proceedingWith: ctx.item ? ctx.item.id : null, proceedingWithActionable: proceedWithActionable };
     const committed = ctx.state.registerEvidence && ctx.state.registerEvidence.decisionRecord ? ctx.state.registerEvidence.decisionRecord : null;
     const consistent = committed ? committed.decision === d.decision && committed.selected === (d.selected ? d.selected.id : null) && canon(arr(committed.tiedSet)) === canon(arr(d.tiedSet)) : null;
     return { status: id ? "DONE" : "HALTED", inputs: REG.toSelectorCandidates(ctx.register),
-      decision: { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, resolutionSteps: d.resolutionSteps || null, justification: d.justification, uncertainty: d.selected ? d.selected.uncertainty : d.proposed ? d.proposed.uncertainty : null, ownerAuthorizationRequired: arr(d.ownerAuthorizationRequired).map((x: any) => x.id), consistentWithCommittedRegisterEvidence: consistent },
-      rationale: id ? `selector decision ${d.decision}${d.decision === "TIE_EXPLAINED" ? ` (tie ${arr(d.tiedSet).join("/")} resolved by ${d.resolvedBy})` : ""} — a PROPOSAL, not an authorization` : `selector decision ${d.decision}: ODG does not pick (no id tie-break) — owner/ODG decision required` };
+      decision: { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, resolutionSteps: d.resolutionSteps || null, justification: d.justification, uncertainty: d.selected ? d.selected.uncertainty : d.proposed ? d.proposed.uncertainty : null, ownerAuthorizationRequired: arr(d.ownerAuthorizationRequired).map((x: any) => x.id), consistentWithCommittedRegisterEvidence: consistent,
+        strategicSelection: selectionSummary(d), actionableSelection: ctx.actionable, ownerRequest: ctx.ownerRequest, workingOn: ctx.item ? ctx.item.id : null },
+      rationale: (id ? `selector decision ${d.decision}${d.decision === "TIE_EXPLAINED" ? ` (tie ${arr(d.tiedSet).join("/")} resolved by ${d.resolvedBy})` : ""} — a PROPOSAL, not an authorization` : `selector decision ${d.decision}: ODG does not pick (no id tie-break) — owner/ODG decision required`)
+        + (proceedWithActionable ? `; strategic ${id} lacks authorization (owner request recorded) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : strategicItem && !strategicAct.actionable ? `; strategic ${id} lacks authorization and no other item has an AUTHORIZED next step ⇒ the gate will hold (owner request recorded)` : "") };
   });
   if (stopped(r)) return stopped(r);
   const item = ctx.item;
@@ -353,13 +403,14 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       strategy: ctx.strategy ? { mode: ctx.strategy.mode, tentativeMode: ctx.strategy.tentativeMode || null, rule: ctx.strategy.rule } : null,
       authorizationNeeded: ctx.loopAuthorized ? null : ctx.scope ? `scoped: current step ${ctx.scope.currentStep} (${ctx.scope.currentStepKind}${ctx.scope.currentStepAuthorized ? ", AUTHORIZED — provider/docs work, not native dispatch" : ", NOT authorized"}); next ${ctx.scope.nextStep} ${ctx.scope.nextStepAuthorized ? "authorized" : "NOT authorized until " + ctx.scope.currentStep + " is validated by its evidence"}` : `owner: contract ${item.id} PROPOSED → AUTHORIZED (authorizedBy) — ODG cannot self-authorize`, executed: execStatus } : null;
     return { status: "DONE", inputs: rest.map((c: any) => c.id),
-      decision: { preparedMission: prepared, nextAfterCurrent: { decision: nd.decision, selected: nd.selected ? nd.selected.id : null, proposed: nd.proposed ? nd.proposed.id : null, tiedSet: arr(nd.tiedSet), resolvedBy: nd.resolvedBy || null, justification: nd.justification } },
+      decision: { preparedMission: prepared, ownerRequest: ctx.ownerRequest || null, strategicItem: ctx.strategicItem ? ctx.strategicItem.id : null, nextAfterCurrent: { decision: nd.decision, selected: nd.selected ? nd.selected.id : null, proposed: nd.proposed ? nd.proposed.id : null, tiedSet: arr(nd.tiedSet), resolvedBy: nd.resolvedBy || null, justification: nd.justification } },
       rationale: "prepared-mission package for the selected item + the selector's choice once the current item is set aside (PROPOSAL only)" };
   });
   if (stopped(r)) return stopped(r);
 
+  const goAct = { strategic: ctx.strategicItem ? ctx.strategicItem.id : null, workingOn: item ? item.id : null, proceedingWithActionable: !!(ctx.actionable && ctx.actionable.proceedingWithActionable), ownerRequest: ctx.ownerRequest || null };
   const status = !item ? "HALTED_DECISION_REQUIRED" : execStatus === "NOTHING_EXECUTED" ? "HALTED_AT_AUTHORIZATION_GATE" : execStatus === "WOULD_DISPATCH" ? "DRY_COMPLETE" : execStatus.startsWith("EXECUTED_") ? execStatus : execStatus;
-  return finish(status);
+  return finish(status, { selection: goAct });
 }
 
 /* assertConfinedWrite(target, outDir, forbiddenRoots) — the writer guard used by the CLI ports (exported for tests). */
@@ -380,6 +431,7 @@ const GO_CYCLE_CONTRACT = Object.freeze({
     "one bounded cycle per invocation (maxSteps ≤ 10, wall-clock deadline); no loop, no timer, no second scheduler",
     "Truth-Lock refusal ⇒ STARTUP_REFUSED before any state read",
     "selection is the selector's (TIE_EXPLAINED / DECISION_REQUIRED kept; never an id pick)",
+    "V166 GO-ACT-1 (provider-authored): " + ACTIONABLE_RULE + " — strategicSelection kept verbatim; actionableSelection = same selector with unauthorized items excluded (no new scoring); owner-gated never actionable; PROPOSED never authorized; owner request recorded for an unauthorized strategic item",
     "ODG never self-authorizes: execution only through schedulerStep with an external authorization or the canonical pre-authorized allowlist",
     "V166 scoped authorization: an owner-scoped contract dispatches only when its CURRENT step is an execution step derived-authorized by odg-authorization-scope from committed evidence (inspection ACCEPT bound to the contract sha256); non-execution steps are reported, never dispatched",
     "dispatch only in mode EXECUTE, only for NATIVE work in an isolated workspace; PROVIDER/HYBRID ⇒ delegation RECORD only; no provider launch",
@@ -389,5 +441,5 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
+module.exports = { actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};
