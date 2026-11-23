@@ -1,0 +1,17 @@
+{
+  "checkpoint": "V150-CP4 (§46)",
+  "date": "2026-11-23",
+  "headInitial": "9ae54e1b",
+  "headFinal": "593ce11f",
+  "prs": {"#893": "opt-in per-run output isolation for odg-run; ledger read-modify-write under fleet-bridge generation claim on BOTH paths (first version REJECTED: own lock double-hold + default path unlocked + fs leaks; second ACCEPTED)"},
+  "measured": {"realWave": "2 REAL governed odg-run canary runs in one wave: 4.66 s wall vs 4.63 s single (parallel ≈ free); earlier run: 4 real runs 7.3 s", "ledgerStress": "5 procs × 6 s, 2 s TTL: 1858 claims, 0 double holds (inspector)", "defaultPath": "same 22 written paths + 1 released claim file; 0 content diffs after normalisation"},
+  "liveRunner": "the system mission-runner executes runtime/dist (compiled 23:29, before #893) ⇒ the new ledger claim is NOT live until the dist is rebuilt; live tick 00:49 IDLE normal",
+  "residualLows": ["a run killed while holding the ledger claim makes any default run within the 120 s TTL wait 60 s then FAIL (clean, no hang) — visible in the availability SLI", "future-mtime claim file blocks until removed", "hard link from a shared input aliases the shared inode (not used in the stage closure)", "check→rename window protected only by a 5 s TTL margin (no fencing)"],
+  "stillBlocking": "real production waves remain 1: canary missions M0001/G10 and the 12 open register missions declare no write_set",
+  "agents": "4 listed by the runtime; 1 ran (#893 builder) and finished with a delivered report after a FOREGROUND CI wait (lost-report root cause addressed by instruction); others terminal, resumed by the owner, changed nothing",
+  "radar": "unchanged. The '3 sources' limit is the V16 grant's exact-host SECURITY allowlist (plus V372's 5 domains and the client's 5 data hosts) — not a display/pagination limit; widening needs an owner-approved domain list or an authorised web-search service",
+  "providers": "Ollama local reachable (3 qwen models); external key present but no verifiable spend ceiling ⇒ not used (V15.4 §1)",
+  "nativeVsProvider": "decisions by ODG components (wave admission, write-safety, claims, ledger); construction by the provider",
+  "boussole": "unchanged (53a1dedb); Truth Lock 928/928",
+  "nextAction": "declare write_sets for read-only canary missions through their canonical definition (if not a protected register) so a production wave > 1 is possible; then the native agent supervisor (lifecycle states/heartbeats) on the canonical mission components; then the measured Ollama capability registry"
+}
