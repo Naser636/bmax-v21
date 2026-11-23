@@ -41,7 +41,16 @@ const KNOW = { ok: true, collection: "pinned", claims: [{ id: "K1", epistemic: "
 const TL_PASS = { status: "PASS", ok: true, blocked: false, enforce: true, gitState: { isRepo: true, branch: "main", head: "h", originMain: "h", staged: 0 }, verdict: { detail: "ok" } };
 const TL_FAIL = { status: "BLOCKED", ok: false, blocked: true, enforce: true, gitState: { isRepo: true, branch: "feat/x", head: "h", originMain: "h", staged: 0 }, verdict: { detail: "REFUSED — unexpected branch" } };
 
-function authorizeG(state: any): any {
+/* V166 (#933 inspection fix): G's write_set now carries the experiment files, so the COMMITTED register selects H
+ * (TIE_EXPLAINED J/G/H, R3). Tests that exercise G's own gate/dispatch path run on an explicit FOCUS fixture where H and J
+ * are marked PASS (not selectable) so the selector itself selects G — a test fixture, never committed state. */
+function focusG(state: any): any {
+  const s = clone(state); s.measured = state.measured;
+  for (const id of ["H", "J"]) s.sources.contracts.data.contracts.find((x: any) => x.scenario === id).initialState.status = "PASS";
+  return s;
+}
+function authorizeG(state0: any): any {
+  const state = focusG(state0);
   const s = clone(state); s.measured = state.measured;
   const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
   c.state = "AUTHORIZED"; c.authorizedBy = "owner (test fixture)";
@@ -79,16 +88,16 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     check("trace starts with CYCLE_START and ends with CYCLE_END", trace[0].kind === "CYCLE_START" && trace[trace.length - 1].kind === "CYCLE_END");
     check("unauthorized G ⇒ HALTED_AT_AUTHORIZATION_GATE", r.status === "HALTED_AT_AUTHORIZATION_GATE");
     const sel = stepIn(trace, "SELECT").decision;
-    check("TIE_EXPLAINED propagated verbatim (tiedSet G/J, resolvedBy R3, no id pick)", sel.decision === "TIE_EXPLAINED" && sel.selected === "G" && sel.tiedSet.join(",") === "G,J" && sel.resolvedBy === "R3_LOWER_RISK");
+    check("TIE_EXPLAINED propagated verbatim (committed: tiedSet J/G/H resolved by R3 ⇒ H, no id pick)", sel.decision === "TIE_EXPLAINED" && sel.selected === "H" && sel.tiedSet.join(",") === "J,G,H" && sel.resolvedBy === "R3_LOWER_RISK");
     check("SELECT consistent with the committed register decision", sel.consistentWithCommittedRegisterEvidence === true);
     check("STRATEGY = M0 DECISION_REQUIRED (tentative NATIVE), consistent with committed evidence", stepIn(trace, "STRATEGY").decision.mode === "DECISION_REQUIRED" && stepIn(trace, "STRATEGY").decision.rule === "M0" && stepIn(trace, "STRATEGY").decision.consistentWithCommittedStrategyEvidence === true);
     const au = stepIn(trace, "AUTHORIZE");
     check("intelligence-loop halts at PROPOSED (AUTHORIZE stage, proposedOnly)", au.status === "HALTED_AT_GATE" && au.decision.intelligenceLoop.stage === "AUTHORIZE" && au.decision.intelligenceLoop.proposedOnly === true && au.decision.selfAuthorized === false);
-    check("scheduler eligibility: G NOT_PRE_AUTHORIZED, M0001 ALREADY_PROVEN", au.decision.schedulerEligibility.some((e: any) => e.mission === "G" && /NOT_PRE_AUTHORIZED/.test(e.reason)) && au.decision.schedulerEligibility.some((e: any) => e.mission === "M0001" && /ALREADY_PROVEN/.test(e.reason)));
+    check("scheduler eligibility: G NOT_PRE_AUTHORIZED, M0001 ALREADY_PROVEN", au.decision.schedulerEligibility.some((e: any) => e.mission === sel.selected && /NOT_PRE_AUTHORIZED/.test(e.reason)) && au.decision.schedulerEligibility.some((e: any) => e.mission === "M0001" && /ALREADY_PROVEN/.test(e.reason)));
     check("EXECUTE: NOTHING_EXECUTED, no dispatch, no provider", stepIn(trace, "EXECUTE").status === "NOTHING_EXECUTED" && calls.dispatch === 0 && calls.provider === 0 && r.dispatchCalls === 0 && r.providerLaunched === 0);
     const nx = stepIn(trace, "NEXT_SELECTION").decision;
-    check("prepared mission recorded with contract + decomposition + strategy + authorizationNeeded", nx.preparedMission.id === "G" && !!nx.preparedMission.contract.objective && !!nx.preparedMission.decomposition && !!nx.preparedMission.strategy && /PROPOSED → AUTHORIZED/.test(nx.preparedMission.authorizationNeeded));
-    check("next-after-current selection recorded (selector, not id order)", typeof nx.nextAfterCurrent.decision === "string" && nx.nextAfterCurrent.selected !== "G");
+    check("prepared mission recorded with contract + decomposition + strategy + authorizationNeeded", nx.preparedMission.id === sel.selected && !!nx.preparedMission.contract.objective && !!nx.preparedMission.decomposition && !!nx.preparedMission.strategy && /PROPOSED → AUTHORIZED/.test(nx.preparedMission.authorizationNeeded));
+    check("next-after-current selection recorded (selector, not id order)", typeof nx.nextAfterCurrent.decision === "string" && nx.nextAfterCurrent.selected !== sel.selected);
     check("summary written through the confined writer", calls.writes.length === 1);
   }
   // 1b. committed state after V165: the owner authorized REVISION + INSPECTION of G's contract, NOT execution
@@ -97,8 +106,9 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     const g = BASE_LIVE.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
     check("committed contract G is AUTHORIZED_FOR_REVISION by the owner (V165 §1), executionAuthorized false", g.state === "AUTHORIZED_FOR_REVISION" && /^OWNER/.test(String(g.authorizedBy)) && /V165/.test(String(g.authorizedBy)) && g.authorization && g.authorization.executionAuthorized === false);
     // runnable isolated scratch is provided by the default ports (isolation ok + dispatchNative available)
-    const { ports, trace, calls } = mkPorts({ state: BASE_LIVE });
+    const { ports, trace, calls } = mkPorts({ state: focusG(BASE_LIVE) });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
+    check("focus fixture: the selector selects G", stepIn(trace, "SELECT").decision.selected === "G");
     const au = stepIn(trace, "AUTHORIZE");
     check("committed state + EXECUTE + runnable scratch ⇒ G NOT dispatched (revision-only authorization never opens execution)", calls.dispatch === 0 && calls.provider === 0 && r.status === "HALTED_AT_AUTHORIZATION_GATE" && au.decision.selectedAuthorized === false && au.decision.selfAuthorized === false);
     check("committed state ⇒ STRATEGY stays M0 DECISION_REQUIRED for G", stepIn(trace, "STRATEGY").decision.rule === "M0" && stepIn(trace, "STRATEGY").decision.mode === "DECISION_REQUIRED");
@@ -111,13 +121,13 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
   {
     const AS = require("./odg-authorization-scope.js");
     const g = BASE_LIVE.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
-    const rec = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contractSha256: AS.contractSha256(g), inspector: "independent inspector (test fixture)", inspectedHeadSha: "b".repeat(40), ...o });
-    const withEv = (inspection: any) => { const s = clone(BASE_LIVE); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { G: { inspection, experiment: null } }; return s; };
+    const rec = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contractSha256: AS.contractSha256(g), inspector: "independent inspector (test fixture)", inspectorSessionId: "inspector-sid-test", authorSessionId: g.revisionHistory[g.revisionHistory.length - 1].revisionAuthorSessionId, inspectedHeadSha: "b".repeat(40), ...o });
+    const withEv = (inspection: any) => { const s = focusG(BASE_LIVE); s.authorizationEvidence = { G: { inspection, experiment: null } }; return s; };
     const ok = mkPorts({ state: withEv(rec()) });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, ok.ports);
     const au = stepIn(ok.trace, "AUTHORIZE").decision;
     check("V166: ACCEPT record bound to the current contract sha ⇒ RUN_CONTROLLED_EXPERIMENTS derived-authorized; STRATEGY leaves M0; one NATIVE isolated dispatch", au.scopedAuthorization.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && au.scopedAuthorization.executionAuthorized === true && au.selectedAuthorized === true && au.selfAuthorized === false && stepIn(ok.trace, "STRATEGY").decision.rule !== "M0" && stepIn(ok.trace, "STRATEGY").decision.mode === "NATIVE" && ok.calls.dispatch === 1 && r.status === "EXECUTED_PASS" && ok.calls.provider === 0);
-    for (const [name, bad] of [["sha mismatch (contract edited after inspection)", rec({ contractSha256: "0".repeat(64) })], ["REJECT", rec({ verdict: "REJECT" })], ["inspector = revision author", rec({ inspector: g.revisionHistory[g.revisionHistory.length - 1].author })], ["no record", null]] as any[]) {
+    for (const [name, bad] of [["sha mismatch (contract edited after inspection)", rec({ contractSha256: "0".repeat(64) })], ["REJECT", rec({ verdict: "REJECT" })], ["inspector session = author session", rec({ inspectorSessionId: g.revisionHistory[g.revisionHistory.length - 1].revisionAuthorSessionId })], ["no record", null]] as any[]) {
       const p = mkPorts({ state: withEv(bad) });
       const rr = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
       check(`V166: ${name} ⇒ G NOT dispatched, M0 kept`, p.calls.dispatch === 0 && rr.status === "HALTED_AT_AUTHORIZATION_GATE" && stepIn(p.trace, "STRATEGY").decision.rule === "M0" && stepIn(p.trace, "AUTHORIZE").decision.scopedAuthorization.executionAuthorized === false);
@@ -191,7 +201,7 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     const a = mkPorts({ state: s });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, a.ports);
     const sel = stepIn(a.trace, "SELECT").decision;
-    check("uncertain leader ⇒ DECISION_REQUIRED kept, selected=null, proposed recorded (no pick)", sel.decision === "DECISION_REQUIRED" && sel.selected === null && sel.proposed === "G");
+    check("uncertain leader ⇒ DECISION_REQUIRED kept, selected=null, proposed recorded (no pick)", sel.decision === "DECISION_REQUIRED" && sel.selected === null && sel.proposed === "H");
     check("DECISION_REQUIRED ⇒ HALTED_DECISION_REQUIRED, DECOMPOSE/STRATEGY skipped, no dispatch", r.status === "HALTED_DECISION_REQUIRED" && stepIn(a.trace, "DECOMPOSE").status === "SKIPPED" && stepIn(a.trace, "STRATEGY").status === "SKIPPED" && a.calls.dispatch === 0);
   }
   // 7. writer confinement + provider never launched (source scan)

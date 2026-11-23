@@ -322,7 +322,9 @@
         "objective": "Use a retrieved knowledge item (freshness + provenance checked) in a real mission and measure its utility",
         "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
         "write_set": [
-          "docs/odg/evidence/V160_SCENARIO_G.json"
+          "docs/odg/evidence/V160_SCENARIO_G.json",
+          "runtime/bin/odg-v166-scenario-g-experiment.ts",
+          "docs/odg/evidence/V166_G_EXPERIMENT.json"
         ],
         "authorized_symbols": [],
         "invariants": [
@@ -382,12 +384,10 @@
             "chronological split ⇒ distribution shift between TRAIN and TEST (later PRs iterate more, e.g. through the inspection loop); recorded, not corrected",
             "commit count and minutes are confounded proxies (task difficulty, inspection loop)"
           ],
-          "experimentWriteSet": {
-            "files": [
-              "runtime/bin/odg-v166-scenario-g-experiment.ts",
-              "docs/odg/evidence/V166_G_EXPERIMENT.json"
-            ],
-            "note": "additive files for RUN_CONTROLLED_EXPERIMENTS only; docs/odg/evidence/V160_SCENARIO_G.json (the earlier NOT_ADOPTED result) is never rewritten. Recorded here rather than in WORK_ITEM_CONTRACT.write_set: adding them to write_set changes the register's decomposition input for G and flips the committed selection (TIE G/J → TIE J/G/H, H selected) — disclosed for the inspector to judge, not hidden"
+          "secondaryRobustness": {
+            "role": "REPORT-ONLY robustness check — never part of PASS/PARTIAL/FAIL",
+            "split": "fixed-seed random split of the same rows: Fisher–Yates shuffle with the same LCG (seed 20261125), first 200 = TRAIN, last 200 = TEST",
+            "computed": "Δ0 and Δ1 with the same metric, baseline and bootstrap (seed 20261124) as the primary split; reported next to the primary result, cannot change the grade"
           }
         }
       },
@@ -417,10 +417,12 @@
             "C1 replaced: \"admissible() true for the use\" ⇒ use authorized by usableFor(record, \"DESIGN_PROPOSAL\", useAt, {assessment}) with provenance + freshness verified at use time; admissible() recorded for every item and REQUIRED only for an item presented as a FACT (CORROBORATED, isFact)",
             "C2 kept verbatim, operationalized by WORK_ITEM_CONTRACT.preRegistration (metric, baseline, dataset/split, decision rule, thresholds) fixed before any experiment",
             "invariant added (not an acceptance criterion — it constrains grading): negative results recorded as such; the V160 G NOT_ADOPTED result is never rewritten",
-            "write_set, the five original invariants, stop_conditions, rollback, evidence_required unchanged; the future experiment's additive files are declared in preRegistration.experimentWriteSet"
+            "write_set extended with the experiment's additive files (runtime/bin/odg-v166-scenario-g-experiment.ts, docs/odg/evidence/V166_G_EXPERIMENT.json); the five original invariants, stop_conditions, rollback, evidence_required unchanged; secondary fixed-seed random split pre-registered as report-only (inspection #933 recommendation)"
           ],
           "justification": "CP8 G grading (docs/odg/evidence/V163_CHECKPOINT_8.json scenarios.G.criteria): \"admissible() (facts only ⇒ NOT_A_FACT for a SUPPORTED item) is false and scenario G never calls it ⇒ the criterion as worded cannot be met by a SUPPORTED item\"; and \"utility vs the same decision without the item NOT_MEASURED\". In odg-knowledge-intelligence, admissible() is admission AS FACT (returns NOT_A_FACT unless isFact && status VERIFIED, i.e. CORROBORATED), while usableFor() is the use authorization (provenance via the branded assessment, freshness via validUntil, capped by the record's own authorization). The original C1 required both SUPPORTED-or-CORROBORATED and admissible() true — incoherent for SUPPORTED. The revised C1 uses each function for what it decides; C2 gets a pre-registered measurement.",
-          "priorResultUnchanged": "docs/odg/evidence/V160_SCENARIO_G.json decision NOT_ADOPTED (borderline) — untouched"
+          "priorResultUnchanged": "docs/odg/evidence/V160_SCENARIO_G.json decision NOT_ADOPTED (borderline) — untouched",
+          "revisionAuthorSessionId": "a2c8b4b6fcc582da1",
+          "inspectionFixes": "independent inspection of #933 @b994ca69 REJECT: (3) experiment files moved back into write_set (the register selection is allowed to change honestly); (4) inspector independence bound to opaque session ids (DECLARED_SESSION_INDEPENDENCE); (2) secondary random split pre-registered"
         }
       ]
     },

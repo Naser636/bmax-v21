@@ -22,8 +22,11 @@
  *      change, justification, and the WORK_ITEM_CONTRACT carries a preRegistration (metric, baseline, dataset,
  *      decisionRule, thresholds).
  *   R3 INSPECT_REVISED_CONTRACT validated ⇔ a committed inspection record with verdict ACCEPT, contractSha256 equal to
- *      contractSha256(CURRENT contract entry) (any later edit invalidates it), inspector ≠ revision author, inspected PR
- *      head SHA (40 hex), same scenario.
+ *      contractSha256(CURRENT contract entry) (any later edit invalidates it), inspected PR head SHA (40 hex), same
+ *      scenario, and DECLARED SESSION INDEPENDENCE: opaque `inspectorSessionId` and `authorSessionId` both present and
+ *      distinct, with authorSessionId === the contract's revisionHistory[last].revisionAuthorSessionId (recorded by the
+ *      revision, so the inspector cannot pick it). Wording of names is never compared. Evidence level is
+ *      DECLARED_SESSION_INDEPENDENCE — declared ids, NOT cryptographic proof.
  *   R4 RUN_CONTROLLED_EXPERIMENTS becomes AUTHORIZED (derived) ⇔ R0 ∧ R2 ∧ R3 ∧ the owner's executionCondition is
  *      declared. It is VALIDATED (done — not PASS) ⇔ an experiment record bound to the same contractSha256 records an
  *      outcome; the outcome itself is never upgraded here.
@@ -44,6 +47,7 @@ const STEP_KIND: any = Object.freeze({
   RUN_CONTROLLED_EXPERIMENTS: "EXECUTION",
   VALIDATE_CRITERIA: "GRADING",
 });
+const INDEPENDENCE_LEVEL = "DECLARED_SESSION_INDEPENDENCE";   // declared opaque session ids — NOT cryptographic
 const OWNER_SOURCE_RE = /V165/;
 const SHA40 = /^[0-9a-f]{40}$/;
 
@@ -59,7 +63,6 @@ function canon(v: any): string {
 }
 /* contractSha256(entry) = sha256 hex of canon(the WHOLE contracts[scenario=X] entry). */
 function contractSha256(entry: any): string { return crypto.createHash("sha256").update(canon(entry)).digest("hex"); }
-function norm(s: any): string { return String(s == null ? "" : s).toLowerCase().replace(/\s+/g, " ").trim(); }
 function freeze(o: any): any { return Object.freeze(o); }
 
 function ownerAuthorization(contract: any): any {
@@ -83,19 +86,24 @@ function revisionValid(contract: any): any {
   const pr = w && isObj(w.preRegistration) ? w.preRegistration : null;
   if (!pr) return { ok: false, reason: "WORK_ITEM_CONTRACT.preRegistration missing" };
   for (const k of ["metric", "baseline", "dataset", "decisionRule", "thresholds"]) if (pr[k] === undefined || pr[k] === null || pr[k] === "") return { ok: false, reason: `preRegistration.${k} missing` };
-  return { ok: true, author: String(rev.author), evidence: { revisionDate: rev.date || null, author: String(rev.author), originalCriteriaCount: arr(rev.originalCriteria).length } };
+  if (!str(rev.revisionAuthorSessionId)) return { ok: false, reason: "revision has no revisionAuthorSessionId (opaque id binding the author session)" };
+  return { ok: true, author: String(rev.author), authorSessionId: String(rev.revisionAuthorSessionId), evidence: { revisionDate: rev.date || null, author: String(rev.author), originalCriteriaCount: arr(rev.originalCriteria).length } };
 }
 
-function inspectionValid(contract: any, rec: any, revisionAuthor: string | null, sha: string): any {
+const SESSION_ID = /^[A-Za-z0-9._:-]{8,128}$/;
+function inspectionValid(contract: any, rec: any, revisionAuthorSessionId: string | null, sha: string): any {
   if (!isObj(rec)) return { ok: false, reason: "no committed inspection record" };
   if (str(rec.scenario) && String(rec.scenario) !== String(contract.scenario)) return { ok: false, reason: `inspection record is for scenario ${rec.scenario}, not ${contract.scenario}` };
   if (rec.verdict !== "ACCEPT") return { ok: false, reason: `inspection verdict ${rec.verdict === undefined ? "absent" : rec.verdict} ≠ ACCEPT` };
   if (rec.contractSha256 !== sha) return { ok: false, reason: `inspection contractSha256 ${rec.contractSha256} ≠ current contract sha256 ${sha} (contract edited after inspection, or wrong contract)` };
-  if (!str(rec.inspector)) return { ok: false, reason: "inspection record has no inspector identity" };
-  if (!revisionAuthor || norm(rec.inspector) === norm(revisionAuthor)) return { ok: false, reason: "inspector identity equals the revision author (not independent)" };
+  const ins = rec.inspectorSessionId, aut = rec.authorSessionId;
+  if (!str(ins) || !SESSION_ID.test(String(ins))) return { ok: false, reason: "inspection record lacks an opaque inspectorSessionId (not independent)" };
+  if (!str(aut) || !SESSION_ID.test(String(aut))) return { ok: false, reason: "inspection record lacks the authorSessionId (not independent)" };
+  if (!revisionAuthorSessionId || String(aut) !== revisionAuthorSessionId) return { ok: false, reason: "authorSessionId does not equal the revisionAuthorSessionId recorded in the contract (not independent)" };
+  if (String(ins) === String(aut)) return { ok: false, reason: "inspectorSessionId equals authorSessionId (not independent)" };
   const head = String(rec.inspectedHeadSha || "");
   if (!SHA40.test(head)) return { ok: false, reason: "inspection record lacks the inspected PR head SHA (40 hex)" };
-  return { ok: true, evidence: { inspector: String(rec.inspector), verdict: "ACCEPT", contractSha256: sha, inspectedHeadSha: head, inspectedPr: rec.inspectedPr || null, recordPath: rec.recordPath || null } };
+  return { ok: true, evidence: { inspector: str(rec.inspector) ? String(rec.inspector) : null, inspectorSessionId: String(ins), authorSessionId: String(aut), independenceLevel: INDEPENDENCE_LEVEL, verdict: "ACCEPT", contractSha256: sha, inspectedHeadSha: head, inspectedPr: rec.inspectedPr || null, recordPath: rec.recordPath || null } };
 }
 
 function experimentValid(rec: any, sha: string): any {
@@ -129,7 +137,7 @@ function deriveAuthorizationScope(contract: any, evidence?: any): any {
 
   const rev = revisionValid(contract);
   if (rev.ok) validated.push({ step: "REVISE_CONTRACT", evidence: rev.evidence });
-  const insp = rev.ok ? inspectionValid(contract, ev.inspection, rev.author, sha) : { ok: false, reason: "revision not complete (R2) — inspection cannot validate" };
+  const insp = rev.ok ? inspectionValid(contract, ev.inspection, rev.authorSessionId, sha) : { ok: false, reason: "revision not complete (R2) — inspection cannot validate" };
   if (insp.ok) validated.push({ step: "INSPECT_REVISED_CONTRACT", evidence: insp.evidence });
   if (rev.ok && insp.ok && owner.executionCondition && !authorized.has("RUN_CONTROLLED_EXPERIMENTS")) {
     authorized.add("RUN_CONTROLLED_EXPERIMENTS");
@@ -154,7 +162,7 @@ function deriveAuthorizationScope(contract: any, evidence?: any): any {
     owner: freeze({ by: owner.by, source: owner.source, declaredScope: freeze(owner.scope.slice()), executionAuthorizedDeclared: owner.executionAuthorized, executionCondition: owner.executionCondition }),
     sequence: freeze(seq.slice()), authorizedSteps: freeze(seq.filter((s) => authorized.has(s))), derivedSteps: freeze(derived), validatedSteps: freeze(validated),
     currentStep: cur, currentStepKind: cur ? STEP_KIND[cur] : null, currentStepAuthorized: curAuth, nextStep: nxt, nextStepAuthorized: !!nxt && authorized.has(nxt),
-    executionAuthorized: execAuth, reason: why, contractStateRewritten: false, selfAuthorized: false,
+    executionAuthorized: execAuth, reason: why, independenceLevel: INDEPENDENCE_LEVEL, contractStateRewritten: false, selfAuthorized: false,
   });
 }
 
@@ -171,10 +179,10 @@ const AUTHORIZATION_SCOPE_CONTRACT = Object.freeze({
     "PURE derivation: no write, no contract-state rewrite, no authorization minted",
     "owner authorization (by OWNER…, source V165) must exist first — otherwise nothing is derived",
     "steps outside the declared sequence (provider spend, governance, …) are never derived",
-    "inspection validates only with verdict ACCEPT, contractSha256 = sha256(canon(current contract entry)), inspector ≠ revision author, inspected head SHA",
+    "inspection validates only with verdict ACCEPT, contractSha256 = sha256(canon(current contract entry)), distinct opaque inspector/author session ids bound to the revision's revisionAuthorSessionId (DECLARED_SESSION_INDEPENDENCE, not cryptographic), inspected head SHA",
     "a validated step is DONE, never PASS: no outcome is graded or upgraded here",
   ]),
 });
 
-module.exports = { deriveAuthorizationScope, isStepAuthorized, contractSha256, canon, STEP_SEQUENCES, EXECUTION_STEPS, STEP_KIND, AUTHORIZATION_SCOPE_CONTRACT };
+module.exports = { deriveAuthorizationScope, isStepAuthorized, contractSha256, canon, STEP_SEQUENCES, EXECUTION_STEPS, STEP_KIND, INDEPENDENCE_LEVEL, AUTHORIZATION_SCOPE_CONTRACT };
 export {};

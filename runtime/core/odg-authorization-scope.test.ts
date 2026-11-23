@@ -12,7 +12,8 @@ const clone = (o: any) => JSON.parse(JSON.stringify(o));
 const G = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8")).contracts.find((c: any) => c.scenario === "G");
 const SHA = AS.contractSha256(G);
 const HEAD = "a".repeat(40);
-const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contractSha256: SHA, inspector: "independent inspector (fresh session)", inspectedHeadSha: HEAD, inspectedPr: 999, ...o });
+const AUTHOR_SID = G.revisionHistory[G.revisionHistory.length - 1].revisionAuthorSessionId;
+const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contractSha256: SHA, inspector: "independent inspector (fresh session)", inspectorSessionId: "inspector-sid-0001", authorSessionId: AUTHOR_SID, inspectedHeadSha: HEAD, inspectedPr: 999, ...o });
 
 // committed state
 {
@@ -39,9 +40,21 @@ const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contrac
   check("contract edited after inspection (sha mismatch) ⇒ experiments NOT authorized", s1.executionAuthorized === false && !AS.isStepAuthorized(s1, "RUN_CONTROLLED_EXPERIMENTS") && s1.currentStep === "INSPECT_REVISED_CONTRACT" && /sha256/.test(s1.reason));
   const s2 = AS.deriveAuthorizationScope(G, { inspection: inspection({ verdict: "REJECT" }) });
   check("REJECT verdict ⇒ NOT authorized", s2.executionAuthorized === false && !AS.isStepAuthorized(s2, "RUN_CONTROLLED_EXPERIMENTS"));
+  check("committed revision records revisionAuthorSessionId a2c8b4b6fcc582da1", AUTHOR_SID === "a2c8b4b6fcc582da1");
+  const s3 = AS.deriveAuthorizationScope(G, { inspection: inspection({ inspectorSessionId: AUTHOR_SID }) });
+  check("equal session ids (inspector = author) ⇒ NOT authorized", s3.executionAuthorized === false && /not independent/.test(s3.reason));
   const author = G.revisionHistory[G.revisionHistory.length - 1].author;
-  const s3 = AS.deriveAuthorizationScope(G, { inspection: inspection({ inspector: `  ${author.toUpperCase()} ` }) });
-  check("inspector = revision author (case/space-insensitive) ⇒ NOT authorized", s3.executionAuthorized === false && /independent/.test(s3.reason));
+  const w1 = AS.deriveAuthorizationScope(G, { inspection: inspection({ inspector: "PROVIDER (Claude Code)" }) });
+  const w2 = AS.deriveAuthorizationScope(G, { inspection: inspection({ inspector: author }) });
+  check("inspector WORDING never decides (colliding or identical name text): result depends on session ids only", w1.executionAuthorized === true && w2.executionAuthorized === true && w1.independenceLevel === "DECLARED_SESSION_INDEPENDENCE" && w1.validatedSteps[1].evidence.independenceLevel === "DECLARED_SESSION_INDEPENDENCE");
+  const m1 = AS.deriveAuthorizationScope(G, { inspection: inspection({ inspectorSessionId: undefined }) });
+  const m2 = AS.deriveAuthorizationScope(G, { inspection: inspection({ authorSessionId: undefined }) });
+  check("missing inspectorSessionId or authorSessionId ⇒ NOT authorized", m1.executionAuthorized === false && m2.executionAuthorized === false);
+  const m3 = AS.deriveAuthorizationScope(G, { inspection: inspection({ authorSessionId: "some-other-sid-99" }) });
+  check("authorSessionId not equal to the contract's revisionAuthorSessionId (inspector-picked) ⇒ NOT authorized", m3.executionAuthorized === false && /revisionAuthorSessionId/.test(m3.reason));
+  const noSid = clone(G); delete noSid.revisionHistory[noSid.revisionHistory.length - 1].revisionAuthorSessionId;
+  const m4 = AS.deriveAuthorizationScope(noSid, { inspection: inspection({ contractSha256: AS.contractSha256(noSid) }) });
+  check("revision without revisionAuthorSessionId ⇒ REVISE not validated, nothing executable", m4.currentStep === "REVISE_CONTRACT" && m4.executionAuthorized === false);
   const s4 = AS.deriveAuthorizationScope(G, { inspection: inspection({ inspectedHeadSha: "abc" }) });
   check("no inspected head SHA ⇒ NOT authorized", s4.executionAuthorized === false);
   const s5 = AS.deriveAuthorizationScope(G, { inspection: inspection({ scenario: "J" }) });
