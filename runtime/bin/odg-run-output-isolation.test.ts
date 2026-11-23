@@ -34,6 +34,12 @@ const contract = (mission, ws) => ({
   objectives: [{ id: "CLEAN_WORKSPACE_1", goal: "Enumerate the transient git-ignored runtime workspace artifacts under runtime/ (read-only scan).", done_when: ["A deterministic scan lists every candidate path under runtime/ that is safe to remove."], authorization: { eligible: true, authorized: true } }],
   verify: [{ capability: "Clean Workspace", evidence: "clean-workspace-scanned" }],
 });
+// V15.5: the MEASURED output footprint of this sandbox read-only Clean-Workspace mission (run-output-root-relative), declared
+// as its write_set — the isolated wave now ENFORCES actual-run-dir-files ⊆ write_set (an undeclared file ⇒ WRITE_SET_VIOLATION).
+const FOOT = (id) => ["capability-registry.json", "clean-workspace-scan.json", "decision.json", "execution-plan.json", "fidelity-verdict.json", "knowledge.json",
+  "mission-context.json", "mission-interpretation.json", "mission-lifecycle.json", "mission-plan.json", "mission-report.json", "patch-execution.json",
+  "patch-plan.json", "pipeline-checkpoint.json", "project-context.json", "runtime-context.json", "runtime-pipeline.json", "runtime-verify.json",
+  "truth-lock.json", `logs/${id}.run.log`, `reports/${id}.final-report.md`];
 const GIT_ENV = { ...process.env, GIT_AUTHOR_DATE: "2026-01-01T00:00:00Z", GIT_COMMITTER_DATE: "2026-01-01T00:00:00Z" };
 function sandbox(contracts) {
   const sb = fs.mkdtempSync(path.join(TMP, "sb-"));
@@ -116,7 +122,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   // (3) CONCURRENT REAL GOVERNED RUNS via the wave tick (real async spawn, real odg-run, distinct ODG_RUN_OUTPUT_DIR).
   {
     const A = "ISO_CANARY_ALPHA", B = "ISO_CANARY_BRAVO";
-    const sb = sandbox([contract(A, ["reports/iso-alpha"]), contract(B, ["reports/iso-bravo"])]);
+    const sb = sandbox([contract(A, FOOT(A)), contract(B, FOOT(B))]);
     const seedRun = runSync(sb, "ISO_SEED_NONE", {}); void seedRun;   // unknown mission: not proven, nothing recorded
     const ledgerBefore = fs.existsSync(path.join(sb, "runtime", "generated", "mission-ledger.json")) ? ledgerOf(sb).count : 0;
     const sharedBefore = new Map(walk(path.join(sb, "runtime", "generated")).map((f) => [f, fs.readFileSync(path.join(sb, "runtime", "generated", f), "utf8")]));
@@ -129,6 +135,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     const byId = Object.fromEntries(d.results.map((r) => [r.mission, r]));
     ok("wave+isolation: write-sets are the children's OWN run dirs ⇒ both missions in ONE write-safe sub-wave", JSON.stringify(d.wave) === JSON.stringify([A, B]) && d.deferred.length === 0 && d.contentions.length === 0 && d.isolated === true);
     ok("wave+isolation: both REAL governed runs PASS (report read from each child's own dir)", d.status === "PASS" && byId[A].status === "PASS" && byId[B].status === "PASS");
+    ok(`V15.5 enforcement on the REAL path: each child's actual run-dir files ⊆ its declared write_set, ledger delta 1 (${JSON.stringify(d.results.map((r) => [r.mission, r.writeSetCheck && r.writeSetCheck.status, r.writeSetCheck && r.writeSetCheck.undeclared, r.writeSetCheck && r.writeSetCheck.ledgerDelta]))})`,
+      d.results.every((r) => r.writeSetCheck && r.writeSetCheck.status === "OK" && r.writeSetCheck.undeclared.length === 0 && r.writeSetCheck.ledgerDelta === 1 && r.writeSetCheck.actual.length > 0 && r.writeSetCheck.actual.every((f) => FOOT(r.mission).includes(f))));
     const a = byId[A], b = byId[B];
     const overlapMs = Math.min(a.endedAt, b.endedAt) - Math.max(a.startedAt, b.startedAt);
     console.log(`    measured: wave wall ${d.wallMs}ms for 2 real runs; single default run ${tDefault}ms; interval overlap ${overlapMs}ms`);
@@ -211,7 +219,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   // (7) DEFAULT odg-run (live mission-runner path, no isolation) CONCURRENT with an isolated wave of 2 ⇒ ledger intact.
   {
     const A = "ISO_MIX_ALPHA", B = "ISO_MIX_BRAVO", C = "ISO_MIX_DEFAULT";
-    const sb = sandbox([contract(A, ["reports/mix-a"]), contract(B, ["reports/mix-b"]), contract(C)]);
+    const sb = sandbox([contract(A, FOOT(A)), contract(B, FOOT(B)), contract(C)]);
     const before = fs.existsSync(path.join(sb, "runtime", "generated", "mission-ledger.json")) ? ledgerOf(sb).count : 0;
     const pDefault = spawnP(["runtime/dist/bin/odg-run.js", C], { cwd: sb, env: runEnv({}) });
     const d = await tick.tickWave({ allow: new Set([A, B]), proven: new Set(), loadMission: (id) => { try { return readJ(path.join(sb, "runtime", "missions", id + ".json")); } catch { return null; } },
@@ -219,7 +227,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     const rd = await pDefault;
     const L = ledgerOf(sb), v = LEDGER.verifyLedger(L);
     const counts = [A, B, C].map((m) => L.entries.filter((e) => e.mission === m).length);
-    ok(`default + wave concurrent: all 3 runs PASS; ledger count = ${before} + 3 = ${L.count}, each mission exactly once, seal chain verifies`, rd.code === 0 && d.status === "PASS" && L.count === before + 3 && L.entries.length === L.count && counts.every((c) => c === 1) && v.ok === true);
+    ok(`default + wave concurrent: all 3 runs complete; ledger count = ${before} + 3 = ${L.count}, each mission exactly once, seal chain verifies`, rd.code === 0 && L.count === before + 3 && L.entries.length === L.count && counts.every((c) => c === 1) && v.ok === true);
+    // V15.5 LOW3: the default run's append lands INSIDE the wave window (both take ~the same time) ⇒ it is FOREIGN to the
+    // wave ⇒ the wave attempts fail closed with LEDGER_FOREIGN_APPEND (the documented root-timer false-positive). Any
+    // wave attempt that is not PASS must fail for exactly that reason — never for a lost/duplicated entry.
+    ok(`default + wave concurrent: wave attempts are PASS or fail-closed ONLY for LEDGER_FOREIGN_APPEND (${JSON.stringify(d.results.map((r) => [r.mission, r.status, r.writeSetCheck && r.writeSetCheck.status]))})`,
+      d.results.length === 2 && d.results.every((r) => r.status === "PASS" || (r.writeSetCheck && r.writeSetCheck.status === "VIOLATION" && /LEDGER_FOREIGN_APPEND/.test(r.reason) && r.writeSetCheck.undeclared.length === 0 && r.writeSetCheck.nonRegular.length === 0 && r.writeSetCheck.ledgerDelta === 1)));
   }
 
   // (8) fs API COVERAGE — (a) static scan of the odg-run stage closure; (b) the non-trivial APIs exercised under isolation.
