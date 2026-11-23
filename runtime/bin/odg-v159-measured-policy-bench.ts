@@ -23,6 +23,7 @@ const IC = require(path.join(ROOT, "runtime", "core", "odg-intelligent-native-cy
 const POL = require(path.join(ROOT, "runtime", "core", "odg-local-model-execution-policy.js"));
 const GEN = require(path.join(ROOT, "runtime", "core", "local-model-generator.js"));
 const BUILDER = require(path.join(ROOT, "runtime", "core", "native-project-builder.js"));
+const NBS = require(path.join(ROOT, "runtime", "core", "odg-native-build-sandbox.js")); // V15.9: tests evaluated INSIDE the sandbox
 
 const HOST = "http://127.0.0.1:11434";
 const OPTIONS = Object.freeze({ temperature: 0, seed: 42, num_predict: 400 });
@@ -83,7 +84,7 @@ const MISSIONS = [
 ];
 
 function specOf(m: any): any {
-  return { name: m.id, architecture: [{ path: "f.js", role: m.role, contract: m.contract }], independentTest: (mods: any) => safe(() => m.test(mods["f.js"])) };
+  return { name: m.id, architecture: [{ path: "f.js", role: m.role, contract: m.contract }], independentTestSource: NBS.testSourceFromFn(m.test, "f.js", "var eq = " + String(eq) + ";") };
 }
 
 async function ollama(pathname: string, body?: any): Promise<any> {

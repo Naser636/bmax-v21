@@ -16,6 +16,7 @@ const NBO = require("../core/native-build-outcome.js");
 const LEDGER = require("../core/mission-outcome-ledger.js");
 const CAL = require("../core/calibration.js");
 const { COMPLEX_TASKS } = require("./native-complex-corpus.js");
+const NBS = require("../core/odg-native-build-sandbox.js"); // V15.9: serializable tests ⇒ model code executes ONLY in the bwrap sandbox
 const fs = require("fs");
 const path = require("path");
 
@@ -43,7 +44,7 @@ function nowIso(): string { return new Date().toISOString(); }
     const order = i % 2 === 0 ? CELLS : CELLS.slice().reverse();     // alternate model-first order per task (fairness)
     for (const c of order) {
       const key = cellKey(c); const cell = cells[key];
-      const spec = { name: `complex-${task.id}`, architecture: archOf(task), independentTest: (m: any) => { try { return task.test(m["report.js"]) === true; } catch { return false; } } };
+      const spec = { name: `complex-${task.id}`, architecture: archOf(task), independentTestSource: NBS.testSourceFromFn(task.test, "report.js") };
       const gen = GEN.makeLocalGenerator({ model: MODELS[c.model], timeoutMs: 240000, numPredict: 768, temperature: 0.1 });
       const t0 = Date.now(); let bo: any = null, err: any = null;
       try { bo = await BUILDER.buildProject(spec, { generateFile: gen, maxRepair: c.repair }); } catch (e: any) { err = String((e && e.message) || e); }

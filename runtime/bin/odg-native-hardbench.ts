@@ -12,7 +12,8 @@
 
 const BUILDER = require("../core/native-project-builder.js");
 const GEN = require("../core/local-model-generator.js");
-const { HARD_TASKS } = require("./native-hard-corpus.js");
+const { HARD_TASKS, HARD_TEST_PRELUDE } = require("./native-hard-corpus.js");
+const NBS = require("../core/odg-native-build-sandbox.js"); // V15.9: serializable tests ⇒ model code executes ONLY in the bwrap sandbox
 const fs = require("fs");
 
 const MODELS: any = { "3b": "qwen2.5-coder:3b", "7b": "qwen2.5-coder:7b" };
@@ -33,7 +34,7 @@ function archOf(task: any): any[] { return task.files.map((f: any) => ({ path: f
 
   for (let i = start; i < end; i++) {
     const task = HARD_TASKS[i];
-    const spec = { name: `hard-${task.id}`, architecture: archOf(task), writeSet: task.files.map((f: any) => f.path), independentTest: (m: any) => { try { return task.test(m["report.js"]) === true; } catch { return false; } } };
+    const spec = { name: `hard-${task.id}`, architecture: archOf(task), writeSet: task.files.map((f: any) => f.path), independentTestSource: NBS.testSourceFromFn(task.test, "report.js", HARD_TEST_PRELUDE) };
     const t0 = Date.now(); let bo: any = null, err: any = null;
     try { bo = await BUILDER.buildProject(spec, { generateFile: gen, maxRepair: MAX_REPAIR }); } catch (e: any) { err = String((e && e.message) || e); }
     const ms = Date.now() - t0; const b = bo || {}; const fp = b.firstPass || {};
@@ -44,7 +45,7 @@ function archOf(task: any): any[] { return task.files.map((f: any) => ({ path: f
       repairs: b.repairs ?? null, finalAccepted: b.accepted === true,
       repairedToAccept: b.accepted === true && (b.repairs || 0) > 0,
       persistentFailure: !err && b.accepted !== true, finalFalseSuccess: b.buildOk === true && b.verified === false && b.accepted !== true,
-      finalError: err || b.buildError || b.verifyError || null, filesGenerated: b.filesGenerated ?? 0, durationMs: ms, at: nowIso(),
+      finalError: err || b.buildError || b.verifyError || null, filesGenerated: b.filesGenerated ?? 0, executionMode: b.executionMode || null, executionStatus: b.executionStatus || null, durationMs: ms, at: nowIso(),
     };
     // dedup by (taskId, model): a re-run overwrites the prior record (no duplicate inflation).
     dataset.records = dataset.records.filter((r: any) => !(r.taskId === rec.taskId && r.model === rec.model));

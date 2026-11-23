@@ -37,7 +37,7 @@ check(G.extractCode("") === null && G.extractCode(null) === null, "empty/null �
   check((await genProse({ path: "a.js" }, {})).ok === false, "a non-module (prose) response ⇒ ok:false");
 
   // (4) INTEGRATION — the seam drives native-project-builder; the INDEPENDENT verifier still arbitrates (a wrong model ⇒ REJECT).
-  const spec = { name: "calc", writeSet: ["src/calc.js"], architecture: [{ path: "src/calc.js", role: "add", contract: "a+b" }], independentTest: (m: any) => m["src/calc.js"](2, 3) === 5 };
+  const spec = { name: "calc", writeSet: ["src/calc.js"], architecture: [{ path: "src/calc.js", role: "add", contract: "a+b" }], independentTestSource: "(m) => m['src/calc.js'](2, 3) === 5" };   // V15.9: evaluated inside the sandbox
   const rightModel = async () => ({ ok: true, json: async () => ({ response: "module.exports=(a,b)=>a+b;" }) });
   const wrongModel = async () => ({ ok: true, json: async () => ({ response: "module.exports=(a,b)=>a-b;" }) });
   const good = await B.buildProject(spec, { generateFile: G.makeLocalGenerator({}, rightModel) });

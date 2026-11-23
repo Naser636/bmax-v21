@@ -11,6 +11,8 @@
  */
 
 function jeq(a: any, b: any): boolean { return JSON.stringify(a) === JSON.stringify(b); }
+// V15.9: the helper source the task tests reference, so a test can be serialized and evaluated INSIDE the isolation sandbox.
+const HARD_TEST_PRELUDE: string = String(jeq);
 
 const PARSE_NUMS_SPEC = "Export a function (s) that splits the comma-separated string into an array of numbers. Example: '1,2,3' -> [1,2,3].";
 const PARSE_NUMS_REF = "module.exports = (s) => String(s).split(',').map((x) => Number(x));";
@@ -127,6 +129,6 @@ const HARD_TASKS: any[] = [
     test: (f: any) => jeq(f("0,10,35,40"), { fahrenheit: [32, 50, 95, 104], hotCount: 2 }) && jeq(f("20"), { fahrenheit: [68], hotCount: 0 }) },
 ];
 
-module.exports = { HARD_TASKS };
+module.exports = { HARD_TEST_PRELUDE, HARD_TASKS };
 
 export {};
