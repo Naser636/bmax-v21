@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "71e6b31df0c6e350f083d202cd93e4e3a64404fce764b2901068c11342ba4cf5"
+      "sha256": "726abb4c39e05bdc6f2d2251e8b71ec169cbeb34b749f1b37a494cd3f7ae0055"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "add7c7086b662b608e93980b5c719c34c345e89805a66738370ce193955e6d55"
+      "sha256": "7e21b16bece202f76c0c0ca79a12c3567e0c4d85f45959af9c3b342242893c18"
     },
     {
       "source": "docs/odg/evidence/V164_GO_CYCLE.json",
@@ -9998,5 +9998,5 @@
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change"
   ],
-  "generatedAtHead": "ba3ccc192d0360419dd684dbbd58152a00d2a22d"
+  "generatedAtHead": "587650b000cb31c0dfc49cf0791b96769c7ccac6"
 }

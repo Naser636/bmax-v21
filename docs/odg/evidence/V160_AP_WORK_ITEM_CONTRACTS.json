@@ -503,7 +503,7 @@
           },
           "baseline": {
             "B0_primary": "the CURRENT mechanism's own ordering of verification need: s0 = levelRank + (reinforced ? 1 : 0) (DOCS_ONLY 0 … L3 3, L3 REINFORCED 4), from odg-verification-level.chooseLevel unchanged",
-            "B1_comparator": "change breadth alone, no fitting: s1 = log1p(#changedFiles) — H1 must be non-inferior to it, so a PASS cannot come from breadth alone"
+            "B1_comparator": "change breadth alone, no fitting: s1 = log1p(#changedFiles). H1 itself contains f4 = log1p(#changedFiles), so H1 must be strictly SUPERIOR to B1 (Δ1 > 0 with CI95 lower bound > 0) for a PASS — a gain explained by breadth alone does not PASS"
           },
           "featureComputation": "chooseLevel(row.changedFiles, { root: <scratch worktree>, reader: fsReader(root) with memoized read/graph (identical answers) }) on the CURRENT tree for every row (same plan feeds B0, B1-independent, and H1 ⇒ paired); timing probe on 3 synthetic change-sets (not dataset rows) ≈ 0.5–1 s per call ⇒ fits the GO 600 s dispatch bound",
           "metric": "ROC AUC (Mann–Whitney U / (n_pos·n_neg), ties count 0.5) of each score vs HIGH_ITERATION on the HELDOUT split; Δ0 = AUC(H1) − AUC(B0); Δ1 = AUC(H1) − AUC(B1); n, n_pos, n_neg reported",
@@ -512,11 +512,11 @@
           "minimumN": "HELDOUT ≥ 20 HIGH_ITERATION and ≥ 20 LOW_ITERATION rows; DEV ≥ 10 of each (fit needs both classes)",
           "thresholds": {
             "NOT_MEASURED": "dataset sha256 ≠ the pinned value, OR minimumN not met, OR chooseLevel throws on any row (no silent drop), OR the fit yields a non-finite weight, OR > 5% of bootstrap resamples skipped",
-            "PASS": "Δ0 ≥ 0.05 AND CI95 lower bound of Δ0 > 0 AND Δ1 ≥ −0.02 AND AUC(H1) ≥ 0.55",
-            "PARTIAL": "Δ0 > 0 but the PASS conditions are not all met",
+            "PASS": "Δ0 ≥ 0.05 AND CI95 lower bound of Δ0 > 0 AND Δ1 > 0 AND CI95 lower bound of Δ1 > 0 AND AUC(H1) ≥ 0.55",
+            "PARTIAL": "Δ0 > 0 but the PASS conditions are not all met — in particular Δ1 ≤ 0 (or CI95 lower bound of Δ1 ≤ 0) with Δ0 > 0 is PARTIAL, never PASS",
             "FAIL": "Δ0 ≤ 0"
           },
-          "adoptionDecision": "PASS ⇒ ADOPTION_CANDIDATE (advisory only, see mechanism.adoptionScope); PARTIAL / FAIL / NOT_MEASURED ⇒ NOT_ADOPTED (owner V168: « Critère non satisfait : FAIL ou NOT_ADOPTED selon le contrat »)",
+          "adoptionDecision": "PASS ⇒ ADOPTION_CANDIDATE (advisory only, see mechanism.adoptionScope); PARTIAL / FAIL / NOT_MEASURED ⇒ NOT_ADOPTED (owner V168: « Critère non satisfait : FAIL ou NOT_ADOPTED selon le contrat ») — explicitly: Δ1 ≤ 0 ⇒ NOT_ADOPTED (outcome PARTIAL if Δ0 > 0, FAIL if Δ0 ≤ 0)",
           "antiLeakage": {
             "rule": "H1's functional form, features and hyper-parameters are fixed by THIS text before any mechanism output on a dataset row or any metric exists; the runner passes ONLY DEV rows (features + labels) to the fit, records the fitted weights and their sha256 in the experiment record, and only then reads HELDOUT labels to evaluate; HELDOUT is never used for feature selection, standardization, early stopping or threshold choice",
             "lookedAtBeforeRegistration": [
@@ -587,7 +587,18 @@
           ],
           "justification": "The original criteria are coherent but not measurable as worded: no mechanism, dataset, baseline, metric or threshold was fixed, so 'superiority or honest null result' could not be graded (initialState: V159 shows no quality gain on 4 tasks; #902 gain not measured). The dossier (V167_V166_CLOSURE_DOSSIER.json A_H_authorizationRequest.requestedScope.steps[0]) requires fixing the mechanism choice and pre-registering the held-out set, metric, baseline and thresholds, with the write_set extended to the runner + evidence. Its risks are addressed: leakage (dataset frozen + sha before any change; DEV-only fit; record of what was looked at), small n (minimum n, bootstrap CI, honest null expected), selector steering (write_set lists every file the experiment writes, not shrunk).",
           "priorResultUnchanged": "initialState PARTIAL (V159 routing 0.75→0.75; #902 gain not measured) — untouched",
-          "revisionAuthorSessionId": "h-reviser-v168"
+          "revisionAuthorSessionId": "h-reviser-v168",
+          "inspectionFixes": {
+            "date": "2026-11-23",
+            "note": "tightened after inspection REJECT, before any metric was computed",
+            "inspection": "independent inspection of #942 @587650b0 REJECT (MED): the sentence 'a PASS cannot come from breadth alone' was false — H1 contains f4 = log1p(#changedFiles) and PASS only required Δ1 ≥ −0.02 (non-inferiority) while B0 may sit near AUC 0.5",
+            "change": [
+              "thresholds.PASS: 'Δ1 ≥ −0.02' (non-inferiority vs B1) ⇒ 'Δ1 > 0 AND CI95 lower bound of Δ1 > 0' (superiority vs B1) — a TIGHTENING (coordinator decision), never a loosening",
+              "baseline.B1_comparator: false sentence replaced by the accurate statement",
+              "thresholds.PARTIAL and adoptionDecision: where Δ1 ≤ 0 lands stated explicitly (PARTIAL if Δ0 > 0, NOT_ADOPTED)"
+            ],
+            "unchanged": "dataset (sha256 d8bf4a3f…), split, features, hyper-parameters, metric, seeds, NOT_MEASURED and FAIL rules, minimum n"
+          }
         }
       ]
     },
