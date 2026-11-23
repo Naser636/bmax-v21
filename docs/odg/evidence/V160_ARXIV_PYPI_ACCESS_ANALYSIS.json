@@ -1,0 +1,363 @@
+{
+  "//": "V16.0 §6 — official-terms analysis of the two Radar sources blocked on robots.txt vs documented API (export.arxiv.org, pypi.org). RECOMMENDATION ONLY: no grant, admission, candidate or Radar code is changed by this file. Research performed by a provider research agent (WebSearch/WebFetch, 2026-11-23); quotes came through a summarising fetcher — re-verify against the live pages before using them in a governance decision. Prior evidence reused: docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json, V158_RADAR_SOURCE_ADMISSION.json.",
+  "status": "RECOMMENDATION_ONLY",
+  "inconsistencyFlagged": "runtime/core/bounded-http-client.ts ALLOWLIST already contains export.arxiv.org with the comment 'V360 — arXiv API … owner-authorized tech source', while V158 admission REFUSES export.arxiv.org (robots Disallow: /). Effective egress still requires a grant (research-governor) + ODG_RADAR_LIVE; no change made here — owner to confirm whether the V360 entry remains valid.",
+  "ownerQuestions": [
+    "arXiv: should the arXiv API Terms of Use govern export.arxiv.org/api/query (with enforced ≥3 s pacing, single connection, daily cache), or should ODG use only oaipmh.arxiv.org/oai and rss.arxiv.org (both robots 404) — and is the V360 transport ALLOWLIST entry for export.arxiv.org still valid?",
+    "PyPI: should the PyPI API documentation govern /pypi/<pkg>/json at low volume (unique User-Agent, ETag), despite robots 'Disallow: /pypi/*/json', or should ODG stay on pypi.org/rss/ only — and which non-personal contact should the ODG User-Agent carry?"
+  ],
+  "transportGaps": [
+    "per-host pacing + per-host connection limit",
+    "ETag/If-None-Match + response cache",
+    "contact in User-Agent (current: ODG-discovery/1.0 (+Licence-Ouverte-reuse))",
+    "per-call content-type widening for Atom/RSS (default JSON-only)",
+    "redirects blocked ⇒ canonical project names required"
+  ],
+  "analysis": {
+    "schema": "odg.v160.research.arxiv-pypi-robots-vs-api.v1",
+    "fetchDate": "2026-11-23",
+    "method": "Official docs via WebFetch (summarizing fetcher; quotes are as returned, short fragments). robots.txt fetched raw with curl (raw copies in v160-research/raw/). Two single HEAD probes of robots-permitted alternatives (pypi.org/rss/updates.xml, oaipmh.arxiv.org/oai?verb=Identify) to confirm status + content-type. No request was made to any robots-Disallowed path in this pass.",
+    "quoteCaveat": "WebFetch returns model-extracted text; quotes below were requested verbatim but should be re-verified against the live page before being cited in a governance artifact.",
+    "repoContext": {
+      "transport": "runtime/core/bounded-http-client.ts",
+      "observed": [
+        "No per-host pacing, no inter-request delay, no concurrency control (only per-run budget maxCalls=30 in odg-radar-source-admission.ts:36).",
+        "Default UA 'ODG-discovery/1.0 (+Licence-Ouverte-reuse)' — no contact URL/email (line 88).",
+        "No conditional requests (no ETag/If-None-Match / If-Modified-Since handling) and no response cache.",
+        "All 3xx => REDIRECT_BLOCKED (line 95) — PyPI name-normalisation redirects would fail; must request canonical names.",
+        "Default content-type JSON-only; Atom/RSS (text/xml, application/atom+xml) need per-call contentTypes widening (supported by validateContentType).",
+        "Admission code DEFERs any source with maxRequestsPerSecond / maxConcurrency / crawlDelaySeconds while policy.perHostPacingEnforced !== true (odg-radar-source-admission.ts:99-109), and DEFERs RATE_LIMIT_UNDOCUMENTED unless rateLimitDocumented === false (line 96).",
+        "INCONSISTENCY to flag: bounded-http-client ALLOWLIST already contains 'export.arxiv.org' with comment 'V360 — arXiv API (Atom XML) ... owner-authorized tech source' (line 22), while V158 candidates mark it CONDITIONAL_OWNER_DECISION (robots Disallow: /). Owner should reconcile which instrument is current."
+      ]
+    },
+    "hosts": {
+      "arxiv": {
+        "endpointOdgWouldUse": "https://export.arxiv.org/api/query",
+        "q1_isAutomatedAccessOfficiallyPermitted": {
+          "answer": "YES by the API Terms of Use and user manual, under limits; NO per export.arxiv.org/robots.txt (blanket Disallow: /). The conflict is real and documented on both sides.",
+          "limits": {
+            "rate": "<= 1 request / 3 s",
+            "concurrency": "1 connection at a time",
+            "scope": "all machines under your control as a whole",
+            "caching": "same query need not be re-run more than once per day; caching advised",
+            "pageSize": "max_results slices <= 2000, total <= 30000",
+            "userAgentContact": "NOT stated in ToU (not verified as required)"
+          },
+          "evidence": [
+            {
+              "url": "https://info.arxiv.org/help/api/tou.html",
+              "quote": "When using the legacy APIs (including OAI-PMH, RSS, and the arXiv API), make no more than one request every three seconds",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/api/tou.html",
+              "quote": "limit requests to a single connection at a time.",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/api/tou.html",
+              "quote": "Please note that the following rate limits apply to all of the machines under your control as a whole.",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/api/user-manual.html",
+              "quote": "http://export.arxiv.org/api/{method_name}?{parameters}",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/api/user-manual.html",
+              "quote": "incorporate a 3 second delay in your code",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/api/user-manual.html",
+              "quote": "there is no need to call the API more than once in a day for the same query",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/api/user-manual.html",
+              "quote": "limited to 30000 in slices of at most 2000 at a time",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/api/basics.html",
+              "quote": "http://export.arxiv.org/api/query?search_query=all:electron&start=0&max_results=10",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/bulk_data.html",
+              "quote": "We ask that users intent on harvesting use the dedicated site `export.arxiv.org` for these purposes,",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://export.arxiv.org/robots.txt",
+              "quote": "User-agent: * \nDisallow: /",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/robots.html",
+              "quote": "Indiscriminate automated downloads from this site are not permitted",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://info.arxiv.org/help/robots.html",
+              "quote": "arXiv monitors activity and will deny access to sites that violate these guidelines.",
+              "fetched": "2026-11-23"
+            }
+          ]
+        },
+        "q2_officialAlternatives": [
+          {
+            "endpoint": "https://oaipmh.arxiv.org/oai",
+            "official": true,
+            "robots": "oaipmh.arxiv.org/robots.txt => HTTP 404 (RFC 9309 4xx => crawler MAY access). NOTE: export.arxiv.org/oai2 (old base URL) is covered by export's Disallow: /, and arxiv.org/robots.txt Disallows /oai2.",
+            "probe": "HEAD /oai?verb=Identify => 200, content-type text/xml (2026-11-23)",
+            "limits": "Same ToU: 1 req / 3 s, single connection (ToU explicitly names OAI-PMH). Flow control via resumptionToken; 503/Retry-After behaviour NOT documented on the page (not verified).",
+            "fit": "Bulk / incremental metadata by date+set (from/until, set=cs etc.). Not a keyword search — different query model from /api/query.",
+            "evidence": [
+              {
+                "url": "https://info.arxiv.org/help/oa/index.html",
+                "quote": "https://oaipmh.arxiv.org/oai?verb=Identify",
+                "fetched": "2026-11-23"
+              },
+              {
+                "url": "https://info.arxiv.org/help/oa/index.html",
+                "quote": "The old URL will issue a redirect for some time but please update your harvester to use the new baseURL.",
+                "fetched": "2026-11-23"
+              },
+              {
+                "url": "https://info.arxiv.org/help/oa/index.html",
+                "quote": "updated each night shortly after new submissions are announced",
+                "fetched": "2026-11-23"
+              },
+              {
+                "url": "https://info.arxiv.org/help/bulk_data.html",
+                "quote": "the preferred way to bulk-download or keep an up-to-date copy of arXiv metadata",
+                "fetched": "2026-11-23"
+              }
+            ]
+          },
+          {
+            "endpoint": "https://rss.arxiv.org/rss/<category> (and /atom/<category>)",
+            "official": true,
+            "robots": "rss.arxiv.org/robots.txt => HTTP 404 (RFC 9309 => allow).",
+            "limits": "ToU applies (1 req / 3 s); feeds updated once daily => 1 fetch/category/day suffices. Multi-category limit 2000 results.",
+            "fit": "Daily new-submission stream per category — closest fit for a Radar 'what is new' signal; no historical search.",
+            "evidence": [
+              {
+                "url": "https://info.arxiv.org/help/rss.html",
+                "quote": "Feeds are updated daily at midnight Eastern Standard Time.",
+                "fetched": "2026-11-23"
+              },
+              {
+                "url": "https://info.arxiv.org/help/rss.html",
+                "quote": "Please review the Terms of Use for arXiv APIs before using the arXiv RSS feeds.",
+                "fetched": "2026-11-23"
+              }
+            ]
+          },
+          {
+            "endpoint": "https://arxiv.org/abs/<id>",
+            "official": "robots-Allowed HTML, not an API",
+            "robots": "arxiv.org/robots.txt: 'User-agent: *' 'Crawl-delay: 15' 'Allow: /abs' — but Disallow: /api, /oai2, /search",
+            "fit": "Single-paper verification only; Crawl-delay 15 s requires pacing.",
+            "evidence": [
+              {
+                "url": "https://arxiv.org/robots.txt",
+                "quote": "User-agent: *\nCrawl-delay: 15\nAllow: /archive ... Allow: /abs",
+                "fetched": "2026-11-23"
+              }
+            ]
+          },
+          {
+            "endpoint": "Amazon S3 / Kaggle bulk datasets",
+            "official": true,
+            "fit": "Full corpus; S3 is requester-pays per arXiv docs (requester-pays NOT verified in this pass). Out of scope for an anonymous Radar.",
+            "evidence": [
+              {
+                "url": "https://info.arxiv.org/help/bulk_data.html",
+                "quote": "Please do not attempt to download the complete corpus programmatically.",
+                "fetched": "2026-11-23"
+              }
+            ]
+          }
+        ],
+        "q3_technicalNeeds": {
+          "required": [
+            "Per-host pacing >= 3 s between requests, process-wide (ToU scope = all machines as a whole)",
+            "Single in-flight connection per host (serialized queue)",
+            "Daily result caching keyed by query (same query <= 1/day)",
+            "Content-type widening to text/xml / application/atom+xml (supported per call)",
+            "Handle resumptionToken paging for OAI-PMH within the call budget"
+          ],
+          "recommended": [
+            "User-Agent with contact URL/email (good practice; NOT stated as required by arXiv ToU)",
+            "Back-off on 503 (not documented; defensive)"
+          ],
+          "transportLacks": [
+            "per-host pacing",
+            "concurrency limit per host",
+            "result cache / conditional requests",
+            "contact in UA"
+          ]
+        },
+        "q4_recommendation": {
+          "verdict": "DEFER_UNTIL_PACING",
+          "detail": "Robots-clean, officially documented alternatives exist (oaipmh.arxiv.org /oai and rss.arxiv.org /rss/ — both robots.txt 404 => allowed under RFC 9309), so the robots conflict can be AVOIDED without owner override. But every arXiv machine interface is bound by the ToU 1 req/3 s + single-connection limit, which the transport cannot enforce and which the admission code itself DEFERs (PER_SECOND / CONCURRENCY NOT_ENFORCEABLE). Once per-host pacing (>=3 s, 1 connection, process-wide) exists: ADMIT_ALTERNATIVE host=rss.arxiv.org prefix=/rss/ (daily, <=1 fetch per category per day) and host=oaipmh.arxiv.org prefix=/oai (incremental from=<yesterday>), maxRequestsPerSecond=0.333, maxConcurrency=1, cache 24 h. Keep export.arxiv.org/api/query as OWNER_DECISION.",
+          "ownerQuestion": "export.arxiv.org/robots.txt says 'Disallow: /' while the arXiv API ToU and user manual license /api/query at 1 req/3 s. Do you authorize ODG to treat the API ToU as governing for export.arxiv.org/api/query (with enforced 3 s pacing, single connection, daily cache), or should ODG restrict itself to the robots-clean oaipmh.arxiv.org/oai and rss.arxiv.org/rss/ endpoints? Also: the V360 ALLOWLIST entry for export.arxiv.org in bounded-http-client.ts — is it still authorized?"
+        }
+      },
+      "pypi": {
+        "endpointOdgWouldUse": "https://pypi.org/pypi/<project>/json",
+        "q1_isAutomatedAccessOfficiallyPermitted": {
+          "answer": "YES by docs.pypi.org (documented JSON API, no edge rate limit, API collection explicitly distinguished from scraping in the AUP); NO per pypi.org/robots.txt (Disallow: /pypi/*/json, /pypi/*/*/json, /pypi*?). Documented conflict.",
+          "limits": {
+            "rate": "No numeric limit; 'no rate limiting ... at the edge'; avoid thousands of requests in minutes",
+            "concurrency": "not stated",
+            "userAgentContact": "RECOMMENDED (unique UA + contact info), not mandatory",
+            "caching": "CDN-cached; respect ETag",
+            "abuse": "AUP: excessive usage may be throttled/suspended"
+          },
+          "evidence": [
+            {
+              "url": "https://docs.pypi.org/api/json/",
+              "quote": "GET /pypi/<project>/json",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://docs.pypi.org/api/",
+              "quote": "Due to the heavy caching and CDN use, there is currently no rate limiting of PyPI APIs at the edge.",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://docs.pypi.org/api/",
+              "quote": "Try not to make a lot of requests (thousands) in a short amount of time (minutes).",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://docs.pypi.org/api/",
+              "quote": "Set your consumer's `User-Agent` header to uniquely identify your requests.",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://docs.pypi.org/api/",
+              "quote": "Adding your contact information to this value would be helpful as well.",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://docs.pypi.org/api/",
+              "quote": "All API requests are cached.",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://policies.python.org/pypi.org/Acceptable-Use-Policy/",
+              "quote": "Scraping does not refer to the collection of information through our API.",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://policies.python.org/pypi.org/Acceptable-Use-Policy/",
+              "quote": "we reserve the right to suspend your Account, throttle your requests, or otherwise limit your activity",
+              "fetched": "2026-11-23"
+            },
+            {
+              "url": "https://pypi.org/robots.txt",
+              "quote": "Disallow: /pypi/*/json\nDisallow: /pypi/*/*/json\nDisallow: /pypi*?",
+              "fetched": "2026-11-23"
+            }
+          ],
+          "notVerified": [
+            "policies.python.org Terms-of-Use page states it was superseded by the PyPI Terms of Service (2025-02-25); the ToS itself was not fetched in this pass."
+          ]
+        },
+        "q2_officialAlternatives": [
+          {
+            "endpoint": "https://pypi.org/simple/<project>/ (Accept: application/vnd.pypi.simple.v1+json, PEP 691)",
+            "official": true,
+            "robots": "DISALLOWED — pypi.org/robots.txt 'Disallow: /simple/'. NOT a robots-clean alternative (same conflict class).",
+            "evidence": [
+              {
+                "url": "https://docs.pypi.org/api/index-api/",
+                "quote": "It is recommended that new integrations use the JSON version.",
+                "fetched": "2026-11-23"
+              },
+              {
+                "url": "https://pypi.org/robots.txt",
+                "quote": "Disallow: /simple/",
+                "fetched": "2026-11-23"
+              }
+            ]
+          },
+          {
+            "endpoint": "https://pypi.org/rss/updates.xml, /rss/packages.xml, /rss/project/<project>/releases.xml",
+            "official": true,
+            "robots": "ALLOWED — no rule in pypi.org/robots.txt matches /rss/.",
+            "probe": "HEAD /rss/updates.xml => 200, content-type text/xml; charset=UTF-8, ETag present, x-cache HIT (2026-11-23)",
+            "fit": "Officially recommended for periodic new/updated-package checks — matches a Radar signal. Gives name/version/date/summary, NOT full metadata (license, classifiers, deps).",
+            "evidence": [
+              {
+                "url": "https://docs.pypi.org/api/feeds/",
+                "quote": "https://pypi.org/rss/project/<project_name>/releases.xml",
+                "fetched": "2026-11-23"
+              },
+              {
+                "url": "https://docs.pypi.org/api/",
+                "quote": "use our RSS feeds",
+                "fetched": "2026-11-23"
+              }
+            ]
+          },
+          {
+            "endpoint": "https://files.pythonhosted.org/",
+            "official": "distribution file host",
+            "robots": "robots.txt => HTTP 404 (RFC 9309 => allow).",
+            "fit": "Hosts artifacts (and PEP 658 .metadata files), but file URLs are discovered via the Disallowed /simple/ or /pypi/*/json — not a standalone metadata API. Not recommended.",
+            "evidence": []
+          },
+          {
+            "endpoint": "BigQuery bigquery-public-data.pypi.distribution_metadata / file_downloads",
+            "official": true,
+            "fit": "Full metadata dump, but via Google Cloud (account/billing not stated on the docs page — NOT verified); not anonymous HTTP; out of scope for bounded-http-client.",
+            "evidence": [
+              {
+                "url": "https://docs.pypi.org/api/bigquery/",
+                "quote": "is meant to be a data dump of metadata from every release on PyPI",
+                "fetched": "2026-11-23"
+              }
+            ]
+          }
+        ],
+        "q3_technicalNeeds": {
+          "required": [
+            "Content-type widening to text/xml for RSS",
+            "Canonical (PEP 503-normalized) project names, since 3xx are blocked by the transport"
+          ],
+          "recommended": [
+            "Unique User-Agent with contact info (docs recommend)",
+            "ETag / If-None-Match conditional requests (docs ask consumers to respect ETag)",
+            "Spread requests over time (no hard limit)"
+          ],
+          "transportLacks": [
+            "ETag/conditional-request support",
+            "contact in UA",
+            "per-host pacing (not strictly required by PyPI docs)"
+          ]
+        },
+        "q4_recommendation": {
+          "verdict": "ADMIT_ALTERNATIVE (RSS) + OWNER_DECISION (JSON API)",
+          "detail": "ADMIT host=pypi.org prefix=/rss/ (exact paths /rss/updates.xml, /rss/packages.xml, /rss/project/<name>/releases.xml), contentTypes [text/xml, application/rss+xml], rateLimitDocumented=false with basis 'no rate limiting at the edge' (docs.pypi.org/api), per-run budget 30 is far below 'thousands in minutes'. Before or with admission: set UA to a unique ODG string with a contact URL (owner must choose a non-personal contact). /simple/ is NOT an escape hatch (also Disallowed). /pypi/<pkg>/json stays OWNER_DECISION.",
+          "ownerQuestion": "pypi.org/robots.txt Disallows /pypi/*/json and /simple/, while docs.pypi.org documents both as public APIs and the PyPI AUP states API collection is not scraping. Do you authorize ODG to treat the PyPI API docs as governing for GET /pypi/<project>/json (low volume, unique UA with a contact, ETag-respecting), or should ODG restrict PyPI to the robots-clean /rss/ feeds only? And which non-personal contact (URL or role mailbox) should the User-Agent carry?"
+        }
+      }
+    },
+    "crossCutting": {
+      "rfc9309Note": "RFC 9309 robots is a crawler convention, not access authorization; 4xx robots.txt => allowed. Both conflicts are owner-policy questions, not legal ones. Content not independently re-verified here beyond ODG's own admission code (odg-radar-source-admission.ts header).",
+      "notVerified": [
+        "arXiv S3 requester-pays terms",
+        "OAI-PMH 503 Retry-After behaviour",
+        "PyPI Terms of Service (2025) text",
+        "BigQuery cost/auth",
+        "whether arXiv requires a contact in User-Agent (not found in ToU)"
+      ]
+    }
+  }
+}

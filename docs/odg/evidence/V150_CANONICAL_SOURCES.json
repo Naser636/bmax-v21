@@ -1,0 +1,990 @@
+{
+  "//": "Owner-pasted text, recovered from the local Claude Code session transcript (CTO messages of 2026-11-22: 'DIRECTIVE MAÎTRESSE V15.0' §0–§36 — paste ends at '## 37' — and 'ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0' §37–§55). UNVERIFIED against any signed source. V15.0 remains PROPOSED; the Boussole is V12.4 (docs/odg/v124-consolidated-roadmap.json, untouched). This file contains only the owner's text (titles, short exact acceptance excerpts, exact §45 A–P text) plus source hashes — no paraphrase presented as owner text.",
+  "status": "PROPOSED_SOURCE_TEXT_RECOVERED (not adopted, not canonical governance)",
+  "sources": [
+    {
+      "file": "owner paste: CTO — DIRECTIVE MAÎTRESSE V15.0 (session transcript, 2026-11-22)",
+      "sha256": "66814a820ec3b761f4d5a38962c0e5c116ef6980dfde835db30776501e81cee6",
+      "chars": 128058,
+      "lines": 4039,
+      "note": "paste ends at '## 37' (line 4038); file's last line is a paste wrapper tag '</pasted_content id=\"f4cb\">' (not directive text). §37–§55 come from ordre_37_55.md."
+    },
+    {
+      "file": "owner paste: CTO — ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 §§37–55 (session transcript, 2026-11-22)",
+      "sha256": "d6888118cd4d634c7a34d487ef0663e9f1ff658bcce9cdfaa7a9351d6c19e3c2",
+      "chars": 55629,
+      "lines": 2096,
+      "note": "ordre's own top-level blocks 0–4 (instruction, authorité, autorisation, Radar protection, 199 reconciliation) are un-numbered preamble; they are referenced as evidence context, not as §-sections."
+    }
+  ],
+  "sections": [
+    {
+      "id": "§0",
+      "title": "PARTIE 0 — ORDRE EXÉCUTIF DU PROPRIÉTAIRE",
+      "part": "PARTIE 0 — ORDRE EXÉCUTIF DU PROPRIÉTAIRE",
+      "acceptance": {
+        "quote": "Une capacité n'a de valeur opérationnelle que si son existence, son fonctionnement, ses raccordements, ses consommateurs, son utilisation, ses résultats et ses preuves sont démontrés.\nUne simulation n'est jamais une preuve d'exécution réelle.\nUn agent qui produit du code ne prouve pas qu'ODG sait construire nativement.",
+        "file": "line7971.md",
+        "lines": [
+          113,
+          132,
+          140
+        ]
+      }
+    },
+    {
+      "id": "§1",
+      "title": "1. AUTORITÉ ET RESPONSABILITÉS",
+      "part": "PARTIE I — AUTORITÉ, GOUVERNANCE ET ENREGISTREMENT DE LA ROADMAP",
+      "acceptance": {
+        "quote": "La décision, l'autorisation, l'exécution et la vérification doivent rester distinctes.",
+        "file": "line7971.md",
+        "lines": [
+          244
+        ]
+      }
+    },
+    {
+      "id": "§2",
+      "title": "2. ENREGISTREMENT OFFICIEL DE LA V15.0",
+      "part": "PARTIE I — AUTORITÉ, GOUVERNANCE ET ENREGISTREMENT DE LA ROADMAP",
+      "acceptance": {
+        "quote": "La roadmap ne doit pas être déclarée enregistrée, adoptée ou intégrée tant que les preuves correspondantes n'existent pas.\n- PROPOSED.\n- RECONCILIATION_IN_PROGRESS.\n- VALIDATION_PENDING.\n- ACCEPTED.\n- INTEGRATED.",
+        "file": "line7971.md",
+        "lines": [
+          312,
+          318,
+          319,
+          320,
+          321,
+          322
+        ]
+      }
+    },
+    {
+      "id": "§3",
+      "title": "3. LES NEUF PRIMITIVES CANONIQUES",
+      "part": "PARTIE II — FONDATIONS ARCHITECTURALES",
+      "acceptance": {
+        "quote": "Aucune dixième primitive.\nAucun second orchestrateur.\nAucun second scheduler.\nAucun deuxième Radar.\nAucune mémoire concurrente.\nLes nouvelles capacités doivent être des améliorations, des composants spécialisés ou des responsabilités internes aux mécanismes existants.",
+        "file": "line7971.md",
+        "lines": [
+          358,
+          360,
+          362,
+          366,
+          368,
+          374
+        ]
+      }
+    },
+    {
+      "id": "§4",
+      "title": "4. HIÉRARCHIE DE VÉRITÉ",
+      "part": "PARTIE II — FONDATIONS ARCHITECTURALES",
+      "acceptance": {
+        "quote": "En cas de contradiction, appliquer une hiérarchie vérifiable :\n1. Preuves techniques actuelles et reproductibles.\nUne affirmation récente ne remplace pas automatiquement une preuve antérieure valide.",
+        "file": "line7971.md",
+        "lines": [
+          392,
+          394,
+          405
+        ]
+      }
+    },
+    {
+      "id": "§5",
+      "title": "5. ARCHITECTURE COMPACTE ET COHÉRENTE",
+      "part": "PARTIE II — FONDATIONS ARCHITECTURALES",
+      "acceptance": {
+        "quote": "Préférer le raccordement et l'amélioration à la duplication.\n**Construire uniquement ce qui n'existe pas et ce qui est nécessaire. Corriger et raccorder le reste.**",
+        "file": "line7971.md",
+        "lines": [
+          422,
+          441
+        ]
+      }
+    },
+    {
+      "id": "§6",
+      "title": "6. CONSTRUIRE LE CERVEAU CENTRAL",
+      "part": "PARTIE III — ARCHITECTURE COGNITIVE SUPÉRIEURE",
+      "acceptance": {
+        "quote": "ODG doit progresser de la compréhension d'une demande à une décision structurée et à une réalisation vérifiée.\nOBJECTIF → CONTEXTE → CONNAISSANCES → HYPOTHÈSES → STRATÉGIES → RISQUES → DÉCISION → CONTRAT → AUTORISATION → EXÉCUTION → VÉRIFICATION → APPRENTISSAGE.\nNe pas construire un moteur décisionnel parallèle.",
+        "file": "line7971.md",
+        "lines": [
+          449,
+          557,
+          559
+        ]
+      }
+    },
+    {
+      "id": "§7",
+      "title": "7. CAPABILITY DISCOVERY & UTILIZATION",
+      "part": "PARTIE IV — DÉCOUVERTE ET EXPLOITATION DES CAPACITÉS",
+      "acceptance": {
+        "quote": "Un graphe des capacités réellement disponibles, de leurs consommateurs, de leurs dépendances, de leur utilisation et de leurs preuves.\n4. Exécuter un scénario qui l'utilise réellement.\n7. Vérifier qu'il ne s'agit pas d'un mock ou d'un simple test isolé.\n10. Conserver une preuve reproductible.",
+        "file": "line7971.md",
+        "lines": [
+          642,
+          651,
+          654,
+          657
+        ]
+      }
+    },
+    {
+      "id": "§8",
+      "title": "8. GRAPHE DES CAPACITÉS ET DÉPENDANCES",
+      "part": "PARTIE V — GRAPHE VIVANT ET MODÈLE DU SYSTÈME",
+      "acceptance": {
+        "quote": "Construire ou renforcer un graphe vivant, sans créer une deuxième base de vérité.\n- Trouver immédiatement les modules utiles à une mission.\n- Identifier les fichiers qui peuvent être travaillés en parallèle.\n- Préparer les tests à exécuter après une modification.\n- Détecter les conflits avant qu'ils apparaissent.",
+        "file": "line7971.md",
+        "lines": [
+          665,
+          720,
+          722,
+          724,
+          726
+        ]
+      }
+    },
+    {
+      "id": "§9",
+      "title": "9. CENTRE DE PILOTAGE STRATÉGIQUE",
+      "part": "PARTIE VI — PILOTAGE STRATÉGIQUE ET PORTEFEUILLE DE MISSIONS",
+      "acceptance": {
+        "quote": "ODG doit savoir piloter l'ensemble de son évolution.\nLe score de priorité est un outil de décision, pas une autorisation.\nUn blocage isolé ne doit pas arrêter tout le portefeuille.",
+        "file": "line7971.md",
+        "lines": [
+          735,
+          796,
+          812
+        ]
+      }
+    },
+    {
+      "id": "§10",
+      "title": "10. CONSTRUIRE ET AMÉLIORER SON PROPRE SYSTÈME",
+      "part": "PARTIE VII — AUTONOMIE NATIVE D'INGÉNIERIE",
+      "acceptance": {
+        "quote": "L'autonomie native est la priorité stratégique numéro un.\nLa réussite fournisseur ne prouve jamais la capacité native d'ODG.\nL'objectif est de transformer progressivement les interventions fournisseurs en compétences réutilisables d'ODG.",
+        "file": "line7971.md",
+        "lines": [
+          831,
+          935,
+          952
+        ]
+      }
+    },
+    {
+      "id": "§11",
+      "title": "11. BOUCLE D'ÉVOLUTION",
+      "part": "PARTIE VIII — ACQUISITION DE COMPÉTENCES ET AUTO-AMÉLIORATION RÉCURSIVE",
+      "acceptance": {
+        "quote": "La boucle sera considérée comme opérationnellement utile lorsque des preuves démontreront qu'ODG sait :\n1. Détecter une incapacité ou une performance insuffisante.\n4. Déclencher le Radar canonique lorsque nécessaire.\n8. Comparer plusieurs approches sur des critères explicites.\n13. Faire inspecter indépendamment.\n14. Mesurer le gain et les régressions.\n16. Démontrer son utilisation réelle.",
+        "file": "line7971.md",
+        "lines": [
+          1458,
+          1460,
+          1463,
+          1467,
+          1472,
+          1473,
+          1475
+        ]
+      }
+    },
+    {
+      "id": "§12",
+      "title": "12. MÉMOIRE COGNITIVE",
+      "part": "PARTIE IX — MÉMOIRE ET INTELLIGENCE CUMULATIVE",
+      "acceptance": {
+        "quote": "Ne créer aucune mémoire concurrente.\n- Précision de récupération.\n- Fraîcheur.\n- Exactitude de provenance.\n- Détection des contradictions.\n- Amélioration obtenue grâce à la mémoire.",
+        "file": "line7971.md",
+        "lines": [
+          1495,
+          1533,
+          1535,
+          1536,
+          1537,
+          1540
+        ]
+      }
+    },
+    {
+      "id": "§13",
+      "title": "13. ODG KNOWLEDGE INTELLIGENCE V2 — FRONTIER RADAR : DISCOVERY TO ENGINEERING",
+      "part": "PARTIE X — RADAR ET RECHERCHE MONDIALE",
+      "acceptance": {
+        "quote": "Le Radar V2 sera considéré comme utile lorsque des preuves montreront qu'il sait :\n4. Distinguer répétition et corroboration indépendante.\n8. Ne pas transformer une hypothèse en fait.\n11. Détecter des lacunes réelles d'ODG.\n14. Faire utiliser une connaissance dans une mission réelle autorisée.\n15. Mesurer le gain obtenu.",
+        "file": "line7971.md",
+        "lines": [
+          2175,
+          2180,
+          2184,
+          2187,
+          2190,
+          2191
+        ]
+      }
+    },
+    {
+      "id": "§14",
+      "title": "14. FRONTIER LAB",
+      "part": "PARTIE XI — LABORATOIRE ET EXPÉRIMENTATION",
+      "acceptance": {
+        "quote": "Ne pas créer une architecture de recherche concurrente.\nUn prototype ne devient pas automatiquement une capacité canonique.\n4. Inspection indépendante.\n10. Démonstration d'utilisation réelle.",
+        "file": "line7971.md",
+        "lines": [
+          2206,
+          2240,
+          2247,
+          2253
+        ]
+      }
+    },
+    {
+      "id": "§15",
+      "title": "15. ORCHESTRATION INTELLIGENTE",
+      "part": "PARTIE XII — ORCHESTRATION ET MULTI-AGENTS À GRANDE ÉCHELLE",
+      "acceptance": {
+        "quote": "Utiliser exclusivement la chaîne canonique existante.\n- Tâches acceptées.\n- Temps de coordination.\n- Coût par résultat accepté.\n- Taux de conflits.\n- Gain par rapport à une exécution séquentielle.",
+        "file": "line7971.md",
+        "lines": [
+          2281,
+          2657,
+          2661,
+          2662,
+          2664,
+          2668
+        ]
+      }
+    },
+    {
+      "id": "§16",
+      "title": "16. PRIORITÉ P0 : CONTINUITÉ DES MISSIONS",
+      "part": "PARTIE XIII — CONTINUITÉ ET RECOVERY",
+      "acceptance": {
+        "quote": "La continuité est une fondation préalable à l'augmentation du nombre de missions simultanées.\nMesurer les pertes, incohérences, répétitions et délais de reprise.\nNe pas promettre zéro perte pour les données non durablement enregistrées.\nNe jamais prétendre qu'une mission continue en arrière-plan si aucun mécanisme persistant réel n'est actif.",
+        "file": "line7971.md",
+        "lines": [
+          2676,
+          2802,
+          2804,
+          2819
+        ]
+      }
+    },
+    {
+      "id": "§17",
+      "title": "17. SURVEILLANCE, DIAGNOSTIC ET RÉPARATION",
+      "part": "PARTIE XIV — AUTO-GUÉRISON ET MAINTENANCE",
+      "acceptance": {
+        "quote": "5. Construire dans le sandbox autorisé.\n9. Inspecter indépendamment.\n10. Comparer avant/après.\n14. Vérifier que le défaut ne réapparaît pas sur un scénario distinct.\nMesurer les prévisions sur les événements réellement observés.\nUne réparation qui échoue plusieurs fois doit déclencher une réévaluation de stratégie.",
+        "file": "line7971.md",
+        "lines": [
+          2893,
+          2897,
+          2898,
+          2902,
+          2908,
+          2923
+        ]
+      }
+    },
+    {
+      "id": "§18",
+      "title": "18. RAPIDITÉ RÉELLE ET EFFICACITÉ",
+      "part": "PARTIE XV — PERFORMANCE ET GESTION DES RESSOURCES",
+      "acceptance": {
+        "quote": "**VERIFIED ACCEPTED OUTPUT / TOTAL COST / TOTAL TIME.**\nAucune accélération ne doit compromettre les contrôles critiques.\nL'ambition d'une accélération ×2, ×5, ×10 ou davantage doit être mesurée par catégorie de mission. Ne jamais annoncer un gain sans comparaison reproductible.",
+        "file": "line7971.md",
+        "lines": [
+          3064,
+          3066,
+          3085
+        ]
+      }
+    },
+    {
+      "id": "§19",
+      "title": "19. ÉVOLUTION CONTRÔLÉE",
+      "part": "PARTIE XVI — MISES À JOUR ET ÉVOLUTION LOGICIELLE",
+      "acceptance": {
+        "quote": "11. Tester dans le sandbox.\n12. Faire inspecter.\nAucune mise à jour ne doit entraîner un déploiement, une modification VPS ou une action de production dans le cadre de cette directive.\nLa préparation d'une mise à jour ne vaut pas autorisation de déploiement.",
+        "file": "line7971.md",
+        "lines": [
+          3124,
+          3125,
+          3131,
+          3133
+        ]
+      }
+    },
+    {
+      "id": "§20",
+      "title": "20. CAPACITÉS TRANSVERSALES",
+      "part": "PARTIE XVII — MULTIMODALITÉ ET CAPACITÉS COMMUNES",
+      "acceptance": {
+        "quote": "Examiner et renforcer les capacités existantes.\nRaccorder les capacités communes aux consommateurs canoniques via des contrats cohérents.\nTester les parcours complets, les cas limites, les documents dégradés, les données contradictoires, les erreurs d'extraction et les reprises après interruption.",
+        "file": "line7971.md",
+        "lines": [
+          3156,
+          3207,
+          3213
+        ]
+      }
+    },
+    {
+      "id": "§21",
+      "title": "21. SÉCURITÉ TRANSVERSALE",
+      "part": "PARTIE XVIII — SÉCURITÉ ET QUALITÉ",
+      "acceptance": {
+        "quote": "- Moindre privilège.\n- Isolation.\n- Protection contre les injections.\nÉvaluer les mécanismes d'isolation réellement disponibles :\nLa simple séparation des contextes conversationnels ne constitue pas une isolation des fichiers ou des effets de bord.",
+        "file": "line7971.md",
+        "lines": [
+          3223,
+          3226,
+          3230,
+          3287,
+          3298
+        ]
+      }
+    },
+    {
+      "id": "§22",
+      "title": "22. ASSURANCE QUALITÉ INDÉPENDANTE",
+      "part": "PARTIE XIX — QUALITÉ, VALIDATION ET NON-RÉGRESSION",
+      "acceptance": {
+        "quote": "Une amélioration importante doit être :\n- Testée.\n- Raccordée.\n- Utilisée.\n- Mesurée.\n- Inspectée.\n- Reprenable.\n- Réversible selon le mécanisme approprié.",
+        "file": "line7971.md",
+        "lines": [
+          3371,
+          3373,
+          3374,
+          3375,
+          3377,
+          3378,
+          3381,
+          3382
+        ]
+      }
+    },
+    {
+      "id": "§23",
+      "title": "23. ÉCHELLE L0 À L8",
+      "part": "PARTIE XX — NIVEAUX DE MATURITÉ DE L'AUTONOMIE",
+      "acceptance": {
+        "quote": "Ces niveaux décrivent des compétences démontrées. Ils ne constituent jamais des permissions.\nChaque niveau exige des scénarios réussis, reproductibles et évalués indépendamment.\nUne réussite fournisseur ne permet pas de déclarer un niveau natif.\nNe pas promouvoir automatiquement L1 ou un niveau supérieur.",
+        "file": "line7971.md",
+        "lines": [
+          3390,
+          3410,
+          3412,
+          3420
+        ]
+      }
+    },
+    {
+      "id": "§24",
+      "title": "24. TABLEAU DE MESURE",
+      "part": "PARTIE XXI — INDICATEURS DE PROGRESSION",
+      "acceptance": {
+        "quote": "Établir des références initiales avant de fixer des objectifs chiffrés.\nComparer plusieurs générations de missions comparables.\nToute amélioration doit rester soumise à la qualité et à la sécurité.",
+        "file": "line7971.md",
+        "lines": [
+          3454,
+          3502,
+          3515
+        ]
+      }
+    },
+    {
+      "id": "§25",
+      "title": "25. WORK_ITEM_CONTRACT",
+      "part": "PARTIE XXII — MÉTHODE UNIVERSELLE DE CONSTRUCTION",
+      "acceptance": {
+        "quote": "Chaque chantier doit disposer d'un contrat explicite.\n- ACCEPTANCE_CRITERIA.\n- INDEPENDENT_REVIEW.\n- ROLLBACK_PLAN.\n- CHECKPOINT_PLAN.\n- EVIDENCE_REQUIREMENTS.",
+        "file": "line7971.md",
+        "lines": [
+          3523,
+          3542,
+          3544,
+          3545,
+          3546,
+          3547
+        ]
+      }
+    },
+    {
+      "id": "§26",
+      "title": "26. LES TREIZE PROGRAMMES INTÉGRÉS",
+      "part": "PARTIE XXIII — PROGRAMMES STRUCTURANTS",
+      "acceptance": {
+        "quote": "Les treize programmes de la V17.0 sont conservés comme axes de construction, et non comme nouvelles architectures indépendantes.\nChaque programme doit être mappé sur les neuf primitives et les composants existants.\nLe Radar V2 alimente ces programmes à travers les mécanismes canoniques. Il ne devient pas un programme de gouvernance parallèle.",
+        "file": "line7971.md",
+        "lines": [
+          3602,
+          3656,
+          3658
+        ]
+      }
+    },
+    {
+      "id": "§27",
+      "title": "27. AUTOMATISATION DES TÂCHES INTERNES",
+      "part": "PARTIE XXIV — AUTOMATISATION MAXIMALE ET EXÉCUTION CONTINUE",
+      "acceptance": {
+        "quote": "ODG doit poursuivre les missions éligibles selon une boucle contrôlée :\nPour chaque automatisation, mesurer :\n- Temps manuel supprimé.\nUne automatisation n'est conservée que si elle apporte un bénéfice réel.",
+        "file": "line7971.md",
+        "lines": [
+          3717,
+          3855,
+          3857,
+          3866
+        ]
+      }
+    },
+    {
+      "id": "§28",
+      "title": "28. PHASE 0 — VÉRITÉ ET PRÉSERVATION",
+      "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+      "acceptance": {
+        "quote": "Livrables :\n- État technique vérifié.\n- Matrice de filiation.\n- Matrice de correspondance.\n- Registre des divergences.\n- Checkpoint initial.\n- Liste des travaux à reprendre.",
+        "file": "line7971.md",
+        "lines": [
+          3888,
+          3890,
+          3891,
+          3892,
+          3893,
+          3894,
+          3895
+        ]
+      }
+    },
+    {
+      "id": "§29",
+      "title": "29. PHASE 1 — ENREGISTREMENT V15.0 ET CARTOGRAPHIE",
+      "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+      "acceptance": {
+        "quote": "Livrables :\n- Roadmap V15.0 proposée et correctement référencée.\n- Matrice des exigences.\n- Cartographie technique.\n- Inventaire des capacités.\n- État réel des raccordements.",
+        "file": "line7971.md",
+        "lines": [
+          3912,
+          3914,
+          3915,
+          3916,
+          3917,
+          3918
+        ]
+      }
+    },
+    {
+      "id": "§30",
+      "title": "30. PHASE 2 — CONTINUITÉ ET RECOVERY",
+      "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+      "acceptance": {
+        "quote": "Priorité P0.\nLivrable : démonstration reproductible de reprise.",
+        "file": "line7971.md",
+        "lines": [
+          3922,
+          3937
+        ]
+      }
+    },
+    {
+      "id": "§31",
+      "title": "31. PHASE 3 — ORCHESTRATION ET PILOTAGE",
+      "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+      "acceptance": {
+        "quote": "Livrable : missions sélectionnées et poursuivies par la chaîne canonique.",
+        "file": "line7971.md",
+        "lines": [
+          3956
+        ]
+      }
+    },
+    {
+      "id": "§32",
+      "title": "32. PHASE 4 — DISCOVERY ET GRAPHE VIVANT",
+      "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+      "acceptance": {
+        "quote": "Livrable : capacités existantes identifiées, qualifiées et exploitées.",
+        "file": "line7971.md",
+        "lines": [
+          3971
+        ]
+      }
+    },
+    {
+      "id": "§33",
+      "title": "33. PHASE 5 — CERVEAU ET RAISONNEMENT",
+      "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+      "acceptance": {
+        "quote": "Livrable : batterie cognitive mesurée.",
+        "file": "line7971.md",
+        "lines": [
+          3988
+        ]
+      }
+    },
+    {
+      "id": "§34",
+      "title": "34. PHASE 6 — MÉMOIRE ET APPRENTISSAGE",
+      "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+      "acceptance": {
+        "quote": "Livrable : amélioration mesurée grâce à la mémoire.",
+        "file": "line7971.md",
+        "lines": [
+          4005
+        ]
+      }
+    },
+    {
+      "id": "§35",
+      "title": "35. PHASE 7 — AUTONOMIE NATIVE",
+      "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+      "acceptance": {
+        "quote": "Livrable : missions techniques réussies nativement.",
+        "file": "line7971.md",
+        "lines": [
+          4022
+        ]
+      }
+    },
+    {
+      "id": "§36",
+      "title": "36. PHASE 8 — AUTO-AMÉLIORATION RÉCURSIVE",
+      "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+      "acceptance": {
+        "quote": "Livrable : plusieurs cycles d'amélioration démontrés.",
+        "file": "line7971.md",
+        "lines": [
+          4036
+        ]
+      }
+    },
+    {
+      "id": "§37",
+      "title": "5. PHASE 9 — §37 — AUTO-GUÉRISON",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Construire une capacité interne de détection, diagnostic, réparation contrôlée, vérification et prévention des anomalies.\nUne capacité d'auto-guérison démontrée par des scénarios reproductibles, avec diagnostic causal, réparation réversible, validation indépendante, prévention et preuves.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          316,
+          477
+        ]
+      }
+    },
+    {
+      "id": "§38",
+      "title": "6. PHASE 10 — §38 — RADAR ET FRONTIER LAB",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "**Rappel impératif : le Radar existant ne doit subir aucune modification dans cette campagne.**\nDes connaissances qualifiées, traçables, comparées et transformées en améliorations internes réellement utilisées, avec mesures avant/après.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          487,
+          628
+        ]
+      }
+    },
+    {
+      "id": "§39",
+      "title": "7. PHASE 11 — §39 — PERFORMANCE ET ROUTAGE",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Un gain de vitesse n'est accepté que si :\n- La qualité reste au moins équivalente.\n- Le coût total est mesuré.\nUn routage mesuré et une amélioration réelle du temps par résultat accepté.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          745,
+          747,
+          751,
+          755
+        ]
+      }
+    },
+    {
+      "id": "§40",
+      "title": "8. PHASE 12 — §40 — MULTIMODALITÉ",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Chaque capacité multimodale doit être raccordée à un consommateur réel et testée de bout en bout.\nNe pas créer un consommateur artificiel uniquement pour déclarer un raccordement.\nDes capacités multimodales réellement utilisables, avec contrats communs, preuves et résultats reproductibles.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          843,
+          845,
+          849
+        ]
+      }
+    },
+    {
+      "id": "§41",
+      "title": "9. PHASE 13 — §41 — ORCHESTRATION MASSIVE ET MULTI-AGENTS",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Comparer plusieurs niveaux de concurrence sur des missions équivalentes.\nNe pas augmenter la concurrence si le gain est nul ou négatif.\nUne orchestration adaptative, isolée, mesurée et capable de reprendre les missions sans perte de travail.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          963,
+          978,
+          993
+        ]
+      }
+    },
+    {
+      "id": "§42",
+      "title": "10. PHASE 14 — §42 — AUTOMATISATION ET CONTINUITÉ",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Réduire les interventions manuelles répétitives et les interruptions inutiles, sans affaiblir les contrôles.\nDes automatisations réversibles, idempotentes, vérifiées, avec continuité et réduction mesurée des interventions manuelles.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1001,
+          1103
+        ]
+      }
+    },
+    {
+      "id": "§43",
+      "title": "11. PHASE 15 — §43 — SÉCURITÉ ET SIMPLIFICATION",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Renforcer la sécurité, réduire les duplications et améliorer la cohérence générale sans casser les mécanismes validés.\n- D'une preuve de non-régression.\nUne architecture plus simple, plus cohérente et mieux protégée, sans perte de capacités validées.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1111,
+          1190,
+          1206
+        ]
+      }
+    },
+    {
+      "id": "§44",
+      "title": "12. PHASE 16 — §44 — VALIDATION GLOBALE ET ÉVOLUTION CONTINUE",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Vérifier que les phases précédentes fonctionnent ensemble et que les améliorations sont réellement cumulatives.\nComparer les résultats à la baseline initiale.\nUn système intégré, mesuré et capable de poursuivre des cycles d'amélioration avec des preuves indépendantes.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1214,
+          1249,
+          1284
+        ]
+      }
+    },
+    {
+      "id": "§45",
+      "title": "13. §45 — BATTERIE DE DÉMONSTRATION DE L'AUTONOMIE",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Construire et exécuter les seize scénarios suivants dans les environnements autorisés.\nChaque scénario doit posséder un contrat, un état initial, un résultat attendu, des tests, des mesures, des preuves et une inspection indépendante.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1290,
+          1292
+        ]
+      }
+    },
+    {
+      "id": "§46",
+      "title": "14. §46 — CHECKPOINTS ET CONTINUITÉ",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Chaque lot doit conserver :\n- HEAD initial.\n- HEAD final.\n- Contrats.\n- Inspection indépendante.\n- Prochaine action.\nNe pas recommencer les travaux validés.\nÀ la fin de chaque lot, enregistrer l'état permettant de poursuivre sans perte.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1362,
+          1365,
+          1366,
+          1370,
+          1374,
+          1381,
+          1408,
+          1412
+        ]
+      }
+    },
+    {
+      "id": "§47",
+      "title": "15. §47 — LIMITES ET PERMISSIONS",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "L'autorisation du propriétaire décrite au §2 s'applique aux travaux internes légaux, réversibles et confinés.\nL'autonomie technique n'accorde jamais de permission supplémentaire.\nLa préparation d'une release ne vaut pas autorisation de déploiement.\nLe Radar reste inchangé.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1418,
+          1422,
+          1426,
+          1428
+        ]
+      }
+    },
+    {
+      "id": "§48",
+      "title": "16. §48 — EXÉCUTION IMMÉDIATE ET CONTINUE",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Ne pas relancer la campagne précédente.\nCompléter son travail à partir de son état réel.\nExécuter les scénarios A à P, progressivement, selon leurs dépendances.\nNe pas attendre une nouvelle directive pour les opérations internes déjà autorisées.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1436,
+          1438,
+          1510,
+          1522
+        ]
+      }
+    },
+    {
+      "id": "§49",
+      "title": "17. §49 — RAPPORTS ET TRANSPARENCE",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Le rapport exécutif doit rester concis et indiquer :\nNe jamais masquer un résultat négatif.\nNe jamais inventer une preuve.\nNe jamais présenter une estimation comme un fait observé.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1528,
+          1543,
+          1545,
+          1547
+        ]
+      }
+    },
+    {
+      "id": "§50",
+      "title": "18. §50 — CRITÈRES FINAUX DE RÉUSSITE",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "La réussite se mesure sur la capacité d'ODG à :\n- Construire nativement.\n- Augmenter le débit de résultats acceptés.\n- Réduire le temps et le coût par résultat vérifié.\nL'objectif d'une amélioration de dix fois est une ambition à mesurer, jamais une affirmation.\nAucune perfection ne doit être promise.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1553,
+          1563,
+          1576,
+          1577,
+          1579,
+          1581
+        ]
+      }
+    },
+    {
+      "id": "§51",
+      "title": "19. §51 — RÈGLES D'OR PERMANENTES",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "1. V15.0 reste la directive unique de cette campagne.\n2. V12.4 reste la Boussole canonique jusqu'à succession formelle.\n7. Aucune permission auto-attribuée.\n16. Chaque chantier possède un contrat.\n17. Chaque lot possède un checkpoint.\n54. Aucun déploiement réel n'est autorisé.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1612,
+          1613,
+          1618,
+          1627,
+          1628,
+          1665
+        ]
+      }
+    },
+    {
+      "id": "§52",
+      "title": "20. §52 — RÉFÉRENCES MONDIALES ET VEILLE TECHNOLOGIQUE",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Ne pas annoncer qu'ODG est meilleur qu'une référence mondiale sans benchmark comparable et reproductible.\nUn registre de veille technique avec sources, versions, comparaisons, expériences, décisions et résultats.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1799,
+          1803
+        ]
+      }
+    },
+    {
+      "id": "§53",
+      "title": "21. §53 — ACCÉLÉRATION GLOBALE",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Mesurer les étapes qui déterminent réellement la durée des missions :\nUne réduction mesurée du temps par résultat accepté, sans baisse de qualité.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1811,
+          1883
+        ]
+      }
+    },
+    {
+      "id": "§54",
+      "title": "22. §54 — PRÉPARATION DE RELEASE SANS DÉPLOIEMENT",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "Préparer un dossier technique complet.\n**Aucun déploiement ne doit être exécuté.**",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1889,
+          1969
+        ]
+      }
+    },
+    {
+      "id": "§55",
+      "title": "23. §55 — BOUCLE FONDAMENTALE D'ODG",
+      "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+      "acceptance": {
+        "quote": "OBSERVER → COMPRENDRE → CONTEXTUALISER → RECHERCHER → RAISONNER → COMPARER → DÉCIDER → PLANIFIER → CONTRACTUALISER → AUTORISER → DÉCOMPOSER → ALLOUER → PARALLÉLISER → CONSTRUIRE → RACCORDER → AUTOMATISER → TESTER → INSPECTER → MESURER → INTÉGRER → PRÉSERVER → APPRENDRE → REPRENDRE → S'AMÉLIORER → POURSUIVRE.\nNe pas rester dans la planification.",
+        "file": "ordre_37_55.md",
+        "lines": [
+          1977,
+          1979
+        ]
+      }
+    }
+  ],
+  "battery_A_P_exact": [
+    {
+      "id": "A",
+      "title": "A — Ingénierie native",
+      "text": "ODG découvre un défaut, identifie sa cause, conçoit un correctif, crée les tests, les exécute et fait inspecter le résultat.",
+      "lines": [
+        1294,
+        1296
+      ]
+    },
+    {
+      "id": "B",
+      "title": "B — Continuité",
+      "text": "ODG commence une mission, produit des modifications, subit une interruption simulée, restaure son état et reprend uniquement les opérations manquantes.",
+      "lines": [
+        1298,
+        1300
+      ]
+    },
+    {
+      "id": "C",
+      "title": "C — Capacité dormante",
+      "text": "ODG découvre un module existant non utilisé, identifie ses consommateurs, détermine s'il doit être raccordé, réalise le raccordement autorisé et démontre l'utilisation réelle.",
+      "lines": [
+        1302,
+        1304
+      ]
+    },
+    {
+      "id": "D",
+      "title": "D — Recherche et construction",
+      "text": "ODG recherche une méthode, compare les solutions, construit la meilleure solution adaptée à ses contraintes et mesure le gain.",
+      "lines": [
+        1306,
+        1308
+      ]
+    },
+    {
+      "id": "E",
+      "title": "E — Auto-guérison",
+      "text": "ODG détecte une anomalie, identifie sa cause racine, répare en sandbox, vérifie et conserve les preuves.",
+      "lines": [
+        1310,
+        1312
+      ]
+    },
+    {
+      "id": "F",
+      "title": "F — Multi-agents",
+      "text": "ODG décompose une mission, affecte des fournisseurs, réceptionne leurs résultats, détecte les incompatibilités et valide l'intégration.",
+      "lines": [
+        1314,
+        1316
+      ]
+    },
+    {
+      "id": "G",
+      "title": "G — Mémoire",
+      "text": "ODG retrouve une connaissance, vérifie sa fraîcheur, sa provenance et ses conditions, puis démontre son utilité.",
+      "lines": [
+        1318,
+        1320
+      ]
+    },
+    {
+      "id": "H",
+      "title": "H — Amélioration récursive",
+      "text": "ODG améliore un mécanisme de planification ou de vérification et démontre sur des tests indépendants que la nouvelle version est meilleure.",
+      "lines": [
+        1322,
+        1324
+      ]
+    },
+    {
+      "id": "I",
+      "title": "I — Révision stratégique",
+      "text": "ODG compare plusieurs plans, détecte une nouvelle dépendance et réorganise le portefeuille sans perdre les travaux validés.",
+      "lines": [
+        1326,
+        1328
+      ]
+    },
+    {
+      "id": "J",
+      "title": "J — Gestion d'échec",
+      "text": "ODG détecte une stratégie inefficace, arrête les tentatives répétitives, construit une alternative et mesure le résultat.",
+      "lines": [
+        1330,
+        1332
+      ]
+    },
+    {
+      "id": "K",
+      "title": "K — Knowledge Intelligence",
+      "text": "ODG découvre une connaissance, identifie ses sources, structure ses affirmations, distingue les corroborations indépendantes, qualifie la connaissance, identifie une lacune interne et mesure le résultat de son utilisation.",
+      "lines": [
+        1334,
+        1336
+      ]
+    },
+    {
+      "id": "L",
+      "title": "L — Concurrence adaptative",
+      "text": "ODG compare plusieurs niveaux de concurrence et mesure les ressources, le temps, les coûts, les conflits et les résultats acceptés.",
+      "lines": [
+        1338,
+        1340
+      ]
+    },
+    {
+      "id": "M",
+      "title": "M — Reprise multi-agents",
+      "text": "ODG interrompt plusieurs tâches en simulation, récupère leurs états, vérifie les artefacts et reprend uniquement les opérations manquantes.",
+      "lines": [
+        1342,
+        1344
+      ]
+    },
+    {
+      "id": "N",
+      "title": "N — Automatisation",
+      "text": "ODG identifie une tâche répétitive autorisée, réutilise ou construit son automatisation, vérifie son comportement et mesure le temps économisé.",
+      "lines": [
+        1346,
+        1348
+      ]
+    },
+    {
+      "id": "O",
+      "title": "O — Blocage isolé",
+      "text": "Une tâche est bloquée par une dépendance. ODG poursuit les missions indépendantes et reprend la tâche bloquée lorsque sa condition est satisfaite.",
+      "lines": [
+        1350,
+        1352
+      ]
+    },
+    {
+      "id": "P",
+      "title": "P — Réduction des répétitions",
+      "text": "ODG démontre qu'il réutilise des analyses, tests et preuves encore valides sans répéter inutilement les travaux.",
+      "lines": [
+        1354,
+        1356
+      ]
+    }
+  ]
+}
