@@ -260,7 +260,9 @@ function tickOnce(opts: any = {}): any {
  * WRITE_SET_VIOLATION ⇒ NOT verified (fail-closed). The per-tick verdicts are written to <runOutputBase>/wave-summary.json.
  * LIMITS (stated): writes OUTSIDE the run dir by a non-node descendant bypass the overlay and are not attributable per
  * child at runtime (measured absent for the declared canaries via strace); a violating child's own ledger append (done
- * inside the child before the audit) is NOT retracted — the append-only ledger keeps it, the attempt log says FAIL.
+ * inside the child before the audit) is NOT retracted — the append-only ledger keeps it, the attempt log says FAIL; the
+ * check is a POST-HOC snapshot of the run dir, so a file written then deleted (or renamed away) before the child exits is
+ * NOT detected, and empty directories are ignored (not outputs) — so an undeclared empty dir is NOT detected either.
  * =================================================================================================================== */
 const WAVE_DEFAULT_MAX = 2;
 const WAVE_HARD_MAX = 6;                                   // same ceiling as the orchestrator's agentCount (0..6)
@@ -316,44 +318,94 @@ function declaredWriteSet(m: any): string[] | null {
 function writeSetCovers(declared: string[], rel: string): boolean {
   return declared.some((d) => (d.endsWith("/") ? rel.startsWith(d) : rel === d));
 }
-/* listRunFiles — every NON-directory entry (files, symlinks, …) under a run dir, run-relative POSIX paths, sorted.
+/* inspectRunDir — lstat-walk a run dir (NEVER follows links). Returns run-relative POSIX paths, sorted:
+ *   files       — REGULAR files with nlink === 1 (the only acceptable outputs);
+ *   nonRegular  — every other non-directory entry: symlink, regular file with nlink > 1 (hard link to an inode that
+ *                 may live elsewhere), fifo/socket/device — each is a VIOLATION whatever the declaration;
+ *   unreadable  — null, or the reason the dir (or a sub-dir / entry) could not be read ⇒ UNVERIFIABLE.
  * Directories themselves are not outputs (the overlay may create empty parents such as fleet/locks). */
-function listRunFiles(dir: string): string[] {
-  const res: string[] = [];
+function inspectRunDir(dir: string): { files: string[]; nonRegular: string[]; unreadable: string | null } {
+  const files: string[] = [], nonRegular: string[] = [];
+  let unreadable: string | null = null;
+  try { if (!fs.lstatSync(dir).isDirectory()) return { files, nonRegular, unreadable: `run dir is not a directory: ${dir}` }; }
+  catch (e: any) { return { files, nonRegular, unreadable: `run dir unreadable: ${(e && e.code) || e}` }; }
   const walk = (d: string, pre: string) => {
-    let ents: any[] = [];
-    try { ents = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
-    for (const e of ents) { const rel = pre ? pre + "/" + e.name : e.name; if (e.isDirectory()) walk(path.join(d, e.name), rel); else res.push(rel); }
+    let names: string[] = [];
+    try { names = fs.readdirSync(d); } catch (e: any) { unreadable = unreadable || `unreadable dir ${pre || "."}: ${(e && e.code) || e}`; return; }
+    for (const n of names) {
+      const rel = pre ? pre + "/" + n : n;
+      let st: any;
+      try { st = fs.lstatSync(path.join(d, n)); } catch (e: any) { unreadable = unreadable || `unreadable entry ${rel}: ${(e && e.code) || e}`; continue; }
+      if (st.isDirectory()) walk(path.join(d, n), rel);
+      else if (st.isSymbolicLink()) nonRegular.push(`${rel} (symlink)`);
+      else if (!st.isFile()) nonRegular.push(`${rel} (non-regular)`);
+      else if (st.nlink > 1) nonRegular.push(`${rel} (hard link, nlink ${st.nlink})`);
+      else files.push(rel);
+    }
   };
   walk(dir, "");
-  return res.sort();
+  return { files: files.sort(), nonRegular: nonRegular.sort(), unreadable };
 }
-/* ledgerCounts — entries per mission in the shared mission-ledger (append-only); {} when absent/unreadable. */
-function ledgerCounts(ledgerPath: string): any {
+/* listRunFiles — the acceptable regular outputs only (kept for callers/tests); see inspectRunDir for the full verdict. */
+function listRunFiles(dir: string): string[] { return inspectRunDir(dir).files; }
+/* readRegularJson — read a JSON file ONLY if it is a regular, single-link file, opened with O_NOFOLLOW and checked on
+ * the OPEN fd (no lstat→open race). A symlinked / hard-linked / non-regular report is REFUSED (throws ⇒ not verified). */
+function readRegularJson(p: string): any {
+  const fd = fs.openSync(p, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW || 0));
   try {
-    const l = JSON.parse(fs.readFileSync(ledgerPath, "utf8"));
-    const e = Array.isArray(l) ? l : (l.entries || l.missions || []);
-    const c: any = {}; for (const x of e) if (x && typeof x.mission === "string") c[x.mission] = (c[x.mission] || 0) + 1;
-    return c;
-  } catch { return {}; }
+    const st = fs.fstatSync(fd);
+    if (!st.isFile() || st.nlink !== 1) throw new Error(`refusing non-regular/linked file: ${p}`);
+    return JSON.parse(fs.readFileSync(fd, "utf8"));
+  } finally { fs.closeSync(fd); }
 }
-/* auditRunWrites — PURE over (declared, actual files, ledger delta): the V15.5 write-set ENFORCEMENT verdict.
- *   UNDECLARED — mission declares no write-set: nothing to enforce against (it was serialized, UNKNOWN);
- *   VIOLATION  — an actual file in the run dir is outside the declared set, OR the mission appended >1 ledger entry;
- *   OK         — every actual file is declared and the ledger delta is 0 or 1. */
-function auditRunWrites(declared: string[] | null, actual: string[], ledgerDelta: number): any {
-  if (!declared) return { status: "UNDECLARED", undeclared: [], actual, ledgerDelta };
-  const undeclared = actual.filter((f) => !writeSetCovers(declared, f));
+/* ledgerCounts — per-mission + total entry counts of the shared mission-ledger (append-only). ABSENT ⇒ ok, empty;
+ * present-but-unreadable/unparsable ⇒ ok:false (the caller must treat the ledger check as UNVERIFIABLE). */
+function ledgerCounts(ledgerPath: string): { ok: boolean; per: any; total: number; reason?: string } {
+  let raw: string;
+  try { raw = fs.readFileSync(ledgerPath, "utf8"); }
+  catch (e: any) { return e && e.code === "ENOENT" ? { ok: true, per: {}, total: 0 } : { ok: false, per: {}, total: 0, reason: `ledger unreadable: ${(e && e.code) || e}` }; }
+  try {
+    const l = JSON.parse(raw);
+    const e = Array.isArray(l) ? l : (l && Array.isArray(l.entries) ? l.entries : (l && Array.isArray(l.missions) ? l.missions : null));
+    if (!e) return { ok: false, per: {}, total: 0, reason: "ledger has no entries array" };
+    const c: any = {}; for (const x of e) if (x && typeof x.mission === "string") c[x.mission] = (c[x.mission] || 0) + 1;
+    return { ok: true, per: c, total: e.length };
+  } catch { return { ok: false, per: {}, total: 0, reason: "ledger unparsable" }; }
+}
+/* ledgerForeignDelta — PURE: entries appended during the wave NOT attributable to a wave member (other ids, or entries
+ * without a string id) = total delta − Σ per-wave-id deltas. > 0 ⇒ every wave attempt fails closed (LEDGER_FOREIGN_APPEND).
+ * KNOWN false-positive source: a concurrent default tick (the root timer) recording its own mission meanwhile. */
+function ledgerForeignDelta(before: any, after: any, waveIds: string[]): number {
+  const own = waveIds.reduce((n, id) => n + ((after.per[id] || 0) - (before.per[id] || 0)), 0);
+  return (after.total - before.total) - own;
+}
+/* auditRunWrites — PURE: the V15.5 write-set ENFORCEMENT verdict. o = { nonRegular, unverifiable, ledgerForeign }.
+ *   UNVERIFIABLE — run dir / ledger could not be read ⇒ fail (never OK by absence of evidence);
+ *   VIOLATION    — a symlink / hard link / non-regular entry; an actual file outside the declared set; a ledger delta
+ *                  outside {0,1}; or foreign ledger appends during the wave;
+ *   UNDECLARED   — mission declares no write-set (it was serialized, UNKNOWN) and nothing above was found;
+ *   OK           — every actual file is a declared regular file and the ledger delta is 0 or 1. */
+function auditRunWrites(declared: string[] | null, actual: string[], ledgerDelta: number, o: any = {}): any {
+  const nonRegular: string[] = Array.isArray(o.nonRegular) ? o.nonRegular : [];
+  const base: any = { undeclared: [], actual, ledgerDelta, nonRegular };
+  if (o.unverifiable) return { ...base, status: "UNVERIFIABLE", unverifiable: String(o.unverifiable) };
+  const undeclared = declared ? actual.filter((f) => !writeSetCovers(declared, f)) : [];
   const ledgerOk = ledgerDelta === 0 || ledgerDelta === 1;
-  return { status: undeclared.length === 0 && ledgerOk ? "OK" : "VIOLATION", undeclared, actual, ledgerDelta, ...(ledgerOk ? {} : { ledgerViolation: `ledger delta ${ledgerDelta} (expected 0 or 1)` }) };
+  const foreign = typeof o.ledgerForeign === "number" && o.ledgerForeign !== 0 ? o.ledgerForeign : 0;
+  const bad = nonRegular.length > 0 || undeclared.length > 0 || !ledgerOk || foreign !== 0;
+  return { ...base, undeclared, status: bad ? "VIOLATION" : (declared ? "OK" : "UNDECLARED"),
+    ...(ledgerOk ? {} : { ledgerViolation: `ledger delta ${ledgerDelta} (expected 0 or 1)` }),
+    ...(foreign ? { ledgerForeign: `LEDGER_FOREIGN_APPEND: ${foreign} ledger entr${foreign === 1 ? "y" : "ies"} appended during the wave under ids outside it (fail-closed; a concurrent default/root-timer tick is a known false-positive source)` } : {}) };
 }
 
 /* selectWave — PURE: admitted ids → canonical classify → canonical dispatch plan → first write-safe sub-wave (capped). */
 function selectWave(admittedIds: string[], o: any): any {
   const REC = o.REC, MO = o.MO;
   const shared: string[] = Array.isArray(o.runnerSharedWriteSet) ? o.runnerSharedWriteSet : REAL_RUNNER_SHARED_WRITESET.slice();
+  const declaredById: any = {};
   const records = admittedIds.map((id) => {
     const decl = declaredWriteSet(o.loadMission(id));
+    declaredById[id] = decl ? decl.slice() : null;   // CAPTURED at selection: enforcement uses THIS, never a re-read
     const rec: any = { id, status: "READY", title: `canary ${id}`, deps: [], acceptance: "", nextAction: "read-only canary run via the governed odg-run pipeline" };
     const own: string[] = typeof o.runnerWriteSetFor === "function" ? o.runnerWriteSetFor(id) : [];   // isolated run dir
     // V15.5: declared paths are run-root-relative ⇒ projected onto the PHYSICAL root this child writes: its own run dir
@@ -371,7 +423,7 @@ function selectWave(admittedIds: string[], o: any): any {
   const cap = o.waveMax;
   const wave = firstWave.slice(0, cap);
   const deferred = admittedIds.filter((id) => wave.indexOf(id) < 0);
-  return { wave, deferred, subWaves: layer0 ? layer0.subWaves.map((w: any) => w.slice()) : [], contentions: layer0 ? layer0.contentions : [], cap, routes: plan.routes };
+  return { wave, deferred, subWaves: layer0 ? layer0.subWaves.map((w: any) => w.slice()) : [], contentions: layer0 ? layer0.contentions : [], cap, routes: plan.routes, declared: declaredById };
 }
 
 /* runGovernedChild — async spawn of the governed child; NEVER rejects. Same verification rule as the default dispatch. */
@@ -480,7 +532,7 @@ async function tickWave(opts: any = {}): Promise<any> {
   const optsFor = (id: string) => !isolate ? childOpts : {
     ...childOpts,
     env: { ...childOpts.env, ODG_RUN_OUTPUT_DIR: runDirFor(id), ODG_RUN_OUTPUT_ROOT: path.resolve(runCwd) },
-    readReport: opts.readReport || ((mid: string) => JSON.parse(fs.readFileSync(path.join(runDirFor(mid), "mission-report.json"), "utf8"))),
+    readReport: opts.readReport || ((mid: string) => readRegularJson(path.join(runDirFor(mid), "mission-report.json"))),   // V15.5: no symlink/hard-link report
   };
   // V15.5 ENFORCEMENT inputs: the shared ledger's per-mission entry counts BEFORE the wave (lock-serialized SHARED_STATE).
   const ledgerPath = path.join(runCwd, "runtime", "generated", "mission-ledger.json");
@@ -495,11 +547,16 @@ async function tickWave(opts: any = {}): Promise<any> {
     // V15.5 WRITE-SET ENFORCEMENT (isolated wave only — the only mode with an attributable per-child output dir): the
     // files the child ACTUALLY left in its run dir must ⊆ its declared write-set and it may append at most ONE ledger
     // entry. Otherwise the attempt is a WRITE_SET_VIOLATION ⇒ NOT verified (fail-closed), whatever the child reported.
-    const writeSetCheck = !isolate ? { status: "NOT_ENFORCED_NON_ISOLATED" }
-      : auditRunWrites(declaredWriteSet(loadMission(id)), listRunFiles(runDirFor(id)), ((ledgerAfter as any)[id] || 0) - ((ledgerBefore as any)[id] || 0));
+    const insp = isolate ? inspectRunDir(runDirFor(id)) : null;
+    const ledgerUnverifiable = isolate && !((ledgerBefore as any).ok && (ledgerAfter as any).ok) ? ((ledgerBefore as any).reason || (ledgerAfter as any).reason || "ledger unreadable") : null;
+    const writeSetCheck: any = !isolate ? { status: "NOT_ENFORCED_NON_ISOLATED" }
+      : auditRunWrites(sel.declared[id], (insp as any).files, ((ledgerAfter as any).per[id] || 0) - ((ledgerBefore as any).per[id] || 0),
+        { nonRegular: (insp as any).nonRegular, unverifiable: (insp as any).unreadable || ledgerUnverifiable, ledgerForeign: ledgerUnverifiable ? 0 : ledgerForeignDelta(ledgerBefore, ledgerAfter, sel.wave) });
     if (writeSetCheck.status === "VIOLATION") {
-      const why = [writeSetCheck.undeclared.length ? `undeclared writes ${JSON.stringify(writeSetCheck.undeclared)}` : "", writeSetCheck.ledgerViolation || ""].filter(Boolean).join("; ");
+      const why = [writeSetCheck.nonRegular.length ? `non-regular/linked entries ${JSON.stringify(writeSetCheck.nonRegular)}` : "", writeSetCheck.undeclared.length ? `undeclared writes ${JSON.stringify(writeSetCheck.undeclared)}` : "", writeSetCheck.ledgerViolation || "", writeSetCheck.ledgerForeign || ""].filter(Boolean).join("; ");
       r = { ...r, verified: false, detail: `WRITE_SET_VIOLATION: ${why} (child said: ${r.detail})` };
+    } else if (writeSetCheck.status === "UNVERIFIABLE") {
+      r = { ...r, verified: false, detail: `WRITE_SET_UNVERIFIABLE: ${writeSetCheck.unverifiable} (child said: ${r.detail})` };
     }
     const c = SCHED.classifyDispatch(r);                              // canonical fail-closed classification
     const d = { status: c.status, mission: id, reason: c.detail };
@@ -538,6 +595,6 @@ async function mainWave(): Promise<void> {
   process.exit(d.status === "PASS" || d.status === "IDLE" ? 0 : 1);
 }
 
-module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, launcherEnforce, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES, tickWave, selectWave, runGovernedChild, waveMaxFromEnv, declaredWriteSet, validateWriteSet, writeSetCovers, listRunFiles, ledgerCounts, auditRunWrites, WAVE_DEFAULT_MAX, WAVE_HARD_MAX, REAL_RUNNER_SHARED_WRITESET, ISOLATED_RUNNER_SHARED_WRITESET };
+module.exports = { tickOnce, readAuditChain, persistAuditChain, auditIntegrityGate, launcherEnforce, AUDIT_CHAIN_PATH, canarySpecFromMission, CANARY_READONLY_MODES, tickWave, selectWave, runGovernedChild, waveMaxFromEnv, declaredWriteSet, validateWriteSet, writeSetCovers, listRunFiles, inspectRunDir, readRegularJson, ledgerCounts, ledgerForeignDelta, auditRunWrites, WAVE_DEFAULT_MAX, WAVE_HARD_MAX, REAL_RUNNER_SHARED_WRITESET, ISOLATED_RUNNER_SHARED_WRITESET };
 if (require.main === module) { if (process.env.ODG_TICK_WAVE === "1") mainWave(); else main(); }
 export {};

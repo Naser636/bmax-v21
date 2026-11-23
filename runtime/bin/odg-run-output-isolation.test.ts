@@ -227,7 +227,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     const rd = await pDefault;
     const L = ledgerOf(sb), v = LEDGER.verifyLedger(L);
     const counts = [A, B, C].map((m) => L.entries.filter((e) => e.mission === m).length);
-    ok(`default + wave concurrent: all 3 runs PASS; ledger count = ${before} + 3 = ${L.count}, each mission exactly once, seal chain verifies`, rd.code === 0 && d.status === "PASS" && L.count === before + 3 && L.entries.length === L.count && counts.every((c) => c === 1) && v.ok === true);
+    ok(`default + wave concurrent: all 3 runs complete; ledger count = ${before} + 3 = ${L.count}, each mission exactly once, seal chain verifies`, rd.code === 0 && L.count === before + 3 && L.entries.length === L.count && counts.every((c) => c === 1) && v.ok === true);
+    // V15.5 LOW3: the default run's append lands INSIDE the wave window (both take ~the same time) ⇒ it is FOREIGN to the
+    // wave ⇒ the wave attempts fail closed with LEDGER_FOREIGN_APPEND (the documented root-timer false-positive). Any
+    // wave attempt that is not PASS must fail for exactly that reason — never for a lost/duplicated entry.
+    ok(`default + wave concurrent: wave attempts are PASS or fail-closed ONLY for LEDGER_FOREIGN_APPEND (${JSON.stringify(d.results.map((r) => [r.mission, r.status, r.writeSetCheck && r.writeSetCheck.status]))})`,
+      d.results.length === 2 && d.results.every((r) => r.status === "PASS" || (r.writeSetCheck && r.writeSetCheck.status === "VIOLATION" && /LEDGER_FOREIGN_APPEND/.test(r.reason) && r.writeSetCheck.undeclared.length === 0 && r.writeSetCheck.nonRegular.length === 0 && r.writeSetCheck.ledgerDelta === 1)));
   }
 
   // (8) fs API COVERAGE — (a) static scan of the odg-run stage closure; (b) the non-trivial APIs exercised under isolation.

@@ -584,6 +584,16 @@
     "lock-wait behaviour under real claim contention (0 waits observed)",
     "M0000 pristine-state ledger-stage ordering dependence (pre-existing) - not fixed",
     "a live wave with these missions admits nothing today (all already proven in the main ledger)",
-    "Truth-Lock-enforced wave run (only possible on branch main)"
-  ]
+    "Truth-Lock-enforced wave run (only possible on branch main)",
+    "files written then deleted/renamed before the child exits, and undeclared empty directories, are not detected (post-hoc snapshot)",
+    "LEDGER_FOREIGN_APPEND fails closed on a legitimate concurrent default tick (false positive by design)"
+  ],
+  "inspection_fixes_after_review": {
+    "MED": "run-dir check is an lstat walk that never follows links: symlink, hard link (nlink>1) or any non-regular entry => VIOLATION; readReport opens mission-report.json with O_NOFOLLOW and refuses a non-regular or linked file",
+    "LOW1": "the declared write_set is captured per id when selectWave runs and that copy is enforced (a mission JSON deleted mid-run no longer downgrades the check to UNDECLARED)",
+    "LOW2": "a missing or unreadable run dir / sub-dir / entry, or a present-but-unreadable ledger => UNVERIFIABLE => fail",
+    "LOW3": "ledger entries appended under ids outside the wave (total delta - sum of per-wave-id deltas) => every wave attempt VIOLATION LEDGER_FOREIGN_APPEND. Known false positive: a concurrent default/root-timer tick (reproduced by the isolation test (7))",
+    "LOW4": "LIMITS comment extended: files written then deleted before the child exits, and empty directories, are not detected",
+    "re_verified": "real CLI wave of 5 re-run after the fixes: 5/5 PASS, writeSetCheck OK x5, ledger 5 entries, seal OK"
+  }
 }

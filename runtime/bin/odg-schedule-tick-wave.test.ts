@@ -234,8 +234,20 @@ for (const f of (process.env["STUB_EXTRA_" + id] || "").split(",").filter(Boolea
 const n = parseInt(process.env["STUB_LEDGER_" + id] || "0", 10);
 if (n > 0) { const lp = path.join(process.cwd(), "runtime", "generated", "mission-ledger.json"); fs.mkdirSync(path.dirname(lp), { recursive: true });
   let l = { entries: [] }; try { l = JSON.parse(fs.readFileSync(lp, "utf8")); } catch {} for (let i = 0; i < n; i++) l.entries.push({ mission: id, proven: true }); fs.writeFileSync(lp, JSON.stringify(l)); }
-fs.writeFileSync(path.join(out, "mission-report.json"), JSON.stringify({ mission: id, validated: true, status: "SUCCESS" }));
-setTimeout(() => process.exit(0), 150);
+const act = (process.env["STUB_ACT_" + id] || "").split(",").filter(Boolean);
+const lp = path.join(process.cwd(), "runtime", "generated", "mission-ledger.json");
+const rep = JSON.stringify({ mission: id, validated: true, status: "SUCCESS" });
+for (const a of act) {
+  if (a === "symlink") fs.symlinkSync("/etc/passwd", path.join(out, "decision.json"));
+  if (a === "hardlink") { const ext = path.join(process.cwd(), "outside-" + id + ".json"); fs.writeFileSync(ext, "{}"); fs.linkSync(ext, path.join(out, "decision.json")); }
+  if (a === "fifo") require("child_process").execFileSync("mkfifo", [path.join(out, "decision.json")]);
+  if (a === "foreign") { fs.mkdirSync(path.dirname(lp), { recursive: true }); let l = { entries: [] }; try { l = JSON.parse(fs.readFileSync(lp, "utf8")); } catch {} l.entries.push({ mission: "NOT_IN_WAVE", proven: true }); fs.writeFileSync(lp, JSON.stringify(l)); }
+  if (a === "garbleLedger") { fs.mkdirSync(path.dirname(lp), { recursive: true }); fs.writeFileSync(lp, "{not json"); }
+  if (a === "unreadableSub") { fs.mkdirSync(path.join(out, "sub")); fs.chmodSync(path.join(out, "sub"), 0); }
+}
+if (act.includes("symlinkReport")) { const ext = path.join(process.cwd(), "elsewhere-" + id + ".json"); fs.writeFileSync(ext, rep); fs.symlinkSync(ext, path.join(out, "mission-report.json")); }
+else fs.writeFileSync(path.join(out, "mission-report.json"), rep);
+setTimeout(() => process.exit(0), parseInt(process.env["STUB_SLEEP_" + id] || "150", 10));
 `);
     const isoOpts = (dir, spec, env) => ({ ...waveOpts(dir, spec, { env }), runBin: ISTUB, isolate: true, readReport: undefined, cwd: dir, runOutputBase: path.join(dir, "runtime", "generated", "wave-runs", "t") });
     const decl = (id) => ({ write_set: ["mission-report.json", "logs/" + id + ".run.log"] });
@@ -269,6 +281,53 @@ setTimeout(() => process.exit(0), 150);
       const dir = freshDir();
       const d = await tick.tickWave(isoOpts(dir, { W9107: { }, W9108: { } }, {}));
       ok("absent write_set (isolated, real spawn) ⇒ serialized wave of 1, check UNDECLARED (not enforced, not violated)", d.wave.length === 1 && d.results[0].writeSetCheck.status === "UNDECLARED" && d.results[0].status === "PASS");
+    }
+    // ---- inspection hardening (MED + LOW1..3) ----
+    {
+      const dir = freshDir();
+      const spec = { W9201: decl("W9201"), W9202: decl("W9202"), W9203: decl("W9203") };
+      const d = await tick.tickWave({ ...isoOpts(dir, spec, { STUB_ACT_W9201: "symlink", STUB_ACT_W9202: "hardlink", STUB_ACT_W9203: "fifo" }), waveMax: 3 });
+      const by = Object.fromEntries(d.results.map((r) => [r.mission, r]));
+      ok(`MED: decision.json -> /etc/passwd SYMLINK in the run dir ⇒ FAIL WRITE_SET_VIOLATION (not counted as a declared file) (${by.W9201.reason.slice(0, 90)})`, by.W9201.status === "FAIL" && by.W9201.writeSetCheck.status === "VIOLATION" && /decision\.json \(symlink\)/.test(by.W9201.reason) && !by.W9201.writeSetCheck.actual.includes("decision.json"));
+      ok("MED: a HARD-LINKED declared file (nlink 2, inode shared with a file outside the run dir) ⇒ VIOLATION", by.W9202.status === "FAIL" && /hard link, nlink 2/.test(by.W9202.reason));
+      ok("MED: a non-regular entry (FIFO) under a declared name ⇒ VIOLATION", by.W9203.status === "FAIL" && /decision\.json \(non-regular\)/.test(by.W9203.reason));
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9204: decl("W9204") }, { STUB_ACT_W9204: "symlinkReport" }));
+      ok(`MED: a SYMLINKED mission-report.json (pointing at a SUCCESS report elsewhere) is REFUSED by readReport ⇒ not verified ⇒ FAIL (${d.results[0].reason.slice(0, 80)})`, d.results[0].status === "FAIL" && d.results[0].writeSetCheck.status === "VIOLATION" && /mission-report\.json \(symlink\)/.test(d.results[0].reason));
+      const t = path.join(dir, "real.json"); fs.writeFileSync(t, '{"a":1}'); fs.symlinkSync(t, path.join(dir, "ln.json")); fs.linkSync(t, path.join(dir, "hl.json"));
+      let e1 = null, e2 = null; try { tick.readRegularJson(path.join(dir, "ln.json")); } catch (e) { e1 = e; } try { tick.readRegularJson(path.join(dir, "hl.json")); } catch (e) { e2 = e; }
+      fs.rmSync(path.join(dir, "hl.json")); 
+      ok("MED: readRegularJson refuses a symlink (O_NOFOLLOW) and a hard-linked file; reads a plain regular file", e1 && e2 && tick.readRegularJson(t).a === 1);
+    }
+    {
+      const dir = freshDir();
+      let gone = false;
+      const spec = { W9205: decl("W9205") };
+      const o = isoOpts(dir, spec, { STUB_ACT_W9205: "", STUB_EXTRA_W9205: "undeclared.json", STUB_SLEEP_W9205: "400" });
+      o.loadMission = (id) => (gone ? null : (spec[id] ? { mission: id, mode: "AUDIT", ...spec[id] } : null));
+      const timer = setTimeout(() => { gone = true; }, 150);   // mission definition deleted/broken MID-RUN
+      const d = await tick.tickWave(o); clearTimeout(timer);
+      ok(`LOW1: write_set captured at selection — a mission JSON deleted mid-run does NOT downgrade to UNDECLARED; the undeclared write is still a VIOLATION (${d.results[0].writeSetCheck.status})`, gone && d.results[0].status === "FAIL" && d.results[0].writeSetCheck.status === "VIOLATION" && JSON.stringify(d.results[0].writeSetCheck.undeclared) === '["undeclared.json"]');
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9206: decl("W9206"), W9207: decl("W9207") }, { STUB_ACT_W9206: "garbleLedger" }));
+      ok(`LOW2: ledger unparsable after the wave ⇒ every attempt UNVERIFIABLE ⇒ FAIL, never OK (${d.results[0].reason.slice(0, 70)})`, d.results.length === 2 && d.results.every((r) => r.status === "FAIL" && r.writeSetCheck.status === "UNVERIFIABLE" && /^WRITE_SET_UNVERIFIABLE: ledger unparsable/.test(r.reason)));
+      const dir2 = freshDir();
+      const d2 = await tick.tickWave(isoOpts(dir2, { W9208: decl("W9208") }, { STUB_ACT_W9208: "unreadableSub" }));
+      try { fs.chmodSync(path.join(dir2, "runtime", "generated", "wave-runs", "t", "W9208", "sub"), 0o755); } catch {}
+      const rootUser = typeof process.getuid === "function" && process.getuid() === 0;
+      ok(`LOW2: an unreadable sub-dir in the run dir ⇒ UNVERIFIABLE ⇒ FAIL${rootUser ? " (skipped: root reads mode-000 dirs)" : ""}`, rootUser || (d2.results[0].status === "FAIL" && d2.results[0].writeSetCheck.status === "UNVERIFIABLE"));
+      const miss = tick.inspectRunDir(path.join(dir2, "does-not-exist"));
+      ok("LOW2: a missing run dir ⇒ unreadable reported ⇒ auditRunWrites UNVERIFIABLE (not OK by absence)", miss.unreadable && tick.auditRunWrites(["a"], miss.files, 1, { unverifiable: miss.unreadable }).status === "UNVERIFIABLE" && tick.ledgerCounts(path.join(dir2, "nope.json")).ok === true);
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9209: decl("W9209"), W9210: decl("W9210") }, { STUB_ACT_W9209: "foreign" }));
+      ok(`LOW3: a ledger append under an id OUTSIDE the wave ⇒ every attempt FAIL LEDGER_FOREIGN_APPEND (distinct reason) (${d.results[1].reason.slice(0, 90)})`, d.results.every((r) => r.status === "FAIL" && r.writeSetCheck.status === "VIOLATION" && /LEDGER_FOREIGN_APPEND: 1 ledger entry/.test(r.reason)));
+      ok("LOW3: ledgerForeignDelta = total delta − Σ wave deltas (id-less entries count as foreign)", tick.ledgerForeignDelta({ per: { A: 1 }, total: 1 }, { per: { A: 2, B: 1 }, total: 4 }, ["A"]) === 2 && tick.ledgerForeignDelta({ per: {}, total: 0 }, { per: { A: 1 }, total: 1 }, ["A"]) === 0);
     }
     {
       const dir = freshDir();
