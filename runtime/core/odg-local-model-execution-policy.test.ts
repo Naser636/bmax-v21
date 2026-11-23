@@ -89,6 +89,14 @@ function main(): void {
   check("loader fail-closed: bad registry inside valid envelope ⇒ NOT_MEASURED", M.loadMeasuredRegistry("x.json", { readFile: () => JSON.stringify({ schema: "V155_OLLAMA_CAPABILITY_REGISTRY_EVIDENCE", generatedAt: ENV.generatedAt, registry: { schema: CAP.REGISTRY_SCHEMA, classes: ["a"], models: [] } }) }).ok === false);
 
   // REAL registry: measured raise + provenance
+  // #912 LOW: a hand-edited registry size cannot turn a SMALLER model into a "raise" (sizes cross-checked vs reference table)
+  {
+    const tampered = JSON.parse(JSON.stringify(ENV));
+    const m05 = tampered.registry.models.find((m: any) => m.id === "qwen2.5:0.5b");
+    if (m05) { m05.parameterCount = 9e12; for (const k of Object.keys(m05.perClass || {})) if (m05.perClass[k] && m05.perClass[k].status) { m05.perClass[k].status = "QUALIFIED"; m05.perClass[k].passRate = { value: 1, n: 99 }; } }
+    const t = M.chooseExecutionPolicy("t", [], { taskClass: "bugfix", measured: tampered, now: NOW });
+    check("#912 LOW: tampered parameterCount (0.5b claimed 9e12) never yields 0.5b", t.model !== "qwen2.5:0.5b");
+  }
   const bf = M.chooseExecutionPolicy("t", [], { taskClass: "bugfix", measured: ENV, now: NOW });
   check("REAL bugfix (3b DEMOTED, 7b QUALIFIED) ⇒ PROBE raised 3b→7b; maxRepair/tier unchanged", bf.model === "qwen2.5-coder:7b" && bf.maxRepair === 1 && bf.tier === "PROBE" && bf.measured.raised === true && bf.escalateIfStillFails === false);
   check("provenance recorded: class, qualified model, pass rate, n, taskset version, evidence sha/time", bf.measured.taskClass === "bugfix" && bf.measured.qualifiedModel === "qwen2.5-coder:7b" && bf.measured.passRate === 1 && bf.measured.n === 3 && bf.measured.taskSetVersion === "V155-TASKSET-2" && bf.measured.sha256 === ENV.sha256 && bf.measured.generatedAt === ENV.generatedAt && /MEASURED:/.test(bf.reason));

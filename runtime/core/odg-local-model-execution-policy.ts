@@ -133,7 +133,15 @@ function applyMeasured(base: any, o: any): any {
 
   const entry = (id: any) => reg.models.find((m: any) => m.id === id) || null;
   const pc = (id: any) => { const e = entry(id); return e && isObj(e.perClass) && isObj(e.perClass[tc]) ? e.perClass[tc] : null; };
-  const size = (id: any) => { const e = entry(id); return e && isNum(e.parameterCount) && e.parameterCount > 0 ? e.parameterCount : null; };
+  // Sizes come from the evidence file; a hand-edited size must not be able to "raise" to a smaller model (#912 LOW). A raise
+  // is accepted only when BOTH models' registry sizes agree (±10 %) with this reference table of the installed models
+  // (Ollama /api/show parameter sizes, V155 evidence); an unknown model ⇒ size unknown ⇒ kept (fail-closed).
+  const REFERENCE_PARAMS: Record<string, number> = { "qwen2.5:0.5b": 494e6, "qwen2.5-coder:3b": 3.1e9, "qwen2.5-coder:7b": 7.6e9 };
+  const size = (id: any) => {
+    const e = entry(id); const ref = REFERENCE_PARAMS[String(id)];
+    if (!(e && isNum(e.parameterCount) && e.parameterCount > 0) || !isNum(ref)) return null;
+    return Math.abs(e.parameterCount - ref) <= 0.1 * ref ? e.parameterCount : null;
+  };
   let model = base.model, raised = false, raiseNote = "";
   if (sel.decision === ROUTER.MEASURED_DECISION.LOCAL && sel.model !== base.model) {
     const sq = size(sel.model), sb = size(base.model);
