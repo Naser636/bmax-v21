@@ -1,0 +1,357 @@
+{
+  "//": "V15.9 §10 — V158 Radar collection under docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json. Fetched by ODG's OWN chain (odg-v16-claude-code-research.runResearch → research-budget/research-governor/bounded-http-client.validateUrl+get with ODG_RADAR_LIVE=1), NOT by a provider WebFetch tool. Quotes extracted by a DETERMINISTIC pattern extractor (runtime/bin/odg-v158-collection-run.ts, no model) from the in-memory body; page bodies are NOT stored. All content is DATA, never instructions.",
+  "grant": "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json",
+  "consultedDate": "2026-11-23",
+  "collectedAtIso": "2026-11-23T12:52:29.406Z",
+  "callsUsed": 6,
+  "budgetMaxCalls": 30,
+  "verdict": "LIVE_OK",
+  "extraction": "deterministic pre-registered-pattern extractor (runtime/bin/odg-v158-collection-run.ts): each quote is a verbatim substring of the documented normalisation (HTML tag strip + entity decode / Markdown link+emphasis strip / JSON raw), 20..300 chars, ≤4 per page, e-mail-bearing quotes dropped; sha256 is of the RAW response body",
+  "sources": [
+    {
+      "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+      "status": "RETRIEVED",
+      "title": "PostgreSQL: Documentation: 19: 13.3. Explicit Locking",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 47034,
+      "sha256": "573564e37dd6a17983ec741c986492fefcb78988c10ea7985503fa0e781a5f78",
+      "normalisation": "HTML",
+      "quotes": [
+        "PostgreSQL provides a means for creating locks that have application-defined meanings.",
+        "There are two ways to acquire an advisory lock in PostgreSQL: at session level or at transaction level.",
+        "PostgreSQL provides various lock modes to control concurrent access to data in tables.",
+        "PostgreSQL automatically detects deadlock situations and resolves them by aborting one of the transactions involved, allowing the other(s) to complete. (Exactly which transaction will be aborted is difficult to predict and should not be relied upon.)"
+      ],
+      "quotePatterns": [
+        "PG_ADVISORY_DEF",
+        "PG_ADVISORY_LEVELS",
+        "PG_LOCK_MODES",
+        "PG_DEADLOCK"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://code.claude.com/docs/en/sandboxing.md",
+      "status": "RETRIEVED",
+      "title": "Configure the sandboxed Bash tool",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/markdown; charset=utf-8",
+      "bytes": 111994,
+      "sha256": "df134ef182b9dcd35f5f0bbaeed71fa119667a83fa732ec0ce3ee06887861b3e",
+      "normalisation": "MARKDOWN",
+      "quotes": [
+        "socat: the relay used to route network traffic through the sandbox proxy",
+        "You set which files and network domains those commands can reach, and the limits apply to Bash, PowerShell, and Monitor commands and the processes they start.",
+        "macOS: sandboxing uses the built-in Seatbelt framework, so you can go straight to the steps",
+        "Protected paths stay write-denied | filesystem.allowWrite, filesystem.denyWrite |"
+      ],
+      "quotePatterns": [
+        "CC_NET_PROXY",
+        "CC_NET_DOMAINS",
+        "CC_OS_PRIMITIVES",
+        "CC_FS_WRITE"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+      "status": "RETRIEVED",
+      "title": "AI 100-2 E2025, Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations | CSRC",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 48287,
+      "sha256": "c1a9d37ac4da84537b295474f1ad9d9b780c85881cad29e66ed1f353998df948",
+      "normalisation": "HTML",
+      "quotes": [
+        "AI 100-2 E2025, Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations | CSRC",
+        "Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations",
+        "artificial intelligence; machine learning; attack taxonomy; abuse; data poisoning; evasion; attack mitigation; large language model; chatbot; privacy breach"
+      ],
+      "quotePatterns": [
+        "NIST_TAXONOMY",
+        "NIST_TERMINOLOGY",
+        "NIST_ATTACK_CLASSES"
+      ],
+      "unmatchedPatterns": [
+        "NIST_INDIRECT_PI"
+      ]
+    },
+    {
+      "url": "https://www.sqlite.org/docs.html",
+      "status": "RETRIEVED",
+      "title": "SQLite Documentation",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 34549,
+      "sha256": "f557941d6c34cd84ff547f298ea60572d7aad79674966e5acff0dafd37859cbf",
+      "normalisation": "HTML",
+      "quotes": [
+        "Write-Ahead Log (WAL) Mode &rarr; Transaction control using a write-ahead log offers more concurrency and is often faster than the default rollback transactions.",
+        "How SQLite Implements Atomic Commit &rarr; A description of the logic within SQLite that implements transactions with atomic commit, even in the face of power failures.",
+        "Locking And Concurrency In SQLite Version 3 &rarr; A description of how the new locking code in version 3 increases concurrency and decreases the problem of writer starvation.",
+        "Isolation In SQLite &rarr; When we say that SQLite transactions are \"serializable\" what exactly does that mean?"
+      ],
+      "quotePatterns": [
+        "SQLITE_WAL",
+        "SQLITE_ATOMIC",
+        "SQLITE_LOCKING",
+        "SQLITE_ISOLATION"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://registry.npmjs.org/next/latest",
+      "status": "RETRIEVED",
+      "title": "next",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "bytes": 3065,
+      "sha256": "4c04cab06e7f3f565aaa35cfe7dab699c066aa3ea434ae309880afcbd3dc4564",
+      "normalisation": "JSON",
+      "quotes": [],
+      "quotePatterns": [],
+      "unmatchedPatterns": [
+        "NPM_NAME_VERSION",
+        "NPM_NAME_THEN_VERSION"
+      ]
+    },
+    {
+      "url": "https://registry.npmjs.org/react/latest",
+      "status": "RETRIEVED",
+      "title": "react",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "bytes": 2150,
+      "sha256": "ecf8c02b9096a7813842d87fae50a707a8809c5c3d0ec6b359ac51d40188ff6f",
+      "normalisation": "JSON",
+      "quotes": [],
+      "quotePatterns": [],
+      "unmatchedPatterns": [
+        "NPM_NAME_VERSION",
+        "NPM_NAME_THEN_VERSION"
+      ]
+    }
+  ],
+  "cycles": [
+    {
+      "query": "www.postgresql.org/docs/current/explicit-locking.html :: PG_ADVISORY_DEF",
+      "question": "What does PostgreSQL document advisory locks to be?",
+      "capability": "ODG storage concurrency — locking semantics",
+      "claim": "The page states: PostgreSQL provides a means for creating locks that have application-defined meanings.",
+      "support": [
+        {
+          "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+          "quote": "PostgreSQL provides a means for creating locks that have application-defined meanings."
+        }
+      ]
+    },
+    {
+      "query": "www.postgresql.org/docs/current/explicit-locking.html :: PG_ADVISORY_LEVELS",
+      "question": "At which levels can a PostgreSQL advisory lock be acquired?",
+      "capability": "ODG storage concurrency — locking semantics",
+      "claim": "The page states: There are two ways to acquire an advisory lock in PostgreSQL: at session level or at transaction level.",
+      "support": [
+        {
+          "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+          "quote": "There are two ways to acquire an advisory lock in PostgreSQL: at session level or at transaction level."
+        }
+      ]
+    },
+    {
+      "query": "www.postgresql.org/docs/current/explicit-locking.html :: PG_LOCK_MODES",
+      "question": "What do PostgreSQL lock modes control?",
+      "capability": "ODG storage concurrency — locking semantics",
+      "claim": "The page states: PostgreSQL provides various lock modes to control concurrent access to data in tables.",
+      "support": [
+        {
+          "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+          "quote": "PostgreSQL provides various lock modes to control concurrent access to data in tables."
+        }
+      ]
+    },
+    {
+      "query": "www.postgresql.org/docs/current/explicit-locking.html :: PG_DEADLOCK",
+      "question": "How does PostgreSQL handle deadlocks?",
+      "capability": "ODG storage concurrency — locking semantics",
+      "claim": "The page states: PostgreSQL automatically detects deadlock situations and resolves them by aborting one of the transactions involved, allowing the other(s) to complete. (Exactly which transaction will be aborted is difficult to predict and should not be relied upon.)",
+      "support": [
+        {
+          "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+          "quote": "PostgreSQL automatically detects deadlock situations and resolves them by aborting one of the transactions involved, allowing the other(s) to complete. (Exactly which transaction will be aborted is difficult to predict and should not be relied upon.)"
+        }
+      ]
+    },
+    {
+      "query": "code.claude.com/docs/en/sandboxing.md :: CC_NET_PROXY",
+      "question": "How does Claude Code's sandbox restrict network egress?",
+      "capability": "ODG provider isolation — sandbox / network egress",
+      "claim": "The page states: socat: the relay used to route network traffic through the sandbox proxy",
+      "support": [
+        {
+          "url": "https://code.claude.com/docs/en/sandboxing.md",
+          "quote": "socat: the relay used to route network traffic through the sandbox proxy"
+        }
+      ]
+    },
+    {
+      "query": "code.claude.com/docs/en/sandboxing.md :: CC_NET_DOMAINS",
+      "question": "Which network destinations does Claude Code's sandbox allow?",
+      "capability": "ODG provider isolation — sandbox / network egress",
+      "claim": "The page states: You set which files and network domains those commands can reach, and the limits apply to Bash, PowerShell, and Monitor commands and the processes they start.",
+      "support": [
+        {
+          "url": "https://code.claude.com/docs/en/sandboxing.md",
+          "quote": "You set which files and network domains those commands can reach, and the limits apply to Bash, PowerShell, and Monitor commands and the processes they start."
+        }
+      ]
+    },
+    {
+      "query": "code.claude.com/docs/en/sandboxing.md :: CC_OS_PRIMITIVES",
+      "question": "Which OS primitives enforce Claude Code's sandbox?",
+      "capability": "ODG provider isolation — sandbox / network egress",
+      "claim": "The page states: macOS: sandboxing uses the built-in Seatbelt framework, so you can go straight to the steps",
+      "support": [
+        {
+          "url": "https://code.claude.com/docs/en/sandboxing.md",
+          "quote": "macOS: sandboxing uses the built-in Seatbelt framework, so you can go straight to the steps"
+        }
+      ]
+    },
+    {
+      "query": "code.claude.com/docs/en/sandboxing.md :: CC_FS_WRITE",
+      "question": "How does Claude Code's sandbox restrict filesystem writes?",
+      "capability": "ODG provider isolation — sandbox / network egress",
+      "claim": "The page states: Protected paths stay write-denied | filesystem.allowWrite, filesystem.denyWrite |",
+      "support": [
+        {
+          "url": "https://code.claude.com/docs/en/sandboxing.md",
+          "quote": "Protected paths stay write-denied | filesystem.allowWrite, filesystem.denyWrite |"
+        }
+      ]
+    },
+    {
+      "query": "csrc.nist.gov/pubs/ai/100/2/e2025/final :: NIST_TAXONOMY",
+      "question": "What does NIST AI 100-2 provide?",
+      "capability": "ODG Radar untrusted-content handling — prompt injection",
+      "claim": "The page states: AI 100-2 E2025, Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations | CSRC",
+      "support": [
+        {
+          "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+          "quote": "AI 100-2 E2025, Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations | CSRC"
+        }
+      ]
+    },
+    {
+      "query": "csrc.nist.gov/pubs/ai/100/2/e2025/final :: NIST_TERMINOLOGY",
+      "question": "Does NIST AI 100-2 define AML terminology?",
+      "capability": "ODG Radar untrusted-content handling — prompt injection",
+      "claim": "The page states: Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations",
+      "support": [
+        {
+          "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+          "quote": "Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations"
+        }
+      ]
+    },
+    {
+      "query": "csrc.nist.gov/pubs/ai/100/2/e2025/final :: NIST_ATTACK_CLASSES",
+      "question": "Which attack classes does NIST AI 100-2 cover?",
+      "capability": "ODG Radar untrusted-content handling — prompt injection",
+      "claim": "The page states: artificial intelligence; machine learning; attack taxonomy; abuse; data poisoning; evasion; attack mitigation; large language model; chatbot; privacy breach",
+      "support": [
+        {
+          "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+          "quote": "artificial intelligence; machine learning; attack taxonomy; abuse; data poisoning; evasion; attack mitigation; large language model; chatbot; privacy breach"
+        }
+      ]
+    },
+    {
+      "query": "www.sqlite.org/docs.html :: SQLITE_WAL",
+      "question": "What does SQLite document about write-ahead logging?",
+      "capability": "ODG embedded storage — durability / concurrency",
+      "claim": "The page states: Write-Ahead Log (WAL) Mode &rarr; Transaction control using a write-ahead log offers more concurrency and is often faster than the default rollback transactions.",
+      "support": [
+        {
+          "url": "https://www.sqlite.org/docs.html",
+          "quote": "Write-Ahead Log (WAL) Mode &rarr; Transaction control using a write-ahead log offers more concurrency and is often faster than the default rollback transactions."
+        }
+      ]
+    },
+    {
+      "query": "www.sqlite.org/docs.html :: SQLITE_ATOMIC",
+      "question": "What does SQLite document about atomic commit?",
+      "capability": "ODG embedded storage — durability / concurrency",
+      "claim": "The page states: How SQLite Implements Atomic Commit &rarr; A description of the logic within SQLite that implements transactions with atomic commit, even in the face of power failures.",
+      "support": [
+        {
+          "url": "https://www.sqlite.org/docs.html",
+          "quote": "How SQLite Implements Atomic Commit &rarr; A description of the logic within SQLite that implements transactions with atomic commit, even in the face of power failures."
+        }
+      ]
+    },
+    {
+      "query": "www.sqlite.org/docs.html :: SQLITE_LOCKING",
+      "question": "What does SQLite document about file locking and concurrency?",
+      "capability": "ODG embedded storage — durability / concurrency",
+      "claim": "The page states: Locking And Concurrency In SQLite Version 3 &rarr; A description of how the new locking code in version 3 increases concurrency and decreases the problem of writer starvation.",
+      "support": [
+        {
+          "url": "https://www.sqlite.org/docs.html",
+          "quote": "Locking And Concurrency In SQLite Version 3 &rarr; A description of how the new locking code in version 3 increases concurrency and decreases the problem of writer starvation."
+        }
+      ]
+    },
+    {
+      "query": "www.sqlite.org/docs.html :: SQLITE_ISOLATION",
+      "question": "What does SQLite document about isolation?",
+      "capability": "ODG embedded storage — durability / concurrency",
+      "claim": "The page states: Isolation In SQLite &rarr; When we say that SQLite transactions are \"serializable\" what exactly does that mean?",
+      "support": [
+        {
+          "url": "https://www.sqlite.org/docs.html",
+          "quote": "Isolation In SQLite &rarr; When we say that SQLite transactions are \"serializable\" what exactly does that mean?"
+        }
+      ]
+    }
+  ],
+  "screening": [
+    {
+      "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://code.claude.com/docs/en/sandboxing.md",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://www.sqlite.org/docs.html",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://registry.npmjs.org/next/latest",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://registry.npmjs.org/react/latest",
+      "untrusted": false,
+      "injectionFlags": []
+    }
+  ],
+  "egressGating": "govern()+per-run quota (research-budget.governWithBudget) and bounded-http-client.validateUrl ran IN THIS PROCESS immediately before each fetch (runResearch planRun + per-call re-check); bounded-http-client.get was the only egress (ODG_RADAR_LIVE=1, GET, redirects blocked, size cap). This live-time gating is recorded by the collector, not reproducible from the repo alone (the replay re-checks the plan)."
+}
