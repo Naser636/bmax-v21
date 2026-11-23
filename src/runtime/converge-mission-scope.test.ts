@@ -150,11 +150,31 @@ const DIRTY: DelegatedVerdict = { gitClean: false, residual: ["docs/stray.md"] }
 {
   // Persisted gitClean is FALSE in delegated mode (#922) — the scoped converge must use the fresh delegated verdict.
   const r = scoped(["docs/a.md"], false, [CLEAN, CLEAN]);
-  check(r.code === 0, "C1. proven patch unchanged ⇒ RELEASE ⇒ exit 0");
+  check(r.code === 3, "C1. proven patch unchanged ⇒ PROVEN, PENDING HUMAN COMMIT ⇒ exit 3 (never a RELEASE)");
   check(!r.log.includes("campaign-readPlanState"), "C2. the adapter's campaign readPlanState is NEVER called (no roadmap walk)");
-  check(JSON.stringify(r.log) === JSON.stringify(["contract:T", "pipeline:T", "evidence:T", "archive:T"]), "C3. exactly the target mission ran, archived once");
+  check(JSON.stringify(r.log) === JSON.stringify(["contract:T", "pipeline:T", "evidence:T"]), "C3. exactly the target mission ran and NOTHING was archived (no ledger/checkpoint write)");
   check(r.seen.length === 2 && r.seen.every((p) => JSON.stringify(p) === JSON.stringify(["docs/a.md"])), "C4. verdict computed twice (pre-flight + evidence) on the SAME proven set");
-  check(r.rep.converged === true && r.rep.scope?.mission === "T" && r.rep.scope?.released === true && r.rep.scope?.gitCleanBasis === "DELEGATED_PATCH", "C5. report: converged + scope{MISSION_SCOPED,T,released,DELEGATED_PATCH}");
+  check(r.rep.converged === false && r.rep.status === "VALIDATED_PENDING_COMMIT" && r.rep.scope?.mission === "T" && r.rep.scope?.released === false
+    && r.rep.scope?.gitCleanBasis === "DELEGATED_PATCH" && r.rep.scope?.delegatedPatchClean === true && r.rep.scope?.pendingHumanCommit === true,
+    "C5. report: VALIDATED_PENDING_COMMIT, not released, delegatedPatchClean exposed SEPARATELY, pendingHumanCommit");
+  check(r.rep.halt?.mission === "T" && r.rep.halt?.reason === "VALIDATED_PENDING_COMMIT", "C5b. the Release Manager saw gitClean=false (tree state) ⇒ NO_RELEASE ⇒ honest pending-commit halt");
+  check(process.env.ODG_DELEGATED_PATCH_PENDING_COMMIT === undefined, "C5c. refuse-only ledger marker is restored after the scoped run");
+}
+{
+  // Even if the inner evidence claims gitClean=true, delegated mode FORCES the tree state false ⇒ no RELEASE/archive.
+  const r = scoped(["docs/a.md"], true, [CLEAN, CLEAN]);
+  check(r.code === 3 && !r.log.some((l) => l.startsWith("archive:")), "C5d. delegated mode never RELEASEs/archives, even if inner gitClean claims true");
+}
+{
+  // The pipeline (inside runPipeline) sees the refuse-only ledger marker in delegated mode only.
+  let seen: string | undefined = "unset";
+  const ports = innerPorts(false, []);
+  const wrapped: AutonomyRuntimePorts = { ...ports, runPipeline: (m) => { seen = process.env.ODG_DELEGATED_PATCH_PENDING_COMMIT; return ports.runPipeline(m); } };
+  runScopedConverge({ mission: "T", delegatedPaths: ["docs/a.md"] }, { autonomy: new RuntimeAutonomy(), ports: wrapped, migrationReport: () => "M", readJson: () => null, writeFile: () => {}, now: () => "2026-11-23T00:00:00.000Z", log: () => {}, delegatedVerdict: () => CLEAN });
+  check(seen === "1", "C5e. delegated mode: pipeline children inherit ODG_DELEGATED_PATCH_PENDING_COMMIT=1 (ledger stage refuses)");
+  seen = "unset";
+  runScopedConverge({ mission: "T", delegatedPaths: [] }, { autonomy: new RuntimeAutonomy(), ports: { ...innerPorts(true, []), runPipeline: () => { seen = process.env.ODG_DELEGATED_PATCH_PENDING_COMMIT; return { pipelineOk: true }; } }, migrationReport: () => "M", readJson: () => null, writeFile: () => {}, now: () => "2026-11-23T00:00:00.000Z", log: () => {} });
+  check(seen === undefined, "C5f. default (post-commit) mode: no marker ⇒ ledger records normally");
 }
 {
   const r = scoped(["docs/a.md"], false, [DIRTY]);
@@ -205,7 +225,7 @@ if (!fs.existsSync(path.join(REPO, "runtime", "dist", "bin", "odg-verify.js"))) 
   failures++; console.log("  FAIL D0. runtime/dist/bin/odg-verify.js missing — run `npm run build:runtime` first");
 } else {
   { const d = gitRepo(); const r = realScoped(d);
-    check(r.code === 0 && r.log.includes("archive:T"), "D1. only the proven untracked patch ⇒ clean ⇒ RELEASE"); fs.rmSync(d, { recursive: true, force: true }); }
+    check(r.code === 3 && !r.log.includes("archive:T"), "D1. only the proven untracked patch ⇒ delegated verdict clean ⇒ PENDING COMMIT (exit 3), not archived"); fs.rmSync(d, { recursive: true, force: true }); }
   { const d = gitRepo(); fs.writeFileSync(path.join(d, "docs", "stray.md"), "x\n"); const r = realScoped(d);
     const v = r.rep.scope?.delegatedVerdicts?.[0];
     check(r.code === 2 && r.log.length === 0 && !!v && v.gitClean === false && v.residual.includes("docs/stray.md"), "D2. extra untracked sibling ⇒ pre-flight STOP, residual names docs/stray.md"); fs.rmSync(d, { recursive: true, force: true }); }
@@ -259,7 +279,13 @@ function runDelegate(dir: string, convergeExit: number) {
   check(!!r.convergeArgv && r.convergeArgv[0] === "--mission=M", "E1. delegate invokes converge with --mission=<its mission>");
   check(JSON.stringify(cPaths) === JSON.stringify(["--delegated-path=src/app/deliverable.ts"]) && JSON.stringify(cPaths) === JSON.stringify(vPaths),
     "E2. converge receives EXACTLY the proven --delegated-path set verify received (same observation)");
-  check(r.exit === 0 && /ODG DELEGATE — done/.test(r.out), "E3. green converge ⇒ delegate completes (archive step reached)");
+  check(r.exit === 0 && /ODG DELEGATE — done/.test(r.out), "E3. converge exit 0 ⇒ delegate completes (archive step reached)");
+  fs.rmSync(dir, { recursive: true, force: true });
+}
+{
+  const dir = delegateSandbox(); const r = runDelegate(dir, 3);
+  check(r.exit === 0 && /PROVEN, AWAITING HUMAN COMMIT/.test(r.out) && !/ODG DELEGATE — done/.test(r.out) && !/Lifecycle:/.test(r.out),
+    "E3b. converge exit 3 (pending commit) ⇒ delegate stops honestly (exit 0), markArchived NEVER called");
   fs.rmSync(dir, { recursive: true, force: true });
 }
 {
@@ -287,6 +313,42 @@ function runDelegate(dir: string, convergeExit: number) {
   const b = spawnSync("node", [bin, "--mission=M", "--delegated-path=docs/a.md"], { cwd: dir }); const argvB = JSON.parse(fs.readFileSync(path.join(dir, "tsx-argv.json"), "utf8"));
   check(b.status === 3 && JSON.stringify(argvB) === JSON.stringify([entry, "--mission=M", "--delegated-path=docs/a.md"]), "E7. odg-converge forwards the scope argv verbatim");
   fs.rmSync(dir, { recursive: true, force: true });
+}
+
+// ---------------------------------------------------------------- F. Mission Ledger refuses a delegated (uncommitted) patch
+console.log("F. Mission Ledger — no proven entry while the delegated patch is uncommitted");
+function ledgerSandbox(verifyMode: string | null): string {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "v161-ledger-"));
+  fs.mkdirSync(path.join(dir, "runtime", "generated"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "runtime", "generated", "mission-report.json"), JSON.stringify({ mission: "LM", validated: true, status: "SUCCESS" }));
+  const verify: Record<string, unknown> = { build: true, typescript: true, gitClean: false, mission: "LM" };
+  if (verifyMode) verify.gitCleanScope = { mode: verifyMode, provenInScope: ["docs/a.md"], residualDirty: [] };
+  fs.writeFileSync(path.join(dir, "runtime", "generated", "runtime-verify.json"), JSON.stringify(verify));
+  return dir;
+}
+function ledgerRun(dir: string, marker: boolean) {
+  const env: NodeJS.ProcessEnv = { ...process.env };
+  if (marker) env.ODG_DELEGATED_PATCH_PENDING_COMMIT = "1"; else delete env.ODG_DELEGATED_PATCH_PENDING_COMMIT;
+  const r = spawnSync("node", [path.join(REPO, "runtime", "dist", "core", "mission-ledger.js"), "LM"], { cwd: dir, encoding: "utf8", env });
+  const out = (r.stdout || "") + (r.stderr || "");
+  let entries: { mission?: string }[] = [];
+  try { entries = JSON.parse(fs.readFileSync(path.join(dir, "runtime", "generated", "mission-ledger.json"), "utf8")).entries || []; } catch { entries = []; }
+  return { out, entries };
+}
+{
+  const d = ledgerSandbox(null); const r = ledgerRun(d, true);
+  check(/DELEGATED_PATCH|delegated patch is UNCOMMITTED/.test(r.out) && !r.entries.some((e) => e.mission === "LM"), "F1. marker set ⇒ ledger REFUSES (no entry written) despite a validated report");
+  fs.rmSync(d, { recursive: true, force: true });
+}
+{
+  const d = ledgerSandbox("DELEGATED_PATCH"); const r = ledgerRun(d, false);
+  check(/delegated patch is UNCOMMITTED/.test(r.out) && !r.entries.some((e) => e.mission === "LM"), "F2. verify evidence in DELEGATED_PATCH mode ⇒ ledger REFUSES (no entry)");
+  fs.rmSync(d, { recursive: true, force: true });
+}
+{
+  const d = ledgerSandbox(null); const r = ledgerRun(d, false);
+  check(!/delegated patch is UNCOMMITTED/.test(r.out), "F3. no marker + default verify evidence ⇒ the delegated gate is inert (other gates decide, unchanged)");
+  fs.rmSync(d, { recursive: true, force: true });
 }
 
 console.log(failures === 0 ? "\nALL PASS — V16.1 mission-scoped delegate converge" : `\nFAILURES: ${failures}`);

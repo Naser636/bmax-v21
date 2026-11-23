@@ -297,8 +297,18 @@ export function runConverge(seams: ConvergeSeams = {}): number {
 // delegatedGitClean over the same porcelain surface: a dirty entry is tolerated only when it is exactly one
 // of those proven paths. That verdict is recomputed FRESH (a) before the pipeline runs and (b) at evidence
 // time — any new dirty path that appeared after delegate's observation (between verify and converge, or
-// produced by the pipeline itself) ⇒ gitClean=false ⇒ NO_RELEASE ⇒ non-zero exit ⇒ no archive.
-// Exit 0 ONLY when the loop reached PLAN_COMPLETE AND the target mission was actually RELEASED this run.
+// produced by the pipeline itself) ⇒ FAIL (exit 2).
+//
+// #923 inspection (HIGH): the delegated verdict NEVER replaces the Release Manager's gitClean gate. An uncommitted
+// patch is NOT a release: in delegated mode validation.gitClean stays FALSE (the tree state), so the Release Manager
+// returns NO_RELEASE and the loop ends at the honest VALIDATED_PENDING_COMMIT ("proven, awaiting the human commit").
+// The delegated verdict is exposed SEPARATELY (report scope.delegatedPatchClean). No release, no archive, no ledger
+// entry and no autonomy checkpoint before the commit: archive is refused in delegated mode, and the pipeline's own
+// Mission Ledger stage is told (ODG_DELEGATED_PATCH_PENDING_COMMIT=1, refuse-only) not to record. After the human
+// commit, `odg delegate <M>` observes 0 delegated paths ⇒ converge --mission=<M> with the DEFAULT gate ⇒ RELEASE +
+// ledger + archive through the unchanged path.
+// Exit codes (scoped): 0 = RELEASED (default gate only); 3 = DELEGATED PATCH PROVEN, PENDING HUMAN COMMIT (delegated
+// mode success, nothing recorded); 2 = blocked/diverged; 1 = anything else.
 // ---------------------------------------------------------------------------------------------------
 
 /** Explicit scope for a mission-scoped converge. */
@@ -307,6 +317,12 @@ export interface ConvergeScope {
   /** Proven in-scope uncommitted patch paths (odg-delegate). Empty ⇒ the default gitClean gate. */
   delegatedPaths: string[];
 }
+
+/** Scoped exit code: delegated patch proven (all gates green but the uncommitted tree), awaiting the human commit. */
+export const SCOPED_EXIT_PENDING_COMMIT = 3;
+
+/** Refuse-only env marker honoured by mission-ledger.recordMission (never permits anything). */
+export const DELEGATED_PENDING_COMMIT_ENV = "ODG_DELEGATED_PATCH_PENDING_COMMIT";
 
 /** Fresh delegated gitClean verdict for the current tree (same surface as odg-verify's delegated mode). */
 export interface DelegatedVerdict {
@@ -371,9 +387,10 @@ function defaultDelegatedVerdict(provenPaths: string[]): DelegatedVerdict {
 
 /**
  * Wrap the real ports so the EXISTING loop sees a one-mission work-list. generateContract/runPipeline are
- * the real ones; gatherEvidence is the real one with gitClean replaced — ONLY in delegated mode — by the
- * fresh delegated verdict; archive is the real one (records the ledger) and marks the scope done so the
- * next selection returns null (PLAN_COMPLETE). readPlanState does NOT call the adapter's campaign
+ * the real ones. gatherEvidence is the real one; in delegated mode it records the fresh delegated verdict
+ * SEPARATELY and FORCES validation.gitClean=false (the uncommitted tree) ⇒ the Release Manager can never RELEASE
+ * an uncommitted patch. archive is the real one (records the ledger) in default mode and REFUSED (throws ⇒
+ * EXECUTION_FAILED) in delegated mode — defense in depth. readPlanState does NOT call the adapter's campaign
  * readPlanState (which materialises every roadmap contract): it is the mission alone.
  */
 export function scopedPorts(
@@ -396,16 +413,23 @@ export function scopedPorts(
       if (scope.delegatedPaths.length === 0) return ev;
       const v = delegatedVerdict(scope.delegatedPaths);
       onVerdict(v);
-      return { ...ev, validation: { ...ev.validation, gitClean: v.gitClean === true } };
+      return { ...ev, validation: { ...ev.validation, gitClean: false } };
     },
     archive: (m, record) => {
+      if (scope.delegatedPaths.length > 0) {
+        throw new Error("archive refused: the delegated patch is UNCOMMITTED (human commit gate) — no ledger/checkpoint write");
+      }
       inner.archive(m, record);
       if (m === scope.mission) archived = true;
     },
   };
 }
 
-/** Mission-scoped converge. Exit 0 ⇔ PLAN_COMPLETE AND the scoped mission (and only it) RELEASED this run. */
+/**
+ * Mission-scoped converge. Default gate: exit 0 ⇔ PLAN_COMPLETE AND the scoped mission (and only it) RELEASED.
+ * Delegated: exit 3 ⇔ VALIDATED_PENDING_COMMIT for exactly this mission, nothing released, and BOTH fresh
+ * delegated verdicts clean; any divergence ⇒ 2.
+ */
 export function runScopedConverge(scope: ConvergeScope, seams: ScopedConvergeSeams = {}): number {
   const log = seams.log ?? console.log;
   const now = seams.now ?? (() => new Date().toISOString());
@@ -441,10 +465,25 @@ export function runScopedConverge(scope: ConvergeScope, seams: ScopedConvergeSea
   const autonomy: AutonomyEngine = seams.autonomy ?? new RuntimeAutonomy();
   const ports = scopedPorts(seams.ports ?? new AutonomyRuntimeAdapter(), scope, verdictFn, (v) => verdicts.push(v));
 
-  autonomy.initialize();
-  const result = autonomy.run({ autonomyContractVersion: AUTONOMY_CONTRACT_VERSION }, ports);
+  // Delegated: every pipeline child inherits the refuse-only ledger marker (no proven entry before the commit).
+  const prevMarker = process.env[DELEGATED_PENDING_COMMIT_ENV];
+  if (delegated) process.env[DELEGATED_PENDING_COMMIT_ENV] = "1";
+  let result: AutonomyRunResult;
+  try {
+    autonomy.initialize();
+    result = autonomy.run({ autonomyContractVersion: AUTONOMY_CONTRACT_VERSION }, ports);
+  } finally {
+    if (delegated) {
+      if (prevMarker === undefined) delete process.env[DELEGATED_PENDING_COMMIT_ENV];
+      else process.env[DELEGATED_PENDING_COMMIT_ENV] = prevMarker;
+    }
+  }
   const released = result.completed.some((c) => c.mission === scope.mission);
   const onlyTarget = result.completed.every((c) => c.mission === scope.mission);
+  const lastVerdict = verdicts[verdicts.length - 1];
+  const pendingCommit = delegated && result.status === "VALIDATED_PENDING_COMMIT" && result.completed.length === 0 &&
+    result.halt?.mission === scope.mission && verdicts.length >= 2 && verdicts.every((v) => v.gitClean === true) &&
+    !!lastVerdict && lastVerdict.gitClean === true;
 
   log("Status     :", result.status);
   log("Released   :", released ? scope.mission : "(none)");
@@ -453,9 +492,11 @@ export function runScopedConverge(scope: ConvergeScope, seams: ScopedConvergeSea
     log("Reason     :", result.halt.reason);
     log("Detail     :", result.halt.message);
   }
-  writeScopedReport({ result, contract }, scope, verdicts, null, io, startedAt, migrationText);
+  if (delegated) log("Delegated  :", pendingCommit ? "PROVEN — PENDING HUMAN COMMIT (not released, not recorded, not archived)" : "NOT PROVEN");
+  writeScopedReport({ result, contract }, scope, verdicts, null, io, startedAt, migrationText, pendingCommit);
   log("======================================");
 
+  if (delegated) return pendingCommit ? SCOPED_EXIT_PENDING_COMMIT : 2;
   if (result.status === "PLAN_COMPLETE" && released && onlyTarget) return 0;
   if (result.status === "BLOCKED" || result.status === "VALIDATED_PENDING_COMMIT") return 2;
   return 1;
@@ -475,6 +516,7 @@ function writeScopedReport(
   },
   startedAt: string,
   migrationText: string,
+  pendingCommit = false,
 ): void {
   try {
     const base: Record<string, unknown> = run
@@ -492,6 +534,9 @@ function writeScopedReport(
         gitCleanBasis,
         delegatedPaths: scope.delegatedPaths,
         delegatedVerdicts: verdicts,
+        // the delegate's verdict, SEPARATE from the release gate (which stays the tree state)
+        delegatedPatchClean: verdicts.length > 0 && verdicts.every((v) => v.gitClean === true),
+        pendingHumanCommit: pendingCommit,
         preflightStop,
       },
     };
@@ -499,7 +544,7 @@ function writeScopedReport(
     if (run) {
       s.writeFile(REPORT_MD, renderMarkdown(report) + `## Scope\n- MISSION_SCOPED: ${scope.mission} (gitClean basis: ${gitCleanBasis}; released: ${released})\n`);
     }
-    s.log("Convergence:", report.converged ? "REACHED (mission-scoped)" : "NOT REACHED");
+    s.log("Convergence:", report.converged ? "REACHED (mission-scoped)" : pendingCommit ? "PROVEN, PENDING HUMAN COMMIT (mission-scoped)" : "NOT REACHED");
     s.log("Report     :", REPORT_JSON);
   } catch (e) {
     s.log("Report     : (non-blocking error) " + (e as Error).message);

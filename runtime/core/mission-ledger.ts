@@ -146,6 +146,15 @@ function recordMission(mission: string): any {
   //   - src/runtime LOCAL route: ledger-record-adapter writes the honest report, then records;
   //   - autonomy RELEASE path: AutonomyRuntimeAdapter runs the Validation Engine for the mission
   //     (writing its report) and only RELEASEs/archives on validated === true.
+  // #923 DELEGATED-PATCH gate (REFUSE-ONLY, defense in depth). An odg-delegate patch that is still UNCOMMITTED is
+  // proven-pending-commit, NOT released: it must never become an immutable proven entry before the human commit.
+  // Refuse when (a) the mission-scoped delegated converge marked this process tree, or (b) the current verify evidence
+  // is in DELEGATED_PATCH mode. Neither condition can ever PERMIT a record — every other gate below is unchanged.
+  const verifyNow = readJsonSafe("runtime/generated/runtime-verify.json");
+  if (process.env.ODG_DELEGATED_PATCH_PENDING_COMMIT === "1" || (verifyNow && verifyNow.gitCleanScope && verifyNow.gitCleanScope.mode === "DELEGATED_PATCH")) {
+    console.warn(`[MissionLedger] Refusing to record "${mission}": delegated patch is UNCOMMITTED (pending the human commit gate).`);
+    return { skipped: true, reason: "DELEGATED_PATCH_PENDING_COMMIT", entry: { mission } };
+  }
   const report = readJsonSafe("runtime/generated/mission-report.json");
   const proven = !!report && report.mission === mission && report.validated === true;
   if (!proven) {
