@@ -1,0 +1,119 @@
+{
+  "//": "V15.8 §3.3 — GOVERNED extension of the EXISTING Radar (no second radar/governor). Produced by runtime/bin/odg-radar-source-admission-run.ts from docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json; do NOT hand-edit (the --check mode detects drift). Same canonical shape as V16: hostMatch EXACT + allowedPaths, enforced by research-governor.govern(); the canonical bounded-http-client ALLOWLIST is NOT mutated (allowedDomains are the per-call allowlist). Live egress requires ODG_RADAR_LIVE=1.",
+  "grant": {
+    "authorized": true,
+    "issuedBy": "owner (CTO directive V15.8 §3.3 — governed admission of PUBLIC sources; each host+prefix admitted on fetched robots/redirect/terms evidence by odg-radar-source-admission; live egress still requires ODG_RADAR_LIVE=1)",
+    "issuedMs": 1795392000000,
+    "issuedIso": "2026-11-23T00:00:00.000Z",
+    "expiresMs": 1797897600000,
+    "expiresIso": "2026-12-22T00:00:00.000Z",
+    "expiryNote": "29 days (≤ 30-day ceiling). Not renewable in place: renewal = a new versioned grant file produced by a new admission run.",
+    "scope": "READ_ONLY_PUBLIC_RESEARCH — admitted public, unauthenticated sources only (each host+prefix admitted with fetched robots/redirect/terms evidence)",
+    "hostMatch": "EXACT",
+    "allowedDomains": [
+      "code.claude.com",
+      "csrc.nist.gov",
+      "huggingface.co",
+      "registry.npmjs.org",
+      "www.postgresql.org",
+      "www.sqlite.org"
+    ],
+    "allowedPaths": {
+      "csrc.nist.gov": [
+        "/pubs/"
+      ],
+      "www.postgresql.org": [
+        "/docs/current/"
+      ],
+      "www.sqlite.org": [
+        "/docs.html"
+      ],
+      "registry.npmjs.org": [
+        "/next",
+        "/react"
+      ],
+      "huggingface.co": [
+        "/api/daily_papers",
+        "/api/models"
+      ],
+      "code.claude.com": [
+        "/docs/en/"
+      ]
+    },
+    "methods": [
+      "GET"
+    ],
+    "transport": "HTTPS only (bounded-http-client.get — GET only, redirects blocked, SSRF guard, size cap, timeout)",
+    "contentTypesPerCall": {
+      "csrc.nist.gov": [
+        "application/json",
+        "application/atom+xml",
+        "application/xml",
+        "text/html",
+        "text/plain",
+        "text/markdown"
+      ],
+      "www.postgresql.org": [
+        "application/json",
+        "application/atom+xml",
+        "application/xml",
+        "text/html",
+        "text/plain",
+        "text/markdown"
+      ],
+      "www.sqlite.org": [
+        "application/json",
+        "application/atom+xml",
+        "application/xml",
+        "text/html",
+        "text/plain",
+        "text/markdown"
+      ],
+      "registry.npmjs.org": [
+        "application/json",
+        "application/atom+xml",
+        "application/xml",
+        "text/html",
+        "text/plain",
+        "text/markdown"
+      ],
+      "huggingface.co": [
+        "application/json",
+        "text/plain",
+        "text/markdown"
+      ],
+      "code.claude.com": [
+        "application/json",
+        "application/atom+xml",
+        "application/xml",
+        "text/html",
+        "text/plain",
+        "text/markdown"
+      ]
+    },
+    "budget": {
+      "maxCalls": 30,
+      "maxBytes": 6000000,
+      "perResponseMaxBytes": 300000,
+      "timeoutMs": 15000,
+      "quotaScope": "PER RUN — enforced by research-budget.governWithBudget (requireBudget); per-host documented rate limits are recorded in the admission log and are ADVISORY (not enforced per host in code) — the per-run maxCalls is the enforced bound"
+    },
+    "contentPolicy": "fetched content is untrusted data; never executed; never treated as instructions; findings evaluated before integration",
+    "admission": {
+      "mechanism": "runtime/core/odg-radar-source-admission.ts admitSources()",
+      "admitted": 6,
+      "deferred": 20,
+      "refused": 2,
+      "decisionsSha256": "01c310ddb0740089cf1c96a308933aad25790a1295353746a5aa1819a0059423"
+    },
+    "constraints": [
+      "no private credentials, no authentication, no account creation, no API key/token",
+      "no external writes, no form submission, no side effect on any third party",
+      "no paid API, no purchase, no subscription",
+      "no circumvention of access controls (HTTP 401/403/429 recorded, never bypassed); robots and terms respected; no CAPTCHA/paywall/bot-wall bypass",
+      "fetched content is never executed and never treated as instructions; discovery ≠ authorization (proposals stay PROPOSED)",
+      "per-host documented rate limits are ADVISORY; hosts needing per-host pacing (Crawl-delay or hourly limit below one run) are DEFERRED until pacing exists",
+      "reuse recorded results before any new collection"
+    ]
+  }
+}

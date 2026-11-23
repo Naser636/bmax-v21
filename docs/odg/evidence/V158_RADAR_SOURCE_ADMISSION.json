@@ -1,0 +1,375 @@
+{
+  "generatedBy": "runtime/bin/odg-radar-source-admission-run.ts (deterministic, no network)",
+  "candidatesFile": "docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json",
+  "issuedIso": "2026-11-23T00:00:00.000Z",
+  "summary": {
+    "candidates": 28,
+    "admitted": 6,
+    "deferred": 20,
+    "refused": 2
+  },
+  "grantRefusedReason": null,
+  "decisions": [
+    {
+      "host": "api.github.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "RATE_LIMIT_60/h_TOO_CLOSE_TO_RUN_BUDGET_30 (no cumulative cap enforced)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/repos/anthropics/claude-code (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/repos/ollama/ollama (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/repos/ggml-org/llama.cpp (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/repos/stripe/smokescreen (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/repos/google/osv.dev (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "3ab2a29b3509da3163b831ac8f984c09050e32f2d98e0292bfd04079bd4b4aa4"
+    },
+    {
+      "host": "export.arxiv.org",
+      "decision": "REFUSE",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_DISALLOWS:/api/query",
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "OWNER_DECISION_REQUIRED: CONDITIONAL_OWNER_DECISION: CONTRADICTION robots vs ToU. RFC 9309: robots is not access authorization; ToU explicitly licenses API use. Owner must decide which instrument governs; log it."
+      ],
+      "evidenceSha256": "144c8b4a73d8e94d77dfe1ab7702a74671a0ac1411dd241e146b60d8886f0912"
+    },
+    {
+      "host": "arxiv.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "CRAWL_DELAY_15s_NOT_ENFORCEABLE (no per-host pacing in the transport)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/abs/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "d034f7d6cac97591e2986cc88023bab8bef6b5ae0af5044e62a1160388a33b81"
+    },
+    {
+      "host": "api.crossref.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "PER_SECOND_LIMIT_1_NOT_ENFORCEABLE",
+        "CONCURRENCY_LIMIT_1_NOT_ENFORCEABLE",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/works (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "2ac97caf8646f0e4b2558ddd29869e23ce026f130683f437e961d54367166a1b"
+    },
+    {
+      "host": "api.openalex.org",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: CONDITIONAL_LOW_BUDGET: Usage-priced service; keyless budget ~100 req/day. Key = registration (owner-gated).",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/works (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "0cf7d8c153fbafd1771e0e0db7aac69e56e517d91fdc70d4b7179d7b24529526"
+    },
+    {
+      "host": "api.semanticscholar.org",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: CONDITIONAL_UNRELIABLE: Anonymous pool frequently exhausted; treat 429 as normal; license agreement governs API use.",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/graph/v1/paper/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "58673300cde442f066c9984512540648ae644e276c0af7cc886adedd52635e99"
+    },
+    {
+      "host": "www.rfc-editor.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/rfc/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "a1ce5e4cd2c815e81fce1a5dba86f146f18fc6f2ed52666145e1daec040b6646"
+    },
+    {
+      "host": "datatracker.ietf.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/doc/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/api/v1/doc/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "1524d9b81efc304714668aa5e6cd261754e24be709e49e5d2f2013733b3cee6a"
+    },
+    {
+      "host": "www.w3.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:/TR/ ⊃ /TR/? (governor cannot exclude sub-paths — narrow the prefix)"
+      ],
+      "evidenceSha256": "69fea3e52051b70cd1ff26c9715411d0afe119925bfcb2ab021fcde993011f40"
+    },
+    {
+      "host": "csrc.nist.gov",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/pubs/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "e4cb9ff757a2c1025f3e42ff291ea7116510c727ed83a05bad40ead6a206aa6f"
+    },
+    {
+      "host": "nvlpubs.nist.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "CONTENT_TYPE_NOT_GRANTABLE:application/pdf",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/nistpubs/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "3ec9497df423fe60c97f1c72cb4446638ad4808afd8b903f566dd1b9dda8eef1"
+    },
+    {
+      "host": "services.nvd.nist.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/rest/json/cves/2.0 (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "28644df2f25e1232fc81ed8c0a19fe4eb65f5ed58a20b8d8e5178441c3925f01"
+    },
+    {
+      "host": "api.osv.dev",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/v1/vulns/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
+        "NON_GET_ENDPOINT_POST:/v1/query (grant is GET-only)"
+      ],
+      "evidenceSha256": "155def043cfbe77b762a0a4714834ec29b58c9ba18ca00e990769e9fadca7339"
+    },
+    {
+      "host": "www.cisa.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/sites/default/files/feeds/known_exploited_vulnerabilities.json (Disallow: /*/media/oembed)"
+      ],
+      "evidenceSha256": "fc2bcc5e98c3f539217758ff9f324118b259eba970f3c9603d1bbbbb38920430"
+    },
+    {
+      "host": "cheatsheetseries.owasp.org",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/cheatsheets/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "beaa9bb32d014a5486e1c0283f5c300b8a539e79a61d37d5bdfb9365b6acbfde"
+    },
+    {
+      "host": "genai.owasp.org",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/llmrisk/llm01-prompt-injection/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/llm-top-10/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "be38faca4119728419de74b8d8a278b55eb049b28a73cc7857175178acae1452"
+    },
+    {
+      "host": "opentelemetry.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/docs/specs/otel/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "7064b72a3c399c4c25091db26a3dd1b78fcafb20ac251106f53e0d593c1aa120"
+    },
+    {
+      "host": "kubernetes.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/docs/home/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/docs/concepts/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "d443f8e5a48070f8efc415098a989840e07945bdb12cb765fde81f338fea3695"
+    },
+    {
+      "host": "www.postgresql.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/docs/current/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "a01bb573cb997fa961f0fb7076deeb5a1fa991a6043d086bfa392fb85ef63ab1"
+    },
+    {
+      "host": "www.sqlite.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/docs.html"
+      ],
+      "reasons": [],
+      "evidenceSha256": "188990843093c764adcedf2c655f3fb6f4e61641e7b36b0110f2ded45a7ec13a"
+    },
+    {
+      "host": "docs.python.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/3/library/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/3/reference/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "9594510b2014ba8b4b51fcc059ae2a718845827662a874a98cea6259875fd9ac"
+    },
+    {
+      "host": "pypi.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: robots Disallow /pypi/*/json (wildcard) vs documented JSON API (docs.pypi.org/api) — same conflict class as export.arxiv.org",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/pypi/ (Disallow: /pypi/*/json | Disallow: /pypi/*/*/json | Disallow: /pypi*?)"
+      ],
+      "evidenceSha256": "cbd284e441ecfc3b1ab6dcda9145a38f517477dadfaa09753c4a910eff82dbca"
+    },
+    {
+      "host": "registry.npmjs.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/next",
+        "/react"
+      ],
+      "reasons": [],
+      "evidenceSha256": "c580f50807fea23f5d4a1f1c9554a7d8039c6b4e336803c2bc38cd28e64f516c"
+    },
+    {
+      "host": "huggingface.co",
+      "decision": "ADMIT",
+      "tier": "T2",
+      "admittedPrefixes": [
+        "/api/daily_papers",
+        "/api/models"
+      ],
+      "reasons": [],
+      "evidenceSha256": "283dfa735dd8cbb818d10fcd44c7ae8cae8049572d287844edae4dac81bf8401"
+    },
+    {
+      "host": "www.anthropic.com",
+      "decision": "REFUSE",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OFF_HOST_REDIRECT_ON_PREFIX:/engineering/",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/research/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "2cac0afa3272ab0348e2bea5b0d68de4225e3e781f42e59479e1be58d1633aaf"
+    },
+    {
+      "host": "code.claude.com",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/docs/en/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "2231aa2b72ccbd23c27b014f74c3d4642d0cbb081104d1eb45c1126048b0fed6"
+    },
+    {
+      "host": "bair.berkeley.edu",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/blog/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "ae78b1389757a530c3a1063b43c09eeaabd035056bad6ec8eec6f52cfb8b918a"
+    },
+    {
+      "host": "www.usenix.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "CRAWL_DELAY_10s_NOT_ENFORCEABLE (no per-host pacing in the transport)",
+        "ROBOTS_SUBPATHS_NOT_ANALYSED:/conference/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
+      ],
+      "evidenceSha256": "f91acbe60849283668fab7ae01c49497fb812effe67e526dd24ca4524ae21bb2"
+    }
+  ],
+  "honesty": [
+    "admission evidence (robots/redirect/terms/rate limits) was FETCHED by a provider research agent on 2026-11-23 and normalized by the coordinating session; it is a point-in-time observation — re-run admission before renewal",
+    "an ADMIT means 'allowed to be fetched by the governed chain', not 'trusted content': every finding is still stamped and sanitized as untrusted data",
+    "built by the Claude Code provider (coordinating session), not ODG-native construction"
+  ]
+}
