@@ -130,7 +130,7 @@ function hardTask(id: string): any {
   return { id, type: "implement", family: t.family, selectedBecause: SELECTION_EVIDENCE[id],
     spec: { name: id, architecture: arch, writeSet: arch.map((a: any) => a.path), independentTestSource: wholeTestSource },
     wholeTestSource, entry: "report.js", reference: Object.fromEntries(t.files.map((f: any) => [f.path, f.ref])),
-    oracle: { derivation: "per-module (args→result) recorded from the corpus REFERENCE implementation on the whole-task inputs (task-author oracle, never shown to the model as code)", inputs: HARD_INPUTS[id], subproblems } };
+    oracle: { derivation: "per-module (args→result) recorded from the corpus REFERENCE implementation on the whole-task inputs (task-author oracle; never shown as code, BUT expected outputs on these inputs reach repair prompts via repairExamples — see honestLimits)", inputs: HARD_INPUTS[id], subproblems } };
 }
 
 function parseRangeTask(): any {
@@ -319,6 +319,8 @@ function buildEvidence(x: any): any {
       intermediateOracle: t.oracle ? { derivation: t.oracle.derivation, inputs: t.oracle.inputs, subproblems: t.oracle.subproblems.map((s: any) => ({ id: s.id, files: s.spec.architecture.map((a: any) => a.path), cases: s.spec.independentTestCases.length, structuredRepairExamples: Array.isArray(s.spec.repairExamples) })) } : null })),
     graderSelfTest: x.graderSelfTest, rows: x.rows, summary: x.summary, classification: classify(x.rows, x.blocked),
     honestLimits: [
+      "ORACLE PARTLY VISIBLE (#925 inspection): for sub-problems with primitive results the per-module oracle (recorded on the SAME inputs the whole-task acceptance test uses) is passed as repairExamples; on repair, odg-repair-feedback writes 'calling … with (args) returned X but the expected result is Y' into the next prompt. This happened live (rle-codec encode.js, both trials). The default arm got only the generic hint ⇒ the comparison is NOT equal-information and the alternative partly saw expected outputs of acceptance inputs; no gain was claimed (0/8 vs 0/8).",
+      "REPAIR_BUDGET_EXHAUSTED with maxRepair 1 means 'one repair attempted and failed', not a deep repair search.",
       "n is SMALL (4 tasks × " + x.trials + " trials); at temperature 0 + seed 42 trials of the same condition are near-deterministic, so trials are close to repeats, not independent samples — no statistical claim",
       "the DECOMPOSED alternative gets MORE verification signal than the default: per-module oracles recorded from the corpus reference implementation (task-author oracle). That extra signal IS the strategy's lever (intermediate verification) but it means the comparison is not equal-information",
       "odg-decomposed-execution threads bo.modules forward, which a SANDBOXED build never returns (model code is never loaded on the host) — the runner therefore freezes verified files through the generator seam; this gap in the canonical module is recorded, not fixed here",

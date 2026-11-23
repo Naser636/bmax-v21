@@ -78,7 +78,7 @@
       ],
       "plannerStrategy": "DECOMPOSED",
       "intermediateOracle": {
-        "derivation": "per-module (args→result) recorded from the corpus REFERENCE implementation on the whole-task inputs (task-author oracle, never shown to the model as code)",
+        "derivation": "per-module (args→result) recorded from the corpus REFERENCE implementation on the whole-task inputs (task-author oracle; never shown as code, BUT expected outputs on these inputs reach repair prompts via repairExamples — see honestLimits)",
         "inputs": [
           "aaab",
           "abc",
@@ -137,7 +137,7 @@
       ],
       "plannerStrategy": "DECOMPOSED",
       "intermediateOracle": {
-        "derivation": "per-module (args→result) recorded from the corpus REFERENCE implementation on the whole-task inputs (task-author oracle, never shown to the model as code)",
+        "derivation": "per-module (args→result) recorded from the corpus REFERENCE implementation on the whole-task inputs (task-author oracle; never shown as code, BUT expected outputs on these inputs reach repair prompts via repairExamples — see honestLimits)",
         "inputs": [
           "1,2,3;4,x,6",
           "1,2;1,2,3",
@@ -198,7 +198,7 @@
       ],
       "plannerStrategy": "DECOMPOSED",
       "intermediateOracle": {
-        "derivation": "per-module (args→result) recorded from the corpus REFERENCE implementation on the whole-task inputs (task-author oracle, never shown to the model as code)",
+        "derivation": "per-module (args→result) recorded from the corpus REFERENCE implementation on the whole-task inputs (task-author oracle; never shown as code, BUT expected outputs on these inputs reach repair prompts via repairExamples — see honestLimits)",
         "inputs": [
           "-5,50,150",
           "10,20",
@@ -1443,6 +1443,8 @@
   },
   "classification": "REAL — live local models (Ollama loopback), model code executed only in the bwrap native-build sandbox, ODG-decided stops, rule-selected alternatives executed and measured on the same tasks",
   "honestLimits": [
+    "ORACLE PARTLY VISIBLE (#925 inspection): for sub-problems with primitive results the per-module oracle (recorded on the SAME inputs the whole-task acceptance test uses) is passed as repairExamples; on repair, odg-repair-feedback writes 'calling … with (args) returned X but the expected result is Y' into the next prompt. This happened live (rle-codec encode.js, both trials). The default arm got only the generic hint ⇒ the comparison is NOT equal-information and the alternative partly saw expected outputs of acceptance inputs; no gain was claimed (0/8 vs 0/8).",
+    "REPAIR_BUDGET_EXHAUSTED with maxRepair 1 means 'one repair attempted and failed', not a deep repair search.",
     "n is SMALL (4 tasks × 2 trials); at temperature 0 + seed 42 trials of the same condition are near-deterministic, so trials are close to repeats, not independent samples — no statistical claim",
     "the DECOMPOSED alternative gets MORE verification signal than the default: per-module oracles recorded from the corpus reference implementation (task-author oracle). That extra signal IS the strategy's lever (intermediate verification) but it means the comparison is not equal-information",
     "odg-decomposed-execution threads bo.modules forward, which a SANDBOXED build never returns (model code is never loaded on the host) — the runner therefore freezes verified files through the generator seam; this gap in the canonical module is recorded, not fixed here",
