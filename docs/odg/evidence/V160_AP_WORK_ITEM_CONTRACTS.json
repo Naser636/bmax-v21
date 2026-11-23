@@ -430,8 +430,8 @@
       "scenario": "H",
       "title": "H — Amélioration récursive",
       "ownerText": "ODG améliore un mécanisme de planification ou de vérification et démontre sur des tests indépendants que la nouvelle version est meilleure.",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — directive V168 (2026-11-23): \"J'autorise explicitement la mission H dans son périmètre exact, tel qu'il est défini dans le dossier : docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json\" — full path (revise → inspect → offline experiments → inspect results → validate on evidence → close) without re-approval between steps; H only.",
       "initialState": {
         "status": "PARTIAL",
         "evidence": [
@@ -472,6 +472,20 @@
           "independent inspection verdict on the exact head",
           "CI green on the exact head"
         ]
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V168_OWNER_AUTHORIZATION_H.json (V168)",
+        "transcribedBy": "PROVIDER (Claude Code coordinating session) — verbatim transcription",
+        "date": "2026-11-23",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "offline controlled experiments only after an independent inspection ACCEPT of the revised contract is recorded (owner V168: « Expériences hors ligne prévues par le contrat » after « Inspection indépendante du contrat révisé »)"
       }
     },
     {
