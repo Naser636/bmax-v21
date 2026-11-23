@@ -1,7 +1,7 @@
 {
   "schema": "ODG_AGENT_SUPERVISOR_SNAPSHOT",
-  "version": 1,
-  "at": "2026-11-23T02:09:34.975Z",
+  "version": 2,
+  "at": "2026-11-23T02:33:38.849Z",
   "states": [
     "RUNNING",
     "COMPLETED_WITH_RESULT",
@@ -17,7 +17,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #878 MERGED with passing checks"
+        "PR #878 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -25,6 +25,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v15-0-master-directive-proposed",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -45,7 +46,9 @@
           {
             "number": 878,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -53,7 +56,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -61,7 +65,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #874 MERGED with passing checks"
+        "PR #874 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -69,6 +73,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v15-closure-dossier",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -89,7 +94,9 @@
           {
             "number": 874,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -97,7 +104,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -105,7 +113,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #883 MERGED with passing checks"
+        "PR #883 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -113,6 +121,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v150-checkpoint-1",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -133,7 +142,9 @@
           {
             "number": 883,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -141,7 +152,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -149,7 +161,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #887 MERGED with passing checks"
+        "PR #887 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -157,6 +169,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v150-checkpoint-2",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -177,7 +190,9 @@
           {
             "number": 887,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -185,7 +200,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -193,7 +209,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #888 MERGED with passing checks"
+        "PR #888 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -201,6 +217,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v150-checkpoint-2b",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -221,7 +238,9 @@
           {
             "number": 888,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -229,7 +248,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -237,7 +257,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #892 MERGED with passing checks"
+        "PR #892 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -245,6 +265,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v150-checkpoint-3",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -265,7 +286,9 @@
           {
             "number": 892,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -273,7 +296,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -281,7 +305,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #894 MERGED with passing checks"
+        "PR #894 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -289,6 +313,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v150-checkpoint-4",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -309,7 +334,9 @@
           {
             "number": 894,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -317,7 +344,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -325,7 +353,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #880 MERGED with passing checks"
+        "PR #880 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -333,6 +361,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v150-dormant-judgment",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -353,7 +382,9 @@
           {
             "number": 880,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -361,7 +392,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -369,7 +401,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #875 MERGED with passing checks"
+        "PR #875 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -377,6 +409,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v16-owner-packet",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -397,7 +430,9 @@
           {
             "number": 875,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -405,7 +440,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -413,7 +449,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #877 MERGED with passing checks"
+        "PR #877 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -421,6 +457,7 @@
       "owner": null,
       "worktree": null,
       "branch": "docs/v16-unlock-inventory",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -441,7 +478,9 @@
           {
             "number": 877,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -449,7 +488,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -457,7 +497,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #870 MERGED with passing checks"
+        "PR #870 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -465,6 +505,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v15-closure",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -485,7 +526,9 @@
           {
             "number": 870,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -493,7 +536,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -501,7 +545,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #869 MERGED with passing checks"
+        "PR #869 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -509,6 +553,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v15-owner-signing-tool",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -529,7 +574,9 @@
           {
             "number": 869,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -537,7 +584,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -545,7 +593,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #868 MERGED with passing checks"
+        "PR #868 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -553,6 +601,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v15-trace-launcher-written",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -573,7 +622,9 @@
           {
             "number": 868,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -581,7 +632,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -589,7 +641,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #884 MERGED with passing checks"
+        "PR #884 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -597,6 +649,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v150-btp-fr-invoice-compliance",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -617,7 +670,9 @@
           {
             "number": 884,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -625,7 +680,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -633,7 +689,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #881 MERGED with passing checks"
+        "PR #881 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -641,6 +697,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v150-component-judgment-run",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -661,7 +718,9 @@
           {
             "number": 881,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -669,7 +728,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -677,7 +737,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #885 MERGED with passing checks"
+        "PR #885 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -685,6 +745,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v150-p9-repair-no-progress-stop",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -705,7 +766,9 @@
           {
             "number": 885,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -713,7 +776,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -721,7 +785,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #879 MERGED with passing checks"
+        "PR #879 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -729,6 +793,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v150-phase1-correspondence",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -749,7 +814,9 @@
           {
             "number": 879,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -757,7 +824,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -765,7 +833,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #889 MERGED with passing checks"
+        "PR #889 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -773,6 +841,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v150-scenario-e-self-healing",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -793,7 +862,9 @@
           {
             "number": 889,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -801,7 +872,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -809,7 +881,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #886 MERGED with passing checks"
+        "PR #886 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -817,6 +889,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v150-scenario-l-concurrency-calibration",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -837,7 +910,9 @@
           {
             "number": 886,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -845,7 +920,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -853,7 +929,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #890 MERGED with passing checks"
+        "PR #890 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -861,6 +937,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v150-scenario-m-resume",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -881,7 +958,9 @@
           {
             "number": 890,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -889,7 +968,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -897,7 +977,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #891 MERGED with passing checks"
+        "PR #891 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -905,6 +985,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v151-native-wave-dispatch",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -925,7 +1006,9 @@
           {
             "number": 891,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -933,7 +1016,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -941,7 +1025,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #893 MERGED with passing checks"
+        "PR #893 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -949,6 +1033,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v151-odg-run-output-isolation",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -969,7 +1054,9 @@
           {
             "number": 893,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -977,7 +1064,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -985,7 +1073,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #876 MERGED with passing checks"
+        "PR #876 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -993,6 +1081,7 @@
       "owner": null,
       "worktree": null,
       "branch": "feat/v16-radar-claude-code-research",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1013,7 +1102,9 @@
           {
             "number": 876,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -1021,7 +1112,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -1029,7 +1121,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #871 MERGED with passing checks"
+        "PR #871 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -1037,6 +1129,7 @@
       "owner": null,
       "worktree": null,
       "branch": "fix/v15-attestation-binding",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1057,7 +1150,9 @@
           {
             "number": 871,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -1065,7 +1160,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -1073,7 +1169,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #873 MERGED with passing checks"
+        "PR #873 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -1081,6 +1177,7 @@
       "owner": null,
       "worktree": null,
       "branch": "fix/v15-launcher-hardening",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1101,7 +1198,9 @@
           {
             "number": 873,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -1109,7 +1208,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -1117,7 +1217,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #872 MERGED with passing checks"
+        "PR #872 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -1125,6 +1225,7 @@
       "owner": null,
       "worktree": null,
       "branch": "fix/v15-slo-sli-definitions",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1145,7 +1246,9 @@
           {
             "number": 872,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -1153,7 +1256,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -1161,7 +1265,7 @@
       "kind": "BRANCH",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #882 MERGED with passing checks"
+        "PR #882 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": null,
       "child_ids": [],
@@ -1169,6 +1273,7 @@
       "owner": null,
       "worktree": null,
       "branch": "fix/v150-root-cause-defects",
+      "mainCheckout": false,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1189,7 +1294,9 @@
           {
             "number": 882,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
           }
         ]
       },
@@ -1197,7 +1304,8 @@
         "hasFinalReport": false,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -1213,6 +1321,7 @@
       "owner": null,
       "worktree": null,
       "branch": "governance/f11-operating-contract",
+      "mainCheckout": false,
       "write_set": [
         "docs/film-factory/.gitignore",
         "docs/film-factory/OPERATING_CONTRACT.md",
@@ -1261,22 +1370,24 @@
         "hasFinalReport": false,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "NONE"
       }
     },
     {
       "id": "task:a0462f9c9f9dca4be",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a0462f9c9f9dca4be",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1299,22 +1410,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a05eb43adfdf1a65e",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a05eb43adfdf1a65e",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1337,7 +1450,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -1345,14 +1459,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #765 MERGED with passing checks"
+        "PR #765 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a072d60575db164f1",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/hypothesis-driven-mission-20261120",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1373,7 +1488,9 @@
           {
             "number": 765,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -1381,22 +1498,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:a09d0597cb07bb825",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a09d0597cb07bb825",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1419,7 +1538,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -1427,14 +1547,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #837 MERGED with passing checks"
+        "PR #837 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a0b0bee9280bfa3f4",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/dimension-coverage-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1455,7 +1576,9 @@
           {
             "number": 837,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -1463,22 +1586,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:a0c16a8b953582179",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a0c16a8b953582179",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1501,22 +1626,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a0d7aedff16de184d",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a0d7aedff16de184d",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1539,22 +1666,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a0ddb04ef2d15948f",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a0ddb04ef2d15948f",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1577,7 +1706,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -1585,14 +1715,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #842 MERGED with passing checks"
+        "PR #842 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a11ec20a6591b880a",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/intelligence-eval-knowledge-reuse-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1613,7 +1744,9 @@
           {
             "number": 842,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -1621,22 +1754,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:a11f229ac1cf52584",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a11f229ac1cf52584",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1659,22 +1794,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a1205618f0e1fd6ce",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a1205618f0e1fd6ce",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1697,22 +1834,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a135b402b1f87aca9",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a135b402b1f87aca9",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1735,22 +1874,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a1aff7b0546d9a97e",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a1aff7b0546d9a97e",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1773,22 +1914,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a1e29b62a68a09463",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a1e29b62a68a09463",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1811,22 +1954,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a269a45e31593fabb",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a269a45e31593fabb",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1849,22 +1994,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a29b3710cdb84c1cf",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a29b3710cdb84c1cf",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1887,22 +2034,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a2a7545406965bfba",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a2a7545406965bfba",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1925,22 +2074,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a345f6f5a1d8860f4",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a345f6f5a1d8860f4",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -1963,22 +2114,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a391b4b591bff07a0",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a391b4b591bff07a0",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2001,7 +2154,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -2009,14 +2163,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #828 MERGED with passing checks"
+        "PR #828 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a395f809753871c3f",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/system-coverage-matrix-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2037,7 +2192,9 @@
           {
             "number": 828,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -2045,7 +2202,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -2053,14 +2211,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #840 MERGED with passing checks"
+        "PR #840 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a3970cc6e0244e79e",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/intelligence-evaluation-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2081,7 +2240,9 @@
           {
             "number": 840,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -2089,7 +2250,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -2097,14 +2259,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #763 MERGED with passing checks"
+        "PR #763 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a3d423080096ecd85",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/git-reuse-freshness-signal-20261120",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2125,7 +2288,9 @@
           {
             "number": 763,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -2133,22 +2298,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:a3f9178ceee3cb904",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a3f9178ceee3cb904",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2171,7 +2338,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -2179,14 +2347,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #761 MERGED with passing checks"
+        "PR #761 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a54b3968969cbfd6e",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/native-execution-provenance-20261120",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2207,7 +2376,9 @@
           {
             "number": 761,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -2215,7 +2386,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -2223,14 +2395,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #839 MERGED with passing checks"
+        "PR #839 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a55e2d5ed9ab82aa8",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/light-path-selector-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2251,7 +2424,9 @@
           {
             "number": 839,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -2259,22 +2434,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:a5749c3ac539c7d15",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a5749c3ac539c7d15",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2297,7 +2474,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -2305,14 +2483,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #830 MERGED with passing checks"
+        "PR #830 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a5b1e2c9faf77ef52",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/self-improvement-cycle-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2333,7 +2512,9 @@
           {
             "number": 830,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -2341,22 +2522,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:a5ce9b5c1fd3d6963",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a5ce9b5c1fd3d6963",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2379,22 +2562,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a6126d2e79ddfe240",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a6126d2e79ddfe240",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2417,22 +2602,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a6145b716b3709110",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a6145b716b3709110",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2455,7 +2642,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -2468,15 +2656,16 @@
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a663963936a863e43",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
       "created_at": "2026-11-23T01:59:16.597Z",
-      "last_progress_at": "2026-11-23T02:08:59.662Z",
-      "heartbeat": "2026-11-23T02:08:59.662Z",
+      "last_progress_at": "2026-11-23T02:33:32.397Z",
+      "heartbeat": "2026-11-23T02:33:32.397Z",
       "deadline": null,
       "relaunchOf": null,
       "timedOut": false,
@@ -2493,22 +2682,24 @@
         "hasFinalReport": false,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "NONE"
       }
     },
     {
       "id": "task:a711d11d0e36f2864",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a711d11d0e36f2864",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2531,22 +2722,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a72719a4c3bf99f02",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a72719a4c3bf99f02",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2569,7 +2762,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -2577,14 +2771,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #845 MERGED with passing checks"
+        "PR #845 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a77b5238fd0043f20",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/fix-campaign-circular-dep-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2605,7 +2800,9 @@
           {
             "number": 845,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -2613,22 +2810,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:a79ad9a2d04df468f",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a79ad9a2d04df468f",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2651,22 +2850,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a7bbfb8e01c63f205",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a7bbfb8e01c63f205",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2689,22 +2890,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a80bdbb18f7d3a244",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a80bdbb18f7d3a244",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2727,22 +2930,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a8c107fd0ebed2fb8",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a8c107fd0ebed2fb8",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2765,22 +2970,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a91937ff8150a96b3",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a91937ff8150a96b3",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2803,22 +3010,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:a93ba87ce3eece512",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a93ba87ce3eece512",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2841,7 +3050,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -2849,14 +3059,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #835 MERGED with passing checks"
+        "PR #835 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a98e14de9a9431cd3",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/hybrid-reasoning-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2877,7 +3088,9 @@
           {
             "number": 835,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -2885,22 +3098,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:a9ced2f9d9ba95722",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a9ced2f9d9ba95722",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2923,7 +3138,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -2931,14 +3147,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #841 MERGED with passing checks"
+        "PR #841 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:a9eeb983682d65843",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/intelligence-eval-verification-axis-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -2959,7 +3176,9 @@
           {
             "number": 841,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -2967,45 +3186,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
-      }
-    },
-    {
-      "id": "task:aa4024c9615823d10",
-      "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
-      "reasons": [
-        "final report recoverable (report-only agent)"
-      ],
-      "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
-      "child_ids": [],
-      "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
-      "branch": null,
-      "write_set": null,
-      "writeSetSource": "UNKNOWN",
-      "readOnly": false,
-      "created_at": "2026-11-20T02:04:09.018Z",
-      "last_progress_at": "2026-11-20T02:20:01.574Z",
-      "heartbeat": "2026-11-20T02:20:01.574Z",
-      "deadline": null,
-      "relaunchOf": null,
-      "timedOut": false,
-      "action": null,
-      "recoverable": false,
-      "delivery": {
-        "ahead": null,
-        "dirty": 0,
-        "pushed": false,
-        "integrated": null,
-        "prs": []
-      },
-      "quality": {
-        "hasFinalReport": true,
-        "hasPR": false,
-        "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -3013,14 +3195,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #843 MERGED with passing checks"
+        "PR #843 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:aaadffa82ce90d099",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/component-census-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3041,7 +3224,9 @@
           {
             "number": 843,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3049,7 +3234,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -3057,14 +3243,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #764 MERGED with passing checks"
+        "PR #764 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:aad8e0df435be1413",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/native-mission-continuation-20261120",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3085,7 +3272,9 @@
           {
             "number": 764,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3093,22 +3282,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:aaf664db5a28b9efa",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:aaf664db5a28b9efa",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3131,7 +3322,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -3139,14 +3331,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #831 MERGED with passing checks"
+        "PR #831 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:ab074e0f991e43022",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/night-cycle-scheduler-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3167,7 +3360,9 @@
           {
             "number": 831,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3175,7 +3370,48 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
+      }
+    },
+    {
+      "id": "task:ab245bf3019f79340",
+      "kind": "CLAUDE_TASK",
+      "state": "COMPLETED_NO_RESULT",
+      "reasons": [
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
+      ],
+      "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
+      "child_ids": [],
+      "mission": null,
+      "owner": "claude-code-subagent:ab245bf3019f79340",
+      "worktree": "/home/ubuntu/bmax-v21",
+      "branch": null,
+      "mainCheckout": true,
+      "write_set": null,
+      "writeSetSource": "UNKNOWN",
+      "readOnly": false,
+      "created_at": "2026-11-23T02:17:07.913Z",
+      "last_progress_at": "2026-11-23T02:19:55.573Z",
+      "heartbeat": "2026-11-23T02:19:55.573Z",
+      "deadline": null,
+      "relaunchOf": null,
+      "timedOut": false,
+      "action": null,
+      "recoverable": false,
+      "delivery": {
+        "ahead": null,
+        "dirty": 0,
+        "pushed": false,
+        "integrated": null,
+        "prs": []
+      },
+      "quality": {
+        "hasFinalReport": true,
+        "hasPR": false,
+        "hasTestsEvidence": false,
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -3183,14 +3419,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #844 MERGED with passing checks"
+        "PR #844 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:ab64cfc969094a85f",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/census-consumes-architecture-audit-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3211,7 +3448,9 @@
           {
             "number": 844,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3219,7 +3458,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -3227,14 +3467,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #833 MERGED with passing checks"
+        "PR #833 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:ac143fcd77f3043af",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/radar-foresight-calibration-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3255,7 +3496,9 @@
           {
             "number": 833,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3263,7 +3506,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -3271,14 +3515,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #762 MERGED with passing checks"
+        "PR #762 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:ac4e1cfa3b7f640fc",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/native-provenance-runner-20261120",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3299,7 +3544,9 @@
           {
             "number": 762,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3307,7 +3554,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -3320,15 +3568,16 @@
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:ac5f6966512570406",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
       "created_at": "2026-11-23T01:59:16.598Z",
-      "last_progress_at": "2026-11-23T02:09:27.402Z",
-      "heartbeat": "2026-11-23T02:09:27.402Z",
+      "last_progress_at": "2026-11-23T02:33:33.367Z",
+      "heartbeat": "2026-11-23T02:33:33.367Z",
       "deadline": null,
       "relaunchOf": null,
       "timedOut": false,
@@ -3345,22 +3594,24 @@
         "hasFinalReport": false,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "NONE"
       }
     },
     {
       "id": "task:ad0a71f59aa9876a6",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:ad0a71f59aa9876a6",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3383,22 +3634,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:ae063cab9659542dc",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:ae063cab9659542dc",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3421,22 +3674,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:ae0a682ea46088745",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:ae0a682ea46088745",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3459,7 +3714,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -3467,14 +3723,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #836 MERGED with passing checks"
+        "PR #836 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:aef20adc9f3c5cd5a",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/multimodal-ingest-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3495,7 +3752,9 @@
           {
             "number": 836,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3503,22 +3762,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:af091ac007ee6d660",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:af091ac007ee6d660",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3541,7 +3802,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -3549,14 +3811,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #838 MERGED with passing checks"
+        "PR #838 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:af1220b1f8207b0ec",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/mission-performance-profile-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3577,7 +3840,9 @@
           {
             "number": 838,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3585,7 +3850,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -3593,14 +3859,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #845 MERGED with passing checks"
+        "PR #845 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:af24c7b9126c108a1",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/fix-campaign-circular-dep-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3621,7 +3888,9 @@
           {
             "number": 845,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3629,7 +3898,8 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
@@ -3637,14 +3907,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #834 MERGED with passing checks"
+        "PR #834 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:afaf8c814850884a7",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/model-intelligence-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3665,7 +3936,9 @@
           {
             "number": 834,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3673,22 +3946,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:afb3ab7db9fbf3b8f",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:afb3ab7db9fbf3b8f",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3711,7 +3986,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -3719,14 +3995,15 @@
       "kind": "CLAUDE_TASK",
       "state": "COMPLETED_WITH_RESULT",
       "reasons": [
-        "PR #832 MERGED with passing checks"
+        "PR #832 MERGED (head oid verified) with passing checks"
       ],
       "parent_id": "session:2a84cac7-6c0a-4dd2-9b87-1bb9d4f28c9e",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:afc3be5080bd42b93",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": "excellence/forecast-memory-20261121",
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3747,7 +4024,9 @@
           {
             "number": 832,
             "state": "MERGED",
-            "checks": "SUCCESS"
+            "checks": "SUCCESS",
+            "tipMatch": null,
+            "trusted": true
           }
         ]
       },
@@ -3755,22 +4034,24 @@
         "hasFinalReport": true,
         "hasPR": true,
         "hasTestsEvidence": true,
-        "hasCommits": true
+        "hasCommits": true,
+        "resultKind": "INTEGRATED"
       }
     },
     {
       "id": "task:aff37fdb77196a360",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:aff37fdb77196a360",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3793,22 +4074,24 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
       "id": "task:aff59d2658af6c4e7",
       "kind": "CLAUDE_TASK",
-      "state": "COMPLETED_WITH_RESULT",
+      "state": "COMPLETED_NO_RESULT",
       "reasons": [
-        "final report recoverable (report-only agent)"
+        "final report recoverable, but the task ran in the MAIN checkout — no attributable delivery (report ≠ integrated result)"
       ],
       "parent_id": "session:6cab89c8-b42c-4fe1-8a23-22912dd25cd7",
       "child_ids": [],
       "mission": null,
-      "owner": "claude-code-subagent",
-      "worktree": null,
+      "owner": "claude-code-subagent:aff59d2658af6c4e7",
+      "worktree": "/home/ubuntu/bmax-v21",
       "branch": null,
+      "mainCheckout": true,
       "write_set": null,
       "writeSetSource": "UNKNOWN",
       "readOnly": false,
@@ -3831,7 +4114,8 @@
         "hasFinalReport": true,
         "hasPR": false,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": false,
+        "resultKind": "REPORT_RECOVERABLE"
       }
     },
     {
@@ -3848,13 +4132,15 @@
       "owner": null,
       "worktree": "/home/ubuntu/wt-v155-supervisor",
       "branch": "feat/v155-agent-supervisor",
+      "mainCheckout": false,
       "write_set": [
+        "docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json",
         "package.json",
         "runtime/bin/odg-agent-supervisor-run.ts",
         "runtime/core/odg-agent-supervisor.test.ts",
         "runtime/core/odg-agent-supervisor.ts"
       ],
-      "writeSetSource": "UNKNOWN",
+      "writeSetSource": "OBSERVED_DIFF",
       "readOnly": false,
       "created_at": null,
       "last_progress_at": null,
@@ -3865,17 +4151,26 @@
       "action": null,
       "recoverable": false,
       "delivery": {
-        "ahead": 0,
+        "ahead": 1,
         "dirty": 4,
-        "pushed": false,
-        "integrated": true,
-        "prs": []
+        "pushed": true,
+        "integrated": false,
+        "prs": [
+          {
+            "number": 895,
+            "state": "OPEN",
+            "checks": "SUCCESS",
+            "tipMatch": true,
+            "trusted": true
+          }
+        ]
       },
       "quality": {
         "hasFinalReport": false,
-        "hasPR": false,
-        "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasPR": true,
+        "hasTestsEvidence": true,
+        "hasCommits": true,
+        "resultKind": "NONE"
       }
     },
     {
@@ -3892,8 +4187,11 @@
       "owner": null,
       "worktree": "/home/ubuntu/wt-v155-writesets",
       "branch": "feat/v155-mission-write-sets",
+      "mainCheckout": false,
       "write_set": [
+        "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
         "runtime/bin/odg-run-output-isolation.test.ts",
+        "runtime/bin/odg-schedule-tick-wave.test.ts",
         "runtime/bin/odg-schedule-tick.ts",
         "runtime/missions/G10_READONLY_AUTONOMY_PROBE.json",
         "runtime/missions/M0000.json",
@@ -3902,7 +4200,7 @@
         "runtime/missions/QUAL_CLEAN_GATEB.json",
         "runtime/missions/RUNTIME_SELF_AUDIT.json"
       ],
-      "writeSetSource": "UNKNOWN",
+      "writeSetSource": "OBSERVED_DIFF",
       "readOnly": false,
       "created_at": null,
       "last_progress_at": null,
@@ -3913,17 +4211,26 @@
       "action": null,
       "recoverable": false,
       "delivery": {
-        "ahead": 0,
-        "dirty": 8,
-        "pushed": false,
-        "integrated": true,
-        "prs": []
+        "ahead": 1,
+        "dirty": 0,
+        "pushed": true,
+        "integrated": false,
+        "prs": [
+          {
+            "number": 896,
+            "state": "OPEN",
+            "checks": "PENDING",
+            "tipMatch": true,
+            "trusted": true
+          }
+        ]
       },
       "quality": {
         "hasFinalReport": false,
-        "hasPR": false,
+        "hasPR": true,
         "hasTestsEvidence": false,
-        "hasCommits": false
+        "hasCommits": true,
+        "resultKind": "NONE"
       }
     }
   ],
@@ -3951,6 +4258,7 @@
         "task:a7bbfb8e01c63f205",
         "task:a93ba87ce3eece512",
         "task:aaf664db5a28b9efa",
+        "task:ab245bf3019f79340",
         "task:ac5f6966512570406",
         "task:ad0a71f59aa9876a6",
         "task:ae063cab9659542dc",
@@ -3960,7 +4268,7 @@
         "task:aff59d2658af6c4e7"
       ],
       "byState": {
-        "COMPLETED_WITH_RESULT": 25,
+        "COMPLETED_NO_RESULT": 26,
         "RUNNING": 2
       }
     },
@@ -3991,7 +4299,6 @@
         "task:a98e14de9a9431cd3",
         "task:a9ced2f9d9ba95722",
         "task:a9eeb983682d65843",
-        "task:aa4024c9615823d10",
         "task:aaadffa82ce90d099",
         "task:aad8e0df435be1413",
         "task:ab074e0f991e43022",
@@ -4006,44 +4313,94 @@
         "task:afc3be5080bd42b93"
       ],
       "byState": {
-        "COMPLETED_WITH_RESULT": 37
+        "COMPLETED_WITH_RESULT": 23,
+        "COMPLETED_NO_RESULT": 13
       }
     }
   ],
   "metrics": {
     "byState": {
       "RUNNING": 4,
-      "COMPLETED_WITH_RESULT": 89,
-      "COMPLETED_NO_RESULT": 0,
+      "COMPLETED_WITH_RESULT": 50,
+      "COMPLETED_NO_RESULT": 39,
       "BLOCKED": 0,
       "INTERRUPTED": 0,
       "ORPHAN": 1,
       "AWAITING_VALIDATION": 0
     },
+    "byResultKind": {
+      "INTEGRATED": 50,
+      "NONE": 5,
+      "REPORT_RECOVERABLE": 39
+    },
     "total": 94,
     "reportQuality": {
       "withFinalReport": 62,
-      "withPR": 50,
-      "withTestsEvidence": 50,
-      "completedWithResult": 89
+      "withPR": 52,
+      "withTestsEvidence": 51,
+      "completedWithResult": 50,
+      "note": "a recoverable final report is NOT a result: COMPLETED_WITH_RESULT = tip-verified delivery + tests (INTEGRATED/DELIVERED) or a DECLARED read-only agent's report (REPORT_ONLY)"
     },
     "latencyMs": {
       "n": 62,
-      "median": 198830,
+      "median": 198373,
       "max": 52155793
     },
     "uselessRelaunches": "NOT_MEASURED (no relaunch records)",
     "integratedIntoMain": {
       "branchesObserved": 53,
-      "integrated": 29,
-      "mergedPRs": 50
+      "integrated": 27,
+      "verifiedMergedPRs": 50
     },
-    "measuredAt": "2026-11-23T02:09:34.975Z"
+    "measuredAt": "2026-11-23T02:33:38.849Z"
   },
   "contention": {
-    "holders": 2,
-    "contentions": [],
-    "note": "UNKNOWN write-set conflicts with everything (fail-closed)"
+    "holders": 5,
+    "contentions": [
+      {
+        "a": "branch:governance/f11-operating-contract",
+        "b": "task:a663963936a863e43",
+        "reason": "UNKNOWN_WRITESET",
+        "shared": []
+      },
+      {
+        "a": "branch:governance/f11-operating-contract",
+        "b": "task:ac5f6966512570406",
+        "reason": "UNKNOWN_WRITESET",
+        "shared": []
+      },
+      {
+        "a": "task:a663963936a863e43",
+        "b": "task:ac5f6966512570406",
+        "reason": "UNKNOWN_WRITESET",
+        "shared": []
+      },
+      {
+        "a": "task:a663963936a863e43",
+        "b": "worktree:/home/ubuntu/wt-v155-supervisor",
+        "reason": "UNKNOWN_WRITESET",
+        "shared": []
+      },
+      {
+        "a": "task:a663963936a863e43",
+        "b": "worktree:/home/ubuntu/wt-v155-writesets",
+        "reason": "UNKNOWN_WRITESET",
+        "shared": []
+      },
+      {
+        "a": "task:ac5f6966512570406",
+        "b": "worktree:/home/ubuntu/wt-v155-supervisor",
+        "reason": "UNKNOWN_WRITESET",
+        "shared": []
+      },
+      {
+        "a": "task:ac5f6966512570406",
+        "b": "worktree:/home/ubuntu/wt-v155-writesets",
+        "reason": "UNKNOWN_WRITESET",
+        "shared": []
+      }
+    ],
+    "note": "UNKNOWN write-set conflicts with everything (fail-closed); keys are canonical lower-cased paths"
   },
   "recovery": [
     {
@@ -4245,16 +4602,18 @@
     "worktrees": 3,
     "branches": 31,
     "prs": 200,
-    "procsInWorktrees": 15,
+    "integratedMergedPrOids": 243,
+    "procsInWorktrees": 9,
     "heartbeats": 0,
+    "corruptHeartbeats": 0,
     "heartbeatDir": "/home/ubuntu/bmax-v21/runtime/generated/agent-supervisor/heartbeats",
     "claims": 0,
     "taskSessions": 2,
     "tasksInWindow": 64,
-    "tasksOlderThanWindow": 192,
+    "tasksOlderThanWindow": 193,
     "backgroundShellOutputs": {
-      "fresh": 3,
-      "stale": 440
+      "fresh": 5,
+      "stale": 443
     },
     "taskContentIngested": false
   }

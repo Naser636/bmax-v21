@@ -10,7 +10,7 @@
  *
  * Run: tsx runtime/bin/odg-agent-supervisor-run.ts [--repo DIR] [--prs gh-prs.json] [--tasks-root DIR]
  *        [--heartbeat-dir DIR] [--locks-dir DIR] [--task-window-h N] [--out FILE]
- *   gh-prs.json = output of: gh pr list --state all --limit 200 --json number,headRefName,state,headRefOid,statusCheckRollup
+ *   gh-prs.json = output of: gh pr list --state all --limit 200 --json number,headRefName,state,headRefOid,mergeCommit,statusCheckRollup
  */
 const fs = require("fs");
 const path = require("path");
