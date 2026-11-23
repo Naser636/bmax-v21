@@ -17,8 +17,12 @@
  *   - READS of anything else (shared INPUTS: project-context.json, present-state-reconciliation.json, autonomy/
  *     patch-memory + capability library …) fall through to the shared LOWER layer, READ-ONLY — exactly what the
  *     default path would have read;
- *   - SHARED_STATE (mission-ledger.json + its .lock/.tmp-*) passes through to the real shared file; the ledger
- *     stage serializes its read-modify-write with withExclusiveLock (O_CREAT|O_EXCL) when isolation is active.
+ *   - SHARED_STATE (mission-ledger.json + .tmp-*, and its fleet-bridge generation claims fleet/locks/mission-ledger.lock.*)
+ *     passes through to the real shared file; the ledger stage serializes its read-modify-write on EVERY path with
+ *     mission-ledger.withLedgerClaim (reuses fleet-bridge tryClaim/releaseClaim — no second lock design here).
+ * Relative paths resolve against process.cwd() of the calling process (the pinned root only identifies WHICH directory
+ * is the shared runtime/generated). Every path-taking fs API is covered (sync, callback and promises) — see PATCHED_APIS;
+ * a test scans the odg-run stage closure and fails on any fs API used there that is neither patched nor path-free.
  * Directory listings merge both layers (upper wins on a name clash). Deletes/renames only ever touch the upper layer.
  *
  * DEFAULT UNCHANGED: with ODG_RUN_OUTPUT_DIR unset nothing here is loaded by odg-run, no fs function is patched, no
@@ -28,19 +32,20 @@
  * canary run); a write to shared learning state (e.g. autonomy/patch-memory.json) by an ISOLATED run is captured in
  * the per-run layer and NOT propagated to the shared file (no lost-update, but no shared learning either — read-only
  * canaries perform none, measured); only string paths are mapped (Buffer/URL/fd arguments pass through unchanged);
- * the git-based Clean-Workspace observation sees the physical workspace, so its transient-candidate list differs; the
- * stale-lock break (holder dead > staleMs) is best-effort — two waiters breaking the SAME stale lock may race once.
+ * the git-based Clean-Workspace observation sees the physical workspace, so its transient-candidate list differs; a
+ * linkSync whose SOURCE is a shared input creates a per-run hard link to the SHARED inode (none in the stage closure).
  */
 "use strict";
 
 import * as fs from "fs";
+import * as url from "url";
 import * as path from "path";
 
 const ENV_DIR = "ODG_RUN_OUTPUT_DIR";
 const ENV_ROOT = "ODG_RUN_OUTPUT_ROOT";   // pinned repo root, so a descendant with another cwd maps only the REAL generated dir
 const INSTALLED = Symbol.for("odg.runOutputIsolation.installed");
 
-/* Shared state that MUST stay shared (other runs + the scheduler's proven-dedup read it). Serialized by a lock. */
+/* Shared state that MUST stay shared (other runs + the scheduler's proven-dedup read it). Serialized by the ledger claim. */
 const SHARED_STATE: readonly string[] = Object.freeze(["mission-ledger.json"]);
 /* Artifacts an odg-run run PRODUCES (measured inventory of a governed read-only canary run). Upper-only reads. */
 const PER_RUN_ARTIFACTS: readonly string[] = Object.freeze([
@@ -73,121 +78,130 @@ function resolveConfig(env: Record<string, string | undefined> = process.env, cw
 function classifyRel(rel: string): Kind {
   const norm = rel.split(path.sep).join("/");
   const base = norm.split("/")[0];
-  for (const s of SHARED_STATE) if (norm === s || norm === s + ".lock" || norm.startsWith(s + ".tmp-")) return "SHARED";
+  for (const s of SHARED_STATE) if (norm === s || norm.startsWith(s + ".tmp-")) return "SHARED";
+  if (norm.startsWith("fleet/locks/mission-ledger.lock")) return "SHARED";   // the ledger's fleet-bridge generation claims
   for (const a of PER_RUN_ARTIFACTS) if (norm === a || norm.startsWith(a + ".tmp-")) return "PER_RUN";
   if (PER_RUN_DIRS.indexOf(base) >= 0) return "PER_RUN";
   return "INPUT";
 }
 
-/* mapPath — PURE: (path, ctx) → the layer + upper/lower physical paths. */
-function mapPath(p: string, ctx: Ctx): { kind: Kind; rel?: string; upper?: string; lower?: string } {
-  const abs = path.resolve(ctx.root, p);
+/* mapPath — PURE: (path, ctx, cwd) → the layer + upper/lower physical paths. Relative ⇒ resolved against cwd. */
+function mapPath(p: string, ctx: Ctx, cwd: string = process.cwd()): { kind: Kind; rel?: string; upper?: string; lower?: string } {
+  const abs = path.resolve(cwd, p);
   if (isWithin(abs, ctx.out) || !isWithin(abs, ctx.gen)) return { kind: "OUTSIDE" };
   const rel = path.relative(ctx.gen, abs);
   const kind: Kind = rel === "" ? "INPUT" : classifyRel(rel);
   return { kind, rel, upper: rel === "" ? ctx.out : path.join(ctx.out, rel), lower: abs };
 }
 
-function sleepMs(ms: number): void { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms); }
-
-/* withExclusiveLock — cross-process mutual exclusion via an O_CREAT|O_EXCL lock file (atomic on POSIX local fs).
- * A lock older than staleMs (crashed holder) is broken. Throws after timeoutMs — never proceeds unlocked. */
-function withExclusiveLock<T>(lockFile: string, fn: () => T, o: { timeoutMs?: number; staleMs?: number; pollMs?: number } = {}): T {
-  const timeoutMs = o.timeoutMs ?? 60000, staleMs = o.staleMs ?? 120000, pollMs = o.pollMs ?? 15;
-  const t0 = Date.now();
-  let fd: number | null = null;
-  while (fd === null) {
-    try { fd = fs.openSync(lockFile, "wx"); fs.writeSync(fd, String(process.pid)); }
-    catch (e: any) {
-      if (!e || e.code !== "EEXIST") throw e;
-      try { if (Date.now() - fs.statSync(lockFile).mtimeMs > staleMs) { fs.rmSync(lockFile, { force: true }); continue; } } catch { /* raced */ }
-      if (Date.now() - t0 > timeoutMs) throw new Error(`withExclusiveLock: timed out after ${timeoutMs}ms waiting for ${lockFile}`);
-      sleepMs(pollMs);
-    }
-  }
-  try { return fn(); }
-  finally { try { fs.closeSync(fd); } catch { /* closed */ } try { fs.rmSync(lockFile, { force: true }); } catch { /* best-effort */ } }
-}
-
 function isActive(env: Record<string, string | undefined> = process.env): boolean {
   return typeof env[ENV_DIR] === "string" && env[ENV_DIR]!.trim() !== "";
 }
 
-/* install — patch the shared `fs` module object (and fs.promises) in THIS process. Idempotent. Returns ctx|null. */
+/* API coverage. Roles per argument position: r = read path, w = written file (parent auto-created), d = mutated
+ * path (no parent creation), o = open(path, flags) ⇒ w|r by flags, L = directory listing (layers merged), - = untouched. */
+const SYNC_APIS: Record<string, string> = {
+  readFileSync: "r", existsSync: "r", statSync: "r", lstatSync: "r", accessSync: "r", readlinkSync: "r", opendirSync: "r",
+  createReadStream: "r", watch: "r", watchFile: "r", unwatchFile: "r", statfsSync: "r",
+  readdirSync: "L", writeFileSync: "w", appendFileSync: "w", truncateSync: "w", createWriteStream: "w", mkdtempSync: "w",
+  mkdirSync: "d", rmSync: "d", rmdirSync: "d", unlinkSync: "d", utimesSync: "d", lutimesSync: "d", chmodSync: "d", lchmodSync: "d",
+  chownSync: "d", lchownSync: "d", renameSync: "dw", copyFileSync: "rw", cpSync: "rw", linkSync: "rw", symlinkSync: "-w", openSync: "o",
+  realpathSync: "r",
+};
+const CALLBACK_APIS: Record<string, string> = {
+  readFile: "r", exists: "r", stat: "r", lstat: "r", access: "r", readlink: "r", opendir: "r", realpath: "r", statfs: "r",
+  readdir: "L", writeFile: "w", appendFile: "w", truncate: "w", mkdtemp: "w",
+  mkdir: "d", rm: "d", rmdir: "d", unlink: "d", utimes: "d", lutimes: "d", chmod: "d", lchmod: "d", chown: "d", lchown: "d",
+  rename: "dw", copyFile: "rw", cp: "rw", link: "rw", symlink: "-w", open: "o",
+};
+const PROMISE_APIS: Record<string, string> = {
+  readFile: "r", stat: "r", lstat: "r", access: "r", readlink: "r", opendir: "r", realpath: "r", statfs: "r", watch: "r",
+  readdir: "L", writeFile: "w", appendFile: "w", truncate: "w", mkdtemp: "w",
+  mkdir: "d", rm: "d", rmdir: "d", unlink: "d", utimes: "d", lutimes: "d", chmod: "d", lchmod: "d", chown: "d", lchown: "d",
+  rename: "dw", copyFile: "rw", cp: "rw", link: "rw", symlink: "-w", open: "o",
+};
+/* fs APIs that take NO path (fd / constants / classes) — safe by construction. */
+const PATH_FREE_APIS: readonly string[] = Object.freeze(["closeSync", "close", "writeSync", "write", "readSync", "read", "fstatSync", "fstat",
+  "ftruncateSync", "ftruncate", "fsyncSync", "fsync", "fdatasyncSync", "fdatasync", "futimesSync", "futimes", "fchmodSync", "fchmod",
+  "fchownSync", "fchown", "writevSync", "readvSync", "constants", "promises", "Dirent", "Stats", "ReadStream", "WriteStream"]);
+const PATCHED_APIS = Object.freeze({ sync: Object.keys(SYNC_APIS), callback: Object.keys(CALLBACK_APIS), promises: Object.keys(PROMISE_APIS) });
+
+/* install — patch the shared `fs` module object (sync + callback) and fs.promises in THIS process. Idempotent. */
 function install(env: Record<string, string | undefined> = process.env): Ctx | null {
   const g: any = globalThis as any;
   if (g[INSTALLED]) return g[INSTALLED];
   const ctx = resolveConfig(env);
   if (!ctx) return null;
   const F: any = require("fs");
-  const O: any = {};
-  for (const k of ["readFileSync", "writeFileSync", "appendFileSync", "existsSync", "statSync", "lstatSync", "accessSync",
-    "readdirSync", "mkdirSync", "rmSync", "unlinkSync", "renameSync", "openSync", "copyFileSync", "utimesSync", "realpathSync"]) O[k] = F[k];
   const P: any = F.promises;
-  const OP: any = {};
-  for (const k of ["readFile", "writeFile", "appendFile", "stat", "access", "readdir", "mkdir", "rm", "unlink", "rename"]) OP[k] = P[k];
+  const O: any = {};
+  for (const k of ["existsSync", "mkdirSync", "readdirSync"]) O[k] = F[k];
   O.mkdirSync(ctx.out, { recursive: true });
 
-  const m = (p: any) => (typeof p === "string" ? mapPath(p, ctx) : { kind: "OUTSIDE" as Kind });
+  const asStr = (p: any): string | null => (typeof p === "string" ? p : p instanceof URL && p.protocol === "file:" ? url.fileURLToPath(p) : Buffer.isBuffer(p) ? p.toString() : null);
+  const m = (p: any) => { const s2 = asStr(p); return s2 === null ? { kind: "OUTSIDE" as Kind } : mapPath(s2, ctx); };
   const exists = (p: string) => O.existsSync(p);
+  const mkParent = (t: string) => { try { O.mkdirSync(path.dirname(t), { recursive: true }); } catch { /* surfaced by the op */ } };
   // read target: upper when present; upper-only for PER_RUN; else the shared lower layer (read-only fall-through).
   const rd = (p: any): any => { const x = m(p); if (x.kind === "OUTSIDE" || x.kind === "SHARED") return p; if (exists(x.upper!)) return x.upper; return x.kind === "PER_RUN" ? x.upper : x.lower; };
   const wrDir = (p: any): any => { const x = m(p); return x.kind === "OUTSIDE" || x.kind === "SHARED" ? p : x.upper; };
-  const wr = (p: any): any => { const t = wrDir(p); if (t !== p) { try { O.mkdirSync(path.dirname(t), { recursive: true }); } catch { /* surfaced by the op */ } } return t; };
+  const wr = (p: any): any => { const x = m(p); if (x.kind === "OUTSIDE") return p; const t = x.kind === "SHARED" ? x.lower! : x.upper!; mkParent(t); return x.kind === "SHARED" ? p : t; };
   const isWriteFlag = (f: any) => typeof f === "number" ? (f & (fs.constants.O_WRONLY | fs.constants.O_RDWR | fs.constants.O_CREAT)) !== 0 : typeof f === "string" && /[wa+]/.test(f);
-  const merge = (p: any, a: any[], list: (d: string, ...r: any[]) => any[]): any => {
+  const merged = (p: any, a: any[]): any => {
     const x = m(p);
     if (x.kind === "OUTSIDE" || x.kind === "SHARED") return null;
-    const up = exists(x.upper!) ? list(x.upper!, ...a) : null;
-    const low = x.kind !== "PER_RUN" && exists(x.lower!) ? list(x.lower!, ...a) : null;
-    if (!up && !low) return list(x.kind === "PER_RUN" ? x.upper! : x.lower!, ...a); // natural ENOENT
-    const seen = new Set<string>(); const res: any[] = [];
+    const up = exists(x.upper!) ? O.readdirSync(x.upper!, ...a) : null;
+    const low = x.kind !== "PER_RUN" && exists(x.lower!) ? O.readdirSync(x.lower!, ...a) : null;
+    if (!up && !low) return O.readdirSync(x.kind === "PER_RUN" ? x.upper! : x.lower!, ...a); // natural ENOENT
     const nameOf = (e: any) => String(typeof e === "string" ? e : (e && e.name));
     // A lower-layer entry that is a PER_RUN artifact is INVISIBLE (upper-only reads ⇒ listing it would be a dangling name).
     const lowVisible = (low || []).filter((e: any) => classifyRel(path.join(x.rel!, nameOf(e))) !== "PER_RUN");
+    const seen = new Set<string>(); const res: any[] = [];
     for (const e of [...(up || []), ...lowVisible]) { const n = nameOf(e); if (!seen.has(n)) { seen.add(n); res.push(e); } }
     return res;
   };
-
-  F.readFileSync = (p: any, ...a: any[]) => O.readFileSync(rd(p), ...a);
-  F.existsSync = (p: any) => O.existsSync(rd(p));
-  F.statSync = (p: any, ...a: any[]) => O.statSync(rd(p), ...a);
-  F.lstatSync = (p: any, ...a: any[]) => O.lstatSync(rd(p), ...a);
-  F.accessSync = (p: any, ...a: any[]) => O.accessSync(rd(p), ...a);
-  F.realpathSync = Object.assign((p: any, ...a: any[]) => O.realpathSync(rd(p), ...a), { native: O.realpathSync.native });
-  F.readdirSync = (p: any, ...a: any[]) => { const r = merge(p, a, O.readdirSync); return r === null ? O.readdirSync(p, ...a) : r; };
-  F.writeFileSync = (p: any, ...a: any[]) => O.writeFileSync(wr(p), ...a);
-  F.appendFileSync = (p: any, ...a: any[]) => O.appendFileSync(wr(p), ...a);
-  F.mkdirSync = (p: any, ...a: any[]) => O.mkdirSync(wrDir(p), ...a);
-  F.rmSync = (p: any, ...a: any[]) => O.rmSync(wrDir(p), ...a);
-  F.unlinkSync = (p: any, ...a: any[]) => O.unlinkSync(wrDir(p), ...a);
-  F.utimesSync = (p: any, ...a: any[]) => O.utimesSync(wrDir(p), ...a);
-  F.renameSync = (a: any, b: any) => O.renameSync(wrDir(a), wr(b));
-  F.copyFileSync = (a: any, b: any, ...r: any[]) => O.copyFileSync(rd(a), wr(b), ...r);
-  F.openSync = (p: any, flags?: any, ...a: any[]) => O.openSync(isWriteFlag(flags) ? wr(p) : rd(p), flags, ...a);
-  P.readFile = (p: any, ...a: any[]) => OP.readFile(rd(p), ...a);
-  P.stat = (p: any, ...a: any[]) => OP.stat(rd(p), ...a);
-  P.access = (p: any, ...a: any[]) => OP.access(rd(p), ...a);
-  P.readdir = async (p: any, ...a: any[]) => { const r = merge(p, a, O.readdirSync); return r === null ? OP.readdir(p, ...a) : r; };
-  P.writeFile = (p: any, ...a: any[]) => OP.writeFile(wr(p), ...a);
-  P.appendFile = (p: any, ...a: any[]) => OP.appendFile(wr(p), ...a);
-  P.mkdir = (p: any, ...a: any[]) => OP.mkdir(wrDir(p), ...a);
-  P.rm = (p: any, ...a: any[]) => OP.rm(wrDir(p), ...a);
-  P.unlink = (p: any, ...a: any[]) => OP.unlink(wrDir(p), ...a);
-  P.rename = (a: any, b: any) => OP.rename(wrDir(a), wr(b));
+  const mapArgs = (roles: string, a: any[]): any[] => {
+    const b = a.slice();
+    if (roles === "o") { b[0] = isWriteFlag(b[1]) ? wr(b[0]) : rd(b[0]); return b; }
+    for (let i = 0; i < roles.length && i < b.length; i++) {
+      const r = roles[i];
+      if (r === "r" || r === "L") b[i] = rd(b[i]); else if (r === "w") b[i] = wr(b[i]); else if (r === "d") b[i] = wrDir(b[i]);
+    }
+    return b;
+  };
+  const patch = (obj: any, name: string, roles: string, kind: "sync" | "cb" | "promise") => {
+    const orig = obj && obj[name];
+    if (typeof orig !== "function") return;
+    let fn: any;
+    if (roles === "L" && kind === "sync") fn = function (this: any, p: any, ...a: any[]) { const r = merged(p, a); return r === null ? orig.call(this, p, ...a) : r; };
+    else if (roles === "L" && kind === "promise") fn = async function (this: any, p: any, ...a: any[]) { const r = merged(p, a); return r === null ? orig.call(this, p, ...a) : r; };
+    else if (roles === "L" && kind === "cb") fn = function (this: any, p: any, ...a: any[]) {
+      const cb = typeof a[a.length - 1] === "function" ? a.pop() : null;
+      let r: any; try { r = merged(p, a); } catch (e) { if (cb) { process.nextTick(cb, e); return; } throw e; }
+      if (r === null) return orig.call(this, p, ...a, ...(cb ? [cb] : []));
+      if (cb) process.nextTick(cb, null, r);
+    };
+    else fn = function (this: any, ...a: any[]) { return orig.apply(this, mapArgs(roles, a)); };
+    for (const k of Object.keys(orig)) { try { fn[k] = orig[k]; } catch { /* read-only prop */ } }   // e.g. realpathSync.native
+    if (orig.native) fn.native = function (this: any, ...a: any[]) { return orig.native.apply(this, mapArgs(roles, a)); };
+    obj[name] = fn;
+  };
+  for (const [k, r] of Object.entries(SYNC_APIS)) patch(F, k, r, "sync");
+  for (const [k, r] of Object.entries(CALLBACK_APIS)) patch(F, k, r, "cb");
+  for (const [k, r] of Object.entries(PROMISE_APIS)) patch(P, k, r, "promise");
   g[INSTALLED] = ctx;
   return ctx;
 }
 
 /* childEnv — the env odg-run hands to its stage children in isolated mode: pins the root, preloads this module in
- * every node descendant, disables git's OPTIONAL index lock (concurrent `git status` on one repo never contends). */
+ * every node descendant (path QUOTED for NODE_OPTIONS), disables git's OPTIONAL index lock. */
 function childEnv(env: Record<string, string | undefined>, ctx: Ctx, selfPath: string): Record<string, string | undefined> {
-  const pre = `--require ${selfPath}`;
+  const pre = `--require ${JSON.stringify(selfPath)}`;
   const prior = typeof env.NODE_OPTIONS === "string" && env.NODE_OPTIONS.trim() ? env.NODE_OPTIONS : "";
   return { ...env, [ENV_DIR]: ctx.out, [ENV_ROOT]: ctx.root, GIT_OPTIONAL_LOCKS: "0", NODE_OPTIONS: prior.indexOf(pre) >= 0 ? prior : (prior ? prior + " " + pre : pre) };
 }
 
-module.exports = { ENV_DIR, ENV_ROOT, SHARED_STATE, PER_RUN_ARTIFACTS, PER_RUN_DIRS, resolveConfig, classifyRel, mapPath, withExclusiveLock, isActive, install, childEnv };
+module.exports = { ENV_DIR, ENV_ROOT, SHARED_STATE, PER_RUN_ARTIFACTS, PER_RUN_DIRS, PATCHED_APIS, PATH_FREE_APIS, resolveConfig, classifyRel, mapPath, isActive, install, childEnv };
 
 // Preload entry: `node --require <this file>` installs the overlay as soon as the descendant starts (no-op when unset).
 if (isActive()) { try { install(); } catch (e: any) { console.error("STOP: run-output isolation refused —", e && e.message); process.exit(1); } }

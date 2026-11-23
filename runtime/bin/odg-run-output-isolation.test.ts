@@ -58,6 +58,10 @@ const norm = (t, sb, out) => t.split(out || "\u0000").join("<GEN>").split(path.j
   .replace(/\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z/g, "<TS>").replace(/\b[0-9a-f]{64}\b/g, "<H>").replace(/\(\d+(\.\d+)?m?s\)/g, "(<D>)").replace(/\d+(\.\d+)?ms\b/g, "<D>");
 const readJ = (f) => JSON.parse(fs.readFileSync(f, "utf8"));
 const ledgerOf = (sb) => readJ(path.join(sb, "runtime", "generated", "mission-ledger.json"));
+const BRIDGE = require(path.join(DIST, "core", "fleet-bridge.js"));
+const LEDGER_CUR = (sb) => BRIDGE.currentClaim({ locksDir: path.join(sb, "runtime", "generated", "fleet", "locks") }, "mission-ledger");
+const spawnP = (args, o = {}) => new Promise((res) => { const c = cp.spawn("node", args, { stdio: ["ignore", "pipe", "pipe"], ...o }); let out = ""; c.stdout.on("data", (b) => (out += b)); c.stderr.on("data", (b) => (out += b)); c.on("close", (code) => res({ code, out })); });
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 (async () => {
   // (1) PURE config/classification — fail-closed refusals, inventory classes.
@@ -66,14 +70,16 @@ const ledgerOf = (sb) => readJ(path.join(sb, "runtime", "generated", "mission-le
     ok("config: unset/blank ⇒ isolation OFF (null)", ISO.resolveConfig({}, root) === null && ISO.resolveConfig({ ODG_RUN_OUTPUT_DIR: "  " }, root) === null);
     ok("config: = shared generated / its ancestor / tracked repo space ⇒ REFUSED (throws)", [ "runtime/generated", "runtime", "/r", "src/out" ].every((v) => { try { ISO.resolveConfig({ ODG_RUN_OUTPUT_DIR: v }, root); return false; } catch { return true; } }));
     ok("config: under runtime/generated/** or outside the repo ⇒ accepted", ISO.resolveConfig({ ODG_RUN_OUTPUT_DIR: "runtime/generated/wave-runs/t/A" }, root).out === "/r/runtime/generated/wave-runs/t/A" && ISO.resolveConfig({ ODG_RUN_OUTPUT_DIR: "/tmp/x" }, root).out === "/tmp/x");
-    ok("classify: mission-ledger(.lock/.tmp-*) SHARED; run artifacts + logs/reports PER_RUN; the rest INPUT (read-only fall-through)",
-      ["mission-ledger.json", "mission-ledger.json.lock", "mission-ledger.json.tmp-1-2"].every((r) => ISO.classifyRel(r) === "SHARED")
+    ok("classify: mission-ledger(.tmp-*) + its fleet-bridge claims SHARED; run artifacts + logs/reports PER_RUN; the rest INPUT (read-only fall-through)",
+      ["mission-ledger.json", "fleet/locks/mission-ledger.lock.3", "mission-ledger.json.tmp-1-2"].every((r) => ISO.classifyRel(r) === "SHARED")
       && ["mission-report.json", "pipeline-checkpoint.json.tmp-9", "logs/x.run.log", "reports/x.md", "truth-lock.json"].every((r) => ISO.classifyRel(r) === "PER_RUN")
       && ["project-context.json", "autonomy/patch-memory.json", "present-state-reconciliation.json"].every((r) => ISO.classifyRel(r) === "INPUT"));
     const ctx = { root, gen: "/r/runtime/generated", out: "/r/runtime/generated/wave-runs/t/A" };
     ok("mapPath: a path inside the run dir or outside generated is untouched; generated paths map to the run dir",
       ISO.mapPath("/r/runtime/generated/wave-runs/t/A/x.json", ctx).kind === "OUTSIDE" && ISO.mapPath("src/a.ts", ctx).kind === "OUTSIDE"
-      && ISO.mapPath("runtime/generated/mission-plan.json", ctx).upper === "/r/runtime/generated/wave-runs/t/A/mission-plan.json");
+      && ISO.mapPath("runtime/generated/mission-plan.json", ctx, "/r").upper === "/r/runtime/generated/wave-runs/t/A/mission-plan.json");
+    ok("mapPath: RELATIVE paths resolve against the calling process cwd (not the pinned root)",
+      ISO.mapPath("generated/x.json", ctx, "/r/runtime").upper === "/r/runtime/generated/wave-runs/t/A/x.json" && ISO.mapPath("runtime/generated/x.json", ctx, "/elsewhere").kind === "OUTSIDE");
   }
 
   // (2) DEFAULT PATH UNCHANGED + ISOLATED FIDELITY — same sandbox content, one default run vs one isolated run.
@@ -84,12 +90,15 @@ const ledgerOf = (sb) => readJ(path.join(sb, "runtime", "generated", "mission-le
     const t0 = Date.now(); const ra = runSync(sa, M, {}); tDefault = Date.now() - t0;
     const out = path.join(TMP, "iso-out-golden");
     const rb = runSync(sbx, M, { ODG_RUN_OUTPUT_DIR: out });
-    const pa = walk(path.join(sa, "runtime", "generated"));
+    const paAll = walk(path.join(sa, "runtime", "generated"));
+    const CLAIM = /^fleet\/locks\/mission-ledger\.lock\.\d+$/;
+    const claims = paAll.filter((f) => CLAIM.test(f)), pa = paAll.filter((f) => !CLAIM.test(f));
     ok("default (unset): real governed run exit 0, report SUCCESS+validated", ra.status === 0 && readJ(path.join(sa, "runtime", "generated", "mission-report.json")).validated === true);
     ok(`default (unset): writes EXACTLY the golden ${GOLDEN_DEFAULT_PATHS.length}-path set captured from pre-change origin/main`, JSON.stringify(pa) === JSON.stringify(GOLDEN_DEFAULT_PATHS.map((p) => p.replace("<M>", M))));
+    ok(`default (unset): the ONLY accepted addition is the ledger's fleet-bridge claim under fleet/locks, RELEASED (mtime=epoch) (${JSON.stringify(claims)})`, claims.length >= 1 && claims.length <= 2 && claims.every((f) => fs.statSync(path.join(sa, "runtime", "generated", f)).mtimeMs === 0));
     ok("default (unset): no isolation trace (no 'Output dir : ISOLATED' line, no NODE_OPTIONS preload)", !/ISOLATED/.test(ra.stdout));
-    const pbShared = walk(path.join(sbx, "runtime", "generated")), pbOut = walk(out);
-    ok("isolated: exit 0; shared runtime/generated receives ONLY the shared ledger (+ the absent-input bootstrap seed project-context.json is per-run)", rb.status === 0 && JSON.stringify(pbShared) === '["mission-ledger.json"]');
+    const pbSharedAll = walk(path.join(sbx, "runtime", "generated")), pbOut = walk(out), pbShared = pbSharedAll.filter((f) => !CLAIM.test(f));
+    ok("isolated: exit 0; shared runtime/generated receives ONLY the shared ledger + its claim (the bootstrap seed project-context.json is per-run)", rb.status === 0 && JSON.stringify(pbShared) === '["mission-ledger.json"]' && pbSharedAll.some((f) => CLAIM.test(f)) && !pbOut.some((f) => f.startsWith("fleet/")));
     ok("isolated: per-run dir ∪ shared ledger = EXACTLY the default path set", JSON.stringify([...pbOut, ...pbShared].sort()) === JSON.stringify(pa));
     let diffs = [];
     for (const f of pbOut) if (norm(fs.readFileSync(path.join(out, f), "utf8"), sbx, out) !== norm(fs.readFileSync(path.join(sa, "runtime", "generated", f), "utf8"), sa)) diffs.push(f);
@@ -130,10 +139,11 @@ const ledgerOf = (sb) => readJ(path.join(sb, "runtime", "generated", "mission-le
         && fs.existsSync(path.join(dir, "logs", id + ".run.log")) && fs.existsSync(path.join(dir, "reports", id + ".final-report.md")));
     }
     const sharedAfter = walk(path.join(sb, "runtime", "generated")).filter((f) => !f.startsWith("wave-runs/"));
-    const changed = sharedAfter.filter((f) => !sharedBefore.has(f) || sharedBefore.get(f) !== fs.readFileSync(path.join(sb, "runtime", "generated", f), "utf8"));
-    ok(`shared runtime/generated: the ONLY changed file is the shared ledger (changed: ${JSON.stringify(changed)})`, JSON.stringify(changed) === '["mission-ledger.json"]');
+    const changed = sharedAfter.filter((f) => !/^fleet\/locks\/mission-ledger\.lock\.\d+$/.test(f)).filter((f) => !sharedBefore.has(f) || sharedBefore.get(f) !== fs.readFileSync(path.join(sb, "runtime", "generated", f), "utf8"));
+    ok(`shared runtime/generated: the ONLY changed file is the shared ledger (+ its claim generations) (changed: ${JSON.stringify(changed)})`, JSON.stringify(changed) === '["mission-ledger.json"]');
     const L = ledgerOf(sb), v = LEDGER.verifyLedger(L);
-    ok("shared ledger: lock-serialized RMW ⇒ +2 entries (no lost update), one per mission, seal chain verifies", L.count === ledgerBefore + 2 && L.entries.length === L.count && L.entries.slice(-2).map((e) => e.mission).sort().join() === [A, B].sort().join() && v.ok === true && !fs.existsSync(path.join(sb, "runtime", "generated", "mission-ledger.json.lock")));
+    const cur = LEDGER_CUR(sb);
+    ok("shared ledger: claim-serialized RMW ⇒ +2 entries (no lost update), one per mission, seal chain verifies, claim released", L.count === ledgerBefore + 2 && L.entries.length === L.count && L.entries.slice(-2).map((e) => e.mission).sort().join() === [A, B].sort().join() && v.ok === true && cur && cur.mtimeMs === 0);
     const lines = fs.readFileSync(logPath, "utf8").split("\n").filter(Boolean);
     ok("shared attempt log: line count = 2 (one per child), every line valid JSON with the default row shape", lines.length === 2 && lines.every((l) => { const r = JSON.parse(l); return JSON.stringify(Object.keys(r)) === '["mission","recordedAt","status","reason"]' && r.status === "PASS"; }));
   }
@@ -149,25 +159,114 @@ const ledgerOf = (sb) => readJ(path.join(sb, "runtime", "generated", "mission-le
     ok(`attempt log: ${N} concurrent writers × ${K} O_APPEND lines ⇒ line count = sum (${lines.length}/${N * K}), every line valid JSON, none torn/interleaved`, lines.length === N * K && valid === N * K && Object.values(per).every((c) => c === K));
   }
 
-  // (5) withExclusiveLock under REAL process concurrency: read-modify-write counter, no lost update.
+  // (5) LEDGER CLAIM (reuses fleet-bridge generation claims) under REAL process concurrency.
   {
-    const ctr = path.join(TMP, "ctr.json"), lock = ctr + ".lock", N = 5, K = 40;
-    fs.writeFileSync(ctr, JSON.stringify({ n: 0 }));
-    const script = `const fs=require("fs");const I=require(${JSON.stringify(path.join(DIST, "core", "run-output-isolation.js"))});for(let i=0;i<${K};i++)I.withExclusiveLock(${JSON.stringify(lock)},()=>{const v=JSON.parse(fs.readFileSync(${JSON.stringify(ctr)},"utf8"));fs.writeFileSync(${JSON.stringify(ctr)}+".t",JSON.stringify({n:v.n+1}));fs.renameSync(${JSON.stringify(ctr)}+".t",${JSON.stringify(ctr)});});`;
-    await Promise.all(Array.from({ length: N }, () => new Promise((res) => cp.spawn("node", ["-e", script], { stdio: "ignore" }).on("close", res))));
-    ok(`withExclusiveLock: ${N} processes × ${K} locked RMW increments ⇒ ${N * K} (got ${readJ(ctr).n}), lock released`, readJ(ctr).n === N * K && !fs.existsSync(lock));
-    fs.writeFileSync(lock, "stale"); const old = (Date.now() - 600000) / 1000; fs.utimesSync(lock, old, old);
-    ok("withExclusiveLock: a stale lock (crashed holder) is broken, not waited on forever", ISO.withExclusiveLock(lock, () => 42, { staleMs: 1000, timeoutMs: 2000 }) === 42);
-    fs.writeFileSync(lock, "held");
-    let threw = false; try { ISO.withExclusiveLock(lock, () => 1, { staleMs: 600000, timeoutMs: 150 }); } catch { threw = true; }
-    ok("withExclusiveLock: a live lock ⇒ bounded wait then THROW (never proceeds unlocked)", threw); fs.rmSync(lock, { force: true });
+    const LJS = JSON.stringify(path.join(DIST, "core", "mission-ledger.js"));
+    // (a) claim-serialized read-modify-write counter: N processes × K increments ⇒ no lost update.
+    {
+      const locksDir = path.join(TMP, "claims-a"), ctr = path.join(TMP, "ctr.json"), N = 5, K = 20;
+      fs.writeFileSync(ctr, JSON.stringify({ n: 0 }));
+      const script = `const fs=require("fs");const L=require(${LJS});for(let i=0;i<${K};i++)L.withLedgerClaim(()=>{const v=JSON.parse(fs.readFileSync(${JSON.stringify(ctr)},"utf8"));fs.writeFileSync(${JSON.stringify(ctr)}+".t"+process.pid,JSON.stringify({n:v.n+1}));fs.renameSync(${JSON.stringify(ctr)}+".t"+process.pid,${JSON.stringify(ctr)});},{locksDir:${JSON.stringify(locksDir)}});`;
+      const rs = await Promise.all(Array.from({ length: N }, () => spawnP(["-e", script])));
+      ok(`ledger claim: ${N} processes × ${K} claim-serialized RMW increments ⇒ ${N * K} (got ${readJ(ctr).n}), all exit 0`, readJ(ctr).n === N * K && rs.every((r) => r.code === 0));
+    }
+    // (b) STALE-CLAIM TAKEOVER RACE: 3 claimants hit one stale generation at the same instant ⇒ exactly ONE holder.
+    {
+      const locksDir = path.join(TMP, "claims-b"); fs.mkdirSync(locksDir, { recursive: true });
+      const stale = path.join(locksDir, "mission-ledger.lock.1"); fs.writeFileSync(stale, JSON.stringify({ pid: 999999, token: "dead" }));
+      const old = (Date.now() - 3600000) / 1000; fs.utimesSync(stale, old, old);
+      const startAt = Date.now() + 800;
+      const script = `const L=require(${LJS});while(Date.now()<${startAt});let c=null;try{c=L.claimLedger({locksDir:${JSON.stringify(locksDir)},timeoutMs:0});}catch(e){console.log("LOST "+e.message.split(":")[0]);process.exit(0);}const t0=Date.now();while(Date.now()-t0<400);console.log("HELD "+c.gen);c.release();`;
+      const rs = await Promise.all([0, 1, 2].map(() => spawnP(["-e", script])));
+      const held = rs.filter((r) => /^HELD/m.test(r.out)), lost = rs.filter((r) => /^LOST LEDGER_CLAIM_TIMEOUT/m.test(r.out));
+      ok(`stale takeover race (3 claimants, same instant): exactly ONE holder, 2 refused (${rs.map((r) => r.out.trim()).join(" | ")})`, held.length === 1 && lost.length === 2);
+    }
+    // (c) OUTLIVED HOLDER: A outlives its TTL; B takes over; A cannot write (LOST) and its release cannot touch B's claim.
+    {
+      const locksDir = path.join(TMP, "claims-c"), flag = path.join(TMP, "a-claimed");
+      const script = `const fs=require("fs");const L=require(${LJS});const c=L.claimLedger({locksDir:${JSON.stringify(locksDir)},ttlMs:300,marginMs:0});fs.writeFileSync(${JSON.stringify(flag)},String(c.gen));const t0=Date.now();while(Date.now()-t0<900);let r="HELD";try{c.assertHeld();}catch(e){r=e.message.split(":")[0];}c.release();console.log(r);`;
+      const pa = spawnP(["-e", script]);
+      while (!fs.existsSync(flag)) await sleep(10);
+      await sleep(450);   // A's claim is now stale (ttl 300ms) but A is still running
+      const pb = spawnP(["-e", `const L=require(${LJS});const c=L.claimLedger({locksDir:${JSON.stringify(locksDir)},ttlMs:300,timeoutMs:0});console.log(JSON.stringify({gen:c.gen}));const t0=Date.now();while(Date.now()-t0<1200);`]);
+      const ra = await pa;
+      const cur = BRIDGE.currentClaim({ locksDir }, "mission-ledger");
+      const bLiveAfterARelease = !!cur && cur.gen === Number(fs.readFileSync(flag, "utf8")) + 1 && cur.mtimeMs > 0;
+      const rb = await pb;
+      ok(`outlived holder: A ⇒ ${ra.out.trim()} (no write after losing the claim); B ⇒ ${rb.out.trim()}; A's release left B's claim LIVE`, /LEDGER_CLAIM_LOST/.test(ra.out) && bLiveAfterARelease);
+    }
+    // (d) bounded wait: a LIVE claim held elsewhere ⇒ a clear LEDGER_CLAIM_TIMEOUT, never a hang.
+    {
+      const locksDir = path.join(TMP, "claims-d"), flag = path.join(TMP, "d-held");
+      const pa = spawnP(["-e", `const fs=require("fs");const L=require(${LJS});const c=L.claimLedger({locksDir:${JSON.stringify(locksDir)}});fs.writeFileSync(${JSON.stringify(flag)},"1");const t0=Date.now();while(Date.now()-t0<1500);c.release();`]);
+      while (!fs.existsSync(flag)) await sleep(10);
+      const t0 = Date.now(); let msg = "";
+      try { LEDGER.claimLedger({ locksDir, timeoutMs: 200 }); } catch (e) { msg = e.message; }
+      const took = Date.now() - t0;
+      ok(`bounded wait: live claim elsewhere ⇒ LEDGER_CLAIM_TIMEOUT after ${took}ms (timeout 200ms), not a hang`, /^LEDGER_CLAIM_TIMEOUT/.test(msg) && took < 2000);
+      await pa;
+    }
+  }
+
+  // (7) DEFAULT odg-run (live mission-runner path, no isolation) CONCURRENT with an isolated wave of 2 ⇒ ledger intact.
+  {
+    const A = "ISO_MIX_ALPHA", B = "ISO_MIX_BRAVO", C = "ISO_MIX_DEFAULT";
+    const sb = sandbox([contract(A, ["reports/mix-a"]), contract(B, ["reports/mix-b"]), contract(C)]);
+    const before = fs.existsSync(path.join(sb, "runtime", "generated", "mission-ledger.json")) ? ledgerOf(sb).count : 0;
+    const pDefault = spawnP(["runtime/dist/bin/odg-run.js", C], { cwd: sb, env: runEnv({}) });
+    const d = await tick.tickWave({ allow: new Set([A, B]), proven: new Set(), loadMission: (id) => { try { return readJ(path.join(sb, "runtime", "missions", id + ".json")); } catch { return null; } },
+      runBin: "runtime/dist/bin/odg-run.js", cwd: sb, env: runEnv({}), isolate: true, runOutputBase: path.join(sb, "runtime", "generated", "wave-runs", "mix"), logPath: path.join(sb, "mix.jsonl"), chain: [], timeoutMs: 120000 });
+    const rd = await pDefault;
+    const L = ledgerOf(sb), v = LEDGER.verifyLedger(L);
+    const counts = [A, B, C].map((m) => L.entries.filter((e) => e.mission === m).length);
+    ok(`default + wave concurrent: all 3 runs PASS; ledger count = ${before} + 3 = ${L.count}, each mission exactly once, seal chain verifies`, rd.code === 0 && d.status === "PASS" && L.count === before + 3 && L.entries.length === L.count && counts.every((c) => c === 1) && v.ok === true);
+  }
+
+  // (8) fs API COVERAGE — (a) static scan of the odg-run stage closure; (b) the non-trivial APIs exercised under isolation.
+  {
+    const okFs = new Set([...ISO.PATCHED_APIS.sync, ...ISO.PATCHED_APIS.callback, ...ISO.PATH_FREE_APIS]);
+    const okP = new Set([...ISO.PATCHED_APIS.promises, ...ISO.PATH_FREE_APIS]);
+    const scan = (src) => {
+      const bad = [], used = [], al = [];
+      for (const m of src.matchAll(/(?:const|let|var)\s+(\w+)\s*=\s*(__importStar\(|__importDefault\()?require\("(?:node:)?fs(\/promises)?"\)\)?/g)) al.push({ n: m[2] && m[2].startsWith("__importDefault") ? m[1] + ".default" : m[1], p: !!m[3] });
+      for (const m of src.matchAll(/(?:const|let|var)\s*\{([^}]+)\}\s*=\s*require\("(?:node:)?fs(\/promises)?"\)/g)) for (const n of m[1].split(",").map((x) => x.split(":")[0].trim()).filter(Boolean)) { used.push(n); if (!(m[2] ? okP : okFs).has(n)) bad.push("destructured " + n); }
+      for (const a of al) for (const m of src.matchAll(new RegExp("\\b" + a.n.replace(".", "\\.") + "\\.(promises\\.)?(\\w+)", "g"))) { const n = m[2]; used.push(n); if (!((a.p || m[1]) ? okP : okFs).has(n)) bad.push(a.n + "." + (m[1] || "") + n); }
+      return { bad, used };
+    };
+    ok("closure scan self-check: an unpatched path API (fs.fooSync / fsp.lchownX) IS detected", scan('const fs = require("fs");\nconst fsp = require("fs/promises");\nfs.fooSync("runtime/generated/x");fsp.lchownX("a");').bad.length === 2);
+    const files = [...fs.readdirSync(path.join(DIST, "core")).filter((f) => f.endsWith(".js")).map((f) => path.join(DIST, "core", f)), path.join(DIST, "bin", "odg-run.js"), path.join(DIST, "bin", "odg-bootstrap.js")];
+    const bad = [], usedAll = [];
+    for (const f of files) { const r = scan(fs.readFileSync(f, "utf8")); usedAll.push(...r.used); for (const b of r.bad) bad.push(path.basename(f) + ": " + b); }
+    ok(`closure scan: ${files.length} dist modules, ${usedAll.length} fs call sites — every fs API used is patched or path-free (unpatched: ${JSON.stringify([...new Set(bad)])})`, bad.length === 0 && usedAll.length > 300);
+
+    const R = fs.mkdtempSync(path.join(TMP, "api-")), OUT = path.join(TMP, "api-out-" + path.basename(R));
+    fs.mkdirSync(path.join(R, "runtime", "generated", "seed-dir"), { recursive: true });
+    fs.writeFileSync(path.join(R, "runtime", "generated", "seed.txt"), "shared");
+    fs.writeFileSync(path.join(R, "runtime", "generated", "seed-dir", "a.txt"), "a");
+    const before = walk(path.join(R, "runtime", "generated"));
+    const script = `const fs=require("fs"),fsp=require("fs/promises");const G="runtime/generated";(async()=>{
+await new Promise((r,j)=>fs.writeFile(G+"/cb.txt","1",(e)=>e?j(e):r()));
+await new Promise((r,j)=>fs.appendFile(G+"/cb-append.txt","1",(e)=>e?j(e):r()));
+await new Promise((r)=>{const w=fs.createWriteStream(G+"/stream.txt");w.end("s",r);});
+const h=await fsp.open(G+"/p-open.txt","w");await h.writeFile("p");await h.close();
+await fsp.copyFile(G+"/seed.txt",G+"/p-copy.txt");
+fs.symlinkSync("seed.txt",G+"/sym.txt");fs.linkSync(G+"/seed.txt",G+"/hard.txt");
+const t=fs.mkdtempSync(G+"/tmp-");fs.writeFileSync(t+"/in.txt","t");
+fs.cpSync(G+"/seed-dir",G+"/seed-copy",{recursive:true});
+process.chdir("runtime");fs.writeFileSync("generated/rel.txt","rel");
+console.log("DONE",fs.readFileSync("generated/rel.txt","utf8"),fs.readFileSync("generated/seed.txt","utf8"));})().catch((e)=>{console.log("ERR",e.message);process.exit(1);});`;
+    const r = await spawnP(["--require", path.join(DIST, "core", "run-output-isolation.js"), "-e", script], { cwd: R, env: { ...runEnv({}), ODG_RUN_OUTPUT_DIR: OUT, ODG_RUN_OUTPUT_ROOT: R } });
+    const after = walk(path.join(R, "runtime", "generated")), outFiles = walk(OUT);
+    const expect = ["cb.txt", "cb-append.txt", "stream.txt", "p-open.txt", "p-copy.txt", "sym.txt", "hard.txt", "rel.txt", "seed-copy/a.txt"];
+    ok(`API coverage: callback writeFile/appendFile, createWriteStream, promises.open/copyFile, symlinkSync, linkSync, mkdtempSync, cpSync and a cwd-RELATIVE write all land in the run dir; the shared dir is untouched (${r.out.trim()})`,
+      r.code === 0 && /^DONE rel shared/.test(r.out.trim()) && JSON.stringify(after) === JSON.stringify(before) && expect.every((f) => outFiles.includes(f)) && outFiles.some((f) => /^tmp-[^/]+\/in\.txt$/.test(f)));
   }
 
   // (6) Wave default contract preserved: an injected runner without opts.isolate ⇒ isolation OFF, shared write-set kept.
   {
     const sel = tick.selectWave(["X1", "X2"], { REC: require(path.join(DIST, "core", "odg-open-mission-recovery.js")), MO: require(path.join(DIST, "core", "odg-mission-orchestrator.js")), loadMission: () => ({ write_set: ["a"] }), waveMax: 2 });
     ok("selectWave without isolation: real-runner shared runtime/generated still serializes (one per sub-wave)", JSON.stringify(sel.subWaves) === '[["X1"],["X2"]]');
-    ok("ISOLATED_RUNNER_SHARED_WRITESET is empty (the ledger is lock-serialized, not wave-serialized)", Array.isArray(tick.ISOLATED_RUNNER_SHARED_WRITESET) && tick.ISOLATED_RUNNER_SHARED_WRITESET.length === 0);
+    ok("ISOLATED_RUNNER_SHARED_WRITESET is empty (the ledger is claim-serialized, not wave-serialized)", Array.isArray(tick.ISOLATED_RUNNER_SHARED_WRITESET) && tick.ISOLATED_RUNNER_SHARED_WRITESET.length === 0);
   }
 
   const realGenAfter = fs.existsSync(path.join(REAL_GEN, "mission-ledger.json")) ? fs.statSync(path.join(REAL_GEN, "mission-ledger.json")).mtimeMs : null;

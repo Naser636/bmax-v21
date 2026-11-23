@@ -85,6 +85,50 @@ function verifyLedger(payload: any): any {
   return { ok: true, verified, legacyUnsealed: legacy, total: entries.length, tamperEvident: verified > 0, tip: prevSeal, brokenAt: -1, reason: verified > 0 ? "sealed chain intact" : "legacy unsealed (no seals yet — NOT tamper-evident)" };
 }
 
+/*
+ * V15.1 LEDGER CLAIM — the ledger's read-modify-write is a CROSS-PROCESS critical section: a default odg-run (live
+ * mission-runner timer) and isolated wave runs (ODG_RUN_OUTPUT_DIR) may reach this stage at the same time, and two
+ * unserialized appenders lose an update (last rename wins). The critical section REUSES the accepted generation-numbered
+ * claim of fleet-bridge (tryClaim/releaseClaim/currentClaim, race-free takeover, #890) — no second lock design — under
+ * the existing fleet locks dir as request id "mission-ledger" (files runtime/generated/fleet/locks/mission-ledger.lock.<gen>).
+ * Taken on BOTH paths (the one accepted default-path change). Bounded wait (default 60s) ⇒ a clear thrown failure,
+ * never a hang. The holder RE-VERIFIES before writing that its generation is still the highest AND that it is not within
+ * the takeover margin of its TTL; otherwise it throws and writes nothing. Release only marks its OWN generation released.
+ */
+const LEDGER_CLAIM_ID = "mission-ledger";
+const LEDGER_CLAIM_DEFAULTS = { locksDir: "runtime/generated/fleet/locks", ttlMs: 120000, timeoutMs: 60000, pollMs: 25, marginMs: 5000 };
+let activeClaim: any = null;
+function sleepSync(ms: number): void { Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms); }
+function claimLedger(o: any = {}): any {
+  const bridge: any = require("./fleet-bridge");
+  const opt = { ...LEDGER_CLAIM_DEFAULTS, ...o };
+  const cfg = { locksDir: opt.locksDir, lockTtlMs: opt.ttlMs };
+  const t0 = Date.now();
+  while (!bridge.tryClaim(cfg, LEDGER_CLAIM_ID)) {
+    if (Date.now() - t0 >= opt.timeoutMs) {
+      const cur = bridge.currentClaim(cfg, LEDGER_CLAIM_ID);
+      throw new Error(`LEDGER_CLAIM_TIMEOUT: mission-ledger claim not acquired within ${opt.timeoutMs}ms (current gen ${cur ? cur.gen : "?"}, holder pid ${cur && cur.holder ? cur.holder.pid : "?"}) — NOT recorded`);
+    }
+    sleepSync(opt.pollMs);
+  }
+  const mine = bridge.currentClaim(cfg, LEDGER_CLAIM_ID);
+  const gen = mine && mine.gen, token = mine && mine.holder && mine.holder.token, at = Date.now();
+  return {
+    gen,
+    assertHeld() {
+      const cur = bridge.currentClaim(cfg, LEDGER_CLAIM_ID);
+      if (!cur || cur.gen !== gen || !cur.holder || cur.holder.token !== token) throw new Error(`LEDGER_CLAIM_LOST: generation ${gen} superseded by ${cur ? cur.gen : "none"} — refusing to write`);
+      if (Date.now() - at > opt.ttlMs - opt.marginMs) throw new Error(`LEDGER_CLAIM_EXPIRING: held ${Date.now() - at}ms of a ${opt.ttlMs}ms TTL — refusing to write (a takeover may be imminent)`);
+    },
+    release() { bridge.releaseClaim(cfg, LEDGER_CLAIM_ID); },
+  };
+}
+function withLedgerClaim<T>(fn: () => T, o: any = {}): T {
+  const c = claimLedger(o);
+  const prev = activeClaim; activeClaim = c;
+  try { return fn(); } finally { activeClaim = prev; c.release(); }
+}
+
 function recordMission(mission: string): any {
   // Proven-only gate (DEFAULT-DENY). `proven: true` is recorded ONLY when the Validation Engine's
   // report for THIS EXACT mission says validated === true. A report that is ABSENT, belongs to
@@ -291,12 +335,13 @@ function recordMission(mission: string): any {
   fs.mkdirSync("runtime/generated", { recursive: true });
   // CRASH-ATOMIC write (S3b): serialize to a temp file in the SAME directory, then rename() over the target. rename(2)
   // is atomic on POSIX, so a crash/interrupt mid-write can NEVER leave a torn/half-written ledger — which the reader
-  // above would classify as corrupt and then REFUSE to append to, silently stalling all future evidence. (This does
-  // NOT serialize two CONCURRENT read-modify-write appenders — a lost-update — which stays gated by the one-active-
-  // mission discipline and is a documented defense-in-depth follow-on, NOT reachable by any automated path today.)
+  // above would classify as corrupt and then REFUSE to append to, silently stalling all future evidence. (Two CONCURRENT
+  // read-modify-write appenders are serialized by the V15.1 ledger claim — see claimLedger/withLedgerClaim above.)
   const payload = JSON.stringify({ generatedAt: entry.recordedAt, count: entries.length, tipSeal: entry.seal, entries }, null, 2);
   const tmp = `${LEDGER_FILE}.tmp-${process.pid}-${entries.length}`;
+  if (activeClaim) activeClaim.assertHeld();   // V15.1: never write after losing the ledger claim (superseded / near-expiry)
   fs.writeFileSync(tmp, payload);
+  if (activeClaim) { try { activeClaim.assertHeld(); } catch (e) { try { fs.rmSync(tmp, { force: true }); } catch { /* best-effort */ } throw e; } }
   try { fs.renameSync(tmp, LEDGER_FILE); } catch (e) { try { fs.rmSync(tmp, { force: true }); } catch { /* best-effort */ } throw e; }
 
   // V28 — governed post-release experience accumulation (ADVISORY, non-authoritative). Runs ONLY after
@@ -330,16 +375,18 @@ function recordMission(mission: string): any {
   return { skipped: false, entry, count: entries.length };
 }
 
-module.exports = { recordMission, verifyLedger, sealFor };
+module.exports = { recordMission, verifyLedger, sealFor, claimLedger, withLedgerClaim, LEDGER_CLAIM_ID, LEDGER_CLAIM_DEFAULTS };
 
 if (require.main === module) {
   const mission = process.argv[2] || "BUILD_RUNTIME";
   try {
-    // V15.1: under OPT-IN run-output isolation (ODG_RUN_OUTPUT_DIR) concurrent runs may reach this stage at once; the
-    // ledger stays SHARED (proven-dedup reads it), so its read-modify-write is SERIALIZED by an O_EXCL lock — no lost
-    // update, the seal chain stays linear. Default (unset) path: called directly, exactly as before.
-    const iso = process.env.ODG_RUN_OUTPUT_DIR ? require("./run-output-isolation") : null;
-    const result = iso && iso.isActive() ? iso.withExclusiveLock(LEDGER_FILE + ".lock", () => recordMission(mission)) : recordMission(mission);
+    // V15.1: the read-modify-write runs under the fleet-bridge generation claim on EVERY path (default + isolated).
+    let result: any;
+    try { result = withLedgerClaim(() => recordMission(mission)); }
+    catch (e: any) {
+      if (/^LEDGER_CLAIM_/.test(String(e && e.message))) { console.error("STOP: [MissionLedger]", e.message); process.exit(1); } // clear, bounded failure — never a silent unrecorded success
+      throw e;
+    }
     console.log("======================================");
     console.log("MISSION LEDGER");
     console.log("======================================");
