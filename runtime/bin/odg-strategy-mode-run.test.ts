@@ -33,6 +33,7 @@ check("16 A–P contracts present", ev.missions.filter((m: any) => m.family === 
   const stateOf = (id: string) => (apC.find((c: any) => "AP-" + c.scenario === id) || {}).state;
   check("A–P PROPOSED ⇒ DECISION_REQUIRED (selector never authorizes)", ev.missions.filter((m: any) => m.family === "AP" && stateOf(m.id) !== "AUTHORIZED").every((m: any) => m.current.mode === "DECISION_REQUIRED"));
   check("A–P AUTHORIZED (owner) ⇒ not M0 (the owner's authorization, never the selector's)", ev.missions.filter((m: any) => m.family === "AP" && stateOf(m.id) === "AUTHORIZED").every((m: any) => m.current.rule !== "M0" && m.current.authorizationRequired === false));
+  check("AUTHORIZED_FOR_REVISION (G, V165) ⇒ still M0 DECISION_REQUIRED (revision ≠ execution)", ev.missions.filter((m: any) => m.family === "AP" && stateOf(m.id) === "AUTHORIZED_FOR_REVISION").every((m: any) => m.current.rule === "M0" && m.current.mode === "DECISION_REQUIRED"));
 }
 const sels = ev.missions.flatMap((m: any) => [m.prior, m.current].filter(Boolean));
 check("every PROVIDER/HYBRID selection: auth+budget required, not executable, not launched", sels.filter((x: any) => ["PROVIDER", "HYBRID"].includes(x.mode)).every((x: any) => x.authorizationRequired && x.budgetRequired && !x.providerExecutable && x.launchedBySelector === false));

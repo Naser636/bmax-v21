@@ -91,14 +91,17 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     check("next-after-current selection recorded (selector, not id order)", typeof nx.nextAfterCurrent.decision === "string" && nx.nextAfterCurrent.selected !== "G");
     check("summary written through the confined writer", calls.writes.length === 1);
   }
-  // 1b. committed state after V165: contract G AUTHORIZED by the owner ⇒ the gate opens on the owner's authorization only
+  // 1b. committed state after V165: the owner authorized REVISION + INSPECTION of G's contract, NOT execution
+  //     ("lancer les expériences contrôlées après validation de ce contrat") ⇒ state AUTHORIZED_FOR_REVISION
   {
-    const { ports, trace, calls } = mkPorts({ state: BASE_LIVE });
-    await GO.runGoCycle({ mode: "DRY" }, ports);
-    const au = stepIn(trace, "AUTHORIZE");
     const g = BASE_LIVE.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
-    check("committed contract G is AUTHORIZED by the owner (V165 §1), not by ODG", g.state === "AUTHORIZED" && /V165/.test(String(g.authorizedBy)) && /^OWNER/.test(String(g.authorizedBy)));
-    check("committed state ⇒ AUTHORIZE passes on the external authorization, selfAuthorized false, no dispatch in DRY", au.decision.selectedAuthorized === true && au.decision.selfAuthorized === false && calls.dispatch === 0 && calls.provider === 0);
+    check("committed contract G is AUTHORIZED_FOR_REVISION by the owner (V165 §1), executionAuthorized false", g.state === "AUTHORIZED_FOR_REVISION" && /^OWNER/.test(String(g.authorizedBy)) && /V165/.test(String(g.authorizedBy)) && g.authorization && g.authorization.executionAuthorized === false);
+    // runnable isolated scratch is provided by the default ports (isolation ok + dispatchNative available)
+    const { ports, trace, calls } = mkPorts({ state: BASE_LIVE });
+    const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
+    const au = stepIn(trace, "AUTHORIZE");
+    check("committed state + EXECUTE + runnable scratch ⇒ G NOT dispatched (revision-only authorization never opens execution)", calls.dispatch === 0 && calls.provider === 0 && r.status === "HALTED_AT_AUTHORIZATION_GATE" && au.decision.selectedAuthorized === false && au.decision.selfAuthorized === false);
+    check("committed state ⇒ STRATEGY stays M0 DECISION_REQUIRED for G", stepIn(trace, "STRATEGY").decision.rule === "M0" && stepIn(trace, "STRATEGY").decision.mode === "DECISION_REQUIRED");
   }
   // 2. --execute on unauthorized work: still no dispatch
   {

@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "d40c2776a97596d43cc54ff2ad5c4cf2df59d2b3b9102029ea4928837a7a059e"
+      "sha256": "82ec235ccc2b76528a791e59382f48d1839b104cd7ca342b22efd086b41aa1dc"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "c37241e73ded66baa2fb28df4b143f496f05221f7a1418ebf5a89a4887998513"
+      "sha256": "f77fc8fc099313c547c1f5cf5784e0ee3042b8035a08ba1361cbc947224b3ac8"
     }
   ],
   "register": {
@@ -957,7 +957,7 @@
         "id": "G",
         "kind": "WORK_ITEM_CONTRACT",
         "title": "G — Mémoire",
-        "contractState": "AUTHORIZED",
+        "contractState": "AUTHORIZED_FOR_REVISION",
         "authorizedBy": "OWNER (CTO) — directive V165 §1, 2026-11-23: \"J'autorise la reprise de la mission G.\" Scope: revise the contract (make the admissible() criterion coherent, measurable, testable; keep still-valid criteria; document changes + justification), independent inspection of the revised contract, then controlled experiments after that contract is validated. \"Ne jamais transformer rétroactivement un résultat négatif en réussite.\"",
         "status": "EXECUTED_PARTIAL",
         "statusSource": [
@@ -9896,5 +9896,5 @@
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): only evidenceLevel is derivable, every other criterion is NOT_MEASURED (uncertainty 0.9), so under uncertaintyMax 0.5 none can be the choice until benefit criteria are measured; the GAP_LINKS dedupe table and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change"
   ],
-  "generatedAtHead": "e2f76f9d691da725561543ed52b133f8e6e98bf3"
+  "generatedAtHead": "b93166c230ff9be500499021a08b3928e036d92e"
 }

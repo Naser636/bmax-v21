@@ -16,6 +16,7 @@
       "Ne jamais transformer rétroactivement un résultat négatif en réussite."
     ],
     "appliesTo": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#G",
+    "machineState": "contract G state AUTHORIZED_FOR_REVISION (scope REVISE_CONTRACT + INSPECT_REVISED_CONTRACT; executionAuthorized false until an inspection ACCEPT of the revised contract is recorded)",
     "order": [
       "revise contract",
       "independent inspection of the revised contract",
