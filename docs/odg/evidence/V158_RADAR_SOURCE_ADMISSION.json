@@ -23,6 +23,7 @@
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/repos/stripe/smokescreen (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/repos/google/osv.dev (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "3ab2a29b3509da3163b831ac8f984c09050e32f2d98e0292bfd04079bd4b4aa4"
     },
     {
@@ -39,6 +40,7 @@
         "TERMS_NOT_VERIFIED",
         "OWNER_DECISION_REQUIRED: CONDITIONAL_OWNER_DECISION: CONTRADICTION robots vs ToU. RFC 9309: robots is not access authorization; ToU explicitly licenses API use. Owner must decide which instrument governs; log it."
       ],
+      "termsCondition": null,
       "evidenceSha256": "144c8b4a73d8e94d77dfe1ab7702a74671a0ac1411dd241e146b60d8886f0912"
     },
     {
@@ -50,6 +52,7 @@
         "CRAWL_DELAY_15s_NOT_ENFORCEABLE (no per-host pacing in the transport)",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/abs/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "d034f7d6cac97591e2986cc88023bab8bef6b5ae0af5044e62a1160388a33b81"
     },
     {
@@ -62,6 +65,7 @@
         "CONCURRENCY_LIMIT_1_NOT_ENFORCEABLE",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/works (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "2ac97caf8646f0e4b2558ddd29869e23ce026f130683f437e961d54367166a1b"
     },
     {
@@ -79,6 +83,7 @@
         "OWNER_DECISION_REQUIRED: CONDITIONAL_LOW_BUDGET: Usage-priced service; keyless budget ~100 req/day. Key = registration (owner-gated).",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/works (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "0cf7d8c153fbafd1771e0e0db7aac69e56e517d91fdc70d4b7179d7b24529526"
     },
     {
@@ -96,6 +101,7 @@
         "OWNER_DECISION_REQUIRED: CONDITIONAL_UNRELIABLE: Anonymous pool frequently exhausted; treat 429 as normal; license agreement governs API use.",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/graph/v1/paper/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "58673300cde442f066c9984512540648ae644e276c0af7cc886adedd52635e99"
     },
     {
@@ -106,6 +112,7 @@
       "reasons": [
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/rfc/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "a1ce5e4cd2c815e81fce1a5dba86f146f18fc6f2ed52666145e1daec040b6646"
     },
     {
@@ -117,6 +124,7 @@
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/doc/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/api/v1/doc/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "1524d9b81efc304714668aa5e6cd261754e24be709e49e5d2f2013733b3cee6a"
     },
     {
@@ -127,6 +135,7 @@
       "reasons": [
         "PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:/TR/ ⊃ /TR/? (governor cannot exclude sub-paths — narrow the prefix)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "4e54dffadd34084a849ac951ab9f2101dc77e93d1081cf2d5c6c29fb7d2070d2"
     },
     {
@@ -137,6 +146,7 @@
         "/pubs/"
       ],
       "reasons": [],
+      "termsCondition": null,
       "evidenceSha256": "41fcddf2360c3a36d40efd1500f778b1f61f82c5adf39369cc46765fb433c05b"
     },
     {
@@ -148,6 +158,7 @@
         "CONTENT_TYPE_NOT_GRANTABLE:application/pdf",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/nistpubs/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "3ec9497df423fe60c97f1c72cb4446638ad4808afd8b903f566dd1b9dda8eef1"
     },
     {
@@ -164,6 +175,7 @@
         "RATE_LIMIT_UNDOCUMENTED",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/rest/json/cves/2.0 (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "28644df2f25e1232fc81ed8c0a19fe4eb65f5ed58a20b8d8e5178441c3925f01"
     },
     {
@@ -175,6 +187,7 @@
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/v1/vulns/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
         "NON_GET_ENDPOINT_POST:/v1/query (grant is GET-only)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "155def043cfbe77b762a0a4714834ec29b58c9ba18ca00e990769e9fadca7339"
     },
     {
@@ -185,6 +198,7 @@
       "reasons": [
         "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/sites/default/files/feeds/known_exploited_vulnerabilities.json (Disallow: /*/media/oembed)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "a2a30a3e07f124583e528d1d16bf63211a53b230edd766d59b995fdc908cce0f"
     },
     {
@@ -200,6 +214,7 @@
         "TERMS_NOT_VERIFIED",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/cheatsheets/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "beaa9bb32d014a5486e1c0283f5c300b8a539e79a61d37d5bdfb9365b6acbfde"
     },
     {
@@ -216,6 +231,7 @@
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/llmrisk/llm01-prompt-injection/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/llm-top-10/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "be38faca4119728419de74b8d8a278b55eb049b28a73cc7857175178acae1452"
     },
     {
@@ -227,6 +243,7 @@
         "TERMS_NOT_VERIFIED",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/docs/specs/otel/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "7064b72a3c399c4c25091db26a3dd1b78fcafb20ac251106f53e0d593c1aa120"
     },
     {
@@ -243,6 +260,7 @@
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/docs/home/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/docs/concepts/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "d443f8e5a48070f8efc415098a989840e07945bdb12cb765fde81f338fea3695"
     },
     {
@@ -253,6 +271,7 @@
         "/docs/current/"
       ],
       "reasons": [],
+      "termsCondition": null,
       "evidenceSha256": "0b6bdad1a6c80779dc9001492108d9665cbfdfb8c24adc3009b7dc3e80d334d7"
     },
     {
@@ -263,6 +282,7 @@
         "/docs.html"
       ],
       "reasons": [],
+      "termsCondition": null,
       "evidenceSha256": "c19b447f572d50f158b1bdeccaaf63c59d3d603e2692b79a811083b3c547e479"
     },
     {
@@ -279,6 +299,7 @@
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/3/library/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/3/reference/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "9594510b2014ba8b4b51fcc059ae2a718845827662a874a98cea6259875fd9ac"
     },
     {
@@ -290,6 +311,7 @@
         "OWNER_DECISION_REQUIRED: robots Disallow /pypi/*/json (wildcard) vs documented JSON API (docs.pypi.org/api) — same conflict class as export.arxiv.org",
         "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/pypi/ (Disallow: /pypi/*/json | Disallow: /pypi/*/*/json | Disallow: /pypi*?)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "9ddceea49625919232e68e4f095d2486eddef6c2c0ab3f5aa04736435a5fd6eb"
     },
     {
@@ -301,6 +323,7 @@
         "/react"
       ],
       "reasons": [],
+      "termsCondition": null,
       "evidenceSha256": "8134070f46a9569c08806791c5531ec2bf87c4c0c5530c22de2b09ee74ed10ea"
     },
     {
@@ -312,6 +335,7 @@
         "/api/models"
       ],
       "reasons": [],
+      "termsCondition": null,
       "evidenceSha256": "a5d29d32d06a711f493041124c978434ab192eeea20b084e1283ca2b21337b49"
     },
     {
@@ -323,6 +347,7 @@
         "OFF_HOST_REDIRECT_ON_PREFIX:/engineering/",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/research/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "2cac0afa3272ab0348e2bea5b0d68de4225e3e781f42e59479e1be58d1633aaf"
     },
     {
@@ -334,6 +359,7 @@
         "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
         "OWNER_DECISION_REQUIRED: V16.0 research: Anthropic terms forbid access by 'automated or non-human means' unless explicitly permitted; robots.txt carries 'Content-Signal: ai-input=yes' — whether that is the explicit permission is an OWNER/legal decision. Deny-by-default until decided."
       ],
+      "termsCondition": null,
       "evidenceSha256": "6aa56a6d3db99a52110e1ceed5b5b9854317f7f50626543d5714fecfb4be7a9e"
     },
     {
@@ -349,6 +375,7 @@
         "TERMS_NOT_VERIFIED",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/blog/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "ae78b1389757a530c3a1063b43c09eeaabd035056bad6ec8eec6f52cfb8b918a"
     },
     {
@@ -365,6 +392,7 @@
         "CRAWL_DELAY_10s_NOT_ENFORCEABLE (no per-host pacing in the transport)",
         "ROBOTS_SUBPATHS_NOT_ANALYSED:/conference/ (robotsDisallowedWithin + robotsWildcardRulesInside must be explicit arrays)"
       ],
+      "termsCondition": null,
       "evidenceSha256": "f91acbe60849283668fab7ae01c49497fb812effe67e526dd24ca4524ae21bb2"
     }
   ],

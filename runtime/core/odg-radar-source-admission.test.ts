@@ -113,6 +113,7 @@ check("governor DENYs after expiry", G.govern({ urls: ["https://www.rfc-editor.o
   const g158 = JSON.parse(fs2.readFileSync(path2.join(ROOT2, "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json"), "utf8")).grant;
   check("V16.0: code.claude.com no longer admitted in V158 (Anthropic terms ⇒ owner decision)", !g158.allowedDomains.includes("code.claude.com"));
 }
+check("#918: a conditional terms permission is carried into the grant's hostConditions", (() => { const r = A.admitSources([good({ termsCondition: "research only; publications open access" })], { issuedMs: NOW, issuedBy: "x" }); return r.grant.hostConditions["www.rfc-editor.org"] === "research only; publications open access"; })());
 process.stdout.write(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}\n`);
 process.exit(failures === 0 ? 0 : 1);
 export {};

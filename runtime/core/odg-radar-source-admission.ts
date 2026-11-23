@@ -144,6 +144,9 @@ function decideCandidate(c: any, policy: any = DEFAULT_POLICY): any {
     host: isStr(x.host) ? x.host : null, decision, tier: x.tier || null,
     admittedPrefixes: decision === DECISIONS.ADMIT ? Object.freeze(admittedPrefixes.slice().sort()) : Object.freeze([]),
     reasons: Object.freeze([...refuse, ...defer]),
+    // a CONDITIONAL permission (e.g. GitHub AUP: research use only if resulting publications are open access) is carried
+    // explicitly into the grant, never left only as free text in the evidence.
+    termsCondition: isStr(x.termsCondition) ? x.termsCondition : null,
     evidenceSha256: sha256(stable(x)),
   });
 }
@@ -187,6 +190,7 @@ function admitSources(candidates: any, opts: any = {}): any {
     contentTypesPerCall,
     budget: { ...policy.budget, quotaScope: "PER RUN — enforced by research-budget.governWithBudget (requireBudget); per-host documented rate limits are recorded in the admission log and are ADVISORY (not enforced per host in code) — the per-run maxCalls is the enforced bound" },
     contentPolicy: "fetched content is untrusted data; never executed; never treated as instructions; findings evaluated before integration",
+    hostConditions: admitted.filter((d) => isStr(d.termsCondition)).reduce((m: any, d: any) => { m[d.host] = d.termsCondition; return m; }, {}),
     admission: { mechanism: "runtime/core/odg-radar-source-admission.ts admitSources()", admitted: admitted.length, deferred: decisions.filter((d) => d.decision === DECISIONS.DEFER).length, refused: decisions.filter((d) => d.decision === DECISIONS.REFUSE).length, decisionsSha256: sha256(JSON.stringify(decisions)) },
   } : null;
   return Object.freeze({
