@@ -30,7 +30,9 @@
  *   R4 RUN_CONTROLLED_EXPERIMENTS becomes AUTHORIZED (derived) ⇔ R0 ∧ R2 ∧ R3 ∧ the owner's executionCondition is
  *      declared. It is VALIDATED (done — not PASS) ⇔ an experiment record bound to the same contractSha256 records an
  *      outcome; the outcome itself is never upgraded here.
- *   R5 VALIDATE_CRITERIA is authorized once the experiments are validated; it is NEVER auto-validated here (grading needs
+ *   R5b VALIDATE_CRITERIA is VALIDATED only by a committed criteria-validation record (see validationValid) — the grade
+ *      comes from that record, bounded by the experiment outcome (never upgraded).
+ *   R5 VALIDATE_CRITERIA is authorized once the experiments are validated; it is NEVER auto-graded here (grading needs
  *      an independent inspection of the experiment result — not defined by V166).
  *   R6 executionAuthorized ⇔ the CURRENT step is an execution step AND authorized. Everything else is provider/docs work.
  */
@@ -113,11 +115,33 @@ function experimentValid(rec: any, sha: string): any {
   return { ok: true, evidence: { outcome: rec.outcome, contractSha256: sha, note: "step DONE with its recorded outcome — the outcome is not graded or upgraded here" } };
 }
 
+/* experimentSha256(rec) = sha256 of canon(the experiment record without the reader-added `recordPath`). */
+function experimentSha256(rec: any): string { const r: any = { ...(isObj(rec) ? rec : {}) }; delete r.recordPath; return crypto.createHash("sha256").update(canon(r)).digest("hex"); }
+const GRADE_RANK: any = Object.freeze({ NOT_MEASURED: 0, FAIL: 1, PARTIAL: 2, PASS: 3 });
+/* R5b — VALIDATE_CRITERIA validated ⇔ a committed criteria-validation record bound to the current contract sha256 AND to
+ * the exact experiment record (experimentSha256), citing an independent inspection of the experiment result with
+ * verdict ACCEPT and distinct declared session ids, whose scenarioGrade never exceeds the experiment outcome
+ * (no upgrade; NOT_MEASURED only if the experiment is NOT_MEASURED). Grading is NOT done here — the record is. */
+function validationValid(rec: any, sha: string, experiment: any): any {
+  if (!isObj(rec)) return { ok: false, reason: "no committed criteria-validation record" };
+  if (rec.contractSha256 !== sha) return { ok: false, reason: "criteria-validation record not bound to the current contract sha256" };
+  const xs = experimentSha256(experiment);
+  if (!isObj(rec.experimentEvidence) || rec.experimentEvidence.experimentSha256 !== xs) return { ok: false, reason: `criteria-validation record not bound to the current experiment record (experimentSha256 ${xs.slice(0, 12)})` };
+  const ei = rec.experimentInspection;
+  if (!isObj(ei) || ei.verdict !== "ACCEPT") return { ok: false, reason: "experiment result lacks an independent inspection ACCEPT" };
+  if (!str(ei.inspectorSessionId) || !str(ei.authorSessionId) || !SESSION_ID.test(String(ei.inspectorSessionId)) || !SESSION_ID.test(String(ei.authorSessionId)) || String(ei.inspectorSessionId) === String(ei.authorSessionId)) return { ok: false, reason: "experiment inspection lacks distinct declared session ids (not independent)" };
+  const g = rec.scenarioGrade, o = experiment.outcome;
+  if (!(g in GRADE_RANK) || !(o in GRADE_RANK)) return { ok: false, reason: "scenarioGrade or experiment outcome not a recognised grade" };
+  if (GRADE_RANK[g] > GRADE_RANK[o]) return { ok: false, reason: `scenarioGrade ${g} exceeds the experiment outcome ${o} (upgrade refused)` };
+  if (g === "NOT_MEASURED" && o !== "NOT_MEASURED") return { ok: false, reason: "NOT_MEASURED grade on a measured experiment" };
+  return { ok: true, evidence: { scenarioGrade: g, experimentOutcome: o, experimentSha256: xs, inspectorSessionId: String(ei.inspectorSessionId), independenceLevel: INDEPENDENCE_LEVEL, note: "VALIDATE_CRITERIA DONE with the recorded grade — never upgraded here" } };
+}
+
 /*
  * deriveAuthorizationScope(contract, evidence) → frozen
- *   { applicable, scenario, contractSha256, owner, sequence, authorizedSteps, derivedSteps, validatedSteps:[{step,evidence}],
+ *   { applicable, scenario, contractSha256, experimentSha256, owner, sequence, authorizedSteps, derivedSteps, validatedSteps:[{step,evidence}],
  *     currentStep, currentStepKind, currentStepAuthorized, nextStep, nextStepAuthorized, executionAuthorized, reason, selfAuthorized:false }
- * evidence = { inspection?: record|null, experiment?: record|null }.
+ * evidence = { inspection?: record|null, experiment?: record|null, validation?: record|null }.
  */
 function deriveAuthorizationScope(contract: any, evidence?: any): any {
   const ev = isObj(evidence) ? evidence : {};
@@ -146,6 +170,8 @@ function deriveAuthorizationScope(contract: any, evidence?: any): any {
   const exp = authorized.has("RUN_CONTROLLED_EXPERIMENTS") ? experimentValid(ev.experiment, sha) : { ok: false, reason: "experiments not authorized" };
   if (insp.ok && exp.ok) validated.push({ step: "RUN_CONTROLLED_EXPERIMENTS", evidence: exp.evidence });
   if (insp.ok && exp.ok && !authorized.has("VALIDATE_CRITERIA")) { authorized.add("VALIDATE_CRITERIA"); derived.push({ step: "VALIDATE_CRITERIA", rule: "R5", coveredBy: `${owner.by} — ${owner.source}` }); }
+  const val = insp.ok && exp.ok ? validationValid(ev.validation, sha, ev.experiment) : { ok: false, reason: "experiments not validated" };
+  if (val.ok) validated.push({ step: "VALIDATE_CRITERIA", evidence: val.evidence });
 
   const vset = new Set(validated.map((v) => v.step));
   const cur = seq.find((s) => !vset.has(s)) || null;
@@ -156,7 +182,7 @@ function deriveAuthorizationScope(contract: any, evidence?: any): any {
     : cur === "REVISE_CONTRACT" ? `REVISE_CONTRACT not validated: ${rev.reason}`
     : cur === "INSPECT_REVISED_CONTRACT" ? `INSPECT_REVISED_CONTRACT pending: ${insp.reason} ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized`
     : cur === "RUN_CONTROLLED_EXPERIMENTS" ? `inspection ACCEPT bound to contract ${sha.slice(0, 12)} ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); ${exp.reason}`
-    : `VALIDATE_CRITERIA pending: needs an independent inspection of the experiment result (never auto-validated)`;
+    : `VALIDATE_CRITERIA pending: ${val.reason} (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)`;
   return freeze({
     applicable: true, scenario: String(contract.scenario), contractSha256: sha, contractState: contract.state || null,
     owner: freeze({ by: owner.by, source: owner.source, declaredScope: freeze(owner.scope.slice()), executionAuthorizedDeclared: owner.executionAuthorized, executionCondition: owner.executionCondition }),
@@ -184,5 +210,5 @@ const AUTHORIZATION_SCOPE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { deriveAuthorizationScope, isStepAuthorized, contractSha256, canon, STEP_SEQUENCES, EXECUTION_STEPS, STEP_KIND, INDEPENDENCE_LEVEL, AUTHORIZATION_SCOPE_CONTRACT };
+module.exports = { deriveAuthorizationScope, isStepAuthorized, contractSha256, experimentSha256, canon, STEP_SEQUENCES, EXECUTION_STEPS, STEP_KIND, INDEPENDENCE_LEVEL, AUTHORIZATION_SCOPE_CONTRACT };
 export {};

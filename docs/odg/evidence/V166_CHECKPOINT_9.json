@@ -1,0 +1,146 @@
+{
+  "checkpoint": "CP9",
+  "date": "2026-11-23",
+  "headAtCheckpoint": "8063418a",
+  "previous": "docs/odg/evidence/V163_CHECKPOINT_8.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5
+  },
+  "boussole": "V12.4 canonical (unchanged). V15.0 NOT adopted; gate 10/12 NOT signed (V165 §7 authorizes measuring it only).",
+  "ownerDirectives": [
+    "V164 (build register/selector/GO/Radar)",
+    "V165 (authorization: mission G + internal construction; docs/odg/V165_OWNER_AUTHORIZATION.json)",
+    "V166 (prior authorization covers in-scope steps; automatic evidence-bound validation)"
+  ],
+  "prs": [
+    {
+      "pr": 927,
+      "merge": "f6753e8d",
+      "what": "strategic register + selectNextExplained (TIE_EXPLAINED, never id-ordered)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    },
+    {
+      "pr": 928,
+      "merge": "2b446aca",
+      "what": "V164 Radar admission: 46 candidates → 3 ADMIT / 40 DEFER / 3 REFUSE (GitHub AUP §6 vs §7 owner question)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    },
+    {
+      "pr": 929,
+      "merge": "9eabf4a4",
+      "what": "strategy-mode selector NATIVE/HYBRID/PROVIDER (probe-first; scenario D FAIL)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    },
+    {
+      "pr": 930,
+      "merge": "a1eee034",
+      "what": "ODG GO bounded governed cycle (I PASS, J PARTIAL)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    },
+    {
+      "pr": 931,
+      "merge": "8eed6b10",
+      "what": "register: 11 capability-gap candidates (not selectable until benefits measured)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    },
+    {
+      "pr": 932,
+      "merge": "adb6b017",
+      "what": "owner V165 transcription: G AUTHORIZED_FOR_REVISION + V165_OWNER_AUTHORIZATION.json (quotes only)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    },
+    {
+      "pr": 933,
+      "merge": "4731dd44",
+      "what": "odg-authorization-scope (scoped owner authorization, evidence-bound step validation) + G contract revised (C1 usableFor; pre-registered experiment)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    },
+    {
+      "pr": 934,
+      "merge": "548be51c",
+      "what": "inspection record: revised G contract ACCEPT (sha-bound, declared session independence)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    },
+    {
+      "pr": 935,
+      "merge": "639c2e42",
+      "what": "G controlled experiment (pre-registered) ⇒ PARTIAL",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    },
+    {
+      "pr": 936,
+      "merge": "8063418a",
+      "what": "GO actionable selection + declared dispatch targets + write confinement (ignored paths) + unsandboxed dispatch default-deny",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+    }
+  ],
+  "missionG": {
+    "status": "CLOSED_PARTIAL",
+    "steps": {
+      "REVISE_CONTRACT": "validated (#933)",
+      "INSPECT_REVISED_CONTRACT": "validated (#934 record, ACCEPT on 83427f93 after a REJECT on b994ca69 for selector steering)",
+      "RUN_CONTROLLED_EXPERIMENTS": "authorized automatically (R4, owner V165) and run (#935)",
+      "VALIDATE_CRITERIA": "validated by docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json (this PR, R5b)"
+    },
+    "result": {
+      "C1": "MET",
+      "C2": "MEASURED — PARTIAL (Δ0 +0.09 CI95 [0.055,0.129] vs no-knowledge; Δ1 −0.185 vs TRAIN-fitted threshold)",
+      "grade": "PARTIAL"
+    },
+    "lesson": "published heuristic (T_K=1000) beats using nothing but loses clearly to a threshold calibrated on ODG's own data ⇒ prefer measured local calibration",
+    "priorResult": "V160_SCENARIO_G NOT_ADOPTED unchanged"
+  },
+  "automaticValidation": {
+    "mechanism": "runtime/core/odg-authorization-scope.ts (R0 owner authorization required; R3 inspection record sha-bound; R4 experiments derived; R5b criteria record bound to contract + experiment sha, grade ≤ outcome)",
+    "demonstrated": "G advanced through all 4 steps without a new owner approval, each step validated only by committed evidence; independence is DECLARED by session ids, not cryptographic"
+  },
+  "go": {
+    "behaviour": "strategicSelection (register) + actionableSelection (best item with an authorized next step); owner request recorded for an unauthorized strategic item; scoped execution steps dispatch only declared targets; unsandboxed target dispatch refused by default",
+    "realStateAtCP9": "strategic H (TIE_EXPLAINED J/G/H, R3) ⇒ owner request 'H PROPOSED → AUTHORIZED'; G fully validated ⇒ no actionable authorized item remains ⇒ halt with owner request"
+  },
+  "scenarios": {
+    "V164_B": "PARTIAL",
+    "V164_C": "PASS (threshold-sensitive)",
+    "V164_D": "FAIL",
+    "V164_I": "PASS",
+    "V164_J": "PARTIAL (J8 real --execute NOT_MEASURED)",
+    "AP_G": "PARTIAL (C1 MET, C2 PARTIAL)",
+    "AP_F": "PARTIAL",
+    "AP_J": "PARTIAL",
+    "others": "unchanged from CP8 (PROPOSED)"
+  },
+  "nativeVsProvider": {
+    "odgNative": [
+      "selection via strategic register + selectNextExplained",
+      "authorization gate + scoped derivation (odg-authorization-scope)",
+      "strategy-mode choice",
+      "GO trace/stop/halt decisions",
+      "Radar admission verdicts (runner)",
+      "experiment grading by the pre-registered rule"
+    ],
+    "provider": [
+      "all code, rules, weights, contracts, pre-registrations, evidence writing",
+      "independent inspections (provider sessions)",
+      "merges by the coordinating session after CI + inspection"
+    ],
+    "nativeBuiltCodeMerged": 0,
+    "note": "~80% native target NOT met, not claimed"
+  },
+  "openGaps": [
+    "provider launch by ODG (no verifiable spend ceiling)",
+    "cryptographic inspector identity (declared session ids only)",
+    "sandboxed dispatch under /home (provider-sandbox refuses ro binds under /home)",
+    "4 register criteria NOT_MEASURED for every item ⇒ capability gaps unselectable",
+    "integration (merge) still performed by the coordinating session"
+  ],
+  "ownerQuestions": [
+    "authorize H (current strategic priority, PROPOSED; outside V165/V166)?",
+    "GitHub AUP §6 vs §7 (V160 grant in force + #920 collection rest on it)",
+    "terms owner questions from V164 admission (OpenAI, NVIDIA, IBM, Ollama, Stanford, CMU, Microsoft devblogs, IETF TLP PDF)",
+    "per-host pacing (Crawl-delay)",
+    "provider spend ceiling",
+    "gate 10/12 signature + V15.0 adoption (measurement authorized, signature not)"
+  ],
+  "nextAction": "ODG GO halts with an owner request for H; independent authorized work: none actionable in the register today"
+}

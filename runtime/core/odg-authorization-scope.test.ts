@@ -84,6 +84,24 @@ const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contrac
   check("a declared out-of-sequence step is ignored; a declared execution step needs executionAuthorized true", !AS.isStepAuthorized(u, "PROVIDER_SPEND") && !AS.isStepAuthorized(u, "RUN_CONTROLLED_EXPERIMENTS") && u.executionAuthorized === false);
   check("derivation is frozen (no mutation path)", Object.isFrozen(s) && Object.isFrozen(s.authorizedSteps));
 }
+// R5b — VALIDATE_CRITERIA validated only by a bound criteria-validation record; never an upgrade
+{
+  const exp = { contractSha256: SHA, outcome: "PARTIAL" };
+  const xs = AS.experimentSha256(exp);
+  const val = (o: any = {}) => ({ contractSha256: SHA, experimentEvidence: { experimentSha256: xs }, experimentInspection: { verdict: "ACCEPT", inspectorSessionId: "insp-session-0002", authorSessionId: "exp-author-0003" }, scenarioGrade: "PARTIAL", ...o });
+  const run = (v: any, e: any = exp) => AS.deriveAuthorizationScope(G, { inspection: inspection(), experiment: e, validation: v });
+  check("R5b: no validation record ⇒ VALIDATE_CRITERIA current, not validated", run(null).currentStep === "VALIDATE_CRITERIA");
+  check("R5b: bound record (contract + experiment sha, ACCEPT, distinct ids, grade ≤ outcome) ⇒ all steps validated", run(val()).currentStep === null && run(val()).validatedSteps.some((x: any) => x.step === "VALIDATE_CRITERIA" && x.evidence.scenarioGrade === "PARTIAL"));
+  check("R5b: upgrade refused (PASS on a PARTIAL experiment)", run(val({ scenarioGrade: "PASS" })).currentStep === "VALIDATE_CRITERIA");
+  check("R5b: downgrade allowed (FAIL ≤ PARTIAL)", run(val({ scenarioGrade: "FAIL" })).currentStep === null);
+  check("R5b: NOT_MEASURED grade on a measured experiment refused", run(val({ scenarioGrade: "NOT_MEASURED" })).currentStep === "VALIDATE_CRITERIA");
+  check("R5b: experiment edited after validation ⇒ not validated", run(val(), { ...exp, outcome: "PASS" }).currentStep === "VALIDATE_CRITERIA");
+  check("R5b: reader-added recordPath does not change experimentSha256", AS.experimentSha256({ ...exp, recordPath: "x" }) === xs);
+  check("R5b: contract sha mismatch ⇒ not validated", run(val({ contractSha256: "0".repeat(64) })).currentStep === "VALIDATE_CRITERIA");
+  check("R5b: inspection REJECT ⇒ not validated", run(val({ experimentInspection: { verdict: "REJECT", inspectorSessionId: "insp-session-0002", authorSessionId: "exp-author-0003" } })).currentStep === "VALIDATE_CRITERIA");
+  check("R5b: same inspector/author session ⇒ not validated", run(val({ experimentInspection: { verdict: "ACCEPT", inspectorSessionId: "same-session-01", authorSessionId: "same-session-01" } })).currentStep === "VALIDATE_CRITERIA");
+  check("R5b: missing session ids ⇒ not validated", run(val({ experimentInspection: { verdict: "ACCEPT" } })).currentStep === "VALIDATE_CRITERIA");
+}
 if (failures) { process.stdout.write(`${failures} FAILED\n`); process.exit(1); }
 process.stdout.write("all odg-authorization-scope tests passed\n");
 export {};
