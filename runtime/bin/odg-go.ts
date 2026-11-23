@@ -47,6 +47,8 @@ const F = Object.freeze({
   COLLECTION: "docs/odg/evidence/V160_PRACTICES_COLLECTION.json",
   COLLECTION_REGISTRY: "docs/odg/evidence/COLLECTION_REGISTRY.json",
 });
+/* V166 scoped-authorization evidence (odg-authorization-scope): committed records ONLY; absent ⇒ null (nothing derived). */
+const AUTH_EVIDENCE = Object.freeze({ G: Object.freeze({ inspection: "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V166_G_EXPERIMENT.json" }) });
 const UNIT_SYSTEM = "/etc/systemd/system/odg-mission-runner.service";
 const UNIT_REPO = "deploy/odg-mission-runner.service";
 const MAX_STEP_DELAY_MS = 5000;
@@ -186,6 +188,9 @@ function readState(repo: string): any {
   const strategyEvidence = add(F.STRATEGY);
   const admission = add(F.ADMISSION);
   const grant = add(F.GRANT);
+  const optional = (rel: string) => { const p = path.join(repo, rel); const h = sha256File(p); inputs.push({ source: rel, sha256: h }); if (!h) return null; try { return { ...readJson(p), recordPath: rel }; } catch { return null; } };
+  const authorizationEvidence: any = {};
+  for (const [sc, files] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(files.inspection), experiment: optional(files.experiment) };
   inputs.push({ source: F.MEASURED, sha256: sha256File(path.join(repo, F.MEASURED)) });
   let ledgerPayload: any = null;
   try { ledgerPayload = readJson(path.join(repo, "runtime", "generated", "mission-ledger.json")); } catch { ledgerPayload = null; }
@@ -199,7 +204,7 @@ function readState(repo: string): any {
   const parity = (Object.values(F) as string[]).concat(["docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json", "docs/odg/evidence/V161_SCENARIO_J.json"]).map((rel: string) => ({ file: rel, codeTreeEqualsRepo: sha256File(path.join(ROOT, rel)) === sha256File(path.join(repo, rel)) }));
   return {
     repo, inputs, sources: { contracts: src.contracts, v150: src.v150, cp8: src.cp8, scenarioEvidence: src.scenarioEvidence },
-    registerEvidence, strategyEvidence, radar: { grant, admission },
+    registerEvidence, strategyEvidence, radar: { grant, admission }, authorizationEvidence,
     ledger: { proven, integrity }, attempts: { count: att.length, last: last ? { mission: last.mission, status: last.status, recordedAt: last.recordedAt } : null },
     allowlist: readAllowlist(), measured: POL.loadMeasuredRegistry(F.MEASURED, { root: repo }), strategyNow: smr.now, codeTreeParity: parity,
   };
