@@ -28,6 +28,16 @@
       "fetched": 6,
       "collector": "runtime/bin/odg-v158-collection-run.ts (research-governor + bounded-http-client, deterministic extractor)",
       "pinnedIn": "V15.9 §10 (V158 collection)"
+    },
+    {
+      "path": "docs/odg/evidence/V160_PRACTICES_COLLECTION.json",
+      "sha256": "2675846657b7c4c528ec7256f398f1b934f288fcec1087c3ed57c8bd7c170f49",
+      "grant": "docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json",
+      "collectedAt": "2026-11-23",
+      "calls": 10,
+      "fetched": 10,
+      "collector": "runtime/bin/odg-v160-practices-collection-run.ts via odg-v158-collection-run.collect (research-governor + bounded-http-client, deterministic extractor)",
+      "pinnedIn": "V16.0 (engineering-practices collection)"
     }
   ]
 }
