@@ -194,6 +194,148 @@ const GOLDEN = {"out":[{"status":"IDLE","mission":null,"reason":"no eligible pre
     } else console.log("  (skip CLI checks: runtime/dist not built)");
   }
 
+  // (9) V15.5 DECLARED WRITE-SETS — validation (pure), projection honesty, refusal, and ENFORCEMENT of actual writes.
+  {
+    const V = tick.validateWriteSet;
+    const kind = (m) => V(m).kind;
+    ok("write_set validation: absent (no key / null mission) ⇒ ABSENT (⇒ UNKNOWN ⇒ serialized)", kind({ mission: "X" }) === "ABSENT" && kind(null) === "ABSENT" && tick.declaredWriteSet({ mission: "X" }) === null);
+    const bad = [{ write_set: "mission-report.json" }, { write_set: null }, { write_set: {} }, { write_set: [] }, { write_set: [1] }, { write_set: [null] }, { write_set: [""] }, { write_set: ["  "] }, { write_set: [" a"] },
+      { write_set: ["/etc/passwd"] }, { write_set: ["C:/x"] }, { write_set: ["../x"] }, { write_set: ["a/../../x"] }, { write_set: ["a/./b"] }, { write_set: ["."] }, { write_set: ["a\\b"] }, { write_set: ["a\u0000b"] },
+      { writeSet: 7 }, { write_set: ["a"], writeSet: ["b"] }];
+    ok(`write_set validation: ${bad.length} malformed shapes (non-array, empty, non-string, blank/padded, absolute, drive, '..', '.', backslash, NUL, ambiguous dual key) ⇒ MALFORMED, never DECLARED`, bad.every((m) => kind(m) === "MALFORMED" && tick.declaredWriteSet(m) === null));
+    const g = V({ write_set: ["reports//x.md", "logs/", "mission-report.json", "mission-report.json"] });
+    ok("write_set validation: well-formed ⇒ DECLARED, normalised (// collapsed, dir '/' kept) and de-duplicated", g.kind === "DECLARED" && JSON.stringify(g.paths) === '["reports/x.md","logs/","mission-report.json"]' && kind({ writeSet: ["a"] }) === "DECLARED" && kind({ write_set: ["a"], writeSet: ["a"] }) === "DECLARED");
+    ok("writeSetCovers: exact file or 'dir/' prefix only (no sibling-prefix leak)", tick.writeSetCovers(["logs/", "a.json"], "logs/M.run.log") && tick.writeSetCovers(["a.json"], "a.json") && !tick.writeSetCovers(["a.json"], "a.json.tmp-1") && !tick.writeSetCovers(["logs/"], "logsX/y") && !tick.writeSetCovers(["logs"], "logs/y"));
+    const A = tick.auditRunWrites;
+    ok("auditRunWrites: ⊆ declared + ledger delta 0/1 ⇒ OK; undeclared file ⇒ VIOLATION; ledger delta 2 ⇒ VIOLATION; no declaration ⇒ UNDECLARED",
+      A(["a", "b"], ["a"], 1).status === "OK" && A(["a"], ["a"], 0).status === "OK" && A(["a"], ["a", "z"], 1).status === "VIOLATION" && JSON.stringify(A(["a"], ["a", "z"], 1).undeclared) === '["z"]'
+      && A(["a"], ["a"], 2).status === "VIOLATION" && A(["a"], ["a"], -1).status === "VIOLATION" && A(null, ["a"], 1).status === "UNDECLARED");
+
+    // Projection honesty (selectWave, pure): the SAME logical names overlap on the shared root (⇒ serialized) and are
+    // disjoint only when each child writes its OWN physical run dir.
+    const REC = require(path.join(__dirname, "..", "dist", "core", "odg-open-mission-recovery.js"));
+    const MO = require(path.join(__dirname, "..", "dist", "core", "odg-mission-orchestrator.js"));
+    const same = (id) => ({ mission: id, mode: "AUDIT", write_set: ["mission-report.json", "logs/" + id + ".run.log"] });
+    const sh = tick.selectWave(["S1", "S2"], { REC, MO, loadMission: same, waveMax: 6, runnerSharedWriteSet: [] });
+    ok("overlap: identical declared outputs on the SHARED root (no isolation) ⇒ WRITESET_OVERLAP ⇒ serialized", JSON.stringify(sh.subWaves) === '[["S1"],["S2"]]' && sh.contentions[0].reason === "WRITESET_OVERLAP");
+    const iso = tick.selectWave(["S1", "S2"], { REC, MO, loadMission: same, waveMax: 6, runnerSharedWriteSet: [], writeRootFor: (id) => "runtime/generated/wave-runs/t/" + id, runnerWriteSetFor: (id) => ["runtime/generated/wave-runs/t/" + id] });
+    ok("projection: the same logical outputs under DISTINCT per-run roots ⇒ physically disjoint ⇒ one wave", JSON.stringify(iso.wave) === '["S1","S2"]' && iso.contentions.length === 0);
+    const isoU = tick.selectWave(["S1", "S2"], { REC, MO, loadMission: (id) => ({ mission: id, mode: "AUDIT" }), waveMax: 6, runnerSharedWriteSet: [], writeRootFor: (id) => "r/" + id, runnerWriteSetFor: (id) => ["r/" + id] });
+    ok("absent write_set ⇒ UNKNOWN ⇒ serialized EVEN WITH distinct isolated run dirs", isoU.wave.length === 1 && isoU.contentions[0].reason === "UNKNOWN_WRITESET");
+
+    // REAL async spawn path, ISOLATED, with a stub that honours ODG_RUN_OUTPUT_DIR (writes its report + extra files there).
+    const ISTUB = path.join(TMP, "stub-isolated-run.js");
+    fs.writeFileSync(ISTUB, `
+const fs = require("fs"), path = require("path");
+const id = process.argv[2], out = process.env.ODG_RUN_OUTPUT_DIR;
+fs.mkdirSync(path.join(out, "logs"), { recursive: true });
+fs.writeFileSync(path.join(out, "logs", id + ".run.log"), "log");
+for (const f of (process.env["STUB_EXTRA_" + id] || "").split(",").filter(Boolean)) fs.writeFileSync(path.join(out, f), "x");
+const n = parseInt(process.env["STUB_LEDGER_" + id] || "0", 10);
+if (n > 0) { const lp = path.join(process.cwd(), "runtime", "generated", "mission-ledger.json"); fs.mkdirSync(path.dirname(lp), { recursive: true });
+  let l = { entries: [] }; try { l = JSON.parse(fs.readFileSync(lp, "utf8")); } catch {} for (let i = 0; i < n; i++) l.entries.push({ mission: id, proven: true }); fs.writeFileSync(lp, JSON.stringify(l)); }
+const act = (process.env["STUB_ACT_" + id] || "").split(",").filter(Boolean);
+const lp = path.join(process.cwd(), "runtime", "generated", "mission-ledger.json");
+const rep = JSON.stringify({ mission: id, validated: true, status: "SUCCESS" });
+for (const a of act) {
+  if (a === "symlink") fs.symlinkSync("/etc/passwd", path.join(out, "decision.json"));
+  if (a === "hardlink") { const ext = path.join(process.cwd(), "outside-" + id + ".json"); fs.writeFileSync(ext, "{}"); fs.linkSync(ext, path.join(out, "decision.json")); }
+  if (a === "fifo") require("child_process").execFileSync("mkfifo", [path.join(out, "decision.json")]);
+  if (a === "foreign") { fs.mkdirSync(path.dirname(lp), { recursive: true }); let l = { entries: [] }; try { l = JSON.parse(fs.readFileSync(lp, "utf8")); } catch {} l.entries.push({ mission: "NOT_IN_WAVE", proven: true }); fs.writeFileSync(lp, JSON.stringify(l)); }
+  if (a === "garbleLedger") { fs.mkdirSync(path.dirname(lp), { recursive: true }); fs.writeFileSync(lp, "{not json"); }
+  if (a === "unreadableSub") { fs.mkdirSync(path.join(out, "sub")); fs.chmodSync(path.join(out, "sub"), 0); }
+}
+if (act.includes("symlinkReport")) { const ext = path.join(process.cwd(), "elsewhere-" + id + ".json"); fs.writeFileSync(ext, rep); fs.symlinkSync(ext, path.join(out, "mission-report.json")); }
+else fs.writeFileSync(path.join(out, "mission-report.json"), rep);
+setTimeout(() => process.exit(0), parseInt(process.env["STUB_SLEEP_" + id] || "150", 10));
+`);
+    const isoOpts = (dir, spec, env) => ({ ...waveOpts(dir, spec, { env }), runBin: ISTUB, isolate: true, readReport: undefined, cwd: dir, runOutputBase: path.join(dir, "runtime", "generated", "wave-runs", "t") });
+    const decl = (id) => ({ write_set: ["mission-report.json", "logs/" + id + ".run.log"] });
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9101: decl("W9101"), W9102: decl("W9102") }, { STUB_EXTRA_W9101: "undeclared.json", STUB_LEDGER_W9102: "1" }));
+      const by = Object.fromEntries(d.results.map((r) => [r.mission, r]));
+      ok("enforcement: both declared isolated children ran in ONE wave (same logical names, distinct run dirs)", JSON.stringify(d.wave) === '["W9101","W9102"]' && d.isolated === true);
+      ok(`enforcement: W9101 left an UNDECLARED file ⇒ FAIL WRITE_SET_VIOLATION although it reported SUCCESS (${by.W9101.reason})`, by.W9101.status === "FAIL" && /^WRITE_SET_VIOLATION: undeclared writes \["undeclared.json"\]/.test(by.W9101.reason) && by.W9101.writeSetCheck.status === "VIOLATION");
+      ok("enforcement: compliant sibling W9102 (declared files + exactly ONE ledger entry) ⇒ PASS, check OK; tick FAIL (no false success)", by.W9102.status === "PASS" && by.W9102.writeSetCheck.status === "OK" && by.W9102.writeSetCheck.ledgerDelta === 1 && d.status === "FAIL");
+      const r = rows(dir);
+      ok("enforcement: the violation is RECORDED in the attempt log (FAIL + WRITE_SET_VIOLATION reason) and in the audit chain", r.some((x) => x.mission === "W9101" && x.status === "FAIL" && /WRITE_SET_VIOLATION/.test(x.reason)) && d.auditChain.length === 2 && AUDIT.verifyChain(d.auditChain).ok === true);
+      const sum = JSON.parse(fs.readFileSync(path.join(dir, "runtime", "generated", "wave-runs", "t", "wave-summary.json"), "utf8"));
+      ok("enforcement: per-tick wave-summary.json carries each child's writeSetCheck", sum.results.length === 2 && sum.results.some((x) => x.mission === "W9101" && x.writeSetCheck.status === "VIOLATION"));
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9103: decl("W9103") }, { STUB_LEDGER_W9103: "2" }));
+      ok(`enforcement: a child appending TWO ledger entries (duplicate) ⇒ FAIL WRITE_SET_VIOLATION (${d.results[0].reason})`, d.results[0].status === "FAIL" && /ledger delta 2/.test(d.results[0].reason));
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9104: { write_set: ["../escape.json"] }, W9105: decl("W9105") }, {}));
+      ok("refusal: MALFORMED write_set ('..') ⇒ BLOCKED WRITE_SET_MALFORMED, never spawned; the valid sibling still runs", d.refused.length === 1 && d.refused[0].mission === "W9104" && d.refused[0].status === "BLOCKED" && /^WRITE_SET_MALFORMED/.test(d.refused[0].reason)
+        && JSON.stringify(d.wave) === '["W9105"]' && !fs.existsSync(path.join(dir, "runtime", "generated", "wave-runs", "t", "W9104")) && d.results[0].status === "PASS");
+      const dir2 = freshDir();
+      const d2 = await tick.tickWave(isoOpts(dir2, { W9106: { write_set: "mission-report.json" } }, {}));
+      ok("refusal: only-mission MALFORMED (non-array) ⇒ tick BLOCKED, nothing spawned", d2.status === "BLOCKED" && d2.wave.length === 0 && /WRITE_SET_MALFORMED: write_set is not an array/.test(d2.refused[0].reason));
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9107: { }, W9108: { } }, {}));
+      ok("absent write_set (isolated, real spawn) ⇒ serialized wave of 1, check UNDECLARED (not enforced, not violated)", d.wave.length === 1 && d.results[0].writeSetCheck.status === "UNDECLARED" && d.results[0].status === "PASS");
+    }
+    // ---- inspection hardening (MED + LOW1..3) ----
+    {
+      const dir = freshDir();
+      const spec = { W9201: decl("W9201"), W9202: decl("W9202"), W9203: decl("W9203") };
+      const d = await tick.tickWave({ ...isoOpts(dir, spec, { STUB_ACT_W9201: "symlink", STUB_ACT_W9202: "hardlink", STUB_ACT_W9203: "fifo" }), waveMax: 3 });
+      const by = Object.fromEntries(d.results.map((r) => [r.mission, r]));
+      ok(`MED: decision.json -> /etc/passwd SYMLINK in the run dir ⇒ FAIL WRITE_SET_VIOLATION (not counted as a declared file) (${by.W9201.reason.slice(0, 90)})`, by.W9201.status === "FAIL" && by.W9201.writeSetCheck.status === "VIOLATION" && /decision\.json \(symlink\)/.test(by.W9201.reason) && !by.W9201.writeSetCheck.actual.includes("decision.json"));
+      ok("MED: a HARD-LINKED declared file (nlink 2, inode shared with a file outside the run dir) ⇒ VIOLATION", by.W9202.status === "FAIL" && /hard link, nlink 2/.test(by.W9202.reason));
+      ok("MED: a non-regular entry (FIFO) under a declared name ⇒ VIOLATION", by.W9203.status === "FAIL" && /decision\.json \(non-regular\)/.test(by.W9203.reason));
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9204: decl("W9204") }, { STUB_ACT_W9204: "symlinkReport" }));
+      ok(`MED: a SYMLINKED mission-report.json (pointing at a SUCCESS report elsewhere) is REFUSED by readReport ⇒ not verified ⇒ FAIL (${d.results[0].reason.slice(0, 80)})`, d.results[0].status === "FAIL" && d.results[0].writeSetCheck.status === "VIOLATION" && /mission-report\.json \(symlink\)/.test(d.results[0].reason));
+      const t = path.join(dir, "real.json"); fs.writeFileSync(t, '{"a":1}'); fs.symlinkSync(t, path.join(dir, "ln.json")); fs.linkSync(t, path.join(dir, "hl.json"));
+      let e1 = null, e2 = null; try { tick.readRegularJson(path.join(dir, "ln.json")); } catch (e) { e1 = e; } try { tick.readRegularJson(path.join(dir, "hl.json")); } catch (e) { e2 = e; }
+      fs.rmSync(path.join(dir, "hl.json")); 
+      ok("MED: readRegularJson refuses a symlink (O_NOFOLLOW) and a hard-linked file; reads a plain regular file", e1 && e2 && tick.readRegularJson(t).a === 1);
+    }
+    {
+      const dir = freshDir();
+      let gone = false;
+      const spec = { W9205: decl("W9205") };
+      const o = isoOpts(dir, spec, { STUB_ACT_W9205: "", STUB_EXTRA_W9205: "undeclared.json", STUB_SLEEP_W9205: "400" });
+      o.loadMission = (id) => (gone ? null : (spec[id] ? { mission: id, mode: "AUDIT", ...spec[id] } : null));
+      const timer = setTimeout(() => { gone = true; }, 150);   // mission definition deleted/broken MID-RUN
+      const d = await tick.tickWave(o); clearTimeout(timer);
+      ok(`LOW1: write_set captured at selection — a mission JSON deleted mid-run does NOT downgrade to UNDECLARED; the undeclared write is still a VIOLATION (${d.results[0].writeSetCheck.status})`, gone && d.results[0].status === "FAIL" && d.results[0].writeSetCheck.status === "VIOLATION" && JSON.stringify(d.results[0].writeSetCheck.undeclared) === '["undeclared.json"]');
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9206: decl("W9206"), W9207: decl("W9207") }, { STUB_ACT_W9206: "garbleLedger" }));
+      ok(`LOW2: ledger unparsable after the wave ⇒ every attempt UNVERIFIABLE ⇒ FAIL, never OK (${d.results[0].reason.slice(0, 70)})`, d.results.length === 2 && d.results.every((r) => r.status === "FAIL" && r.writeSetCheck.status === "UNVERIFIABLE" && /^WRITE_SET_UNVERIFIABLE: ledger unparsable/.test(r.reason)));
+      const dir2 = freshDir();
+      const d2 = await tick.tickWave(isoOpts(dir2, { W9208: decl("W9208") }, { STUB_ACT_W9208: "unreadableSub" }));
+      try { fs.chmodSync(path.join(dir2, "runtime", "generated", "wave-runs", "t", "W9208", "sub"), 0o755); } catch {}
+      const rootUser = typeof process.getuid === "function" && process.getuid() === 0;
+      ok(`LOW2: an unreadable sub-dir in the run dir ⇒ UNVERIFIABLE ⇒ FAIL${rootUser ? " (skipped: root reads mode-000 dirs)" : ""}`, rootUser || (d2.results[0].status === "FAIL" && d2.results[0].writeSetCheck.status === "UNVERIFIABLE"));
+      const miss = tick.inspectRunDir(path.join(dir2, "does-not-exist"));
+      ok("LOW2: a missing run dir ⇒ unreadable reported ⇒ auditRunWrites UNVERIFIABLE (not OK by absence)", miss.unreadable && tick.auditRunWrites(["a"], miss.files, 1, { unverifiable: miss.unreadable }).status === "UNVERIFIABLE" && tick.ledgerCounts(path.join(dir2, "nope.json")).ok === true);
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(isoOpts(dir, { W9209: decl("W9209"), W9210: decl("W9210") }, { STUB_ACT_W9209: "foreign" }));
+      ok(`LOW3: a ledger append under an id OUTSIDE the wave ⇒ every attempt FAIL LEDGER_FOREIGN_APPEND (distinct reason) (${d.results[1].reason.slice(0, 90)})`, d.results.every((r) => r.status === "FAIL" && r.writeSetCheck.status === "VIOLATION" && /LEDGER_FOREIGN_APPEND: 1 ledger entry/.test(r.reason)));
+      ok("LOW3: ledgerForeignDelta = total delta − Σ wave deltas (id-less entries count as foreign)", tick.ledgerForeignDelta({ per: { A: 1 }, total: 1 }, { per: { A: 2, B: 1 }, total: 4 }, ["A"]) === 2 && tick.ledgerForeignDelta({ per: {}, total: 0 }, { per: { A: 1 }, total: 1 }, ["A"]) === 0);
+    }
+    {
+      const dir = freshDir();
+      const d = await tick.tickWave(waveOpts(dir, { W9109: { write_set: ["out/q"] } }, { env: { STUB_SLEEP_MS: "50" } }));
+      ok("non-isolated wave (injected runner, no per-child dir) ⇒ writeSetCheck NOT_ENFORCED_NON_ISOLATED (stated, not faked)", d.results[0].writeSetCheck.status === "NOT_ENFORCED_NON_ISOLATED" && d.results[0].status === "PASS");
+    }
+  }
+
   fs.rmSync(TMP, { recursive: true, force: true });
   console.log(`\nODG-SCHEDULE-TICK WAVE — ${pass} assertions passed. (stub workload only; NO real odg-run/mission executed; throw-away state.)`);
 })().catch((e) => { console.error(e); process.exit(1); });
