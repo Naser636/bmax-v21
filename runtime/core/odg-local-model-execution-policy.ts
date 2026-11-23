@@ -33,11 +33,22 @@ const LOW = 0.3;    // < LOW  ⇒ local compute is measured-unreliable ⇒ escal
 function chooseExecutionPolicy(missionType: any, history: any, opts: any = {}): any {
   // V15.9: the OPTIONAL measured inputs are stripped before the calibrated-P derivation (it never sees them), and when
   // none is supplied the call below is EXACTLY the pre-V15.9 call (same opts object) ⇒ byte-identical output.
-  const o = isObj(opts) ? opts : {};
+  // V16.4: OPTIONAL opts.strategyMode = { mission, ctx } attaches the strategy-mode selection (NATIVE/HYBRID/PROVIDER/
+  // DECISION_REQUIRED). It is stripped first, so absent ⇒ the exact pre-V16.4 path (same opts object) ⇒ byte-identical.
+  const o0 = isObj(opts) ? opts : {};
+  const wantsStrategy = Object.prototype.hasOwnProperty.call(o0, STRATEGY_OPT_KEY);
+  const o = wantsStrategy ? omitKey(o0, STRATEGY_OPT_KEY) : o0;
   const wantsMeasured = MEASURED_OPT_KEYS.some((k) => Object.prototype.hasOwnProperty.call(o, k));
   const base = calibratedPolicy(missionType, history, wantsMeasured ? stripMeasuredOpts(o) : o);
-  return wantsMeasured ? applyMeasured(base, o) : base;
+  const out = wantsMeasured ? applyMeasured(base, o) : base;
+  if (!wantsStrategy) return out;
+  const sm = isObj(o0[STRATEGY_OPT_KEY]) ? o0[STRATEGY_OPT_KEY] : {};
+  const SEL = require("./odg-strategy-mode-selector.js"); // lazy: the selector composes this module (no load-time cycle)
+  return freeze({ ...out, strategyMode: SEL.selectStrategyMode(sm.mission, isObj(sm.ctx) ? sm.ctx : {}) });
 }
+
+const STRATEGY_OPT_KEY = "strategyMode";
+function omitKey(o: any, k: string): any { const r: any = {}; for (const x of Object.keys(o)) if (x !== k) r[x] = o[x]; return r; }
 
 function calibratedPolicy(missionType: any, history: any, opts: any): any {
   const d = CP.derivePsuccess(missionType, Array.isArray(history) ? history : [], opts);
@@ -210,5 +221,5 @@ const EXECUTION_POLICY_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { chooseExecutionPolicy, MODEL, EXECUTION_POLICY_CONTRACT, loadMeasuredRegistry, MEASURED_MAX_AGE_MS, MEASURED_OPT_KEYS, DEFAULT_EVIDENCE };
+module.exports = { chooseExecutionPolicy, MODEL, EXECUTION_POLICY_CONTRACT, loadMeasuredRegistry, MEASURED_MAX_AGE_MS, MEASURED_OPT_KEYS, DEFAULT_EVIDENCE, STRATEGY_OPT_KEY };
 export {};
