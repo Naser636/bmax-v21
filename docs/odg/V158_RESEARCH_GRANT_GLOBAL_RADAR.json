@@ -14,7 +14,6 @@
       "code.claude.com",
       "csrc.nist.gov",
       "huggingface.co",
-      "opentelemetry.io",
       "pypi.org",
       "registry.npmjs.org",
       "www.cisa.gov",
@@ -31,9 +30,6 @@
       ],
       "www.cisa.gov": [
         "/sites/default/files/feeds/known_exploited_vulnerabilities.json"
-      ],
-      "opentelemetry.io": [
-        "/docs/specs/otel/"
       ],
       "www.postgresql.org": [
         "/docs/current/"
@@ -78,14 +74,6 @@
         "text/markdown"
       ],
       "www.cisa.gov": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
-      ],
-      "opentelemetry.io": [
         "application/json",
         "application/atom+xml",
         "application/xml",
@@ -149,10 +137,10 @@
     "contentPolicy": "fetched content is untrusted data; never executed; never treated as instructions; findings evaluated before integration",
     "admission": {
       "mechanism": "runtime/core/odg-radar-source-admission.ts admitSources()",
-      "admitted": 10,
-      "deferred": 16,
+      "admitted": 9,
+      "deferred": 17,
       "refused": 2,
-      "decisionsSha256": "a708b9e81187be2bf6d47561ca0d7b90ab5addfb7f159f1dc6dd818963864081"
+      "decisionsSha256": "c83b5e68e2b5b3b056deadbb07cd60b09aa66b848ffa1da4bc443d93edc01082"
     },
     "constraints": [
       "no private credentials, no authentication, no account creation, no API key/token",

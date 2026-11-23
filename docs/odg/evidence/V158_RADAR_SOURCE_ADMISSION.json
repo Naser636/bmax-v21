@@ -4,8 +4,8 @@
   "issuedIso": "2026-11-23T00:00:00.000Z",
   "summary": {
     "candidates": 28,
-    "admitted": 10,
-    "deferred": 16,
+    "admitted": 9,
+    "deferred": 17,
     "refused": 2
   },
   "grantRefusedReason": null,
@@ -206,13 +206,13 @@
     },
     {
       "host": "opentelemetry.io",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/docs/specs/otel/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED"
       ],
-      "reasons": [],
-      "evidenceSha256": "9b0309486fe03a87c5d5040819600e782c23a90666386ee1754ffbece6c41ca7"
+      "evidenceSha256": "7064b72a3c399c4c25091db26a3dd1b78fcafb20ac251106f53e0d593c1aa120"
     },
     {
       "host": "kubernetes.io",

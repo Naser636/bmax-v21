@@ -585,7 +585,7 @@
    "scheme": "https",
    "access": "ANONYMOUS_PUBLIC_HTML",
    "tier": "T1",
-   "termsVerified": true,
+   "termsVerified": false,
    "termsUrl": "https://opentelemetry.io/docs/ (license notice in footer; not separately verified)",
    "prefixes": [
     {
@@ -611,7 +611,8 @@
    "paid": false,
    "termsForbidAutomation": false,
    "botChallengeObserved": false,
-   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)"
+   "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
+   "termsNote": "terms URL text says \"license notice in footer; not separately verified\" ⇒ not verified (#905 re-inspection)"
   },
   {
    "host": "kubernetes.io",
