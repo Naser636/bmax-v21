@@ -25,7 +25,11 @@ if (process.argv[2] === "--race-child") {
 
 let failures = 0;
 function check(name: string, cond: boolean): void { process.stdout.write(`${cond ? "ok" : "NOT OK"} - ${name}\n`); if (!cond) failures++; }
-const NOW = Date.parse("2026-11-23T12:00:00Z");
+// NOW must sit well AFTER the real wall clock: the supervisor (correctly) takes a heartbeat file's real mtime as progress
+// evidence, and these fixtures are written with real mtimes. A FIXED date (formerly 2026-11-23T12:00Z) made every
+// "stale heartbeat" fixture look fresh once the real clock came within staleMs of it — a time bomb that broke CI at 11:45Z
+// on 2026-11-23. Real now + 2 h keeps every fixture file ≥ 2 h old relative to NOW (the condition under which it passed).
+const NOW = Date.now() + 2 * 3600000;
 const MIN = 60000;
 const H = "a".repeat(40), H2 = "b".repeat(40);
 function tmp(): string { return fs.mkdtempSync(path.join(os.tmpdir(), "odg-agent-sup-")); }
