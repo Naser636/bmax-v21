@@ -1,0 +1,20 @@
+{
+  "//": "Independent inspection record of the REVISED contract G (owner directive V165 §1: 'faire inspecter indépendamment le contrat révisé'). Verdict reported by the independent inspector session; recorded by the coordinating provider session. Independence is DECLARED by distinct session ids (not cryptographic).",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "G",
+  "verdict": "ACCEPT",
+  "contractSha256": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd",
+  "inspectedHeadSha": "83427f936423c2bb49d0af0fcbd463f7ced144ae",
+  "inspectedPr": 933,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab6a445c9679c2387",
+  "authorSessionId": "a2c8b4b6fcc582da1",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-23",
+  "history": [
+    {"head": "b994ca69", "verdict": "REJECT", "findings": ["HIGH: experiment files moved out of write_set to avoid flipping ODG's selection (selector steering)", "MED: inspector≠author was a wording compare, not identity-bound"]},
+    {"head": "83427f93", "verdict": "ACCEPT", "findings": ["write_set restored; selection changed honestly to H (G waits on priority)", "session-id independence (declared)", "secondaryRobustness report-only split added", "pre-registration otherwise unchanged vs b994ca69"]}
+  ],
+  "scopeNote": "This record validates step INSPECT_REVISED_CONTRACT only. It authorizes RUN_CONTROLLED_EXPERIMENTS through the owner's prior V165 authorization; it grades nothing and does not alter the earlier G result (NOT_ADOPTED)."
+}
