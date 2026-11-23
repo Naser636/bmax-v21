@@ -83,6 +83,25 @@ check("sentence:true accepts only fragments that end like a sentence", C.extract
     check("committed V160 collection: quotes ≤ 300, registered for ITS url, no e-mail, no body", !/"body"/.test(ct) && !EMAIL.test(ct) && cc.sources.every((s: any) => { const t = V.TARGETS.find((x: any) => x.url === s.url); return !!t && (s.quotes || []).length <= 4 && (s.quotes || []).every((q: string, i: number) => { const p = t.patterns.find((pp: any) => pp.id === s.quotePatterns[i]); return q.length <= 300 && !!p && new RegExp(p.re.source, p.re.flags).test(q); }); }));
     const kp = path.join(ROOT, VK.OUT_PATH);
     check("committed V160 knowledge re-derives exactly from the committed collection", fs.existsSync(kp) && JSON.stringify(VK.derive(cc, regReal), null, 2) + "\n" === fs.readFileSync(kp, "utf8") && !EMAIL.test(fs.readFileSync(kp, "utf8")));
+    const kn = JSON.parse(fs.readFileSync(kp, "utf8"));
+    check("committed V160 knowledge: nothing presented/admitted as fact; single-source claims at most SUPPORTED", kn.summary.presentedAsFact === 0 && kn.summary.admittedAsFact === 0 && kn.summary.CORROBORATED === 0);
+    check("committed V160 knowledge: fragment-keyed claims are never SUPPORTED", kn.results.filter((r: any) => VK.STRUCT[String(r.query).split(":: ")[1]] && VK.STRUCT[String(r.query).split(":: ")[1]].fragment === true).every((r: any) => r.dimensions.epistemic !== "SUPPORTED"));
+    // ── METHOD CARDS ──
+    const MC = require("./odg-v160-method-cards-run.ts");
+    const mp = path.join(ROOT, MC.OUT_PATH);
+    const mt = fs.existsSync(mp) ? fs.readFileSync(mp, "utf8") : "";
+    check("method cards re-derive exactly from the pinned collection + knowledge file", !!mt && JSON.stringify(MC.build(cc, kn, regReal), null, 2) + "\n" === mt);
+    const cards = mt ? JSON.parse(mt).cards : [];
+    const fieldsOf = (c: any) => [c.problemSolved, c.howItWorks, ...c.conditions, ...c.limits];
+    const quotesOf = (u: string) => (cc.sources.find((s: any) => s.url === u) || { quotes: [] }).quotes;
+    check("every card claim is a VERBATIM pinned quote (same url) or labelled HYPOTHESIS / COLLECTION_RECORD", cards.length > 0 && cards.every((c: any) => fieldsOf(c).every((f: any) => (f.basis === "QUOTE" && f.quotes.length > 0 && f.quotes.every((q: any) => quotesOf(q.url).includes(q.quote))) || ((f.basis === "HYPOTHESIS" || f.basis === "COLLECTION_RECORD") && typeof f.text === "string" && !f.quotes)) && c.title.basis === "HYPOTHESIS" && c.primitives.basis === "HYPOTHESIS" && c.odgComponents.basis === "HYPOTHESIS" && c.demonstrationTest.basis === "HYPOTHESIS"));
+    check("every card's howItWorks is quote-backed (a method card never rests on a hypothesis alone)", cards.every((c: any) => c.howItWorks.basis === "QUOTE"));
+    check("primitives ⊆ the nine; mapped ODG files exist; nothing demonstrated; no invented score", cards.every((c: any) => c.primitives.values.every((p: string) => ["IDENTITY", "STATE", "CONTRACT", "POLICY", "RESOLVER", "EXECUTOR", "EVIDENCE", "RECOVERY", "ALLOCATOR"].includes(p)) && c.odgComponents.files.every((f: any) => f.exists === true) && c.matrixInput.demonstrated === false && c.matrixInput.score === "NOT_MEASURED"));
+    check("each card records org + source url + consultedDate", cards.every((c: any) => c.org && c.source.length > 0 && c.source.every((s: any) => s.consultedDate === cc.consultedDate && quotesOf(s.url).length > 0)));
+    const forged = JSON.parse(JSON.stringify(cc)); forged.sources[0].quotes[0] = "forged quote text that the page never said";
+    let refused = false; try { MC.build(forged, kn, regReal); } catch { refused = true; }
+    check("method cards refuse a collection whose digest ≠ pin", refused);
+    check("method cards contain no e-mail address", !EMAIL.test(mt));
   }
   if (failures) { process.stdout.write(`\n${failures} FAILED\n`); process.exit(1); }
   process.stdout.write("\nall V160 practices collection/knowledge checks passed\n");

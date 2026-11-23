@@ -1,0 +1,1422 @@
+{
+  "lot": "V16.0 — V160 engineering-practices Radar collection → canonical knowledge assessment (KI-V2 four dimensions)",
+  "input": "docs/odg/evidence/V160_PRACTICES_COLLECTION.json (no new network call)",
+  "collectionAuthenticated": "PINNED_DIGEST",
+  "collectionSha256": "2675846657b7c4c528ec7256f398f1b934f288fcec1087c3ed57c8bd7c170f49",
+  "consultedDate": "2026-11-23",
+  "summary": {
+    "claims": 25,
+    "keysAuthored": 24,
+    "CORROBORATED": 0,
+    "SUPPORTED": 22,
+    "CANDIDATE": 1,
+    "UNKNOWN": 2,
+    "citationsVerified": 24,
+    "keptInMemory": 25,
+    "admittedAsFact": 0,
+    "presentedAsFact": 0,
+    "unansweredQuestions": 13
+  },
+  "crossFamilyOverlap": {
+    "sharedPhrases": [
+      {
+        "phrase": "a code review",
+        "families": [
+          "google",
+          "microsoft"
+        ]
+      },
+      {
+        "phrase": "code review",
+        "families": [
+          "google",
+          "microsoft"
+        ]
+      }
+    ],
+    "count": 2,
+    "note": "REVIEW: shared cross-family phrases could ground matching keys"
+  },
+  "unanswered": [
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+      "patternId": "M_CR_GOAL",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+      "patternId": "M_CR_AUTO",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+      "patternId": "M_CR_TIME",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/",
+      "patternId": "M_AT_WHY",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/",
+      "patternId": "M_AT_PYRAMID",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/",
+      "patternId": "M_AT_UNIT",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/",
+      "patternId": "M_AT_E2E",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+      "patternId": "N_VV",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+      "patternId": "N_REVIEW",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+      "patternId": "N_RISK",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://research.google/pubs/modern-code-review-a-case-study-at-google/",
+      "patternId": "R_MCR_WHAT",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://research.google/pubs/modern-code-review-a-case-study-at-google/",
+      "patternId": "R_MCR_FIND",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://research.google/pubs/modern-code-review-a-case-study-at-google/",
+      "patternId": "R_MCR_EDU",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    }
+  ],
+  "timeSensitive": [],
+  "results": [
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/standard.html :: G_STD_HEALTH",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "When does Google's guide say a reviewer should approve a change?",
+      "claim": "The page states: In general, reviewers should favor approving a CL once it is in a state where it definitely improves the overall code health of the system being worked on, even if the CL isn’t perfect.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "reviewers",
+        "relation": "states",
+        "value": "favor approving a CL once it is in a state where it definitely improves the overall code health of the system being worked on",
+        "scope": "Google eng-practices — The Standard of Code Review",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "same quote: even if the CL is not perfect"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/standard.html :: G_STD_PERFECT",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "Does Google's guide require perfect code before approval?",
+      "claim": "The page states: A key point here is that there is no such thing as “perfect” code—there is only better code.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "code",
+        "relation": "states",
+        "value": "no such thing as perfect code",
+        "scope": "Google eng-practices — The Standard of Code Review",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "same quote: there is only better code"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/standard.html :: G_STD_FACTS",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What overrules opinions in a Google code review?",
+      "claim": "The page states: Technical facts and data overrule opinions and personal preferences.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "Technical facts and data",
+        "relation": "states",
+        "value": "overrule opinions and personal preferences",
+        "scope": "Google eng-practices — The Standard of Code Review",
+        "time": null,
+        "version": null,
+        "qualifiers": []
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/standard.html :: G_STD_PURPOSE",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What is the primary purpose of code review per Google?",
+      "claim": "The page states: The primary purpose of code review is to make sure that the overall code health of Google’s code base is improving over time.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "primary purpose of code review",
+        "relation": "states",
+        "value": "the overall code health of Google code base is improving over time",
+        "scope": "Google eng-practices — The Standard of Code Review",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "stated for Google's code base"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/speed.html :: G_SPD_ONEDAY",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What maximum response time does Google set for a code review?",
+      "claim": "The page states: One business day is the maximum time it should take to respond to a code review request (i.e., first thing the next morning).",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "code review request",
+        "relation": "states",
+        "value": "one business day is the maximum time it should take to respond",
+        "scope": "Google eng-practices — Speed of Code Reviews",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "maximum, not target"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/speed.html :: G_SPD_SLOW",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What happens when code reviews are slow (Google)?",
+      "claim": "The page states: When reviews are slow, there is increased pressure to allow developers to submit CLs that are not as good as they could be.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "reviews",
+        "relation": "states",
+        "value": "increased pressure to allow developers to submit CLs that are not as good as they could be",
+        "scope": "Google eng-practices — Speed of Code Reviews",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "one of the stated consequences of slow reviews"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/speed.html :: G_SPD_FOCUS",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "Should a reviewer interrupt focused work to review (Google)?",
+      "claim": "The page states: If you are not in the middle of a focused task, you should do a code review shortly after it comes in.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "code review",
+        "relation": "states",
+        "value": "do a code review shortly after it comes in",
+        "scope": "Google eng-practices — Speed of Code Reviews",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "condition in the same quote: if not in the middle of a focused task"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SMALL_WHY",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "Why does Google prefer small changes?",
+      "claim": "The page states: Reviewed more quickly.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "Small CLs",
+        "relation": "states",
+        "value": "reviewed more quickly",
+        "scope": "Google eng-practices — Small CLs (list item)",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "bullet-list fragment: one listed benefit, no context"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "UNKNOWN",
+        "maturity": "DISCOVERED",
+        "authorization": "READ_ONLY_ANALYSIS",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "citationVerified": false,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "READ_ONLY_ANALYSIS",
+        "usableForIntegrationRequest": "READ_ONLY_ANALYSIS"
+      },
+      "reasons": [
+        "no source citation verified against the recorded page text"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SMALL_ONE",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "How much should one Google CL contain?",
+      "claim": "The page states: In general, the right size for a CL is one self-contained change.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "right size for a CL",
+        "relation": "states",
+        "value": "one self-contained change",
+        "scope": "Google eng-practices — Small CLs",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "'In general' in the same quote"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SMALL_TESTS",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "Do tests belong in the same CL (Google)?",
+      "claim": "The page states: The CL should include related test code.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "CL",
+        "relation": "states",
+        "value": "include related test code",
+        "scope": "Google eng-practices — Small CLs",
+        "time": null,
+        "version": null,
+        "qualifiers": []
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SMALL_SIZE",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What size guidance does Google give for a CL?",
+      "claim": "The page states: There are no hard and fast rules about how large is “too large.” 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large, but it’s up to the judgment of your reviewer.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "CL",
+        "relation": "states",
+        "value": "100 lines is usually a reasonable size for a CL",
+        "scope": "Google eng-practices — Small CLs",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "same quote: no hard and fast rules; 1000 lines usually too large; up to the reviewer's judgment"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: G_LOOK_DESIGN",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What is the most important thing to cover in a Google code review?",
+      "claim": "The page states: The most important thing to cover in a review is the overall design of the CL.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "review",
+        "relation": "states",
+        "value": "the overall design of the CL",
+        "scope": "Google eng-practices — What to look for in a code review",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "stated as the most important thing to cover"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: G_LOOK_OVERENG",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What does Google's guide say about over-engineering?",
+      "claim": "The page states: A particular type of complexity is over-engineering, where developers have made the code more generic than it needs to be, or added functionality that isn’t presently needed by the system.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "over-engineering",
+        "relation": "states",
+        "value": "made the code more generic than it needs to be",
+        "scope": "Google eng-practices — What to look for in a code review",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "or added functionality not presently needed (same quote)"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: G_LOOK_TESTS",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What does Google's guide ask of tests in a change?",
+      "claim": "The page states: Ask for unit, integration, or end-to-end tests as appropriate for the change.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "tests",
+        "relation": "states",
+        "value": "unit, integration, or end-to-end tests as appropriate for the change",
+        "scope": "Google eng-practices — What to look for in a code review",
+        "time": null,
+        "version": null,
+        "qualifiers": []
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "google"
+      ],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (google) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: G_LOOK_FUNC",
+      "org": "Google",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "How does a Google reviewer check functionality?",
+      "claim": "The page states: Does this CL do what the developer intended?",
+      "keyAuthored": false,
+      "structured": null,
+      "dimensions": {
+        "epistemic": "UNKNOWN",
+        "maturity": "USABLE",
+        "authorization": "READ_ONLY_ANALYSIS",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "citationVerified": true,
+          "keyGrounded": false,
+          "publisherKnown": true,
+          "organization": "Google (Engineering Practices, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "READ_ONLY_ANALYSIS",
+        "usableForIntegrationRequest": "READ_ONLY_ANALYSIS"
+      },
+      "reasons": [
+        "no source citation verified against the recorded page text",
+        "1 verified citation(s) without a GROUNDED own structured key — not counted"
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/code-reviews/ :: M_CR_PR",
+      "org": "Microsoft",
+      "practiceArea": "code review",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "How are reviews tied to pull requests (Microsoft playbook)?",
+      "claim": "The page states: Developers working on projects should conduct peer code reviews on every pull request (or check-in to a shared branch).",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "Developers",
+        "relation": "states",
+        "value": "conduct peer code reviews on every pull request",
+        "scope": "Microsoft playbook — Code Reviews",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "or check-in to a shared branch (same quote)"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "microsoft"
+      ],
+      "sources": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Microsoft (Code With Engineering Playbook, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (microsoft) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/ :: M_CI_DEF",
+      "org": "Microsoft",
+      "practiceArea": "continuous integration",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "How does the Microsoft playbook define continuous integration?",
+      "claim": "The page states: Continuous integration automation is an integral part of the software development lifecycle intended to reduce build integration errors and maximize velocity across a dev crew.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "Continuous integration automation",
+        "relation": "states",
+        "value": "reduce build integration errors and maximize velocity",
+        "scope": "Microsoft playbook — Continuous Integration",
+        "time": null,
+        "version": null,
+        "qualifiers": []
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "microsoft"
+      ],
+      "sources": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Microsoft (Code With Engineering Playbook, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (microsoft) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/ :: M_CI_BROKEN",
+      "org": "Microsoft",
+      "practiceArea": "continuous integration",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What does the Microsoft playbook say about broken builds?",
+      "claim": "The page states: If the build step happens to fail then the build pipeline run status should be reported as failed including relevant logs and stack traces.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "build pipeline run status",
+        "relation": "states",
+        "value": "reported as failed including relevant logs and stack traces",
+        "scope": "Microsoft playbook — Continuous Integration",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "condition: the build step fails"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "microsoft"
+      ],
+      "sources": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Microsoft (Code With Engineering Playbook, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (microsoft) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/ :: M_CI_MAIN",
+      "org": "Microsoft",
+      "practiceArea": "continuous integration",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What state must the main branch keep (Microsoft playbook)?",
+      "claim": "The page states: Protected branch policies should be setup on the main branch to ensure that CI stage(s) have passed prior to starting a code review.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "main branch",
+        "relation": "states",
+        "value": "ensure that CI stage(s) have passed prior to starting a code review",
+        "scope": "Microsoft playbook — Continuous Integration",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "via protected branch policies (same quote)"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "microsoft"
+      ],
+      "sources": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Microsoft (Code With Engineering Playbook, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (microsoft) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/ :: M_CI_GATE",
+      "org": "Microsoft",
+      "practiceArea": "continuous integration",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "Which quality gates run in CI (Microsoft playbook)?",
+      "claim": "The page states: The Code Review recipes section of the playbook has suggestions for linters and preferred styles for a number of languages.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "Code Review recipes section",
+        "relation": "states",
+        "value": "suggestions for linters and preferred styles",
+        "scope": "Microsoft playbook — Continuous Integration (cross-reference)",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "cross-reference sentence pointing to another section; no gate is defined here"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "microsoft"
+      ],
+      "sources": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "Microsoft (Code With Engineering Playbook, served by GitHub Pages)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (microsoft) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
+      ]
+    },
+    {
+      "query": "github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/ :: GH_MQ_WHAT",
+      "org": "GitHub",
+      "practiceArea": "delivery engineering",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What does GitHub's merge queue guarantee?",
+      "claim": "The page states: By mid-2021, a few small, internal repositories started testing merge queue, but moving our large monorepo would not happen until the next year for a few reasons.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "merge queue",
+        "relation": "states",
+        "value": "small, internal repositories started testing merge queue",
+        "scope": "GitHub blog — merge queue post (history, mid-2021)",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "history: the monorepo moved later (same quote)"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "microsoft"
+      ],
+      "sources": [
+        {
+          "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "GitHub (Microsoft)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (microsoft) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/ :: GH_MQ_SCALE",
+      "org": "GitHub",
+      "practiceArea": "delivery engineering",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "At what scale does GitHub run its merge queue?",
+      "claim": "The page states: By rolling out changes to the process in phases (and sometimes testing and rolling back changes early in the morning before most developers started working) we were able to slowly transition our large monorepo and all of our repositories responsible for production services onto merge queue by 2023.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "monorepo",
+        "relation": "states",
+        "value": "rolling out changes to the process in phases",
+        "scope": "GitHub blog — merge queue post (rollout)",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "completed by 2023 per the same quote"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "microsoft"
+      ],
+      "sources": [
+        {
+          "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "GitHub (Microsoft)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (microsoft) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/ :: GH_MQ_TRAINS",
+      "org": "GitHub",
+      "practiceArea": "delivery engineering",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "What did GitHub's merge queue replace?",
+      "claim": "The page states: Our solution at this time was trains.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "GitHub",
+        "relation": "states",
+        "value": "solution at this time was trains",
+        "scope": "GitHub blog — merge queue post (earlier approach)",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "earlier approach; what replaced it is not in this quote"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "microsoft"
+      ],
+      "sources": [
+        {
+          "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "GitHub (Microsoft)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (microsoft) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/ :: GH_MQ_MAIN",
+      "org": "GitHub",
+      "practiceArea": "delivery engineering",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "How does GitHub keep its main branch deployable?",
+      "claim": "The page states: For GitHub and our \"deploy the merge process,\" merge queue dynamically forms groups of pull requests that are candidates for deployment, kicks off builds and tests via GitHub Actions, and ensures our main branch is never updated to a failing commit by enforcing branch protection rules.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "merge queue",
+        "relation": "states",
+        "value": "ensures our main branch is never updated to a failing commit by enforcing branch protection rules",
+        "scope": "GitHub blog — merge queue post",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "forms groups of PRs and runs builds/tests via GitHub Actions (same quote)"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "microsoft"
+      ],
+      "sources": [
+        {
+          "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "GitHub (Microsoft)"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (microsoft) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    },
+    {
+      "query": "www.nasa.gov/reference/systems-engineering-handbook/ :: N_LESSONS",
+      "org": "NASA",
+      "practiceArea": "systems engineering",
+      "nature": "OFFICIAL_DOCUMENTATION",
+      "question": "Does the NASA SE handbook cover lessons learned?",
+      "claim": "The page states: Lessons learned on systems engineering were documented in reports such as those by the NASA Integrated Action Team (NIAT), the Columbia Accident Investigation Board (CAIB), and the follow-on Diaz Report.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "Lessons learned on systems engineering",
+        "relation": "states",
+        "value": "documented in reports such as those by the NASA Integrated Action Team",
+        "scope": "NASA SE handbook index page",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "also CAIB and the Diaz Report (same quote)"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "SUPPORTED",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [
+        "nasa"
+      ],
+      "sources": [
+        {
+          "url": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": true,
+          "organization": "NASA"
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified OFFICIAL primary source documenting its own statement (nasa) — supports WHAT THE PUBLISHER STATES, not a general truth"
+      ]
+    }
+  ],
+  "limits": [
+    "each claim is SINGLE-SOURCE (one page) ⇒ at most SUPPORTED ('what the publisher states'), never CORROBORATED on its own; same-family pages (e.g. two Google sites, or GitHub + Microsoft) never corroborate each other",
+    "fragment quotes (titles, headings, TOC/index entries, checklist lines) are capped at CANDIDATE",
+    "research.google abstracts are SCIENTIFIC_PUBLICATION ⇒ CANDIDATE until a methodology/reproducibility review",
+    "structured keys authored by the provider from the recorded quotes, not model-inferred; quotes from a deterministic pattern extractor, verbatim w.r.t. the documented normalisation",
+    "knowledge usefulness for ODG is NOT_MEASURED until a mission applies it"
+  ]
+}
