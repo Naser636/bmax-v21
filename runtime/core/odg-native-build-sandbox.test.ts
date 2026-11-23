@@ -69,7 +69,7 @@ function observe(src: string): any {
   // the candidate has no stdout channel (cannot forge the nonce line) and cannot redefine the loader's verdict entrypoint
   // V8 gives every context a `console`, but in a vm context it is NOT wired to the process stdout ⇒ no output channel.
   let seenStdout = "";
-  const capRunner = (prog: string, n: string, o: any) => { const r = LMB.defaultCodeRunner(prog, { timeoutMs: 15000 }); seenStdout = String(r.stdout || ""); return r; };
+  const capRunner = (prog: string, n: string, o: any) => { const r = N.defaultRunner(prog, n, { processTimeoutMs: 15000 }); seenStdout = String(r.stdout || ""); return r; };
   const leak = N.runIsolated({ "f.js": "try { console.log('ODG-CONSOLE-LEAK'); } catch (e) {} try { console.error('ODG-CONSOLE-LEAK'); } catch (e) {} module.exports = (a, b) => a + b;" }, { kind: "source", source: "(m) => m['f.js'](2, 3) === 5" }, { runner: capRunner });
   check(leak.verified === true && seenStdout.length > 0 && !seenStdout.includes("ODG-CONSOLE-LEAK"), "model code has no stdout channel (console inside the vm context reaches nothing) ⇒ cannot print a nonce line");
   const tamper = N.runIsolated({ "f.js": "try { globalThis.__odgRunTest = () => 'T'; } catch (e) {} try { Object.defineProperty(globalThis, '__odgRunTest', { value: () => 'T' }); } catch (e) {} module.exports = (a, b) => a - b;" }, { kind: "source", source: "(m) => m['f.js'](2, 3) === 5" });
@@ -88,7 +88,7 @@ function observe(src: string): any {
     `const done = (v) => { r.net = v; process.stdout.write('\\n' + ${JSON.stringify(nonce)} + JSON.stringify(r) + '\\n'); process.exit(0); };`,
     "s.on('connect', () => done('CONNECTED')); s.on('error', (e) => done('BLOCKED:' + e.code)); s.on('timeout', () => done('BLOCKED:timeout'));",
   ].join("\n");
-  const rr = LMB.defaultCodeRunner(raw, { timeoutMs: 15000 });
+  const rr = N.defaultRunner(raw, nonce, { processTimeoutMs: 15000 });   // the SAME runner the builder uses (host interpreter by absolute path)
   const ro = rr.ran ? LMB.parseResult(rr.stdout, nonce) : null;
   check(ro !== null, "outer-layer probe produced a nonce-stamped report" + ` [ran=${rr.ran} exitOk=${rr.exitOk} reason=${String(rr.reason || "")}]`);
   if (ro) {

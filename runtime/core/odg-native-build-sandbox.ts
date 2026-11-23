@@ -262,5 +262,5 @@ const NATIVE_BUILD_SANDBOX_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { nodeBinding, UNISOLATED_OPT_IN, DEFAULT_STEP_TIMEOUT_MS, DEFAULT_PROCESS_TIMEOUT_MS, MEMORY_LIMIT_BYTES, serializableTest, hasAcceptanceCriterion, testSourceFromFn, buildSandboxProgram, gradeCases, runIsolated, replayFn, probeSandbox, newNonce, NATIVE_BUILD_SANDBOX_CONTRACT };
+module.exports = { nodeBinding, defaultRunner, UNISOLATED_OPT_IN, DEFAULT_STEP_TIMEOUT_MS, DEFAULT_PROCESS_TIMEOUT_MS, MEMORY_LIMIT_BYTES, serializableTest, hasAcceptanceCriterion, testSourceFromFn, buildSandboxProgram, gradeCases, runIsolated, replayFn, probeSandbox, newNonce, NATIVE_BUILD_SANDBOX_CONTRACT };
 export {};
