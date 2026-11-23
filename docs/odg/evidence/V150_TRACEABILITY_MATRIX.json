@@ -1,0 +1,2169 @@
+{
+  "meta": {
+    "generatedAt": "2026-11-23",
+    "repoHead": "4f4fceb2 (main, clean)",
+    "mode": "READ-ONLY analysis of the repository (no repository writes by the analysing agent)",
+    "statusRules": "documented ≠ validated. VALIDATED only when evidence demonstrates the section's OWN acceptance text; PARTIALLY_VALIDATED when some acceptance items are evidenced; IN_PROGRESS when precursors/partial work exist but no acceptance item is demonstrated; TO_BUILD when the section's deliverable does not exist. Scenario PASS = behaviour demonstrated reproducibly on real code paths with independent inspection; the battery-wide absence of committed per-scenario contracts is listed as a gap, not grade-determining.",
+    "caveats": [
+      "bwrap native-build isolation is IN_PROGRESS in another session (not merged) — not counted",
+      "#913 require allowlist is defense-in-depth only (7 known in-process escapes), not isolation",
+      "V155_TRANSVERSAL_VALIDATION A–L uses V15.5 Step-6 lettering, NOT §45 A–P; mapped by content only",
+      "V150_BATTERY_A_P_MAP.json was produced at head 59619324 (#885); later evidence (#886–#913) applied on top",
+      "all construction in the campaign is provider work; ODG-native = runtime decisions only (CP1–CP6)"
+    ],
+    "generator": "provider research agent (read-only), reviewed by the coordinating session; regeneration script kept out of the repo"
+  },
+  "canonical": {
+    "sources": [
+      {
+        "file": "owner paste: CTO — DIRECTIVE MAÎTRESSE V15.0 (session transcript, 2026-11-22)",
+        "sha256": "66814a820ec3b761f4d5a38962c0e5c116ef6980dfde835db30776501e81cee6",
+        "chars": 128058,
+        "lines": 4039,
+        "note": "paste ends at '## 37' (line 4038); file's last line is a paste wrapper tag '</pasted_content id=\"f4cb\">' (not directive text). §37–§55 come from ordre_37_55.md."
+      },
+      {
+        "file": "owner paste: CTO — ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 §§37–55 (session transcript, 2026-11-22)",
+        "sha256": "d6888118cd4d634c7a34d487ef0663e9f1ff658bcce9cdfaa7a9351d6c19e3c2",
+        "chars": 55629,
+        "lines": 2096,
+        "note": "ordre's own top-level blocks 0–4 (instruction, authorité, autorisation, Radar protection, 199 reconciliation) are un-numbered preamble; they are referenced as evidence context, not as §-sections."
+      }
+    ],
+    "sections": [
+      {
+        "id": "§0",
+        "title": "PARTIE 0 — ORDRE EXÉCUTIF DU PROPRIÉTAIRE",
+        "source": "line7971.md",
+        "headingLine": 25,
+        "part": "PARTIE 0 — ORDRE EXÉCUTIF DU PROPRIÉTAIRE",
+        "acceptance": {
+          "quote": "Une capacité n'a de valeur opérationnelle que si son existence, son fonctionnement, ses raccordements, ses consommateurs, son utilisation, ses résultats et ses preuves sont démontrés.\nUne simulation n'est jamais une preuve d'exécution réelle.\nUn agent qui produit du code ne prouve pas qu'ODG sait construire nativement.",
+          "file": "line7971.md",
+          "lines": [
+            113,
+            132,
+            140
+          ]
+        },
+        "subsections": [
+          {
+            "id": "0.1",
+            "title": "0.1. Mission principale",
+            "line": 27
+          },
+          {
+            "id": "0.2",
+            "title": "0.2. Ordre impératif : construire le système réel",
+            "line": 53
+          },
+          {
+            "id": "0.3",
+            "title": "0.3. Objectif final",
+            "line": 76
+          },
+          {
+            "id": "0.4",
+            "title": "0.4. Principe de valeur réelle",
+            "line": 111
+          },
+          {
+            "id": "0.5",
+            "title": "0.5. Priorité stratégique absolue",
+            "line": 142
+          }
+        ]
+      },
+      {
+        "id": "§1",
+        "title": "1. AUTORITÉ ET RESPONSABILITÉS",
+        "source": "line7971.md",
+        "headingLine": 163,
+        "part": "PARTIE I — AUTORITÉ, GOUVERNANCE ET ENREGISTREMENT DE LA ROADMAP",
+        "acceptance": {
+          "quote": "La décision, l'autorisation, l'exécution et la vérification doivent rester distinctes.",
+          "file": "line7971.md",
+          "lines": [
+            244
+          ]
+        }
+      },
+      {
+        "id": "§2",
+        "title": "2. ENREGISTREMENT OFFICIEL DE LA V15.0",
+        "source": "line7971.md",
+        "headingLine": 246,
+        "part": "PARTIE I — AUTORITÉ, GOUVERNANCE ET ENREGISTREMENT DE LA ROADMAP",
+        "acceptance": {
+          "quote": "La roadmap ne doit pas être déclarée enregistrée, adoptée ou intégrée tant que les preuves correspondantes n'existent pas.\n- PROPOSED.\n- RECONCILIATION_IN_PROGRESS.\n- VALIDATION_PENDING.\n- ACCEPTED.\n- INTEGRATED.",
+          "file": "line7971.md",
+          "lines": [
+            312,
+            318,
+            319,
+            320,
+            321,
+            322
+          ]
+        }
+      },
+      {
+        "id": "§3",
+        "title": "3. LES NEUF PRIMITIVES CANONIQUES",
+        "source": "line7971.md",
+        "headingLine": 344,
+        "part": "PARTIE II — FONDATIONS ARCHITECTURALES",
+        "acceptance": {
+          "quote": "Aucune dixième primitive.\nAucun second orchestrateur.\nAucun second scheduler.\nAucun deuxième Radar.\nAucune mémoire concurrente.\nLes nouvelles capacités doivent être des améliorations, des composants spécialisés ou des responsabilités internes aux mécanismes existants.",
+          "file": "line7971.md",
+          "lines": [
+            358,
+            360,
+            362,
+            366,
+            368,
+            374
+          ]
+        }
+      },
+      {
+        "id": "§4",
+        "title": "4. HIÉRARCHIE DE VÉRITÉ",
+        "source": "line7971.md",
+        "headingLine": 390,
+        "part": "PARTIE II — FONDATIONS ARCHITECTURALES",
+        "acceptance": {
+          "quote": "En cas de contradiction, appliquer une hiérarchie vérifiable :\n1. Preuves techniques actuelles et reproductibles.\nUne affirmation récente ne remplace pas automatiquement une preuve antérieure valide.",
+          "file": "line7971.md",
+          "lines": [
+            392,
+            394,
+            405
+          ]
+        }
+      },
+      {
+        "id": "§5",
+        "title": "5. ARCHITECTURE COMPACTE ET COHÉRENTE",
+        "source": "line7971.md",
+        "headingLine": 407,
+        "part": "PARTIE II — FONDATIONS ARCHITECTURALES",
+        "acceptance": {
+          "quote": "Préférer le raccordement et l'amélioration à la duplication.\n**Construire uniquement ce qui n'existe pas et ce qui est nécessaire. Corriger et raccorder le reste.**",
+          "file": "line7971.md",
+          "lines": [
+            422,
+            441
+          ]
+        }
+      },
+      {
+        "id": "§6",
+        "title": "6. CONSTRUIRE LE CERVEAU CENTRAL",
+        "source": "line7971.md",
+        "headingLine": 447,
+        "part": "PARTIE III — ARCHITECTURE COGNITIVE SUPÉRIEURE",
+        "acceptance": {
+          "quote": "ODG doit progresser de la compréhension d'une demande à une décision structurée et à une réalisation vérifiée.\nOBJECTIF → CONTEXTE → CONNAISSANCES → HYPOTHÈSES → STRATÉGIES → RISQUES → DÉCISION → CONTRAT → AUTORISATION → EXÉCUTION → VÉRIFICATION → APPRENTISSAGE.\nNe pas construire un moteur décisionnel parallèle.",
+          "file": "line7971.md",
+          "lines": [
+            449,
+            557,
+            559
+          ]
+        }
+      },
+      {
+        "id": "§7",
+        "title": "7. CAPABILITY DISCOVERY & UTILIZATION",
+        "source": "line7971.md",
+        "headingLine": 565,
+        "part": "PARTIE IV — DÉCOUVERTE ET EXPLOITATION DES CAPACITÉS",
+        "acceptance": {
+          "quote": "Un graphe des capacités réellement disponibles, de leurs consommateurs, de leurs dépendances, de leur utilisation et de leurs preuves.\n4. Exécuter un scénario qui l'utilise réellement.\n7. Vérifier qu'il ne s'agit pas d'un mock ou d'un simple test isolé.\n10. Conserver une preuve reproductible.",
+          "file": "line7971.md",
+          "lines": [
+            642,
+            651,
+            654,
+            657
+          ]
+        }
+      },
+      {
+        "id": "§8",
+        "title": "8. GRAPHE DES CAPACITÉS ET DÉPENDANCES",
+        "source": "line7971.md",
+        "headingLine": 663,
+        "part": "PARTIE V — GRAPHE VIVANT ET MODÈLE DU SYSTÈME",
+        "acceptance": {
+          "quote": "Construire ou renforcer un graphe vivant, sans créer une deuxième base de vérité.\n- Trouver immédiatement les modules utiles à une mission.\n- Identifier les fichiers qui peuvent être travaillés en parallèle.\n- Préparer les tests à exécuter après une modification.\n- Détecter les conflits avant qu'ils apparaissent.",
+          "file": "line7971.md",
+          "lines": [
+            665,
+            720,
+            722,
+            724,
+            726
+          ]
+        }
+      },
+      {
+        "id": "§9",
+        "title": "9. CENTRE DE PILOTAGE STRATÉGIQUE",
+        "source": "line7971.md",
+        "headingLine": 733,
+        "part": "PARTIE VI — PILOTAGE STRATÉGIQUE ET PORTEFEUILLE DE MISSIONS",
+        "acceptance": {
+          "quote": "ODG doit savoir piloter l'ensemble de son évolution.\nLe score de priorité est un outil de décision, pas une autorisation.\nUn blocage isolé ne doit pas arrêter tout le portefeuille.",
+          "file": "line7971.md",
+          "lines": [
+            735,
+            796,
+            812
+          ]
+        }
+      },
+      {
+        "id": "§10",
+        "title": "10. CONSTRUIRE ET AMÉLIORER SON PROPRE SYSTÈME",
+        "source": "line7971.md",
+        "headingLine": 829,
+        "part": "PARTIE VII — AUTONOMIE NATIVE D'INGÉNIERIE",
+        "acceptance": {
+          "quote": "L'autonomie native est la priorité stratégique numéro un.\nLa réussite fournisseur ne prouve jamais la capacité native d'ODG.\nL'objectif est de transformer progressivement les interventions fournisseurs en compétences réutilisables d'ODG.",
+          "file": "line7971.md",
+          "lines": [
+            831,
+            935,
+            952
+          ]
+        }
+      },
+      {
+        "id": "§11",
+        "title": "11. BOUCLE D'ÉVOLUTION",
+        "source": "line7971.md",
+        "headingLine": 958,
+        "part": "PARTIE VIII — ACQUISITION DE COMPÉTENCES ET AUTO-AMÉLIORATION RÉCURSIVE",
+        "acceptance": {
+          "quote": "La boucle sera considérée comme opérationnellement utile lorsque des preuves démontreront qu'ODG sait :\n1. Détecter une incapacité ou une performance insuffisante.\n4. Déclencher le Radar canonique lorsque nécessaire.\n8. Comparer plusieurs approches sur des critères explicites.\n13. Faire inspecter indépendamment.\n14. Mesurer le gain et les régressions.\n16. Démontrer son utilisation réelle.",
+          "file": "line7971.md",
+          "lines": [
+            1458,
+            1460,
+            1463,
+            1467,
+            1472,
+            1473,
+            1475
+          ]
+        }
+      },
+      {
+        "id": "§12",
+        "title": "12. MÉMOIRE COGNITIVE",
+        "source": "line7971.md",
+        "headingLine": 1491,
+        "part": "PARTIE IX — MÉMOIRE ET INTELLIGENCE CUMULATIVE",
+        "acceptance": {
+          "quote": "Ne créer aucune mémoire concurrente.\n- Précision de récupération.\n- Fraîcheur.\n- Exactitude de provenance.\n- Détection des contradictions.\n- Amélioration obtenue grâce à la mémoire.",
+          "file": "line7971.md",
+          "lines": [
+            1495,
+            1533,
+            1535,
+            1536,
+            1537,
+            1540
+          ]
+        }
+      },
+      {
+        "id": "§13",
+        "title": "13. ODG KNOWLEDGE INTELLIGENCE V2 — FRONTIER RADAR : DISCOVERY TO ENGINEERING",
+        "source": "line7971.md",
+        "headingLine": 1567,
+        "part": "PARTIE X — RADAR ET RECHERCHE MONDIALE",
+        "acceptance": {
+          "quote": "Le Radar V2 sera considéré comme utile lorsque des preuves montreront qu'il sait :\n4. Distinguer répétition et corroboration indépendante.\n8. Ne pas transformer une hypothèse en fait.\n11. Détecter des lacunes réelles d'ODG.\n14. Faire utiliser une connaissance dans une mission réelle autorisée.\n15. Mesurer le gain obtenu.",
+          "file": "line7971.md",
+          "lines": [
+            2175,
+            2180,
+            2184,
+            2187,
+            2190,
+            2191
+          ]
+        }
+      },
+      {
+        "id": "§14",
+        "title": "14. FRONTIER LAB",
+        "source": "line7971.md",
+        "headingLine": 2202,
+        "part": "PARTIE XI — LABORATOIRE ET EXPÉRIMENTATION",
+        "acceptance": {
+          "quote": "Ne pas créer une architecture de recherche concurrente.\nUn prototype ne devient pas automatiquement une capacité canonique.\n4. Inspection indépendante.\n10. Démonstration d'utilisation réelle.",
+          "file": "line7971.md",
+          "lines": [
+            2206,
+            2240,
+            2247,
+            2253
+          ]
+        }
+      },
+      {
+        "id": "§15",
+        "title": "15. ORCHESTRATION INTELLIGENTE",
+        "source": "line7971.md",
+        "headingLine": 2279,
+        "part": "PARTIE XII — ORCHESTRATION ET MULTI-AGENTS À GRANDE ÉCHELLE",
+        "acceptance": {
+          "quote": "Utiliser exclusivement la chaîne canonique existante.\n- Tâches acceptées.\n- Temps de coordination.\n- Coût par résultat accepté.\n- Taux de conflits.\n- Gain par rapport à une exécution séquentielle.",
+          "file": "line7971.md",
+          "lines": [
+            2281,
+            2657,
+            2661,
+            2662,
+            2664,
+            2668
+          ]
+        }
+      },
+      {
+        "id": "§16",
+        "title": "16. PRIORITÉ P0 : CONTINUITÉ DES MISSIONS",
+        "source": "line7971.md",
+        "headingLine": 2674,
+        "part": "PARTIE XIII — CONTINUITÉ ET RECOVERY",
+        "acceptance": {
+          "quote": "La continuité est une fondation préalable à l'augmentation du nombre de missions simultanées.\nMesurer les pertes, incohérences, répétitions et délais de reprise.\nNe pas promettre zéro perte pour les données non durablement enregistrées.\nNe jamais prétendre qu'une mission continue en arrière-plan si aucun mécanisme persistant réel n'est actif.",
+          "file": "line7971.md",
+          "lines": [
+            2676,
+            2802,
+            2804,
+            2819
+          ]
+        }
+      },
+      {
+        "id": "§17",
+        "title": "17. SURVEILLANCE, DIAGNOSTIC ET RÉPARATION",
+        "source": "line7971.md",
+        "headingLine": 2825,
+        "part": "PARTIE XIV — AUTO-GUÉRISON ET MAINTENANCE",
+        "acceptance": {
+          "quote": "5. Construire dans le sandbox autorisé.\n9. Inspecter indépendamment.\n10. Comparer avant/après.\n14. Vérifier que le défaut ne réapparaît pas sur un scénario distinct.\nMesurer les prévisions sur les événements réellement observés.\nUne réparation qui échoue plusieurs fois doit déclencher une réévaluation de stratégie.",
+          "file": "line7971.md",
+          "lines": [
+            2893,
+            2897,
+            2898,
+            2902,
+            2908,
+            2923
+          ]
+        }
+      },
+      {
+        "id": "§18",
+        "title": "18. RAPIDITÉ RÉELLE ET EFFICACITÉ",
+        "source": "line7971.md",
+        "headingLine": 2948,
+        "part": "PARTIE XV — PERFORMANCE ET GESTION DES RESSOURCES",
+        "acceptance": {
+          "quote": "**VERIFIED ACCEPTED OUTPUT / TOTAL COST / TOTAL TIME.**\nAucune accélération ne doit compromettre les contrôles critiques.\nL'ambition d'une accélération ×2, ×5, ×10 ou davantage doit être mesurée par catégorie de mission. Ne jamais annoncer un gain sans comparaison reproductible.",
+          "file": "line7971.md",
+          "lines": [
+            3064,
+            3066,
+            3085
+          ]
+        }
+      },
+      {
+        "id": "§19",
+        "title": "19. ÉVOLUTION CONTRÔLÉE",
+        "source": "line7971.md",
+        "headingLine": 3091,
+        "part": "PARTIE XVI — MISES À JOUR ET ÉVOLUTION LOGICIELLE",
+        "acceptance": {
+          "quote": "11. Tester dans le sandbox.\n12. Faire inspecter.\nAucune mise à jour ne doit entraîner un déploiement, une modification VPS ou une action de production dans le cadre de cette directive.\nLa préparation d'une mise à jour ne vaut pas autorisation de déploiement.",
+          "file": "line7971.md",
+          "lines": [
+            3124,
+            3125,
+            3131,
+            3133
+          ]
+        }
+      },
+      {
+        "id": "§20",
+        "title": "20. CAPACITÉS TRANSVERSALES",
+        "source": "line7971.md",
+        "headingLine": 3154,
+        "part": "PARTIE XVII — MULTIMODALITÉ ET CAPACITÉS COMMUNES",
+        "acceptance": {
+          "quote": "Examiner et renforcer les capacités existantes.\nRaccorder les capacités communes aux consommateurs canoniques via des contrats cohérents.\nTester les parcours complets, les cas limites, les documents dégradés, les données contradictoires, les erreurs d'extraction et les reprises après interruption.",
+          "file": "line7971.md",
+          "lines": [
+            3156,
+            3207,
+            3213
+          ]
+        }
+      },
+      {
+        "id": "§21",
+        "title": "21. SÉCURITÉ TRANSVERSALE",
+        "source": "line7971.md",
+        "headingLine": 3219,
+        "part": "PARTIE XVIII — SÉCURITÉ ET QUALITÉ",
+        "acceptance": {
+          "quote": "- Moindre privilège.\n- Isolation.\n- Protection contre les injections.\nÉvaluer les mécanismes d'isolation réellement disponibles :\nLa simple séparation des contextes conversationnels ne constitue pas une isolation des fichiers ou des effets de bord.",
+          "file": "line7971.md",
+          "lines": [
+            3223,
+            3226,
+            3230,
+            3287,
+            3298
+          ]
+        }
+      },
+      {
+        "id": "§22",
+        "title": "22. ASSURANCE QUALITÉ INDÉPENDANTE",
+        "source": "line7971.md",
+        "headingLine": 3304,
+        "part": "PARTIE XIX — QUALITÉ, VALIDATION ET NON-RÉGRESSION",
+        "acceptance": {
+          "quote": "Une amélioration importante doit être :\n- Testée.\n- Raccordée.\n- Utilisée.\n- Mesurée.\n- Inspectée.\n- Reprenable.\n- Réversible selon le mécanisme approprié.",
+          "file": "line7971.md",
+          "lines": [
+            3371,
+            3373,
+            3374,
+            3375,
+            3377,
+            3378,
+            3381,
+            3382
+          ]
+        }
+      },
+      {
+        "id": "§23",
+        "title": "23. ÉCHELLE L0 À L8",
+        "source": "line7971.md",
+        "headingLine": 3388,
+        "part": "PARTIE XX — NIVEAUX DE MATURITÉ DE L'AUTONOMIE",
+        "acceptance": {
+          "quote": "Ces niveaux décrivent des compétences démontrées. Ils ne constituent jamais des permissions.\nChaque niveau exige des scénarios réussis, reproductibles et évalués indépendamment.\nUne réussite fournisseur ne permet pas de déclarer un niveau natif.\nNe pas promouvoir automatiquement L1 ou un niveau supérieur.",
+          "file": "line7971.md",
+          "lines": [
+            3390,
+            3410,
+            3412,
+            3420
+          ]
+        }
+      },
+      {
+        "id": "§24",
+        "title": "24. TABLEAU DE MESURE",
+        "source": "line7971.md",
+        "headingLine": 3452,
+        "part": "PARTIE XXI — INDICATEURS DE PROGRESSION",
+        "acceptance": {
+          "quote": "Établir des références initiales avant de fixer des objectifs chiffrés.\nComparer plusieurs générations de missions comparables.\nToute amélioration doit rester soumise à la qualité et à la sécurité.",
+          "file": "line7971.md",
+          "lines": [
+            3454,
+            3502,
+            3515
+          ]
+        }
+      },
+      {
+        "id": "§25",
+        "title": "25. WORK_ITEM_CONTRACT",
+        "source": "line7971.md",
+        "headingLine": 3521,
+        "part": "PARTIE XXII — MÉTHODE UNIVERSELLE DE CONSTRUCTION",
+        "acceptance": {
+          "quote": "Chaque chantier doit disposer d'un contrat explicite.\n- ACCEPTANCE_CRITERIA.\n- INDEPENDENT_REVIEW.\n- ROLLBACK_PLAN.\n- CHECKPOINT_PLAN.\n- EVIDENCE_REQUIREMENTS.",
+          "file": "line7971.md",
+          "lines": [
+            3523,
+            3542,
+            3544,
+            3545,
+            3546,
+            3547
+          ]
+        }
+      },
+      {
+        "id": "§26",
+        "title": "26. LES TREIZE PROGRAMMES INTÉGRÉS",
+        "source": "line7971.md",
+        "headingLine": 3600,
+        "part": "PARTIE XXIII — PROGRAMMES STRUCTURANTS",
+        "acceptance": {
+          "quote": "Les treize programmes de la V17.0 sont conservés comme axes de construction, et non comme nouvelles architectures indépendantes.\nChaque programme doit être mappé sur les neuf primitives et les composants existants.\nLe Radar V2 alimente ces programmes à travers les mécanismes canoniques. Il ne devient pas un programme de gouvernance parallèle.",
+          "file": "line7971.md",
+          "lines": [
+            3602,
+            3656,
+            3658
+          ]
+        }
+      },
+      {
+        "id": "§27",
+        "title": "27. AUTOMATISATION DES TÂCHES INTERNES",
+        "source": "line7971.md",
+        "headingLine": 3664,
+        "part": "PARTIE XXIV — AUTOMATISATION MAXIMALE ET EXÉCUTION CONTINUE",
+        "acceptance": {
+          "quote": "ODG doit poursuivre les missions éligibles selon une boucle contrôlée :\nPour chaque automatisation, mesurer :\n- Temps manuel supprimé.\nUne automatisation n'est conservée que si elle apporte un bénéfice réel.",
+          "file": "line7971.md",
+          "lines": [
+            3717,
+            3855,
+            3857,
+            3866
+          ]
+        }
+      },
+      {
+        "id": "§28",
+        "title": "28. PHASE 0 — VÉRITÉ ET PRÉSERVATION",
+        "source": "line7971.md",
+        "headingLine": 3872,
+        "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+        "acceptance": {
+          "quote": "Livrables :\n- État technique vérifié.\n- Matrice de filiation.\n- Matrice de correspondance.\n- Registre des divergences.\n- Checkpoint initial.\n- Liste des travaux à reprendre.",
+          "file": "line7971.md",
+          "lines": [
+            3888,
+            3890,
+            3891,
+            3892,
+            3893,
+            3894,
+            3895
+          ]
+        }
+      },
+      {
+        "id": "§29",
+        "title": "29. PHASE 1 — ENREGISTREMENT V15.0 ET CARTOGRAPHIE",
+        "source": "line7971.md",
+        "headingLine": 3897,
+        "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+        "acceptance": {
+          "quote": "Livrables :\n- Roadmap V15.0 proposée et correctement référencée.\n- Matrice des exigences.\n- Cartographie technique.\n- Inventaire des capacités.\n- État réel des raccordements.",
+          "file": "line7971.md",
+          "lines": [
+            3912,
+            3914,
+            3915,
+            3916,
+            3917,
+            3918
+          ]
+        }
+      },
+      {
+        "id": "§30",
+        "title": "30. PHASE 2 — CONTINUITÉ ET RECOVERY",
+        "source": "line7971.md",
+        "headingLine": 3920,
+        "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+        "acceptance": {
+          "quote": "Priorité P0.\nLivrable : démonstration reproductible de reprise.",
+          "file": "line7971.md",
+          "lines": [
+            3922,
+            3937
+          ]
+        }
+      },
+      {
+        "id": "§31",
+        "title": "31. PHASE 3 — ORCHESTRATION ET PILOTAGE",
+        "source": "line7971.md",
+        "headingLine": 3939,
+        "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+        "acceptance": {
+          "quote": "Livrable : missions sélectionnées et poursuivies par la chaîne canonique.",
+          "file": "line7971.md",
+          "lines": [
+            3956
+          ]
+        }
+      },
+      {
+        "id": "§32",
+        "title": "32. PHASE 4 — DISCOVERY ET GRAPHE VIVANT",
+        "source": "line7971.md",
+        "headingLine": 3958,
+        "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+        "acceptance": {
+          "quote": "Livrable : capacités existantes identifiées, qualifiées et exploitées.",
+          "file": "line7971.md",
+          "lines": [
+            3971
+          ]
+        }
+      },
+      {
+        "id": "§33",
+        "title": "33. PHASE 5 — CERVEAU ET RAISONNEMENT",
+        "source": "line7971.md",
+        "headingLine": 3973,
+        "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+        "acceptance": {
+          "quote": "Livrable : batterie cognitive mesurée.",
+          "file": "line7971.md",
+          "lines": [
+            3988
+          ]
+        }
+      },
+      {
+        "id": "§34",
+        "title": "34. PHASE 6 — MÉMOIRE ET APPRENTISSAGE",
+        "source": "line7971.md",
+        "headingLine": 3990,
+        "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+        "acceptance": {
+          "quote": "Livrable : amélioration mesurée grâce à la mémoire.",
+          "file": "line7971.md",
+          "lines": [
+            4005
+          ]
+        }
+      },
+      {
+        "id": "§35",
+        "title": "35. PHASE 7 — AUTONOMIE NATIVE",
+        "source": "line7971.md",
+        "headingLine": 4007,
+        "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+        "acceptance": {
+          "quote": "Livrable : missions techniques réussies nativement.",
+          "file": "line7971.md",
+          "lines": [
+            4022
+          ]
+        }
+      },
+      {
+        "id": "§36",
+        "title": "36. PHASE 8 — AUTO-AMÉLIORATION RÉCURSIVE",
+        "source": "line7971.md",
+        "headingLine": 4024,
+        "part": "PARTIE XXV — PLAN D'EXÉCUTION INTÉGRAL",
+        "acceptance": {
+          "quote": "Livrable : plusieurs cycles d'amélioration démontrés.",
+          "file": "line7971.md",
+          "lines": [
+            4036
+          ]
+        }
+      },
+      {
+        "id": "§37",
+        "title": "5. PHASE 9 — §37 — AUTO-GUÉRISON",
+        "source": "ordre_37_55.md",
+        "headingLine": 312,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Construire une capacité interne de détection, diagnostic, réparation contrôlée, vérification et prévention des anomalies.\nUne capacité d'auto-guérison démontrée par des scénarios reproductibles, avec diagnostic causal, réparation réversible, validation indépendante, prévention et preuves.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            316,
+            477
+          ]
+        }
+      },
+      {
+        "id": "§38",
+        "title": "6. PHASE 10 — §38 — RADAR ET FRONTIER LAB",
+        "source": "ordre_37_55.md",
+        "headingLine": 481,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "**Rappel impératif : le Radar existant ne doit subir aucune modification dans cette campagne.**\nDes connaissances qualifiées, traçables, comparées et transformées en améliorations internes réellement utilisées, avec mesures avant/après.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            487,
+            628
+          ]
+        }
+      },
+      {
+        "id": "§39",
+        "title": "7. PHASE 11 — §39 — PERFORMANCE ET ROUTAGE",
+        "source": "ordre_37_55.md",
+        "headingLine": 632,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Un gain de vitesse n'est accepté que si :\n- La qualité reste au moins équivalente.\n- Le coût total est mesuré.\nUn routage mesuré et une amélioration réelle du temps par résultat accepté.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            745,
+            747,
+            751,
+            755
+          ]
+        }
+      },
+      {
+        "id": "§40",
+        "title": "8. PHASE 12 — §40 — MULTIMODALITÉ",
+        "source": "ordre_37_55.md",
+        "headingLine": 759,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Chaque capacité multimodale doit être raccordée à un consommateur réel et testée de bout en bout.\nNe pas créer un consommateur artificiel uniquement pour déclarer un raccordement.\nDes capacités multimodales réellement utilisables, avec contrats communs, preuves et résultats reproductibles.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            843,
+            845,
+            849
+          ]
+        }
+      },
+      {
+        "id": "§41",
+        "title": "9. PHASE 13 — §41 — ORCHESTRATION MASSIVE ET MULTI-AGENTS",
+        "source": "ordre_37_55.md",
+        "headingLine": 853,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Comparer plusieurs niveaux de concurrence sur des missions équivalentes.\nNe pas augmenter la concurrence si le gain est nul ou négatif.\nUne orchestration adaptative, isolée, mesurée et capable de reprendre les missions sans perte de travail.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            963,
+            978,
+            993
+          ]
+        }
+      },
+      {
+        "id": "§42",
+        "title": "10. PHASE 14 — §42 — AUTOMATISATION ET CONTINUITÉ",
+        "source": "ordre_37_55.md",
+        "headingLine": 997,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Réduire les interventions manuelles répétitives et les interruptions inutiles, sans affaiblir les contrôles.\nDes automatisations réversibles, idempotentes, vérifiées, avec continuité et réduction mesurée des interventions manuelles.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1001,
+            1103
+          ]
+        }
+      },
+      {
+        "id": "§43",
+        "title": "11. PHASE 15 — §43 — SÉCURITÉ ET SIMPLIFICATION",
+        "source": "ordre_37_55.md",
+        "headingLine": 1107,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Renforcer la sécurité, réduire les duplications et améliorer la cohérence générale sans casser les mécanismes validés.\n- D'une preuve de non-régression.\nUne architecture plus simple, plus cohérente et mieux protégée, sans perte de capacités validées.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1111,
+            1190,
+            1206
+          ]
+        }
+      },
+      {
+        "id": "§44",
+        "title": "12. PHASE 16 — §44 — VALIDATION GLOBALE ET ÉVOLUTION CONTINUE",
+        "source": "ordre_37_55.md",
+        "headingLine": 1210,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Vérifier que les phases précédentes fonctionnent ensemble et que les améliorations sont réellement cumulatives.\nComparer les résultats à la baseline initiale.\nUn système intégré, mesuré et capable de poursuivre des cycles d'amélioration avec des preuves indépendantes.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1214,
+            1249,
+            1284
+          ]
+        }
+      },
+      {
+        "id": "§45",
+        "title": "13. §45 — BATTERIE DE DÉMONSTRATION DE L'AUTONOMIE",
+        "source": "ordre_37_55.md",
+        "headingLine": 1288,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Construire et exécuter les seize scénarios suivants dans les environnements autorisés.\nChaque scénario doit posséder un contrat, un état initial, un résultat attendu, des tests, des mesures, des preuves et une inspection indépendante.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1290,
+            1292
+          ]
+        }
+      },
+      {
+        "id": "§46",
+        "title": "14. §46 — CHECKPOINTS ET CONTINUITÉ",
+        "source": "ordre_37_55.md",
+        "headingLine": 1360,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Chaque lot doit conserver :\n- HEAD initial.\n- HEAD final.\n- Contrats.\n- Inspection indépendante.\n- Prochaine action.\nNe pas recommencer les travaux validés.\nÀ la fin de chaque lot, enregistrer l'état permettant de poursuivre sans perte.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1362,
+            1365,
+            1366,
+            1370,
+            1374,
+            1381,
+            1408,
+            1412
+          ]
+        }
+      },
+      {
+        "id": "§47",
+        "title": "15. §47 — LIMITES ET PERMISSIONS",
+        "source": "ordre_37_55.md",
+        "headingLine": 1416,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "L'autorisation du propriétaire décrite au §2 s'applique aux travaux internes légaux, réversibles et confinés.\nL'autonomie technique n'accorde jamais de permission supplémentaire.\nLa préparation d'une release ne vaut pas autorisation de déploiement.\nLe Radar reste inchangé.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1418,
+            1422,
+            1426,
+            1428
+          ]
+        }
+      },
+      {
+        "id": "§48",
+        "title": "16. §48 — EXÉCUTION IMMÉDIATE ET CONTINUE",
+        "source": "ordre_37_55.md",
+        "headingLine": 1434,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Ne pas relancer la campagne précédente.\nCompléter son travail à partir de son état réel.\nExécuter les scénarios A à P, progressivement, selon leurs dépendances.\nNe pas attendre une nouvelle directive pour les opérations internes déjà autorisées.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1436,
+            1438,
+            1510,
+            1522
+          ]
+        }
+      },
+      {
+        "id": "§49",
+        "title": "17. §49 — RAPPORTS ET TRANSPARENCE",
+        "source": "ordre_37_55.md",
+        "headingLine": 1526,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Le rapport exécutif doit rester concis et indiquer :\nNe jamais masquer un résultat négatif.\nNe jamais inventer une preuve.\nNe jamais présenter une estimation comme un fait observé.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1528,
+            1543,
+            1545,
+            1547
+          ]
+        }
+      },
+      {
+        "id": "§50",
+        "title": "18. §50 — CRITÈRES FINAUX DE RÉUSSITE",
+        "source": "ordre_37_55.md",
+        "headingLine": 1551,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "La réussite se mesure sur la capacité d'ODG à :\n- Construire nativement.\n- Augmenter le débit de résultats acceptés.\n- Réduire le temps et le coût par résultat vérifié.\nL'objectif d'une amélioration de dix fois est une ambition à mesurer, jamais une affirmation.\nAucune perfection ne doit être promise.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1553,
+            1563,
+            1576,
+            1577,
+            1579,
+            1581
+          ]
+        }
+      },
+      {
+        "id": "§51",
+        "title": "19. §51 — RÈGLES D'OR PERMANENTES",
+        "source": "ordre_37_55.md",
+        "headingLine": 1610,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "1. V15.0 reste la directive unique de cette campagne.\n2. V12.4 reste la Boussole canonique jusqu'à succession formelle.\n7. Aucune permission auto-attribuée.\n16. Chaque chantier possède un contrat.\n17. Chaque lot possède un checkpoint.\n54. Aucun déploiement réel n'est autorisé.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1612,
+            1613,
+            1618,
+            1627,
+            1628,
+            1665
+          ]
+        }
+      },
+      {
+        "id": "§52",
+        "title": "20. §52 — RÉFÉRENCES MONDIALES ET VEILLE TECHNOLOGIQUE",
+        "source": "ordre_37_55.md",
+        "headingLine": 1670,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Ne pas annoncer qu'ODG est meilleur qu'une référence mondiale sans benchmark comparable et reproductible.\nUn registre de veille technique avec sources, versions, comparaisons, expériences, décisions et résultats.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1799,
+            1803
+          ]
+        }
+      },
+      {
+        "id": "§53",
+        "title": "21. §53 — ACCÉLÉRATION GLOBALE",
+        "source": "ordre_37_55.md",
+        "headingLine": 1807,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Mesurer les étapes qui déterminent réellement la durée des missions :\nUne réduction mesurée du temps par résultat accepté, sans baisse de qualité.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1811,
+            1883
+          ]
+        }
+      },
+      {
+        "id": "§54",
+        "title": "22. §54 — PRÉPARATION DE RELEASE SANS DÉPLOIEMENT",
+        "source": "ordre_37_55.md",
+        "headingLine": 1887,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "Préparer un dossier technique complet.\n**Aucun déploiement ne doit être exécuté.**",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1889,
+            1969
+          ]
+        }
+      },
+      {
+        "id": "§55",
+        "title": "23. §55 — BOUCLE FONDAMENTALE D'ODG",
+        "source": "ordre_37_55.md",
+        "headingLine": 1973,
+        "part": "ORDRE DE CONTINUITÉ EXÉCUTIVE V15.0 — EXTENSION DÉTAILLÉE DES PHASES 9 À 16 — §§37 À 55",
+        "acceptance": {
+          "quote": "OBSERVER → COMPRENDRE → CONTEXTUALISER → RECHERCHER → RAISONNER → COMPARER → DÉCIDER → PLANIFIER → CONTRACTUALISER → AUTORISER → DÉCOMPOSER → ALLOUER → PARALLÉLISER → CONSTRUIRE → RACCORDER → AUTOMATISER → TESTER → INSPECTER → MESURER → INTÉGRER → PRÉSERVER → APPRENDRE → REPRENDRE → S'AMÉLIORER → POURSUIVRE.\nNe pas rester dans la planification.",
+          "file": "ordre_37_55.md",
+          "lines": [
+            1977,
+            1979
+          ]
+        }
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "A",
+      "title": "A — Ingénierie native",
+      "text": "ODG découvre un défaut, identifie sa cause, conçoit un correctif, crée les tests, les exécute et fait inspecter le résultat.",
+      "lines": [
+        1294,
+        1296
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "V150_BATTERY_A_P_MAP.json A (odg-native-engineering-loop deterministic transforms, l3-governed-repair)",
+        "V159_MEASURED_MODEL_POLICY.json: local-model fixes on synthetic bugfix/repair missions with independent functional test"
+      ],
+      "missingForPass": "ODG must discover a REAL defect, generate the fix and tests itself, and pass an independent inspection that can reject; apply needs an owner-authorized write-set; generated code should run in bwrap (IN_PROGRESS elsewhere)"
+    },
+    {
+      "id": "B",
+      "title": "B — Continuité",
+      "text": "ODG commence une mission, produit des modifications, subit une interruption simulée, restaure son état et reprend uniquement les opérations manquantes.",
+      "lines": [
+        1298,
+        1300
+      ],
+      "status": "PASS",
+      "evidence": [
+        "V150_SCENARIO_M_RESUME.json (real SIGKILL, only missing ops re-run, #890 inspected)",
+        "odg-native-continuity-run.ts two-process resume (reExecutedPriorWork=[])",
+        "V155 transversal G"
+      ],
+      "missingForPass": "PASS within scope (process death, single host, synthetic ops). Missing for full: committed scenario contract; power-loss durability"
+    },
+    {
+      "id": "C",
+      "title": "C — Capacité dormante",
+      "text": "ODG découvre un module existant non utilisé, identifie ses consommateurs, détermine s'il doit être raccordé, réalise le raccordement autorisé et démontre l'utilisation réelle.",
+      "lines": [
+        1302,
+        1304
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "V150_COMPONENT_JUDGMENT / V150_199_RECONCILIATION (ODG component-judgment + individual reads)",
+        "#884 FR invoice compliance + due date threaded into live BTP journey (opt-in stage, inspected)",
+        "#882 cto-dashboard runner"
+      ],
+      "missingForPass": "one chain where ODG itself detects the dormant module, proposes the wiring, the wiring is authorized, and real use is demonstrated outside a test (the #884 stage is opt-in and was wired by the provider)"
+    },
+    {
+      "id": "D",
+      "title": "D — Recherche et construction",
+      "text": "ODG recherche une méthode, compare les solutions, construit la meilleure solution adaptée à ses contraintes et mesure le gain.",
+      "lines": [
+        1306,
+        1308
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "#905/#906: researched references + canonical acquire() claims grounded the Radar admission rules, then the admission module was built",
+        "frontier-lab / scientific-research tests (synthetic)"
+      ],
+      "missingForPass": "comparison of ≥2 researched methods on a real task and a measured gain vs baseline"
+    },
+    {
+      "id": "E",
+      "title": "E — Auto-guérison",
+      "text": "ODG détecte une anomalie, identifie sa cause racine, répare en sandbox, vérifie et conserve les preuves.",
+      "lines": [
+        1310,
+        1312
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "V150_SCENARIO_E_SELF_HEALING.json 8/8 cases; real defect fixed in repair-workflow.ts (#889)"
+      ],
+      "missingForPass": "ODG-generated fix (currently provider-scripted seam), anomaly from a real component rather than an injected synthetic module, prevention step"
+    },
+    {
+      "id": "F",
+      "title": "F — Multi-agents",
+      "text": "ODG décompose une mission, affecte des fournisseurs, réceptionne leurs résultats, détecte les incompatibilités et valide l'intégration.",
+      "lines": [
+        1314,
+        1316
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "odg-orchestration-scenario / odg-writeset-contention tests; real waves (V155_REAL_WAVE_EVIDENCE)",
+        "V155 transversal F (V15.5 lettering) PARTIAL"
+      ],
+      "missingForPass": "post-receipt detection of incompatible outputs from two providers and a validated integration step"
+    },
+    {
+      "id": "G",
+      "title": "G — Mémoire",
+      "text": "ODG retrouve une connaissance, vérifie sa fraîcheur, sa provenance et ses conditions, puis démontre son utilité.",
+      "lines": [
+        1318,
+        1320
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "memory-scenario-battery, learning-reuse-proof, reuse-validity-gate (synthetic records)",
+        "V158_KNOWLEDGE_ASSESSMENT.json (provenance, sha256, timeSensitive, admissibility)"
+      ],
+      "missingForPass": "a retrieved knowledge item with freshness/provenance checked that is then used in a mission with measured utility"
+    },
+    {
+      "id": "H",
+      "title": "H — Amélioration récursive",
+      "text": "ODG améliore un mécanisme de planification ou de vérification et démontre sur des tests indépendants que la nouvelle version est meilleure.",
+      "lines": [
+        1322,
+        1324
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "V159_MEASURED_MODEL_POLICY.json (routing mechanism improved; before/after 0.75→0.75, escalation 0/2→2/2)",
+        "#902 verification levels",
+        "evolution-loop test (synthetic)"
+      ],
+      "missingForPass": "demonstrated superiority on independent held-out tests (V159 shows no quality gain; #902 gain not measured)"
+    },
+    {
+      "id": "I",
+      "title": "I — Révision stratégique",
+      "text": "ODG compare plusieurs plans, détecte une nouvelle dépendance et réorganise le portefeuille sans perdre les travaux validés.",
+      "lines": [
+        1326,
+        1328
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "continuous-planner.test.ts (CASPER-style repair, independent mission preserved, PROPOSED)"
+      ],
+      "missingForPass": "run against the live register/portfolio with a real new dependency and assertion that ACCEPTED work is preserved"
+    },
+    {
+      "id": "J",
+      "title": "J — Gestion d'échec",
+      "text": "ODG détecte une stratégie inefficace, arrête les tentatives répétitives, construit une alternative et mesure le résultat.",
+      "lines": [
+        1330,
+        1332
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "#885 NO_PROGRESS_IDENTICAL_REGENERATION stop",
+        "V159: implement NO_QUALIFIED → evidence-gated sovereign-delegation record (no provider called)"
+      ],
+      "missingForPass": "an alternative strategy actually executed after the stop and its result measured against the original"
+    },
+    {
+      "id": "K",
+      "title": "K — Knowledge Intelligence",
+      "text": "ODG découvre une connaissance, identifie ses sources, structure ses affirmations, distingue les corroborations indépendantes, qualifie la connaissance, identifie une lacune interne et mesure le résultat de son utilisation.",
+      "lines": [
+        1334,
+        1336
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "V158_RADAR_LIVE_RUN.json LIVE_OK (8/8, 6 hosts)",
+        "V158_RADAR_COLLECTION.json + V158_KNOWLEDGE_ASSESSMENT.json (15 claims; 0 CORROBORATED; 6 SUPPORTED)",
+        "#911 publisher identities"
+      ],
+      "missingForPass": "internal gap identification from the knowledge and measured result of its use; independent corroboration (needs more admitted hosts — partly owner-gated)"
+    },
+    {
+      "id": "L",
+      "title": "L — Concurrence adaptative",
+      "text": "ODG compare plusieurs niveaux de concurrence et mesure les ressources, le temps, les coûts, les conflits et les résultats acceptés.",
+      "lines": [
+        1338,
+        1340
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "V150_SCENARIO_L_CONCURRENCY.json (1/2/4/8 → 8 workers, 6.58×, 0 failures)",
+        "#902 adaptive concurrency policy",
+        "V155_REAL_WAVE_EVIDENCE (×5.08)"
+      ],
+      "missingForPass": "resources (CPU/RAM), costs, conflicts and accepted results measured per level; levels above 8 to locate the optimum; real missions rather than test suites"
+    },
+    {
+      "id": "M",
+      "title": "M — Reprise multi-agents",
+      "text": "ODG interrompt plusieurs tâches en simulation, récupère leurs états, vérifie les artefacts et reprend uniquement les opérations manquantes.",
+      "lines": [
+        1342,
+        1344
+      ],
+      "status": "PASS",
+      "evidence": [
+        "V150_SCENARIO_M_RESUME.json allProven=true (2 kills at different points, 0 repeated, 0 lost, leases taken over not double-held, concurrent resumers)",
+        "V155 transversal G (real canary missions)"
+      ],
+      "missingForPass": "PASS within scope. Missing for full: committed scenario contract; N>2 resumers; fencing tokens"
+    },
+    {
+      "id": "N",
+      "title": "N — Automatisation",
+      "text": "ODG identifie une tâche répétitive autorisée, réutilise ou construit son automatisation, vérifie son comportement et mesure le temps économisé.",
+      "lines": [
+        1346,
+        1348
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "idempotency-guard; live tick automation (dedup); battery map N (automation-measurement SIMULATED, NOT_RUN)"
+      ],
+      "missingForPass": "a real repetitive internal task identified, automated idempotently, verified, and time saved measured"
+    },
+    {
+      "id": "O",
+      "title": "O — Blocage isolé",
+      "text": "Une tâche est bloquée par une dépendance. ODG poursuit les missions indépendantes et reprend la tâche bloquée lorsque sa condition est satisfaite.",
+      "lines": [
+        1350,
+        1352
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "odg-continuation-diagnostic / orchestration-scenario tests (blocked lot does not freeze independent work)",
+        "V155 transversal K (real: deferred independent missions PASSed after interruption, 0 human inputs)"
+      ],
+      "missingForPass": "a real dependency-blocked task that is resumed automatically when its condition becomes satisfied"
+    },
+    {
+      "id": "P",
+      "title": "P — Réduction des répétitions",
+      "text": "ODG démontre qu'il réutilise des analyses, tests et preuves encore valides sans répéter inutilement les travaux.",
+      "lines": [
+        1354,
+        1356
+      ],
+      "status": "PARTIAL",
+      "evidence": [
+        "live ledger dedup (1199 ALREADY_PROVEN no-op rows, V155 maturity)",
+        "odg-reuse-demonstrations-run (learning reuse PROVEN)"
+      ],
+      "missingForPass": "measured work avoided (time/ops saved) when reusing still-valid analyses/tests/proofs"
+    }
+  ],
+  "sectionsStatus": [
+    {
+      "id": "§0",
+      "title": "PARTIE 0 — ORDRE EXÉCUTIF DU PROPRIÉTAIRE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "docs/odg/evidence/V155_NATIVE_AUTONOMY_MATURITY.json (value-level taxonomy applied: EXERCISED_LIVE / WIRED_TESTED / BUILT_NOT_WIRED; native vs provider separated)",
+        "every checkpoint CP1–CP6 records nativeVsProvider"
+      ],
+      "gaps": [
+        "0.3: most of the 30 target abilities not demonstrated natively; native-built code changes = 0 (V155 maturity, CP6)",
+        "0.5 priority #1 (native autonomy) has the weakest evidence of all programs"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§1",
+      "title": "1. AUTORITÉ ET RESPONSABILITÉS",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V16_PERMISSION_INVENTORY.md 'Not unlocked on purpose' (no self-escalation)",
+        "every PR #880–#913 independently inspected (CP1–CP6 REJECT/ACCEPT logs)",
+        "V188 provider contract (Claude Code = TECHNICAL_PROVIDER_ONLY)"
+      ],
+      "gaps": [
+        "inspector / owner / renew identity are caller-declared strings (V155 transversal H PARTIAL) — separation of verification is declared, not identity-bound",
+        "owner-signed acceptance path not active (TRUST_ANCHORS.json empty)",
+        "decision authority over construction is exercised by the provider coordinator, not ODG (native share 0)"
+      ],
+      "blocker": "gate 10/12 owner signature; distinct provider GitHub identity + code-owner review"
+    },
+    {
+      "id": "§2",
+      "title": "2. ENREGISTREMENT OFFICIEL DE LA V15.0",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "docs/odg/V15_0_MASTER_DIRECTIVE.md (#878): registered PROPOSED, lineage table, A–M correspondence, protected registers untouched",
+        "#879 V150_PHASE1_CORRESPONDENCE.json"
+      ],
+      "gaps": [
+        "2.3 step 16 (record in the Boussole via canonical process) not done — owner-gated",
+        "status vocabulary: only PROPOSED used; RECONCILIATION_IN_PROGRESS transition not recorded",
+        "historical V15.0/V16.0/V17.0/V18.0 roadmap texts not present in repo (only known via the directive)"
+      ],
+      "blocker": "V15.0 adoption / Boussole + ROADMAP.json change = owner decision"
+    },
+    {
+      "id": "§3",
+      "title": "3. LES NEUF PRIMITIVES CANONIQUES",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V15_0_MASTER_DIRECTIVE.md: 'V15.0 adds no new primitive, orchestrator, scheduler, queue, Radar, memory or permission engine'",
+        "V150_SCENARIO_E composition.builtNoSecondRepairEngine=true",
+        "CP6 radar.mechanism: governor/budget/transport consumed UNCHANGED"
+      ],
+      "gaps": [
+        "no automated structural check that no second scheduler/queue/orchestrator exists; compliance rests on inspection",
+        "new components added in the campaign (odg-agent-supervisor #895, odg-radar-source-admission #905, verification-level/concurrency-policy #902) — each justified as specialized components, but §3.1 responsibility reconciliation onto the nine primitives is not documented"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§4",
+      "title": "4. HIÉRARCHIE DE VÉRITÉ",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "Truth Lock verify-historical 928/928 at every checkpoint",
+        "CP5 correction of two previously stated figures after inspection; #900 verdicts relabelled on inspection REJECT"
+      ],
+      "gaps": [
+        "hierarchy applied by practice/inspection, not encoded in a mechanism"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§5",
+      "title": "5. ARCHITECTURE COMPACTE ET COHÉRENTE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V150_199_RECONCILIATION.json (each of 198 items read individually; minimalFix per item)",
+        "compositions reuse canonical modules (scenario E, M; Radar admission over research-governor)"
+      ],
+      "gaps": [
+        "~190 reconciliation items still carry only a diagnosis (minimalFix backlog, CP1)",
+        "no measured complexity/duplication reduction"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§6",
+      "title": "6. CONSTRUIRE LE CERVEAU CENTRAL",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "prior arc components: odg-hybrid-reasoning, world-model, per-axis intelligence (#835, #838–#847) listed in V15_0_MASTER_DIRECTIVE §2 programme A"
+      ],
+      "gaps": [
+        "no V15.0 lot ran on §6; correspondence notes 'several axes NOT_MEASURED on real data'",
+        "single decision loop OBJECTIF→…→APPRENTISSAGE not demonstrated end-to-end on a real mission"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§7",
+      "title": "7. CAPABILITY DISCOVERY & UTILIZATION",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V150_PHASE1_CORRESPONDENCE.json (census 786 modules: 562 CONNECTED / 224 NO_CONSUMER; decision surface 199)",
+        "V150_COMPONENT_JUDGMENT.json (198: 57 LIBRARY / 85 MISSING_CONSUMER / 52 BLOCKED …)",
+        "V150_199_RECONCILIATION.json (actuallyLoaded true 16 / false 182)",
+        "#882 front-door load fix, cto-dashboard runner; #884 FR invoice + due date threaded into live BTP journey"
+      ],
+      "gaps": [
+        "7.6 real-use verification (traced scenario, not mock) done for only a handful of components",
+        "consumer counts are static (limits: dynamic/spawn consumers missed)"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§8",
+      "title": "8. GRAPHE DES CAPACITÉS ET DÉPENDANCES",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "change-impact-graph (#829 prior), odg-component-census",
+        "#902 verification levels select tests from change impact (L1/L2 1–61 s vs full gate ~461 s, V157)",
+        "odg-writeset-contention + mission write_sets (#896) detect file conflicts before dispatch"
+      ],
+      "gaps": [
+        "8.3 synchronisation of the graph with the repo not demonstrated",
+        "8.4 'reuse still-valid impact analyses' and 'reduce repeated reads' not measured"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§9",
+      "title": "9. CENTRE DE PILOTAGE STRATÉGIQUE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "#882 odg-cto-dashboard-run.ts gives a runnable consolidated view (~40 modules)",
+        "V155_AGENT_SUPERVISOR_SNAPSHOT.json (agents by state)",
+        "continuous-planner test (battery I) ; blocked-not-frozen tests (battery O)"
+      ],
+      "gaps": [
+        "9.2 rolling planning is done by the provider in checkpoints, not by ODG",
+        "portfolio scoring/re-planning not wired to the live register"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§10",
+      "title": "10. CONSTRUIRE ET AMÉLIORER SON PROPRE SYSTÈME",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "10.6 MET: V155_NATIVE_AUTONOMY_MATURITY.json separates native / provider / human (1314/1315 commits and 522/522 PRs provider; native-built code changes 0)",
+        "V159_MEASURED_MODEL_POLICY.json: local-model native builds on 4 synthetic missions (6/8 pass)"
+      ],
+      "gaps": [
+        "no native success on a real repo mission",
+        "10.7 provider→native reproduction exercises not run",
+        "model-generated code runs in-process, not in bwrap (V159 honesty) — bwrap native-build isolation IN_PROGRESS in another session, not merged; #913 require allowlist is defense-in-depth only"
+      ],
+      "blocker": "real-repo apply of an ODG-authored change needs an owner-authorized write-set; identity-bound native provenance key (Ed25519) decision"
+    },
+    {
+      "id": "§11",
+      "title": "11. BOUCLE D'ÉVOLUTION",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "#885 anti-loop NO_PROGRESS stop (11.22)",
+        "V158 research/admission (#905/#906): research fed admission design (3 FACT_CORROBORATED design claims)",
+        "odg-self-improvement-cycle (PROPOSED-only)"
+      ],
+      "gaps": [
+        "11.24 criteria 10–18 (reproducible experiment, acquire skill, held-out tests, measured gain, wiring, real use, reuse on distinct mission) not demonstrated once end-to-end",
+        "Radar not triggered by an ODG-detected incapacity (research was provider-initiated)"
+      ],
+      "blocker": "self-improvement-cycle real-repo execution = OWNER_DECISION_ONLY"
+    },
+    {
+      "id": "§12",
+      "title": "12. MÉMOIRE COGNITIVE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "memory-scenario-battery, odg-reuse-validity-gate, learning-reuse-proof (battery map G)",
+        "V158_KNOWLEDGE_ASSESSMENT.json: 15 claims kept in memory as CANDIDATE/SUPPORTED, 0 admitted as fact; timeSensitive recorded"
+      ],
+      "gaps": [
+        "12.3 'amélioration obtenue grâce à la mémoire', 'réduction des recherches répétitives', 'temps de reconstruction du contexte' NOT_MEASURED",
+        "learning-reuse-proof flaky under parallel tsx"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§13",
+      "title": "13. ODG KNOWLEDGE INTELLIGENCE V2 — FRONTIER RADAR : DISCOVERY TO ENGINEERING",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "#905 odg-radar-source-admission + V158 grant (6 admitted / 20 deferred / 2 refused)",
+        "#908 V158_RADAR_LIVE_RUN.json LIVE_OK 8/8 on 6 hosts",
+        "#910 V158_RADAR_COLLECTION.json + V158_KNOWLEDGE_ASSESSMENT.json; #911 publisher identities + FRAGMENT cap (6 SUPPORTED / 8 CANDIDATE / 1 UNKNOWN / 0 facts)",
+        "Lot 1 (claims/corroboration/integrity) built in V373/V374, owner-anchoring #867/#871"
+      ],
+      "gaps": [
+        "criteria 11–15 not met: no ODG gap detected from Radar output, no mission fed, 13.14 first real-use demonstration not done, no measured gain",
+        "0 CORROBORATED claims (single-source pages)",
+        "Lots 3–5 NOT_STARTED (V15_0_MASTER_DIRECTIVE §2)",
+        "REVIEW: #911 changed runtime/core/odg-knowledge-intelligence.ts (KI-V2 qualification, not collection/governor/transport) — whether this counts as modifying 'le Radar existant' under ordre §3 is an owner interpretation question"
+      ],
+      "blocker": "per-host pacing/cumulative caps in Radar transport (github/crossref/arxiv); new hosts = new versioned grant (V158 grant expires 2026-12-22); robots-vs-API conflicts (export.arxiv.org, pypi.org)"
+    },
+    {
+      "id": "§14",
+      "title": "14. FRONTIER LAB",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "runtime/core/frontier-lab.test.ts, scientific-research.test.ts (battery map D: preregistration, isolation, independent verification, never self-promotes)"
+      ],
+      "gaps": [
+        "injected/synthetic runners only; no real comparison of ≥2 methods; 14.3 promotion path never exercised on a real prototype"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§15",
+      "title": "15. ORCHESTRATION INTELLIGENTE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "#891 wave dispatch, #893 per-run output isolation, #896 mission write_sets, #895/#897/#901 agent supervisor, #902 concurrency policy",
+        "V155_REAL_WAVE_EVIDENCE.json: real wave of 5 canary missions median 5.55 s vs 28.21 s sequential (×5.08), 0 lost/duplicated ledger entries",
+        "V15_CLOSURE_DOSSIER §10 / CP5 / CP6: inspection REJECT rates, PR cycle times"
+      ],
+      "gaps": [
+        "production waves not active (live unit allowlists only M0001, no ODG_TICK_WAVE)",
+        "15.16: cost per accepted result, coordination time, quality per agent NOT_MEASURED",
+        "supervisor heartbeats are harness-written; odg-run has no in-process heartbeat (V155 transversal E/F PARTIAL)",
+        "post-receipt incompatibility detection/integration of conflicting outputs absent (battery F)"
+      ],
+      "blocker": "production waves: systemd unit env ODG_TICK_WAVE + wider ODG_CANARY_ALLOWLIST (owner)"
+    },
+    {
+      "id": "§16",
+      "title": "16. PRIORITÉ P0 : CONTINUITÉ DES MISSIONS",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V150_SCENARIO_M_RESUME.json allProven=true (real SIGKILL ×2, 0 ops repeated, 0 lost, 0 double-held leases; #890 REJECT→ACCEPT)",
+        "odg-native-continuity-run (battery B)",
+        "V155 transversal G (only the interrupted mission re-ran, ledger each-once, seal OK)",
+        "scenario E case 6 INTERRUPTED_RESTORED"
+      ],
+      "gaps": [
+        "16.7 cases not covered: crash during generation, interruption during integration, corrupted checkpoint (explicit), dependency unavailable",
+        "power-loss durability NOT measured (no dir fsync)",
+        "16.8 automatic resume of an unattended long mission not active (resident driver L0; 364-min disconnect = largest loss, V157)"
+      ],
+      "blocker": "unattended continuation path (resident driver / scheduled resume) owner-gated"
+    },
+    {
+      "id": "§17",
+      "title": "17. SURVEILLANCE, DIAGNOSTIC ET RÉPARATION",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V150_SCENARIO_E_SELF_HEALING.json: 8/8 cases as expected (accept, reject+rollback, regression break, generation error, timeout, crash mid-repair, write-set refusal, hash-verified rollback); real defect fixed in repair-workflow.ts (#889)",
+        "#885 anti-loop (17.6)"
+      ],
+      "gaps": [
+        "fix candidate is a provider-scripted seam — ODG generated no fix",
+        "synthetic sandbox module, not a real-repo anomaly",
+        "17.5 prevention (forecast vs observed) not done; 17.4 step 14 (recurrence on distinct scenario) not shown",
+        "17.6 strategy re-evaluation after repeated failure not exercised (retry not exercised)"
+      ],
+      "blocker": "repair-apply on the real repo = owner-gated"
+    },
+    {
+      "id": "§18",
+      "title": "18. RAPIDITÉ RÉELLE ET EFFICACITÉ",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V157_PERFORMANCE_BASELINE.json (full gate build 11.8 s / typecheck 27.9 s / test:report 421 s; top slowdowns ranked)",
+        "V150_SCENARIO_L_CONCURRENCY.json (1/2/4/8 → 6.58×)",
+        "V159_MEASURED_MODEL_POLICY.json (18.1 local-model routing used by execution policy)"
+      ],
+      "gaps": [
+        "central metric VERIFIED ACCEPTED OUTPUT / TOTAL COST / TOTAL TIME not computed (tokens/cost NOT_MEASURED)",
+        "before/after gain on PRs ≥ #902 'gainNotYetMeasured' (CP5)",
+        "single-run timings, no repeats (V157 honesty)"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§19",
+      "title": "19. ÉVOLUTION CONTRÔLÉE",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "V155_OLLAMA_CAPABILITY_REGISTRY.json versions local models with measured qualification",
+        "multi-ecosystem SBOM (prior arc)"
+      ],
+      "gaps": [
+        "19.2 qualification pipeline for a dependency/model update not exercised in V15.0",
+        "no compatibility watch run"
+      ],
+      "blocker": "any update reaching production/VPS = owner-gated (19.3)"
+    },
+    {
+      "id": "§20",
+      "title": "20. CAPACITÉS TRANSVERSALES",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "odg-multimodal-ingest (#836), pdf-extract, document-intelligence exist with unit tests"
+      ],
+      "gaps": [
+        "no V15.0 lot; 20.7 end-to-end/degraded-document tests not run; consumers not demonstrated"
+      ],
+      "blocker": "video/ASR/vision BLOCKED (resources) per correspondence programme J"
+    },
+    {
+      "id": "§21",
+      "title": "21. SÉCURITÉ TRANSVERSALE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "#913 default-deny require allowlist for generated modules (documented as defense-in-depth, 7 known in-process escapes)",
+        "#896 write-set enforcement (symlink/hardlink MED fixed)",
+        "#870 egress kill-switch in client; #905 RFC 9309 robots analysis; collection injection screening (V158_RADAR_COLLECTION.screening)",
+        "#901 supervisor fail-open fixed; #873 launcher hardening"
+      ],
+      "gaps": [
+        "model-generated code still executes in-process outside bwrap; bwrap native-build isolation IN_PROGRESS in another session (not merged)",
+        "identity-bound inspector/provenance absent",
+        "residual: provider-writable local refs, review-only anchor pinning (V15_CLOSURE_DOSSIER §13)"
+      ],
+      "blocker": "anchor enforcement (distinct identity / signed commits); confined drop-in dry-run under user systemd"
+    },
+    {
+      "id": "§22",
+      "title": "22. ASSURANCE QUALITÉ INDÉPENDANTE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "every PR independently inspected; first-pass REJECT 5/7 (CP5), 3/6 (CP6); inspections caught real defects (robots wildcard, fail-open verdict, over-attribution)",
+        "full test:report 852/853 (V157; 1 worktree-specific failure fixed by #904)"
+      ],
+      "gaps": [
+        "inspectors are provider sub-agents; independence declared, not identity-bound",
+        "22.5 'utilisée / observée' rarely shown for merged improvements"
+      ],
+      "blocker": "owner-signed review (gate 10/12)"
+    },
+    {
+      "id": "§23",
+      "title": "23. ÉCHELLE L0 À L8",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "resident driver kept at L0; L1 dossier (V15_CLOSURE_DOSSIER §7) recommends no",
+        "V155 capability ladder (8 EXERCISED_LIVE / 11 WIRED_TESTED / 1 BUILT_NOT_WIRED)"
+      ],
+      "gaps": [
+        "no native level above L0 demonstrated with independent evaluation"
+      ],
+      "blocker": "L1+ promotion = owner decision"
+    },
+    {
+      "id": "§24",
+      "title": "24. TABLEAU DE MESURE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "baselines: V157 (performance), V155 maturity (autonomy counters), V155 Ollama registry (routing), scenario L (concurrency), V155 real wave"
+      ],
+      "gaps": [
+        "domains without baseline: compréhension, raisonnement, Radar 'découvertes devenues améliorations' (=0), sécurité incidents, automatisation, coût",
+        "24.2 cumulative progression across mission generations not shown"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§25",
+      "title": "25. WORK_ITEM_CONTRACT",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "docs/odg/WIC_V150_PHASE1_CORRESPONDENCE.json; WIC_V15-* (6 files for V15 session lots #864–#873)"
+      ],
+      "gaps": [
+        "no committed WIC_*.json for V15.0 lots #880–#913 (contracts may exist in PR bodies — not verified here); §45 per-scenario contracts absent"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§26",
+      "title": "26. LES TREIZE PROGRAMMES INTÉGRÉS",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V15_0_MASTER_DIRECTIVE.md §2: programmes A–M → existing components + V14.4/V12.4 anchors + real state"
+      ],
+      "gaps": [
+        "mapping onto the nine primitives (required) not produced; table hand-written, not generated"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§27",
+      "title": "27. AUTOMATISATION DES TÂCHES INTERNES",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "live root-timer odg-schedule-tick loop (load state → Truth Lock → eligible missions → dedup) exercised live (V155 maturity: 1199 dedup rows)",
+        "#891 opt-in wave dispatch"
+      ],
+      "gaps": [
+        "27.10 automation measurement (manual time removed, error rate…) not done",
+        "live queue of read-only canaries exhausted (IDLE)",
+        "27.8 session continuity: 364-min disconnect with zero progress"
+      ],
+      "blocker": "production waves + unattended continuation owner-gated"
+    },
+    {
+      "id": "§28",
+      "title": "28. PHASE 0 — VÉRITÉ ET PRÉSERVATION",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V15_CLOSURE_DOSSIER.md (verified state, Truth Lock 928/928)",
+        "V15_0_MASTER_DIRECTIVE.md §1 lineage table, §2 correspondence",
+        "V150_CHECKPOINT_1.json (initial checkpoint, headInitial b931cae6)",
+        "CP1 nextAction / reconciliation backlog (works to resume)"
+      ],
+      "gaps": [
+        "'Registre des divergences' exists only implicitly (lineage table notes) — no standalone register",
+        "V17.0/V18.0 texts unavailable in repo, so their reconciliation is by directive text only"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§29",
+      "title": "29. PHASE 1 — ENREGISTREMENT V15.0 ET CARTOGRAPHIE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "#878 V15.0 registered PROPOSED and referenced",
+        "#879 V150_PHASE1_CORRESPONDENCE.json (generated by existing modules under WIC)",
+        "census inventory 786 modules; 199 reconciliation = real wiring state"
+      ],
+      "gaps": [
+        "'Matrice des exigences' (§0–§55 → evidence) did not exist before this matrix",
+        "nine-primitive cartography not produced",
+        "Boussole reconciliation owner-gated"
+      ],
+      "blocker": "Boussole reconciliation / V15.0 adoption (owner)"
+    },
+    {
+      "id": "§30",
+      "title": "30. PHASE 2 — CONTINUITÉ ET RECOVERY",
+      "status": "VALIDATED",
+      "evidence": [
+        "V150_SCENARIO_M_RESUME.json — reproducible (generatedAt, commands), real SIGKILL twice, 10/10 verdicts true, independent inspection REJECT→ACCEPT (#890)",
+        "V155 transversal G (real canary missions, ledger seal OK)",
+        "odg-native-continuity-run two-process resume"
+      ],
+      "gaps": [
+        "scope of validation: process death on a single host with synthetic ops; power-loss and integration-time interruption not covered (see §16)"
+      ],
+      "blocker": null,
+      "note": "Validated strictly against §30's own deliverable ('démonstration reproductible de reprise'); §16 as a whole stays PARTIALLY_VALIDATED"
+    },
+    {
+      "id": "§31",
+      "title": "31. PHASE 3 — ORCHESTRATION ET PILOTAGE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "live tick selects/dedups M0001 via canonical chain",
+        "V155 transversal K: after an interrupted wave the next ticks admitted and PASSed deferred independent missions with 0 human inputs (sandbox worktree, harness loop standing in for timer)"
+      ],
+      "gaps": [
+        "no mission currently pursued live (queue exhausted, allowlist = M0001)",
+        "Resolver/Allocator for provider tasks not exercised by ODG"
+      ],
+      "blocker": "production waves / wider canary allowlist (systemd, owner)"
+    },
+    {
+      "id": "§32",
+      "title": "32. PHASE 4 — DISCOVERY ET GRAPHE VIVANT",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "identified + qualified: 198-item reconciliation (12 classes), component judgment",
+        "exploited: front-door, cto-dashboard runner (#882), FR invoice compliance/due date on live BTP journey (#884)"
+      ],
+      "gaps": [
+        "'exploitées' for only ~5 of 198; 63 MISSING_CONSUMER + 33 MISSING_INTEGRATION remain",
+        "3 DUPLICATE / 3 OBSOLETE not retired"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§33",
+      "title": "33. PHASE 5 — CERVEAU ET RAISONNEMENT",
+      "status": "TO_BUILD",
+      "evidence": [
+        "precursors: per-axis intelligence (#838–#847), odg-hybrid-reasoning (#835)"
+      ],
+      "gaps": [
+        "measured cognitive battery for V15.0 phase 5 does not exist"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§34",
+      "title": "34. PHASE 6 — MÉMOIRE ET APPRENTISSAGE",
+      "status": "TO_BUILD",
+      "evidence": [
+        "precursors: memory-scenario-battery, learning-reuse-proof, reuse-validity-gate, belief-refresh"
+      ],
+      "gaps": [
+        "no measured improvement attributable to memory (with vs without)"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§35",
+      "title": "35. PHASE 7 — AUTONOMIE NATIVE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V159_MEASURED_MODEL_POLICY.json: native-project-builder + local model + independent functional test on 4 synthetic missions (bugfix/repair/refactor pass; implement fails)",
+        "V328 calibration (prior): 32/40 native builds"
+      ],
+      "gaps": [
+        "no native success on a real repository task; native-built code changes in repo = 0",
+        "generated code not sandboxed (bwrap IN_PROGRESS elsewhere; #913 defense-in-depth only)"
+      ],
+      "blocker": "real-repo native apply needs owner-authorized write-set"
+    },
+    {
+      "id": "§36",
+      "title": "36. PHASE 8 — AUTO-AMÉLIORATION RÉCURSIVE",
+      "status": "TO_BUILD",
+      "evidence": [
+        "V159 before/after (provider-built overlay): passRate unchanged 0.75→0.75, escalation changed 0/2→2/2",
+        "odg-self-improvement-cycle PROPOSED-only"
+      ],
+      "gaps": [
+        "no improvement cycle demonstrated with measured before/after gain and independent control; 'plusieurs cycles' = 0"
+      ],
+      "blocker": "self-improvement real-repo execution = OWNER_DECISION_ONLY"
+    },
+    {
+      "id": "§37",
+      "title": "5. PHASE 9 — §37 — AUTO-GUÉRISON",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V150_SCENARIO_E_SELF_HEALING.json (8 reproducible cases, causal diagnosis via rce-root-cause-intelligence, reversible repair, independent verifier, whole-tree sha256 rollback)",
+        "#885 anti-loop; #889 repair-workflow interrupted-run defect fix"
+      ],
+      "gaps": [
+        "5.9 scenarios missing: contrat incohérent, dépendance manquante, preuve invalide, artefact corrompu, dégradation de performance, conflit entre agents",
+        "prevention (5.7) not demonstrated",
+        "fix generation is provider-scripted"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§38",
+      "title": "6. PHASE 10 — §38 — RADAR ET FRONTIER LAB",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "Radar used without modifying governor/transport/ALLOWLIST (CP6)",
+        "#905/#908/#910/#911 qualified, traceable knowledge (sha256, robots provenance, publisher families)",
+        "V158_RADAR_ADMISSION_REFERENCES.json 27 refs title-verified"
+      ],
+      "gaps": [
+        "'transformées en améliorations internes réellement utilisées, avec mesures avant/après' — not done",
+        "Frontier Lab not exercised on Radar output",
+        "see §13 REVIEW flag on #911"
+      ],
+      "blocker": "per-host pacing, new hosts, robots-vs-API (owner)"
+    },
+    {
+      "id": "§39",
+      "title": "7. PHASE 11 — §39 — PERFORMANCE ET ROUTAGE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "#912 measured registry used by execution policy (V159): bugfix/repair 3b→7b, implement NO_QUALIFIED→escalation record",
+        "V157 baseline; #902 verification levels L1/L2/L3"
+      ],
+      "gaps": [
+        "passRate unchanged; wall-time drop NOT claimed (cause not established, n=2)",
+        "total cost not measured → 7.7 gain acceptance conditions unmet"
+      ],
+      "blocker": "external model providers (no verifiable spend ceiling)"
+    },
+    {
+      "id": "§40",
+      "title": "8. PHASE 12 — §40 — MULTIMODALITÉ",
+      "status": "TO_BUILD",
+      "evidence": [
+        "components pre-exist: odg-multimodal-ingest (#836), pdf-extract, document-intelligence"
+      ],
+      "gaps": [
+        "phase 12 lot NOT_STARTED: no inventory refresh, no common contract, no evaluation corpus (8.4), no real consumer end-to-end (8.5)"
+      ],
+      "blocker": "video/ASR/vision resources BLOCKED"
+    },
+    {
+      "id": "§41",
+      "title": "9. PHASE 13 — §41 — ORCHESTRATION MASSIVE ET MULTI-AGENTS",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V150_SCENARIO_L (levels 1/2/4/8), #902 adaptive concurrency policy on real host signals (V157 concurrencyPolicyOnRealHost)",
+        "V155_REAL_WAVE_EVIDENCE (isolation via run dirs + write-sets, ×5.08)",
+        "V150_SCENARIO_M / V155 G (resume without loss)"
+      ],
+      "gaps": [
+        "9.7 cost, CPU/RAM, conflicts, rejected results, coordination time not measured across levels",
+        "optimum not shown (top of tested range)",
+        "9.8 agent replacement/reassignment not demonstrated (decideRecovery never RELAUNCHes wave child)",
+        "production waves inactive"
+      ],
+      "blocker": "production waves (systemd)"
+    },
+    {
+      "id": "§42",
+      "title": "10. PHASE 14 — §42 — AUTOMATISATION ET CONTINUITÉ",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "idempotency-guard, live tick dedup, wave dispatch; battery N PARTIAL"
+      ],
+      "gaps": [
+        "no automation with measured reduction of manual interventions; automation-measurement bin is SIMULATED"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§43",
+      "title": "11. PHASE 15 — §43 — SÉCURITÉ ET SIMPLIFICATION",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "security fixes with fail-before/pass-after + inspection: #896, #901, #907, #913, #905 robots",
+        "CP1 DUPLICATE/OBSOLETE identification"
+      ],
+      "gaps": [
+        "simplification: no module retired/merged, no measured complexity reduction",
+        "11.6 automation audit not done"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§44",
+      "title": "12. PHASE 16 — §44 — VALIDATION GLOBALE ET ÉVOLUTION CONTINUE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V155_TRANSVERSAL_VALIDATION.json: 12 combined scenarios (V15.5 lettering, NOT §45) 8 REAL / 4 PARTIAL after inspection relabel",
+        "V150_BATTERY_A_P_MAP.json"
+      ],
+      "gaps": [
+        "12.3 cumulative evaluation vs initial baseline not produced",
+        "combined scenarios Radar→mission, multimodality+contracts, simplification+non-regression not run"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§45",
+      "title": "13. §45 — BATTERIE DE DÉMONSTRATION DE L'AUTONOMIE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "see scenarios[] (2 PASS / 14 PARTIAL)"
+      ],
+      "gaps": [
+        "per-scenario contract + initial state artefacts absent for all 16",
+        "14 scenarios PARTIAL"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§46",
+      "title": "14. §46 — CHECKPOINTS ET CONTINUITÉ",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V150_CHECKPOINT_1..4, V155_CHECKPOINT_5, V159_CHECKPOINT_6 (HEAD initial/final, PRs, measures, blockers, agents, next action)"
+      ],
+      "gaps": [
+        "no checkpoint after #909: #910–#913 not checkpointed (CP7 due)",
+        "'Contrats' field absent from checkpoints",
+        "checkpoints are per batch, not per lot"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§47",
+      "title": "15. §47 — LIMITES ET PERMISSIONS",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V16_PERMISSION_INVENTORY 'Not unlocked on purpose'; systemd dry-run refused and not retried",
+        "no deploy, no systemd/sudo use recorded in CP1–CP6; Radar governor/transport unchanged"
+      ],
+      "gaps": [
+        "compliance is attested, not provable as a negative",
+        "§13 REVIEW flag: #911 touched odg-knowledge-intelligence.ts (interpretation of 'Radar reste inchangé')"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§48",
+      "title": "16. §48 — EXÉCUTION IMMÉDIATE ET CONTINUE",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "Actions 1–8, 10, 12, 13 (partially) executed via #880–#913"
+      ],
+      "gaps": [
+        "Action 9 (multimodality) not started; Action 11 (automation) unmeasured; Action 15 (release prep) not started; Action 13 battery 2/16 PASS"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§49",
+      "title": "17. §49 — RAPPORTS ET TRANSPARENCE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "checkpoints record negative results (e.g. V159 'NO quality improvement', native share 0, outage incident) and corrections (CP5 figures)"
+      ],
+      "gaps": [
+        "'Phase et lot actif' not consistently stated; last report (post-#913) not checkpointed"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§50",
+      "title": "18. §50 — CRITÈRES FINAUX DE RÉUSSITE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "met with evidence: préserver le travail / reprendre (M, G), détecter anomalies (E), découvrir capacités (census/199), vérifier indépendamment (inspections, partially), choisir la concurrence (#902)"
+      ],
+      "gaps": [
+        "not met: construire nativement (0 native code changes), apprendre/améliorer ses mécanismes with measured gain, augmenter le débit accepté (unmeasured), réduire temps/coût par résultat vérifié (unmeasured)",
+        "multi-agent criteria: replacement of failed agents, net gain, coordination bottleneck — not measured"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§51",
+      "title": "19. §51 — RÈGLES D'OR PERMANENTES",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "rules 1–2 (V15.0 PROPOSED, V12.4 canonical unchanged 53a1dedb), 7 (no self-granted permission), 54 (no deploy) evidenced in checkpoints"
+      ],
+      "gaps": [
+        "rule 9 (native autonomy #1) vs native share 0",
+        "rule 16 (every work item has a contract) — WIC missing for most lots",
+        "rule 52 (capabilities actually wired and used) — 182/198 not loaded"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§52",
+      "title": "20. §52 — RÉFÉRENCES MONDIALES ET VEILLE TECHNOLOGIQUE",
+      "status": "PARTIALLY_VALIDATED",
+      "evidence": [
+        "V158_RADAR_ADMISSION_REFERENCES.json (27 references, 5 academic/5 benchmark/6 standards/5 implementation/6 industry; title-verified)",
+        "V158_DOSSIER_KNOWLEDGE.json (10 claims, 3 FACT_CORROBORATED)"
+      ],
+      "gaps": [
+        "no local benchmarks/experiments against references (20.3 steps 10–11)",
+        "topic coverage of §52 list (leases, workflows, observability, cost control…) not mapped"
+      ],
+      "blocker": "Radar host widening for primary sources (owner)"
+    },
+    {
+      "id": "§53",
+      "title": "21. §53 — ACCÉLÉRATION GLOBALE",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "V157 critical-path / top-slowdowns analysis (disconnect 364 min, REJECT rework 71%)",
+        "CP6 strategy comparison direct vs agent (n small)"
+      ],
+      "gaps": [
+        "deliverable 'réduction mesurée du temps par résultat accepté' not measured (before/after pending)"
+      ],
+      "blocker": null
+    },
+    {
+      "id": "§54",
+      "title": "22. §54 — PRÉPARATION DE RELEASE SANS DÉPLOIEMENT",
+      "status": "TO_BUILD",
+      "evidence": [
+        "V15_CLOSURE_DOSSIER.md is a closure dossier, not a §54 release dossier; older V93_RELEASE_RUNBOOK.json predates V15.0"
+      ],
+      "gaps": [
+        "no V15.0 release dossier (version, changes, migration plan, backup/recovery, runbook, checklist)"
+      ],
+      "blocker": "deployment itself is forbidden/owner-gated; preparation is internal and allowed"
+    },
+    {
+      "id": "§55",
+      "title": "23. §55 — BOUCLE FONDAMENTALE D'ODG",
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "ODG components perform OBSERVE/DECIDE/VERIFY steps inside the tick, wave admission, supervisor, Radar gates"
+      ],
+      "gaps": [
+        "the full loop (RESEARCH→…→BUILD→WIRE→MEASURE) is driven by the provider coordinator, not by ODG (native construction share 0)"
+      ],
+      "blocker": null
+    }
+  ],
+  "summary": {
+    "sectionCounts": {
+      "PARTIALLY_VALIDATED": 41,
+      "IN_PROGRESS": 9,
+      "VALIDATED": 1,
+      "TO_BUILD": 5
+    },
+    "scenarioCounts": {
+      "PARTIAL": 14,
+      "PASS": 2
+    },
+    "top10NextInternal": [
+      {
+        "rank": 1,
+        "item": "Write CP7 (§46) covering #909–#913 + commit WORK_ITEM_CONTRACTs for V15.0 lots and one contract+initial-state file per §45 scenario",
+        "advances": [
+          "§25",
+          "§45",
+          "§46",
+          "§49",
+          "§51"
+        ]
+      },
+      {
+        "rank": 2,
+        "item": "Execute the INTERNAL steps of V155 nextProgressionSequence: persist evaluator-independence verdicts, attempt-log reason on stale-claim recovery, dep-planner layer trace in wave-summary, read-only decompose of one real ROADMAP mission",
+        "advances": [
+          "§10",
+          "§23",
+          "§35",
+          "§50"
+        ]
+      },
+      {
+        "rank": 3,
+        "item": "§13.14 first real-use demonstration: take one admitted/SUPPORTED V158 knowledge item into a genuine internal mission with before/after measurement and inspection",
+        "advances": [
+          "§13",
+          "§38",
+          "§45-K",
+          "§45-G",
+          "§45-D"
+        ]
+      },
+      {
+        "rank": 4,
+        "item": "Scenario F: two workers return conflicting outputs on overlapping logic; detect post-receipt incompatibility and integrate via the canonical chain",
+        "advances": [
+          "§15",
+          "§41",
+          "§45-F"
+        ]
+      },
+      {
+        "rank": 5,
+        "item": "Scenario J: after the #885 NO_PROGRESS stop, execute an alternative strategy (measured model raise / decomposition) and measure vs the original",
+        "advances": [
+          "§11.22",
+          "§17.6",
+          "§37",
+          "§45-J"
+        ]
+      },
+      {
+        "rank": 6,
+        "item": "Scenario H / phase 8: measure the #902 verification levels (escape rate vs full gate) on held-out historical PRs — a mechanism improvement judged on independent data",
+        "advances": [
+          "§36",
+          "§11",
+          "§22",
+          "§45-H"
+        ]
+      },
+      {
+        "rank": 7,
+        "item": "Performance before/after on PRs ≥ #902 and compute VERIFIED ACCEPTED OUTPUT / COST / TIME (add token/cost instrumentation)",
+        "advances": [
+          "§18",
+          "§39",
+          "§53",
+          "§24"
+        ]
+      },
+      {
+        "rank": 8,
+        "item": "Scenario C end-to-end: ODG component-judgment proposes wiring for one MISSING_CONSUMER gap-closer, authorized wiring, real-path use proof; continue the 198-item backlog",
+        "advances": [
+          "§7",
+          "§32",
+          "§45-C"
+        ]
+      },
+      {
+        "rank": 9,
+        "item": "§54 release dossier without deployment for V15.0 work (#878–#913): changes, CI, tests, evidence, migration, backup/restore, runbook, checklist",
+        "advances": [
+          "§54",
+          "§48 Action 15"
+        ]
+      },
+      {
+        "rank": 10,
+        "item": "Phase 12: multimodal inventory refresh + small synthetic evaluation corpus (8.4) through odg-multimodal-ingest with one real consumer",
+        "advances": [
+          "§20",
+          "§40",
+          "§48 Action 9"
+        ]
+      }
+    ],
+    "alsoInternal": [
+      "Scenario L: extend to levels >8 and record CPU/RAM/conflicts/accepted results",
+      "Scenario N: automate+time one real repetitive task (e.g. post-tick dist rebuild check)",
+      "Scenario O: real dependency-blocked task auto-resumed when condition satisfied",
+      "Wire supervisor heartbeat into wave children (V155 E/F → REAL)",
+      "After the bwrap native-build isolation lands (other session — do not duplicate), re-run V159 missions inside bwrap"
+    ],
+    "ownerGated": [
+      "Production waves: systemd unit env ODG_TICK_WAVE + wider ODG_CANARY_ALLOWLIST (§15, §27, §31, §41)",
+      "External model providers: list + verifiable spend ceiling (§18.1, §39)",
+      "Radar transport per-host pacing / cumulative caps (unblocks api.github.com, api.crossref.org, arxiv.org) — Radar code change (§13, §38)",
+      "New Radar hosts / grant renewal (V158 grant expires 2026-12-22) (§13, §52)",
+      "robots-vs-documented-API conflicts: export.arxiv.org, pypi.org (§13)",
+      "Interpretation: does #911's change to odg-knowledge-intelligence.ts fall under ordre §3 'Radar existant inchangé'? (§38, §47)",
+      "V15.0 adoption; Boussole / ROADMAP.json / v124 companion changes (§2, §29, §51)",
+      "Gate 10/12 → 12/12 owner-signed review; TRUST_ANCHORS.json enrolment; distinct provider identity + code-owner review (§1, §22)",
+      "Confined drop-in dry-run under user systemd (§21)",
+      "Resident driver L1+ promotion; unattended continuation path (§16.8, §23, §27.8)",
+      "Real-repo repair-apply / self-improvement-cycle execution (OWNER_DECISION_ONLY) and owner-authorized write-set for an ODG-authored change (§10, §17, §35, §36)",
+      "Identity-bound native provenance (agent-identity Ed25519 signing key decision) (§10, §22)",
+      "SLO target choice (§18, V15_CLOSURE_DOSSIER §8)",
+      "Any deployment / production change (root) (§19.3, §47, §54)"
+    ]
+  },
+  "//": "V16.0 §3 traceability matrix for V15.0 (PROPOSED). Section texts/criteria are quoted from the owner's pasted text (see V150_CANONICAL_SOURCES.json for provenance and its UNVERIFIED label); statuses are a provider (Claude Code research agent) assessment against repo evidence at HEAD 4f4fceb2 — documented ≠ validated; owner-gated items are recorded per section. Not a governance decision."
+}
