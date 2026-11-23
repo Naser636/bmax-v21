@@ -211,6 +211,8 @@ function configEq(file: any, key: any, equals?: any): { ok: boolean; detail: str
 // authorized globs, and a glob is cut at its first '*', so an ancestor glob such as `runtime/**` (the engineering
 // default) authorizes runtime/governance/ROADMAP.json. protectedClean refuses ANY changed path under a protected root or
 // equal to a protected file, whatever the write-set says. Same observer as scopeClean (git status), fail-closed.
+// KNOWN LIMIT: writes INSIDE .git/ (hooks, config) never appear in `git status`, so the .git/ entry below cannot be
+// enforced by this observer — only an outer sandbox (no write access to .git/) confines them.
 const PROTECTED_ROOTS: readonly string[] = Object.freeze([".git/", ".github/", "runtime/governance/"]);
 const PROTECTED_FILES: readonly string[] = Object.freeze(["runtime/governance/ROADMAP.json", "docs/odg/closure-register.json"]);
 function protectedClean(changedPaths?: any, observer?: any, extraProtectedFiles?: any): { ok: boolean; detail: string } {
