@@ -195,4 +195,13 @@ delete process.env.CONTRACTONDEMAND_ENABLED;
 ok("source performs no process.env access (property/index), only mentions it in a comment",
   !/process\.env[.[]/.test(fs.readFileSync("runtime/dist/core/scope-observer.js", "utf8"))); // ZERO-JS: inspect the compiled dist port
 
+// V16.0 protectedClean: protected roots refused regardless of write-set (ancestor glob runtime/** cannot authorize them)
+{
+  const so = require("./scope-observer.js");
+  ok("protectedClean: change under runtime/governance/ refused even though runtime/** would authorize it", so.scopeClean(["runtime/**"], ["runtime/governance/ROADMAP.json"]).ok === true && so.protectedClean(["runtime/governance/ROADMAP.json"]).ok === false);
+  ok("protectedClean: .git/ and .github/ refused; closure register refused", so.protectedClean([".git/hooks/pre-commit"]).ok === false && so.protectedClean([".github/workflows/x.yml"]).ok === false && so.protectedClean(["docs/odg/closure-register.json"]).ok === false);
+  ok("protectedClean: ordinary paths accepted; extra protected file honoured", so.protectedClean(["runtime/core/a.ts", "docs/odg/evidence/x.json"]).ok === true && so.protectedClean(["docs/x.json"], undefined, ["docs/x.json"]).ok === false);
+  ok("protectedClean: observer failure ⇒ refuse (fail-closed)", so.protectedClean(undefined, () => ({ ok: false })).ok === false);
+}
+
 console.log(`\nSCOPE OBSERVER — ${passed} assertions passed.`);

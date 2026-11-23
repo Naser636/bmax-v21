@@ -97,9 +97,10 @@ const objectives = Array.isArray(plan.objectives) ? plan.objectives : [];
 const objectiveText = objectives.flatMap((o: any) => [o.goal, ...(o.done_when || [])]);
 // V16.0 (#915) — ONE admissibility filter for every contract path the delegate consumes (brief scope, isolation
 // write-set, write-set conformance): a strict repo-relative path charset (no control chars/backticks/spaces ⇒ no brief
-// injection), no absolute/'..'/'~', and never a protected root (.git/, .github/, runtime/governance/, the sovereign
-// ALWAYS_PROTECTED registers). A contract path that fails it is DROPPED everywhere — so a write to it then fails
-// conformance (scopeClean) instead of being invited by the brief.
+// injection), no absolute/'..'/'~', and no EXPLICITLY declared protected path (.git/, .github/, runtime/governance/, the
+// sovereign ALWAYS_PROTECTED registers). A contract path that fails it is DROPPED everywhere — so a write to it then
+// fails conformance (scopeClean) instead of being invited by the brief. NOTE: an ANCESTOR glob (e.g. runtime/**) still
+// passes this filter; protected roots under such globs are refused at conformance by scope-observer.protectedClean.
 const PROTECTED_PREFIXES = Object.freeze([".git/", ".github/", "runtime/governance/"]);
 const SOVEREIGN_PROTECTED: readonly string[] = (() => { try { return require(path.join(ROOT, _corePort("runtime/core/odg-sovereign-delegation.js"))).ALWAYS_PROTECTED || []; } catch { return ["runtime/governance/ROADMAP.json", "docs/odg/closure-register.json"]; } })();
 const safeRel = (p: any): boolean => typeof p === "string" && p.length > 0 && p.length <= 300
@@ -295,6 +296,11 @@ try {
     die(`STOP: delegated patch is OUT OF SCOPE — ${conformance.detail}. The received change touched files outside the authorized write-set; refusing (no verify/converge/archive).`, 2);
   }
   console.log("Conformance:", conformance.detail);
+  // V16.0: protected roots are NEVER writable through delegation, even under an ancestor glob like runtime/** .
+  const { protectedClean } = require(path.join(ROOT, _corePort("runtime/core/scope-observer.js")));
+  const prot = protectedClean(undefined, undefined, SOVEREIGN_PROTECTED);
+  if (!prot.ok) die(`STOP: delegated patch touches a PROTECTED path — ${prot.detail}; refusing (no verify/converge/archive).`, 2);
+  console.log("Protected roots:", prot.detail);
 } catch (err: any) {
   die(`STOP: write-set conformance check failed to run (${err.message}); refusing fail-closed.`, 2);
 }

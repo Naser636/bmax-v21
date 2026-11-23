@@ -194,7 +194,32 @@ function configEq(file: any, key: any, equals?: any): { ok: boolean; detail: str
     : { ok: false, detail: `observed ${JSON.stringify(value)} != declared ${JSON.stringify(equals)} at ${file}:${key}` };
 }
 
+// V16.0 (#915 MED follow-up) — PROTECTED ROOTS regardless of authorization. scopeClean judges a change against the
+// authorized globs, and a glob is cut at its first '*', so an ancestor glob such as `runtime/**` (the engineering
+// default) authorizes runtime/governance/ROADMAP.json. protectedClean refuses ANY changed path under a protected root or
+// equal to a protected file, whatever the write-set says. Same observer as scopeClean (git status), fail-closed.
+const PROTECTED_ROOTS: readonly string[] = Object.freeze([".git/", ".github/", "runtime/governance/"]);
+const PROTECTED_FILES: readonly string[] = Object.freeze(["runtime/governance/ROADMAP.json", "docs/odg/closure-register.json"]);
+function protectedClean(changedPaths?: any, observer?: any, extraProtectedFiles?: any): { ok: boolean; detail: string } {
+  let changed: string[];
+  if (Array.isArray(changedPaths)) changed = changedPaths;
+  else {
+    const observe = typeof observer === "function" ? observer : gitChangedPathsChecked;
+    const obs = observe();
+    if (!obs || obs.ok !== true) return { ok: false, detail: "cannot observe working tree (git status failed) — protected-root check UNKNOWN, refusing (fail-closed)" };
+    changed = obs.paths;
+  }
+  const files = new Set<string>([...PROTECTED_FILES, ...(Array.isArray(extraProtectedFiles) ? extraProtectedFiles.filter((x: any) => typeof x === "string") : [])]);
+  const norm = (f: any) => String(f).replace(/^\.\//, "");
+  const hits = changed.map(norm).filter((f: string) => files.has(f) || PROTECTED_ROOTS.some((r) => f === r.slice(0, -1) || f.startsWith(r)));
+  return hits.length === 0
+    ? { ok: true, detail: `no change under a protected root (${changed.length} changed)` }
+    : { ok: false, detail: `change(s) under a PROTECTED root/file (never authorizable by a write-set): ${hits.join(", ")}` };
+}
+
 module.exports = {
+  protectedClean,
+  PROTECTED_ROOTS,
   gitChangedPaths,
   gitChangedPathsChecked,
   changedPathsInScope,
