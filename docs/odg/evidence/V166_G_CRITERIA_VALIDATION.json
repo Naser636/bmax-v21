@@ -1,0 +1,47 @@
+{
+  "//": "VALIDATE_CRITERIA for mission G (owner V165 §1 + V166 §3 step 10: 'Valider automatiquement les critères effectivement satisfaits'). Criteria graded ONLY from committed evidence, after an independent inspection of the experiment result (PR #935, ACCEPT, metrics recomputed independently). Nothing upgraded; prior result kept.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "G",
+  "date": "2026-11-23",
+  "contractSha256": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V166_G_EXPERIMENT.json",
+    "sha256": "b595489c4abbbd088794928d2cd638e23e52017857f65c0e92c294e466324c95",
+    "pr": 935,
+    "mergedAs": "639c2e42",
+    "experimentSha256": "25a8db57f6812db84a40db3f92b0323e4aa85612cefa4bb0ecfdb1ad6b07a705",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256"
+  },
+  "experimentInspection": {
+    "pr": 935,
+    "inspectedHead": "53a187aa",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "ab245bf3019f79340",
+    "authorSessionId": "a81452d944e56b002",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "findings": "pre-registration implemented literally; TEST BA T_K 0.59 / B0 0.5 / B1 0.775 recomputed independently; Δ0 +0.09, Δ1 −0.185; grade PARTIAL follows the rule; no upgrade"
+  },
+  "criteria": [
+    {
+      "id": "C1",
+      "text": "knowledge retrieved from the pinned, attested collection; SUPPORTED/CORROBORATED; usableFor(DESIGN_PROPOSAL) at use time (provenance + freshness); admissible() recorded, required only for FACT items",
+      "status": "MET",
+      "evidence": "V166_G_EXPERIMENT.json C1: attested=true, epistemic SUPPORTED, isFact false, usableFor → DESIGN_PROPOSAL, admissible → NOT_A_FACT (expected for a SUPPORTED item)"
+    },
+    {
+      "id": "C2",
+      "text": "used by a real mission decision; utility measured vs the same mission without it",
+      "status": "MET_AS_MEASUREMENT — utility PARTIAL",
+      "evidence": "pre-registered rule ⇒ PARTIAL: Δ0 +0.09 (CI95 low 0.0549 > 0) vs no-knowledge baseline B0; but Δ1 −0.185 vs a TRAIN-fitted threshold (PASS needs ≥ −0.02). Secondary random split: same picture (report-only).",
+      "interpretation": "on THIS dataset (chronological split with a strong prevalence shift: TRAIN 20/200 vs TEST 100/200 HIGH_ITERATION; n=200 per split), the knowledge item helps vs using nothing, but a threshold learned from ODG's own data beats it clearly — a hypothesis to prefer measured local calibration, not a general finding"
+    }
+  ],
+  "scenarioGrade": "PARTIAL",
+  "gradeRule": "scenario PASS requires every criterion MET with PASS utility; C2 utility is PARTIAL by its pre-registered rule ⇒ PARTIAL",
+  "priorResult": "V160_SCENARIO_G.json NOT_ADOPTED (2026-11-23, #921) — unchanged, not re-graded",
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PARTIAL)",
+    "missionG": "CLOSED_PARTIAL — further work would need a new mission (e.g. adopt measured calibration), not a re-grade"
+  }
+}

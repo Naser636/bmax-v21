@@ -51,7 +51,7 @@ const F = Object.freeze({
   COLLECTION_REGISTRY: "docs/odg/evidence/COLLECTION_REGISTRY.json",
 });
 /* V166 scoped-authorization evidence (odg-authorization-scope): committed records ONLY; absent ⇒ null (nothing derived). */
-const AUTH_EVIDENCE = Object.freeze({ G: Object.freeze({ inspection: "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V166_G_EXPERIMENT.json" }) });
+const AUTH_EVIDENCE = Object.freeze({ G: Object.freeze({ inspection: "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V166_G_EXPERIMENT.json", validation: "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json" }) });
 const UNIT_SYSTEM = "/etc/systemd/system/odg-mission-runner.service";
 const UNIT_REPO = "deploy/odg-mission-runner.service";
 const MAX_STEP_DELAY_MS = 5000;
@@ -223,7 +223,7 @@ function readState(repo: string): any {
   const grant = add(F.GRANT);
   const optional = (rel: string) => { const p = path.join(repo, rel); const h = sha256File(p); inputs.push({ source: rel, sha256: h }); if (!h) return null; try { return { ...readJson(p), recordPath: rel }; } catch { return null; } };
   const authorizationEvidence: any = {};
-  for (const [sc, files] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(files.inspection), experiment: optional(files.experiment) };
+  for (const [sc, files] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(files.inspection), experiment: optional(files.experiment), validation: optional(files.validation) };
   inputs.push({ source: F.MEASURED, sha256: sha256File(path.join(repo, F.MEASURED)) });
   let ledgerPayload: any = null;
   try { ledgerPayload = readJson(path.join(repo, "runtime", "generated", "mission-ledger.json")); } catch { ledgerPayload = null; }
