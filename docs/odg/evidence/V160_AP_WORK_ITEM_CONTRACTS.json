@@ -307,8 +307,8 @@
       "scenario": "G",
       "title": "G — Mémoire",
       "ownerText": "ODG retrouve une connaissance, vérifie sa fraîcheur, sa provenance et ses conditions, puis démontre son utilité.",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — directive V165 §1, 2026-11-23: \"J'autorise la reprise de la mission G.\" Scope: revise the contract (make the admissible() criterion coherent, measurable, testable; keep still-valid criteria; document changes + justification), independent inspection of the revised contract, then controlled experiments after that contract is validated. \"Ne jamais transformer rétroactivement un résultat négatif en réussite.\"",
       "initialState": {
         "status": "PARTIAL",
         "evidence": [
@@ -348,6 +348,18 @@
           "independent inspection verdict on the exact head",
           "CI green on the exact head"
         ]
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V165_OWNER_AUTHORIZATION.json#missionG",
+        "transcribedBy": "PROVIDER (Claude Code coordinating session) — verbatim transcription",
+        "date": "2026-11-23",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "controlled experiments only after an independent inspection ACCEPT of the revised contract is recorded (owner: « lancer les expériences contrôlées après validation de ce contrat »); until then state stays AUTHORIZED_FOR_REVISION, which no execution gate (odg-go declaredAuthorization, strategy-mode M0) treats as AUTHORIZED"
       }
     },
     {
