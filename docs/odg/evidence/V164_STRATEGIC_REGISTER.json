@@ -261,8 +261,8 @@
         }
       ],
       "benefit": {
-        "blocker": "BLK-2 (CP8 capability-gap items only): n = number of distinct committed BLOCKER RECORDS (the declared blockerFields — CP8-or-later evidence only, so blockers removed by the PRs CP8 lists are not counted; a record repeated in a later checkpoint counts again: repetition) attributed to the gap; a record is attributed iff it names the gap's audit number in an 'audit #a/#b' reference, OR its normalized text (lower-case; runs of '_', '-', whitespace ⇒ one space) contains one of the gap's declared blockerAnchors, an anchor being USABLE only if it occurs (normalized) in the gap's own cited CP8 text; value = min(1, n/4); n = 0 ⇒ NOT_MEASURED (absence from the declared record set is not evidence of no benefit)",
-        "reliability": "REL-2 (CP8 capability-gap items only): r = number of independent-inspection REJECTs recorded in a CP8-or-later PR record (the declared prRecordFields) whose PR number the gap's own cited CP8 text cites as '#<n>' (the gap names that PR as its area's work); a record contributes the integer written immediately before 'REJECT' (optionally with one severity word, e.g. '2 HIGH REJECTs'); a REJECT mention without a count is UNCOUNTED (not guessed); value = min(1, r/4); gap text cites no PR, or no counted REJECT ⇒ NOT_MEASURED",
+        "blocker": "BLK-2 (CP8 capability-gap items only): n = number of distinct committed BLOCKER RECORDS (the declared blockerFields — CP8-or-later evidence only, so blockers removed by the PRs CP8 lists are not counted; a record repeated in a later checkpoint counts again: repetition) attributed to the gap, counting AT MOST ONE per source file (several fields of one file restate one observation; every matched record is still cited); a record is attributed iff it names the gap's audit number in an 'audit #a/#b' reference, OR its normalized text (lower-case; runs of '_', '-', whitespace ⇒ one space) contains one of the gap's declared blockerAnchors, an anchor being USABLE only if it occurs (normalized) in the gap's own cited CP8 text; value = min(1, n/4) — the divisor 4 is PROVIDER-AUTHORED (no canonical source scales it): it is the number of distinct files in blockerFields, so a gap blocking in every declared file reaches 1, and it matches the n/4 scale of CAP-1/EVD-1; n = 0 ⇒ NOT_MEASURED (absence from the declared record set is not evidence of no benefit)",
+        "reliability": "REL-2 (CP8 capability-gap items only): r = number of independent-inspection REJECTs recorded in a CP8-or-later PR record (the declared prRecordFields) whose PR number the gap's own cited CP8 text cites as '#<n>' (the gap names that PR as its area's work); a record contributes the integer written immediately before 'REJECT' (optionally with one severity word, e.g. '2 HIGH REJECTs'); a REJECT mention without a count is UNCOUNTED (not guessed); value = min(1, r/4) — the divisor 4 is PROVIDER-AUTHORED (no canonical source scales it), chosen only to keep the n/4 scale of CAP-1/EVD-1/BLK-2; gap text cites no PR, or no counted REJECT ⇒ NOT_MEASURED",
         "dependency": "DEP-2 (CP8 capability-gap items only): a gap linked to a CP8.ownerQuestions entry (GAP_LINKS.oqRe) has that owner decision as its STATED dependency; it is UNSATISFIED (value 0/1) iff the latest checkpoint's ownerQuestions (latestCheckpoint) still lists a question matching the same oqRe; not re-listed ⇒ NOT_MEASURED (no field states it was resolved); no linked owner question ⇒ NOT_MEASURED (DEP-1)",
         "blockerFields": [
           {
@@ -4381,7 +4381,7 @@
           },
           "blockerRepetitionReduction": {
             "status": "MEASURED",
-            "value": 1,
+            "value": 0.5,
             "rule": "BLK-2",
             "source": [
               "docs/odg/evidence/V163_CHECKPOINT_8.json#hybridMethod.blockers[1]",
@@ -4389,7 +4389,7 @@
               "docs/odg/evidence/V164_GO_CYCLE.json#executionCandidates.schedulerEligibility[1].reason",
               "docs/odg/evidence/V164_GO_CYCLE.json#executionCandidates.finding"
             ],
-            "basis": "n=4 attributed blocker records: docs/odg/evidence/V163_CHECKPOINT_8.json#hybridMethod.blockers[1] [audit #1]; docs/odg/evidence/V163_CHECKPOINT_8.json#nextAction [anchor 'ALREADY_PROVEN', anchor 'M0001']; docs/odg/evidence/V164_GO_CYCLE.json#executionCandidates.schedulerEligibility[1].reason [anchor 'ALREADY_PROVEN', anchor 'M0001']; docs/odg/evidence/V164_GO_CYCLE.json#executionCandidates.finding [anchor 'ALREADY_PROVEN']"
+            "basis": "n=2 source file(s) with ≥1 attributed blocker record (at most one counted per file; 4 record(s) cited): docs/odg/evidence/V163_CHECKPOINT_8.json#hybridMethod.blockers[1] [audit #1]; docs/odg/evidence/V163_CHECKPOINT_8.json#nextAction [anchor 'ALREADY_PROVEN', anchor 'M0001']; docs/odg/evidence/V164_GO_CYCLE.json#executionCandidates.schedulerEligibility[1].reason [anchor 'ALREADY_PROVEN', anchor 'M0001']; docs/odg/evidence/V164_GO_CYCLE.json#executionCandidates.finding [anchor 'ALREADY_PROVEN']"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
@@ -4491,7 +4491,7 @@
             "source": [
               "docs/odg/evidence/V163_CHECKPOINT_8.json#hybridMethod.blockers[1]"
             ],
-            "basis": "n=1 attributed blocker records: docs/odg/evidence/V163_CHECKPOINT_8.json#hybridMethod.blockers[1] [audit #2]"
+            "basis": "n=1 source file(s) with ≥1 attributed blocker record (at most one counted per file; 1 record(s) cited): docs/odg/evidence/V163_CHECKPOINT_8.json#hybridMethod.blockers[1] [audit #2]"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
@@ -4716,7 +4716,7 @@
               "docs/odg/evidence/V163_CHECKPOINT_8.json#hybridMethod.blockers[0]",
               "docs/odg/evidence/V166_CHECKPOINT_9.json#openGaps[0]"
             ],
-            "basis": "n=2 attributed blocker records: docs/odg/evidence/V163_CHECKPOINT_8.json#hybridMethod.blockers[0] [anchor 'provider launch', anchor 'spend ceiling']; docs/odg/evidence/V166_CHECKPOINT_9.json#openGaps[0] [anchor 'provider launch', anchor 'spend ceiling']"
+            "basis": "n=2 source file(s) with ≥1 attributed blocker record (at most one counted per file; 2 record(s) cited): docs/odg/evidence/V163_CHECKPOINT_8.json#hybridMethod.blockers[0] [anchor 'provider launch', anchor 'spend ceiling']; docs/odg/evidence/V166_CHECKPOINT_9.json#openGaps[0] [anchor 'provider launch', anchor 'spend ceiling']"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
@@ -5036,7 +5036,7 @@
             "source": [
               "docs/odg/evidence/V166_CHECKPOINT_9.json#openGaps[1]"
             ],
-            "basis": "n=1 attributed blocker records: docs/odg/evidence/V166_CHECKPOINT_9.json#openGaps[1] [anchor 'inspector identity']"
+            "basis": "n=1 source file(s) with ≥1 attributed blocker record (at most one counted per file; 1 record(s) cited): docs/odg/evidence/V166_CHECKPOINT_9.json#openGaps[1] [anchor 'inspector identity']"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
@@ -5138,7 +5138,7 @@
             "source": [
               "docs/odg/evidence/V166_CHECKPOINT_9.json#openGaps[4]"
             ],
-            "basis": "n=1 attributed blocker records: docs/odg/evidence/V166_CHECKPOINT_9.json#openGaps[4] [anchor 'integration']"
+            "basis": "n=1 source file(s) with ≥1 attributed blocker record (at most one counted per file; 1 record(s) cited): docs/odg/evidence/V166_CHECKPOINT_9.json#openGaps[4] [anchor 'integration']"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
@@ -5239,7 +5239,7 @@
               "docs/odg/evidence/V163_CHECKPOINT_8.json#nextAction",
               "docs/odg/evidence/V164_GO_CYCLE.json#executionCandidates.schedulerEligibility[1].reason"
             ],
-            "basis": "n=2 attributed blocker records: docs/odg/evidence/V163_CHECKPOINT_8.json#nextAction [anchor 'M0001']; docs/odg/evidence/V164_GO_CYCLE.json#executionCandidates.schedulerEligibility[1].reason [anchor 'M0001']"
+            "basis": "n=2 source file(s) with ≥1 attributed blocker record (at most one counted per file; 2 record(s) cited): docs/odg/evidence/V163_CHECKPOINT_8.json#nextAction [anchor 'M0001']; docs/odg/evidence/V164_GO_CYCLE.json#executionCandidates.schedulerEligibility[1].reason [anchor 'M0001']"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
@@ -6501,8 +6501,8 @@
       "V150-T07",
       "E",
       "I",
-      "CP8-GAP-1-selectNextMission",
       "V150-T10",
+      "CP8-GAP-1-selectNextMission",
       "CP8-GAP-9-chooseFollowing",
       "V150-T09",
       "CP8-GAP-3-chooseMode",
@@ -6516,7 +6516,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'H': evidence score 0.32 (uncertainty 0.5 ≤ 0.5); tie of 3 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, G, F, D, V150-T02, L, P, O, N, V150-T07, E, I, CP8-GAP-1-selectNextMission, V150-T10, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'H': evidence score 0.32 (uncertainty 0.5 ≤ 0.5); tie of 3 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, G, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -7931,94 +7931,6 @@
         "autoSelectable": true
       },
       {
-        "id": "CP8-GAP-1-selectNextMission",
-        "status": "PARTIAL",
-        "evidenceScore": 0.125,
-        "upperBound": 0.925,
-        "uncertainty": 0.8,
-        "measuredWeightShare": 0.2,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "MEASURED",
-            "value": 1,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.1,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0.25,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.025,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": false,
-        "ownerReason": null,
-        "autoSelectable": true
-      },
-      {
         "id": "A",
         "status": "PARTIAL",
         "evidenceScore": 0.1,
@@ -8285,6 +8197,94 @@
             "weight": 0.1,
             "contribution": 0.01,
             "uncertaintyContribution": 0
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "CP8-GAP-1-selectNextMission",
+        "status": "PARTIAL",
+        "evidenceScore": 0.075,
+        "upperBound": 0.875,
+        "uncertainty": 0.8,
+        "measuredWeightShare": 0.2,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.025,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
           }
         ],
         "unblocks": 0,
@@ -10021,7 +10021,7 @@
       "H"
     ],
     "resolvedBy": "R3_LOWER_RISK",
-    "justification": "ODG proposes 'H': evidence score 0.32 (uncertainty 0.5 ≤ 0.5); tie of 3 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, G, F, D, V150-T02, L, P, O, N, V150-T07, E, I, CP8-GAP-1-selectNextMission, V150-T10, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'H': evidence score 0.32 (uncertainty 0.5 ≤ 0.5); tie of 3 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, G, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
       "text": "demonstrated superiority on independent held-out tests (V159 shows no quality gain; #902 gain not measured)",
@@ -10112,5 +10112,5 @@
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change"
   ],
-  "generatedAtHead": "cbc59e6778cefb58e2332145dbc937eb423ae675"
+  "generatedAtHead": "f4c3759f7fa37251fe2be68566ff08bf5baa2f94"
 }
