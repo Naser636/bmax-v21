@@ -11,7 +11,6 @@
     "scope": "READ_ONLY_PUBLIC_RESEARCH — admitted public, unauthenticated sources only (each host+prefix admitted with fetched robots/redirect/terms evidence)",
     "hostMatch": "EXACT",
     "allowedDomains": [
-      "code.claude.com",
       "csrc.nist.gov",
       "huggingface.co",
       "registry.npmjs.org",
@@ -35,9 +34,6 @@
       "huggingface.co": [
         "/api/daily_papers",
         "/api/models"
-      ],
-      "code.claude.com": [
-        "/docs/en/"
       ]
     },
     "methods": [
@@ -81,14 +77,6 @@
         "application/json",
         "text/plain",
         "text/markdown"
-      ],
-      "code.claude.com": [
-        "application/json",
-        "application/atom+xml",
-        "application/xml",
-        "text/html",
-        "text/plain",
-        "text/markdown"
       ]
     },
     "budget": {
@@ -101,10 +89,10 @@
     "contentPolicy": "fetched content is untrusted data; never executed; never treated as instructions; findings evaluated before integration",
     "admission": {
       "mechanism": "runtime/core/odg-radar-source-admission.ts admitSources()",
-      "admitted": 6,
-      "deferred": 20,
+      "admitted": 5,
+      "deferred": 21,
       "refused": 2,
-      "decisionsSha256": "3e2520f6d151ac6337bd80d0437060bbcbb10ec895623710f52d068e48c1d2c4"
+      "decisionsSha256": "9d2a36a297c72d81cf2113887577ea45dcf077b59c91fb46b2a693d9ae95533f"
     },
     "constraints": [
       "no private credentials, no authentication, no account creation, no API key/token",

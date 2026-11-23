@@ -103,6 +103,16 @@ check("governor DENYs a sub-domain of an admitted host (EXACT)", G.govern({ urls
 check("governor DENYs a deferred/refused host", G.govern({ urls: ["https://export.arxiv.org/api/query?x=1"] }, g, t).decision === "DENY");
 check("governor DENYs after expiry", G.govern({ urls: ["https://www.rfc-editor.org/rfc/a"] }, g, g.expiresMs + 1).decision === "DENY");
 
+// V16.0: committed V160 grant re-derives from its candidates (no hand-widening); code.claude.com deferred in V158.
+{
+  const fs2 = require("fs"); const path2 = require("path"); const ROOT2 = path2.resolve(__dirname, "..", "..");
+  const c160 = JSON.parse(fs2.readFileSync(path2.join(ROOT2, "docs/odg/evidence/V160_RADAR_SOURCE_CANDIDATES.json"), "utf8")).candidates;
+  const g160 = JSON.parse(fs2.readFileSync(path2.join(ROOT2, "docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json"), "utf8")).grant;
+  const r160 = A.admitSources(c160, { issuedMs: g160.issuedMs, issuedBy: g160.issuedBy });
+  check("V160 grant hosts/paths equal a fresh admission of its candidates", JSON.stringify(r160.grant.allowedPaths) === JSON.stringify(g160.allowedPaths) && JSON.stringify(r160.grant.allowedDomains) === JSON.stringify(g160.allowedDomains));
+  const g158 = JSON.parse(fs2.readFileSync(path2.join(ROOT2, "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json"), "utf8")).grant;
+  check("V16.0: code.claude.com no longer admitted in V158 (Anthropic terms ⇒ owner decision)", !g158.allowedDomains.includes("code.claude.com"));
+}
 process.stdout.write(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}\n`);
 process.exit(failures === 0 ? 0 : 1);
 export {};

@@ -1,0 +1,1422 @@
+{
+ "generated": "2026-11-23",
+ "source": "V160 research (provider research agent). QUALIFICATION ONLY — nothing collected beyond robots.txt, one prefix probe and one sample page per prefix; redirects never followed; no auth, no challenge bypass.",
+ "schema": "normalized like docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json; unknown => field omitted (gate defers). Extra informational fields: org, termsClause, prefixHttpStatus, prefixRedirectLocation, sampledUrl, robotsFetch.",
+ "robotsMethod": "robots.txt fetched without following redirects; '*' groups merged per RFC 9309; Allow/Disallow evaluated by longest match with '*' and '$' honoured; robotsWildcardRulesInside = every wildcard rule whose literal head is compatible with the prefix (may match inside).",
+ "candidates": [
+  {
+   "host": "research.google",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Google",
+   "termsVerified": true,
+   "termsUrl": "https://policies.google.com/terms",
+   "termsClause": "Google ToS prohibits only \"using automated means to access content from any of our services in violation of the machine-readable instructions on our web pages (for example, robots.txt files that disallow crawling, training, or other activities)\" => automated access that honours robots.txt is not forbidden",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/pubs/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://research.google/pubs/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:54+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    },
+    {
+     "path": "/blog/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://research.google/blog/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:54+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "d9c80d619935ed4da8027c09289b43a9c9d1bcb76968958ef7a25836d45e1be9",
+   "robotsTxtBytes": 68,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Footer links https://policies.google.com/terms. Primary source (Google Research publications + blog).",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "FULL"
+   }
+  },
+  {
+   "host": "sre.google",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Google",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/sre-book/",
+     "robots": "ALLOW",
+     "redirect": "SAME_HOST",
+     "prefixHttpStatus": 301,
+     "prefixRedirectLocation": "https://sre.google/sre-book/introduction/",
+     "sampled200": true,
+     "sampledUrl": "https://sre.google/sre-book/introduction/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*authuser*",
+      "Disallow: /*cache*"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T16:43:39+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    },
+    {
+     "path": "/workbook/",
+     "robots": "ALLOW",
+     "redirect": "SAME_HOST",
+     "prefixHttpStatus": 301,
+     "prefixRedirectLocation": "https://sre.google/",
+     "sampled200": true,
+     "sampledUrl": "https://sre.google/workbook/table-of-contents/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*authuser*",
+      "Disallow: /*cache*"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T16:43:39+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "0070574c0db6da5e8b9c59c3e17fb72f7eb8e6aebd7ea4c90f02f395e28b481a",
+   "robotsTxtBytes": 96,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: Google SRE book + workbook (free online). Both prefix roots 301 SAME_HOST (/sre-book/ -> /sre-book/introduction/, /workbook/ -> /) => gate will DEFER (PREFIX_NOT_CANONICAL); content pages under them 200. No terms link found in page HTML (Google ToS likely applies but not observed) => termsVerified false. Wildcards '/*authuser*','/*cache*' could match inside.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "google.github.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Google",
+   "termsVerified": true,
+   "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+   "termsClause": "GitHub AUP s.7: \"Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access.\" s.4 forbids only \"excessive automated bulk activity\". Condition: research use, open-access publications.",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/eng-practices/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://google.github.io/eng-practices/review/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:39:01+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "d469bc2548a2a41d2dfaa404a5d6b28eef7f1aadb3ab9de1203a71c50b13b57b",
+   "robotsTxtBytes": 10416,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: Google Engineering Practices (code review guide), served by GitHub Pages => GitHub AUP governs automated access. robots.txt 404 (10 KB 404 page; sha is of the 404 body).",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "FULL"
+   }
+  },
+  {
+   "host": "abseil.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Google",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/resources/swe-book/html/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 404,
+     "sampled200": true,
+     "sampledUrl": "https://abseil.io/resources/swe-book/html/toc.html",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:43:16+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "8fa3036c68bfcbd32365f6225d24333264093b7cd38d306e106b4dbdc934fd5b",
+   "robotsTxtBytes": 1248,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: 'Software Engineering at Google' book (CC BY-NC-ND 4.0, linked). Prefix root itself 404 (no index) but toc.html 200. No site ToS found; the CC licence governs reuse, not automated access => termsVerified false.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "deepmind.google",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Google DeepMind",
+   "termsVerified": true,
+   "termsUrl": "https://policies.google.com/terms",
+   "termsClause": "Google ToS prohibits only \"using automated means to access content from any of our services in violation of the machine-readable instructions on our web pages (for example, robots.txt files that disallow crawling, training, or other activities)\" => automated access that honours robots.txt is not forbidden",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/research/publications/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://deepmind.google/research/publications/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:42:44+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    },
+    {
+     "path": "/blog/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://deepmind.google/blog/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:42:44+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "f43be63c1571009a5f6a1364ef3bf60b48e50db989dbe9f47cc07818796b92f8",
+   "robotsTxtBytes": 69,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Footer links https://policies.google.com/terms. /discover/blog/ 301 -> /blog/ (use /blog/).",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "FULL"
+   }
+  },
+  {
+   "host": "www.nasa.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NASA",
+   "termsVerified": true,
+   "termsUrl": "https://www.nasa.gov/privacy/",
+   "termsClause": "NASA Web Privacy Policy & Important Notices (redirect target of /nasa-web-privacy-policy-and-important-notices/): Security Notice prohibits only \"unauthorized attempts to upload or change information\"; no clause restricting automated read access",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/reference/systems-engineering-handbook/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:08+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "44d72c5ad1a94bb45f25caaba917c39b39b383af3a121b59a5a7e46fbe3ccb05",
+   "robotsTxtBytes": 69,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [
+     [
+      "usasearch"
+     ]
+    ]
+   },
+   "raw": {
+    "notes": "Primary: NASA Systems Engineering Handbook (SP-2016-6105 online edition).",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "FULL"
+   }
+  },
+  {
+   "host": "llis.nasa.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NASA",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/lesson/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://llis.nasa.gov/lesson/1",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:43:34+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "8a32bbf1becbbfca75df4b4a06048bdd6f76aa5dbe11761c3a2e95c642d532b9",
+   "robotsTxtBytes": 51,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: NASA Lessons Learned Information System. /lesson/1 returns 200 but title 'Llis' (JS single-page app; content may not be in HTML). Site-specific terms not found.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "standards.nasa.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NASA",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/standard/nasa/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 404,
+     "sampled200": true,
+     "sampledUrl": "https://standards.nasa.gov/standard/nasa/nasa-std-87398",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*/media/oembed"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T16:43:30+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "2a787f20489a257692bad5f16ae5ceb28876cd38d8d9cde9c84a2d3835e30bab",
+   "robotsTxtBytes": 1706,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: NASA technical standards (e.g. NASA-STD-8739.8). Prefix root 404, sample 200. Wildcard 'Disallow: /*/media/oembed' could match inside. Terms not found.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "nodis3.gsfc.nasa.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NASA",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/displayDir.cfm",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "SAME_HOST",
+     "prefixHttpStatus": 302,
+     "prefixRedirectLocation": "main_lib.cfm",
+     "sampled200": true,
+     "sampledUrl": "https://nodis3.gsfc.nasa.gov/displayDir.cfm?t=NPR&c=7123&s=1",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:03+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "robotsTxtBytes": 0,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: NASA directives (NPR 7123.1 systems engineering, NPR 7150.2 software). Content needs a query string (?t=NPR&c=7123&s=1, 200); bare path 302 SAME_HOST -> main_lib.cfm. robots.txt 404. Terms not found.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "ntrs.nasa.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "org": "NASA",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/api/citations/",
+     "redirect": "NONE",
+     "prefixHttpStatus": 404,
+     "sampled200": true,
+     "sampledUrl": "https://ntrs.nasa.gov/api/citations/20170001761",
+     "robotsFullFileFetchedAt": "2026-11-23T16:41:13+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsFetch": {
+    "status": "FETCH_FAILED:TimeoutError",
+    "mode": "FAILED",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: NASA Technical Reports Server JSON API (/api/citations/20170001761 = 200). robots.txt UNREACHABLE: 3 attempts timed out (25 s, 60 s, 60 s) => RFC 9309 'unreachable' => must assume complete disallow; robots field omitted (gate defers). /citations/ HTML also timed out.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "global.toyota",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Toyota",
+   "termsVerified": true,
+   "termsUrl": "https://global.toyota/en/terms-of-use/",
+   "termsClause": "Toyota Terms of Use: \"TMC does not permit any duplication, diversion, modification, sale, or any other similar usage of the Content on this website that infringes upon such intellectual property rights\"; no clause on automated access",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/en/company/vision-and-philosophy/production-system/",
+     "robots": "REDIRECTED",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:23+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "robotsTxtBytes": 0,
+   "robotsFetch": {
+    "status": 301,
+    "mode": "REDIRECTED",
+    "location": "https://global.toyota/robots.txt/",
+    "starGroups": 0,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: Toyota Production System official page (overview level, not a handbook). robots.txt: /robots.txt 301 -> /robots.txt/ which returns 404 HTML (meta noindex, refresh to /en/) => robots REDIRECTED; RFC 9309 would follow and land on 4xx (allow), but the gate treats redirected robots as unknown.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "learn.microsoft.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Microsoft",
+   "termsVerified": true,
+   "termsUrl": "https://learn.microsoft.com/en-us/legal/termsofuse",
+   "termsClause": "Microsoft ToU: only relevant clauses are \"Harvest or otherwise collect information about others, including e-mail addresses\" and \"You may not use web scraping, web harvesting, or web data extraction methods to extract data from the AI services\" (AI services only) => automated read of documentation not forbidden",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/en-us/azure/well-architected/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://learn.microsoft.com/en-us/azure/well-architected/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*/answers/accounts/",
+      "Disallow: /*/answers/users/",
+      "Disallow: /*/answers/revisions/",
+      "Disallow: /*/answers/search",
+      "Disallow: /*/answers/*sort=newest",
+      "Disallow: /*/answers/*sort=hottest",
+      "Disallow: /*/answers/*sort=votes",
+      "Disallow: /*/answers/commands/",
+      "Disallow: /*/answers/badges/",
+      "Disallow: /*/answers/comments",
+      "Disallow: /*/answers/*?*sort=",
+      "Disallow: /*/answers/*?*topics=",
+      "Disallow: /*/answers/*?*pagesize=",
+      "Disallow: /*/answers/*?*orderby=",
+      "Disallow: /*/answers/*?*filterby=",
+      "Disallow: /*/opbuildpdf/",
+      "Disallow: /*/search/?*terms"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:28+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    },
+    {
+     "path": "/en-us/security/engineering/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://learn.microsoft.com/en-us/security/engineering/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*/answers/accounts/",
+      "Disallow: /*/answers/users/",
+      "Disallow: /*/answers/revisions/",
+      "Disallow: /*/answers/search",
+      "Disallow: /*/answers/*sort=newest",
+      "Disallow: /*/answers/*sort=hottest",
+      "Disallow: /*/answers/*sort=votes",
+      "Disallow: /*/answers/commands/",
+      "Disallow: /*/answers/badges/",
+      "Disallow: /*/answers/comments",
+      "Disallow: /*/answers/*?*sort=",
+      "Disallow: /*/answers/*?*topics=",
+      "Disallow: /*/answers/*?*pagesize=",
+      "Disallow: /*/answers/*?*orderby=",
+      "Disallow: /*/answers/*?*filterby=",
+      "Disallow: /*/opbuildpdf/",
+      "Disallow: /*/search/?*terms"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:28+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "960054479af442fe1599ec890c8902fbe29786aa3fb948781042050063b4f327",
+   "robotsTxtBytes": 765,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: Azure Well-Architected Framework + Microsoft security engineering (SDL) docs. 17 wildcard rules ('/*/answers/...', etc.) could in principle match inside => gate defers unless the policy treats them as non-applicable.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "www.microsoft.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Microsoft",
+   "termsVerified": true,
+   "termsUrl": "https://www.microsoft.com/en-us/legal/terms-of-use",
+   "termsClause": "Microsoft ToU: only relevant clauses are \"Harvest or otherwise collect information about others, including e-mail addresses\" and \"You may not use web scraping, web harvesting, or web data extraction methods to extract data from the AI services\" (AI services only) => automated read of documentation not forbidden",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/en-us/securityengineering/sdl/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.microsoft.com/en-us/securityengineering/sdl/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*?*ep_*",
+      "Disallow: /*&ep_*",
+      "Disallow: /*/store/locations/store-locations-sitemap.xml",
+      "Disallow: /*/security/search-results.aspx?",
+      "Disallow: /*/music/*/search/",
+      "Disallow: /*/store/buynow?",
+      "Disallow: /*/store/cart",
+      "Disallow: /*/search/",
+      "Disallow: /*/music/*/Search/",
+      "Disallow: /*/Search/",
+      "Disallow: /*/newsearch/",
+      "Disallow: *action=catalogsearch&",
+      "Disallow: /*/store/d/groove-music-pass/cfq7ttc0k5dq/0001",
+      "Disallow: /*/store/best-rated/*?*&*&*",
+      "Disallow: /*/store/best-selling/*?*&*&*",
+      "Disallow: /*/store/coming-soon/*?*&*&*",
+      "Disallow: /*/store/deals/*?*&*&*",
+      "Disallow: /*/store/game-demos/*?*&*&*",
+      "Disallow: /*/store/game-previews/*?*&*&*",
+      "Disallow: /*/store/most-played/*?*&*&*",
+      "Disallow: /*/store/most-popular/*?*&*&*",
+      "Disallow: /*/store/new/*?*&*&*",
+      "Disallow: /*/store/new-and-rising/*?*&*&*",
+      "Disallow: /*/store/top-free/*?*&*&*",
+      "Disallow: /*/store/top-paid/*?*&*&*",
+      "Disallow: /*/store/collections/helpmechoosepc?*&*&*",
+      "Disallow: /*/store/collections/helpmechoosepc/?*&*&*",
+      "Disallow: /*/store/movies-and-tv/*?*&*&*",
+      "Disallow: /*/microsoft-365/site-search",
+      "Disallow: */qa-folder",
+      "Allow: /*/store/*/search/",
+      "Allow: /*/store/*/layout/",
+      "Allow: /*/store/music/groove-music-pass/*",
+      "Allow: *action=catalogsearch&catalog_mode=grid&page=2$",
+      "Allow: *action=catalogsearch&catalog_mode=grid&page=3$",
+      "Allow: *action=catalogsearch&catalog_mode=grid&page=4$",
+      "Allow: *action=catalogsearch&catalog_mode=grid&page=5$",
+      "Allow: *action=catalogsearch&catalog_mode=grid&page=6$",
+      "Allow: *action=catalogsearch&catalog_mode=grid&page=7$",
+      "Allow: *action=catalogsearch&catalog_mode=grid&page=8$",
+      "Allow: *action=catalogsearch&catalog_mode=list&page=2$",
+      "Allow: *action=catalogsearch&catalog_mode=list&page=3$",
+      "Allow: *action=catalogsearch&catalog_mode=list&page=4$",
+      "Allow: *action=catalogsearch&catalog_mode=list&page=5$",
+      "Allow: *action=catalogsearch&catalog_mode=list&page=6$",
+      "Allow: *action=catalogsearch&catalog_mode=list&page=7$",
+      "Allow: *action=catalogsearch&catalog_mode=list&page=8$",
+      "Disallow: *action=accessorysearch&product=*&*",
+      "Allow: *action=accessorysearch&product=*$",
+      "Disallow: *action=accessorysearch&",
+      "Allow: *action=accessorysearch&page=2$",
+      "Allow: *action=accessorysearch&page=3$",
+      "Allow: *action=accessorysearch&page=4$",
+      "Allow: *action=accessorysearch&page=5$",
+      "Allow: *action=accessorysearch&page=6$",
+      "Allow: *action=accessorysearch&page=7$",
+      "Allow: *action=accessorysearch&page=8$",
+      "Disallow: *action=productcompareaction&",
+      "Disallow: *action=productLinkAction&",
+      "Disallow: *action=overlay&",
+      "Disallow: *action=quickSearch&",
+      "Disallow: *action=writeReview",
+      "Disallow: *rep=hc",
+      "Disallow: *fe=true",
+      "Disallow: *?intc=",
+      "Disallow: *&solved=",
+      "Disallow: */wal/",
+      "Disallow: */layout/",
+      "Disallow: */base-en/",
+      "Disallow: *action=siteSearch",
+      "Disallow: *action=productSupportSearch",
+      "Disallow: *=imgmanager",
+      "Disallow: */unsubscribe/",
+      "Disallow: *ActivityUID=",
+      "Disallow: /*/download/confirmation.aspx?",
+      "Disallow: /*HpOptOut=true$",
+      "Disallow: /*TOCLinksForCrawlers*",
+      "Disallow: /*mac/help.mspx?",
+      "Disallow: /*mactopia/help.mspx?",
+      "Disallow: */mediaapi/",
+      "Disallow: /*/download/confirmation.aspx?",
+      "Disallow: /*/download/registration-suggested.aspx?",
+      "Disallow: /*/download/results.aspx?",
+      "Disallow: /*/download/Browse.aspx?",
+      "Disallow: /*/download/browse.aspx?",
+      "Disallow: /*/download/info.aspx?",
+      "Disallow: /*/download/thankyou.aspx",
+      "Disallow: /*/download/thankyou.aspx?",
+      "Disallow: /*mnp_utility.mspx?",
+      "Disallow: */isv/*?",
+      "Disallow: /*?p=",
+      "Disallow: /*?*p=*",
+      "Disallow: /*/embed/",
+      "Disallow: /*noItems="
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:34+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "79a2a24e3e2c00deaba2fc1922b9113f5508e74133911eadea4ebb00b5de9768",
+   "robotsTxtBytes": 9126,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: Microsoft SDL landing page. 94 wildcard rules in robots '*' group may match inside.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "microsoft.github.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Microsoft",
+   "termsVerified": true,
+   "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+   "termsClause": "GitHub AUP s.7: \"Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access.\" s.4 forbids only \"excessive automated bulk activity\". Condition: research use, open-access publications.",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/code-with-engineering-playbook/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://microsoft.github.io/code-with-engineering-playbook/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:37+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "b620507312c5e97566a3c6cfaf99144fefc18a0da7d941401dfa0f5f58fb0368",
+   "robotsTxtBytes": 9379,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: Microsoft CSE 'Engineering Fundamentals Playbook' on GitHub Pages => GitHub AUP.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "FULL"
+   }
+  },
+  {
+   "host": "github.blog",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "GitHub",
+   "termsVerified": true,
+   "termsUrl": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+   "termsClause": "GitHub AUP s.7: \"Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access.\" s.4 forbids only \"excessive automated bulk activity\". Condition: research use, open-access publications. github.blog footer links the GitHub Terms of Service.",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/engineering/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://github.blog/engineering/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:38:44+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "8df48636a2542d5e497a1acfea9140526cc2bb55fd1d02934a3263cebf681eed",
+   "robotsTxtBytes": 269,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: GitHub engineering blog.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "FULL"
+   }
+  },
+  {
+   "host": "stripe.dev",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Stripe",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/blog",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://stripe.dev/blog/topic/engineering",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:48:17+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "9c6fe8ba56f4ea9a3213ab7c250ec4e84158f2e9cb6d46991c8223b5216adc57",
+   "robotsTxtBytes": 800,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: Stripe engineering blog moved here (stripe.com/blog/engineering 301 OFF_HOST -> stripe.dev/blog/topic/engineering). /blog/ 308 SAME_HOST -> /blog; canonical prefix /blog probed (200, no redirect). Footer links https://stripe.com/legal, an index of product agreements; no website terms of use found => termsVerified false.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "research.ibm.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "IBM",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/blog",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://research.ibm.com/blog",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:42:49+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    },
+    {
+     "path": "/publications",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://research.ibm.com/publications",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:42:49+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "a2f248e39e354dd0c4d975aed45c60136f367e258b83f42eaaff5f64db935733",
+   "robotsTxtBytes": 162,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 2,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: IBM Research blog and publications. Terms link not present in server HTML; ibm.com terms (see www.ibm.com) not confirmed to cover this host => termsVerified false.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "www.ibm.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T2",
+   "org": "IBM",
+   "termsVerified": true,
+   "termsUrl": "https://www.ibm.com/legal/terms",
+   "termsClause": "IBM Terms of Use: \"You may only use a crawler to crawl this Web site as permitted by this Web site's robots.txt\"",
+   "rateLimitDocumented": false,
+   "rateLimitNote": "terms page read in full; no rate limit published",
+   "requiresAuth": false,
+   "paid": false,
+   "termsForbidAutomation": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/think",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.ibm.com/think/topics/site-reliability-engineering",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*.ssi$"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T16:42:57+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "baf7c72f9745976fe6d21877e45c2d5f39ebdf13b82f5c345e99299158456fe2",
+   "robotsTxtBytes": 4665,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [
+     [
+      "fast corporate crawler"
+     ],
+     [
+      "008"
+     ],
+     [
+      "magpie-crawler"
+     ],
+     [
+      "magpie-crawler/1.1"
+     ],
+     [
+      "magpierss"
+     ],
+     [
+      "psnsearch"
+     ],
+     [
+      "httrack"
+     ],
+     [
+      "acrolinx-bot"
+     ],
+     [
+      "amazon-quick-on-behalf-of"
+     ]
+    ]
+   },
+   "raw": {
+    "notes": "IBM Think = explainer/marketing-leaning (T2). Wildcard 'Disallow: /*.ssi$' may match inside.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "developer.nvidia.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NVIDIA",
+   "termsVerified": false,
+   "termsUrl": "https://www.nvidia.com/en-us/about-nvidia/terms-of-service/",
+   "termsClause": "NVIDIA ToS (f): \"use any robot, spider, scraper, crawler, data mining tool, data gathering or extraction tool, or any other automatic device ... to access, acquire, copy or monitor any portion of the Site\" — ToS covers www.nvidia.com \"and other NVIDIA operated websites where these Terms are linked\"; developer.nvidia.com links only /about-nvidia/legal-info (which links the ToS)",
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "ownerDecisionRequired": "NVIDIA ToS forbids robots on covered sites; coverage of developer.nvidia.com is indirect (via legal-info link) — treat as forbidden unless owner/legal decides otherwise",
+   "prefixes": [
+    {
+     "path": "/blog/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://developer.nvidia.com/blog/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Allow: /*/llms.txt$",
+      "Allow: /*.md$",
+      "Disallow: /*[?&]AMJnQtSpH=*",
+      "Disallow: /*[?&]__prclt=*",
+      "Disallow: /*[?&]_bg=*",
+      "Disallow: /*[?&]_bt=*",
+      "Disallow: /*[?&]_hsenc=*",
+      "Disallow: /*[?&]_hsmi=*",
+      "Disallow: /*[?&]_lrsc=*",
+      "Disallow: /*[?&]adbid=*",
+      "Disallow: /*[?&]adbpl=*",
+      "Disallow: /*[?&]adbpr=*",
+      "Disallow: /*[?&]adbsc=*",
+      "Disallow: /*[?&]amp;utm_medium=*",
+      "Disallow: /*[?&]amp;utm_source=*",
+      "Disallow: /*[?&]by8Vk=*",
+      "Disallow: /*[?&]cat=*",
+      "Disallow: /*[?&]cm_cat=*",
+      "Disallow: /*[?&]cm_ite=*",
+      "Disallow: /*[?&]cm_pla=*",
+      "Disallow: /*[?&]cm_ven=*",
+      "Disallow: /*[?&]dysig_tid=*",
+      "Disallow: /*[?&]es_id=*",
+      "Disallow: /*[?&]fbclid=*",
+      "Disallow: /*[?&]filter_by=*",
+      "Disallow: /*[?&]gad_source=*",
+      "Disallow: /*[?&]gclid=*",
+      "Disallow: /*[?&]gh_src=*",
+      "Disallow: /*[?&]hsCtaTracking=*",
+      "Disallow: /*[?&]infl_anl=*",
+      "Disallow: /*[?&]linkId=*",
+      "Disallow: /*[?&]mkt_tok=*",
+      "Disallow: /*[?&]ncid=*",
+      "Disallow: /*[?&]network=*",
+      "Disallow: /*[?&]nvid=*",
+      "Disallow: /*[?&]org=*",
+      "Disallow: /*[?&]p=*",
+      "Disallow: /*[?&]reader=*",
+      "Disallow: /*[?&]ref=*",
+      "Disallow: /*[?&]rel=*",
+      "Disallow: /*[?&]sfdcid=*",
+      "Disallow: /*[?&]source=*",
+      "Disallow: /*[?&]spm=*",
+      "Disallow: /*[?&]szn-session=*",
+      "Disallow: /*[?&]trk=*",
+      "Disallow: /*[?&]userID=*",
+      "Disallow: /*[?&]utm*",
+      "Disallow: /*.woff$",
+      "Disallow: /*.woff2$"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T16:39:26+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "a221012ed37e844af211105107cd515481de1e4863a3ffff2bd53a4f882750e7",
+   "robotsTxtBytes": 5057,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 2,
+    "namedUAGroups": [
+     [
+      "googlebot",
+      "googlebot smartphone",
+      "google adsbot",
+      "bingbot"
+     ]
+    ]
+   },
+   "raw": {
+    "notes": "Primary: NVIDIA Technical Blog. 49 wildcard rules may match inside.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "www.bosch.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T2",
+   "org": "Bosch",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/research/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.bosch.com/research/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:39:53+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "7f03f031ad7213632f4c0bda4daf101371e779a6c8181e02a225d980b3d45da7",
+   "robotsTxtBytes": 78,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Bosch Research overview pages (corporate, not engineering handbooks). Legal notice page fetched (https://www.bosch.com/legal-notice/) but server HTML contained only navigation => terms not read => termsVerified false.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "www.asml.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T2",
+   "org": "ASML",
+   "termsVerified": false,
+   "termsUrl": "https://www.asml.com/en/terms-of-use",
+   "termsClause": "ASML Terms: \"no part of our websites may be copied, reproduced, republished, uploaded, translated, transmitted, embedded or distributed in any way to any other computer, server, website or other medium for publication or distribution or for any commercial enterprise without ASML's prior written consent\"",
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "ownerDecisionRequired": "ASML terms restrict copying 'to any other computer ... for any commercial enterprise' without consent — ambiguous for automated retrieval; legal reading required",
+   "prefixes": [
+    {
+     "path": "/en/technology",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.asml.com/en/technology",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*?job_country=",
+      "Disallow: /*?job_type=",
+      "Disallow: /*?job_teams=",
+      "Disallow: /*?job_technical_fields=",
+      "Disallow: /*?job_degrees=",
+      "Disallow: /*?job_experience_levels=",
+      "Disallow: /*?job_educational_backgrounds=",
+      "Disallow: /*?job_city=",
+      "Disallow: /*?sort_by=",
+      "Disallow: /*?query=",
+      "Disallow: /*?tags=",
+      "Disallow: /*&job_country=",
+      "Disallow: /*&job_type=",
+      "Disallow: /*&job_teams=",
+      "Disallow: /*&job_technical_fields=",
+      "Disallow: /*&job_degrees=",
+      "Disallow: /*&job_experience_levels=",
+      "Disallow: /*&job_educational_backgrounds=",
+      "Disallow: /*&job_city=",
+      "Disallow: /*&sort_by=",
+      "Disallow: /*&query=",
+      "Disallow: /*&tags=",
+      "Disallow: *show.do",
+      "Disallow: *sys_tab",
+      "Disallow: *?rid",
+      "Disallow: */tw/",
+      "Disallow: */ja/",
+      "Disallow: */kr/"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T16:39:56+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "d3a271f1982bfc7f7ce4add5a875b13748827fbee7bb0c5fcd06c6e1ae12bcaf",
+   "robotsTxtBytes": 991,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [
+     [
+      "acrolinx-bot"
+     ]
+    ]
+   },
+   "raw": {
+    "notes": "Technology overview pages (marketing-leaning). 28 wildcard rules may match inside.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "www.sei.cmu.edu",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Carnegie Mellon SEI (standards/academic, superior primary source)",
+   "termsVerified": false,
+   "termsUrl": "https://www.sei.cmu.edu/legal/",
+   "termsClause": "SEI ToU s.5: \"You may display the content of the Service only for your own personal use (i.e., non-commercial use) and may not otherwise copy, reproduce, alter, modify, create derivative works of, or publicly display any content\"; no clause on automated access",
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "ownerDecisionRequired": "SEI ToU restricts use to personal non-commercial display",
+   "prefixes": [
+    {
+     "path": "/library/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.sei.cmu.edu/library/",
+     "robotsDisallowedWithin": [
+      "/library/search/"
+     ],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:43:20+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    },
+    {
+     "path": "/blog/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.sei.cmu.edu/blog/",
+     "robotsDisallowedWithin": [
+      "/blog/search/"
+     ],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:43:20+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "a1d779551396813cac1c3a87c9af4d9ea09b91fc227e7f116fea41c4373c0d0d",
+   "robotsTxtBytes": 211,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Primary: CMU SEI digital library + blog (software engineering, DevSecOps, architecture). robots disallows /library/search/ and /blog/search/ INSIDE the prefixes => narrower prefixes needed. insights.sei.cmu.edu 301 OFF_HOST -> www.sei.cmu.edu.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  },
+  {
+   "host": "www.spacex.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T2",
+   "org": "SpaceX",
+   "termsVerified": false,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "prefixes": [
+    {
+     "path": "/updates/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.spacex.com/updates/",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T16:43:47+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "1b4409baf3f25f8d37dc1a992f3481907b4869ae24667b39fd274684f4c2afd9",
+   "robotsTxtBytes": 321,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": []
+   },
+   "raw": {
+    "notes": "Only news/updates (JS shell, HTML title 'SpaceX'); NO primary engineering-method documentation found. robots.txt 404. Terms not found.",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "evidenceCompleteness": "PARTIAL"
+   }
+  }
+ ],
+ "refused_at_research": [
+  {
+   "host": "aws.amazon.com",
+   "org": "Amazon",
+   "reason": "TERMS_FORBID_AUTOMATED_ACCESS + OFF_HOST_REDIRECT: AWS Site Terms: 'This license does not include ... any use of data mining, robots, or similar data gathering and extraction tools' (https://aws.amazon.com/terms/). /builders-library/ 301 OFF_HOST -> builder.aws.com."
+  },
+  {
+   "host": "builder.aws.com",
+   "org": "Amazon",
+   "reason": "TERMS_FORBID_AUTOMATED_ACCESS: page footer links https://aws.amazon.com/terms/ (same robots/data-mining prohibition). Builders' Library content now lives here (/content/<id>/<slug>, 200)."
+  },
+  {
+   "host": "docs.aws.amazon.com",
+   "org": "Amazon",
+   "reason": "Deny-by-default: AWS Site Terms forbid robots on the 'AWS Site'; footer is JS-rendered so coverage of this host was not observed directly. robots Crawl-delay: 5. Prefix /wellarchitected/latest/framework/ = 200, robots ALLOW, no wildcards. Needs a legal reading."
+  },
+  {
+   "host": "netflixtechblog.com",
+   "org": "Netflix",
+   "reason": "BOT_CHALLENGE: hosted on Medium; robots.txt 307 -> medium.com/m/global-identity-2 (OFF_HOST); pages return 403 'Just a moment...' (Cloudflare challenge). Never bypassed."
+  },
+  {
+   "host": "netflix.github.io",
+   "org": "Netflix",
+   "reason": "NO_NARROW_PREFIX: only the OSS index at '/' (200); no engineering-practice path; '/' is too broad."
+  },
+  {
+   "host": "blog.palantir.com",
+   "org": "Palantir",
+   "reason": "BOT_CHALLENGE: Medium-hosted; 403 'Just a moment...' (Cloudflare) on / ; robots also lists /m/, /me/, /media/, /r/, /trending, /search?q= disallows."
+  },
+  {
+   "host": "engineering.fb.com",
+   "org": "Meta",
+   "reason": "TERMS_FORBID_AUTOMATED_ACCESS: footer links https://www.facebook.com/policies; Meta Terms s.3.2(3): you may not access or collect data from Meta Products using automated means without prior permission; Products include Meta 'websites'. (robots ALLOW, /category/production-engineering/ 200 — technically reachable.)"
+  },
+  {
+   "host": "ai.meta.com",
+   "org": "Meta",
+   "reason": "TERMS_FORBID_AUTOMATED_ACCESS: same Meta Terms (footer links facebook.com/policies). /research/ and /blog/ 200, robots ALLOW with 3 wildcards."
+  },
+  {
+   "host": "openai.com",
+   "org": "OpenAI",
+   "reason": "TERMS_FORBID_AUTOMATED_ACCESS: OpenAI Terms of Use (https://openai.com/policies/terms-of-use/, fetched EEA version updated 2026-01-16) cover 'associated ... websites' and prohibit 'Automatically or programmatically extracting data or Output'. CONTRADICTION: robots allows /research/ (200, no challenge)."
+  },
+  {
+   "host": "cdn.openai.com",
+   "org": "OpenAI",
+   "reason": "Root 404, PDFs only; same OpenAI terms apply."
+  },
+  {
+   "host": "www.anthropic.com",
+   "org": "Anthropic",
+   "reason": "TERMS_FORBID_AUTOMATED_ACCESS (owner/legal to confirm): Consumer Terms (https://www.anthropic.com/legal/consumer-terms) cover 'associated apps, software, and websites' and prohibit access 'through automated or non-human means, whether through a bot, script, or otherwise' except via an API key 'or where we otherwise explicitly permit it'. CONTRADICTION: robots 'Allow: /'; /research and /engineering 200 (trailing-slash forms 308 SAME_HOST). Same question applies to code.claude.com admitted in V158 (its robots carries Content-Signal ai-input=yes, which may count as explicit permission). V158 also found /engineering/<slug> 308 OFF_HOST."
+  },
+  {
+   "host": "www.siemens.com",
+   "org": "Siemens",
+   "reason": "TERMS_FORBID_AUTOMATED_ACCESS: Terms of Use cover 'this website, any functionally related websites' and prohibit 'Engage in text or data mining. This includes, but is not limited to, any automated scraping, reproduction, or extraction of conte[nt]'. Probed innovation page also 301 SAME_HOST."
+  },
+  {
+   "host": "www.tesla.com",
+   "org": "Tesla",
+   "reason": "BOT_CHALLENGE/BLOCK: /blog returns 403 'Access Denied' to the probe; robots Crawl-delay 10."
+  },
+  {
+   "host": "queue.acm.org",
+   "org": "ACM (academic, superior source)",
+   "reason": "ROBOTS_DISALLOWS: 'Disallow: /*.cfm' covers all article URLs (detail.cfm); 403 to the probe."
+  },
+  {
+   "host": "insights.sei.cmu.edu",
+   "org": "CMU SEI",
+   "reason": "OFF_HOST_REDIRECT: 301 -> www.sei.cmu.edu (evaluated as a candidate instead)."
+  }
+ ],
+ "per_org_primary_source": {
+  "NASA": "YES — strongest set: Systems Engineering Handbook (www.nasa.gov), NPR directives (nodis3), standards (standards.nasa.gov), lessons learned (llis), NTRS reports API. All are partial: terms verified only for www.nasa.gov; NTRS robots.txt unreachable.",
+  "Tesla": "NO primary engineering-method source found; www.tesla.com blocks the probe (403).",
+  "Toyota": "YES — official TPS overview page (global.toyota), overview level only. Robots redirect means the gate will defer.",
+  "SpaceX": "NO primary engineering-method source; only news/updates (JS shell).",
+  "Google": "YES — SRE book + workbook (sre.google), eng-practices (google.github.io), SWE-at-Google book (abseil.io), Google Research pubs/blog.",
+  "Amazon": "YES (Builders' Library, Well-Architected), but REFUSED/deferred: AWS Site Terms forbid robots/data-mining tools.",
+  "Microsoft": "YES — Well-Architected, security engineering/SDL (learn + www.microsoft.com), Engineering Fundamentals Playbook (microsoft.github.io). Terms verified.",
+  "OpenAI": "Research pages exist but terms forbid programmatic extraction => REFUSED.",
+  "Anthropic": "Research/engineering pages exist; consumer terms forbid automated access unless explicitly permitted => REFUSED pending owner/legal reading (also affects V158 code.claude.com).",
+  "NVIDIA": "YES — Technical Blog; deferred (ToS robot prohibition; coverage of developer host indirect).",
+  "Google DeepMind": "YES — publications + blog under Google ToS (robots-respecting automation not forbidden).",
+  "IBM": "YES — IBM Research blog/publications (terms coverage not confirmed); ibm.com/think (terms explicitly allow robots.txt-compliant crawling; T2 explainer content).",
+  "Palantir": "Engineering blog exists on Medium but bot-challenged => REFUSED. No other primary source found.",
+  "Netflix": "Tech blog exists on Medium but bot-challenged => REFUSED. netflix.github.io is only an OSS index.",
+  "GitHub": "YES — github.blog/engineering/ (GitHub ToS/AUP; research-use condition).",
+  "Stripe": "YES — stripe.dev/blog (engineering blog moved from stripe.com, which 301s off-host); no website terms found.",
+  "Siemens": "Terms forbid text/data mining incl. automated scraping => REFUSED; no primary engineering-handbook source found.",
+  "Bosch": "Only corporate research overview pages; terms not readable from server HTML => deferred. No engineering-practice handbook found.",
+  "ASML": "Only technology overview pages (marketing-leaning); restrictive copy clause => owner decision.",
+  "Meta": "YES (engineering.fb.com, ai.meta.com) but Meta Terms forbid automated collection without permission => REFUSED.",
+  "Superior primary sources": "CMU SEI (www.sei.cmu.edu; personal/non-commercial ToU => owner decision); ACM Queue refused (robots). Earlier-admitted standards hosts (csrc.nist.gov, www.rfc-editor.org, www.w3.org) remain the strongest standards-body sources."
+ },
+ "counts": {
+  "candidates": 23,
+  "fully_evidenced": 6,
+  "partial": 17,
+  "refused": 15
+ }
+}

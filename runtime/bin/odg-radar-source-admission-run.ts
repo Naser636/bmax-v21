@@ -17,8 +17,16 @@ const ROOT = path.resolve(__dirname, "..", "..");
 const args = process.argv.slice(2);
 const opt = (k: string, d: string | null = null): string | null => { const i = args.indexOf(k); return i >= 0 && i + 1 < args.length ? args[i + 1] : d; };
 const CAND = path.resolve(ROOT, opt("--candidates", "docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json") as string);
-const GRANT_OUT = path.join(ROOT, "docs", "odg", "V158_RESEARCH_GRANT_GLOBAL_RADAR.json");
-const EVID_OUT = path.join(ROOT, "docs", "odg", "evidence", "V158_RADAR_SOURCE_ADMISSION.json");
+// V16.0: output paths are parameterised (each campaign = its own versioned grant); defaults keep the V158 behaviour.
+// Outputs are confined to docs/odg/ (repo-relative, no '..') so the CLI cannot write a grant anywhere else.
+const outPath = (flag: string, dflt: string): string => {
+  const rel = opt(flag, dflt) as string;
+  const abs = path.resolve(ROOT, rel);
+  if (!abs.startsWith(path.join(ROOT, "docs", "odg") + path.sep) || !/\.json$/.test(abs)) { process.stderr.write(`${flag} must be a .json path under docs/odg/\n`); process.exit(2); }
+  return abs;
+};
+const GRANT_OUT = outPath("--grant-out", "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json");
+const EVID_OUT = outPath("--evidence-out", "docs/odg/evidence/V158_RADAR_SOURCE_ADMISSION.json");
 const ISSUED_ISO = opt("--issued-iso", "2026-11-23T00:00:00.000Z") as string;
 const ISSUED_BY = opt("--issued-by", "owner (CTO directive V15.8 §3.3 — governed admission of PUBLIC sources; each host+prefix admitted on fetched robots/redirect/terms evidence by odg-radar-source-admission; live egress still requires ODG_RADAR_LIVE=1)") as string;
 

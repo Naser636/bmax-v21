@@ -4,8 +4,8 @@
   "issuedIso": "2026-11-23T00:00:00.000Z",
   "summary": {
     "candidates": 28,
-    "admitted": 6,
-    "deferred": 20,
+    "admitted": 5,
+    "deferred": 21,
     "refused": 2
   },
   "grantRefusedReason": null,
@@ -327,13 +327,14 @@
     },
     {
       "host": "code.claude.com",
-      "decision": "ADMIT",
+      "decision": "DEFER",
       "tier": "T1",
-      "admittedPrefixes": [
-        "/docs/en/"
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "OWNER_DECISION_REQUIRED: V16.0 research: Anthropic terms forbid access by 'automated or non-human means' unless explicitly permitted; robots.txt carries 'Content-Signal: ai-input=yes' — whether that is the explicit permission is an OWNER/legal decision. Deny-by-default until decided."
       ],
-      "reasons": [],
-      "evidenceSha256": "b910d72121327118e2b412b0081987961928ce43479b3685253ffccf669a3663"
+      "evidenceSha256": "6aa56a6d3db99a52110e1ceed5b5b9854317f7f50626543d5714fecfb4be7a9e"
     },
     {
       "host": "bair.berkeley.edu",
