@@ -2,7 +2,7 @@
   "ran": "v158-radar-research",
   "grant": "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json",
   "grantExpiresIso": "2026-12-22T00:00:00.000Z",
-  "at": "2026-11-23T12:11:10.821Z",
+  "at": "2026-11-23T12:17:59.275Z",
   "killSwitch": "ON (ODG_RADAR_LIVE=1)",
   "mode": "LIVE",
   "egress": 8,
@@ -87,7 +87,7 @@
       "httpStatus": 200,
       "contentType": "text/html; charset=utf-8",
       "bytes": 48287,
-      "sha256": "f3c00c548c202f783a4bd73766cec35a9837fc7c5160924617fd4771783fb5fa",
+      "sha256": "c8ddb6d9afb715505b13f7017101139c83819e95fbc61f8b814da78b65b2b431",
       "title": "AI 100-2 E2025, Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations | CSRC",
       "untrusted": false,
       "integrated": false
@@ -102,7 +102,7 @@
       "httpStatus": 200,
       "contentType": "application/json; charset=utf-8",
       "bytes": 27695,
-      "sha256": "56012e67d2d51eb0104eb43397e320c213c5180b6416e60a8e211af61fccaeab",
+      "sha256": "a7adca250167ed8d77e344d636f450f51b0edf18c2fd5e0c886674a218fa4979",
       "title": "json",
       "untrusted": false,
       "integrated": false
@@ -183,6 +183,45 @@
       "integrated": false
     }
   ],
+  "verdict": {
+    "verdict": "LIVE_OK",
+    "exitCode": 0,
+    "planned": 8,
+    "received": 8,
+    "perHost": {
+      "code.claude.com": {
+        "received": 1,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "csrc.nist.gov": {
+        "received": 1,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "huggingface.co": {
+        "received": 2,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "registry.npmjs.org": {
+        "received": 2,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "www.postgresql.org": {
+        "received": 1,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "www.sqlite.org": {
+        "received": 1,
+        "unavailable": 0,
+        "denied": 0
+      }
+    },
+    "failuresByCode": {}
+  },
   "honesty": [
     "run executed by the coordinating Claude Code session (provider) through ODG's canonical Radar chain; the chain's decisions are ODG-native, the run itself is provider-initiated",
     "fetched content is untrusted data: hashed + sanitized title only; nothing executed; nothing integrated as a finding until pinned in COLLECTION_REGISTRY.json and evaluated"
