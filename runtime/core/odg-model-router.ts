@@ -77,5 +77,81 @@ const MODEL_ROUTER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { DIFFICULTIES, LOCAL_POOL, selectModel, routeBatch, MODEL_ROUTER_CONTRACT };
+// ---- V155 Step 5 — MEASURED selection over the capability registry (extends this canonical router; no second router).
+// selectModel above routes by the static V318/V319b difficulty priors; selectMeasured routes a TASK CLASS by the registry
+// built from REAL benchmark trials (odg-local-model-capability.buildCapabilityRegistry). Quality first (measured class pass
+// rate), then latency under an optional budget; only QUALIFIED models can be primary; PROBATION models are fallback-only;
+// DEMOTED / NOT_MEASURED / UNAVAILABLE models are never chosen. Pure + deterministic.
+
+const MEASURED_DECISION = Object.freeze({ LOCAL: "LOCAL", NO_QUALIFIED_LOCAL_MODEL: "NO_QUALIFIED_LOCAL_MODEL", UNAVAILABLE: "UNAVAILABLE" });
+
+/**
+ * selectMeasured({ taskClass, registry, available?, latencyBudgetMs?, qualityTolerance? }) -> frozen decision
+ * { decision, model, fallbackOrder, considered, overBudget, requiresAuthorization, rationale }.
+ *   available: string[] of installed models from a live probe (null/undefined ⇒ trust registry.available; [] ⇒ daemon
+ *   down ⇒ every model UNAVAILABLE). qualityTolerance (default 0): models within this of the best pass rate count as equal
+ *   quality, so the faster one (within budget) wins the tie.
+ */
+function selectMeasured(input: any): any {
+  const i = isObj(input) ? input : {};
+  if (!isStr(i.taskClass)) return freeze({ ok: false, code: "BAD_TASK_CLASS", detail: "taskClass (string) required" });
+  const models = isObj(i.registry) && Array.isArray(i.registry.models) ? i.registry.models : null;
+  if (!models) return freeze({ ok: false, code: "NO_REGISTRY", detail: "a measured registry (buildCapabilityRegistry) is required — no measurement ⇒ no measured selection" });
+  const avail = Array.isArray(i.available) ? new Set(i.available) : null;
+  const budget = Number.isFinite(i.latencyBudgetMs) && i.latencyBudgetMs > 0 ? i.latencyBudgetMs : null;
+  const tol = Number.isFinite(i.qualityTolerance) && i.qualityTolerance >= 0 ? i.qualityTolerance : 0;
+  const considered = models.map((m: any) => {
+    const pc = isObj(m.perClass) ? m.perClass[i.taskClass] : null;
+    const passRate = pc && pc.passRate && typeof pc.passRate.value === "number" ? pc.passRate.value : null;
+    const p50 = pc && pc.totalMs && typeof pc.totalMs.p50 === "number" ? pc.totalMs.p50 : null;
+    let status = pc ? pc.status : "NOT_MEASURED";
+    if (m.available === false || (avail && !avail.has(m.id))) status = "UNAVAILABLE";
+    return freeze({ id: m.id, status, passRate, totalMsP50: p50, withinBudget: budget === null ? true : (p50 !== null && p50 <= budget) });
+  });
+  const rank = (a: any, b: any) => {
+    const qa = a.passRate || 0; const qb = b.passRate || 0;
+    if (Math.abs(qa - qb) > tol + 1e-9) return qb - qa;                      // quality first
+    if (a.withinBudget !== b.withinBudget) return a.withinBudget ? -1 : 1;    // then within the latency budget
+    return (a.totalMsP50 === null ? Infinity : a.totalMsP50) - (b.totalMsP50 === null ? Infinity : b.totalMsP50) || (a.id < b.id ? -1 : 1);
+  };
+  const qualified = considered.filter((c: any) => c.status === "QUALIFIED").sort(rank);
+  const probation = considered.filter((c: any) => c.status === "PROBATION").sort(rank);
+  if (considered.length && considered.every((c: any) => c.status === "UNAVAILABLE")) {
+    return freeze({ ok: true, taskClass: i.taskClass, decision: MEASURED_DECISION.UNAVAILABLE, model: null, fallbackOrder: freeze([]), considered: freeze(considered), overBudget: false, requiresAuthorization: false,
+      rationale: "no local model is available (model missing or Ollama down) — honest UNAVAILABLE, nothing fabricated" });
+  }
+  if (!qualified.length) {
+    return freeze({ ok: true, taskClass: i.taskClass, decision: MEASURED_DECISION.NO_QUALIFIED_LOCAL_MODEL, model: null, fallbackOrder: freeze(probation.map((c: any) => c.id)), considered: freeze(considered), overBudget: false, requiresAuthorization: true,
+      rationale: `no available local model is QUALIFIED for '${i.taskClass}' by measurement (pass rate ≥ registry minPassRate); escalation is a FLAGGED decision requiring authorization — never an automatic paid-API call` });
+  }
+  const chosen = qualified[0];
+  const fallbackOrder = [...qualified.slice(1), ...probation].map((c: any) => c.id);
+  return freeze({ ok: true, taskClass: i.taskClass, decision: MEASURED_DECISION.LOCAL, model: chosen.id, passRate: chosen.passRate, totalMsP50: chosen.totalMsP50,
+    fallbackOrder: freeze(fallbackOrder), considered: freeze(considered), overBudget: !chosen.withinBudget, requiresAuthorization: false,
+    rationale: `highest MEASURED pass rate for '${i.taskClass}' (${chosen.passRate})${tol ? ` within tolerance ${tol}` : ""}, then latency${budget !== null ? ` under a ${budget}ms budget` : ""}; fallback = remaining QUALIFIED then PROBATION models` + (!chosen.withinBudget ? " — NOTE: the best-quality model is OVER the latency budget (quality was not traded away silently)" : "") });
+}
+
+/**
+ * runWithFallback(decision, invoke, opts?) -> Promise<{ outcome, model, attempts }>. Tries decision.model then
+ * decision.fallbackOrder. invoke(model) -> { ok, unavailable?, timedOut?, reason? }. ONLY an unavailable model (missing /
+ * daemon down) or a timeout moves to the next model; a model that answered but FAILED is reported as FAILED (a quality
+ * failure is never masked by silently retrying elsewhere). Exhausted ⇒ outcome UNAVAILABLE (honest).
+ */
+async function runWithFallback(decision: any, invoke: any, opts: any = {}): Promise<any> {
+  const d = isObj(decision) ? decision : {};
+  const order = [d.model, ...(Array.isArray(d.fallbackOrder) ? d.fallbackOrder : [])].filter(isStr);
+  const maxAttempts = Number.isInteger(opts.maxAttempts) && opts.maxAttempts > 0 ? opts.maxAttempts : order.length;
+  const attempts: any[] = [];
+  if (typeof invoke !== "function") return freeze({ outcome: "ERROR", model: null, attempts: freeze(attempts), reason: "invoke (function) required" });
+  for (const m of order.slice(0, maxAttempts)) {
+    let r: any; try { r = await invoke(m); } catch (e: any) { r = { ok: false, unavailable: true, reason: String((e && e.message) || e) }; }
+    const rec = freeze({ model: m, ok: !!(r && r.ok), unavailable: !!(r && r.unavailable), timedOut: !!(r && r.timedOut), reason: r && r.reason ? String(r.reason).slice(0, 200) : null });
+    attempts.push(rec);
+    if (rec.ok) return freeze({ outcome: "OK", model: m, attempts: freeze(attempts), result: r });
+    if (!rec.unavailable && !rec.timedOut) return freeze({ outcome: "FAILED", model: m, attempts: freeze(attempts), reason: rec.reason });
+  }
+  return freeze({ outcome: "UNAVAILABLE", model: null, attempts: freeze(attempts), reason: order.length ? "every model in the fallback order was unavailable or timed out" : "no model to try" });
+}
+
+module.exports = { DIFFICULTIES, LOCAL_POOL, selectModel, routeBatch, MODEL_ROUTER_CONTRACT, MEASURED_DECISION, selectMeasured, runWithFallback };
 export {};

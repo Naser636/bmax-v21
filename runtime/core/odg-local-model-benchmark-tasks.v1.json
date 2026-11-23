@@ -1,0 +1,151 @@
+{
+  "schema": "ODG_LOCAL_MODEL_BENCHMARK_TASKSET",
+  "version": "V155-TASKSET-1",
+  "createdFor": "CTO directive V15.5 Step 5 — measured local-model capability registry",
+  "graders": {
+    "hidden-test": "extract code (fence-stripped) -> compile check (JS: vm.Script parse only; TS: full typecheck via the typescript compiler API) -> run the HIDDEN test against the candidate inside the provider-sandbox bubblewrap profile (no network, cleared env)",
+    "refactor": "hidden-test + the candidate must contain no for/while loop (comments stripped)",
+    "test-writing": "run the candidate tests against the reference implementation (must pass with >= minAssertions assert calls) AND against every mutant (each must FAIL) — mutation-killing, not self-report",
+    "json-equal": "fence-stripped output parses as a JSON object and deep-equals `expected` (key order ignored)",
+    "strict-schema": "RAW output (NO fence stripping) parses as JSON and matches the schema exactly (keys, enums, integer, string arrays) = contract adherence; pass additionally requires the values to equal `expected`",
+    "json-field": "fence-stripped output parses as a JSON object and `field` equals `expectedValue`"
+  },
+  "tasks": [
+    {
+      "id": "impl-chunk",
+      "taskClass": "implement",
+      "lang": "js",
+      "grader": "hidden-test",
+      "fnName": "chunk",
+      "prompt": "Write a plain JavaScript (CommonJS, no imports) function `chunk(arr, size)` that splits the array `arr` into consecutive sub-arrays of length `size` (the last one may be shorter). It must not mutate `arr`. If `size` is not a positive integer, throw a RangeError. Output ONLY the code, no explanation.",
+      "hiddenTest": "const a=[1,2,3,4,5];\nassert.deepStrictEqual(fn(a,2),[[1,2],[3,4],[5]]);\nassert.deepStrictEqual(a,[1,2,3,4,5]);\nassert.deepStrictEqual(fn([],3),[]);\nassert.deepStrictEqual(fn([1,2,3],3),[[1,2,3]]);\nassert.deepStrictEqual(fn([1,2],5),[[1,2]]);\nassert.throws(()=>fn([1],0),RangeError);\nassert.throws(()=>fn([1],1.5),RangeError);"
+    },
+    {
+      "id": "impl-ts-parse-range",
+      "taskClass": "implement",
+      "lang": "ts",
+      "grader": "hidden-test",
+      "fnName": "parseRange",
+      "prompt": "Write a TypeScript function `export function parseRange(spec: string): number[]` that parses a page-range spec like \"1-3,5,8-9\" into a sorted array of unique integers [1,2,3,5,8,9]. Whitespace around items is allowed. An empty string returns []. Any malformed item (e.g. \"a\", \"3-1\", \"1-\") must throw an Error. Use explicit types; no `any`. Output ONLY the code, no explanation.",
+      "hiddenTest": "assert.deepStrictEqual(fn('1-3,5,8-9'),[1,2,3,5,8,9]);\nassert.deepStrictEqual(fn(' 2 , 1 '),[1,2]);\nassert.deepStrictEqual(fn('4,4,2-3'),[2,3,4]);\nassert.deepStrictEqual(fn(''),[]);\nassert.throws(()=>fn('a'));\nassert.throws(()=>fn('3-1'));\nassert.throws(()=>fn('1-'));"
+    },
+    {
+      "id": "bugfix-median",
+      "taskClass": "bugfix",
+      "lang": "js",
+      "grader": "hidden-test",
+      "fnName": "median",
+      "prompt": "This JavaScript function should return the median of an array of numbers without mutating the input, and return null for an empty array, but it is buggy:\n\nfunction median(xs) {\n  xs.sort();\n  const mid = xs.length / 2;\n  return xs[mid];\n}\n\nReturn the corrected function `median(xs)` (plain JavaScript, no imports). Output ONLY the code, no explanation.",
+      "hiddenTest": "const a=[10,2,33];\nassert.strictEqual(fn(a),10);\nassert.deepStrictEqual(a,[10,2,33]);\nassert.strictEqual(fn([4,1,3,2]),2.5);\nassert.strictEqual(fn([5]),5);\nassert.strictEqual(fn([]),null);\nassert.strictEqual(fn([100,9,20,3]),14.5);"
+    },
+    {
+      "id": "repair-total-length",
+      "taskClass": "repair",
+      "lang": "js",
+      "grader": "hidden-test",
+      "fnName": "totalLength",
+      "prompt": "Running this JavaScript function:\n\nfunction totalLength(items) {\n  let total = 0;\n  for (let i = 0; i <= items.length; i++) total += items[i].length;\n  return total;\n}\n\nwith totalLength([\"ab\", \"c\"]) fails with:\n\nTypeError: Cannot read properties of undefined (reading 'length')\n    at totalLength (repl:3:58)\n\nFix the bug. The function must return the sum of the string lengths (0 for an empty array). Return the corrected function `totalLength(items)` (plain JavaScript). Output ONLY the code, no explanation.",
+      "hiddenTest": "assert.strictEqual(fn(['ab','c']),3);\nassert.strictEqual(fn([]),0);\nassert.strictEqual(fn(['hello']),5);\nassert.strictEqual(fn(['','x','yz']),3);"
+    },
+    {
+      "id": "repair-parse-config",
+      "taskClass": "repair",
+      "lang": "js",
+      "grader": "hidden-test",
+      "fnName": "parseConfig",
+      "prompt": "This JavaScript function must return the `port` number from a JSON config string, defaulting to 8080 when the text is empty, is not valid JSON, or has no numeric `port`:\n\nfunction parseConfig(text) {\n  return JSON.parse(text).port || 8080;\n}\n\nThe failing test is:\n\nassert.strictEqual(parseConfig(\"\"), 8080);\n// SyntaxError: Unexpected end of JSON input\n\nalso parseConfig('{\"port\":\"abc\"}') must return 8080 and parseConfig('{\"port\":0}') must return 0. Return the corrected function `parseConfig(text)` (plain JavaScript). Output ONLY the code, no explanation.",
+      "hiddenTest": "assert.strictEqual(fn(''),8080);\nassert.strictEqual(fn('not json'),8080);\nassert.strictEqual(fn('{\"port\":3000}'),3000);\nassert.strictEqual(fn('{\"port\":0}'),0);\nassert.strictEqual(fn('{\"port\":\"abc\"}'),8080);\nassert.strictEqual(fn('{}'),8080);\nassert.strictEqual(fn('null'),8080);"
+    },
+    {
+      "id": "refactor-even-squares",
+      "taskClass": "refactor",
+      "lang": "js",
+      "grader": "refactor",
+      "fnName": "sumEvenSquares",
+      "prompt": "Refactor this JavaScript function so it uses NO `for` or `while` loops (use array methods such as filter/map/reduce instead) while keeping exactly the same behaviour, name and signature:\n\nfunction sumEvenSquares(nums) {\n  let s = 0;\n  for (let i = 0; i < nums.length; i++) {\n    if (nums[i] % 2 === 0) s += nums[i] * nums[i];\n  }\n  return s;\n}\n\nOutput ONLY the code, no explanation.",
+      "hiddenTest": "assert.strictEqual(fn([1,2,3,4]),20);\nassert.strictEqual(fn([]),0);\nassert.strictEqual(fn([-2,5]),4);\nassert.strictEqual(fn([0,7]),0);\nassert.strictEqual(fn([6]),36);"
+    },
+    {
+      "id": "write-tests-slugify",
+      "taskClass": "test-writing",
+      "lang": "js",
+      "grader": "test-writing",
+      "fnName": "slugify",
+      "prompt": "A JavaScript function `slugify(s)` is ALREADY defined and in scope (do not define or require it). Spec: it lowercases the string, trims it, replaces every run of characters that are not a-z or 0-9 with a single hyphen, and removes leading/trailing hyphens; e.g. slugify(\"  Hello, World! \") === \"hello-world\" and slugify(\"A--B\") === \"a-b\". Write at least 4 test assertions for it using Node's built-in `assert` module (`const assert = require(\"assert\");`), as a plain script (no test framework). Output ONLY the code, no explanation.",
+      "referenceImpl": "function slugify(s){ return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }",
+      "mutants": [
+        "function slugify(s){ return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g,'-'); }",
+        "function slugify(s){ return String(s).trim().replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-+|-+$/g,''); }",
+        "function slugify(s){ return String(s).toLowerCase().trim().replace(/[^a-z0-9]/g,'-').replace(/^-+|-+$/g,''); }"
+      ],
+      "minAssertions": 3
+    },
+    {
+      "id": "extract-invoice",
+      "taskClass": "extract",
+      "lang": "json",
+      "grader": "json-equal",
+      "prompt": "Extract the fields from this text into a JSON object with exactly the keys invoice (string), vendor (string), total (number), currency (ISO 4217 string), due (YYYY-MM-DD string).\n\nTEXT: \"Facture INV-2041 emise par ACME SARL. Montant total : 1250.50 EUR, a regler avant le 15/12/2026.\"\n\nOutput ONLY the JSON object.",
+      "expected": {
+        "invoice": "INV-2041",
+        "vendor": "ACME SARL",
+        "total": 1250.5,
+        "currency": "EUR",
+        "due": "2026-12-15"
+      }
+    },
+    {
+      "id": "strict-status-contract",
+      "taskClass": "strict-contract",
+      "lang": "json",
+      "grader": "strict-schema",
+      "prompt": "Return EXACTLY one JSON object and NOTHING else (no markdown fences, no prose, no trailing text). Schema: {\"status\": one of \"ok\"|\"degraded\"|\"down\", \"failing\": integer >= 0, \"services\": array of the failing service names as strings, sorted alphabetically}. No other keys are allowed. Situation: services web, db and api were checked; web is healthy, db and api are failing; at least one service is healthy.",
+      "schema": {
+        "keys": [
+          "failing",
+          "services",
+          "status"
+        ],
+        "enums": {
+          "status": [
+            "ok",
+            "degraded",
+            "down"
+          ]
+        },
+        "integer": [
+          "failing"
+        ],
+        "stringArray": [
+          "services"
+        ]
+      },
+      "expected": {
+        "status": "degraded",
+        "failing": 2,
+        "services": [
+          "api",
+          "db"
+        ]
+      }
+    },
+    {
+      "id": "judgment-risk-drop-table",
+      "taskClass": "judgment",
+      "lang": "json",
+      "grader": "json-field",
+      "prompt": "Classify the operational risk of this change as HIGH or LOW. Answer with ONLY a JSON object {\"risk\": \"HIGH\" | \"LOW\", \"reason\": string}.\n\nCHANGE: a production database migration that runs `DROP TABLE customers;` with no backup step.",
+      "field": "risk",
+      "expectedValue": "HIGH"
+    },
+    {
+      "id": "judgment-risk-readme-typo",
+      "taskClass": "judgment",
+      "lang": "json",
+      "grader": "json-field",
+      "prompt": "Classify the operational risk of this change as HIGH or LOW. Answer with ONLY a JSON object {\"risk\": \"HIGH\" | \"LOW\", \"reason\": string}.\n\nCHANGE: fix a spelling mistake in README.md (documentation only, no code change).",
+      "field": "risk",
+      "expectedValue": "LOW"
+    }
+  ]
+}
