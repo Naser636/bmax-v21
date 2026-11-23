@@ -29,6 +29,18 @@ const COMP = require("./odg-mission-completeness.js"); // V327 §6/§9: pre-flig
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 
+// V15.9 §6 — mission type → V155 benchmark task class. ONLY unambiguous code-build mappings (the cycle builds code via
+// native-project-builder): the mission type must NAME the benchmark class (or its literal alias). Anything else
+// (e.g. "arith", self-calibration keys, judgment/extract/strict-contract which are not code builds) ⇒ UNMAPPED ⇒ no
+// taskClass is passed ⇒ the calibrated policy is used unchanged.
+const MISSION_TYPE_TO_TASK_CLASS = Object.freeze({
+  "implement": "implement", "bugfix": "bugfix", "bug-fix": "bugfix", "repair": "repair",
+  "refactor": "refactor", "test-writing": "test-writing", "write-tests": "test-writing",
+} as Record<string, string>);
+function taskClassForMissionType(type: any): string | null {
+  return typeof type === "string" && Object.prototype.hasOwnProperty.call(MISSION_TYPE_TO_TASK_CLASS, type) ? MISSION_TYPE_TO_TASK_CLASS[type] : null;
+}
+
 /** selectIntelligently(register, history, opts) — calibrated-aware selection: REUSES routing (#771) which adjusts
  *  priorities then defers to campaign-controller.selectNextLot. Returns the routing result (baseline vs routed pick). */
 function selectIntelligently(register: any, history: any, opts: any = {}): any {
@@ -84,9 +96,13 @@ async function runIntelligentCycle(opts: any): Promise<any> {
     } else selfCalibrated = freeze({ key: bf.key, confidence: bf.confidence, refused: true, reason: bf.reason });
   }
 
-  // (1) resource sizing (policy) + (2) build seam honoring it
-  const policy = POLICY.chooseExecutionPolicy(policyType, policyHistory);
-  const seam = SEAM.makePolicyBuildSeam({ history: policyHistory, generatorFor: o.generatorFor, taskTypeOf: () => policyType, buildProject: deps.buildProject });
+  // (1) resource sizing (policy) + (2) build seam honoring it. V15.9: when the caller supplies a measured registry
+  // envelope (o.measured, from POLICY.loadMeasuredRegistry) the policy consults it for the MAPPED task class only
+  // (monotone-safe overlay: raise model / flag escalate / provenance). Not supplied ⇒ the exact pre-V15.9 call.
+  const taskClass = taskClassForMissionType(m.type);
+  const policyOpts: any = o.measured !== undefined ? (taskClass ? { taskClass, measured: o.measured, now: o.now } : { measured: o.measured, now: o.now }) : undefined;
+  const policy = policyOpts ? POLICY.chooseExecutionPolicy(policyType, policyHistory, policyOpts) : POLICY.chooseExecutionPolicy(policyType, policyHistory);
+  const seam = SEAM.makePolicyBuildSeam({ history: policyHistory, generatorFor: o.generatorFor, taskTypeOf: () => policyType, buildProject: deps.buildProject, ...(policyOpts ? { policyOpts } : {}) });
 
   // (2) execute via the EXISTING native-engineering-cycle (explore mode, externally authorized) through the policy seam
   let cyc: any;
@@ -111,7 +127,7 @@ async function runIntelligentCycle(opts: any): Promise<any> {
 
   return freeze({
     ok: true, mission: m.id,
-    policy: freeze({ model: policy.model, maxRepair: policy.maxRepair, tier: policy.tier }),
+    policy: freeze({ model: policy.model, maxRepair: policy.maxRepair, tier: policy.tier, ...(policy.measured ? { escalateIfStillFails: policy.escalateIfStillFails, measured: policy.measured } : {}) }),
     selfCalibrated,   // V327 §3: the store-derived belief that drove the policy (or the refusal), or null if explicit history was used
     behavioral,       // V327 §2: the behavioral trend of the self-calibrated class (improving/plateau/regressing + obsolete flag), or null
     generalization,   // V327 §6: whether the belief's evidence was diverse enough to apply here (OVERFIT ⇒ probed instead), or null
@@ -136,9 +152,10 @@ const INTELLIGENT_NATIVE_CYCLE_CONTRACT = Object.freeze({
     "MISSING-INFORMATION PRE-FLIGHT (§6/§9): a structurally UNDERSPECIFIED spec (no buildable architecture / no acceptance criterion, via odg-mission-completeness) is detected BEFORE any attempt and returned as UNDERSPECIFIED (clarification needed) — never a wasted local build, never miscounted as a capability failure",
     "BEHAVIORAL OBSOLESCENCE (§2): a self-calibrated class that is REGRESSING / plateau-low / has a recurring-failure signature (odg-behavioral-improvement) escalates even when the point belief is not low — more local probing won't help; reuses #778 unchanged, delegation stays evidence-gated",
     "all execution is INJECTED (generatorFor/buildProject) ⇒ deterministic + testable without a live model; no fabricated native success",
+    "V15.9 MEASURED POLICY: with an opt-in measured registry envelope (o.measured), the mission type is mapped to a V155 benchmark class ONLY when it names one (MISSION_TYPE_TO_TASK_CLASS); unmapped ⇒ no taskClass ⇒ calibrated policy unchanged (NOT_MEASURED recorded); the overlay is monotone-safe (never a smaller model)",
     "no new primitive/registry/orchestrator; consumes the previously-orphan built capabilities as their real consumer (§7)",
   ]),
 });
 
-module.exports = { selectIntelligently, runIntelligentCycle, INTELLIGENT_NATIVE_CYCLE_CONTRACT };
+module.exports = { selectIntelligently, runIntelligentCycle, INTELLIGENT_NATIVE_CYCLE_CONTRACT, MISSION_TYPE_TO_TASK_CLASS, taskClassForMissionType };
 export {};

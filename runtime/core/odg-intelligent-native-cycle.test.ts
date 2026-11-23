@@ -79,7 +79,26 @@ async function main(): Promise<void> {
     IC.INTELLIGENT_NATIVE_CYCLE_CONTRACT.reuses.some((s: string) => /#771/.test(s)) &&
     IC.INTELLIGENT_NATIVE_CYCLE_CONTRACT.reuses.some((s: string) => /#778/.test(s)));
 
-  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-intelligent-native-cycle (V327 §5/§7: the single REAL consumer of routing#771/policy#774/seam#776/decomposition#775/escalation#778 over native-engineering-cycle; select→execute[policy seam]→decompose-if-hard→escalate-only-if-calibrated-low; ACCEPTED⇒cheap/no-escalate, low+fail⇒7b/3+provider-delegation, thin+fail⇒probe, decomp-solved⇒no-escalate; independent verifier arbitrates; no 2nd orchestrator; fail-closed/frozen)" : failures + " FAIL"}\n`);
+  // ---- V15.9 §6 — measured registry wired into the REAL caller (opt-in, mapped mission types only) -------------------
+  const POL = require("./odg-local-model-execution-policy.js");
+  const ENV = POL.loadMeasuredRegistry(); const NOW = Date.parse(ENV.generatedAt) + 3600 * 1000;
+  const seen: string[] = [];
+  const genSpy = (model: string) => { seen.push(model); return () => ({ ok: true, content: "module.exports=()=>1" }); };
+  const bp = async () => ({ accepted: true, verified: true });
+  const legacy = await IC.runIntelligentCycle({ mission: { ...mission, type: "bugfix" }, history: [], generatorFor: genFor, deps: { buildProject: bp } });
+  check("no measured option ⇒ legacy policy object unchanged (3b PROBE, no measured/escalate keys)", JSON.stringify(legacy.policy) === JSON.stringify({ model: "qwen2.5-coder:3b", maxRepair: 1, tier: "PROBE" }));
+  seen.length = 0;
+  const mb = await IC.runIntelligentCycle({ mission: { ...mission, type: "bugfix" }, history: [], generatorFor: genSpy, measured: ENV, now: NOW, deps: { buildProject: async (_s: any, d: any) => { d.generateFile(); return { accepted: true, verified: true }; } } });
+  check("mapped 'bugfix' + measured ⇒ policy raised to 7b AND the build seam actually generates with 7b (provenance attached)", mb.policy.model === "qwen2.5-coder:7b" && mb.policy.measured.raised === true && mb.policy.measured.taskClass === "bugfix" && seen.length > 0 && seen.every((x) => x === "qwen2.5-coder:7b"));
+  const mi = await IC.runIntelligentCycle({ mission: { ...mission, type: "implement" }, history: [], generatorFor: genFor, measured: ENV, now: NOW, deps: { buildProject: async () => ({ accepted: false }) } });
+  check("mapped 'implement' (NO_QUALIFIED) + local failure ⇒ escalate flag set ⇒ evidence-gated delegation", mi.policy.escalateIfStillFails === true && mi.escalation.escalate === true && mi.escalation.delegationState === "CREATED");
+  const mu = await IC.runIntelligentCycle({ mission: { ...mission, type: "arith" }, history: [], generatorFor: genFor, measured: ENV, now: NOW, deps: { buildProject: bp } });
+  check("UNMAPPED mission type ('arith') ⇒ no taskClass passed ⇒ model unchanged + NOT_MEASURED recorded", mu.policy.model === "qwen2.5-coder:3b" && mu.policy.measured.status === "NOT_MEASURED" && /no taskClass/.test(mu.policy.measured.reason));
+  const mx = await IC.runIntelligentCycle({ mission: { ...mission, type: "bugfix" }, history: [], generatorFor: genFor, measured: ENV, now: NOW + 40 * 86400000, deps: { buildProject: bp } });
+  check("EXPIRED measured registry in the caller ⇒ calibrated model kept (fail-closed)", mx.policy.model === "qwen2.5-coder:3b" && mx.policy.measured.status === "NOT_MEASURED");
+  check("mapping is explicit + unambiguous (only code-build classes; judgment/extract/strict-contract unmapped)", IC.taskClassForMissionType("bug-fix") === "bugfix" && IC.taskClassForMissionType("write-tests") === "test-writing" && IC.taskClassForMissionType("judgment") === null && IC.taskClassForMissionType("extract") === null && IC.taskClassForMissionType(undefined) === null && IC.taskClassForMissionType("toString") === null);
+
+  process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-intelligent-native-cycle (V327 §5/§7: the single REAL consumer of routing#771/policy#774/seam#776/decomposition#775/escalation#778 over native-engineering-cycle; select→execute[policy seam]→decompose-if-hard→escalate-only-if-calibrated-low; ACCEPTED⇒cheap/no-escalate, low+fail⇒7b/3+provider-delegation, thin+fail⇒probe, decomp-solved⇒no-escalate; independent verifier arbitrates; no 2nd orchestrator; fail-closed/frozen; V15.9 measured registry wired for mapped mission types, opt-in, monotone)" : failures + " FAIL"}\n`);
   process.exit(failures === 0 ? 0 : 1);
 }
 main();
