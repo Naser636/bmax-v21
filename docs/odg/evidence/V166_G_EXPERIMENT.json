@@ -1,0 +1,406 @@
+{
+  "schema": "odg-scenario-experiment/1",
+  "scenario": "G",
+  "step": "RUN_CONTROLLED_EXPERIMENTS",
+  "contract": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#G",
+  "contractSha256": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd",
+  "authorization": {
+    "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+    "authorizedSteps": [
+      "REVISE_CONTRACT",
+      "INSPECT_REVISED_CONTRACT",
+      "RUN_CONTROLLED_EXPERIMENTS"
+    ],
+    "derivedSteps": [
+      {
+        "step": "RUN_CONTROLLED_EXPERIMENTS",
+        "rule": "R4",
+        "coveredBy": "OWNER — docs/odg/V165_OWNER_AUTHORIZATION.json#missionG (executionCondition: controlled experiments only after an independent inspection ACCEPT of the revised contract is recorded (owner: « lancer les expériences contrôlées après validation de ce contrat »); until then state stays AUTHORIZED_FOR_REVISION, which no execution gate (odg-go declaredAuthorization, strategy-mode M0) treats as AUTHORIZED)"
+      }
+    ],
+    "reason": "inspection ACCEPT bound to contract ac79b1744bf4 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "selfAuthorized": false,
+    "inspection": {
+      "path": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
+      "verdict": "ACCEPT",
+      "inspectedHeadSha": "83427f936423c2bb49d0af0fcbd463f7ced144ae",
+      "inspectedPr": 933
+    },
+    "note": "authorized automatically by odg-authorization-scope R4 under the owner's V165 authorization; the provider did not self-authorize"
+  },
+  "outcome": "PARTIAL",
+  "grade": {
+    "outcome": "PARTIAL",
+    "passConditions": {
+      "delta0_ge_0_05": true,
+      "ci95Low_delta0_gt_0": true,
+      "delta1_ge_minus_0_02": false
+    },
+    "because": [
+      "PASS condition not met: delta1_ge_minus_0_02"
+    ],
+    "rule": "first matching of NOT_MEASURED, PASS, PARTIAL, FAIL per WORK_ITEM_CONTRACT.preRegistration.thresholds (mechanical; no re-tuning)",
+    "gradedBy": "pre-registered rule only — NOT the independent VALIDATE_CRITERIA step (pending)"
+  },
+  "inputs": {
+    "contracts": {
+      "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+      "sha256File": "d8b57d497749a9e699658b9015601b9551b669d05a916fecee3dcac0fead0897"
+    },
+    "inspection": {
+      "path": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
+      "sha256File": "d606c6e296a759fd291028faf76833ff1828d23b3ec87570455f6af1da664534"
+    },
+    "dataset": {
+      "path": "docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json",
+      "sha256": "09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea",
+      "pinned": "09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea",
+      "matches": true,
+      "rawRows": 400,
+      "eligibleRows": 400,
+      "droppedRows": 0,
+      "rowsWithNegativeMinutes": 0
+    },
+    "collection": {
+      "path": "docs/odg/evidence/V160_PRACTICES_COLLECTION.json",
+      "sha256": "749af2eacc3193adc253cdc514c4316de9b04e5d174f1c77446a603b78412b13"
+    },
+    "registry": {
+      "path": "docs/odg/evidence/COLLECTION_REGISTRY.json",
+      "sha256": "c4d45b97a4f43fa70c3e284b596d941c713bdd6a42ec2b35300b79575e04889c"
+    }
+  },
+  "preRegistration": {
+    "knowledgeItem": "G_SMALL_SIZE",
+    "T_K": 1000,
+    "T_secondary": 100,
+    "highIterationMinCommits": 2,
+    "dataset": "docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json",
+    "datasetSha256": "09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea",
+    "trainN": 200,
+    "testN": 200,
+    "resamples": 1000,
+    "bootstrapSeed": 20261124,
+    "secondarySplitSeed": 20261125,
+    "minClassInTest": 20,
+    "pass": {
+      "minDelta0": 0.05,
+      "ciLowDelta0GreaterThan": 0,
+      "minDelta1": -0.02
+    }
+  },
+  "useAt": "2026-11-23T21:30:00Z",
+  "C1": {
+    "ok": true,
+    "refusal": null,
+    "collection": "docs/odg/evidence/V160_PRACTICES_COLLECTION.json",
+    "registry": "docs/odg/evidence/COLLECTION_REGISTRY.json",
+    "collectionSha256": "749af2eacc3193adc253cdc514c4316de9b04e5d174f1c77446a603b78412b13",
+    "registryPins": [
+      "2675846657b7c4c528ec7256f398f1b934f288fcec1087c3ed57c8bd7c170f49"
+    ],
+    "attested": true,
+    "useAt": "2026-11-23T21:30:00.000Z",
+    "item": {
+      "id": "G_SMALL_SIZE",
+      "claim": "The page states: There are no hard and fast rules about how large is “too large.” 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large, but it’s up to the judgment of your reviewer.",
+      "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+      "epistemic": "SUPPORTED",
+      "isFact": false,
+      "provenance": "ASSESSMENT:kc:e353da6e42eab8d9",
+      "useAuthorization": "DESIGN_PROPOSAL",
+      "useReason": "within attested record + contract",
+      "validUntil": "2027-02-21T12:00:00.000Z",
+      "fresh": true,
+      "admissible": {
+        "trusted": false,
+        "verdict": "NOT_A_FACT",
+        "reasons": [
+          "only a REPO-authenticated CORROBORATED fact is admissible as fact"
+        ]
+      },
+      "presentedAs": "DESIGN_PROPOSAL (not a fact)"
+    },
+    "expectedAdmissibleVerdictForSupported": "NOT_A_FACT",
+    "admissibleVerdictAsExpected": true
+  },
+  "primary": {
+    "split": "sorted by PR number ascending; TRAIN = first 200, TEST = last 200",
+    "counts": {
+      "train": {
+        "n": 200,
+        "highIteration": 20,
+        "notHighIteration": 180,
+        "prRange": [
+          519,
+          719
+        ]
+      },
+      "test": {
+        "n": 200,
+        "highIteration": 100,
+        "notHighIteration": 100
+      }
+    },
+    "B1": {
+      "T_B": 144,
+      "trainBalancedAccuracy": 0.602778,
+      "candidates": 149
+    },
+    "test": {
+      "withKnowledge_T_K": {
+        "T": 1000,
+        "tp": 18,
+        "tn": 100,
+        "fp": 0,
+        "fn": 82,
+        "balancedAccuracy": 0.59,
+        "recall": 0.18,
+        "specificity": 1,
+        "mcc": 0.314485
+      },
+      "B0_noBound": {
+        "T": null,
+        "tp": 0,
+        "tn": 100,
+        "fp": 0,
+        "fn": 100,
+        "balancedAccuracy": 0.5,
+        "recall": 0,
+        "specificity": 1,
+        "mcc": null
+      },
+      "B1_dataOnly_T_B": {
+        "T": 144,
+        "tp": 81,
+        "tn": 74,
+        "fp": 26,
+        "fn": 19,
+        "balancedAccuracy": 0.775,
+        "recall": 0.81,
+        "specificity": 0.74,
+        "mcc": 0.551352
+      }
+    },
+    "delta0": 0.09,
+    "delta1": -0.185,
+    "bootstrap": {
+      "resamples": 1000,
+      "seed": 20261124,
+      "usedResamples": 1000,
+      "undefinedResamples": 0,
+      "ci95Delta0": [
+        0.054945,
+        0.128866
+      ],
+      "ci95Delta1": [
+        -0.252526,
+        -0.122596
+      ]
+    },
+    "secondary_reportOnly": {
+      "T100_highIteration": {
+        "T": 100,
+        "tp": 86,
+        "tn": 54,
+        "fp": 46,
+        "fn": 14,
+        "balancedAccuracy": 0.7,
+        "recall": 0.86,
+        "specificity": 0.54,
+        "mcc": 0.4222
+      },
+      "slowLabel": {
+        "definition": "open→merge minutes > median minutes of the TRAIN split",
+        "trainMedianMinutes": 5.9,
+        "T_K": {
+          "T": 1000,
+          "tp": 16,
+          "tn": 52,
+          "fp": 2,
+          "fn": 130,
+          "balancedAccuracy": 0.536276,
+          "recall": 0.109589,
+          "specificity": 0.962963,
+          "mcc": 0.112551
+        },
+        "B0": {
+          "T": null,
+          "tp": 0,
+          "tn": 54,
+          "fp": 0,
+          "fn": 146,
+          "balancedAccuracy": 0.5,
+          "recall": 0,
+          "specificity": 1,
+          "mcc": null
+        },
+        "T100": {
+          "T": 100,
+          "tp": 109,
+          "tn": 31,
+          "fp": 23,
+          "fn": 37,
+          "balancedAccuracy": 0.660324,
+          "recall": 0.746575,
+          "specificity": 0.574074,
+          "mcc": 0.300512
+        }
+      }
+    }
+  },
+  "secondaryRobustness": {
+    "role": "REPORT-ONLY — cannot change the grade",
+    "split": "Fisher–Yates with LCG seed 20261125; first 200 = TRAIN, last 200 = TEST",
+    "counts": {
+      "train": {
+        "n": 200,
+        "highIteration": 60,
+        "notHighIteration": 140,
+        "prRange": [
+          521,
+          920
+        ]
+      },
+      "test": {
+        "n": 200,
+        "highIteration": 60,
+        "notHighIteration": 140
+      }
+    },
+    "B1": {
+      "T_B": 164,
+      "trainBalancedAccuracy": 0.690476,
+      "candidates": 162
+    },
+    "test": {
+      "withKnowledge_T_K": {
+        "T": 1000,
+        "tp": 10,
+        "tn": 140,
+        "fp": 0,
+        "fn": 50,
+        "balancedAccuracy": 0.583333,
+        "recall": 0.166667,
+        "specificity": 1,
+        "mcc": 0.350438
+      },
+      "B0_noBound": {
+        "T": null,
+        "tp": 0,
+        "tn": 140,
+        "fp": 0,
+        "fn": 60,
+        "balancedAccuracy": 0.5,
+        "recall": 0,
+        "specificity": 1,
+        "mcc": null
+      },
+      "B1_dataOnly_T_B": {
+        "T": 164,
+        "tp": 46,
+        "tn": 90,
+        "fp": 50,
+        "fn": 14,
+        "balancedAccuracy": 0.704762,
+        "recall": 0.766667,
+        "specificity": 0.642857,
+        "mcc": 0.375635
+      }
+    },
+    "delta0": 0.083333,
+    "delta1": -0.121429,
+    "bootstrap": {
+      "resamples": 1000,
+      "seed": 20261124,
+      "usedResamples": 1000,
+      "undefinedResamples": 0,
+      "ci95Delta0": [
+        0.040983,
+        0.136363
+      ],
+      "ci95Delta1": [
+        -0.190647,
+        -0.048314
+      ]
+    },
+    "secondary_reportOnly": {
+      "T100_highIteration": {
+        "T": 100,
+        "tp": 53,
+        "tn": 42,
+        "fp": 98,
+        "fn": 7,
+        "balancedAccuracy": 0.591666,
+        "recall": 0.883333,
+        "specificity": 0.3,
+        "mcc": 0.195342
+      },
+      "slowLabel": {
+        "definition": "open→merge minutes > median minutes of the TRAIN split",
+        "trainMedianMinutes": 6.2,
+        "T_K": {
+          "T": 1000,
+          "tp": 9,
+          "tn": 101,
+          "fp": 1,
+          "fn": 89,
+          "balancedAccuracy": 0.541017,
+          "recall": 0.091837,
+          "specificity": 0.990196,
+          "mcc": 0.188159
+        },
+        "B0": {
+          "T": null,
+          "tp": 0,
+          "tn": 102,
+          "fp": 0,
+          "fn": 98,
+          "balancedAccuracy": 0.5,
+          "recall": 0,
+          "specificity": 1,
+          "mcc": null
+        },
+        "T100": {
+          "T": 100,
+          "tp": 80,
+          "tn": 31,
+          "fp": 71,
+          "fn": 18,
+          "balancedAccuracy": 0.560125,
+          "recall": 0.816327,
+          "specificity": 0.303922,
+          "mcc": 0.139767
+        }
+      }
+    }
+  },
+  "priorResult": {
+    "path": "docs/odg/evidence/V160_SCENARIO_G.json",
+    "decision": "NOT_ADOPTED (borderline)",
+    "note": "untouched; not re-graded by this experiment"
+  },
+  "ambiguities": [
+    "useAt is not fixed by the pre-registration: pinned to the actual run instant 2026-11-23T21:30Z so --check is reproducible (the item's validUntil is 2027-02-21; any later real use must re-check)",
+    "row eligibility read literally ('finite additions/deletions/commits and createdAt/mergedAt'): the V160 runner's extra 'minutes ≥ 0' filter is NOT applied; rowsWithNegativeMinutes is recorded (minutes only feed the report-only secondary label)",
+    "'SPLIT_RECOMMENDED iff size > T' is strict for every T (T_K, T=100, every B1 candidate); B1 candidates are exactly the distinct TRAIN sizes (no extra 'flag nothing' candidate)",
+    "paired bootstrap: one LCG stream (seed 20261124) draws TEST.length indices per resample in order; Δ0/Δ1 computed on the same resample; a resample whose balanced accuracy is undefined (a class absent) is excluded and counted (undefinedResamples); percentiles as in odg-v160-scenario-g-run: sorted[floor(p·n)]",
+    "Δ values are differences of the 6-decimal balanced accuracies returned by odg-binary-classification-metrics, rounded to 6 decimals; thresholds compared on those values",
+    "Fisher–Yates direction for the secondary split: i from n−1 down to 1, j = floor(rnd()·(i+1)), applied to the PR-number-sorted rows; the secondary split refits B1 on its own TRAIN and reuses bootstrap seed 20261124",
+    "the secondary 'slow' label (minutes > TRAIN median) is evaluated on the primary split only, report-only"
+  ],
+  "honesty": [
+    "a validated RUN_CONTROLLED_EXPERIMENTS step is DONE with the recorded outcome, never upgraded; VALIDATE_CRITERIA (independent inspection of this result) is pending",
+    "the knowledge item is SUPPORTED (single official source), never a fact; a PASS would be a DESIGN_PROPOSAL on held-out ODG data, not causation",
+    "the held-out split is not blind to the analyst (the dataset was analysed by the V160 run; label counts per split were inspected before registration)",
+    "chronological split ⇒ distribution shift (TRAIN 20/200 vs TEST 100/200 HIGH_ITERATION); recorded, not corrected",
+    "commit count and minutes are confounded proxies (task difficulty, inspection loop)",
+    "provider (Claude Code) wrote this runner; attestation, use authorization, metrics and the grade rule are executed by ODG components / the frozen rule"
+  ],
+  "run": {
+    "head": "0a14976dc8359af53720903922a449f37f88b8eb",
+    "command": "npx tsx runtime/bin/odg-v166-scenario-g-experiment.ts --write",
+    "note": "head = HEAD at --write time (the commit carrying this record is its child)"
+  }
+}
