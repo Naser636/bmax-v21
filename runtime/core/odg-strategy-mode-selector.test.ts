@@ -36,22 +36,22 @@ const expired = SEL.selectStrategyMode({ id: "u4", taskClass: "bugfix", taskClas
 check("expired registry ⇒ NOT_MEASURED (fail-closed)", expired.parts[0].qualification === "NOT_MEASURED");
 
 // PROVIDER — class NO_QUALIFIED, single part
-const prov = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t" }, ctx);
-check("PROVIDER: implement (NO_QUALIFIED) single part ⇒ PROVIDER record", prov.mode === "PROVIDER" && prov.parts[0].qualification === "NOT_QUALIFIED_MEASURED");
+const prov = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t", observations: [fail("qwen2.5-coder:7b", 3)] }, ctx);
+check("PROVIDER: implement single part with an OBSERVED local failure ⇒ PROVIDER record", prov.mode === "PROVIDER" && prov.parts[0].qualification === "NOT_QUALIFIED_OBSERVED");
 check("PROVIDER: authorizationRequired + budgetRequired, NOT executable, never launched", prov.authorizationRequired && prov.budgetRequired && !prov.providerExecutable && prov.launchedBySelector === false && prov.perModeAssessment.PROVIDER.cost === "UNKNOWN");
 check("PROVIDER: one deny-by-default delegation record in CREATED state", prov.delegationRecords.length === 1 && prov.delegationRecords[0].state === "CREATED" && prov.delegationRecords[0].authority === "ODG");
 const budget = { currency: "EUR", ceiling: 5, enforcedBy: "test-ceiling", evidenceRef: "t" };
-const pb = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t" }, { ...ctx, providerBudget: budget });
+const pb = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t", observations: [fail("qwen2.5-coder:7b", 3)] }, { ...ctx, providerBudget: budget });
 check("budget alone ⇒ budgetRequired false but still NOT executable (no authorization)", pb.budgetRequired === false && pb.providerExecutable === false && pb.authorizationRequired === true);
-const pa = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t" }, { ...ctx, providerAuthorization: { by: "OWNER", missionId: "p1", scope: "PROVIDER_DELEGATION", evidenceRef: "t" } });
+const pa = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t", observations: [fail("qwen2.5-coder:7b", 3)] }, { ...ctx, providerAuthorization: { by: "OWNER", missionId: "p1", scope: "PROVIDER_DELEGATION", evidenceRef: "t" } });
 check("authorization alone ⇒ still NOT executable (budget UNKNOWN)", pa.providerExecutable === false && pa.budgetRequired === true);
-const pab = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t" }, { ...ctx, providerBudget: budget, providerAuthorization: { by: "OWNER", missionId: "p1", scope: "PROVIDER_DELEGATION", evidenceRef: "t" } });
+const pab = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t", observations: [fail("qwen2.5-coder:7b", 3)] }, { ...ctx, providerBudget: budget, providerAuthorization: { by: "OWNER", missionId: "p1", scope: "PROVIDER_DELEGATION", evidenceRef: "t" } });
 check("budget + bound OWNER authorization ⇒ providerExecutable, still launchedBySelector=false, record CREATED (not AUTHORIZED)", pab.providerExecutable === true && pab.launchedBySelector === false && pab.delegationRecords[0].state === "CREATED");
-const wrongAuth = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t" }, { ...ctx, providerBudget: budget, providerAuthorization: { by: "PROVIDER", missionId: "p1", scope: "PROVIDER_DELEGATION", evidenceRef: "t" } });
+const wrongAuth = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t", observations: [fail("qwen2.5-coder:7b", 3)] }, { ...ctx, providerBudget: budget, providerAuthorization: { by: "PROVIDER", missionId: "p1", scope: "PROVIDER_DELEGATION", evidenceRef: "t" } });
 check("provider self-authorization refused (by≠OWNER)", wrongAuth.providerExecutable === false);
-const otherMission = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t" }, { ...ctx, providerBudget: budget, providerAuthorization: { by: "OWNER", missionId: "p2", scope: "PROVIDER_DELEGATION", evidenceRef: "t" } });
+const otherMission = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t", observations: [fail("qwen2.5-coder:7b", 3)] }, { ...ctx, providerBudget: budget, providerAuthorization: { by: "OWNER", missionId: "p2", scope: "PROVIDER_DELEGATION", evidenceRef: "t" } });
 check("authorization bound to another mission refused", otherMission.providerExecutable === false);
-const badBudget = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t" }, { ...ctx, providerBudget: { currency: "EUR", ceiling: 0 } });
+const badBudget = SEL.selectStrategyMode({ id: "p1", taskClass: "implement", taskClassSource: "t", observations: [fail("qwen2.5-coder:7b", 3)] }, { ...ctx, providerBudget: { currency: "EUR", ceiling: 0 } });
 check("unverifiable budget ⇒ cost UNKNOWN", badBudget.budgetRequired === true && badBudget.perModeAssessment.PROVIDER.cost === "UNKNOWN");
 
 // observed evidence precedence
@@ -62,27 +62,38 @@ check("observed 7b failure ⇒ NOT_QUALIFIED_OBSERVED ⇒ PROVIDER", obsFail7.mo
 const obsPass = SEL.selectStrategyMode({ id: "o3", taskClass: "implement", taskClassSource: "t", observations: [pass("qwen2.5-coder:3b")] }, ctx);
 check("observed ACCEPT overrides class NO_QUALIFIED ⇒ NATIVE", obsPass.mode === "NATIVE" && obsPass.parts[0].qualification === "QUALIFIED_OBSERVED");
 const notRun = SEL.selectStrategyMode({ id: "o4", taskClass: "implement", taskClassSource: "t", observations: [{ model: "qwen2.5-coder:3b", accepted: false, executionStatus: "NOT_RUN", source: "t" }] }, ctx);
-check("NOT_RUN observation is ignored (not a failure)", notRun.parts[0].qualification === "NOT_QUALIFIED_MEASURED");
+check("NOT_RUN observation is ignored (not a failure) ⇒ PROBATION_PROBE", notRun.parts[0].qualification === "PROBATION_PROBE");
+
+// weak evidence is never treated harsher than no evidence (canonical V159: local probe first, escalate if it still fails)
+const weak = SEL.selectStrategyMode({ id: "w1", taskClass: "implement", taskClassSource: "t" }, ctx);
+check("NO_QUALIFIED class with PROBATION model, no observed failure ⇒ NATIVE PROBATION_PROBE (not PROVIDER), escalateAfterFailure", weak.mode === "NATIVE" && weak.parts[0].qualification === "PROBATION_PROBE" && weak.parts[0].escalateAfterFailure === true && weak.delegationRecords.length === 0);
+check("PROBATION-only evidence raises uncertainty (never LOW)", weak.uncertainty.level !== "LOW" && weak.uncertainty.because.some((b: string) => /PROBATION/.test(b)));
+const fSens = SEL.selectStrategyMode({ id: "fs", decomposition: decomp, parts: ["A", "B", "C"].map((x) => part(x)) }, ctx);
+check("sensitivity: F-like parts labelled 'implement', no observation ⇒ NATIVE probe, not PROVIDER", fSens.mode === "NATIVE" && fSens.parts.every((p: any) => p.qualification === "PROBATION_PROBE"));
+const missFail = SEL.selectStrategyMode({ id: "mf", decomposition: decomp, parts: [part("a"), part("b")], missionObservations: [fail("qwen2.5-coder:3b")] }, ctx);
+check("unlocalised mission-level OBSERVED failure applies to every part ⇒ PROVIDER", missFail.mode === "PROVIDER" && missFail.parts.every((p: any) => p.qualification === "NOT_QUALIFIED_OBSERVED"));
+const missFailLoc = SEL.selectStrategyMode({ id: "mf2", decomposition: decomp, parts: [part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b")], missionObservations: [fail("qwen2.5-coder:3b")] }, ctx);
+check("mission failure localised by part evidence ⇒ not attributed to unobserved parts", missFailLoc.parts[1].qualification === "PROBATION_PROBE");
 
 // HYBRID
 const hm = (parts: any[], extra: any = {}) => ({ id: "h1", decomposition: decomp, parts, ...extra });
-const hyb = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b"), part("c", { taskClass: "bugfix" })]), ctx);
+const hyb = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { observations: [fail("qwen2.5-coder:7b", 3)] }), part("c", { taskClass: "bugfix" })]), ctx);
 check("HYBRID: decomposable + disjoint + mixed qualification ⇒ HYBRID", hyb.mode === "HYBRID" && hyb.rule === "M4");
 check("HYBRID: native parts local, unqualified via per-part delegation records", JSON.stringify(hyb.perModeAssessment.HYBRID.nativeParts) === '["a","c"]' && JSON.stringify(hyb.perModeAssessment.HYBRID.delegatedParts) === '["b"]' && hyb.delegationRecords.length === 1 && hyb.delegationRecords[0].missionId === "h1::b");
 check("HYBRID: budget + authorization required, not executable, not launched", hyb.authorizationRequired && hyb.budgetRequired && !hyb.providerExecutable && hyb.launchedBySelector === false);
-const overlap = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { writeSet: ["m/a.js"] })]), ctx);
+const overlap = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { writeSet: ["m/a.js"], observations: [fail("qwen2.5-coder:7b", 3)] })]), ctx);
 check("HYBRID refused on overlapping write-sets ⇒ PROVIDER", overlap.mode === "PROVIDER" && overlap.perModeAssessment.HYBRID.refusedBecause.some((r: string) => /overlap/.test(r)));
-const unknownWs = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { writeSet: undefined })]), ctx);
+const unknownWs = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { writeSet: undefined, observations: [fail("qwen2.5-coder:7b", 3)] })]), ctx);
 check("HYBRID refused on UNKNOWN write-set (fail-closed) ⇒ PROVIDER", unknownWs.mode === "PROVIDER" && unknownWs.inputs.writeSetDisjoint === false);
-const placeholder = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { writeSet: ["runtime/core/<x>.ts"] })]), ctx);
+const placeholder = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { writeSet: ["runtime/core/<x>.ts"], observations: [fail("qwen2.5-coder:7b", 3)] })]), ctx);
 check("placeholder write-set ⇒ UNKNOWN ⇒ no HYBRID", placeholder.mode !== "HYBRID" && placeholder.parts[1].writeSet.status === "NOT_MEASURED");
-const noIndep = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { independentCheck: false })]), ctx);
+const noIndep = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { independentCheck: false, observations: [fail("qwen2.5-coder:7b", 3)] })]), ctx);
 check("HYBRID refused without per-part independent checks", noIndep.mode === "PROVIDER");
-const mono = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b")], { decomposition: { strategy: "MONOLITHIC", source: "t" } }), ctx);
+const mono = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { observations: [fail("qwen2.5-coder:7b", 3)] })], { decomposition: { strategy: "MONOLITHIC", source: "t" } }), ctx);
 check("HYBRID refused when the planner verdict is MONOLITHIC", mono.mode === "PROVIDER");
 const allLocal = SEL.selectStrategyMode(hm([part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b", { taskClass: "bugfix" })]), ctx);
 check("all parts local ⇒ NATIVE (not HYBRID)", allLocal.mode === "NATIVE");
-const noneLocal = SEL.selectStrategyMode(hm([part("a"), part("b")]), ctx);
+const noneLocal = SEL.selectStrategyMode(hm([part("a", { observations: [fail("qwen2.5-coder:7b", 3)] }), part("b", { observations: [fail("qwen2.5-coder:3b")] })]), ctx);
 check("no part local ⇒ PROVIDER (not HYBRID)", noneLocal.mode === "PROVIDER");
 const computedPlanner = SEL.selectStrategyMode({ id: "h2", parts: [part("a", { observations: [pass("qwen2.5-coder:3b")] }), part("b"), part("c"), part("d")] }, ctx);
 check("planner computed by decomposition-planner when not recorded (4 files ⇒ DECOMPOSED)", computedPlanner.inputs.planner.value === "DECOMPOSED" && /decomposition-planner/.test(computedPlanner.inputs.planner.source));
@@ -130,6 +141,10 @@ check("F6 PROVIDER failed ⇒ DECISION_REQUIRED (terminal)", s4.next.mode === "D
 let cur: any = { ...d3b }; const seen: string[] = [SEL.strategyKey(cur)]; let steps = 0;
 for (;;) { const r = N(cur, { stopReason: "REPAIR_BUDGET_EXHAUSTED", intermediateOracle: true, parts: [{ id: "a", verified: true }, { id: "b", verified: false }], decomposable: true, disjoint: true }); if (!r.next) break; seen.push(SEL.strategyKey(r.next)); steps++; if (r.next.mode === "DECISION_REQUIRED" || steps > 20) break; cur = { ...r.next, tried: r.tried }; }
 check("chain terminates within MAX_CHAIN and never repeats a strategy", steps <= SEL.MAX_CHAIN && new Set(seen).size === seen.length && seen[seen.length - 1] === "DECISION_REQUIRED");
+let term: any = { mode: "DECISION_REQUIRED" }; let loops = 0;
+for (let i = 0; i < 10; i++) { const r = N(term, { stopReason: "REPAIR_BUDGET_EXHAUSTED" }); if (r.next === null) break; loops++; term = { ...r.next, tried: r.tried }; }
+check("terminal: DECISION_REQUIRED ⇒ next null on the first call (repeated calls never loop)", loops === 0 && N({ mode: "DECISION_REQUIRED" }, { stopReason: "REPAIR_BUDGET_EXHAUSTED" }).rule === "F7");
+check("terminal: DECISION_REQUIRED already in tried ⇒ next null", N({ mode: "PROVIDER", tried: ["DECISION_REQUIRED"] }, { stopReason: "REPAIR_BUDGET_EXHAUSTED" }).next === null);
 const capped = N({ mode: "NATIVE", strategy: "X", model: "m", maxRepair: 1, tried: ["a", "b", "c", "d", "e", "f"] }, { stopReason: "REPAIR_BUDGET_EXHAUSTED" });
 check("tried ≥ MAX_CHAIN ⇒ DECISION_REQUIRED", capped.next.mode === "DECISION_REQUIRED");
 const already = N({ ...d3b, tried: ["NATIVE:LARGER_MODEL_REPAIR_DEPTH:qwen2.5-coder:7b:3"] }, { stopReason: "REPAIR_BUDGET_EXHAUSTED" });
@@ -139,7 +154,7 @@ check("never returns an already-tried strategy", already.next.mode === "PROVIDER
 const h = (s: number, f: number): any[] => [...Array(s).fill(0).map(() => ({ missionType: "t", verified: true })), ...Array(f).fill(0).map(() => ({ missionType: "t", verified: false }))];
 const plain = JSON.stringify(POL.chooseExecutionPolicy("t", h(18, 2)));
 const plainM = JSON.stringify(POL.chooseExecutionPolicy("t", h(18, 2), { taskClass: "bugfix", measured, now: NOW }));
-const withSm = POL.chooseExecutionPolicy("t", h(18, 2), { strategyMode: { mission: { id: "w", taskClass: "implement", taskClassSource: "t" }, ctx } });
+const withSm = POL.chooseExecutionPolicy("t", h(18, 2), { strategyMode: { mission: { id: "w", taskClass: "implement", taskClassSource: "t", observations: [fail("qwen2.5-coder:7b", 3)] }, ctx } });
 const withSmM = POL.chooseExecutionPolicy("t", h(18, 2), { taskClass: "bugfix", measured, now: NOW, strategyMode: { mission: { id: "w", taskClass: "bugfix", taskClassSource: "t" }, ctx } });
 const { strategyMode: sm1, ...rest1 } = withSm; const { strategyMode: sm2, ...rest2 } = withSmM;
 check("wiring: absent strategyMode ⇒ no strategyMode field (byte-identical callers)", !("strategyMode" in JSON.parse(plain)) && !("strategyMode" in JSON.parse(plainM)));

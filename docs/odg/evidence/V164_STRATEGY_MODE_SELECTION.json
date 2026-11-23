@@ -2,7 +2,7 @@
   "schema": "V164_STRATEGY_MODE_SELECTION_EVIDENCE",
   "directive": "owner V16.4 §4 sélecteur de stratégie (MODE NATIF / HYBRIDE / FOURNISSEUR) + §7 gap 'absence de mode hybride dans le sélecteur' + §10 scenario D",
   "gapRef": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (\"'hybrid' is not an option of the component\")",
-  "head": "1f34145b8348222886a038953b97bdb9b806cf36",
+  "head": "cdd6efd0ccfde545d0d024b9e9d4fba1064dca62",
   "evaluationInstant": "2026-11-23T18:56:03.582Z",
   "evaluationInstantNote": "pinned = latest timestamp among the source evidence files (deterministic; registry freshness checked against it)",
   "sources": {
@@ -55,7 +55,8 @@
   "rules": [
     "Q1 a part with an OBSERVED local ACCEPT (same contract) ⇒ QUALIFIED_OBSERVED (model = the accepting model)",
     "Q2 a part with OBSERVED local failures only ⇒ QUALIFIED_MEASURED if the registry has a QUALIFIED model strictly larger than every model tried, else NOT_QUALIFIED_OBSERVED",
-    "Q3 no part observation ⇒ class registry via chooseExecutionPolicy measured overlay (selectMeasured): LOCAL ⇒ QUALIFIED_MEASURED; NO_QUALIFIED_LOCAL_MODEL ⇒ NOT_QUALIFIED_MEASURED (PROBATION is not qualified — odg-model-router); UNAVAILABLE ⇒ UNAVAILABLE; absent taskClass / unusable registry ⇒ NOT_MEASURED",
+    "Q2b a mission-level local failure that no part-level observation localises counts as an observed failure of every part (PROVIDER only after an OBSERVED local failure on that task/part)",
+    "Q3 no part observation ⇒ class registry via chooseExecutionPolicy measured overlay (selectMeasured): LOCAL ⇒ QUALIFIED_MEASURED; NO_QUALIFIED_LOCAL_MODEL with a PROBATION model ⇒ PROBATION_PROBE (€0 local probe first, escalate-after-failure — weak evidence is never treated harsher than none); NO_QUALIFIED without PROBATION ⇒ NOT_QUALIFIED_MEASURED; UNAVAILABLE ⇒ UNAVAILABLE; absent taskClass / unusable registry ⇒ NOT_MEASURED",
     "Q4 NOT_MEASURED is never default-filled: it is treated as a €0 local PROBE (canonical policy PROBE tier) and raises uncertainty to HIGH",
     "M0 mission.authorizationState supplied and ≠ AUTHORIZED ⇒ DECISION_REQUIRED (the selector never authorizes); the evidence-derived choice is reported as tentativeMode",
     "M1 risk HIGH ⇒ authorizationRequired for every mode; risk HIGH with uncertainty HIGH ⇒ DECISION_REQUIRED",
@@ -66,7 +67,7 @@
     "C1 local cost = €0 (loopback Ollama); provider cost = UNKNOWN unless a verifiable budget {currency, ceiling>0, enforcedBy, evidenceRef} is supplied ⇒ budgetRequired",
     "C2 a provider part ALWAYS has authorizationRequired=true; providerExecutable only with a verifiable budget AND an OWNER authorization bound to this mission id; the selector NEVER launches a provider",
     "U1 uncertainty HIGH if any part qualification is NOT_MEASURED; else MEDIUM if risk is NOT_MEASURED or a multi-part write-set is UNKNOWN; else LOW",
-    "F0..F6 strategy change on failure: see nextStrategyAfterFailure (ODG stop only; never repeats a tried strategy; bounded by MAX_CHAIN)"
+    "F0..F7 strategy change on failure: see nextStrategyAfterFailure (ODG stop only; never repeats a tried strategy; bounded by MAX_CHAIN)"
   ],
   "preRegistration": {
     "scenario": "D — ODG choisit correctement le mode (V16.4 §10)",
@@ -523,41 +524,43 @@
         "source": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json#before/after.perMission.v159-implement-parse-range"
       },
       "prior": {
-        "mode": "PROVIDER",
-        "tentativeMode": "PROVIDER",
-        "rule": "M5",
-        "rationale": "not locally qualified: V159/v159-implement-parse-range:NOT_QUALIFIED_MEASURED; HYBRID refused (single part (nothing to split); no locally-qualified part) ⇒ PROVIDER record",
+        "mode": "NATIVE",
+        "tentativeMode": "NATIVE",
+        "rule": "M2",
+        "rationale": "every part LOCAL_OK (V159/v159-implement-parse-range:PROBATION_PROBE) ⇒ NATIVE (€0) — PROBATION_PROBE parts (V159/v159-implement-parse-range) escalate if they still fail",
         "uncertainty": {
           "level": "MEDIUM",
           "because": [
+            "PROBATION-only local evidence (weak): V159/v159-implement-parse-range",
             "risk NOT_MEASURED"
           ]
         },
-        "authorizationRequired": true,
-        "budgetRequired": true,
+        "authorizationRequired": false,
+        "budgetRequired": false,
         "providerExecutable": false,
         "launchedBySelector": false,
         "fallbackChain": [
+          "NATIVE",
           "PROVIDER",
           "DECISION_REQUIRED"
         ],
         "parts": [
           {
             "id": "V159/v159-implement-parse-range",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "PROBATION_PROBE",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' but PROBATION qwen2.5-coder:3b,qwen2.5-coder:7b and no observed failure on this task/part ⇒ €0 local PROBE, escalate if it still fails (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
           }
         ],
         "hybrid": {
           "applicable": false,
-          "nativeParts": [],
-          "delegatedParts": [
+          "nativeParts": [
             "V159/v159-implement-parse-range"
           ],
+          "delegatedParts": [],
           "refusedBecause": [
             "single part (nothing to split)",
-            "no locally-qualified part"
+            "no part needs delegation"
           ]
         },
         "provider": {
@@ -581,13 +584,7 @@
             "status": "NOT_SUPPLIED"
           }
         },
-        "delegationRecords": [
-          {
-            "missionId": "V159/v159-implement-parse-range",
-            "state": "CREATED",
-            "authority": "ODG"
-          }
-        ]
+        "delegationRecords": []
       },
       "current": {
         "mode": "PROVIDER",
@@ -814,7 +811,7 @@
         "mode": "PROVIDER",
         "tentativeMode": "PROVIDER",
         "rule": "M5",
-        "rationale": "not locally qualified: parse.js:NOT_QUALIFIED_MEASURED, encode.js:NOT_QUALIFIED_MEASURED, decode.js:NOT_QUALIFIED_MEASURED, report.js:NOT_QUALIFIED_MEASURED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
+        "rationale": "not locally qualified: parse.js:NOT_QUALIFIED_OBSERVED, encode.js:NOT_QUALIFIED_OBSERVED, decode.js:NOT_QUALIFIED_OBSERVED, report.js:NOT_QUALIFIED_OBSERVED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
         "uncertainty": {
           "level": "MEDIUM",
           "because": [
@@ -832,27 +829,27 @@
         "parts": [
           {
             "id": "parse.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=rle-codec]); no larger QUALIFIED model untried"
           },
           {
             "id": "encode.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=rle-codec]); no larger QUALIFIED model untried"
           },
           {
             "id": "decode.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=rle-codec]); no larger QUALIFIED model untried"
           },
           {
             "id": "report.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=rle-codec]); no larger QUALIFIED model untried"
           }
         ],
         "hybrid": {
@@ -998,7 +995,7 @@
         "mode": "PROVIDER",
         "tentativeMode": "PROVIDER",
         "rule": "M5",
-        "rationale": "not locally qualified: parse.js:NOT_QUALIFIED_MEASURED, validate.js:NOT_QUALIFIED_MEASURED, collect.js:NOT_QUALIFIED_MEASURED, report.js:NOT_QUALIFIED_MEASURED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
+        "rationale": "not locally qualified: parse.js:NOT_QUALIFIED_OBSERVED, validate.js:NOT_QUALIFIED_OBSERVED, collect.js:NOT_QUALIFIED_OBSERVED, report.js:NOT_QUALIFIED_OBSERVED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
         "uncertainty": {
           "level": "MEDIUM",
           "because": [
@@ -1016,27 +1013,27 @@
         "parts": [
           {
             "id": "parse.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=csv-typed-validator]); no larger QUALIFIED model untried"
           },
           {
             "id": "validate.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=csv-typed-validator]); no larger QUALIFIED model untried"
           },
           {
             "id": "collect.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=csv-typed-validator]); no larger QUALIFIED model untried"
           },
           {
             "id": "report.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=csv-typed-validator]); no larger QUALIFIED model untried"
           }
         ],
         "hybrid": {
@@ -1085,10 +1082,11 @@
         "mode": "HYBRID",
         "tentativeMode": "HYBRID",
         "rule": "M4",
-        "rationale": "decomposable (DECOMPOSED, 4 parts with independent checks) + disjoint write-sets; local: parse.js,validate.js; delegated: collect.js,report.js ⇒ HYBRID (ODG pilots + integrates + independent validation)",
+        "rationale": "decomposable (DECOMPOSED, 4 parts with independent checks) + disjoint write-sets; local: parse.js,validate.js,report.js; delegated: collect.js ⇒ HYBRID (ODG pilots + integrates + independent validation)",
         "uncertainty": {
           "level": "MEDIUM",
           "because": [
+            "PROBATION-only local evidence (weak): report.js",
             "risk NOT_MEASURED"
           ]
         },
@@ -1122,20 +1120,20 @@
           },
           {
             "id": "report.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "PROBATION_PROBE",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' but PROBATION qwen2.5-coder:3b,qwen2.5-coder:7b and no observed failure on this task/part ⇒ €0 local PROBE, escalate if it still fails (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
           }
         ],
         "hybrid": {
           "applicable": true,
           "nativeParts": [
             "parse.js",
-            "validate.js"
+            "validate.js",
+            "report.js"
           ],
           "delegatedParts": [
-            "collect.js",
-            "report.js"
+            "collect.js"
           ],
           "refusedBecause": []
         },
@@ -1165,11 +1163,6 @@
             "missionId": "J/csv-typed-validator::collect.js",
             "state": "CREATED",
             "authority": "ODG"
-          },
-          {
-            "missionId": "J/csv-typed-validator::report.js",
-            "state": "CREATED",
-            "authority": "ODG"
           }
         ]
       }
@@ -1187,7 +1180,7 @@
         "mode": "PROVIDER",
         "tentativeMode": "PROVIDER",
         "rule": "M5",
-        "rationale": "not locally qualified: parse.js:NOT_QUALIFIED_MEASURED, clamp.js:NOT_QUALIFIED_MEASURED, flagged.js:NOT_QUALIFIED_MEASURED, report.js:NOT_QUALIFIED_MEASURED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
+        "rationale": "not locally qualified: parse.js:NOT_QUALIFIED_OBSERVED, clamp.js:NOT_QUALIFIED_OBSERVED, flagged.js:NOT_QUALIFIED_OBSERVED, report.js:NOT_QUALIFIED_OBSERVED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
         "uncertainty": {
           "level": "MEDIUM",
           "because": [
@@ -1205,27 +1198,27 @@
         "parts": [
           {
             "id": "parse.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=range-clamp-pipeline]); no larger QUALIFIED model untried"
           },
           {
             "id": "clamp.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=range-clamp-pipeline]); no larger QUALIFIED model untried"
           },
           {
             "id": "flagged.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=range-clamp-pipeline]); no larger QUALIFIED model untried"
           },
           {
             "id": "report.js",
-            "qualification": "NOT_QUALIFIED_MEASURED",
+            "qualification": "NOT_QUALIFIED_OBSERVED",
             "localModel": null,
-            "basis": "Q3 registry NO_QUALIFIED_LOCAL_MODEL for 'implement' (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].perClass.implement (sha256 288f46b7686e))"
+            "basis": "Q2b mission-level 1 observed local failure(s) (docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[id=range-clamp-pipeline]); no larger QUALIFIED model untried"
           }
         ],
         "hybrid": {
@@ -2628,8 +2621,8 @@
   ],
   "modeCounts": {
     "prior": {
-      "NATIVE": 4,
-      "PROVIDER": 5
+      "NATIVE": 5,
+      "PROVIDER": 4
     },
     "current": {
       "NATIVE": 4,
@@ -2880,30 +2873,41 @@
   ],
   "sensitivity": {
     "note": "NOT GRADED. F parts carry NO task-class label in the evidence; if they were labelled 'implement' (hypothetical), the class registry (implement ⇒ NO_QUALIFIED_LOCAL_MODEL) would drive the PRIOR choice:",
-    "mode": "PROVIDER",
-    "rule": "M5",
-    "rationale": "not locally qualified: A:NOT_QUALIFIED_MEASURED, B:NOT_QUALIFIED_MEASURED, C:NOT_QUALIFIED_MEASURED; HYBRID refused (no locally-qualified part) ⇒ PROVIDER record",
-    "implication": "the selector would have delegated a mission native solved (4/4 trials accepted: 3 REAL + 1 CONTROLLED) ⇒ class-level 'implement' NO_QUALIFIED is pessimistic for small single-function parts; D4 passes only because F parts are unlabelled"
+    "mode": "NATIVE",
+    "rule": "M2",
+    "rationale": "every part LOCAL_OK (A:PROBATION_PROBE, B:PROBATION_PROBE, C:PROBATION_PROBE) ⇒ NATIVE (€0) — PROBATION_PROBE parts (A,B,C) escalate if they still fail",
+    "implication": "NATIVE €0 probe (PROBATION_PROBE, escalate if it still fails) — weak class evidence is not treated harsher than none; the selector would NOT have delegated what native solved"
   },
   "scenarioD": {
     "results": {
       "D1": "PASS",
       "D2": "PASS",
-      "D3": "PASS",
+      "D3": "FAIL",
       "D4": "PASS",
       "D5": "PASS",
       "D6": "PASS",
       "D7": "NOT_MEASURED"
     },
-    "grade": "PARTIAL",
+    "grade": "FAIL",
     "gradingRule": "FAIL if any of D1–D6 fails; PASS only if D1–D6 pass AND D7 passes; otherwise PARTIAL (D7 NOT_MEASURED ⇒ ceiling PARTIAL). Retrospective consistency ≠ prospective correctness.",
+    "d3Violations": [
+      {
+        "id": "V159/v159-implement-parse-range",
+        "priorMode": "NATIVE",
+        "priorRule": "M2",
+        "parts": [
+          "V159/v159-implement-parse-range:PROBATION_PROBE"
+        ]
+      }
+    ],
+    "d3Note": "post-inspection fix (#929 MED-2): a NO_QUALIFIED class with a PROBATION local model and NO observed failure on that task now gets a €0 local PROBE with escalate-after-failure (canonical V159 policy) instead of PROVIDER. The pre-registered D3 ('PRIOR not NATIVE when the observed outcome was a local failure') then FAILS on every such mission (the probe is the step that was observed to fail, after which V159 escalated). The criterion is NOT amended post hoc; whether D3 or probe-first is the better rule needs a fresh pre-registration and prospective data.",
     "retrospectiveVsProspective": "D3/D4/D5 are RETROSPECTIVE (consistency of the choice with outcomes observed before/after); no HYBRID or PROVIDER selection was executed (no provider call allowed, no hybrid run) ⇒ prospective correctness NOT_MEASURED ⇒ ceiling PARTIAL"
   },
   "providerCalls": 0,
   "modelCalls": 0,
   "honestLimits": [
     "the selector CHOOSES only; nothing was executed by this run (no model, no provider, no network) — evidence is re-read from committed files",
-    "D3 is driven mainly by the class-level registry verdict implement ⇒ NO_QUALIFIED_LOCAL_MODEL (V155, n=6 per model) plus prior observed failures; it shows the selector would not have repeated the failed local strategy, NOT that PROVIDER would have succeeded",
+    "D3 PASS cases rest on OBSERVED prior local failures on the same task (Q2/Q2b); D3 FAIL cases are missions with only class-level PROBATION evidence where the selector probes locally first (by design); in no case is it shown that PROVIDER would have succeeded",
     "J per-part 'verified' verdicts came from an arm whose repair prompts partly saw expected outputs (V161 J honestLimits #1) ⇒ the HYBRID CURRENT choice for the 3 decomposed J tasks rests on that partly-advantaged evidence",
     "risk is NOT_MEASURED for every real record (no record declares a risk level) ⇒ uncertainty ≥ MEDIUM everywhere; no deadline was supplied by any record",
     "A–P contracts are scenario-level work items (state PROPOSED, placeholder write-sets) ⇒ DECISION_REQUIRED by rule M0; their tentativeMode is low-information (no task class, no observation)",
