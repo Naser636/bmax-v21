@@ -286,27 +286,30 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const strategicAct = actionabilityOf(ctx.state, strategicItem);
     let act: any = null, actItem: any = null;
     if (strategicItem && strategicAct.actionable) { act = d; actItem = strategicItem; }
-    else if (strategicItem) {
+    else {
+      // GO-ACT-1 also applies when the strategic selection is UNDECIDED (DECISION_REQUIRED / NO_ELIGIBLE): ODG still
+      // works on the best item it is allowed to do, and the undecided strategic choice becomes an owner/ODG request.
       act = SEL.selectNextExplained(actionableCandidates(ctx.state, ctx.register), actionableOptions());
       const aid = chosenId(act);
       actItem = aid ? ctx.register.items.find((it: any) => it.id === aid) : null;
       if (actItem && !actionabilityOf(ctx.state, actItem).actionable) actItem = null;   // defensive: never a non-actionable pick
     }
-    const proceedWithActionable = !!strategicItem && !strategicAct.actionable && !!actItem;
+    const proceedWithActionable = !!actItem && (!strategicItem || !strategicAct.actionable);
     ctx.item = proceedWithActionable ? actItem : strategicItem;
     ctx.strategicItem = strategicItem;
-    ctx.ownerRequest = strategicItem && !strategicAct.actionable ? { item: strategicItem.id, authorizationNeeded: `owner — ${strategicItem.id} ${strategicItem.contractState || "PROPOSED"}${strategicItem.contractState === "AUTHORIZED" ? "" : " → AUTHORIZED (authorizedBy)"}`, reason: strategicAct.reason, requestedBy: "ODG GO (GO-ACT-1) — a REQUEST, not an authorization" } : null;
+    ctx.ownerRequest = !strategicItem ? { item: null, decisionNeeded: `strategic selection ${d.decision}${arr(d.tiedSet).length ? ` among ${arr(d.tiedSet).join("/")}` : ""} — owner/ODG decision required (no id tie-break)`, requestedBy: "ODG GO (GO-ACT-1) — a REQUEST, not an authorization" }
+      : strategicItem && !strategicAct.actionable ? { item: strategicItem.id, authorizationNeeded: `owner — ${strategicItem.id} ${strategicItem.contractState || "PROPOSED"}${strategicItem.contractState === "AUTHORIZED" ? "" : " → AUTHORIZED (authorizedBy)"}`, reason: strategicAct.reason, requestedBy: "ODG GO (GO-ACT-1) — a REQUEST, not an authorization" } : null;
     ctx.actionable = { rule: ACTIONABLE_RULE, ruleDetail: ACTIONABLE_RULE_DETAIL, authoredBy: "technical provider (Claude Code) — provider-authored rule; every decision is the selector's",
       strategicActionable: strategicItem ? strategicAct : null,
       selection: act ? (act === d ? { sameAsStrategic: true, ...selectionSummary(d) } : { sameAsStrategic: false, ...selectionSummary(act), excludedNotAuthorizedNow: arr(act.excluded).filter((x: any) => x.status === NOT_AUTHORIZED_NOW).map((x: any) => x.id) }) : null,
       item: actItem ? actItem.id : null, basis: actItem ? actionabilityOf(ctx.state, actItem) : null, proceedingWith: ctx.item ? ctx.item.id : null, proceedingWithActionable: proceedWithActionable };
     const committed = ctx.state.registerEvidence && ctx.state.registerEvidence.decisionRecord ? ctx.state.registerEvidence.decisionRecord : null;
     const consistent = committed ? committed.decision === d.decision && committed.selected === (d.selected ? d.selected.id : null) && canon(arr(committed.tiedSet)) === canon(arr(d.tiedSet)) : null;
-    return { status: id ? "DONE" : "HALTED", inputs: REG.toSelectorCandidates(ctx.register),
+    return { status: id || proceedWithActionable ? "DONE" : "HALTED", inputs: REG.toSelectorCandidates(ctx.register),
       decision: { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, resolutionSteps: d.resolutionSteps || null, justification: d.justification, uncertainty: d.selected ? d.selected.uncertainty : d.proposed ? d.proposed.uncertainty : null, ownerAuthorizationRequired: arr(d.ownerAuthorizationRequired).map((x: any) => x.id), consistentWithCommittedRegisterEvidence: consistent,
         strategicSelection: selectionSummary(d), actionableSelection: ctx.actionable, ownerRequest: ctx.ownerRequest, workingOn: ctx.item ? ctx.item.id : null },
-      rationale: (id ? `selector decision ${d.decision}${d.decision === "TIE_EXPLAINED" ? ` (tie ${arr(d.tiedSet).join("/")} resolved by ${d.resolvedBy})` : ""} — a PROPOSAL, not an authorization` : `selector decision ${d.decision}: ODG does not pick (no id tie-break) — owner/ODG decision required`)
-        + (proceedWithActionable ? `; strategic ${id} lacks authorization (owner request recorded) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : strategicItem && !strategicAct.actionable ? `; strategic ${id} lacks authorization and no other item has an AUTHORIZED next step ⇒ the gate will hold (owner request recorded)` : "") };
+      rationale: (!id && proceedWithActionable ? `strategic selector decision ${d.decision} (tie ${arr(d.tiedSet).join("/")}; owner/ODG decision requested) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : id ? `selector decision ${d.decision}${d.decision === "TIE_EXPLAINED" ? ` (tie ${arr(d.tiedSet).join("/")} resolved by ${d.resolvedBy})` : ""} — a PROPOSAL, not an authorization` : `selector decision ${d.decision}: ODG does not pick (no id tie-break) — owner/ODG decision required`)
+        + (proceedWithActionable && id ? `; strategic ${id} lacks authorization (owner request recorded) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : strategicItem && !strategicAct.actionable ? `; strategic ${id} lacks authorization and no other item has an AUTHORIZED next step ⇒ the gate will hold (owner request recorded)` : "") };
   });
   if (stopped(r)) return stopped(r);
   const item = ctx.item;
