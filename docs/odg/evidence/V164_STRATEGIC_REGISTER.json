@@ -26,7 +26,7 @@
       "sha256": "6e1abe2898c582f95d3325f9e15a98769da88b50cc6bf56490fc0ad7147c2ae3"
     },
     {
-      "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json",
+      "source": "docs/odg/evidence/V163_CHECKPOINT_8.json",
       "sha256": "7a29ae850f41de89bd0919755deb2bb568216cd2e35421e94cb676242e8d15e6"
     },
     {
@@ -136,7 +136,7 @@
     "sourcesUsed": {
       "contracts": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
       "v150": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
-      "cp8": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json",
+      "cp8": "docs/odg/evidence/V163_CHECKPOINT_8.json",
       "scenarioEvidence": [
         {
           "scenario": "F",
@@ -757,7 +757,7 @@
         "status": "EXECUTED_PARTIAL",
         "statusSource": [
           "docs/odg/evidence/V161_SCENARIO_F.json#contractRef",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.F.status"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.F.status"
         ],
         "nextStep": {
           "remainingCriteria": [
@@ -766,7 +766,7 @@
               "grade": "PARTIAL — real-repo assign REFUSED fail-closed (UNKNOWN write-sets); mechanics shown on a throw-away workspace; closures CLOSED_NO_RESULT (never CLOSED_ACCEPTED)"
             }
           ],
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.F.criteria"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.F.criteria"
         },
         "executedEvidence": "docs/odg/evidence/V161_SCENARIO_F.json",
         "deps": [],
@@ -865,7 +865,7 @@
             "source": [
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].initialState.evidence",
               "docs/odg/evidence/V161_SCENARIO_F.json",
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.F.criteria"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.F.criteria"
             ],
             "basis": "k=4 (initialState.evidence 2 + executed file + CP8 grading)"
           }
@@ -880,7 +880,7 @@
         "status": "EXECUTED_PARTIAL",
         "statusSource": [
           "docs/odg/evidence/V160_SCENARIO_G.json#contract",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.status"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.status"
         ],
         "nextStep": {
           "remainingCriteria": [
@@ -893,7 +893,7 @@
               "grade": "PARTIAL — the item is SUPPORTED and usableFor(DESIGN_PROPOSAL) is met; admissible() (facts only ⇒ NOT_A_FACT for a SUPPORTED item) is false and scenario G never calls it ⇒ the criterion as worded cannot be met by a SUPPORTED item"
             }
           ],
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.criteria"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.criteria"
         },
         "executedEvidence": "docs/odg/evidence/V160_SCENARIO_G.json",
         "deps": [],
@@ -992,7 +992,7 @@
             "source": [
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].initialState.evidence",
               "docs/odg/evidence/V160_SCENARIO_G.json",
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.criteria"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.criteria"
             ],
             "basis": "k=4 (initialState.evidence 2 + executed file + CP8 grading)"
           }
@@ -1234,7 +1234,7 @@
         "status": "EXECUTED_PARTIAL",
         "statusSource": [
           "docs/odg/evidence/V161_SCENARIO_J.json#scenario",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.J.status"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.J.status"
         ],
         "nextStep": {
           "remainingCriteria": [
@@ -1243,7 +1243,7 @@
               "grade": "NOT MET as worded for the trigger — the alternatives were triggered by the 8 default stops, all REPAIR_BUDGET_EXHAUSTED (maxRepair 1 = one repair attempted). Both named signals WERE observed: NO_PROGRESS_IDENTICAL_REGENERATION in the 7b alternative on parse-range and in the decomposed alternative on range-clamp-pipeline (both trials); the parse-range policy rows record measuredDecision NO_QUALIFIED_LOCAL_MODEL"
             }
           ],
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.J.criteria"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.J.criteria"
         },
         "executedEvidence": "docs/odg/evidence/V161_SCENARIO_J.json",
         "deps": [],
@@ -1344,7 +1344,7 @@
             "source": [
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].initialState.evidence",
               "docs/odg/evidence/V161_SCENARIO_J.json",
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.J.criteria"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.J.criteria"
             ],
             "basis": "k=4 (initialState.evidence 2 + executed file + CP8 grading)"
           }
@@ -2030,8 +2030,8 @@
         "title": "Write CP7 (§46) covering #909–#913 + commit WORK_ITEM_CONTRACTs for V15.0 lots and one contract+initial-state file per §45 scenario",
         "status": "ACCEPTED",
         "statusSource": [
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#prs[pr=919].gates"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#prs[pr=919].gates"
         ],
         "nextStep": null,
         "deps": [],
@@ -2128,7 +2128,7 @@
             "value": 0.25,
             "rule": "EVD-1",
             "source": [
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note"
             ],
             "basis": "k=1"
           }
@@ -2141,7 +2141,7 @@
         "status": "PROPOSED",
         "statusSource": [
           "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[1].item",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note (not listed executed)"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note (not listed executed)"
         ],
         "nextStep": {
           "text": "author a WORK_ITEM_CONTRACT (none exists) — then PROPOSED → AUTHORIZED",
@@ -2253,7 +2253,7 @@
         "status": "PROPOSED",
         "statusSource": [
           "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[6].item",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note (not listed executed)"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note (not listed executed)"
         ],
         "nextStep": {
           "text": "author a WORK_ITEM_CONTRACT (none exists) — then PROPOSED → AUTHORIZED",
@@ -2364,7 +2364,7 @@
         "status": "PROPOSED",
         "statusSource": [
           "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[8].item",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note (not listed executed)"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note (not listed executed)"
         ],
         "nextStep": {
           "text": "author a WORK_ITEM_CONTRACT (none exists) — then PROPOSED → AUTHORIZED",
@@ -2471,7 +2471,7 @@
         "status": "PROPOSED",
         "statusSource": [
           "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[9].item",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note (not listed executed)"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#v150Matrix.note (not listed executed)"
         ],
         "nextStep": {
           "text": "author a WORK_ITEM_CONTRACT (none exists) — then PROPOSED → AUTHORIZED",
@@ -4148,12 +4148,12 @@
         "title": "MC-CR-APPROVAL-STANDARD (Google)",
         "status": "PROPOSED",
         "statusSource": [
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[0].decision",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[0].basis"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[0].decision",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[0].basis"
         ],
         "nextStep": {
           "text": "run the card's demonstrationTest",
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[0].basis"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[0].basis"
         },
         "deps": [],
         "depsNote": "no dependency stated ⇒ []",
@@ -4230,7 +4230,7 @@
             "value": 0,
             "rule": "EVD-1",
             "source": [
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[0].decision"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[0].decision"
             ],
             "basis": "k=0 (demonstration not run)"
           }
@@ -4242,12 +4242,12 @@
         "title": "MC-CR-LATENCY (Google)",
         "status": "PROPOSED",
         "statusSource": [
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[1].decision",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[1].basis"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[1].decision",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[1].basis"
         ],
         "nextStep": {
           "text": "run the card's demonstrationTest",
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[1].basis"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[1].basis"
         },
         "deps": [],
         "depsNote": "no dependency stated ⇒ []",
@@ -4324,7 +4324,7 @@
             "value": 0,
             "rule": "EVD-1",
             "source": [
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[1].decision"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[1].decision"
             ],
             "basis": "k=0 (demonstration not run)"
           }
@@ -4336,8 +4336,8 @@
         "title": "MC-SMALL-CHANGES (Google)",
         "status": "NOT_ADOPTED",
         "statusSource": [
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[2].decision",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[2].basis"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[2].decision",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[2].basis"
         ],
         "nextStep": null,
         "deps": [],
@@ -4415,7 +4415,7 @@
             "value": 0,
             "rule": "EVD-1",
             "source": [
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[2].decision"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[2].decision"
             ],
             "basis": "k=0 (demonstration not run)"
           }
@@ -4427,12 +4427,12 @@
         "title": "MC-REVIEW-FOCUS (Google)",
         "status": "PROPOSED",
         "statusSource": [
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[3].decision",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[3].basis"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[3].decision",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[3].basis"
         ],
         "nextStep": {
           "text": "run the card's demonstrationTest",
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[3].basis"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[3].basis"
         },
         "deps": [],
         "depsNote": "no dependency stated ⇒ []",
@@ -4509,7 +4509,7 @@
             "value": 0,
             "rule": "EVD-1",
             "source": [
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[3].decision"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[3].decision"
             ],
             "basis": "k=0 (demonstration not run)"
           }
@@ -4521,12 +4521,12 @@
         "title": "MC-PEER-REVIEW-EVERY-PR (Microsoft)",
         "status": "PROPOSED",
         "statusSource": [
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[4].decision",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[4].basis"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[4].decision",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[4].basis"
         ],
         "nextStep": {
           "text": "run the card's demonstrationTest",
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[4].basis"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[4].basis"
         },
         "deps": [],
         "depsNote": "no dependency stated ⇒ []",
@@ -4603,7 +4603,7 @@
             "value": 0,
             "rule": "EVD-1",
             "source": [
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[4].decision"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[4].decision"
             ],
             "basis": "k=0 (demonstration not run)"
           }
@@ -4615,12 +4615,12 @@
         "title": "MC-CI-BEFORE-REVIEW (Microsoft)",
         "status": "PROPOSED",
         "statusSource": [
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[5].decision",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[5].basis"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[5].decision",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[5].basis"
         ],
         "nextStep": {
           "text": "run the card's demonstrationTest",
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[5].basis"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[5].basis"
         },
         "deps": [],
         "depsNote": "no dependency stated ⇒ []",
@@ -4697,7 +4697,7 @@
             "value": 0,
             "rule": "EVD-1",
             "source": [
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[5].decision"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[5].decision"
             ],
             "basis": "k=0 (demonstration not run)"
           }
@@ -4709,12 +4709,12 @@
         "title": "MC-MERGE-QUEUE (GitHub)",
         "status": "PROPOSED",
         "statusSource": [
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[6].decision",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[6].basis"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[6].decision",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[6].basis"
         ],
         "nextStep": {
           "text": "run the card's demonstrationTest",
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[6].basis"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[6].basis"
         },
         "deps": [],
         "depsNote": "no dependency stated ⇒ []",
@@ -4791,7 +4791,7 @@
             "value": 0,
             "rule": "EVD-1",
             "source": [
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[6].decision"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[6].decision"
             ],
             "basis": "k=0 (demonstration not run)"
           }
@@ -4803,12 +4803,12 @@
         "title": "MC-LESSONS-LEARNED (NASA)",
         "status": "PROPOSED",
         "statusSource": [
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[7].decision",
-          "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[7].basis"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[7].decision",
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[7].basis"
         ],
         "nextStep": {
           "text": "run the card's demonstrationTest",
-          "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[7].basis"
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[7].basis"
         },
         "deps": [],
         "depsNote": "no dependency stated ⇒ []",
@@ -4885,7 +4885,7 @@
             "value": 0,
             "rule": "EVD-1",
             "source": [
-              "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[7].decision"
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#globalResearch.matrix[7].decision"
             ],
             "basis": "k=0 (demonstration not run)"
           }
@@ -7649,7 +7649,7 @@
           "grade": "PARTIAL — the item is SUPPORTED and usableFor(DESIGN_PROPOSAL) is met; admissible() (facts only ⇒ NOT_A_FACT for a SUPPORTED item) is false and scenario G never calls it ⇒ the criterion as worded cannot be met by a SUPPORTED item"
         }
       ],
-      "source": "git:origin/docs/v163-checkpoint-8:docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.criteria"
+      "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.criteria"
     },
     "ownerAuthorizationRequired": [
       "K",
@@ -7726,5 +7726,5 @@
     "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change"
   ],
-  "generatedAtHead": "55a83728141efaffd02f2aaf9ce88898fea0840c"
+  "generatedAtHead": "4816db015a9e6ddf88151bb7ae8c66b3d8f6f804"
 }
