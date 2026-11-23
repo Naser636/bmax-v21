@@ -1,0 +1,1291 @@
+{
+  "schema": "V161_SCENARIO_F_EVIDENCE",
+  "scenario": "V15.0 §45 F — multi-agents",
+  "ownerText": "ODG décompose une mission, affecte des fournisseurs, réceptionne leurs résultats, détecte les incompatibilités et valide l'intégration.",
+  "contractRef": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#F (contract write_set names V160_SCENARIO_F.json / odg-v160-scenario-f-run.ts; this owner-directed V161 run uses the V161 names — recorded, not hidden)",
+  "startedAt": "2026-11-23T18:20:39.864Z",
+  "finishedAt": "2026-11-23T18:49:14.325Z",
+  "head": "27fc4eaedb8e60a9a409bafedb2cbefba7156d8b",
+  "node": "v22.22.1",
+  "providers": [
+    {
+      "model": "qwen2.5-coder:3b",
+      "digest": "f72c60cabf6237b07f6e632b2c48d533cef25eda2efbd34bed21c5e9c01e6225",
+      "endpoint": "127.0.0.1:11434 (loopback Ollama, local, no paid/external provider)"
+    },
+    {
+      "model": "qwen2.5-coder:7b",
+      "digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+      "endpoint": "127.0.0.1:11434 (loopback Ollama, local, no paid/external provider)"
+    }
+  ],
+  "task": {
+    "sharedInterface": "LineItem = { sku: string, qty: integer, unitCents: integer } (exactly these three keys; unitCents = price in integer euro-cents)",
+    "parts": [
+      {
+        "id": "A",
+        "path": "src/parse-line.js",
+        "difficulty": "easy",
+        "contract": "module.exports = function parseLine(line) — line is a string 'SKU,QTY,PRICE'; each field may have surrounding spaces; PRICE is a decimal euro amount with 0, 1 or 2 decimals (e.g. '3', '3.5', '0.29'). Return a LineItem object EXACTLY { sku: <trimmed SKU string>, qty: <parseInt(QTY)>, unitCents: <Math.round(parseFloat(PRICE) * 100)> } — no other keys. LineItem = { sku: string, qty: integer, unitCents: integer } (exactly these three keys; unitCents = price in integer euro-cents)",
+        "ownCases": 2,
+        "interfaceCases": 5
+      },
+      {
+        "id": "B",
+        "path": "src/invoice-total.js",
+        "difficulty": "moderate",
+        "contract": "module.exports = function invoiceTotal(items) — items is an array of LineItem objects. LineItem = { sku: string, qty: integer, unitCents: integer } (exactly these three keys; unitCents = price in integer euro-cents). Return EXACTLY { count: items.length, totalCents: <sum over items of qty * unitCents> } (integers). An empty array returns { count: 0, totalCents: 0 }.",
+        "ownCases": 2,
+        "interfaceCases": 2
+      },
+      {
+        "id": "C",
+        "path": "src/format-cents.js",
+        "difficulty": "easy",
+        "contract": "module.exports = function formatCents(cents) — cents is a non-negative integer number of euro-cents. Return a string of euros with exactly two decimals using integer arithmetic only (no floating rounding): 725 => '7.25', 5 => '0.05', 100 => '1.00', 0 => '0.00'.",
+        "ownCases": 2,
+        "interfaceCases": 3
+      }
+    ],
+    "integrationFile": {
+      "path": "src/invoice.js",
+      "author": "SCENARIO_HARNESS",
+      "sha256": "e52e0bc52c381ba5733d3de816fc2b89565c6fc76619d591b73e585a853abceb"
+    },
+    "integrationCases": 2,
+    "heldOutCases": 2,
+    "controlledPerturbation": {
+      "part": "A",
+      "deliveredContract": "module.exports = function parseLine(line) — line is a string 'SKU,QTY,PRICE'; each field may have surrounding spaces. Return EXACTLY { sku: <trimmed SKU string>, qty: <parseInt(QTY)>, price: <parseFloat(PRICE), the euro amount as a number> } — no other keys.",
+      "note": "CONTROLLED: the contract delivered to part A's provider deliberately differs from the declared shared interface (price in euros instead of unitCents). Labelled CONTROLLED; never counted as a natural incompatibility."
+    }
+  },
+  "sandboxProbe": {
+    "ok": true,
+    "reason": null
+  },
+  "supervisor": {
+    "mode": "REPO_MODE_SCENARIO_WORKSPACE",
+    "realRepoAttempt": {
+      "repo": "the ODG repository checkout running this bin",
+      "outcome": "REFUSED_WRITESET_CONFLICT",
+      "conflicts": [
+        {
+          "with": "…/wt-v161-scenario-f",
+          "reason": "UNKNOWN_WRITESET"
+        },
+        {
+          "with": "…/bmax-v21",
+          "reason": "UNKNOWN_WRITESET"
+        },
+        {
+          "with": "…/wt-v161-delegate-converge",
+          "reason": "UNKNOWN_WRITESET"
+        },
+        {
+          "with": "…/wt-v161-scenario-j",
+          "reason": "UNKNOWN_WRITESET"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "trials": 4,
+    "byClassification": {
+      "REAL": 3,
+      "CONTROLLED": 1
+    },
+    "verdicts": [
+      {
+        "trial": "T1",
+        "kind": "REAL",
+        "classification": "REAL",
+        "initial": "COMPATIBLE",
+        "repairRounds": 0,
+        "verdict": "ACCEPTED_FIRST_PASS",
+        "wallMs": 640305
+      },
+      {
+        "trial": "T2",
+        "kind": "REAL",
+        "classification": "REAL",
+        "initial": "COMPATIBLE",
+        "repairRounds": 0,
+        "verdict": "ACCEPTED_FIRST_PASS",
+        "wallMs": 718773
+      },
+      {
+        "trial": "T3",
+        "kind": "REAL",
+        "classification": "REAL",
+        "initial": "COMPATIBLE",
+        "repairRounds": 0,
+        "verdict": "ACCEPTED_FIRST_PASS",
+        "wallMs": 181616
+      },
+      {
+        "trial": "T4-CONTROLLED",
+        "kind": "CONTROLLED",
+        "classification": "CONTROLLED",
+        "initial": "INCOMPATIBLE_INTERFACE_VIOLATION",
+        "repairRounds": 1,
+        "verdict": "ACCEPTED_AFTER_REPAIR",
+        "wallMs": 167049
+      }
+    ],
+    "naturalIncompatibilitiesObserved": 0,
+    "controlledIncompatibilitiesDetected": 1,
+    "accepted": 4
+  },
+  "trials": [
+    {
+      "trialId": "T1",
+      "kind": "REAL",
+      "decomposition": {
+        "strategy": "DECOMPOSED",
+        "complexity": "META",
+        "reason": "meta-engineering (code-analyzing-code) — decompose into focused, independently-verifiable primitives (the V30 lesson: monolithic meta generation fails, decomposed succeeds)",
+        "files": [
+          "src/parse-line.js",
+          "src/invoice-total.js",
+          "src/format-cents.js",
+          "src/invoice.js"
+        ],
+        "writeSets": {
+          "A": [
+            "src/parse-line.js"
+          ],
+          "B": [
+            "src/invoice-total.js"
+          ],
+          "C": [
+            "src/format-cents.js"
+          ],
+          "INTEGRATOR": [
+            "src/invoice.js"
+          ]
+        },
+        "contention": {
+          "ok": true,
+          "anyContention": false,
+          "layer0ParallelSafe": true,
+          "contentions": []
+        }
+      },
+      "assignments": [
+        {
+          "part": "A",
+          "path": "src/parse-line.js",
+          "difficulty": "easy",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:3b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T1-A",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T1/src/parse-line.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        },
+        {
+          "part": "B",
+          "path": "src/invoice-total.js",
+          "difficulty": "moderate",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:7b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T1-B",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T1/src/invoice-total.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        },
+        {
+          "part": "C",
+          "path": "src/format-cents.js",
+          "difficulty": "easy",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:3b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T1-C",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T1/src/format-cents.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        }
+      ],
+      "receipt": {
+        "A": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "bf3c72e83dc3599b1f8ad2147a2098fc6d288e9fdc9159b8ed6800c7d6f36dab"
+        },
+        "B": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "bd8753311c7651f41b1e6ec0b8d974f5acf8c03f23c4681b01f3a2268756316c"
+        },
+        "C": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "6e838520fb03a2d6c4821c2d5913c7314ddf4af765f28f1b70f0e8500efdd2dc"
+        }
+      },
+      "generations": [
+        {
+          "part": "A",
+          "path": "src/parse-line.js",
+          "model": "qwen2.5-coder:3b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "bf3c72e83dc3599b1f8ad2147a2098fc6d288e9fdc9159b8ed6800c7d6f36dab",
+          "bytes": 231,
+          "ms": 29721,
+          "evalCount": 69,
+          "servedModel": "qwen2.5-coder:3b",
+          "reason": null
+        },
+        {
+          "part": "B",
+          "path": "src/invoice-total.js",
+          "model": "qwen2.5-coder:7b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "bd8753311c7651f41b1e6ec0b8d974f5acf8c03f23c4681b01f3a2268756316c",
+          "bytes": 175,
+          "ms": 170734,
+          "evalCount": 52,
+          "servedModel": "qwen2.5-coder:7b",
+          "reason": null
+        },
+        {
+          "part": "C",
+          "path": "src/format-cents.js",
+          "model": "qwen2.5-coder:3b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "6e838520fb03a2d6c4821c2d5913c7314ddf4af765f28f1b70f0e8500efdd2dc",
+          "bytes": 269,
+          "ms": 435554,
+          "evalCount": 87,
+          "servedModel": "qwen2.5-coder:3b",
+          "reason": null
+        }
+      ],
+      "decomposedExecution": {
+        "verifiedCount": 3,
+        "total": 3,
+        "note": "all sub-problems independently verified + composed on proven parts (decomposition with intermediate verification)"
+      },
+      "initialDetection": {
+        "classification": "COMPATIBLE",
+        "incompatible": false,
+        "offending": [],
+        "detectedBy": null,
+        "perPart": {
+          "A": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "B": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "C": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          }
+        },
+        "integration": {
+          "status": "EXECUTED",
+          "pass": true,
+          "error": null
+        }
+      },
+      "repairRounds": [],
+      "repairStopReason": null,
+      "finalDetection": {
+        "classification": "COMPATIBLE",
+        "incompatible": false,
+        "offending": [],
+        "detectedBy": null,
+        "perPart": {
+          "A": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "B": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "C": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          }
+        },
+        "integration": {
+          "status": "EXECUTED",
+          "pass": true,
+          "error": null
+        }
+      },
+      "heldOut": {
+        "status": "EXECUTED",
+        "outcome": "PASS",
+        "pass": true,
+        "error": null,
+        "wallMs": 210
+      },
+      "accepted": true,
+      "verdict": "ACCEPTED_FIRST_PASS",
+      "finalFiles": {
+        "src/parse-line.js": {
+          "sha256": "bf3c72e83dc3599b1f8ad2147a2098fc6d288e9fdc9159b8ed6800c7d6f36dab",
+          "code": "module.exports = function parseLine(line) {\n  const [sku, qty, price] = line.trim().split(',').map(field => field.trim());\n  const unitCents = Math.round(parseFloat(price) * 100);\n  return { sku, qty: parseInt(qty), unitCents };\n};"
+        },
+        "src/invoice-total.js": {
+          "sha256": "bd8753311c7651f41b1e6ec0b8d974f5acf8c03f23c4681b01f3a2268756316c",
+          "code": "module.exports = function invoiceTotal(items) {\n  return {\n    count: items.length,\n    totalCents: items.reduce((total, item) => total + item.qty * item.unitCents, 0)\n  };\n};"
+        },
+        "src/format-cents.js": {
+          "sha256": "6e838520fb03a2d6c4821c2d5913c7314ddf4af765f28f1b70f0e8500efdd2dc",
+          "code": "module.exports = function formatCents(cents) {\n  if (cents < 0) {\n    throw new Error(\"Cents must be a non-negative integer\");\n  }\n  const euros = Math.floor(cents / 100);\n  const centsPart = cents % 100;\n  return `${euros}.${centsPart.toString().padStart(2, '0')}`;\n};"
+        }
+      },
+      "glue": {
+        "path": "src/invoice.js",
+        "sha256": "e52e0bc52c381ba5733d3de816fc2b89565c6fc76619d591b73e585a853abceb",
+        "author": "SCENARIO_HARNESS"
+      },
+      "wallMs": 640305,
+      "classification": "REAL"
+    },
+    {
+      "trialId": "T2",
+      "kind": "REAL",
+      "decomposition": {
+        "strategy": "DECOMPOSED",
+        "complexity": "META",
+        "reason": "meta-engineering (code-analyzing-code) — decompose into focused, independently-verifiable primitives (the V30 lesson: monolithic meta generation fails, decomposed succeeds)",
+        "files": [
+          "src/parse-line.js",
+          "src/invoice-total.js",
+          "src/format-cents.js",
+          "src/invoice.js"
+        ],
+        "writeSets": {
+          "A": [
+            "src/parse-line.js"
+          ],
+          "B": [
+            "src/invoice-total.js"
+          ],
+          "C": [
+            "src/format-cents.js"
+          ],
+          "INTEGRATOR": [
+            "src/invoice.js"
+          ]
+        },
+        "contention": {
+          "ok": true,
+          "anyContention": false,
+          "layer0ParallelSafe": true,
+          "contentions": []
+        }
+      },
+      "assignments": [
+        {
+          "part": "A",
+          "path": "src/parse-line.js",
+          "difficulty": "easy",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:3b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T2-A",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T2/src/parse-line.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        },
+        {
+          "part": "B",
+          "path": "src/invoice-total.js",
+          "difficulty": "moderate",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:7b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T2-B",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T2/src/invoice-total.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        },
+        {
+          "part": "C",
+          "path": "src/format-cents.js",
+          "difficulty": "easy",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:3b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T2-C",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T2/src/format-cents.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        }
+      ],
+      "receipt": {
+        "A": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "4b9d4ad2a510ce977797e83cda6fcecdbfaf04dafd4ba689e9bc774647c85fc1"
+        },
+        "B": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "bd8753311c7651f41b1e6ec0b8d974f5acf8c03f23c4681b01f3a2268756316c"
+        },
+        "C": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "6e838520fb03a2d6c4821c2d5913c7314ddf4af765f28f1b70f0e8500efdd2dc"
+        }
+      },
+      "generations": [
+        {
+          "part": "A",
+          "path": "src/parse-line.js",
+          "model": "qwen2.5-coder:3b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "4b9d4ad2a510ce977797e83cda6fcecdbfaf04dafd4ba689e9bc774647c85fc1",
+          "bytes": 229,
+          "ms": 344328,
+          "evalCount": 72,
+          "servedModel": "qwen2.5-coder:3b",
+          "reason": null
+        },
+        {
+          "part": "B",
+          "path": "src/invoice-total.js",
+          "model": "qwen2.5-coder:7b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "bd8753311c7651f41b1e6ec0b8d974f5acf8c03f23c4681b01f3a2268756316c",
+          "bytes": 175,
+          "ms": 7924,
+          "evalCount": 52,
+          "servedModel": "qwen2.5-coder:7b",
+          "reason": null
+        },
+        {
+          "part": "C",
+          "path": "src/format-cents.js",
+          "model": "qwen2.5-coder:3b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "6e838520fb03a2d6c4821c2d5913c7314ddf4af765f28f1b70f0e8500efdd2dc",
+          "bytes": 269,
+          "ms": 362672,
+          "evalCount": 87,
+          "servedModel": "qwen2.5-coder:3b",
+          "reason": null
+        }
+      ],
+      "decomposedExecution": {
+        "verifiedCount": 3,
+        "total": 3,
+        "note": "all sub-problems independently verified + composed on proven parts (decomposition with intermediate verification)"
+      },
+      "initialDetection": {
+        "classification": "COMPATIBLE",
+        "incompatible": false,
+        "offending": [],
+        "detectedBy": null,
+        "perPart": {
+          "A": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "B": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "C": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          }
+        },
+        "integration": {
+          "status": "EXECUTED",
+          "pass": true,
+          "error": null
+        }
+      },
+      "repairRounds": [],
+      "repairStopReason": null,
+      "finalDetection": {
+        "classification": "COMPATIBLE",
+        "incompatible": false,
+        "offending": [],
+        "detectedBy": null,
+        "perPart": {
+          "A": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "B": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "C": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          }
+        },
+        "integration": {
+          "status": "EXECUTED",
+          "pass": true,
+          "error": null
+        }
+      },
+      "heldOut": {
+        "status": "EXECUTED",
+        "outcome": "PASS",
+        "pass": true,
+        "error": null,
+        "wallMs": 289
+      },
+      "accepted": true,
+      "verdict": "ACCEPTED_FIRST_PASS",
+      "finalFiles": {
+        "src/parse-line.js": {
+          "sha256": "4b9d4ad2a510ce977797e83cda6fcecdbfaf04dafd4ba689e9bc774647c85fc1",
+          "code": "module.exports = function parseLine(line) {\n  const [sku, qty, price] = line.trim().split(',').map(field => field.trim());\n  return {\n    sku,\n    qty: parseInt(qty, 10),\n    unitCents: Math.round(parseFloat(price) * 100)\n  };\n};"
+        },
+        "src/invoice-total.js": {
+          "sha256": "bd8753311c7651f41b1e6ec0b8d974f5acf8c03f23c4681b01f3a2268756316c",
+          "code": "module.exports = function invoiceTotal(items) {\n  return {\n    count: items.length,\n    totalCents: items.reduce((total, item) => total + item.qty * item.unitCents, 0)\n  };\n};"
+        },
+        "src/format-cents.js": {
+          "sha256": "6e838520fb03a2d6c4821c2d5913c7314ddf4af765f28f1b70f0e8500efdd2dc",
+          "code": "module.exports = function formatCents(cents) {\n  if (cents < 0) {\n    throw new Error(\"Cents must be a non-negative integer\");\n  }\n  const euros = Math.floor(cents / 100);\n  const centsPart = cents % 100;\n  return `${euros}.${centsPart.toString().padStart(2, '0')}`;\n};"
+        }
+      },
+      "glue": {
+        "path": "src/invoice.js",
+        "sha256": "e52e0bc52c381ba5733d3de816fc2b89565c6fc76619d591b73e585a853abceb",
+        "author": "SCENARIO_HARNESS"
+      },
+      "wallMs": 718773,
+      "classification": "REAL"
+    },
+    {
+      "trialId": "T3",
+      "kind": "REAL",
+      "decomposition": {
+        "strategy": "DECOMPOSED",
+        "complexity": "META",
+        "reason": "meta-engineering (code-analyzing-code) — decompose into focused, independently-verifiable primitives (the V30 lesson: monolithic meta generation fails, decomposed succeeds)",
+        "files": [
+          "src/parse-line.js",
+          "src/invoice-total.js",
+          "src/format-cents.js",
+          "src/invoice.js"
+        ],
+        "writeSets": {
+          "A": [
+            "src/parse-line.js"
+          ],
+          "B": [
+            "src/invoice-total.js"
+          ],
+          "C": [
+            "src/format-cents.js"
+          ],
+          "INTEGRATOR": [
+            "src/invoice.js"
+          ]
+        },
+        "contention": {
+          "ok": true,
+          "anyContention": false,
+          "layer0ParallelSafe": true,
+          "contentions": []
+        }
+      },
+      "assignments": [
+        {
+          "part": "A",
+          "path": "src/parse-line.js",
+          "difficulty": "easy",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:3b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T3-A",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T3/src/parse-line.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        },
+        {
+          "part": "B",
+          "path": "src/invoice-total.js",
+          "difficulty": "moderate",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:7b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T3-B",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T3/src/invoice-total.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        },
+        {
+          "part": "C",
+          "path": "src/format-cents.js",
+          "difficulty": "easy",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:3b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T3-C",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T3/src/format-cents.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        }
+      ],
+      "receipt": {
+        "A": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "4b9d4ad2a510ce977797e83cda6fcecdbfaf04dafd4ba689e9bc774647c85fc1"
+        },
+        "B": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "bd8753311c7651f41b1e6ec0b8d974f5acf8c03f23c4681b01f3a2268756316c"
+        },
+        "C": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "cec4b750ef897dc9bb7266702703b7cff76cab820df9230566437f15cb69fc83"
+        }
+      },
+      "generations": [
+        {
+          "part": "A",
+          "path": "src/parse-line.js",
+          "model": "qwen2.5-coder:3b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "4b9d4ad2a510ce977797e83cda6fcecdbfaf04dafd4ba689e9bc774647c85fc1",
+          "bytes": 229,
+          "ms": 9273,
+          "evalCount": 72,
+          "servedModel": "qwen2.5-coder:3b",
+          "reason": null
+        },
+        {
+          "part": "B",
+          "path": "src/invoice-total.js",
+          "model": "qwen2.5-coder:7b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "bd8753311c7651f41b1e6ec0b8d974f5acf8c03f23c4681b01f3a2268756316c",
+          "bytes": 175,
+          "ms": 159753,
+          "evalCount": 52,
+          "servedModel": "qwen2.5-coder:7b",
+          "reason": null
+        },
+        {
+          "part": "C",
+          "path": "src/format-cents.js",
+          "model": "qwen2.5-coder:3b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "cec4b750ef897dc9bb7266702703b7cff76cab820df9230566437f15cb69fc83",
+          "bytes": 257,
+          "ms": 8852,
+          "evalCount": 84,
+          "servedModel": "qwen2.5-coder:3b",
+          "reason": null
+        }
+      ],
+      "decomposedExecution": {
+        "verifiedCount": 3,
+        "total": 3,
+        "note": "all sub-problems independently verified + composed on proven parts (decomposition with intermediate verification)"
+      },
+      "initialDetection": {
+        "classification": "COMPATIBLE",
+        "incompatible": false,
+        "offending": [],
+        "detectedBy": null,
+        "perPart": {
+          "A": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "B": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "C": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          }
+        },
+        "integration": {
+          "status": "EXECUTED",
+          "pass": true,
+          "error": null
+        }
+      },
+      "repairRounds": [],
+      "repairStopReason": null,
+      "finalDetection": {
+        "classification": "COMPATIBLE",
+        "incompatible": false,
+        "offending": [],
+        "detectedBy": null,
+        "perPart": {
+          "A": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "B": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "C": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          }
+        },
+        "integration": {
+          "status": "EXECUTED",
+          "pass": true,
+          "error": null
+        }
+      },
+      "heldOut": {
+        "status": "EXECUTED",
+        "outcome": "PASS",
+        "pass": true,
+        "error": null,
+        "wallMs": 217
+      },
+      "accepted": true,
+      "verdict": "ACCEPTED_FIRST_PASS",
+      "finalFiles": {
+        "src/parse-line.js": {
+          "sha256": "4b9d4ad2a510ce977797e83cda6fcecdbfaf04dafd4ba689e9bc774647c85fc1",
+          "code": "module.exports = function parseLine(line) {\n  const [sku, qty, price] = line.trim().split(',').map(field => field.trim());\n  return {\n    sku,\n    qty: parseInt(qty, 10),\n    unitCents: Math.round(parseFloat(price) * 100)\n  };\n};"
+        },
+        "src/invoice-total.js": {
+          "sha256": "bd8753311c7651f41b1e6ec0b8d974f5acf8c03f23c4681b01f3a2268756316c",
+          "code": "module.exports = function invoiceTotal(items) {\n  return {\n    count: items.length,\n    totalCents: items.reduce((total, item) => total + item.qty * item.unitCents, 0)\n  };\n};"
+        },
+        "src/format-cents.js": {
+          "sha256": "cec4b750ef897dc9bb7266702703b7cff76cab820df9230566437f15cb69fc83",
+          "code": "module.exports = function formatCents(cents) {\n  if (cents < 0) {\n    throw new Error(\"Cents cannot be negative\");\n  }\n  const euros = Math.floor(cents / 100);\n  const centsPart = cents % 100;\n  return `${euros}.${centsPart.toString().padStart(2, '0')}`;\n};"
+        }
+      },
+      "glue": {
+        "path": "src/invoice.js",
+        "sha256": "e52e0bc52c381ba5733d3de816fc2b89565c6fc76619d591b73e585a853abceb",
+        "author": "SCENARIO_HARNESS"
+      },
+      "wallMs": 181616,
+      "classification": "REAL"
+    },
+    {
+      "trialId": "T4-CONTROLLED",
+      "kind": "CONTROLLED",
+      "decomposition": {
+        "strategy": "DECOMPOSED",
+        "complexity": "META",
+        "reason": "meta-engineering (code-analyzing-code) — decompose into focused, independently-verifiable primitives (the V30 lesson: monolithic meta generation fails, decomposed succeeds)",
+        "files": [
+          "src/parse-line.js",
+          "src/invoice-total.js",
+          "src/format-cents.js",
+          "src/invoice.js"
+        ],
+        "writeSets": {
+          "A": [
+            "src/parse-line.js"
+          ],
+          "B": [
+            "src/invoice-total.js"
+          ],
+          "C": [
+            "src/format-cents.js"
+          ],
+          "INTEGRATOR": [
+            "src/invoice.js"
+          ]
+        },
+        "contention": {
+          "ok": true,
+          "anyContention": false,
+          "layer0ParallelSafe": true,
+          "contentions": []
+        }
+      },
+      "assignments": [
+        {
+          "part": "A",
+          "path": "src/parse-line.js",
+          "difficulty": "easy",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:3b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T4-CONTROLLED-A",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T4-CONTROLLED/src/parse-line.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        },
+        {
+          "part": "B",
+          "path": "src/invoice-total.js",
+          "difficulty": "moderate",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:7b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T4-CONTROLLED-B",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T4-CONTROLLED/src/invoice-total.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        },
+        {
+          "part": "C",
+          "path": "src/format-cents.js",
+          "difficulty": "easy",
+          "routerDecision": "LOCAL",
+          "model": "qwen2.5-coder:3b",
+          "supervisor": {
+            "id": "v161-f-mwtlcy29-T4-CONTROLLED-C",
+            "outcome": "ASSIGNED",
+            "writeSet": [
+              "scenario-f/T4-CONTROLLED/src/format-cents.js"
+            ],
+            "conflicts": null,
+            "renew": "RENEWED",
+            "close": {
+              "outcome": "CLOSED_NO_RESULT",
+              "state": "COMPLETED_NO_RESULT",
+              "reason": null
+            }
+          }
+        }
+      ],
+      "receipt": {
+        "A": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "d31c896b6bcc2e2fd0c5c676542c06ab536e011c5db2cdca774392e328a38175"
+        },
+        "B": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "7ca4e7b78f07219c0c4581adff0290099c44504db753521da7c79952ce7a4711"
+        },
+        "C": {
+          "received": true,
+          "writeSetViolation": false,
+          "executionMode": "SANDBOX",
+          "executionStatus": "EXECUTED",
+          "ownAccepted": true,
+          "ownRepairs": 0,
+          "sha256": "c2ae529518172d1a3f1b32eaf92dee5aac063f1973c9818cb932a266151476df"
+        }
+      },
+      "generations": [
+        {
+          "part": "A",
+          "path": "src/parse-line.js",
+          "model": "qwen2.5-coder:3b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "d31c896b6bcc2e2fd0c5c676542c06ab536e011c5db2cdca774392e328a38175",
+          "bytes": 207,
+          "ms": 6520,
+          "evalCount": 62,
+          "servedModel": "qwen2.5-coder:3b",
+          "reason": null
+        },
+        {
+          "part": "B",
+          "path": "src/invoice-total.js",
+          "model": "qwen2.5-coder:7b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "7ca4e7b78f07219c0c4581adff0290099c44504db753521da7c79952ce7a4711",
+          "bytes": 177,
+          "ms": 135420,
+          "evalCount": 53,
+          "servedModel": "qwen2.5-coder:7b",
+          "reason": null
+        },
+        {
+          "part": "C",
+          "path": "src/format-cents.js",
+          "model": "qwen2.5-coder:3b",
+          "ok": true,
+          "repairHint": false,
+          "sha256": "c2ae529518172d1a3f1b32eaf92dee5aac063f1973c9818cb932a266151476df",
+          "bytes": 257,
+          "ms": 6518,
+          "evalCount": 84,
+          "servedModel": "qwen2.5-coder:3b",
+          "reason": null
+        },
+        {
+          "part": "A",
+          "path": "src/parse-line.js",
+          "model": "qwen2.5-coder:3b",
+          "ok": true,
+          "repairHint": true,
+          "sha256": "bf3c72e83dc3599b1f8ad2147a2098fc6d288e9fdc9159b8ed6800c7d6f36dab",
+          "bytes": 231,
+          "ms": 13616,
+          "evalCount": 69,
+          "servedModel": "qwen2.5-coder:3b",
+          "reason": null
+        }
+      ],
+      "decomposedExecution": {
+        "verifiedCount": 3,
+        "total": 3,
+        "note": "all sub-problems independently verified + composed on proven parts (decomposition with intermediate verification)"
+      },
+      "initialDetection": {
+        "classification": "INCOMPATIBLE_INTERFACE_VIOLATION",
+        "incompatible": true,
+        "offending": [
+          "A"
+        ],
+        "detectedBy": "odg-native-build-sandbox.runIsolated (bwrap) + host gradeCases oracle over the declared shared-interface / cross-part cases",
+        "perPart": {
+          "A": {
+            "ownPass": true,
+            "interfacePass": false,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": "case 0: ([\"X9 , 3 , 0.29\"]) returned {\"price\":0.29,\"qty\":3,\"sku\":\"X9\"}, expected {\"qty\":3,\"sku\":\"X9\",\"unitCents\":29}"
+          },
+          "B": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "C": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          }
+        },
+        "integration": {
+          "status": "EXECUTED",
+          "pass": false,
+          "error": "case 0: ([\"X9 , 3 , 0.29\\nK,10,1.5\\nZ,1,19.99\"]) returned {\"count\":3,\"display\":\"NaN.NaN\",\"totalCents\":null}, expected {\"count\":3,\"display\":\"35.86\",\"totalCents\":3586}"
+        }
+      },
+      "repairRounds": [
+        {
+          "round": 1,
+          "regenerated": [
+            {
+              "part": "A",
+              "model": "qwen2.5-coder:3b",
+              "feedbackSha256": "1dcfb9168f2a93808c77779588437fcb02edbd776b2a5a1adeadd5f091ad1def",
+              "accepted": true,
+              "repairs": 0,
+              "repairStopReason": null,
+              "executionStatus": "EXECUTED",
+              "sha256": "bf3c72e83dc3599b1f8ad2147a2098fc6d288e9fdc9159b8ed6800c7d6f36dab"
+            }
+          ],
+          "changed": [
+            "A"
+          ],
+          "before": "INCOMPATIBLE_INTERFACE_VIOLATION",
+          "after": "COMPATIBLE",
+          "integrationPass": true
+        }
+      ],
+      "repairStopReason": null,
+      "finalDetection": {
+        "classification": "COMPATIBLE",
+        "incompatible": false,
+        "offending": [],
+        "detectedBy": null,
+        "perPart": {
+          "A": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "B": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          },
+          "C": {
+            "ownPass": true,
+            "interfacePass": true,
+            "interfaceStatus": "EXECUTED",
+            "interfaceError": null
+          }
+        },
+        "integration": {
+          "status": "EXECUTED",
+          "pass": true,
+          "error": null
+        }
+      },
+      "heldOut": {
+        "status": "EXECUTED",
+        "outcome": "PASS",
+        "pass": true,
+        "error": null,
+        "wallMs": 197
+      },
+      "accepted": true,
+      "verdict": "ACCEPTED_AFTER_REPAIR",
+      "finalFiles": {
+        "src/parse-line.js": {
+          "sha256": "bf3c72e83dc3599b1f8ad2147a2098fc6d288e9fdc9159b8ed6800c7d6f36dab",
+          "code": "module.exports = function parseLine(line) {\n  const [sku, qty, price] = line.trim().split(',').map(field => field.trim());\n  const unitCents = Math.round(parseFloat(price) * 100);\n  return { sku, qty: parseInt(qty), unitCents };\n};"
+        },
+        "src/invoice-total.js": {
+          "sha256": "7ca4e7b78f07219c0c4581adff0290099c44504db753521da7c79952ce7a4711",
+          "code": "module.exports = function invoiceTotal(items) {\n  return {\n    count: items.length,\n    totalCents: items.reduce((total, item) => total + (item.qty * item.unitCents), 0)\n  };\n};"
+        },
+        "src/format-cents.js": {
+          "sha256": "c2ae529518172d1a3f1b32eaf92dee5aac063f1973c9818cb932a266151476df",
+          "code": "module.exports = function formatCents(cents) {\n  if (cents < 0) {\n    throw new Error('Cents cannot be negative');\n  }\n  const euros = Math.floor(cents / 100);\n  const centsPart = cents % 100;\n  return `${euros}.${centsPart.toString().padStart(2, '0')}`;\n};"
+        }
+      },
+      "glue": {
+        "path": "src/invoice.js",
+        "sha256": "e52e0bc52c381ba5733d3de816fc2b89565c6fc76619d591b73e585a853abceb",
+        "author": "SCENARIO_HARNESS"
+      },
+      "wallMs": 167049,
+      "classification": "CONTROLLED"
+    }
+  ],
+  "attribution": {
+    "ODG_NATIVE_COMPONENT": [
+      "decomposition-planner.chooseStrategy",
+      "odg-writeset-contention.computeLayerContention",
+      "odg-model-router.selectModel",
+      "odg-agent-supervisor.assign/renew/close",
+      "odg-decomposed-execution.runDecomposed",
+      "native-project-builder.buildProject (own + targeted repair)",
+      "odg-native-build-sandbox.runIsolated + gradeCases (detection + acceptance)"
+    ],
+    "PROVIDER": [
+      "part source code: generated by the local models qwen2.5-coder:3b / :7b (provider work, NOT counted as ODG-native)"
+    ],
+    "SCENARIO_HARNESS": [
+      "the task definition, shared-interface cross-part case projection, the integration file src/invoice.js, the classification mapping of sandbox verdicts, the CONTROLLED perturbation"
+    ]
+  },
+  "priorRun": {
+    "note": "FIRST live run (same code minus the loopbackFetch fix), discarded as evidence of record but reported: 3 generations (T3 part C x2, T4 part A) failed with 'fetch failed' at ~300 s = undici's headersTimeout under a contended shared Ollama (load ~16 on 8 cores). Root-caused and fixed by injecting loopbackFetch (node:http) into local-model-generator's fetchImpl seam.",
+    "verdicts": {
+      "T1": "ACCEPTED_FIRST_PASS (COMPATIBLE)",
+      "T2": "ACCEPTED_AFTER_REPAIR (part C failed its OWN contract: formatCents(1100) returned '11' — integration also failed; targeted regeneration of C only fixed it)",
+      "T3": "REJECTED (part C never received — fetch timeout)",
+      "T4-CONTROLLED": "ACCEPTED_AFTER_REPAIR but the perturbation was NOT observed (part A never received on first generation — fetch timeout)"
+    },
+    "naturalIncompatibilitiesObserved": 0
+  },
+  "honestLimits": [
+    "one small task (3 model parts + 1 harness-authored integration file); results are not a statistical capability measure",
+    "the incompatibility classification is a deterministic mapping in this bin over the sandbox+oracle verdicts; the verdicts themselves come from odg-native-build-sandbox (bwrap) and its host-side gradeCases",
+    "part difficulty ('easy' / 'moderate') is DECLARED by the scenario to route the parts to two different providers via odg-model-router — not a measured difficulty",
+    "the real repository's supervisor refused (fail-closed) because concurrent sibling worktrees hold UNKNOWN write-sets; assignments were then recorded in REPO mode against the scenario's own throw-away git workspace (staleMs=1000) — not against the live repository",
+    "supervisor write-sets are namespaced virtual paths (scenario-f/<trial>/src/…); generated code lives only in memory + the sandbox, never in the repository",
+    "the integration repair feedback includes the failing interface case (input/expected/actual) — the held-out set is the only check never shown to a generator",
+    "no independent human/agent inspection of the generated code is claimed beyond the sandbox held-out check and the supervisor close inspector identity (a declared string, not cryptographically bound)"
+  ]
+}
