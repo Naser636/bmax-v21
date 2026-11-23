@@ -20,7 +20,8 @@ const GRANT_PATH = "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json";
 const EVIDENCE_PATH = "docs/odg/evidence/V158_RADAR_LIVE_RUN.json";
 // ≤ 10 concrete pages, at least one per admitted host, chosen for ODG engineering relevance and small responses.
 const TARGETS = Object.freeze([
-  { url: "https://code.claude.com/docs/en/sandboxing.md", topics: ["egress control", "agent isolation"] },
+  // code.claude.com removed (V16.0): Anthropic terms forbid automated access unless explicitly permitted — DEFERRED
+  // to an owner decision by the governed admission. Records collected earlier while it was admitted stay historical.
   { url: "https://csrc.nist.gov/pubs/ai/100/2/e2025/final", topics: ["adversarial ML taxonomy", "prompt injection"] },
   { url: "https://huggingface.co/api/daily_papers?limit=5", topics: ["research discovery", "AI papers"] },
   { url: "https://huggingface.co/api/models?search=qwen2.5-coder&limit=5", topics: ["local models", "model registry"] },

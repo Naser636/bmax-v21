@@ -1007,11 +1007,12 @@
    "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
    "requiresAuth": false,
    "paid": false,
-   "termsForbidAutomation": false,
    "botChallengeObserved": false,
    "flagsBasis": "research admission_status CANDIDATE = all checks fetched & consistent (anonymous, free, terms permit automated access, no bot challenge observed)",
    "robotsTxtSha256": "2916f7b4de0705dbb485dd4f5271d4909e482e6ebc12634349ea2373ca65a0fa",
-   "robotsTxtBytes": 176
+   "robotsTxtBytes": 176,
+   "ownerDecisionRequired": "V16.0 research: Anthropic terms forbid access by 'automated or non-human means' unless explicitly permitted; robots.txt carries 'Content-Signal: ai-input=yes' — whether that is the explicit permission is an OWNER/legal decision. Deny-by-default until decided.",
+   "termsReassessedAt": "2026-11-23"
   },
   {
    "host": "bair.berkeley.edu",

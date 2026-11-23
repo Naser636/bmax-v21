@@ -66,7 +66,7 @@ check("entities decoded per the documented list", C.normalise("<p>a &amp; b &mda
   const pin = reg.collections.find((c: any) => c.path === C.COLLECTION_PATH);
   check("committed collection digest equals its COLLECTION_REGISTRY pin", !!pin && ATT.contentSha256(col) === pin.sha256 && pin.calls === col.callsUsed && pin.grant === col.grant);
   const allQuotes = col.sources.flatMap((s: any) => s.quotes || []);
-  check("committed collection: every quote ≤ 300 chars and matches a pre-registered pattern of ITS url", col.sources.every((s: any) => { const t = C.TARGETS.find((x: any) => x.url === s.url); return (s.quotes || []).length <= 4 && (s.quotes || []).every((q: string, i: number) => { const p = t && t.patterns.find((pp: any) => pp.id === s.quotePatterns[i]); return q.length <= 300 && !!p && new RegExp(p.re.source, p.re.flags).test(q); }); }));
+  check("committed collection: every quote ≤ 300 chars and matches a pre-registered pattern of ITS url", col.sources.every((s: any) => { const t = C.ALL_TARGETS.find((x: any) => x.url === s.url); return (s.quotes || []).length <= 4 && (s.quotes || []).every((q: string, i: number) => { const p = t && t.patterns.find((pp: any) => pp.id === s.quotePatterns[i]); return q.length <= 300 && !!p && new RegExp(p.re.source, p.re.flags).test(q); }); }));
   check("committed collection: calls ≤ the grant's per-run budget", col.callsUsed <= col.budgetMaxCalls);
   const asmText = fs.readFileSync(path.join(ROOT, KR.OUT_PATH), "utf8");
   check("no quote / claim in the committed files contains an e-mail address", !allQuotes.some((q: string) => EMAIL.test(q)) && !EMAIL.test(colText) && !EMAIL.test(asmText));
@@ -80,6 +80,7 @@ check("entities decoded per the documented list", C.normalise("<p>a &amp; b &mda
   check("a tampered collection (digest ≠ pin) is refused by the assessment", threw);
   fs.rmSync(dir, { recursive: true, force: true });
   if (failures) { process.stdout.write(`\n${failures} FAILED\n`); process.exit(1); }
-  process.stdout.write("\nall V158 collection/knowledge checks passed\n");
+  check("V16.0: retired targets (code.claude.com — owner decision) are never fetched live, only kept to verify history", C.TARGETS.every((t: any) => t.retired !== true && !/code\.claude\.com/.test(t.url)) && C.ALL_TARGETS.some((t: any) => t.retired === true));
+process.stdout.write("\nall V158 collection/knowledge checks passed\n");
 })();
 export {};

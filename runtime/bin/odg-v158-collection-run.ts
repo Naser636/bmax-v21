@@ -41,7 +41,7 @@ const MIN_QUOTE_CHARS = 20;
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
 
 /* PRE-REGISTERED questions + patterns (fixed BEFORE the fetch). A quote is recorded only if it matches one of these. */
-const TARGETS = Object.freeze([
+const ALL_TARGETS = Object.freeze([
   { url: "https://www.postgresql.org/docs/current/explicit-locking.html", mode: "HTML", topics: ["locking", "concurrency"], capability: "ODG storage concurrency — locking semantics",
     patterns: [
       { id: "PG_ADVISORY_DEF", question: "What does PostgreSQL document advisory locks to be?", re: /application-defined meanings|called advisory locks/i },
@@ -49,7 +49,10 @@ const TARGETS = Object.freeze([
       { id: "PG_LOCK_MODES", question: "What do PostgreSQL lock modes control?", re: /lock modes to control concurrent access/i },
       { id: "PG_DEADLOCK", question: "How does PostgreSQL handle deadlocks?", re: /automatically detects deadlock/i },
     ] },
-  { url: "https://code.claude.com/docs/en/sandboxing.md", mode: "MARKDOWN", topics: ["egress control", "agent isolation"], capability: "ODG provider isolation — sandbox / network egress",
+  // RETIRED (V16.0): Anthropic terms forbid automated access unless explicitly permitted ⇒ the governed admission DEFERS
+  // code.claude.com to an owner decision. Kept ONLY so the historical (pinned) collection's quotes stay verifiable against
+  // their registered patterns; live runs skip retired targets.
+  { retired: true, url: "https://code.claude.com/docs/en/sandboxing.md", mode: "MARKDOWN", topics: ["egress control", "agent isolation"], capability: "ODG provider isolation — sandbox / network egress",
     patterns: [
       { id: "CC_NET_PROXY", question: "How does Claude Code's sandbox restrict network egress?", re: /^(?=.*\bnetwork\b)(?=.*\bproxy\b)/i },
       { id: "CC_NET_DOMAINS", question: "Which network destinations does Claude Code's sandbox allow?", re: /^(?=.*\bnetwork\b)(?=.*\bdomains?\b)/i },
@@ -81,6 +84,7 @@ const TARGETS = Object.freeze([
       { id: "NPM_NAME_THEN_VERSION", question: "What is the current `latest` version of react on npm (name and version not adjacent)?", re: /"name"\s*:\s*"react"[^{}]{0,200}?"version"\s*:\s*"[0-9][^"]{0,39}"/ },
     ] },
 ]);
+const TARGETS = Object.freeze(ALL_TARGETS.filter((t: any) => t.retired !== true));   // live targets only
 
 const BLOCK_TAGS = "p|li|h[1-6]|div|br|tr|td|th|pre|dt|dd|table|ul|ol|section|article|header|footer|nav|blockquote|caption|title";
 function decodeEntities(s: string): string {
@@ -181,7 +185,7 @@ async function collect(o: any): Promise<any> {
   if (!live) { const plan = R.planRun(TARGETS, grant, nowMs); return { written: false, reason: "DRY (ODG_RADAR_LIVE!=1): nothing fetched, nothing written", plan: plan.plan.map((p: any) => [p.decision, p.url]) }; }
   if (fs.existsSync(outPath) && opts.overwrite !== true) return { written: false, reason: "REFUSED: " + outPath + " exists (a collection is immutable once recorded/pinned)" };
   const inner = typeof opts.fetchImpl === "function" ? opts.fetchImpl : HTTP.get;
-  const byTarget: Record<string, any> = {}; for (const t of TARGETS) byTarget[t.url] = t;
+  const byTarget: Record<string, any> = {}; for (const t of TARGETS) byTarget[t.url] = t;   // live targets only
   const extracted = new Map<string, any[]>();
   const titled = new Map<string, boolean>();
   // WRAPPER: passes the REAL call through unchanged; additionally extracts quotes from the in-memory body (never stored).
@@ -205,5 +209,5 @@ async function main(): Promise<void> {
   if (process.env.ODG_RADAR_LIVE === "1" && !r.written) process.exit(2);
 }
 if (require.main === module) main().catch((e) => { process.stderr.write("v158 collection error: " + ((e && e.message) || e) + "\n"); process.exit(1); });
-module.exports = { hasStructuredTitle, TARGETS, GRANT_PATH, COLLECTION_PATH, MAX_QUOTES_PER_PAGE, MAX_QUOTE_CHARS, EMAIL_RE, normalise, fragments, extractQuotes, buildCollection, collect };
+module.exports = { hasStructuredTitle, TARGETS, ALL_TARGETS, GRANT_PATH, COLLECTION_PATH, MAX_QUOTES_PER_PAGE, MAX_QUOTE_CHARS, EMAIL_RE, normalise, fragments, extractQuotes, buildCollection, collect };
 export {};
