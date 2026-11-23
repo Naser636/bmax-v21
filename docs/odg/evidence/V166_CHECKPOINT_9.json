@@ -88,7 +88,7 @@
       "C2": "MEASURED — PARTIAL (Δ0 +0.09 CI95 [0.055,0.129] vs no-knowledge; Δ1 −0.185 vs TRAIN-fitted threshold)",
       "grade": "PARTIAL"
     },
-    "lesson": "published heuristic (T_K=1000) beats using nothing but loses clearly to a threshold calibrated on ODG's own data ⇒ prefer measured local calibration",
+    "lesson": "on this dataset only (chronological split, strong prevalence shift TRAIN 20/200 vs TEST 100/200, n=200/split): the published heuristic (T_K=1000) beats using nothing but loses clearly to a threshold calibrated on ODG's own data ⇒ hypothesis: prefer measured local calibration",
     "priorResult": "V160_SCENARIO_G NOT_ADOPTED unchanged"
   },
   "automaticValidation": {
@@ -125,7 +125,8 @@
       "merges by the coordinating session after CI + inspection"
     ],
     "nativeBuiltCodeMerged": 0,
-    "note": "~80% native target NOT met, not claimed"
+    "note": "~80% native target NOT met, not claimed",
+    "nativeBuiltCodeMergedBasis": "assertion from the PR record (every merged change in #927–#936 was authored by provider sessions), not measured by a tool"
   },
   "openGaps": [
     "provider launch by ODG (no verifiable spend ceiling)",

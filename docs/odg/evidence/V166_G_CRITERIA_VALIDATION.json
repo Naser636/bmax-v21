@@ -33,7 +33,7 @@
       "text": "used by a real mission decision; utility measured vs the same mission without it",
       "status": "MET_AS_MEASUREMENT — utility PARTIAL",
       "evidence": "pre-registered rule ⇒ PARTIAL: Δ0 +0.09 (CI95 low 0.0549 > 0) vs no-knowledge baseline B0; but Δ1 −0.185 vs a TRAIN-fitted threshold (PASS needs ≥ −0.02). Secondary random split: same picture (report-only).",
-      "interpretation": "the knowledge item helps vs using nothing, but a threshold learned from ODG's own data beats it clearly ⇒ prefer measured local calibration over the published heuristic for this decision"
+      "interpretation": "on THIS dataset (chronological split with a strong prevalence shift: TRAIN 20/200 vs TEST 100/200 HIGH_ITERATION; n=200 per split), the knowledge item helps vs using nothing, but a threshold learned from ODG's own data beats it clearly — a hypothesis to prefer measured local calibration, not a general finding"
     }
   ],
   "scenarioGrade": "PARTIAL",
