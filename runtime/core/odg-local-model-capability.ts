@@ -110,8 +110,9 @@ function stats(xs: any[]): any {
   const p50 = v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2;
   return Object.freeze({ n: v.length, mean: Math.round(mean * 10) / 10, p50: Math.round(p50 * 10) / 10, min: v[0], max: v[v.length - 1], stdev: Math.round(sd * 10) / 10 });
 }
-function classStatus(m: any, t: any): string {
+function classStatus(m: any, t: any, minN: number): string {
   if (!m || m.n === 0 || m.value === null) return CLASS_STATUS.NOT_MEASURED;
+  if (m.n < minN) return CLASS_STATUS.PROBATION;   // insufficient sample: NEVER QUALIFIED (nor DEMOTED) on a partial measurement
   if (m.value >= t.minPassRate) return CLASS_STATUS.QUALIFIED;
   if (m.value < t.demoteBelow) return CLASS_STATUS.DEMOTED;
   return CLASS_STATUS.PROBATION;
@@ -127,6 +128,10 @@ function buildCapabilityRegistry(run: any, opts: any = {}): any {
   const t = { ...DEFAULT_THRESHOLDS, ...(isObj(opts.thresholds) ? opts.thresholds : {}) };
   const trials = arr(R.trials).filter((x: any) => isObj(x) && isObj(x.grade));
   const classes = [...new Set(arr(R.taskSet && R.taskSet.tasks).map((x: any) => x.taskClass))].sort();
+  // minimum sample per class = trialsPerTask × tasks in the class (overridable upward via thresholds.minN); a class with
+  // fewer MEASURED trials (e.g. sandbox NOT_MEASURED on some) can never be QUALIFIED.
+  const trialsPerTask = Number.isInteger(R.meta && R.meta.trialsPerTask) && R.meta.trialsPerTask > 0 ? R.meta.trialsPerTask : 3;
+  const minSampleFor = (c: string) => Math.max(Number.isInteger(t.minN) && t.minN > 0 ? t.minN : 1, trialsPerTask * arr(R.taskSet && R.taskSet.tasks).filter((x: any) => x.taskClass === c).length);
   const models = arr(R.models).map((info: any) => {
     const mine = trials.filter((x: any) => x.model === info.id && x.grade.measured !== false);
     const unmeasured = trials.filter((x: any) => x.model === info.id && x.grade.measured === false).length;
@@ -140,7 +145,8 @@ function buildCapabilityRegistry(run: any, opts: any = {}): any {
     for (const c of classes) {
       const xs = mine.filter((x: any) => x.taskClass === c);
       const m = metric(pass(xs), xs.length);
-      perClass[c] = Object.freeze({ passRate: m, status: info.available === false ? "UNAVAILABLE" : classStatus(m, t), totalMs: stats(xs.map((x: any) => x.totalMs)) });
+      const minN = minSampleFor(c);
+      perClass[c] = Object.freeze({ passRate: m, minN, sufficientSample: m.n >= minN, status: info.available === false ? "UNAVAILABLE" : classStatus(m, t, minN), totalMs: stats(xs.map((x: any) => x.totalMs)) });
     }
     const taskIds = [...new Set(mine.map((x: any) => x.taskId))];
     const perTask = taskIds.map((id) => {

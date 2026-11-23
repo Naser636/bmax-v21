@@ -133,7 +133,11 @@ function buildBwrapArgs(spec: any): string[] {
   for (const p of modelChk.paths) out.push("--ro-bind", p, p);  // explicit model files, read-only
   out.push("--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp");
   out.push("--bind", spec.realWork || work, work, "--chdir", work);
-  out.push(...setenv, "--", ...argv);
+  // OPT-IN memory bound (V155): wrap the child in prlimit --as so an allocation bomb fails fast instead of running to the
+  // timeout. Absent ⇒ argv is byte-identical to before (existing callers unchanged).
+  const memBytes = Number.isInteger(spec.memoryLimitBytes) && spec.memoryLimitBytes > 0 ? spec.memoryLimitBytes : null;
+  const inner = memBytes !== null ? ["/usr/bin/prlimit", `--as=${memBytes}`, "--", ...argv] : argv;
+  out.push(...setenv, "--", ...inner);
   return out;
 }
 
@@ -158,6 +162,7 @@ function runProvider(prompt: any, opts: any): any {
       roBinds: options.roBinds,
       modelFiles: options.modelFiles,
       envAllowlist: options.envAllowlist,
+      memoryLimitBytes: options.memoryLimitBytes,
       work: "/tmp/work",
       realWork: work,
     });

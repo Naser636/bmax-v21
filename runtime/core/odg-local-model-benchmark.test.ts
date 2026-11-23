@@ -9,6 +9,16 @@ const O = require("./ollama-provider.js");
 const B = require("./odg-local-model-benchmark.js");
 const CAP = require("./odg-local-model-capability.js");
 const R = require("./odg-model-router.js");
+const PS = require("./provider-sandbox.js");
+const { spawnSync } = require("child_process");
+
+// observation-faking runner (no process): returns what a sandbox run of `program` WOULD print, stamped with the nonce.
+function obsFor(task: any, mode: "pass" | "fail"): string[] {
+  return task.cases.map((c: any, i: number) => JSON.stringify(c.throws !== undefined ? (mode === "pass" ? { ok: false, errorName: c.throws === true ? "Error" : c.throws } : { ok: true, value: 0 }) : { ok: true, value: mode === "pass" || i > 0 ? c.expect : "WRONG", argsAfter: c.argsAfter !== undefined ? c.argsAfter : c.args }));
+}
+function fakeRun(task: any, mode: "pass" | "fail") { return (_p: string, nonce: string) => ({ ran: true, exitOk: true, stdout: "noise\n" + nonce + JSON.stringify(obsFor(task, mode)) + "\n" }); }
+// REAL program execution in a plain child `node -` (no network; used only to prove the harness itself resists tampering).
+function nodeRunner(program: string): any { const r = spawnSync(process.execPath, ["-"], { input: program, encoding: "utf8", timeout: 15000 }); return { ran: true, exitOk: r.status === 0, stdout: r.status === 0 ? String(r.stdout) : "", reason: r.status === 0 ? undefined : "exit " + r.status }; }
 
 let failures = 0;
 function check(name: string, cond: boolean): void { process.stdout.write(`${cond ? "ok" : "NOT OK"} - ${name}\n`); if (!cond) failures++; }
@@ -69,7 +79,7 @@ async function providerTests(): Promise<void> {
 
 function taskSetAndGraderTests(): void {
   const ts = B.loadTaskSet();
-  check("task set loads: versioned, sha256-pinned, ≥8 tasks", ts.ok && ts.version === "V155-TASKSET-1" && /^[0-9a-f]{64}$/.test(ts.sha256) && ts.tasks.length >= 8);
+  check("task set loads: versioned, sha256-pinned, ≥8 tasks", ts.ok && ts.version === "V155-TASKSET-2" && /^[0-9a-f]{64}$/.test(ts.sha256) && ts.tasks.length >= 8);
   const classes = new Set(ts.tasks.map((t: any) => t.taskClass));
   check("task set covers implement/bugfix/repair/extract/strict-contract/refactor/test-writing/judgment", ["implement", "bugfix", "repair", "extract", "strict-contract", "refactor", "test-writing", "judgment"].every((c) => classes.has(c)));
   check("validateTaskSet rejects an unknown grader", B.validateTaskSet({ version: "x", tasks: [{ id: "a", taskClass: "c", prompt: "p", grader: "vibes" }] }).ok === false);
@@ -84,23 +94,27 @@ function taskSetAndGraderTests(): void {
   const tsOk = B.compileCheck("export function f(a: number): number { return a + 1; }", "ts");
   check("compileCheck TS: typed ⇒ ok:true + transpiled CJS", tsOk.ok === true && /exports\.f/.test(tsOk.js));
 
-  const passRunner = () => ({ ran: true, result: { pass: true } });
-  const failRunner = () => ({ ran: true, result: { pass: false, error: "AssertionError" } });
+  const passRunner = fakeRun(T("bugfix-median"), "pass");
+  const failRunner = fakeRun(T("bugfix-median"), "fail");
   const noSandbox = () => ({ ran: false, reason: "sandbox unavailable" });
   const goodMedian = "function median(xs){ if(!xs.length) return null; const s=[...xs].sort((a,b)=>a-b); const m=Math.floor(s.length/2); return s.length%2?s[m]:(s[m-1]+s[m])/2; }";
   check("hidden-test grader: runner pass ⇒ passed + compiled", (() => { const g = B.gradeTrial(T("bugfix-median"), goodMedian, { codeRunner: passRunner }); return g.passed && g.compile.ok && g.measured; })());
   check("hidden-test grader: runner fail ⇒ not passed", B.gradeTrial(T("bugfix-median"), goodMedian, { codeRunner: failRunner }).passed === false);
   check("hidden-test grader: no sandbox ⇒ measured:false (NOT_MEASURED, never a pass)", (() => { const g = B.gradeTrial(T("bugfix-median"), goodMedian, { codeRunner: noSandbox }); return g.measured === false && g.passed === false; })());
-  check("hidden-test grader: uncompilable output never reaches the runner", (() => { let called = false; const g = B.gradeTrial(T("bugfix-median"), "function median(", { codeRunner: () => { called = true; return { ran: true, result: { pass: true } }; } }); return !called && g.passed === false && g.compile.ok === false; })());
-  check("refactor grader: a remaining for-loop ⇒ fail even if tests would pass", B.gradeTrial(T("refactor-even-squares"), "function sumEvenSquares(n){ let s=0; for (const x of n) if (x%2===0) s+=x*x; return s; }", { codeRunner: passRunner }).passed === false);
-  const prog = B.hiddenTestProgram("function median(x){return 1}", T("bugfix-median"));
-  check("hidden-test program embeds the hidden test in its own scope + a result marker", prog.includes(T("bugfix-median").hiddenTest) && prog.includes("__ODG_RESULT__") && prog.includes("(require('assert'), __odgFn)"));
+  check("hidden-test grader: uncompilable output never reaches the runner", (() => { let called = false; const g = B.gradeTrial(T("bugfix-median"), "function median(", { codeRunner: () => { called = true; return passRunner("", "x"); } }); return !called && g.passed === false && g.compile.ok === false; })());
+  check("refactor grader: a remaining for-loop ⇒ fail even if tests would pass", B.gradeTrial(T("refactor-even-squares"), "function sumEvenSquares(n){ let s=0; for (const x of n) if (x%2===0) s+=x*x; return s; }", { codeRunner: fakeRun(T("refactor-even-squares"), "pass") }).passed === false);
+  const prog = B.hiddenTestProgram("function median(x){return 1}", T("bugfix-median"), "ODGnonce0123456789abcdef:");
+  check("hidden-test program: EXPECTED values never enter the sandboxed program (host-side oracle)", !prog.includes("14.5") && !prog.includes("2.5") && prog.includes("createContext(Object.create(null))"));
+  check("hidden-test grader: a correct-looking marker WITHOUT the run nonce ⇒ fail", B.gradeTrial(T("bugfix-median"), goodMedian, { codeRunner: (_p: string) => ({ ran: true, exitOk: true, stdout: "ODGforged0000000000000000000000:" + JSON.stringify(obsFor(T("bugfix-median"), "pass")) }) }).passed === false);
+  check("hidden-test grader: non-zero exit ⇒ fail even with a valid nonce line", B.gradeTrial(T("bugfix-median"), goodMedian, { codeRunner: (_p: string, n: string) => ({ ran: true, exitOk: false, stdout: n + JSON.stringify(obsFor(T("bugfix-median"), "pass")) }) }).passed === false);
   // test-writing: reference must pass with ≥ minAssertions AND every mutant must fail
   let call = 0;
-  const twRunner = (p: string) => { call++; return p.startsWith(T("write-tests-slugify").referenceImpl) ? { ran: true, result: { pass: true, assertions: 5 } } : { ran: true, result: { pass: false } }; };
+  const refEsc = JSON.stringify(T("write-tests-slugify").referenceImpl).slice(1, -1);
+  const twRunner = (p: string, n: string) => { call++; return { ran: true, exitOk: true, stdout: n + JSON.stringify(p.includes(refEsc) ? { pass: true, assertions: 5 } : { pass: false }) }; };
   check("test-writing grader: reference passes + all mutants killed ⇒ pass", (() => { const g = B.gradeTrial(T("write-tests-slugify"), "assert.ok(1)", { codeRunner: twRunner }); return g.passed && g.mutantsKilled === g.mutantsTotal && call === 1 + T("write-tests-slugify").mutants.length; })());
-  check("test-writing grader: a surviving mutant ⇒ fail", B.gradeTrial(T("write-tests-slugify"), "assert.ok(1)", { codeRunner: () => ({ ran: true, result: { pass: true, assertions: 5 } }) }).passed === false);
-  check("test-writing grader: too few assertions ⇒ fail", B.gradeTrial(T("write-tests-slugify"), "assert.ok(1)", { codeRunner: () => ({ ran: true, result: { pass: true, assertions: 1 } }) }).passed === false);
+  check("test-writing grader: a surviving mutant ⇒ fail", B.gradeTrial(T("write-tests-slugify"), "assert.ok(1)", { codeRunner: (_p: string, n: string) => ({ ran: true, exitOk: true, stdout: n + JSON.stringify({ pass: true, assertions: 5 }) }) }).passed === false);
+  check("test-writing grader: too few assertions ⇒ fail", B.gradeTrial(T("write-tests-slugify"), "assert.ok(1)", { codeRunner: (_p: string, n: string) => ({ ran: true, exitOk: true, stdout: n + JSON.stringify({ pass: true, assertions: 3 }) }) }).passed === false);
+  check("test-writing minAssertions aligned with the prompt ('at least 4')", T("write-tests-slugify").minAssertions === 4 && /at least 4/.test(T("write-tests-slugify").prompt));
 
   const exp = T("strict-status-contract").expected;
   const strictGood = B.gradeTrial(T("strict-status-contract"), JSON.stringify(exp));
@@ -149,7 +163,12 @@ async function runBenchmarkTest(): Promise<any> {
       return { ok: true, model: input.model, text, ttftMs: input.model === "big:7b" ? 400 : 100, totalMs: input.model === "big:7b" ? 4000 : 1000, tokPerSec: input.model === "big:7b" ? 8 : 16, evalCount: 30, loadDurationNs: 1e6, doneReason: "stop", options: input.options };
     },
   };
-  const run = await B.runBenchmark({ models: ["big:7b", "small:3b", "absent:1b"], taskSet: ts, trials: 3, provider, codeRunner: (p: string) => ({ ran: true, result: { pass: p.includes("__odgFn") || p.startsWith(ts.tasks.find((t: any) => t.grader === "test-writing").referenceImpl), assertions: 5 } }), samplerFactory: () => ({ start() {}, stop() { return { cpuAvgPct: 350, cpuPeakPct: 600, rssPeakMb: 900, samples: 4, pids: ["1"] }; } }), loadavg: () => 1.5 });
+  const run = await B.runBenchmark({ models: ["big:7b", "small:3b", "absent:1b"], taskSet: ts, trials: 3, provider, codeRunner: (p: string, n: string) => {
+    const tw = ts.tasks.find((t: any) => t.grader === "test-writing");
+    if (p.includes("__odgAssertApi")) return { ran: true, exitOk: true, stdout: n + JSON.stringify({ pass: p.includes(JSON.stringify(tw.referenceImpl).slice(1, -1)), assertions: 5 }) };
+    const task = ts.tasks.find((t: any) => Array.isArray(t.cases) && p.includes("const __cases = " + JSON.stringify(t.cases.map((c: any) => JSON.stringify(c.args)))));
+    return { ran: true, exitOk: true, stdout: n + JSON.stringify(obsFor(task, "pass")) };
+  }, samplerFactory: () => ({ start() {}, stop() { return { cpuAvgPct: 350, cpuPeakPct: 600, rssPeakMb: 900, samples: 4, pids: ["1"] }; } }), loadavg: () => 1.5 });
   check("runBenchmark: trials = 2 available models × tasks × 3", run.ok && run.trials.length === 2 * ts.tasks.length * 3);
   check("runBenchmark: absent model ⇒ available:false, ZERO trials (UNAVAILABLE, nothing fabricated)", run.models.find((m: any) => m.id === "absent:1b").available === false && run.trials.every((t: any) => t.model !== "absent:1b"));
   const firstSmall = events.indexOf("gen:small:3b"); const unloadBig = events.indexOf("unload:big:7b");
@@ -203,7 +222,7 @@ function registryAndRouterTests(run: any): void {
 }
 
 async function fallbackTests(): Promise<void> {
-  const d = { model: "a", fallbackOrder: ["b", "c"] };
+  const d = { decision: "LOCAL", requiresAuthorization: false, model: "a", fallbackOrder: ["b", "c"] };
   const r1 = await R.runWithFallback(d, async (m: string) => (m === "a" ? { ok: false, unavailable: true, reason: "model 'a' not found" } : { ok: true }));
   check("fallback: missing primary ⇒ next model answers", r1.outcome === "OK" && r1.model === "b" && r1.attempts.length === 2 && r1.attempts[0].unavailable === true);
   const r2 = await R.runWithFallback(d, async (m: string) => (m === "a" ? { ok: false, timedOut: true, reason: "generation timed out" } : { ok: true }));
@@ -213,11 +232,71 @@ async function fallbackTests(): Promise<void> {
   const r4 = await R.runWithFallback(d, async () => ({ ok: false, unavailable: true, reason: "ECONNREFUSED" }));
   check("fallback: Ollama down for every model ⇒ honest UNAVAILABLE", r4.outcome === "UNAVAILABLE" && r4.model === null && r4.attempts.length === 3);
   const r5 = await R.runWithFallback(d, async (m: string) => { if (m === "a") throw new Error("socket hang up"); return { ok: true }; });
-  check("fallback: a throwing invoke is treated as unavailable ⇒ next", r5.outcome === "OK" && r5.model === "b");
+  check("fallback: a THROWING invoke is a caller bug ⇒ ERROR (not silently treated as unavailability)", r5.outcome === "ERROR" && r5.model === "a" && r5.attempts.length === 1);
   // end-to-end with the real provider function + an injected stream: absent model 404 ⇒ fallback
   const stream = async (_p: string, payload: any) => (payload.model === "absent:1b" ? { ok: false, reason: 'HTTP 404: {"error":"model not found"}' } : { ok: true, text: "{}", ttftMs: 1, totalMs: 2, final: { eval_count: 1, eval_duration: 1e9 } });
-  const r6 = await R.runWithFallback({ model: "absent:1b", fallbackOrder: ["small:3b"] }, (m: string) => O.generateMeasured({ model: m, prompt: "p", stream }));
+  const r6 = await R.runWithFallback({ decision: "LOCAL", requiresAuthorization: false, model: "absent:1b", fallbackOrder: ["small:3b"] }, (m: string) => O.generateMeasured({ model: m, prompt: "p", stream }));
   check("fallback via ollama-provider.generateMeasured: 404 ⇒ unavailable ⇒ small:3b", r6.outcome === "OK" && r6.model === "small:3b" && r6.attempts[0].unavailable === true);
+}
+
+// ---- regression tests for the independent inspection of #898 ----
+async function inspectionRegressions(run: any): Promise<void> {
+  // MED1: a probation-only registry must NOT run anything by fallback
+  const probReg = { models: [{ id: "p", available: true, perClass: { implement: { passRate: { value: 0.6, n: 6 }, status: "PROBATION", totalMs: { p50: 10 } } } }] };
+  const dNo = R.selectMeasured({ taskClass: "implement", registry: probReg });
+  check("MED1: NO_QUALIFIED_LOCAL_MODEL has an EMPTY fallbackOrder (probation listed for information only)", dNo.decision === "NO_QUALIFIED_LOCAL_MODEL" && dNo.fallbackOrder.length === 0 && JSON.stringify(dNo.probationCandidates) === '["p"]');
+  let invoked = 0;
+  const rNo = await R.runWithFallback(dNo, async () => { invoked++; return { ok: true }; });
+  check("MED1: runWithFallback REFUSES a NO_QUALIFIED decision — model 'p' is never invoked", rNo.outcome === "REFUSED" && invoked === 0);
+  const rForged = await R.runWithFallback({ decision: "NO_QUALIFIED_LOCAL_MODEL", requiresAuthorization: true, model: null, fallbackOrder: ["p"] }, async () => { invoked++; return { ok: true }; });
+  check("MED1: even a forged decision carrying a fallbackOrder is REFUSED when not LOCAL / requiresAuthorization", rForged.outcome === "REFUSED" && invoked === 0);
+  check("MED1: LOCAL but requiresAuthorization:true ⇒ REFUSED", (await R.runWithFallback({ decision: "LOCAL", requiresAuthorization: true, model: "a" }, async () => { invoked++; return { ok: true }; })).outcome === "REFUSED" && invoked === 0);
+  check("MED1: UNAVAILABLE decision ⇒ REFUSED (nothing to run)", (await R.runWithFallback({ decision: "UNAVAILABLE", model: null }, async () => { invoked++; return { ok: true }; })).outcome === "REFUSED" && invoked === 0);
+
+  // MED2: the REAL harness program (run in a plain child node, no network) resists tampering by the candidate
+  const add = { id: "add", taskClass: "implement", lang: "js", grader: "hidden-test", fnName: "add", cases: [{ args: [1, 2], expect: 3 }, { args: [2, 2], expect: 4 }] };
+  const real = (code: string) => B.gradeTrial(add, code, { codeRunner: nodeRunner });
+  check("MED2: a correct candidate passes through the real harness", real("function add(a, b) { return a + b; }").passed === true);
+  check("MED2: neutering assert (require('assert').strictEqual=()=>{}) cannot pass a wrong add", real("require('assert').strictEqual = () => {}; require('assert').deepStrictEqual = () => {}; function add(a, b) { return a - b; }").passed === false);
+  check("MED2: a forged marker on STDERR + exit 3 does not pass", real("function add(a, b) { return 0; } process.stderr.write('\\n__ODG_RESULT__{\"pass\":true}\\n'); process.exit(3);").passed === false);
+  check("MED2: printing a pass-looking line on stdout without the nonce does not pass", real("function add(a, b) { return 0; } console.log('__ODG_RESULT__{\"pass\":true}');").passed === false);
+  check("MED2: constructor-chain escape finds no host process inside the null-prototype context", real("const p = this.constructor.constructor('return typeof process')(); function add(a, b) { return p === 'object' ? a + b : -999; }").passed === false);
+  check("MED2: overriding JSON in the candidate context cannot forge the expected values (they never enter the program)", real("JSON.stringify = function () { return '{\"ok\":true,\"value\":3}'; }; function add(a, b) { return 0; }").passed === false);
+  check("MED2: infinite loop is cut by the vm timeout ⇒ fail (not hang)", real("while (true) {} function add(a, b) { return a + b; }").passed === false);
+  check("MED2: parseResult reads only nonce-stamped stdout lines; short/absent nonce ⇒ null", B.parseResult("x\nODGabcdefabcdefabcdef:[1]\n", "ODGabcdefabcdefabcdef:")[0] === 1 && B.parseResult("ODG:[1]", "ODG:") === null && B.parseResult("[1]", "ODGabcdefabcdefabcdef:") === null);
+
+  // MED3: opt-in memory bound in provider-sandbox; existing callers byte-identical
+  const base = PS.buildBwrapArgs({ argv: ["node", "-"], work: "/tmp/work", realWork: "/tmp" });
+  const bounded = PS.buildBwrapArgs({ argv: ["node", "-"], work: "/tmp/work", realWork: "/tmp", memoryLimitBytes: 1 << 30 });
+  const tail = bounded.slice(bounded.indexOf("--") + 1);
+  check("MED3: memoryLimitBytes wraps the child in prlimit --as (inside the sandbox)", JSON.stringify(tail) === JSON.stringify(["/usr/bin/prlimit", "--as=1073741824", "--", "node", "-"]));
+  check("MED3: without the option the bwrap argv is unchanged (opt-in only)", JSON.stringify(base.slice(base.indexOf("--") + 1)) === '["node","-"]' && JSON.stringify(base.slice(0, base.indexOf("--"))) === JSON.stringify(bounded.slice(0, bounded.indexOf("--"))));
+  check("MED3: the benchmark runner's bound is 1 GiB", B.CODE_MEMORY_LIMIT_BYTES === 1024 * 1024 * 1024);
+  const sb = spawnSync("/usr/bin/env", ["sh", "-c", "command -v bwrap && command -v prlimit"], { encoding: "utf8" });
+  if (sb.status === 0) {
+    const t0 = Date.now();
+    const bomb = PS.runProvider("const b = []; for (let i = 0; i < 40; i++) b.push(Buffer.alloc(256 * 1024 * 1024)); console.log('ALLOCATED');", { command: "node -", timeoutMs: 60000, memoryLimitBytes: B.CODE_MEMORY_LIMIT_BYTES });
+    const ms = Date.now() - t0;
+    check(`MED3: a 10 GiB Buffer bomb in the real sandbox fails FAST under the bound (${ms}ms, not the 60s timeout)`, bomb.launched === true && bomb.ok === false && !/ALLOCATED/.test(String(bomb.text || "")) && ms < 20000);
+  } else process.stdout.write("skip - MED3 live bomb probe (bwrap/prlimit not present on this host)\n");
+
+  // MED4: minimum sample — 1 measured pass + 2 NOT_MEASURED must not QUALIFY
+  const thin = { ...run, trials: run.trials.filter((t: any) => !(t.model === "big:7b" && t.taskClass === "extract" && t.trial > 1)).concat(run.trials.filter((t: any) => t.model === "big:7b" && t.taskClass === "extract" && t.trial > 1).map((t: any) => ({ ...t, grade: { ...t.grade, measured: false, passed: false } }))) };
+  const thinReg = CAP.buildCapabilityRegistry(thin);
+  const pc = thinReg.models.find((m: any) => m.id === "big:7b").perClass.extract;
+  check("MED4: 1/1 measured pass with n < minN (=3) ⇒ PROBATION, never QUALIFIED", pc.passRate.n === 1 && pc.passRate.value === 1 && pc.minN === 3 && pc.sufficientSample === false && pc.status === "PROBATION");
+  check("MED4: thresholds.minN can raise the bar above trials×tasks", CAP.buildCapabilityRegistry(run, { thresholds: { minN: 10 } }).models.find((m: any) => m.id === "big:7b").perClass.extract.status === "PROBATION");
+
+  // LOW: wall-clock deadline on a trickling stream (idle timer never trips)
+  const trickle = (_o: any, cb: any) => { const req: any = new EventEmitter(); req.setTimeout = () => req; req.write = () => true; req.destroy = () => { clearInterval(req.iv); }; req.end = () => { const res: any = new EventEmitter(); res.statusCode = 200; cb(res); req.iv = setInterval(() => res.emit("data", Buffer.from('{"response":"x","done":false}\n')), 10); }; return req; };
+  const t1 = Date.now();
+  const tr = await O.loopbackStream("/api/generate", {}, { request: trickle, timeoutMs: 150 });
+  check("LOW: a trickling stream hits the WALL-CLOCK deadline ⇒ timedOut", tr.ok === false && tr.timedOut === true && /wall-clock/.test(tr.reason) && Date.now() - t1 < 2000);
+  // LOW: TS check is noResolve, refuses reference directives, scrubs host paths, and is time-bounded in a child
+  check("LOW: TS `/// <reference path>` refused", B.compileCheck('/// <reference path="/etc/hostname" />\nexport function f(a: number): number { return a; }', "ts").ok === false);
+  const imp = B.compileCheck("import * as x from '/etc/hostname';\nexport function f(a: number): number { return a; }", "ts");
+  check("LOW: TS import of a host path is NOT resolved and the diagnostic carries no host path", imp.ok === false && !/\/etc/.test(String(imp.reason)));
+  check("LOW: TS type-check timeout ⇒ fail closed (reported, never a pass)", B.compileCheck("export function f(a: number): number { return a; }", "ts", { spawn: () => ({ error: Object.assign(new Error("spawnSync ETIMEDOUT"), { code: "ETIMEDOUT" }), status: null, signal: "SIGTERM" }) }).ok === false);
 }
 
 async function main(): Promise<void> {
@@ -227,6 +306,7 @@ async function main(): Promise<void> {
   const run = await runBenchmarkTest();
   registryAndRouterTests(run);
   await fallbackTests();
+  await inspectionRegressions(run);
   check("contracts declare reuse (no second client/registry/router)", B.LOCAL_MODEL_BENCHMARK_CONTRACT.reuses.some((x: string) => /ollama-provider/.test(x)) && B.LOCAL_MODEL_BENCHMARK_CONTRACT.reuses.some((x: string) => /buildCapabilityRegistry/.test(x)));
   process.stdout.write("\n" + (failures === 0 ? "ALL PASS — odg-local-model-benchmark (V155 Step 5: measured registry; objective graders; NOT_MEASURED never 0; one model at a time; quality-first selection; unavailable/timeout fallback; demotion from appended history; zero network)" : failures + " FAIL") + "\n");
   process.exit(failures === 0 ? 0 : 1);

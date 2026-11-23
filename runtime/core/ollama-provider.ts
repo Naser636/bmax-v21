@@ -233,7 +233,8 @@ function loopbackStream(pathName: string, payload: any, opts: any = {}): Promise
   const request = typeof opts.request === "function" ? opts.request : http.request;
   const body = JSON.stringify(payload);
   return new Promise((resolve) => {
-    let done = false; const finish = (r: any) => { if (!done) { done = true; resolve(r); } };
+    let done = false; let deadline: any = null;
+    const finish = (r: any) => { if (!done) { done = true; if (deadline) clearTimeout(deadline); resolve(r); } };
     const t0 = now(); let ttftMs: number | null = null; let text = ""; let buf = ""; let bytes = 0; let final: any = null;
     const req = request({ host: OLLAMA_HOST, port: OLLAMA_PORT, path: pathName, method: "POST", headers: { "Content-Type": "application/json", "Content-Length": Buffer.byteLength(body) } }, (res: any) => {
       if (res.statusCode !== 200) { let e = ""; res.on("data", (c: any) => { if (e.length < 2000) e += c; }); res.on("end", () => finish({ ok: false, status: res.statusCode, reason: `HTTP ${res.statusCode}: ${e.slice(0, 300)}` })); return; }
@@ -257,7 +258,10 @@ function loopbackStream(pathName: string, payload: any, opts: any = {}): Promise
       });
     });
     req.on("error", (e: any) => finish({ ok: false, reason: `loopback request error: ${e && e.message}` }));
-    req.setTimeout(timeoutMs, () => { req.destroy(); finish({ ok: false, reason: "generation timed out", timedOut: true }); });
+    req.setTimeout(timeoutMs, () => { req.destroy(); finish({ ok: false, reason: "generation timed out (idle)", timedOut: true }); });
+    // WALL-CLOCK deadline (req.setTimeout is idle-only: a slow trickle of tokens would never trip it).
+    deadline = setTimeout(() => { try { req.destroy(); } catch { /* already closed */ } finish({ ok: false, reason: "generation timed out (wall-clock deadline)", timedOut: true }); }, timeoutMs);
+    if (deadline && typeof deadline.unref === "function") deadline.unref();
     req.write(body); req.end();
   });
 }

@@ -121,7 +121,9 @@ function selectMeasured(input: any): any {
       rationale: "no local model is available (model missing or Ollama down) — honest UNAVAILABLE, nothing fabricated" });
   }
   if (!qualified.length) {
-    return freeze({ ok: true, taskClass: i.taskClass, decision: MEASURED_DECISION.NO_QUALIFIED_LOCAL_MODEL, model: null, fallbackOrder: freeze(probation.map((c: any) => c.id)), considered: freeze(considered), overBudget: false, requiresAuthorization: true,
+    // NO fallbackOrder here: PROBATION models are listed for the authorizer's information only — nothing is runnable
+    // without an explicit authorization (runWithFallback refuses this decision).
+    return freeze({ ok: true, taskClass: i.taskClass, decision: MEASURED_DECISION.NO_QUALIFIED_LOCAL_MODEL, model: null, fallbackOrder: freeze([]), probationCandidates: freeze(probation.map((c: any) => c.id)), considered: freeze(considered), overBudget: false, requiresAuthorization: true,
       rationale: `no available local model is QUALIFIED for '${i.taskClass}' by measurement (pass rate ≥ registry minPassRate); escalation is a FLAGGED decision requiring authorization — never an automatic paid-API call` });
   }
   const chosen = qualified[0];
@@ -133,18 +135,23 @@ function selectMeasured(input: any): any {
 
 /**
  * runWithFallback(decision, invoke, opts?) -> Promise<{ outcome, model, attempts }>. Tries decision.model then
- * decision.fallbackOrder. invoke(model) -> { ok, unavailable?, timedOut?, reason? }. ONLY an unavailable model (missing /
+ * decision.fallbackOrder — ONLY for decision===LOCAL without requiresAuthorization (else REFUSED). invoke(model) -> { ok, unavailable?, timedOut?, reason? }. ONLY an unavailable model (missing /
  * daemon down) or a timeout moves to the next model; a model that answered but FAILED is reported as FAILED (a quality
  * failure is never masked by silently retrying elsewhere). Exhausted ⇒ outcome UNAVAILABLE (honest).
  */
 async function runWithFallback(decision: any, invoke: any, opts: any = {}): Promise<any> {
   const d = isObj(decision) ? decision : {};
+  // only a measured LOCAL decision that needs no authorization is runnable — NO_QUALIFIED_LOCAL_MODEL / UNAVAILABLE /
+  // anything flagged requiresAuthorization is REFUSED (a PROBATION model never runs by fallback without authorization).
+  if (d.decision !== MEASURED_DECISION.LOCAL || d.requiresAuthorization === true) return freeze({ outcome: "REFUSED", model: null, attempts: freeze([]), reason: `decision '${String(d.decision)}'${d.requiresAuthorization === true ? " requires authorization" : " is not a runnable LOCAL decision"} — nothing executed` });
   const order = [d.model, ...(Array.isArray(d.fallbackOrder) ? d.fallbackOrder : [])].filter(isStr);
   const maxAttempts = Number.isInteger(opts.maxAttempts) && opts.maxAttempts > 0 ? opts.maxAttempts : order.length;
   const attempts: any[] = [];
   if (typeof invoke !== "function") return freeze({ outcome: "ERROR", model: null, attempts: freeze(attempts), reason: "invoke (function) required" });
   for (const m of order.slice(0, maxAttempts)) {
-    let r: any; try { r = await invoke(m); } catch (e: any) { r = { ok: false, unavailable: true, reason: String((e && e.message) || e) }; }
+    // a THROW is a caller/integration bug, not transport unavailability: stop with ERROR (unavailability must be
+    // reported in the return value, e.g. generateMeasured's { unavailable:true }).
+    let r: any; try { r = await invoke(m); } catch (e: any) { attempts.push(freeze({ model: m, ok: false, unavailable: false, timedOut: false, reason: "invoke threw: " + String((e && e.message) || e).slice(0, 200) })); return freeze({ outcome: "ERROR", model: m, attempts: freeze(attempts), reason: "invoke threw (caller bug, not unavailability)" }); }
     const rec = freeze({ model: m, ok: !!(r && r.ok), unavailable: !!(r && r.unavailable), timedOut: !!(r && r.timedOut), reason: r && r.reason ? String(r.reason).slice(0, 200) : null });
     attempts.push(rec);
     if (rec.ok) return freeze({ outcome: "OK", model: m, attempts: freeze(attempts), result: r });

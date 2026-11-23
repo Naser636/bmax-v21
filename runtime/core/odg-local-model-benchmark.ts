@@ -3,17 +3,18 @@
 
 /*
  * V155 Step 5 — LOCAL-MODEL BENCHMARK HARNESS (the MEASUREMENT half of the measured capability registry). It is NOT a
- * registry and NOT a router: it loads the versioned task set (odg-local-model-benchmark-tasks.v1.json), drives each
+ * registry and NOT a router: it loads the versioned task set (odg-local-model-benchmark-tasks.v2.json), drives each
  * installed local model through it ONE MODEL AT A TIME with recorded options (temperature 0, fixed seed), grades every
  * trial with an OBJECTIVE pass/fail grader, and samples the Ollama runner process (CPU/RSS via /proc) during inference.
  * Aggregation lives in the canonical odg-local-model-capability.buildCapabilityRegistry; selection/fallback/demotion in
  * the canonical odg-model-router.selectMeasured/runWithFallback. Transport = the canonical ollama-provider
  * (listModels/showModel/generateMeasured/unloadModel — loopback only).
  *
- * SAFETY: model output is UNTRUSTED. JS compile checks only PARSE (vm.Script, nothing executed); TS is type-checked with
- * the typescript compiler API (nothing executed); hidden tests run the candidate ONLY inside provider-sandbox's bubblewrap
- * profile (no network, cleared env, no home dir) via runProvider("node -"). No sandbox ⇒ the run is REFUSED, never run
- * unsandboxed. Every seam (provider, codeRunner, sampler, clock) is injectable so unit tests use ZERO network/processes.
+ * SAFETY: model output is UNTRUSTED. JS compile checks only PARSE (vm.Script, nothing executed); TS is type-checked
+ * (noResolve, no reference following) in a time-bounded child process (nothing executed); candidate code runs ONLY inside
+ * provider-sandbox's bubblewrap profile (no network, cleared env, no home dir, RLIMIT_AS 1 GiB) and, within it, in a
+ * null-prototype vm context with no require/process. The sandboxed program only RECORDS observations; the EXPECTED values
+ * stay on the host, which asserts (exit 0 + a per-run random nonce on stdout required). No sandbox ⇒ NOT_MEASURED. Every seam (provider, codeRunner, sampler, clock) is injectable so unit tests use ZERO network/processes.
  * HONESTY: a grader that cannot run records NOT_MEASURED — never a pass.
  */
 
@@ -21,10 +22,10 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const vm = require("vm");
+const { spawnSync } = require("child_process");
 
-const TASKSET_FILE = path.join(__dirname, "odg-local-model-benchmark-tasks.v1.json");
+const TASKSET_FILE = path.join(__dirname, "odg-local-model-benchmark-tasks.v2.json");
 const DEFAULT_OPTIONS = Object.freeze({ temperature: 0, seed: 42, top_k: 1, num_predict: 512, num_ctx: 4096 });
-const RESULT_MARK = "__ODG_RESULT__";
 const CODE_GRADERS = Object.freeze(["hidden-test", "refactor", "test-writing"]);
 const JSON_GRADERS = Object.freeze(["json-equal", "strict-schema", "json-field"]);
 
@@ -51,7 +52,7 @@ function validateTaskSet(doc: any): any {
     if (ids.has(t.id)) return { ok: false, reason: "duplicate task id " + t.id };
     ids.add(t.id);
     if (![...CODE_GRADERS, ...JSON_GRADERS].includes(t.grader)) return { ok: false, reason: "task " + t.id + ": unknown grader " + t.grader };
-    if ((t.grader === "hidden-test" || t.grader === "refactor") && (typeof t.hiddenTest !== "string" || typeof t.fnName !== "string")) return { ok: false, reason: "task " + t.id + ": hiddenTest+fnName required" };
+    if ((t.grader === "hidden-test" || t.grader === "refactor") && (!Array.isArray(t.cases) || !t.cases.length || typeof t.fnName !== "string")) return { ok: false, reason: "task " + t.id + ": cases[]+fnName required" };
     if (t.grader === "test-writing" && (typeof t.referenceImpl !== "string" || !arr(t.mutants).length)) return { ok: false, reason: "task " + t.id + ": referenceImpl+mutants required" };
     if ((t.grader === "json-equal" || t.grader === "strict-schema") && !isObj(t.expected)) return { ok: false, reason: "task " + t.id + ": expected required" };
     if (t.grader === "json-field" && (typeof t.field !== "string" || t.expectedValue === undefined)) return { ok: false, reason: "task " + t.id + ": field+expectedValue required" };
@@ -79,92 +80,172 @@ function parseJsonLoose(raw: any): any {
 
 function stripComments(code: string): string { return code.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:\\])\/\/.*$/gm, "$1"); }
 
-let TS_CACHE: any = null;
-function loadTs(): any { if (TS_CACHE === null) { try { TS_CACHE = require("typescript"); } catch { TS_CACHE = false; } } return TS_CACHE || null; }
+// TS type check runs in a SEPARATE, time-bounded child process (never in this process): noResolve + no reference
+// following (a `/// <reference path>` or an import can never make the compiler read a host file), only the pinned
+// lib.es2020.d.ts is loaded, and host paths are scrubbed from the diagnostic. Nothing of the candidate is executed.
+const TS_CHECK_SCRIPT = [
+  "const inp = JSON.parse(require('fs').readFileSync(0, 'utf8'));",
+  "const ts = require(inp.tsPath); const fileName = '/virtual/candidate.ts'; const code = inp.code;",
+  "const options = { strict: true, noImplicitAny: true, noEmit: true, noResolve: true, types: [], skipLibCheck: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS, lib: ['lib.es2020.d.ts'] };",
+  "const host = ts.createCompilerHost(options); const orig = host.getSourceFile.bind(host);",
+  "host.getSourceFile = (f, l) => (f === fileName ? ts.createSourceFile(f, code, l) : (/lib\\.[a-z0-9.]+\\.d\\.ts$/i.test(f) ? orig(f, l) : undefined));",
+  "const oe = host.fileExists.bind(host); host.fileExists = (f) => f === fileName || (/lib\\.[a-z0-9.]+\\.d\\.ts$/i.test(f) && oe(f));",
+  "const or = host.readFile.bind(host); host.readFile = (f) => (f === fileName ? code : (/lib\\.[a-z0-9.]+\\.d\\.ts$/i.test(f) ? or(f) : undefined));",
+  "const program = ts.createProgram([fileName], options, host);",
+  "const d = ts.getPreEmitDiagnostics(program).filter((x) => x.file && x.file.fileName === fileName);",
+  "if (d.length) { process.stdout.write(JSON.stringify({ ok: false, reason: 'tsc: ' + ts.flattenDiagnosticMessageText(d[0].messageText, ' ').slice(0, 200), diagnostics: d.length })); }",
+  "else { process.stdout.write(JSON.stringify({ ok: true, js: ts.transpileModule(code, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, noResolve: true } }).outputText })); }",
+].join("\n");
 
-/** compileCheck(code, lang) -> { ok, applicable, reason?, js? }. JS: vm.Script PARSE only (= node --check; nothing runs).
- *  TS: full type check (strict, noImplicitAny) of the single file via the typescript compiler API, then transpile to CJS. */
-function compileCheck(code: any, lang: string): any {
+function scrubHostPaths(s: string): string { return String(s).replace(/(?:\/[A-Za-z0-9._@+-]+){2,}/g, "<path>"); }
+
+let TS_PATH: any = null;
+function tsPath(): string | null { if (TS_PATH === null) { try { TS_PATH = require.resolve("typescript"); } catch { TS_PATH = false; } } return TS_PATH || null; }
+
+/** compileCheck(code, lang, opts?) -> { ok, applicable, reason?, js? }. JS: vm.Script PARSE only (= node --check; nothing
+ *  runs). TS: full type check (strict, noImplicitAny, noResolve) in a time-bounded child process, then transpile to CJS. */
+function compileCheck(code: any, lang: string, opts: any = {}): any {
   if (typeof code !== "string" || !code.trim()) return { ok: false, applicable: true, reason: "no code extracted" };
   if (lang === "ts") {
-    const ts = loadTs();
-    if (!ts) return { ok: false, applicable: false, reason: "typescript compiler unavailable ⇒ NOT_MEASURED" };
-    const fileName = "/virtual/candidate.ts";
-    const options = { strict: true, noImplicitAny: true, noEmit: true, target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS, lib: ["lib.es2020.d.ts"], types: [], skipLibCheck: true };
-    const host = ts.createCompilerHost(options);
-    const orig = host.getSourceFile.bind(host);
-    host.getSourceFile = (f: string, l: any, ...rest: any[]) => (f === fileName ? ts.createSourceFile(f, code, l) : orig(f, l, ...rest));
-    const origExists = host.fileExists.bind(host);
-    host.fileExists = (f: string) => f === fileName || origExists(f);
-    const origRead = host.readFile.bind(host);
-    host.readFile = (f: string) => (f === fileName ? code : origRead(f));
-    const program = ts.createProgram([fileName], options, host);
-    const diags = ts.getPreEmitDiagnostics(program).filter((d: any) => d.file && d.file.fileName === fileName);
-    if (diags.length) return { ok: false, applicable: true, reason: "tsc: " + ts.flattenDiagnosticMessageText(diags[0].messageText, " ").slice(0, 200), diagnostics: diags.length };
-    const js = ts.transpileModule(code, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 } }).outputText;
-    return { ok: true, applicable: true, js };
+    if (/^\s*\/\/\/\s*<reference/m.test(code)) return { ok: false, applicable: true, reason: "triple-slash reference directives are refused (no host-file following)" };
+    const tp = tsPath();
+    if (!tp) return { ok: false, applicable: false, reason: "typescript compiler unavailable ⇒ NOT_MEASURED" };
+    const spawn = typeof opts.spawn === "function" ? opts.spawn : spawnSync;
+    const r = spawn(process.execPath, ["-e", TS_CHECK_SCRIPT], { input: JSON.stringify({ code, tsPath: tp }), encoding: "utf8", timeout: Number(opts.tsTimeoutMs) > 0 ? Number(opts.tsTimeoutMs) : 30000, maxBuffer: 4 * 1024 * 1024 });
+    if (r.error || r.status !== 0) {
+      const timedOut = !!(r.error && /ETIMEDOUT/.test(String(r.error.code || r.error.message))) || r.signal === "SIGTERM";
+      return timedOut ? { ok: false, applicable: true, reason: "tsc: type check exceeded the time bound" } : { ok: false, applicable: false, reason: "type-check process failed ⇒ NOT_MEASURED: " + scrubHostPaths(String((r.error && r.error.message) || r.stderr || "")).slice(0, 160) };
+    }
+    let o: any; try { o = JSON.parse(String(r.stdout)); } catch { return { ok: false, applicable: false, reason: "type-check output unparseable ⇒ NOT_MEASURED" }; }
+    return o.ok ? { ok: true, applicable: true, js: String(o.js) } : { ok: false, applicable: true, reason: scrubHostPaths(o.reason), diagnostics: o.diagnostics };
   }
   try { new vm.Script(code, { filename: "candidate.js" }); return { ok: true, applicable: true, js: code }; }
   catch (e: any) { return { ok: false, applicable: true, reason: "syntax: " + String(e && e.message).slice(0, 200) }; }
 }
 
-/** hiddenTestProgram(js, task) -> a self-contained Node program: candidate at module scope, the hidden test in its own
- *  function scope (so a candidate's own `assert`/`fn` bindings cannot collide), one RESULT_MARK line on stdout. */
-function hiddenTestProgram(js: string, task: any): string {
+// In-context minimal assert (counts in a closure the candidate cannot name). Defined INSIDE the candidate's vm context so
+// no host-realm object is ever handed to model code (no constructor-chain escape to the host `process`).
+const CTX_ASSERT_SRC = [
+  "var __odgAssertApi = (function () {",
+  "  let n = 0;",
+  "  function canon(v) { if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']'; if (v && typeof v === 'object') return '{' + Object.keys(v).sort().map(function (k) { return JSON.stringify(k) + ':' + canon(v[k]); }).join(',') + '}'; return typeof v === 'undefined' ? 'undefined' : JSON.stringify(v); }",
+  "  function fail(m) { var e = new Error(m); e.name = 'AssertionError'; throw e; }",
+  "  var a = function (v, m) { n++; if (!v) fail(m || 'not truthy'); };",
+  "  a.ok = a;",
+  "  a.strictEqual = function (x, y, m) { n++; if (!Object.is(x, y)) fail(m || JSON.stringify(x) + ' !== ' + JSON.stringify(y)); };",
+  "  a.equal = function (x, y, m) { n++; if (!(x === y || String(x) === String(y))) fail(m || 'not equal'); };",
+  "  a.notStrictEqual = function (x, y, m) { n++; if (Object.is(x, y)) fail(m || 'equal'); };",
+  "  a.notEqual = a.notStrictEqual;",
+  "  a.deepStrictEqual = function (x, y, m) { n++; if (canon(x) !== canon(y)) fail(m || canon(x) + ' !== ' + canon(y)); };",
+  "  a.deepEqual = a.deepStrictEqual;",
+  "  a.notDeepStrictEqual = function (x, y, m) { n++; if (canon(x) === canon(y)) fail(m || 'deep equal'); };",
+  "  a.throws = function (f, e, m) { n++; var t = false; try { f(); } catch (err) { t = true; } if (!t) fail(m || 'missing expected exception'); };",
+  "  a.doesNotThrow = function (f, m) { n++; try { f(); } catch (err) { fail(m || 'unexpected exception'); } };",
+  "  a.match = function (s, re, m) { n++; if (!re.test(s)) fail(m || 'no match'); };",
+  "  a.strict = a;",
+  "  return { assert: a, count: function () { return n; } };",
+  "})();",
+].join("\n");
+
+/**
+ * hiddenTestProgram(js, task, nonce) -> a self-contained Node program. The candidate runs ONLY inside a fresh vm context
+ * built from Object.create(null) (no host-realm object, no require/process), with per-call vm timeouts. The program only
+ * OBSERVES: for each hidden case it records { value | errorName, argsAfter } as JSON and prints ONE line on stdout
+ * prefixed with a per-run random nonce. The EXPECTED values never enter the program — assertions run on the host
+ * (gradeObservations), so a candidate cannot neuter the oracle; faking an observation requires computing the answer.
+ */
+function hiddenTestProgram(js: string, task: any, nonce: string): string {
   const n = String(task.fnName).replace(/[^A-Za-z0-9_$]/g, "");
+  const inCtx = "var module = { exports: {} }; var exports = module.exports;\n" + js + "\n;";
+  const finder = `globalThis.__odgFn = (typeof ${n} === "function") ? ${n} : (module.exports && typeof module.exports.${n} === "function") ? module.exports.${n} : (typeof module.exports === "function" ? module.exports : undefined);
+globalThis.__odgRun = function (argsJson) { var args = JSON.parse(argsJson); if (typeof __odgFn !== "function") return JSON.stringify({ missing: true }); try { var v = __odgFn.apply(null, args); return JSON.stringify({ ok: true, undef: v === undefined, value: v === undefined ? null : v, argsAfter: args }); } catch (e) { return JSON.stringify({ ok: false, errorName: (e && e.name) ? String(e.name) : null, message: String((e && e.message) || e).slice(0, 200) }); } };`;
+  const cases = arr(task.cases).map((c: any) => JSON.stringify(arr(c.args)));
   return [
-    js,
-    ";",
-    `const __odgFn = (typeof ${n} === "function") ? ${n} : (module.exports && typeof module.exports.${n} === "function") ? module.exports.${n} : (typeof module.exports === "function" ? module.exports : (typeof exports !== "undefined" && exports && typeof exports.${n} === "function" ? exports.${n} : undefined));`,
+    "'use strict';",
+    "const __w = process.stdout.write.bind(process.stdout); const __vm = require('vm');",
+    `const __N = ${JSON.stringify(nonce)};`,
+    `const __cases = ${JSON.stringify(cases)};`,
+    "const __ctx = __vm.createContext(Object.create(null));",
+    "let __out;",
     "try {",
-    "  if (typeof __odgFn !== 'function') throw new Error('function " + n + " not found in candidate');",
-    "  (function (assert, fn) {",
-    task.hiddenTest,
-    "  })(require('assert'), __odgFn);",
-    `  process.stdout.write('\\n${RESULT_MARK}' + JSON.stringify({ pass: true }) + '\\n');`,
-    "} catch (e) {",
-    `  process.stdout.write('\\n${RESULT_MARK}' + JSON.stringify({ pass: false, error: String(e && e.message || e).slice(0, 300) }) + '\\n');`,
-    "}",
+    `  __vm.runInContext(${JSON.stringify(inCtx)}, __ctx, { timeout: 5000, filename: 'candidate.js' });`,
+    `  __vm.runInContext(${JSON.stringify(finder)}, __ctx, { timeout: 1000 });`,
+    "  __out = __cases.map((a) => { const s = __vm.runInContext('__odgRun(' + JSON.stringify(a) + ')', __ctx, { timeout: 5000 }); return typeof s === 'string' ? s : JSON.stringify({ bad: true }); });",
+    "} catch (e) { __out = { crashed: String((e && e.message) || e).slice(0, 200) }; }",
+    "__w('\\n' + __N + JSON.stringify(__out) + '\\n');",
   ].join("\n");
 }
 
-/** testWritingProgram(impl, candidateTests) -> runs the candidate's assert-script against `impl`, counting assertions. */
-function testWritingProgram(impl: string, tests: string): string {
+/** testWritingProgram(impl, candidateTests, nonce) -> runs the candidate's assert-script against the trusted `impl`
+ *  inside a fresh null-prototype vm context with an in-context assert (assertions counted in a closure). Outcome =
+ *  whether the script threw; printed once on stdout behind the per-run nonce. */
+function testWritingProgram(impl: string, tests: string, nonce: string): string {
+  const prelude = CTX_ASSERT_SRC + "\n" + impl + "\n;var __odgImpl = slugify;\nvar __odgRequire = function (m) { if (m === 'assert' || m === 'node:assert' || m === 'assert/strict' || m === 'node:assert/strict') return __odgAssertApi.assert; if (String(m).charAt(0) === '.') { var o = function () { return __odgImpl.apply(null, arguments); }; o.slugify = __odgImpl; o.default = __odgImpl; return o; } throw new Error('module ' + m + ' is not available'); };\nvar __odgSuite = function (name, f) { if (typeof f === 'function') f(); };";
+  const body = "(function (require, describe, it, test) {\n" + tests + "\n})(__odgRequire, __odgSuite, __odgSuite, __odgSuite);";
   return [
-    impl,
-    ";",
-    "const __odgA = require('assert'); let __odgCount = 0;",
-    "function __odgWrap(base) { const w = function () { __odgCount++; return base.apply(null, arguments); }; for (const k of Object.keys(base)) { if (typeof base[k] === 'function') w[k] = function () { __odgCount++; return base[k].apply(null, arguments); }; } return w; }",
-    "const __odgAssert = __odgWrap(__odgA); __odgAssert.strict = __odgWrap(__odgA.strict);",
-    "const __odgImpl = slugify;",
-    "function __odgRequire(m) { if (m === 'assert' || m === 'node:assert') return __odgAssert; if (m === 'assert/strict' || m === 'node:assert/strict') return __odgAssert.strict; if (String(m).startsWith('.')) { const o = function () { return __odgImpl.apply(null, arguments); }; o.slugify = __odgImpl; o.default = __odgImpl; return o; } return require(m); }",
-    "function __odgSuite(name, f) { if (typeof f === 'function') f(); }",
-    "process.on('unhandledRejection', (e) => { process.stdout.write('\\n" + RESULT_MARK + "' + JSON.stringify({ pass: false, assertions: __odgCount, error: 'unhandled rejection: ' + String(e && e.message || e).slice(0, 200) }) + '\\n'); process.exit(0); });",
+    "'use strict';",
+    "const __w = process.stdout.write.bind(process.stdout); const __vm = require('vm');",
+    `const __N = ${JSON.stringify(nonce)};`,
+    "const __ctx = __vm.createContext(Object.create(null));",
+    "let __done = false; const __emit = (o) => { if (__done) return; __done = true; __w('\\n' + __N + JSON.stringify(o) + '\\n'); };",
+    "process.on('unhandledRejection', (e) => { __emit({ pass: false, error: 'unhandled rejection' }); });",
+    "let __count = null;",
     "try {",
-    "  (function (require, describe, it, test) {",
-    tests,
-    "  })(__odgRequire, __odgSuite, __odgSuite, __odgSuite);",
-    "  setImmediate(() => process.stdout.write('\\n" + RESULT_MARK + "' + JSON.stringify({ pass: true, assertions: __odgCount }) + '\\n'));",
-    "} catch (e) {",
-    "  process.stdout.write('\\n" + RESULT_MARK + "' + JSON.stringify({ pass: false, assertions: __odgCount, error: String(e && e.message || e).slice(0, 300) }) + '\\n');",
-    "}",
+    `  __vm.runInContext(${JSON.stringify(prelude)}, __ctx, { timeout: 2000, filename: 'prelude.js' });`,
+    "  __count = __vm.runInContext('__odgAssertApi.count', __ctx);",
+    `  __vm.runInContext(${JSON.stringify(body)}, __ctx, { timeout: 5000, filename: 'candidate-tests.js' });`,
+    "  setImmediate(() => __emit({ pass: true, assertions: Number(__count()) }));",
+    "} catch (e) { __emit({ pass: false, assertions: __count ? Number(__count()) : 0, error: String((e && e.message) || e).slice(0, 300) }); }",
   ].join("\n");
 }
 
-/** defaultCodeRunner(program) -> { ran, result?, reason? }: runs ONLY inside provider-sandbox (bubblewrap; no network,
- *  cleared env). Sandbox unavailable ⇒ { ran:false } (the trial's test metric is NOT_MEASURED, never a pass). */
+const CODE_MEMORY_LIMIT_BYTES = 1024 * 1024 * 1024; // RLIMIT_AS for candidate code (an allocation bomb fails fast)
+
+/** defaultCodeRunner(program) -> { ran, exitOk, stdout, reason? }: runs ONLY inside provider-sandbox (bubblewrap; no
+ *  network, cleared env) under an RLIMIT_AS memory bound. Sandbox unavailable ⇒ { ran:false } (NOT_MEASURED). */
 function defaultCodeRunner(program: string, opts: any = {}): any {
   const PS = require("./provider-sandbox");
-  const r = PS.runProvider(program, { command: "node -", timeoutMs: Number(opts.timeoutMs) > 0 ? Number(opts.timeoutMs) : 10000 });
+  const r = PS.runProvider(program, { command: "node -", timeoutMs: Number(opts.timeoutMs) > 0 ? Number(opts.timeoutMs) : 15000, memoryLimitBytes: Number(opts.memoryLimitBytes) > 0 ? Number(opts.memoryLimitBytes) : CODE_MEMORY_LIMIT_BYTES });
   if (!r.launched) return { ran: false, reason: r.reason || "sandbox did not launch" };
-  return { ran: true, result: parseResult(String(r.text || "") + "\n" + String(r.stderr || "")), exitOk: r.ok === true, reason: r.ok ? undefined : r.reason };
+  return { ran: true, exitOk: r.ok === true, stdout: r.ok ? String(r.text || "") : "", reason: r.ok ? undefined : r.reason };
 }
 
-function parseResult(out: string): any {
-  const i = out.lastIndexOf(RESULT_MARK);
-  if (i < 0) return { pass: false, error: "no result marker (crash/timeout)" };
-  const line = out.slice(i + RESULT_MARK.length).split("\n")[0];
-  try { const o = JSON.parse(line); return isObj(o) ? o : { pass: false, error: "bad result" }; } catch { return { pass: false, error: "bad result json" }; }
+/** parseResult(stdout, nonce) -> the JSON after the LAST line starting with the nonce on STDOUT, or null. */
+function parseResult(stdout: string, nonce: string): any {
+  if (typeof nonce !== "string" || nonce.length < 16) return null;
+  const lines = String(stdout || "").split("\n").filter((l) => l.startsWith(nonce));
+  if (!lines.length) return null;
+  try { return JSON.parse(lines[lines.length - 1].slice(nonce.length)); } catch { return null; }
+}
+
+/** runSandboxed(run, program, nonce) -> { ran, result|null, reason }: requires launch + exit 0 + a nonce line on stdout. */
+function runSandboxed(run: any, program: string, nonce: string): any {
+  const r = run(program, nonce) || {};
+  if (!r.ran) return { ran: false, result: null, reason: r.reason || "sandbox unavailable" };
+  if (r.exitOk !== true) return { ran: true, result: null, reason: "candidate process exited non-zero / timed out: " + String(r.reason || "").slice(0, 120) };
+  const res = parseResult(r.stdout, nonce);
+  return res === null ? { ran: true, result: null, reason: "no nonce-stamped result on stdout" } : { ran: true, result: res };
+}
+
+/** gradeObservations(task, observed) -> { pass, reason }: the HOST-side oracle over the sandbox's observations. */
+function gradeObservations(task: any, observed: any): any {
+  const cases = arr(task.cases);
+  if (!Array.isArray(observed)) return { pass: false, reason: "candidate crashed: " + String((observed && observed.crashed) || "no observations").slice(0, 160) };
+  if (observed.length !== cases.length) return { pass: false, reason: "observation count mismatch" };
+  for (let i = 0; i < cases.length; i++) {
+    const c = cases[i]; let o: any; try { o = JSON.parse(observed[i]); } catch { return { pass: false, reason: `case ${i}: unparseable observation` }; }
+    if (!isObj(o) || o.missing) return { pass: false, reason: `function ${task.fnName} not found in candidate` };
+    if (c.throws !== undefined) {
+      if (o.ok !== false) return { pass: false, reason: `case ${i}: expected a throw${typeof c.throws === "string" ? " (" + c.throws + ")" : ""}, got ${canonical(o.undef ? undefined : o.value)}` };
+      if (typeof c.throws === "string" && o.errorName !== c.throws) return { pass: false, reason: `case ${i}: threw ${o.errorName}, expected ${c.throws}` };
+      continue;
+    }
+    if (o.ok !== true) return { pass: false, reason: `case ${i}: threw ${o.errorName}: ${o.message}` };
+    const got = o.undef ? "undefined" : canonical(o.value);
+    if (got !== canonical(c.expect)) return { pass: false, reason: `case ${i}: got ${got.slice(0, 80)} expected ${canonical(c.expect).slice(0, 80)}` };
+    if (c.argsAfter !== undefined && canonical(o.argsAfter) !== canonical(c.argsAfter)) return { pass: false, reason: `case ${i}: input mutated (${canonical(o.argsAfter).slice(0, 80)})` };
+  }
+  return { pass: true, reason: `all ${cases.length} hidden cases passed` };
 }
 
 function strictSchemaCheck(obj: any, schema: any): any {
@@ -179,45 +260,57 @@ function strictSchemaCheck(obj: any, schema: any): any {
 }
 
 function canonical(v: any): string {
+  if (v === undefined) return "undefined";
   if (Array.isArray(v)) return "[" + v.map(canonical).join(",") + "]";
   if (isObj(v)) return "{" + Object.keys(v).sort().map((k) => JSON.stringify(k) + ":" + canonical(v[k])).join(",") + "}";
   return JSON.stringify(v);
 }
 
+function newNonce(): string { return "ODG" + crypto.randomBytes(16).toString("hex") + ":"; }
+
 /**
  * gradeTrial(task, rawText, opts?) -> { passed, compile:{applicable,ok}, structured:{applicable,ok}, strict:{applicable,ok},
- * measured, reason }. OBJECTIVE graders only. opts.codeRunner(program) injectable (tests). `measured:false` ⇒ the grader
- * could not run (e.g. no sandbox) ⇒ the caller records NOT_MEASURED, never a pass.
+ * measured, reason }. OBJECTIVE graders only. opts.codeRunner(program, nonce) -> { ran, exitOk, stdout } injectable
+ * (tests). `measured:false` ⇒ the grader could not run (e.g. no sandbox) ⇒ NOT_MEASURED, never a pass.
  */
 function gradeTrial(task: any, rawText: any, opts: any = {}): any {
   const run = typeof opts.codeRunner === "function" ? opts.codeRunner : defaultCodeRunner;
+  const nonceOf = typeof opts.nonce === "function" ? opts.nonce : newNonce;
   const text = String(rawText == null ? "" : rawText);
   const out: any = { passed: false, measured: true, compile: { applicable: false, ok: false }, structured: { applicable: false, ok: false }, strict: { applicable: false, ok: false }, reason: "" };
   if (CODE_GRADERS.includes(task.grader)) {
     const code = extractCode(text);
-    const cc = compileCheck(code, task.lang);
+    const cc = compileCheck(code, task.lang, opts);
     out.compile = { applicable: cc.applicable !== false, ok: cc.ok === true };
     if (cc.applicable === false) { out.measured = false; out.reason = cc.reason; return out; }
     if (!cc.ok) { out.reason = cc.reason; return out; }
     if (task.grader === "refactor" && /\b(for|while)\s*\(|\bdo\s*\{/.test(stripComments(cc.js))) { out.reason = "refactor constraint violated: a for/while loop remains"; return out; }
     if (task.grader === "test-writing") {
-      const ref = run(testWritingProgram(task.referenceImpl, cc.js));
+      const n1 = nonceOf();
+      const ref = runSandboxed(run, testWritingProgram(task.referenceImpl, cc.js, n1), n1);
       if (!ref.ran) { out.measured = false; out.reason = ref.reason; return out; }
       const minA = Number(task.minAssertions) > 0 ? Number(task.minAssertions) : 1;
-      if (ref.result.pass !== true) { out.reason = "tests fail against the CORRECT implementation: " + (ref.result.error || ""); return out; }
+      if (!ref.result || ref.result.pass !== true) { out.reason = "tests fail against the CORRECT implementation: " + String((ref.result && ref.result.error) || ref.reason || ""); return out; }
       if (!(Number(ref.result.assertions) >= minA)) { out.reason = "only " + ref.result.assertions + " assertion(s) executed (< " + minA + ")"; return out; }
       const survived: number[] = [];
-      arr(task.mutants).forEach((m: string, i: number) => { const r = run(testWritingProgram(m, cc.js)); if (!r.ran) { out.measured = false; } else if (r.result.pass === true) survived.push(i); });
-      if (!out.measured) { out.reason = "sandbox unavailable for a mutant run"; return out; }
+      for (let i = 0; i < arr(task.mutants).length; i++) {
+        const nm = nonceOf();
+        const r = runSandboxed(run, testWritingProgram(task.mutants[i], cc.js, nm), nm);
+        if (!r.ran) { out.measured = false; out.reason = "sandbox unavailable for a mutant run"; return out; }
+        if (r.result && r.result.pass === true) survived.push(i);   // a mutant is KILLED by a failed assertion / crash / non-zero exit
+      }
       out.passed = survived.length === 0;
       out.mutantsKilled = arr(task.mutants).length - survived.length; out.mutantsTotal = arr(task.mutants).length;
       out.reason = out.passed ? "all mutants killed; reference passes" : "mutant(s) survived: " + survived.join(",");
       return out;
     }
-    const r = run(hiddenTestProgram(cc.js, task));
+    const nonce = nonceOf();
+    const r = runSandboxed(run, hiddenTestProgram(cc.js, task, nonce), nonce);
     if (!r.ran) { out.measured = false; out.reason = r.reason; return out; }
-    out.passed = r.result.pass === true;
-    out.reason = out.passed ? "hidden test passed" : "hidden test failed: " + (r.result.error || r.reason || "");
+    if (r.result === null) { out.reason = "hidden test failed: " + r.reason; return out; }
+    const g = gradeObservations(task, r.result);
+    out.passed = g.pass === true;
+    out.reason = out.passed ? "hidden test passed (" + g.reason + ")" : "hidden test failed: " + g.reason;
     return out;
   }
   // JSON graders
@@ -347,12 +440,13 @@ const LOCAL_MODEL_BENCHMARK_CONTRACT = Object.freeze({
     "odg-local-model-capability.buildCapabilityRegistry (aggregation) + odg-model-router.selectMeasured (selection) — not reimplemented here",
   ]),
   invariants: Object.freeze([
-    "model output is UNTRUSTED: compile checks parse/type-check only; hidden tests run ONLY inside the bubblewrap sandbox",
+    "model output is UNTRUSTED: compile checks parse/type-check only (TS: noResolve, child process, time-bounded); candidate code runs ONLY inside the bubblewrap sandbox under RLIMIT_AS, in a null-prototype vm context",
+    "the oracle is on the HOST: the sandboxed program records observations only (expected values never enter it); a result counts only with exit 0 + the per-run nonce on stdout",
     "every grader is objective pass/fail against a hidden oracle (hidden test / mutants / exact JSON / schema); no model self-report",
     "a grader that cannot run ⇒ measured:false ⇒ NOT_MEASURED — never a pass; a missing model ⇒ UNAVAILABLE, no fabricated trials",
     "one model resident at a time (parallelism 1; unload after each model); options recorded verbatim with the task-set sha256",
   ]),
 });
 
-module.exports = { TASKSET_FILE, DEFAULT_OPTIONS, loadTaskSet, validateTaskSet, extractCode, parseJsonLoose, compileCheck, hiddenTestProgram, testWritingProgram, gradeTrial, createProcSampler, runBenchmark, parseResult, LOCAL_MODEL_BENCHMARK_CONTRACT };
+module.exports = { TASKSET_FILE, DEFAULT_OPTIONS, CODE_MEMORY_LIMIT_BYTES, loadTaskSet, validateTaskSet, extractCode, parseJsonLoose, compileCheck, hiddenTestProgram, testWritingProgram, gradeObservations, gradeTrial, createProcSampler, runBenchmark, parseResult, defaultCodeRunner, LOCAL_MODEL_BENCHMARK_CONTRACT };
 export {};
