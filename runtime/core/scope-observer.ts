@@ -22,19 +22,32 @@ import { execFileSync } from "child_process";
 // EMPTY change set (VE: empty ⇒ engineeringOk false) but a FAIL-OPEN for scopeClean, whose "nothing out
 // of scope" verdict is trivially satisfied by an empty set — so scopeClean uses THIS checked observation.
 function gitChangedPathsChecked(): { ok: boolean; paths: string[] } {
-  let porcelain = "";
+  // V16.0 (#917 inspection): NUL-delimited porcelain v1 — paths are never quoted (non-ASCII/space/'"' names arrive
+  // verbatim), untracked directories are expanded to their files (a new runtime/governance/x is not hidden behind a
+  // collapsed 'runtime/' entry), and a rename/copy record carries BOTH paths as separate fields (the old one follows the
+  // record) — both are returned, so a staged `git mv runtime/core/a.ts runtime/governance/NEW.json` exposes the
+  // protected destination instead of one opaque "old -> new" string.
+  let raw = "";
   try {
-    porcelain = execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }) as string;
+    raw = execFileSync("git", ["status", "--porcelain=v1", "-z", "--untracked-files=all"], { encoding: "utf8" }) as string;
   } catch {
     return { ok: false, paths: [] };
   }
-  return {
-    ok: true,
-    paths: porcelain
-      .split(/\r?\n/)
-      .map((l) => l.slice(3).trim()) // strip the 2-char status + space
-      .filter(Boolean),
-  };
+  return { ok: true, paths: parsePorcelainZ(raw) };
+}
+
+/** parsePorcelainZ(raw) -> every path named by a `git status --porcelain=v1 -z` output (both sides of R/C records). */
+function parsePorcelainZ(raw: string): string[] {
+  const fields = String(raw || "").split("\0");
+  const out: string[] = [];
+  for (let i = 0; i < fields.length; i++) {
+    const rec = fields[i];
+    if (!rec || rec.length < 4) continue;
+    const xy = rec.slice(0, 2);
+    out.push(rec.slice(3));
+    if (/[RC]/.test(xy) && i + 1 < fields.length && fields[i + 1]) { out.push(fields[i + 1]); i++; }   // rename/copy source
+  }
+  return out.filter(Boolean);
 }
 
 // Back-compat un-discriminated form: [] on a git error OR a clean tree. Preserved verbatim for callers that
@@ -194,7 +207,35 @@ function configEq(file: any, key: any, equals?: any): { ok: boolean; detail: str
     : { ok: false, detail: `observed ${JSON.stringify(value)} != declared ${JSON.stringify(equals)} at ${file}:${key}` };
 }
 
+// V16.0 (#915 MED follow-up) — PROTECTED ROOTS regardless of authorization. scopeClean judges a change against the
+// authorized globs, and a glob is cut at its first '*', so an ancestor glob such as `runtime/**` (the engineering
+// default) authorizes runtime/governance/ROADMAP.json. protectedClean refuses ANY changed path under a protected root or
+// equal to a protected file, whatever the write-set says. Same observer as scopeClean (git status), fail-closed.
+// KNOWN LIMIT: writes INSIDE .git/ (hooks, config) never appear in `git status`, so the .git/ entry below cannot be
+// enforced by this observer — only an outer sandbox (no write access to .git/) confines them.
+const PROTECTED_ROOTS: readonly string[] = Object.freeze([".git/", ".github/", "runtime/governance/"]);
+const PROTECTED_FILES: readonly string[] = Object.freeze(["runtime/governance/ROADMAP.json", "docs/odg/closure-register.json"]);
+function protectedClean(changedPaths?: any, observer?: any, extraProtectedFiles?: any): { ok: boolean; detail: string } {
+  let changed: string[];
+  if (Array.isArray(changedPaths)) changed = changedPaths;
+  else {
+    const observe = typeof observer === "function" ? observer : gitChangedPathsChecked;
+    const obs = observe();
+    if (!obs || obs.ok !== true) return { ok: false, detail: "cannot observe working tree (git status failed) — protected-root check UNKNOWN, refusing (fail-closed)" };
+    changed = obs.paths;
+  }
+  const files = new Set<string>([...PROTECTED_FILES, ...(Array.isArray(extraProtectedFiles) ? extraProtectedFiles.filter((x: any) => typeof x === "string") : [])]);
+  const norm = (f: any) => String(f).replace(/^\.\//, "");
+  const hits = changed.map(norm).filter((f: string) => files.has(f) || PROTECTED_ROOTS.some((r) => f === r.slice(0, -1) || f.startsWith(r)));
+  return hits.length === 0
+    ? { ok: true, detail: `no change under a protected root (${changed.length} changed)` }
+    : { ok: false, detail: `change(s) under a PROTECTED root/file (never authorizable by a write-set): ${hits.join(", ")}` };
+}
+
 module.exports = {
+  parsePorcelainZ,
+  protectedClean,
+  PROTECTED_ROOTS,
   gitChangedPaths,
   gitChangedPathsChecked,
   changedPathsInScope,
