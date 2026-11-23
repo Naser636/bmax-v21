@@ -1,0 +1,785 @@
+{
+  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical.",
+  "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
+  "count": 16,
+  "initialStatusCounts": {
+    "PASS": 2,
+    "PARTIAL": 14
+  },
+  "contracts": [
+    {
+      "scenario": "A",
+      "title": "A — Ingénierie native",
+      "ownerText": "ODG découvre un défaut, identifie sa cause, conçoit un correctif, crée les tests, les exécute et fait inspecter le résultat.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "V150_BATTERY_A_P_MAP.json A (odg-native-engineering-loop deterministic transforms, l3-governed-repair)",
+          "V159_MEASURED_MODEL_POLICY.json: local-model fixes on synthetic bugfix/repair missions with independent functional test"
+        ],
+        "missingForPass": "ODG must discover a REAL defect, generate the fix and tests itself, and pass an independent inspection that can reject; apply needs an owner-authorized write-set; generated code should run in bwrap (IN_PROGRESS elsewhere)",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "ODG discovers a REAL defect, generates the fix and its tests itself (local model, executed in the bwrap sandbox), and an independent inspection that can reject accepts it",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "runtime/core/<defect-module>.ts",
+          "runtime/core/<defect-module>.test.ts",
+          "docs/odg/evidence/V160_SCENARIO_A.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "the defect is detected by an ODG component on real repo state (not injected)",
+          "fix + tests authored by the native path (provenance actor ODG, model id recorded)",
+          "model-written code executed only in odg-native-build-sandbox",
+          "independent inspection verdict recorded (can REJECT)",
+          "apply limited to an owner-authorized write-set"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "B",
+      "title": "B — Continuité",
+      "ownerText": "ODG commence une mission, produit des modifications, subit une interruption simulée, restaure son état et reprend uniquement les opérations manquantes.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PASS",
+        "evidence": [
+          "V150_SCENARIO_M_RESUME.json (real SIGKILL, only missing ops re-run, #890 inspected)",
+          "odg-native-continuity-run.ts two-process resume (reExecutedPriorWork=[])",
+          "V155 transversal G"
+        ],
+        "missingForPass": "PASS within scope (process death, single host, synthetic ops). Missing for full: committed scenario contract; power-loss durability",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Commit the scenario contract for the already-PASS continuity scenario and close the power-loss gap honestly",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_B.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "existing PASS evidence re-verified from V150_SCENARIO_M_RESUME.json",
+          "power-loss durability either demonstrated (fsync/rename audit) or recorded NOT_MEASURED"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "C",
+      "title": "C — Capacité dormante",
+      "ownerText": "ODG découvre un module existant non utilisé, identifie ses consommateurs, détermine s'il doit être raccordé, réalise le raccordement autorisé et démontre l'utilisation réelle.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "V150_COMPONENT_JUDGMENT / V150_199_RECONCILIATION (ODG component-judgment + individual reads)",
+          "#884 FR invoice compliance + due date threaded into live BTP journey (opt-in stage, inspected)",
+          "#882 cto-dashboard runner"
+        ],
+        "missingForPass": "one chain where ODG itself detects the dormant module, proposes the wiring, the wiring is authorized, and real use is demonstrated outside a test (the #884 stage is opt-in and was wired by the provider)",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "One chain where ODG itself detects a dormant module, proposes its wiring, the wiring is authorized, and real use is shown outside a test",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "runtime/core/<consumer>.ts",
+          "docs/odg/evidence/V160_SCENARIO_C.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "detection by odg-component-judgment on current main",
+          "wiring proposal recorded PROPOSED → owner AUTHORIZED before apply",
+          "a real (non-test) invocation consumes the module, with evidence"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "D",
+      "title": "D — Recherche et construction",
+      "ownerText": "ODG recherche une méthode, compare les solutions, construit la meilleure solution adaptée à ses contraintes et mesure le gain.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "#905/#906: researched references + canonical acquire() claims grounded the Radar admission rules, then the admission module was built",
+          "frontier-lab / scientific-research tests (synthetic)"
+        ],
+        "missingForPass": "comparison of ≥2 researched methods on a real task and a measured gain vs baseline",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Compare ≥2 researched methods on a real task, build the best and measure the gain vs a baseline",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "runtime/core/<method>.ts",
+          "docs/odg/evidence/V160_SCENARIO_D.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "≥2 methods with verified references (dossier rule)",
+          "same task + baseline measured before/after",
+          "gain stated with n and variance; no gain ⇒ reported as such"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "E",
+      "title": "E — Auto-guérison",
+      "ownerText": "ODG détecte une anomalie, identifie sa cause racine, répare en sandbox, vérifie et conserve les preuves.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "V150_SCENARIO_E_SELF_HEALING.json 8/8 cases; real defect fixed in repair-workflow.ts (#889)"
+        ],
+        "missingForPass": "ODG-generated fix (currently provider-scripted seam), anomaly from a real component rather than an injected synthetic module, prevention step",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Self-healing on an anomaly from a REAL component with an ODG-generated fix and a prevention step",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_E.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "anomaly observed in a real component (not a synthetic module)",
+          "fix generated by the native path, executed in the sandbox",
+          "prevention (regression test/guard) added and verified"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "F",
+      "title": "F — Multi-agents",
+      "ownerText": "ODG décompose une mission, affecte des fournisseurs, réceptionne leurs résultats, détecte les incompatibilités et valide l'intégration.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "odg-orchestration-scenario / odg-writeset-contention tests; real waves (V155_REAL_WAVE_EVIDENCE)",
+          "V155 transversal F (V15.5 lettering) PARTIAL"
+        ],
+        "missingForPass": "post-receipt detection of incompatible outputs from two providers and a validated integration step",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Decompose a mission, assign two providers/agents, detect incompatible outputs after receipt, and validate an integration step",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_F.json",
+          "runtime/bin/odg-v160-scenario-f-run.ts"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "decomposition + assignment through odg-agent-supervisor (write-sets declared)",
+          "two independently produced outputs received",
+          "an incompatibility is DETECTED by an ODG check (not by the coordinator)",
+          "integration validated by tests + independent inspection"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "G",
+      "title": "G — Mémoire",
+      "ownerText": "ODG retrouve une connaissance, vérifie sa fraîcheur, sa provenance et ses conditions, puis démontre son utilité.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "memory-scenario-battery, learning-reuse-proof, reuse-validity-gate (synthetic records)",
+          "V158_KNOWLEDGE_ASSESSMENT.json (provenance, sha256, timeSensitive, admissibility)"
+        ],
+        "missingForPass": "a retrieved knowledge item with freshness/provenance checked that is then used in a mission with measured utility",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Use a retrieved knowledge item (freshness + provenance checked) in a real mission and measure its utility",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_G.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "item from the pinned collection with SUPPORTED/CORROBORATED status and admissible() true for the use",
+          "used by a real mission decision; utility measured vs the same mission without it"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "H",
+      "title": "H — Amélioration récursive",
+      "ownerText": "ODG améliore un mécanisme de planification ou de vérification et démontre sur des tests indépendants que la nouvelle version est meilleure.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "V159_MEASURED_MODEL_POLICY.json (routing mechanism improved; before/after 0.75→0.75, escalation 0/2→2/2)",
+          "#902 verification levels",
+          "evolution-loop test (synthetic)"
+        ],
+        "missingForPass": "demonstrated superiority on independent held-out tests (V159 shows no quality gain; #902 gain not measured)",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Improve a planning/verification mechanism and show superiority on independent held-out tests",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_H.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "held-out test set fixed BEFORE the change",
+          "before/after on that set with n; superiority or honest null result"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "I",
+      "title": "I — Révision stratégique",
+      "ownerText": "ODG compare plusieurs plans, détecte une nouvelle dépendance et réorganise le portefeuille sans perdre les travaux validés.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "continuous-planner.test.ts (CASPER-style repair, independent mission preserved, PROPOSED)"
+        ],
+        "missingForPass": "run against the live register/portfolio with a real new dependency and assertion that ACCEPTED work is preserved",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Run strategic revision against the live register with a real new dependency, preserving ACCEPTED work",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_I.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "live register read-only snapshot",
+          "a real dependency introduced (proposal)",
+          "assertion: every ACCEPTED item preserved; revised plan PROPOSED only"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "J",
+      "title": "J — Gestion d'échec",
+      "ownerText": "ODG détecte une stratégie inefficace, arrête les tentatives répétitives, construit une alternative et mesure le résultat.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "#885 NO_PROGRESS_IDENTICAL_REGENERATION stop",
+          "V159: implement NO_QUALIFIED → evidence-gated sovereign-delegation record (no provider called)"
+        ],
+        "missingForPass": "an alternative strategy actually executed after the stop and its result measured against the original",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "After a repetitive-failure stop, execute an alternative strategy and measure it against the original",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_J.json",
+          "runtime/bin/odg-v160-scenario-j-run.ts"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "stop triggered by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
+          "alternative (decomposition / different model / repair depth) actually executed",
+          "outcome compared on the same task and recorded with n"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "K",
+      "title": "K — Knowledge Intelligence",
+      "ownerText": "ODG découvre une connaissance, identifie ses sources, structure ses affirmations, distingue les corroborations indépendantes, qualifie la connaissance, identifie une lacune interne et mesure le résultat de son utilisation.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "V158_RADAR_LIVE_RUN.json LIVE_OK (8/8, 6 hosts)",
+          "V158_RADAR_COLLECTION.json + V158_KNOWLEDGE_ASSESSMENT.json (15 claims; 0 CORROBORATED; 6 SUPPORTED)",
+          "#911 publisher identities"
+        ],
+        "missingForPass": "internal gap identification from the knowledge and measured result of its use; independent corroboration (needs more admitted hosts — partly owner-gated)",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Use admitted knowledge to identify an internal gap and measure the result of acting on it; seek independent corroboration",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_K.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "gap identified from pinned SUPPORTED knowledge",
+          "action + measured result",
+          "independent corroboration attempted (more admitted hosts may be owner-gated ⇒ recorded)"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "L",
+      "title": "L — Concurrence adaptative",
+      "ownerText": "ODG compare plusieurs niveaux de concurrence et mesure les ressources, le temps, les coûts, les conflits et les résultats acceptés.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "V150_SCENARIO_L_CONCURRENCY.json (1/2/4/8 → 8 workers, 6.58×, 0 failures)",
+          "#902 adaptive concurrency policy",
+          "V155_REAL_WAVE_EVIDENCE (×5.08)"
+        ],
+        "missingForPass": "resources (CPU/RAM), costs, conflicts and accepted results measured per level; levels above 8 to locate the optimum; real missions rather than test suites",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Measure resources, costs, conflicts and accepted results per concurrency level on real missions, beyond 8 workers",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_L.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "levels 1..16 (or host max) on real missions",
+          "CPU/RAM/conflicts/accepted results per level",
+          "optimum located with evidence"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "M",
+      "title": "M — Reprise multi-agents",
+      "ownerText": "ODG interrompt plusieurs tâches en simulation, récupère leurs états, vérifie les artefacts et reprend uniquement les opérations manquantes.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PASS",
+        "evidence": [
+          "V150_SCENARIO_M_RESUME.json allProven=true (2 kills at different points, 0 repeated, 0 lost, leases taken over not double-held, concurrent resumers)",
+          "V155 transversal G (real canary missions)"
+        ],
+        "missingForPass": "PASS within scope. Missing for full: committed scenario contract; N>2 resumers; fencing tokens",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Commit the scenario contract for the already-PASS multi-agent resume and record remaining gaps",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_M.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "existing PASS re-verified",
+          "N>2 resumers and fencing tokens demonstrated or NOT_MEASURED"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "N",
+      "title": "N — Automatisation",
+      "ownerText": "ODG identifie une tâche répétitive autorisée, réutilise ou construit son automatisation, vérifie son comportement et mesure le temps économisé.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "idempotency-guard; live tick automation (dedup); battery map N (automation-measurement SIMULATED, NOT_RUN)"
+        ],
+        "missingForPass": "a real repetitive internal task identified, automated idempotently, verified, and time saved measured",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Identify a real repetitive internal task, automate it idempotently, verify, and measure time saved",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_N.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "task chosen from measured repetition (e.g. CI/inspection loops)",
+          "automation idempotent + tested",
+          "time saved measured on real runs"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "O",
+      "title": "O — Blocage isolé",
+      "ownerText": "Une tâche est bloquée par une dépendance. ODG poursuit les missions indépendantes et reprend la tâche bloquée lorsque sa condition est satisfaite.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "odg-continuation-diagnostic / orchestration-scenario tests (blocked lot does not freeze independent work)",
+          "V155 transversal K (real: deferred independent missions PASSed after interruption, 0 human inputs)"
+        ],
+        "missingForPass": "a real dependency-blocked task that is resumed automatically when its condition becomes satisfied",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "A real dependency-blocked task resumes automatically when its condition becomes satisfied while independent work continues",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_O.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "real blocked task (not a fixture)",
+          "independent missions progress meanwhile (measured)",
+          "automatic resume on condition, evidence of no manual trigger"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    },
+    {
+      "scenario": "P",
+      "title": "P — Réduction des répétitions",
+      "ownerText": "ODG démontre qu'il réutilise des analyses, tests et preuves encore valides sans répéter inutilement les travaux.",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "initialState": {
+        "status": "PARTIAL",
+        "evidence": [
+          "live ledger dedup (1199 ALREADY_PROVEN no-op rows, V155 maturity)",
+          "odg-reuse-demonstrations-run (learning reuse PROVEN)"
+        ],
+        "missingForPass": "measured work avoided (time/ops saved) when reusing still-valid analyses/tests/proofs",
+        "asOf": "main a9145c3a (2026-11-23)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Measure work avoided (time/ops) when reusing still-valid analyses/tests/proofs",
+        "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_P.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+        ],
+        "acceptance_criteria": [
+          "reuse decisions validated (validity check) — never stale reuse",
+          "time/ops saved measured vs recompute"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the scenario PR; evidence files are additive",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      }
+    }
+  ]
+}
