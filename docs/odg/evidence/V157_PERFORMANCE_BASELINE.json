@@ -1,0 +1,606 @@
+{
+  "schema": "ODG_V157_PERFORMANCE_BASELINE",
+  "version": 1,
+  "directive": "CTO V15.7 — performance engineering without weakening controls",
+  "generatedBy": [
+    "runtime/bin/odg-verification-level-run.ts --base <merge>^1 --head <merge> --measure L1,L2 --skip-typecheck --workers 4 --json",
+    "full gate: npm run build:runtime; npx tsc --noEmit -p tsconfig.json; ODG_TEST_WORKERS=8 npm run test:report"
+  ],
+  "honesty": [
+    "all timings are REAL wall-clock measurements on ONE host (8 CPUs) — single run each, no repeats ⇒ indicative, not statistical",
+    "host was shared (other agents / the live root timer may run): loadavg is recorded at each measurement",
+    "test selection computed on the CURRENT origin/main tree (1c183ae3), which contains all five PRs — not on each merge commit's own tree",
+    "L1/L2 wall time EXCLUDES typecheck (measured once: 27923 ms) — localWithTypecheckMs adds it",
+    "the full test:report was measured ONCE and is reused as the comparator for every PR",
+    "CI per-run times and PR open→merge durations below are COORDINATOR-SUPPLIED from GitHub (not re-measured here)"
+  ],
+  "fullGate": {
+    "label": "REAL — measured once on this host (8 CPUs, 24 GB) in a fresh git worktree of origin/main 1c183ae3",
+    "build_runtime": {
+      "exitCode": 0,
+      "wallMs": 11790
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "wallMs": 27923
+    },
+    "test_report": {
+      "exitCode": 1,
+      "wallMs": 421334,
+      "workers": 8,
+      "summary": "TOTAL 853 · PASS 852 · FAIL 1 · BLOCKED_BY_ISOLATION 0 · SKIPPED 0 · NOT_RUN 0",
+      "failing": [
+        {
+          "suite": "runtime/bin/odg-backup-restore.test.ts",
+          "assertion": "restore(clone) reproduces the exact repo HEAD",
+          "note": "reproduced standalone in this worktree; run started before any tracked-file edit of this PR ⇒ not caused by it; root cause NOT investigated (suspected worktree-specific HEAD resolution) — NOT claimed environmental"
+        }
+      ]
+    },
+    "loadavgBefore": "0.78 0.55 0.57 2/339 632284",
+    "loadavgAfter": "10.01 6.13 2.89 1/348 679687"
+  },
+  "historicalPRs": [
+    {
+      "pr": 893,
+      "mergeCommit": "593ce11f4351f0e73c516cd9b514dae91f776a7a",
+      "diff": "git diff --name-only 593ce11f4351f0e73c516cd9b514dae91f776a7a^1...593ce11f4351f0e73c516cd9b514dae91f776a7a",
+      "changedFiles": 7,
+      "chosenLevel": "L3",
+      "reinforced": true,
+      "independentInspection": "MANDATORY",
+      "reasons": [
+        "package.json: only suites ADDED to test:report (1) ⇒ run them at L1",
+        "SENSITIVE runtime/bin/odg-run-output-isolation.test.ts: sandbox ⇒ REINFORCED",
+        "SENSITIVE runtime/bin/odg-schedule-tick.ts: odg-schedule-tick ⇒ REINFORCED",
+        "SENSITIVE runtime/core/mission-ledger.ts: ledger ⇒ REINFORCED",
+        "SENSITIVE runtime/core/run-output-isolation.ts: sandbox ⇒ REINFORCED",
+        "BUILD_CONFIG tsconfig.runtime-dist.json ⇒ L3 (affects build/CI for everything)",
+        "REVERSE_DEPENDENTS: 4 module(s) depend on the change ⇒ L2"
+      ],
+      "unresolved": [],
+      "selected": {
+        "L1": [
+          "runtime/bin/odg-run-output-isolation.test.ts",
+          "runtime/bin/odg-schedule-tick.test.ts"
+        ],
+        "L2": [
+          "runtime/bin/odg-run-output-isolation.test.ts",
+          "runtime/bin/odg-schedule-tick-wave.test.ts",
+          "runtime/bin/odg-schedule-tick.test.ts",
+          "runtime/bin/odg-v155-transversal-validation.test.ts",
+          "runtime/core/change-impact-graph.test.ts",
+          "runtime/core/fleet-collector.test.ts",
+          "runtime/core/fleet-stage.test.ts",
+          "runtime/core/mission-ledger-integrity.test.ts",
+          "runtime/core/odg-v251-repair-reconciliation.test.ts",
+          "runtime/core/self-readonly-mission.test.ts"
+        ],
+        "L3": "855 suites (full test:report)"
+      },
+      "timing": {
+        "L1": {
+          "suites": 2,
+          "workers": 4,
+          "wallMs": 37613,
+          "counts": {
+            "PASS": 2,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 11.2,
+          "localWithTypecheckMs": 65536
+        },
+        "L2": {
+          "suites": 10,
+          "workers": 4,
+          "wallMs": 51277,
+          "counts": {
+            "PASS": 10,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 8.2,
+          "localWithTypecheckMs": 79200
+        },
+        "loadavgAtRun": [
+          2.97,
+          4.66,
+          2.74
+        ]
+      },
+      "verdictForThisPR": "L3 REINFORCED: the full gate (build+tsc+test:report ≈ 461 s here) was REQUIRED — L1/L2 timings are shown only as the fail-fast pre-check that would run first"
+    },
+    {
+      "pr": 896,
+      "mergeCommit": "3b20d3632b1620f4b3b84088aa01960124954906",
+      "diff": "git diff --name-only 3b20d3632b1620f4b3b84088aa01960124954906^1...3b20d3632b1620f4b3b84088aa01960124954906",
+      "changedFiles": 10,
+      "chosenLevel": "L3",
+      "reinforced": true,
+      "independentInspection": "MANDATORY",
+      "reasons": [
+        "SENSITIVE runtime/bin/odg-run-output-isolation.test.ts: sandbox ⇒ REINFORCED",
+        "SENSITIVE runtime/bin/odg-schedule-tick-wave.test.ts: odg-schedule-tick ⇒ REINFORCED",
+        "SENSITIVE runtime/bin/odg-schedule-tick.ts: odg-schedule-tick ⇒ REINFORCED",
+        "SENSITIVE runtime/missions/RUNTIME_SELF_AUDIT.json: integrity/audit chain ⇒ REINFORCED",
+        "REVERSE_DEPENDENTS: 1 module(s) depend on the change ⇒ L2",
+        "UNRESOLVED_IMPACT (6: runtime/missions/G10_READONLY_AUTONOMY_PROBE.json NON_TS_RUNTIME_FILE; runtime/missions/M0000.json NON_TS_RUNTIME_FILE; runtime/missions/M0001.json NON_TS_RUNTIME_FILE) ⇒ escalate L2 → L3 (fail closed)"
+      ],
+      "unresolved": [
+        {
+          "path": "runtime/missions/G10_READONLY_AUTONOMY_PROBE.json",
+          "reason": "NON_TS_RUNTIME_FILE (consumers not resolvable by the import graph)"
+        },
+        {
+          "path": "runtime/missions/M0000.json",
+          "reason": "NON_TS_RUNTIME_FILE (consumers not resolvable by the import graph)"
+        },
+        {
+          "path": "runtime/missions/M0001.json",
+          "reason": "NON_TS_RUNTIME_FILE (consumers not resolvable by the import graph)"
+        },
+        {
+          "path": "runtime/missions/M0002.json",
+          "reason": "NON_TS_RUNTIME_FILE (consumers not resolvable by the import graph)"
+        },
+        {
+          "path": "runtime/missions/QUAL_CLEAN_GATEB.json",
+          "reason": "NON_TS_RUNTIME_FILE (consumers not resolvable by the import graph)"
+        },
+        {
+          "path": "runtime/missions/RUNTIME_SELF_AUDIT.json",
+          "reason": "NON_TS_RUNTIME_FILE (consumers not resolvable by the import graph)"
+        }
+      ],
+      "selected": {
+        "L1": [
+          "runtime/bin/odg-run-output-isolation.test.ts",
+          "runtime/bin/odg-schedule-tick-wave.test.ts",
+          "runtime/bin/odg-schedule-tick.test.ts"
+        ],
+        "L2": [
+          "runtime/bin/odg-run-output-isolation.test.ts",
+          "runtime/bin/odg-schedule-tick-wave.test.ts",
+          "runtime/bin/odg-schedule-tick.test.ts",
+          "runtime/bin/odg-v155-transversal-validation.test.ts",
+          "runtime/core/self-readonly-mission.test.ts"
+        ],
+        "L3": "855 suites (full test:report)"
+      },
+      "timing": {
+        "L1": {
+          "suites": 3,
+          "workers": 4,
+          "wallMs": 49764,
+          "counts": {
+            "PASS": 3,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 8.5,
+          "localWithTypecheckMs": 77687
+        },
+        "L2": {
+          "suites": 5,
+          "workers": 4,
+          "wallMs": 51045,
+          "counts": {
+            "PASS": 5,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 8.3,
+          "localWithTypecheckMs": 78968
+        },
+        "loadavgAtRun": [
+          2.08,
+          3.85,
+          2.66
+        ]
+      },
+      "verdictForThisPR": "L3 REINFORCED: the full gate (build+tsc+test:report ≈ 461 s here) was REQUIRED — L1/L2 timings are shown only as the fail-fast pre-check that would run first"
+    },
+    {
+      "pr": 898,
+      "mergeCommit": "c6949b09f313557b3c821fca34e96dfb00f571ab",
+      "diff": "git diff --name-only c6949b09f313557b3c821fca34e96dfb00f571ab^1...c6949b09f313557b3c821fca34e96dfb00f571ab",
+      "changedFiles": 11,
+      "chosenLevel": "L3",
+      "reinforced": true,
+      "independentInspection": "MANDATORY",
+      "reasons": [
+        "package.json: only suites ADDED to test:report (1) ⇒ run them at L1",
+        "SENSITIVE runtime/core/provider-sandbox.ts: sandbox ⇒ REINFORCED",
+        "IMPACTS_SENSITIVE_CONSUMER: runtime/core/delegate-isolation.ts, runtime/core/objective-authorization.ts ⇒ REINFORCED",
+        "REVERSE_DEPENDENTS: 39 module(s) depend on the change ⇒ L2",
+        "UNRESOLVED_IMPACT (2: runtime/core/odg-local-model-benchmark-tasks.v1.json NON_TS_RUNTIME_FILE; runtime/core/odg-local-model-benchmark-tasks.v2.json NON_TS_RUNTIME_FILE) ⇒ escalate L2 → L3 (fail closed)"
+      ],
+      "unresolved": [
+        {
+          "path": "runtime/core/odg-local-model-benchmark-tasks.v1.json",
+          "reason": "NON_TS_RUNTIME_FILE (consumers not resolvable by the import graph)"
+        },
+        {
+          "path": "runtime/core/odg-local-model-benchmark-tasks.v2.json",
+          "reason": "NON_TS_RUNTIME_FILE (consumers not resolvable by the import graph)"
+        }
+      ],
+      "selected": {
+        "L1": [
+          "runtime/core/odg-local-model-benchmark.test.ts",
+          "runtime/core/odg-local-model-capability.test.ts",
+          "runtime/core/odg-model-router.test.ts",
+          "runtime/core/ollama-provider.test.ts",
+          "runtime/core/provider-sandbox.test.ts"
+        ],
+        "L2": [
+          "runtime/bin/odg-frontier.test.ts",
+          "runtime/bin/odg-probe.test.ts",
+          "runtime/bin/odg-v155-transversal-validation.test.ts",
+          "runtime/core/autonomous-execution-policy.test.ts",
+          "runtime/core/autonomy-measure.test.ts",
+          "runtime/core/bash-command-governor.test.ts",
+          "runtime/core/capability-contracts.test.ts",
+          "runtime/core/capability-executors.test.ts",
+          "runtime/core/capability-probes.test.ts",
+          "runtime/core/capability-router.test.ts",
+          "runtime/core/change-impact-graph.test.ts",
+          "runtime/core/decision-engine.test.ts",
+          "runtime/core/decision-precedent-executor.test.ts",
+          "runtime/core/delegate-isolation-truth-lock.test.ts",
+          "runtime/core/delegate-isolation.test.ts",
+          "runtime/core/engineering-executor.test.ts",
+          "runtime/core/external-research-live.test.ts",
+          "runtime/core/final-report.test.ts",
+          "runtime/core/frontier-pipeline.test.ts",
+          "runtime/core/generative-repair-adapter.test.ts",
+          "runtime/core/generative-repair-eval.test.ts",
+          "runtime/core/git-branch-integration.test.ts",
+          "runtime/core/http-get-bounded.test.ts",
+          "runtime/core/implement-via-local-provider.test.ts",
+          "runtime/core/learning-loop-integration.test.ts",
+          "runtime/core/local-autonomy.test.ts",
+          "runtime/core/local-model-manager.test.ts",
+          "runtime/core/mission-fidelity-verdict.test.ts",
+          "runtime/core/mission-loader.verify.test.ts",
+          "runtime/core/mission-reuse-recorder.test.ts",
+          "runtime/core/nl-objective-gateway.expert.test.ts",
+          "runtime/core/nl-objective-gateway.test.ts",
+          "runtime/core/objective-attribution.test.ts",
+          "runtime/core/objective-authorization.test.ts",
+          "runtime/core/observability-verification.test.ts",
+          "runtime/core/odg-btp-communication-capability-matrix.test.ts",
+          "runtime/core/odg-capability-reuse-path.test.ts",
+          "runtime/core/odg-compounding-transfer-demo.test.ts",
+          "runtime/core/odg-cto-dashboard.test.ts",
+          "runtime/core/odg-delegate-provenance-smoke.test.ts",
+          "runtime/core/odg-intelligence-economic-assistants.test.ts",
+          "runtime/core/odg-intelligence-evaluation.test.ts",
+          "runtime/core/odg-light-path-selector.test.ts",
+          "runtime/core/odg-local-model-benchmark.test.ts",
+          "runtime/core/odg-local-model-capability.test.ts",
+          "runtime/core/odg-mission-orchestrator.test.ts",
+          "runtime/core/odg-model-router.test.ts",
+          "runtime/core/odg-native-engineering-loop.test.ts",
+          "runtime/core/odg-native-engineering-plan.test.ts",
+          "runtime/core/odg-native-execution-provenance.test.ts",
+          "runtime/core/odg-open-mission-recovery.test.ts",
+          "runtime/core/odg-orchestration-plan.test.ts",
+          "runtime/core/odg-orchestration-scenario.test.ts",
+          "runtime/core/odg-v251-repair-reconciliation.test.ts",
+          "runtime/core/ollama-provider.test.ts",
+          "runtime/core/patch-executor.test.ts",
+          "runtime/core/prove-the-number-demonstrator.test.ts",
+          "runtime/core/provider-sandbox.test.ts",
+          "runtime/core/repair-retry.test.ts",
+          "runtime/core/repair-router.test.ts",
+          "runtime/core/truth-lock-chokepoint.test.ts",
+          "runtime/core/unit-economics.test.ts"
+        ],
+        "L3": "855 suites (full test:report)"
+      },
+      "timing": {
+        "L1": {
+          "suites": 5,
+          "workers": 4,
+          "wallMs": 16668,
+          "counts": {
+            "PASS": 5,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 25.3,
+          "localWithTypecheckMs": 44591
+        },
+        "L2": {
+          "suites": 62,
+          "workers": 4,
+          "wallMs": 61029,
+          "counts": {
+            "PASS": 62,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 6.9,
+          "localWithTypecheckMs": 88952
+        },
+        "loadavgAtRun": [
+          3.12,
+          3.73,
+          2.71
+        ]
+      },
+      "verdictForThisPR": "L3 REINFORCED: the full gate (build+tsc+test:report ≈ 461 s here) was REQUIRED — L1/L2 timings are shown only as the fail-fast pre-check that would run first"
+    },
+    {
+      "pr": 899,
+      "mergeCommit": "b7c31f970eafbde3578f8fdf04281c33a8481c6f",
+      "diff": "git diff --name-only b7c31f970eafbde3578f8fdf04281c33a8481c6f^1...b7c31f970eafbde3578f8fdf04281c33a8481c6f",
+      "changedFiles": 8,
+      "chosenLevel": "L2",
+      "reinforced": false,
+      "independentInspection": "RECOMMENDED",
+      "reasons": [
+        "package.json: only suites ADDED to test:report (2) ⇒ run them at L1",
+        "REVERSE_DEPENDENTS: 1 module(s) depend on the change ⇒ L2"
+      ],
+      "unresolved": [],
+      "selected": {
+        "L1": [
+          "runtime/bin/odg-native-autonomy-maturity-run.test.ts",
+          "runtime/core/odg-capability-maturity.test.ts",
+          "runtime/core/odg-native-autonomy-maturity.test.ts"
+        ],
+        "L2": [
+          "runtime/bin/odg-native-autonomy-maturity-run.test.ts",
+          "runtime/core/change-impact-graph.test.ts",
+          "runtime/core/odg-capability-maturity.test.ts",
+          "runtime/core/odg-cto-dashboard.test.ts",
+          "runtime/core/odg-native-autonomy-maturity.test.ts",
+          "runtime/core/odg-v251-repair-reconciliation.test.ts"
+        ],
+        "L3": "855 suites (full test:report)"
+      },
+      "timing": {
+        "L1": {
+          "suites": 3,
+          "workers": 4,
+          "wallMs": 9760,
+          "counts": {
+            "PASS": 3,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 43.2,
+          "localWithTypecheckMs": 37683
+        },
+        "L2": {
+          "suites": 6,
+          "workers": 4,
+          "wallMs": 8864,
+          "counts": {
+            "PASS": 6,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 47.5,
+          "localWithTypecheckMs": 36787
+        },
+        "loadavgAtRun": [
+          2.41,
+          3.51,
+          2.66
+        ]
+      },
+      "verdictForThisPR": "local L2 pre-check suffices before CI (CI still mandatory)"
+    },
+    {
+      "pr": 900,
+      "mergeCommit": "1c183ae3a53df927d437c77bede19c6cb1baff49",
+      "diff": "git diff --name-only 1c183ae3a53df927d437c77bede19c6cb1baff49^1...1c183ae3a53df927d437c77bede19c6cb1baff49",
+      "changedFiles": 4,
+      "chosenLevel": "L1",
+      "reinforced": false,
+      "independentInspection": "RECOMMENDED",
+      "reasons": [
+        "package.json: only suites ADDED to test:report (1) ⇒ run them at L1"
+      ],
+      "unresolved": [],
+      "selected": {
+        "L1": [
+          "runtime/bin/odg-v155-transversal-validation.test.ts"
+        ],
+        "L2": [
+          "runtime/bin/odg-v155-transversal-validation.test.ts"
+        ],
+        "L3": "855 suites (full test:report)"
+      },
+      "timing": {
+        "L1": {
+          "suites": 1,
+          "workers": 4,
+          "wallMs": 1181,
+          "counts": {
+            "PASS": 1,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 356.8,
+          "localWithTypecheckMs": 29104
+        },
+        "L2": {
+          "suites": 1,
+          "workers": 4,
+          "wallMs": 1214,
+          "counts": {
+            "PASS": 1,
+            "SKIPPED": 0,
+            "BLOCKED_BY_ISOLATION": 0,
+            "FAIL": 0,
+            "NOT_RUN": 0
+          },
+          "failing": [],
+          "speedupVsFullTestReport": 347.1,
+          "localWithTypecheckMs": 29137
+        },
+        "loadavgAtRun": [
+          2.29,
+          3.47,
+          2.65
+        ]
+      },
+      "verdictForThisPR": "local L1 pre-check suffices before CI (CI still mandatory)"
+    }
+  ],
+  "campaignTimingsV155": {
+    "label": "COORDINATOR-SUPPLIED (GitHub data for the V15.5 PRs) — not re-measured by this PR",
+    "ciRunSeconds": {
+      "min": 218,
+      "max": 374
+    },
+    "ciRunsPerPR": {
+      "min": 2,
+      "max": 3
+    },
+    "ciWallPerPRMinutes": {
+      "min": 7.3,
+      "max": 18.7
+    },
+    "prOpenToMergeMinutes": {
+      "893": 35,
+      "895": 32,
+      "896": 33,
+      "897": 6,
+      "898": 50,
+      "899": 24,
+      "900": 17
+    },
+    "prOpenToMergeSummary": {
+      "n": 7,
+      "totalMinutes": 197,
+      "median": 32,
+      "mean": 28.1
+    },
+    "firstInspectionReject": {
+      "rejected": 6,
+      "of": 7,
+      "rate": 0.86
+    },
+    "sessionDisconnect": {
+      "from": "03:06",
+      "to": "09:10",
+      "minutes": 364
+    }
+  },
+  "topSlowdowns": [
+    {
+      "rank": 1,
+      "cause": "Session disconnect — 364 min (03:06→09:10) of zero progress",
+      "evidence": "364 min > the SUM of all 7 PR open→merge times (197 min); it is the largest single loss",
+      "mitigation": "an unattended continuation path (resident driver / scheduled resume) — OWNER_GATED; not addressed by this PR",
+      "confidence": "HIGH (direct arithmetic on supplied data)"
+    },
+    {
+      "rank": 2,
+      "cause": "First-inspection REJECT rework loop — 6/7 PRs (86%) rejected at first inspection",
+      "evidence": "each REJECT forces fix → re-push → another full CI run; consistent with 2–3 CI runs per PR (1 run would suffice without rework)",
+      "mitigation": "pre-PR self-check = the REINFORCED adversarial checklist emitted by odg-verification-level; L1/L2 local pre-checks fail fast before CI",
+      "confidence": "MEDIUM — the per-PR split between rework time and other waiting is NOT_MEASURED (no per-phase timestamps supplied)"
+    },
+    {
+      "rank": 3,
+      "cause": "Serial CI waiting — 2–3 runs × 218–374 s = 7.3–18.7 min of CI wall per PR",
+      "evidence": "= 23%–58% of the 32-min median open→merge; full local gate measured here at 461 s (853 suites) vs L1/L2 pre-checks of seconds to ~1-2 min",
+      "mitigation": "inspection in parallel with CI (new process); targeted L1/L2 locally; CI itself is never lowered",
+      "confidence": "MEDIUM — CI queue/wait time beyond run time NOT_MEASURED"
+    }
+  ],
+  "concurrencyPolicyOnRealHost": {
+    "label": "REAL host signals read-only (/proc/loadavg, /proc/meminfo, os.cpus, live agent-supervisor snapshot); coordination signals not wired ⇒ NOT_MEASURED",
+    "command": "npx tsx runtime/bin/odg-concurrency-policy-run.ts",
+    "measuredAt": "2026-11-23T11:12:18.763Z",
+    "agentsByState": {
+      "RUNNING": 2,
+      "COMPLETED_WITH_RESULT": 0,
+      "COMPLETED_NO_RESULT": 64,
+      "BLOCKED": 0,
+      "INTERRUPTED": 0,
+      "ORPHAN": 35,
+      "AWAITING_VALIDATION": 0
+    },
+    "decision": {
+      "direction": "DOWN",
+      "limits": {
+        "coordinator": 1,
+        "builders": 1,
+        "inspectors": 1,
+        "gitIntegration": 1
+      },
+      "admit": {
+        "coordinator": 1,
+        "builders": 0,
+        "inspectors": 0,
+        "gitIntegration": 0
+      },
+      "running": {
+        "builder": 2,
+        "coordinator": 0,
+        "inspector": 0,
+        "gitIntegration": 0,
+        "unclassifiedCountedAsBuilder": 2,
+        "lockClaimsRunning": 0,
+        "runningCount": 2
+      },
+      "signals": {
+        "cpuCount": 8,
+        "load1": 2.01,
+        "loadPerCpu": 0.251,
+        "memAvailableMb": 20555,
+        "writesetConflicts": 2,
+        "refusalRate": "NOT_MEASURED",
+        "ciQueue": "NOT_MEASURED",
+        "inspectionQueue": "NOT_MEASURED"
+      },
+      "notMeasured": [
+        "refusalRate",
+        "ciQueue",
+        "inspectionQueue"
+      ],
+      "reasons": [
+        "DOWN: WRITESET_CONFLICTS 2",
+        "inspectors: admitted only when a change is READY (changeReady=NOT_MEASURED)",
+        "gitIntegration: admitted only when no integration is active (gitIntegrationActive=NOT_MEASURED)"
+      ]
+    },
+    "interpretation": "Host is NOT under CPU/RAM pressure (load 0.25/cpu, ~20 GB available). The DOWN comes from 2 supervisor contentions that are both UNKNOWN_WRITESET (agents without a declared heartbeat write-set conflict with everything — fail-closed), not an observed path overlap. Declaring write-sets via supervisor heartbeats would clear this signal; the policy correctly refuses to admit a new builder while 2 builder-class agents are RUNNING with unknown write-sets.",
+    "note": "the live measurement includes this PR's own sub-agent session and worktree among the RUNNING agents (agent ids omitted: they contain host paths)"
+  }
+}
