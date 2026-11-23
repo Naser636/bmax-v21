@@ -95,14 +95,25 @@ function pathTokens(strings: any[]): string[] {
 
 const objectives = Array.isArray(plan.objectives) ? plan.objectives : [];
 const objectiveText = objectives.flatMap((o: any) => [o.goal, ...(o.done_when || [])]);
+// V16.0 (#915) — ONE admissibility filter for every contract path the delegate consumes (brief scope, isolation
+// write-set, write-set conformance): a strict repo-relative path charset (no control chars/backticks/spaces ⇒ no brief
+// injection), no absolute/'..'/'~', and never a protected root (.git/, .github/, runtime/governance/, the sovereign
+// ALWAYS_PROTECTED registers). A contract path that fails it is DROPPED everywhere — so a write to it then fails
+// conformance (scopeClean) instead of being invited by the brief.
+const PROTECTED_PREFIXES = Object.freeze([".git/", ".github/", "runtime/governance/"]);
+const SOVEREIGN_PROTECTED: readonly string[] = (() => { try { return require(path.join(ROOT, _corePort("runtime/core/odg-sovereign-delegation.js"))).ALWAYS_PROTECTED || []; } catch { return ["runtime/governance/ROADMAP.json", "docs/odg/closure-register.json"]; } })();
+const safeRel = (p: any): boolean => typeof p === "string" && p.length > 0 && p.length <= 300
+  && /^[A-Za-z0-9._\-\/*]+$/.test(p) && !p.startsWith("/") && !/(^|\/)\.\.(\/|$)/.test(p)
+  && !PROTECTED_PREFIXES.some((pre) => p === pre.slice(0, -1) || p.startsWith(pre))
+  && !SOVEREIGN_PROTECTED.includes(p);
 const contractDeclared = Array.isArray(plan.authorizedPaths) && plan.authorizedPaths.length > 0;
-const derived = contractDeclared ? plan.authorizedPaths : pathTokens([...objectiveText, ...(plan.definitionOfDone || [])]);
-// V16.0 FIX — a path the CONTRACT explicitly authorizes is part of the scope even if it does not exist yet: a mission
-// whose job is to CREATE a file (a checkpoint, a new module) must have that file in scope, otherwise the provider either
-// cannot do the work or writes outside the brief. Only paths GUESSED from objective text are dropped when absent.
-// Contract-declared paths are still validated as plain repo-relative paths (no absolute, no '..', no NUL/backslash).
-const safeRel = (p: any) => typeof p === "string" && p.length > 0 && !path.isAbsolute(p) && !/(^|\/)\.\.(\/|$)/.test(p) && !/[\0\\]/.test(p);
-const authorizedToCreate = new Set<string>(contractDeclared ? plan.authorizedPaths.filter(safeRel) : []);
+const contractPaths: string[] = contractDeclared ? plan.authorizedPaths.filter(safeRel) : [];
+const rejectedContractPaths: string[] = contractDeclared ? plan.authorizedPaths.filter((p: any) => !safeRel(p)).map((p: any) => JSON.stringify(String(p)).slice(0, 120)) : [];
+if (rejectedContractPaths.length) process.stdout.write(`delegate: ${rejectedContractPaths.length} contract path(s) REJECTED (unsafe/protected): ${rejectedContractPaths.join(", ")}\n`);
+const derived = contractDeclared ? contractPaths : pathTokens([...objectiveText, ...(plan.definitionOfDone || [])]).filter(safeRel);
+// a path the CONTRACT explicitly authorizes stays in scope even if it does not exist yet (creation missions); paths
+// merely GUESSED from objective text are dropped when absent.
+const authorizedToCreate = new Set<string>(contractPaths);
 
 const contractPath = plan.source || path.join("runtime", "missions", `${mission}.json`);
 // A scope entry is kept when it is a glob/directory boundary the contract declares (e.g. `runtime/**`)
@@ -180,7 +191,7 @@ const delegMode = delegIso.selectDelegateMode({
   isolationRequested: process.env.ODG_DELEGATE_ISOLATION === "1",
   command: process.env.ODG_ISOLATED_PROVIDER_CMD,
   declaredOffline: process.env.ODG_ISOLATED_PROVIDER_OFFLINE === "1",
-  writeSet: Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [],
+  writeSet: contractPaths,
 });
 console.log("--------------------------------------");
 console.log("Delegation mode:", delegMode.isolated ? "ISOLATED (local offline provider — no repo/.git/docker/secrets/network)" : "HISTORICAL (provider has repository access — NOT isolated)");
@@ -209,7 +220,7 @@ if (prepareOnly) {
 if (delegMode.isolated) {
   console.log("--------------------------------------");
   console.log("ISOLATED PROVIDER (experimental — PROVIDER_ISOLATION)");
-  const isoWriteSet = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
+  const isoWriteSet = contractPaths;
   // Baseline = the pre-proposal HEAD, persisted on the first (propose) invocation and reused on the
   // post-acceptance invocation so the committed-diff check is scoped correctly. Gitignored artifact.
   const baselineFile = path.join(DELEGATION_DIR, `${mission}.isolation-baseline`);
@@ -278,7 +289,7 @@ console.log("--------------------------------------");
 console.log("WRITE-SET CONFORMANCE");
 try {
   const { scopeClean } = require(path.join(ROOT, _corePort("runtime/core/scope-observer.js")));
-  const authorized = Array.isArray(plan.authorizedPaths) ? plan.authorizedPaths : [];
+  const authorized = contractPaths;   // V16.0: same admissibility filter as the brief (unsafe/protected ⇒ not authorized)
   const conformance = scopeClean(authorized);
   if (!conformance.ok) {
     die(`STOP: delegated patch is OUT OF SCOPE — ${conformance.detail}. The received change touched files outside the authorized write-set; refusing (no verify/converge/archive).`, 2);
