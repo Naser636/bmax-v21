@@ -1,9 +1,9 @@
 {
   "checkpoint": "CP7 — PRs #909–#914 (V15.9 consolidation → V16.0 traceability) + state of the native-build bwrap isolation and follow-ups",
   "date": "2026-11-23",
-  "producedVia": "ODG canonical delegation: mission runtime/missions/V160_CP7_AP_CONTRACTS.json → odg-delegate --prepare-only brief (scope = this file + the A–P contracts + the mission contract) → provider (Claude Code) wrote within scope → odg-delegate verify/converge. Provider work, ODG-supervised.",
+  "producedVia": "ODG canonical delegation: mission runtime/missions/V160_CP7_AP_CONTRACTS.json → odg-delegate --prepare-only brief (scope = this file + the A–P contracts + the mission contract) → provider (Claude Code) wrote within scope → odg-delegate verify (FAILED — see delegateRunResult). Provider work, ODG-supervised.",
   "headAtCP6": "5be27612 (CP6 itself merged as #909 → c15deead)",
-  "headAtCheckpoint": "28cade40",
+  "headAtCheckpoint": "2a855713 (after #918 merged)",
   "prs": {
     "909": {
       "merge": "c15deead",
@@ -29,7 +29,7 @@
       "merge": "932d6609",
       "inspectedHead": "f0098560",
       "what": "measured local-model registry used by the execution policy (monotone raise-only, size cross-check, escalate on NO_QUALIFIED)",
-      "result": "before/after pass rate 0.75 → 0.75 (n=2 per condition, no gain claimed); implement escalates 2/2",
+      "result": "before/after pass rate 6/8 → 6/8 (4 missions × 2 trials = n=8 per condition; no gain claimed); implement escalates 2/2",
       "inspection": "REINFORCED ACCEPT → LOW fixed → ACCEPT on exact head"
     },
     "913": {
@@ -55,25 +55,26 @@
     "917": {
       "merge": "28cade40",
       "what": "protectedClean: protected roots never writable through delegation even under runtime/**; git status parsed with porcelain v1 -z (both sides of renames, unquoted names, expanded untracked dirs)",
-      "knownLimit": ".git/ internals never appear in git status — only an outer sandbox confines them"
+      "knownLimit": ".git/ internals never appear in git status — only an outer sandbox confines them",
+      "inspectedHead": "0a15ecc3 (ACCEPT); merged head 6b45d8d0 adds only the .git/ known-limit comment"
     }
   },
   "nativeBuildIsolation": {
     "pr": 916,
     "state": "IN_PROGRESS — NOT MERGED at this checkpoint",
     "inspection": "REINFORCED ACCEPT at b9fedbce (no default host execution of model code; all escape probes blocked; MED disclosed: SOURCE-form tests run in the candidate's realm, gameable like the legacy in-thread test)",
-    "ci": "FAILED on b9fedbce and af09c030 (sandbox cases not executing on the CI runner after the first escapes); builder pushed a fix (e838fabb) — CI + delta inspection pending",
+    "ci": "FAILED on b9fedbce, af09c030 AND on the builder's fix e838fabb (run 16:49–16:55Z) — sandbox cases do not execute on the CI runner after the first escapes; root cause under diagnosis by the builder; NOT mergeable",
     "evidence": "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json on the PR branch: 80/80 deterministic + 54/54 model-generated verdict parity, 8 escapes blocked, in-process control leaks; ~240 ms per isolated evaluation vs ~1 ms in-process"
   },
   "radar": {
-    "V158": "after V16.0 research, code.claude.com is DEFERRED to an owner decision (Anthropic terms forbid automated access unless explicitly permitted) — PR #918 (open) regenerates the V158 grant to 5 hosts and retires that target",
-    "V160": "PR #918 (open, under REINFORCED inspection): engineering-practices campaign — 23 candidates qualified, 6 admitted (research.google, google.github.io/eng-practices, deepmind.google, NASA SE handbook, Microsoft engineering playbook, github.blog/engineering), 17 deferred, 15 refused at research (AWS/Meta/OpenAI/Anthropic/Siemens terms forbid automation; Medium/Netflix/Palantir bot challenge; Tesla 403)",
+    "V158": "after V16.0 research, code.claude.com is DEFERRED to an owner decision (Anthropic terms forbid automated access unless explicitly permitted) — PR #918 (merged) regenerated the V158 grant to 5 hosts and retires that target",
+    "V160": "PR #918 (MERGED 2a855713 after REINFORCED ACCEPT; GitHub AUP open-access condition recorded in grant.hostConditions): engineering-practices campaign — 23 candidates qualified, 6 admitted (research.google, google.github.io/eng-practices, deepmind.google, NASA SE handbook, Microsoft engineering playbook, github.blog/engineering), 17 deferred, 15 refused at research (AWS/Meta/OpenAI/Anthropic/Siemens terms forbid automation; Medium/Netflix/Palantir bot challenge; Tesla 403)",
     "collection": "V160 practices collection being built offline; LIVE run only after #918 merges"
   },
   "apContracts": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json — 16 contracts, all PROPOSED (PROPOSED ≠ AUTHORIZED), initial state copied from V150_TRACEABILITY_MATRIX: 2 PASS (B, M) / 14 PARTIAL",
   "odgPilotingAssessment": {
     "real": [
-      "odg-agent-supervisor classifies agents/worktrees from evidence (62 units, 0 conflicts, 1 ORPHAN branch governance/f11-operating-contract to review)",
+      "odg-agent-supervisor classifies agents/worktrees from evidence (62 units, 0 conflicts, 1 ORPHAN branch governance/f11-operating-contract to review) — session observation 2026-11-23T16:20Z (scratchpad snapshot, NOT committed evidence)",
       "odg-delegate emits scoped briefs and verifies scope/protected roots before verify/converge",
       "Radar admission/governor/budget/transport decide egress",
       "tick decides admissions/dedup"
