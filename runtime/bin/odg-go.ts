@@ -53,7 +53,7 @@ const F = Object.freeze({
   COLLECTION_REGISTRY: "docs/odg/evidence/COLLECTION_REGISTRY.json",
 });
 /* V166 scoped-authorization evidence (odg-authorization-scope): committed records ONLY; absent ⇒ null (nothing derived). */
-const AUTH_EVIDENCE = Object.freeze({ G: Object.freeze({ inspection: "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V166_G_EXPERIMENT.json", validation: "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json" }) });
+const AUTH_EVIDENCE = Object.freeze({ G: Object.freeze({ inspection: "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V166_G_EXPERIMENT.json", validation: "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json" }), H: Object.freeze({ inspection: "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V168_H_EXPERIMENT.json", validation: "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json" }) });
 const UNIT_SYSTEM = "/etc/systemd/system/odg-mission-runner.service";
 const UNIT_REPO = "deploy/odg-mission-runner.service";
 const MAX_STEP_DELAY_MS = 5000;
