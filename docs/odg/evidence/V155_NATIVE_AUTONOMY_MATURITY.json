@@ -1,0 +1,1000 @@
+{
+  "schema": "odg.native-autonomy-maturity.v1",
+  "id": "V155_NATIVE_AUTONOMY_MATURITY",
+  "directive": "CTO V15.5 Step 7 — honest, reproducible measure of ODG native autonomy vs provider work",
+  "measuredAt": "2026-11-23T04:00:00.000Z",
+  "measuredRef": {
+    "ref": "HEAD",
+    "sha": "3b20d3632b1620f4b3b84088aa01960124954906"
+  },
+  "windows": {
+    "last30d": {
+      "from": "2026-10-24T04:00:00.000Z",
+      "to": "2026-11-23T04:00:00.000Z",
+      "days": 30,
+      "valid": true
+    },
+    "v15Arc": "merged PRs #870..latest on the measured ref"
+  },
+  "counters": {
+    "1_nativeDecisions": {
+      "value": 2404,
+      "status": "MEASURED",
+      "byClass": {
+        "DEDUP_REFUSAL": 1206,
+        "TRUTH_LOCK_REFUSAL": 1182,
+        "NO_ELIGIBLE_MISSION": 13,
+        "AUTHORIZATION_REFUSAL": 2,
+        "ADMISSION_DISPATCH": 1
+      },
+      "trigger": "UNATTENDED_CADENCE",
+      "cadence": {
+        "gaps": 2403,
+        "regular15min": 2362,
+        "share": 0.9829
+      },
+      "schedulerAuditChain": {
+        "entries": 41,
+        "verify": {
+          "ok": true,
+          "reason": "intact",
+          "keyed": false,
+          "tipAnchored": false
+        }
+      },
+      "source": "runtime/generated/mission-attempt-log.jsonl (one row per tick decision by odg-schedule-tick) + runtime/generated/scheduler-audit-chain.json (audit-log.verifyChain)",
+      "note": "every row is a decision TAKEN BY ODG CODE (truth-lock refusal, dedup refusal, authorization refusal, admission). The per-row trigger is NOT recorded; the 15-min cadence share is the evidence of the periodic runner. Wave selection / write-set refusals / repair-stop reasons only count when they appear in this persistent log — worktree runs a provider launched are reported separately (providerInvokedDecisions)."
+    },
+    "1b_providerInvokedDecisions": {
+      "value": 21,
+      "items": [
+        {
+          "source": "docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json",
+          "kind": "supervisor recovery decisions (REFUSE/RELAUNCH)",
+          "count": 6
+        },
+        {
+          "source": "docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json",
+          "kind": "supervisor write-set contention verdicts",
+          "count": 15
+        },
+        {
+          "source": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+          "kind": "wave selection + write-set enforcement in worktree runs (narrative evidence; per-decision count not machine-recorded)",
+          "count": null
+        }
+      ],
+      "status": "MEASURED",
+      "trigger": "PROVIDER_INVOKED_RUN",
+      "note": "decisions ODG code took inside worktree runs a PROVIDER launched (wave selection, write-set enforcement, supervisor recovery refusals) — ODG decisions, NOT unattended autonomy; kept out of counter 1"
+    },
+    "2_nativeExecutions": {
+      "dispatchedByOdgRunner": 1,
+      "dispatchedPass": 1,
+      "dispatchedMissions": [
+        "SELF_AUDIT_COVERAGE_16"
+      ],
+      "ledgerEntriesInWindow": 465,
+      "ledgerActorOdg": 1,
+      "ledgerActorOdgMissions": [
+        "ODG_NATIVE_PROVENANCE_SUM_REPAIR_20261120"
+      ],
+      "ledgerUnattributed": 464,
+      "maturityReport": {
+        "distinctMissions": 6,
+        "attribution": {
+          "distinct": 6,
+          "withExecutionActor": 1,
+          "withoutExecutionActor": 5,
+          "actorCoverageRate": 0.1667
+        },
+        "nativeAutonomyMeasurable": true
+      },
+      "status": "MEASURED",
+      "source": "mission-attempt-log PASS/FAIL rows (missions the ODG runner admitted+dispatched) + mission-ledger entries whose actor-provenance resolved actor=ODG (odg-autonomy-maturity-report)",
+      "note": "an UNATTRIBUTED ledger entry is NOT counted native (validated ≠ natively executed). The ledger actor=ODG entries come from runs of ODG's deterministic native executor (EXEC ODG_NATIVE_EXECUTION); the run itself may have been provider-invoked."
+    },
+    "3_providerDelegated": {
+      "status": "MEASURED",
+      "last30d": {
+        "commits": 1315,
+        "providerAttributedCommits": 1314,
+        "unattributedCommits": 1,
+        "odgIdentityButProviderAttributed": 952,
+        "mergedPrs": 522,
+        "providerDelegatedPrs": 522,
+        "prRange": [
+          1,
+          897
+        ],
+        "nativeBuiltCommits": 0
+      },
+      "v15Arc": {
+        "fromPr": 870,
+        "commits": 56,
+        "providerAttributedCommits": 56,
+        "unattributedCommits": 0,
+        "odgIdentityButProviderAttributed": 56,
+        "mergedPrs": 28,
+        "providerDelegatedPrs": 28,
+        "prRange": [
+          870,
+          897
+        ],
+        "nativeBuiltCommits": 0
+      },
+      "source": "git log of the measured ref (non-merge commits: trailer 'Co-Authored-By: Claude' / 'Generated with Claude Code'; merged PRs from 'Merge pull request #N' merge commits, delegated iff any commit of merge^1..merge^2 carries the attribution)",
+      "note": "provider work is NEVER native. 'unattributed' commits are NOT native either — they lack ANY actor provenance (owner hand-commits or older sessions)."
+    },
+    "4_correctionsProposedByOdg": {
+      "value": 247,
+      "status": "MEASURED",
+      "parts": {
+        "frontierProposals": 1,
+        "selfDiagnosticRepairHypotheses": 0,
+        "nativeTransformProposals": 217,
+        "supervisorFreeingProposals": 29
+      },
+      "excluded": [
+        {
+          "id": "INC-1a5e7942dde09084",
+          "reason": "non-ISO createdAt 'T' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-da953c85f9c130c6",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-99d1c870bc1a3607",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-09c73c50f8c57373",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-dde081fb36008be6",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-1bb226f51a45a069",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-a5e360bdabc34a41",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-34126f4cf6b428e5",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-59d011ac35c27d4d",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-1e2cdfc4597a895d",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-e4a57d3dc2902c52",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-56b2cc39fd6c5724",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-068aeaf57bf522e2",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-d2b333134dc444a8",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-f3856dac190ccae6",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-f0b22ba9773d631e",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-9faadbb4d6b6f048",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-82025f6c5138fe7e",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-4a5463292985220c",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-93961b55cdebae7b",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-bee6ab770e35512f",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-62f67a6a892a9914",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        }
+      ],
+      "window": "ALL_TIME (the proposal artifacts are cumulative registries, not time-series)",
+      "source": "runtime/generated/autonomy/frontier-proposal-registry.json, runtime/generated/autonomy/self-diagnostic-incidents.json, docs/odg/native-execution-provenance.json (proposedTransforms), docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json (freeing — PROPOSAL ONLY)",
+      "note": "PROPOSED ≠ APPLIED. nativeTransformProposals INCLUDES benign/redundant candidates (see that artifact's own note) — it is NOT a count of real defects. Proposals from runs a provider launched are still ODG-generated proposals."
+    },
+    "5_correctionsBuiltByOdg": {
+      "value": 0,
+      "v15Arc": 0,
+      "status": "MEASURED",
+      "source": "git log — a code change counts as ODG-BUILT only with an explicit native-actor provenance binding (trailer 'ODG-Native-Actor: ODG'); none exists in history",
+      "note": "0 is the honest value: ODG has PROPOSED corrections (counter 4) and its native executor has applied deterministic transforms IN MEMORY, but no repository change was authored+applied+committed by an ODG actor. Real-repo write by ODG is OWNER_GATED."
+    },
+    "6_independentValidations": {
+      "recordedInspectionRounds": 3,
+      "records": [
+        {
+          "file": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+          "rounds": 1,
+          "verdicts": [
+            "FIXES_AFTER_REVIEW"
+          ],
+          "inspector": "UNSTATED (fixes recorded after a review)"
+        },
+        {
+          "file": "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json",
+          "rounds": 2,
+          "verdicts": [
+            "REJECT",
+            "ACCEPT"
+          ],
+          "inspector": "the provider's OWN inspection subagent (same session, separate context) — NOT an independent party; does NOT count as the owner's independent inspection"
+        }
+      ],
+      "commitsCitingIndependentInspection": 72,
+      "byInspector": {
+        "providerSubagent": 1,
+        "unstated": 1,
+        "owner": "NOT_MEASURED",
+        "odgNativeEvaluator": "NOT_MEASURED"
+      },
+      "status": "MEASURED (only what is verifiable on disk / in git)",
+      "source": "docs/odg/evidence/*.json (rounds[].verdict, inspection_fixes_after_review) + git commit messages in the 30-day window",
+      "note": "the inspections recorded are by the PROVIDER's own inspection subagent (separate context, same session) — NOT an independent party and NOT ODG-native. Verdicts held only in PR conversations/session transcripts are NOT_MEASURED here. ODG's native evaluator-independence has no persistent verdict log ⇒ NOT_MEASURED."
+    },
+    "7_autonomousRecoveries": {
+      "unattendedLive": 0,
+      "status": "MEASURED",
+      "supervisor": {
+        "interruptedObserved": 0,
+        "relaunchDecisions": 0,
+        "refuseDecisions": 6,
+        "trigger": "PROVIDER_INVOKED_RUN"
+      },
+      "providerTriggeredExperiments": [
+        {
+          "file": "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+          "recoveries": 4,
+          "trigger": "CONTROLLED_EXPERIMENT"
+        },
+        {
+          "file": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json#step4_interruption",
+          "recoveries": 2,
+          "trigger": "CONTROLLED_EXPERIMENT"
+        }
+      ],
+      "source": "mission-attempt-log reasons (INTERRUPTED_PRIOR_RUN/RESUMED/reclaim/takeover) in window + V155_AGENT_SUPERVISOR_SNAPSHOT recovery decisions + controlled interruption experiments (V150_SCENARIO_M_RESUME, V155_REAL_WAVE_EVIDENCE step4_interruption)",
+      "note": "an experiment where the PROVIDER killed a run and re-ran the next tick proves the recovery MECHANISM, not unattended autonomous recovery. Only persistent-log events count as unattendedLive."
+    }
+  },
+  "capabilityLadder": {
+    "total": 20,
+    "byLevel": {
+      "ABSENT": 0,
+      "BUILT_NOT_WIRED": 1,
+      "WIRED_TESTED": 11,
+      "EXERCISED_LIVE": 8
+    },
+    "exercisedLiveUnattended": 2,
+    "items": [
+      {
+        "id": "detect-needs",
+        "name": "detect needs",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-radar-to-mission-loop.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 3,
+            "testFile": "runtime/core/odg-radar-to-mission-loop.test.ts"
+          },
+          {
+            "component": "runtime/core/self-diagnostic.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 3,
+            "testFile": "runtime/core/self-diagnostic.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/V136_SELF_ORIGINATION.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "prioritise",
+        "name": "prioritise",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/mission-scheduler.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/mission-scheduler.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-mission-scheduler.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 2,
+            "testFile": "runtime/core/odg-mission-scheduler.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "runtime/generated/mission-attempt-log.jsonl",
+          "trigger": "UNATTENDED_CADENCE",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "analyse-deps",
+        "name": "analyse dependencies",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/dep-planner.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 8,
+            "testFile": "runtime/core/dep-planner.test.ts"
+          },
+          {
+            "component": "runtime/core/change-impact-graph.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 10,
+            "testFile": "runtime/core/change-impact-graph.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "no persisted live run artifact found"
+      },
+      {
+        "id": "decompose",
+        "name": "decompose",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/mission-decomposer.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/mission-decomposer.test.ts"
+          },
+          {
+            "component": "runtime/core/decomposition-planner.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 8,
+            "testFile": "runtime/core/decomposition-planner.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-mission-decompose-chain.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": false,
+            "consumers": 0,
+            "testFile": "runtime/core/odg-mission-decompose-chain.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "no persisted live run artifact found"
+      },
+      {
+        "id": "skills",
+        "name": "skills / capability registry",
+        "level": "BUILT_NOT_WIRED",
+        "ladderLevel": "BUILT",
+        "firstGap": "TESTED",
+        "components": [
+          {
+            "component": "runtime/core/capability-registry.ts",
+            "built": true,
+            "tested": false,
+            "testFileExists": true,
+            "wired": false,
+            "consumers": 0,
+            "testFile": "runtime/core/capability-registry.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "runtime/generated/autonomy/capability-outcomes.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "select-models",
+        "name": "select resources / models",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/model-router.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 2,
+            "testFile": "runtime/core/model-router.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-model-router.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": false,
+            "consumers": 0,
+            "testFile": "runtime/core/odg-model-router.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "model routing is being reworked by another V15.5 step; no live routing log measured here"
+      },
+      {
+        "id": "allocate-agents",
+        "name": "allocate agents",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-mission-orchestrator.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 5,
+            "testFile": "runtime/core/odg-mission-orchestrator.test.ts"
+          },
+          {
+            "component": "runtime/core/writeset-scheduler.ts",
+            "built": true,
+            "tested": false,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/writeset-scheduler.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "define-write-sets",
+        "name": "define write-sets",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-writeset-contention.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/odg-writeset-contention.test.ts"
+          },
+          {
+            "component": "runtime/bin/odg-schedule-tick.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 0,
+            "testFile": "runtime/bin/odg-schedule-tick-wave.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "execute",
+        "name": "execute",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-native-engineering.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 5,
+            "testFile": "runtime/core/odg-native-engineering.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-native-engineering-loop.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 2,
+            "testFile": "runtime/core/odg-native-engineering-loop.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-closed-executor.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 6,
+            "testFile": "runtime/core/odg-closed-executor.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "attempt-log:PASS",
+          "trigger": "UNATTENDED_CADENCE",
+          "present": true,
+          "countedLive": true
+        },
+        "note": "the timer-cadence log holds a real PASS dispatch; the ledger's single actor=ODG entry came from a provider-invoked native run"
+      },
+      {
+        "id": "supervise",
+        "name": "supervise",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-agent-supervisor.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/odg-agent-supervisor.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "detect-errors",
+        "name": "detect errors",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/rce-signal-collector.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/rce-signal-collector.test.ts"
+          },
+          {
+            "component": "runtime/core/self-diagnostic.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 3,
+            "testFile": "runtime/core/self-diagnostic.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+          "trigger": "CONTROLLED_EXPERIMENT",
+          "present": true,
+          "countedLive": false
+        },
+        "note": ""
+      },
+      {
+        "id": "diagnose",
+        "name": "diagnose",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/rce-root-cause-intelligence.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/rce-root-cause-intelligence.test.ts"
+          },
+          {
+            "component": "runtime/core/repair-planner.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 3,
+            "testFile": "runtime/core/repair-planner.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+          "trigger": "CONTROLLED_EXPERIMENT",
+          "present": true,
+          "countedLive": false
+        },
+        "note": ""
+      },
+      {
+        "id": "propose-apply-fixes",
+        "name": "propose + apply authorized fixes",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/repair-workflow.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 8,
+            "testFile": "runtime/core/repair-workflow.test.ts"
+          },
+          {
+            "component": "runtime/core/generative-repair-adapter.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/generative-repair-adapter.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+          "trigger": "CONTROLLED_EXPERIMENT",
+          "present": true,
+          "countedLive": false
+        },
+        "note": "apply to the REAL repo is OWNER_GATED; only experiment fixtures were repaired"
+      },
+      {
+        "id": "test",
+        "name": "test",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/code-execution.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 11,
+            "testFile": "runtime/core/code-execution.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-closed-executor.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 6,
+            "testFile": "runtime/core/odg-closed-executor.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/native-execution-provenance.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "independent-inspection",
+        "name": "independent inspection",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/evaluator-independence.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 9,
+            "testFile": "runtime/core/evaluator-independence.test.ts"
+          },
+          {
+            "component": "runtime/core/independent-label-policy.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/independent-label-policy.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "recorded inspections are the provider's own subagent, not ODG's evaluator ⇒ not counted as ODG live"
+      },
+      {
+        "id": "integrate",
+        "name": "integrate",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/git-branch-integration.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/git-branch-integration.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "integration to main is done by the owner via PR merge"
+      },
+      {
+        "id": "recover",
+        "name": "recover",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/campaign-loop.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 9,
+            "testFile": "runtime/core/campaign-loop.test.ts"
+          },
+          {
+            "component": "runtime/core/idempotency-guard.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 6,
+            "testFile": "runtime/core/idempotency-guard.test.ts"
+          },
+          {
+            "component": "runtime/core/fleet-bridge.ts",
+            "built": true,
+            "tested": false,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/fleet-bridge.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+          "trigger": "CONTROLLED_EXPERIMENT",
+          "present": true,
+          "countedLive": false
+        },
+        "note": ""
+      },
+      {
+        "id": "self-measure",
+        "name": "self-measure",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-native-autonomy-maturity.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/odg-native-autonomy-maturity.test.ts"
+          },
+          {
+            "component": "runtime/core/autonomy-measure.ts",
+            "built": true,
+            "tested": false,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 6,
+            "testFile": "runtime/core/autonomy-measure.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "runtime/generated/autonomy-rate.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "improve-methods",
+        "name": "improve methods",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/odg-self-improvement-cycle.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 2,
+            "testFile": "runtime/core/odg-self-improvement-cycle.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-behavioral-improvement.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/odg-behavioral-improvement.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "real-repo self-improvement cycle = OWNER_DECISION_ONLY"
+      },
+      {
+        "id": "continue-next-mission",
+        "name": "continue to next mission",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/odg-native-mission-continuation.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/odg-native-mission-continuation.test.ts"
+          },
+          {
+            "component": "runtime/core/continuous-planner.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": false,
+            "consumers": 0,
+            "testFile": "runtime/core/continuous-planner.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "resident driver = OWNER_GATED"
+      }
+    ],
+    "note": "per-capability level, NO blended score. built = file exists; tested = its .test.ts exists AND is in package.json test:report (the CI gate — ci.yml runs only test:report; testFileExists is reported separately); wired = required by ≥1 non-test runtime/src file other than itself; EXERCISED_LIVE = a real-state run artifact exists (CONTROLLED_EXPERIMENT never counts). A provider-invoked live run is EXERCISED_LIVE but NOT unattended (see exercisedLiveUnattended)."
+  },
+  "nextProgressionSequence": [
+    {
+      "capability": "independent-inspection",
+      "target": "EXERCISED_LIVE",
+      "step": "persist evaluator-independence verdicts from the mission pipeline's validation stage to an append-only runtime/generated log (one row per verdict), so ODG's own independent check becomes countable instead of the provider subagent's",
+      "gating": "INTERNAL",
+      "current": "WIRED_TESTED"
+    },
+    {
+      "capability": "recover",
+      "target": "EXERCISED_LIVE",
+      "step": "make odg-schedule-tick write an explicit attempt-log reason when it reclaims a stale ledger claim / re-admits a mission whose prior run was interrupted (INTERRUPTED_PRIOR_RUN), so a real unattended recovery is recorded when it happens",
+      "gating": "INTERNAL (code); occurrence on the live timer is unforced",
+      "current": "WIRED_TESTED"
+    },
+    {
+      "capability": "decompose",
+      "target": "EXERCISED_LIVE",
+      "step": "run odg-mission-decompose-chain read-only over one real ROADMAP mission and commit the decomposition evidence artifact",
+      "gating": "INTERNAL",
+      "current": "WIRED_TESTED"
+    },
+    {
+      "capability": "analyse-deps",
+      "target": "EXERCISED_LIVE",
+      "step": "persist the dep-planner layer plan the wave tick already computes into wave-summary/attempt-log so dependency analysis leaves a live trace",
+      "gating": "INTERNAL",
+      "current": "WIRED_TESTED"
+    },
+    {
+      "capability": "propose-apply-fixes",
+      "target": "EXERCISED_LIVE",
+      "step": "apply ONE ODG-proposed deterministic repair to the real repo through repair-workflow under an owner-authorized write-set, committed with an 'ODG-Native-Actor: ODG' provenance trailer (would also move counter 5 off 0)",
+      "gating": "OWNER_GATED (real-repo write)",
+      "current": "WIRED_TESTED"
+    }
+  ],
+  "honesty": [
+    "separate counters, NO blended autonomy %; each has a window + source; NOT_MEASURED where no source exists",
+    "provider work is NEVER native; the 'ODG Runtime' git identity is the session config, not the actor",
+    "ODG-built corrections = 0 unless a native-actor provenance binding exists (none does)",
+    "CONTROLLED_EXPERIMENT evidence never promotes a capability to EXERCISED_LIVE; PROVIDER_INVOKED live runs are flagged, not counted as unattended",
+    "this artifact was produced by a provider (Claude Code) running ODG's read-only measure; it is evidence, not acceptance"
+  ],
+  "reproduce": "npx tsx runtime/bin/odg-native-autonomy-maturity-run.ts --state-root <main checkout> --now 2026-11-23T04:00:00.000Z --ref 3b20d3632b1620f4b3b84088aa01960124954906",
+  "stateRoot": "<main checkout> (read-only)"
+}
