@@ -37,17 +37,20 @@ const TARGETS = Object.freeze([
 function summarize(out: any, live: boolean): any {
   const plan: any[] = Array.isArray(out && out.plan) ? out.plan : [];
   const results: any[] = Array.isArray(out && out.results) ? out.results : [];
+  // FAIL-CLOSED: "received" needs POSITIVE evidence — a numeric 2xx httpStatus AND a content digest. Any other shape
+  // (unknown classification, missing status, non-2xx) counts as unavailable, never as success.
+  const isReceived = (r: any): boolean => !!r && typeof r.httpStatus === "number" && r.httpStatus >= 200 && r.httpStatus < 300 && typeof r.sha256 === "string" && /^[0-9a-f]{64}$/.test(r.sha256);
   const hostOf = (u: string): string | null => { try { return new URL(u).hostname; } catch { return null; } };
   const perHost: any = {}; const failuresByCode: any = {};
   for (const r of results) {
     const h = hostOf(r && r.url) || "(invalid-url)";
     const e = perHost[h] || (perHost[h] = { received: 0, unavailable: 0, denied: 0 });
-    if (r.classification === "DENIED") e.denied++;
-    else if (r.classification === "LIVE_UNAVAILABLE" || r.classification === "UNSTAMPED") { e.unavailable++; const k = String(r.code || (r.statusCode ? "HTTP_" + r.statusCode : "UNKNOWN")); failuresByCode[k] = (failuresByCode[k] || 0) + 1; }
-    else e.received++;
+    if (r && r.classification === "DENIED") e.denied++;
+    else if (isReceived(r)) e.received++;
+    else { e.unavailable++; const k = String((r && r.code) || (r && (r.statusCode || r.httpStatus) ? "HTTP_" + (r.statusCode || r.httpStatus) : (r && r.classification ? "CLASS_" + r.classification : "UNKNOWN"))); failuresByCode[k] = (failuresByCode[k] || 0) + 1; }
   }
   const denied = Number(out && out.denied) || 0;
-  const received = results.filter((r: any) => r && r.classification !== "DENIED" && r.classification !== "LIVE_UNAVAILABLE" && r.classification !== "UNSTAMPED").length;
+  const received = results.filter((r: any) => r && r.classification !== "DENIED" && isReceived(r)).length;
   const planned = plan.filter((p: any) => p.decision === "ALLOW").length;
   let verdict: string, exitCode: number;
   if (denied > 0) { verdict = "DENIED"; exitCode = 2; }
