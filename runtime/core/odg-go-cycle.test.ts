@@ -133,16 +133,33 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     const sc = au.decision.scopedAuthorization;
     check("V166: AUTHORIZE reports scoped state — INSPECT_REVISED_CONTRACT AUTHORIZED (provider/docs work, not native dispatch), next RUN_CONTROLLED_EXPERIMENTS NOT authorized", !!sc && sc.currentStep === "INSPECT_REVISED_CONTRACT" && sc.currentStepAuthorized === true && /not native dispatch/.test(sc.report) && sc.nextStep === "RUN_CONTROLLED_EXPERIMENTS" && sc.nextStepAuthorized === false && sc.executionAuthorized === false && /scoped/.test(stepIn(trace, "NEXT_SELECTION").decision.preparedMission.authorizationNeeded));
   }
+  // committed authorization evidence, exactly as odg-go readState loads it (AUTH_EVIDENCE paths; absent ⇒ null)
+  const optJ = (rel: string) => { try { return rj(rel); } catch { return null; } };
+  const COMMITTED_AUTH_EV = {
+    G: { inspection: optJ("docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json"), experiment: optJ("docs/odg/evidence/V166_G_EXPERIMENT.json"), validation: optJ("docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json") },
+    H: { inspection: optJ("docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json"), experiment: optJ("docs/odg/evidence/V168_H_EXPERIMENT.json"), validation: optJ("docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json") },
+  };
+  const BASE_LIVE_EV = (() => { const s = clone(BASE_LIVE); s.measured = BASE_LIVE.measured; s.authorizationEvidence = COMMITTED_AUTH_EV; return s; })();
   // 1d. V16.8 COMMITTED state (no fixture): H AUTHORIZED_FOR_REVISION (V168) with its revised contract ⇒ the register
   //     decision is DECISION_REQUIRED (J/G tie), kept verbatim (no id pick) ⇒ HALTED_DECISION_REQUIRED, nothing dispatched
   {
     const h = BASE_LIVE.sources.contracts.data.contracts.find((x: any) => x.scenario === "H");
     check("committed contract H is AUTHORIZED_FOR_REVISION by the owner (V168), executionAuthorized false", h.state === "AUTHORIZED_FOR_REVISION" && /V168/.test(String(h.authorizedBy)) && h.authorization && h.authorization.executionAuthorized === false && /V168_OWNER_AUTHORIZATION_H\.json/.test(h.authorization.source));
-    const { ports, trace, calls } = mkPorts({ state: BASE_LIVE });
+    const { ports, trace, calls } = mkPorts({ state: BASE_LIVE_EV });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
     const sel = stepIn(trace, "SELECT").decision;
     check("committed V168 state: SELECT = DECISION_REQUIRED (tie J/G), consistent with the committed register, no id pick", sel.decision === "DECISION_REQUIRED" && sel.selected === null && sel.tiedSet.join(",") === "J,G" && sel.consistentWithCommittedRegisterEvidence === true);
-    check("committed V168 state ⇒ HALTED_DECISION_REQUIRED, no dispatch, no provider", r.status === "HALTED_DECISION_REQUIRED" && calls.dispatch === 0 && calls.provider === 0);
+    // V16.8 fix (GO-ACT-1 applies when the strategic selection is UNDECIDED): ODG proceeds with the best AUTHORIZED item (H)
+    // and records the undecided strategic choice as an owner/ODG request; no dispatch without --allow-unsandboxed-target.
+    check("committed V168 state ⇒ strategic DECISION_REQUIRED kept, GO proceeds with the authorized item H (committed authorization evidence loaded as odg-go does), owner request for the J/G decision, no dispatch without --allow-unsandboxed-target, no provider", r.status !== "HALTED_DECISION_REQUIRED" && sel.workingOn === "H" && sel.ownerRequest && sel.ownerRequest.item === null && /J\/G/.test(String(sel.ownerRequest.decisionNeeded)) && calls.dispatch === 0 && calls.provider === 0);
+  }
+  // 1e. strategic UNDECIDED and NO authorized item ⇒ still HALTED_DECISION_REQUIRED (no arbitrary pick)
+  {
+    const s = clone(BASE_LIVE_EV); s.measured = BASE_LIVE.measured;
+    const h = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "H"); h.state = "PROPOSED"; h.authorizedBy = null; delete h.authorization;
+    const { ports, trace, calls } = mkPorts({ state: s });
+    const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
+    check("strategic undecided + no authorized item ⇒ HALTED_DECISION_REQUIRED, nothing selected, no dispatch", r.status === "HALTED_DECISION_REQUIRED" && stepIn(trace, "SELECT").decision.workingOn === null && calls.dispatch === 0);
   }
   // 1c. V166: committed state + a valid inspection ACCEPT record ⇒ the experiments step is derived-authorized and dispatches
   //     only through the existing NATIVE + isolated path; any defect in the record ⇒ no dispatch
