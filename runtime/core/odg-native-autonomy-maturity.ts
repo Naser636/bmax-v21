@@ -75,15 +75,71 @@ function countDecisions(attempts: any[], auditChain: any, win: any): any {
   for (const a of rows) { const c = classifyAttempt(a); byClass[c] = (byClass[c] || 0) + 1; }
   const chain = Array.isArray(auditChain) ? auditChain : null;
   const v = chain ? AUDIT.verifyChain(chain) : null;
+  // DISTINCT decisions: identical (status, reason) rows are the SAME decision repeated by the periodic runner.
+  const kinds: Record<string, any> = {};
+  for (const a of rows) {
+    const norm = str(a.status) === "STARTUP_REFUSED" ? truthLockCause(str(a.reason)) : normReason(str(a.reason));
+    const k = str(a.status) + " | " + norm;
+    if (!kinds[k]) kinds[k] = { status: str(a.status), reason: norm, decisionClass: classifyAttempt(a), count: 0, first: a.recordedAt, last: a.recordedAt };
+    const e = kinds[k]; e.count++; if (a.recordedAt < e.first) e.first = a.recordedAt; if (a.recordedAt > e.last) e.last = a.recordedAt;
+  }
+  const distinct = Object.values(kinds).sort((x: any, y: any) => y.count - x.count || (x.reason < y.reason ? -1 : 1)).map((e: any) => freeze({ ...e }));
+  const repeatedNoOps = distinct.filter((e: any) => e.decisionClass === "DEDUP_REFUSAL" || e.decisionClass === "NO_ELIGIBLE_MISSION").reduce((n: number, e: any) => n + e.count, 0);
+  const meaningful = rows.filter((a) => MEANINGFUL.has(classifyAttempt(a))).length;
+  const truthLock = truthLockIncidents(rows);
   return freeze({
     value: attempts === null ? null : rows.length,
     status: attempts === null ? NOT_MEASURED : "MEASURED",
+    rowsAreNotDistinctDecisions: true,
+    distinctDecisionKinds: attempts === null ? null : distinct.length,
+    repeatedNoOpRows: attempts === null ? null : repeatedNoOps,
+    meaningfulDecisions: attempts === null ? null : meaningful,
+    meaningfulDefinition: "rows whose class is one of " + Array.from(MEANINGFUL).join("/") + " (an admission/dispatch or a refusal of a concrete mission); repeated dedup / no-eligible no-ops and truth-lock startup refusals are excluded",
+    distinctDecisions: freeze(distinct.slice(0, 25)),
+    truthLockRefusalCauses: truthLock,
     byClass: freeze(byClass),
     trigger: TRIGGER.UNATTENDED,
     cadence: cadence(rows),
     schedulerAuditChain: chain ? freeze({ entries: chain.length, verify: freeze({ ok: v.ok, reason: v.reason, keyed: v.keyed, tipAnchored: v.tipAnchored }) }) : NOT_MEASURED,
     source: "runtime/generated/mission-attempt-log.jsonl (one row per tick decision by odg-schedule-tick) + runtime/generated/scheduler-audit-chain.json (audit-log.verifyChain)",
-    note: "every row is a decision TAKEN BY ODG CODE (truth-lock refusal, dedup refusal, authorization refusal, admission). The per-row trigger is NOT recorded; the 15-min cadence share is the evidence of the periodic runner. Wave selection / write-set refusals / repair-stop reasons only count when they appear in this persistent log — worktree runs a provider launched are reported separately (providerInvokedDecisions).",
+    note: "every row is a decision TAKEN BY ODG CODE, but ROWS ARE NOT DISTINCT DECISIONS: the periodic runner repeats the same no-op (e.g. the same ALREADY_PROVEN dedup) every tick, and truth-lock refusals mostly record a runner OUTAGE (main checkout off main), not threats. Read meaningfulDecisions + distinctDecisionKinds, not value. The per-row trigger is NOT recorded; the 15-min cadence share is the evidence of the periodic runner. Wave selection / write-set refusals / repair-stop reasons only count when they appear in this persistent log — worktree runs a provider launched are reported separately (providerInvokedDecisions).",
+  });
+}
+
+/** normReason — volatile parts (commit shas) replaced so the same decision with a different HEAD is ONE kind. */
+function normReason(r: string): string { return r.replace(/\b(?=[0-9a-f]*[a-f])[0-9a-f]{7,40}\b/g, "<sha>").replace(/\b\d+ staged change/g, "<n> staged change"); }
+/** truthLockCause(reason) — the CAUSE of a startup refusal (one decision per cause, whatever the volatile details). */
+function truthLockCause(r: string): string {
+  const m = /unexpected branch "([^"]+)"/.exec(r);
+  return m ? "MAIN_CHECKOUT_ON_BRANCH " + m[1] : /diverges from origin/.test(r) ? "HEAD_DIVERGES_FROM_ORIGIN_MAIN" : "OTHER: " + normReason(r).slice(0, 80);
+}
+const MEANINGFUL = Object.freeze(new Set(["ADMISSION_DISPATCH", "WAVE_ADMISSION", "AUTHORIZATION_REFUSAL", "WRITE_SET_REFUSAL", "REPAIR_STOP"]));
+/** truthLockIncidents(rows) — group STARTUP_REFUSED by CAUSE (unexpected branch name / HEAD divergence) with first/last.
+ * A truth-lock refusal caused by the MAIN checkout being left on a feature branch is a RUNNER OUTAGE (the runner could
+ * not run), NOT a detected threat. Who switched the branch is NOT recorded; feature-branch names are provider work branches. */
+function truthLockIncidents(rows: any[]): any {
+  const by: Record<string, any> = {};
+  for (const a of rows) {
+    if (str(a.status) !== "STARTUP_REFUSED") continue;
+    const cause = truthLockCause(str(a.reason));
+    if (!by[cause]) by[cause] = { cause, count: 0, first: a.recordedAt, last: a.recordedAt };
+    const e = by[cause]; e.count++; if (a.recordedAt < e.first) e.first = a.recordedAt; if (a.recordedAt > e.last) e.last = a.recordedAt;
+  }
+  const causes = Object.values(by).sort((x: any, y: any) => y.count - x.count).map((e: any) => freeze({ ...e }));
+  const offMain = causes.filter((c: any) => /^MAIN_CHECKOUT_ON_BRANCH /.test(c.cause));
+  const offMainRows = offMain.reduce((n: number, c: any) => n + c.count, 0);
+  const total = causes.reduce((n: number, c: any) => n + c.count, 0);
+  return freeze({
+    total,
+    causes: freeze(causes),
+    incident: offMainRows > 0 ? freeze({
+      id: "RUNNER_OUTAGE_MAIN_CHECKOUT_OFF_MAIN",
+      finding: offMainRows + " of " + total + " truth-lock refusals were caused by the MAIN checkout being left on " + offMain.length + " non-main branch(es) — the periodic runner was OUT (it refused to start), not detecting threats",
+      ticksLost: offMainRows,
+      span: freeze({ first: offMain.reduce((m: string, c: any) => (c.first < m ? c.first : m), offMain[0].first), last: offMain.reduce((m: string, c: any) => (c.last > m ? c.last : m), offMain[0].last) }),
+      likelyCause: "provider sessions working in the main checkout on feature branches (branch names are provider work branches); the actor who switched branches is NOT recorded",
+      remedy: "provider work only in isolated worktrees (the main checkout stays on main) — already the standing V15.5 rule",
+    }) : null,
   });
 }
 
@@ -96,8 +152,8 @@ function countNativeExecutions(attempts: any[], ledger: any, win: any): any {
   const report = ledger === null ? null : AMR.reportMaturityFromLedger({ entries: inWinLedger });
   return freeze({
     dispatchedByOdgRunner: attempts === null ? null : rows.length,
-    dispatchedPass: rows.filter((a) => a.status === "PASS").length,
-    dispatchedMissions: freeze(Array.from(new Set(rows.map((a) => str(a.mission)))).sort()),
+    dispatchedPass: attempts === null ? null : rows.filter((a) => a.status === "PASS").length,
+    dispatchedMissions: attempts === null ? NOT_MEASURED : freeze(Array.from(new Set(rows.map((a) => str(a.mission)))).sort()),
     ledgerEntriesInWindow: ledger === null ? null : inWinLedger.length,
     ledgerActorOdg: ledger === null ? null : odgActor.length,
     ledgerActorOdgMissions: freeze(odgActor.map((e) => str(e.mission))),
@@ -110,8 +166,11 @@ function countNativeExecutions(attempts: any[], ledger: any, win: any): any {
 }
 
 /* ---------------------------------------------------------------- (3) PROVIDER work + (5) native BUILT -------------- */
-const PROVIDER_TRAILER = /Co-Authored-By:\s*Claude|Generated with \[?Claude Code/i;
-const NATIVE_TRAILER = /^ODG-Native-Actor:\s*ODG\s*$/m; // no such provenance trailer exists today — detection stays honest
+// ANY provider attribution, case-insensitive, anywhere in the message (some commits put the trailer mid-line): a Co-authored-by naming an AI provider/assistant (Claude, Anthropic,
+// OpenAI/GPT/ChatGPT/Codex, Copilot, Gemini/Google AI, Cursor, Devin, Aider, Mistral, …) or a "Generated with <tool>" line.
+const PROVIDER_TRAILER = /Co-authored-by:[^\n]*(claude|anthropic|openai|chatgpt|\bgpt|codex|copilot|gemini|bard|cursor|devin|aider|mistral|llama|ollama|qwen|deepseek|\bai\b|\[bot\])|Generated with \[?(claude|codex|copilot|cursor|chatgpt|gemini|aider)/im;
+// A TEXT trailer claiming native authorship. It is NOT identity-bound (anyone can type it) ⇒ at most an UNVERIFIED_CLAIM.
+const NATIVE_TRAILER = /^ODG-Native-Actor:\s*ODG\s*$/im;
 /** commits: [{ sha, at, author, body, merge?:bool, pr?:number, prCommitShas?:string[] }] */
 function countProviderWork(commits: any[], win: any, arcFromPr: number): any {
   const all = arr(commits).filter(isObj);
@@ -124,16 +183,19 @@ function countProviderWork(commits: any[], win: any, arcFromPr: number): any {
     const ms = merges.filter((m) => (w ? inWin(m.at, w) : true) && (!arcOnly || m.pr >= arcFromPr));
     const nmArc = arcOnly ? nm.filter((c) => ms.some((m) => arr(m.prCommitShas).includes(c.sha))) : nm;
     const attributed = nmArc.filter((c) => attributedSet.has(c.sha));
-    const native = nmArc.filter((c) => NATIVE_TRAILER.test(str(c.body)));
+    // native CLAIM ⇔ native trailer AND NO provider attribution of any form. Both ⇒ PROVIDER + CONFLICTING_ATTRIBUTION.
+    const conflicting = attributed.filter((c) => NATIVE_TRAILER.test(str(c.body)));
+    const native = nmArc.filter((c) => NATIVE_TRAILER.test(str(c.body)) && !attributedSet.has(c.sha));
     return freeze({
       commits: nmArc.length,
       providerAttributedCommits: attributed.length,
       unattributedCommits: nmArc.length - attributed.length - native.length,
+      conflictingAttribution: freeze(conflicting.map((c) => freeze({ sha: str(c.sha), flag: "CONFLICTING_ATTRIBUTION", countedAs: "PROVIDER" }))),
       odgIdentityButProviderAttributed: attributed.filter((c) => /ODG/i.test(str(c.author))).length,
       mergedPrs: ms.length,
       providerDelegatedPrs: ms.filter(prDelegated).length,
       prRange: ms.length ? [Math.min(...ms.map((m) => m.pr)), Math.max(...ms.map((m) => m.pr))] : null,
-      nativeBuiltCommits: native.length,
+      nativeClaimCommits: native.length, // UNVERIFIED text claims, never 'native'
     });
   };
   if (commits === null) return freeze({ status: NOT_MEASURED, source: "git log (unavailable)" });
@@ -141,18 +203,27 @@ function countProviderWork(commits: any[], win: any, arcFromPr: number): any {
     status: "MEASURED",
     last30d: slice(win, false),
     v15Arc: freeze({ fromPr: arcFromPr, ...slice(null, true) }),
-    source: "git log of the measured ref (non-merge commits: trailer 'Co-Authored-By: Claude' / 'Generated with Claude Code'; merged PRs from 'Merge pull request #N' merge commits, delegated iff any commit of merge^1..merge^2 carries the attribution)",
+    source: "git log of the measured ref (non-merge commits: any case-insensitive Co-authored-by naming an AI provider (Claude/Anthropic/OpenAI/Copilot/Gemini/…) or 'Generated with <AI tool>'; merged PRs from 'Merge pull request #N' merge commits, delegated iff any commit of merge^1..merge^2 carries the attribution)",
     note: "provider work is NEVER native. 'unattributed' commits are NOT native either — they lack ANY actor provenance (owner hand-commits or older sessions).",
   });
 }
 function countNativeBuilt(provider: any): any {
   if (!isObj(provider) || provider.status !== "MEASURED") return freeze({ value: null, status: NOT_MEASURED });
+  const claims30 = provider.last30d.nativeClaimCommits;
+  const claimsArc = provider.v15Arc.nativeClaimCommits;
+  const conflicts = provider.last30d.conflictingAttribution.length;
   return freeze({
-    value: provider.last30d.nativeBuiltCommits,
-    v15Arc: provider.v15Arc.nativeBuiltCommits,
-    status: "MEASURED",
-    source: "git log — a code change counts as ODG-BUILT only with an explicit native-actor provenance binding (trailer 'ODG-Native-Actor: ODG'); none exists in history",
-    note: "0 is the honest value: ODG has PROPOSED corrections (counter 4) and its native executor has applied deterministic transforms IN MEMORY, but no repository change was authored+applied+committed by an ODG actor. Real-repo write by ODG is OWNER_GATED.",
+    value: 0, // identity-bound native commits: no verifier/binding exists in this repo ⇒ none can be verified
+    identityBoundVerification: "UNAVAILABLE — no commit carries an identity-bound (e.g. agent-identity Ed25519-signed) native-actor provenance, and this measure has no such verifier",
+    unverifiedNativeClaims: freeze({ last30d: claims30, v15Arc: claimsArc, status: claims30 + claimsArc > 0 ? "UNVERIFIED_CLAIM" : "NONE" }),
+    conflictingAttributionLast30d: conflicts,
+    status: claims30 + claimsArc > 0 ? "UNVERIFIED_CLAIM" : "MEASURED_ZERO",
+    source: "git log — a text trailer 'ODG-Native-Actor: ODG' on a commit with NO provider attribution is only an UNVERIFIED claim (text is not identity-bound); a commit with both is PROVIDER (CONFLICTING_ATTRIBUTION)",
+    note: (claims30 + claimsArc === 0
+      ? "0 native-built corrections, and 0 even claimed: no commit in the windows claims native authorship. "
+      : (claims30 + claimsArc) + " commit(s) CLAIM native authorship by text trailer only — UNVERIFIED_CLAIM, NOT counted native (value stays 0). ")
+      + (conflicts ? conflicts + " commit(s) carry BOTH a native claim and provider attribution ⇒ counted PROVIDER, flagged CONFLICTING_ATTRIBUTION. " : "")
+      + "ODG has PROPOSED corrections (counter 4); real-repo write by ODG is OWNER_GATED.",
   });
 }
 
@@ -204,7 +275,8 @@ function countValidations(evidence: any[], commits: any[], win: any): any {
   const nm = commits === null ? null : arr(commits).filter((c) => isObj(c) && c.merge !== true && inWin(c.at, win) && /independent inspection|inspection REJECT|per independent/i.test(str(c.body)));
   const providerSubagent = recs.filter((r) => /provider|subagent|NOT an independent party/i.test(r.inspector)).length;
   return freeze({
-    recordedInspectionRounds: recs.reduce((n, r) => n + r.rounds, 0),
+    recordedInspectionRounds: recs.length ? recs.reduce((n, r) => n + r.rounds, 0) : null,
+    recordedInspectionRoundsStatus: recs.length ? "MEASURED" : NOT_MEASURED,
     records: freeze(recs),
     commitsCitingIndependentInspection: nm === null ? NOT_MEASURED : nm.length,
     byInspector: freeze({ providerSubagent, unstated: recs.length - providerSubagent, owner: NOT_MEASURED, odgNativeEvaluator: NOT_MEASURED }),
@@ -268,6 +340,21 @@ function nextSequence(ladder: any, steps: any[]): any[] {
   return arr(steps).filter((s) => isObj(s) && lvl[s.capability] !== undefined && idx(lvl[s.capability]) < idx(s.target)).map((s) => freeze({ ...s, current: lvl[s.capability] })).slice(0, 5);
 }
 
+/** providerInvoked(items) — numeric counts summed; null-count items are NOT dropped (listed as unmeasured). */
+function providerInvoked(items: any): any {
+  const all = arr(items).filter(isObj);
+  const measured = all.filter((d) => typeof d.count === "number");
+  const unmeasured = all.filter((d) => typeof d.count !== "number");
+  return freeze({
+    value: measured.length ? measured.reduce((n: number, d: any) => n + d.count, 0) : null,
+    status: measured.length ? (unmeasured.length ? "PARTIAL (unmeasured items listed)" : "MEASURED") : NOT_MEASURED,
+    items: freeze(measured.map((d) => freeze({ ...d }))),
+    unmeasuredItems: freeze(unmeasured.map((d) => freeze({ ...d, count: NOT_MEASURED }))),
+    trigger: TRIGGER.PROVIDER_INVOKED,
+    note: "decisions ODG code took inside runs a PROVIDER launched (wave selection, write-set enforcement, supervisor recovery refusals) — ODG decisions, NOT unattended autonomy; kept out of counter 1. Items without a machine-recorded count are listed, never summed as 0.",
+  });
+}
+
 /** buildReport(input) — the whole measure. input carries every pre-read source (null ⇒ source absent). */
 function buildReport(input: any): any {
   const i = isObj(input) ? input : {};
@@ -283,7 +370,7 @@ function buildReport(input: any): any {
     windows: freeze({ last30d: win, v15Arc: "merged PRs #" + (typeof i.arcFromPr === "number" ? i.arcFromPr : 870) + "..latest on the measured ref" }),
     counters: freeze({
       "1_nativeDecisions": countDecisions(i.attempts === undefined ? null : i.attempts, i.auditChain === undefined ? null : i.auditChain, win),
-      "1b_providerInvokedDecisions": freeze({ value: arr(i.providerInvokedDecisions).length ? arr(i.providerInvokedDecisions).reduce((n: number, d: any) => n + (typeof d.count === "number" ? d.count : 0), 0) : null, items: freeze(arr(i.providerInvokedDecisions)), status: arr(i.providerInvokedDecisions).length ? "MEASURED" : NOT_MEASURED, trigger: TRIGGER.PROVIDER_INVOKED, note: "decisions ODG code took inside worktree runs a PROVIDER launched (wave selection, write-set enforcement, supervisor recovery refusals) — ODG decisions, NOT unattended autonomy; kept out of counter 1" }),
+      "1b_providerInvokedDecisions": providerInvoked(i.providerInvokedDecisions),
       "2_nativeExecutions": countNativeExecutions(i.attempts === undefined ? null : i.attempts, i.ledger === undefined ? null : i.ledger, win),
       "3_providerDelegated": provider,
       "4_correctionsProposedByOdg": countProposals(i.proposalSources),

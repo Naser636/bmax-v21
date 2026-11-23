@@ -83,23 +83,51 @@ function main(): void {
   const tampered = chain.map((e: any, i: number) => (i === 0 ? { ...e, payload: { status: "PASS" } } : e));
   check("(1) tampered chain ⇒ verify.ok false", M.countDecisions(attempts, tampered, M.windowOf(NOW, 30)).schedulerAuditChain.verify.ok === false);
   check("(1) no attempt log ⇒ NOT_MEASURED (null, not 0)", M.countDecisions(null, null, M.windowOf(NOW, 30)).value === null && M.countDecisions(null, null, M.windowOf(NOW, 30)).status === M.NOT_MEASURED);
-  check("(1b) provider-invoked decisions kept separate, null counts not summed as 0-guess", c["1b_providerInvokedDecisions"].value === 6 && c["1b_providerInvokedDecisions"].trigger === T.PROVIDER_INVOKED);
+  check("(1b) provider-invoked decisions kept separate; null-count item LISTED as unmeasured, not dropped", c["1b_providerInvokedDecisions"].value === 6 && c["1b_providerInvokedDecisions"].trigger === T.PROVIDER_INVOKED && c["1b_providerInvokedDecisions"].unmeasuredItems.length === 1 && /PARTIAL/.test(c["1b_providerInvokedDecisions"].status));
+  check("(1b) REGRESSION: all counts null ⇒ NOT_MEASURED (not MEASURED 0)", (() => { const b = M.buildReport({ now: NOW, providerInvokedDecisions: [{ source: "w", count: null }] }).counters["1b_providerInvokedDecisions"]; return b.value === null && b.status === M.NOT_MEASURED && b.unmeasuredItems.length === 1; })());
+  // REGRESSION (MED): rows ≠ distinct decisions; truth-lock outage is an incident, not threats
+  const rep = [] as any[];
+  for (let k = 0; k < 5; k++) rep.push({ mission: "(none)", recordedAt: t(200 + k * 15), status: "IDLE", reason: "no eligible [M0001: ALREADY_PROVEN (dedup): M0001]" });
+  for (let k = 0; k < 4; k++) rep.push({ mission: "(startup)", recordedAt: t(400 + k * 15), status: "STARTUP_REFUSED", reason: 'REFUSED — unexpected branch "excellence/v3-wave3" (expected "main")' + (k ? "; " + k + " staged change(s) in the index" : "") });
+  rep.push({ mission: "(startup)", recordedAt: t(500), status: "STARTUP_REFUSED", reason: "REFUSED — HEAD abc1234 diverges from origin/main def5678" });
+  rep.push({ mission: "(startup)", recordedAt: t(515), status: "STARTUP_REFUSED", reason: "REFUSED — HEAD 9999aaa diverges from origin/main bbbb000" }); // same decision, other shas
+  rep.push({ mission: "S", recordedAt: t(100), status: "PASS", reason: "status SUCCESS" });
+  const dd = M.countDecisions(rep, null, M.windowOf(NOW, 30));
+  check("(1) REGRESSION: 12 rows but 4 distinct decision kinds (one per truth-lock cause; volatile shas/counts ignored); 5 repeated no-ops; 1 meaningful", dd.value === 12 && dd.distinctDecisionKinds === 4 && dd.repeatedNoOpRows === 5 && dd.meaningfulDecisions === 1 && dd.rowsAreNotDistinctDecisions === true);
+  check("(1) REGRESSION: truth-lock causes grouped by branch; incident RUNNER_OUTAGE recorded with span", dd.truthLockRefusalCauses.total === 6 && dd.truthLockRefusalCauses.causes[0].cause === "MAIN_CHECKOUT_ON_BRANCH excellence/v3-wave3" && dd.truthLockRefusalCauses.causes[0].count === 4 && dd.truthLockRefusalCauses.incident.id === "RUNNER_OUTAGE_MAIN_CHECKOUT_OFF_MAIN" && dd.truthLockRefusalCauses.incident.ticksLost === 4 && dd.truthLockRefusalCauses.incident.span.first === t(445));
+  check("(1) date-like digits in a reason are NOT mistaken for shas", M.countDecisions([{ mission: "a", recordedAt: t(1), status: "BLOCKED", reason: "x-20261101" }, { mission: "a", recordedAt: t(2), status: "BLOCKED", reason: "x-20261102" }], null, M.windowOf(NOW, 30)).distinctDecisionKinds === 2);
+  check("(1) no off-main refusals ⇒ no incident", M.countDecisions([{ mission: "x", recordedAt: t(1), status: "PASS", reason: "" }], null, M.windowOf(NOW, 30)).truthLockRefusalCauses.incident === null);
 
   // (2) executions
   const x = c["2_nativeExecutions"];
   check("(2) dispatched PASS/FAIL in window = 3 (OLD excluded)", x.dispatchedByOdgRunner === 3 && x.dispatchedPass === 2);
   check("(2) ledger: actor=ODG 1, unattributed 1 (unattributed NEVER native)", x.ledgerActorOdg === 1 && x.ledgerUnattributed === 1 && x.ledgerActorOdgMissions[0] === "N1");
+  check("(2) REGRESSION: no attempt log ⇒ dispatchedPass/missions NOT_MEASURED (not 0)", (() => { const e = M.countNativeExecutions(null, ledger, M.windowOf(NOW, 30)); return e.dispatchedPass === null && e.dispatchedMissions === M.NOT_MEASURED; })());
   check("(2) reuses odg-autonomy-maturity-report attribution coverage", x.maturityReport.attribution.withExecutionActor === 1 && x.maturityReport.attribution.distinct === 2);
 
   // (3)/(5) provider work
   const p = c["3_providerDelegated"];
   check("(3) 30d: 3 commits, 2 provider-attributed, 1 unattributed", p.last30d.commits === 3 && p.last30d.providerAttributedCommits === 2 && p.last30d.unattributedCommits === 1);
-  check("(3) 'ODG Runtime' identity with Claude trailer is PROVIDER, not native", p.last30d.odgIdentityButProviderAttributed === 2 && p.last30d.nativeBuiltCommits === 0);
+  check("(3) 'ODG Runtime' identity with Claude trailer is PROVIDER, not native", p.last30d.odgIdentityButProviderAttributed === 2 && p.last30d.nativeClaimCommits === 0);
   check("(3) PRs: 3 merged, 2 delegated (owner-only PR not delegated)", p.last30d.mergedPrs === 3 && p.last30d.providerDelegatedPrs === 2);
   check("(3) V15 arc #870.. = 2 PRs, both delegated, 2 commits", p.v15Arc.mergedPrs === 2 && p.v15Arc.providerDelegatedPrs === 2 && p.v15Arc.commits === 2 && p.v15Arc.prRange[0] === 870);
-  check("(5) built by ODG = 0 without a native-actor provenance trailer", c["5_correctionsBuiltByOdg"].value === 0 && c["5_correctionsBuiltByOdg"].status === "MEASURED");
-  const nat = M.countProviderWork([{ sha: "n", at: t(1), author: "ODG Runtime", body: "fix\n\nODG-Native-Actor: ODG" }], M.windowOf(NOW, 30), 870);
-  check("(5) an explicit native-actor binding WOULD count (and is not provider)", nat.last30d.nativeBuiltCommits === 1 && nat.last30d.providerAttributedCommits === 0);
+  check("(5) built by ODG = 0, MEASURED_ZERO, note computed (no claims)", c["5_correctionsBuiltByOdg"].value === 0 && c["5_correctionsBuiltByOdg"].status === "MEASURED_ZERO" && /0 even claimed/.test(c["5_correctionsBuiltByOdg"].note));
+  // REGRESSION (HIGH): native trailer + provider attribution ⇒ PROVIDER + CONFLICTING; no double-subtraction
+  const W = M.windowOf(NOW, 30);
+  const mix = M.countProviderWork([
+    { sha: "both", at: t(1), author: "ODG Runtime", body: "fix\n\nODG-Native-Actor: ODG\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" },
+    { sha: "anth", at: t(1), author: "ODG Runtime", body: "fix\n\nCo-authored-by: Anthropic Claude <x@y>" },
+    { sha: "gpt", at: t(1), author: "Dev", body: "fix\n\nco-authored-by: OpenAI Codex <codex@openai.com>" },
+    { sha: "gen", at: t(1), author: "Dev", body: "docs\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)" },
+    { sha: "mid", at: t(1), author: "ODG Runtime", body: "fix\n\nInspection LOW 1. Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" },
+    { sha: "human", at: t(1), author: "Owner", body: "chore: hand edit\n\nCo-authored-by: Alice <a@b>" },
+    { sha: "claim", at: t(1), author: "ODG Runtime", body: "fix\n\nODG-Native-Actor: ODG" },
+  ], W, 870);
+  check("(3) REGRESSION: both trailers ⇒ PROVIDER + CONFLICTING_ATTRIBUTION, not a native claim", mix.last30d.conflictingAttribution.length === 1 && mix.last30d.conflictingAttribution[0].sha === "both" && mix.last30d.nativeClaimCommits === 1);
+  check("(3) REGRESSION: broadened attribution (Anthropic / OpenAI Codex / Generated with / mid-line trailer, case-insensitive); human co-author is NOT provider", mix.last30d.providerAttributedCommits === 5);
+  check("(3) REGRESSION: unattributed not double-subtracted (7 − 5 provider − 1 claim = 1 human)", mix.last30d.unattributedCommits === 1);
+  const nb = M.countNativeBuilt(mix);
+  check("(5) REGRESSION: text-trailer claim ⇒ UNVERIFIED_CLAIM, value stays 0, never 'MEASURED native'", nb.value === 0 && nb.status === "UNVERIFIED_CLAIM" && nb.unverifiedNativeClaims.last30d === 1 && /UNAVAILABLE/.test(nb.identityBoundVerification) && /CONFLICTING_ATTRIBUTION/.test(nb.note) && !/MEASURED native/.test(JSON.stringify(nb)));
   check("(3) no git ⇒ NOT_MEASURED; (5) follows", M.countProviderWork(null, null, 870).status === M.NOT_MEASURED && M.countNativeBuilt(M.countProviderWork(null, null, 870)).value === null);
 
   // (4) proposals
@@ -113,6 +141,7 @@ function main(): void {
   check("(6) 3 recorded rounds (2 verdicts + fixes-after-review); unrelated evidence ignored", v.recordedInspectionRounds === 3 && v.records.length === 2);
   check("(6) provider-subagent inspections identified; owner/ODG-native NOT_MEASURED", v.byInspector.providerSubagent === 1 && v.byInspector.owner === M.NOT_MEASURED && v.byInspector.odgNativeEvaluator === M.NOT_MEASURED);
   check("(6) commits citing independent inspection = 1", v.commitsCitingIndependentInspection === 1);
+  check("(6) REGRESSION: no inspection evidence ⇒ recordedInspectionRounds NOT_MEASURED (not 0)", (() => { const z = M.countValidations([], null, W); return z.recordedInspectionRounds === null && z.recordedInspectionRoundsStatus === M.NOT_MEASURED; })());
 
   // (7) recoveries
   const rc = c["7_autonomousRecoveries"];
@@ -137,7 +166,7 @@ function main(): void {
   const r2 = M.buildReport({ now: NOW, attempts, auditChain: chain, ledger, commits, arcFromPr: 870, capabilitySpecs: specs, componentFacts: facts, liveOk, progressionSteps: steps });
   check("deterministic (same input ⇒ same output)", JSON.stringify(r2) === JSON.stringify(M.buildReport({ now: NOW, attempts, auditChain: chain, ledger, commits, arcFromPr: 870, capabilitySpecs: specs, componentFacts: facts, liveOk, progressionSteps: steps })));
   check("frozen report + counters", Object.isFrozen(r) && Object.isFrozen(r.counters) && Object.isFrozen(r.capabilityLadder.items));
-  check("empty input ⇒ every source-backed counter NOT_MEASURED (no fabricated zeros)", (() => { const e = M.buildReport({}).counters; return e["1_nativeDecisions"].value === null && e["2_nativeExecutions"].status === M.NOT_MEASURED && e["3_providerDelegated"].status === M.NOT_MEASURED && e["4_correctionsProposedByOdg"].value === null && e["5_correctionsBuiltByOdg"].value === null && e["7_autonomousRecoveries"].unattendedLive === null; })());
+  check("empty input ⇒ every source-backed counter NOT_MEASURED (no fabricated zeros)", (() => { const e = M.buildReport({}).counters; return e["1b_providerInvokedDecisions"].status === M.NOT_MEASURED && e["6_independentValidations"].recordedInspectionRounds === null && e["1_nativeDecisions"].value === null && e["2_nativeExecutions"].status === M.NOT_MEASURED && e["3_providerDelegated"].status === M.NOT_MEASURED && e["4_correctionsProposedByOdg"].value === null && e["5_correctionsBuiltByOdg"].value === null && e["7_autonomousRecoveries"].unattendedLive === null; })());
   check("contract: no second engine; reuses canonical measures", M.NATIVE_AUTONOMY_MATURITY_CONTRACT.reuses.includes("odg-capability-maturity.coarseLevel") && M.NATIVE_AUTONOMY_MATURITY_CONTRACT.invariants.some((s: string) => /no second engine/.test(s)));
 
   process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-native-autonomy-maturity (7 separate counters w/ window+source; NOT_MEASURED w/o source; provider never native; ODG-built=0 w/o native binding; experiment≠live; fixture records excluded; ladder via odg-capability-maturity.coarseLevel; PURE/deterministic/frozen)" : failures + " FAIL"}\n`);

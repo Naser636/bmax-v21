@@ -175,7 +175,7 @@ const progressionSteps = [
   { capability: "recover", target: "EXERCISED_LIVE", step: "make odg-schedule-tick write an explicit attempt-log reason when it reclaims a stale ledger claim / re-admits a mission whose prior run was interrupted (INTERRUPTED_PRIOR_RUN), so a real unattended recovery is recorded when it happens", gating: "INTERNAL (code); occurrence on the live timer is unforced" },
   { capability: "decompose", target: "EXERCISED_LIVE", step: "run odg-mission-decompose-chain read-only over one real ROADMAP mission and commit the decomposition evidence artifact", gating: "INTERNAL" },
   { capability: "analyse-deps", target: "EXERCISED_LIVE", step: "persist the dep-planner layer plan the wave tick already computes into wave-summary/attempt-log so dependency analysis leaves a live trace", gating: "INTERNAL" },
-  { capability: "propose-apply-fixes", target: "EXERCISED_LIVE", step: "apply ONE ODG-proposed deterministic repair to the real repo through repair-workflow under an owner-authorized write-set, committed with an 'ODG-Native-Actor: ODG' provenance trailer (would also move counter 5 off 0)", gating: "OWNER_GATED (real-repo write)" },
+  { capability: "propose-apply-fixes", target: "EXERCISED_LIVE", step: "apply ONE ODG-proposed deterministic repair to the real repo through repair-workflow under an owner-authorized write-set, where the change is authored+applied by ODG's executor and carries IDENTITY-BOUND native provenance (an agent-identity Ed25519 signature over the diff/commit, verified by this measure) — a text trailer on a provider commit is NOT native and would not move counter 5", gating: "OWNER_GATED (real-repo write) + INTERNAL (identity-bound provenance verifier)" },
   { capability: "continue-next-mission", target: "EXERCISED_LIVE", step: "enable the resident driver so odg-native-mission-continuation picks the next mission without a provider", gating: "OWNER_GATED (resident driver / systemd)" },
   { capability: "improve-methods", target: "EXERCISED_LIVE", step: "run odg-self-improvement-cycle against the real repo", gating: "OWNER_GATED (OWNER_DECISION_ONLY)" },
 ];
@@ -193,9 +193,9 @@ const out = { ...report, reproduce: "npx tsx runtime/bin/odg-native-autonomy-mat
 if (!NO_WRITE) { fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify(out, null, 2) + "\n"); }
 const c = report.counters;
 process.stdout.write(JSON.stringify({
-  nativeDecisions30d: c["1_nativeDecisions"].value, nativeExecutions30d: c["2_nativeExecutions"].dispatchedByOdgRunner, ledgerActorOdg30d: c["2_nativeExecutions"].ledgerActorOdg,
+  nativeDecisions30d: c["1_nativeDecisions"].value, distinctDecisionKinds30d: c["1_nativeDecisions"].distinctDecisionKinds, meaningfulDecisions30d: c["1_nativeDecisions"].meaningfulDecisions, truthLockOutageTicks: (c["1_nativeDecisions"].truthLockRefusalCauses.incident || {}).ticksLost ?? 0, nativeExecutions30d: c["2_nativeExecutions"].dispatchedByOdgRunner, ledgerActorOdg30d: c["2_nativeExecutions"].ledgerActorOdg,
   providerCommits30d: c["3_providerDelegated"].last30d && c["3_providerDelegated"].last30d.providerAttributedCommits, providerPrs30d: c["3_providerDelegated"].last30d && c["3_providerDelegated"].last30d.providerDelegatedPrs,
-  proposed: c["4_correctionsProposedByOdg"].value, builtByOdg: c["5_correctionsBuiltByOdg"].value, inspectionRounds: c["6_independentValidations"].recordedInspectionRounds,
+  proposed: c["4_correctionsProposedByOdg"].value, builtByOdg: c["5_correctionsBuiltByOdg"].value, builtByOdgStatus: c["5_correctionsBuiltByOdg"].status, inspectionRounds: c["6_independentValidations"].recordedInspectionRounds,
   unattendedRecoveries: c["7_autonomousRecoveries"].unattendedLive, ladder: report.capabilityLadder.byLevel, artifact: NO_WRITE ? null : path.relative(ROOT, OUT),
 }, null, 2) + "\n");
 export {};
