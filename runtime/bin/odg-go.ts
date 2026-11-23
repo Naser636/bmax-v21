@@ -20,6 +20,8 @@
  *  --out           trace/summary directory (default <os.tmpdir()>/odg-go). REFUSED inside the main checkout (its
  *                  runtime/generated + runtime/dist feed the live root timer) and inside any runtime/governance.
  *  STOP            touch <out>/STOP, send SIGINT/SIGTERM, or set ODG_SCHEDULER_STOP=1 — checked between every step.
+ * Exit codes: 0 cycle ran · 2 refused at startup (out dir / Truth-Lock) · 3 STOPPED · 4 REFUSED mid-run (a confined
+ *              write was refused, e.g. --out swapped for a symlink after validation — see GO-WR-1) · 1 unexpected error.
  * No network, no model, no provider call, no git write.
  */
 const fs = require("fs");
@@ -131,9 +133,16 @@ function validateOutDir(outDir: string, repo: string): { ok: boolean; reason: st
   for (const f of forbiddenRoots(repo)) if (insideP(od, f)) return { ok: false, reason: `out dir ${od} is inside protected ${f} (main checkout / state repo / code tree)` };
   return { ok: true, reason: "confined", physical: od };
 }
+/* GO-WR-1 (provider-authored rule, Claude Code; V167 §4 correction of #930 inspection LOWs). */
+const WRITE_REFUSED_EXIT = 4;
+const WRITE_REFUSAL_RULE = "GO-WR-1 (provider rule): any refusal by safeWrite mid-run (e.g. --out swapped for a symlink after validation) is a clean fail-closed stop — status REFUSED, exit 4, no stack trace; a final CYCLE_END REFUSED trace entry + summary are attempted ONLY if the out dir still validates (no symlink component, same physical path as validated at startup), otherwise nothing more is written and a one-line REFUSED reason goes to stderr. KNOWN RESIDUAL (stated, not hidden): safeWrite realpaths the parent then opens the final component with O_NOFOLLOW; O_NOFOLLOW covers only the FINAL component, so an attacker able to swap a parent directory in the sub-microsecond window between realpath(parent) and open() could redirect the write. Node exposes no openat()/dir-fd API to close this; no further mechanism is added.";
+function writeRefusal(e: any): Error { const err: any = e instanceof Error ? e : new Error(String(e)); err.goWriteRefused = true; return err; }
 /* safeWrite — the ONE write primitive: lexical check (core assertConfinedWrite) + realpath(parent) must equal the
  * physical out dir + lstat(final) must not be a symlink + open with O_NOFOLLOW (the opened file IS the checked path). */
 function safeWrite(target: string, data: string, mode: "append" | "truncate" | "exclusive", physOut: string, forb: string[]): void {
+  try { safeWriteInner(target, data, mode, physOut, forb); } catch (e: any) { throw writeRefusal(e); }   // every refusal is tagged (GO-WR-1)
+}
+function safeWriteInner(target: string, data: string, mode: "append" | "truncate" | "exclusive", physOut: string, forb: string[]): void {
   GO.assertConfinedWrite(target, physOut, forb, path);
   const parent = fs.realpathSync(path.dirname(path.resolve(target)));
   if (parent !== physOut) throw new Error(`WRITE_PARENT_NOT_OUT_DIR: ${parent} ≠ ${physOut}`);
@@ -277,8 +286,10 @@ function buildPorts(o: any): any {
   const w = (p: string, data: string, mode: "append" | "truncate" | "exclusive") => { safeWrite(p, data, mode, physOut, forb); if (!writes.includes(path.resolve(p))) writes.push(path.resolve(p)); };
   const tracePath = path.join(physOut, "go-trace.jsonl");
   const stopPath = path.join(physOut, "STOP");
+  const last: any = { runId: null, cycleSeq: null };
   return {
     writes,
+    last,
     now: () => Date.now(),
     truthLock: () => truthLockGate({ mutating: true, enforce: true, exec: (args: string[]) => git(repo, args) }),
     readState: () => readState(repo),
@@ -289,10 +300,10 @@ function buildPorts(o: any): any {
       return { stop: false };
     },
     trace: {
-      append: (e: any) => { w(tracePath, JSON.stringify(e) + "\n", "append"); },
+      append: (e: any) => { if (e && e.runId) { last.runId = e.runId; last.cycleSeq = e.cycleSeq; } w(tracePath, JSON.stringify(e) + "\n", "append"); },
       readPrior: () => { try { return fs.readFileSync(tracePath, "utf8").split("\n").filter(Boolean).map((l: string) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { return []; } },
     },
-    writeSummary: (s: any) => { const p = path.join(physOut, "go-cycle.json"); const tmp = `${p}.tmp-${process.pid}`; w(tmp, JSON.stringify(s, null, 2) + "\n", "exclusive"); GO.assertConfinedWrite(p, physOut, forb, path); try { if (fs.lstatSync(p).isSymbolicLink()) throw new Error(`SYMLINK_TARGET_REFUSED: ${p}`); } catch (e: any) { if (e && e.code !== "ENOENT") { fs.rmSync(tmp, { force: true }); throw e; } } fs.renameSync(tmp, p); if (!writes.includes(p)) writes.push(p); },
+    writeSummary: (s: any) => { const p = path.join(physOut, "go-cycle.json"); const tmp = `${p}.tmp-${process.pid}`; w(tmp, JSON.stringify(s, null, 2) + "\n", "exclusive"); try { GO.assertConfinedWrite(p, physOut, forb, path); } catch (e: any) { throw writeRefusal(e); } try { if (fs.lstatSync(p).isSymbolicLink()) throw writeRefusal(new Error(`SYMLINK_TARGET_REFUSED: ${p}`)); } catch (e: any) { if (e && e.code !== "ENOENT") { fs.rmSync(tmp, { force: true }); throw writeRefusal(e); } } fs.renameSync(tmp, p); if (!writes.includes(p)) writes.push(p); },
     isolation: (next: any) => isolationCheck(scratch, next.mission, repo, next.dispatchTarget),
     dispatchNative: (next: any, c: any) => {
       if (c && c.dispatchTarget) {
@@ -328,7 +339,25 @@ async function runOnce(argv: string[]): Promise<{ code: number; result: any; wri
     const result = await GO.runGoCycle({ mode: argv.includes("--execute") ? "EXECUTE" : "DRY", allowUnsandboxedTarget: argv.includes("--allow-unsandboxed-target"), maxSteps: numArg(argv, "--max-steps", GO.DEFAULTS.maxSteps), deadlineMs: numArg(argv, "--deadline-ms", GO.DEFAULTS.deadlineMs) }, ports);
     const code = result.status === "STARTUP_REFUSED" ? 2 : result.status === "STOPPED" ? 3 : 0;
     return { code, result, writes: ports.writes };
+  } catch (e: any) {
+    if (!(e && e.goWriteRefused)) throw e;   // not a write refusal ⇒ unchanged (exit 1)
+    return writeRefusedStop(e, { outDir, repo, physical: v.physical as string, ports });
   } finally { process.removeListener("SIGINT", hInt); process.removeListener("SIGTERM", hTerm); }
+}
+
+/* writeRefusedStop — GO-WR-1: clean fail-closed stop after a mid-run write refusal. The final record is attempted
+ * ONLY when the out dir still validates exactly as at startup; never through a swapped path. */
+function writeRefusedStop(e: any, o: { outDir: string; repo: string; physical: string; ports: any }): { code: number; result: any; writes: string[] } {
+  const reason = String((e && e.message) || e).split("\n")[0];
+  const still = (() => { try { const v2 = validateOutDir(o.outDir, o.repo); return v2.ok && !symlinkComponent(o.outDir) && fs.realpathSync(o.outDir) === o.physical; } catch { return false; } })();
+  const result: any = { status: "REFUSED", runId: o.ports.last.runId, cycleSeq: o.ports.last.cycleSeq, reason, rule: WRITE_REFUSAL_RULE, outDirStillValid: still, finalRecord: still ? "attempted" : "skipped (out dir no longer validates — nothing written through it)" };
+  if (still) {
+    const end = { kind: "CYCLE_END", status: "REFUSED", runId: result.runId, cycleSeq: result.cycleSeq, reason, rule: WRITE_REFUSAL_RULE, endedAt: new Date().toISOString() };
+    try { safeWrite(path.join(o.physical, "go-trace.jsonl"), JSON.stringify(end) + "\n", "append", o.physical, forbiddenRoots(o.repo)); const p = path.join(o.physical, "go-trace.jsonl"); if (!o.ports.writes.includes(p)) o.ports.writes.push(p); result.traceWritten = true; } catch { result.traceWritten = false; }
+    try { o.ports.writeSummary({ ...result, writes: o.ports.writes }); result.summaryWritten = true; } catch { result.summaryWritten = false; }
+  }
+  process.stderr.write(`REFUSED: write refused mid-run (${reason}); ${still ? "final record attempted in the still-valid out dir" : "out dir no longer validates — nothing more written"} (exit ${WRITE_REFUSED_EXIT})\n`);
+  return { code: WRITE_REFUSED_EXIT, result: Object.freeze(result), writes: o.ports.writes };
 }
 
 /* redact(text, pairs) — host paths → placeholders (longest first), then any leftover /home/… or /tmp/… path. */
@@ -486,7 +515,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);

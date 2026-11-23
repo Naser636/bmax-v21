@@ -80,8 +80,35 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     const forb = B.forbiddenRoots(ROOT);
     const thrown = (fn: () => void) => { try { fn(); return ""; } catch (e: any) { return String(e.message); } };
     check("symlinked FINAL file ⇒ safeWrite refuses, victim unchanged", /SYMLINK_TARGET_REFUSED|ELOOP/.test(thrown(() => B.safeWrite(path.join(realOut, "go-trace.jsonl"), "x\n", "append", realOut, forb))) && fs.readFileSync(victim, "utf8") === "orig");
-    let rejected = false; try { await B.runOnce(["--repo", notRepo, "--out", realOut]); } catch { rejected = true; }
-    check("symlinked final trace file ⇒ real cycle refuses to write through it", rejected && fs.readFileSync(victim, "utf8") === "orig");
+    let rejected = false; let rf: any = null; try { rf = await B.runOnce(["--repo", notRepo, "--out", realOut]); } catch { rejected = true; }
+    check("symlinked final trace file ⇒ real cycle refuses to write through it: clean REFUSED exit 4 (GO-WR-1), no throw", !rejected && rf.code === B.WRITE_REFUSED_EXIT && rf.code === 4 && rf.result.status === "REFUSED" && fs.readFileSync(victim, "utf8") === "orig");
+    check("symlinked final trace file ⇒ out dir still validates ⇒ final record attempted (trace refused again, summary written)", rf.result.outDirStillValid === true && rf.result.traceWritten === false && rf.result.summaryWritten === true && JSON.parse(fs.readFileSync(path.join(realOut, "go-cycle.json"), "utf8")).status === "REFUSED");
+    // GO-WR-1: --out swapped for a symlink AFTER validation (mid-run) ⇒ REFUSED exit 4, nothing written into the swap target
+    {
+      const swapOut = path.join(T, "swap-out"); const swapTarget = path.join(T, "swap-target"); fs.mkdirSync(swapTarget);
+      const errs: string[] = []; const origErr = process.stderr.write.bind(process.stderr);
+      (process.stderr as any).write = (c: any) => { errs.push(String(c)); return true; };
+      let sw: any = null; let threw = false;
+      try {
+        const pr = B.runOnce(["--repo", notRepo, "--out", swapOut, "--step-delay-ms", "200"]);   // CYCLE_START + TRUTH_LOCK written, now paused
+        fs.renameSync(swapOut, swapOut + ".orig"); fs.symlinkSync(swapTarget, swapOut);       // the swap, after validation
+        sw = await pr;
+      } catch { threw = true; } finally { (process.stderr as any).write = origErr; }
+      check("swap-after-validate ⇒ resolves (no throw), status REFUSED, exit code 4", !threw && sw && sw.code === 4 && sw.result.status === "REFUSED");
+      check("swap-after-validate ⇒ nothing written into the swap target", fs.readdirSync(swapTarget).length === 0);
+      check("swap-after-validate ⇒ final record skipped (out dir no longer validates)", sw && sw.result.outDirStillValid === false && sw.result.traceWritten === undefined);
+      check("swap-after-validate ⇒ one-line REFUSED reason on stderr, no stack trace", errs.length === 1 && /^REFUSED: write refused mid-run/.test(errs[0]) && errs[0].trim().split("\n").length === 1 && !/\n\s+at /.test(errs[0]));
+      check("swap-after-validate ⇒ the pre-swap trace (in the original dir) has no CYCLE_END", !fs.readFileSync(path.join(swapOut + ".orig", "go-trace.jsonl"), "utf8").includes("CYCLE_END"));
+      check("GO-WR-1 rule states the realpath→open O_NOFOLLOW residual", /O_NOFOLLOW covers only the FINAL component/.test(B.WRITE_REFUSAL_RULE) && /openat/.test(B.WRITE_REFUSAL_RULE));
+    }
+    // process level: the real CLI exits 4 with no stack trace on a mid-run write refusal
+    {
+      const cp = require("child_process");
+      const pOut = path.join(T, "proc-out"); fs.mkdirSync(pOut); const v2 = path.join(T, "victim2.txt"); fs.writeFileSync(v2, "orig");
+      fs.symlinkSync(v2, path.join(pOut, "go-trace.jsonl"));
+      const pr = cp.spawnSync(process.execPath, [...process.execArgv, path.join(__dirname, "odg-go.ts"), "--repo", notRepo, "--out", pOut], { encoding: "utf8", timeout: 60000 });
+      check("CLI process: mid-run write refusal ⇒ exit 4, one-line REFUSED stderr, no stack, victim unchanged", pr.status === 4 && /^REFUSED: /.test(pr.stderr) && !/\n\s+at |odg-go error/.test(pr.stderr) && fs.readFileSync(v2, "utf8") === "orig");
+    }
     check("'..' traversal ⇒ safeWrite refuses", /WRITE_OUTSIDE_OUT_DIR|WRITE_PARENT_NOT_OUT_DIR/.test(thrown(() => B.safeWrite(path.join(realOut, "..", "evil.txt"), "x", "truncate", realOut, forb))) && !fs.existsSync(path.join(T, "evil.txt")));
     fs.mkdirSync(path.join(realOut, "sub"));
     check("write into a sub-dir (parent ≠ out dir) ⇒ refused", /WRITE_PARENT_NOT_OUT_DIR/.test(thrown(() => B.safeWrite(path.join(realOut, "sub", "f"), "x", "truncate", realOut, forb))));

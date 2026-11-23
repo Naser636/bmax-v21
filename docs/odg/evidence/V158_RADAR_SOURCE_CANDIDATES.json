@@ -242,7 +242,8 @@
    "scheme": "https",
    "access": "ANONYMOUS_PUBLIC_HTML",
    "tier": "T1",
-   "termsVerified": true,
+   "termsVerified": false,
+   "termsVerifiedCorrection": "2026-11-23 correction (V167 §4, owner follow-up recorded in docs/odg/evidence/V164_RADAR_SOURCE_CANDIDATES.json ownerFollowUps[0]): termsVerified was true but the V158 terms reading was a PARAPHRASE — the termsUrl (trustee.ietf.org Trust Legal Provisions) is an index page with no provision text (V164 re-read: one GET 2026-11-23T19:40:01Z, HTTP 200, 44753 bytes, sha256 0fec62449d9568727d7111fcb325e8a490406f5e5345a0e2d4edd95fcf222653, recorded in V164_RADAR_SOURCE_CANDIDATES.json termsRetrieval). Label corrected to false = UNVERIFIED; no other field changed; no grant in force relied on it (host DEFERRED in V158 and V164). Historical record annotated, not re-fetched.",
    "termsUrl": "https://trustee.ietf.org/documents/trust-legal-provisions/",
    "prefixes": [
     {
@@ -280,7 +281,8 @@
    "scheme": "https",
    "access": "ANONYMOUS_PUBLIC_API",
    "tier": "T1",
-   "termsVerified": true,
+   "termsVerified": false,
+   "termsVerifiedCorrection": "2026-11-23 correction (V167 §4, owner follow-up recorded in docs/odg/evidence/V164_RADAR_SOURCE_CANDIDATES.json ownerFollowUps[0]): termsVerified was true but the V158 terms reading was a PARAPHRASE — the termsUrl (trustee.ietf.org Trust Legal Provisions) is an index page with no provision text (V164 re-read: one GET 2026-11-23T19:40:01Z, HTTP 200, 44753 bytes, sha256 0fec62449d9568727d7111fcb325e8a490406f5e5345a0e2d4edd95fcf222653, recorded in V164_RADAR_SOURCE_CANDIDATES.json termsRetrieval). Label corrected to false = UNVERIFIED; no other field changed; no grant in force relied on it (host DEFERRED in V158 and V164). Historical record annotated, not re-fetched.",
    "termsUrl": "https://trustee.ietf.org/documents/trust-legal-provisions/",
    "prefixes": [
     {
