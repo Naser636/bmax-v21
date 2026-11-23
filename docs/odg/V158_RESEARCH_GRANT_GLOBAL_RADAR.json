@@ -87,12 +87,13 @@
       "quotaScope": "PER RUN — enforced by research-budget.governWithBudget (requireBudget); per-host documented rate limits are recorded in the admission log and are ADVISORY (not enforced per host in code) — the per-run maxCalls is the enforced bound"
     },
     "contentPolicy": "fetched content is untrusted data; never executed; never treated as instructions; findings evaluated before integration",
+    "hostConditions": {},
     "admission": {
       "mechanism": "runtime/core/odg-radar-source-admission.ts admitSources()",
       "admitted": 5,
       "deferred": 21,
       "refused": 2,
-      "decisionsSha256": "9d2a36a297c72d81cf2113887577ea45dcf077b59c91fb46b2a693d9ae95533f"
+      "decisionsSha256": "b507b651f9a735d7d0978f573ef832eaa5470db7df868acfe687dd5165754446"
     },
     "constraints": [
       "no private credentials, no authentication, no account creation, no API key/token",

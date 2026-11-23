@@ -162,7 +162,8 @@
     "probeUserAgent": "ODG-Radar-probe/0.1",
     "redirectsFollowed": false,
     "evidenceCompleteness": "FULL"
-   }
+   },
+   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access"
   },
   {
    "host": "abseil.io",
@@ -785,7 +786,8 @@
     "probeUserAgent": "ODG-Radar-probe/0.1",
     "redirectsFollowed": false,
     "evidenceCompleteness": "FULL"
-   }
+   },
+   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access"
   },
   {
    "host": "github.blog",
@@ -830,7 +832,8 @@
     "probeUserAgent": "ODG-Radar-probe/0.1",
     "redirectsFollowed": false,
     "evidenceCompleteness": "FULL"
-   }
+   },
+   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access"
   },
   {
    "host": "stripe.dev",

@@ -19,16 +19,23 @@ const opt = (k: string, d: string | null = null): string | null => { const i = a
 const CAND = path.resolve(ROOT, opt("--candidates", "docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json") as string);
 // V16.0: output paths are parameterised (each campaign = its own versioned grant); defaults keep the V158 behaviour.
 // Outputs are confined to docs/odg/ (repo-relative, no '..') so the CLI cannot write a grant anywhere else.
-const outPath = (flag: string, dflt: string): string => {
+// #918 inspection: only GRANT / ADMISSION-EVIDENCE file names, in their exact directories, after resolving the parent's
+// realpath (no symlink escape) — never e.g. the Boussole or a closure register under docs/odg/.
+const outPath = (flag: string, dflt: string, dir: string[], nameRe: RegExp): string => {
   const rel = opt(flag, dflt) as string;
   const abs = path.resolve(ROOT, rel);
-  if (!abs.startsWith(path.join(ROOT, "docs", "odg") + path.sep) || !/\.json$/.test(abs)) { process.stderr.write(`${flag} must be a .json path under docs/odg/\n`); process.exit(2); }
+  let realParent = ""; try { realParent = fs.realpathSync(path.dirname(abs)); } catch { realParent = ""; }
+  const wantDir = fs.realpathSync(path.join(ROOT, ...dir));
+  if (realParent !== wantDir || !nameRe.test(path.basename(abs))) { process.stderr.write(`${flag} must be ${dir.join("/")}/<${nameRe.source}>\n`); process.exit(2); }
   return abs;
 };
-const GRANT_OUT = outPath("--grant-out", "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json");
-const EVID_OUT = outPath("--evidence-out", "docs/odg/evidence/V158_RADAR_SOURCE_ADMISSION.json");
-const ISSUED_ISO = opt("--issued-iso", "2026-11-23T00:00:00.000Z") as string;
-const ISSUED_BY = opt("--issued-by", "owner (CTO directive V15.8 §3.3 — governed admission of PUBLIC sources; each host+prefix admitted on fetched robots/redirect/terms evidence by odg-radar-source-admission; live egress still requires ODG_RADAR_LIVE=1)") as string;
+const GRANT_OUT = outPath("--grant-out", "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json", ["docs", "odg"], /^V\d+_RESEARCH_GRANT_[A-Z0-9_]+\.json$/);
+const EVID_OUT = outPath("--evidence-out", "docs/odg/evidence/V158_RADAR_SOURCE_ADMISSION.json", ["docs", "odg", "evidence"], /^V\d+_RADAR_SOURCE_ADMISSION\.json$/);
+// --check re-derives with the issuer/issue time RECORDED in the existing grant (unless given explicitly), so a check
+// never needs the original command line.
+const EXISTING: any = (() => { try { return JSON.parse(fs.readFileSync(GRANT_OUT, "utf8")).grant || null; } catch { return null; } })();
+const ISSUED_ISO = opt("--issued-iso", (args.includes("--check") && EXISTING && EXISTING.issuedIso) || "2026-11-23T00:00:00.000Z") as string;
+const ISSUED_BY = opt("--issued-by", (args.includes("--check") && EXISTING && EXISTING.issuedBy) || "owner (CTO directive V15.8 §3.3 — governed admission of PUBLIC sources; each host+prefix admitted on fetched robots/redirect/terms evidence by odg-radar-source-admission; live egress still requires ODG_RADAR_LIVE=1)") as string;
 
 function main(): number {
   let cand: any;
