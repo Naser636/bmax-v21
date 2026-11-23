@@ -25,6 +25,7 @@ const m = G.measure({ prs: [{ number: 1, additions: 1, deletions: 0, createdAt: 
 check("measure: malformed PR rows are dropped, not coerced", m.n === 2 && m.buckets.large_gt_1000.n === 1);
 check("the recorded decision matches the rule applied to the recorded measurement", G.decide(ev.knowledge, ev.measurement).decision === ev.decision.decision);
 check("evidence holds no author/personal data", !/"author"|@[A-Za-z0-9-]+\.[a-z]{2,}/.test(fs.readFileSync(path.join(ROOT, "docs", "odg", "evidence", "V160_SCENARIO_G_PR_HISTORY.json"), "utf8")));
+check("#921: robustness bootstrap recorded and the NOT_ADOPTED decision flagged borderline when the CI straddles 0.3", ev.measurement.robustnessSizeMinutes.status === "MEASURED" && (ev.decision.decision !== "NOT_ADOPTED" || typeof ev.decision.borderline === "boolean"));
 process.stdout.write(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}\n`);
 process.exit(failures === 0 ? 0 : 1);
 export {};

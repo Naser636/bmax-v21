@@ -37,6 +37,16 @@
     ]
   },
   "measurement": {
+    "robustnessSizeMinutes": {
+      "status": "MEASURED",
+      "resamples": 1000,
+      "seed": 20261123,
+      "ci95": [
+        0.2,
+        0.384
+      ],
+      "shareAtOrAboveThreshold": 0.44
+    },
     "n": 400,
     "range": [
       519,
@@ -76,12 +86,15 @@
   },
   "decision": {
     "decision": "NOT_ADOPTED",
-    "reason": "pre-registered rule not met: spearman(size,minutes)=0.293436, spearman(size,commits)=0.401154, median minutes 5.966666666666667 (≤100) vs 17.216666666666665 (>1000)"
+    "borderline": true,
+    "reason": "rule not met: spearman(size,minutes)=0.293436, spearman(size,commits)=0.401154, median minutes 5.966666666666667 (≤100) vs 17.216666666666665 (>1000)"
   },
   "classification": "REAL — admitted knowledge retrieved, checked at use time and used to decide an ODG design question on ODG's real data",
   "honesty": [
     "correlational evidence on ODG's own PR history (confounded by task difficulty and by the inspection loop) — it CONFIRMS OR NOT the published guidance on ODG's data, it does not prove causation",
     "the knowledge is a single-source official statement (SUPPORTED), never a fact; the decision can only be a DESIGN_PROPOSAL",
+    "freshness/authorization are evaluated as of the PINNED use date (2026-11-23T18:00Z) for reproducibility — a later real use must re-check (the record expires at its validUntil)",
+    "NOT_ADOPTED is BORDERLINE when the bootstrap CI straddles the threshold: statistically indistinguishable from ADOPT — it does NOT refute the knowledge on ODG's data",
     "provider (Claude Code) wrote this runner; the checks (attestation, usableFor, rank correlation) and the decision rule are executed by ODG components"
   ]
 }

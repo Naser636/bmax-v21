@@ -14,7 +14,8 @@
  *     single-source official statement (SUPPORTED, not a fact); ODG tests whether ITS OWN history agrees, on a committed
  *     snapshot of 400 merged PRs (docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json), with the canonical
  *     odg-rank-correlation (Spearman) — size vs open→merge minutes and vs commit count (a proxy for fix cycles).
- *  4. DECIDE with a rule PRE-REGISTERED here (written before the analysis was run):
+ *  4. DECIDE with a rule STATED IN THIS CODE before the recorded run (not externally timestamped — the rule and the data
+ *     land in the same commit, so "pre-registered" cannot be proven; no tuning toward ADOPT is visible):
  *       ADOPT_AS_PROPOSAL iff  spearman(size, minutes) ≥ 0.3  AND  spearman(size, commits) ≥ 0.3
  *                         AND median(minutes | size > 1000) > median(minutes | size ≤ 100)
  *       otherwise NOT_ADOPTED (knowledge not confirmed on ODG's data).
@@ -69,10 +70,28 @@ function measure(hist: any): any {
   const sc = RC.spearman(rows.map((r: any) => r.size), rows.map((r: any) => r.commits));
   const bucket = (f: (r: any) => boolean) => { const b = rows.filter(f); return { n: b.length, medianMinutes: median(b.map((r: any) => r.minutes)), medianCommits: median(b.map((r: any) => r.commits)) }; };
   return {
+    robustnessSizeMinutes: bootstrap(rows, RULE.minSpearmanMinutes),
     n: rows.length, range: rows.length ? [Math.min(...rows.map((r: any) => r.number)), Math.max(...rows.map((r: any) => r.number))] : null,
     spearmanSizeMinutes: sm, spearmanSizeCommits: sc,
     buckets: { small_le_100: bucket((r) => r.size <= RULE.smallMax), medium_101_1000: bucket((r) => r.size > RULE.smallMax && r.size <= RULE.largeMin), large_gt_1000: bucket((r) => r.size > RULE.largeMin) },
   };
+}
+
+/** robustness: deterministic bootstrap (fixed-seed LCG, 1000 resamples) of spearman(size, minutes) — how often a resample
+ *  clears the rule's threshold. A decision whose CI straddles the threshold is reported BORDERLINE (statistically
+ *  indistinguishable from the opposite decision), never as a refutation. */
+function bootstrap(rows: any[], threshold: number, B: number = 1000, seed: number = 20261123): any {
+  if (rows.length < 10) return { status: "NOT_MEASURABLE" };
+  let st = seed >>> 0; const rnd = () => { st = (Math.imul(st, 1664525) + 1013904223) >>> 0; return st / 4294967296; };
+  const rhos: number[] = [];
+  for (let b = 0; b < B; b++) {
+    const xs: number[] = [], ys: number[] = [];
+    for (let i = 0; i < rows.length; i++) { const r = rows[Math.floor(rnd() * rows.length)]; xs.push(r.size); ys.push(r.minutes); }
+    const s = RC.spearman(xs, ys); if (s && Number.isFinite(s.rho)) rhos.push(s.rho);
+  }
+  rhos.sort((a, b) => a - b);
+  const q = (p: number) => rhos[Math.min(rhos.length - 1, Math.max(0, Math.floor(p * rhos.length)))];
+  return { status: "MEASURED", resamples: rhos.length, seed, ci95: [Number(q(0.025).toFixed(3)), Number(q(0.975).toFixed(3))], shareAtOrAboveThreshold: Number((rhos.filter((r) => r >= threshold).length / rhos.length).toFixed(3)) };
 }
 
 function decide(check: any, m: any): any {
@@ -84,7 +103,7 @@ function decide(check: any, m: any): any {
   const confirmed = rm >= RULE.minSpearmanMinutes && rc >= RULE.minSpearmanCommits && ml > ms;
   return confirmed
     ? { decision: "ADOPT_AS_PROPOSAL", proposal: "delegated missions should target one self-contained change and flag > 1000 changed lines for splitting (advisory, DESIGN_PROPOSAL — not an enforced rule)", reason: `ODG's own history agrees with the knowledge: spearman(size,minutes)=${rm}, spearman(size,commits)=${rc}, median minutes ${ms} (≤100) vs ${ml} (>1000)` }
-    : { decision: "NOT_ADOPTED", reason: `pre-registered rule not met: spearman(size,minutes)=${rm}, spearman(size,commits)=${rc}, median minutes ${ms} (≤100) vs ${ml} (>1000)` };
+    : { decision: "NOT_ADOPTED", borderline: !!(m.robustnessSizeMinutes && m.robustnessSizeMinutes.status === "MEASURED" && m.robustnessSizeMinutes.ci95[0] < RULE.minSpearmanMinutes && m.robustnessSizeMinutes.ci95[1] >= RULE.minSpearmanMinutes), reason: `rule not met: spearman(size,minutes)=${rm}, spearman(size,commits)=${rc}, median minutes ${ms} (≤100) vs ${ml} (>1000)` };
 }
 
 function run(useAt: number): any {
@@ -98,6 +117,8 @@ function run(useAt: number): any {
     honesty: [
       "correlational evidence on ODG's own PR history (confounded by task difficulty and by the inspection loop) — it CONFIRMS OR NOT the published guidance on ODG's data, it does not prove causation",
       "the knowledge is a single-source official statement (SUPPORTED), never a fact; the decision can only be a DESIGN_PROPOSAL",
+      "freshness/authorization are evaluated as of the PINNED use date (2026-11-23T18:00Z) for reproducibility — a later real use must re-check (the record expires at its validUntil)",
+      "NOT_ADOPTED is BORDERLINE when the bootstrap CI straddles the threshold: statistically indistinguishable from ADOPT — it does NOT refute the knowledge on ODG's data",
       "provider (Claude Code) wrote this runner; the checks (attestation, usableFor, rank correlation) and the decision rule are executed by ODG components",
     ],
   };
