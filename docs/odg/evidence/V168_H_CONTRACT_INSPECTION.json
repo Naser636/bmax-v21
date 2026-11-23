@@ -1,0 +1,20 @@
+{
+  "//": "Independent inspection record of the REVISED contract H (owner V168: 'Inspection indépendante du contrat révisé'). Verdict reported by the independent inspector session; recorded by the coordinating provider session. Independence is DECLARED by distinct session ids (not cryptographic).",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "H",
+  "verdict": "ACCEPT",
+  "contractSha256": "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2",
+  "inspectedHeadSha": "98eed7f23c20bd20a576c0c33a84d9b088c97d3f",
+  "inspectedPr": 942,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab6a445c9679c2387",
+  "authorSessionId": "h-reviser-v168",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-23",
+  "history": [
+    {"head": "587650b0", "verdict": "REJECT", "findings": ["MED: stated safeguard false — PASS only required Δ1 ≥ −0.02 (non-inferiority vs breadth baseline B1) while H1 contains the breadth feature; a breadth-only H1 could PASS"]},
+    {"head": "98eed7f2", "verdict": "ACCEPT", "findings": ["PASS now requires superiority over breadth (Δ1 > 0 and CI95-low(Δ1) > 0) — tightened before any metric was computed", "decision table complete (NOT_MEASURED → PASS → PARTIAL → FAIL; every non-PASS ⇒ NOT_ADOPTED)", "dataset sha d8bf4a3f unchanged; contract G unchanged"]}
+  ],
+  "scopeNote": "Validates step INSPECT_REVISED_CONTRACT of H only. It authorizes RUN_CONTROLLED_EXPERIMENTS through the owner's V168 authorization; it grades nothing."
+}
