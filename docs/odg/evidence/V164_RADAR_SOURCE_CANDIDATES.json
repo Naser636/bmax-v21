@@ -1,0 +1,2921 @@
+{
+ "generated": "2026-11-23",
+ "directive": "owner directive V164 §5 — Radar must discover new sources widely, qualify them, and submit them to the canonical security/admission process BEFORE any collection",
+ "source": "V164 discovery + qualification by the Claude Code provider (technical provider, not authority). QUALIFICATION ONLY — per host: one robots.txt fetch, one probe of each prefix, one sample page per prefix, the linked terms page(s); sequential, ~1 s between requests, User-Agent ODG-Radar-probe/0.1, redirects never followed on robots/prefix/sample, no auth, no challenge/CAPTCHA/paywall bypass, no 403 retried with other identities. Terms pages were fetched with redirects followed (reading only). NOTHING collected; no ODG_RADAR_LIVE used (the admission runner is offline and needs no flag).",
+ "schema": "normalized like docs/odg/evidence/V160_RADAR_SOURCE_CANDIDATES.json; unknown ⇒ field omitted (gate defers). Extra informational fields: org, topics, whyPrimary, priorOutcome, termsClause, termsNote, prefixHttpStatus, prefixRedirectLocation, sampledUrl, sampleHttpStatus, sampleTitle, robotsFetch, raw.",
+ "robotsMethod": "robots.txt fetched without following redirects; '*' groups merged per RFC 9309; Allow/Disallow evaluated by longest match with '*' and '$' honoured; robotsDisallowedWithin = literal Disallow rules strictly inside the prefix; robotsWildcardRulesInside = every wildcard Disallow rule whose literal head is compatible with the prefix (may match inside); robots 4xx ⇒ NO_ROBOTS_4XX with empty arrays; 3xx ⇒ REDIRECTED; network/TLS error ⇒ UNREACHABLE_5XX.",
+ "topicCodes": [
+  "AGENTS",
+  "AUTONOMY",
+  "SWE_AUTOMATION",
+  "PLANNING",
+  "MEMORY_LEARNING",
+  "RELIABILITY_SECURITY_RECOVERY",
+  "OBSERVABILITY_CAUSAL",
+  "LOCAL_MODELS_ROUTING",
+  "DISTRIBUTED_ARCH",
+  "RESOURCE_OPTIMISATION",
+  "INDEPENDENT_VALIDATION",
+  "LONG_RUNNING_EXECUTION"
+ ],
+ "candidates": [
+  {
+   "host": "nasa.github.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NASA",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "DISTRIBUTED_ARCH",
+    "LONG_RUNNING_EXECUTION"
+   ],
+   "whyPrimary": "F Prime (F´) flight-software framework docs, published by NASA JPL on the NASA GitHub org (component architecture, fault handling, long-running embedded execution)",
+   "termsVerified": true,
+   "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
+   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "prefixes": [
+    {
+     "path": "/fprime/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://nasa.github.io/fprime/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "F´ Component Quality — devel",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:23:03+00:00 (robots.txt 4xx ⇒ RFC 9309 allow; no rules)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 9115,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "NO_ROBOTS_4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "swehb.nasa.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NASA",
+   "topics": [
+    "SWE_AUTOMATION",
+    "INDEPENDENT_VALIDATION",
+    "RELIABILITY_SECURITY_RECOVERY"
+   ],
+   "whyPrimary": "NASA Software Engineering Handbook (NASA-HDBK-2203, companion to NPR 7150.2): IV&V, software assurance, safety",
+   "termsVerified": false,
+   "termsNote": "every probed page returns HTTP 403 (no challenge page; access control recorded, never bypassed) — terms not reachable from the site; access status unverified",
+   "prefixes": [
+    {
+     "path": "/display/SWEHBVD/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 403,
+     "sampled200": false,
+     "sampledUrl": "https://swehb.nasa.gov/display/SWEHBVD/SWE-001+-+Compliance+Matrix",
+     "sampleHttpStatus": 403,
+     "sampleTitle": "403 Forbidden",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:40+00:00 (robots.txt 4xx ⇒ RFC 9309 allow; no rules)"
+    }
+   ],
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 199,
+   "robotsFetch": {
+    "status": 403,
+    "mode": "NO_ROBOTS_4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "ntrs.nasa.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "org": "NASA",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "INDEPENDENT_VALIDATION",
+    "PLANNING"
+   ],
+   "whyPrimary": "NASA Technical Reports Server citation JSON API (primary NASA technical reports)",
+   "priorOutcome": "V160 DEFER (robots.txt unreachable 3x ⇒ RFC 9309 disallow; terms not verified) — re-probed",
+   "termsVerified": true,
+   "termsUrl": "https://sti.nasa.gov/disclaimers/",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "NASA STI 'Disclaimers, Copyright Notice, and Terms and Conditions of Use' (linked from the NTRS footer; fetched 2026-11-23): 'NASA does not grant exclusive use rights with respect to NASA material. NASA should be acknowledged as the source of its material' — no restriction on automated access; the STI site itself publishes a 'Data Harvesting' help section. Terms page read: no rate limit published (NTRS API documentation itself not reviewed)",
+   "prefixes": [
+    {
+     "path": "/api/citations/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 404,
+     "sampled200": true,
+     "sampledUrl": "https://ntrs.nasa.gov/api/citations/20170001761",
+     "sampleHttpStatus": 200,
+     "sampleTitle": null,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:23:11+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "expectedContentTypes": [
+    "application/json"
+   ],
+   "robotsTxtSha256": "5d0a4ff5255a5800d9d871145e70fefe1390c3585cff8266dc04867fea2fac75",
+   "robotsTxtBytes": 66,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://sti.nasa.gov/disclaimers",
+      "Disclaimers, Copyright, Terms of Use"
+     ],
+     [
+      "https://sti.nasa.gov/disclaimers/",
+      "NASA Disclaimers, Copyright Notice, and "
+     ],
+     [
+      "https://www.nasa.gov/nasa-web-privacy-policy-and-important-notices/",
+      "NASA Web Privacy Policy and Important No"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "www.tri.global",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Toyota",
+   "topics": [
+    "AUTONOMY",
+    "PLANNING",
+    "MEMORY_LEARNING"
+   ],
+   "whyPrimary": "Toyota Research Institute (TRI) official research/publications pages (robotics, large behaviour models, automated driving)",
+   "termsVerified": false,
+   "termsNote": "only a Privacy Policy is linked; /terms-of-use is 404 — no website terms found",
+   "prefixes": [
+    {
+     "path": "/publications",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.tri.global/publications",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Publications | Toyota Research Institute",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*/media/oembed"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T19:26:56+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "773fb8d35bb9a39d35335ee6db8dc5c912d2aacbfb823152d9c61cd647dd902d",
+   "robotsTxtBytes": 2027,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "/privacy-policy",
+      "PRIVACY POLICY"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "global.toyota",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Toyota",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "RESOURCE_OPTIMISATION"
+   ],
+   "whyPrimary": "Official Toyota Production System overview (jidoka = stop-on-defect, just-in-time) — overview level only",
+   "priorOutcome": "V160 DEFER (robots.txt redirected) — re-probed to see whether the reason changed",
+   "termsVerified": true,
+   "termsUrl": "https://global.toyota/en/terms-of-use/",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "unchanged from V160: Toyota ToU forbids duplication/diversion 'that infringes' rights; no automated-access clause found (keyword search 2026-11-23)",
+   "prefixes": [
+    {
+     "path": "/en/company/vision-and-philosophy/production-system/",
+     "robots": "REDIRECTED",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://global.toyota/en/company/vision-and-philosophy/production-system/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Toyota Production System | Vision & Philosophy | Company | Toyota Motor Corporation Official Global Website"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 0,
+   "robotsFetch": {
+    "status": 301,
+    "mode": "REDIRECTED",
+    "location": "https://global.toyota/robots.txt/",
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "sre.google",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Google",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "OBSERVABILITY_CAUSAL",
+    "LONG_RUNNING_EXECUTION"
+   ],
+   "whyPrimary": "Google SRE book + SRE workbook (free official edition)",
+   "priorOutcome": "V160 DEFER (prefix roots 301 same-host; terms not observed) — re-candidate with canonical (non-redirecting) prefixes",
+   "termsVerified": false,
+   "termsNote": "unchanged from V160: page footers link only the CC BY-NC-ND 4.0 licence; Google ToS not linked from the site (licence governs reuse, not automated access)",
+   "prefixes": [
+    {
+     "path": "/sre-book/introduction/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://sre.google/sre-book/introduction/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Google SRE - IT Service Management: Automate Operations",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*authuser*",
+      "Disallow: /*cache*"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T19:23:29+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    },
+    {
+     "path": "/workbook/table-of-contents/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://sre.google/workbook/table-of-contents/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Google SRE - SRE workbook table of content",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*authuser*",
+      "Disallow: /*cache*"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T19:23:29+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "0070574c0db6da5e8b9c59c3e17fb72f7eb8e6aebd7ea4c90f02f395e28b481a",
+   "robotsTxtBytes": 96,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "cloud.google.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Google",
+   "topics": [
+    "DISTRIBUTED_ARCH",
+    "RELIABILITY_SECURITY_RECOVERY",
+    "RESOURCE_OPTIMISATION"
+   ],
+   "whyPrimary": "Google Cloud Well-Architected Framework (official architecture guidance: reliability, cost/performance optimisation)",
+   "termsVerified": false,
+   "termsNote": "Google ToS not linked from the probed response (301 redirect only)",
+   "prefixes": [
+    {
+     "path": "/architecture/framework",
+     "robots": "ALLOW",
+     "redirect": "OFF_HOST",
+     "prefixRedirectLocation": "https://docs.cloud.google.com/architecture/framework",
+     "prefixHttpStatus": 301,
+     "sampled200": false,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:01+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "37365b84bd6175aee6de59b4bf48768799cb05c8fb0425567c3fc25e0eefb13d",
+   "robotsTxtBytes": 2529,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [
+     [
+      "google-devrel"
+     ]
+    ],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": "content moved to docs.cloud.google.com (off-host redirect) — future candidate, not probed in this run",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "abseil.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Google",
+   "topics": [
+    "SWE_AUTOMATION",
+    "INDEPENDENT_VALIDATION"
+   ],
+   "whyPrimary": "'Software Engineering at Google' book (official free HTML edition)",
+   "priorOutcome": "V160 DEFER (no site terms found) — re-probed",
+   "termsVerified": false,
+   "termsNote": "unchanged from V160: only the CC BY-NC-ND licence is linked; /about/ has no terms",
+   "prefixes": [
+    {
+     "path": "/resources/swe-book/html/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 404,
+     "sampled200": true,
+     "sampledUrl": "https://abseil.io/resources/swe-book/html/toc.html",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Software Engineering at Google",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:23:38+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "8fa3036c68bfcbd32365f6225d24333264093b7cd38d306e106b4dbdc934fd5b",
+   "robotsTxtBytes": 1248,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "www.amazon.science",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Amazon",
+   "topics": [
+    "AGENTS",
+    "MEMORY_LEARNING",
+    "DISTRIBUTED_ARCH",
+    "RESOURCE_OPTIMISATION"
+   ],
+   "whyPrimary": "Amazon Science official publications + blog (Amazon research papers)",
+   "termsVerified": true,
+   "termsUrl": "https://www.amazon.com/gp/help/customer/display.html?nodeId=508088",
+   "termsForbidAutomation": true,
+   "termsClause": "Footer 'Conditions of Use' → Amazon.com Conditions of Use (fetched 2026-11-23): 'This license does not include ... any use of data mining, robots, or similar data gathering and extraction tools' and 'You will not ... use AI-generated content from the Amazon Services to ... develop or improve ... machine learning models' — same prohibition class as AWS (V160 REFUSED)",
+   "prefixes": [
+    {
+     "path": "/publications",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.amazon.science/publications",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Publications - Amazon Science",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:23:43+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    },
+    {
+     "path": "/blog",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.amazon.science/blog",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Blog - Amazon Science",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:23:43+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "crawlDelaySeconds": 10,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "f4cb546fa8c4d9d262c61bb92a5262714c498b017d93f3dfc76a5ecb630a2e84",
+   "robotsTxtBytes": 130,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://www.amazon.com/gp/help/customer/display.html/ref=footer_cou?ie=UTF8&amp;nodeId=508088",
+      "Conditions of Use"
+     ],
+     [
+      "https://www.amazon.com/gp/help/customer/display.html?nodeId=468496",
+      "Privacy"
+     ],
+     [
+      "https://www.amazon.science/research-areas/security-privacy-and-abuse-prevention",
+      "Security, privacy, and abuse prevention"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "www.microsoft.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Microsoft",
+   "topics": [
+    "AGENTS",
+    "SWE_AUTOMATION",
+    "RELIABILITY_SECURITY_RECOVERY"
+   ],
+   "whyPrimary": "Microsoft Research publications (primary research papers)",
+   "priorOutcome": "V160 DEFER on this host for /en-us/securityengineering/sdl/ (robots wildcard rules may match inside) — new prefix probed",
+   "termsVerified": true,
+   "termsUrl": "https://www.microsoft.com/en-us/legal/terms-of-use",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "Microsoft Terms of Use (footer 'Terms of use' → go.microsoft.com/fwlink/?LinkID=206977; fetched 2026-11-23): relevant clauses only 'Harvest or otherwise collect information about others, including e-mail addresses' and the AI-services reverse-engineering/scraping restriction (AI services only) ⇒ reading public engineering articles is not forbidden — same reading as V160 learn.microsoft.com",
+   "prefixes": [
+    {
+     "path": "/en-us/research/publication/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 404,
+     "sampled200": false,
+     "sampledUrl": "https://www.microsoft.com/en-us/research/publications/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Publications index - Microsoft Research",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: *&solved=",
+      "Disallow: */base-en/",
+      "Disallow: */isv/*?",
+      "Disallow: */layout/",
+      "Disallow: */mediaapi/",
+      "Disallow: */qa-folder",
+      "Disallow: */unsubscribe/",
+      "Disallow: */wal/",
+      "Disallow: *=imgmanager",
+      "Disallow: *?intc=",
+      "Disallow: *ActivityUID=",
+      "Disallow: *action=accessorysearch&",
+      "Disallow: *action=accessorysearch&product=*&*",
+      "Disallow: *action=catalogsearch&",
+      "Disallow: *action=overlay&",
+      "Disallow: *action=productLinkAction&",
+      "Disallow: *action=productSupportSearch",
+      "Disallow: *action=productcompareaction&",
+      "Disallow: *action=quickSearch&",
+      "Disallow: *action=siteSearch",
+      "Disallow: *action=writeReview",
+      "Disallow: *fe=true",
+      "Disallow: *rep=hc",
+      "Disallow: /*&ep_*",
+      "Disallow: /*/Search/",
+      "Disallow: /*/download/Browse.aspx?",
+      "Disallow: /*/download/browse.aspx?",
+      "Disallow: /*/download/confirmation.aspx?",
+      "Disallow: /*/download/info.aspx?",
+      "Disallow: /*/download/registration-suggested.aspx?",
+      "Disallow: /*/download/results.aspx?",
+      "Disallow: /*/download/thankyou.aspx",
+      "Disallow: /*/download/thankyou.aspx?",
+      "Disallow: /*/embed/",
+      "Disallow: /*/microsoft-365/site-search",
+      "Disallow: /*/music/*/Search/",
+      "Disallow: /*/music/*/search/",
+      "Disallow: /*/newsearch/",
+      "Disallow: /*/search/",
+      "Disallow: /*/security/search-results.aspx?",
+      "Disallow: /*/store/best-rated/*?*&*&*",
+      "Disallow: /*/store/best-selling/*?*&*&*",
+      "Disallow: /*/store/buynow?",
+      "Disallow: /*/store/cart",
+      "Disallow: /*/store/collections/helpmechoosepc/?*&*&*",
+      "Disallow: /*/store/collections/helpmechoosepc?*&*&*",
+      "Disallow: /*/store/coming-soon/*?*&*&*",
+      "Disallow: /*/store/d/groove-music-pass/cfq7ttc0k5dq/0001",
+      "Disallow: /*/store/deals/*?*&*&*",
+      "Disallow: /*/store/game-demos/*?*&*&*",
+      "Disallow: /*/store/game-previews/*?*&*&*",
+      "Disallow: /*/store/locations/store-locations-sitemap.xml",
+      "Disallow: /*/store/most-played/*?*&*&*",
+      "Disallow: /*/store/most-popular/*?*&*&*",
+      "Disallow: /*/store/movies-and-tv/*?*&*&*",
+      "Disallow: /*/store/new-and-rising/*?*&*&*",
+      "Disallow: /*/store/new/*?*&*&*",
+      "Disallow: /*/store/top-free/*?*&*&*",
+      "Disallow: /*/store/top-paid/*?*&*&*",
+      "Disallow: /*?*ep_*",
+      "Disallow: /*?*p=*",
+      "Disallow: /*?p=",
+      "Disallow: /*HpOptOut=true$",
+      "Disallow: /*TOCLinksForCrawlers*",
+      "Disallow: /*mac/help.mspx?",
+      "Disallow: /*mactopia/help.mspx?",
+      "Disallow: /*mnp_utility.mspx?",
+      "Disallow: /*noItems="
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T19:23:48+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "79a2a24e3e2c00deaba2fc1922b9113f5508e74133911eadea4ebb00b5de9768",
+   "robotsTxtBytes": 9126,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": "sample /en-us/research/publications/ is NOT under prefix /en-us/research/publication/ ⇒ sampled200=false",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "microsoft.github.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Microsoft",
+   "topics": [
+    "AGENTS",
+    "PLANNING"
+   ],
+   "whyPrimary": "AutoGen multi-agent framework documentation (Microsoft, GitHub Pages)",
+   "priorOutcome": "HOST ALREADY ADMITTED in V160 grant for /code-with-engineering-playbook/ only — this is a NEW PREFIX on an admitted host, not a new host",
+   "termsVerified": true,
+   "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
+   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "prefixes": [
+    {
+     "path": "/autogen/stable/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://microsoft.github.io/autogen/stable/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "AutoGen — AutoGen",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:22+00:00 (robots.txt 4xx ⇒ RFC 9309 allow; no rules)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 9379,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "NO_ROBOTS_4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://go.microsoft.com/fwlink/?LinkId=521839",
+      "Privacy Policy"
+     ],
+     [
+      "https://go.microsoft.com/fwlink/?linkid=2259814",
+      "Consumer Health Privacy"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "devblogs.microsoft.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Microsoft",
+   "topics": [
+    "SWE_AUTOMATION",
+    "RELIABILITY_SECURITY_RECOVERY"
+   ],
+   "whyPrimary": "'Engineering@Microsoft' official engineering blog",
+   "termsVerified": true,
+   "termsUrl": "https://www.microsoft.com/en-us/legal/terms-of-use",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "Microsoft Terms of Use (footer 'Terms of use' → go.microsoft.com/fwlink/?LinkID=206977; fetched 2026-11-23): relevant clauses only 'Harvest or otherwise collect information about others, including e-mail addresses' and the AI-services reverse-engineering/scraping restriction (AI services only) ⇒ reading public engineering articles is not forbidden — same reading as V160 learn.microsoft.com",
+   "prefixes": [
+    {
+     "path": "/engineering-at-microsoft/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://devblogs.microsoft.com/engineering-at-microsoft/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Engineering@Microsoft",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:23:58+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "b0d2665115183af00ad864d8fc214048178aca6486043d5165890b485f02bf46",
+   "robotsTxtBytes": 9670,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://aka.ms/yourcaliforniaprivacychoices",
+      "Your Privacy Choices Opt-Out Icon       "
+     ],
+     [
+      "https://go.microsoft.com/fwlink/?LinkID=206977",
+      "Terms of use"
+     ],
+     [
+      "https://go.microsoft.com/fwlink/?LinkId=521839",
+      "Privacy"
+     ],
+     [
+      "https://go.microsoft.com/fwlink/?LinkId=521839",
+      "Privacy Statement."
+     ],
+     [
+      "https://go.microsoft.com/fwlink/?linkid=2259814",
+      "Consumer Health Privacy"
+     ],
+     [
+      "https://www.microsoft.com/en-us/legal/compliance/recycling",
+      "Recycling"
+     ],
+     [
+      "https://www.microsoft.com/en-us/privacy?icid=DSM_Footer_Company_Privacy",
+      "Privacy at Microsoft"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "openai.github.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "OpenAI",
+   "topics": [
+    "AGENTS",
+    "PLANNING",
+    "LONG_RUNNING_EXECUTION"
+   ],
+   "whyPrimary": "OpenAI Agents SDK (Python) official documentation (GitHub Pages; code MIT)",
+   "priorOutcome": "openai.com REFUSED in V160 (OpenAI Terms forbid programmatic extraction) — GitHub-hosted docs evaluated separately",
+   "termsVerified": false,
+   "termsNote": "site shows only 'CC BY 4.0' docs licence; GitHub AUP would permit research use, but OpenAI Terms of Use (fetched 2026-11-23) forbid 'Automatically or programmatically extracting data or Output' for OpenAI 'Services'; whether OpenAI's terms reach its GitHub-Pages docs is a legal reading",
+   "ownerDecisionRequired": "openai.github.io: GitHub AUP (research use permitted) vs OpenAI Terms ('Automatically or programmatically extracting data') — do OpenAI's terms cover its GitHub-hosted SDK docs? openai.com remains REFUSED (V160)",
+   "prefixes": [
+    {
+     "path": "/openai-agents-python/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://openai.github.io/openai-agents-python/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "OpenAI Agents SDK",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:02+00:00 (robots.txt 4xx ⇒ RFC 9309 allow; no rules)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 9115,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "NO_ROBOTS_4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "modelcontextprotocol.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Anthropic (originator; MCP now governed under the Linux Foundation's Agentic AI Foundation)",
+   "topics": [
+    "AGENTS",
+    "DISTRIBUTED_ARCH"
+   ],
+   "whyPrimary": "Model Context Protocol specification (agent↔tool protocol)",
+   "termsVerified": false,
+   "termsNote": "no terms/legal link found on the site (spec licence not separately verified)",
+   "prefixes": [
+    {
+     "path": "/specification",
+     "robots": "ALLOW",
+     "redirect": "SAME_HOST",
+     "prefixRedirectLocation": "/specification/2026-07-28",
+     "prefixHttpStatus": 307,
+     "sampled200": false,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:03+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "da617760d5f0ec302dda3fe4019a76cb708e048faaf61e78e1ce8736dac2241f",
+   "robotsTxtBytes": 179,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "research.nvidia.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NVIDIA",
+   "topics": [
+    "LOCAL_MODELS_ROUTING",
+    "RESOURCE_OPTIMISATION",
+    "AUTONOMY"
+   ],
+   "whyPrimary": "NVIDIA Research publications",
+   "termsVerified": true,
+   "termsUrl": "https://www.nvidia.com/en-us/about-nvidia/terms-of-service/",
+   "termsForbidAutomation": true,
+   "termsClause": "Footer links NVIDIA Terms of Service explicitly; NVIDIA ToS (f) (quoted in V160 evidence, page re-fetched 2026-11-23): 'use any robot, spider, scraper, crawler, data mining tool, data gathering or extraction tool, or any other automatic device ... to access, acquire ...' is prohibited",
+   "prefixes": [
+    {
+     "path": "/publications",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://research.nvidia.com/publications",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Publications | Research",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*/media/oembed"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:09+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "cef99f4db207a7389d12b7ea44e7b2cce9181d3912a00193cd0683aa25c39876",
+   "robotsTxtBytes": 3209,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "nvidia.github.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NVIDIA",
+   "topics": [
+    "LOCAL_MODELS_ROUTING",
+    "RESOURCE_OPTIMISATION"
+   ],
+   "whyPrimary": "TensorRT-LLM docs (NVIDIA, GitHub Pages): inference optimisation / serving",
+   "termsVerified": false,
+   "termsNote": "GitHub-hosted, but the page footer links NVIDIA Terms of Service (robot/scraper prohibition) — conflicting terms",
+   "ownerDecisionRequired": "nvidia.github.io: GitHub AUP (research use permitted) vs NVIDIA ToS linked from the docs footer (robots/scrapers prohibited) — which governs?",
+   "prefixes": [
+    {
+     "path": "/TensorRT-LLM/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://nvidia.github.io/TensorRT-LLM/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Welcome to TensorRT LLM’s Documentation! — TensorRT LLM",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:14+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "c420a2d6964a2ee153e11e6ccc4aec776793e244f0b7861d34c3022ac6a50887",
+   "robotsTxtBytes": 70,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "research.ibm.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "IBM",
+   "topics": [
+    "AGENTS",
+    "SWE_AUTOMATION",
+    "LOCAL_MODELS_ROUTING"
+   ],
+   "whyPrimary": "IBM Research blog + publications",
+   "priorOutcome": "V160 DEFER (terms coverage not confirmed) — re-probed",
+   "termsVerified": false,
+   "termsNote": "unchanged from V160: no terms link in server HTML; ibm.com/legal/terms (fetched 2026-11-23) both allows 'a crawler ... as permitted by ... robots.txt' and lists 'any robot, spider, site search/retrieval application ... to retrieve, index, \"data mine\"' among prohibited conduct, and states use is 'non-commercial in nature' — ambiguous",
+   "ownerDecisionRequired": "IBM Terms: robots.txt-compliant crawling permitted vs 'robot ... data mine' conduct prohibition and 'non-commercial' use — and does it cover research.ibm.com?",
+   "prefixes": [
+    {
+     "path": "/blog",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://research.ibm.com/blog",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Blog - IBM Research",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:18+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    },
+    {
+     "path": "/publications",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://research.ibm.com/publications",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Publications - IBM Research",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:18+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "a2f248e39e354dd0c4d975aed45c60136f367e258b83f42eaaff5f64db935733",
+   "robotsTxtBytes": 162,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 2,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "www.palantir.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Palantir",
+   "topics": [
+    "AGENTS",
+    "DISTRIBUTED_ARCH",
+    "OBSERVABILITY_CAUSAL"
+   ],
+   "whyPrimary": "Palantir Foundry public product documentation (the only primary Palantir technical source found besides the bot-challenged Medium blog)",
+   "termsVerified": false,
+   "termsNote": "footer links /terms-and-conditions/ but the page is a JS shell (50 chars of server text) — terms not readable",
+   "prefixes": [
+    {
+     "path": "/docs/foundry",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.palantir.com/docs/foundry",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Documentation • Palantir",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:06+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "48182094fc56f42869cbaba3a9a5b07dbd5d59cecd34f43e14c8256468fcd3ce",
+   "robotsTxtBytes": 175,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://www.palantir.com/privacy-and-security/",
+      "Privacy Statement ↗"
+     ],
+     [
+      "https://www.palantir.com/terms-and-conditions/",
+      "Terms of Use ↗"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "netflix.github.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Netflix",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "INDEPENDENT_VALIDATION"
+   ],
+   "whyPrimary": "Chaos Monkey documentation (Netflix OSS, GitHub Pages) — narrow project prefix",
+   "priorOutcome": "V160 REFUSED netflix.github.io at '/' (too broad) — narrow project prefix now proposed",
+   "termsVerified": true,
+   "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
+   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "prefixes": [
+    {
+     "path": "/chaosmonkey/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://netflix.github.io/chaosmonkey/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Home - Chaos Monkey",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:28+00:00 (robots.txt 4xx ⇒ RFC 9309 allow; no rules)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 9379,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "NO_ROBOTS_4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "github.blog",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "GitHub",
+   "topics": [
+    "AGENTS",
+    "SWE_AUTOMATION"
+   ],
+   "whyPrimary": "GitHub blog AI & ML section (Copilot agent engineering)",
+   "priorOutcome": "HOST ALREADY ADMITTED in V160 grant for /engineering/ only — NEW PREFIX on an admitted host",
+   "termsVerified": true,
+   "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
+   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "prefixes": [
+    {
+     "path": "/ai-and-ml/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://github.blog/ai-and-ml/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "The latest on AI & ML - The GitHub Blog",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:31+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "8df48636a2542d5e497a1acfea9140526cc2bb55fd1d02934a3263cebf681eed",
+   "robotsTxtBytes": 269,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "stripe.dev",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Stripe",
+   "topics": [
+    "DISTRIBUTED_ARCH",
+    "RELIABILITY_SECURITY_RECOVERY"
+   ],
+   "whyPrimary": "Stripe engineering blog (moved from stripe.com)",
+   "priorOutcome": "V160 DEFER (no website terms found) — re-probed",
+   "termsVerified": false,
+   "termsNote": "unchanged from V160: footer links stripe.com/legal (index; no website terms of use found — Stripe Services Agreement governs payment services, not this blog)",
+   "prefixes": [
+    {
+     "path": "/blog",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://stripe.dev/blog",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Stripe | Dev Blog",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:34+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "9c6fe8ba56f4ea9a3213ab7c250ec4e84158f2e9cb6d46991c8223b5216adc57",
+   "robotsTxtBytes": 800,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://stripe.com/legal",
+      "Legal"
+     ],
+     [
+      "https://stripe.com/privacy",
+      "Privacy"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "www.bosch-ai.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Bosch",
+   "topics": [
+    "AUTONOMY",
+    "MEMORY_LEARNING",
+    "INDEPENDENT_VALIDATION"
+   ],
+   "whyPrimary": "Bosch Center for Artificial Intelligence research pages",
+   "termsVerified": false,
+   "termsNote": "TLS certificate does not match www.bosch-ai.com (hostname mismatch) — no content reachable; never bypassed",
+   "prefixes": [
+    {
+     "path": "/research/",
+     "robots": "UNREACHABLE_5XX",
+     "redirect": "UNKNOWN",
+     "prefixHttpStatus": null,
+     "sampled200": false
+    }
+   ],
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 0,
+   "robotsFetch": {
+    "status": null,
+    "mode": "UNREACHABLE_5XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": "robots.txt fetch failed: URLError(SSLCertVerificationError(1, \"[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.bosch-ai.com'. (_ssl.c:1081)\"))",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "pytorch.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Meta (originator; PyTorch is now governed by the PyTorch Foundation / Linux Foundation)",
+   "topics": [
+    "LOCAL_MODELS_ROUTING",
+    "RESOURCE_OPTIMISATION"
+   ],
+   "whyPrimary": "PyTorch official docs + blog",
+   "termsVerified": true,
+   "termsUrl": "https://www.linuxfoundation.org/legal/terms",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "Footer 'Policies' → linuxfoundation.org/legal/policies → Linux Foundation Terms of Use (rev. 2020-11-16, apply to 'Linux Foundation websites'; fetched 2026-11-23): conduct/IP/user-content rules only; no clause on robots, crawlers, scraping, data mining or automated access",
+   "prefixes": [
+    {
+     "path": "/blog/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://pytorch.org/blog/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Blog - PyTorch",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:44+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "a528e19d8435a9c63cabdac0ed400f181a141d11bd54ef1f155d31aba0773cc4",
+   "robotsTxtBytes": 292,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 2,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": "pytorch.org/docs/stable/ answers 301 OFF-HOST → docs.pytorch.org/docs/stable/ ⇒ that prefix is not proposed here (it would REFUSE the host); docs.pytorch.org evaluated as its own candidate",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "http://www.linuxfoundation.org/privacy",
+      "Privacy Policy"
+     ],
+     [
+      "https://www.linuxfoundation.org/legal/policies",
+      "Policies"
+     ],
+     [
+      "https://www.linuxfoundation.org/privacy/",
+      "Privacy Policy"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "docs.pytorch.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Meta (originator; PyTorch Foundation / Linux Foundation)",
+   "topics": [
+    "LOCAL_MODELS_ROUTING",
+    "RESOURCE_OPTIMISATION"
+   ],
+   "whyPrimary": "PyTorch official documentation (pytorch.org/docs/stable/ 301s OFF-HOST here)",
+   "termsVerified": true,
+   "termsUrl": "https://www.linuxfoundation.org/legal/terms",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "same Linux Foundation Terms of Use as pytorch.org",
+   "prefixes": [
+    {
+     "path": "/docs/stable/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": false,
+     "sampledUrl": "https://docs.pytorch.org/docs/stable/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Redirecting…",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*/_downloads/",
+      "Disallow: /*/_modules/",
+      "Disallow: /*/_sources/",
+      "Disallow: /*/_static/"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:08+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "5ebe63860bafa9bc04389cc341d455fea6440e26f8270e30dbefecf0c6361de7",
+   "robotsTxtBytes": 1046,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": "/docs/stable/ is a client-side 'Redirecting…' stub (no content) ⇒ sampled200=false",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "opentelemetry.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "CNCF / OpenTelemetry",
+   "topics": [
+    "OBSERVABILITY_CAUSAL",
+    "DISTRIBUTED_ARCH"
+   ],
+   "whyPrimary": "OpenTelemetry official documentation and specification pages",
+   "priorOutcome": "V158 DEFER (TERMS_NOT_VERIFIED) — re-probed",
+   "termsVerified": false,
+   "termsNote": "unchanged from V158: footer links LF privacy + trademark pages and the CC BY 4.0 licence only — no terms of use linked",
+   "prefixes": [
+    {
+     "path": "/docs/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://opentelemetry.io/docs/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Documentation | OpenTelemetry",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:50+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "fd89345af6aca5dab85f2aa6a830e270a362b1fa6b5f19607ddd773a081ed651",
+   "robotsTxtBytes": 14,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "kubernetes.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "CNCF / Kubernetes",
+   "topics": [
+    "DISTRIBUTED_ARCH",
+    "RESOURCE_OPTIMISATION",
+    "RELIABILITY_SECURITY_RECOVERY"
+   ],
+   "whyPrimary": "Kubernetes official concepts documentation (controllers/reconciliation, scheduling)",
+   "priorOutcome": "V158 DEFER (REQUIRESAUTH_NOT_VERIFIED) — re-probed",
+   "termsVerified": true,
+   "termsUrl": "https://lfprojects.org/policies/terms-of-use/",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "NEW vs V158: footer states 'For website terms of use, trademark policy and other project policies please see https://lfprojects.org/policies/'; LF Projects Terms of Use (eff. 2017-09-14, 'apply to your use of the web sites of LF Project and the Projects'; fetched 2026-11-23): conduct/IP/user-content/DMCA only — no clause on robots, crawlers, scraping, data mining or automated access",
+   "prefixes": [
+    {
+     "path": "/docs/concepts/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://kubernetes.io/docs/concepts/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Concepts | Kubernetes",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:24:54+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "a596f8f693e5eee502900b033a46f73d564da30aef78b63c9233f8283fd8a4fa",
+   "robotsTxtBytes": 148,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "slsa.dev",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "OpenSSF (Linux Foundation)",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "INDEPENDENT_VALIDATION"
+   ],
+   "whyPrimary": "SLSA supply-chain integrity specification",
+   "termsVerified": false,
+   "termsNote": "footer links only the Community Specification License 1.0 (© The Linux Foundation); no website terms linked",
+   "prefixes": [
+    {
+     "path": "/spec/v1.1/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://slsa.dev/spec/v1.1/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "SLSA • SLSA specification",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:12+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "212cf4d230aab8bdbd60dd4a44176e7b1252c82c7004155a6aaa1b9a2d1fee6f",
+   "robotsTxtBytes": 22,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://github.com/slsa-framework/governance",
+      "Community Specification License 1.0"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "www.rfc-editor.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "IETF / RFC Editor",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "DISTRIBUTED_ARCH"
+   ],
+   "whyPrimary": "Authoritative RFC series (e.g. RFC 9309)",
+   "priorOutcome": "V158 DEFER (robots sub-paths not analysed) — re-analysed with explicit arrays",
+   "termsVerified": true,
+   "termsUrl": "https://trustee.ietf.org/documents/trust-legal-provisions/",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "reused from V158 evidence (IETF Trust Legal Provisions); pages link trustee.ietf.org/license-info (observed 2026-11-23)",
+   "prefixes": [
+    {
+     "path": "/rfc/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 404,
+     "sampled200": true,
+     "sampledUrl": "https://www.rfc-editor.org/rfc/rfc9309.html",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "RFC 9309: Robots Exclusion Protocol",
+     "robotsDisallowedWithin": [
+      "/rfc/authors/",
+      "/rfc/rerendered/",
+      "/rfc/v3test/"
+     ],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:01+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "df052cf390448ea2916ce4d3b5f6e42880cd246ea2bf1d5efce5596b1b2e3827",
+   "robotsTxtBytes": 135,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "datatracker.ietf.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "IETF",
+   "topics": [
+    "DISTRIBUTED_ARCH",
+    "RELIABILITY_SECURITY_RECOVERY"
+   ],
+   "whyPrimary": "IETF Datatracker document pages (RFCs + drafts)",
+   "priorOutcome": "V158 DEFER (robots sub-paths not analysed) — re-analysed",
+   "termsVerified": true,
+   "termsUrl": "https://trustee.ietf.org/documents/trust-legal-provisions/",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "reused from V158 evidence (IETF Trust Legal Provisions, verified in the V158 admission); RFC pages link trustee.ietf.org/license-info (observed 2026-11-23)",
+   "prefixes": [
+    {
+     "path": "/doc/html/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 404,
+     "sampled200": true,
+     "sampledUrl": "https://datatracker.ietf.org/doc/html/rfc9309",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "RFC 9309 - Robots Exclusion Protocol",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:29+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "b78dba3cd417cda57157a0f20a73343adf799ff824bd1302320d4171f009d448",
+   "robotsTxtBytes": 34,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "#name-copyright-notice",
+      "Copyright Notice"
+     ],
+     [
+      "https://trustee.ietf.org/license-info",
+      "https://trustee.ietf.org/license-info"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "www.w3.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "W3C",
+   "topics": [
+    "OBSERVABILITY_CAUSAL",
+    "DISTRIBUTED_ARCH"
+   ],
+   "whyPrimary": "W3C Trace Context Recommendation (distributed tracing standard) — narrowed from /TR/",
+   "priorOutcome": "V158 DEFER /TR/ (robots disallowed sub-path /TR/?) — narrowed prefix",
+   "termsVerified": true,
+   "termsUrl": "https://www.w3.org/copyright/document-license-2023/",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsClause": "reused from V158 evidence (W3C Document License 2023, re-fetched 2026-11-23)",
+   "prefixes": [
+    {
+     "path": "/TR/trace-context/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.w3.org/TR/trace-context/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Trace Context",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: /*,*",
+      "Disallow: /*/wiki/*/edit",
+      "Disallow: /*/wiki/*/history",
+      "Disallow: /*/wiki/*/info",
+      "Disallow: /*/wiki/Help:",
+      "Disallow: /*/wiki/Special:",
+      "Disallow: /*/wiki/Talk:",
+      "Disallow: /*/wiki/index.php/Help",
+      "Disallow: /*/wiki/index.php/MediaWiki",
+      "Disallow: /*/wiki/index.php/Special:",
+      "Disallow: /*/wiki/index.php/Template",
+      "Disallow: /*/wiki/index.php?",
+      "Disallow: /*/wiki/skins/",
+      "Disallow: /*/wp-admin/",
+      "Disallow: /*/wp-content/cache/",
+      "Disallow: /*/wp-content/plugins/",
+      "Disallow: /*/wp-content/themes/",
+      "Disallow: /*/wp-includes/"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:11+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "444079f3a1dade59d593ff5968013596b910f004fcfb0d33eef897f322f914ab",
+   "robotsTxtBytes": 3844,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [
+     [
+      "w3c-checklink"
+     ]
+    ],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "www.nist.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "NIST",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "INDEPENDENT_VALIDATION"
+   ],
+   "whyPrimary": "NIST AI Risk Management Framework official pages",
+   "termsVerified": false,
+   "termsNote": "/oism/site-policies is 404; footer links /copyrights-disclaimers (not reviewed)",
+   "prefixes": [
+    {
+     "path": "/itl/ai-risk-management-framework",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.nist.gov/itl/ai-risk-management-framework",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "AI Risk Management Framework | NIST",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [
+      "Disallow: *&f%5B*",
+      "Disallow: *?f%5B*",
+      "Disallow: /*/media/oembed"
+     ],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:14+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "0fed8806709b6ff2716921723b5077d1c19d152f760db983af60988cae0031dd",
+   "robotsTxtBytes": 2425,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "cheatsheetseries.owasp.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "OWASP",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "AGENTS"
+   ],
+   "whyPrimary": "OWASP Cheat Sheet Series (incl. AI agent security)",
+   "priorOutcome": "V158 DEFER (REQUIRESAUTH_NOT_VERIFIED) — re-probed",
+   "termsVerified": false,
+   "termsNote": "unchanged from V158: site links only CC BY-SA 4.0; owasp.org/policy/general-disclaimer exists (no automation clause) but is not linked from this host",
+   "prefixes": [
+    {
+     "path": "/cheatsheets/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 404,
+     "sampled200": true,
+     "sampledUrl": "https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "AI Agent Security - OWASP Cheat Sheet Series",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:18+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
+   "robotsTxtBytes": 23,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "#8-data-protection-privacy",
+      "&para;"
+     ],
+     [
+      "#8-data-protection-privacy",
+      "8. Data Protection &amp; Privacy"
+     ],
+     [
+      "User_Privacy_Protection_Cheat_Sheet.html",
+      "User Privacy Protection"
+     ],
+     [
+      "https://creativecommons.org/licenses/by-sa/4.0/",
+      "Creative Commons Attribution-ShareAlike "
+     ]
+    ]
+   }
+  },
+  {
+   "host": "genai.owasp.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "OWASP",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "AGENTS"
+   ],
+   "whyPrimary": "OWASP GenAI Security Project (LLM Top 10)",
+   "priorOutcome": "V158 DEFER (REQUIRESAUTH_NOT_VERIFIED) — re-probed",
+   "termsVerified": false,
+   "termsNote": "unchanged from V158: footer links only the OWASP privacy policy; no terms of use",
+   "prefixes": [
+    {
+     "path": "/llm-top-10/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://genai.owasp.org/llm-top-10/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "LLMRisks Archive - OWASP Gen AI Security Project",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:23+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "97b84e188cad27f575c890dfbd7302dd9415bd4bf09b0e9c3c98d98313c09d75",
+   "robotsTxtBytes": 346,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 2,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://owasp.org/www-policy/operational/privacy",
+      "PRIVACY"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "www.usenix.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "USENIX",
+   "topics": [
+    "RELIABILITY_SECURITY_RECOVERY",
+    "DISTRIBUTED_ARCH",
+    "OBSERVABILITY_CAUSAL"
+   ],
+   "whyPrimary": ";login: online (SRE/systems practitioner literature, USENIX)",
+   "priorOutcome": "V158 DEFER (REQUIRESAUTH_NOT_VERIFIED) — re-probed",
+   "termsVerified": false,
+   "termsNote": "/about/privacy-policy 404; no terms of use found",
+   "prefixes": [
+    {
+     "path": "/publications/loginonline/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.usenix.org/publications/loginonline/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "USENIX | The Advanced Computing Systems Association",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:27+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "crawlDelaySeconds": 10,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "5c58976a23d656923dff36dd9c8a7d01e5fea16f57d5abf506a1292d9c354e18",
+   "robotsTxtBytes": 2208,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "jepsen.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Jepsen (independent)",
+   "topics": [
+    "INDEPENDENT_VALIDATION",
+    "DISTRIBUTED_ARCH"
+   ],
+   "whyPrimary": "Jepsen analyses: independent safety testing of distributed databases",
+   "termsVerified": false,
+   "termsNote": "no terms page; every page footer says 'Additional information for LLM scrapers is available' linking /llm/index, which serves deliberately scrambled word-salad text (an anti-LLM-scraper / data-poisoning signal) — AI use is evidently unwelcome",
+   "ownerDecisionRequired": "jepsen.io signals hostility to LLM scraping (/llm/index decoy page) without stating terms — recommend NOT collecting; written permission from Jepsen LLC would be required",
+   "prefixes": [
+    {
+     "path": "/analyses",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://jepsen.io/analyses",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Analyses",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:31+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "348e28a172d03b5d6fdd84b620390aa8f265aef26b7282a54f6cf01288702145",
+   "robotsTxtBytes": 30,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "martinfowler.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Thoughtworks / Martin Fowler",
+   "topics": [
+    "DISTRIBUTED_ARCH",
+    "SWE_AUTOMATION"
+   ],
+   "whyPrimary": "Primary long-form architecture/patterns articles",
+   "termsVerified": false,
+   "termsNote": "no terms of use found (© Martin Fowler only); /articles/ index returns 403 to the probe while article pages return 200",
+   "prefixes": [
+    {
+     "path": "/articles/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 403,
+     "sampled200": true,
+     "sampledUrl": "https://martinfowler.com/articles/microservices.html",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Microservices",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:35+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
+   "robotsTxtBytes": 23,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "docs.temporal.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Temporal Technologies",
+   "topics": [
+    "LONG_RUNNING_EXECUTION",
+    "RELIABILITY_SECURITY_RECOVERY"
+   ],
+   "whyPrimary": "Temporal durable-execution encyclopedia (official docs)",
+   "termsVerified": false,
+   "termsNote": "docs footer links no terms; temporal.io/terms-of-service is a Temporal Cloud customer agreement, not website terms",
+   "prefixes": [
+    {
+     "path": "/encyclopedia",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://docs.temporal.io/encyclopedia",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Temporal Encyclopedia | Temporal Documentation",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:15+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "80c61d955cc8da87ca3f479b626520ebf3296af99352b3b968fff64bd9d0dd49",
+   "robotsTxtBytes": 70,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "langchain-ai.github.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "LangChain",
+   "topics": [
+    "AGENTS",
+    "MEMORY_LEARNING",
+    "LONG_RUNNING_EXECUTION"
+   ],
+   "whyPrimary": "LangGraph docs (stateful multi-agent orchestration, checkpoints)",
+   "termsVerified": true,
+   "termsUrl": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+   "termsForbidAutomation": false,
+   "rateLimitDocumented": false,
+   "termsCondition": "GitHub Acceptable Use Policy: scraping/automated collection permitted for research purposes ONLY if any publications resulting from that research are open access; ODG use = internal research, no publication; any future publication must be open access",
+   "termsClause": "GitHub AUP s.7 (fetched 2026-11-23): 'You may use information from our Service for the following reasons, regardless of whether the information was scraped ... Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access' — same basis as the V160 admission of microsoft.github.io / google.github.io",
+   "prefixes": [
+    {
+     "path": "/langgraph/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": false,
+     "sampledUrl": "https://langchain-ai.github.io/langgraph/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Redirecting to LangGraph Documentation",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:42+00:00 (robots.txt 4xx ⇒ RFC 9309 allow; no rules)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 9115,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "NO_ROBOTS_4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": "/langgraph/ is a client-side 'Redirecting…' stub (no content) ⇒ sampled200=false; LangGraph docs moved to docs.langchain.com (evaluated separately)",
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "docs.langchain.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "LangChain",
+   "topics": [
+    "AGENTS",
+    "MEMORY_LEARNING",
+    "LONG_RUNNING_EXECUTION"
+   ],
+   "whyPrimary": "LangGraph official docs (moved here from langchain-ai.github.io)",
+   "termsVerified": false,
+   "termsNote": "no terms link in docs; langchain.com/terms-of-service is the LangSmith platform agreement, not website terms",
+   "prefixes": [
+    {
+     "path": "/oss/python/langgraph/",
+     "robots": "ALLOW",
+     "redirect": "SAME_HOST",
+     "prefixRedirectLocation": "/oss/python/langgraph",
+     "prefixHttpStatus": 308,
+     "sampled200": true,
+     "sampledUrl": "https://docs.langchain.com/oss/python/langgraph/overview",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "LangGraph overview - Docs by LangChain",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:24+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "1bb8194498c6422caeccd94e7f761dd0712d3f3cde49022cdf1e475f60212ff2",
+   "robotsTxtBytes": 174,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "a2a-protocol.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Linux Foundation (A2A; originated at Google)",
+   "topics": [
+    "AGENTS",
+    "DISTRIBUTED_ARCH"
+   ],
+   "whyPrimary": "Agent2Agent protocol specification",
+   "termsVerified": false,
+   "termsNote": "footer: '© 2026 The Linux Foundation. Licensed under the Apache License 2.0' — licence only, no website terms linked",
+   "prefixes": [
+    {
+     "path": "/latest/specification/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://a2a-protocol.org/latest/specification/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Overview - A2A Protocol",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:46+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "259a2d33a615eae79a535f75f179301ce37f590f360454651acd7584109d5ffe",
+   "robotsTxtBytes": 917,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [
+     [
+      "gptbot"
+     ],
+     [
+      "chatgpt-user"
+     ],
+     [
+      "claudebot"
+     ],
+     [
+      "claude-web"
+     ],
+     [
+      "perplexitybot"
+     ],
+     [
+      "facebookbot"
+     ],
+     [
+      "applebot"
+     ],
+     [
+      "perplexitybot"
+     ],
+     [
+      "google-extended"
+     ],
+     [
+      "googleother"
+     ],
+     [
+      "duckassistbot"
+     ]
+    ],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://github.com/a2aproject/A2A/blob/main/LICENSE",
+      "Apache License 2.0"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "docs.vllm.ai",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "vLLM project (PyTorch Foundation)",
+   "topics": [
+    "LOCAL_MODELS_ROUTING",
+    "RESOURCE_OPTIMISATION"
+   ],
+   "whyPrimary": "vLLM official docs (local/self-hosted LLM serving)",
+   "termsVerified": false,
+   "termsNote": "no terms link (CC BY / SIL OFL theme notices only)",
+   "prefixes": [
+    {
+     "path": "/en/latest/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://docs.vllm.ai/en/latest/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "vLLM",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:49+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "577c06267cc86bb5bbe920e7f1de55e0a367d86dcaa845cd912deff694453cdb",
+   "robotsTxtBytes": 662,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "docs.ollama.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Ollama",
+   "topics": [
+    "LOCAL_MODELS_ROUTING"
+   ],
+   "whyPrimary": "Ollama official API docs (ODG's local model runtime)",
+   "termsVerified": false,
+   "termsNote": "ollama.com/terms (fetched 2026-11-23) prohibits 'Use automated means to access our services without permission'; whether 'services' includes the public docs site is unclear",
+   "ownerDecisionRequired": "Ollama terms: 'Use automated means to access our services without permission' — does it cover docs.ollama.com? (ODG runs Ollama locally; docs could alternatively be read from the open-source repository)",
+   "prefixes": [
+    {
+     "path": "/api",
+     "robots": "ALLOW",
+     "redirect": "SAME_HOST",
+     "prefixRedirectLocation": "/api/introduction",
+     "prefixHttpStatus": 308,
+     "sampled200": false,
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:17+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "robotsTxtSha256": "c7fa1e8d04c7c8eab7506cb70708cc40c34cfe91d024aed2a713097dd8e6c261",
+   "robotsTxtBytes": 171,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": null
+   }
+  },
+  {
+   "host": "crfm.stanford.edu",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Stanford CRFM (university)",
+   "topics": [
+    "INDEPENDENT_VALIDATION"
+   ],
+   "whyPrimary": "HELM holistic evaluation of language models",
+   "termsVerified": false,
+   "termsNote": "no terms link on the page (Stanford ToU likely applies — see hai.stanford.edu — but not observed)",
+   "prefixes": [
+    {
+     "path": "/helm/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://crfm.stanford.edu/helm/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "Holistic Evaluation of Language Models (HELM)",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:25:57+00:00 (robots.txt 4xx ⇒ RFC 9309 allow; no rules)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 7739,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "NO_ROBOTS_4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "bair.berkeley.edu",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "UC Berkeley BAIR (university)",
+   "topics": [
+    "AGENTS",
+    "AUTONOMY",
+    "MEMORY_LEARNING"
+   ],
+   "whyPrimary": "BAIR blog (primary research write-ups)",
+   "priorOutcome": "V158 DEFER (REQUIRESAUTH_NOT_VERIFIED) — re-probed",
+   "termsVerified": false,
+   "termsNote": "unchanged from V158: no terms page (© UC Regents only)",
+   "prefixes": [
+    {
+     "path": "/blog/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://bair.berkeley.edu/blog/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "The Berkeley Artificial Intelligence Research Blog",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:26:02+00:00 (robots.txt 4xx ⇒ RFC 9309 allow; no rules)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": null,
+   "robotsTxtBytes": 11292,
+   "robotsFetch": {
+    "status": 404,
+    "mode": "NO_ROBOTS_4XX",
+    "location": null,
+    "starGroups": 0,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": []
+   }
+  },
+  {
+   "host": "www.cs.cmu.edu",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Carnegie Mellon University SCS (university)",
+   "topics": [
+    "AGENTS",
+    "SWE_AUTOMATION"
+   ],
+   "whyPrimary": "CMU School of Computer Science news (research announcements)",
+   "termsVerified": false,
+   "termsNote": "footer 'Legal Info' → cmu.edu/legal: 'you may use this Site only for your own personal viewing and non-commercial use' — same class as SEI (V160 owner decision)",
+   "ownerDecisionRequired": "CMU legal notice: personal viewing / non-commercial use only — compatible with ODG internal research?",
+   "prefixes": [
+    {
+     "path": "/news/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://www.cs.cmu.edu/news/",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "SCS News",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:26:08+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "crawlDelaySeconds": 10,
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "dd0a00f69065061d9c062b3f63cc08ed443d250d09ca6593f31ce08261524e66",
+   "robotsTxtBytes": 3070,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [
+     [
+      "meta-externalagent"
+     ],
+     [
+      "bytespider"
+     ],
+     [
+      "semrushbot"
+     ],
+     [
+      "semanticscholarbot"
+     ],
+     [
+      "petalbot"
+     ],
+     [
+      "baiduspider"
+     ],
+     [
+      "yandex"
+     ],
+     [
+      "trendictionbot"
+     ]
+    ],
+    "aiCrawlerGroupsDisallowAll": [
+     [
+      "bytespider"
+     ],
+     [
+      "baiduspider"
+     ]
+    ]
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      " https://magazine.cs.cmu.edu/how-privacy-engineering-is-shaping-the-age-of-ai",
+      "October 19, 2026     How Privacy Enginee"
+     ],
+     [
+      "https://www.cmu.edu/legal/",
+      "Legal Info"
+     ]
+    ]
+   }
+  },
+  {
+   "host": "hai.stanford.edu",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "org": "Stanford HAI (university)",
+   "topics": [
+    "INDEPENDENT_VALIDATION",
+    "RESOURCE_OPTIMISATION"
+   ],
+   "whyPrimary": "AI Index report pages (independent measurement of AI progress/cost)",
+   "termsVerified": false,
+   "termsNote": "footer 'Terms of Use' → stanford.edu/site/terms: 'User may download material from the Sites only for User's own personal, non-commercial use'",
+   "ownerDecisionRequired": "Stanford ToU: download only for 'personal, non-commercial use' — compatible with ODG internal research?",
+   "prefixes": [
+    {
+     "path": "/ai-index",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "prefixHttpStatus": 200,
+     "sampled200": true,
+     "sampledUrl": "https://hai.stanford.edu/ai-index",
+     "sampleHttpStatus": 200,
+     "sampleTitle": "AI Index | Stanford HAI",
+     "robotsDisallowedWithin": [],
+     "robotsWildcardRulesInside": [],
+     "robotsFullFileFetchedAt": "2026-11-23T19:27:20+00:00 (RFC 9309 '*' group merging, wildcards and $ honoured)"
+    }
+   ],
+   "requiresAuth": false,
+   "paid": false,
+   "botChallengeObserved": false,
+   "robotsTxtSha256": "634aebd0966c7232de836e545a20ba86ae09e13cca8de456f2a2c9f23eadd7bd",
+   "robotsTxtBytes": 117,
+   "robotsFetch": {
+    "status": 200,
+    "mode": "PARSED",
+    "location": null,
+    "starGroups": 1,
+    "namedUAGroups": [],
+    "aiCrawlerGroupsDisallowAll": []
+   },
+   "raw": {
+    "notes": null,
+    "probed": "2026-11-23",
+    "probeUserAgent": "ODG-Radar-probe/0.1",
+    "redirectsFollowed": false,
+    "footerLegalLinksObserved": [
+     [
+      "https://uit.stanford.edu/security/copyright-infringement",
+      "Copyright"
+     ],
+     [
+      "https://www.stanford.edu/site/privacy/",
+      "Privacy"
+     ],
+     [
+      "https://www.stanford.edu/site/terms/",
+      "Terms of Use"
+     ]
+    ]
+   }
+  }
+ ],
+ "alreadyAdmittedNotRecandidated": {
+  "V158_RESEARCH_GRANT_GLOBAL_RADAR": [
+   "csrc.nist.gov",
+   "www.postgresql.org",
+   "www.sqlite.org",
+   "registry.npmjs.org",
+   "huggingface.co"
+  ],
+  "V160_RESEARCH_GRANT_ENGINEERING_PRACTICES": [
+   "research.google",
+   "google.github.io",
+   "deepmind.google",
+   "www.nasa.gov",
+   "microsoft.github.io",
+   "github.blog"
+  ],
+  "note": "Not re-listed as new. Two admitted hosts appear in this file ONLY as NEW-PREFIX candidates (microsoft.github.io /autogen/stable/, github.blog /ai-and-ml/), flagged in priorOutcome; their V160 prefixes are not repeated."
+ },
+ "previouslyRefusedNotRecandidated": [
+  {
+   "host": "aws.amazon.com / builder.aws.com / docs.aws.amazon.com",
+   "org": "Amazon",
+   "v160": "TERMS_FORBID_AUTOMATED_ACCESS",
+   "changed": false
+  },
+  {
+   "host": "netflixtechblog.com",
+   "org": "Netflix",
+   "v160": "BOT_CHALLENGE (Medium/Cloudflare)",
+   "changed": false
+  },
+  {
+   "host": "blog.palantir.com",
+   "org": "Palantir",
+   "v160": "BOT_CHALLENGE (Medium/Cloudflare)",
+   "changed": false
+  },
+  {
+   "host": "engineering.fb.com / ai.meta.com",
+   "org": "Meta",
+   "v160": "TERMS_FORBID_AUTOMATED_ACCESS (Meta Terms 3.2(3))",
+   "changed": false
+  },
+  {
+   "host": "openai.com / cdn.openai.com",
+   "org": "OpenAI",
+   "v160": "TERMS_FORBID_AUTOMATED_ACCESS",
+   "changed": false
+  },
+  {
+   "host": "www.anthropic.com",
+   "org": "Anthropic",
+   "v160": "TERMS_FORBID_AUTOMATED_ACCESS (owner/legal to confirm); V158 OFF_HOST_REDIRECT on /engineering/",
+   "changed": false
+  },
+  {
+   "host": "code.claude.com",
+   "org": "Anthropic",
+   "v160": "DEFERRED to owner (Anthropic terms) — still pending; not re-run",
+   "changed": false
+  },
+  {
+   "host": "www.siemens.com",
+   "org": "Siemens",
+   "v160": "TERMS_FORBID_AUTOMATED_ACCESS (text/data mining prohibited)",
+   "changed": false
+  },
+  {
+   "host": "www.tesla.com",
+   "org": "Tesla",
+   "v160": "BOT_CHALLENGE/BLOCK (403) + Crawl-delay 10",
+   "changed": false
+  },
+  {
+   "host": "queue.acm.org",
+   "org": "ACM",
+   "v160": "ROBOTS_DISALLOWS (/*.cfm)",
+   "changed": false
+  },
+  {
+   "host": "export.arxiv.org / pypi.org",
+   "org": "arXiv / PSF",
+   "v160": "robots vs documented API conflict — OWNER question (V160_ARXIV_PYPI_ACCESS_ANALYSIS), kept DEFERRED, not re-run",
+   "changed": false
+  }
+ ],
+ "reCandidatesReasonChanged": {
+  "ntrs.nasa.gov": "V160: robots.txt unreachable (timeouts). V164: robots.txt 200 PARSED, /api/citations/ ALLOW, no rules inside; terms now read (sti.nasa.gov) ⇒ eligible",
+  "kubernetes.io": "V158: terms not verified. V164: footer explicitly points to lfprojects.org/policies; LF Projects Terms of Use read ⇒ eligible",
+  "netflix.github.io": "V160: '/' too broad. V164: narrow project prefix /chaosmonkey/",
+  "datatracker.ietf.org": "V158: robots sub-paths not analysed for /doc/. V164: /doc/ contains Disallow /doc/pdf/ ⇒ narrowed to /doc/html/ (no rules inside)",
+  "www.w3.org": "V158: /TR/ ⊃ /TR/? . V164: narrowed to /TR/trace-context/ — still DEFER (wildcards '/*,*' may match inside)",
+  "others re-probed (sre.google, abseil.io, research.ibm.com, stripe.dev, global.toyota, opentelemetry.io, owasp, usenix, bair, rfc-editor)": "reason UNCHANGED ⇒ still DEFER (recorded, not re-admitted)"
+ },
+ "per_org_primary_source": {
+  "NASA": "STRONG: F´ flight-software docs (nasa.github.io), NTRS citation API (ntrs.nasa.gov) — both eligible; Software Engineering Handbook (swehb.nasa.gov) returns 403 to anonymous probes.",
+  "SpaceX": "LITTLE PUBLIC MATERIAL: no primary engineering-method source exists publicly (www.spacex.com = news/updates JS shell, V160). No candidate — not padded.",
+  "Tesla": "LITTLE PUBLIC MATERIAL: no engineering blog/docs; www.tesla.com refused at V160 (403 block). No candidate.",
+  "Toyota": "PARTIAL: TRI publications (www.tri.global; no website terms, wildcard robots) and TPS overview (global.toyota; robots.txt still redirects). Both DEFER.",
+  "Google": "Admitted earlier (research.google, google.github.io). New: SRE book canonical prefixes (terms still not linked ⇒ DEFER), Cloud Well-Architected (moved off-host to docs.cloud.google.com ⇒ REFUSE as probed).",
+  "Amazon": "Amazon Science publications exist but Amazon Conditions of Use forbid robots/data mining ⇒ REFUSE (same as AWS in V160).",
+  "Microsoft": "AutoGen docs + Engineering@Microsoft blog eligible; Microsoft Research publications DEFER (robots wildcards on www.microsoft.com).",
+  "OpenAI": "Only GitHub-hosted Agents SDK docs; owner decision (GitHub AUP vs OpenAI terms). openai.com still REFUSED.",
+  "Anthropic": "LITTLE ADMISSIBLE MATERIAL: anthropic.com refused / code.claude.com deferred (V160, unchanged). MCP specification (Anthropic-originated, now LF-governed) DEFER (same-host redirect + no terms). No knowledge of internal methods is claimed.",
+  "NVIDIA": "Research publications REFUSE (ToS forbids robots, linked from footer); TensorRT-LLM GitHub docs owner decision (NVIDIA ToS linked).",
+  "Google DeepMind": "Already admitted in V160 (deepmind.google /blog/, /research/publications/); no new host needed.",
+  "IBM": "IBM Research blog/publications DEFER (terms ambiguous: crawler-permitted vs 'data mine' + non-commercial clauses).",
+  "Palantir": "LITTLE PUBLIC MATERIAL: public Foundry product docs only (terms page JS-only ⇒ DEFER); engineering blog is bot-challenged (V160 REFUSE).",
+  "Netflix": "Chaos Monkey docs (netflix.github.io/chaosmonkey/) eligible; tech blog remains bot-challenged (V160 REFUSE).",
+  "GitHub": "github.blog /ai-and-ml/ eligible (new prefix on V160-admitted host).",
+  "Stripe": "stripe.dev blog still DEFER (no website terms found).",
+  "Siemens": "LITTLE ADMISSIBLE MATERIAL: terms forbid text/data mining (V160 REFUSE); no new source.",
+  "Bosch": "LITTLE PUBLIC MATERIAL: Bosch Center for AI site has an invalid TLS certificate for www.bosch-ai.com ⇒ DEFER; corporate research pages DEFER (V160).",
+  "ASML": "LITTLE PUBLIC MATERIAL: technology overview pages only; restrictive copy clause — V160 owner decision still pending; no new source.",
+  "Meta": "Meta-owned blogs REFUSED (Meta Terms, V160). PyTorch (Meta-originated, now PyTorch Foundation/LF): pytorch.org /blog/ eligible; docs.pytorch.org DEFER (robots wildcards).",
+  "Higher-value others": "Eligible: kubernetes.io concepts, IETF datatracker /doc/html/. DEFER: OpenTelemetry, SLSA, A2A, vLLM (no terms linked), RFC Editor (/rfc/ contains disallowed sub-paths), W3C Trace Context + NIST AI RMF (robots wildcards), OWASP (no terms), USENIX + CMU (Crawl-delay 10), Temporal/LangGraph/MCP/Ollama docs (redirect or terms), Stanford HAI/CMU (personal non-commercial terms), Jepsen (anti-LLM-scraper decoy page), martinfowler.com/BAIR/CRFM (no terms)."
+ },
+ "ownerQuestions": [
+  "openai.github.io: GitHub AUP (research use permitted) vs OpenAI Terms ('Automatically or programmatically extracting data') — do OpenAI's terms cover its GitHub-hosted SDK docs? openai.com remains REFUSED (V160)",
+  "nvidia.github.io: GitHub AUP (research use permitted) vs NVIDIA ToS linked from the docs footer (robots/scrapers prohibited) — which governs?",
+  "IBM Terms: robots.txt-compliant crawling permitted vs 'robot ... data mine' conduct prohibition and 'non-commercial' use — and does it cover research.ibm.com?",
+  "jepsen.io signals hostility to LLM scraping (/llm/index decoy page) without stating terms — recommend NOT collecting; written permission from Jepsen LLC would be required",
+  "Ollama terms: 'Use automated means to access our services without permission' — does it cover docs.ollama.com? (ODG runs Ollama locally; docs could alternatively be read from the open-source repository)",
+  "CMU legal notice: personal viewing / non-commercial use only — compatible with ODG internal research?",
+  "Stanford ToU: download only for 'personal, non-commercial use' — compatible with ODG internal research?",
+  "Linux-Foundation project sites without a linked terms page (opentelemetry.io, slsa.dev, a2a-protocol.org, docs.vllm.ai): may the LF / LF Projects Terms of Use be taken as governing them (as kubernetes.io states explicitly)?",
+  "Per-host pacing: www.amazon.science, www.usenix.org and www.cs.cmu.edu publish Crawl-delay 10 — DEFERRED until the transport enforces per-host pacing (transport gap already listed in V160_ARXIV_PYPI_ACCESS_ANALYSIS)."
+ ],
+ "counts": {
+  "candidates": 46,
+  "byOrg": {
+   "Amazon": 1,
+   "Anthropic": 1,
+   "Bosch": 1,
+   "CNCF / Kubernetes": 1,
+   "CNCF / OpenTelemetry": 1,
+   "Carnegie Mellon University SCS": 1,
+   "GitHub": 1,
+   "Google": 3,
+   "IBM": 1,
+   "IETF": 1,
+   "IETF / RFC Editor": 1,
+   "Jepsen": 1,
+   "LangChain": 2,
+   "Linux Foundation": 1,
+   "Meta": 2,
+   "Microsoft": 3,
+   "NASA": 3,
+   "NIST": 1,
+   "NVIDIA": 2,
+   "Netflix": 1,
+   "OWASP": 2,
+   "Ollama": 1,
+   "OpenAI": 1,
+   "OpenSSF": 1,
+   "Palantir": 1,
+   "Stanford CRFM": 1,
+   "Stanford HAI": 1,
+   "Stripe": 1,
+   "Temporal Technologies": 1,
+   "Thoughtworks / Martin Fowler": 1,
+   "Toyota": 2,
+   "UC Berkeley BAIR": 1,
+   "USENIX": 1,
+   "W3C": 1,
+   "vLLM project": 1
+  },
+  "byTopic": {
+   "AGENTS": 15,
+   "AUTONOMY": 4,
+   "DISTRIBUTED_ARCH": 15,
+   "INDEPENDENT_VALIDATION": 10,
+   "LOCAL_MODELS_ROUTING": 7,
+   "LONG_RUNNING_EXECUTION": 6,
+   "MEMORY_LEARNING": 6,
+   "OBSERVABILITY_CAUSAL": 5,
+   "PLANNING": 4,
+   "RELIABILITY_SECURITY_RECOVERY": 19,
+   "RESOURCE_OPTIMISATION": 10,
+   "SWE_AUTOMATION": 8
+  }
+ }
+}
