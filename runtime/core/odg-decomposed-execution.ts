@@ -24,7 +24,9 @@ function isObj(v: any): boolean { return v !== null && typeof v === "object" && 
  *   subproblems: ORDERED [{ id, spec:{ name, architecture, independentTest }, required?=true }]. Each spec is a
  *     native-project-builder project with its OWN independentTest (the intermediate verification).
  *   deps: { generateFile, maxRepair?=2, buildProject?=BUILDER.buildProject }.
- * Runs each in order; a verified sub-problem's modules thread forward as builtContracts; a REQUIRED sub-problem that
+ * Runs each in order; a verified sub-problem's modules thread forward as builtContracts and its verified FILE SOURCES
+ * (bo.files — the only thing a sandboxed build returns) are frozen for later sub-problems (served via the generator seam,
+ * also passed as deps.verifiedFiles); a REQUIRED sub-problem that
  * fails after repair STOPS the chain and is surfaced as `escalate` (the exact unit to hand to provider/further
  * decomposition). Blind whole-task retries are never issued.
  */
@@ -36,18 +38,35 @@ async function runDecomposed(subproblems: any, deps: any): Promise<any> {
   const maxRepair = Number.isFinite(d.maxRepair) ? d.maxRepair : 2;
 
   const results: any[] = [];
-  let builtContracts: any = {};        // accumulated verified modules, threaded to later sub-problems
+  let builtContracts: any = {};        // accumulated verified modules (in-process builders only), threaded to later sub-problems
+  // V16.7 (scenario-J defect 1): a SANDBOXED build (native-project-builder SANDBOX mode, #916) never returns `modules` —
+  // model code is never loaded on the host — so threading only `bo.modules` silently lost every earlier proven part. The
+  // sandboxed build DOES return the verified FILE SOURCES (`bo.files`). Those strings are accumulated here and FROZEN for
+  // later sub-problems: the generator seam returns the verified source byte-for-byte for an already-verified path (no
+  // model call, no drift), and the sources travel to the builder as `deps.verifiedFiles`. Sources stay STRINGS — nothing
+  // is compiled/loaded on the host (isolation invariant of #916 holds); they only re-enter a build through its sandbox.
+  const verifiedFiles: Record<string, string> = {};
+  const has = (o: any, k: string): boolean => Object.prototype.hasOwnProperty.call(o, k);
+  const generateFile = async (fileSpec: any, ctx: any): Promise<any> =>
+    (fileSpec && typeof fileSpec.path === "string" && has(verifiedFiles, fileSpec.path))
+      ? { ok: true, content: verifiedFiles[fileSpec.path], frozen: true }
+      : d.generateFile(fileSpec, ctx);
   let firstFailure: string | null = null;
   for (const sp of subproblems) {
     const id = sp && (typeof sp.id === "string" ? sp.id : (sp.spec && sp.spec.name)) || "subproblem";
     const required = !sp || sp.required !== false;
     let bo: any;
-    try { bo = await build(sp.spec, { generateFile: d.generateFile, maxRepair, builtContracts }); }
+    try { bo = await build(sp.spec, { generateFile, maxRepair, builtContracts, verifiedFiles: freeze({ ...verifiedFiles }) }); }
     catch (e: any) { bo = { verified: false, buildOk: false, repairs: null, error: String((e && e.message) || e) }; }
     const verified = bo && bo.verified === true;
-    results.push(freeze({ id, verified, repairs: bo ? bo.repairs : null, buildOk: bo ? bo.buildOk === true : false, required }));
-    if (verified) { if (bo.modules && isObj(bo.modules)) builtContracts = { ...builtContracts, ...bo.modules }; }
-    else if (required) { firstFailure = id; break; }   // LOCALISED failure ⇒ stop; no blind whole-task retry
+    const newlyFrozen: string[] = [];
+    if (verified) {
+      if (bo.modules && isObj(bo.modules)) builtContracts = { ...builtContracts, ...bo.modules };
+      // only a VERIFIED (and, when the builder reports it, ACCEPTED) sub-problem contributes its sources
+      if (bo.accepted !== false && isObj(bo.files)) for (const p of Object.keys(bo.files)) if (typeof bo.files[p] === "string" && !has(verifiedFiles, p)) { verifiedFiles[p] = bo.files[p]; newlyFrozen.push(p); }
+    }
+    results.push(freeze({ id, verified, repairs: bo ? bo.repairs : null, buildOk: bo ? bo.buildOk === true : false, required, verifiedFiles: freeze(newlyFrozen) }));
+    if (!verified && required) { firstFailure = id; break; }   // LOCALISED failure ⇒ stop; no blind whole-task retry
   }
 
   const verifiedCount = results.filter((r) => r.verified).length;
@@ -56,6 +75,7 @@ async function runDecomposed(subproblems: any, deps: any): Promise<any> {
     ok: true,
     results: freeze(results),
     verifiedCount, total: subproblems.length,
+    verifiedFilePaths: freeze(Object.keys(verifiedFiles)),   // paths frozen from verified sub-problems (sources, never loaded on host)
     allVerified,
     firstFailure,
     // the EXACT sub-problem to escalate (provider / further decomposition) — targeted, not a blind whole-task retry.
@@ -74,6 +94,7 @@ const DECOMPOSED_EXECUTION_CONTRACT = Object.freeze({
     "each sub-problem is verified by its OWN independentTest BEFORE the next — a whole-task verdict cannot hide which part is wrong",
     "a REQUIRED sub-problem failing after its repair budget STOPS the chain and is surfaced as the EXACT unit to escalate (provider/decomposition) — no blind whole-task retry",
     "verified sub-problem modules thread forward as builtContracts ⇒ later sub-problems compose on PROVEN parts",
+    "V16.7: verified FILE SOURCES (bo.files — what a SANDBOXED build returns; it never returns modules) are FROZEN for later sub-problems: an already-verified path is served from the verified source via the generator seam (no model call, no drift) and passed as deps.verifiedFiles; sources stay strings — never compiled/loaded on the host (sandbox isolation #916 holds)",
     "REUSES buildProject; builds NO second orchestrator/executor; the real builder is injectable for deterministic tests",
     "fail-closed on empty subproblems / missing generator; AUTHORIZES NOTHING; frozen results",
   ]),

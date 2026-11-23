@@ -25,6 +25,20 @@ function main(): void {
   const thrown = M.buildExecutionFeedback([{ args: [1], expect: 2 }], () => { throw new Error("boom"); });
   check("thrown error ⇒ verifyError mentions THREW + the message", thrown.hasFailure === true && /THREW/.test(thrown.verifyError) && /boom/.test(thrown.verifyError) && thrown.failing.threw === "boom");
 
+  // V16.7 DEFECT-J2 REPRO (scenario J honestLimits): structured (array/object) results compared with === never match ⇒ a
+  // CORRECT structured case is reported as the failing one ("returned [1,2] but expected [1,2]") and the real failure is hidden.
+  const st = M.buildExecutionFeedback([{ args: ["aab"], expect: [["a", 2], ["b", 1]] }, { args: ["c"], expect: [["c", 1]] }], (s: string) => (s === "c" ? [["c", 9]] : [["a", 2], ["b", 1]]));
+  check("DEFECT-J2: a structurally-equal ARRAY result is a PASS; the first REAL failure (c) is reported", st.hasFailure === true && JSON.stringify(st.failing.args) === '["c"]' && /returned \[\["c",9\]\]/.test(st.verifyError));
+  check("DEFECT-J2: structurally-equal OBJECT results (key order ignored) ⇒ all pass", M.buildExecutionFeedback([{ args: [1], expect: { a: 1, b: [2, { c: 3 }] } }], () => ({ b: [2, { c: 3 }], a: 1 })).hasFailure === false);
+  check("DEFECT-J2: a structurally-DIFFERENT object still fails (nested value differs)", M.buildExecutionFeedback([{ args: [1], expect: { a: 1, b: [2, 3] } }], () => ({ a: 1, b: [2, 4] })).hasFailure === true);
+  // semantics pinned: undefined-valued key ≠ missing key; array ≠ object; length matters; NaN never equal (as ===); -0 equals 0 (as ===); primitives unchanged (no coercion)
+  check("semantics: {a:undefined} ≠ {} (undefined-vs-missing is a difference)", M.buildExecutionFeedback([{ args: [], expect: {} }], () => ({ a: undefined })).hasFailure === true);
+  check("semantics: [] ≠ {} and [1] ≠ [1,undefined] (type + length strict)", M.buildExecutionFeedback([{ args: [], expect: {} }], () => []).hasFailure === true && M.buildExecutionFeedback([{ args: [], expect: [1] }], () => [1, undefined]).hasFailure === true);
+  check("semantics: NaN never equal (top-level AND nested), -0 equals 0 (=== primitive rule kept)", M.buildExecutionFeedback([{ args: [], expect: NaN }], () => NaN).hasFailure === true && M.buildExecutionFeedback([{ args: [], expect: [NaN] }], () => [NaN]).hasFailure === true && M.buildExecutionFeedback([{ args: [], expect: [0] }], () => [-0]).hasFailure === false);
+  check("semantics: primitives unchanged — no coercion ('1' ≠ 1, null ≠ undefined)", M.buildExecutionFeedback([{ args: [], expect: 1 }], () => "1").hasFailure === true && M.buildExecutionFeedback([{ args: [], expect: null }], () => undefined).hasFailure === true);
+  check("semantics: non-plain objects (Date) compare by reference only — two equal-valued Dates do NOT match", M.buildExecutionFeedback([{ args: [], expect: new Date(0) }], () => new Date(0)).hasFailure === true);
+  check("semantics: a cyclic result does not hang / throw (deterministic verdict)", (() => { const c: any = { a: 1 }; c.self = c; const e: any = { a: 1 }; e.self = e; const r = M.buildExecutionFeedback([{ args: [], expect: e }], () => c); return typeof r.hasFailure === "boolean"; })());
+
   // fail-closed: non-function / no examples ⇒ GENERIC verifyError (never a false all-pass)
   check("non-function ⇒ fail-closed GENERIC verifyError (not a false all-pass)", (() => { const r = M.buildExecutionFeedback(ex, null); return r.hasFailure === true && /fix the logic/.test(r.verifyError) && r.failing === null; })());
   check("no structured examples ⇒ GENERIC feedback (no execution trace available)", (() => { const r = M.buildExecutionFeedback([], (a: number) => a); return r.hasFailure === true && /no execution trace/.test(r.reason); })());
