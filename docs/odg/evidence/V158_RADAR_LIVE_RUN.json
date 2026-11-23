@@ -1,0 +1,229 @@
+{
+  "ran": "v158-radar-research",
+  "grant": "docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json",
+  "grantExpiresIso": "2026-12-22T00:00:00.000Z",
+  "at": "2026-11-23T12:17:59.275Z",
+  "killSwitch": "ON (ODG_RADAR_LIVE=1)",
+  "mode": "LIVE",
+  "egress": 8,
+  "attempted": 8,
+  "bytes": 277953,
+  "allowed": 8,
+  "denied": 0,
+  "distinctHostsAllowed": 6,
+  "plan": [
+    {
+      "decision": "ALLOW",
+      "url": "https://code.claude.com/docs/en/sandboxing.md",
+      "host": "code.claude.com",
+      "reasons": []
+    },
+    {
+      "decision": "ALLOW",
+      "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+      "host": "csrc.nist.gov",
+      "reasons": []
+    },
+    {
+      "decision": "ALLOW",
+      "url": "https://huggingface.co/api/daily_papers?limit=5",
+      "host": "huggingface.co",
+      "reasons": []
+    },
+    {
+      "decision": "ALLOW",
+      "url": "https://huggingface.co/api/models?search=qwen2.5-coder&limit=5",
+      "host": "huggingface.co",
+      "reasons": []
+    },
+    {
+      "decision": "ALLOW",
+      "url": "https://registry.npmjs.org/next/latest",
+      "host": "registry.npmjs.org",
+      "reasons": []
+    },
+    {
+      "decision": "ALLOW",
+      "url": "https://registry.npmjs.org/react/latest",
+      "host": "registry.npmjs.org",
+      "reasons": []
+    },
+    {
+      "decision": "ALLOW",
+      "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+      "host": "www.postgresql.org",
+      "reasons": []
+    },
+    {
+      "decision": "ALLOW",
+      "url": "https://www.sqlite.org/docs.html",
+      "host": "www.sqlite.org",
+      "reasons": []
+    }
+  ],
+  "results": [
+    {
+      "url": "https://code.claude.com/docs/en/sandboxing.md",
+      "topics": [
+        "egress control",
+        "agent isolation"
+      ],
+      "classification": "LIVE_SOURCE",
+      "httpStatus": 200,
+      "contentType": "text/markdown; charset=utf-8",
+      "bytes": 111994,
+      "sha256": "df134ef182b9dcd35f5f0bbaeed71fa119667a83fa732ec0ce3ee06887861b3e",
+      "title": "Configure the sandboxed Bash tool",
+      "untrusted": false,
+      "integrated": false
+    },
+    {
+      "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+      "topics": [
+        "adversarial ML taxonomy",
+        "prompt injection"
+      ],
+      "classification": "LIVE_SOURCE",
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 48287,
+      "sha256": "c8ddb6d9afb715505b13f7017101139c83819e95fbc61f8b814da78b65b2b431",
+      "title": "AI 100-2 E2025, Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations | CSRC",
+      "untrusted": false,
+      "integrated": false
+    },
+    {
+      "url": "https://huggingface.co/api/daily_papers?limit=5",
+      "topics": [
+        "research discovery",
+        "AI papers"
+      ],
+      "classification": "LIVE_SOURCE",
+      "httpStatus": 200,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 27695,
+      "sha256": "a7adca250167ed8d77e344d636f450f51b0edf18c2fd5e0c886674a218fa4979",
+      "title": "json",
+      "untrusted": false,
+      "integrated": false
+    },
+    {
+      "url": "https://huggingface.co/api/models?search=qwen2.5-coder&limit=5",
+      "topics": [
+        "local models",
+        "model registry"
+      ],
+      "classification": "LIVE_SOURCE",
+      "httpStatus": 200,
+      "contentType": "application/json; charset=utf-8",
+      "bytes": 3179,
+      "sha256": "c4aa43665d3dacdd6e2d7cf4cf58b462ffc93e418416968c79e573884db7b87e",
+      "title": "json",
+      "untrusted": false,
+      "integrated": false
+    },
+    {
+      "url": "https://registry.npmjs.org/next/latest",
+      "topics": [
+        "dependency intelligence",
+        "Next.js release"
+      ],
+      "classification": "LIVE_SOURCE",
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "bytes": 3065,
+      "sha256": "4c04cab06e7f3f565aaa35cfe7dab699c066aa3ea434ae309880afcbd3dc4564",
+      "title": "next",
+      "untrusted": false,
+      "integrated": false
+    },
+    {
+      "url": "https://registry.npmjs.org/react/latest",
+      "topics": [
+        "dependency intelligence",
+        "React release"
+      ],
+      "classification": "LIVE_SOURCE",
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "bytes": 2150,
+      "sha256": "ecf8c02b9096a7813842d87fae50a707a8809c5c3d0ec6b359ac51d40188ff6f",
+      "title": "react",
+      "untrusted": false,
+      "integrated": false
+    },
+    {
+      "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+      "topics": [
+        "locking",
+        "concurrency"
+      ],
+      "classification": "LIVE_SOURCE",
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 47034,
+      "sha256": "573564e37dd6a17983ec741c986492fefcb78988c10ea7985503fa0e781a5f78",
+      "title": "PostgreSQL: Documentation: 19: 13.3. Explicit Locking",
+      "untrusted": false,
+      "integrated": false
+    },
+    {
+      "url": "https://www.sqlite.org/docs.html",
+      "topics": [
+        "embedded storage",
+        "documentation index"
+      ],
+      "classification": "LIVE_SOURCE",
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 34549,
+      "sha256": "f557941d6c34cd84ff547f298ea60572d7aad79674966e5acff0dafd37859cbf",
+      "title": "SQLite Documentation",
+      "untrusted": false,
+      "integrated": false
+    }
+  ],
+  "verdict": {
+    "verdict": "LIVE_OK",
+    "exitCode": 0,
+    "planned": 8,
+    "received": 8,
+    "perHost": {
+      "code.claude.com": {
+        "received": 1,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "csrc.nist.gov": {
+        "received": 1,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "huggingface.co": {
+        "received": 2,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "registry.npmjs.org": {
+        "received": 2,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "www.postgresql.org": {
+        "received": 1,
+        "unavailable": 0,
+        "denied": 0
+      },
+      "www.sqlite.org": {
+        "received": 1,
+        "unavailable": 0,
+        "denied": 0
+      }
+    },
+    "failuresByCode": {}
+  },
+  "honesty": [
+    "run executed by the coordinating Claude Code session (provider) through ODG's canonical Radar chain; the chain's decisions are ODG-native, the run itself is provider-initiated",
+    "fetched content is untrusted data: hashed + sanitized title only; nothing executed; nothing integrated as a finding until pinned in COLLECTION_REGISTRY.json and evaluated"
+  ]
+}
