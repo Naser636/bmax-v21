@@ -368,6 +368,7 @@ if (require.main === module) {
         naturalIncompatibilitiesObserved: 0,
       },
       honestLimits: [
+        "supervisor closure NEVER reached CLOSED_ACCEPTED: parts have no git delivery ⇒ CLOSED_NO_RESULT; integration acceptance comes from the sandbox verdicts, not from supervisor closure",
         "one small task (3 model parts + 1 harness-authored integration file); results are not a statistical capability measure",
         "the incompatibility classification is a deterministic mapping in this bin over the sandbox+oracle verdicts; the verdicts themselves come from odg-native-build-sandbox (bwrap) and its host-side gradeCases",
         "part difficulty ('easy' / 'moderate') is DECLARED by the scenario to route the parts to two different providers via odg-model-router — not a measured difficulty",

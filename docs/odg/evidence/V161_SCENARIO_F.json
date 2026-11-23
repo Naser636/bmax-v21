@@ -1286,6 +1286,7 @@
     "the real repository's supervisor refused (fail-closed) because concurrent sibling worktrees hold UNKNOWN write-sets; assignments were then recorded in REPO mode against the scenario's own throw-away git workspace (staleMs=1000) — not against the live repository",
     "supervisor write-sets are namespaced virtual paths (scenario-f/<trial>/src/…); generated code lives only in memory + the sandbox, never in the repository",
     "the integration repair feedback includes the failing interface case (input/expected/actual) — the held-out set is the only check never shown to a generator",
-    "no independent human/agent inspection of the generated code is claimed beyond the sandbox held-out check and the supervisor close inspector identity (a declared string, not cryptographically bound)"
+    "no independent human/agent inspection of the generated code is claimed beyond the sandbox held-out check and the supervisor close inspector identity (a declared string, not cryptographically bound)",
+    "supervisor closure NEVER reached CLOSED_ACCEPTED: every close returned CLOSED_NO_RESULT (parts have no git delivery ⇒ the supervisor classifies them COMPLETED_NO_RESULT) — integration acceptance comes from the sandbox verdicts, not from supervisor closure (#924 inspection)"
   ]
 }
