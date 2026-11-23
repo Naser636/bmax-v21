@@ -150,13 +150,28 @@ function gradeCases(cases: any[], observations: any): any {
   return { pass: true, error: null };
 }
 
+/** nodeBinding() -> { command, roBind|null }. ROOT-CAUSE FIX (CI): the sandbox PATH is /usr/bin:/bin, but a toolchain node
+ *  (e.g. actions/setup-node under /opt/hostedtoolcache, nvm under $HOME) lives elsewhere ⇒ `node -` exited 127 inside bwrap.
+ *  Run the SAME interpreter as the host (process.execPath) by absolute path; when it is outside the default read-only
+ *  system dirs, bind ITS install prefix read-only (provider-sandbox validates it: a confidential prefix such as /home is
+ *  REFUSED ⇒ NOT_RUN, fail-closed — never a wider bind). A prefix under /tmp is shadowed by the sandbox's tmpfs /tmp ⇒ the
+ *  interpreter is absent ⇒ the probe fails ⇒ NOT_RUN (fail-closed, diagnosable via the kept stderr). */
+function nodeBinding(): any {
+  const path = require("path");
+  const exe = process.execPath;
+  const sys = ["/usr/", "/lib/", "/lib64/", "/bin/", "/sbin/"];
+  if (sys.some((d) => exe.startsWith(d))) return { command: exe, roBind: null };
+  return { command: exe, roBind: path.dirname(path.dirname(exe)) };   // <prefix>/bin/node ⇒ bind <prefix>
+}
+
 /** defaultRunner(program, nonce, opts) — REUSES odg-local-model-benchmark.defaultCodeRunner (provider-sandbox bwrap +
  *  RLIMIT_AS). Returns { ran, exitOk, stdout, reason }. ran:false ⇒ the sandbox did not launch (NOT_RUN). */
 function defaultRunner(program: string, _nonce: string, opts: any = {}): any {
   // Same call as odg-local-model-benchmark.defaultCodeRunner (provider-sandbox, `node -`, RLIMIT_AS), but the child's
   // stderr is KEPT (truncated) in `reason` so a sandbox failure is diagnosable (crash / OOM / missing binary).
   const PS = require("./provider-sandbox");
-  const r = PS.runProvider(program, { command: "node -", timeoutMs: Number(opts.processTimeoutMs) > 0 ? Number(opts.processTimeoutMs) : DEFAULT_PROCESS_TIMEOUT_MS, memoryLimitBytes: Number(opts.memoryLimitBytes) > 0 ? Number(opts.memoryLimitBytes) : MEMORY_LIMIT_BYTES });
+  const nb = nodeBinding();
+  const r = PS.runProvider(program, { command: nb.command, ...(nb.roBind ? { modelFiles: [nb.roBind] } : {}), timeoutMs: Number(opts.processTimeoutMs) > 0 ? Number(opts.processTimeoutMs) : DEFAULT_PROCESS_TIMEOUT_MS, memoryLimitBytes: Number(opts.memoryLimitBytes) > 0 ? Number(opts.memoryLimitBytes) : MEMORY_LIMIT_BYTES });
   if (!r.launched) return { ran: false, reason: String(r.reason || "sandbox did not launch") + (r.stderr ? " | stderr: " + String(r.stderr).slice(0, 300) : "") };
   return { ran: true, exitOk: r.ok === true, stdout: r.ok ? String(r.text || "") : "", reason: r.ok ? undefined : String(r.reason || "") + (r.stderr ? " | stderr: " + String(r.stderr).slice(-400) : "") };
 }
@@ -247,5 +262,5 @@ const NATIVE_BUILD_SANDBOX_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { UNISOLATED_OPT_IN, DEFAULT_STEP_TIMEOUT_MS, DEFAULT_PROCESS_TIMEOUT_MS, MEMORY_LIMIT_BYTES, serializableTest, hasAcceptanceCriterion, testSourceFromFn, buildSandboxProgram, gradeCases, runIsolated, replayFn, probeSandbox, newNonce, NATIVE_BUILD_SANDBOX_CONTRACT };
+module.exports = { nodeBinding, UNISOLATED_OPT_IN, DEFAULT_STEP_TIMEOUT_MS, DEFAULT_PROCESS_TIMEOUT_MS, MEMORY_LIMIT_BYTES, serializableTest, hasAcceptanceCriterion, testSourceFromFn, buildSandboxProgram, gradeCases, runIsolated, replayFn, probeSandbox, newNonce, NATIVE_BUILD_SANDBOX_CONTRACT };
 export {};

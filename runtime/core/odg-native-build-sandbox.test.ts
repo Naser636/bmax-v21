@@ -50,6 +50,9 @@ function observe(src: string): any {
 }
 
 (async () => {
+  // ROOT-CAUSE regression (CI): the sandbox must run the HOST's interpreter by absolute path and bind a non-system prefix
+  const nb = N.nodeBinding();
+  check(nb.command === process.execPath && (nb.roBind === null ? /^\/(usr|lib|lib64|bin|sbin)\//.test(process.execPath) : process.execPath.startsWith(nb.roBind + "/")), "sandbox runs process.execPath (not PATH 'node'); a non-system install prefix is bound read-only: " + JSON.stringify(nb));
   const probe = N.probeSandbox();
   check(probe.ok === true, "bubblewrap sandbox probe OK (required for the isolation tests): " + String(probe.reason));
   process.stderr.write("diag: probe=" + JSON.stringify(probe) + "\n");
