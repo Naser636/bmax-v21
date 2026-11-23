@@ -22,6 +22,17 @@ function fn(v: any): boolean { return typeof v === "function"; }
 
 /** assembleAndLoad(files) -> { ok, modules?, error? }. In-memory build: compile each file as a CommonJS module in
  *  dependency order; a reference to a missing symbol throws ⇒ ok:false (fail-closed, no silent partial). */
+// GENERATED-CODE REQUIRE ALLOWLIST (V15.9 security): model-authored modules run in ODG's process, so their `require` must
+// not reach the host. They may require (1) another GENERATED file of the same project, or (2) a PURE built-in from this
+// list. Everything else — fs, child_process, net/http(s), worker_threads, vm, module, os, process bindings, and any
+// relative/absolute path that is not a generated file (which previously resolved against runtime/core = ODG internals) —
+// throws REQUIRE_DENIED ⇒ the build fails (fail-closed). HONEST LIMIT: this is NOT a sandbox — `process`/`globalThis`
+// remain reachable in-process; real isolation of untrusted execution is an outer bwrap process (separate work item).
+const GENERATED_REQUIRE_ALLOW: readonly string[] = Object.freeze(["assert", "assert/strict", "util", "events", "string_decoder"]);
+function allowedBuiltin(req: string): boolean {
+  const r = typeof req === "string" ? req.replace(/^node:/, "") : "";
+  return GENERATED_REQUIRE_ALLOW.includes(r);
+}
 function assembleAndLoad(files: any): any {
   const registry: any = {};
   const make = (path: string, content: string) => {
@@ -30,7 +41,8 @@ function assembleAndLoad(files: any): any {
       // resolve a relative import to another generated file by basename
       const key = Object.keys(files).find((k) => k === req || k.endsWith(req.replace(/^\.\//, "")) || req.endsWith(k.replace(/^.*\//, "").replace(/\.js$/, "")));
       if (key) { if (!registry[key]) registry[key] = make(key, files[key]); return registry[key].exports; }
-      return require(req);
+      if (allowedBuiltin(req)) return require(String(req).replace(/^node:/, ""));
+      throw new Error("REQUIRE_DENIED: '" + String(req) + "' — generated code may only require other generated files or pure built-ins (" + GENERATED_REQUIRE_ALLOW.join(", ") + ")");
     };
     m._compile(content, path);
     return m;
@@ -147,7 +159,7 @@ const NATIVE_PROJECT_BUILDER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { assembleAndLoad, buildProject, NATIVE_PROJECT_BUILDER_CONTRACT };
+module.exports = { assembleAndLoad, buildProject, NATIVE_PROJECT_BUILDER_CONTRACT, GENERATED_REQUIRE_ALLOW };
 
 if (require.main === module) { process.stdout.write(JSON.stringify(NATIVE_PROJECT_BUILDER_CONTRACT, null, 2) + "\n"); }
 

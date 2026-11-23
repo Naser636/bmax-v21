@@ -91,6 +91,15 @@ const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "
   check(rOk.accepted === true && spy2.called === true, "bounded pre-guard PASS (terminates) ⇒ normal in-thread verification runs and accepts (backward-compatible)");
 
   check(/accepted ONLY if it builds AND passes the INDEPENDENT test/i.test(JSON.stringify(B.NATIVE_PROJECT_BUILDER_CONTRACT.invariants)), "contract: independent test is the arbiter");
+  // V15.9 security: generated code may require only other generated files or pure built-ins (default-deny, fail-closed).
+  const denied = (src: string) => { const r = B.assembleAndLoad({ "src/x.js": src }); return r.ok === false && /REQUIRE_DENIED/.test(String(r.error)); };
+  check(["fs", "node:fs", "child_process", "net", "http", "https", "worker_threads", "vm", "module", "os"].every((m) => denied(`const z=require('${m}');module.exports=1;`)), "V15.9: fs/child_process/net/http(s)/worker_threads/vm/module/os ⇒ REQUIRE_DENIED (build fails)");
+  check(denied("const z=require('./repair-workflow.js');module.exports=1;") && denied("const z=require('../core/repair-workflow');module.exports=1;"), "V15.9: a relative path that is NOT a generated file (formerly resolved to ODG internals in runtime/core) ⇒ REQUIRE_DENIED");
+  check(denied("const z=require('/etc/passwd');module.exports=1;"), "V15.9: absolute path ⇒ REQUIRE_DENIED");
+  const okAssert = B.assembleAndLoad({ "src/y.js": "const a=require('assert');const u=require('node:util');module.exports=(x)=>{a.ok(true);return u.format('%d',x);};" });
+  check(okAssert.ok === true && okAssert.modules["src/y.js"](7) === "7", "V15.9: pure built-ins on the allowlist (assert, node:util) still load");
+  const okRel = B.assembleAndLoad({ "src/ops.js": "module.exports={add:(a,b)=>a+b};", "src/calc.js": "const ops=require('./ops.js');module.exports=(a,b)=>ops.add(a,b);" });
+  check(okRel.ok === true && okRel.modules["src/calc.js"](2, 3) === 5, "V15.9: requiring another GENERATED file still works (inter-file relations preserved)");
   if (failures === 0) process.stdout.write("ALL PASS — V12.4 NATIVE PROJECT BUILDER\n");
   process.exit(failures === 0 ? 0 : 1);
 })();
