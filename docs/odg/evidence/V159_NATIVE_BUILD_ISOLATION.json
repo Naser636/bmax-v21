@@ -1,0 +1,3518 @@
+{
+  "schema": "V159_NATIVE_BUILD_ISOLATION_EVIDENCE",
+  "directive": "CTO V15.9 — model-written native-build code executes ONLY inside an outer isolated process (bwrap); the host never compiles/executes it",
+  "startedAt": "2026-11-23T14:00:58.694Z",
+  "finishedAt": "2026-11-23T14:16:26.490Z",
+  "head": "4f4fceb2bb6d390a9eb2dbb641cea57c3308c2fb",
+  "node": "v22.22.1",
+  "isolation": {
+    "id": "V159-NATIVE-BUILD-SANDBOX",
+    "purpose": "execute MODEL-WRITTEN native-build code ONLY in an outer isolated process; the host never compiles/executes it",
+    "reuses": [
+      "provider-sandbox.runProvider/buildBwrapArgs (bubblewrap --unshare-all/--clearenv/minimal ro binds/--info-fd launch proof/prlimit RLIMIT_AS) — no second sandbox",
+      "odg-local-model-benchmark.defaultCodeRunner + parseResult + CTX_ASSERT_SRC (#898 pattern: null-prototype vm context inside bwrap, per-run nonce, JSON observations only)",
+      "odg-repair-feedback.buildExecutionFeedback (fed by replayFn over sandbox observations)"
+    ],
+    "invariants": [
+      "only DATA crosses: file sources + test inputs in; a nonce-stamped JSON verdict/observations out; model code has no stdout/process/require",
+      "sandbox unavailable / probe failed ⇒ NOT_RUN (verified=null) — NEVER a silent in-process fallback",
+      "a launched run without a well-formed nonce-stamped result (crash, OOM, timeout, garbage, forgery) ⇒ NON-pass",
+      "no network (--unshare-all), cleared env, no repo/home bind, tmpfs /tmp, RLIMIT_AS 1 GiB, per-step vm timeout + process timeout",
+      "CASES form: expected values stay on the host (host-graded). SOURCE form: test runs in the candidate realm (tamper-equivalent to the legacy in-thread test — stated, not hidden)"
+    ]
+  },
+  "method": "Same code evaluated by both paths: IN_PROCESS = native-project-builder.assembleAndLoad + the corpus host-function test (legacy, now opt-in UNISOLATED); ISOLATED = odg-native-build-sandbox.runIsolated (bwrap --unshare-all/--clearenv + prlimit RLIMIT_AS 1GiB + null-prototype vm; test serialized via testSourceFromFn). Wall time per evaluation (isolated includes bwrap+node process start).",
+  "deterministic": {
+    "note": "every corpus task's REFERENCE implementation (expected PASS) + a BROKEN_ENTRY variant (expected FAIL)",
+    "summary": {
+      "comparisons": 80,
+      "verdictEqual": 80,
+      "divergent": [],
+      "passInProcess": 40,
+      "passIsolated": 40,
+      "wallInProcess": {
+        "n": 80,
+        "medianMs": 0.86,
+        "meanMs": 1.05,
+        "maxMs": 3.11
+      },
+      "wallIsolated": {
+        "n": 80,
+        "medianMs": 243,
+        "meanMs": 242.13,
+        "maxMs": 305
+      }
+    },
+    "rows": [
+      {
+        "corpus": "hard",
+        "id": "number-stats-suite",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.467849
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 274,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "number-stats-suite",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.855592
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 253,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "word-metrics",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 3.023987
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 271,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "word-metrics",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.473566
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 261,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "grade-report",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.60156
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 235,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "grade-report",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.727308
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 266,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "roman-codec",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.521252
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 285,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "roman-codec",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.571025
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 239,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "rle-codec",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.140923
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 236,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "rle-codec",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 1.760611
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 237,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "bracket-balance",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.043075
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 278,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "bracket-balance",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.311165
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 200,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "bank-ledger",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 3.11181
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 216,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "bank-ledger",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 1.000333
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 214,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "stack-machine",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.593651
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 217,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "stack-machine",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.498311
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 217,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "voting-tally",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.67605
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 216,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "voting-tally",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.512939
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 210,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "csv-typed-validator",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.581357
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 217,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "csv-typed-validator",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.566532
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 216,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "range-clamp-pipeline",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.749586
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 211,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "range-clamp-pipeline",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.848101
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 225,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "temperature-pipeline",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.208383
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 254,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "temperature-pipeline",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.675242
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 243,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "sum-max",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.879729
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 234,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "sum-max",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.567252
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 244,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "min-count",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.029021
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 280,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "min-count",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.581163
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 280,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "mean-range",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.245683
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 249,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "mean-range",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.255651
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 209,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "evensum-oddsum",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.283017
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 259,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "evensum-oddsum",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.442556
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 294,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "pos-neg",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.13143
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 235,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "pos-neg",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.640659
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 215,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "first-last",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.977172
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 256,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "first-last",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.891214
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 262,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "word-count-longest",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.047927
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 264,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "word-count-longest",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.533667
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 244,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "vowel-consonant",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.916787
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 209,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "vowel-consonant",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.714434
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 273,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "sum-list",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.777897
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 260,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "sum-list",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.624334
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 223,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "product-list",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.049999
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 285,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "product-list",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.275487
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 246,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "max-list",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.805497
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 243,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "max-list",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.322545
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 216,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "min-list",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.950822
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 254,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "min-list",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.368801
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 207,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "count-even",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.155775
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 275,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "count-even",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.264881
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 209,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "sum-squares",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.18995
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 253,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "sum-squares",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.157263
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 200,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "average",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.815277
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 197,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "average",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.360487
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 210,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "celsius-to-f",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.902137
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 269,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "celsius-to-f",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.178275
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 259,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "clamp",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.731369
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 251,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "clamp",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.220452
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 217,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "digit-sum",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.938183
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 236,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "digit-sum",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.285931
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 249,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "factorial",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.613845
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 242,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "factorial",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.349247
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 212,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "nth-fibonacci",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.974907
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 226,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "nth-fibonacci",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.287835
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 242,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "gcd",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.150329
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 264,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "gcd",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.249413
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 263,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "is-prime",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.216594
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 217,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "is-prime",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.290955
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 270,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "reverse-string",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.603031
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 298,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "reverse-string",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.226963
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 213,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "count-vowels",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.996995
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 246,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "count-vowels",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.395388
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 218,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "is-palindrome",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.682245
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 283,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "is-palindrome",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.307645
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 252,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "title-case",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.556361
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 240,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "title-case",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.350972
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 238,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "decimal-to-binary",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.396678
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 227,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "decimal-to-binary",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.309285
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 305,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "run-length-encode",
+        "variant": "REFERENCE",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.860097
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 208,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "run-length-encode",
+        "variant": "BROKEN_ENTRY",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 0.323225
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 249,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      }
+    ]
+  },
+  "modelGenerated": {
+    "model": "qwen2.5-coder:3b",
+    "transport": "Ollama loopback 127.0.0.1:11434 (generation on the host; ONLY execution sandboxed)",
+    "corpora": [
+      "hard",
+      "complex",
+      "calibrate"
+    ],
+    "maxTasksPerCorpus": "ALL",
+    "builds": [
+      {
+        "corpus": "hard",
+        "id": "number-stats-suite",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 377,
+        "buildMs": 95131,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "word-metrics",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 374,
+        "buildMs": 46256,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "grade-report",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 386,
+        "buildMs": 52544,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "roman-codec",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 417,
+        "buildMs": 78782,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "rle-codec",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 373,
+        "buildMs": 38052,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "bracket-balance",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": true,
+        "repairs": 1,
+        "repairStopReason": null,
+        "sandboxWallMs": 386,
+        "buildMs": 35790,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "bank-ledger",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 406,
+        "buildMs": 57613,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "stack-machine",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": true,
+        "repairs": 1,
+        "repairStopReason": null,
+        "sandboxWallMs": 385,
+        "buildMs": 61478,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "voting-tally",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 395,
+        "buildMs": 40615,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "csv-typed-validator",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 388,
+        "buildMs": 37913,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "range-clamp-pipeline",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 387,
+        "buildMs": 35154,
+        "error": null
+      },
+      {
+        "corpus": "hard",
+        "id": "temperature-pipeline",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": false,
+        "repairs": 1,
+        "repairStopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "sandboxWallMs": 412,
+        "buildMs": 36894,
+        "error": null
+      },
+      {
+        "corpus": "complex",
+        "id": "sum-max",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 196,
+        "buildMs": 16962,
+        "error": null
+      },
+      {
+        "corpus": "complex",
+        "id": "min-count",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 265,
+        "buildMs": 12871,
+        "error": null
+      },
+      {
+        "corpus": "complex",
+        "id": "mean-range",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 195,
+        "buildMs": 15922,
+        "error": null
+      },
+      {
+        "corpus": "complex",
+        "id": "evensum-oddsum",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": true,
+        "repairs": 1,
+        "repairStopReason": null,
+        "sandboxWallMs": 393,
+        "buildMs": 31182,
+        "error": null
+      },
+      {
+        "corpus": "complex",
+        "id": "pos-neg",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 194,
+        "buildMs": 14820,
+        "error": null
+      },
+      {
+        "corpus": "complex",
+        "id": "first-last",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 205,
+        "buildMs": 13207,
+        "error": null
+      },
+      {
+        "corpus": "complex",
+        "id": "word-count-longest",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 195,
+        "buildMs": 13746,
+        "error": null
+      },
+      {
+        "corpus": "complex",
+        "id": "vowel-consonant",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 205,
+        "buildMs": 15205,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "sum-list",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 201,
+        "buildMs": 6270,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "product-list",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 178,
+        "buildMs": 5869,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "max-list",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 189,
+        "buildMs": 6211,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "min-list",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 214,
+        "buildMs": 6039,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "count-even",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 197,
+        "buildMs": 5285,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "sum-squares",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 195,
+        "buildMs": 5620,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "average",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 213,
+        "buildMs": 6205,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "celsius-to-f",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 188,
+        "buildMs": 5552,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "clamp",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 216,
+        "buildMs": 6451,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "digit-sum",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 209,
+        "buildMs": 8799,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "factorial",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 188,
+        "buildMs": 8312,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "nth-fibonacci",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": false,
+        "finalAccepted": true,
+        "repairs": 1,
+        "repairStopReason": null,
+        "sandboxWallMs": 396,
+        "buildMs": 17392,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "gcd",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 220,
+        "buildMs": 7498,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "is-prime",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 184,
+        "buildMs": 8062,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "reverse-string",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 181,
+        "buildMs": 4851,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "count-vowels",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 191,
+        "buildMs": 6145,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "is-palindrome",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 196,
+        "buildMs": 4693,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "title-case",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 187,
+        "buildMs": 6476,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "decimal-to-binary",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 205,
+        "buildMs": 8331,
+        "error": null
+      },
+      {
+        "corpus": "calibrate",
+        "id": "run-length-encode",
+        "model": "qwen2.5-coder:3b",
+        "executionMode": "SANDBOX",
+        "executionStatus": "EXECUTED",
+        "firstPassAccepted": true,
+        "finalAccepted": true,
+        "repairs": 0,
+        "repairStopReason": null,
+        "sandboxWallMs": 190,
+        "buildMs": 9191,
+        "error": null
+      }
+    ],
+    "summary": {
+      "comparisons": 54,
+      "verdictEqual": 54,
+      "divergent": [],
+      "passInProcess": 30,
+      "passIsolated": 30,
+      "wallInProcess": {
+        "n": 54,
+        "medianMs": 1.19,
+        "meanMs": 1.23,
+        "maxMs": 2.9
+      },
+      "wallIsolated": {
+        "n": 54,
+        "medianMs": 236,
+        "meanMs": 230.17,
+        "maxMs": 285
+      }
+    },
+    "rows": [
+      {
+        "corpus": "hard",
+        "id": "number-stats-suite",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.674201
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 253,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "number-stats-suite",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.737761
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 199,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "word-metrics",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.346313
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 204,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "word-metrics",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.820843
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 247,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "grade-report",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.19151
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 249,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "grade-report",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.990093
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 195,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "roman-codec",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "Assignment to constant variable.",
+          "ms": 1.257106
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 283,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "roman-codec",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "Assignment to constant variable.",
+          "ms": 2.511958
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 270,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "rle-codec",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": false,
+          "verified": false,
+          "verdict": "BUILD_ERROR",
+          "error": "encode is not a function",
+          "ms": 0.887929
+        },
+        "isolated": {
+          "buildOk": false,
+          "verified": false,
+          "verdict": "BUILD_ERROR",
+          "error": "encode is not a function",
+          "ms": 242,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "rle-codec",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.546526
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 267,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "bracket-balance",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 0.912671
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 189,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "bracket-balance",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.40528
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 204,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "bank-ledger",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.535173
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 222,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "bank-ledger",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.821638
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 237,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "stack-machine",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 1.222361
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 235,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "stack-machine",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 2.898619
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 254,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "voting-tally",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": false,
+          "verified": false,
+          "verdict": "BUILD_ERROR",
+          "error": "Cannot read properties of undefined (reading 'votes')",
+          "ms": 2.067065
+        },
+        "isolated": {
+          "buildOk": false,
+          "verified": false,
+          "verdict": "BUILD_ERROR",
+          "error": "Cannot read properties of undefined (reading 'votes')",
+          "ms": 269,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "voting-tally",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": false,
+          "verified": false,
+          "verdict": "BUILD_ERROR",
+          "error": "Cannot read properties of undefined (reading 'votes')",
+          "ms": 0.742888
+        },
+        "isolated": {
+          "buildOk": false,
+          "verified": false,
+          "verdict": "BUILD_ERROR",
+          "error": "Cannot read properties of undefined (reading 'votes')",
+          "ms": 226,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "csv-typed-validator",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "input.split is not a function",
+          "ms": 2.428266
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 285,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "csv-typed-validator",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "require(...).parse is not a function",
+          "ms": 1.908668
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 229,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "range-clamp-pipeline",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.913937
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 241,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "range-clamp-pipeline",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 0.819689
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 184,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "temperature-pipeline",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.925708
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 251,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "hard",
+        "id": "temperature-pipeline",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "f is not a function",
+          "ms": 1.536325
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 222,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "sum-max",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.391608
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 189,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "min-count",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.124971
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 214,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "mean-range",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.167346
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 249,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "evensum-oddsum",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "parse is not defined",
+          "ms": 1.573966
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 270,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "evensum-oddsum",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.371775
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 221,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "pos-neg",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.032433
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 210,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "first-last",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.256921
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 239,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "word-count-longest",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.421806
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 219,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "complex",
+        "id": "vowel-consonant",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.047517
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 217,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "sum-list",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.660963
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 224,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "product-list",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.872263
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 212,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "max-list",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.628424
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 247,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "min-list",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.614028
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 195,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "count-even",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.541692
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 208,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "sum-squares",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.716401
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 220,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "average",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.461015
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 255,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "celsius-to-f",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.517246
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 198,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "clamp",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.673494
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 198,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "digit-sum",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.759501
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 238,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "factorial",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.669738
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 237,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "nth-fibonacci",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": "add is not defined",
+          "ms": 1.067349
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": false,
+          "verdict": "FAIL",
+          "error": null,
+          "ms": 242,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "nth-fibonacci",
+        "variant": "MODEL_FINAL",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.19281
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 259,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "gcd",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.97595
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 238,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "is-prime",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.52062
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 236,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "reverse-string",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.494968
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 241,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "count-vowels",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.582913
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 257,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "is-palindrome",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.791101
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 192,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "title-case",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.947125
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 191,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "decimal-to-binary",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 1.613056
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 257,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      },
+      {
+        "corpus": "calibrate",
+        "id": "run-length-encode",
+        "variant": "MODEL_FIRST_PASS",
+        "inProcess": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 0.781674
+        },
+        "isolated": {
+          "buildOk": true,
+          "verified": true,
+          "verdict": "PASS",
+          "error": null,
+          "ms": 199,
+          "status": "EXECUTED"
+        },
+        "verdictEqual": true
+      }
+    ]
+  },
+  "escapes": [
+    {
+      "escape": "require.cache",
+      "isolatedObserved": "BLOCKED:Cannot convert undefined or null to object",
+      "hostMarkerPresent": false,
+      "secretLeaked": false
+    },
+    {
+      "escape": "module.constructor._load",
+      "isolatedObserved": "BLOCKED:module.constructor._load is not a function",
+      "hostMarkerPresent": false,
+      "secretLeaked": false
+    },
+    {
+      "escape": "module.constructor.createRequire",
+      "isolatedObserved": "BLOCKED:module.constructor.createRequire is not a function",
+      "hostMarkerPresent": false,
+      "secretLeaked": false
+    },
+    {
+      "escape": "process.mainModule.require",
+      "isolatedObserved": "BLOCKED:process is not defined",
+      "hostMarkerPresent": false,
+      "secretLeaked": false
+    },
+    {
+      "escape": "process.getBuiltinModule",
+      "isolatedObserved": "BLOCKED:process is not defined",
+      "hostMarkerPresent": false,
+      "secretLeaked": false
+    },
+    {
+      "escape": "Function('return process')",
+      "isolatedObserved": "BLOCKED:process is not defined",
+      "hostMarkerPresent": false,
+      "secretLeaked": false
+    },
+    {
+      "escape": "process.binding",
+      "isolatedObserved": "BLOCKED:process is not defined",
+      "hostMarkerPresent": false,
+      "secretLeaked": false
+    },
+    {
+      "escape": "dynamic import()",
+      "isolatedObserved": "BLOCKED:A dynamic import callback was not specified.",
+      "hostMarkerPresent": false,
+      "secretLeaked": false
+    },
+    {
+      "escape": "CONTROL process.getBuiltinModule via legacy IN-PROCESS path",
+      "inProcessObserved": "ESCAPED:<host-secret>",
+      "hostMarkerPresent": true,
+      "secretLeaked": true
+    }
+  ],
+  "honestLimits": [
+    "SOURCE-form test runs in the candidate's realm (tamper-equivalent to the legacy in-thread test, not stronger); the CASES form is host-graded.",
+    "inside the sandbox generated code may require only other generated files or 'assert' (in-context shim); the #913 in-process allowlist also allowed util/events/string_decoder — such code builds in-process but fails isolated (REQUIRE_DENIED) — any such case appears as a divergence above.",
+    "wall time includes per-evaluation bwrap + node startup; measured on a shared host.",
+    "VERIFIED in-repo ≠ DEPLOYED."
+  ]
+}

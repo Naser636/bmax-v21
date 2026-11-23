@@ -9,7 +9,8 @@ const spec = {
     { path: "src/ops.js", role: "math ops", contract: "exports { add(a,b) }" },
     { path: "src/calc.js", role: "calculator", contract: "exports compute(a,b) using ops.add", dependsOn: ["src/ops.js"] },
   ],
-  independentTest: (mods: any) => { const calc = mods["src/calc.js"]; return typeof calc === "function" ? calc(2, 3) === 5 : (calc && calc.compute ? calc.compute(2, 3) === 5 : false); },
+  // V15.9: SERIALIZABLE independent test — evaluated INSIDE the bwrap sandbox (model code never runs in this process).
+  independentTestSource: "(mods) => { const calc = mods['src/calc.js']; return typeof calc === 'function' ? calc(2, 3) === 5 : (calc && calc.compute ? calc.compute(2, 3) === 5 : false); }",
 };
 // a GOOD generator seam (models a correct local-model output): ops exports add; calc requires ops and computes.
 const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "module.exports={add:(a,b)=>a+b};" : "const ops=require('./ops.js');module.exports=(a,b)=>ops.add(a,b);" });
@@ -65,7 +66,7 @@ const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "
   // V327 §3: with STRUCTURED repairExamples, the repair hint is SPECIFIC execution feedback (Self-Debugging), not generic.
   const fbSpec = { name: "f", writeSet: ["f.js"], entry: "f.js", repairExamples: [{ args: [2, 3], expect: 5 }],
     architecture: [{ path: "f.js", role: "add", contract: "module.exports=(a,b)=>a+b" }],
-    independentTest: (m: any) => m["f.js"](2, 3) === 5 };
+    independentTestSource: "(m) => m['f.js'](2, 3) === 5" };
   let hintSeen: any = null;
   const capFeedback = async (f: any) => { if (f.verifyError) hintSeen = f.verifyError; return { ok: true, content: f.verifyError ? "module.exports=(a,b)=>a+b;" : "module.exports=(a,b)=>a*b;" }; };
   const rfb = await B.buildProject(fbSpec, { generateFile: capFeedback, maxRepair: 1 });
@@ -78,7 +79,7 @@ const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "
   check(genHint && /fix the logic/.test(genHint) && !/EXECUTION FEEDBACK/.test(genHint), "no repairExamples ⇒ generic hint (backward-compatible)");
 
   // V327 §4/§7: the bounded PRE-GUARD skips the hang-prone in-thread test when a single-file candidate does not terminate.
-  const guardSpec = { name: "f", writeSet: ["f.js"], repairExamples: [{ args: [2, 3], expect: 5 }], architecture: [{ path: "f.js", role: "add", contract: "module.exports=(a,b)=>a+b" }], independentTest: (m: any) => { spy.called = true; return m["f.js"](2, 3) === 5; } };
+  const guardSpec = { name: "f", writeSet: ["f.js"], repairExamples: [{ args: [2, 3], expect: 5 }], architecture: [{ path: "f.js", role: "add", contract: "module.exports=(a,b)=>a+b" }], unisolatedInProcess: "UNISOLATED_IN_PROCESS", independentTest: (m: any) => { spy.called = true; return m["f.js"](2, 3) === 5; } };   // legacy in-thread path: EXPLICIT opt-in only
   const spy = { called: false };
   const good1 = async () => ({ ok: true, content: "module.exports=(a,b)=>a+b;" });
   // guard TIMEOUT ⇒ in-thread test SKIPPED, not accepted (cycle protected) — independentTest never called

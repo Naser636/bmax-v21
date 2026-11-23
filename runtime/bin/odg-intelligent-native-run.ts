@@ -24,7 +24,7 @@ const history = [
 ];
 const mission = {
   id: "intelligent-demo-add", type: "arith",
-  spec: { name: "add", architecture: [{ path: "f.js", role: "add two numbers", contract: "module.exports=(a,b)=>a+b" }], independentTest: (m: any) => typeof m["f.js"] === "function" && m["f.js"](2, 3) === 5 && m["f.js"](-1, 1) === 0 },
+  spec: { name: "add", architecture: [{ path: "f.js", role: "add two numbers", contract: "module.exports=(a,b)=>a+b" }], independentTestCases: [{ entry: "f.js", args: [2, 3], expect: 5 }, { entry: "f.js", args: [-1, 1], expect: 0 }] },   // V15.9: host-graded, run in the sandbox
 };
 
 (async () => {

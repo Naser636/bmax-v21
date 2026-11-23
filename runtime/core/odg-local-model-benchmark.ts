@@ -448,5 +448,5 @@ const LOCAL_MODEL_BENCHMARK_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { TASKSET_FILE, DEFAULT_OPTIONS, CODE_MEMORY_LIMIT_BYTES, loadTaskSet, validateTaskSet, extractCode, parseJsonLoose, compileCheck, hiddenTestProgram, testWritingProgram, gradeObservations, gradeTrial, createProcSampler, runBenchmark, parseResult, defaultCodeRunner, LOCAL_MODEL_BENCHMARK_CONTRACT };
+module.exports = { TASKSET_FILE, DEFAULT_OPTIONS, CODE_MEMORY_LIMIT_BYTES, CTX_ASSERT_SRC, loadTaskSet, validateTaskSet, extractCode, parseJsonLoose, compileCheck, hiddenTestProgram, testWritingProgram, gradeObservations, gradeTrial, createProcSampler, runBenchmark, parseResult, defaultCodeRunner, LOCAL_MODEL_BENCHMARK_CONTRACT };
 export {};

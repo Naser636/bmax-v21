@@ -103,7 +103,7 @@ const NATIVE_ENGINEERING_CYCLE_CONTRACT = Object.freeze({
 module.exports = { runNativeCycle, NATIVE_ENGINEERING_CYCLE_CONTRACT };
 
 if (require.main === module) {
-  const spec = { name: "calc", architecture: [{ path: "src/ops.js", role: "math", contract: "add", dependsOn: [] }, { path: "src/calc.js", role: "uses ops", contract: "ops.add", dependsOn: ["src/ops.js"] }], independentTest: (m: any) => typeof m["src/calc.js"] === "function" && m["src/calc.js"](2, 3) === 5 };
+  const spec = { name: "calc", architecture: [{ path: "src/ops.js", role: "math", contract: "add", dependsOn: [] }, { path: "src/calc.js", role: "uses ops", contract: "ops.add", dependsOn: ["src/ops.js"] }], independentTestCases: [{ entry: "src/calc.js", args: [2, 3], expect: 5 }] };   // V15.9: serializable ⇒ isolated sandbox
   // GOVERNED cold start ⇒ routes to the provider (no demonstrated readiness).
   (async () => {
     const governed = await runNativeCycle(spec, [], {}, {});

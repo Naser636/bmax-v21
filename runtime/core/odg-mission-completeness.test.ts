@@ -16,6 +16,12 @@ function main(): void {
   const noTest = C.assessCompleteness({ name: "f", architecture: [{ path: "f.js", role: "r", contract: "c" }] });
   check("no independentTest ⇒ UNDERSPECIFIED (unverifiable ⇒ never acceptable)", noTest.verdict === "UNDERSPECIFIED" && noTest.complete === false && noTest.missing.some((m: string) => /acceptance criterion/.test(m)));
 
+  // V15.9: the SERIALIZABLE (sandbox) test forms are acceptance criteria too; empty forms are not
+  const arch1 = [{ path: "f.js", role: "r", contract: "c" }];
+  check("independentTestSource ⇒ EXECUTABLE (V15.9 sandbox form)", C.assessCompleteness({ name: "f", architecture: arch1, independentTestSource: "(m) => true" }).verdict === "EXECUTABLE");
+  check("independentTestCases ⇒ EXECUTABLE (V15.9 sandbox form)", C.assessCompleteness({ name: "f", architecture: arch1, independentTestCases: [{ entry: "f.js", args: [], expect: 1 }] }).verdict === "EXECUTABLE");
+  check("empty independentTestSource/Cases ⇒ still UNDERSPECIFIED", C.assessCompleteness({ name: "f", architecture: arch1, independentTestSource: "  ", independentTestCases: [] }).verdict === "UNDERSPECIFIED");
+
   // no architecture ⇒ UNDERSPECIFIED
   const noArch = C.assessCompleteness({ name: "f", independentTest: () => true });
   check("no architecture ⇒ UNDERSPECIFIED (nothing to build)", noArch.verdict === "UNDERSPECIFIED" && noArch.missing.some((m: string) => /architecture/.test(m)));

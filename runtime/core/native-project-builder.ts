@@ -16,6 +16,7 @@
 const RW = require("./repair-workflow.js");
 const RF = require("./odg-repair-feedback.js"); // V327 §3: Self-Debugging/Reflexion execution-feedback repair hint
 const RF_BE = require("./odg-bounded-exec.js"); // V327 §4/§7: timeboxed pre-guard against non-terminating generations
+const NBS = require("./odg-native-build-sandbox.js"); // V15.9: OUTER-process isolation for model-written code (reuses provider-sandbox bwrap)
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function fn(v: any): boolean { return typeof v === "function"; }
@@ -31,7 +32,8 @@ function fn(v: any): boolean { return typeof v === "function"; }
 // require.cache[..].require, module.constructor._load / .prototype.require / .createRequire(abs), process.mainModule.require,
 // process.getBuiltinModule, Function("return process")(), dynamic import(), process.binding. Shadowing module/process or a
 // vm context does not fix this (prototype/constructor chains). Real isolation of untrusted model code = an OUTER bwrap
-// process (provider-sandbox) — separate work item; until then, run native builds only on trusted local models/specs.
+// process — DONE in V15.9: buildProject runs model code in odg-native-build-sandbox (bwrap) by default; assembleAndLoad is
+// now reached only via the explicit UNISOLATED_IN_PROCESS opt-in (and by corpus-soundness checks over TRUSTED reference code).
 const GENERATED_REQUIRE_ALLOW: readonly string[] = Object.freeze(["assert", "assert/strict", "util", "events", "string_decoder"]);
 function allowedBuiltin(req: string): boolean {
   const r = typeof req === "string" ? req.replace(/^node:/, "") : "";
@@ -80,23 +82,64 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
     fileStatus.push({ path: fileSpec.path, stage: "GENERATED" });
   }
 
+  // V15.9 ISOLATION — EXECUTION MODE. Model-written code is executed ONLY inside an OUTER isolated process
+  // (odg-native-build-sandbox: provider-sandbox bwrap + RLIMIT_AS + null-prototype vm; JSON verdicts out, nonce-stamped)
+  // whenever the spec carries a SERIALIZABLE test (independentTestSource | independentTestCases). A host-function
+  // independentTest cannot cross a process boundary: it runs in-thread ONLY behind the explicit opt-in
+  // UNISOLATED_IN_PROCESS (spec.unisolatedInProcess or deps.unisolatedInProcess) — otherwise it is REFUSED (never silently
+  // executed in-process). Sandbox unavailable / probe failed ⇒ NOT_RUN (verified=null), never an in-process fallback.
+  const testForm = NBS.serializableTest(s);
+  const optIn = s.unisolatedInProcess === NBS.UNISOLATED_OPT_IN || deps.unisolatedInProcess === NBS.UNISOLATED_OPT_IN;
+  const executionMode: string = testForm ? "SANDBOX" : (fn(s.independentTest) ? (optIn ? "UNISOLATED_IN_PROCESS" : "REFUSED_UNISOLATED") : "SANDBOX");
+  const repairExs = Array.isArray(s.repairExamples) ? s.repairExamples.filter((e: any) => isObj(e) && Array.isArray(e.args)) : null;
+  const entryPath = typeof s.entry === "string" ? s.entry : (arch.length ? arch[arch.length - 1].path : null);
+  let executionStatus = "EXECUTED";
+  let notRunReason: string | null = null;
+  let isolation: any = executionMode === "UNISOLATED_IN_PROCESS"
+    ? Object.freeze({ mechanism: "UNISOLATED — in-process module._compile (explicit opt-in; model code runs in ODG's process)", network: true, hostExecutesModelCode: true })
+    : null;
+  let sandboxWallMs = 0;
+  if (executionMode !== "UNISOLATED_IN_PROCESS" && Object.keys(files).length > 0) {
+    let probe: any;
+    try { probe = typeof deps.sandboxProbe === "function" ? deps.sandboxProbe() : NBS.probeSandbox(deps.sandboxRunner); } catch (e: any) { probe = { ok: false, reason: String((e && e.message) || e) }; }
+    if (!probe || probe.ok !== true) { executionStatus = "NOT_RUN"; notRunReason = "sandbox unavailable — " + String((probe && probe.reason) || "probe failed") + " — refusing in-process execution (fail-closed)"; }
+  }
+
   // BUILD + INDEPENDENT VERIFICATION, with bounded repair on EITHER a build error OR a verify failure. V40 LOT M: a false
   // success (the project COMPILES but FAILS the independent test) previously got NO repair — now the test failure is fed
   // back to the generator, fail-closed. Acceptance is still decided ONLY by the independent test.
-  let build = assembleAndLoad(files);
+  let build: any = { ok: false, error: "not built" };
   let verifyErr: any = null;
-  // V327 §4/§7: bounded PRE-GUARD against a non-terminating generation. The in-thread independentTest below cannot
-  // interrupt an infinite loop; so for a single-file spec that supplies STRUCTURED repairExamples, run the candidate
-  // source in a timeboxed CHILD first (odg-bounded-exec, injectable via deps.boundedCheck). A TIMEOUT ⇒ the code hangs ⇒
-  // treat as not-verified WITHOUT calling the (hang-prone) in-thread test. Opt-in (needs repairExamples + single file);
-  // no repairExamples ⇒ unchanged behaviour. Fail-open to the normal path on any guard error (never a false accept).
+  let verified = false as boolean;   // assigned inside evaluate() (closure) — widen so TS does not narrow to `false`
+  let repairObs: any = null;
+  // V327 §4/§7: bounded PRE-GUARD (UNISOLATED mode only) against a non-terminating generation. The in-thread
+  // independentTest cannot interrupt an infinite loop; for a single-file spec with STRUCTURED repairExamples the candidate
+  // first runs in a timeboxed CHILD (odg-bounded-exec, injectable via deps.boundedCheck). TIMEOUT ⇒ not-verified without
+  // calling the in-thread test. In SANDBOX mode the sandbox's own step/process timeouts subsume this guard.
   const boundedCheck = typeof deps.boundedCheck === "function" ? deps.boundedCheck : (src: string, ex: any) => RF_BE.runExamplesBounded(src, ex, { timeoutMs: Number(deps.boundedTimeoutMs) || 3000 });
   const hangGuardTimedOut = (): boolean => {
     if (!(build.ok && arch.length === 1 && Array.isArray(s.repairExamples) && typeof files[arch[0].path] === "string")) return false;
     try { return boundedCheck(files[arch[0].path], s.repairExamples).verdict === "TIMEOUT"; } catch { return false; }
   };
-  const runVerify = (): boolean => { verifyErr = null; if (hangGuardTimedOut()) { verifyErr = "bounded pre-guard TIMEOUT: candidate did not terminate — in-thread test skipped (fail-closed, cycle protected)"; return false; } if (build.ok && fn(s.independentTest)) { try { return s.independentTest(build.modules) === true; } catch (e: any) { verifyErr = String((e && e.message) || e); return false; } } return false; };
-  let verified = runVerify();
+  const evaluate = (): void => {
+    verifyErr = null; repairObs = null;
+    if (executionMode === "UNISOLATED_IN_PROCESS") {
+      build = assembleAndLoad(files);
+      if (hangGuardTimedOut()) { verifyErr = "bounded pre-guard TIMEOUT: candidate did not terminate — in-thread test skipped (fail-closed, cycle protected)"; verified = false; return; }
+      if (build.ok && fn(s.independentTest)) { try { verified = s.independentTest(build.modules) === true; } catch (e: any) { verifyErr = String((e && e.message) || e); verified = false; } return; }
+      verified = false; return;
+    }
+    if (executionStatus === "NOT_RUN") { build = { ok: false, error: "NOT_RUN: " + notRunReason }; verified = false; return; }
+    const r = NBS.runIsolated(files, testForm || { kind: "none" }, { runner: deps.sandboxRunner, repair: repairExs && entryPath ? { entry: entryPath, examples: repairExs } : null, stepTimeoutMs: deps.sandboxStepTimeoutMs, processTimeoutMs: deps.sandboxProcessTimeoutMs });
+    sandboxWallMs += Number(r.wallMs) || 0;
+    isolation = r.isolation;
+    if (r.status !== "EXECUTED") { executionStatus = "NOT_RUN"; notRunReason = r.reason; build = { ok: false, error: "NOT_RUN: " + r.reason }; verified = false; return; }
+    build = { ok: r.buildOk === true, error: r.buildOk === true ? null : r.buildError };
+    repairObs = r.repairObservations;
+    if (executionMode === "REFUSED_UNISOLATED") { verified = false; verifyErr = "REFUSED_UNISOLATED: independentTest is a host function (cannot run isolated) and the UNISOLATED_IN_PROCESS opt-in is absent — supply independentTestSource/independentTestCases (fail-closed)"; return; }
+    verified = r.verified === true; verifyErr = r.verifyError || null;
+  };
+  evaluate();
   const firstPass = Object.freeze({ buildOk: build.ok === true, verified: build.ok === true && verified === true, error: build.ok ? verifyErr : build.error });  // instrumentation: the pre-repair verdict (no behaviour change)
   let repairs = 0;
   // V15.0 §37.8 ANTI-LOOP: a repair round that regenerates EXACTLY the same files as the previous state carries no new
@@ -104,19 +147,21 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
   // instead of burning the remaining repair budget; the result stays fail-closed (not accepted) and records why.
   const snapshot = (): string => JSON.stringify(Object.keys(files).sort().map((k) => [k, files[k]]));
   let repairStopReason: string | null = null;
-  while (!(build.ok && verified) && repairs < maxRepair && fn(deps.generateFile)) {
+  if (executionStatus === "NOT_RUN") repairStopReason = "NOT_RUN_NO_SANDBOX";                 // no verdict ⇒ no blind repair
+  else if (executionMode === "REFUSED_UNISOLATED") repairStopReason = "VERIFY_REFUSED_UNISOLATED"; // regeneration cannot fix a refused test
+  while (repairStopReason === null && !(build.ok && verified) && repairs < maxRepair && fn(deps.generateFile)) {
     const before = snapshot();
     repairs++;
     // regenerate every file with the FAILURE in context: a build error, or a "builds-but-fails-the-test" verify failure.
     // V327 §3 (Self-Debugging/Reflexion): when the spec provides STRUCTURED repairExamples [{args,expect}], feed the
-    // generator the SPECIFIC first failing case (input → expected vs actual) instead of the generic message — the
-    // world-reference execution-feedback technique. Backward-compatible: no repairExamples ⇒ the generic hint, unchanged.
-    // Safe: the independent test already ran the modules in-thread above (no new hang surface); fail-closed to generic.
+    // generator the SPECIFIC first failing case (input → expected vs actual) instead of the generic message. In SANDBOX
+    // mode the examples were executed INSIDE the sandbox and the host only REPLAYS the observations (NBS.replayFn).
     let verifyHint = "the project BUILDS but FAILS the independent functional test — the logic does not satisfy the contract; fix the logic";
-    if (build.ok && Array.isArray(s.repairExamples) && build.modules) {
-      const entry = typeof s.entry === "string" ? s.entry : (arch.length ? arch[arch.length - 1].path : null);
-      const entryFn = entry ? build.modules[entry] : null;
-      try { const fb = RF.buildExecutionFeedback(s.repairExamples, entryFn); if (fb && fb.hasFailure === true && typeof fb.verifyError === "string") verifyHint = fb.verifyError; } catch { /* fail-closed to generic */ }
+    if (build.ok && Array.isArray(s.repairExamples)) {
+      let entryFn: any = null;
+      if (executionMode === "UNISOLATED_IN_PROCESS") entryFn = build.modules && entryPath ? build.modules[entryPath] : null;
+      else if (Array.isArray(repairObs) && repairExs && repairObs.length === repairExs.length) entryFn = NBS.replayFn(repairObs);
+      try { const fb = RF.buildExecutionFeedback(executionMode === "UNISOLATED_IN_PROCESS" ? s.repairExamples : repairExs, entryFn); if (fb && fb.hasFailure === true && typeof fb.verifyError === "string") verifyHint = fb.verifyError; } catch { /* fail-closed to generic */ }
     }
     const hint = !build.ok ? { buildError: build.error } : { verifyError: verifyHint };
     let regenFailed = 0;   // a transient generate failure (e.g. model timeout) keeps the old content — NOT "no progress"
@@ -126,12 +171,13 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
     // still produce different output; at the default low temperature an identical round is treated as no new information. A timeout-based hang-guard
     // verdict is not re-run after an identical round (accepted risk: a spurious TIMEOUT then stands — still fail-closed).
     if (regenFailed === 0 && snapshot() === before) { repairStopReason = "NO_PROGRESS_IDENTICAL_REGENERATION"; break; }
-    build = assembleAndLoad(files);
-    verified = runVerify();
+    evaluate();
+    if (executionStatus === "NOT_RUN") { repairStopReason = "NOT_RUN_NO_SANDBOX"; break; }
   }
   if (repairStopReason === null && !(build.ok && verified) && repairs >= maxRepair && maxRepair > 0) repairStopReason = "REPAIR_BUDGET_EXHAUSTED";
 
   const filesGenerated = Object.keys(files).length;
+  const notRun = executionStatus === "NOT_RUN";
   return Object.freeze({
     project: s.name || "project",
     filesPlanned: arch.length,
@@ -140,10 +186,14 @@ async function buildProject(spec: any, deps: any = {}): Promise<any> {
     buildError: build.ok ? null : build.error,
     repairs,
     repairStopReason,                                     // V15.0 anti-loop: why the repair loop stopped (null if accepted / no repair)
-    verified: build.ok && verified,
-    verifyError: verifyErr,
-    accepted: build.ok === true && verified === true,     // native build accepted ONLY on independent verification
+    verified: notRun ? null : (build.ok === true && verified === true),   // NOT_RUN ⇒ null (NOT_MEASURED, never a fabricated false/true)
+    verifyError: notRun ? notRunReason : verifyErr,
+    accepted: !notRun && build.ok === true && verified === true,     // native build accepted ONLY on independent verification
     firstPass,                                            // the pre-repair verdict (instrumentation for benchmarks)
+    executionMode,                                        // V15.9: SANDBOX | UNISOLATED_IN_PROCESS (explicit opt-in) | REFUSED_UNISOLATED
+    executionStatus,                                      // V15.9: EXECUTED | NOT_RUN (no sandbox ⇒ nothing executed, fail-closed)
+    isolation,                                            // V15.9: how model code was executed (hostExecutesModelCode flag)
+    sandboxWallMs: executionMode === "UNISOLATED_IN_PROCESS" ? null : sandboxWallMs,
     fileStatus: Object.freeze(fileStatus),
     files: Object.freeze({ ...files }),                    // retained (valid partial not lost)
   });
@@ -160,6 +210,8 @@ const NATIVE_PROJECT_BUILDER_CONTRACT = Object.freeze({
     "the project is accepted ONLY if it builds AND passes the INDEPENDENT test — never on the generator's claim",
     "bounded repair on a build error; accepted/valid files are retained (a later failure does not lose prior valid work)",
     "pure orchestration: the generator and verifier are seams; the quality gate is never lowered",
+    "V15.9: model-written code executes ONLY in an OUTER isolated process (bwrap sandbox) when the spec has a serializable test; a host-function test runs in-process ONLY behind the explicit UNISOLATED_IN_PROCESS opt-in, otherwise REFUSED",
+    "V15.9: no sandbox ⇒ NOT_RUN (verified=null, accepted=false) — never a silent in-process fallback",
   ]),
 });
 
