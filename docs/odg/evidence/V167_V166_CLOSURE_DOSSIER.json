@@ -1,0 +1,203 @@
+{
+  "//": "V166 closure dossier (owner directive 'REPRISE V166, ACHÈVEMENT, CLÔTURE PROPRE'). Prepared by the PROVIDER (Claude Code coordinating session) from committed evidence + one read-only re-measurement. AUTHORIZES NOTHING, SIGNS NOTHING, ACTIVATES NOTHING.",
+  "schema": "odg-closure-dossier/1",
+  "date": "2026-11-23",
+  "headAtDossier": "28718a37",
+  "stateReconstruction": {
+    "head": "28718a37 = origin/main, branch main",
+    "worktree": "clean (0 tracked/untracked changes); 172 ignored entries (runtime/generated, dist, node_modules … — not touched)",
+    "stashes": "5 present (stash@{0}…{4}), each readable (git stash show)",
+    "openPRs": 0,
+    "truthLock": "verified=928 missing=0 changed=0",
+    "processes": "no tsx/odg/provider process besides the live root timer's periodic ticks (IDLE)",
+    "concurrentWork": "none detected"
+  },
+  "A_H_authorizationRequest": {
+    "strategicSelection": "ODG GO (main 28718a37): strategicSelection H via TIE_EXPLAINED J/G/H resolved by R3_LOWER_RISK; ownerRequest 'owner — H PROPOSED → AUTHORIZED (authorizedBy)' recorded by GO-ACT-1; actionableSelection: none (G CLOSED_PARTIAL, all others PROPOSED)",
+    "contractAsCommitted": {
+      "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#H",
+      "state": "PROPOSED",
+      "objective": "Improve a planning/verification mechanism and show superiority on independent held-out tests",
+      "acceptance": [
+        "held-out test set fixed BEFORE the change",
+        "before/after on that set with n; superiority or honest null result"
+      ],
+      "write_set": [
+        "docs/odg/evidence/V160_SCENARIO_H.json"
+      ],
+      "initialStatus": "PARTIAL (V159 routing: no quality gain 0.75→0.75; #902 verification levels gain not measured)"
+    },
+    "technicallyFeasible": "yes, offline/local only: candidate mechanisms already canonical — (1) odg-verification-level (#902, L1/L2/L3/REINFORCED) judged on historical PRs; (2) odg-local-model-execution-policy routing (V159). Held-out data must be assembled from committed evidence before any change.",
+    "alreadyAuthorized": "nothing for H (V165 authorizes mission G + internal construction of autonomy capabilities; H's contract is PROPOSED and is a V15.0 scenario, not listed in V165 §1)",
+    "requestedScope": {
+      "steps": [
+        "REVISE_CONTRACT (fix the mechanism choice + pre-register held-out set, metric, baseline, thresholds; write_set extended to the runner + evidence)",
+        "INSPECT_REVISED_CONTRACT (independent, sha-bound record)",
+        "RUN_CONTROLLED_EXPERIMENTS (offline, local; declared dispatchTarget inside write_set)",
+        "VALIDATE_CRITERIA (R5b record; grade ≤ outcome)"
+      ],
+      "mirrors": "the G sequence enforced by runtime/core/odg-authorization-scope.ts (would need STEP_SEQUENCES.H — an additive code change inside the same authorization)",
+      "excluded": [
+        "provider spend",
+        "egress / Radar grant change",
+        "host/systemd/deploy",
+        "governance changes"
+      ],
+      "risks": [
+        "held-out leakage if the set is assembled after looking at the mechanism's outputs (mitigation: freeze set + sha before any change)",
+        "small n (≈40 campaign PRs) ⇒ wide CI; honest null result likely",
+        "selector steering (inspection precedent #933)"
+      ],
+      "dependencies": [
+        "none external; uses committed PR/inspection history"
+      ]
+    },
+    "requestText": "Autoriser H en AUTHORIZED_FOR_REVISION (même schéma que G : révision du contrat → inspection indépendante liée à l'empreinte → expériences contrôlées hors ligne → validation des critères), périmètre interne, sans dépense ni accès externe ?",
+    "notLaunched": "H, its experiments and any H action are NOT started (no authorization)"
+  },
+  "B_githubAUP": {
+    "pinnedText": {
+      "url": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+      "sha256": "d343690d118ff5bae23aef1cf9b6ccbf90c214c4b38b0f4bc42a2103535a47f8",
+      "fetchedAt": "2026-11-23T19:44:15Z",
+      "source": "docs/odg/evidence/V164_RADAR_SOURCE_CANDIDATES.json (termsRetrieval.hitsVerbatim)"
+    },
+    "s6": "6. Services Usage Limits — \"You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission.\"",
+    "s7": "7. Information Usage Restrictions — \"You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any p[ublications resulting from that research are open access] …\" (bracketed tail per the V160/V164 recorded open-access condition; the pinned hit context is truncated at 'only if any p')",
+    "dependents": {
+      "grantInForce": "docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json — google.github.io, microsoft.github.io, github.blog (GitHub open-access condition recorded)",
+      "collection": "#920 V160_PRACTICES_COLLECTION.json (pinned; 25 quotes, 22 SUPPORTED, 0 facts) — already collected",
+      "v164": "nasa.github.io, microsoft.github.io (autogen), netflix.github.io, github.blog (ai-and-ml) DEFERRED in V164 on this point"
+    },
+    "interpretations": [
+      {
+        "id": "I1_specific_governs",
+        "reading": "§7 is the specific clause on using information (explicitly 'regardless of whether … scraped'); §6 targets the Service itself (reselling/duplicating the platform or access). Internal research use of public, non-personal docs is permitted if resulting publications are open access.",
+        "consequence": "V160 grant + #920 stand; V164 GitHub-hosted hosts could be re-admitted with the condition",
+        "risk": "ODG is a business system — 'research purposes' may be read narrowly (non-commercial research)"
+      },
+      {
+        "id": "I2_conservative",
+        "reading": "§6 restricts copying 'any portion of the Service' (content included) without written permission; §7 does not override it for commercial actors.",
+        "consequence": "V160 grant should be suspended for GitHub-hosted hosts; #920 quotes retained only as short, attributed excerpts already collected; no new collection",
+        "risk": "loses useful primary sources (Microsoft playbook, GitHub engineering blog, Google eng-practices)"
+      }
+    ],
+    "recommendation": "Reversible middle path: (1) no new GitHub-hosted collection until the owner rules; (2) keep #920 as-is (already collected, short attributed quotes, internal use, no redistribution); (3) owner decides I1 vs I2 — or obtains GitHub's written permission (removes the ambiguity); (4) whichever is chosen, record it as a dated owner decision and re-run admission (no hand-edit of grants).",
+    "unchanged": "V160 grant NOT modified; #920 NOT resumed"
+  },
+  "C_radarEightSources": {
+    "sources": [
+      {
+        "id": "openai.github.io",
+        "question": "openai.github.io: GitHub AUP (research use permitted) vs OpenAI Terms ('Automatically or programmatically extracting data') — do OpenAI's terms cover its GitHub-hosted SDK docs? openai.com remains REFUSED (V160)"
+      },
+      {
+        "id": "nvidia.github.io",
+        "question": "nvidia.github.io: GitHub AUP (research use permitted) vs NVIDIA ToS linked from the docs footer (robots/scrapers prohibited) — which governs?"
+      },
+      {
+        "id": "IBM (research.ibm.com)",
+        "question": "IBM Terms: robots.txt-compliant crawling permitted vs 'robot ... data mine' conduct prohibition and 'non-commercial' use — and does it cover research.ibm.com?"
+      },
+      {
+        "id": "docs.ollama.com",
+        "question": "Ollama terms: 'Use automated means to access our services without permission' — does it cover docs.ollama.com? (ODG runs Ollama locally; docs could alternatively be read from the open-source repository)"
+      },
+      {
+        "id": "Stanford",
+        "question": "Stanford ToU: download only for 'personal, non-commercial use' — compatible with ODG internal research?"
+      },
+      {
+        "id": "CMU (www.cs.cmu.edu)",
+        "question": "CMU legal notice: personal viewing / non-commercial use only — compatible with ODG internal research?"
+      },
+      {
+        "id": "devblogs.microsoft.com",
+        "question": "devblogs.microsoft.com: Microsoft ToU 'Documents' clause (informational and non-commercial or personal use only; no copying onto any network computer) — do blog articles fall under it, and is ODG internal research compatible? (also bears on V160's reading of learn.microsoft.com / www.microsoft.com, both deferred for other reasons)"
+      },
+      {
+        "id": "IETF (datatracker.ietf.org / www.rfc-editor.org)",
+        "question": "IETF: may the IETF Trust Legal Provisions 5.0 (PDF; copyright licence) be fetched and quoted as the basis for datatracker.ietf.org / www.rfc-editor.org access, or is a separate website-terms basis required?"
+      }
+    ],
+    "perSourceAssessment": "robots/terms/API/redirect results per host are in docs/odg/evidence/V164_RADAR_SOURCE_ADMISSION.json (decisions[]) — all 8 DEFERRED for terms; none is admitted by this dossier",
+    "alternativesWithoutTermsConflict": {
+      "docs.ollama.com": "read the open-source repository docs instead (would need its own admission; GitHub AUP question applies)",
+      "IETF": "fetch + quote the TLP 5.0 PDF (one fetch) to settle the basis — needs owner OK",
+      "Stanford/CMU": "personal/non-commercial-only terms ⇒ recommend DEFER unless owner accepts a non-commercial-research reading"
+    },
+    "pacingProposal": {
+      "rule": "per-host minimum interval = max(robots Crawl-delay, 10 s); ≤ 1 concurrent request per host; ≤ 60 requests/host/day for collection; exponential backoff on 429/503 (respect Retry-After); stop on any 403/CAPTCHA/auth wall",
+      "status": "PROPOSAL — the transport (bounded-http-client) does not enforce per-host pacing today; implementing it is a Radar code change ⇒ owner decision (standing constraint 'no Radar code change')",
+      "affected": "www.amazon.science (also REFUSED by terms), www.usenix.org, www.cs.cmu.edu publish Crawl-delay 10"
+    },
+    "admittedSourcesContinue": "pytorch.org /blog/, kubernetes.io /docs/concepts/, ntrs.nasa.gov /api/citations/ (V164 grant) + V158/V160 grants within their existing limits"
+  },
+  "D_providerBudget": {
+    "inventory": {
+      "local": [
+        "Ollama loopback models (registry docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json: qwen2.5-coder 7b/3b/0.5b; €0 marginal cost)",
+        "bwrap native-build sandbox (#916)"
+      ],
+      "configuredProviders": [
+        "Claude Code (this coordinating session + its agents) — billing not visible to ODG; no verifiable ceiling exposed to the repo"
+      ],
+      "notInspected": "no credential, key, account or billing page was read (secrets rule)"
+    },
+    "knownCosts": "NOT_MEASURED (no price/usage source committed in the repo; none invented)",
+    "proposalTemplate": {
+      "ceiling": "OWNER-chosen amount (none proposed or assumed)",
+      "perMissionCap": "OWNER-chosen",
+      "killSwitch": "stop all provider launches when cumulative ≥ 80% of ceiling; hard stop at 100%",
+      "verifiability": "a ceiling counts only if ODG can read the consumed amount from an owner-designated read-only source",
+      "defaultMode": "NATIVE/HYBRID local-first (scenario D lesson: probe-first)"
+    },
+    "status": "no spend, no subscription, no account, no budget increase triggered"
+  },
+  "E_gate10of12": {
+    "authorizedAction": "measure only (V165 §7); signature remains a separate owner decision",
+    "remeasurement": {
+      "runner": "runtime/bin/odg-gate-experiment-resident-confinement.ts --ci-commit 28718a37 (no --write)",
+      "candidate": "28718a37 (main; required CI green)",
+      "realRepoFingerprint": "unchanged before/after (runner check + git status 0→0)",
+      "result": {
+        "verdict": "RETURN_TO_EXPERIMENT",
+        "action": "RETURNED",
+        "satisfied": "10/12",
+        "softMissing": [
+          "codeAndDepsReviewed",
+          "independentInspection"
+        ],
+        "hardViolations": [],
+        "basis": {
+          "linkedToV124": "MEASURED_PASS (companion docs/odg/v124-consolidated-roadmap.json lists CM-V234-RESIDENT-DRIVER)",
+          "needDemonstrated": "MEASURED_PASS (baseline: attack surfaces AVAILABLE to an unconfined tick (capability by construction, not a demonstrated incident) > 0)",
+          "codeAndDepsReviewed": "OWNER_REVIEW_FAIL (RECORD_NOT_BOUND_TO_CANDIDATE (subjectCommit null))",
+          "isolatedExperiment": "MEASURED_PASS (runs in a throw-away copy under os.tmpdir() (path check) + bubblewrap for the candidate; see noContractOrPermissionViolation for the repo check)",
+          "baselineRecorded": "MEASURED_PASS (7 attack-surface probes run UNCONFINED in the throw-away copy before the change)",
+          "functionalTestsPass": "MEASURED_PASS (confined launcher: L0 tick (rebuild path) exit 0 + writes=0; stop signal ⇒ STOPPED; stale build ⇒ confined tsx fallback)",
+          "nonRegressionPass": "MEASURED_PASS (GitHub Actions required check on commit 28718a37 (gh run list, read-only))",
+          "measurableGainOrNewCapability": "MEASURED_PASS (attack surface removed: available surfaces baseline → candidate (strict decrease to 0); not a measured risk reduction)",
+          "noContractOrPermissionViolation": "MEASURED_PASS (real repository fingerprint (HEAD + status + index; NOT gitignored paths) identical before/after; runner writes only in the throw-away copy; no systemd/sudo action)",
+          "securityValidated": "MEASURED_PASS (confinement of the 7 probed surfaces (writes, trace truncation, symlink, host socket, non-loopback net) — all REFUSED; scope = these probes, NOT a full security validation)",
+          "independentInspection": "OWNER_REVIEW_FAIL (RECORD_NOT_BOUND_TO_CANDIDATE (subjectCommit null))",
+          "rollbackAvailable": "MEASURED_PASS (rollback = keep the existing ExecStart (normal launcher); measured: it still runs, exit 0, L0 line)"
+        }
+      }
+    },
+    "previousMeasurement": "docs/odg/evidence/V15_GATE_EXPERIMENT_RESIDENT_CONFINEMENT_RUN4.json (candidate 3a88de01): 10/12",
+    "missing": [
+      "codeAndDepsReviewed",
+      "independentInspection"
+    ],
+    "missingReason": "RECORD_NOT_BOUND_TO_CANDIDATE (subjectCommit null) — satisfiable ONLY by an OWNER-anchored inspection record bound to the candidate commit (docs/odg/V16_OWNER_REVIEW_PACKET.md, docs/odg/OWNER_SIGNING_PROCEDURE.md); provider inspections never count",
+    "limits": [
+      "securityValidated covers the 7 probed surfaces only",
+      "measurableGain = attack surface 7→0, not a measured risk reduction",
+      "needDemonstrated = capability by construction, not an incident"
+    ],
+    "notSigned": "gate NOT signed, NOT promoted, NOT declared validated"
+  },
+  "nextMissionRecommended": "Owner decisions A (H authorization) and B (GitHub AUP) unblock the most work; until then ODG GO halts with the H owner request — no authorized actionable item"
+}
