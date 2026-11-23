@@ -3,13 +3,13 @@
   "asOf": "2026-11-23",
   "referencesFile": "docs/odg/evidence/V158_RADAR_ADMISSION_REFERENCES.json",
   "referencesTotal": 27,
-  "referencesUsedAsEvidence": 17,
+  "referencesUsedAsEvidence": 16,
   "summary": {
-    "claims": 9,
+    "claims": 10,
     "verifiedKnowledge": 3,
     "byClassification": {
       "FACT_CORROBORATED": 3,
-      "CLAIM_SINGLE_SOURCE": 5,
+      "CLAIM_SINGLE_SOURCE": 6,
       "RECOMMENDATION_RECORDED": 1
     }
   },
@@ -67,11 +67,11 @@
       "grounds": "stampFinding/sanitizeExternal: retrieved content = untrusted data; never instructions"
     },
     {
-      "claim": "model-level prompt-injection defenses alone do not eliminate the risk; system-level controls on what the agent may fetch and do are required",
+      "claim": "system-level designs that prevent untrusted data from changing an agent's control flow give stronger prompt-injection resistance than model-level filtering",
       "type": "FACT",
-      "classification": "FACT_CORROBORATED",
-      "corroborationLevel": "CORROBORATED",
-      "independentSupportCount": 2,
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroborationLevel": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
       "officialCorroboration": false,
       "freshness": "FRESH",
       "sources": [
@@ -84,25 +84,13 @@
           "url": "https://arxiv.org/abs/2506.08837",
           "stance": "SUPPORTS",
           "date": "2026-11-23"
-        },
-        {
-          "url": "https://arxiv.org/abs/2410.02644",
-          "stance": "SUPPORTS",
-          "date": "2026-11-23"
-        },
-        {
-          "url": "https://www.anthropic.com/research/prompt-injection-defenses",
-          "stance": "SUPPORTS",
-          "date": "2026-11-23"
         }
       ],
-      "verifiedKnowledge": true,
-      "note": "corroborated by ≥2 INDEPENDENT accessible sources (secondary sources — official primary not confirmed); still a MODEL conclusion, not an absolute fact",
+      "verifiedKnowledge": false,
+      "note": "single accessible source — NOT verified knowledge; needs independent corroboration",
       "attributedRefs": [
         "A4",
-        "A5",
-        "B3",
-        "E2"
+        "A5"
       ],
       "grounds": "the GRANT (exact hosts + prefixes), not retrieved content, fixes what is fetched"
     },
@@ -205,6 +193,34 @@
         "C2"
       ],
       "grounds": "OFF_HOST redirect on a prefix ⇒ REFUSE; same-host redirect ⇒ non-canonical prefix ⇒ DEFER (transport blocks redirects)"
+    },
+    {
+      "claim": "current prompt-injection defenses reduce but do not eliminate the risk for agents that process untrusted content",
+      "type": "FACT",
+      "classification": "FACT_CORROBORATED",
+      "corroborationLevel": "CORROBORATED",
+      "independentSupportCount": 2,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://www.anthropic.com/research/prompt-injection-defenses",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": true,
+      "note": "corroborated by ≥2 INDEPENDENT accessible sources (secondary sources — official primary not confirmed); still a MODEL conclusion, not an absolute fact",
+      "attributedRefs": [
+        "E2",
+        "C4"
+      ],
+      "grounds": "defense in depth: the admission/grant bounds exposure even if content filtering fails"
     },
     {
       "claim": "the unauthenticated GitHub REST API primary rate limit is 60 requests per hour",

@@ -24,7 +24,9 @@ const AS_OF = Date.UTC(2026, 10, 23);
 // claim → { type, refs (ids whose recorded contribution states it), grounds (admission rule it justifies) }
 const CLAIMS = Object.freeze([
   { text: "content retrieved from the web can act as instructions to an LLM agent (indirect prompt injection) and must be treated as untrusted data", type: "FACT", refs: ["A1", "A3", "C3", "C4", "E1", "E3"], grounds: "stampFinding/sanitizeExternal: retrieved content = untrusted data; never instructions" },
-  { text: "model-level prompt-injection defenses alone do not eliminate the risk; system-level controls on what the agent may fetch and do are required", type: "FACT", refs: ["A4", "A5", "B3", "E2"], grounds: "the GRANT (exact hosts + prefixes), not retrieved content, fixes what is fetched" },
+  // #906 inspection: the former combined claim was over-attributed (E2 states only the residual-risk half; B3 states neither).
+  { text: "current prompt-injection defenses reduce but do not eliminate the risk for agents that process untrusted content", type: "FACT", refs: ["E2", "C4"], grounds: "defense in depth: the admission/grant bounds exposure even if content filtering fails" },
+  { text: "system-level designs that prevent untrusted data from changing an agent's control flow give stronger prompt-injection resistance than model-level filtering", type: "FACT", refs: ["A4", "A5"], grounds: "the GRANT (exact hosts + prefixes), not retrieved content, fixes what is fetched" },
   { text: "egress for automated clients should be allowlist-first with internal and private addresses blocked", type: "FACT", refs: ["C2", "D1", "D2"], grounds: "validHost refuses IP literals, localhost/.local/.internal; hostMatch EXACT" },
   { text: "redirect following should be disabled for allowlisted outbound requests to prevent server-side request forgery", type: "RECOMMENDATION", refs: ["C2"], grounds: "OFF_HOST redirect on a prefix ⇒ REFUSE; same-host redirect ⇒ non-canonical prefix ⇒ DEFER (transport blocks redirects)" },
   { text: "a robots.txt 4xx response allows access while an unreachable or 5xx robots.txt must be treated as complete disallow", type: "FACT", refs: ["C1"], grounds: "NO_ROBOTS_4XX ⇒ allow; UNREACHABLE_5XX ⇒ DEFER" },
@@ -33,6 +35,12 @@ const CLAIMS = Object.freeze([
   { text: "the arXiv API terms ask for no more than one request every three seconds on a single connection", type: "FACT", refs: ["E5"], grounds: "export.arxiv.org: terms vs robots Disallow contradiction ⇒ REFUSE/owner decision; per-host pacing absent" },
   { text: "the Crossref public pool limits queries to one request per second with concurrency one", type: "FACT", refs: ["E6"], grounds: "api.crossref.org DEFERRED: per-second/concurrency limits not enforceable without per-host pacing" },
 ]);
+
+/** FAIL-CLOSED: a reference counts as RETRIEVED only on a POSITIVE record of a successful fetch ("FETCHED: HTTP 2xx …").
+ *  Missing/other verification text (403, NOT_FETCHED, "unverified", absent) ⇒ INACCESSIBLE (recorded, never support). */
+function sourceStatusFor(r: any): string {
+  return r && typeof r.verification === "string" && /^FETCHED: HTTP 2\d\d\b/.test(r.verification.trim()) ? "RETRIEVED" : "INACCESSIBLE";
+}
 
 function main(): number {
   let doc: any;
@@ -45,8 +53,7 @@ function main(): number {
   for (const r of refs) {
     const claims = CLAIMS.filter((c) => c.refs.includes(r.id)).map((c) => ({ text: c.text, type: c.type, stance: "SUPPORTS" }));
     if (!claims.length) continue;
-    const verified = typeof r.verification === "string" ? !/not\s+(fetched|verified)/i.test(r.verification) : true;
-    sources.push({ url: r.url, status: verified ? "RETRIEVED" : "INACCESSIBLE", consultedDate: r.accessed || "2026-11-23", publishedDate: r.published || undefined, claims });
+    sources.push({ url: r.url, status: sourceStatusFor(r), consultedDate: r.accessed || "2026-11-23", publishedDate: r.published || undefined, claims });
   }
   for (const c of CLAIMS) for (const id of c.refs) if (!byId[id]) missing.push(`${id} (claim: ${c.text.slice(0, 40)}…)`);
   if (missing.length) { process.stderr.write(`attributed reference ids missing from the dossier: ${missing.join("; ")}\n`); return 2; }
@@ -76,5 +83,6 @@ function main(): number {
   process.stdout.write(JSON.stringify(out.summary) + "\n");
   return 0;
 }
-process.exitCode = main();
+if (require.main === module) process.exitCode = main();
+module.exports = { CLAIMS, sourceStatusFor };
 export {};
