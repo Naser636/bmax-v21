@@ -1,23 +1,23 @@
 {
   "schema": "V155_OLLAMA_CAPABILITY_REGISTRY_EVIDENCE",
   "directive": "CTO V15.5 Step 5 — measured local-model capability registry",
-  "generatedAt": "2026-11-23T03:05:41.053Z",
-  "startedAt": "2026-11-23T02:50:49.472Z",
-  "head": "262bb92fe380400b86cc2ab232499a36d5ae6c5b",
+  "generatedAt": "2026-11-23T09:45:54.705Z",
+  "startedAt": "2026-11-23T09:34:23.982Z",
+  "head": "facb71dfd9bdad743b4cb6e0708cbee781e0407f",
   "branch": "feat/v155-ollama-capability-registry",
   "host": {
     "cpus": 8,
     "memGb": 25,
     "gpu": "none assumed (CPU inference)",
     "loadavgAtStart": [
-      3.62,
-      3.07,
-      2.52
+      2.25,
+      1.64,
+      1.87
     ],
     "loadavgAtEnd": [
-      8.66,
-      8.42,
-      6.33
+      7.2,
+      7.4,
+      5.15
     ],
     "note": "the host is SHARED with other sessions; per-trial hostLoad1m is recorded so latency/throughput can be read against contention"
   },
@@ -36,9 +36,9 @@
   "keepAlive": "10m",
   "parallelism": 1,
   "taskSet": {
-    "file": "runtime/core/odg-local-model-benchmark-tasks.v1.json",
-    "version": "V155-TASKSET-1",
-    "sha256": "c61aa592e49a9420fba5a1b0f174c32532aadee2637c73541a3defca7712d3b6",
+    "file": "runtime/core/odg-local-model-benchmark-tasks.v2.json",
+    "version": "V155-TASKSET-2",
+    "sha256": "755cbf1f0acd64e4e3c84e1f8fd212d2b8e09e596dab7d6e503d5d2901e1b9e6",
     "tasks": [
       {
         "id": "impl-chunk",
@@ -140,60 +140,60 @@
         "resources": {
           "cpuAvgPct": {
             "n": 33,
-            "mean": 764.8,
-            "p50": 786.9,
-            "min": 627.6,
-            "max": 794.7,
-            "stdev": 43.5
+            "mean": 785.4,
+            "p50": 791.5,
+            "min": 686.7,
+            "max": 794.3,
+            "stdev": 21.2
           },
           "cpuPeakPct": {
             "n": 33,
-            "mean": 808.6,
-            "p50": 805.7,
-            "min": 797.4,
-            "max": 882.4,
-            "stdev": 15.2
+            "mean": 809.1,
+            "p50": 806.5,
+            "min": 800,
+            "max": 855.3,
+            "stdev": 11.4
           },
           "rssPeakMb": {
             "n": 33,
-            "mean": 4997.2,
-            "p50": 4921.3,
-            "min": 4837,
-            "max": 5335.1,
-            "stdev": 177.8
+            "mean": 4876.4,
+            "p50": 4887.3,
+            "min": 4782.1,
+            "max": 4929.7,
+            "stdev": 46.7
           },
           "note": "sampled from the Ollama runner process via /proc during each trial (CPU% may exceed 100 on multi-core)"
         },
         "latency": {
           "ttftMs": {
             "n": 33,
-            "mean": 1604,
-            "p50": 181,
-            "min": 132,
-            "max": 7204,
-            "stdev": 2144.5
+            "mean": 1233.9,
+            "p50": 179,
+            "min": 117,
+            "max": 4814,
+            "stdev": 1654.8
           },
           "totalMs": {
             "n": 33,
-            "mean": 15547.6,
-            "p50": 9579,
-            "min": 3670,
-            "max": 61938,
-            "stdev": 13583.3
+            "mean": 11078.5,
+            "p50": 8151,
+            "min": 3441,
+            "max": 55393,
+            "stdev": 9778.7
           },
           "coldLoad": {
-            "totalMs": 19651,
-            "loadMs": 14718
+            "totalMs": 14990,
+            "loadMs": 13453
           }
         },
         "speed": {
           "tokPerSec": {
             "n": 33,
-            "mean": 6.6,
-            "p50": 7.7,
-            "min": 0.96,
-            "max": 8.29,
-            "stdev": 2.1
+            "mean": 8.1,
+            "p50": 8.3,
+            "min": 2.75,
+            "max": 9.21,
+            "stdev": 1.3
           },
           "basis": "eval_count / eval_duration (daemon counters)"
         },
@@ -236,14 +236,16 @@
               "passes": 3,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 3,
-              "mean": 20709.3,
-              "p50": 16436,
-              "min": 16121,
-              "max": 29571,
-              "stdev": 6267.5
+              "mean": 11363.7,
+              "p50": 10100,
+              "min": 9996,
+              "max": 13995,
+              "stdev": 1861.1
             }
           },
           "extract": {
@@ -252,14 +254,16 @@
               "passes": 3,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 3,
-              "mean": 9520,
-              "p50": 8420,
-              "min": 8405,
-              "max": 11735,
-              "stdev": 1566.3
+              "mean": 8985,
+              "p50": 8151,
+              "min": 7818,
+              "max": 10986,
+              "stdev": 1421.4
             }
           },
           "implement": {
@@ -268,14 +272,16 @@
               "passes": 3,
               "n": 6
             },
+            "minN": 6,
+            "sufficientSample": true,
             "status": "PROBATION",
             "totalMs": {
               "n": 6,
-              "mean": 24130.3,
-              "p50": 26096,
-              "min": 11211,
-              "max": 35356,
-              "stdev": 9822.7
+              "mean": 26028.5,
+              "p50": 23319,
+              "min": 10382,
+              "max": 55393,
+              "stdev": 14784.8
             }
           },
           "judgment": {
@@ -284,14 +290,16 @@
               "passes": 6,
               "n": 6
             },
+            "minN": 6,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 6,
-              "mean": 6274,
-              "p50": 6011.5,
-              "min": 5578,
-              "max": 7463,
-              "stdev": 662.6
+              "mean": 5685.3,
+              "p50": 5243.5,
+              "min": 5136,
+              "max": 7080,
+              "stdev": 731.9
             }
           },
           "refactor": {
@@ -300,14 +308,16 @@
               "passes": 3,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 3,
-              "mean": 7224,
-              "p50": 6012,
-              "min": 5924,
-              "max": 9736,
-              "stdev": 1776.6
+              "mean": 6786,
+              "p50": 5645,
+              "min": 5237,
+              "max": 9476,
+              "stdev": 1909.4
             }
           },
           "repair": {
@@ -316,14 +326,16 @@
               "passes": 6,
               "n": 6
             },
+            "minN": 6,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 6,
-              "mean": 28451.3,
-              "p50": 25959.5,
-              "min": 6025,
-              "max": 61938,
-              "stdev": 20781.2
+              "mean": 8035.3,
+              "p50": 7340,
+              "min": 5820,
+              "max": 11929,
+              "stdev": 2222.4
             }
           },
           "strict-contract": {
@@ -332,14 +344,16 @@
               "passes": 3,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 3,
-              "mean": 4838,
-              "p50": 3671,
-              "min": 3670,
-              "max": 7173,
-              "stdev": 1651.1
+              "mean": 4713,
+              "p50": 3545,
+              "min": 3441,
+              "max": 7153,
+              "stdev": 1725.9
             }
           },
           "test-writing": {
@@ -348,14 +362,16 @@
               "passes": 3,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 3,
-              "mean": 11020.7,
-              "p50": 9579,
-              "min": 9433,
-              "max": 14050,
-              "stdev": 2142.9
+              "mean": 10517.7,
+              "p50": 9717,
+              "min": 8511,
+              "max": 13325,
+              "stdev": 2045.2
             }
           }
         },
@@ -370,11 +386,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 15244,
-              "p50": 11750,
-              "min": 11211,
-              "max": 22771,
-              "stdev": 5326.9
+              "mean": 18046.7,
+              "p50": 13066,
+              "min": 10382,
+              "max": 30692,
+              "stdev": 9008.5
             }
           },
           {
@@ -387,11 +403,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 33016.7,
-              "p50": 34273,
-              "min": 29421,
-              "max": 35356,
-              "stdev": 2580.7
+              "mean": 34010.3,
+              "p50": 23345,
+              "min": 23293,
+              "max": 55393,
+              "stdev": 15119.8
             }
           },
           {
@@ -404,11 +420,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 20709.3,
-              "p50": 16436,
-              "min": 16121,
-              "max": 29571,
-              "stdev": 6267.5
+              "mean": 11363.7,
+              "p50": 10100,
+              "min": 9996,
+              "max": 13995,
+              "stdev": 1861.1
             }
           },
           {
@@ -421,11 +437,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 20954.7,
-              "p50": 13642,
-              "min": 6025,
-              "max": 43197,
-              "stdev": 16032.2
+              "mean": 7201,
+              "p50": 5823,
+              "min": 5820,
+              "max": 9960,
+              "stdev": 1950.9
             }
           },
           {
@@ -438,11 +454,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 35948,
-              "p50": 38277,
-              "min": 7629,
-              "max": 61938,
-              "stdev": 22232.6
+              "mean": 8869.7,
+              "p50": 7368,
+              "min": 7312,
+              "max": 11929,
+              "stdev": 2163.4
             }
           },
           {
@@ -455,11 +471,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 7224,
-              "p50": 6012,
-              "min": 5924,
-              "max": 9736,
-              "stdev": 1776.6
+              "mean": 6786,
+              "p50": 5645,
+              "min": 5237,
+              "max": 9476,
+              "stdev": 1909.4
             }
           },
           {
@@ -472,11 +488,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 11020.7,
-              "p50": 9579,
-              "min": 9433,
-              "max": 14050,
-              "stdev": 2142.9
+              "mean": 10517.7,
+              "p50": 9717,
+              "min": 8511,
+              "max": 13325,
+              "stdev": 2045.2
             }
           },
           {
@@ -489,11 +505,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 9520,
-              "p50": 8420,
-              "min": 8405,
-              "max": 11735,
-              "stdev": 1566.3
+              "mean": 8985,
+              "p50": 8151,
+              "min": 7818,
+              "max": 10986,
+              "stdev": 1421.4
             }
           },
           {
@@ -506,11 +522,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 4838,
-              "p50": 3671,
-              "min": 3670,
-              "max": 7173,
-              "stdev": 1651.1
+              "mean": 4713,
+              "p50": 3545,
+              "min": 3441,
+              "max": 7153,
+              "stdev": 1725.9
             }
           },
           {
@@ -523,11 +539,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 6263,
-              "p50": 5748,
-              "min": 5578,
-              "max": 7463,
-              "stdev": 851.4
+              "mean": 5794.7,
+              "p50": 5168,
+              "min": 5136,
+              "max": 7080,
+              "stdev": 909
             }
           },
           {
@@ -540,11 +556,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 6285,
-              "p50": 6084,
-              "min": 5939,
-              "max": 6832,
-              "stdev": 391.3
+              "mean": 5576,
+              "p50": 5252,
+              "min": 5235,
+              "max": 6241,
+              "stdev": 470.3
             }
           }
         ],
@@ -554,7 +570,7 @@
           "maxPassVariance": 0,
           "deterministicOutputTasks": 9,
           "tasks": 11,
-          "latencyCvMean": 0.296
+          "latencyCvMean": 0.26
         },
         "knownLimits": [],
         "domains": [
@@ -582,26 +598,26 @@
         "resources": {
           "cpuAvgPct": {
             "n": 33,
-            "mean": 787.1,
-            "p50": 789.1,
-            "min": 767.1,
-            "max": 795.6,
-            "stdev": 5.5
+            "mean": 777.2,
+            "p50": 786,
+            "min": 656.6,
+            "max": 792.2,
+            "stdev": 28.1
           },
           "cpuPeakPct": {
             "n": 33,
-            "mean": 806.6,
-            "p50": 805.7,
-            "min": 796.8,
-            "max": 857.8,
-            "stdev": 10.7
+            "mean": 798.5,
+            "p50": 800.8,
+            "min": 728.4,
+            "max": 806.5,
+            "stdev": 12.8
           },
           "rssPeakMb": {
             "n": 33,
-            "mean": 2127.5,
-            "p50": 2134.1,
-            "min": 2073.2,
-            "max": 2162.2,
+            "mean": 2127.6,
+            "p50": 2134.2,
+            "min": 2073.3,
+            "max": 2162.3,
             "stdev": 29.5
           },
           "note": "sampled from the Ollama runner process via /proc during each trial (CPU% may exceed 100 on multi-core)"
@@ -609,33 +625,33 @@
         "latency": {
           "ttftMs": {
             "n": 33,
-            "mean": 584,
-            "p50": 107,
-            "min": 65,
-            "max": 2230,
-            "stdev": 756.1
+            "mean": 684.4,
+            "p50": 102,
+            "min": 54,
+            "max": 4396,
+            "stdev": 984.9
           },
           "totalMs": {
             "n": 33,
-            "mean": 5177,
-            "p50": 3943,
-            "min": 2020,
-            "max": 16501,
-            "stdev": 3536.2
+            "mean": 6171.5,
+            "p50": 4134,
+            "min": 2082,
+            "max": 35398,
+            "stdev": 6128.8
           },
           "coldLoad": {
-            "totalMs": 6892,
-            "loadMs": 6230
+            "totalMs": 6134,
+            "loadMs": 5439
           }
         },
         "speed": {
           "tokPerSec": {
             "n": 33,
-            "mean": 16.5,
-            "p50": 16.5,
-            "min": 14.88,
-            "max": 17.51,
-            "stdev": 0.6
+            "mean": 16,
+            "p50": 16.7,
+            "min": 1.06,
+            "max": 18.66,
+            "stdev": 3.3
           },
           "basis": "eval_count / eval_duration (daemon counters)"
         },
@@ -678,14 +694,16 @@
               "passes": 0,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "DEMOTED",
             "totalMs": {
               "n": 3,
-              "mean": 4394,
-              "p50": 4047,
-              "min": 3943,
-              "max": 5192,
-              "stdev": 565.9
+              "mean": 4338.3,
+              "p50": 3925,
+              "min": 3606,
+              "max": 5484,
+              "stdev": 820.5
             }
           },
           "extract": {
@@ -694,14 +712,16 @@
               "passes": 3,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 3,
-              "mean": 4462.7,
-              "p50": 3897,
-              "min": 3875,
-              "max": 5616,
-              "stdev": 815.6
+              "mean": 6363,
+              "p50": 5144,
+              "min": 3542,
+              "max": 10403,
+              "stdev": 2930.6
             }
           },
           "implement": {
@@ -710,14 +730,16 @@
               "passes": 3,
               "n": 6
             },
+            "minN": 6,
+            "sufficientSample": true,
             "status": "PROBATION",
             "totalMs": {
               "n": 6,
-              "mean": 10728,
-              "p50": 10739.5,
-              "min": 5202,
-              "max": 16501,
-              "stdev": 4868
+              "mean": 9791.8,
+              "p50": 9728,
+              "min": 4743,
+              "max": 15563,
+              "stdev": 4626.9
             }
           },
           "judgment": {
@@ -726,14 +748,16 @@
               "passes": 6,
               "n": 6
             },
+            "minN": 6,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 6,
-              "mean": 2897,
-              "p50": 2742.5,
-              "min": 2420,
-              "max": 4048,
-              "stdev": 552.9
+              "mean": 3050.3,
+              "p50": 2928.5,
+              "min": 2369,
+              "max": 4134,
+              "stdev": 574.1
             }
           },
           "refactor": {
@@ -742,14 +766,16 @@
               "passes": 3,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 3,
-              "mean": 3732.3,
-              "p50": 3068,
-              "min": 3006,
-              "max": 5123,
-              "stdev": 983.7
+              "mean": 3825.3,
+              "p50": 3432,
+              "min": 2850,
+              "max": 5194,
+              "stdev": 996.5
             }
           },
           "repair": {
@@ -758,14 +784,16 @@
               "passes": 3,
               "n": 6
             },
+            "minN": 6,
+            "sufficientSample": true,
             "status": "PROBATION",
             "totalMs": {
               "n": 6,
-              "mean": 4322.8,
-              "p50": 3862.5,
-              "min": 3438,
-              "max": 5679,
-              "stdev": 958.1
+              "mean": 4296.3,
+              "p50": 3843,
+              "min": 3367,
+              "max": 5513,
+              "stdev": 835.3
             }
           },
           "strict-contract": {
@@ -774,14 +802,16 @@
               "passes": 0,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "DEMOTED",
             "totalMs": {
               "n": 3,
-              "mean": 2542,
-              "p50": 2093,
-              "min": 2020,
-              "max": 3513,
-              "stdev": 687.2
+              "mean": 13287.3,
+              "p50": 2382,
+              "min": 2082,
+              "max": 35398,
+              "stdev": 15635.1
             }
           },
           "test-writing": {
@@ -790,14 +820,16 @@
               "passes": 0,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "DEMOTED",
             "totalMs": {
               "n": 3,
-              "mean": 5920,
-              "p50": 5331,
-              "min": 5039,
-              "max": 7390,
-              "stdev": 1046.3
+              "mean": 5795,
+              "p50": 5140,
+              "min": 4914,
+              "max": 7331,
+              "stdev": 1090
             }
           }
         },
@@ -812,11 +844,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 5909.3,
-              "p50": 5763,
-              "min": 5202,
-              "max": 6763,
-              "stdev": 645.6
+              "mean": 5225,
+              "p50": 4920,
+              "min": 4743,
+              "max": 6012,
+              "stdev": 561.2
             }
           },
           {
@@ -829,11 +861,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 15546.7,
-              "p50": 15423,
-              "min": 14716,
-              "max": 16501,
-              "stdev": 734
+              "mean": 14358.7,
+              "p50": 14069,
+              "min": 13444,
+              "max": 15563,
+              "stdev": 889
             }
           },
           {
@@ -846,11 +878,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 4394,
-              "p50": 4047,
-              "min": 3943,
-              "max": 5192,
-              "stdev": 565.9
+              "mean": 4338.3,
+              "p50": 3925,
+              "min": 3606,
+              "max": 5484,
+              "stdev": 820.5
             }
           },
           {
@@ -863,11 +895,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 4468,
-              "p50": 3870,
-              "min": 3855,
-              "max": 5679,
-              "stdev": 856.3
+              "mean": 4399.7,
+              "p50": 3862,
+              "min": 3824,
+              "max": 5513,
+              "stdev": 787.4
             }
           },
           {
@@ -880,11 +912,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 4177.7,
-              "p50": 3461,
-              "min": 3438,
-              "max": 5634,
-              "stdev": 1029.8
+              "mean": 4193,
+              "p50": 3819,
+              "min": 3367,
+              "max": 5393,
+              "stdev": 868.4
             }
           },
           {
@@ -897,11 +929,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 3732.3,
-              "p50": 3068,
-              "min": 3006,
-              "max": 5123,
-              "stdev": 983.7
+              "mean": 3825.3,
+              "p50": 3432,
+              "min": 2850,
+              "max": 5194,
+              "stdev": 996.5
             }
           },
           {
@@ -914,11 +946,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 5920,
-              "p50": 5331,
-              "min": 5039,
-              "max": 7390,
-              "stdev": 1046.3
+              "mean": 5795,
+              "p50": 5140,
+              "min": 4914,
+              "max": 7331,
+              "stdev": 1090
             }
           },
           {
@@ -931,11 +963,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 4462.7,
-              "p50": 3897,
-              "min": 3875,
-              "max": 5616,
-              "stdev": 815.6
+              "mean": 6363,
+              "p50": 5144,
+              "min": 3542,
+              "max": 10403,
+              "stdev": 2930.6
             }
           },
           {
@@ -948,11 +980,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 2542,
-              "p50": 2093,
-              "min": 2020,
-              "max": 3513,
-              "stdev": 687.2
+              "mean": 13287.3,
+              "p50": 2382,
+              "min": 2082,
+              "max": 35398,
+              "stdev": 15635.1
             }
           },
           {
@@ -965,11 +997,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 3297,
-              "p50": 2975,
-              "min": 2868,
-              "max": 4048,
-              "stdev": 532.8
+              "mean": 3510.3,
+              "p50": 3331,
+              "min": 3066,
+              "max": 4134,
+              "stdev": 454.1
             }
           },
           {
@@ -982,11 +1014,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 2497,
-              "p50": 2454,
-              "min": 2420,
-              "max": 2617,
-              "stdev": 86
+              "mean": 2590.3,
+              "p50": 2611,
+              "min": 2369,
+              "max": 2791,
+              "stdev": 172.9
             }
           }
         ],
@@ -996,7 +1028,7 @@
           "maxPassVariance": 0,
           "deterministicOutputTasks": 6,
           "tasks": 11,
-          "latencyCvMean": 0.165
+          "latencyCvMean": 0.275
         },
         "knownLimits": [
           "bugfix: measured pass rate 0 < 0.5",
@@ -1024,26 +1056,26 @@
         "resources": {
           "cpuAvgPct": {
             "n": 33,
-            "mean": 750.8,
-            "p50": 771.4,
-            "min": 628.3,
-            "max": 789.8,
-            "stdev": 41.1
+            "mean": 783.1,
+            "p50": 785.5,
+            "min": 760.3,
+            "max": 796.7,
+            "stdev": 8.9
           },
           "cpuPeakPct": {
             "n": 33,
-            "mean": 785.6,
-            "p50": 792,
-            "min": 732.8,
-            "max": 809.9,
-            "stdev": 19.2
+            "mean": 797.8,
+            "p50": 796,
+            "min": 787,
+            "max": 818.2,
+            "stdev": 6.7
           },
           "rssPeakMb": {
             "n": 33,
-            "mean": 525.4,
-            "p50": 528.9,
-            "min": 501.6,
-            "max": 538.2,
+            "mean": 525.6,
+            "p50": 529,
+            "min": 501.8,
+            "max": 538.4,
             "stdev": 11
           },
           "note": "sampled from the Ollama runner process via /proc during each trial (CPU% may exceed 100 on multi-core)"
@@ -1051,33 +1083,33 @@
         "latency": {
           "ttftMs": {
             "n": 33,
-            "mean": 283.1,
-            "p50": 75,
-            "min": 26,
-            "max": 2163,
-            "stdev": 433.5
+            "mean": 173.3,
+            "p50": 45,
+            "min": 21,
+            "max": 619,
+            "stdev": 201.7
           },
           "totalMs": {
             "n": 33,
-            "mean": 4521.4,
-            "p50": 1270,
-            "min": 513,
-            "max": 40056,
-            "stdev": 8436.6
+            "mean": 1737.5,
+            "p50": 1003,
+            "min": 456,
+            "max": 9761,
+            "stdev": 2182.1
           },
           "coldLoad": {
-            "totalMs": 2040,
-            "loadMs": 1835
+            "totalMs": 2033,
+            "loadMs": 1810
           }
         },
         "speed": {
           "tokPerSec": {
             "n": 33,
-            "mean": 45.4,
-            "p50": 54.4,
-            "min": 1.26,
-            "max": 59.72,
-            "stdev": 17
+            "mean": 60.8,
+            "p50": 61.5,
+            "min": 52.89,
+            "max": 65.89,
+            "stdev": 3.6
           },
           "basis": "eval_count / eval_duration (daemon counters)"
         },
@@ -1120,14 +1152,16 @@
               "passes": 0,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "DEMOTED",
             "totalMs": {
               "n": 3,
-              "mean": 1096,
-              "p50": 993,
-              "min": 984,
-              "max": 1311,
-              "stdev": 152.1
+              "mean": 1110.7,
+              "p50": 991,
+              "min": 950,
+              "max": 1391,
+              "stdev": 198.9
             }
           },
           "extract": {
@@ -1136,14 +1170,16 @@
               "passes": 3,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "QUALIFIED",
             "totalMs": {
               "n": 3,
-              "mean": 1339,
-              "p50": 1160,
-              "min": 1147,
-              "max": 1710,
-              "stdev": 262.4
+              "mean": 1190,
+              "p50": 1057,
+              "min": 1037,
+              "max": 1476,
+              "stdev": 202.4
             }
           },
           "implement": {
@@ -1152,14 +1188,16 @@
               "passes": 0,
               "n": 6
             },
+            "minN": 6,
+            "sufficientSample": true,
             "status": "DEMOTED",
             "totalMs": {
               "n": 6,
-              "mean": 5215.7,
-              "p50": 4431.5,
-              "min": 1539,
-              "max": 9832,
-              "stdev": 3673.2
+              "mean": 4916.8,
+              "p50": 3884,
+              "min": 1291,
+              "max": 9761,
+              "stdev": 3579.5
             }
           },
           "judgment": {
@@ -1168,14 +1206,16 @@
               "passes": 3,
               "n": 6
             },
+            "minN": 6,
+            "sufficientSample": true,
             "status": "PROBATION",
             "totalMs": {
               "n": 6,
-              "mean": 892,
-              "p50": 860,
-              "min": 639,
-              "max": 1270,
-              "stdev": 242.9
+              "mean": 818.5,
+              "p50": 789.5,
+              "min": 575,
+              "max": 1199,
+              "stdev": 228.5
             }
           },
           "refactor": {
@@ -1184,14 +1224,16 @@
               "passes": 0,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "DEMOTED",
             "totalMs": {
               "n": 3,
-              "mean": 1455.7,
-              "p50": 1246,
-              "min": 1034,
-              "max": 2087,
-              "stdev": 454.7
+              "mean": 731.3,
+              "p50": 623,
+              "min": 568,
+              "max": 1003,
+              "stdev": 193.4
             }
           },
           "repair": {
@@ -1200,14 +1242,16 @@
               "passes": 3,
               "n": 6
             },
+            "minN": 6,
+            "sufficientSample": true,
             "status": "PROBATION",
             "totalMs": {
               "n": 6,
-              "mean": 8083.7,
-              "p50": 2018,
-              "min": 960,
-              "max": 40056,
-              "stdev": 14309.8
+              "mean": 929.7,
+              "p50": 848.5,
+              "min": 655,
+              "max": 1356,
+              "stdev": 265.8
             }
           },
           "strict-contract": {
@@ -1216,14 +1260,16 @@
               "passes": 0,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "DEMOTED",
             "totalMs": {
               "n": 3,
-              "mean": 648.7,
-              "p50": 513,
-              "min": 513,
-              "max": 920,
-              "stdev": 191.9
+              "mean": 632,
+              "p50": 467,
+              "min": 456,
+              "max": 973,
+              "stdev": 241.2
             }
           },
           "test-writing": {
@@ -1232,14 +1278,16 @@
               "passes": 0,
               "n": 3
             },
+            "minN": 3,
+            "sufficientSample": true,
             "status": "DEMOTED",
             "totalMs": {
               "n": 3,
-              "mean": 16813.3,
-              "p50": 19646,
-              "min": 3655,
-              "max": 27139,
-              "stdev": 9794.3
+              "mean": 2118.7,
+              "p50": 2013,
+              "min": 1931,
+              "max": 2412,
+              "stdev": 210.1
             }
           }
         },
@@ -1254,11 +1302,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 1654,
-              "p50": 1563,
-              "min": 1539,
-              "max": 1860,
-              "stdev": 146
+              "mean": 1554.7,
+              "p50": 1475,
+              "min": 1291,
+              "max": 1898,
+              "stdev": 254.1
             }
           },
           {
@@ -1271,11 +1319,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 8777.3,
-              "p50": 9497,
-              "min": 7003,
-              "max": 9832,
-              "stdev": 1262.1
+              "mean": 8279,
+              "p50": 9206,
+              "min": 5870,
+              "max": 9761,
+              "stdev": 1718.4
             }
           },
           {
@@ -1288,11 +1336,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 1096,
-              "p50": 993,
-              "min": 984,
-              "max": 1311,
-              "stdev": 152.1
+              "mean": 1110.7,
+              "p50": 991,
+              "min": 950,
+              "max": 1391,
+              "stdev": 198.9
             }
           },
           {
@@ -1305,11 +1353,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 14697.3,
-              "p50": 2348,
-              "min": 1688,
-              "max": 40056,
-              "stdev": 17933.3
+              "mean": 1017.7,
+              "p50": 881,
+              "min": 816,
+              "max": 1356,
+              "stdev": 240.7
             }
           },
           {
@@ -1322,11 +1370,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 1470,
-              "p50": 1026,
-              "min": 960,
-              "max": 2424,
-              "stdev": 675.1
+              "mean": 841.7,
+              "p50": 660,
+              "min": 655,
+              "max": 1210,
+              "stdev": 260.5
             }
           },
           {
@@ -1339,11 +1387,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 1455.7,
-              "p50": 1246,
-              "min": 1034,
-              "max": 2087,
-              "stdev": 454.7
+              "mean": 731.3,
+              "p50": 623,
+              "min": 568,
+              "max": 1003,
+              "stdev": 193.4
             }
           },
           {
@@ -1356,11 +1404,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 16813.3,
-              "p50": 19646,
-              "min": 3655,
-              "max": 27139,
-              "stdev": 9794.3
+              "mean": 2118.7,
+              "p50": 2013,
+              "min": 1931,
+              "max": 2412,
+              "stdev": 210.1
             }
           },
           {
@@ -1373,11 +1421,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 1339,
-              "p50": 1160,
-              "min": 1147,
-              "max": 1710,
-              "stdev": 262.4
+              "mean": 1190,
+              "p50": 1057,
+              "min": 1037,
+              "max": 1476,
+              "stdev": 202.4
             }
           },
           {
@@ -1390,11 +1438,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 648.7,
-              "p50": 513,
-              "min": 513,
-              "max": 920,
-              "stdev": 191.9
+              "mean": 632,
+              "p50": 467,
+              "min": 456,
+              "max": 973,
+              "stdev": 241.2
             }
           },
           {
@@ -1407,11 +1455,11 @@
             "distinctOutputs": 1,
             "totalMs": {
               "n": 3,
-              "mean": 1123,
-              "p50": 1063,
-              "min": 1036,
-              "max": 1270,
-              "stdev": 104.5
+              "mean": 1029.7,
+              "p50": 955,
+              "min": 935,
+              "max": 1199,
+              "stdev": 120
             }
           },
           {
@@ -1424,11 +1472,11 @@
             "distinctOutputs": 2,
             "totalMs": {
               "n": 3,
-              "mean": 661,
-              "p50": 660,
-              "min": 639,
-              "max": 684,
-              "stdev": 18.4
+              "mean": 607.3,
+              "p50": 603,
+              "min": 575,
+              "max": 644,
+              "stdev": 28.3
             }
           }
         ],
@@ -1438,7 +1486,7 @@
           "maxPassVariance": 0,
           "deterministicOutputTasks": 7,
           "tasks": 11,
-          "latencyCvMean": 0.323
+          "latencyCvMean": 0.198
         },
         "knownLimits": [
           "bugfix: measured pass rate 0 < 0.5",
@@ -1453,6 +1501,50 @@
       }
     ]
   },
+  "graderSelfTest": {
+    "correctCandidatePasses": {
+      "passed": true,
+      "measured": true,
+      "ms": 197,
+      "reason": "hidden test passed (all 2 hidden cases passed)"
+    },
+    "assertNeuter": {
+      "passed": false,
+      "measured": true,
+      "ms": 234,
+      "reason": "hidden test failed: candidate crashed: require is not defined"
+    },
+    "stderrMarkerExit3": {
+      "passed": false,
+      "measured": true,
+      "ms": 256,
+      "reason": "hidden test failed: candidate crashed: process is not defined"
+    },
+    "constructorEscape": {
+      "passed": false,
+      "measured": true,
+      "ms": 244,
+      "reason": "hidden test failed: case 0: got -999 expected 3"
+    },
+    "memoryBomb": {
+      "passed": false,
+      "measured": true,
+      "ms": 208,
+      "reason": "hidden test failed: candidate crashed: Array buffer allocation failed"
+    },
+    "infiniteLoop": {
+      "passed": false,
+      "measured": true,
+      "ms": 5241,
+      "reason": "hidden test failed: candidate crashed: Script execution timed out after 5000ms"
+    },
+    "bufferBombRawSandbox": {
+      "launched": true,
+      "ok": false,
+      "ms": 241,
+      "allocatedAll": false
+    }
+  },
   "selection": {
     "bugfix": {
       "qualityFirst": {
@@ -1461,28 +1553,28 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:7b",
         "passRate": 1,
-        "totalMsP50": 16436,
+        "totalMsP50": 10100,
         "fallbackOrder": [],
         "considered": [
           {
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 16436,
+            "totalMsP50": 10100,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 4047,
+            "totalMsP50": 3925,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 993,
+            "totalMsP50": 991,
             "withinBudget": true
           }
         ],
@@ -1496,28 +1588,28 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:7b",
         "passRate": 1,
-        "totalMsP50": 16436,
+        "totalMsP50": 10100,
         "fallbackOrder": [],
         "considered": [
           {
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 16436,
+            "totalMsP50": 10100,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 4047,
+            "totalMsP50": 3925,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 993,
+            "totalMsP50": 991,
             "withinBudget": true
           }
         ],
@@ -1533,7 +1625,7 @@
         "decision": "LOCAL",
         "model": "qwen2.5:0.5b",
         "passRate": 1,
-        "totalMsP50": 1160,
+        "totalMsP50": 1057,
         "fallbackOrder": [
           "qwen2.5-coder:3b",
           "qwen2.5-coder:7b"
@@ -1543,21 +1635,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 8420,
+            "totalMsP50": 8151,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 3897,
+            "totalMsP50": 5144,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 1160,
+            "totalMsP50": 1057,
             "withinBudget": true
           }
         ],
@@ -1571,7 +1663,7 @@
         "decision": "LOCAL",
         "model": "qwen2.5:0.5b",
         "passRate": 1,
-        "totalMsP50": 1160,
+        "totalMsP50": 1057,
         "fallbackOrder": [
           "qwen2.5-coder:3b",
           "qwen2.5-coder:7b"
@@ -1581,21 +1673,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 8420,
+            "totalMsP50": 8151,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 3897,
+            "totalMsP50": 5144,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 1160,
+            "totalMsP50": 1057,
             "withinBudget": true
           }
         ],
@@ -1610,7 +1702,8 @@
         "taskClass": "implement",
         "decision": "NO_QUALIFIED_LOCAL_MODEL",
         "model": null,
-        "fallbackOrder": [
+        "fallbackOrder": [],
+        "probationCandidates": [
           "qwen2.5-coder:3b",
           "qwen2.5-coder:7b"
         ],
@@ -1619,21 +1712,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 26096,
+            "totalMsP50": 23319,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 10739.5,
+            "totalMsP50": 9728,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 4431.5,
+            "totalMsP50": 3884,
             "withinBudget": true
           }
         ],
@@ -1646,7 +1739,8 @@
         "taskClass": "implement",
         "decision": "NO_QUALIFIED_LOCAL_MODEL",
         "model": null,
-        "fallbackOrder": [
+        "fallbackOrder": [],
+        "probationCandidates": [
           "qwen2.5-coder:3b",
           "qwen2.5-coder:7b"
         ],
@@ -1655,21 +1749,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 26096,
+            "totalMsP50": 23319,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 10739.5,
+            "totalMsP50": 9728,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 4431.5,
+            "totalMsP50": 3884,
             "withinBudget": true
           }
         ],
@@ -1685,7 +1779,7 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:3b",
         "passRate": 1,
-        "totalMsP50": 2742.5,
+        "totalMsP50": 2928.5,
         "fallbackOrder": [
           "qwen2.5-coder:7b",
           "qwen2.5:0.5b"
@@ -1695,21 +1789,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 6011.5,
+            "totalMsP50": 5243.5,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 2742.5,
+            "totalMsP50": 2928.5,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 860,
+            "totalMsP50": 789.5,
             "withinBudget": true
           }
         ],
@@ -1723,7 +1817,7 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:3b",
         "passRate": 1,
-        "totalMsP50": 2742.5,
+        "totalMsP50": 2928.5,
         "fallbackOrder": [
           "qwen2.5-coder:7b",
           "qwen2.5:0.5b"
@@ -1733,21 +1827,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 6011.5,
+            "totalMsP50": 5243.5,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 2742.5,
+            "totalMsP50": 2928.5,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 860,
+            "totalMsP50": 789.5,
             "withinBudget": true
           }
         ],
@@ -1763,7 +1857,7 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:3b",
         "passRate": 1,
-        "totalMsP50": 3068,
+        "totalMsP50": 3432,
         "fallbackOrder": [
           "qwen2.5-coder:7b"
         ],
@@ -1772,21 +1866,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 6012,
+            "totalMsP50": 5645,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 3068,
+            "totalMsP50": 3432,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 1246,
+            "totalMsP50": 623,
             "withinBudget": true
           }
         ],
@@ -1800,7 +1894,7 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:3b",
         "passRate": 1,
-        "totalMsP50": 3068,
+        "totalMsP50": 3432,
         "fallbackOrder": [
           "qwen2.5-coder:7b"
         ],
@@ -1809,21 +1903,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 6012,
+            "totalMsP50": 5645,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 3068,
+            "totalMsP50": 3432,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 1246,
+            "totalMsP50": 623,
             "withinBudget": true
           }
         ],
@@ -1839,7 +1933,7 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:7b",
         "passRate": 1,
-        "totalMsP50": 25959.5,
+        "totalMsP50": 7340,
         "fallbackOrder": [
           "qwen2.5:0.5b",
           "qwen2.5-coder:3b"
@@ -1849,21 +1943,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 25959.5,
+            "totalMsP50": 7340,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 3862.5,
+            "totalMsP50": 3843,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 2018,
+            "totalMsP50": 848.5,
             "withinBudget": true
           }
         ],
@@ -1877,7 +1971,7 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:7b",
         "passRate": 1,
-        "totalMsP50": 25959.5,
+        "totalMsP50": 7340,
         "fallbackOrder": [
           "qwen2.5:0.5b",
           "qwen2.5-coder:3b"
@@ -1887,21 +1981,21 @@
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 25959.5,
+            "totalMsP50": 7340,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 3862.5,
+            "totalMsP50": 3843,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "PROBATION",
             "passRate": 0.5,
-            "totalMsP50": 2018,
+            "totalMsP50": 848.5,
             "withinBudget": true
           }
         ],
@@ -1917,28 +2011,28 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:7b",
         "passRate": 1,
-        "totalMsP50": 3671,
+        "totalMsP50": 3545,
         "fallbackOrder": [],
         "considered": [
           {
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 3671,
+            "totalMsP50": 3545,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 2093,
+            "totalMsP50": 2382,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 513,
+            "totalMsP50": 467,
             "withinBudget": true
           }
         ],
@@ -1952,28 +2046,28 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:7b",
         "passRate": 1,
-        "totalMsP50": 3671,
+        "totalMsP50": 3545,
         "fallbackOrder": [],
         "considered": [
           {
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 3671,
+            "totalMsP50": 3545,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 2093,
+            "totalMsP50": 2382,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 513,
+            "totalMsP50": 467,
             "withinBudget": true
           }
         ],
@@ -1989,28 +2083,28 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:7b",
         "passRate": 1,
-        "totalMsP50": 9579,
+        "totalMsP50": 9717,
         "fallbackOrder": [],
         "considered": [
           {
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 9579,
+            "totalMsP50": 9717,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 5331,
+            "totalMsP50": 5140,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 19646,
+            "totalMsP50": 2013,
             "withinBudget": true
           }
         ],
@@ -2024,28 +2118,28 @@
         "decision": "LOCAL",
         "model": "qwen2.5-coder:7b",
         "passRate": 1,
-        "totalMsP50": 9579,
+        "totalMsP50": 9717,
         "fallbackOrder": [],
         "considered": [
           {
             "id": "qwen2.5-coder:7b",
             "status": "QUALIFIED",
             "passRate": 1,
-            "totalMsP50": 9579,
+            "totalMsP50": 9717,
             "withinBudget": true
           },
           {
             "id": "qwen2.5-coder:3b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 5331,
+            "totalMsP50": 5140,
             "withinBudget": true
           },
           {
             "id": "qwen2.5:0.5b",
             "status": "DEMOTED",
             "passRate": 0,
-            "totalMsP50": 19646,
+            "totalMsP50": 2013,
             "withinBudget": true
           }
         ],
@@ -2078,81 +2172,162 @@
     "result": {
       "ok": true,
       "passed": true,
-      "totalMs": 11084
+      "totalMs": 10073
     }
   },
-  "demotions": [
-    {
-      "model": "qwen2.5-coder:3b",
-      "taskClass": "bugfix",
-      "from": null,
-      "to": "DEMOTED",
-      "passRate": 0,
-      "runId": "v155-2026-11-23T02:50:49.472Z"
-    },
-    {
-      "model": "qwen2.5-coder:3b",
-      "taskClass": "strict-contract",
-      "from": null,
-      "to": "DEMOTED",
-      "passRate": 0,
-      "runId": "v155-2026-11-23T02:50:49.472Z"
-    },
-    {
-      "model": "qwen2.5-coder:3b",
-      "taskClass": "test-writing",
-      "from": null,
-      "to": "DEMOTED",
-      "passRate": 0,
-      "runId": "v155-2026-11-23T02:50:49.472Z"
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskClass": "bugfix",
-      "from": null,
-      "to": "DEMOTED",
-      "passRate": 0,
-      "runId": "v155-2026-11-23T02:50:49.472Z"
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskClass": "implement",
-      "from": null,
-      "to": "DEMOTED",
-      "passRate": 0,
-      "runId": "v155-2026-11-23T02:50:49.472Z"
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskClass": "refactor",
-      "from": null,
-      "to": "DEMOTED",
-      "passRate": 0,
-      "runId": "v155-2026-11-23T02:50:49.472Z"
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskClass": "strict-contract",
-      "from": null,
-      "to": "DEMOTED",
-      "passRate": 0,
-      "runId": "v155-2026-11-23T02:50:49.472Z"
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskClass": "test-writing",
-      "from": null,
-      "to": "DEMOTED",
-      "passRate": 0,
-      "runId": "v155-2026-11-23T02:50:49.472Z"
-    }
-  ],
+  "demotions": [],
   "qualificationHistory": [
     {
       "runId": "v155-2026-11-23T02:50:49.472Z",
       "at": "2026-11-23T02:50:49.472Z",
       "head": "262bb92fe380400b86cc2ab232499a36d5ae6c5b",
       "taskSetVersion": "V155-TASKSET-1",
+      "perModel": {
+        "qwen2.5-coder:7b": {
+          "available": true,
+          "digest": "dae161e27b0e90dd1856c8bb3209201fd6736d8eb66298e75ed87571486f4364",
+          "perClass": {
+            "bugfix": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "extract": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "implement": {
+              "passRate": 0.5,
+              "n": 6,
+              "status": "PROBATION"
+            },
+            "judgment": {
+              "passRate": 1,
+              "n": 6,
+              "status": "QUALIFIED"
+            },
+            "refactor": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "repair": {
+              "passRate": 1,
+              "n": 6,
+              "status": "QUALIFIED"
+            },
+            "strict-contract": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "test-writing": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            }
+          }
+        },
+        "qwen2.5-coder:3b": {
+          "available": true,
+          "digest": "f72c60cabf6237b07f6e632b2c48d533cef25eda2efbd34bed21c5e9c01e6225",
+          "perClass": {
+            "bugfix": {
+              "passRate": 0,
+              "n": 3,
+              "status": "DEMOTED"
+            },
+            "extract": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "implement": {
+              "passRate": 0.5,
+              "n": 6,
+              "status": "PROBATION"
+            },
+            "judgment": {
+              "passRate": 1,
+              "n": 6,
+              "status": "QUALIFIED"
+            },
+            "refactor": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "repair": {
+              "passRate": 0.5,
+              "n": 6,
+              "status": "PROBATION"
+            },
+            "strict-contract": {
+              "passRate": 0,
+              "n": 3,
+              "status": "DEMOTED"
+            },
+            "test-writing": {
+              "passRate": 0,
+              "n": 3,
+              "status": "DEMOTED"
+            }
+          }
+        },
+        "qwen2.5:0.5b": {
+          "available": true,
+          "digest": "a8b0c51577010a279d933d14c2a8ab4b268079d44c5c8830c0a93900f1827c67",
+          "perClass": {
+            "bugfix": {
+              "passRate": 0,
+              "n": 3,
+              "status": "DEMOTED"
+            },
+            "extract": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "implement": {
+              "passRate": 0,
+              "n": 6,
+              "status": "DEMOTED"
+            },
+            "judgment": {
+              "passRate": 0.5,
+              "n": 6,
+              "status": "PROBATION"
+            },
+            "refactor": {
+              "passRate": 0,
+              "n": 3,
+              "status": "DEMOTED"
+            },
+            "repair": {
+              "passRate": 0.5,
+              "n": 6,
+              "status": "PROBATION"
+            },
+            "strict-contract": {
+              "passRate": 0,
+              "n": 3,
+              "status": "DEMOTED"
+            },
+            "test-writing": {
+              "passRate": 0,
+              "n": 3,
+              "status": "DEMOTED"
+            }
+          }
+        }
+      }
+    },
+    {
+      "runId": "v155-2026-11-23T09:34:23.982Z",
+      "at": "2026-11-23T09:34:23.982Z",
+      "head": "facb71dfd9bdad743b4cb6e0708cbee781e0407f",
+      "taskSetVersion": "V155-TASKSET-2",
       "perModel": {
         "qwen2.5-coder:7b": {
           "available": true,
@@ -2305,14 +2480,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 5963,
-      "totalMs": 22771,
-      "tokPerSec": 5,
+      "reason": "hidden test passed (all 6 hidden cases passed)",
+      "ttftMs": 2967,
+      "totalMs": 13066,
+      "tokPerSec": 8.32,
       "evalCount": 84,
-      "hostLoad1m": 3.92,
-      "cpuAvgPct": 700.5,
-      "rssPeakMb": 5280.2,
+      "hostLoad1m": 2.04,
+      "cpuAvgPct": 783.4,
+      "rssPeakMb": 4782.1,
       "outputSha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
       "error": null
     },
@@ -2325,14 +2500,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 165,
-      "totalMs": 11211,
-      "tokPerSec": 7.61,
+      "reason": "hidden test passed (all 6 hidden cases passed)",
+      "ttftMs": 150,
+      "totalMs": 30692,
+      "tokPerSec": 2.75,
       "evalCount": 84,
-      "hostLoad1m": 5.61,
-      "cpuAvgPct": 789.2,
-      "rssPeakMb": 5280.3,
+      "hostLoad1m": 3.36,
+      "cpuAvgPct": 686.7,
+      "rssPeakMb": 4782.1,
       "outputSha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
       "error": null
     },
@@ -2345,14 +2520,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 165,
-      "totalMs": 11750,
-      "tokPerSec": 7.25,
+      "reason": "hidden test passed (all 6 hidden cases passed)",
+      "ttftMs": 168,
+      "totalMs": 10382,
+      "tokPerSec": 8.23,
       "evalCount": 84,
-      "hostLoad1m": 6.13,
-      "cpuAvgPct": 784.8,
-      "rssPeakMb": 5280.3,
+      "hostLoad1m": 6.02,
+      "cpuAvgPct": 787.7,
+      "rssPeakMb": 4782.2,
       "outputSha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
       "error": null
     },
@@ -2365,14 +2540,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly deep-equal: + actual - expected + [ + 0 + ] - [] ",
-      "ttftMs": 4207,
-      "totalMs": 34273,
-      "tokPerSec": 6.79,
+      "reason": "hidden test failed: case 3: got [0] expected []",
+      "ttftMs": 3718,
+      "totalMs": 55393,
+      "tokPerSec": 3.95,
       "evalCount": 204,
-      "hostLoad1m": 6.49,
-      "cpuAvgPct": 777,
-      "rssPeakMb": 5298.6,
+      "hostLoad1m": 6.32,
+      "cpuAvgPct": 722.7,
+      "rssPeakMb": 4800.4,
       "outputSha256": "b464da45096d495ce1bb27f16fdea1bdefe2c5dc142569d5867124b7198bfec7",
       "error": null
     },
@@ -2385,14 +2560,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly deep-equal: + actual - expected + [ + 0 + ] - [] ",
-      "ttftMs": 2508,
-      "totalMs": 29421,
-      "tokPerSec": 7.02,
+      "reason": "hidden test failed: case 3: got [0] expected []",
+      "ttftMs": 222,
+      "totalMs": 23293,
+      "tokPerSec": 8.2,
       "evalCount": 189,
-      "hostLoad1m": 7.16,
-      "cpuAvgPct": 767.8,
-      "rssPeakMb": 5317.2,
+      "hostLoad1m": 8.1,
+      "cpuAvgPct": 788.8,
+      "rssPeakMb": 4819.1,
       "outputSha256": "f9ca20509b03ab8c6578c8d1c9fa27c27dee84a32d5f1e08466179abdad91e24",
       "error": null
     },
@@ -2405,14 +2580,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly deep-equal: + actual - expected + [ + 0 + ] - [] ",
-      "ttftMs": 405,
-      "totalMs": 35356,
-      "tokPerSec": 5.41,
+      "reason": "hidden test failed: case 3: got [0] expected []",
+      "ttftMs": 179,
+      "totalMs": 23345,
+      "tokPerSec": 8.16,
       "evalCount": 189,
-      "hostLoad1m": 8.5,
-      "cpuAvgPct": 735.3,
-      "rssPeakMb": 5335.1,
+      "hostLoad1m": 8.07,
+      "cpuAvgPct": 792.2,
+      "rssPeakMb": 4836.9,
       "outputSha256": "f9ca20509b03ab8c6578c8d1c9fa27c27dee84a32d5f1e08466179abdad91e24",
       "error": null
     },
@@ -2425,14 +2600,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 2942,
-      "totalMs": 29571,
-      "tokPerSec": 3.53,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 2854,
+      "totalMs": 13995,
+      "tokPerSec": 8.44,
       "evalCount": 94,
-      "hostLoad1m": 8.17,
-      "cpuAvgPct": 705.4,
-      "rssPeakMb": 5335.1,
+      "hostLoad1m": 8.04,
+      "cpuAvgPct": 791.5,
+      "rssPeakMb": 4836.9,
       "outputSha256": "14a93208c8ff0f0a63e8edcbd5eae57301d8416c9604f197181fc91571f4e087",
       "error": null
     },
@@ -2445,14 +2620,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 706,
-      "totalMs": 16436,
-      "tokPerSec": 5.28,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 143,
+      "totalMs": 9996,
+      "tokPerSec": 8.43,
       "evalCount": 83,
-      "hostLoad1m": 8.43,
-      "cpuAvgPct": 746.4,
-      "rssPeakMb": 5335.1,
+      "hostLoad1m": 8.11,
+      "cpuAvgPct": 792.8,
+      "rssPeakMb": 4836.9,
       "outputSha256": "a04fa71e81de8a5cc6a4ce891f92d7506a293b93056e0286aca8c6e80e152cfd",
       "error": null
     },
@@ -2465,14 +2640,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 382,
-      "totalMs": 16121,
-      "tokPerSec": 5.28,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 183,
+      "totalMs": 10100,
+      "tokPerSec": 8.37,
       "evalCount": 83,
-      "hostLoad1m": 8.64,
-      "cpuAvgPct": 748,
-      "rssPeakMb": 4837,
+      "hostLoad1m": 8.17,
+      "cpuAvgPct": 791,
+      "rssPeakMb": 4836.9,
       "outputSha256": "a04fa71e81de8a5cc6a4ce891f92d7506a293b93056e0286aca8c6e80e152cfd",
       "error": null
     },
@@ -2485,13 +2660,13 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 6685,
-      "totalMs": 43197,
-      "tokPerSec": 1.26,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 4344,
+      "totalMs": 9960,
+      "tokPerSec": 8.2,
       "evalCount": 46,
-      "hostLoad1m": 8.72,
-      "cpuAvgPct": 666.8,
+      "hostLoad1m": 8.22,
+      "cpuAvgPct": 793.1,
       "rssPeakMb": 4852.8,
       "outputSha256": "79efa438f81a33f87144ee368b1c9a1d4d0d0b23f245e1cc2e9e64617abaf268",
       "error": null
@@ -2505,13 +2680,13 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 204,
-      "totalMs": 6025,
-      "tokPerSec": 7.91,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 142,
+      "totalMs": 5820,
+      "tokPerSec": 8.11,
       "evalCount": 46,
-      "hostLoad1m": 9.13,
-      "cpuAvgPct": 786.9,
+      "hostLoad1m": 8.18,
+      "cpuAvgPct": 790.7,
       "rssPeakMb": 4852.8,
       "outputSha256": "79efa438f81a33f87144ee368b1c9a1d4d0d0b23f245e1cc2e9e64617abaf268",
       "error": null
@@ -2525,13 +2700,13 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
+      "reason": "hidden test passed (all 4 hidden cases passed)",
       "ttftMs": 150,
-      "totalMs": 13642,
-      "tokPerSec": 3.41,
+      "totalMs": 5823,
+      "tokPerSec": 8.11,
       "evalCount": 46,
-      "hostLoad1m": 9.04,
-      "cpuAvgPct": 727.3,
+      "hostLoad1m": 8.17,
+      "cpuAvgPct": 793.8,
       "rssPeakMb": 4852.8,
       "outputSha256": "79efa438f81a33f87144ee368b1c9a1d4d0d0b23f245e1cc2e9e64617abaf268",
       "error": null
@@ -2545,13 +2720,13 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 7204,
-      "totalMs": 38277,
-      "tokPerSec": 1.9,
+      "reason": "hidden test passed (all 7 hidden cases passed)",
+      "ttftMs": 4814,
+      "totalMs": 11929,
+      "tokPerSec": 8.3,
       "evalCount": 59,
-      "hostLoad1m": 8.96,
-      "cpuAvgPct": 667.1,
+      "hostLoad1m": 7.58,
+      "cpuAvgPct": 788.8,
       "rssPeakMb": 4874.1,
       "outputSha256": "020f7f30e2b9ef52f2fbf91cc65e577f8c9d4a521ed42322e1de3c935a043908",
       "error": null
@@ -2565,14 +2740,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 168,
-      "totalMs": 61938,
-      "tokPerSec": 0.96,
+      "reason": "hidden test passed (all 7 hidden cases passed)",
+      "ttftMs": 180,
+      "totalMs": 7312,
+      "tokPerSec": 8.28,
       "evalCount": 59,
-      "hostLoad1m": 8.86,
-      "cpuAvgPct": 627.6,
-      "rssPeakMb": 4874.2,
+      "hostLoad1m": 7.81,
+      "cpuAvgPct": 793,
+      "rssPeakMb": 4874.1,
       "outputSha256": "020f7f30e2b9ef52f2fbf91cc65e577f8c9d4a521ed42322e1de3c935a043908",
       "error": null
     },
@@ -2585,14 +2760,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 164,
-      "totalMs": 7629,
-      "tokPerSec": 7.91,
+      "reason": "hidden test passed (all 7 hidden cases passed)",
+      "ttftMs": 153,
+      "totalMs": 7368,
+      "tokPerSec": 8.18,
       "evalCount": 59,
-      "hostLoad1m": 9.95,
-      "cpuAvgPct": 790.3,
-      "rssPeakMb": 4874.2,
+      "hostLoad1m": 7.82,
+      "cpuAvgPct": 791.3,
+      "rssPeakMb": 4874.1,
       "outputSha256": "020f7f30e2b9ef52f2fbf91cc65e577f8c9d4a521ed42322e1de3c935a043908",
       "error": null
     },
@@ -2605,14 +2780,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 4048,
-      "totalMs": 9736,
-      "tokPerSec": 7.74,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 3821,
+      "totalMs": 9476,
+      "tokPerSec": 7.79,
       "evalCount": 44,
-      "hostLoad1m": 9.09,
-      "cpuAvgPct": 782.5,
-      "rssPeakMb": 4887.4,
+      "hostLoad1m": 7.85,
+      "cpuAvgPct": 788.8,
+      "rssPeakMb": 4887.3,
       "outputSha256": "e437fd79fe02db4d7408a02daf82ff917be9da772d9ef13f4fc73d2acc7fb1bd",
       "error": null
     },
@@ -2625,14 +2800,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 158,
-      "totalMs": 6012,
-      "tokPerSec": 7.53,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 166,
+      "totalMs": 5237,
+      "tokPerSec": 8.68,
       "evalCount": 44,
-      "hostLoad1m": 8.36,
-      "cpuAvgPct": 780.5,
-      "rssPeakMb": 4887.4,
+      "hostLoad1m": 7.87,
+      "cpuAvgPct": 791.6,
+      "rssPeakMb": 4887.3,
       "outputSha256": "e437fd79fe02db4d7408a02daf82ff917be9da772d9ef13f4fc73d2acc7fb1bd",
       "error": null
     },
@@ -2645,14 +2820,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 166,
-      "totalMs": 5924,
-      "tokPerSec": 7.64,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 163,
+      "totalMs": 5645,
+      "tokPerSec": 8.03,
       "evalCount": 44,
-      "hostLoad1m": 8.33,
-      "cpuAvgPct": 786,
-      "rssPeakMb": 4887.4,
+      "hostLoad1m": 7.88,
+      "cpuAvgPct": 791.5,
+      "rssPeakMb": 4887.3,
       "outputSha256": "e437fd79fe02db4d7408a02daf82ff917be9da772d9ef13f4fc73d2acc7fb1bd",
       "error": null
     },
@@ -2666,13 +2841,13 @@
       "structuredOk": null,
       "strictOk": null,
       "reason": "all mutants killed; reference passes",
-      "ttftMs": 4745,
-      "totalMs": 14050,
-      "tokPerSec": 7.85,
+      "ttftMs": 4662,
+      "totalMs": 13325,
+      "tokPerSec": 8.43,
       "evalCount": 73,
-      "hostLoad1m": 8.3,
-      "cpuAvgPct": 791.2,
-      "rssPeakMb": 4897.5,
+      "hostLoad1m": 7.89,
+      "cpuAvgPct": 792.1,
+      "rssPeakMb": 4897.4,
       "outputSha256": "0dd4b6d62c9b1bde9abd316dd23f0f7d04d9443616c0440671a7243bf2c84afc",
       "error": null
     },
@@ -2687,12 +2862,12 @@
       "strictOk": null,
       "reason": "all mutants killed; reference passes",
       "ttftMs": 181,
-      "totalMs": 9579,
-      "tokPerSec": 7.77,
+      "totalMs": 9717,
+      "tokPerSec": 7.66,
       "evalCount": 73,
-      "hostLoad1m": 8.24,
-      "cpuAvgPct": 791.2,
-      "rssPeakMb": 4897.5,
+      "hostLoad1m": 7.92,
+      "cpuAvgPct": 781,
+      "rssPeakMb": 4897.4,
       "outputSha256": "0dd4b6d62c9b1bde9abd316dd23f0f7d04d9443616c0440671a7243bf2c84afc",
       "error": null
     },
@@ -2706,13 +2881,13 @@
       "structuredOk": null,
       "strictOk": null,
       "reason": "all mutants killed; reference passes",
-      "ttftMs": 163,
-      "totalMs": 9433,
-      "tokPerSec": 7.88,
+      "ttftMs": 188,
+      "totalMs": 8511,
+      "tokPerSec": 8.77,
       "evalCount": 73,
-      "hostLoad1m": 8.2,
-      "cpuAvgPct": 792.2,
-      "rssPeakMb": 4897.5,
+      "hostLoad1m": 8.01,
+      "cpuAvgPct": 780.4,
+      "rssPeakMb": 4897.4,
       "outputSha256": "0dd4b6d62c9b1bde9abd316dd23f0f7d04d9443616c0440671a7243bf2c84afc",
       "error": null
     },
@@ -2726,73 +2901,73 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "exact match",
-      "ttftMs": 3611,
-      "totalMs": 11735,
-      "tokPerSec": 8.01,
+      "ttftMs": 3570,
+      "totalMs": 10986,
+      "tokPerSec": 8.77,
       "evalCount": 65,
-      "hostLoad1m": 8.17,
+      "hostLoad1m": 8.08,
+      "cpuAvgPct": 791.1,
+      "rssPeakMb": 4910.7,
+      "outputSha256": "c99d36959bcd9137d0fa25aa8986b42cba0d398870dc7cc78f15c884af38d693",
+      "error": null
+    },
+    {
+      "model": "qwen2.5-coder:7b",
+      "taskId": "extract-invoice",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "exact match",
+      "ttftMs": 127,
+      "totalMs": 7818,
+      "tokPerSec": 8.45,
+      "evalCount": 65,
+      "hostLoad1m": 8.07,
+      "cpuAvgPct": 791.8,
+      "rssPeakMb": 4910.7,
+      "outputSha256": "c99d36959bcd9137d0fa25aa8986b42cba0d398870dc7cc78f15c884af38d693",
+      "error": null
+    },
+    {
+      "model": "qwen2.5-coder:7b",
+      "taskId": "extract-invoice",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "exact match",
+      "ttftMs": 135,
+      "totalMs": 8151,
+      "tokPerSec": 8.11,
+      "evalCount": 65,
+      "hostLoad1m": 8.06,
+      "cpuAvgPct": 793.7,
+      "rssPeakMb": 4910.7,
+      "outputSha256": "c99d36959bcd9137d0fa25aa8986b42cba0d398870dc7cc78f15c884af38d693",
+      "error": null
+    },
+    {
+      "model": "qwen2.5-coder:7b",
+      "taskId": "strict-status-contract",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": true,
+      "reason": "strict contract + values correct",
+      "ttftMs": 3605,
+      "totalMs": 7153,
+      "tokPerSec": 8.18,
+      "evalCount": 29,
+      "hostLoad1m": 8.05,
       "cpuAvgPct": 792.1,
-      "rssPeakMb": 4910.7,
-      "outputSha256": "c99d36959bcd9137d0fa25aa8986b42cba0d398870dc7cc78f15c884af38d693",
-      "error": null
-    },
-    {
-      "model": "qwen2.5-coder:7b",
-      "taskId": "extract-invoice",
-      "trial": 2,
-      "passed": true,
-      "measured": true,
-      "compileOk": null,
-      "structuredOk": true,
-      "strictOk": null,
-      "reason": "exact match",
-      "ttftMs": 175,
-      "totalMs": 8405,
-      "tokPerSec": 7.9,
-      "evalCount": 65,
-      "hostLoad1m": 8.44,
-      "cpuAvgPct": 792.8,
-      "rssPeakMb": 4910.7,
-      "outputSha256": "c99d36959bcd9137d0fa25aa8986b42cba0d398870dc7cc78f15c884af38d693",
-      "error": null
-    },
-    {
-      "model": "qwen2.5-coder:7b",
-      "taskId": "extract-invoice",
-      "trial": 3,
-      "passed": true,
-      "measured": true,
-      "compileOk": null,
-      "structuredOk": true,
-      "strictOk": null,
-      "reason": "exact match",
-      "ttftMs": 151,
-      "totalMs": 8420,
-      "tokPerSec": 7.87,
-      "evalCount": 65,
-      "hostLoad1m": 8.49,
-      "cpuAvgPct": 792,
-      "rssPeakMb": 4910.7,
-      "outputSha256": "c99d36959bcd9137d0fa25aa8986b42cba0d398870dc7cc78f15c884af38d693",
-      "error": null
-    },
-    {
-      "model": "qwen2.5-coder:7b",
-      "taskId": "strict-status-contract",
-      "trial": 1,
-      "passed": true,
-      "measured": true,
-      "compileOk": null,
-      "structuredOk": true,
-      "strictOk": true,
-      "reason": "strict contract + values correct",
-      "ttftMs": 3670,
-      "totalMs": 7173,
-      "tokPerSec": 8.29,
-      "evalCount": 29,
-      "hostLoad1m": 8.56,
-      "cpuAvgPct": 791.7,
-      "rssPeakMb": 4921.3,
+      "rssPeakMb": 4921.2,
       "outputSha256": "602fbbdcd2d64cf65f1dc2ca1db8f3b0acfaff07e61f054c235d36b3d71c7036",
       "error": null
     },
@@ -2806,13 +2981,13 @@
       "structuredOk": true,
       "strictOk": true,
       "reason": "strict contract + values correct",
-      "ttftMs": 155,
-      "totalMs": 3671,
-      "tokPerSec": 8.25,
+      "ttftMs": 123,
+      "totalMs": 3441,
+      "tokPerSec": 8.75,
       "evalCount": 29,
-      "hostLoad1m": 8.52,
-      "cpuAvgPct": 794.7,
-      "rssPeakMb": 4921.3,
+      "hostLoad1m": 8.05,
+      "cpuAvgPct": 794.2,
+      "rssPeakMb": 4921.2,
       "outputSha256": "602fbbdcd2d64cf65f1dc2ca1db8f3b0acfaff07e61f054c235d36b3d71c7036",
       "error": null
     },
@@ -2826,13 +3001,13 @@
       "structuredOk": true,
       "strictOk": true,
       "reason": "strict contract + values correct",
-      "ttftMs": 132,
-      "totalMs": 3670,
-      "tokPerSec": 8.2,
+      "ttftMs": 134,
+      "totalMs": 3545,
+      "tokPerSec": 8.5,
       "evalCount": 29,
-      "hostLoad1m": 8.47,
-      "cpuAvgPct": 793.2,
-      "rssPeakMb": 4921.3,
+      "hostLoad1m": 8.04,
+      "cpuAvgPct": 790,
+      "rssPeakMb": 4921.2,
       "outputSha256": "602fbbdcd2d64cf65f1dc2ca1db8f3b0acfaff07e61f054c235d36b3d71c7036",
       "error": null
     },
@@ -2846,12 +3021,12 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 2078,
-      "totalMs": 7463,
-      "tokPerSec": 7.82,
+      "ttftMs": 2089,
+      "totalMs": 7080,
+      "tokPerSec": 8.43,
       "evalCount": 42,
-      "hostLoad1m": 8.44,
-      "cpuAvgPct": 790.7,
+      "hostLoad1m": 8.04,
+      "cpuAvgPct": 792.4,
       "rssPeakMb": 4929.7,
       "outputSha256": "a5ad31dcbe6d6a3a4c75b0956d204ff0db9e320a49373fab1dc79f37614f032e",
       "error": null
@@ -2866,12 +3041,12 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 138,
-      "totalMs": 5748,
-      "tokPerSec": 7.49,
+      "ttftMs": 121,
+      "totalMs": 5168,
+      "tokPerSec": 8.33,
       "evalCount": 42,
-      "hostLoad1m": 8.4,
-      "cpuAvgPct": 785,
+      "hostLoad1m": 8.03,
+      "cpuAvgPct": 790.2,
       "rssPeakMb": 4929.7,
       "outputSha256": "a5ad31dcbe6d6a3a4c75b0956d204ff0db9e320a49373fab1dc79f37614f032e",
       "error": null
@@ -2886,12 +3061,12 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 138,
-      "totalMs": 5578,
-      "tokPerSec": 7.73,
+      "ttftMs": 119,
+      "totalMs": 5136,
+      "tokPerSec": 8.38,
       "evalCount": 42,
-      "hostLoad1m": 8.37,
-      "cpuAvgPct": 787.2,
+      "hostLoad1m": 8.03,
+      "cpuAvgPct": 792.6,
       "rssPeakMb": 4929.7,
       "outputSha256": "a5ad31dcbe6d6a3a4c75b0956d204ff0db9e320a49373fab1dc79f37614f032e",
       "error": null
@@ -2906,12 +3081,12 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 941,
-      "totalMs": 6832,
-      "tokPerSec": 7.98,
+      "ttftMs": 905,
+      "totalMs": 6241,
+      "tokPerSec": 8.81,
       "evalCount": 47,
-      "hostLoad1m": 8.31,
-      "cpuAvgPct": 789.6,
+      "hostLoad1m": 8.03,
+      "cpuAvgPct": 790.9,
       "rssPeakMb": 4929.7,
       "outputSha256": "b0fdded1a6feffa7c546c7fc95ebf041fa0d7cda0f0a7c8d4b56dfba3e1a555c",
       "error": null
@@ -2926,12 +3101,12 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 132,
-      "totalMs": 5939,
-      "tokPerSec": 8.1,
+      "ttftMs": 126,
+      "totalMs": 5235,
+      "tokPerSec": 9.21,
       "evalCount": 47,
-      "hostLoad1m": 8.29,
-      "cpuAvgPct": 794,
+      "hostLoad1m": 8.03,
+      "cpuAvgPct": 792.9,
       "rssPeakMb": 4929.7,
       "outputSha256": "b0fdded1a6feffa7c546c7fc95ebf041fa0d7cda0f0a7c8d4b56dfba3e1a555c",
       "error": null
@@ -2946,12 +3121,12 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 133,
-      "totalMs": 6084,
-      "tokPerSec": 7.9,
+      "ttftMs": 117,
+      "totalMs": 5252,
+      "tokPerSec": 9.15,
       "evalCount": 47,
-      "hostLoad1m": 8.26,
-      "cpuAvgPct": 790.3,
+      "hostLoad1m": 8.02,
+      "cpuAvgPct": 794.3,
       "rssPeakMb": 4929.7,
       "outputSha256": "b0fdded1a6feffa7c546c7fc95ebf041fa0d7cda0f0a7c8d4b56dfba3e1a555c",
       "error": null
@@ -2965,14 +3140,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 1457,
-      "totalMs": 6763,
-      "tokPerSec": 15.85,
+      "reason": "hidden test passed (all 6 hidden cases passed)",
+      "ttftMs": 1241,
+      "totalMs": 6012,
+      "tokPerSec": 17.62,
       "evalCount": 84,
-      "hostLoad1m": 7.29,
-      "cpuAvgPct": 776.8,
-      "rssPeakMb": 2073.2,
+      "hostLoad1m": 7.46,
+      "cpuAvgPct": 786,
+      "rssPeakMb": 2073.3,
       "outputSha256": "6db11f88c1724d932f2460e6508b051ebfadbe02b56b9bda3ef66579362491c6",
       "error": null
     },
@@ -2985,14 +3160,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 109,
-      "totalMs": 5763,
-      "tokPerSec": 14.88,
+      "reason": "hidden test passed (all 6 hidden cases passed)",
+      "ttftMs": 129,
+      "totalMs": 4743,
+      "tokPerSec": 18.22,
       "evalCount": 84,
-      "hostLoad1m": 7.35,
-      "cpuAvgPct": 767.1,
-      "rssPeakMb": 2073.3,
+      "hostLoad1m": 7.54,
+      "cpuAvgPct": 791.4,
+      "rssPeakMb": 2073.4,
       "outputSha256": "9fa3c029f05dfcfb977514270bb339c810f8e3b175ca8dc8d7fe53e83088ea87",
       "error": null
     },
@@ -3005,14 +3180,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 74,
-      "totalMs": 5202,
-      "tokPerSec": 16.39,
+      "reason": "hidden test passed (all 6 hidden cases passed)",
+      "ttftMs": 78,
+      "totalMs": 4920,
+      "tokPerSec": 17.36,
       "evalCount": 84,
-      "hostLoad1m": 7.48,
-      "cpuAvgPct": 790.1,
-      "rssPeakMb": 2073.3,
+      "hostLoad1m": 7.58,
+      "cpuAvgPct": 790.6,
+      "rssPeakMb": 2073.4,
       "outputSha256": "9fa3c029f05dfcfb977514270bb339c810f8e3b175ca8dc8d7fe53e83088ea87",
       "error": null
     },
@@ -3025,14 +3200,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly deep-equal: + actual - expected [ 2, 3, 4, + 4 ] ",
-      "ttftMs": 1720,
-      "totalMs": 16501,
-      "tokPerSec": 15.84,
+      "reason": "hidden test failed: case 2: got [2,3,4,4] expected [2,3,4]",
+      "ttftMs": 1671,
+      "totalMs": 15563,
+      "tokPerSec": 16.85,
       "evalCount": 234,
-      "hostLoad1m": 7.52,
-      "cpuAvgPct": 790.3,
-      "rssPeakMb": 2082.1,
+      "hostLoad1m": 7.61,
+      "cpuAvgPct": 792.2,
+      "rssPeakMb": 2082.2,
       "outputSha256": "e13561125ffc19a75236533fa8cb34bc9d67336a9d98f70ea91dbf6639bcc71a",
       "error": null
     },
@@ -3045,39 +3220,39 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly deep-equal: + actual - expected [ 2, 3, 4, + 4 ] ",
-      "ttftMs": 158,
-      "totalMs": 15423,
-      "tokPerSec": 15.33,
+      "reason": "hidden test failed: case 2: got [2,3,4,4] expected [2,3,4]",
+      "ttftMs": 115,
+      "totalMs": 13444,
+      "tokPerSec": 17.56,
       "evalCount": 234,
-      "hostLoad1m": 7.74,
-      "cpuAvgPct": 783,
-      "rssPeakMb": 2095.2,
-      "outputSha256": "e13561125ffc19a75236533fa8cb34bc9d67336a9d98f70ea91dbf6639bcc71a",
-      "error": null
-    },
-    {
-      "model": "qwen2.5-coder:3b",
-      "taskId": "impl-ts-parse-range",
-      "trial": 3,
-      "passed": false,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly deep-equal: + actual - expected [ 2, 3, 4, + 4 ] ",
-      "ttftMs": 122,
-      "totalMs": 14716,
-      "tokPerSec": 16.04,
-      "evalCount": 234,
-      "hostLoad1m": 7.94,
-      "cpuAvgPct": 790,
+      "hostLoad1m": 7.86,
+      "cpuAvgPct": 792.1,
       "rssPeakMb": 2095.3,
       "outputSha256": "e13561125ffc19a75236533fa8cb34bc9d67336a9d98f70ea91dbf6639bcc71a",
       "error": null
     },
     {
       "model": "qwen2.5-coder:3b",
+      "taskId": "impl-ts-parse-range",
+      "trial": 3,
+      "passed": false,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test failed: case 2: got [2,3,4,4] expected [2,3,4]",
+      "ttftMs": 95,
+      "totalMs": 14069,
+      "tokPerSec": 16.75,
+      "evalCount": 234,
+      "hostLoad1m": 7.96,
+      "cpuAvgPct": 788,
+      "rssPeakMb": 2095.4,
+      "outputSha256": "e13561125ffc19a75236533fa8cb34bc9d67336a9d98f70ea91dbf6639bcc71a",
+      "error": null
+    },
+    {
+      "model": "qwen2.5-coder:3b",
       "taskId": "bugfix-median",
       "trial": 1,
       "passed": false,
@@ -3085,14 +3260,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: 3 !== 2.5 ",
-      "ttftMs": 1345,
-      "totalMs": 5192,
-      "tokPerSec": 16.65,
+      "reason": "hidden test failed: case 1: got 3 expected 2.5",
+      "ttftMs": 1614,
+      "totalMs": 5484,
+      "tokPerSec": 16.55,
       "evalCount": 64,
-      "hostLoad1m": 7.95,
-      "cpuAvgPct": 790.2,
-      "rssPeakMb": 2096.1,
+      "hostLoad1m": 8.05,
+      "cpuAvgPct": 774.5,
+      "rssPeakMb": 2096.3,
       "outputSha256": "1da9c125d99c30b2be8f9d91bd2d387a6007450da3982f0bcb3132854aad890d",
       "error": null
     },
@@ -3105,14 +3280,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: 3 !== 2.5 ",
-      "ttftMs": 85,
-      "totalMs": 3943,
-      "tokPerSec": 16.61,
+      "reason": "hidden test failed: case 1: got 3 expected 2.5",
+      "ttftMs": 84,
+      "totalMs": 3925,
+      "tokPerSec": 16.69,
       "evalCount": 64,
-      "hostLoad1m": 7.96,
-      "cpuAvgPct": 790.5,
-      "rssPeakMb": 2096.1,
+      "hostLoad1m": 8.04,
+      "cpuAvgPct": 786.2,
+      "rssPeakMb": 2096.3,
       "outputSha256": "1da9c125d99c30b2be8f9d91bd2d387a6007450da3982f0bcb3132854aad890d",
       "error": null
     },
@@ -3125,94 +3300,94 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: 3 !== 2.5 ",
-      "ttftMs": 123,
-      "totalMs": 4047,
-      "tokPerSec": 16.32,
+      "reason": "hidden test failed: case 1: got 3 expected 2.5",
+      "ttftMs": 122,
+      "totalMs": 3606,
+      "tokPerSec": 18.38,
       "evalCount": 64,
-      "hostLoad1m": 7.96,
-      "cpuAvgPct": 783,
-      "rssPeakMb": 2096.1,
-      "outputSha256": "1da9c125d99c30b2be8f9d91bd2d387a6007450da3982f0bcb3132854aad890d",
-      "error": null
-    },
-    {
-      "model": "qwen2.5-coder:3b",
-      "taskId": "repair-total-length",
-      "trial": 1,
-      "passed": true,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 2014,
-      "totalMs": 5679,
-      "tokPerSec": 16.95,
-      "evalCount": 62,
-      "hostLoad1m": 7.96,
-      "cpuAvgPct": 790,
-      "rssPeakMb": 2110.6,
-      "outputSha256": "93829177c81e65b875e0f8a10dc7d4917de2603c4d87fae4efcbab55ba6df826",
-      "error": null
-    },
-    {
-      "model": "qwen2.5-coder:3b",
-      "taskId": "repair-total-length",
-      "trial": 2,
-      "passed": true,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 89,
-      "totalMs": 3870,
-      "tokPerSec": 16.41,
-      "evalCount": 62,
-      "hostLoad1m": 7.97,
-      "cpuAvgPct": 787.6,
-      "rssPeakMb": 2110.6,
-      "outputSha256": "93829177c81e65b875e0f8a10dc7d4917de2603c4d87fae4efcbab55ba6df826",
-      "error": null
-    },
-    {
-      "model": "qwen2.5-coder:3b",
-      "taskId": "repair-total-length",
-      "trial": 3,
-      "passed": true,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 94,
-      "totalMs": 3855,
-      "tokPerSec": 16.5,
-      "evalCount": 62,
-      "hostLoad1m": 7.97,
-      "cpuAvgPct": 787,
-      "rssPeakMb": 2110.7,
-      "outputSha256": "93829177c81e65b875e0f8a10dc7d4917de2603c4d87fae4efcbab55ba6df826",
-      "error": null
-    },
-    {
-      "model": "qwen2.5-coder:3b",
-      "taskId": "repair-parse-config",
-      "trial": 1,
-      "passed": false,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: 'abc' !== 8080 ",
-      "ttftMs": 2230,
-      "totalMs": 5634,
-      "tokPerSec": 16.47,
-      "evalCount": 56,
-      "hostLoad1m": 7.97,
+      "hostLoad1m": 8.04,
       "cpuAvgPct": 789.2,
-      "rssPeakMb": 2125.8,
+      "rssPeakMb": 2096.3,
+      "outputSha256": "1da9c125d99c30b2be8f9d91bd2d387a6007450da3982f0bcb3132854aad890d",
+      "error": null
+    },
+    {
+      "model": "qwen2.5-coder:3b",
+      "taskId": "repair-total-length",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 1985,
+      "totalMs": 5513,
+      "tokPerSec": 17.59,
+      "evalCount": 62,
+      "hostLoad1m": 8.04,
+      "cpuAvgPct": 779.9,
+      "rssPeakMb": 2110.8,
+      "outputSha256": "93829177c81e65b875e0f8a10dc7d4917de2603c4d87fae4efcbab55ba6df826",
+      "error": null
+    },
+    {
+      "model": "qwen2.5-coder:3b",
+      "taskId": "repair-total-length",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 96,
+      "totalMs": 3824,
+      "tokPerSec": 16.66,
+      "evalCount": 62,
+      "hostLoad1m": 8.11,
+      "cpuAvgPct": 784.2,
+      "rssPeakMb": 2110.8,
+      "outputSha256": "93829177c81e65b875e0f8a10dc7d4917de2603c4d87fae4efcbab55ba6df826",
+      "error": null
+    },
+    {
+      "model": "qwen2.5-coder:3b",
+      "taskId": "repair-total-length",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 92,
+      "totalMs": 3862,
+      "tokPerSec": 16.46,
+      "evalCount": 62,
+      "hostLoad1m": 8.11,
+      "cpuAvgPct": 785.5,
+      "rssPeakMb": 2110.8,
+      "outputSha256": "93829177c81e65b875e0f8a10dc7d4917de2603c4d87fae4efcbab55ba6df826",
+      "error": null
+    },
+    {
+      "model": "qwen2.5-coder:3b",
+      "taskId": "repair-parse-config",
+      "trial": 1,
+      "passed": false,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test failed: case 4: got \"abc\" expected 8080",
+      "ttftMs": 2208,
+      "totalMs": 5393,
+      "tokPerSec": 17.6,
+      "evalCount": 56,
+      "hostLoad1m": 8.11,
+      "cpuAvgPct": 790,
+      "rssPeakMb": 2125.9,
       "outputSha256": "49fb5551e89259b708d2a1eb435091d0b74cbb794954eb8cffb1ed186e165477",
       "error": null
     },
@@ -3225,14 +3400,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: 'abc' !== 8080 ",
-      "ttftMs": 87,
-      "totalMs": 3438,
-      "tokPerSec": 16.74,
+      "reason": "hidden test failed: case 4: got \"abc\" expected 8080",
+      "ttftMs": 102,
+      "totalMs": 3367,
+      "tokPerSec": 17.17,
       "evalCount": 56,
-      "hostLoad1m": 7.97,
-      "cpuAvgPct": 791.3,
-      "rssPeakMb": 2125.9,
+      "hostLoad1m": 8.1,
+      "cpuAvgPct": 785.1,
+      "rssPeakMb": 2126,
       "outputSha256": "49fb5551e89259b708d2a1eb435091d0b74cbb794954eb8cffb1ed186e165477",
       "error": null
     },
@@ -3245,14 +3420,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: 'abc' !== 8080 ",
-      "ttftMs": 107,
-      "totalMs": 3461,
-      "tokPerSec": 16.71,
+      "reason": "hidden test failed: case 4: got \"abc\" expected 8080",
+      "ttftMs": 365,
+      "totalMs": 3819,
+      "tokPerSec": 16.22,
       "evalCount": 56,
-      "hostLoad1m": 7.97,
-      "cpuAvgPct": 789.1,
-      "rssPeakMb": 2125.9,
+      "hostLoad1m": 8.09,
+      "cpuAvgPct": 777.4,
+      "rssPeakMb": 2126,
       "outputSha256": "49fb5551e89259b708d2a1eb435091d0b74cbb794954eb8cffb1ed186e165477",
       "error": null
     },
@@ -3265,14 +3440,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 1737,
-      "totalMs": 5123,
-      "tokPerSec": 16.55,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 1956,
+      "totalMs": 5194,
+      "tokPerSec": 17.32,
       "evalCount": 56,
-      "hostLoad1m": 7.98,
-      "cpuAvgPct": 788,
-      "rssPeakMb": 2134.1,
+      "hostLoad1m": 8.08,
+      "cpuAvgPct": 779.3,
+      "rssPeakMb": 2134.2,
       "outputSha256": "3acf713519acb93a62799e6a396ae51ffe675cd308048b9adfac1802b0d9f80f",
       "error": null
     },
@@ -3285,14 +3460,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 81,
-      "totalMs": 3068,
-      "tokPerSec": 16.42,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 100,
+      "totalMs": 3432,
+      "tokPerSec": 14.73,
       "evalCount": 49,
-      "hostLoad1m": 7.98,
-      "cpuAvgPct": 789.2,
-      "rssPeakMb": 2134.1,
+      "hostLoad1m": 8.16,
+      "cpuAvgPct": 766.7,
+      "rssPeakMb": 2134.2,
       "outputSha256": "0a09ed880fb0c614a4f02d7483437d40e1823d5584c561ac4b4fdeeaec2cc104",
       "error": null
     },
@@ -3305,14 +3480,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 86,
-      "totalMs": 3006,
-      "tokPerSec": 16.82,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 84,
+      "totalMs": 2850,
+      "tokPerSec": 17.73,
       "evalCount": 49,
-      "hostLoad1m": 7.98,
-      "cpuAvgPct": 778.8,
-      "rssPeakMb": 2134.1,
+      "hostLoad1m": 8.22,
+      "cpuAvgPct": 789.2,
+      "rssPeakMb": 2134.2,
       "outputSha256": "0a09ed880fb0c614a4f02d7483437d40e1823d5584c561ac4b4fdeeaec2cc104",
       "error": null
     },
@@ -3325,14 +3500,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "tests fail against the CORRECT implementation: Expected values to be strictly equal: + actual - expected + 'nospecial-chars' - 'nospecialcha",
-      "ttftMs": 2146,
-      "totalMs": 7390,
-      "tokPerSec": 16.03,
+      "reason": "tests fail against the CORRECT implementation: \"nospecial-chars\" !== \"nospecialchars\"",
+      "ttftMs": 2153,
+      "totalMs": 7331,
+      "tokPerSec": 16.25,
       "evalCount": 84,
-      "hostLoad1m": 7.98,
-      "cpuAvgPct": 787.8,
-      "rssPeakMb": 2141,
+      "hostLoad1m": 8.22,
+      "cpuAvgPct": 787.3,
+      "rssPeakMb": 2141.1,
       "outputSha256": "2fda2054aac9a934c7489509b8adc74c60cf9223107b411beb6cce805cefff24",
       "error": null
     },
@@ -3345,14 +3520,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "tests fail against the CORRECT implementation: Expected values to be strictly equal: + actual - expected + 'nospecial-chars' - 'nospecialcha",
-      "ttftMs": 156,
-      "totalMs": 5331,
-      "tokPerSec": 15.66,
+      "reason": "tests fail against the CORRECT implementation: \"nospecial-chars\" !== \"nospecialchars\"",
+      "ttftMs": 77,
+      "totalMs": 5140,
+      "tokPerSec": 16.01,
       "evalCount": 81,
-      "hostLoad1m": 7.98,
-      "cpuAvgPct": 782,
-      "rssPeakMb": 2141,
+      "hostLoad1m": 8.19,
+      "cpuAvgPct": 776.6,
+      "rssPeakMb": 2141.1,
       "outputSha256": "e62f5439bbfa86483a4d521ddc03b5dbecb12a4c1e6abb763206a83ae2f4dbf7",
       "error": null
     },
@@ -3365,14 +3540,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "tests fail against the CORRECT implementation: Expected values to be strictly equal: + actual - expected + 'nospecial-chars' - 'nospecialcha",
-      "ttftMs": 82,
-      "totalMs": 5039,
-      "tokPerSec": 16.35,
+      "reason": "tests fail against the CORRECT implementation: \"nospecial-chars\" !== \"nospecialchars\"",
+      "ttftMs": 88,
+      "totalMs": 4914,
+      "tokPerSec": 16.8,
       "evalCount": 81,
-      "hostLoad1m": 8.07,
-      "cpuAvgPct": 788.9,
-      "rssPeakMb": 2141,
+      "hostLoad1m": 8.33,
+      "cpuAvgPct": 789.7,
+      "rssPeakMb": 2141.1,
       "outputSha256": "e62f5439bbfa86483a4d521ddc03b5dbecb12a4c1e6abb763206a83ae2f4dbf7",
       "error": null
     },
@@ -3386,13 +3561,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "exact match",
-      "ttftMs": 1672,
-      "totalMs": 5616,
-      "tokPerSec": 16.52,
+      "ttftMs": 1567,
+      "totalMs": 5144,
+      "tokPerSec": 18.18,
       "evalCount": 65,
-      "hostLoad1m": 8.22,
-      "cpuAvgPct": 784.7,
-      "rssPeakMb": 2149.8,
+      "hostLoad1m": 8.31,
+      "cpuAvgPct": 786.8,
+      "rssPeakMb": 2149.9,
       "outputSha256": "c99d36959bcd9137d0fa25aa8986b42cba0d398870dc7cc78f15c884af38d693",
       "error": null
     },
@@ -3406,13 +3581,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "exact match",
-      "ttftMs": 67,
-      "totalMs": 3897,
-      "tokPerSec": 16.98,
+      "ttftMs": 54,
+      "totalMs": 3542,
+      "tokPerSec": 18.66,
       "evalCount": 65,
-      "hostLoad1m": 8.2,
-      "cpuAvgPct": 790.1,
-      "rssPeakMb": 2149.8,
+      "hostLoad1m": 8.28,
+      "cpuAvgPct": 788.2,
+      "rssPeakMb": 2149.9,
       "outputSha256": "c99d36959bcd9137d0fa25aa8986b42cba0d398870dc7cc78f15c884af38d693",
       "error": null
     },
@@ -3426,13 +3601,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "exact match",
-      "ttftMs": 75,
-      "totalMs": 3875,
-      "tokPerSec": 17.12,
+      "ttftMs": 63,
+      "totalMs": 10403,
+      "tokPerSec": 6.29,
       "evalCount": 65,
-      "hostLoad1m": 8.19,
-      "cpuAvgPct": 792.6,
-      "rssPeakMb": 2149.8,
+      "hostLoad1m": 8.26,
+      "cpuAvgPct": 683.7,
+      "rssPeakMb": 2149.9,
       "outputSha256": "c99d36959bcd9137d0fa25aa8986b42cba0d398870dc7cc78f15c884af38d693",
       "error": null
     },
@@ -3446,13 +3621,13 @@
       "structuredOk": true,
       "strictOk": false,
       "reason": "RAW output is not bare JSON (fences/prose ⇒ contract violated)",
-      "ttftMs": 1585,
-      "totalMs": 3513,
-      "tokPerSec": 17.14,
+      "ttftMs": 4396,
+      "totalMs": 35398,
+      "tokPerSec": 1.06,
       "evalCount": 33,
-      "hostLoad1m": 8.17,
-      "cpuAvgPct": 791.5,
-      "rssPeakMb": 2156.6,
+      "hostLoad1m": 8.38,
+      "cpuAvgPct": 656.6,
+      "rssPeakMb": 2156.7,
       "outputSha256": "a6462c3936fa82c2be8e54309870bfd4f578a491af046a4cec37278d8d220f1b",
       "error": null
     },
@@ -3466,13 +3641,13 @@
       "structuredOk": true,
       "strictOk": false,
       "reason": "RAW output is not bare JSON (fences/prose ⇒ contract violated)",
-      "ttftMs": 69,
-      "totalMs": 2020,
-      "tokPerSec": 16.93,
+      "ttftMs": 339,
+      "totalMs": 2382,
+      "tokPerSec": 16.17,
       "evalCount": 33,
-      "hostLoad1m": 8.24,
-      "cpuAvgPct": 783.4,
-      "rssPeakMb": 2156.6,
+      "hostLoad1m": 9.3,
+      "cpuAvgPct": 772.4,
+      "rssPeakMb": 2156.7,
       "outputSha256": "a6462c3936fa82c2be8e54309870bfd4f578a491af046a4cec37278d8d220f1b",
       "error": null
     },
@@ -3486,13 +3661,13 @@
       "structuredOk": true,
       "strictOk": false,
       "reason": "RAW output is not bare JSON (fences/prose ⇒ contract violated)",
-      "ttftMs": 67,
-      "totalMs": 2093,
-      "tokPerSec": 16.31,
+      "ttftMs": 70,
+      "totalMs": 2082,
+      "tokPerSec": 16.43,
       "evalCount": 33,
-      "hostLoad1m": 8.24,
-      "cpuAvgPct": 786.2,
-      "rssPeakMb": 2156.6,
+      "hostLoad1m": 9.3,
+      "cpuAvgPct": 790.1,
+      "rssPeakMb": 2156.7,
       "outputSha256": "a6462c3936fa82c2be8e54309870bfd4f578a491af046a4cec37278d8d220f1b",
       "error": null
     },
@@ -3506,13 +3681,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 961,
-      "totalMs": 4048,
-      "tokPerSec": 17.17,
+      "ttftMs": 945,
+      "totalMs": 4134,
+      "tokPerSec": 16.64,
       "evalCount": 53,
-      "hostLoad1m": 8.24,
-      "cpuAvgPct": 790,
-      "rssPeakMb": 2162.2,
+      "hostLoad1m": 9.2,
+      "cpuAvgPct": 788.9,
+      "rssPeakMb": 2162.3,
       "outputSha256": "6191ece7be017ee69c61fb958f2cceebbff5f38882400aa07ed7eada54ea1c7d",
       "error": null
     },
@@ -3526,13 +3701,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 65,
-      "totalMs": 2868,
-      "tokPerSec": 17.51,
+      "ttftMs": 68,
+      "totalMs": 3066,
+      "tokPerSec": 16.38,
       "evalCount": 49,
-      "hostLoad1m": 8.3,
-      "cpuAvgPct": 795.6,
-      "rssPeakMb": 2162.2,
+      "hostLoad1m": 9.1,
+      "cpuAvgPct": 788.4,
+      "rssPeakMb": 2162.3,
       "outputSha256": "152fc20c7c49c71bf8ecc8c85ff61859a2b8bbb5c5ede8ac85ba725f0400666e",
       "error": null
     },
@@ -3546,13 +3721,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 66,
-      "totalMs": 2975,
-      "tokPerSec": 16.85,
+      "ttftMs": 69,
+      "totalMs": 3331,
+      "tokPerSec": 15.04,
       "evalCount": 49,
-      "hostLoad1m": 8.36,
-      "cpuAvgPct": 791.5,
-      "rssPeakMb": 2162.2,
+      "hostLoad1m": 9.1,
+      "cpuAvgPct": 776.1,
+      "rssPeakMb": 2162.3,
       "outputSha256": "152fc20c7c49c71bf8ecc8c85ff61859a2b8bbb5c5ede8ac85ba725f0400666e",
       "error": null
     },
@@ -3566,13 +3741,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 383,
-      "totalMs": 2617,
-      "tokPerSec": 17.5,
+      "ttftMs": 421,
+      "totalMs": 2791,
+      "tokPerSec": 16.48,
       "evalCount": 39,
-      "hostLoad1m": 8.36,
-      "cpuAvgPct": 792.4,
-      "rssPeakMb": 2162.2,
+      "hostLoad1m": 9.01,
+      "cpuAvgPct": 781.3,
+      "rssPeakMb": 2162.3,
       "outputSha256": "6986571fa7a5ea315725cff5ccf501028a15865abf42d8fecf83ee03c5de70d8",
       "error": null
     },
@@ -3586,13 +3761,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 77,
-      "totalMs": 2420,
-      "tokPerSec": 16.25,
+      "ttftMs": 61,
+      "totalMs": 2611,
+      "tokPerSec": 14.92,
       "evalCount": 38,
-      "hostLoad1m": 8.33,
-      "cpuAvgPct": 784.9,
-      "rssPeakMb": 2162.2,
+      "hostLoad1m": 8.93,
+      "cpuAvgPct": 771,
+      "rssPeakMb": 2162.3,
       "outputSha256": "7a7303567755c9e52d00701f8ebb1c91833f1c1943d72eccd6edcb4e3d1fa31d",
       "error": null
     },
@@ -3606,13 +3781,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 82,
-      "totalMs": 2454,
-      "tokPerSec": 16.03,
+      "ttftMs": 77,
+      "totalMs": 2369,
+      "tokPerSec": 16.59,
       "evalCount": 38,
-      "hostLoad1m": 8.33,
-      "cpuAvgPct": 780.4,
-      "rssPeakMb": 2162.2,
+      "hostLoad1m": 8.93,
+      "cpuAvgPct": 781.5,
+      "rssPeakMb": 2162.3,
       "outputSha256": "7a7303567755c9e52d00701f8ebb1c91833f1c1943d72eccd6edcb4e3d1fa31d",
       "error": null
     },
@@ -3625,14 +3800,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Missing expected exception (RangeError).",
-      "ttftMs": 382,
-      "totalMs": 1860,
-      "tokPerSec": 57.63,
+      "reason": "hidden test failed: case 5: expected a throw (RangeError), got [[1]]",
+      "ttftMs": 359,
+      "totalMs": 1898,
+      "tokPerSec": 55.38,
       "evalCount": 85,
-      "hostLoad1m": 8.3,
-      "cpuAvgPct": 785.7,
-      "rssPeakMb": 501.6,
+      "hostLoad1m": 8.86,
+      "cpuAvgPct": 768.5,
+      "rssPeakMb": 501.8,
       "outputSha256": "c5e661dbeeb804e49414b45914f9f20de9c41da36032146b20d963f4d916347f",
       "error": null
     },
@@ -3645,14 +3820,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: subArr.slice is not a function",
-      "ttftMs": 35,
-      "totalMs": 1539,
-      "tokPerSec": 47.28,
+      "reason": "hidden test failed: case 0: threw TypeError: subArr.slice is not a function",
+      "ttftMs": 150,
+      "totalMs": 1475,
+      "tokPerSec": 53.77,
       "evalCount": 71,
-      "hostLoad1m": 8.28,
-      "cpuAvgPct": 749.2,
-      "rssPeakMb": 501.7,
+      "hostLoad1m": 8.86,
+      "cpuAvgPct": 760.5,
+      "rssPeakMb": 501.8,
       "outputSha256": "74c48b2b08d5b9391d02142a827209e99dd7287dda864222313b417a696e1ec2",
       "error": null
     },
@@ -3665,14 +3840,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: subArr.slice is not a function",
-      "ttftMs": 37,
-      "totalMs": 1563,
-      "tokPerSec": 46.63,
+      "reason": "hidden test failed: case 0: threw TypeError: subArr.slice is not a function",
+      "ttftMs": 44,
+      "totalMs": 1291,
+      "tokPerSec": 57.05,
       "evalCount": 71,
-      "hostLoad1m": 8.28,
-      "cpuAvgPct": 760.3,
-      "rssPeakMb": 501.8,
+      "hostLoad1m": 8.79,
+      "cpuAvgPct": 770.3,
+      "rssPeakMb": 501.9,
       "outputSha256": "74c48b2b08d5b9391d02142a827209e99dd7287dda864222313b417a696e1ec2",
       "error": null
     },
@@ -3686,13 +3861,13 @@
       "structuredOk": null,
       "strictOk": null,
       "reason": "tsc: Cannot find module 'path' or its corresponding type declarations.",
-      "ttftMs": 477,
-      "totalMs": 7003,
-      "tokPerSec": 48.47,
+      "ttftMs": 509,
+      "totalMs": 5870,
+      "tokPerSec": 58.98,
       "evalCount": 316,
-      "hostLoad1m": 8.28,
-      "cpuAvgPct": 771.4,
-      "rssPeakMb": 504.2,
+      "hostLoad1m": 8.79,
+      "cpuAvgPct": 788.1,
+      "rssPeakMb": 504.4,
       "outputSha256": "ee82c3eb783b035865c439b6608ae1bd1f9dbf3757dcdb3ba230d417e76edaf2",
       "error": null
     },
@@ -3706,13 +3881,13 @@
       "structuredOk": null,
       "strictOk": null,
       "reason": "tsc: Cannot find module 'querystring' or its corresponding type declarations.",
-      "ttftMs": 75,
-      "totalMs": 9497,
-      "tokPerSec": 54.38,
+      "ttftMs": 59,
+      "totalMs": 9206,
+      "tokPerSec": 56.01,
       "evalCount": 512,
-      "hostLoad1m": 8.23,
-      "cpuAvgPct": 780.8,
-      "rssPeakMb": 509.8,
+      "hostLoad1m": 8.73,
+      "cpuAvgPct": 784.9,
+      "rssPeakMb": 509.9,
       "outputSha256": "af15c8a8183a561cb7e4725bd9576511e4d76f86c9cfa9a068183d85d8af3ec4",
       "error": null
     },
@@ -3726,13 +3901,13 @@
       "structuredOk": null,
       "strictOk": null,
       "reason": "tsc: Cannot find module 'querystring' or its corresponding type declarations.",
-      "ttftMs": 84,
-      "totalMs": 9832,
-      "tokPerSec": 52.56,
+      "ttftMs": 72,
+      "totalMs": 9761,
+      "tokPerSec": 52.89,
       "evalCount": 512,
-      "hostLoad1m": 8.2,
-      "cpuAvgPct": 777.7,
-      "rssPeakMb": 517.6,
+      "hostLoad1m": 8.61,
+      "cpuAvgPct": 787.9,
+      "rssPeakMb": 517.7,
       "outputSha256": "af15c8a8183a561cb7e4725bd9576511e4d76f86c9cfa9a068183d85d8af3ec4",
       "error": null
     },
@@ -3745,14 +3920,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: undefined !== 10 ",
-      "ttftMs": 377,
-      "totalMs": 1311,
-      "tokPerSec": 58.97,
+      "reason": "hidden test failed: case 0: got undefined expected 10",
+      "ttftMs": 428,
+      "totalMs": 1391,
+      "tokPerSec": 57.24,
       "evalCount": 55,
-      "hostLoad1m": 8.25,
-      "cpuAvgPct": 774.8,
-      "rssPeakMb": 517.6,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 785.5,
+      "rssPeakMb": 517.7,
       "outputSha256": "894a6b1382e9b29ace8b380b61a08e5bd0792b4f3be40b3bd6ac26f9b0b74d7d",
       "error": null
     },
@@ -3765,14 +3940,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: undefined !== 10 ",
-      "ttftMs": 53,
-      "totalMs": 993,
-      "tokPerSec": 58.89,
+      "reason": "hidden test failed: case 0: got undefined expected 10",
+      "ttftMs": 35,
+      "totalMs": 991,
+      "tokPerSec": 57.69,
       "evalCount": 55,
-      "hostLoad1m": 8.25,
-      "cpuAvgPct": 773.5,
-      "rssPeakMb": 517.6,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 782.8,
+      "rssPeakMb": 517.7,
       "outputSha256": "894a6b1382e9b29ace8b380b61a08e5bd0792b4f3be40b3bd6ac26f9b0b74d7d",
       "error": null
     },
@@ -3785,134 +3960,134 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: undefined !== 10 ",
-      "ttftMs": 46,
-      "totalMs": 984,
-      "tokPerSec": 58.96,
-      "evalCount": 55,
-      "hostLoad1m": 8.25,
-      "cpuAvgPct": 778.1,
-      "rssPeakMb": 517.6,
-      "outputSha256": "894a6b1382e9b29ace8b380b61a08e5bd0792b4f3be40b3bd6ac26f9b0b74d7d",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "repair-total-length",
-      "trial": 1,
-      "passed": true,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 593,
-      "totalMs": 2348,
-      "tokPerSec": 28.51,
-      "evalCount": 50,
-      "hostLoad1m": 8.39,
-      "cpuAvgPct": 732.5,
-      "rssPeakMb": 524.2,
-      "outputSha256": "120ec6056ea5b44cb511e3d15c6267a4a355c228249b3ba4f47024e57b00365f",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "repair-total-length",
-      "trial": 2,
-      "passed": true,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 378,
-      "totalMs": 40056,
-      "tokPerSec": 1.26,
-      "evalCount": 50,
-      "hostLoad1m": 8.39,
-      "cpuAvgPct": 628.3,
-      "rssPeakMb": 524.2,
-      "outputSha256": "120ec6056ea5b44cb511e3d15c6267a4a355c228249b3ba4f47024e57b00365f",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "repair-total-length",
-      "trial": 3,
-      "passed": true,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test passed",
-      "ttftMs": 51,
-      "totalMs": 1688,
-      "tokPerSec": 30.59,
-      "evalCount": 50,
-      "hostLoad1m": 9.32,
-      "cpuAvgPct": 734.4,
-      "rssPeakMb": 524.2,
-      "outputSha256": "120ec6056ea5b44cb511e3d15c6267a4a355c228249b3ba4f47024e57b00365f",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "repair-parse-config",
-      "trial": 1,
-      "passed": false,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: + actual - expected + { + port: 3000 + } - 3000 ",
-      "ttftMs": 957,
-      "totalMs": 2424,
-      "tokPerSec": 25.98,
-      "evalCount": 38,
-      "hostLoad1m": 9.38,
-      "cpuAvgPct": 731.1,
-      "rssPeakMb": 526,
-      "outputSha256": "89baae0ae94159091feedb32c6e5960764c47e2c76d5b8f9917c75a062664fd0",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "repair-parse-config",
-      "trial": 2,
-      "passed": false,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: + actual - expected + { + port: 3000 + } - 3000 ",
-      "ttftMs": 70,
-      "totalMs": 960,
-      "tokPerSec": 42.78,
-      "evalCount": 38,
-      "hostLoad1m": 9.38,
-      "cpuAvgPct": 749.8,
-      "rssPeakMb": 526,
-      "outputSha256": "89baae0ae94159091feedb32c6e5960764c47e2c76d5b8f9917c75a062664fd0",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "repair-parse-config",
-      "trial": 3,
-      "passed": false,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: + actual - expected + { + port: 3000 + } - 3000 ",
+      "reason": "hidden test failed: case 0: got undefined expected 10",
       "ttftMs": 48,
-      "totalMs": 1026,
-      "tokPerSec": 39.3,
+      "totalMs": 950,
+      "tokPerSec": 61.13,
+      "evalCount": 55,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 782.1,
+      "rssPeakMb": 517.7,
+      "outputSha256": "894a6b1382e9b29ace8b380b61a08e5bd0792b4f3be40b3bd6ac26f9b0b74d7d",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "repair-total-length",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 520,
+      "totalMs": 1356,
+      "tokPerSec": 60.01,
+      "evalCount": 50,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 782.4,
+      "rssPeakMb": 524.3,
+      "outputSha256": "120ec6056ea5b44cb511e3d15c6267a4a355c228249b3ba4f47024e57b00365f",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "repair-total-length",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 33,
+      "totalMs": 881,
+      "tokPerSec": 58.98,
+      "evalCount": 50,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 781.9,
+      "rssPeakMb": 524.3,
+      "outputSha256": "120ec6056ea5b44cb511e3d15c6267a4a355c228249b3ba4f47024e57b00365f",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "repair-total-length",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 37,
+      "totalMs": 816,
+      "tokPerSec": 64.3,
+      "evalCount": 50,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 782.6,
+      "rssPeakMb": 524.3,
+      "outputSha256": "120ec6056ea5b44cb511e3d15c6267a4a355c228249b3ba4f47024e57b00365f",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "repair-parse-config",
+      "trial": 1,
+      "passed": false,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test failed: case 2: got {\"port\":3000} expected 3000",
+      "ttftMs": 619,
+      "totalMs": 1210,
+      "tokPerSec": 64.66,
       "evalCount": 38,
-      "hostLoad1m": 9.38,
-      "cpuAvgPct": 702.4,
-      "rssPeakMb": 526,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 786.8,
+      "rssPeakMb": 526.1,
+      "outputSha256": "89baae0ae94159091feedb32c6e5960764c47e2c76d5b8f9917c75a062664fd0",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "repair-parse-config",
+      "trial": 2,
+      "passed": false,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test failed: case 2: got {\"port\":3000} expected 3000",
+      "ttftMs": 45,
+      "totalMs": 655,
+      "tokPerSec": 62.72,
+      "evalCount": 38,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 772.5,
+      "rssPeakMb": 526.2,
+      "outputSha256": "89baae0ae94159091feedb32c6e5960764c47e2c76d5b8f9917c75a062664fd0",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "repair-parse-config",
+      "trial": 3,
+      "passed": false,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test failed: case 2: got {\"port\":3000} expected 3000",
+      "ttftMs": 32,
+      "totalMs": 660,
+      "tokPerSec": 60.79,
+      "evalCount": 38,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 779.2,
+      "rssPeakMb": 526.2,
       "outputSha256": "89baae0ae94159091feedb32c6e5960764c47e2c76d5b8f9917c75a062664fd0",
       "error": null
     },
@@ -3925,14 +4100,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: 30 !== 20 ",
-      "ttftMs": 1205,
-      "totalMs": 2087,
-      "tokPerSec": 37.52,
+      "reason": "hidden test failed: case 0: got 30 expected 20",
+      "ttftMs": 498,
+      "totalMs": 1003,
+      "tokPerSec": 65.83,
       "evalCount": 33,
-      "hostLoad1m": 9.35,
-      "cpuAvgPct": 717.1,
-      "rssPeakMb": 528.9,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 760.3,
+      "rssPeakMb": 529,
       "outputSha256": "fc7ed3a260f7b8d18bd48a876f059c4241b7e2363956f2f9644006d1b9ca0d6f",
       "error": null
     },
@@ -3945,14 +4120,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: 30 !== 20 ",
-      "ttftMs": 141,
-      "totalMs": 1034,
-      "tokPerSec": 37.08,
+      "reason": "hidden test failed: case 0: got 30 expected 20",
+      "ttftMs": 42,
+      "totalMs": 568,
+      "tokPerSec": 63.04,
       "evalCount": 33,
-      "hostLoad1m": 9.35,
-      "cpuAvgPct": 727.4,
-      "rssPeakMb": 528.9,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 771.9,
+      "rssPeakMb": 529,
       "outputSha256": "fc7ed3a260f7b8d18bd48a876f059c4241b7e2363956f2f9644006d1b9ca0d6f",
       "error": null
     },
@@ -3965,14 +4140,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "hidden test failed: Expected values to be strictly equal: 30 !== 20 ",
-      "ttftMs": 61,
-      "totalMs": 1246,
-      "tokPerSec": 27.9,
+      "reason": "hidden test failed: case 0: got 30 expected 20",
+      "ttftMs": 44,
+      "totalMs": 623,
+      "tokPerSec": 57.43,
       "evalCount": 33,
-      "hostLoad1m": 9.35,
-      "cpuAvgPct": 708.6,
-      "rssPeakMb": 528.9,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 778.5,
+      "rssPeakMb": 529,
       "outputSha256": "fc7ed3a260f7b8d18bd48a876f059c4241b7e2363956f2f9644006d1b9ca0d6f",
       "error": null
     },
@@ -3985,14 +4160,14 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "tests fail against the CORRECT implementation: '123' == '123-@#'",
-      "ttftMs": 2163,
-      "totalMs": 19646,
-      "tokPerSec": 6.41,
+      "reason": "tests fail against the CORRECT implementation: not equal",
+      "ttftMs": 590,
+      "totalMs": 2412,
+      "tokPerSec": 61.53,
       "evalCount": 112,
-      "hostLoad1m": 9.56,
-      "cpuAvgPct": 694.2,
-      "rssPeakMb": 528.9,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 788.2,
+      "rssPeakMb": 529,
       "outputSha256": "3a893c98795d1544ed63989facc793cb47fcb2daa1938464ffa6c1437e9afa63",
       "error": null
     },
@@ -4005,94 +4180,94 @@
       "compileOk": true,
       "structuredOk": null,
       "strictOk": null,
-      "reason": "tests fail against the CORRECT implementation: '123' == '123-@#'",
-      "ttftMs": 170,
-      "totalMs": 27139,
-      "tokPerSec": 4.16,
-      "evalCount": 112,
-      "hostLoad1m": 9.59,
-      "cpuAvgPct": 638.3,
-      "rssPeakMb": 528.9,
-      "outputSha256": "3a893c98795d1544ed63989facc793cb47fcb2daa1938464ffa6c1437e9afa63",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "write-tests-slugify",
-      "trial": 3,
-      "passed": false,
-      "measured": true,
-      "compileOk": true,
-      "structuredOk": null,
-      "strictOk": null,
-      "reason": "tests fail against the CORRECT implementation: '123' == '123-@#'",
-      "ttftMs": 325,
-      "totalMs": 3655,
-      "tokPerSec": 33.68,
-      "evalCount": 112,
-      "hostLoad1m": 9.59,
-      "cpuAvgPct": 703.7,
-      "rssPeakMb": 528.9,
-      "outputSha256": "3a893c98795d1544ed63989facc793cb47fcb2daa1938464ffa6c1437e9afa63",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "extract-invoice",
-      "trial": 1,
-      "passed": true,
-      "measured": true,
-      "compileOk": null,
-      "structuredOk": true,
-      "strictOk": null,
-      "reason": "exact match",
-      "ttftMs": 619,
-      "totalMs": 1710,
-      "tokPerSec": 58.76,
-      "evalCount": 64,
-      "hostLoad1m": 9.47,
-      "cpuAvgPct": 769.8,
-      "rssPeakMb": 532.5,
-      "outputSha256": "d5c659fad8ee6d2580dbeff6e0f1bac68e3136171a7cc04b8889385e0c3a685a",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "extract-invoice",
-      "trial": 2,
-      "passed": true,
-      "measured": true,
-      "compileOk": null,
-      "structuredOk": true,
-      "strictOk": null,
-      "reason": "exact match",
-      "ttftMs": 29,
-      "totalMs": 1147,
-      "tokPerSec": 57.48,
-      "evalCount": 64,
-      "hostLoad1m": 9.47,
-      "cpuAvgPct": 789.8,
-      "rssPeakMb": 532.5,
-      "outputSha256": "d5c659fad8ee6d2580dbeff6e0f1bac68e3136171a7cc04b8889385e0c3a685a",
-      "error": null
-    },
-    {
-      "model": "qwen2.5:0.5b",
-      "taskId": "extract-invoice",
-      "trial": 3,
-      "passed": true,
-      "measured": true,
-      "compileOk": null,
-      "structuredOk": true,
-      "strictOk": null,
-      "reason": "exact match",
+      "reason": "tests fail against the CORRECT implementation: not equal",
       "ttftMs": 33,
-      "totalMs": 1160,
-      "tokPerSec": 56.94,
+      "totalMs": 1931,
+      "tokPerSec": 59.11,
+      "evalCount": 112,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 788,
+      "rssPeakMb": 529,
+      "outputSha256": "3a893c98795d1544ed63989facc793cb47fcb2daa1938464ffa6c1437e9afa63",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "write-tests-slugify",
+      "trial": 3,
+      "passed": false,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "tests fail against the CORRECT implementation: not equal",
+      "ttftMs": 49,
+      "totalMs": 2013,
+      "tokPerSec": 57.13,
+      "evalCount": 112,
+      "hostLoad1m": 8,
+      "cpuAvgPct": 791,
+      "rssPeakMb": 529.1,
+      "outputSha256": "3a893c98795d1544ed63989facc793cb47fcb2daa1938464ffa6c1437e9afa63",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "extract-invoice",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "exact match",
+      "ttftMs": 442,
+      "totalMs": 1476,
+      "tokPerSec": 62.04,
       "evalCount": 64,
-      "hostLoad1m": 9.47,
-      "cpuAvgPct": 781.9,
-      "rssPeakMb": 532.5,
+      "hostLoad1m": 8.08,
+      "cpuAvgPct": 780.3,
+      "rssPeakMb": 532.7,
+      "outputSha256": "d5c659fad8ee6d2580dbeff6e0f1bac68e3136171a7cc04b8889385e0c3a685a",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "extract-invoice",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "exact match",
+      "ttftMs": 39,
+      "totalMs": 1037,
+      "tokPerSec": 64.31,
+      "evalCount": 64,
+      "hostLoad1m": 8.08,
+      "cpuAvgPct": 779.4,
+      "rssPeakMb": 532.7,
+      "outputSha256": "d5c659fad8ee6d2580dbeff6e0f1bac68e3136171a7cc04b8889385e0c3a685a",
+      "error": null
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "taskId": "extract-invoice",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "exact match",
+      "ttftMs": 26,
+      "totalMs": 1057,
+      "tokPerSec": 62.18,
+      "evalCount": 64,
+      "hostLoad1m": 8.08,
+      "cpuAvgPct": 795.2,
+      "rssPeakMb": 532.7,
       "outputSha256": "d5c659fad8ee6d2580dbeff6e0f1bac68e3136171a7cc04b8889385e0c3a685a",
       "error": null
     },
@@ -4106,13 +4281,13 @@
       "structuredOk": true,
       "strictOk": false,
       "reason": "RAW output is not bare JSON (fences/prose ⇒ contract violated)",
-      "ttftMs": 375,
-      "totalMs": 920,
-      "tokPerSec": 59.25,
+      "ttftMs": 417,
+      "totalMs": 973,
+      "tokPerSec": 57.74,
       "evalCount": 32,
-      "hostLoad1m": 9.43,
-      "cpuAvgPct": 787.1,
-      "rssPeakMb": 534.8,
+      "hostLoad1m": 8.08,
+      "cpuAvgPct": 791.3,
+      "rssPeakMb": 534.9,
       "outputSha256": "8e07ed4887b2b79a5aa79cd58d27d7f4509bfc64fcc0ce9674b2d05d5a29789b",
       "error": null
     },
@@ -4126,13 +4301,13 @@
       "structuredOk": true,
       "strictOk": false,
       "reason": "failing must be a non-negative integer",
-      "ttftMs": 41,
-      "totalMs": 513,
-      "tokPerSec": 59.72,
+      "ttftMs": 38,
+      "totalMs": 467,
+      "tokPerSec": 65.89,
       "evalCount": 28,
-      "hostLoad1m": 9.43,
-      "cpuAvgPct": 765.4,
-      "rssPeakMb": 534.8,
+      "hostLoad1m": 8.15,
+      "cpuAvgPct": 786.8,
+      "rssPeakMb": 534.9,
       "outputSha256": "a1375ab49ffd00f03cc7d54b590211aa698c798d6e81567e530ac6a5399cfa15",
       "error": null
     },
@@ -4146,13 +4321,13 @@
       "structuredOk": true,
       "strictOk": false,
       "reason": "failing must be a non-negative integer",
-      "ttftMs": 27,
-      "totalMs": 513,
-      "tokPerSec": 57.74,
+      "ttftMs": 21,
+      "totalMs": 456,
+      "tokPerSec": 64.9,
       "evalCount": 28,
-      "hostLoad1m": 9.43,
-      "cpuAvgPct": 771.9,
-      "rssPeakMb": 534.8,
+      "hostLoad1m": 8.15,
+      "cpuAvgPct": 789.6,
+      "rssPeakMb": 534.9,
       "outputSha256": "a1375ab49ffd00f03cc7d54b590211aa698c798d6e81567e530ac6a5399cfa15",
       "error": null
     },
@@ -4166,13 +4341,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk=\"LOW\" (expected \"HIGH\")",
-      "ttftMs": 237,
-      "totalMs": 1270,
-      "tokPerSec": 57.37,
+      "ttftMs": 274,
+      "totalMs": 1199,
+      "tokPerSec": 64.33,
       "evalCount": 59,
-      "hostLoad1m": 9.43,
-      "cpuAvgPct": 775.4,
-      "rssPeakMb": 536.6,
+      "hostLoad1m": 8.15,
+      "cpuAvgPct": 792,
+      "rssPeakMb": 536.7,
       "outputSha256": "56f521639bd9386940c843bd0d51cf67bd55b43f04cc17151f130b30c2d73d5d",
       "error": null
     },
@@ -4186,13 +4361,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk=\"LOW\" (expected \"HIGH\")",
-      "ttftMs": 26,
-      "totalMs": 1036,
-      "tokPerSec": 58.62,
+      "ttftMs": 29,
+      "totalMs": 935,
+      "tokPerSec": 65.39,
       "evalCount": 59,
-      "hostLoad1m": 9.43,
-      "cpuAvgPct": 781.8,
-      "rssPeakMb": 536.6,
+      "hostLoad1m": 8.15,
+      "cpuAvgPct": 790.9,
+      "rssPeakMb": 536.7,
       "outputSha256": "56f521639bd9386940c843bd0d51cf67bd55b43f04cc17151f130b30c2d73d5d",
       "error": null
     },
@@ -4206,13 +4381,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk=\"LOW\" (expected \"HIGH\")",
-      "ttftMs": 57,
-      "totalMs": 1063,
-      "tokPerSec": 58.8,
+      "ttftMs": 25,
+      "totalMs": 955,
+      "tokPerSec": 63.83,
       "evalCount": 59,
-      "hostLoad1m": 9.39,
-      "cpuAvgPct": 781.8,
-      "rssPeakMb": 536.6,
+      "hostLoad1m": 8.15,
+      "cpuAvgPct": 790.5,
+      "rssPeakMb": 536.7,
       "outputSha256": "56f521639bd9386940c843bd0d51cf67bd55b43f04cc17151f130b30c2d73d5d",
       "error": null
     },
@@ -4226,13 +4401,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 117,
-      "totalMs": 684,
-      "tokPerSec": 58.54,
+      "ttftMs": 110,
+      "totalMs": 644,
+      "tokPerSec": 62.04,
       "evalCount": 33,
-      "hostLoad1m": 9.39,
-      "cpuAvgPct": 786,
-      "rssPeakMb": 538.2,
+      "hostLoad1m": 8.15,
+      "cpuAvgPct": 786.5,
+      "rssPeakMb": 538.4,
       "outputSha256": "f8633d6a97884c7c6445fae45a36737e3c3022d2c480832078a80b2b0aa8d874",
       "error": null
     },
@@ -4246,13 +4421,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 26,
-      "totalMs": 639,
-      "tokPerSec": 59.07,
+      "ttftMs": 27,
+      "totalMs": 603,
+      "tokPerSec": 62.75,
       "evalCount": 36,
-      "hostLoad1m": 9.39,
-      "cpuAvgPct": 783.5,
-      "rssPeakMb": 538.2,
+      "hostLoad1m": 8.22,
+      "cpuAvgPct": 789,
+      "rssPeakMb": 538.4,
       "outputSha256": "16814dba20d323bdc800e67d50ad416b599ae3e0f593caf0772df1c6c6c509f5",
       "error": null
     },
@@ -4266,13 +4441,13 @@
       "structuredOk": true,
       "strictOk": null,
       "reason": "risk correct",
-      "ttftMs": 28,
-      "totalMs": 660,
-      "tokPerSec": 57.81,
+      "ttftMs": 24,
+      "totalMs": 575,
+      "tokPerSec": 65.36,
       "evalCount": 36,
-      "hostLoad1m": 9.39,
-      "cpuAvgPct": 783.5,
-      "rssPeakMb": 538.2,
+      "hostLoad1m": 8.22,
+      "cpuAvgPct": 796.7,
+      "rssPeakMb": 538.4,
       "outputSha256": "16814dba20d323bdc800e67d50ad416b599ae3e0f593caf0772df1c6c6c509f5",
       "error": null
     }
