@@ -33,7 +33,9 @@ function assessCompleteness(spec: any): any {
   }
 
   // acceptance criterion: the independent verifier is the SOLE arbiter — without it, acceptance is impossible.
-  if (typeof spec.independentTest !== "function") missing.push("acceptance criterion (independentTest) — without it the mission can never be accepted");
+  // V15.9: a SERIALIZABLE test (independentTestSource | independentTestCases — the isolated-sandbox forms) is an acceptance criterion too.
+  const hasSerializable = (typeof spec.independentTestSource === "string" && spec.independentTestSource.trim().length > 0) || (Array.isArray(spec.independentTestCases) && spec.independentTestCases.length > 0);
+  if (typeof spec.independentTest !== "function" && !hasSerializable) missing.push("acceptance criterion (independentTest) — without it the mission can never be accepted");
 
   const complete = missing.length === 0;
   return freeze({

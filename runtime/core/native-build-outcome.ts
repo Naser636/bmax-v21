@@ -35,6 +35,10 @@ function deriveNativeOutcome(buildOutcome: any, spec: any, strategy: any = "UNSP
   if (!isObj(buildOutcome)) {
     return Object.freeze({ missionId, attempt, type, outcome: "UNKNOWN", independentlyVerified: false, evidence: "no canonical build result — not a measurable outcome (fail-closed; a claim is not a build)" });
   }
+  // V15.9: a build whose model code was NEVER executed (no sandbox ⇒ NOT_RUN) is not a capability failure ⇒ UNKNOWN.
+  if (buildOutcome.executionStatus === "NOT_RUN") {
+    return Object.freeze({ missionId, attempt, type, outcome: "UNKNOWN", independentlyVerified: false, evidence: "native build NOT_RUN (isolation sandbox unavailable — model code never executed) — not a measurable outcome (fail-closed)" });
+  }
   const accepted = buildOutcome.accepted === true;
   if (accepted) {
     return Object.freeze({ missionId, attempt, type, outcome: "SUCCESS", independentlyVerified: true, evidence: `native ${strat} build of a ${complexity} project ACCEPTED by the independent verifier (built + passed the independent test)` });

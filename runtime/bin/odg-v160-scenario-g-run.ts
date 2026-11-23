@@ -99,7 +99,7 @@ function decide(check: any, m: any): any {
   const rm = m.spearmanSizeMinutes && Number.isFinite(m.spearmanSizeMinutes.rho) ? m.spearmanSizeMinutes.rho : null;
   const rc = m.spearmanSizeCommits && Number.isFinite(m.spearmanSizeCommits.rho) ? m.spearmanSizeCommits.rho : null;
   const ms = m.buckets.small_le_100.medianMinutes, ml = m.buckets.large_gt_1000.medianMinutes;
-  if (rm === null || rc === null || ms === null || ml === null) return { decision: "NOT_MEASURABLE", reason: "insufficient data for the pre-registered rule" };
+  if (rm === null || rc === null || ms === null || ml === null) return { decision: "NOT_MEASURABLE", reason: "insufficient data for the stated rule" };
   const confirmed = rm >= RULE.minSpearmanMinutes && rc >= RULE.minSpearmanCommits && ml > ms;
   return confirmed
     ? { decision: "ADOPT_AS_PROPOSAL", proposal: "delegated missions should target one self-contained change and flag > 1000 changed lines for splitting (advisory, DESIGN_PROPOSAL — not an enforced rule)", reason: `ODG's own history agrees with the knowledge: spearman(size,minutes)=${rm}, spearman(size,commits)=${rc}, median minutes ${ms} (≤100) vs ${ml} (>1000)` }
