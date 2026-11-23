@@ -94,6 +94,27 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     check("main checkout as scratch ⇒ refused", B.isolationCheck(repo, "MX", ROOT).ok === false);
     check("this code tree as scratch ⇒ refused", B.isolationCheck(ROOT, "MX", ROOT).ok === false);
     check("missing mission file ⇒ NOT_RUNNABLE", /NOT_RUNNABLE/.test(B.isolationCheck(wt, "NOPE", ROOT).reason));
+    // GO-DT-1: a declared dispatch target replaces the missions/<id>.json runnability check; odg-run is never the fallback
+    const T1 = { command: "runtime/bin/exp.ts", args: ["out/e.json"], writeSet: ["out/e.json"] };
+    check("GO-DT-1: declared target absent in scratch ⇒ NOT_RUNNABLE even though runtime/missions/MX.json exists", /NOT_RUNNABLE: declared dispatch target/.test(B.isolationCheck(wt, "MX", ROOT, T1).reason));
+    check("GO-DT-1: dispatchArgv with target ⇒ exactly the declared command; without ⇒ odg-run <id> (plain AUTHORIZED path)", B.dispatchArgv({ mission: "G" }, { dispatchTarget: T1 }).join(" ") === "tsx runtime/bin/exp.ts out/e.json" && B.dispatchArgv({ mission: "MX" }, {}).join(" ") === "tsx runtime/bin/odg-run.ts MX");
+    fs.mkdirSync(path.join(wt, "out")); fs.writeFileSync(path.join(wt, "out", "e.json"), "{}");
+    check("GO-DT-1: writes ⊆ target writeSet ⇒ confined", B.targetWriteConfinement(wt, T1).ok === true);
+    fs.writeFileSync(path.join(wt, "out", "other.json"), "{}");
+    check("GO-DT-1: write outside the target writeSet ⇒ WRITE_OUTSIDE_TARGET_WRITE_SET", /WRITE_OUTSIDE_TARGET_WRITE_SET: out\/other\.json/.test(B.targetWriteConfinement(wt, T1).reason));
+    fs.rmSync(path.join(wt, "out", "other.json"));
+    // gitignored writes (runtime/generated, dist) are NOT hidden from the confinement check
+    fs.writeFileSync(path.join(wt, ".gitignore"), "runtime/generated/\ndist/\n"); g(wt, "add", ".gitignore"); g(wt, "commit", "-q", "-m", "ignore");
+    fs.mkdirSync(path.join(wt, "runtime", "generated"), { recursive: true }); fs.writeFileSync(path.join(wt, "runtime", "generated", "x.json"), "{}");
+    check("GO-DT-1: runner writing gitignored runtime/generated/x ⇒ WRITE_OUTSIDE_TARGET_WRITE_SET", /WRITE_OUTSIDE_TARGET_WRITE_SET: .*runtime\/generated\/x\.json/.test(String(B.targetWriteConfinement(wt, T1).reason)));
+    fs.rmSync(path.join(wt, "runtime", "generated"), { recursive: true });
+    fs.mkdirSync(path.join(wt, "dist")); fs.writeFileSync(path.join(wt, "dist", "a.js"), "x");
+    check("GO-DT-1: runner writing an ignored dist file ⇒ WRITE_OUTSIDE_TARGET_WRITE_SET", /WRITE_OUTSIDE_TARGET_WRITE_SET: .*dist\/a\.js/.test(String(B.targetWriteConfinement(wt, T1).reason)));
+    fs.rmSync(path.join(wt, "out"), { recursive: true });
+    check("GO-DT-1: non-pristine scratch (ignored dist entry) refused for a declared target", /not pristine/.test(B.isolationCheck(wt, "MX", ROOT, T1).reason));
+    fs.rmSync(path.join(wt, "dist"), { recursive: true });
+    check("GO-DT-1: parsePorcelainZ keeps the status column and BOTH rename sides", B.parsePorcelainZ(" M a.ts\0R  new.ts\0old.ts\0!! runtime/generated/x\0").join(",") === "a.ts,new.ts,old.ts,runtime/generated/x");
+    g(wt, "reset", "-q", "--hard", "HEAD~1");
     fs.writeFileSync(path.join(wt, "dirty.txt"), "x");
     check("dirty (untracked) scratch ⇒ refused (shared/used)", /not clean/.test(B.isolationCheck(wt, "MX", ROOT).reason));
     fs.rmSync(path.join(wt, "dirty.txt"));

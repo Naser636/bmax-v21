@@ -10,6 +10,9 @@
  *   npx tsx runtime/bin/odg-go.ts --check --repo <dir>          (re-run a dry cycle; compare its decisions digest with
  *                                                               docs/odg/evidence/V164_GO_CYCLE.json — host-dependent)
  *
+ *  --allow-unsandboxed-target  explicit opt-in (recorded in the trace) to run a contract-DECLARED scoped dispatch target
+ *                  on the host: scratch writes are confined (git status --ignored ⊆ target writeSet), out-of-scratch
+ *                  writes are NOT (no bwrap). Absent ⇒ UNSANDBOXED_TARGET_NOT_OPTED_IN, nothing dispatched (GO-DT-1).
  *  --dry (DEFAULT) plan-only: every step runs, schedulerStep's dispatch is a recorder (nothing executed).
  *  --execute       dispatch allowed ONLY for a canonically authorized NATIVE mission in the isolated --scratch worktree
  *                  (odg-run there, bounded, SIGKILL on timeout). PROVIDER/HYBRID ⇒ delegation record only. No commit/merge.
@@ -156,10 +159,37 @@ function readAllowlist(o: any = {}): any {
   return { ids: base.filter((id) => want.includes(id)), source: `${source} ∩ env ODG_CANARY_ALLOWLIST (env may only narrow)`, refusedWidening: want.filter((id) => !base.includes(id)) };
 }
 
+/* dispatchArgv(next, ctx) — npx argv: the contract-declared target for a scoped execution step, else odg-run <id>. */
+function dispatchArgv(next: any, c: any): string[] {
+  const t = c && c.dispatchTarget;
+  return t ? ["tsx", String(t.command), ...(Array.isArray(t.args) ? t.args.map(String) : [])] : ["tsx", "runtime/bin/odg-run.ts", next.mission];
+}
+/* rawGit — like git() but WITHOUT trimming (porcelain -z output starts with a significant status column). */
+function rawGit(dir: string, args: string[]): string | null { try { return String(cp.execFileSync("git", ["-C", dir, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 })); } catch { return null; } }
+/* parsePorcelainZ(raw) — every path of `git status --porcelain=v1 -z` (rename/copy ⇒ new AND original path). */
+function parsePorcelainZ(raw: string): string[] {
+  const parts = raw.split("\0"); const out: string[] = [];
+  for (let i = 0; i < parts.length; i++) {
+    const e = parts[i]; if (e.length < 4) continue;
+    const xy = e.slice(0, 2); out.push(e.slice(3));
+    if (/[RC]/.test(xy) && i + 1 < parts.length && parts[i + 1]) { out.push(parts[i + 1]); i++; }
+  }
+  return out;
+}
+/* targetWriteConfinement(workspace, target) — every changed/untracked path in the scratch ⊆ target.writeSet. */
+function targetWriteConfinement(ws: string, target: any): any {
+  // EVERY entry — modified, untracked AND gitignored (runtime/generated, dist, .next …) — counts; renames: both sides
+  const raw = rawGit(ws, ["status", "--porcelain=v1", "-z", "--untracked-files=all", "--ignored"]);
+  if (raw === null) return { ok: false, reason: "WRITE_CONFINEMENT_UNVERIFIABLE: git status failed" };
+  const allowed = (Array.isArray(target.writeSet) ? target.writeSet : []).map(String);
+  const changed = parsePorcelainZ(raw);
+  const outside = changed.filter((p: string) => !allowed.some((w: string) => p === w || (w.endsWith("/") && p.startsWith(w))));
+  return outside.length ? { ok: false, reason: `WRITE_OUTSIDE_TARGET_WRITE_SET: ${outside.join(", ")}` } : { ok: true, changed };
+}
 /* isolationCheck — the --execute scratch worktree must be FRESH and UNSHARED: a registered LINKED worktree (not a main
  * checkout, not the state repo, not this code tree), detached HEAD (no branch = nobody's working branch), clean status
  * incl. untracked, no runtime/generated (never used by a run), no symlink in its path, and the mission is runnable there. */
-function isolationCheck(scratch: string | null, missionId: string, repo: string): any {
+function isolationCheck(scratch: string | null, missionId: string, repo: string, dispatchTarget?: any): any {
   if (!scratch) return { ok: false, reason: "no --scratch isolated worktree given" };
   if (symlinkComponent(scratch)) return { ok: false, reason: "scratch path has a symlink component" };
   const s = realOr(scratch);
@@ -175,6 +205,9 @@ function isolationCheck(scratch: string | null, missionId: string, repo: string)
   const st = git(s, ["status", "--porcelain", "--untracked-files=all"]);
   if (st === null || st !== "") return { ok: false, reason: "scratch worktree is not clean (shared/used)" };
   if (fs.existsSync(path.join(s, "runtime", "generated"))) return { ok: false, reason: "scratch already has runtime/generated (used by a previous run) — not fresh" };
+  // GO-DT-1: a scoped execution step runs ONLY its contract-declared runner (never runtime/missions/<id>.json via odg-run)
+  if (dispatchTarget && rawGit(s, ["status", "--porcelain=v1", "-z", "--untracked-files=all", "--ignored"]) !== "") return { ok: false, reason: "scratch is not pristine (ignored/untracked entries present) — target write confinement would not be exact" };
+  if (dispatchTarget) return fs.existsSync(path.join(s, String(dispatchTarget.command))) && !symlinkComponent(path.join(s, String(dispatchTarget.command))) ? { ok: true, workspace: s } : { ok: false, reason: `NOT_RUNNABLE: declared dispatch target ${dispatchTarget.command} absent in the scratch worktree` };
   if (!fs.existsSync(path.join(s, "runtime", "missions", `${missionId}.json`))) return { ok: false, reason: `NOT_RUNNABLE: no runtime/missions/${missionId}.json in the scratch worktree` };
   return { ok: true, workspace: s };
 }
@@ -255,10 +288,17 @@ function buildPorts(o: any): any {
       readPrior: () => { try { return fs.readFileSync(tracePath, "utf8").split("\n").filter(Boolean).map((l: string) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { return []; } },
     },
     writeSummary: (s: any) => { const p = path.join(physOut, "go-cycle.json"); const tmp = `${p}.tmp-${process.pid}`; w(tmp, JSON.stringify(s, null, 2) + "\n", "exclusive"); GO.assertConfinedWrite(p, physOut, forb, path); try { if (fs.lstatSync(p).isSymbolicLink()) throw new Error(`SYMLINK_TARGET_REFUSED: ${p}`); } catch (e: any) { if (e && e.code !== "ENOENT") { fs.rmSync(tmp, { force: true }); throw e; } } fs.renameSync(tmp, p); if (!writes.includes(p)) writes.push(p); },
-    isolation: (next: any) => isolationCheck(scratch, next.mission, repo),
+    isolation: (next: any) => isolationCheck(scratch, next.mission, repo, next.dispatchTarget),
     dispatchNative: (next: any, c: any) => {
+      if (c && c.dispatchTarget) {
+        if (c.allowUnsandboxedTarget !== true) return { verified: false, detail: "UNSANDBOXED_TARGET_NOT_OPTED_IN: refused (out-of-scratch writes not confined)" };
+        // GO-DT-1: exactly the contract-declared runner, no shell, bounded; writes confined to the target writeSet
+        const r = cp.spawnSync("npx", dispatchArgv(next, c), { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
+        const conf = targetWriteConfinement(c.workspace, c.dispatchTarget);
+        return { verified: r.status === 0 && conf.ok, detail: `declared target ${c.dispatchTarget.command} exit ${r.status} in ${c.workspace}; ${conf.ok ? "writes ⊆ target writeSet" : conf.reason}` };
+      }
       // governed pipeline in the ISOLATED worktree only (never the main checkout); bounded; nothing committed/merged.
-      const r = cp.spawnSync("npx", ["tsx", "runtime/bin/odg-run.ts", next.mission], { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
+      const r = cp.spawnSync("npx", dispatchArgv(next, c), { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
       let report: any = null; try { report = readJson(path.join(c.workspace, "runtime", "generated", "mission-report.json")); } catch { report = null; }
       const verified = r.status === 0 && !!report && report.mission === next.mission && report.validated === true && report.status === "SUCCESS";
       return { verified, detail: report ? `odg-run status ${report.status} (exit ${r.status}) in ${c.workspace}` : `odg-run exit ${r.status} (no report) in ${c.workspace}` };
@@ -280,7 +320,7 @@ async function runOnce(argv: string[]): Promise<{ code: number; result: any; wri
   process.on("SIGINT", hInt); process.on("SIGTERM", hTerm);
   const ports = buildPorts({ repo, outDir, scratch: arg(argv, "--scratch"), stepDelayMs: numArg(argv, "--step-delay-ms", 0), signalState });
   try {
-    const result = await GO.runGoCycle({ mode: argv.includes("--execute") ? "EXECUTE" : "DRY", maxSteps: numArg(argv, "--max-steps", GO.DEFAULTS.maxSteps), deadlineMs: numArg(argv, "--deadline-ms", GO.DEFAULTS.deadlineMs) }, ports);
+    const result = await GO.runGoCycle({ mode: argv.includes("--execute") ? "EXECUTE" : "DRY", allowUnsandboxedTarget: argv.includes("--allow-unsandboxed-target"), maxSteps: numArg(argv, "--max-steps", GO.DEFAULTS.maxSteps), deadlineMs: numArg(argv, "--deadline-ms", GO.DEFAULTS.deadlineMs) }, ports);
     const code = result.status === "STARTUP_REFUSED" ? 2 : result.status === "STOPPED" ? 3 : 0;
     return { code, result, writes: ports.writes };
   } finally { process.removeListener("SIGINT", hInt); process.removeListener("SIGTERM", hTerm); }
@@ -441,7 +481,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);
