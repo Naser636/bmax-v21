@@ -1,0 +1,167 @@
+#!/usr/bin/env node
+"use strict";
+/* V16.4 ODG GO — OFFLINE tests of runtime/core/odg-go-cycle.ts with INJECTED ports (no network, no model, no provider,
+ * no git, no write outside an in-memory trace). State = the COMMITTED canonical evidence of this tree (deterministic),
+ * with fixed ledger/allowlist; the REAL canonical components are exercised (no component mocks). */
+const fs = require("fs");
+const path = require("path");
+const GO = require("./odg-go-cycle.js");
+const SS = require("../bin/odg-strategic-select.ts");
+const SMR = require("../bin/odg-strategy-mode-run.ts");
+const POL = require("./odg-local-model-execution-policy.js");
+const ROOT = path.resolve(__dirname, "..", "..");
+let failures = 0;
+function check(name: string, cond: boolean): void { process.stdout.write(`${cond ? "ok" : "NOT OK"} - ${name}\n`); if (!cond) failures++; }
+const rj = (rel: string) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), "utf8"));
+const clone = (o: any) => JSON.parse(JSON.stringify(o));
+
+const BASE = (() => {
+  const src = SS.loadSources(ROOT);
+  return {
+    inputs: src.inputs, sources: { contracts: src.contracts, v150: src.v150, cp8: src.cp8, scenarioEvidence: src.scenarioEvidence },
+    registerEvidence: rj("docs/odg/evidence/V164_STRATEGIC_REGISTER.json"), strategyEvidence: rj("docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json"),
+    radar: { grant: rj("docs/odg/V164_RESEARCH_GRANT_BROAD_ADMISSION.json"), admission: rj("docs/odg/evidence/V164_RADAR_SOURCE_ADMISSION.json") },
+    ledger: { proven: ["M0001"], integrity: { ok: true } }, attempts: { count: 7, last: null }, allowlist: { ids: ["M0001"], source: "test" },
+    measured: POL.loadMeasuredRegistry("docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json", { root: ROOT }), strategyNow: SMR.loadSources().now,
+  };
+})();
+const KNOW = { ok: true, collection: "pinned", claims: [{ id: "K1", epistemic: "SUPPORTED", isFact: false, useAuthorization: "DESIGN_PROPOSAL", admissible: { trusted: false, verdict: "NOT_A_FACT" } }] };
+const TL_PASS = { status: "PASS", ok: true, blocked: false, enforce: true, gitState: { isRepo: true, branch: "main", head: "h", originMain: "h", staged: 0 }, verdict: { detail: "ok" } };
+const TL_FAIL = { status: "BLOCKED", ok: false, blocked: true, enforce: true, gitState: { isRepo: true, branch: "feat/x", head: "h", originMain: "h", staged: 0 }, verdict: { detail: "REFUSED — unexpected branch" } };
+
+function authorizeG(state: any): any {
+  const s = clone(state); s.measured = state.measured;
+  const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
+  c.state = "AUTHORIZED"; c.authorizedBy = "owner (test fixture)";
+  return s;
+}
+function mkPorts(o: any = {}): any {
+  const trace: any[] = o.trace || [];
+  let t = 1_000_000;
+  const calls = { readState: 0, dispatch: 0, provider: 0, writes: [] as string[], isolation: 0 };
+  const ports: any = {
+    now: o.now || (() => (t += 5)),
+    truthLock: () => o.tl || TL_PASS,
+    readState: () => { calls.readState++; return o.state || BASE; },
+    knowledge: () => KNOW,
+    stopRequested: o.stopRequested || (() => ({ stop: false })),
+    trace: { append: (e: any) => trace.push(JSON.parse(JSON.stringify(e))), readPrior: () => trace.slice() },
+    writeSummary: (x: any) => { GO.assertConfinedWrite("/virtual/out/go-cycle.json", "/virtual/out", ["/virtual/main/runtime/generated"], path); calls.writes.push("/virtual/out/go-cycle.json"); },
+    isolation: o.isolation || ((_n: any) => { calls.isolation++; return { ok: true, workspace: "/virtual/scratch" }; }),
+    dispatchNative: (_n: any) => { calls.dispatch++; return o.dispatchResult || { verified: true, detail: "fixture PASS" }; },
+    launchProvider: () => { calls.provider++; throw new Error("provider must never be launched"); },
+  };
+  return { ports, trace, calls };
+}
+const stepsOf = (tr: any[]) => tr.filter((e) => e.kind === "STEP");
+const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.step === s);
+
+(async () => {
+  // 1. ordering + uniform trace entries on the committed state (unauthorized G)
+  {
+    const { ports, trace, calls } = mkPorts();
+    const r = await GO.runGoCycle({ mode: "DRY" }, ports);
+    const st = stepsOf(trace);
+    check("10 steps run in the canonical order", st.map((e) => e.step).join(",") === GO.STEPS.join(","));
+    check("every STEP entry carries step/inputsSha256/decision/rationale/decidedBy/startedAt/endedAt", st.every((e) => ["step", "inputsSha256", "decision", "rationale", "decidedBy", "startedAt", "endedAt"].every((k) => e[k] !== undefined && e[k] !== null) && /^[0-9a-f]{64}$/.test(e.inputsSha256)));
+    check("trace starts with CYCLE_START and ends with CYCLE_END", trace[0].kind === "CYCLE_START" && trace[trace.length - 1].kind === "CYCLE_END");
+    check("unauthorized G ⇒ HALTED_AT_AUTHORIZATION_GATE", r.status === "HALTED_AT_AUTHORIZATION_GATE");
+    const sel = stepIn(trace, "SELECT").decision;
+    check("TIE_EXPLAINED propagated verbatim (tiedSet G/J, resolvedBy R3, no id pick)", sel.decision === "TIE_EXPLAINED" && sel.selected === "G" && sel.tiedSet.join(",") === "G,J" && sel.resolvedBy === "R3_LOWER_RISK");
+    check("SELECT consistent with the committed register decision", sel.consistentWithCommittedRegisterEvidence === true);
+    check("STRATEGY = M0 DECISION_REQUIRED (tentative NATIVE), consistent with committed evidence", stepIn(trace, "STRATEGY").decision.mode === "DECISION_REQUIRED" && stepIn(trace, "STRATEGY").decision.rule === "M0" && stepIn(trace, "STRATEGY").decision.consistentWithCommittedStrategyEvidence === true);
+    const au = stepIn(trace, "AUTHORIZE");
+    check("intelligence-loop halts at PROPOSED (AUTHORIZE stage, proposedOnly)", au.status === "HALTED_AT_GATE" && au.decision.intelligenceLoop.stage === "AUTHORIZE" && au.decision.intelligenceLoop.proposedOnly === true && au.decision.selfAuthorized === false);
+    check("scheduler eligibility: G NOT_PRE_AUTHORIZED, M0001 ALREADY_PROVEN", au.decision.schedulerEligibility.some((e: any) => e.mission === "G" && /NOT_PRE_AUTHORIZED/.test(e.reason)) && au.decision.schedulerEligibility.some((e: any) => e.mission === "M0001" && /ALREADY_PROVEN/.test(e.reason)));
+    check("EXECUTE: NOTHING_EXECUTED, no dispatch, no provider", stepIn(trace, "EXECUTE").status === "NOTHING_EXECUTED" && calls.dispatch === 0 && calls.provider === 0 && r.dispatchCalls === 0 && r.providerLaunched === 0);
+    const nx = stepIn(trace, "NEXT_SELECTION").decision;
+    check("prepared mission recorded with contract + decomposition + strategy + authorizationNeeded", nx.preparedMission.id === "G" && !!nx.preparedMission.contract.objective && !!nx.preparedMission.decomposition && !!nx.preparedMission.strategy && /PROPOSED → AUTHORIZED/.test(nx.preparedMission.authorizationNeeded));
+    check("next-after-current selection recorded (selector, not id order)", typeof nx.nextAfterCurrent.decision === "string" && nx.nextAfterCurrent.selected !== "G");
+    check("summary written through the confined writer", calls.writes.length === 1);
+  }
+  // 2. --execute on unauthorized work: still no dispatch
+  {
+    const { ports, trace, calls } = mkPorts();
+    const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
+    check("EXECUTE mode + unauthorized ⇒ gate holds, dispatchNative never called", r.status === "HALTED_AT_AUTHORIZATION_GATE" && calls.dispatch === 0 && stepIn(trace, "EXECUTE").status === "NOTHING_EXECUTED");
+  }
+  // 3. authorized NATIVE: DRY ⇒ WOULD_DISPATCH (no call); EXECUTE ⇒ exactly one dispatch; re-run ⇒ deduped
+  {
+    const S = authorizeG(BASE);
+    const a = mkPorts({ state: S });
+    const rd = await GO.runGoCycle({ mode: "DRY" }, a.ports);
+    check("authorized + NATIVE + DRY ⇒ WOULD_DISPATCH, dispatch not called", stepIn(a.trace, "EXECUTE").status === "WOULD_DISPATCH" && a.calls.dispatch === 0 && rd.status === "DRY_COMPLETE");
+    check("authorized ⇒ intelligence loop passes AUTHORIZE (external authorization only)", stepIn(a.trace, "AUTHORIZE").decision.selectedAuthorized === true && stepIn(a.trace, "STRATEGY").decision.mode === "NATIVE");
+    const shared: any[] = [];
+    const b = mkPorts({ state: S, trace: shared });
+    const r1 = await GO.runGoCycle({ mode: "EXECUTE" }, b.ports);
+    check("authorized + NATIVE + isolated + EXECUTE ⇒ exactly one dispatch, EXECUTED_PASS", b.calls.dispatch === 1 && r1.status === "EXECUTED_PASS" && shared.some((e) => e.kind === "DISPATCHED" && e.mission === "G"));
+    const c = mkPorts({ state: S, trace: shared });
+    const r2 = await GO.runGoCycle({ mode: "EXECUTE" }, c.ports);
+    check("re-run with the same state: (runId, mission) already dispatched ⇒ NOT dispatched again", c.calls.dispatch === 0 && r2.runId === r1.runId && stepIn(shared.slice(shared.lastIndexOf(shared.filter((e: any) => e.kind === "CYCLE_START").pop())), "EXECUTE").status === "NOTHING_EXECUTED");
+    const d = mkPorts({ state: S, isolation: () => ({ ok: false, reason: "no --scratch" }) });
+    await GO.runGoCycle({ mode: "EXECUTE" }, d.ports);
+    check("authorized but NOT isolated ⇒ refused (NO_ISOLATED_WORKSPACE), no dispatch", d.calls.dispatch === 0 && /NO_ISOLATED_WORKSPACE|no eligible|AUTHORIZATION_DENIED/.test(stepIn(d.trace, "EXECUTE").decision.scheduler.reason));
+    const e = mkPorts({ state: S, dispatchResult: { verified: false, detail: "fixture FAIL" } });
+    const re = await GO.runGoCycle({ mode: "EXECUTE" }, e.ports);
+    check("failed execution ⇒ EXECUTED_FAIL + nextStrategyAfterFailure recorded (not executed)", re.status === "EXECUTED_FAIL" && !!stepIn(e.trace, "EXECUTE").decision.nextStrategyAfterFailure);
+  }
+  // 4. idempotent dry re-run
+  {
+    const shared: any[] = [];
+    const r1 = await GO.runGoCycle({ mode: "DRY" }, mkPorts({ trace: shared }).ports);
+    const s2 = clone(BASE); s2.measured = BASE.measured; s2.attempts = { count: 9999, last: { status: "IDLE" } };   // volatile attempt-log growth
+    const r2 = await GO.runGoCycle({ mode: "DRY" }, mkPorts({ trace: shared, state: s2 }).ports);
+    check("re-run on the same state ⇒ same runId + decisionsDigest, idempotent=true, duplicateOf set", r2.runId === r1.runId && r2.decisionsDigest === r1.decisionsDigest && r2.idempotent === true && r2.duplicateOf && r2.duplicateOf.cycleSeq === 1 && r2.cycleSeq === 2);
+    const s3 = authorizeG(BASE);
+    const r3 = await GO.runGoCycle({ mode: "DRY" }, mkPorts({ trace: shared, state: s3 }).ports);
+    check("changed state ⇒ different runId, not idempotent", r3.runId !== r1.runId && r3.idempotent === false);
+  }
+  // 5. stops: STOP port mid-cycle, canonical emergency stop, deadline, max steps, truth-lock refusal
+  {
+    let n = 0;
+    const a = mkPorts({ stopRequested: () => ({ stop: ++n > 3, reason: "STOP_FILE", source: "/virtual/out/STOP" }) });
+    const r = await GO.runGoCycle({ mode: "DRY" }, a.ports);
+    const stop = a.trace.find((e: any) => e.kind === "STOP");
+    check("STOP request mid-cycle ⇒ STOPPED after 3 steps, STOP entry before step 4, CYCLE_END STOPPED", r.status === "STOPPED" && stepsOf(a.trace).length === 3 && stop && stop.beforeStep === GO.STEPS[3] && stop.reason === "STOP_FILE" && a.trace[a.trace.length - 1].status === "STOPPED");
+    process.env.ODG_SCHEDULER_STOP = "1";
+    const b = mkPorts();
+    const rb = await GO.runGoCycle({ mode: "DRY" }, b.ports);
+    delete process.env.ODG_SCHEDULER_STOP;
+    check("ODG_SCHEDULER_STOP=1 ⇒ STOPPED before TRUTH_LOCK, nothing read", rb.status === "STOPPED" && rb.stop.reason === "EMERGENCY_STOP" && stepsOf(b.trace).length === 0 && b.calls.readState === 0);
+    let t = 0;
+    const c = mkPorts({ now: () => (t += 400) });
+    const rc = await GO.runGoCycle({ mode: "DRY", deadlineMs: 3000 }, c.ports);
+    check("deadline ⇒ STOPPED (DEADLINE) with trace", rc.status === "STOPPED" && rc.stop.reason === "DEADLINE" && stepsOf(c.trace).length < 10 && c.trace.some((e: any) => e.kind === "STOP"));
+    const d = mkPorts();
+    const rd = await GO.runGoCycle({ mode: "DRY", maxSteps: 4 }, d.ports);
+    check("max steps 4 ⇒ STOPPED (MAX_STEPS) after exactly 4 steps", rd.status === "STOPPED" && rd.stop.reason === "MAX_STEPS" && stepsOf(d.trace).length === 4);
+    const e = mkPorts({ tl: TL_FAIL });
+    const re = await GO.runGoCycle({ mode: "EXECUTE" }, e.ports);
+    check("Truth-Lock refusal ⇒ STARTUP_REFUSED, state never read, nothing dispatched", re.status === "STARTUP_REFUSED" && e.calls.readState === 0 && e.calls.dispatch === 0 && stepsOf(e.trace).length === 1);
+  }
+  // 6. DECISION_REQUIRED (uncertainty above max) ⇒ no pick, downstream steps skipped
+  {
+    const s = clone(BASE); s.measured = BASE.measured;
+    s.sources.v150.data.summary.top10NextInternal = []; s.sources.v150.data.summary.alsoInternal = [];   // strategic criteria unmeasured ⇒ uncertainty > max
+    const a = mkPorts({ state: s });
+    const r = await GO.runGoCycle({ mode: "EXECUTE" }, a.ports);
+    const sel = stepIn(a.trace, "SELECT").decision;
+    check("uncertain leader ⇒ DECISION_REQUIRED kept, selected=null, proposed recorded (no pick)", sel.decision === "DECISION_REQUIRED" && sel.selected === null && sel.proposed === "G");
+    check("DECISION_REQUIRED ⇒ HALTED_DECISION_REQUIRED, DECOMPOSE/STRATEGY skipped, no dispatch", r.status === "HALTED_DECISION_REQUIRED" && stepIn(a.trace, "DECOMPOSE").status === "SKIPPED" && stepIn(a.trace, "STRATEGY").status === "SKIPPED" && a.calls.dispatch === 0);
+  }
+  // 7. writer confinement + provider never launched (source scan)
+  {
+    const t = (fn: () => void) => { try { fn(); return null; } catch (e: any) { return String(e.message); } };
+    check("write into main checkout runtime/generated ⇒ FORBIDDEN_WRITE", /FORBIDDEN_WRITE/.test(String(t(() => GO.assertConfinedWrite("/main/runtime/generated/x.json", "/main/runtime/generated", ["/main/runtime/generated"], path)))));
+    check("write into main checkout runtime/dist ⇒ FORBIDDEN_WRITE", /FORBIDDEN_WRITE/.test(String(t(() => GO.assertConfinedWrite("/main/runtime/dist/a.js", "/out", ["/main/runtime/dist"], path)))));
+    check("write outside the out dir ⇒ WRITE_OUTSIDE_OUT_DIR", /WRITE_OUTSIDE_OUT_DIR/.test(String(t(() => GO.assertConfinedWrite("/out-evil/x", "/out", [], path)))));
+    check("'..' escape is resolved and refused", /WRITE_OUTSIDE_OUT_DIR/.test(String(t(() => GO.assertConfinedWrite("/out/../etc/x", "/out", [], path)))));
+    check("write inside the out dir is allowed", t(() => GO.assertConfinedWrite("/out/go-trace.jsonl", "/out", ["/main/runtime/generated"], path)) === null);
+    const src = fs.readFileSync(path.join(__dirname, "odg-go-cycle.ts"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+    check("core has no child_process / fs / network / provider launch", !/require\(["'](child_process|fs|https?|net)["']\)/.test(src) && !/claude\s+-p|launchProvider|spawn\(/.test(src));
+  }
+  if (failures) { process.stdout.write(`\n${failures} FAILED\n`); process.exit(1); }
+  process.stdout.write("\nall odg-go-cycle tests passed\n");
+})().catch((e) => { process.stdout.write(`NOT OK - threw ${e && e.stack}\n`); process.exit(1); });
+export {};
