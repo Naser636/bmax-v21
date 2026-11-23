@@ -1,0 +1,3184 @@
+{
+  "schema": "odg.native-autonomy-maturity.v1",
+  "id": "V155_NATIVE_AUTONOMY_MATURITY",
+  "directive": "CTO V15.5 Step 7 — honest, reproducible measure of ODG native autonomy vs provider work",
+  "measuredAt": "2026-11-23T04:00:00.000Z",
+  "measuredRef": {
+    "ref": "HEAD",
+    "sha": "315c0c19661bceda07e4eb4950a2610a03356aa7"
+  },
+  "windows": {
+    "last30d": {
+      "from": "2026-10-24T04:00:00.000Z",
+      "to": "2026-11-23T04:00:00.000Z",
+      "days": 30,
+      "valid": true
+    },
+    "v15Arc": "merged PRs #870..latest on the measured ref"
+  },
+  "counters": {
+    "1_nativeDecisions": {
+      "value": 2404,
+      "status": "MEASURED",
+      "rowsAreNotDistinctDecisions": true,
+      "distinctDecisionKinds": 336,
+      "repeatedNoOpRows": 1219,
+      "meaningfulDecisions": 3,
+      "meaningfulDefinition": "rows whose class is one of ADMISSION_DISPATCH/WAVE_ADMISSION/AUTHORIZATION_REFUSAL/WRITE_SET_REFUSAL/REPAIR_STOP (an admission/dispatch or a refusal of a concrete mission); repeated dedup / no-eligible no-ops and truth-lock startup refusals are excluded",
+      "distinctDecisions": [
+        {
+          "status": "IDLE",
+          "reason": "no eligible pre-authorized PENDING mission [M0001: ALREADY_PROVEN (dedup): M0001]",
+          "decisionClass": "DEDUP_REFUSAL",
+          "count": 1199,
+          "first": "2026-10-24T04:14:09.820Z",
+          "last": "2026-11-23T03:50:51.132Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/v3-wave3-demonstrators-20261101",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 737,
+          "first": "2026-11-01T16:27:09.471Z",
+          "last": "2026-11-11T18:18:21.074Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/dataset-quality-service-20261029",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 23,
+          "first": "2026-10-29T04:03:27.432Z",
+          "last": "2026-10-29T09:34:12.576Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH governance/odg5-reality-gate-abc-promotion",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 20,
+          "first": "2026-10-25T16:05:12.775Z",
+          "last": "2026-10-25T20:53:13.610Z"
+        },
+        {
+          "status": "IDLE",
+          "reason": "no eligible pre-authorized PENDING mission (empty queue)",
+          "decisionClass": "NO_ELIGIBLE_MISSION",
+          "count": 13,
+          "first": "2026-10-27T00:18:20.816Z",
+          "last": "2026-11-11T18:23:36.302Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/post-merge-20261025",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 11,
+          "first": "2026-10-25T22:24:22.732Z",
+          "last": "2026-10-26T00:55:44.739Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/intelligence-evaluation-20261121",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 6,
+          "first": "2026-11-21T17:36:28.576Z",
+          "last": "2026-11-21T18:51:40.873Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/p14-golden-path-scorecard-20261117",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 6,
+          "first": "2026-11-17T14:27:21.137Z",
+          "last": "2026-11-17T15:42:51.121Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/defensive-hardening-alloc-atomic-20261031",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 5,
+          "first": "2026-10-31T21:55:15.534Z",
+          "last": "2026-10-31T22:55:21.545Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/pipeline-builder-test-20261025",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 5,
+          "first": "2026-10-25T21:08:17.767Z",
+          "last": "2026-10-25T22:09:02.701Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/git-integration-preflight-20261030",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 4,
+          "first": "2026-10-30T17:52:19.538Z",
+          "last": "2026-10-30T18:37:26.756Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/integration-ci-portability-20261030",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 4,
+          "first": "2026-10-30T18:52:26.914Z",
+          "last": "2026-10-30T19:37:29.509Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/audit-log-keyed-hmac-20261031",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-10-31T23:10:21.586Z",
+          "last": "2026-10-31T23:40:22.531Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/ci-reliability-suite-timeout-20261031",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-10-31T15:24:32.065Z",
+          "last": "2026-10-31T15:54:35.532Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/cm-radar-gate-chain-20261117",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-11-17T16:59:11.100Z",
+          "last": "2026-11-17T17:29:21.112Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/component-census-20261121",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-11-21T20:06:52.973Z",
+          "last": "2026-11-21T20:37:11.087Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/confine-code-review-tsc-20261030",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-10-30T14:37:04.550Z",
+          "last": "2026-10-30T15:07:06.031Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/http-bounded-resolve-once-20261031",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-10-31T17:24:46.511Z",
+          "last": "2026-10-31T17:54:49.023Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/mission-ledger-tamper-evidence-20261101",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-11-01T00:40:32.551Z",
+          "last": "2026-11-01T01:10:39.581Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/p0c-entry-authorization-gatea-20261031",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-10-31T16:54:42.531Z",
+          "last": "2026-10-31T18:09:51.182Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/p13-tail-latency-slo-20261117",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-11-17T13:11:51.103Z",
+          "last": "2026-11-17T13:42:01.064Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/v136-self-readonly-mission-origination-20261111",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 3,
+          "first": "2026-11-11T21:01:12.504Z",
+          "last": "2026-11-11T21:20:31.103Z"
+        },
+        {
+          "status": "BLOCKED",
+          "reason": "AUTHORIZATION_DENIED: CANARY_REFUSES_NON_READONLY: mission is NOT read-only (requiresEngineering/authorizedPaths present) — out of canary scope",
+          "decisionClass": "AUTHORIZATION_REFUSAL",
+          "count": 2,
+          "first": "2026-10-29T21:59:12.302Z",
+          "last": "2026-11-11T20:50:14.725Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "HEAD_DIVERGES_FROM_ORIGIN_MAIN",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 2,
+          "first": "2026-10-31T12:09:12.526Z",
+          "last": "2026-11-22T01:38:21.951Z"
+        },
+        {
+          "status": "STARTUP_REFUSED",
+          "reason": "MAIN_CHECKOUT_ON_BRANCH excellence/autonomy-store-atomic-corruption-20261031",
+          "decisionClass": "TRUTH_LOCK_REFUSAL",
+          "count": 2,
+          "first": "2026-10-31T20:10:06.311Z",
+          "last": "2026-10-31T20:25:08.559Z"
+        }
+      ],
+      "truthLockRefusalCauses": {
+        "total": 1182,
+        "causes": [
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v3-wave3-demonstrators-20261101",
+            "count": 737,
+            "first": "2026-11-01T16:27:09.471Z",
+            "last": "2026-11-11T18:18:21.074Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/dataset-quality-service-20261029",
+            "count": 23,
+            "first": "2026-10-29T04:03:27.432Z",
+            "last": "2026-10-29T09:34:12.576Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH governance/odg5-reality-gate-abc-promotion",
+            "count": 20,
+            "first": "2026-10-25T16:05:12.775Z",
+            "last": "2026-10-25T20:53:13.610Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/post-merge-20261025",
+            "count": 11,
+            "first": "2026-10-25T22:24:22.732Z",
+            "last": "2026-10-26T00:55:44.739Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p14-golden-path-scorecard-20261117",
+            "count": 6,
+            "first": "2026-11-17T14:27:21.137Z",
+            "last": "2026-11-17T15:42:51.121Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/intelligence-evaluation-20261121",
+            "count": 6,
+            "first": "2026-11-21T17:36:28.576Z",
+            "last": "2026-11-21T18:51:40.873Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/pipeline-builder-test-20261025",
+            "count": 5,
+            "first": "2026-10-25T21:08:17.767Z",
+            "last": "2026-10-25T22:09:02.701Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/defensive-hardening-alloc-atomic-20261031",
+            "count": 5,
+            "first": "2026-10-31T21:55:15.534Z",
+            "last": "2026-10-31T22:55:21.545Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/git-integration-preflight-20261030",
+            "count": 4,
+            "first": "2026-10-30T17:52:19.538Z",
+            "last": "2026-10-30T18:37:26.756Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/integration-ci-portability-20261030",
+            "count": 4,
+            "first": "2026-10-30T18:52:26.914Z",
+            "last": "2026-10-30T19:37:29.509Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/confine-code-review-tsc-20261030",
+            "count": 3,
+            "first": "2026-10-30T14:37:04.550Z",
+            "last": "2026-10-30T15:07:06.031Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/ci-reliability-suite-timeout-20261031",
+            "count": 3,
+            "first": "2026-10-31T15:24:32.065Z",
+            "last": "2026-10-31T15:54:35.532Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0c-entry-authorization-gatea-20261031",
+            "count": 3,
+            "first": "2026-10-31T16:54:42.531Z",
+            "last": "2026-10-31T18:09:51.182Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/http-bounded-resolve-once-20261031",
+            "count": 3,
+            "first": "2026-10-31T17:24:46.511Z",
+            "last": "2026-10-31T17:54:49.023Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/audit-log-keyed-hmac-20261031",
+            "count": 3,
+            "first": "2026-10-31T23:10:21.586Z",
+            "last": "2026-10-31T23:40:22.531Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/mission-ledger-tamper-evidence-20261101",
+            "count": 3,
+            "first": "2026-11-01T00:40:32.551Z",
+            "last": "2026-11-01T01:10:39.581Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v136-self-readonly-mission-origination-20261111",
+            "count": 3,
+            "first": "2026-11-11T21:01:12.504Z",
+            "last": "2026-11-11T21:20:31.103Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p13-tail-latency-slo-20261117",
+            "count": 3,
+            "first": "2026-11-17T13:11:51.103Z",
+            "last": "2026-11-17T13:42:01.064Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/cm-radar-gate-chain-20261117",
+            "count": 3,
+            "first": "2026-11-17T16:59:11.100Z",
+            "last": "2026-11-17T17:29:21.112Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/component-census-20261121",
+            "count": 3,
+            "first": "2026-11-21T20:06:52.973Z",
+            "last": "2026-11-21T20:37:11.087Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/go-build-capability-20261028",
+            "count": 2,
+            "first": "2026-10-28T21:47:46.508Z",
+            "last": "2026-10-28T22:02:47.588Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/rust-build-capability-20261028",
+            "count": 2,
+            "first": "2026-10-28T23:02:53.385Z",
+            "last": "2026-10-28T23:17:56.478Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/patch-executor-symlink-confinement-20261030",
+            "count": 2,
+            "first": "2026-10-30T13:21:55.772Z",
+            "last": "2026-10-30T13:36:55.915Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/gate-external-research-suites-20261030",
+            "count": 2,
+            "first": "2026-10-30T14:07:00.281Z",
+            "last": "2026-10-30T14:22:02.525Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/bash-governor-sandbox-confinement-20261030",
+            "count": 2,
+            "first": "2026-10-30T15:52:10.593Z",
+            "last": "2026-10-30T16:07:10.783Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/code-exec-go-rust-fileread-20261030",
+            "count": 2,
+            "first": "2026-10-30T16:22:11.495Z",
+            "last": "2026-10-30T16:37:12.143Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/validation-deliverable-target-allowlist-20261030",
+            "count": 2,
+            "first": "2026-10-30T17:22:12.586Z",
+            "last": "2026-10-30T17:37:15.530Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/roadmap-consolidation-crosswalk-20261030",
+            "count": 2,
+            "first": "2026-10-30T20:37:35.068Z",
+            "last": "2026-10-30T20:52:35.506Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/ci-setup-node-cache-reliability-20261030",
+            "count": 2,
+            "first": "2026-10-30T21:07:35.565Z",
+            "last": "2026-10-30T21:22:37.543Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v2-poleB-engineering-hardening-20261030",
+            "count": 2,
+            "first": "2026-10-30T23:22:47.517Z",
+            "last": "2026-10-30T23:37:48.579Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/phase0-historical-continuity-20261031",
+            "count": 2,
+            "first": "2026-10-31T00:37:52.499Z",
+            "last": "2026-10-31T00:52:52.580Z"
+          },
+          {
+            "cause": "HEAD_DIVERGES_FROM_ORIGIN_MAIN",
+            "count": 2,
+            "first": "2026-10-31T12:09:12.526Z",
+            "last": "2026-11-22T01:38:21.951Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/recon-followups-adapter-pdfstreams-20261031",
+            "count": 2,
+            "first": "2026-10-31T19:40:02.506Z",
+            "last": "2026-10-31T19:55:05.580Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/autonomy-store-atomic-corruption-20261031",
+            "count": 2,
+            "first": "2026-10-31T20:10:06.311Z",
+            "last": "2026-10-31T20:25:08.559Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v3-wave2-demonstrators-20261101",
+            "count": 2,
+            "first": "2026-11-01T15:27:02.482Z",
+            "last": "2026-11-01T15:42:02.598Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v133-postdeploy-regression-20261111",
+            "count": 2,
+            "first": "2026-11-11T18:33:22.775Z",
+            "last": "2026-11-11T18:48:41.091Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v135-seed-recovery-fmea-actiongate-20261111",
+            "count": 2,
+            "first": "2026-11-11T19:19:04.979Z",
+            "last": "2026-11-11T19:34:11.025Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v135b-boussole-reconcile-20261111",
+            "count": 2,
+            "first": "2026-11-11T20:19:31.094Z",
+            "last": "2026-11-11T20:34:41.107Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v139-resilience-fault-injection-20261111",
+            "count": 2,
+            "first": "2026-11-11T22:50:51.085Z",
+            "last": "2026-11-11T23:05:55.841Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v140-research-to-mission-bridge-20261111",
+            "count": 2,
+            "first": "2026-11-11T23:35:57.491Z",
+            "last": "2026-11-11T23:51:05.716Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v163-broad-it-eval-set-20261112",
+            "count": 2,
+            "first": "2026-11-12T16:44:18.351Z",
+            "last": "2026-11-12T16:59:21.089Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-capability-matrix-20261117",
+            "count": 2,
+            "first": "2026-11-17T18:30:51.174Z",
+            "last": "2026-11-17T18:45:51.162Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/c6-gate-wiring-20261118",
+            "count": 2,
+            "first": "2026-11-18T19:45:31.136Z",
+            "last": "2026-11-18T20:00:31.841Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/reuse-validity-gate-20261119",
+            "count": 2,
+            "first": "2026-11-19T20:27:23.485Z",
+            "last": "2026-11-19T20:42:41.095Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/hypothesis-adjudicator-20261119",
+            "count": 2,
+            "first": "2026-11-19T21:28:29.063Z",
+            "last": "2026-11-19T21:43:41.102Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/light-path-selector-20261121",
+            "count": 2,
+            "first": "2026-11-21T16:36:16.111Z",
+            "last": "2026-11-21T16:51:21.113Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/canary-tick-dist-wire-20261028",
+            "count": 1,
+            "first": "2026-10-28T16:32:05.550Z",
+            "last": "2026-10-28T16:32:05.550Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/odg5-audit-eval-metrics-wire-20261028",
+            "count": 1,
+            "first": "2026-10-28T17:02:12.513Z",
+            "last": "2026-10-28T17:02:12.513Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/dashboard-auth-v2-20261028",
+            "count": 1,
+            "first": "2026-10-28T17:17:16.531Z",
+            "last": "2026-10-28T17:17:16.531Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/broad-it-corpus-grow-20261028",
+            "count": 1,
+            "first": "2026-10-28T18:02:20.763Z",
+            "last": "2026-10-28T18:02:20.763Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/noinstall-lang-checkers-20261028",
+            "count": 1,
+            "first": "2026-10-28T18:17:22.504Z",
+            "last": "2026-10-28T18:17:22.504Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/roadmap-schema-proposal-20261028",
+            "count": 1,
+            "first": "2026-10-28T18:32:25.532Z",
+            "last": "2026-10-28T18:32:25.532Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p01-billing-sandbox-20261028",
+            "count": 1,
+            "first": "2026-10-28T18:47:26.571Z",
+            "last": "2026-10-28T18:47:26.571Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/seo-positioning-register-20261028",
+            "count": 1,
+            "first": "2026-10-28T19:32:29.961Z",
+            "last": "2026-10-28T19:32:29.961Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/vps-status-verification-20261028",
+            "count": 1,
+            "first": "2026-10-28T19:47:32.547Z",
+            "last": "2026-10-28T19:47:32.547Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/dashboard-auth-activation-prereq-20261028",
+            "count": 1,
+            "first": "2026-10-28T20:02:35.574Z",
+            "last": "2026-10-28T20:02:35.574Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/dashboard-auth-live-activation-20261028",
+            "count": 1,
+            "first": "2026-10-28T20:17:36.729Z",
+            "last": "2026-10-28T20:17:36.729Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/engine-no-repeat-guard-20261028",
+            "count": 1,
+            "first": "2026-10-28T22:17:47.586Z",
+            "last": "2026-10-28T22:17:47.586Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/coverage-toolchain-aware-20261028",
+            "count": 1,
+            "first": "2026-10-28T22:47:52.551Z",
+            "last": "2026-10-28T22:47:52.551Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/engine-benchmark-baseline-20261028",
+            "count": 1,
+            "first": "2026-10-28T23:33:01.507Z",
+            "last": "2026-10-28T23:33:01.507Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/java-build-plus-multimode-20261028",
+            "count": 1,
+            "first": "2026-10-28T23:48:02.465Z",
+            "last": "2026-10-28T23:48:02.465Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/csharp-plus-integration-mode-20261028",
+            "count": 1,
+            "first": "2026-10-29T00:18:03.249Z",
+            "last": "2026-10-29T00:18:03.249Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/htmlcss-tidy-capability-20261028",
+            "count": 1,
+            "first": "2026-10-29T00:33:03.538Z",
+            "last": "2026-10-29T00:33:03.538Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/runner-exitcode-honesty-fix-20261028",
+            "count": 1,
+            "first": "2026-10-29T00:48:04.043Z",
+            "last": "2026-10-29T00:48:04.043Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/fairness-eval-harness-20261029",
+            "count": 1,
+            "first": "2026-10-29T01:18:07.600Z",
+            "last": "2026-10-29T01:18:07.600Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/hadolint-adapter-prep-20261029",
+            "count": 1,
+            "first": "2026-10-29T01:33:11.538Z",
+            "last": "2026-10-29T01:33:11.538Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/campaign-loop-continuity-20261029",
+            "count": 1,
+            "first": "2026-10-29T01:48:12.557Z",
+            "last": "2026-10-29T01:48:12.557Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/campaign-run-entrypoint-20261029",
+            "count": 1,
+            "first": "2026-10-29T02:03:14.553Z",
+            "last": "2026-10-29T02:03:14.553Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/odg-resume-reader-20261029",
+            "count": 1,
+            "first": "2026-10-29T02:18:15.580Z",
+            "last": "2026-10-29T02:18:15.580Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/ese-code-review-service-20261029",
+            "count": 1,
+            "first": "2026-10-29T03:18:23.283Z",
+            "last": "2026-10-29T03:18:23.283Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH docs/business-campaign-checkpoint-20261029",
+            "count": 1,
+            "first": "2026-10-29T03:33:24.505Z",
+            "last": "2026-10-29T03:33:24.505Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/sbom-audit-service-20261029",
+            "count": 1,
+            "first": "2026-10-29T03:48:26.544Z",
+            "last": "2026-10-29T03:48:26.544Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/finance-ledger-service-20261029",
+            "count": 1,
+            "first": "2026-10-29T09:49:16.530Z",
+            "last": "2026-10-29T09:49:16.530Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/regulatory-dossier-service-20261029",
+            "count": 1,
+            "first": "2026-10-29T10:04:18.561Z",
+            "last": "2026-10-29T10:04:18.561Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/engine-mission-evidence-gate-20261029",
+            "count": 1,
+            "first": "2026-10-29T10:49:24.636Z",
+            "last": "2026-10-29T10:49:24.636Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/engine-learning-reuse-proof-20261029",
+            "count": 1,
+            "first": "2026-10-29T11:19:25.487Z",
+            "last": "2026-10-29T11:19:25.487Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/engine-proof-consumption-policy-20261029",
+            "count": 1,
+            "first": "2026-10-29T11:49:27.514Z",
+            "last": "2026-10-29T11:49:27.514Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/new-language-families-noinstall-20261029",
+            "count": 1,
+            "first": "2026-10-29T13:34:42.544Z",
+            "last": "2026-10-29T13:34:42.544Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH docs/p2-autonomous-progress-checkpoint-20261029",
+            "count": 1,
+            "first": "2026-10-29T13:49:45.526Z",
+            "last": "2026-10-29T13:49:45.526Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/engine-test-worker-memory-cap-20261029",
+            "count": 1,
+            "first": "2026-10-29T14:19:47.068Z",
+            "last": "2026-10-29T14:19:47.068Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/product-einvoice-validator-slice1-20261029",
+            "count": 1,
+            "first": "2026-10-29T15:04:50.772Z",
+            "last": "2026-10-29T15:04:50.772Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/product-einvoice-parser-slice2-20261029",
+            "count": 1,
+            "first": "2026-10-29T16:49:54.630Z",
+            "last": "2026-10-29T16:49:54.630Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH docs/einvoice-3slice-complete-checkpoint-20261029",
+            "count": 1,
+            "first": "2026-10-29T17:19:56.552Z",
+            "last": "2026-10-29T17:19:56.552Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH docs/d6-d7-progress-checkpoint-20261029",
+            "count": 1,
+            "first": "2026-10-29T17:35:01.532Z",
+            "last": "2026-10-29T17:35:01.532Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/d6-bg23-vat-breakdown-20261029",
+            "count": 1,
+            "first": "2026-10-29T20:20:19.535Z",
+            "last": "2026-10-29T20:20:19.535Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/h1-h2-h3-reconciliation-20261029",
+            "count": 1,
+            "first": "2026-10-29T21:05:23.783Z",
+            "last": "2026-10-29T21:05:23.783Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0-source-of-truth-canary-guard-20261029",
+            "count": 1,
+            "first": "2026-10-29T22:20:36.558Z",
+            "last": "2026-10-29T22:20:36.558Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/seo-crawl-consistency-20261030",
+            "count": 1,
+            "first": "2026-10-30T01:50:52.519Z",
+            "last": "2026-10-30T01:50:52.519Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/seo-hreflang-reciprocity-20261030",
+            "count": 1,
+            "first": "2026-10-30T02:05:55.557Z",
+            "last": "2026-10-30T02:05:55.557Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/gate-governance-safety-tests-20261030",
+            "count": 1,
+            "first": "2026-10-30T03:05:59.530Z",
+            "last": "2026-10-30T03:05:59.530Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/nl-gateway-weak-negation-failopen-20261030",
+            "count": 1,
+            "first": "2026-10-30T03:51:02.525Z",
+            "last": "2026-10-30T03:51:02.525Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/nl-gateway-fr-pas-collision-20261030",
+            "count": 1,
+            "first": "2026-10-30T04:06:05.574Z",
+            "last": "2026-10-30T04:06:05.574Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/nl-gateway-negation-dos-bound-20261030",
+            "count": 1,
+            "first": "2026-10-30T04:21:06.022Z",
+            "last": "2026-10-30T04:21:06.022Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v107-owner-gated-dossier-20261030",
+            "count": 1,
+            "first": "2026-10-30T10:36:38.532Z",
+            "last": "2026-10-30T10:36:38.532Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/dead-js-fallback-failclosed-20261030",
+            "count": 1,
+            "first": "2026-10-30T11:06:42.553Z",
+            "last": "2026-10-30T11:06:42.553Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/gate-writepath-safety-tests-20261030",
+            "count": 1,
+            "first": "2026-10-30T11:36:44.072Z",
+            "last": "2026-10-30T11:36:44.072Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/i18n-fairness-opportunity-routing-20261030",
+            "count": 1,
+            "first": "2026-10-30T11:51:44.081Z",
+            "last": "2026-10-30T11:51:44.081Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/sql-check-arbitrary-write-20261030",
+            "count": 1,
+            "first": "2026-10-30T12:21:45.670Z",
+            "last": "2026-10-30T12:21:45.670Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/dashboard-observability-dist-20261030",
+            "count": 1,
+            "first": "2026-10-30T12:36:46.730Z",
+            "last": "2026-10-30T12:36:46.730Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/odg-health-failvisible-registry-20261030",
+            "count": 1,
+            "first": "2026-10-30T15:22:08.564Z",
+            "last": "2026-10-30T15:22:08.564Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/odg-health-failvisible-sources-20261030",
+            "count": 1,
+            "first": "2026-10-30T15:37:09.040Z",
+            "last": "2026-10-30T15:37:09.040Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/parallel-isolation-3-suites-20261030",
+            "count": 1,
+            "first": "2026-10-30T16:52:12.540Z",
+            "last": "2026-10-30T16:52:12.540Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/odg-health-lastmission-failvisible-20261030",
+            "count": 1,
+            "first": "2026-10-30T17:07:12.550Z",
+            "last": "2026-10-30T17:07:12.550Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/integration-reconciliation-20261030",
+            "count": 1,
+            "first": "2026-10-30T19:52:31.560Z",
+            "last": "2026-10-30T19:52:31.560Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/confine-behaviour-integration-exec-20261030",
+            "count": 1,
+            "first": "2026-10-30T20:22:33.291Z",
+            "last": "2026-10-30T20:22:33.291Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/audit-finding-closure-crosswalk-ss-20261030",
+            "count": 1,
+            "first": "2026-10-30T21:37:41.564Z",
+            "last": "2026-10-30T21:37:41.564Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/dockerfile-structural-lint-noinstall-20261030",
+            "count": 1,
+            "first": "2026-10-30T21:52:42.553Z",
+            "last": "2026-10-30T21:52:42.553Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/pending-queue-prune-inert-20261030",
+            "count": 1,
+            "first": "2026-10-30T22:07:43.233Z",
+            "last": "2026-10-30T22:07:43.233Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/recon2-portfolio-horizon-depplanner-empty-20261030",
+            "count": 1,
+            "first": "2026-10-30T22:22:44.524Z",
+            "last": "2026-10-30T22:22:44.524Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/crash-atomic-durable-writes-20261030",
+            "count": 1,
+            "first": "2026-10-30T22:37:46.550Z",
+            "last": "2026-10-30T22:37:46.550Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v2-poleA-reconciliation-20261030",
+            "count": 1,
+            "first": "2026-10-30T23:52:50.530Z",
+            "last": "2026-10-30T23:52:50.530Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v2-governance-stamp-sync-20261030",
+            "count": 1,
+            "first": "2026-10-31T00:07:50.565Z",
+            "last": "2026-10-31T00:07:50.565Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0-autonomy-program-aggregate-20261031",
+            "count": 1,
+            "first": "2026-10-31T00:22:52.532Z",
+            "last": "2026-10-31T00:22:52.532Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0-slice2-impl-20261031",
+            "count": 1,
+            "first": "2026-10-31T01:22:53.778Z",
+            "last": "2026-10-31T01:22:53.778Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0a-r1-hardening-20261031",
+            "count": 1,
+            "first": "2026-10-31T01:52:56.818Z",
+            "last": "2026-10-31T01:52:56.818Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0c-transitive-stale-reconcile-20261031",
+            "count": 1,
+            "first": "2026-10-31T02:08:01.497Z",
+            "last": "2026-10-31T02:08:01.497Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0e-attestation-key-trust-20261031",
+            "count": 1,
+            "first": "2026-10-31T11:54:10.519Z",
+            "last": "2026-10-31T11:54:10.519Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/reconcile-sec2-c6-integration-20261031",
+            "count": 1,
+            "first": "2026-10-31T12:24:13.502Z",
+            "last": "2026-10-31T12:24:13.502Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/sec3-audit-chain-verify-on-read-20261031",
+            "count": 1,
+            "first": "2026-10-31T12:39:15.268Z",
+            "last": "2026-10-31T12:39:15.268Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0c3-verify-evidence-gate-20261031",
+            "count": 1,
+            "first": "2026-10-31T12:54:15.595Z",
+            "last": "2026-10-31T12:54:15.595Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0c5-truthlock-launcher-default-20261031",
+            "count": 1,
+            "first": "2026-10-31T13:09:15.784Z",
+            "last": "2026-10-31T13:09:15.784Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/closeout-compass-clxvii-20261031",
+            "count": 1,
+            "first": "2026-10-31T13:24:17.558Z",
+            "last": "2026-10-31T13:24:17.558Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/slice3-refined-diagnosis-20261031",
+            "count": 1,
+            "first": "2026-10-31T14:09:22.533Z",
+            "last": "2026-10-31T14:09:22.533Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/odg-resume-handoff-budget-20261031",
+            "count": 1,
+            "first": "2026-10-31T14:39:28.542Z",
+            "last": "2026-10-31T14:39:28.542Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p0c3-absent-verify-gateb-20261031",
+            "count": 1,
+            "first": "2026-10-31T15:09:31.939Z",
+            "last": "2026-10-31T15:09:31.939Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/campaign-controller-lifecycle-20261031",
+            "count": 1,
+            "first": "2026-10-31T18:24:52.591Z",
+            "last": "2026-10-31T18:24:52.591Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/ve-engineering-predicate-writeset-20261031",
+            "count": 1,
+            "first": "2026-10-31T18:39:52.500Z",
+            "last": "2026-10-31T18:39:52.500Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/pdf-extract-bomb-guard-20261031",
+            "count": 1,
+            "first": "2026-10-31T18:54:54.696Z",
+            "last": "2026-10-31T18:54:54.696Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/governed-bash-secret-redaction-20261031",
+            "count": 1,
+            "first": "2026-10-31T19:24:59.266Z",
+            "last": "2026-10-31T19:24:59.266Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/patch-executor-hunk-bounds-20261031",
+            "count": 1,
+            "first": "2026-10-31T20:40:09.544Z",
+            "last": "2026-10-31T20:40:09.544Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/ollama-loopbackget-cap-20261031",
+            "count": 1,
+            "first": "2026-10-31T21:10:11.497Z",
+            "last": "2026-10-31T21:10:11.497Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/einvoice-doctype-reject-20261031",
+            "count": 1,
+            "first": "2026-10-31T21:25:12.514Z",
+            "last": "2026-10-31T21:25:12.514Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/regex-input-bound-20261031",
+            "count": 1,
+            "first": "2026-10-31T21:40:12.507Z",
+            "last": "2026-10-31T21:40:12.507Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/evidence-provenance-keyed-hmac-20261031",
+            "count": 1,
+            "first": "2026-10-31T23:55:23.349Z",
+            "last": "2026-10-31T23:55:23.349Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/build-recovery-scope-boundary-20261101",
+            "count": 1,
+            "first": "2026-11-01T00:25:29.554Z",
+            "last": "2026-11-01T00:25:29.554Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/actor-provenance-adversarial-tests-20261101",
+            "count": 1,
+            "first": "2026-11-01T01:25:41.554Z",
+            "last": "2026-11-01T01:25:41.554Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/campaign-metrics-waiting-buckets-20261101",
+            "count": 1,
+            "first": "2026-11-01T01:40:42.556Z",
+            "last": "2026-11-01T01:40:42.556Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/validation-engine-reality-honesty-20261101",
+            "count": 1,
+            "first": "2026-11-01T01:55:42.549Z",
+            "last": "2026-11-01T01:55:42.549Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/reconcile-four-missions-20261101",
+            "count": 1,
+            "first": "2026-11-01T02:10:46.567Z",
+            "last": "2026-11-01T02:10:46.567Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/wave4-g01-characterization-baseline-20261101",
+            "count": 1,
+            "first": "2026-11-01T04:41:00.540Z",
+            "last": "2026-11-01T04:41:00.540Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/wave4-g06-dora-metrics-20261101",
+            "count": 1,
+            "first": "2026-11-01T12:41:42.552Z",
+            "last": "2026-11-01T12:41:42.552Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/wave4-g07-misleading-case-corpus-20261101",
+            "count": 1,
+            "first": "2026-11-01T12:56:45.602Z",
+            "last": "2026-11-01T12:56:45.602Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/wave4-g08-evidence-pack-export-20261101",
+            "count": 1,
+            "first": "2026-11-01T13:11:48.543Z",
+            "last": "2026-11-01T13:11:48.543Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/wave6-7-eval-and-closure-20261101",
+            "count": 1,
+            "first": "2026-11-01T13:41:53.566Z",
+            "last": "2026-11-01T13:41:53.566Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v2-p0p1-crosswalk-20261101",
+            "count": 1,
+            "first": "2026-11-01T14:11:56.581Z",
+            "last": "2026-11-01T14:11:56.581Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v2-p2-p12-ten-professions-20261101",
+            "count": 1,
+            "first": "2026-11-01T14:26:59.551Z",
+            "last": "2026-11-01T14:26:59.551Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v3-p3-cra-demonstrator-20261101",
+            "count": 1,
+            "first": "2026-11-01T14:57:01.541Z",
+            "last": "2026-11-01T14:57:01.541Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v3-p8-einvoice-demonstrator-20261101",
+            "count": 1,
+            "first": "2026-11-01T15:12:01.759Z",
+            "last": "2026-11-01T15:12:01.759Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v135b-grant-ownergate-map-20261111",
+            "count": 1,
+            "first": "2026-11-11T20:04:26.101Z",
+            "last": "2026-11-11T20:04:26.101Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v137-metier-qualification-20261111",
+            "count": 1,
+            "first": "2026-11-11T22:05:42.439Z",
+            "last": "2026-11-11T22:05:42.439Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v138-research-intelligence-20261111",
+            "count": 1,
+            "first": "2026-11-11T22:35:46.398Z",
+            "last": "2026-11-11T22:35:46.398Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v140-independent-assurance-20261111",
+            "count": 1,
+            "first": "2026-11-11T23:20:56.822Z",
+            "last": "2026-11-11T23:20:56.822Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v141-commercial-intelligence-chain-20261111",
+            "count": 1,
+            "first": "2026-11-12T00:06:21.018Z",
+            "last": "2026-11-12T00:06:21.018Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v142-radar-metier-commercial-20261112",
+            "count": 1,
+            "first": "2026-11-12T00:36:36.100Z",
+            "last": "2026-11-12T00:36:36.100Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v145-five-metiers-commercial-20261112",
+            "count": 1,
+            "first": "2026-11-12T01:37:11.135Z",
+            "last": "2026-11-12T01:37:11.135Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v148-chantier-profitability-roadmap-proposal-20261112",
+            "count": 1,
+            "first": "2026-11-12T03:07:56.076Z",
+            "last": "2026-11-12T03:07:56.076Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v152-native-transform-catalog-20261112",
+            "count": 1,
+            "first": "2026-11-12T12:12:31.116Z",
+            "last": "2026-11-12T12:12:31.116Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v153-closed-executor-hardening-20261112",
+            "count": 1,
+            "first": "2026-11-12T12:43:11.090Z",
+            "last": "2026-11-12T12:43:11.090Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v155-duplicate-import-consolidation-20261112",
+            "count": 1,
+            "first": "2026-11-12T13:28:21.196Z",
+            "last": "2026-11-12T13:28:21.196Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v157-real-provider-governance-20261112",
+            "count": 1,
+            "first": "2026-11-12T14:13:37.004Z",
+            "last": "2026-11-12T14:13:37.004Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v159-mission-scheduler-bridge-20261112",
+            "count": 1,
+            "first": "2026-11-12T14:58:49.491Z",
+            "last": "2026-11-12T14:58:49.491Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v160-campaign-lifecycle-persistence-20261112",
+            "count": 1,
+            "first": "2026-11-12T15:13:54.236Z",
+            "last": "2026-11-12T15:13:54.236Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v161-real-closure-register-20261112",
+            "count": 1,
+            "first": "2026-11-12T15:44:01.324Z",
+            "last": "2026-11-12T15:44:01.324Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v162-audit-integrity-analysis-20261112",
+            "count": 1,
+            "first": "2026-11-12T16:14:07.110Z",
+            "last": "2026-11-12T16:14:07.110Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v166-radar-otel-genai-20261112",
+            "count": 1,
+            "first": "2026-11-12T18:30:04.790Z",
+            "last": "2026-11-12T18:30:04.790Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v167-otel-execution-trace-20261112",
+            "count": 1,
+            "first": "2026-11-12T18:45:12.057Z",
+            "last": "2026-11-12T18:45:12.057Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v167b-mission-orchestrator-20261112",
+            "count": 1,
+            "first": "2026-11-12T19:00:19.524Z",
+            "last": "2026-11-12T19:00:19.524Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v169-roadmap-reconciliation-20261112",
+            "count": 1,
+            "first": "2026-11-12T20:15:49.235Z",
+            "last": "2026-11-12T20:15:49.235Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v171-weekly-radar-scheduler-20261112",
+            "count": 1,
+            "first": "2026-11-12T21:01:01.011Z",
+            "last": "2026-11-12T21:01:01.011Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v174-support-renewal-engine-20261112",
+            "count": 1,
+            "first": "2026-11-12T22:01:51.058Z",
+            "last": "2026-11-12T22:01:51.058Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v174a-global-opportunity-radar-20261112",
+            "count": 1,
+            "first": "2026-11-12T22:16:51.087Z",
+            "last": "2026-11-12T22:16:51.087Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v174b-metier-certification-planner-20261112",
+            "count": 1,
+            "first": "2026-11-12T22:32:11.106Z",
+            "last": "2026-11-12T22:32:11.106Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v178-product-economics-audit-20261112",
+            "count": 1,
+            "first": "2026-11-12T23:47:41.095Z",
+            "last": "2026-11-12T23:47:41.095Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v180a-three-person-economic-model-20261113",
+            "count": 1,
+            "first": "2026-11-13T00:48:21.100Z",
+            "last": "2026-11-13T00:48:21.100Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v182-missing-capabilities-20261113",
+            "count": 1,
+            "first": "2026-11-13T01:34:01.083Z",
+            "last": "2026-11-13T01:34:01.083Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v124-extension-parked-20261113",
+            "count": 1,
+            "first": "2026-11-13T01:49:11.062Z",
+            "last": "2026-11-13T01:49:11.062Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v183-governance-views-20261113",
+            "count": 1,
+            "first": "2026-11-13T02:19:24.602Z",
+            "last": "2026-11-13T02:19:24.602Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v189-sandbox-audit-20261113",
+            "count": 1,
+            "first": "2026-11-13T04:50:56.136Z",
+            "last": "2026-11-13T04:50:56.136Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v189a-improvement-contracts-20261113",
+            "count": 1,
+            "first": "2026-11-13T05:06:01.089Z",
+            "last": "2026-11-13T05:06:01.089Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v191-continuity-checkpoint-20261113",
+            "count": 1,
+            "first": "2026-11-13T11:39:58.807Z",
+            "last": "2026-11-13T11:39:58.807Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v192-sandbox-net-lot4-20261113",
+            "count": 1,
+            "first": "2026-11-13T11:54:59.437Z",
+            "last": "2026-11-13T11:54:59.437Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v201-v202-wifr06-radar-robustness-20261115",
+            "count": 1,
+            "first": "2026-11-15T20:51:56.205Z",
+            "last": "2026-11-15T20:51:56.205Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v205-production-gate-matrix-20261115",
+            "count": 1,
+            "first": "2026-11-15T22:07:02.644Z",
+            "last": "2026-11-15T22:07:02.644Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v207-16block-lotCD-20261115",
+            "count": 1,
+            "first": "2026-11-15T23:07:16.073Z",
+            "last": "2026-11-15T23:07:16.073Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v207-16block-lotE-20261115",
+            "count": 1,
+            "first": "2026-11-15T23:22:18.684Z",
+            "last": "2026-11-15T23:22:18.684Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v213-radar-video-sources-20261116",
+            "count": 1,
+            "first": "2026-11-16T00:52:58.573Z",
+            "last": "2026-11-16T00:52:58.573Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v214-radar-video-consumer-20261116",
+            "count": 1,
+            "first": "2026-11-16T01:08:11.066Z",
+            "last": "2026-11-16T01:08:11.066Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/sandbox-certification-harness-20261116",
+            "count": 1,
+            "first": "2026-11-16T01:38:21.083Z",
+            "last": "2026-11-16T01:38:21.083Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/opp-contradiction-wiring-20261116",
+            "count": 1,
+            "first": "2026-11-16T10:58:39.854Z",
+            "last": "2026-11-16T10:58:39.854Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/deployment-dossier-draft-20261116",
+            "count": 1,
+            "first": "2026-11-16T13:00:05.067Z",
+            "last": "2026-11-16T13:00:05.067Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/benchmarks-amazon-google-nvidia-20261116",
+            "count": 1,
+            "first": "2026-11-16T16:31:46.143Z",
+            "last": "2026-11-16T16:31:46.143Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/sandbox-integration-gate-20261116",
+            "count": 1,
+            "first": "2026-11-16T17:17:01.376Z",
+            "last": "2026-11-16T17:17:01.376Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/improvement-chain-20261116",
+            "count": 1,
+            "first": "2026-11-16T17:47:15.218Z",
+            "last": "2026-11-16T17:47:15.218Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/observation-currency-20261116",
+            "count": 1,
+            "first": "2026-11-16T18:32:31.153Z",
+            "last": "2026-11-16T18:32:31.153Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/program-continuity-20261116",
+            "count": 1,
+            "first": "2026-11-16T19:17:59.406Z",
+            "last": "2026-11-16T19:17:59.406Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/resident-driver-l0-20261116",
+            "count": 1,
+            "first": "2026-11-16T21:03:41.185Z",
+            "last": "2026-11-16T21:03:41.185Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/resident-driver-install-20261116",
+            "count": 1,
+            "first": "2026-11-16T21:34:11.155Z",
+            "last": "2026-11-16T21:34:11.155Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/benchmark-audit-20261116",
+            "count": 1,
+            "first": "2026-11-16T22:04:21.824Z",
+            "last": "2026-11-16T22:04:21.824Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/resident-precompile-20261116",
+            "count": 1,
+            "first": "2026-11-16T22:35:11.136Z",
+            "last": "2026-11-16T22:35:11.136Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/metier-campaign-20261116",
+            "count": 1,
+            "first": "2026-11-16T23:05:21.089Z",
+            "last": "2026-11-16T23:05:21.089Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/local-model-capability-20261116",
+            "count": 1,
+            "first": "2026-11-16T23:50:40.916Z",
+            "last": "2026-11-16T23:50:40.916Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/native-engineering-audit-20261117",
+            "count": 1,
+            "first": "2026-11-17T00:35:49.050Z",
+            "last": "2026-11-17T00:35:49.050Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/catalog-real-reach-20261117",
+            "count": 1,
+            "first": "2026-11-17T01:20:51.753Z",
+            "last": "2026-11-17T01:20:51.753Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p1-wcag22-component-audit-20261117",
+            "count": 1,
+            "first": "2026-11-17T01:35:52.081Z",
+            "last": "2026-11-17T01:35:52.081Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p2-nist-selective-abtest-20261117",
+            "count": 1,
+            "first": "2026-11-17T01:50:57.112Z",
+            "last": "2026-11-17T01:50:57.112Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p4-prov-openlineage-graph-20261117",
+            "count": 1,
+            "first": "2026-11-17T02:05:57.337Z",
+            "last": "2026-11-17T02:05:57.337Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p6-significance-mcnemar-wilson-20261117",
+            "count": 1,
+            "first": "2026-11-17T11:41:00.842Z",
+            "last": "2026-11-17T11:41:00.842Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p9-finops-runrate-forecast-20261117",
+            "count": 1,
+            "first": "2026-11-17T11:56:01.089Z",
+            "last": "2026-11-17T11:56:01.089Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/cm-v237-repo-vps-map-20261117",
+            "count": 1,
+            "first": "2026-11-17T12:11:01.153Z",
+            "last": "2026-11-17T12:11:01.153Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p10-obligation-evidence-coverage-20261117",
+            "count": 1,
+            "first": "2026-11-17T12:26:14.293Z",
+            "last": "2026-11-17T12:26:14.293Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p11-batch-stp-exception-queue-20261117",
+            "count": 1,
+            "first": "2026-11-17T12:41:21.079Z",
+            "last": "2026-11-17T12:41:21.079Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p12-event-time-watermark-20261117",
+            "count": 1,
+            "first": "2026-11-17T12:56:34.115Z",
+            "last": "2026-11-17T12:56:34.115Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p15-dag-validation-20261117",
+            "count": 1,
+            "first": "2026-11-17T15:58:21.165Z",
+            "last": "2026-11-17T15:58:21.165Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/m2-extraction-confidence-gate-20261117",
+            "count": 1,
+            "first": "2026-11-17T16:13:30.998Z",
+            "last": "2026-11-17T16:13:30.998Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/m5-wcag-criteria-expansion-20261117",
+            "count": 1,
+            "first": "2026-11-17T16:28:55.884Z",
+            "last": "2026-11-17T16:28:55.884Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-master-roadmap-artefact-20261117",
+            "count": 1,
+            "first": "2026-11-17T19:00:56.096Z",
+            "last": "2026-11-17T19:00:56.096Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/benchmark-corroboration-20261117",
+            "count": 1,
+            "first": "2026-11-17T19:31:21.085Z",
+            "last": "2026-11-17T19:31:21.085Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-canonical-integration-20261117",
+            "count": 1,
+            "first": "2026-11-17T20:16:51.099Z",
+            "last": "2026-11-17T20:16:51.099Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-vision-voice-pipeline-20261117",
+            "count": 1,
+            "first": "2026-11-17T20:47:01.057Z",
+            "last": "2026-11-17T20:47:01.057Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-normative-registry-20261117",
+            "count": 1,
+            "first": "2026-11-17T21:02:09.270Z",
+            "last": "2026-11-17T21:02:09.270Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v271-exec-dashboard-decision-20261117",
+            "count": 1,
+            "first": "2026-11-17T22:33:27.421Z",
+            "last": "2026-11-17T22:33:27.421Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v272-lifecycle-integration-20261117",
+            "count": 1,
+            "first": "2026-11-17T23:04:11.090Z",
+            "last": "2026-11-17T23:04:11.090Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v273-v124-canonical-integration-20261117",
+            "count": 1,
+            "first": "2026-11-17T23:34:36.367Z",
+            "last": "2026-11-17T23:34:36.367Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v276-p2lot1-assistants-20261117",
+            "count": 1,
+            "first": "2026-11-18T00:20:21.074Z",
+            "last": "2026-11-18T00:20:21.074Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v277-p2lot2-operational-assistants-20261118",
+            "count": 1,
+            "first": "2026-11-18T00:35:31.099Z",
+            "last": "2026-11-18T00:35:31.099Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v279-p2lot4-commercial-assistants-20261118",
+            "count": 1,
+            "first": "2026-11-18T01:06:11.090Z",
+            "last": "2026-11-18T01:06:11.090Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v281-p2lot5-governance-quality-20261118",
+            "count": 1,
+            "first": "2026-11-18T01:21:12.591Z",
+            "last": "2026-11-18T01:21:12.591Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v281-p2lot6-intelligence-economic-20261118",
+            "count": 1,
+            "first": "2026-11-18T01:36:13.096Z",
+            "last": "2026-11-18T01:36:13.096Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v287-capability-reuse-path-e2e-20261118",
+            "count": 1,
+            "first": "2026-11-18T03:36:56.162Z",
+            "last": "2026-11-18T03:36:56.162Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v301-c6-certification-ingest-20261118",
+            "count": 1,
+            "first": "2026-11-18T13:27:21.178Z",
+            "last": "2026-11-18T13:27:21.178Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v312-next-security-16.4.6-20261118",
+            "count": 1,
+            "first": "2026-11-18T18:45:02.183Z",
+            "last": "2026-11-18T18:45:02.183Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v318-novel-synthesis-20261118",
+            "count": 1,
+            "first": "2026-11-18T21:31:21.088Z",
+            "last": "2026-11-18T21:31:21.088Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319-v124-crosswalk-20261118",
+            "count": 1,
+            "first": "2026-11-18T22:01:31.585Z",
+            "last": "2026-11-18T22:01:31.585Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319-harder-autonomy-20261118",
+            "count": 1,
+            "first": "2026-11-18T22:16:41.103Z",
+            "last": "2026-11-18T22:16:41.103Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319b-corpus-taxonomy-20261118",
+            "count": 1,
+            "first": "2026-11-18T22:31:48.486Z",
+            "last": "2026-11-18T22:31:48.486Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319-m2-reference-project-20261118",
+            "count": 1,
+            "first": "2026-11-18T23:02:11.093Z",
+            "last": "2026-11-18T23:02:11.093Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319-btp-intake-core-20261118",
+            "count": 1,
+            "first": "2026-11-18T23:17:21.108Z",
+            "last": "2026-11-18T23:17:21.108Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319-btp-quote-revision-20261118",
+            "count": 1,
+            "first": "2026-11-18T23:32:28.654Z",
+            "last": "2026-11-18T23:32:28.654Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319addendum-reconciliation-20261118",
+            "count": 1,
+            "first": "2026-11-18T23:47:51.158Z",
+            "last": "2026-11-18T23:47:51.158Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319-marketing-science-20261118",
+            "count": 1,
+            "first": "2026-11-19T00:03:01.069Z",
+            "last": "2026-11-19T00:03:01.069Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319-brand-profile-20261118",
+            "count": 1,
+            "first": "2026-11-19T00:18:11.114Z",
+            "last": "2026-11-19T00:18:11.114Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319-content-asset-20261118",
+            "count": 1,
+            "first": "2026-11-19T00:33:21.097Z",
+            "last": "2026-11-19T00:33:21.097Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v319-model-router-20261118",
+            "count": 1,
+            "first": "2026-11-19T00:48:22.400Z",
+            "last": "2026-11-19T00:48:22.400Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v320-multimodule-routed-20261118",
+            "count": 1,
+            "first": "2026-11-19T01:03:31.086Z",
+            "last": "2026-11-19T01:03:31.086Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/autonomy-ladder-scorecard-20261118",
+            "count": 1,
+            "first": "2026-11-19T01:18:41.094Z",
+            "last": "2026-11-19T01:18:41.094Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-supplier-commitment-20261119",
+            "count": 1,
+            "first": "2026-11-19T01:33:44.881Z",
+            "last": "2026-11-19T01:33:44.881Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-price-reference-20261119",
+            "count": 1,
+            "first": "2026-11-19T01:48:45.370Z",
+            "last": "2026-11-19T01:48:45.370Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-chantier-schedule-20261119",
+            "count": 1,
+            "first": "2026-11-19T02:03:45.888Z",
+            "last": "2026-11-19T02:03:45.888Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-schedule-plan-20261119",
+            "count": 1,
+            "first": "2026-11-19T02:19:11.059Z",
+            "last": "2026-11-19T02:19:11.059Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/crm-followup-20261119",
+            "count": 1,
+            "first": "2026-11-19T02:34:16.931Z",
+            "last": "2026-11-19T02:34:16.931Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p3-cvss-score-20261119",
+            "count": 1,
+            "first": "2026-11-19T03:04:40.088Z",
+            "last": "2026-11-19T03:04:40.088Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p4-ks-test-20261119",
+            "count": 1,
+            "first": "2026-11-19T11:38:32.804Z",
+            "last": "2026-11-19T11:38:32.804Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p2-passk-estimator-20261119",
+            "count": 1,
+            "first": "2026-11-19T11:53:41.134Z",
+            "last": "2026-11-19T11:53:41.134Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p6-rank-correlation-20261119",
+            "count": 1,
+            "first": "2026-11-19T12:08:56.236Z",
+            "last": "2026-11-19T12:08:56.236Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/evaluator-agreement-scorecard-20261119",
+            "count": 1,
+            "first": "2026-11-19T12:39:11.068Z",
+            "last": "2026-11-19T12:39:11.068Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/data-drift-view-20261119",
+            "count": 1,
+            "first": "2026-11-19T12:54:17.222Z",
+            "last": "2026-11-19T12:54:17.222Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/eval-statistics-index-20261119",
+            "count": 1,
+            "first": "2026-11-19T13:54:31.361Z",
+            "last": "2026-11-19T13:54:31.361Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/interval-scheduling-20261119",
+            "count": 1,
+            "first": "2026-11-19T15:40:31.838Z",
+            "last": "2026-11-19T15:40:31.838Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/fr-payment-terms-20261119",
+            "count": 1,
+            "first": "2026-11-19T16:40:53.322Z",
+            "last": "2026-11-19T16:40:53.322Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/fr-invoice-compliance-20261119",
+            "count": 1,
+            "first": "2026-11-19T16:55:56.123Z",
+            "last": "2026-11-19T16:55:56.123Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/gregorian-calendar-20261119",
+            "count": 1,
+            "first": "2026-11-19T17:11:00.373Z",
+            "last": "2026-11-19T17:11:00.373Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/apportion-20261119",
+            "count": 1,
+            "first": "2026-11-19T17:26:01.077Z",
+            "last": "2026-11-19T17:26:01.077Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-multilingual-estimate-ui-20261119",
+            "count": 1,
+            "first": "2026-11-19T18:26:35.980Z",
+            "last": "2026-11-19T18:26:35.980Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/writeset-contention-20261119",
+            "count": 1,
+            "first": "2026-11-19T18:56:48.971Z",
+            "last": "2026-11-19T18:56:48.971Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/calibrated-psuccess-20261119",
+            "count": 1,
+            "first": "2026-11-19T19:26:51.079Z",
+            "last": "2026-11-19T19:26:51.079Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/wire-calibrated-psuccess-20261119",
+            "count": 1,
+            "first": "2026-11-19T19:57:11.067Z",
+            "last": "2026-11-19T19:57:11.067Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/wire-writeset-orchestrator-20261119",
+            "count": 1,
+            "first": "2026-11-19T20:12:21.089Z",
+            "last": "2026-11-19T20:12:21.089Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/autonomy-maturity-trichotomy-20261119",
+            "count": 1,
+            "first": "2026-11-19T21:13:21.089Z",
+            "last": "2026-11-19T21:13:21.089Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/decision-precedent-fresh-reuse-20261119",
+            "count": 1,
+            "first": "2026-11-19T22:14:02.105Z",
+            "last": "2026-11-19T22:14:02.105Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/cycle-hypothesis-verdict-20261119",
+            "count": 1,
+            "first": "2026-11-19T22:59:51.121Z",
+            "last": "2026-11-19T22:59:51.121Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/btp-revision-prix-20261119",
+            "count": 1,
+            "first": "2026-11-19T23:45:37.910Z",
+            "last": "2026-11-19T23:45:37.910Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/amortissement-20261119",
+            "count": 1,
+            "first": "2026-11-20T00:01:01.126Z",
+            "last": "2026-11-20T00:01:01.126Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/native-engineering-plan-20261120",
+            "count": 1,
+            "first": "2026-11-20T00:31:11.110Z",
+            "last": "2026-11-20T00:31:11.110Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/connect-native-next-plan-20261120",
+            "count": 1,
+            "first": "2026-11-20T01:16:42.926Z",
+            "last": "2026-11-20T01:16:42.926Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/connect-reuse-freshness-20261120",
+            "count": 1,
+            "first": "2026-11-20T01:32:01.083Z",
+            "last": "2026-11-20T01:32:01.083Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/capability-maturity-ladder-20261120",
+            "count": 1,
+            "first": "2026-11-20T01:47:21.097Z",
+            "last": "2026-11-20T01:47:21.097Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/native-execution-provenance-20261120",
+            "count": 1,
+            "first": "2026-11-20T02:48:21.081Z",
+            "last": "2026-11-20T02:48:21.081Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/native-provenance-runner-20261120",
+            "count": 1,
+            "first": "2026-11-20T03:03:31.091Z",
+            "last": "2026-11-20T03:03:31.091Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/git-reuse-freshness-signal-20261120",
+            "count": 1,
+            "first": "2026-11-20T03:18:31.091Z",
+            "last": "2026-11-20T03:18:31.091Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/hypothesis-driven-mission-20261120",
+            "count": 1,
+            "first": "2026-11-20T03:48:36.170Z",
+            "last": "2026-11-20T03:48:36.170Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/durable-native-provenance-20261120",
+            "count": 1,
+            "first": "2026-11-20T13:09:05.223Z",
+            "last": "2026-11-20T13:09:05.223Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/continuity-durable-manifest-20261120",
+            "count": 1,
+            "first": "2026-11-20T13:24:09.368Z",
+            "last": "2026-11-20T13:24:09.368Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/local-model-calibration-evidence-20261120",
+            "count": 1,
+            "first": "2026-11-20T13:54:18.736Z",
+            "last": "2026-11-20T13:54:18.736Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/model-choice-experiment-20261120",
+            "count": 1,
+            "first": "2026-11-20T14:24:21.091Z",
+            "last": "2026-11-20T14:24:21.091Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/native-escalation-20261120",
+            "count": 1,
+            "first": "2026-11-20T15:55:41.100Z",
+            "last": "2026-11-20T15:55:41.100Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/execution-feedback-repair-20261120",
+            "count": 1,
+            "first": "2026-11-20T16:10:51.114Z",
+            "last": "2026-11-20T16:10:51.114Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/wire-execution-feedback-20261120",
+            "count": 1,
+            "first": "2026-11-20T16:25:55.330Z",
+            "last": "2026-11-20T16:25:55.330Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/execution-feedback-ab-evidence-20261120",
+            "count": 1,
+            "first": "2026-11-20T16:56:02.266Z",
+            "last": "2026-11-20T16:56:02.266Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/bounded-exec-deepequal-20261120",
+            "count": 1,
+            "first": "2026-11-20T17:11:05.236Z",
+            "last": "2026-11-20T17:11:05.236Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/autonomy-gate-validation-20261120",
+            "count": 1,
+            "first": "2026-11-20T17:26:08.056Z",
+            "last": "2026-11-20T17:26:08.056Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/metier-transversal-readiness-20261120",
+            "count": 1,
+            "first": "2026-11-20T17:41:08.302Z",
+            "last": "2026-11-20T17:41:08.302Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/intelligent-native-cycle-20261120",
+            "count": 1,
+            "first": "2026-11-20T18:11:09.306Z",
+            "last": "2026-11-20T18:11:09.306Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/belief-staleness-operational-20261120",
+            "count": 1,
+            "first": "2026-11-20T18:41:14.048Z",
+            "last": "2026-11-20T18:41:14.048Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/wire-bounded-exec-guard-20261120",
+            "count": 1,
+            "first": "2026-11-20T18:56:14.508Z",
+            "last": "2026-11-20T18:56:14.508Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/native-outcome-calibration-bridge-20261120",
+            "count": 1,
+            "first": "2026-11-20T19:11:15.675Z",
+            "last": "2026-11-20T19:11:15.675Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/calibration-key-reconciliation-20261120",
+            "count": 1,
+            "first": "2026-11-20T19:26:21.143Z",
+            "last": "2026-11-20T19:26:21.143Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/generalization-validity-20261120",
+            "count": 1,
+            "first": "2026-11-20T20:11:24.644Z",
+            "last": "2026-11-20T20:11:24.644Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/writeset-safe-parallel-waves-20261120",
+            "count": 1,
+            "first": "2026-11-20T20:56:31.136Z",
+            "last": "2026-11-20T20:56:31.136Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/registry-v321-v328-final-20261120",
+            "count": 1,
+            "first": "2026-11-20T21:57:11.100Z",
+            "last": "2026-11-20T21:57:11.100Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/m2-btp-lifecycle-revision-retenue-20261120",
+            "count": 1,
+            "first": "2026-11-20T22:12:21.071Z",
+            "last": "2026-11-20T22:12:21.071Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/m2-btp-procurement-20261120",
+            "count": 1,
+            "first": "2026-11-20T22:27:21.098Z",
+            "last": "2026-11-20T22:27:21.098Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/m2-btp-journey-bin-20261120",
+            "count": 1,
+            "first": "2026-11-20T22:57:51.144Z",
+            "last": "2026-11-20T22:57:51.144Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v360-radar-self-eval-wiring-20261120",
+            "count": 1,
+            "first": "2026-11-20T23:42:56.211Z",
+            "last": "2026-11-20T23:42:56.211Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v360-connect-knowledge-cognitive-drivers-20261121",
+            "count": 1,
+            "first": "2026-11-21T00:13:11.213Z",
+            "last": "2026-11-21T00:13:11.213Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v360-self-healing-chain-connect-20261121",
+            "count": 1,
+            "first": "2026-11-21T00:28:21.130Z",
+            "last": "2026-11-21T00:28:21.130Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v360-radar-live-collection-20261121",
+            "count": 1,
+            "first": "2026-11-21T00:43:25.589Z",
+            "last": "2026-11-21T00:43:25.589Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v360-c2-decompose-to-selection-20261121",
+            "count": 1,
+            "first": "2026-11-21T01:13:51.106Z",
+            "last": "2026-11-21T01:13:51.106Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v360-chains-operational-20261121",
+            "count": 1,
+            "first": "2026-11-21T01:44:16.497Z",
+            "last": "2026-11-21T01:44:16.497Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/v360-radar-arxiv-github-20261121",
+            "count": 1,
+            "first": "2026-11-21T01:59:21.102Z",
+            "last": "2026-11-21T01:59:21.102Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/system-coverage-matrix-20261121",
+            "count": 1,
+            "first": "2026-11-21T03:15:40.746Z",
+            "last": "2026-11-21T03:15:40.746Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/change-impact-graph-js-edge-fix-20261121",
+            "count": 1,
+            "first": "2026-11-21T03:46:01.234Z",
+            "last": "2026-11-21T03:46:01.234Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/self-improvement-cycle-20261121",
+            "count": 1,
+            "first": "2026-11-21T04:16:10.661Z",
+            "last": "2026-11-21T04:16:10.661Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/night-cycle-scheduler-20261121",
+            "count": 1,
+            "first": "2026-11-21T12:34:35.491Z",
+            "last": "2026-11-21T12:34:35.491Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/forecast-memory-20261121",
+            "count": 1,
+            "first": "2026-11-21T13:04:51.082Z",
+            "last": "2026-11-21T13:04:51.082Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/radar-foresight-calibration-20261121",
+            "count": 1,
+            "first": "2026-11-21T13:34:54.789Z",
+            "last": "2026-11-21T13:34:54.789Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/model-intelligence-20261121",
+            "count": 1,
+            "first": "2026-11-21T14:05:01.867Z",
+            "last": "2026-11-21T14:05:01.867Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/hybrid-reasoning-20261121",
+            "count": 1,
+            "first": "2026-11-21T14:35:02.052Z",
+            "last": "2026-11-21T14:35:02.052Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/multimodal-ingest-20261121",
+            "count": 1,
+            "first": "2026-11-21T14:50:04.007Z",
+            "last": "2026-11-21T14:50:04.007Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/dimension-coverage-20261121",
+            "count": 1,
+            "first": "2026-11-21T15:20:21.106Z",
+            "last": "2026-11-21T15:20:21.106Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/mission-performance-profile-20261121",
+            "count": 1,
+            "first": "2026-11-21T15:50:26.099Z",
+            "last": "2026-11-21T15:50:26.099Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/intelligence-eval-verification-axis-20261121",
+            "count": 1,
+            "first": "2026-11-21T19:21:46.092Z",
+            "last": "2026-11-21T19:21:46.092Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/intelligence-eval-knowledge-reuse-20261121",
+            "count": 1,
+            "first": "2026-11-21T19:36:51.120Z",
+            "last": "2026-11-21T19:36:51.120Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/census-consumes-architecture-audit-20261121",
+            "count": 1,
+            "first": "2026-11-21T21:07:11.523Z",
+            "last": "2026-11-21T21:07:11.523Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/fix-campaign-circular-dep-20261121",
+            "count": 1,
+            "first": "2026-11-21T21:37:16.080Z",
+            "last": "2026-11-21T21:37:16.080Z"
+          },
+          {
+            "cause": "MAIN_CHECKOUT_ON_BRANCH excellence/p1-component-judgment-20261121",
+            "count": 1,
+            "first": "2026-11-21T22:22:43.399Z",
+            "last": "2026-11-21T22:22:43.399Z"
+          }
+        ],
+        "incident": {
+          "id": "RUNNER_OUTAGE_MAIN_CHECKOUT_OFF_MAIN",
+          "finding": "1180 of 1182 truth-lock refusals were caused by the MAIN checkout being left on 324 non-main branch(es) — the periodic runner was OUT (it refused to start), not detecting threats",
+          "ticksLost": 1180,
+          "span": {
+            "first": "2026-10-25T16:05:12.775Z",
+            "last": "2026-11-21T22:22:43.399Z"
+          },
+          "likelyCause": "provider sessions working in the main checkout on feature branches (branch names are provider work branches); the actor who switched branches is NOT recorded",
+          "remedy": "provider work only in isolated worktrees (the main checkout stays on main) — already the standing V15.5 rule"
+        }
+      },
+      "byClass": {
+        "DEDUP_REFUSAL": 1206,
+        "TRUTH_LOCK_REFUSAL": 1182,
+        "NO_ELIGIBLE_MISSION": 13,
+        "AUTHORIZATION_REFUSAL": 2,
+        "ADMISSION_DISPATCH": 1
+      },
+      "trigger": "UNATTENDED_CADENCE",
+      "cadence": {
+        "gaps": 2403,
+        "regular15min": 2362,
+        "share": 0.9829
+      },
+      "schedulerAuditChain": {
+        "entries": 42,
+        "verify": {
+          "ok": true,
+          "reason": "intact",
+          "keyed": false,
+          "tipAnchored": false
+        }
+      },
+      "source": "runtime/generated/mission-attempt-log.jsonl (one row per tick decision by odg-schedule-tick) + runtime/generated/scheduler-audit-chain.json (audit-log.verifyChain)",
+      "note": "every row is a decision TAKEN BY ODG CODE, but ROWS ARE NOT DISTINCT DECISIONS: the periodic runner repeats the same no-op (e.g. the same ALREADY_PROVEN dedup) every tick, and truth-lock refusals mostly record a runner OUTAGE (main checkout off main), not threats. Read meaningfulDecisions + distinctDecisionKinds, not value. The per-row trigger is NOT recorded; the 15-min cadence share is the evidence of the periodic runner. Wave selection / write-set refusals / repair-stop reasons only count when they appear in this persistent log — worktree runs a provider launched are reported separately (providerInvokedDecisions)."
+    },
+    "1b_providerInvokedDecisions": {
+      "value": 21,
+      "status": "PARTIAL (unmeasured items listed)",
+      "items": [
+        {
+          "source": "docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json",
+          "kind": "supervisor recovery decisions (REFUSE/RELAUNCH)",
+          "count": 6
+        },
+        {
+          "source": "docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json",
+          "kind": "supervisor write-set contention verdicts",
+          "count": 15
+        }
+      ],
+      "unmeasuredItems": [
+        {
+          "source": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+          "kind": "wave selection + write-set enforcement in worktree runs (narrative evidence; per-decision count not machine-recorded)",
+          "count": "NOT_MEASURED"
+        }
+      ],
+      "trigger": "PROVIDER_INVOKED_RUN",
+      "note": "decisions ODG code took inside runs a PROVIDER launched (wave selection, write-set enforcement, supervisor recovery refusals) — ODG decisions, NOT unattended autonomy; kept out of counter 1. Items without a machine-recorded count are listed, never summed as 0."
+    },
+    "2_nativeExecutions": {
+      "dispatchedByOdgRunner": 1,
+      "dispatchedPass": 1,
+      "dispatchedMissions": [
+        "SELF_AUDIT_COVERAGE_16"
+      ],
+      "ledgerEntriesInWindow": 465,
+      "ledgerActorOdg": 1,
+      "ledgerActorOdgMissions": [
+        "ODG_NATIVE_PROVENANCE_SUM_REPAIR_20261120"
+      ],
+      "ledgerUnattributed": 464,
+      "maturityReport": {
+        "distinctMissions": 6,
+        "attribution": {
+          "distinct": 6,
+          "withExecutionActor": 1,
+          "withoutExecutionActor": 5,
+          "actorCoverageRate": 0.1667
+        },
+        "nativeAutonomyMeasurable": true
+      },
+      "status": "MEASURED",
+      "source": "mission-attempt-log PASS/FAIL rows (missions the ODG runner admitted+dispatched) + mission-ledger entries whose actor-provenance resolved actor=ODG (odg-autonomy-maturity-report)",
+      "note": "an UNATTRIBUTED ledger entry is NOT counted native (validated ≠ natively executed). The ledger actor=ODG entries come from runs of ODG's deterministic native executor (EXEC ODG_NATIVE_EXECUTION); the run itself may have been provider-invoked."
+    },
+    "3_providerDelegated": {
+      "status": "MEASURED",
+      "last30d": {
+        "commits": 1315,
+        "providerAttributedCommits": 1314,
+        "unattributedCommits": 1,
+        "conflictingAttribution": [],
+        "odgIdentityButProviderAttributed": 952,
+        "mergedPrs": 522,
+        "providerDelegatedPrs": 522,
+        "prRange": [
+          1,
+          897
+        ],
+        "nativeClaimCommits": 0
+      },
+      "v15Arc": {
+        "fromPr": 870,
+        "commits": 56,
+        "providerAttributedCommits": 56,
+        "unattributedCommits": 0,
+        "conflictingAttribution": [],
+        "odgIdentityButProviderAttributed": 56,
+        "mergedPrs": 28,
+        "providerDelegatedPrs": 28,
+        "prRange": [
+          870,
+          897
+        ],
+        "nativeClaimCommits": 0
+      },
+      "source": "git log of the measured ref (non-merge commits: any case-insensitive Co-authored-by naming an AI provider (Claude/Anthropic/OpenAI/Copilot/Gemini/…) or 'Generated with <AI tool>'; merged PRs from 'Merge pull request #N' merge commits, delegated iff any commit of merge^1..merge^2 carries the attribution)",
+      "note": "provider work is NEVER native. 'unattributed' commits are NOT native either — they lack ANY actor provenance (owner hand-commits or older sessions)."
+    },
+    "4_correctionsProposedByOdg": {
+      "value": 247,
+      "status": "MEASURED",
+      "parts": {
+        "frontierProposals": 1,
+        "selfDiagnosticRepairHypotheses": 0,
+        "nativeTransformProposals": 217,
+        "supervisorFreeingProposals": 29
+      },
+      "excluded": [
+        {
+          "id": "INC-1a5e7942dde09084",
+          "reason": "non-ISO createdAt 'T' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-da953c85f9c130c6",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-99d1c870bc1a3607",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-09c73c50f8c57373",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-dde081fb36008be6",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-1bb226f51a45a069",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-a5e360bdabc34a41",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-34126f4cf6b428e5",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-59d011ac35c27d4d",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-1e2cdfc4597a895d",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-e4a57d3dc2902c52",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-56b2cc39fd6c5724",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-068aeaf57bf522e2",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-d2b333134dc444a8",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-f3856dac190ccae6",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-f0b22ba9773d631e",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-9faadbb4d6b6f048",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-82025f6c5138fe7e",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-4a5463292985220c",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-93961b55cdebae7b",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-bee6ab770e35512f",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        },
+        {
+          "id": "INC-62f67a6a892a9914",
+          "reason": "non-ISO createdAt '' — looks like a leaked test fixture; EXCLUDED"
+        }
+      ],
+      "window": "ALL_TIME (the proposal artifacts are cumulative registries, not time-series)",
+      "source": "runtime/generated/autonomy/frontier-proposal-registry.json, runtime/generated/autonomy/self-diagnostic-incidents.json, docs/odg/native-execution-provenance.json (proposedTransforms), docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json (freeing — PROPOSAL ONLY)",
+      "note": "PROPOSED ≠ APPLIED. nativeTransformProposals INCLUDES benign/redundant candidates (see that artifact's own note) — it is NOT a count of real defects. Proposals from runs a provider launched are still ODG-generated proposals."
+    },
+    "5_correctionsBuiltByOdg": {
+      "value": 0,
+      "identityBoundVerification": "UNAVAILABLE — no commit carries an identity-bound (e.g. agent-identity Ed25519-signed) native-actor provenance, and this measure has no such verifier",
+      "unverifiedNativeClaims": {
+        "last30d": 0,
+        "v15Arc": 0,
+        "status": "NONE"
+      },
+      "conflictingAttributionLast30d": 0,
+      "status": "MEASURED_ZERO",
+      "source": "git log — a text trailer 'ODG-Native-Actor: ODG' on a commit with NO provider attribution is only an UNVERIFIED claim (text is not identity-bound); a commit with both is PROVIDER (CONFLICTING_ATTRIBUTION)",
+      "note": "0 native-built corrections, and 0 even claimed: no commit in the windows claims native authorship. ODG has PROPOSED corrections (counter 4); real-repo write by ODG is OWNER_GATED."
+    },
+    "6_independentValidations": {
+      "recordedInspectionRounds": 3,
+      "recordedInspectionRoundsStatus": "MEASURED",
+      "records": [
+        {
+          "file": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+          "rounds": 1,
+          "verdicts": [
+            "FIXES_AFTER_REVIEW"
+          ],
+          "inspector": "UNSTATED (fixes recorded after a review)"
+        },
+        {
+          "file": "docs/odg/evidence/V15_RESIDENT_CONFINEMENT_INSPECTION.json",
+          "rounds": 2,
+          "verdicts": [
+            "REJECT",
+            "ACCEPT"
+          ],
+          "inspector": "the provider's OWN inspection subagent (same session, separate context) — NOT an independent party; does NOT count as the owner's independent inspection"
+        }
+      ],
+      "commitsCitingIndependentInspection": 72,
+      "byInspector": {
+        "providerSubagent": 1,
+        "unstated": 1,
+        "owner": "NOT_MEASURED",
+        "odgNativeEvaluator": "NOT_MEASURED"
+      },
+      "status": "MEASURED (only what is verifiable on disk / in git)",
+      "source": "docs/odg/evidence/*.json (rounds[].verdict, inspection_fixes_after_review) + git commit messages in the 30-day window",
+      "note": "the inspections recorded are by the PROVIDER's own inspection subagent (separate context, same session) — NOT an independent party and NOT ODG-native. Verdicts held only in PR conversations/session transcripts are NOT_MEASURED here. ODG's native evaluator-independence has no persistent verdict log ⇒ NOT_MEASURED."
+    },
+    "7_autonomousRecoveries": {
+      "unattendedLive": 0,
+      "status": "MEASURED",
+      "supervisor": {
+        "interruptedObserved": 0,
+        "relaunchDecisions": 0,
+        "refuseDecisions": 6,
+        "trigger": "PROVIDER_INVOKED_RUN"
+      },
+      "providerTriggeredExperiments": [
+        {
+          "file": "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+          "recoveries": 4,
+          "trigger": "CONTROLLED_EXPERIMENT"
+        },
+        {
+          "file": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json#step4_interruption",
+          "recoveries": 2,
+          "trigger": "CONTROLLED_EXPERIMENT"
+        }
+      ],
+      "source": "mission-attempt-log reasons (INTERRUPTED_PRIOR_RUN/RESUMED/reclaim/takeover) in window + V155_AGENT_SUPERVISOR_SNAPSHOT recovery decisions + controlled interruption experiments (V150_SCENARIO_M_RESUME, V155_REAL_WAVE_EVIDENCE step4_interruption)",
+      "note": "an experiment where the PROVIDER killed a run and re-ran the next tick proves the recovery MECHANISM, not unattended autonomous recovery. Only persistent-log events count as unattendedLive."
+    }
+  },
+  "capabilityLadder": {
+    "total": 20,
+    "byLevel": {
+      "ABSENT": 0,
+      "BUILT_NOT_WIRED": 1,
+      "WIRED_TESTED": 11,
+      "EXERCISED_LIVE": 8
+    },
+    "exercisedLiveUnattended": 2,
+    "items": [
+      {
+        "id": "detect-needs",
+        "name": "detect needs",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-radar-to-mission-loop.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 3,
+            "testFile": "runtime/core/odg-radar-to-mission-loop.test.ts"
+          },
+          {
+            "component": "runtime/core/self-diagnostic.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 3,
+            "testFile": "runtime/core/self-diagnostic.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/V136_SELF_ORIGINATION.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "prioritise",
+        "name": "prioritise",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/mission-scheduler.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/mission-scheduler.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-mission-scheduler.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 2,
+            "testFile": "runtime/core/odg-mission-scheduler.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "runtime/generated/mission-attempt-log.jsonl",
+          "trigger": "UNATTENDED_CADENCE",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "analyse-deps",
+        "name": "analyse dependencies",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/dep-planner.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 8,
+            "testFile": "runtime/core/dep-planner.test.ts"
+          },
+          {
+            "component": "runtime/core/change-impact-graph.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 10,
+            "testFile": "runtime/core/change-impact-graph.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "no persisted live run artifact found"
+      },
+      {
+        "id": "decompose",
+        "name": "decompose",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/mission-decomposer.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/mission-decomposer.test.ts"
+          },
+          {
+            "component": "runtime/core/decomposition-planner.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 8,
+            "testFile": "runtime/core/decomposition-planner.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-mission-decompose-chain.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": false,
+            "consumers": 0,
+            "testFile": "runtime/core/odg-mission-decompose-chain.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "no persisted live run artifact found"
+      },
+      {
+        "id": "skills",
+        "name": "skills / capability registry",
+        "level": "BUILT_NOT_WIRED",
+        "ladderLevel": "BUILT",
+        "firstGap": "TESTED",
+        "components": [
+          {
+            "component": "runtime/core/capability-registry.ts",
+            "built": true,
+            "tested": false,
+            "testFileExists": true,
+            "wired": false,
+            "consumers": 0,
+            "testFile": "runtime/core/capability-registry.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "runtime/generated/autonomy/capability-outcomes.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "select-models",
+        "name": "select resources / models",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/model-router.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 2,
+            "testFile": "runtime/core/model-router.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-model-router.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": false,
+            "consumers": 0,
+            "testFile": "runtime/core/odg-model-router.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "model routing is being reworked by another V15.5 step; no live routing log measured here"
+      },
+      {
+        "id": "allocate-agents",
+        "name": "allocate agents",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-mission-orchestrator.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 5,
+            "testFile": "runtime/core/odg-mission-orchestrator.test.ts"
+          },
+          {
+            "component": "runtime/core/writeset-scheduler.ts",
+            "built": true,
+            "tested": false,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/writeset-scheduler.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "define-write-sets",
+        "name": "define write-sets",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-writeset-contention.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/odg-writeset-contention.test.ts"
+          },
+          {
+            "component": "runtime/bin/odg-schedule-tick.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 0,
+            "testFile": "runtime/bin/odg-schedule-tick-wave.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "execute",
+        "name": "execute",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-native-engineering.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 5,
+            "testFile": "runtime/core/odg-native-engineering.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-native-engineering-loop.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 2,
+            "testFile": "runtime/core/odg-native-engineering-loop.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-closed-executor.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 6,
+            "testFile": "runtime/core/odg-closed-executor.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "attempt-log:PASS",
+          "trigger": "UNATTENDED_CADENCE",
+          "present": true,
+          "countedLive": true
+        },
+        "note": "the timer-cadence log holds a real PASS dispatch; the ledger's single actor=ODG entry came from a provider-invoked native run"
+      },
+      {
+        "id": "supervise",
+        "name": "supervise",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-agent-supervisor.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/odg-agent-supervisor.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V155_AGENT_SUPERVISOR_SNAPSHOT.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "detect-errors",
+        "name": "detect errors",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/rce-signal-collector.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/rce-signal-collector.test.ts"
+          },
+          {
+            "component": "runtime/core/self-diagnostic.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 3,
+            "testFile": "runtime/core/self-diagnostic.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+          "trigger": "CONTROLLED_EXPERIMENT",
+          "present": true,
+          "countedLive": false
+        },
+        "note": ""
+      },
+      {
+        "id": "diagnose",
+        "name": "diagnose",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/rce-root-cause-intelligence.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/rce-root-cause-intelligence.test.ts"
+          },
+          {
+            "component": "runtime/core/repair-planner.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 3,
+            "testFile": "runtime/core/repair-planner.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+          "trigger": "CONTROLLED_EXPERIMENT",
+          "present": true,
+          "countedLive": false
+        },
+        "note": ""
+      },
+      {
+        "id": "propose-apply-fixes",
+        "name": "propose + apply authorized fixes",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/repair-workflow.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 8,
+            "testFile": "runtime/core/repair-workflow.test.ts"
+          },
+          {
+            "component": "runtime/core/generative-repair-adapter.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/generative-repair-adapter.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+          "trigger": "CONTROLLED_EXPERIMENT",
+          "present": true,
+          "countedLive": false
+        },
+        "note": "apply to the REAL repo is OWNER_GATED; only experiment fixtures were repaired"
+      },
+      {
+        "id": "test",
+        "name": "test",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/code-execution.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 11,
+            "testFile": "runtime/core/code-execution.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-closed-executor.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 6,
+            "testFile": "runtime/core/odg-closed-executor.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/native-execution-provenance.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "independent-inspection",
+        "name": "independent inspection",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/evaluator-independence.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 9,
+            "testFile": "runtime/core/evaluator-independence.test.ts"
+          },
+          {
+            "component": "runtime/core/independent-label-policy.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/independent-label-policy.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "recorded inspections are the provider's own subagent, not ODG's evaluator ⇒ not counted as ODG live"
+      },
+      {
+        "id": "integrate",
+        "name": "integrate",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/git-branch-integration.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/git-branch-integration.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "integration to main is done by the owner via PR merge"
+      },
+      {
+        "id": "recover",
+        "name": "recover",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/campaign-loop.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 9,
+            "testFile": "runtime/core/campaign-loop.test.ts"
+          },
+          {
+            "component": "runtime/core/idempotency-guard.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 6,
+            "testFile": "runtime/core/idempotency-guard.test.ts"
+          },
+          {
+            "component": "runtime/core/fleet-bridge.ts",
+            "built": true,
+            "tested": false,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 4,
+            "testFile": "runtime/core/fleet-bridge.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+          "trigger": "CONTROLLED_EXPERIMENT",
+          "present": true,
+          "countedLive": false
+        },
+        "note": ""
+      },
+      {
+        "id": "self-measure",
+        "name": "self-measure",
+        "level": "EXERCISED_LIVE",
+        "ladderLevel": "EVIDENCED",
+        "firstGap": "INTEGRATED",
+        "components": [
+          {
+            "component": "runtime/core/odg-native-autonomy-maturity.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/odg-native-autonomy-maturity.test.ts"
+          },
+          {
+            "component": "runtime/core/autonomy-measure.ts",
+            "built": true,
+            "tested": false,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 6,
+            "testFile": "runtime/core/autonomy-measure.test.ts"
+          }
+        ],
+        "liveEvidence": {
+          "source": "runtime/generated/autonomy-rate.json",
+          "trigger": "PROVIDER_INVOKED_RUN",
+          "present": true,
+          "countedLive": true
+        },
+        "note": ""
+      },
+      {
+        "id": "improve-methods",
+        "name": "improve methods",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/odg-self-improvement-cycle.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 2,
+            "testFile": "runtime/core/odg-self-improvement-cycle.test.ts"
+          },
+          {
+            "component": "runtime/core/odg-behavioral-improvement.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/odg-behavioral-improvement.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "real-repo self-improvement cycle = OWNER_DECISION_ONLY"
+      },
+      {
+        "id": "continue-next-mission",
+        "name": "continue to next mission",
+        "level": "WIRED_TESTED",
+        "ladderLevel": "CONNECTED",
+        "firstGap": "FED",
+        "components": [
+          {
+            "component": "runtime/core/odg-native-mission-continuation.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": true,
+            "consumers": 1,
+            "testFile": "runtime/core/odg-native-mission-continuation.test.ts"
+          },
+          {
+            "component": "runtime/core/continuous-planner.ts",
+            "built": true,
+            "tested": true,
+            "testFileExists": true,
+            "wired": false,
+            "consumers": 0,
+            "testFile": "runtime/core/continuous-planner.test.ts"
+          }
+        ],
+        "liveEvidence": "NOT_MEASURED",
+        "note": "resident driver = OWNER_GATED"
+      }
+    ],
+    "note": "per-capability level, NO blended score. built = file exists; tested = its .test.ts exists AND is in package.json test:report (the CI gate — ci.yml runs only test:report; testFileExists is reported separately); wired = required by ≥1 non-test runtime/src file other than itself; EXERCISED_LIVE = a real-state run artifact exists (CONTROLLED_EXPERIMENT never counts). A provider-invoked live run is EXERCISED_LIVE but NOT unattended (see exercisedLiveUnattended)."
+  },
+  "nextProgressionSequence": [
+    {
+      "capability": "independent-inspection",
+      "target": "EXERCISED_LIVE",
+      "step": "persist evaluator-independence verdicts from the mission pipeline's validation stage to an append-only runtime/generated log (one row per verdict), so ODG's own independent check becomes countable instead of the provider subagent's",
+      "gating": "INTERNAL",
+      "current": "WIRED_TESTED"
+    },
+    {
+      "capability": "recover",
+      "target": "EXERCISED_LIVE",
+      "step": "make odg-schedule-tick write an explicit attempt-log reason when it reclaims a stale ledger claim / re-admits a mission whose prior run was interrupted (INTERRUPTED_PRIOR_RUN), so a real unattended recovery is recorded when it happens",
+      "gating": "INTERNAL (code); occurrence on the live timer is unforced",
+      "current": "WIRED_TESTED"
+    },
+    {
+      "capability": "decompose",
+      "target": "EXERCISED_LIVE",
+      "step": "run odg-mission-decompose-chain read-only over one real ROADMAP mission and commit the decomposition evidence artifact",
+      "gating": "INTERNAL",
+      "current": "WIRED_TESTED"
+    },
+    {
+      "capability": "analyse-deps",
+      "target": "EXERCISED_LIVE",
+      "step": "persist the dep-planner layer plan the wave tick already computes into wave-summary/attempt-log so dependency analysis leaves a live trace",
+      "gating": "INTERNAL",
+      "current": "WIRED_TESTED"
+    },
+    {
+      "capability": "propose-apply-fixes",
+      "target": "EXERCISED_LIVE",
+      "step": "apply ONE ODG-proposed deterministic repair to the real repo through repair-workflow under an owner-authorized write-set, where the change is authored+applied by ODG's executor and carries IDENTITY-BOUND native provenance (an agent-identity Ed25519 signature over the diff/commit, verified by this measure) — a text trailer on a provider commit is NOT native and would not move counter 5",
+      "gating": "OWNER_GATED (real-repo write) + INTERNAL (identity-bound provenance verifier)",
+      "current": "WIRED_TESTED"
+    }
+  ],
+  "honesty": [
+    "separate counters, NO blended autonomy %; each has a window + source; NOT_MEASURED where no source exists",
+    "provider work is NEVER native; the 'ODG Runtime' git identity is the session config, not the actor",
+    "ODG-built corrections = 0 unless a native-actor provenance binding exists (none does)",
+    "CONTROLLED_EXPERIMENT evidence never promotes a capability to EXERCISED_LIVE; PROVIDER_INVOKED live runs are flagged, not counted as unattended",
+    "this artifact was produced by a provider (Claude Code) running ODG's read-only measure; it is evidence, not acceptance"
+  ],
+  "reproduce": "npx tsx runtime/bin/odg-native-autonomy-maturity-run.ts --state-root <main checkout> --now 2026-11-23T04:00:00.000Z --ref 315c0c19661bceda07e4eb4950a2610a03356aa7",
+  "stateRoot": "<main checkout> (read-only)"
+}
