@@ -1,0 +1,797 @@
+{
+  "lot": "V15.9 §10 — V158 Radar collection → canonical knowledge assessment (KI-V2 four dimensions)",
+  "input": "docs/odg/evidence/V158_RADAR_COLLECTION.json (no new network call)",
+  "collectionAuthenticated": "PINNED_DIGEST",
+  "collectionSha256": "73a085073962c7c623ceb018f9cbb615528754ff6ccdf14bd41969717345b609",
+  "consultedDate": "2026-11-23",
+  "summary": {
+    "claims": 15,
+    "keysAuthored": 14,
+    "CORROBORATED": 0,
+    "SUPPORTED": 0,
+    "CANDIDATE": 14,
+    "UNKNOWN": 1,
+    "citationsVerified": 15,
+    "keptInMemory": 15,
+    "admittedAsFact": 0,
+    "presentedAsFact": 0,
+    "unansweredQuestions": 5
+  },
+  "crossFamilyOverlap": {
+    "sharedPhrases": [],
+    "count": 0,
+    "note": "no substantive phrase shared across publisher families"
+  },
+  "unanswered": [
+    {
+      "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+      "patternId": "NIST_INDIRECT_PI",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://registry.npmjs.org/next/latest",
+      "patternId": "NPM_NAME_VERSION",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://registry.npmjs.org/next/latest",
+      "patternId": "NPM_NAME_THEN_VERSION",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://registry.npmjs.org/react/latest",
+      "patternId": "NPM_NAME_VERSION",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    },
+    {
+      "url": "https://registry.npmjs.org/react/latest",
+      "patternId": "NPM_NAME_THEN_VERSION",
+      "status": "NOT_MEASURED (no pre-registered pattern matched the fetched page)"
+    }
+  ],
+  "timeSensitive": [
+    {
+      "url": "https://registry.npmjs.org/next/latest",
+      "consultedDate": "2026-11-23",
+      "quotes": 0,
+      "value": "NOT_MEASURED",
+      "staleAfterDays": 7
+    },
+    {
+      "url": "https://registry.npmjs.org/react/latest",
+      "consultedDate": "2026-11-23",
+      "quotes": 0,
+      "value": "NOT_MEASURED",
+      "staleAfterDays": 7
+    }
+  ],
+  "results": [
+    {
+      "query": "www.postgresql.org/docs/current/explicit-locking.html :: PG_ADVISORY_DEF",
+      "question": "What does PostgreSQL document advisory locks to be?",
+      "claim": "The page states: PostgreSQL provides a means for creating locks that have application-defined meanings.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "PostgreSQL",
+        "relation": "states",
+        "value": "creating locks that have application-defined meanings",
+        "scope": "PostgreSQL current docs §13.3",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "the label 'advisory locks' is in the NEXT sentence of the page, not in this recorded quote"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "www.postgresql.org/docs/current/explicit-locking.html :: PG_ADVISORY_LEVELS",
+      "question": "At which levels can a PostgreSQL advisory lock be acquired?",
+      "claim": "The page states: There are two ways to acquire an advisory lock in PostgreSQL: at session level or at transaction level.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "advisory lock",
+        "relation": "states",
+        "value": "at session level or at transaction level",
+        "scope": "PostgreSQL current docs §13.3",
+        "time": null,
+        "version": null,
+        "qualifiers": []
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "www.postgresql.org/docs/current/explicit-locking.html :: PG_LOCK_MODES",
+      "question": "What do PostgreSQL lock modes control?",
+      "claim": "The page states: PostgreSQL provides various lock modes to control concurrent access to data in tables.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "PostgreSQL lock modes",
+        "relation": "states",
+        "value": "lock modes to control concurrent access to data in tables",
+        "scope": "PostgreSQL current docs §13.3",
+        "time": null,
+        "version": null,
+        "qualifiers": []
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "www.postgresql.org/docs/current/explicit-locking.html :: PG_DEADLOCK",
+      "question": "How does PostgreSQL handle deadlocks?",
+      "claim": "The page states: PostgreSQL automatically detects deadlock situations and resolves them by aborting one of the transactions involved, allowing the other(s) to complete. (Exactly which transaction will be aborted is difficult to predict and should not be relied upon.)",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "PostgreSQL",
+        "relation": "states",
+        "value": "automatically detects deadlock situations and resolves them by aborting one of the transactions involved",
+        "scope": "PostgreSQL current docs §13.3",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "same quote: which transaction is aborted is difficult to predict and should not be relied upon"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "code.claude.com/docs/en/sandboxing.md :: CC_NET_PROXY",
+      "question": "How does Claude Code's sandbox restrict network egress?",
+      "claim": "The page states: socat: the relay used to route network traffic through the sandbox proxy",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "socat",
+        "relation": "states",
+        "value": "route network traffic through the sandbox proxy",
+        "scope": "Claude Code sandboxing doc — Linux dependency line",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "dependency-list line: states the relay's role, not the full egress policy"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://code.claude.com/docs/en/sandboxing.md",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "code.claude.com/docs/en/sandboxing.md :: CC_NET_DOMAINS",
+      "question": "Which network destinations does Claude Code's sandbox allow?",
+      "claim": "The page states: You set which files and network domains those commands can reach, and the limits apply to Bash, PowerShell, and Monitor commands and the processes they start.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "commands",
+        "relation": "states",
+        "value": "which files and network domains those commands can reach",
+        "scope": "Claude Code sandboxed Bash tool",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "applies to Bash, PowerShell and Monitor commands and their child processes (same quote)"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://code.claude.com/docs/en/sandboxing.md",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "code.claude.com/docs/en/sandboxing.md :: CC_OS_PRIMITIVES",
+      "question": "Which OS primitives enforce Claude Code's sandbox?",
+      "claim": "The page states: macOS: sandboxing uses the built-in Seatbelt framework, so you can go straight to the steps",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "macOS sandboxing",
+        "relation": "states",
+        "value": "uses the built-in Seatbelt framework",
+        "scope": "Claude Code sandbox on macOS",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "Linux primitive not in the recorded quotes"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://code.claude.com/docs/en/sandboxing.md",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "code.claude.com/docs/en/sandboxing.md :: CC_FS_WRITE",
+      "question": "How does Claude Code's sandbox restrict filesystem writes?",
+      "claim": "The page states: Protected paths stay write-denied | filesystem.allowWrite, filesystem.denyWrite |",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "Protected paths",
+        "relation": "states",
+        "value": "stay write-denied",
+        "scope": "Claude Code sandbox settings table",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "table-row fragment: the row's other columns are not recorded"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://code.claude.com/docs/en/sandboxing.md",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "csrc.nist.gov/pubs/ai/100/2/e2025/final :: NIST_TAXONOMY",
+      "question": "What does NIST AI 100-2 provide?",
+      "claim": "The page states: AI 100-2 E2025, Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations | CSRC",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "AI 100-2 E2025",
+        "relation": "is described as",
+        "value": "a taxonomy and terminology of attacks and mitigations",
+        "scope": "NIST AI 100-2 E2025 publication page (title)",
+        "time": null,
+        "version": "E2025",
+        "qualifiers": [
+          "quote is the page TITLE; indirect prompt injection definition NOT on the landing page"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "csrc.nist.gov/pubs/ai/100/2/e2025/final :: NIST_TERMINOLOGY",
+      "question": "Does NIST AI 100-2 define AML terminology?",
+      "claim": "The page states: Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "Adversarial Machine Learning",
+        "relation": "is described as",
+        "value": "terminology of attacks and mitigations",
+        "scope": "NIST AI 100-2 E2025 publication page (heading)",
+        "time": null,
+        "version": "E2025",
+        "qualifiers": [
+          "heading text; duplicates the title"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "csrc.nist.gov/pubs/ai/100/2/e2025/final :: NIST_ATTACK_CLASSES",
+      "question": "Which attack classes does NIST AI 100-2 cover?",
+      "claim": "The page states: artificial intelligence; machine learning; attack taxonomy; abuse; data poisoning; evasion; attack mitigation; large language model; chatbot; privacy breach",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "attack taxonomy",
+        "relation": "states",
+        "value": "data poisoning; evasion",
+        "scope": "NIST AI 100-2 E2025 keyword list",
+        "time": null,
+        "version": "E2025",
+        "qualifiers": [
+          "keyword list, not a definition"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "www.sqlite.org/docs.html :: SQLITE_WAL",
+      "question": "What does SQLite document about write-ahead logging?",
+      "claim": "The page states: Write-Ahead Log (WAL) Mode &rarr; Transaction control using a write-ahead log offers more concurrency and is often faster than the default rollback transactions.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "Write-Ahead Log (WAL) Mode",
+        "relation": "states",
+        "value": "offers more concurrency and is often faster than the default rollback transactions",
+        "scope": "SQLite documentation index entry",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "index summary line, not the WAL document itself"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://www.sqlite.org/docs.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "www.sqlite.org/docs.html :: SQLITE_ATOMIC",
+      "question": "What does SQLite document about atomic commit?",
+      "claim": "The page states: How SQLite Implements Atomic Commit &rarr; A description of the logic within SQLite that implements transactions with atomic commit, even in the face of power failures.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "SQLite",
+        "relation": "states",
+        "value": "implements transactions with atomic commit, even in the face of power failures",
+        "scope": "SQLite documentation index entry",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "index summary line"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://www.sqlite.org/docs.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "www.sqlite.org/docs.html :: SQLITE_LOCKING",
+      "question": "What does SQLite document about file locking and concurrency?",
+      "claim": "The page states: Locking And Concurrency In SQLite Version 3 &rarr; A description of how the new locking code in version 3 increases concurrency and decreases the problem of writer starvation.",
+      "keyAuthored": true,
+      "structured": {
+        "subject": "locking code in version 3",
+        "relation": "states",
+        "value": "increases concurrency and decreases the problem of writer starvation",
+        "scope": "SQLite documentation index entry (SQLite version 3)",
+        "time": null,
+        "version": null,
+        "qualifiers": [
+          "index summary line"
+        ]
+      },
+      "dimensions": {
+        "epistemic": "CANDIDATE",
+        "maturity": "USABLE",
+        "authorization": "DESIGN_PROPOSAL",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://www.sqlite.org/docs.html",
+          "citationVerified": true,
+          "keyGrounded": true,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "DESIGN_PROPOSAL",
+        "usableForIntegrationRequest": "DESIGN_PROPOSAL"
+      },
+      "reasons": [
+        "verified citation, but nature 'OFFICIAL_DOCUMENTATION' needs evidence appropriate to its nature",
+        "1 source(s) with UNKNOWN publisher identity — not counted for independence"
+      ]
+    },
+    {
+      "query": "www.sqlite.org/docs.html :: SQLITE_ISOLATION",
+      "question": "What does SQLite document about isolation?",
+      "claim": "The page states: Isolation In SQLite &rarr; When we say that SQLite transactions are \"serializable\" what exactly does that mean?",
+      "keyAuthored": false,
+      "structured": null,
+      "dimensions": {
+        "epistemic": "UNKNOWN",
+        "maturity": "USABLE",
+        "authorization": "READ_ONLY_ANALYSIS",
+        "risk": "LOW"
+      },
+      "isFact": false,
+      "independentFamilies": [],
+      "sources": [
+        {
+          "url": "https://www.sqlite.org/docs.html",
+          "citationVerified": true,
+          "keyGrounded": false,
+          "publisherKnown": false,
+          "organization": null
+        }
+      ],
+      "consultedDate": "2026-11-23",
+      "freshness": {
+        "timeSensitive": false
+      },
+      "memory": {
+        "status": "UNVERIFIED",
+        "retention": "KEPT",
+        "admittedAsFactByTrustGate": false,
+        "usableForDesign": "READ_ONLY_ANALYSIS",
+        "usableForIntegrationRequest": "READ_ONLY_ANALYSIS"
+      },
+      "reasons": [
+        "no source citation verified against the recorded page text",
+        "1 verified citation(s) without a GROUNDED own structured key — not counted"
+      ]
+    }
+  ],
+  "limits": [
+    "the 5 V158 hosts are NOT in odg-knowledge-intelligence PUBLISHERS ⇒ publisher identity UNKNOWN ⇒ no claim can reach SUPPORTED (official-primary) — extending that explicit map is a separate reviewed change",
+    "every claim is SINGLE-SOURCE (one page) ⇒ never CORROBORATED; claims bind to WHAT THE PAGE STATES, not to a general truth",
+    "structured keys authored by the provider from the recorded quotes, not model-inferred; quotes from a deterministic pattern extractor, verbatim w.r.t. the documented normalisation",
+    "knowledge usefulness for ODG is NOT_MEASURED until a mission applies it"
+  ]
+}

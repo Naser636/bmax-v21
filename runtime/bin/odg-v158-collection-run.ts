@@ -132,7 +132,15 @@ function extractQuotes(target: any, body: any): any[] {
 }
 
 /** buildCollection(out, extracted, nowMs): PURE. Same schema as the step-2 collection (+ sha256/bytes/contentType/normalisation). */
-function buildCollection(out: any, extracted: Map<string, any[]>, nowMs: number, sum: any): any {
+/* privacy (fail-closed): runResearch.extractTitle falls back to the first 160 body chars when a page has no <title>/# heading/
+ * JSON name — such a fallback is body text, so the collection records title:null instead. */
+function hasStructuredTitle(body: string, ct: string): boolean {
+  const b = String(body || "");
+  if (/json/i.test(ct)) { try { const j = JSON.parse(b); const f = Array.isArray(j) ? j[0] : j; return !!(f && (f.name || f.tag_name || f.full_name)); } catch { return false; } }
+  return /<title[^>]*>([^<]{3,200})<\/title>/i.test(b) || /^#\s+(.{3,200})$/m.test(b);
+}
+
+function buildCollection(out: any, extracted: Map<string, any[]>, nowMs: number, sum: any, titled?: Map<string, boolean>): any {
   const day = new Date(nowMs).toISOString().slice(0, 10);
   const byUrl: Record<string, any> = {}; for (const r of (out && out.results) || []) byUrl[r.url] = r;
   const sources: any[] = []; const cycles: any[] = [];
@@ -141,7 +149,7 @@ function buildCollection(out: any, extracted: Map<string, any[]>, nowMs: number,
     const received = !!r && r.classification !== "DENIED" && r.classification !== "UNSTAMPED" && typeof r.httpStatus === "number" && r.httpStatus >= 200 && r.httpStatus < 300 && /^[0-9a-f]{64}$/.test(String(r.sha256 || ""));
     if (!received) { sources.push({ url: t.url, status: "UNAVAILABLE", code: (r && (r.code || (r.statusCode ? "HTTP_" + r.statusCode : r.classification))) || "NOT_ATTEMPTED", quotes: [] }); continue; }
     const qs = extracted.get(t.url) || [];
-    sources.push({ url: t.url, status: "RETRIEVED", title: r.title, publishedDate: null, httpStatus: r.httpStatus, contentType: r.contentType || null, bytes: r.bytes, sha256: r.sha256,
+    sources.push({ url: t.url, status: "RETRIEVED", title: titled && titled.get(t.url) === true ? r.title : null, publishedDate: null, httpStatus: r.httpStatus, contentType: r.contentType || null, bytes: r.bytes, sha256: r.sha256,
       normalisation: t.mode, quotes: qs.map((q: any) => q.quote), quotePatterns: qs.map((q: any) => q.patternId),
       unmatchedPatterns: t.patterns.map((p: any) => p.id).filter((id: string) => !qs.some((q: any) => q.patternId === id)) });
     for (const q of qs) cycles.push({ query: t.url.replace(/^https:\/\//, "") + " :: " + q.patternId, question: q.question, capability: t.capability, claim: "The page states: " + q.quote, support: [{ url: t.url, quote: q.quote }] });
@@ -175,16 +183,17 @@ async function collect(o: any): Promise<any> {
   const inner = typeof opts.fetchImpl === "function" ? opts.fetchImpl : HTTP.get;
   const byTarget: Record<string, any> = {}; for (const t of TARGETS) byTarget[t.url] = t;
   const extracted = new Map<string, any[]>();
+  const titled = new Map<string, boolean>();
   // WRAPPER: passes the REAL call through unchanged; additionally extracts quotes from the in-memory body (never stored).
   const wrapper = async (url: string, fo: any) => {
     const res = await inner(url, fo);
-    if (res && res.ok && typeof res.body === "string" && res.statusCode >= 200 && res.statusCode < 300 && byTarget[url]) extracted.set(url, extractQuotes(byTarget[url], res.body));
+    if (res && res.ok && typeof res.body === "string" && res.statusCode >= 200 && res.statusCode < 300 && byTarget[url]) { extracted.set(url, extractQuotes(byTarget[url], res.body)); titled.set(url, hasStructuredTitle(res.body, res.contentType || "")); }
     return res;
   };
   const out = await R.runResearch(TARGETS, grant, nowMs, true, wrapper);
   const sum = RUN158.summarize(out, true);
   if (sum.verdict === "DENIED" || sum.verdict === "LIVE_NO_RESPONSE") return { written: false, reason: "REFUSED: verdict " + sum.verdict, verdict: sum };
-  const col = buildCollection(out, extracted, nowMs, sum);
+  const col = buildCollection(out, extracted, nowMs, sum, titled);
   col.budgetMaxCalls = grant.budget && grant.budget.maxCalls;
   fs.writeFileSync(outPath, JSON.stringify(col, null, 2) + "\n");
   return { written: true, path: outPath, verdict: sum, sha256OfFile: crypto.createHash("sha256").update(fs.readFileSync(outPath)).digest("hex"), quotes: col.sources.reduce((a: number, s: any) => a + s.quotes.length, 0), cycles: col.cycles.length };
@@ -196,5 +205,5 @@ async function main(): Promise<void> {
   if (process.env.ODG_RADAR_LIVE === "1" && !r.written) process.exit(2);
 }
 if (require.main === module) main().catch((e) => { process.stderr.write("v158 collection error: " + ((e && e.message) || e) + "\n"); process.exit(1); });
-module.exports = { TARGETS, GRANT_PATH, COLLECTION_PATH, MAX_QUOTES_PER_PAGE, MAX_QUOTE_CHARS, EMAIL_RE, normalise, fragments, extractQuotes, buildCollection, collect };
+module.exports = { hasStructuredTitle, TARGETS, GRANT_PATH, COLLECTION_PATH, MAX_QUOTES_PER_PAGE, MAX_QUOTE_CHARS, EMAIL_RE, normalise, fragments, extractQuotes, buildCollection, collect };
 export {};
