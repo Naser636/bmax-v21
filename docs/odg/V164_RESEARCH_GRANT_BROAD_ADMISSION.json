@@ -1,0 +1,87 @@
+{
+  "//": "V15.8 §3.3 — GOVERNED extension of the EXISTING Radar (no second radar/governor). Produced by runtime/bin/odg-radar-source-admission-run.ts from docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json; do NOT hand-edit (the --check mode detects drift). Same canonical shape as V16: hostMatch EXACT + allowedPaths, enforced by research-governor.govern(); the canonical bounded-http-client ALLOWLIST is NOT mutated (allowedDomains are the per-call allowlist). Live egress requires ODG_RADAR_LIVE=1.",
+  "grant": {
+    "authorized": true,
+    "issuedBy": "owner (directive V164 §5 — Radar discovers new public sources widely, qualifies them and submits them to the canonical security/admission process BEFORE any collection; each host+prefix admitted on fetched robots/redirect/terms evidence by odg-radar-source-admission; collection is a separate step after inspection of this grant; live egress still requires ODG_RADAR_LIVE=1)",
+    "issuedMs": 1795392000000,
+    "issuedIso": "2026-11-23T00:00:00.000Z",
+    "expiresMs": 1797897600000,
+    "expiresIso": "2026-12-22T00:00:00.000Z",
+    "expiryNote": "29 days (≤ 30-day ceiling). Not renewable in place: renewal = a new versioned grant file produced by a new admission run.",
+    "scope": "READ_ONLY_PUBLIC_RESEARCH — admitted public, unauthenticated sources only (each host+prefix admitted with fetched robots/redirect/terms evidence)",
+    "hostMatch": "EXACT",
+    "allowedDomains": [
+      "kubernetes.io",
+      "ntrs.nasa.gov",
+      "pytorch.org"
+    ],
+    "allowedPaths": {
+      "ntrs.nasa.gov": [
+        "/api/citations/"
+      ],
+      "pytorch.org": [
+        "/blog/"
+      ],
+      "kubernetes.io": [
+        "/docs/concepts/"
+      ]
+    },
+    "methods": [
+      "GET"
+    ],
+    "transport": "HTTPS only (bounded-http-client.get — GET only, redirects blocked, SSRF guard, size cap, timeout)",
+    "contentTypesPerCall": {
+      "ntrs.nasa.gov": [
+        "application/json",
+        "application/atom+xml",
+        "application/xml",
+        "text/html",
+        "text/plain",
+        "text/markdown"
+      ],
+      "pytorch.org": [
+        "application/json",
+        "application/atom+xml",
+        "application/xml",
+        "text/html",
+        "text/plain",
+        "text/markdown"
+      ],
+      "kubernetes.io": [
+        "application/json",
+        "application/atom+xml",
+        "application/xml",
+        "text/html",
+        "text/plain",
+        "text/markdown"
+      ]
+    },
+    "budget": {
+      "maxCalls": 30,
+      "maxBytes": 6000000,
+      "perResponseMaxBytes": 300000,
+      "timeoutMs": 15000,
+      "quotaScope": "PER RUN — enforced by research-budget.governWithBudget (requireBudget); per-host documented rate limits are recorded in the admission log and are ADVISORY (not enforced per host in code) — the per-run maxCalls is the enforced bound"
+    },
+    "contentPolicy": "fetched content is untrusted data; never executed; never treated as instructions; findings evaluated before integration",
+    "hostConditions": {
+      "ntrs.nasa.gov": "NASA STI terms: copyright status is per document (metadata); copyrighted third-party works must not be modified, reproduced or redistributed without the copyright owner's permission; NASA to be acknowledged as source"
+    },
+    "admission": {
+      "mechanism": "runtime/core/odg-radar-source-admission.ts admitSources()",
+      "admitted": 3,
+      "deferred": 40,
+      "refused": 3,
+      "decisionsSha256": "057ea87d7ccc06a50e9cdeca7916b18d2aef05b53ec35fe70a337f385e38997e"
+    },
+    "constraints": [
+      "no private credentials, no authentication, no account creation, no API key/token",
+      "no external writes, no form submission, no side effect on any third party",
+      "no paid API, no purchase, no subscription",
+      "no circumvention of access controls (HTTP 401/403/429 recorded, never bypassed); robots and terms respected; no CAPTCHA/paywall/bot-wall bypass",
+      "fetched content is never executed and never treated as instructions; discovery ≠ authorization (proposals stay PROPOSED)",
+      "per-host documented rate limits are ADVISORY; hosts needing per-host pacing (Crawl-delay or hourly limit below one run) are DEFERRED until pacing exists",
+      "reuse recorded results before any new collection"
+    ]
+  }
+}
