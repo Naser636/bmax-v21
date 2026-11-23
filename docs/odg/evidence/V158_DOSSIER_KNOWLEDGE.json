@@ -1,0 +1,297 @@
+{
+  "generatedBy": "runtime/bin/odg-v158-dossier-knowledge-run.ts via odg-knowledge-acquisition.acquire (canonical; deterministic; no network)",
+  "asOf": "2026-11-23",
+  "referencesFile": "docs/odg/evidence/V158_RADAR_ADMISSION_REFERENCES.json",
+  "referencesTotal": 27,
+  "referencesUsedAsEvidence": 16,
+  "summary": {
+    "claims": 10,
+    "verifiedKnowledge": 3,
+    "byClassification": {
+      "FACT_CORROBORATED": 3,
+      "CLAIM_SINGLE_SOURCE": 6,
+      "RECOMMENDATION_RECORDED": 1
+    }
+  },
+  "knowledge": [
+    {
+      "claim": "content retrieved from the web can act as instructions to an LLM agent (indirect prompt injection) and must be treated as untrusted data",
+      "type": "FACT",
+      "classification": "FACT_CORROBORATED",
+      "corroborationLevel": "CORROBORATED",
+      "independentSupportCount": 5,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2302.12173",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://arxiv.org/abs/2404.13208",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://security.googleblog.com/2025/06/mitigating-prompt-injection-attacks.html",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": true,
+      "note": "corroborated by ≥2 INDEPENDENT accessible sources (secondary sources — official primary not confirmed); still a MODEL conclusion, not an absolute fact",
+      "attributedRefs": [
+        "A1",
+        "A3",
+        "C3",
+        "C4",
+        "E1",
+        "E3"
+      ],
+      "grounds": "stampFinding/sanitizeExternal: retrieved content = untrusted data; never instructions"
+    },
+    {
+      "claim": "system-level designs that prevent untrusted data from changing an agent's control flow give stronger prompt-injection resistance than model-level filtering",
+      "type": "FACT",
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroborationLevel": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2503.18813",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://arxiv.org/abs/2506.08837",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": false,
+      "note": "single accessible source — NOT verified knowledge; needs independent corroboration",
+      "attributedRefs": [
+        "A4",
+        "A5"
+      ],
+      "grounds": "the GRANT (exact hosts + prefixes), not retrieved content, fixes what is fetched"
+    },
+    {
+      "claim": "a robots.txt 4xx response allows access while an unreachable or 5xx robots.txt must be treated as complete disallow",
+      "type": "FACT",
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroborationLevel": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://www.rfc-editor.org/rfc/rfc9309.html",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": false,
+      "note": "single accessible source — NOT verified knowledge; needs independent corroboration",
+      "attributedRefs": [
+        "C1"
+      ],
+      "grounds": "NO_ROBOTS_4XX ⇒ allow; UNREACHABLE_5XX ⇒ DEFER"
+    },
+    {
+      "claim": "robots.txt is not a form of access authorization",
+      "type": "FACT",
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroborationLevel": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://www.rfc-editor.org/rfc/rfc9309.html",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": false,
+      "note": "single accessible source — NOT verified knowledge; needs independent corroboration",
+      "attributedRefs": [
+        "C1"
+      ],
+      "grounds": "robots ALLOW is necessary, never sufficient: terms + access type + flags still required"
+    },
+    {
+      "claim": "egress for automated clients should be allowlist-first with internal and private addresses blocked",
+      "type": "FACT",
+      "classification": "FACT_CORROBORATED",
+      "corroborationLevel": "CORROBORATED",
+      "independentSupportCount": 3,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://github.com/stripe/smokescreen",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": true,
+      "note": "corroborated by ≥2 INDEPENDENT accessible sources (secondary sources — official primary not confirmed); still a MODEL conclusion, not an absolute fact",
+      "attributedRefs": [
+        "C2",
+        "D1",
+        "D2"
+      ],
+      "grounds": "validHost refuses IP literals, localhost/.local/.internal; hostMatch EXACT"
+    },
+    {
+      "claim": "redirect following should be disabled for allowlisted outbound requests to prevent server-side request forgery",
+      "type": "RECOMMENDATION",
+      "classification": "RECOMMENDATION_RECORDED",
+      "corroborationLevel": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": false,
+      "note": "recorded as RECOMMENDATION — never promoted to fact",
+      "attributedRefs": [
+        "C2"
+      ],
+      "grounds": "OFF_HOST redirect on a prefix ⇒ REFUSE; same-host redirect ⇒ non-canonical prefix ⇒ DEFER (transport blocks redirects)"
+    },
+    {
+      "claim": "current prompt-injection defenses do not eliminate the risk for agents that process untrusted content",
+      "type": "FACT",
+      "classification": "FACT_CORROBORATED",
+      "corroborationLevel": "CORROBORATED",
+      "independentSupportCount": 2,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://csrc.nist.gov/pubs/ai/100/2/e2025/final",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        },
+        {
+          "url": "https://www.anthropic.com/research/prompt-injection-defenses",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": true,
+      "note": "corroborated by ≥2 INDEPENDENT accessible sources (secondary sources — official primary not confirmed); still a MODEL conclusion, not an absolute fact",
+      "attributedRefs": [
+        "E2",
+        "C4"
+      ],
+      "grounds": "defense in depth: the admission/grant bounds exposure even if content filtering fails"
+    },
+    {
+      "claim": "the unauthenticated GitHub REST API primary rate limit is 60 requests per hour",
+      "type": "FACT",
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroborationLevel": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": false,
+      "note": "single accessible source — NOT verified knowledge; needs independent corroboration",
+      "attributedRefs": [
+        "E4"
+      ],
+      "grounds": "api.github.com DEFERRED: 60/h < 4 × per-run budget and no per-host cumulative cap"
+    },
+    {
+      "claim": "the arXiv API terms ask for no more than one request every three seconds on a single connection",
+      "type": "FACT",
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroborationLevel": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://info.arxiv.org/help/api/tou.html",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": false,
+      "note": "single accessible source — NOT verified knowledge; needs independent corroboration",
+      "attributedRefs": [
+        "E5"
+      ],
+      "grounds": "export.arxiv.org: terms vs robots Disallow contradiction ⇒ REFUSE/owner decision; per-host pacing absent"
+    },
+    {
+      "claim": "the Crossref public pool limits queries to one request per second with concurrency one",
+      "type": "FACT",
+      "classification": "CLAIM_SINGLE_SOURCE",
+      "corroborationLevel": "SINGLE_SOURCE",
+      "independentSupportCount": 1,
+      "officialCorroboration": false,
+      "freshness": "FRESH",
+      "sources": [
+        {
+          "url": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/access-and-authentication/",
+          "stance": "SUPPORTS",
+          "date": "2026-11-23"
+        }
+      ],
+      "verifiedKnowledge": false,
+      "note": "single accessible source — NOT verified knowledge; needs independent corroboration",
+      "attributedRefs": [
+        "E6"
+      ],
+      "grounds": "api.crossref.org DEFERRED: per-second/concurrency limits not enforceable without per-host pacing"
+    }
+  ],
+  "honesty": [
+    "claim→reference attribution is the coordinating session's judgement from each reference's recorded contribution (provider work, auditable here)",
+    "independence is by HOST: several arXiv papers are one host and do not corroborate each other",
+    "FACT_CORROBORATED is still a model conclusion over fetched pages, not an absolute fact; single-source claims are NOT verified knowledge"
+  ]
+}
