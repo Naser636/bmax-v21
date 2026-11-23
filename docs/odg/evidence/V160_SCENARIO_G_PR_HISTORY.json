@@ -1,0 +1,3606 @@
+{
+ "//": "Snapshot of MERGED PRs of Naser636/bmax-v21 taken 2026-11-23 for scenario G (gh pr list --state merged --limit 400 + GraphQL commits.totalCount). Fields: number, additions, deletions, changedFiles, createdAt, mergedAt, commits. No author or personal data.",
+ "takenAt": "2026-11-23",
+ "prs": [
+  {
+   "additions": 309,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T13:51:01Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T13:57:36Z",
+   "number": 519,
+   "commits": 1
+  },
+  {
+   "additions": 292,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T14:12:55Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T14:19:45Z",
+   "number": 520,
+   "commits": 1
+  },
+  {
+   "additions": 216,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T14:32:42Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T14:39:23Z",
+   "number": 521,
+   "commits": 1
+  },
+  {
+   "additions": 234,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T14:54:31Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T15:01:11Z",
+   "number": 522,
+   "commits": 1
+  },
+  {
+   "additions": 220,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T15:13:06Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T15:19:59Z",
+   "number": 523,
+   "commits": 1
+  },
+  {
+   "additions": 218,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T15:36:28Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T15:45:18Z",
+   "number": 524,
+   "commits": 1
+  },
+  {
+   "additions": 239,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T16:10:44Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T16:22:34Z",
+   "number": 525,
+   "commits": 1
+  },
+  {
+   "additions": 216,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T16:43:22Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T17:12:54Z",
+   "number": 526,
+   "commits": 1
+  },
+  {
+   "additions": 366,
+   "changedFiles": 7,
+   "createdAt": "2026-11-12T17:36:52Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T17:43:28Z",
+   "number": 527,
+   "commits": 1
+  },
+  {
+   "additions": 223,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T18:04:51Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T18:09:37Z",
+   "number": 528,
+   "commits": 1
+  },
+  {
+   "additions": 272,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T18:27:07Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T18:31:16Z",
+   "number": 529,
+   "commits": 1
+  },
+  {
+   "additions": 283,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T18:46:59Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T18:52:07Z",
+   "number": 530,
+   "commits": 1
+  },
+  {
+   "additions": 241,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T19:02:17Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-12T19:07:19Z",
+   "number": 531,
+   "commits": 1
+  },
+  {
+   "additions": 213,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T19:23:10Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T19:29:04Z",
+   "number": 532,
+   "commits": 1
+  },
+  {
+   "additions": 225,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T20:16:08Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T20:22:27Z",
+   "number": 533,
+   "commits": 1
+  },
+  {
+   "additions": 449,
+   "changedFiles": 7,
+   "createdAt": "2026-11-12T20:41:30Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T20:45:29Z",
+   "number": 534,
+   "commits": 1
+  },
+  {
+   "additions": 229,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T20:59:47Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T21:05:36Z",
+   "number": 535,
+   "commits": 1
+  },
+  {
+   "additions": 200,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T21:19:29Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T21:25:06Z",
+   "number": 536,
+   "commits": 1
+  },
+  {
+   "additions": 215,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T21:39:50Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T21:44:52Z",
+   "number": 537,
+   "commits": 1
+  },
+  {
+   "additions": 238,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T21:59:50Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-12T22:05:46Z",
+   "number": 538,
+   "commits": 1
+  },
+  {
+   "additions": 204,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T22:18:11Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-12T22:22:29Z",
+   "number": 539,
+   "commits": 1
+  },
+  {
+   "additions": 211,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T22:30:15Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-12T22:34:57Z",
+   "number": 540,
+   "commits": 1
+  },
+  {
+   "additions": 193,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T22:48:42Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-12T22:53:54Z",
+   "number": 541,
+   "commits": 1
+  },
+  {
+   "additions": 157,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T23:07:33Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-12T23:13:12Z",
+   "number": 542,
+   "commits": 1
+  },
+  {
+   "additions": 206,
+   "changedFiles": 5,
+   "createdAt": "2026-11-12T23:26:54Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-12T23:30:51Z",
+   "number": 543,
+   "commits": 1
+  },
+  {
+   "additions": 187,
+   "changedFiles": 7,
+   "createdAt": "2026-11-12T23:44:02Z",
+   "deletions": 9,
+   "mergedAt": "2026-11-12T23:49:37Z",
+   "number": 544,
+   "commits": 1
+  },
+  {
+   "additions": 229,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T00:04:58Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T00:10:15Z",
+   "number": 545,
+   "commits": 1
+  },
+  {
+   "additions": 158,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T00:23:31Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T00:30:59Z",
+   "number": 546,
+   "commits": 1
+  },
+  {
+   "additions": 277,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T00:45:05Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T00:51:16Z",
+   "number": 547,
+   "commits": 1
+  },
+  {
+   "additions": 212,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T01:10:01Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T01:14:09Z",
+   "number": 548,
+   "commits": 1
+  },
+  {
+   "additions": 474,
+   "changedFiles": 9,
+   "createdAt": "2026-11-13T01:30:37Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T01:35:03Z",
+   "number": 549,
+   "commits": 1
+  },
+  {
+   "additions": 215,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T01:47:54Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T01:53:38Z",
+   "number": 550,
+   "commits": 1
+  },
+  {
+   "additions": 576,
+   "changedFiles": 12,
+   "createdAt": "2026-11-13T02:18:23Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T02:24:22Z",
+   "number": 551,
+   "commits": 1
+  },
+  {
+   "additions": 166,
+   "changedFiles": 7,
+   "createdAt": "2026-11-13T02:35:34Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-13T02:41:39Z",
+   "number": 552,
+   "commits": 1
+  },
+  {
+   "additions": 236,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T02:56:14Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T03:02:18Z",
+   "number": 553,
+   "commits": 1
+  },
+  {
+   "additions": 247,
+   "changedFiles": 7,
+   "createdAt": "2026-11-13T03:22:01Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T03:28:34Z",
+   "number": 554,
+   "commits": 1
+  },
+  {
+   "additions": 205,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T03:42:23Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T03:48:55Z",
+   "number": 555,
+   "commits": 1
+  },
+  {
+   "additions": 324,
+   "changedFiles": 7,
+   "createdAt": "2026-11-13T04:06:54Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T04:13:04Z",
+   "number": 556,
+   "commits": 1
+  },
+  {
+   "additions": 217,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T04:28:41Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T04:35:00Z",
+   "number": 557,
+   "commits": 1
+  },
+  {
+   "additions": 171,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T04:50:33Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T04:56:45Z",
+   "number": 558,
+   "commits": 1
+  },
+  {
+   "additions": 163,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T05:04:12Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T05:10:41Z",
+   "number": 559,
+   "commits": 1
+  },
+  {
+   "additions": 171,
+   "changedFiles": 5,
+   "createdAt": "2026-11-13T05:26:32Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T05:32:56Z",
+   "number": 560,
+   "commits": 1
+  },
+  {
+   "additions": 42,
+   "changedFiles": 2,
+   "createdAt": "2026-11-13T11:33:25Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-13T11:40:16Z",
+   "number": 561,
+   "commits": 1
+  },
+  {
+   "additions": 243,
+   "changedFiles": 9,
+   "createdAt": "2026-11-13T11:53:51Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-13T12:00:49Z",
+   "number": 562,
+   "commits": 1
+  },
+  {
+   "additions": 331,
+   "changedFiles": 9,
+   "createdAt": "2026-11-13T12:16:34Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-13T12:23:27Z",
+   "number": 563,
+   "commits": 1
+  },
+  {
+   "additions": 184,
+   "changedFiles": 5,
+   "createdAt": "2026-11-15T19:12:46Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T19:17:32Z",
+   "number": 564,
+   "commits": 1
+  },
+  {
+   "additions": 255,
+   "changedFiles": 2,
+   "createdAt": "2026-11-15T19:38:50Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-15T19:43:32Z",
+   "number": 565,
+   "commits": 1
+  },
+  {
+   "additions": 368,
+   "changedFiles": 3,
+   "createdAt": "2026-11-15T19:56:59Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-15T20:03:07Z",
+   "number": 566,
+   "commits": 1
+  },
+  {
+   "additions": 135,
+   "changedFiles": 4,
+   "createdAt": "2026-11-15T20:13:01Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T20:18:54Z",
+   "number": 567,
+   "commits": 1
+  },
+  {
+   "additions": 155,
+   "changedFiles": 4,
+   "createdAt": "2026-11-15T20:32:06Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T20:36:20Z",
+   "number": 568,
+   "commits": 1
+  },
+  {
+   "additions": 197,
+   "changedFiles": 5,
+   "createdAt": "2026-11-15T20:50:37Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-15T20:56:49Z",
+   "number": 569,
+   "commits": 1
+  },
+  {
+   "additions": 180,
+   "changedFiles": 4,
+   "createdAt": "2026-11-15T21:09:48Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T21:14:03Z",
+   "number": 570,
+   "commits": 1
+  },
+  {
+   "additions": 174,
+   "changedFiles": 4,
+   "createdAt": "2026-11-15T21:22:57Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T21:28:45Z",
+   "number": 571,
+   "commits": 1
+  },
+  {
+   "additions": 172,
+   "changedFiles": 4,
+   "createdAt": "2026-11-15T22:06:45Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T22:12:35Z",
+   "number": 572,
+   "commits": 1
+  },
+  {
+   "additions": 195,
+   "changedFiles": 4,
+   "createdAt": "2026-11-15T22:25:26Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T22:32:00Z",
+   "number": 573,
+   "commits": 1
+  },
+  {
+   "additions": 292,
+   "changedFiles": 9,
+   "createdAt": "2026-11-15T22:45:18Z",
+   "deletions": 15,
+   "mergedAt": "2026-11-15T22:49:46Z",
+   "number": 574,
+   "commits": 1
+  },
+  {
+   "additions": 258,
+   "changedFiles": 7,
+   "createdAt": "2026-11-15T22:54:56Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T23:01:34Z",
+   "number": 575,
+   "commits": 1
+  },
+  {
+   "additions": 461,
+   "changedFiles": 13,
+   "createdAt": "2026-11-15T23:07:08Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T23:13:03Z",
+   "number": 576,
+   "commits": 1
+  },
+  {
+   "additions": 325,
+   "changedFiles": 9,
+   "createdAt": "2026-11-15T23:18:26Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T23:24:21Z",
+   "number": 577,
+   "commits": 1
+  },
+  {
+   "additions": 211,
+   "changedFiles": 5,
+   "createdAt": "2026-11-15T23:41:53Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-15T23:47:59Z",
+   "number": 578,
+   "commits": 1
+  },
+  {
+   "additions": 16,
+   "changedFiles": 2,
+   "createdAt": "2026-11-15T23:56:54Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-16T00:01:18Z",
+   "number": 579,
+   "commits": 1
+  },
+  {
+   "additions": 5,
+   "changedFiles": 2,
+   "createdAt": "2026-11-16T00:11:02Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-16T00:17:12Z",
+   "number": 580,
+   "commits": 1
+  },
+  {
+   "additions": 18,
+   "changedFiles": 2,
+   "createdAt": "2026-11-16T00:30:38Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T00:36:34Z",
+   "number": 581,
+   "commits": 1
+  },
+  {
+   "additions": 88,
+   "changedFiles": 3,
+   "createdAt": "2026-11-16T00:47:54Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T00:53:47Z",
+   "number": 582,
+   "commits": 1
+  },
+  {
+   "additions": 5,
+   "changedFiles": 2,
+   "createdAt": "2026-11-16T01:05:18Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T01:09:41Z",
+   "number": 583,
+   "commits": 1
+  },
+  {
+   "additions": 97,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T01:35:26Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T01:39:53Z",
+   "number": 584,
+   "commits": 1
+  },
+  {
+   "additions": 148,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T01:57:55Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T02:02:03Z",
+   "number": 585,
+   "commits": 1
+  },
+  {
+   "additions": 150,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T02:25:18Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T02:29:18Z",
+   "number": 586,
+   "commits": 1
+  },
+  {
+   "additions": 151,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T02:54:10Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T02:58:48Z",
+   "number": 587,
+   "commits": 1
+  },
+  {
+   "additions": 163,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T03:18:46Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T03:23:13Z",
+   "number": 588,
+   "commits": 1
+  },
+  {
+   "additions": 157,
+   "changedFiles": 6,
+   "createdAt": "2026-11-16T03:42:28Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T03:46:04Z",
+   "number": 589,
+   "commits": 1
+  },
+  {
+   "additions": 64,
+   "changedFiles": 4,
+   "createdAt": "2026-11-16T04:00:09Z",
+   "deletions": 18,
+   "mergedAt": "2026-11-16T04:05:43Z",
+   "number": 590,
+   "commits": 1
+  },
+  {
+   "additions": 29,
+   "changedFiles": 2,
+   "createdAt": "2026-11-16T10:57:13Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-16T11:03:08Z",
+   "number": 591,
+   "commits": 1
+  },
+  {
+   "additions": 20,
+   "changedFiles": 2,
+   "createdAt": "2026-11-16T11:19:51Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-16T11:26:56Z",
+   "number": 592,
+   "commits": 1
+  },
+  {
+   "additions": 29,
+   "changedFiles": 2,
+   "createdAt": "2026-11-16T11:44:41Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-16T11:52:05Z",
+   "number": 593,
+   "commits": 1
+  },
+  {
+   "additions": 19,
+   "changedFiles": 2,
+   "createdAt": "2026-11-16T12:06:59Z",
+   "deletions": 7,
+   "mergedAt": "2026-11-16T12:11:52Z",
+   "number": 594,
+   "commits": 1
+  },
+  {
+   "additions": 158,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T12:34:17Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T12:39:30Z",
+   "number": 595,
+   "commits": 1
+  },
+  {
+   "additions": 131,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T12:56:01Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T13:02:04Z",
+   "number": 596,
+   "commits": 1
+  },
+  {
+   "additions": 151,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T16:04:31Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T16:09:58Z",
+   "number": 597,
+   "commits": 1
+  },
+  {
+   "additions": 257,
+   "changedFiles": 7,
+   "createdAt": "2026-11-16T16:29:23Z",
+   "deletions": 83,
+   "mergedAt": "2026-11-16T16:36:15Z",
+   "number": 598,
+   "commits": 1
+  },
+  {
+   "additions": 121,
+   "changedFiles": 7,
+   "createdAt": "2026-11-16T16:55:41Z",
+   "deletions": 10,
+   "mergedAt": "2026-11-16T17:00:35Z",
+   "number": 599,
+   "commits": 1
+  },
+  {
+   "additions": 130,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T17:16:15Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T17:22:10Z",
+   "number": 600,
+   "commits": 1
+  },
+  {
+   "additions": 129,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T17:45:48Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T17:49:49Z",
+   "number": 601,
+   "commits": 1
+  },
+  {
+   "additions": 113,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T18:07:51Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T18:16:10Z",
+   "number": 602,
+   "commits": 1
+  },
+  {
+   "additions": 254,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T18:31:40Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T18:36:54Z",
+   "number": 603,
+   "commits": 1
+  },
+  {
+   "additions": 208,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T18:57:16Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T19:02:10Z",
+   "number": 604,
+   "commits": 1
+  },
+  {
+   "additions": 196,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T19:17:10Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T19:23:09Z",
+   "number": 605,
+   "commits": 1
+  },
+  {
+   "additions": 230,
+   "changedFiles": 8,
+   "createdAt": "2026-11-16T19:51:13Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-16T19:57:34Z",
+   "number": 606,
+   "commits": 1
+  },
+  {
+   "additions": 181,
+   "changedFiles": 6,
+   "createdAt": "2026-11-16T20:12:12Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-16T20:18:10Z",
+   "number": 607,
+   "commits": 1
+  },
+  {
+   "additions": 166,
+   "changedFiles": 7,
+   "createdAt": "2026-11-16T20:37:53Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-16T20:43:21Z",
+   "number": 608,
+   "commits": 1
+  },
+  {
+   "additions": 191,
+   "changedFiles": 7,
+   "createdAt": "2026-11-16T21:03:28Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-16T21:09:06Z",
+   "number": 609,
+   "commits": 1
+  },
+  {
+   "additions": 143,
+   "changedFiles": 10,
+   "createdAt": "2026-11-16T21:24:08Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-16T21:44:45Z",
+   "number": 610,
+   "commits": 2
+  },
+  {
+   "additions": 153,
+   "changedFiles": 6,
+   "createdAt": "2026-11-16T22:03:34Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-16T22:07:45Z",
+   "number": 611,
+   "commits": 1
+  },
+  {
+   "additions": 104,
+   "changedFiles": 8,
+   "createdAt": "2026-11-16T22:33:41Z",
+   "deletions": 5,
+   "mergedAt": "2026-11-16T22:44:58Z",
+   "number": 612,
+   "commits": 2
+  },
+  {
+   "additions": 196,
+   "changedFiles": 6,
+   "createdAt": "2026-11-16T22:59:34Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-16T23:05:30Z",
+   "number": 613,
+   "commits": 1
+  },
+  {
+   "additions": 609,
+   "changedFiles": 9,
+   "createdAt": "2026-11-16T23:24:00Z",
+   "deletions": 28,
+   "mergedAt": "2026-11-16T23:29:07Z",
+   "number": 614,
+   "commits": 1
+  },
+  {
+   "additions": 137,
+   "changedFiles": 5,
+   "createdAt": "2026-11-16T23:46:57Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-16T23:51:10Z",
+   "number": 615,
+   "commits": 1
+  },
+  {
+   "additions": 115,
+   "changedFiles": 6,
+   "createdAt": "2026-11-17T00:13:48Z",
+   "deletions": 6,
+   "mergedAt": "2026-11-17T00:18:42Z",
+   "number": 616,
+   "commits": 1
+  },
+  {
+   "additions": 141,
+   "changedFiles": 5,
+   "createdAt": "2026-11-17T00:31:07Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T00:36:41Z",
+   "number": 617,
+   "commits": 1
+  },
+  {
+   "additions": 168,
+   "changedFiles": 5,
+   "createdAt": "2026-11-17T00:55:29Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T01:00:22Z",
+   "number": 618,
+   "commits": 1
+  },
+  {
+   "additions": 133,
+   "changedFiles": 5,
+   "createdAt": "2026-11-17T01:20:03Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-17T01:25:25Z",
+   "number": 619,
+   "commits": 1
+  },
+  {
+   "additions": 111,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T01:40:54Z",
+   "deletions": 6,
+   "mergedAt": "2026-11-17T01:46:34Z",
+   "number": 620,
+   "commits": 1
+  },
+  {
+   "additions": 124,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T01:54:35Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-17T01:58:10Z",
+   "number": 621,
+   "commits": 1
+  },
+  {
+   "additions": 143,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T02:06:43Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-17T02:16:35Z",
+   "number": 622,
+   "commits": 2
+  },
+  {
+   "additions": 111,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T11:40:10Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T11:44:56Z",
+   "number": 623,
+   "commits": 1
+  },
+  {
+   "additions": 63,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T11:52:27Z",
+   "deletions": 5,
+   "mergedAt": "2026-11-17T11:58:20Z",
+   "number": 624,
+   "commits": 1
+  },
+  {
+   "additions": 162,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T12:05:54Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T12:11:28Z",
+   "number": 625,
+   "commits": 1
+  },
+  {
+   "additions": 48,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T12:26:01Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-17T12:32:36Z",
+   "number": 626,
+   "commits": 1
+  },
+  {
+   "additions": 46,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T12:39:39Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T12:45:09Z",
+   "number": 627,
+   "commits": 1
+  },
+  {
+   "additions": 54,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T12:56:38Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T13:01:49Z",
+   "number": 628,
+   "commits": 1
+  },
+  {
+   "additions": 57,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T13:25:42Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-17T13:52:40Z",
+   "number": 629,
+   "commits": 1
+  },
+  {
+   "additions": 50,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T14:19:13Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T15:48:47Z",
+   "number": 630,
+   "commits": 1
+  },
+  {
+   "additions": 53,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T15:50:33Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-17T16:00:15Z",
+   "number": 631,
+   "commits": 1
+  },
+  {
+   "additions": 47,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T16:02:47Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T16:08:49Z",
+   "number": 632,
+   "commits": 1
+  },
+  {
+   "additions": 48,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T16:11:09Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T16:15:53Z",
+   "number": 633,
+   "commits": 1
+  },
+  {
+   "additions": 49,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T16:17:43Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T16:23:13Z",
+   "number": 634,
+   "commits": 1
+  },
+  {
+   "additions": 33,
+   "changedFiles": 2,
+   "createdAt": "2026-11-17T16:25:32Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-17T16:44:58Z",
+   "number": 635,
+   "commits": 2
+  },
+  {
+   "additions": 117,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T16:58:50Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T17:36:23Z",
+   "number": 636,
+   "commits": 1
+  },
+  {
+   "additions": 145,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T18:22:18Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T18:49:09Z",
+   "number": 637,
+   "commits": 1
+  },
+  {
+   "additions": 1171,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T19:00:25Z",
+   "deletions": 11,
+   "mergedAt": "2026-11-17T19:09:48Z",
+   "number": 638,
+   "commits": 2
+  },
+  {
+   "additions": 143,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T19:18:40Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T19:33:55Z",
+   "number": 639,
+   "commits": 1
+  },
+  {
+   "additions": 128,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T19:39:27Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T19:44:58Z",
+   "number": 640,
+   "commits": 1
+  },
+  {
+   "additions": 229,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T19:51:35Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T20:01:09Z",
+   "number": 641,
+   "commits": 2
+  },
+  {
+   "additions": 93,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T20:07:28Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T20:28:09Z",
+   "number": 642,
+   "commits": 3
+  },
+  {
+   "additions": 251,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T20:34:49Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T20:39:41Z",
+   "number": 643,
+   "commits": 1
+  },
+  {
+   "additions": 234,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T20:46:12Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T20:50:52Z",
+   "number": 644,
+   "commits": 1
+  },
+  {
+   "additions": 193,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T20:58:50Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T21:04:13Z",
+   "number": 645,
+   "commits": 1
+  },
+  {
+   "additions": 109,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T21:10:36Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T21:15:57Z",
+   "number": 646,
+   "commits": 1
+  },
+  {
+   "additions": 471,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T21:24:58Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T21:30:37Z",
+   "number": 647,
+   "commits": 1
+  },
+  {
+   "additions": 417,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T21:39:38Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T21:45:44Z",
+   "number": 648,
+   "commits": 1
+  },
+  {
+   "additions": 674,
+   "changedFiles": 4,
+   "createdAt": "2026-11-17T21:55:41Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T22:01:35Z",
+   "number": 649,
+   "commits": 1
+  },
+  {
+   "additions": 389,
+   "changedFiles": 4,
+   "createdAt": "2026-11-17T22:10:58Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T22:15:48Z",
+   "number": 650,
+   "commits": 1
+  },
+  {
+   "additions": 468,
+   "changedFiles": 5,
+   "createdAt": "2026-11-17T22:30:47Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T22:36:41Z",
+   "number": 651,
+   "commits": 1
+  },
+  {
+   "additions": 188,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T22:52:26Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T22:58:24Z",
+   "number": 652,
+   "commits": 1
+  },
+  {
+   "additions": 154,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T23:01:44Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T23:06:29Z",
+   "number": 653,
+   "commits": 1
+  },
+  {
+   "additions": 275,
+   "changedFiles": 7,
+   "createdAt": "2026-11-17T23:21:40Z",
+   "deletions": 41,
+   "mergedAt": "2026-11-17T23:40:31Z",
+   "number": 654,
+   "commits": 2
+  },
+  {
+   "additions": 144,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T23:43:21Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T23:48:00Z",
+   "number": 655,
+   "commits": 1
+  },
+  {
+   "additions": 183,
+   "changedFiles": 3,
+   "createdAt": "2026-11-17T23:53:02Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-17T23:58:08Z",
+   "number": 656,
+   "commits": 1
+  },
+  {
+   "additions": 144,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T00:08:45Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T00:12:54Z",
+   "number": 657,
+   "commits": 1
+  },
+  {
+   "additions": 184,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T00:16:00Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T00:27:24Z",
+   "number": 658,
+   "commits": 2
+  },
+  {
+   "additions": 175,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T00:33:28Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T00:36:59Z",
+   "number": 659,
+   "commits": 1
+  },
+  {
+   "additions": 146,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T00:40:07Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T00:46:00Z",
+   "number": 660,
+   "commits": 1
+  },
+  {
+   "additions": 191,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T00:53:01Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T00:57:43Z",
+   "number": 661,
+   "commits": 1
+  },
+  {
+   "additions": 191,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T01:03:03Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T01:09:21Z",
+   "number": 662,
+   "commits": 1
+  },
+  {
+   "additions": 176,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T01:16:15Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T01:28:18Z",
+   "number": 663,
+   "commits": 2
+  },
+  {
+   "additions": 167,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T01:31:45Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T01:37:55Z",
+   "number": 664,
+   "commits": 1
+  },
+  {
+   "additions": 151,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T01:40:53Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T01:46:27Z",
+   "number": 665,
+   "commits": 1
+  },
+  {
+   "additions": 177,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T01:53:39Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T01:58:40Z",
+   "number": 666,
+   "commits": 1
+  },
+  {
+   "additions": 151,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T02:22:51Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T02:28:46Z",
+   "number": 668,
+   "commits": 1
+  },
+  {
+   "additions": 57,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T02:38:51Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-18T02:44:47Z",
+   "number": 669,
+   "commits": 1
+  },
+  {
+   "additions": 62,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T02:53:06Z",
+   "deletions": 9,
+   "mergedAt": "2026-11-18T02:57:46Z",
+   "number": 670,
+   "commits": 1
+  },
+  {
+   "additions": 120,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T03:10:36Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T03:15:30Z",
+   "number": 671,
+   "commits": 1
+  },
+  {
+   "additions": 190,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T03:32:23Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T03:37:26Z",
+   "number": 672,
+   "commits": 1
+  },
+  {
+   "additions": 86,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T03:44:13Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T03:48:59Z",
+   "number": 673,
+   "commits": 1
+  },
+  {
+   "additions": 65,
+   "changedFiles": 1,
+   "createdAt": "2026-11-18T03:58:05Z",
+   "deletions": 15,
+   "mergedAt": "2026-11-18T04:04:54Z",
+   "number": 674,
+   "commits": 1
+  },
+  {
+   "additions": 76,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T04:10:53Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T04:17:21Z",
+   "number": 675,
+   "commits": 1
+  },
+  {
+   "additions": 83,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T04:24:38Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T04:31:26Z",
+   "number": 676,
+   "commits": 1
+  },
+  {
+   "additions": 181,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T04:43:33Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T04:48:28Z",
+   "number": 677,
+   "commits": 1
+  },
+  {
+   "additions": 106,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T11:46:30Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T11:52:20Z",
+   "number": 678,
+   "commits": 1
+  },
+  {
+   "additions": 112,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T12:01:55Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T12:08:52Z",
+   "number": 679,
+   "commits": 1
+  },
+  {
+   "additions": 196,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T12:17:52Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T12:23:49Z",
+   "number": 680,
+   "commits": 1
+  },
+  {
+   "additions": 152,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T12:31:58Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T12:37:04Z",
+   "number": 681,
+   "commits": 1
+  },
+  {
+   "additions": 129,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T12:43:43Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T12:48:44Z",
+   "number": 682,
+   "commits": 1
+  },
+  {
+   "additions": 136,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T13:20:42Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T13:29:02Z",
+   "number": 683,
+   "commits": 1
+  },
+  {
+   "additions": 44,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T13:45:41Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-18T13:51:16Z",
+   "number": 684,
+   "commits": 1
+  },
+  {
+   "additions": 254,
+   "changedFiles": 4,
+   "createdAt": "2026-11-18T18:46:43Z",
+   "deletions": 233,
+   "mergedAt": "2026-11-18T18:53:47Z",
+   "number": 685,
+   "commits": 1
+  },
+  {
+   "additions": 68,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T19:24:10Z",
+   "deletions": 7,
+   "mergedAt": "2026-11-18T19:30:06Z",
+   "number": 686,
+   "commits": 1
+  },
+  {
+   "additions": 119,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T19:59:59Z",
+   "deletions": 9,
+   "mergedAt": "2026-11-18T20:04:49Z",
+   "number": 687,
+   "commits": 1
+  },
+  {
+   "additions": 27,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T20:15:54Z",
+   "deletions": 6,
+   "mergedAt": "2026-11-18T20:23:09Z",
+   "number": 688,
+   "commits": 1
+  },
+  {
+   "additions": 132,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T20:40:12Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T20:44:49Z",
+   "number": 689,
+   "commits": 1
+  },
+  {
+   "additions": 479,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T21:04:10Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T21:09:36Z",
+   "number": 690,
+   "commits": 1
+  },
+  {
+   "additions": 122,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T21:25:49Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T21:31:37Z",
+   "number": 691,
+   "commits": 1
+  },
+  {
+   "additions": 90,
+   "changedFiles": 1,
+   "createdAt": "2026-11-18T22:00:37Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T22:04:51Z",
+   "number": 692,
+   "commits": 1
+  },
+  {
+   "additions": 157,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T22:14:08Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T22:18:45Z",
+   "number": 693,
+   "commits": 1
+  },
+  {
+   "additions": 227,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T22:27:56Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T22:38:27Z",
+   "number": 694,
+   "commits": 2
+  },
+  {
+   "additions": 144,
+   "changedFiles": 2,
+   "createdAt": "2026-11-18T22:41:04Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T22:47:14Z",
+   "number": 695,
+   "commits": 1
+  },
+  {
+   "additions": 44,
+   "changedFiles": 1,
+   "createdAt": "2026-11-18T22:51:21Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T22:57:32Z",
+   "number": 696,
+   "commits": 1
+  },
+  {
+   "additions": 47,
+   "changedFiles": 1,
+   "createdAt": "2026-11-18T23:01:18Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T23:07:16Z",
+   "number": 697,
+   "commits": 1
+  },
+  {
+   "additions": 193,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T23:13:20Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T23:24:01Z",
+   "number": 698,
+   "commits": 2
+  },
+  {
+   "additions": 162,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T23:27:51Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T23:32:43Z",
+   "number": 699,
+   "commits": 1
+  },
+  {
+   "additions": 157,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T23:36:31Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-18T23:42:08Z",
+   "number": 700,
+   "commits": 1
+  },
+  {
+   "additions": 58,
+   "changedFiles": 1,
+   "createdAt": "2026-11-18T23:47:29Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-18T23:54:50Z",
+   "number": 701,
+   "commits": 1
+  },
+  {
+   "additions": 174,
+   "changedFiles": 3,
+   "createdAt": "2026-11-18T23:55:06Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T00:07:27Z",
+   "number": 702,
+   "commits": 2
+  },
+  {
+   "additions": 167,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T00:11:35Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T00:22:36Z",
+   "number": 703,
+   "commits": 2
+  },
+  {
+   "additions": 144,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T00:25:12Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T00:34:01Z",
+   "number": 704,
+   "commits": 2
+  },
+  {
+   "additions": 146,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T00:36:53Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T00:42:27Z",
+   "number": 705,
+   "commits": 1
+  },
+  {
+   "additions": 131,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T00:47:04Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T00:53:25Z",
+   "number": 706,
+   "commits": 1
+  },
+  {
+   "additions": 124,
+   "changedFiles": 2,
+   "createdAt": "2026-11-19T01:00:33Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-19T01:06:56Z",
+   "number": 707,
+   "commits": 1
+  },
+  {
+   "additions": 193,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T01:14:45Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T01:25:22Z",
+   "number": 708,
+   "commits": 2
+  },
+  {
+   "additions": 222,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T01:30:51Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T01:39:53Z",
+   "number": 709,
+   "commits": 2
+  },
+  {
+   "additions": 208,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T01:43:53Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T01:55:15Z",
+   "number": 710,
+   "commits": 2
+  },
+  {
+   "additions": 185,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T02:01:31Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T02:06:51Z",
+   "number": 711,
+   "commits": 1
+  },
+  {
+   "additions": 197,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T02:12:07Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T02:23:18Z",
+   "number": 712,
+   "commits": 2
+  },
+  {
+   "additions": 191,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T02:28:44Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T02:34:52Z",
+   "number": 713,
+   "commits": 1
+  },
+  {
+   "additions": 195,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T02:39:06Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T02:45:16Z",
+   "number": 714,
+   "commits": 1
+  },
+  {
+   "additions": 177,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T02:49:59Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T02:53:59Z",
+   "number": 715,
+   "commits": 1
+  },
+  {
+   "additions": 163,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T03:01:36Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T03:07:49Z",
+   "number": 716,
+   "commits": 1
+  },
+  {
+   "additions": 178,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T03:12:15Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T03:18:07Z",
+   "number": 717,
+   "commits": 1
+  },
+  {
+   "additions": 142,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T03:22:27Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T03:27:49Z",
+   "number": 718,
+   "commits": 1
+  },
+  {
+   "additions": 165,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T11:30:54Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T11:47:40Z",
+   "number": 719,
+   "commits": 2
+  },
+  {
+   "additions": 143,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T11:52:56Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T11:57:01Z",
+   "number": 720,
+   "commits": 1
+  },
+  {
+   "additions": 178,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T12:01:43Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T12:14:19Z",
+   "number": 721,
+   "commits": 2
+  },
+  {
+   "additions": 126,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T12:26:39Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T12:32:58Z",
+   "number": 722,
+   "commits": 1
+  },
+  {
+   "additions": 190,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T12:37:42Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T12:43:34Z",
+   "number": 723,
+   "commits": 1
+  },
+  {
+   "additions": 143,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T12:48:02Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T12:54:57Z",
+   "number": 724,
+   "commits": 1
+  },
+  {
+   "additions": 150,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T12:59:22Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T13:05:20Z",
+   "number": 725,
+   "commits": 1
+  },
+  {
+   "additions": 125,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T13:10:50Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T13:19:03Z",
+   "number": 726,
+   "commits": 2
+  },
+  {
+   "additions": 164,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T13:26:06Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T13:38:36Z",
+   "number": 727,
+   "commits": 2
+  },
+  {
+   "additions": 147,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T13:42:59Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T13:58:16Z",
+   "number": 728,
+   "commits": 2
+  },
+  {
+   "additions": 170,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T15:35:37Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T15:47:03Z",
+   "number": 729,
+   "commits": 2
+  },
+  {
+   "additions": 151,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T15:50:48Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T15:54:58Z",
+   "number": 730,
+   "commits": 1
+  },
+  {
+   "additions": 146,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T15:59:49Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T16:09:18Z",
+   "number": 731,
+   "commits": 1
+  },
+  {
+   "additions": 167,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T16:13:47Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T16:25:49Z",
+   "number": 732,
+   "commits": 2
+  },
+  {
+   "additions": 146,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T16:38:25Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T16:43:45Z",
+   "number": 733,
+   "commits": 1
+  },
+  {
+   "additions": 186,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T16:49:21Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T17:00:36Z",
+   "number": 734,
+   "commits": 2
+  },
+  {
+   "additions": 189,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T17:06:12Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T17:11:20Z",
+   "number": 735,
+   "commits": 1
+  },
+  {
+   "additions": 131,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T17:17:05Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T17:22:00Z",
+   "number": 736,
+   "commits": 1
+  },
+  {
+   "additions": 145,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T17:25:42Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T17:31:38Z",
+   "number": 737,
+   "commits": 1
+  },
+  {
+   "additions": 392,
+   "changedFiles": 4,
+   "createdAt": "2026-11-19T18:20:08Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-19T18:36:48Z",
+   "number": 738,
+   "commits": 2
+  },
+  {
+   "additions": 259,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T18:53:49Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T19:11:44Z",
+   "number": 739,
+   "commits": 2
+  },
+  {
+   "additions": 179,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T19:19:54Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T19:35:32Z",
+   "number": 740,
+   "commits": 2
+  },
+  {
+   "additions": 29,
+   "changedFiles": 4,
+   "createdAt": "2026-11-19T19:51:45Z",
+   "deletions": 18,
+   "mergedAt": "2026-11-19T19:59:40Z",
+   "number": 741,
+   "commits": 1
+  },
+  {
+   "additions": 41,
+   "changedFiles": 2,
+   "createdAt": "2026-11-19T20:05:40Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-19T20:14:06Z",
+   "number": 742,
+   "commits": 1
+  },
+  {
+   "additions": 212,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T20:27:00Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T20:52:05Z",
+   "number": 743,
+   "commits": 2
+  },
+  {
+   "additions": 195,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T21:08:20Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T21:22:54Z",
+   "number": 744,
+   "commits": 2
+  },
+  {
+   "additions": 197,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T21:27:39Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T21:44:17Z",
+   "number": 745,
+   "commits": 2
+  },
+  {
+   "additions": 169,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T21:50:46Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T21:58:20Z",
+   "number": 746,
+   "commits": 1
+  },
+  {
+   "additions": 44,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T22:01:43Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-19T22:08:27Z",
+   "number": 747,
+   "commits": 1
+  },
+  {
+   "additions": 60,
+   "changedFiles": 4,
+   "createdAt": "2026-11-19T22:12:14Z",
+   "deletions": 12,
+   "mergedAt": "2026-11-19T22:26:03Z",
+   "number": 748,
+   "commits": 2
+  },
+  {
+   "additions": 19,
+   "changedFiles": 2,
+   "createdAt": "2026-11-19T22:30:42Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-19T22:37:01Z",
+   "number": 749,
+   "commits": 1
+  },
+  {
+   "additions": 212,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T22:48:51Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T23:02:50Z",
+   "number": 750,
+   "commits": 2
+  },
+  {
+   "additions": 188,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T23:07:51Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T23:14:34Z",
+   "number": 751,
+   "commits": 1
+  },
+  {
+   "additions": 202,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T23:22:43Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T23:29:55Z",
+   "number": 752,
+   "commits": 1
+  },
+  {
+   "additions": 156,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T23:33:53Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-19T23:47:29Z",
+   "number": 753,
+   "commits": 2
+  },
+  {
+   "additions": 234,
+   "changedFiles": 3,
+   "createdAt": "2026-11-19T23:56:06Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T00:12:27Z",
+   "number": 754,
+   "commits": 2
+  },
+  {
+   "additions": 204,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T00:18:31Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T00:25:27Z",
+   "number": 755,
+   "commits": 1
+  },
+  {
+   "additions": 157,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T00:29:42Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T00:43:49Z",
+   "number": 756,
+   "commits": 2
+  },
+  {
+   "additions": 43,
+   "changedFiles": 4,
+   "createdAt": "2026-11-20T00:52:26Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T00:59:14Z",
+   "number": 757,
+   "commits": 1
+  },
+  {
+   "additions": 22,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T01:03:49Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T01:17:34Z",
+   "number": 758,
+   "commits": 2
+  },
+  {
+   "additions": 17,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T01:22:14Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T01:36:08Z",
+   "number": 759,
+   "commits": 2
+  },
+  {
+   "additions": 214,
+   "changedFiles": 5,
+   "createdAt": "2026-11-20T01:46:56Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T02:00:27Z",
+   "number": 760,
+   "commits": 2
+  },
+  {
+   "additions": 263,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T02:35:44Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T02:52:55Z",
+   "number": 761,
+   "commits": 2
+  },
+  {
+   "additions": 256,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T03:00:16Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T03:12:23Z",
+   "number": 762,
+   "commits": 2
+  },
+  {
+   "additions": 352,
+   "changedFiles": 5,
+   "createdAt": "2026-11-20T03:17:45Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T03:29:17Z",
+   "number": 763,
+   "commits": 2
+  },
+  {
+   "additions": 189,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T03:36:31Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T03:41:49Z",
+   "number": 764,
+   "commits": 1
+  },
+  {
+   "additions": 183,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T03:47:04Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T03:59:57Z",
+   "number": 765,
+   "commits": 2
+  },
+  {
+   "additions": 90,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T12:55:11Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T13:01:55Z",
+   "number": 766,
+   "commits": 1
+  },
+  {
+   "additions": 25,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T13:05:48Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T13:17:36Z",
+   "number": 767,
+   "commits": 1
+  },
+  {
+   "additions": 18,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T13:23:19Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T13:29:55Z",
+   "number": 768,
+   "commits": 1
+  },
+  {
+   "additions": 134,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T13:41:03Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T13:46:57Z",
+   "number": 769,
+   "commits": 1
+  },
+  {
+   "additions": 85,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T13:49:25Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T13:55:03Z",
+   "number": 770,
+   "commits": 1
+  },
+  {
+   "additions": 149,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T14:02:38Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T14:08:01Z",
+   "number": 771,
+   "commits": 1
+  },
+  {
+   "additions": 57,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T14:16:35Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T14:24:49Z",
+   "number": 772,
+   "commits": 1
+  },
+  {
+   "additions": 39,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T14:46:45Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T14:50:59Z",
+   "number": 773,
+   "commits": 1
+  },
+  {
+   "additions": 126,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T14:57:29Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T15:05:30Z",
+   "number": 774,
+   "commits": 2
+  },
+  {
+   "additions": 168,
+   "changedFiles": 4,
+   "createdAt": "2026-11-20T15:14:59Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T15:21:11Z",
+   "number": 775,
+   "commits": 2
+  },
+  {
+   "additions": 130,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T15:28:10Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T15:36:38Z",
+   "number": 776,
+   "commits": 3
+  },
+  {
+   "additions": 25,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T15:40:50Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T15:45:40Z",
+   "number": 777,
+   "commits": 1
+  },
+  {
+   "additions": 126,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T15:53:29Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T15:59:31Z",
+   "number": 778,
+   "commits": 1
+  },
+  {
+   "additions": 111,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T16:05:57Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T16:18:49Z",
+   "number": 779,
+   "commits": 1
+  },
+  {
+   "additions": 27,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T16:21:48Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T16:27:33Z",
+   "number": 780,
+   "commits": 1
+  },
+  {
+   "additions": 134,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T16:32:26Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T16:39:11Z",
+   "number": 781,
+   "commits": 1
+  },
+  {
+   "additions": 22,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T16:52:30Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T16:58:03Z",
+   "number": 782,
+   "commits": 1
+  },
+  {
+   "additions": 3,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T17:09:55Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-20T17:16:07Z",
+   "number": 783,
+   "commits": 1
+  },
+  {
+   "additions": 26,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T17:17:01Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T17:23:28Z",
+   "number": 784,
+   "commits": 1
+  },
+  {
+   "additions": 51,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T17:24:48Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T17:30:45Z",
+   "number": 785,
+   "commits": 1
+  },
+  {
+   "additions": 118,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T17:36:23Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T17:41:41Z",
+   "number": 786,
+   "commits": 1
+  },
+  {
+   "additions": 150,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T17:47:07Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T17:55:41Z",
+   "number": 787,
+   "commits": 1
+  },
+  {
+   "additions": 143,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T18:04:43Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T18:11:50Z",
+   "number": 788,
+   "commits": 1
+  },
+  {
+   "additions": 39,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T18:14:58Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T18:21:05Z",
+   "number": 789,
+   "commits": 1
+  },
+  {
+   "additions": 108,
+   "changedFiles": 5,
+   "createdAt": "2026-11-20T18:27:45Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T18:34:23Z",
+   "number": 790,
+   "commits": 1
+  },
+  {
+   "additions": 35,
+   "changedFiles": 4,
+   "createdAt": "2026-11-20T18:39:26Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T18:44:55Z",
+   "number": 791,
+   "commits": 1
+  },
+  {
+   "additions": 25,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T18:49:30Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T18:56:17Z",
+   "number": 792,
+   "commits": 1
+  },
+  {
+   "additions": 22,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T18:57:44Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T19:02:57Z",
+   "number": 793,
+   "commits": 1
+  },
+  {
+   "additions": 110,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T19:07:54Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T19:14:01Z",
+   "number": 794,
+   "commits": 1
+  },
+  {
+   "additions": 169,
+   "changedFiles": 5,
+   "createdAt": "2026-11-20T19:24:47Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-20T19:33:29Z",
+   "number": 795,
+   "commits": 1
+  },
+  {
+   "additions": 184,
+   "changedFiles": 5,
+   "createdAt": "2026-11-20T19:41:54Z",
+   "deletions": 6,
+   "mergedAt": "2026-11-20T19:48:49Z",
+   "number": 796,
+   "commits": 1
+  },
+  {
+   "additions": 152,
+   "changedFiles": 5,
+   "createdAt": "2026-11-20T20:07:15Z",
+   "deletions": 9,
+   "mergedAt": "2026-11-20T20:13:37Z",
+   "number": 797,
+   "commits": 1
+  },
+  {
+   "additions": 73,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T20:33:33Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T20:41:08Z",
+   "number": 798,
+   "commits": 1
+  },
+  {
+   "additions": 36,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T20:44:09Z",
+   "deletions": 21,
+   "mergedAt": "2026-11-20T20:50:04Z",
+   "number": 799,
+   "commits": 1
+  },
+  {
+   "additions": 27,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T20:54:24Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-20T21:05:45Z",
+   "number": 800,
+   "commits": 1
+  },
+  {
+   "additions": 78,
+   "changedFiles": 6,
+   "createdAt": "2026-11-20T21:20:35Z",
+   "deletions": 7,
+   "mergedAt": "2026-11-20T21:26:04Z",
+   "number": 801,
+   "commits": 1
+  },
+  {
+   "additions": 118,
+   "changedFiles": 5,
+   "createdAt": "2026-11-20T21:33:23Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T21:38:52Z",
+   "number": 802,
+   "commits": 1
+  },
+  {
+   "additions": 54,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T21:42:28Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T21:47:12Z",
+   "number": 803,
+   "commits": 1
+  },
+  {
+   "additions": 57,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T21:53:58Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T22:00:06Z",
+   "number": 804,
+   "commits": 1
+  },
+  {
+   "additions": 49,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T22:10:20Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-20T22:16:35Z",
+   "number": 805,
+   "commits": 1
+  },
+  {
+   "additions": 49,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T22:22:54Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-20T22:29:34Z",
+   "number": 806,
+   "commits": 1
+  },
+  {
+   "additions": 34,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T22:32:30Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T22:36:54Z",
+   "number": 807,
+   "commits": 1
+  },
+  {
+   "additions": 21,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T22:43:52Z",
+   "deletions": 14,
+   "mergedAt": "2026-11-20T22:50:01Z",
+   "number": 808,
+   "commits": 1
+  },
+  {
+   "additions": 46,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T22:57:09Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T23:01:29Z",
+   "number": 809,
+   "commits": 1
+  },
+  {
+   "additions": 18,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T23:04:48Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T23:10:40Z",
+   "number": 810,
+   "commits": 1
+  },
+  {
+   "additions": 46,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T23:14:53Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T23:19:31Z",
+   "number": 811,
+   "commits": 1
+  },
+  {
+   "additions": 64,
+   "changedFiles": 1,
+   "createdAt": "2026-11-20T23:33:33Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-20T23:39:15Z",
+   "number": 812,
+   "commits": 1
+  },
+  {
+   "additions": 24,
+   "changedFiles": 2,
+   "createdAt": "2026-11-20T23:39:50Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-20T23:44:31Z",
+   "number": 813,
+   "commits": 1
+  },
+  {
+   "additions": 103,
+   "changedFiles": 3,
+   "createdAt": "2026-11-20T23:48:53Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-20T23:53:39Z",
+   "number": 814,
+   "commits": 1
+  },
+  {
+   "additions": 79,
+   "changedFiles": 2,
+   "createdAt": "2026-11-21T00:09:20Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-21T00:14:28Z",
+   "number": 815,
+   "commits": 1
+  },
+  {
+   "additions": 51,
+   "changedFiles": 1,
+   "createdAt": "2026-11-21T00:27:04Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-21T00:33:03Z",
+   "number": 816,
+   "commits": 1
+  },
+  {
+   "additions": 150,
+   "changedFiles": 4,
+   "createdAt": "2026-11-21T00:40:06Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T00:44:09Z",
+   "number": 817,
+   "commits": 1
+  },
+  {
+   "additions": 129,
+   "changedFiles": 3,
+   "createdAt": "2026-11-21T00:49:22Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T00:55:00Z",
+   "number": 818,
+   "commits": 1
+  },
+  {
+   "additions": 114,
+   "changedFiles": 3,
+   "createdAt": "2026-11-21T01:00:33Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T01:05:22Z",
+   "number": 819,
+   "commits": 1
+  },
+  {
+   "additions": 101,
+   "changedFiles": 3,
+   "createdAt": "2026-11-21T01:09:43Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T01:14:47Z",
+   "number": 820,
+   "commits": 1
+  },
+  {
+   "additions": 105,
+   "changedFiles": 3,
+   "createdAt": "2026-11-21T01:19:36Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T01:25:48Z",
+   "number": 821,
+   "commits": 1
+  },
+  {
+   "additions": 158,
+   "changedFiles": 4,
+   "createdAt": "2026-11-21T01:35:15Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T01:40:34Z",
+   "number": 822,
+   "commits": 1
+  },
+  {
+   "additions": 56,
+   "changedFiles": 1,
+   "createdAt": "2026-11-21T01:44:20Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-21T01:50:40Z",
+   "number": 823,
+   "commits": 1
+  },
+  {
+   "additions": 171,
+   "changedFiles": 6,
+   "createdAt": "2026-11-21T01:57:30Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-21T02:03:58Z",
+   "number": 824,
+   "commits": 1
+  },
+  {
+   "additions": 3,
+   "changedFiles": 2,
+   "createdAt": "2026-11-21T02:05:47Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-21T02:10:42Z",
+   "number": 825,
+   "commits": 1
+  },
+  {
+   "additions": 168,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T02:21:15Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T02:26:40Z",
+   "number": 826,
+   "commits": 1
+  },
+  {
+   "additions": 132,
+   "changedFiles": 4,
+   "createdAt": "2026-11-21T02:35:47Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T02:42:12Z",
+   "number": 827,
+   "commits": 1
+  },
+  {
+   "additions": 252,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T03:02:48Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T03:15:54Z",
+   "number": 828,
+   "commits": 2
+  },
+  {
+   "additions": 15,
+   "changedFiles": 2,
+   "createdAt": "2026-11-21T03:44:16Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-21T03:49:01Z",
+   "number": 829,
+   "commits": 1
+  },
+  {
+   "additions": 453,
+   "changedFiles": 9,
+   "createdAt": "2026-11-21T04:02:13Z",
+   "deletions": 31,
+   "mergedAt": "2026-11-21T04:23:32Z",
+   "number": 830,
+   "commits": 2
+  },
+  {
+   "additions": 369,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T12:29:48Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T12:46:19Z",
+   "number": 831,
+   "commits": 2
+  },
+  {
+   "additions": 292,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T13:01:35Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T13:16:30Z",
+   "number": 832,
+   "commits": 2
+  },
+  {
+   "additions": 206,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T13:27:34Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T13:41:12Z",
+   "number": 833,
+   "commits": 2
+  },
+  {
+   "additions": 222,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T13:54:29Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T14:07:06Z",
+   "number": 834,
+   "commits": 2
+  },
+  {
+   "additions": 242,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T14:22:14Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T14:35:28Z",
+   "number": 835,
+   "commits": 2
+  },
+  {
+   "additions": 211,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T14:49:54Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T15:01:46Z",
+   "number": 836,
+   "commits": 2
+  },
+  {
+   "additions": 207,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T15:11:32Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T15:25:14Z",
+   "number": 837,
+   "commits": 2
+  },
+  {
+   "additions": 225,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T15:49:34Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T16:03:54Z",
+   "number": 838,
+   "commits": 2
+  },
+  {
+   "additions": 198,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T16:32:05Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T17:03:09Z",
+   "number": 839,
+   "commits": 2
+  },
+  {
+   "additions": 212,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T17:35:55Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T18:54:46Z",
+   "number": 840,
+   "commits": 2
+  },
+  {
+   "additions": 34,
+   "changedFiles": 3,
+   "createdAt": "2026-11-21T19:09:13Z",
+   "deletions": 6,
+   "mergedAt": "2026-11-21T19:22:09Z",
+   "number": 841,
+   "commits": 2
+  },
+  {
+   "additions": 30,
+   "changedFiles": 3,
+   "createdAt": "2026-11-21T19:32:01Z",
+   "deletions": 5,
+   "mergedAt": "2026-11-21T19:37:14Z",
+   "number": 842,
+   "commits": 1
+  },
+  {
+   "additions": 200,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T19:53:22Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T20:40:57Z",
+   "number": 843,
+   "commits": 3
+  },
+  {
+   "additions": 34,
+   "changedFiles": 4,
+   "createdAt": "2026-11-21T20:53:50Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-21T21:14:28Z",
+   "number": 844,
+   "commits": 2
+  },
+  {
+   "additions": 6,
+   "changedFiles": 1,
+   "createdAt": "2026-11-21T21:28:57Z",
+   "deletions": 7,
+   "mergedAt": "2026-11-21T21:43:39Z",
+   "number": 845,
+   "commits": 2
+  },
+  {
+   "additions": 79,
+   "changedFiles": 5,
+   "createdAt": "2026-11-21T21:58:37Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T22:04:13Z",
+   "number": 846,
+   "commits": 1
+  },
+  {
+   "additions": 206,
+   "changedFiles": 3,
+   "createdAt": "2026-11-21T22:18:57Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-21T22:24:31Z",
+   "number": 847,
+   "commits": 1
+  },
+  {
+   "additions": 112,
+   "changedFiles": 4,
+   "createdAt": "2026-11-21T22:40:54Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-21T22:48:11Z",
+   "number": 848,
+   "commits": 1
+  },
+  {
+   "additions": 144,
+   "changedFiles": 2,
+   "createdAt": "2026-11-21T23:30:28Z",
+   "deletions": 14,
+   "mergedAt": "2026-11-21T23:36:45Z",
+   "number": 849,
+   "commits": 1
+  },
+  {
+   "additions": 799,
+   "changedFiles": 12,
+   "createdAt": "2026-11-22T01:33:41Z",
+   "deletions": 334,
+   "mergedAt": "2026-11-22T01:39:00Z",
+   "number": 850,
+   "commits": 7
+  },
+  {
+   "additions": 164,
+   "changedFiles": 2,
+   "createdAt": "2026-11-22T02:42:08Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T02:47:22Z",
+   "number": 851,
+   "commits": 1
+  },
+  {
+   "additions": 173,
+   "changedFiles": 3,
+   "createdAt": "2026-11-22T02:49:34Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T03:11:22Z",
+   "number": 852,
+   "commits": 3
+  },
+  {
+   "additions": 546,
+   "changedFiles": 6,
+   "createdAt": "2026-11-22T03:28:29Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-22T03:40:36Z",
+   "number": 853,
+   "commits": 5
+  },
+  {
+   "additions": 698,
+   "changedFiles": 6,
+   "createdAt": "2026-11-22T03:44:56Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-22T04:08:42Z",
+   "number": 854,
+   "commits": 4
+  },
+  {
+   "additions": 36,
+   "changedFiles": 2,
+   "createdAt": "2026-11-22T04:12:51Z",
+   "deletions": 10,
+   "mergedAt": "2026-11-22T04:17:45Z",
+   "number": 855,
+   "commits": 1
+  },
+  {
+   "additions": 754,
+   "changedFiles": 7,
+   "createdAt": "2026-11-22T04:29:44Z",
+   "deletions": 36,
+   "mergedAt": "2026-11-22T04:58:14Z",
+   "number": 856,
+   "commits": 4
+  },
+  {
+   "additions": 482,
+   "changedFiles": 9,
+   "createdAt": "2026-11-22T12:18:16Z",
+   "deletions": 66,
+   "mergedAt": "2026-11-22T12:37:56Z",
+   "number": 857,
+   "commits": 4
+  },
+  {
+   "additions": 8292,
+   "changedFiles": 5,
+   "createdAt": "2026-11-22T12:45:12Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-22T12:55:24Z",
+   "number": 858,
+   "commits": 2
+  },
+  {
+   "additions": 62,
+   "changedFiles": 2,
+   "createdAt": "2026-11-22T13:01:59Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T13:09:18Z",
+   "number": 859,
+   "commits": 3
+  },
+  {
+   "additions": 424,
+   "changedFiles": 8,
+   "createdAt": "2026-11-22T13:23:49Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-22T13:34:19Z",
+   "number": 860,
+   "commits": 2
+  },
+  {
+   "additions": 198,
+   "changedFiles": 7,
+   "createdAt": "2026-11-22T13:50:28Z",
+   "deletions": 9,
+   "mergedAt": "2026-11-22T14:03:53Z",
+   "number": 861,
+   "commits": 3
+  },
+  {
+   "additions": 2,
+   "changedFiles": 1,
+   "createdAt": "2026-11-22T14:04:44Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T14:08:49Z",
+   "number": 862,
+   "commits": 1
+  },
+  {
+   "additions": 185,
+   "changedFiles": 8,
+   "createdAt": "2026-11-22T14:16:03Z",
+   "deletions": 5,
+   "mergedAt": "2026-11-22T14:33:54Z",
+   "number": 863,
+   "commits": 3
+  },
+  {
+   "additions": 170,
+   "changedFiles": 13,
+   "createdAt": "2026-11-22T14:59:34Z",
+   "deletions": 23,
+   "mergedAt": "2026-11-22T15:12:15Z",
+   "number": 864,
+   "commits": 3
+  },
+  {
+   "additions": 439,
+   "changedFiles": 11,
+   "createdAt": "2026-11-22T15:18:59Z",
+   "deletions": 8,
+   "mergedAt": "2026-11-22T15:35:37Z",
+   "number": 865,
+   "commits": 3
+  },
+  {
+   "additions": 398,
+   "changedFiles": 8,
+   "createdAt": "2026-11-22T15:42:37Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-22T15:52:07Z",
+   "number": 866,
+   "commits": 2
+  },
+  {
+   "additions": 90,
+   "changedFiles": 8,
+   "createdAt": "2026-11-22T15:55:54Z",
+   "deletions": 17,
+   "mergedAt": "2026-11-22T16:07:15Z",
+   "number": 867,
+   "commits": 2
+  },
+  {
+   "additions": 276,
+   "changedFiles": 6,
+   "createdAt": "2026-11-22T17:15:16Z",
+   "deletions": 19,
+   "mergedAt": "2026-11-22T17:27:45Z",
+   "number": 868,
+   "commits": 3
+  },
+  {
+   "additions": 260,
+   "changedFiles": 4,
+   "createdAt": "2026-11-22T17:33:11Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T17:43:50Z",
+   "number": 869,
+   "commits": 2
+  },
+  {
+   "additions": 270,
+   "changedFiles": 6,
+   "createdAt": "2026-11-22T17:55:32Z",
+   "deletions": 64,
+   "mergedAt": "2026-11-22T18:31:57Z",
+   "number": 870,
+   "commits": 5
+  },
+  {
+   "additions": 260,
+   "changedFiles": 12,
+   "createdAt": "2026-11-22T18:03:10Z",
+   "deletions": 71,
+   "mergedAt": "2026-11-22T18:36:39Z",
+   "number": 871,
+   "commits": 4
+  },
+  {
+   "additions": 8913,
+   "changedFiles": 8,
+   "createdAt": "2026-11-22T18:06:24Z",
+   "deletions": 216,
+   "mergedAt": "2026-11-22T19:21:40Z",
+   "number": 872,
+   "commits": 3
+  },
+  {
+   "additions": 290,
+   "changedFiles": 7,
+   "createdAt": "2026-11-22T18:09:26Z",
+   "deletions": 33,
+   "mergedAt": "2026-11-22T18:56:03Z",
+   "number": 873,
+   "commits": 3
+  },
+  {
+   "additions": 399,
+   "changedFiles": 4,
+   "createdAt": "2026-11-22T19:22:16Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-22T19:28:37Z",
+   "number": 874,
+   "commits": 3
+  },
+  {
+   "additions": 217,
+   "changedFiles": 9,
+   "createdAt": "2026-11-22T19:40:23Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-22T19:49:03Z",
+   "number": 875,
+   "commits": 2
+  },
+  {
+   "additions": 319,
+   "changedFiles": 6,
+   "createdAt": "2026-11-22T19:43:13Z",
+   "deletions": 5,
+   "mergedAt": "2026-11-22T20:02:24Z",
+   "number": 876,
+   "commits": 3
+  },
+  {
+   "additions": 275,
+   "changedFiles": 3,
+   "createdAt": "2026-11-22T20:13:11Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-22T20:17:27Z",
+   "number": 877,
+   "commits": 1
+  },
+  {
+   "additions": 91,
+   "changedFiles": 2,
+   "createdAt": "2026-11-22T20:34:50Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T20:40:42Z",
+   "number": 878,
+   "commits": 1
+  },
+  {
+   "additions": 1047,
+   "changedFiles": 4,
+   "createdAt": "2026-11-22T20:47:20Z",
+   "deletions": 10,
+   "mergedAt": "2026-11-22T20:56:46Z",
+   "number": 879,
+   "commits": 2
+  },
+  {
+   "additions": 25,
+   "changedFiles": 1,
+   "createdAt": "2026-11-22T21:00:08Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T21:04:18Z",
+   "number": 880,
+   "commits": 1
+  },
+  {
+   "additions": 7124,
+   "changedFiles": 5,
+   "createdAt": "2026-11-22T21:20:18Z",
+   "deletions": 19,
+   "mergedAt": "2026-11-22T21:33:21Z",
+   "number": 881,
+   "commits": 3
+  },
+  {
+   "additions": 90,
+   "changedFiles": 6,
+   "createdAt": "2026-11-22T21:23:47Z",
+   "deletions": 8,
+   "mergedAt": "2026-11-22T21:39:07Z",
+   "number": 882,
+   "commits": 4
+  },
+  {
+   "additions": 25,
+   "changedFiles": 1,
+   "createdAt": "2026-11-22T21:40:16Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T21:45:28Z",
+   "number": 883,
+   "commits": 1
+  },
+  {
+   "additions": 34,
+   "changedFiles": 3,
+   "createdAt": "2026-11-22T21:52:39Z",
+   "deletions": 4,
+   "mergedAt": "2026-11-22T21:58:09Z",
+   "number": 884,
+   "commits": 3
+  },
+  {
+   "additions": 27,
+   "changedFiles": 2,
+   "createdAt": "2026-11-22T22:01:51Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-22T22:08:03Z",
+   "number": 885,
+   "commits": 2
+  },
+  {
+   "additions": 218,
+   "changedFiles": 3,
+   "createdAt": "2026-11-22T22:24:34Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T22:32:15Z",
+   "number": 886,
+   "commits": 3
+  },
+  {
+   "additions": 75,
+   "changedFiles": 1,
+   "createdAt": "2026-11-22T22:33:15Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T22:38:58Z",
+   "number": 887,
+   "commits": 1
+  },
+  {
+   "additions": 39,
+   "changedFiles": 1,
+   "createdAt": "2026-11-22T22:39:23Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T22:44:04Z",
+   "number": 888,
+   "commits": 1
+  },
+  {
+   "additions": 1168,
+   "changedFiles": 4,
+   "createdAt": "2026-11-22T22:56:07Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T23:08:58Z",
+   "number": 889,
+   "commits": 2
+  },
+  {
+   "additions": 1002,
+   "changedFiles": 5,
+   "createdAt": "2026-11-22T22:56:51Z",
+   "deletions": 35,
+   "mergedAt": "2026-11-22T23:35:54Z",
+   "number": 890,
+   "commits": 3
+  },
+  {
+   "additions": 433,
+   "changedFiles": 6,
+   "createdAt": "2026-11-22T23:22:23Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-22T23:40:51Z",
+   "number": 891,
+   "commits": 2
+  },
+  {
+   "additions": 18,
+   "changedFiles": 1,
+   "createdAt": "2026-11-22T23:41:48Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-22T23:47:31Z",
+   "number": 892,
+   "commits": 1
+  },
+  {
+   "additions": 597,
+   "changedFiles": 7,
+   "createdAt": "2026-11-23T00:21:08Z",
+   "deletions": 12,
+   "mergedAt": "2026-11-23T00:56:25Z",
+   "number": 893,
+   "commits": 3
+  },
+  {
+   "additions": 17,
+   "changedFiles": 1,
+   "createdAt": "2026-11-23T00:57:28Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-23T01:01:39Z",
+   "number": 894,
+   "commits": 1
+  },
+  {
+   "additions": 5637,
+   "changedFiles": 5,
+   "createdAt": "2026-11-23T02:10:10Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-23T02:42:25Z",
+   "number": 895,
+   "commits": 2
+  },
+  {
+   "additions": 1076,
+   "changedFiles": 10,
+   "createdAt": "2026-11-23T02:33:27Z",
+   "deletions": 21,
+   "mergedAt": "2026-11-23T03:06:12Z",
+   "number": 896,
+   "commits": 3
+  },
+  {
+   "additions": 455,
+   "changedFiles": 3,
+   "createdAt": "2026-11-23T02:44:57Z",
+   "deletions": 131,
+   "mergedAt": "2026-11-23T02:50:54Z",
+   "number": 897,
+   "commits": 1
+  },
+  {
+   "additions": 6339,
+   "changedFiles": 11,
+   "createdAt": "2026-11-23T09:12:54Z",
+   "deletions": 6,
+   "mergedAt": "2026-11-23T10:03:24Z",
+   "number": 898,
+   "commits": 6
+  },
+  {
+   "additions": 4033,
+   "changedFiles": 8,
+   "createdAt": "2026-11-23T09:20:39Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-23T09:44:32Z",
+   "number": 899,
+   "commits": 2
+  },
+  {
+   "additions": 2011,
+   "changedFiles": 4,
+   "createdAt": "2026-11-23T10:26:46Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-23T10:43:59Z",
+   "number": 900,
+   "commits": 3
+  },
+  {
+   "additions": 249,
+   "changedFiles": 2,
+   "createdAt": "2026-11-23T10:36:47Z",
+   "deletions": 16,
+   "mergedAt": "2026-11-23T10:58:53Z",
+   "number": 901,
+   "commits": 3
+  },
+  {
+   "additions": 1737,
+   "changedFiles": 9,
+   "createdAt": "2026-11-23T11:14:12Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-23T11:41:09Z",
+   "number": 902,
+   "commits": 4
+  },
+  {
+   "additions": 54,
+   "changedFiles": 1,
+   "createdAt": "2026-11-23T11:15:13Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-23T11:24:47Z",
+   "number": 903,
+   "commits": 2
+  },
+  {
+   "additions": 1,
+   "changedFiles": 1,
+   "createdAt": "2026-11-23T11:26:22Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-23T11:33:07Z",
+   "number": 904,
+   "commits": 1
+  },
+  {
+   "additions": 2406,
+   "changedFiles": 8,
+   "createdAt": "2026-11-23T11:40:49Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-23T12:10:54Z",
+   "number": 905,
+   "commits": 6
+  },
+  {
+   "additions": 425,
+   "changedFiles": 6,
+   "createdAt": "2026-11-23T11:48:59Z",
+   "deletions": 3,
+   "mergedAt": "2026-11-23T12:17:36Z",
+   "number": 906,
+   "commits": 4
+  },
+  {
+   "additions": 5,
+   "changedFiles": 1,
+   "createdAt": "2026-11-23T11:56:23Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-23T12:01:01Z",
+   "number": 907,
+   "commits": 1
+  },
+  {
+   "additions": 425,
+   "changedFiles": 7,
+   "createdAt": "2026-11-23T12:12:30Z",
+   "deletions": 22,
+   "mergedAt": "2026-11-23T12:24:44Z",
+   "number": 908,
+   "commits": 6
+  },
+  {
+   "additions": 92,
+   "changedFiles": 1,
+   "createdAt": "2026-11-23T12:26:12Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-23T12:34:36Z",
+   "number": 909,
+   "commits": 2
+  },
+  {
+   "additions": 1562,
+   "changedFiles": 7,
+   "createdAt": "2026-11-23T12:56:50Z",
+   "deletions": 1,
+   "mergedAt": "2026-11-23T13:02:12Z",
+   "number": 910,
+   "commits": 3
+  },
+  {
+   "additions": 135,
+   "changedFiles": 4,
+   "createdAt": "2026-11-23T13:04:22Z",
+   "deletions": 88,
+   "mergedAt": "2026-11-23T13:13:55Z",
+   "number": 911,
+   "commits": 2
+  },
+  {
+   "additions": 986,
+   "changedFiles": 6,
+   "createdAt": "2026-11-23T13:12:50Z",
+   "deletions": 10,
+   "mergedAt": "2026-11-23T13:23:15Z",
+   "number": 912,
+   "commits": 3
+  },
+  {
+   "additions": 27,
+   "changedFiles": 2,
+   "createdAt": "2026-11-23T13:44:38Z",
+   "deletions": 2,
+   "mergedAt": "2026-11-23T13:51:49Z",
+   "number": 913,
+   "commits": 2
+  },
+  {
+   "additions": 3531,
+   "changedFiles": 3,
+   "createdAt": "2026-11-23T14:20:33Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-23T16:00:06Z",
+   "number": 914,
+   "commits": 2
+  },
+  {
+   "additions": 78,
+   "changedFiles": 3,
+   "createdAt": "2026-11-23T16:24:05Z",
+   "deletions": 8,
+   "mergedAt": "2026-11-23T16:34:41Z",
+   "number": 915,
+   "commits": 2
+  },
+  {
+   "additions": 89,
+   "changedFiles": 3,
+   "createdAt": "2026-11-23T16:36:56Z",
+   "deletions": 12,
+   "mergedAt": "2026-11-23T16:53:28Z",
+   "number": 917,
+   "commits": 3
+  },
+  {
+   "additions": 1965,
+   "changedFiles": 12,
+   "createdAt": "2026-11-23T16:56:41Z",
+   "deletions": 35,
+   "mergedAt": "2026-11-23T17:07:10Z",
+   "number": 918,
+   "commits": 2
+  },
+  {
+   "additions": 961,
+   "changedFiles": 3,
+   "createdAt": "2026-11-23T17:01:47Z",
+   "deletions": 0,
+   "mergedAt": "2026-11-23T17:15:12Z",
+   "number": 919,
+   "commits": 3
+  },
+  {
+   "additions": 3411,
+   "changedFiles": 13,
+   "createdAt": "2026-11-23T17:12:51Z",
+   "deletions": 29,
+   "mergedAt": "2026-11-23T17:23:23Z",
+   "number": 920,
+   "commits": 6
+  }
+ ]
+}

@@ -1,0 +1,87 @@
+{
+  "scenario": "G",
+  "contract": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#G",
+  "useAt": "2026-11-23",
+  "rule": {
+    "minSpearmanMinutes": 0.3,
+    "minSpearmanCommits": 0.3,
+    "smallMax": 100,
+    "largeMin": 1000
+  },
+  "knowledge": {
+    "ok": true,
+    "reason": "both claims SUPPORTED, provenance via the pinned collection, fresh at use time, authorized for DESIGN_PROPOSAL",
+    "claims": [
+      {
+        "id": "G_SMALL_ONE",
+        "claim": "The page states: In general, the right size for a CL is one self-contained change.",
+        "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+        "epistemic": "SUPPORTED",
+        "isFact": false,
+        "provenance": "ASSESSMENT:kc:efae40927e7a0f2d",
+        "useAuthorization": "DESIGN_PROPOSAL",
+        "useReason": "within attested record + contract",
+        "validUntil": "2027-02-21T12:00:00.000Z"
+      },
+      {
+        "id": "G_SMALL_SIZE",
+        "claim": "The page states: There are no hard and fast rules about how large is “too large.” 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large, but it’s up to the judgment of your reviewer.",
+        "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+        "epistemic": "SUPPORTED",
+        "isFact": false,
+        "provenance": "ASSESSMENT:kc:e353da6e42eab8d9",
+        "useAuthorization": "DESIGN_PROPOSAL",
+        "useReason": "within attested record + contract",
+        "validUntil": "2027-02-21T12:00:00.000Z"
+      }
+    ]
+  },
+  "measurement": {
+    "n": 400,
+    "range": [
+      519,
+      920
+    ],
+    "spearmanSizeMinutes": {
+      "ok": true,
+      "n": 400,
+      "rho": 0.293436,
+      "strength": "WEAK",
+      "note": "Spearman ρ = Pearson of average ranks (tie-correct); measures MONOTONIC order association — NOT causation/accuracy/linear agreement on raw values."
+    },
+    "spearmanSizeCommits": {
+      "ok": true,
+      "n": 400,
+      "rho": 0.401154,
+      "strength": "MODERATE",
+      "note": "Spearman ρ = Pearson of average ranks (tie-correct); measures MONOTONIC order association — NOT causation/accuracy/linear agreement on raw values."
+    },
+    "buckets": {
+      "small_le_100": {
+        "n": 105,
+        "medianMinutes": 5.966666666666667,
+        "medianCommits": 1
+      },
+      "medium_101_1000": {
+        "n": 276,
+        "medianMinutes": 6.2,
+        "medianCommits": 1
+      },
+      "large_gt_1000": {
+        "n": 19,
+        "medianMinutes": 17.216666666666665,
+        "medianCommits": 3
+      }
+    }
+  },
+  "decision": {
+    "decision": "NOT_ADOPTED",
+    "reason": "pre-registered rule not met: spearman(size,minutes)=0.293436, spearman(size,commits)=0.401154, median minutes 5.966666666666667 (≤100) vs 17.216666666666665 (>1000)"
+  },
+  "classification": "REAL — admitted knowledge retrieved, checked at use time and used to decide an ODG design question on ODG's real data",
+  "honesty": [
+    "correlational evidence on ODG's own PR history (confounded by task difficulty and by the inspection loop) — it CONFIRMS OR NOT the published guidance on ODG's data, it does not prove causation",
+    "the knowledge is a single-source official statement (SUPPORTED), never a fact; the decision can only be a DESIGN_PROPOSAL",
+    "provider (Claude Code) wrote this runner; the checks (attestation, usableFor, rank correlation) and the decision rule are executed by ODG components"
+  ]
+}
