@@ -288,19 +288,27 @@ if (!delegMode.isolated && (process.env.ODG_TRUTH_LOCK_ENFORCE === "1" || proces
 // authorized_paths ⇒ REFUSE here (zero verify/converge/archive); the provider never widens its own scope.
 console.log("--------------------------------------");
 console.log("WRITE-SET CONFORMANCE");
+// V16.1 — ONE observation of the received patch: scopeClean AND protectedClean judge the SAME path list, and that exact
+// proven list (nothing wider) is what verify may tolerate as uncommitted (see odg-verify delegatedGitClean).
+let provenPatchPaths: string[] = [];
 try {
-  const { scopeClean } = require(path.join(ROOT, _corePort("runtime/core/scope-observer.js")));
+  const { scopeClean, gitChangedPathsChecked } = require(path.join(ROOT, _corePort("runtime/core/scope-observer.js")));
   const authorized = contractPaths;   // V16.0: same admissibility filter as the brief (unsafe/protected ⇒ not authorized)
-  const conformance = scopeClean(authorized);
+  const obs = gitChangedPathsChecked();
+  if (!obs || obs.ok !== true || !Array.isArray(obs.paths)) {
+    die("STOP: cannot observe working tree (git status failed) — scope conformance UNKNOWN, refusing (fail-closed; no verify/converge/archive).", 2);
+  }
+  const conformance = scopeClean(authorized, obs.paths);
   if (!conformance.ok) {
     die(`STOP: delegated patch is OUT OF SCOPE — ${conformance.detail}. The received change touched files outside the authorized write-set; refusing (no verify/converge/archive).`, 2);
   }
   console.log("Conformance:", conformance.detail);
   // V16.0: protected roots are NEVER writable through delegation, even under an ancestor glob like runtime/** .
   const { protectedClean } = require(path.join(ROOT, _corePort("runtime/core/scope-observer.js")));
-  const prot = protectedClean(undefined, undefined, SOVEREIGN_PROTECTED);
+  const prot = protectedClean(obs.paths, undefined, SOVEREIGN_PROTECTED);
   if (!prot.ok) die(`STOP: delegated patch touches a PROTECTED path — ${prot.detail}; refusing (no verify/converge/archive).`, 2);
   console.log("Protected roots:", prot.detail);
+  provenPatchPaths = obs.paths.slice();
 } catch (err: any) {
   die(`STOP: write-set conformance check failed to run (${err.message}); refusing fail-closed.`, 2);
 }
@@ -310,7 +318,11 @@ console.log("--------------------------------------");
 console.log("VERIFY");
 // L7-FIX-4: prefer the compiled dist verifier (TS-only) so its transitive core loads from dist; source fallback.
 const verifyBin = resolveRequiredPort(path.join("runtime", "dist", "bin", "odg-verify.js"), path.join(BIN, "odg-verify.js"), (p: string) => fs.existsSync(path.join(ROOT, p)));
-const verify = cp.spawnSync(process.execPath, [verifyBin], { cwd: ROOT, stdio: "inherit" });
+// V16.1 — the uncommitted patch is the delegated deliverable: pass EXACTLY the paths proven in-scope + non-protected
+// above, so verify's gitClean tolerates those and nothing else (any other dirty path ⇒ gitClean=false). Build and
+// typescript gates are unchanged. No proven paths (clean tree) ⇒ no flag ⇒ verify's default gate, unchanged.
+const verifyArgs = [verifyBin, ...provenPatchPaths.map((p) => `--delegated-path=${p}`)];
+const verify = cp.spawnSync(process.execPath, verifyArgs, { cwd: ROOT, stdio: "inherit" });
 if (verify.status !== 0) {
   die(`STOP: verify failed for "${mission}".`, verify.status || 1);
 }
@@ -319,12 +331,31 @@ if (verify.status !== 0) {
 console.log("--------------------------------------");
 console.log("CONVERGE");
 const convergeBin = resolveRequiredPort(path.join("runtime", "dist", "bin", "odg-converge.js"), path.join(BIN, "odg-converge.js"), (p: string) => fs.existsSync(path.join(ROOT, p)));
-const converge = cp.spawnSync(process.execPath, [convergeBin], { cwd: ROOT, stdio: "inherit" });
+// V16.1 — MISSION-SCOPED converge: exactly THIS mission (no campaign walk over the remaining roadmap), and its
+// release gitClean gate judged on the SAME proven path list from the SAME observation that conformance/protected/verify
+// used. converge recomputes that verdict FRESH (pre-flight + evidence time): any dirty path that is not exactly one of
+// those proven paths — e.g. a file that appeared after verify — ⇒ NO_RELEASE ⇒ non-zero exit ⇒ STOP before archive.
+const convergeArgs = [convergeBin, `--mission=${mission}`, ...provenPatchPaths.map((p) => `--delegated-path=${p}`)];
+const converge = cp.spawnSync(process.execPath, convergeArgs, { cwd: ROOT, stdio: "inherit" });
+// #923 — delegated (uncommitted) patch: converge exit 3 = PROVEN, PENDING the HUMAN commit. Nothing was released,
+// recorded or archived; ODG never auto-commits. Same honest stop as the isolated acceptance gate (exit 0, not a failure).
+if (provenPatchPaths.length > 0 && converge.status === 3) {
+  console.log("======================================");
+  console.log("ODG DELEGATE — PROVEN, AWAITING HUMAN COMMIT");
+  console.log("======================================");
+  console.log("Patch   :", provenPatchPaths.join(", "));
+  console.log("Proofs  :", path.join(GENERATED, "runtime-verify.json") + ",", path.join(GENERATED, "convergence-report.json"));
+  console.log("NOT released, NOT recorded in the Mission Ledger, NOT archived. Review + COMMIT the patch, then re-run: odg delegate", mission);
+  console.log("======================================");
+  process.exit(0);
+}
 if (converge.status !== 0) {
   die(`STOP: converge did not reach convergence for "${mission}".`, converge.status || 1);
 }
 
 // --- Steps 9/10 — proofs + auto-archive via the existing Mission Ledger lifecycle ---------------
+// Reached ONLY after the mission-scoped converge exited 0, i.e. the Release Manager RELEASED exactly this mission —
+// which, since #923, happens only on the DEFAULT gate (committed deliverable, 0 delegated paths).
 let lifecycle = null;
 try {
   const { markArchived } = require(path.join(ROOT, _corePort("runtime/core/mission-lifecycle.js")));

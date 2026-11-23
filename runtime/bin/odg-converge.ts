@@ -14,7 +14,9 @@ const root = process.cwd(); // repo root (wrapper cwd) — robust from any dist 
 const tsx = path.join(root, "node_modules", ".bin", "tsx");
 const entry = path.join(root, "src", "runtime", "converge-cli.ts");
 
-const r = spawnSync(tsx, [entry], { cwd: root, stdio: "inherit" });
+// V16.1 — forward argv verbatim (odg-delegate passes --mission=<ID> [--delegated-path=<p>...] for a MISSION-SCOPED
+// converge). No argument ⇒ argv is [entry] exactly as before ⇒ the unchanged campaign-wide converge.
+const r = spawnSync(tsx, [entry, ...process.argv.slice(2)], { cwd: root, stdio: "inherit" });
 process.exit(r.status == null ? 1 : r.status);
 
 export {};
