@@ -48,6 +48,14 @@ const PUBLISHERS: Record<string, any> = Object.freeze({
   "www.nist.gov": { organization: "NIST (US Dept. of Commerce)", family: "nist", role: "PRIMARY_OFFICIAL" },
   "www.nasa.gov": { organization: "NASA", family: "nasa", role: "PRIMARY_OFFICIAL" },
   "sma.nasa.gov": { organization: "NASA Office of Safety and Mission Assurance", family: "nasa", role: "PRIMARY_OFFICIAL" },
+  // V15.9 — hosts of the pinned V158 collection (each the publisher's OWN official site; family = organisation, so two of
+  // them from one organisation never count as independent). PRIMARY_OFFICIAL ⇒ at most SUPPORTED ("what the publisher
+  // states"), never CORROBORATED on its own.
+  "csrc.nist.gov": { organization: "NIST Computer Security Resource Center (US Dept. of Commerce)", family: "nist", role: "PRIMARY_OFFICIAL" },
+  "www.postgresql.org": { organization: "PostgreSQL Global Development Group", family: "postgresql", role: "PRIMARY_OFFICIAL" },
+  "code.claude.com": { organization: "Anthropic", family: "anthropic", role: "PRIMARY_OFFICIAL" },
+  "www.sqlite.org": { organization: "SQLite project (Hwaci)", family: "sqlite", role: "PRIMARY_OFFICIAL" },
+  "registry.npmjs.org": { organization: "npm, Inc. (GitHub)", family: "github-npm", role: "PRIMARY_OFFICIAL" },
 });
 function hostOf(u: any): string { try { return new URL(String(u)).hostname.toLowerCase(); } catch { return ""; } }
 function identityOf(url: string): any {
