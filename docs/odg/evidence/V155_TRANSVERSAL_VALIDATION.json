@@ -1,0 +1,1288 @@
+{
+  "schema": "odg.evidence.v1",
+  "id": "V155_TRANSVERSAL_VALIDATION",
+  "directive": "CTO V15.5 Step 6 — transversal validation (scenarios A–L)",
+  "recordedAt": "2026-11-23T10:25:36.642Z",
+  "provider": "Claude Code (TECHNICAL_PROVIDER_ONLY) - not an authority; acceptance belongs to ODG governance / owner",
+  "base": {
+    "head": "919496d590804c28115f2c18b04f4896b0b55eb6",
+    "originMain": "c6949b09f313557b3c821fca34e96dfb00f571ab",
+    "branch": "feat/v155-transversal-validation",
+    "worktree": "linked git worktree (node_modules symlinked read-only from the main repo; dist built in-worktree)",
+    "mainRepo": "<main checkout> (path redacted)"
+  },
+  "environment": {
+    "node": "v22.22.1",
+    "cpus": 8,
+    "loadavgStart": [
+      0.86,
+      0.91,
+      1.09
+    ],
+    "truthLock": "ODG_TRUTH_LOCK_ENFORCE=0 process-scoped for sandbox ticks (the enforced launcher refuses any branch != main — measured in A)",
+    "state": "the worktree's OWN gitignored runtime/generated, reset before A, before each round and before the claim variant; the main repo's runtime/generated and runtime/dist were never written",
+    "ollama": "loopback 127.0.0.1:11434 models=qwen2.5-coder:7b,qwen2.5-coder:3b,qwen2.5:0.5b"
+  },
+  "parameters": {
+    "rounds": 2,
+    "waveMax": 3,
+    "killAfterMs": 1500,
+    "missions": [
+      "M0001",
+      "G10_READONLY_AUTONOMY_PROBE",
+      "M0002",
+      "RUNTIME_SELF_AUDIT",
+      "QUAL_CLEAN_GATEB"
+    ],
+    "staleMs": 2500,
+    "renewMs": 400,
+    "absentModel": "qwen2.5-coder:14b",
+    "noQualifiedClass": "implement"
+  },
+  "commands": [
+    "npm run build:runtime",
+    "ODG_TRUTH_LOCK_ENFORCE=1 ODG_CANARY_ALLOWLIST=M0001 node runtime/dist/bin/odg-schedule-tick.js   (expected STARTUP_REFUSED off main)",
+    "ODG_TRUTH_LOCK_ENFORCE=0 ODG_CANARY_ALLOWLIST=M0001 node runtime/dist/bin/odg-schedule-tick.js",
+    "[r1-tick1] ODG_TRUTH_LOCK_ENFORCE=0 ODG_CANARY_ALLOWLIST=M0001,G10_READONLY_AUTONOMY_PROBE,M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB ODG_TICK_WAVE=1 ODG_TICK_WAVE_MAX=3 node runtime/dist/bin/odg-schedule-tick.js",
+    "[r1-tick2] ODG_TRUTH_LOCK_ENFORCE=0 ODG_CANARY_ALLOWLIST=M0001,G10_READONLY_AUTONOMY_PROBE,M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB ODG_TICK_WAVE=1 ODG_TICK_WAVE_MAX=3 node runtime/dist/bin/odg-schedule-tick.js",
+    "[r1-tick3] ODG_TRUTH_LOCK_ENFORCE=0 ODG_CANARY_ALLOWLIST=M0001,G10_READONLY_AUTONOMY_PROBE,M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB ODG_TICK_WAVE=1 ODG_TICK_WAVE_MAX=3 node runtime/dist/bin/odg-schedule-tick.js",
+    "[r2-tick1] ODG_TRUTH_LOCK_ENFORCE=0 ODG_CANARY_ALLOWLIST=M0001,G10_READONLY_AUTONOMY_PROBE,M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB ODG_TICK_WAVE=1 ODG_TICK_WAVE_MAX=3 node runtime/dist/bin/odg-schedule-tick.js",
+    "[r2-tick2] ODG_TRUTH_LOCK_ENFORCE=0 ODG_CANARY_ALLOWLIST=M0001,G10_READONLY_AUTONOMY_PROBE,M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB ODG_TICK_WAVE=1 ODG_TICK_WAVE_MAX=3 node runtime/dist/bin/odg-schedule-tick.js",
+    "[r2-tick3] ODG_TRUTH_LOCK_ENFORCE=0 ODG_CANARY_ALLOWLIST=M0001,G10_READONLY_AUTONOMY_PROBE,M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB ODG_TICK_WAVE=1 ODG_TICK_WAVE_MAX=3 node runtime/dist/bin/odg-schedule-tick.js",
+    "[claim-variant] ODG_TRUTH_LOCK_ENFORCE=0 ODG_CANARY_ALLOWLIST=M0002 ODG_TICK_WAVE=1 ODG_TICK_WAVE_MAX=1 node runtime/dist/bin/odg-schedule-tick.js  (+ SIGSTOP/SIGCONT stepping, SIGKILL while holding the mission-ledger claim)"
+  ],
+  "timingsMs": {
+    "A": 16665,
+    "wavesRounds": 34291,
+    "claimVariant": 135351,
+    "IJ": 2491,
+    "L": 27226,
+    "total": 217453
+  },
+  "verdictRules": "classifyScenario (runtime/bin/odg-v155-transversal-validation.ts) — PURE. verdict == classifyScenario(facts) is INTERNAL CONSISTENCY (the verdict follows from the recorded facts), NOT anti-fabrication: it cannot prove the facts were measured. This harness has no injection path, so it never yields SIMULATED; harness-built/harness-emitted parts are capped at PARTIAL.",
+  "tally": {
+    "REAL": 8,
+    "PARTIAL": 4
+  },
+  "scenarios": {
+    "A": {
+      "verdict": "REAL",
+      "reasons": [
+        "dist built in the worktree",
+        "real default (non-wave) tick PASS on reset state",
+        "Truth-Lock-enforced tick STARTUP_REFUSED on the feature branch (expected; hence ODG_TRUTH_LOCK_ENFORCE=0 for the sandbox)"
+      ],
+      "facts": {
+        "executed": true,
+        "build": {
+          "exitCode": 0,
+          "tail": [
+            "build-dist-closure: OK — emitted=134 copied=0 total-closure=134",
+            "build-dist-closure: manifest -> runtime/dist/dist-closure-manifest.json"
+          ]
+        },
+        "truthLockEnforced": {
+          "exitCode": 2,
+          "stdout": "STARTUP_REFUSED: Truth-Lock repo-safety — REFUSED — unexpected branch \"feat/v155-transversal-validation\" (expected \"main\"); HEAD 919496d5 diverges from origin/main c6949b09",
+          "ms": 236
+        },
+        "defaultTick": {
+          "exitCode": 0,
+          "stdout": "[odg-schedule-tick] PASS — status SUCCESS",
+          "ms": 5234
+        }
+      }
+    },
+    "B": {
+      "verdict": "REAL",
+      "reasons": [
+        "every round admitted 5/5 missions via the real gate chain; physical write-sets pairwise disjoint; logical declared sets distinct for 10/10 pairs (identical logical names are disjoint ONLY by run-dir isolation)"
+      ],
+      "facts": {
+        "executed": true,
+        "perRound": [
+          {
+            "admitted": [
+              "M0001",
+              "G10_READONLY_AUTONOMY_PROBE",
+              "M0002",
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "refused": 0,
+            "pairs": 10,
+            "logicalDistinctPairs": 10,
+            "physicalDisjoint": true,
+            "physicalCompared": 3
+          },
+          {
+            "admitted": [
+              "M0001",
+              "G10_READONLY_AUTONOMY_PROBE",
+              "M0002",
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "refused": 0,
+            "pairs": 10,
+            "logicalDistinctPairs": 10,
+            "physicalDisjoint": true,
+            "physicalCompared": 3
+          }
+        ]
+      }
+    },
+    "C": {
+      "verdict": "REAL",
+      "reasons": [
+        "real CLI wave = cap 3 of 5 admitted, 0 contentions, rest deferred; canonical selectWave contrast: isolated 5 vs non-isolated 1 (shared runtime/generated ⇒ serialized)"
+      ],
+      "facts": {
+        "executed": true,
+        "perRound": [
+          {
+            "wave": [
+              "M0001",
+              "G10_READONLY_AUTONOMY_PROBE",
+              "M0002"
+            ],
+            "deferred": [
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "admitted": 5,
+            "cap": 3,
+            "contentions": 0,
+            "overlap": true,
+            "maxConcurrentPids": 3,
+            "tickWriteSetOk": 2,
+            "expectedOk": 2,
+            "killedWriteSetCheck": {
+              "undeclared": [],
+              "actual": [
+                "logs/M0002.run.log",
+                "pipeline-checkpoint.json",
+                "project-context.json",
+                "runtime-context.json",
+                "runtime-pipeline.json",
+                "truth-lock.json"
+              ],
+              "ledgerDelta": 0,
+              "nonRegular": [],
+              "status": "OK"
+            },
+            "independentCheckOk": true,
+            "sharedViolations": [],
+            "wallMs": 5695,
+            "results": [
+              {
+                "mission": "M0001",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5002
+              },
+              {
+                "mission": "G10_READONLY_AUTONOMY_PROBE",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5180
+              },
+              {
+                "mission": "M0002",
+                "status": "FAIL",
+                "reason": "odg-run exit null SIGKILL",
+                "writeSetCheck": "OK",
+                "ms": 817
+              }
+            ]
+          },
+          {
+            "wave": [
+              "M0001",
+              "G10_READONLY_AUTONOMY_PROBE",
+              "M0002"
+            ],
+            "deferred": [
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "admitted": 5,
+            "cap": 3,
+            "contentions": 0,
+            "overlap": true,
+            "maxConcurrentPids": 3,
+            "tickWriteSetOk": 2,
+            "expectedOk": 2,
+            "killedWriteSetCheck": {
+              "undeclared": [],
+              "actual": [
+                "logs/M0002.run.log",
+                "pipeline-checkpoint.json",
+                "project-context.json",
+                "runtime-context.json",
+                "runtime-pipeline.json",
+                "truth-lock.json"
+              ],
+              "ledgerDelta": 0,
+              "nonRegular": [],
+              "status": "OK"
+            },
+            "independentCheckOk": true,
+            "sharedViolations": [],
+            "wallMs": 5430,
+            "results": [
+              {
+                "mission": "M0001",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 4972
+              },
+              {
+                "mission": "G10_READONLY_AUTONOMY_PROBE",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5100
+              },
+              {
+                "mission": "M0002",
+                "status": "FAIL",
+                "reason": "odg-run exit null SIGKILL",
+                "writeSetCheck": "OK",
+                "ms": 841
+              }
+            ]
+          }
+        ],
+        "contrast": {
+          "isolatedWave": 5,
+          "nonIsolatedWave": 1,
+          "nonIsolatedContentions": 10
+        }
+      }
+    },
+    "D": {
+      "verdict": "REAL",
+      "reasons": [
+        "4 real waves: children simultaneous (common instant + ≥2 live pids), tick write-set enforcement OK for every completed child, independent post-run check OK, no undeclared shared write"
+      ],
+      "facts": {
+        "executed": true,
+        "perTick": [
+          {
+            "label": "r1-tick1",
+            "wave": [
+              "M0001",
+              "G10_READONLY_AUTONOMY_PROBE",
+              "M0002"
+            ],
+            "deferred": [
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "admitted": 5,
+            "cap": 3,
+            "contentions": 0,
+            "overlap": true,
+            "maxConcurrentPids": 3,
+            "tickWriteSetOk": 2,
+            "expectedOk": 2,
+            "killedWriteSetCheck": {
+              "undeclared": [],
+              "actual": [
+                "logs/M0002.run.log",
+                "pipeline-checkpoint.json",
+                "project-context.json",
+                "runtime-context.json",
+                "runtime-pipeline.json",
+                "truth-lock.json"
+              ],
+              "ledgerDelta": 0,
+              "nonRegular": [],
+              "status": "OK"
+            },
+            "independentCheckOk": true,
+            "sharedViolations": [],
+            "wallMs": 5695,
+            "results": [
+              {
+                "mission": "M0001",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5002
+              },
+              {
+                "mission": "G10_READONLY_AUTONOMY_PROBE",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5180
+              },
+              {
+                "mission": "M0002",
+                "status": "FAIL",
+                "reason": "odg-run exit null SIGKILL",
+                "writeSetCheck": "OK",
+                "ms": 817
+              }
+            ]
+          },
+          {
+            "label": "r1-tick2",
+            "wave": [
+              "M0002",
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "deferred": [],
+            "admitted": 3,
+            "cap": 3,
+            "contentions": 0,
+            "overlap": true,
+            "maxConcurrentPids": 3,
+            "tickWriteSetOk": 3,
+            "expectedOk": 3,
+            "killedWriteSetCheck": null,
+            "independentCheckOk": true,
+            "sharedViolations": [],
+            "wallMs": 5544,
+            "results": [
+              {
+                "mission": "M0002",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5000
+              },
+              {
+                "mission": "RUNTIME_SELF_AUDIT",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 4997
+              },
+              {
+                "mission": "QUAL_CLEAN_GATEB",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5195
+              }
+            ]
+          },
+          {
+            "label": "r2-tick1",
+            "wave": [
+              "M0001",
+              "G10_READONLY_AUTONOMY_PROBE",
+              "M0002"
+            ],
+            "deferred": [
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "admitted": 5,
+            "cap": 3,
+            "contentions": 0,
+            "overlap": true,
+            "maxConcurrentPids": 3,
+            "tickWriteSetOk": 2,
+            "expectedOk": 2,
+            "killedWriteSetCheck": {
+              "undeclared": [],
+              "actual": [
+                "logs/M0002.run.log",
+                "pipeline-checkpoint.json",
+                "project-context.json",
+                "runtime-context.json",
+                "runtime-pipeline.json",
+                "truth-lock.json"
+              ],
+              "ledgerDelta": 0,
+              "nonRegular": [],
+              "status": "OK"
+            },
+            "independentCheckOk": true,
+            "sharedViolations": [],
+            "wallMs": 5430,
+            "results": [
+              {
+                "mission": "M0001",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 4972
+              },
+              {
+                "mission": "G10_READONLY_AUTONOMY_PROBE",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5100
+              },
+              {
+                "mission": "M0002",
+                "status": "FAIL",
+                "reason": "odg-run exit null SIGKILL",
+                "writeSetCheck": "OK",
+                "ms": 841
+              }
+            ]
+          },
+          {
+            "label": "r2-tick2",
+            "wave": [
+              "M0002",
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "deferred": [],
+            "admitted": 3,
+            "cap": 3,
+            "contentions": 0,
+            "overlap": true,
+            "maxConcurrentPids": 3,
+            "tickWriteSetOk": 3,
+            "expectedOk": 3,
+            "killedWriteSetCheck": null,
+            "independentCheckOk": true,
+            "sharedViolations": [],
+            "wallMs": 5525,
+            "results": [
+              {
+                "mission": "M0002",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5124
+              },
+              {
+                "mission": "RUNTIME_SELF_AUDIT",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5097
+              },
+              {
+                "mission": "QUAL_CLEAN_GATEB",
+                "status": "PASS",
+                "reason": "status SUCCESS",
+                "writeSetCheck": "OK",
+                "ms": 5185
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "E": {
+      "verdict": "PARTIAL",
+      "reasons": [
+        "assign/renew/snapshot ran on every REAL child (real pid + write-set), but in the TEST-ONLY ctx.heartbeatOnly scope. Production repo-evidence mode was probed once: ASSIGNED (supervising worktree dirty paths: 0, 1132 ms) — the supervising worktree is an unowned live worktree whose write-set the supervisor approximates from git-observed paths only (branch diff vs origin/main / dirty paths; with neither it is UNKNOWN ⇒ refused, fail-closed): the gitignored runtime/generated writes of its processes are invisible to it; a repo-mode assign is a ~1.1-1.3 s SYNC call. Heartbeats are emitted by the harness on each child's behalf: odg-run has no in-process heartbeat and the tick is not wired to the supervisor"
+      ],
+      "facts": {
+        "executed": true,
+        "mode": "heartbeatOnly",
+        "assignModes": [
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly",
+          "heartbeatOnly"
+        ],
+        "repoModeOutcome": "ASSIGNED",
+        "repoProbe": {
+          "outcome": "ASSIGNED",
+          "ms": 1132,
+          "worktreeDirtyPaths": 0
+        },
+        "staleMs": 2500,
+        "perTick": [
+          {
+            "label": "r1-tick1",
+            "waveSize": 3,
+            "detected": 3,
+            "assigned": 3,
+            "renewedWhileAlive": 3,
+            "midRunRunning": 3,
+            "midSnapshot": {
+              "at": 986,
+              "states": [
+                {
+                  "id": "r1-t1-M0001",
+                  "state": "RUNNING"
+                },
+                {
+                  "id": "r1-t1-G10_READONLY_AUTONOMY_PROBE",
+                  "state": "RUNNING"
+                },
+                {
+                  "id": "r1-t1-M0002",
+                  "state": "RUNNING"
+                }
+              ]
+            },
+            "renewRefused": [],
+            "assignModes": [
+              "heartbeatOnly",
+              "heartbeatOnly",
+              "heartbeatOnly"
+            ],
+            "assignMs": [
+              6,
+              17,
+              23
+            ],
+            "finalRenew": [
+              "RENEWED",
+              "RENEWED",
+              null
+            ],
+            "assignRefused": []
+          },
+          {
+            "label": "r1-tick2",
+            "waveSize": 3,
+            "detected": 3,
+            "assigned": 3,
+            "renewedWhileAlive": 3,
+            "midRunRunning": 3,
+            "midSnapshot": {
+              "at": 803,
+              "states": [
+                {
+                  "id": "r1-t2-M0002",
+                  "state": "RUNNING"
+                },
+                {
+                  "id": "r1-t2-RUNTIME_SELF_AUDIT",
+                  "state": "RUNNING"
+                },
+                {
+                  "id": "r1-t2-QUAL_CLEAN_GATEB",
+                  "state": "RUNNING"
+                }
+              ]
+            },
+            "renewRefused": [],
+            "assignModes": [
+              "heartbeatOnly",
+              "heartbeatOnly",
+              "heartbeatOnly"
+            ],
+            "assignMs": [
+              5,
+              12,
+              31
+            ],
+            "finalRenew": [
+              "RENEWED",
+              "RENEWED",
+              "RENEWED"
+            ],
+            "assignRefused": []
+          },
+          {
+            "label": "r2-tick1",
+            "waveSize": 3,
+            "detected": 3,
+            "assigned": 3,
+            "renewedWhileAlive": 3,
+            "midRunRunning": 3,
+            "midSnapshot": {
+              "at": 835,
+              "states": [
+                {
+                  "id": "r2-t1-M0001",
+                  "state": "RUNNING"
+                },
+                {
+                  "id": "r2-t1-G10_READONLY_AUTONOMY_PROBE",
+                  "state": "RUNNING"
+                },
+                {
+                  "id": "r2-t1-M0002",
+                  "state": "RUNNING"
+                }
+              ]
+            },
+            "renewRefused": [],
+            "assignModes": [
+              "heartbeatOnly",
+              "heartbeatOnly",
+              "heartbeatOnly"
+            ],
+            "assignMs": [
+              5,
+              11,
+              26
+            ],
+            "finalRenew": [
+              "RENEWED",
+              "RENEWED",
+              null
+            ],
+            "assignRefused": []
+          },
+          {
+            "label": "r2-tick2",
+            "waveSize": 3,
+            "detected": 3,
+            "assigned": 3,
+            "renewedWhileAlive": 3,
+            "midRunRunning": 3,
+            "midSnapshot": {
+              "at": 800,
+              "states": [
+                {
+                  "id": "r2-t2-M0002",
+                  "state": "RUNNING"
+                },
+                {
+                  "id": "r2-t2-RUNTIME_SELF_AUDIT",
+                  "state": "RUNNING"
+                },
+                {
+                  "id": "r2-t2-QUAL_CLEAN_GATEB",
+                  "state": "RUNNING"
+                }
+              ]
+            },
+            "renewRefused": [],
+            "assignModes": [
+              "heartbeatOnly",
+              "heartbeatOnly",
+              "heartbeatOnly"
+            ],
+            "assignMs": [
+              4,
+              11,
+              25
+            ],
+            "finalRenew": [
+              "RENEWED",
+              "RENEWED",
+              "RENEWED"
+            ],
+            "assignRefused": []
+          }
+        ]
+      }
+    },
+    "F": {
+      "verdict": "PARTIAL",
+      "reasons": [
+        "tick part REAL: every round SIGKILL mid-run ⇒ pid dead, attempt FAIL (no false success), 0 ledger entries",
+        "supervisor part PARTIAL: INTERRUPTED (dead pid + stale heartbeat) on every round, but from harness-written heartbeats in heartbeatOnly scope (see E)"
+      ],
+      "facts": {
+        "executed": true,
+        "perRound": [
+          {
+            "killed": {
+              "mission": "M0002",
+              "pid": 608094,
+              "tree": [
+                608094,
+                608234
+              ],
+              "atMsAfterSpawn": 1511,
+              "heldLedgerClaim": false,
+              "stagesDoneAtKill": 0,
+              "lastStageDone": null,
+              "pidDeadAfter": true
+            },
+            "killWindowMissed": null,
+            "killedLedgerAfterTick1": 0,
+            "killedPidDead": true,
+            "attemptStatus": "FAIL",
+            "attemptReason": "odg-run exit null SIGKILL",
+            "supervisorState": "INTERRUPTED",
+            "supervisorReasons": [
+              "stale heartbeat, process not alive"
+            ],
+            "recoveryDecision": {
+              "id": "r1-t1-M0002",
+              "decision": "NOT_RECOVERABLE",
+              "reason": "INTERRUPTED without recoverable worktree state (no dirty paths / no commits ahead)"
+            },
+            "completedStates": [
+              {
+                "id": "r1-t1-M0001",
+                "state": "COMPLETED_NO_RESULT"
+              },
+              {
+                "id": "r1-t1-G10_READONLY_AUTONOMY_PROBE",
+                "state": "COMPLETED_NO_RESULT"
+              }
+            ]
+          },
+          {
+            "killed": {
+              "mission": "M0002",
+              "pid": 610271,
+              "tree": [
+                610271,
+                610389
+              ],
+              "atMsAfterSpawn": 1529,
+              "heldLedgerClaim": false,
+              "stagesDoneAtKill": 0,
+              "lastStageDone": null,
+              "pidDeadAfter": true
+            },
+            "killWindowMissed": null,
+            "killedLedgerAfterTick1": 0,
+            "killedPidDead": true,
+            "attemptStatus": "FAIL",
+            "attemptReason": "odg-run exit null SIGKILL",
+            "supervisorState": "INTERRUPTED",
+            "supervisorReasons": [
+              "stale heartbeat, process not alive"
+            ],
+            "recoveryDecision": {
+              "id": "r2-t1-M0002",
+              "decision": "NOT_RECOVERABLE",
+              "reason": "INTERRUPTED without recoverable worktree state (no dirty paths / no commits ahead)"
+            },
+            "completedStates": [
+              {
+                "id": "r2-t1-M0001",
+                "state": "COMPLETED_NO_RESULT"
+              },
+              {
+                "id": "r2-t1-G10_READONLY_AUTONOMY_PROBE",
+                "state": "COMPLETED_NO_RESULT"
+              }
+            ]
+          }
+        ],
+        "supervisorMode": "heartbeatOnly"
+      }
+    },
+    "G": {
+      "verdict": "REAL",
+      "reasons": [
+        "only the interrupted mission re-ran, each ledger id exactly once, seal OK, no orphan claim; dead-holder claim reclaimed at TTL (gen 1 → 2, 121535 ms after the kill)"
+      ],
+      "facts": {
+        "executed": true,
+        "perRound": [
+          {
+            "reranInterrupted": true,
+            "reranCompleted": [],
+            "recoveredPass": true,
+            "ledgerAfterTick1": {
+              "M0001": 1,
+              "G10_READONLY_AUTONOMY_PROBE": 1
+            },
+            "ledgerEnd": {
+              "M0001": 1,
+              "G10_READONLY_AUTONOMY_PROBE": 1,
+              "M0002": 1,
+              "RUNTIME_SELF_AUDIT": 1,
+              "QUAL_CLEAN_GATEB": 1
+            },
+            "ledgerTotal": 5,
+            "ledgerEachOnce": true,
+            "ledgerSealOk": true,
+            "killedHeldClaim": false,
+            "claimGenBefore": 2,
+            "claimGenAfter": 5,
+            "orphanClaimsAfter": 0,
+            "supervisor": {
+              "relaunchOf": "REFUSED_NOT_RECOVERABLE: INTERRUPTED without recoverable worktree state (no dirty paths / no commits ahead)",
+              "duplicateAssign": "REFUSED_DUPLICATE",
+              "cancel": "RENEWED",
+              "closeRightAfterCancel": "REFUSED (state RUNNING)",
+              "close": "CLOSED_REJECTED"
+            }
+          },
+          {
+            "reranInterrupted": true,
+            "reranCompleted": [],
+            "recoveredPass": true,
+            "ledgerAfterTick1": {
+              "M0001": 1,
+              "G10_READONLY_AUTONOMY_PROBE": 1
+            },
+            "ledgerEnd": {
+              "M0001": 1,
+              "G10_READONLY_AUTONOMY_PROBE": 1,
+              "RUNTIME_SELF_AUDIT": 1,
+              "M0002": 1,
+              "QUAL_CLEAN_GATEB": 1
+            },
+            "ledgerTotal": 5,
+            "ledgerEachOnce": true,
+            "ledgerSealOk": true,
+            "killedHeldClaim": false,
+            "claimGenBefore": 2,
+            "claimGenAfter": 5,
+            "orphanClaimsAfter": 0,
+            "supervisor": {
+              "relaunchOf": "REFUSED_NOT_RECOVERABLE: INTERRUPTED without recoverable worktree state (no dirty paths / no commits ahead)",
+              "duplicateAssign": "REFUSED_DUPLICATE",
+              "cancel": "RENEWED",
+              "closeRightAfterCancel": "REFUSED (state RUNNING)",
+              "close": "CLOSED_REJECTED"
+            }
+          }
+        ],
+        "claimVariant": {
+          "executed": true,
+          "mission": "M0002",
+          "steps": 395,
+          "killedWhileHolding": true,
+          "deadGen": 1,
+          "orphanClaimSeenBySupervisor": [
+            "claim:mission-ledger#1"
+          ],
+          "withinTtlTick": {
+            "exitCode": 1,
+            "ms": 65110,
+            "out": "[odg-schedule-tick wave] FAIL — wave 0/1 PASS (cap 1; deferred 0) (missions M0002)"
+          },
+          "acrossTtlTick": {
+            "exitCode": 0,
+            "ms": 5547,
+            "out": "[odg-schedule-tick wave] PASS — wave 1/1 PASS (cap 1; deferred 0) (missions M0002)"
+          },
+          "newGen": 2,
+          "reclaimed": true,
+          "reclaimAfterMs": 121535,
+          "recoveredPass": true,
+          "ledgerEachOnce": true,
+          "ledgerSealOk": true,
+          "ttlMs": 120000
+        }
+      }
+    },
+    "H": {
+      "verdict": "PARTIAL",
+      "reasons": [
+        "close() refused the owner and the parent as inspector and accepted a distinct inspector — but the inspector is a free-form STRING, not identity-bound: the same harness process supplied owner and inspector strings and an arbitrary string was accepted (independence is declared, not proven)"
+      ],
+      "facts": {
+        "executed": true,
+        "perRound": [
+          {
+            "agent": "r1-t1-M0001",
+            "state": "COMPLETED_NO_RESULT",
+            "self": "REFUSED: inspector is the owner/parent — not independent",
+            "parent": "REFUSED: inspector is the owner/parent — not independent",
+            "distinct": "CLOSED_NO_RESULT"
+          },
+          {
+            "agent": "r2-t1-M0001",
+            "state": "COMPLETED_NO_RESULT",
+            "self": "REFUSED: inspector is the owner/parent — not independent",
+            "parent": "REFUSED: inspector is the owner/parent — not independent",
+            "distinct": "CLOSED_NO_RESULT"
+          }
+        ],
+        "selfRefused": true,
+        "parentRefused": true,
+        "distinctAccepted": true,
+        "identityBound": false
+      }
+    },
+    "I": {
+      "verdict": "REAL",
+      "reasons": [
+        "8 task classes routed by selectMeasured over the COMMITTED measured registry + live availability; 7 LOCAL (QUALIFIED only), 1 not LOCAL (flagged). Task classes ≠ the read-only canary missions (those make no model call)"
+      ],
+      "facts": {
+        "executed": true,
+        "liveProbe": true,
+        "available": [
+          "qwen2.5-coder:7b",
+          "qwen2.5-coder:3b",
+          "qwen2.5:0.5b"
+        ],
+        "registryHeadOfEvidence": "facb71dfd9bdad743b4cb6e0708cbee781e0407f",
+        "perClass": [
+          {
+            "taskClass": "bugfix",
+            "decision": "LOCAL",
+            "model": "qwen2.5-coder:7b",
+            "chosenStatus": "QUALIFIED",
+            "passRate": 1,
+            "fallbackOrder": [],
+            "requiresAuthorization": false
+          },
+          {
+            "taskClass": "extract",
+            "decision": "LOCAL",
+            "model": "qwen2.5:0.5b",
+            "chosenStatus": "QUALIFIED",
+            "passRate": 1,
+            "fallbackOrder": [
+              "qwen2.5-coder:3b",
+              "qwen2.5-coder:7b"
+            ],
+            "requiresAuthorization": false
+          },
+          {
+            "taskClass": "implement",
+            "decision": "NO_QUALIFIED_LOCAL_MODEL",
+            "model": null,
+            "chosenStatus": null,
+            "passRate": null,
+            "fallbackOrder": [],
+            "requiresAuthorization": true
+          },
+          {
+            "taskClass": "judgment",
+            "decision": "LOCAL",
+            "model": "qwen2.5-coder:3b",
+            "chosenStatus": "QUALIFIED",
+            "passRate": 1,
+            "fallbackOrder": [
+              "qwen2.5-coder:7b",
+              "qwen2.5:0.5b"
+            ],
+            "requiresAuthorization": false
+          },
+          {
+            "taskClass": "refactor",
+            "decision": "LOCAL",
+            "model": "qwen2.5-coder:3b",
+            "chosenStatus": "QUALIFIED",
+            "passRate": 1,
+            "fallbackOrder": [
+              "qwen2.5-coder:7b"
+            ],
+            "requiresAuthorization": false
+          },
+          {
+            "taskClass": "repair",
+            "decision": "LOCAL",
+            "model": "qwen2.5-coder:7b",
+            "chosenStatus": "QUALIFIED",
+            "passRate": 1,
+            "fallbackOrder": [
+              "qwen2.5:0.5b",
+              "qwen2.5-coder:3b"
+            ],
+            "requiresAuthorization": false
+          },
+          {
+            "taskClass": "strict-contract",
+            "decision": "LOCAL",
+            "model": "qwen2.5-coder:7b",
+            "chosenStatus": "QUALIFIED",
+            "passRate": 1,
+            "fallbackOrder": [],
+            "requiresAuthorization": false
+          },
+          {
+            "taskClass": "test-writing",
+            "decision": "LOCAL",
+            "model": "qwen2.5-coder:7b",
+            "chosenStatus": "QUALIFIED",
+            "passRate": 1,
+            "fallbackOrder": [],
+            "requiresAuthorization": false
+          }
+        ]
+      }
+    },
+    "J": {
+      "verdict": "PARTIAL",
+      "reasons": [
+        "live: qwen2.5-coder:14b ⇒ unavailable (daemon 404) ⇒ qwen2.5:0.5b answered; 'implement' ⇒ NO_QUALIFIED_LOCAL_MODEL ⇒ runWithFallback REFUSED — but the primary=absent LOCAL decision was CONSTRUCTED by the harness (selectMeasured never picks an absent model itself), so the router-chosen path to an unavailable model is not demonstrated"
+      ],
+      "facts": {
+        "executed": true,
+        "liveProbe": true,
+        "primaryClassForFallback": "extract",
+        "decision": {
+          "decision": "LOCAL",
+          "requiresAuthorization": false,
+          "model": "qwen2.5-coder:14b",
+          "fallbackOrder": [
+            "qwen2.5:0.5b",
+            "qwen2.5-coder:3b",
+            "qwen2.5-coder:7b"
+          ]
+        },
+        "fallback": {
+          "outcome": "OK",
+          "model": "qwen2.5:0.5b",
+          "attempts": [
+            {
+              "model": "qwen2.5-coder:14b",
+              "ok": false,
+              "unavailable": true,
+              "timedOut": false,
+              "reason": "HTTP 404: {\"error\":\"model 'qwen2.5-coder:14b' not found\"}"
+            },
+            {
+              "model": "qwen2.5:0.5b",
+              "ok": true,
+              "unavailable": false,
+              "timedOut": false,
+              "reason": null
+            }
+          ],
+          "result": {
+            "text": "READY",
+            "correct": true,
+            "totalMs": 2416
+          }
+        },
+        "noQualified": {
+          "taskClass": "implement",
+          "decision": "NO_QUALIFIED_LOCAL_MODEL",
+          "probationCandidates": [
+            "qwen2.5-coder:3b",
+            "qwen2.5-coder:7b"
+          ],
+          "run": "REFUSED",
+          "reason": "decision 'NO_QUALIFIED_LOCAL_MODEL' requires authorization — nothing executed"
+        },
+        "constructedDecision": true
+      }
+    },
+    "K": {
+      "verdict": "REAL",
+      "reasons": [
+        "after the interrupted wave, the next ticks admitted and PASSed the deferred independent missions with no human input, then went IDLE (all proven); tick cadence driven by the harness loop standing in for the (untouched) timer"
+      ],
+      "facts": {
+        "executed": true,
+        "perRound": [
+          {
+            "deferredAfterInterrupt": [
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "resumedPass": [
+              "M0002",
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "finalIdle": true,
+            "humanInputs": 0,
+            "ticks": 3
+          },
+          {
+            "deferredAfterInterrupt": [
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "resumedPass": [
+              "M0002",
+              "RUNTIME_SELF_AUDIT",
+              "QUAL_CLEAN_GATEB"
+            ],
+            "finalIdle": true,
+            "humanInputs": 0,
+            "ticks": 3
+          }
+        ]
+      }
+    },
+    "L": {
+      "verdict": "REAL",
+      "reasons": [
+        "evidence + checkpoint written; verify-historical verified=928 missing=0 changed=0; v124 roadmap byte-identical to origin/main; main checkout on main/origin/main and clean"
+      ],
+      "facts": {
+        "executed": true,
+        "historical": {
+          "line": "verified=928 missing=0 changed=0 new_unmanifested=0",
+          "exitCode": 0,
+          "verified": 928,
+          "missing": 0,
+          "changed": 0
+        },
+        "roadmap": {
+          "origin": "198de7f60f5eadb485f54196eec978a3cc6b7378c4551ea5580027149ad3c105",
+          "worktree": "198de7f60f5eadb485f54196eec978a3cc6b7378c4551ea5580027149ad3c105",
+          "mainCheckout": "198de7f60f5eadb485f54196eec978a3cc6b7378c4551ea5580027149ad3c105"
+        },
+        "roadmapUnchanged": true,
+        "mainCheckout": {
+          "ok": true,
+          "detail": "branch=main upstream=origin/main dirty=0",
+          "head": "c6949b09f313557b3c821fca34e96dfb00f571ab"
+        },
+        "evidenceWritable": true
+      }
+    }
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "ticks": [
+        {
+          "label": "r1-tick1",
+          "exitCode": 1,
+          "stdout": "[odg-schedule-tick wave] FAIL — wave 2/3 PASS (cap 3; deferred 2) (missions M0001,G10_READONLY_AUTONOMY_PROBE,M0002)",
+          "wallMs": 5695,
+          "wave": [
+            "M0001",
+            "G10_READONLY_AUTONOMY_PROBE",
+            "M0002"
+          ],
+          "deferred": [
+            "RUNTIME_SELF_AUDIT",
+            "QUAL_CLEAN_GATEB"
+          ],
+          "maxConcurrentPids": 3,
+          "killed": {
+            "mission": "M0002",
+            "atMsAfterSpawn": 1511,
+            "descendantsKilled": 1,
+            "heldLedgerClaim": false,
+            "stagesDoneAtKill": 0,
+            "lastStageDone": null
+          },
+          "killWindowMissed": null,
+          "assignMs": [
+            6,
+            17,
+            23
+          ]
+        },
+        {
+          "label": "r1-tick2",
+          "exitCode": 0,
+          "stdout": "[odg-schedule-tick wave] PASS — wave 3/3 PASS (cap 3; deferred 0) (missions M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB)",
+          "wallMs": 5544,
+          "wave": [
+            "M0002",
+            "RUNTIME_SELF_AUDIT",
+            "QUAL_CLEAN_GATEB"
+          ],
+          "deferred": [],
+          "maxConcurrentPids": 3,
+          "killed": null,
+          "killWindowMissed": null,
+          "assignMs": [
+            5,
+            12,
+            31
+          ]
+        },
+        {
+          "label": "r1-tick3",
+          "exitCode": 0,
+          "stdout": "[odg-schedule-tick wave] IDLE — no eligible pre-authorized PENDING mission [M0001: ALREADY_PROVEN (dedup): M0001; G10_READONLY_AUTONOMY_PROBE: ALREADY_PROVEN (dedup): G10_READONLY_AUTONOMY_PROBE; M0002: ALREADY_PROVEN (dedup): M0002; RUNTIME_SELF_AUDIT: ALREADY_PROVEN (dedup): RUNTIME_SELF_AUDIT; QUAL_CLEAN_GATEB: ALREADY_PROVEN (dedup): QUAL_CLEAN_GATEB]",
+          "wallMs": 315,
+          "wave": [],
+          "deferred": [],
+          "maxConcurrentPids": 0,
+          "killed": null,
+          "killWindowMissed": null,
+          "assignMs": []
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "ticks": [
+        {
+          "label": "r2-tick1",
+          "exitCode": 1,
+          "stdout": "[odg-schedule-tick wave] FAIL — wave 2/3 PASS (cap 3; deferred 2) (missions M0001,G10_READONLY_AUTONOMY_PROBE,M0002)",
+          "wallMs": 5430,
+          "wave": [
+            "M0001",
+            "G10_READONLY_AUTONOMY_PROBE",
+            "M0002"
+          ],
+          "deferred": [
+            "RUNTIME_SELF_AUDIT",
+            "QUAL_CLEAN_GATEB"
+          ],
+          "maxConcurrentPids": 3,
+          "killed": {
+            "mission": "M0002",
+            "atMsAfterSpawn": 1529,
+            "descendantsKilled": 1,
+            "heldLedgerClaim": false,
+            "stagesDoneAtKill": 0,
+            "lastStageDone": null
+          },
+          "killWindowMissed": null,
+          "assignMs": [
+            5,
+            11,
+            26
+          ]
+        },
+        {
+          "label": "r2-tick2",
+          "exitCode": 0,
+          "stdout": "[odg-schedule-tick wave] PASS — wave 3/3 PASS (cap 3; deferred 0) (missions M0002,RUNTIME_SELF_AUDIT,QUAL_CLEAN_GATEB)",
+          "wallMs": 5525,
+          "wave": [
+            "M0002",
+            "RUNTIME_SELF_AUDIT",
+            "QUAL_CLEAN_GATEB"
+          ],
+          "deferred": [],
+          "maxConcurrentPids": 3,
+          "killed": null,
+          "killWindowMissed": null,
+          "assignMs": [
+            4,
+            11,
+            25
+          ]
+        },
+        {
+          "label": "r2-tick3",
+          "exitCode": 0,
+          "stdout": "[odg-schedule-tick wave] IDLE — no eligible pre-authorized PENDING mission [M0001: ALREADY_PROVEN (dedup): M0001; G10_READONLY_AUTONOMY_PROBE: ALREADY_PROVEN (dedup): G10_READONLY_AUTONOMY_PROBE; M0002: ALREADY_PROVEN (dedup): M0002; RUNTIME_SELF_AUDIT: ALREADY_PROVEN (dedup): RUNTIME_SELF_AUDIT; QUAL_CLEAN_GATEB: ALREADY_PROVEN (dedup): QUAL_CLEAN_GATEB]",
+          "wallMs": 297,
+          "wave": [],
+          "deferred": [],
+          "maxConcurrentPids": 0,
+          "killed": null,
+          "killWindowMissed": null,
+          "assignMs": []
+        }
+      ]
+    }
+  ],
+  "postRunNote": "measured at harness commit base.head; afterwards only the WORDING of scenario E's PARTIAL reason was corrected (the repo-mode probe was ASSIGNED via the branch-diff approximation, not refused) and every reasons[] was re-derived from the unchanged facts with classifyScenario — no fact or verdict changed",
+  "findings": [
+    "odg-agent-supervisor repo-evidence mode approximates an unowned live worktree's write-set from git-observed paths (branch diff / dirty); gitignored runtime/generated writes of its live processes are invisible, and with no observed path it is UNKNOWN => every assign refused. Outcome therefore depends on git state, not on what the processes write. Not changed (design trade-off; owner decision).",
+    "renew(status CANCELLED) refreshes heartbeatAt, so a dead agent looks RUNNING for staleMs and close() is refused until it goes stale (measured: closeRightAfterCancel REFUSED (state RUNNING), CLOSED_REJECTED after staleMs). Not changed.",
+    "decideRecovery never RELAUNCHes a wave child (no worktree => NOT_RECOVERABLE); recovery of a wave child goes through the tick's ledger dedup, and the supervisor's work-item dedup requires cancel+close of the interrupted heartbeat first.",
+    "a SIGKILL that lands after the ledger stage leaves a PROVEN ledger entry while the attempt log says FAIL; the next tick dedups it (no re-run, no duplicate). The harness only counts a kill as an interruption when the child had no report and no ledger entry (killedLedgerAfterTick1 = 0).",
+    "a dead ledger-claim holder blocks recording until the 120 s TTL (within-TTL tick fails closed after the 60 s claim timeout); reclaim at TTL is correct (re-measured here, same as #896).",
+    "odg-run has no in-process heartbeat and the tick is not wired to the supervisor: supervision of wave children is harness-bridged."
+  ],
+  "inspectionRevision": {
+    "reason": "independent inspection of #900 REJECT (verdict honesty)",
+    "changes": [
+      "A: enforced Truth-Lock refusal (exit 2) is now mandatory",
+      "F: split into tick part (REAL) and supervisor part (PARTIAL in heartbeatOnly scope: harness-written heartbeats) => overall PARTIAL",
+      "J: constructedDecision fact => PARTIAL (the router never picks an absent model itself)",
+      "dead SIMULATED rule removed (no injection path)",
+      "safety: --worktree + per-worktree marker; all ODG_* env vars scrubbed from children",
+      "redacted absolute main-repo path"
+    ],
+    "method": "NO live re-run: the recorded facts are unchanged except the two added facts (F.supervisorMode copied from E.mode; J.constructedDecision=true, true by construction of the harness), and every verdict/reason/tally was re-derived with the pure classifier",
+    "previousTally": {
+      "REAL": 10,
+      "PARTIAL": 2
+    }
+  }
+}
