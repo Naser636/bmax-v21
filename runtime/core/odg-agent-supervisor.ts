@@ -40,7 +40,7 @@ const HOLDING = Object.freeze(["RUNNING", "AWAITING_VALIDATION", "INTERRUPTED", 
 // heartbeat statuses that release the write-set / work item (everything else is non-terminal ⇒ holds + dedups)
 const TERMINAL_HB = Object.freeze(["CLOSED", "SUPERSEDED"]);
 const PROTECTED_PREFIXES = Object.freeze([...sovereign.ALWAYS_PROTECTED, "runtime/governance", "docs/odg/v124-consolidated-roadmap.json"]);
-const DEFAULTS = Object.freeze({ staleMs: 15 * 60 * 1000, taskWindowMs: 72 * 3600 * 1000, mutexTtlMs: 30000, mutexId: "odg-agent-supervisor.assign" });
+const DEFAULTS = Object.freeze({ ignoredScanBudget: 200000, staleMs: 15 * 60 * 1000, taskWindowMs: 72 * 3600 * 1000, mutexTtlMs: 30000, mutexId: "odg-agent-supervisor.assign" });
 
 function freeze<T>(o: T): T { return Object.freeze(o) as T; }
 function num(v: any): number | null { if (v === null || v === undefined || v === "") return null; const n = typeof v === "number" ? v : Date.parse(v); return Number.isFinite(n) ? n : null; }
@@ -145,6 +145,37 @@ function summarizeTaskTail(tailText: string): any {
  *        integratedOids[], procs[{pid, cwd}], alivePids[], heartbeats[{...declaration, mtimeMs} | {corrupt, file}],
  *        tasks[{id, sessionId, mtimeMs, createdMs, present, tail}], claims[{id, gen, holderPid, mtimeMs, released}] }
  */
+/*
+ * Recovery handle for a supervised child with NO worktree (e.g. a wave child): the heartbeat declares
+ * recovery: { kind: "MISSION_RERUN", missionId } — the mission is re-runnable through the governed tick. Usable ONLY if:
+ *   - missionId equals the heartbeat's workItem (ids compared case-insensitively, everywhere);
+ *   - the heartbeat recorded a pid, and that pid is NOT alive (a killed child, not one that never reported a pid);
+ *   - no final report is recorded;
+ *   - completion evidence WITH PROVENANCE was checked: ev.completionEvidence = { source: "mission-ledger" | "report",
+ *     checkedAt (ISO, not earlier than the heartbeat's last time), ids: string[] } and its ids do not include the mission.
+ * An empty or bare list is NOT evidence of a check (fail-closed: never re-run a mission that may already have completed).
+ */
+const COMPLETION_SOURCES = Object.freeze(["mission-ledger", "report"]);
+function idKey(x: any): string { return String(x).trim().toLowerCase(); }
+function recoveryHandleOf(hb: any, ev: any, pidAliveNow: boolean, hbAt: number | null): any {
+  const r = hb && hb.recovery;
+  if (!r || typeof r !== "object") return null;
+  const kind = r.kind === "MISSION_RERUN" ? r.kind : null;
+  const missionId = typeof r.missionId === "string" && r.missionId.trim() ? r.missionId.trim() : null;
+  const no = (reason: string) => ({ kind: kind || String(r.kind || "?"), missionId, recoverable: false, reason });
+  if (!kind || !missionId) return no("unsupported kind or missing missionId");
+  if (typeof hb.workItem !== "string" || idKey(hb.workItem) !== idKey(missionId)) return no("missionId does not match the heartbeat workItem");
+  if (!Number.isInteger(hb.pid)) return no("no pid recorded — cannot prove the child was killed");
+  if (pidAliveNow) return no("recorded pid is alive");
+  if (hb.finalReport === true) return no("final report recorded — completed, not interrupted");
+  const ce = ev.completionEvidence;
+  const checkedAt = ce ? num(ce.checkedAt) : null;
+  if (!ce || typeof ce !== "object" || !COMPLETION_SOURCES.includes(ce.source) || checkedAt === null || !Array.isArray(ce.ids) || !ce.ids.every((x: any) => typeof x === "string")) return no("completion evidence (with provenance: source, checkedAt, ids) not provided");
+  if (hbAt !== null && checkedAt < hbAt) return no("completion evidence predates the child's last heartbeat");
+  if (ce.ids.some((x: string) => idKey(x) === idKey(missionId))) return no(`${ce.source} shows the mission completed`);
+  return { kind, missionId, recoverable: true, reason: null, evidence: { source: ce.source, checkedAt: iso(checkedAt) } };
+}
+
 function correlate(ev: any, opts: any = {}): any[] {
   const now = num(ev.now) ?? Date.now();
   const staleMs = opts.staleMs ?? DEFAULTS.staleMs;
@@ -168,7 +199,8 @@ function correlate(ev: any, opts: any = {}): any[] {
     return { wt: wt || null, mainCheckout, branch: br && br !== mainBranch ? br : null };
   };
   const procAliveIn = (wt: any) => !!wt && (ev.procs || []).some((p: any) => within(p.cwd, wt.path));
-  const activityFresh = (wt: any) => { const a = wt && ev.worktreeStatus && ev.worktreeStatus[wt.path] ? ev.worktreeStatus[wt.path].lastActivityMs : null; return a !== null && a !== undefined && now - a <= staleMs; };
+  // activity UNKNOWN (ignored-file scan truncated / unreadable / git failed) counts as fresh — fail-closed.
+  const activityFresh = (wt: any) => { const st = wt && ev.worktreeStatus ? ev.worktreeStatus[wt.path] : null; if (!st) return false; if (st.activityUnknown === true) return true; const a = st.lastActivityMs; return a !== null && a !== undefined && now - a <= staleMs; };
 
   // 1) heartbeat-declared agents (the supervisor's own assignments). Corrupt ⇒ a BLOCKED unit holding EVERYTHING.
   for (const hb of ev.heartbeats || []) {
@@ -185,7 +217,8 @@ function correlate(ev: any, opts: any = {}): any[] {
       id: String(hb.id), kind: "HEARTBEAT_AGENT", parent_id: hb.parentId ?? null, child_ids: [], mission: hb.workItem ?? null, owner: hb.owner ?? null,
       worktree: r.wt ? r.wt.path : (hb.worktree ?? null), branch: r.branch, write_set: Array.isArray(hb.writeSet) ? hb.writeSet : null, readOnly: hb.readOnly === true, mainCheckout: r.mainCheckout,
       created_at: num(hb.createdAt), last_progress_at: num(hb.progressAt) ?? hbAt, heartbeat: hbAt, deadline: num(hb.deadline), relaunchOf: hb.relaunchOf ?? null,
-      e: { pidAlive: hb.pid !== undefined && hb.pid !== null && alive.has(Number(hb.pid)), procInWorktree: procAliveIn(r.wt), heartbeatFresh: hbAt !== null && now - hbAt <= staleMs, declared: hb.status ?? null, declaredReason: hb.reason ?? null, testEvidence: hb.testEvidence ?? null, finalReport: hb.finalReport === true, hasOwner: true },
+      e: { pidAlive: hb.pid !== undefined && hb.pid !== null && alive.has(Number(hb.pid)), procInWorktree: procAliveIn(r.wt), heartbeatFresh: hbAt !== null && now - hbAt <= staleMs, declared: hb.status ?? null, declaredReason: hb.reason ?? null, testEvidence: hb.testEvidence ?? null, finalReport: hb.finalReport === true, hasOwner: true,
+        recovery: recoveryHandleOf(hb, ev, hb.pid !== undefined && hb.pid !== null && alive.has(Number(hb.pid)), hbAt) },
     });
   }
   // 2) Claude Code task-output agents (structure only)
@@ -206,6 +239,19 @@ function correlate(ev: any, opts: any = {}): any[] {
   for (const u of units) if (u.kind === "CLAUDE_TASK" && u.worktree && !u.mainCheckout) {
     if (latestByWt.get(u.worktree) === u) { ownedWorktrees.add(u.worktree); if (u.branch) ownedBranches.add(u.branch); u.e.procInWorktree = procAliveIn(wts.find((w: any) => w.path === u.worktree)); }
     else { u.ownsResource = false; }
+  }
+  // 3a) the MAIN checkout is observed like any worktree: production ticks write its gitignored runtime/generated. It is
+  // a unit when a live process sits in it (outside linked worktrees), its index / dirty / ignored files changed within
+  // staleMs, activity is UNKNOWN (scan incomplete), or it has uncommitted paths. RUNNING ⇒ UNKNOWN write-set (blocks).
+  const mainWt = repoRoot ? (ev.worktrees || []).find((w: any) => isMain(w.path)) : null;
+  if (mainWt) {
+    const ms = ev.worktreeStatus ? ev.worktreeStatus[mainWt.path] : null;
+    const procIn = (ev.procs || []).some((p: any) => within(p.cwd, mainWt.path) && !wts.some((w: any) => within(p.cwd, w.path)));
+    const act = activityFresh(mainWt);
+    if (procIn || act || (ms && ms.dirty > 0)) {
+      units.push({ id: "main-checkout:" + mainWt.path, kind: "MAIN_CHECKOUT", parent_id: null, child_ids: [], mission: null, owner: null, worktree: mainWt.path, branch: null, write_set: null, readOnly: false, mainCheckout: true, created_at: null, last_progress_at: ms ? num(ms.lastActivityMs) : null, heartbeat: null, deadline: null, relaunchOf: null,
+        e: { pidAlive: false, procInWorktree: procIn, heartbeatFresh: false, recentActivity: act, declared: null, finalReport: false, hasOwner: false } });
+    }
   }
   // 3) unowned worktrees / branches (resource units)
   for (const w of wts) {
@@ -239,7 +285,11 @@ function correlate(ev: any, opts: any = {}): any[] {
       const trusted = tipMatch === true || (tipMatch === null && integrated && (!b || (!p.headRefOid && b.ahead === 0)));
       return { number: p.number, state: p.state, checks: p.checks || "UNKNOWN", headRefOid: p.headRefOid || null, tipMatch, trusted };
     });
-    u.r = { worktreeExists: !!(u.worktree && (wts.some((w: any) => w.path === u.worktree) || (u.mainCheckout && isMain(u.worktree)))), dirty: st ? st.dirty : 0, dirtyPaths: st && Array.isArray(st.dirtyPaths) ? st.dirtyPaths.slice() : [], ahead: b ? b.ahead : null, behind: b ? b.behind : null, pushed: b ? !!b.pushed : false, integrated: b ? b.ahead === 0 : null, prs };
+    u.r = { worktreeExists: !!(u.worktree && (wts.some((w: any) => w.path === u.worktree) || (u.mainCheckout && isMain(u.worktree)))), dirty: st ? st.dirty : 0, dirtyPaths: st && Array.isArray(st.dirtyPaths) ? st.dirtyPaths.slice() : [], ahead: b ? b.ahead : (st && Number.isInteger(st.headAhead) ? st.headAhead : null), behind: b ? b.behind : null, pushed: b ? !!b.pushed : false, integrated: b ? b.ahead === 0 : (st && Number.isInteger(st.headAhead) ? st.headAhead === 0 : null), prs };
+    if (!b && !u.write_set && st && Array.isArray(st.headDiff) && st.headDiff.length) { u.write_set = st.headDiff.slice(); u.writeSetSource = "OBSERVED_DIFF"; }
+    // git observation failed (rev-list / diff error) ⇒ the write-set is UNKNOWN, never "integrated / holds nothing"
+    u.r.observeFailed = (b && b.observeOk === false) || (!b && st && st.headObserveOk === false) || false;
+    if (u.r.observeFailed) { u.r.integrated = null; u.writeSetSource = "UNKNOWN"; }
     if (!u.write_set && b && Array.isArray(b.writeSet) && b.writeSet.length) { u.write_set = b.writeSet.slice(); u.writeSetSource = "OBSERVED_DIFF"; }
     else u.writeSetSource = u.write_set ? "DECLARED" : "UNKNOWN";
     if (st && Array.isArray(st.dirtyPaths) && st.dirtyPaths.length) { u.write_set = [...new Set([...(u.write_set || []), ...st.dirtyPaths])]; if (u.writeSetSource === "UNKNOWN") u.writeSetSource = "OBSERVED_DIRTY"; }
@@ -277,6 +327,10 @@ function classify(u: any, now: number): any {
 
   if (u.e.isClaim) {
     state = u.e.pidAlive ? "RUNNING" : "ORPHAN"; reasons.push(u.e.pidAlive ? "claim holder pid alive" : "unreleased claim, holder pid not alive");
+  } else if (u.e.declared === "CANCELLED" && !u.e.pidAlive && !u.e.procInWorktree) {
+    // CANCELLED is final once its recorded pid is dead (or immediately when no pid was recorded) — a renew() that
+    // recorded the cancellation refreshed the heartbeat, but freshness must not keep a cancelled agent RUNNING.
+    state = "COMPLETED_NO_RESULT"; reasons.push("cancelled (recorded pid not alive or none recorded, and no live process in its worktree)");
   } else if (live) {
     state = "RUNNING";
     if (u.e.pidAlive) reasons.push("pid alive"); if (u.e.procInWorktree) reasons.push("live process cwd inside worktree"); if (u.e.heartbeatFresh) reasons.push("fresh heartbeat/output without final record"); if (u.e.recentActivity) reasons.push("recent write activity in worktree (dirty-path / index mtime within staleMs)");
@@ -306,13 +360,15 @@ function classify(u: any, now: number): any {
     if (staleMerged) reasons.push(`PR #${staleMerged.number} merged but branch tip moved on (new commits after merge)`);
   }
   const timedOut = u.deadline !== null && now > u.deadline && (state === "RUNNING" || state === "INTERRUPTED");
-  const recoverable = state === "INTERRUPTED" && partialWork && !u.mainCheckout;
+  const handle = u.e.recovery || null;
+  const recoverable = state === "INTERRUPTED" && ((partialWork && !u.mainCheckout) || !!(handle && handle.recoverable));
+  if (state === "INTERRUPTED" && handle) reasons.push(handle.recoverable ? `recovery handle ${handle.kind}:${handle.missionId} — no completion evidence, re-runnable through the governed tick` : `recovery handle present but not usable: ${handle.reason}`);
   return freeze({
     id: u.id, kind: u.kind, state, reasons: freeze(reasons), parent_id: u.parent_id, child_ids: freeze(u.child_ids.slice()), mission: u.mission, owner: u.owner,
-    worktree: u.worktree, branch: u.branch, mainCheckout: !!u.mainCheckout, write_set: u.write_set ? freeze(u.write_set.slice()) : null, writeSetSource: u.writeSetSource, readOnly: u.readOnly, dirty_paths: freeze(u.r.dirtyPaths.slice()),
+    worktree: u.worktree, branch: u.branch, mainCheckout: !!u.mainCheckout, write_set: u.write_set ? freeze(u.write_set.slice()) : null, writeSetSource: u.writeSetSource, observeFailed: !!u.r.observeFailed, readOnly: u.readOnly, dirty_paths: freeze(u.r.dirtyPaths.slice()),
     created_at: iso(u.created_at), last_progress_at: iso(u.last_progress_at), heartbeat: iso(u.heartbeat), deadline: iso(u.deadline), relaunchOf: u.relaunchOf,
     timedOut, action: timedOut && state === "RUNNING" ? "CANCEL_PROPOSED" : null,
-    recoverable, delivery: freeze({ ahead: u.r.ahead, dirty: u.r.dirty, pushed: u.r.pushed, integrated: u.r.integrated, prs: freeze(u.r.prs.map((p: any) => freeze({ number: p.number, state: p.state, checks: p.checks, tipMatch: p.tipMatch, trusted: p.trusted }))) }),
+    recoverable, recoveryHandle: handle ? freeze({ kind: handle.kind, missionId: handle.missionId, recoverable: handle.recoverable, reason: handle.reason }) : null, delivery: freeze({ ahead: u.r.ahead, dirty: u.r.dirty, pushed: u.r.pushed, integrated: u.r.integrated, prs: freeze(u.r.prs.map((p: any) => freeze({ number: p.number, state: p.state, checks: p.checks, tipMatch: p.tipMatch, trusted: p.trusted }))) }),
     quality: freeze({ hasFinalReport: !!u.e.finalReport, hasPR: u.r.prs.length > 0, hasTestsEvidence: tests, hasCommits: (u.r.ahead || 0) > 0 || !!mergedPr, resultKind }),
   });
 }
@@ -320,7 +376,8 @@ function classify(u: any, now: number): any {
 function decideRecovery(a: any): any {
   if (a.state === "RUNNING") return freeze({ decision: "REFUSE", reason: "RUNNING — never relaunch a live agent" + (a.timedOut ? " (timed out ⇒ CANCEL_PROPOSED, owner decides)" : "") });
   if (a.state !== "INTERRUPTED") return freeze({ decision: "NONE", reason: `state ${a.state} is not INTERRUPTED` });
-  if (!a.recoverable) return freeze({ decision: "NOT_RECOVERABLE", reason: a.mainCheckout ? "INTERRUPTED in the MAIN checkout — partial work is not isolated, not auto-recoverable" : "INTERRUPTED without recoverable worktree state (no dirty paths / no commits ahead)" });
+  if (!a.recoverable) return freeze({ decision: "NOT_RECOVERABLE", reason: a.recoveryHandle ? "INTERRUPTED; recovery handle not usable: " + a.recoveryHandle.reason : a.mainCheckout ? "INTERRUPTED in the MAIN checkout — partial work is not isolated, not auto-recoverable" : "INTERRUPTED without recoverable worktree state (no dirty paths / no commits ahead)" });
+  if (a.recoveryHandle && a.recoveryHandle.recoverable && !(a.worktree && (a.delivery.dirty > 0 || (a.delivery.ahead || 0) > 0))) return freeze({ decision: "RELAUNCH", reason: "INTERRUPTED, no completion evidence — re-run the declared mission through the governed tick", via: a.recoveryHandle.kind, missionId: a.recoveryHandle.missionId });
   return freeze({ decision: "RELAUNCH", reason: "INTERRUPTED with partial work in worktree — resume from it", worktree: a.worktree, branch: a.branch });
 }
 
@@ -347,6 +404,14 @@ function metrics(agents: any[], now: number): any {
 // (commits ahead OR uncommitted paths — fail-closed: unowned dirty work is never overwritable).
 function holdsFull(a: any): boolean {
   if (a.kind === "HEARTBEAT_CORRUPT") return true;
+  // UNOWNED worktree/branch: writes to gitignored paths are invisible to git diff/status. Rule (fail-closed but usable):
+  // while it is RUNNING — a live process inside it, or index / dirty / GITIGNORED-file mtime within staleMs — it holds
+  // UNKNOWN ⇒ blocks EVERY assignment, whatever diff it also shows (see contentionRecord); once idle beyond staleMs with
+  // no live process, one with no observed write-set holds NOTHING (a dead process can no longer write; no tracked work).
+  // LIMIT (documented): a writer that pauses longer than staleMs and has no live process inside the worktree is invisible
+  // during that pause; any live process or fresh mtime makes it RUNNING again (and blocking).
+  if (a.observeFailed) return true;
+  if ((a.kind === "WORKTREE" || a.kind === "BRANCH") && !(a.write_set && a.write_set.length) && a.state !== "RUNNING") return false;
   if (HOLDING.includes(a.state)) return true;
   return a.state === "ORPHAN" && !(a.delivery.integrated === true && (a.delivery.dirty || 0) === 0);
 }
@@ -357,6 +422,9 @@ function observedHolds(a: any): boolean {
   return holdsFull(a) || (a.delivery.dirty || 0) > 0;
 }
 function contentionRecord(a: any): any {
+  // an OBSERVED (non-heartbeat) unit that is RUNNING may be writing gitignored paths (runtime/generated, …) that no git
+  // diff can show ⇒ its write-set is UNKNOWN and blocks every assignment, whatever diff it also has (fail-closed).
+  if (a.kind !== "HEARTBEAT_AGENT" && a.kind !== "HEARTBEAT_CORRUPT" && (a.state === "RUNNING" || a.observeFailed)) return { id: a.id, authorizedPaths: undefined, readOnly: false };
   const dirtyOnly = a.kind !== "HEARTBEAT_AGENT" && !holdsFull(a) && (a.delivery.dirty || 0) > 0;
   const ws = dirtyOnly ? (a.dirty_paths && a.dirty_paths.length ? a.dirty_paths : null) : a.write_set;
   return { id: a.id, authorizedPaths: holderKeys(ws) || undefined, readOnly: !dirtyOnly && a.readOnly === true };
@@ -460,6 +528,7 @@ function gatherForMutation(ctx: any): any {
   if (corrupt.length) return { refused: freeze({ outcome: "REFUSED_CORRUPT_HEARTBEAT", files: freeze(corrupt.map((c: any) => c.file)), reason: "a corrupt heartbeat's write-set is unknown — repair it first (fail-closed)" }) };
   const base = ctx.evidence ? ctx.evidence : ctx.repo ? collectEvidence({ repo: ctx.repo, prs: ctx.prs, tasksRoot: ctx.tasksRoot, now }) : {};
   const ev = Object.assign({ now, worktrees: [], branches: [], prs: [], procs: [], alivePids: [], tasks: [], claims: [] }, base, { now, heartbeats: heartbeats.filter((h: any) => !TERMINAL_HB.includes(h.status)), claims: [] });
+  if (ctx.completionEvidence) ev.completionEvidence = ctx.completionEvidence;
   const isAlive = ctx.pidAlive || pidAlive;
   const hbPids = heartbeats.map((h: any) => h.pid).filter((x: any) => Number.isInteger(x));
   ev.alivePids = [...new Set([...(base.alivePids || []), ...hbPids.filter((p: number) => isAlive(p))])];
@@ -583,10 +652,12 @@ function collectGit(repo: string, base = "origin/main"): any {
   const refs = (git(repo, ["for-each-ref", "--format=%(refname:short)\t%(objectname)\t%(committerdate:iso-strict)", "refs/heads"]) || "").split("\n").filter(Boolean);
   const branches = refs.map((line) => {
     const [name, head, committedAt] = line.split("\t");
-    const counts = (git(repo, ["rev-list", "--left-right", "--count", `${base}...${name}`]) || "").trim().split(/\s+/);
+    const countsRaw = git(repo, ["rev-list", "--left-right", "--count", `${base}...${name}`]);
+    const counts = (countsRaw || "").trim().split(/\s+/);
     const remote = (git(repo, ["rev-parse", "--verify", "-q", `refs/remotes/origin/${name}`]) || "").trim();
-    const diff = (git(repo, ["diff", "--name-only", `${base}...${name}`]) || "").split("\n").filter(Boolean);
-    return { name, head, committedAt, behind: Number(counts[0]) || 0, ahead: Number(counts[1]) || 0, pushed: remote === head, writeSet: diff };
+    const diffRaw = git(repo, ["diff", "--name-only", `${base}...${name}`]);
+    const observeOk = countsRaw !== null && diffRaw !== null && counts.length === 2 && counts.every((c) => /^\d+$/.test(c));
+    return { name, head, committedAt, behind: observeOk ? Number(counts[0]) : null, ahead: observeOk ? Number(counts[1]) : null, pushed: remote === head, writeSet: (diffRaw || "").split("\n").filter(Boolean), observeOk };
   });
   const worktreeStatus: any = {};
   for (const w of worktrees) {
@@ -596,9 +667,48 @@ function collectGit(repo: string, base = "origin/main"): any {
     // last observable write activity: mtimes of the dirty paths and of the worktree's git index (stat only, never read)
     const gitDir = (git(w.path, ["rev-parse", "--absolute-git-dir"]) || "").trim();
     const stamps = [...dirtyPaths.map((d) => path.join(w.path, d)), gitDir ? path.join(gitDir, "index") : ""].filter(Boolean).map((f) => { try { return fs.statSync(f).mtimeMs; } catch { return null; } });
-    worktreeStatus[w.path] = { dirty: dirtyPaths.length, dirtyPaths, lastActivityMs: maxMs(...stamps) };
+    // gitignored writes (runtime/generated, …) are invisible to status/diff: include the newest mtime under the
+    // ignored entries (bounded walk, symlinks never followed) so an actively-written worktree counts as active.
+    const ign = ignoredActivity(w.path, path.resolve(w.path) === path.resolve(repo));
+    stamps.push(ign.ms);
+    // a DETACHED worktree has no branch diff: observe its own commits vs base so its write-set is not UNKNOWN.
+    // A git failure leaves headAhead/headDiff null and headObserveOk=false ⇒ UNKNOWN (holds / blocks), never "integrated".
+    let headAhead: number | null = null, headDiff: string[] | null = null, headObserveOk: boolean | null = null;
+    if (w.detached || !w.branch) {
+      const cRaw = git(w.path, ["rev-list", "--count", `${base}..HEAD`]);
+      const dRaw = git(w.path, ["diff", "--name-only", `${base}...HEAD`]);
+      headObserveOk = cRaw !== null && dRaw !== null && /^\d+$/.test(cRaw.trim());
+      headAhead = headObserveOk ? Number((cRaw as string).trim()) : null;
+      headDiff = headObserveOk ? (dRaw as string).split("\n").filter(Boolean) : null;
+    }
+    worktreeStatus[w.path] = { dirty: dirtyPaths.length, dirtyPaths, lastActivityMs: maxMs(...stamps), activityUnknown: !ign.complete, headAhead, headDiff, headObserveOk };
   }
   return { worktrees, branches, worktreeStatus };
+}
+/*
+ * Newest mtime under the worktree's gitignored entries (writes there are invisible to git). FAIL-CLOSED: if git fails,
+ * the walk is truncated (budget), or any entry cannot be stat'ed / read, the result is { complete:false } and the caller
+ * treats the worktree as ACTIVE. No directory is skipped by name — except the ROOT-level node_modules of the MAIN checkout
+ * (an npm-managed dependency tree, rewritten only by `npm install`, not agent output; linked worktrees carry it as a
+ * symlink). Symlinks contribute their own lstat mtime and are not followed.
+ */
+function ignoredActivity(root: string, isMainCheckout: boolean, budget = DEFAULTS.ignoredScanBudget): { ms: number | null; complete: boolean } {
+  const out = git(root, ["ls-files", "--others", "--ignored", "--exclude-standard", "--directory"]);
+  if (out === null) return { ms: null, complete: false };
+  let best: number | null = null, left = budget;
+  const top = out.split("\n").filter(Boolean).map((rel) => rel.replace(/\/$/, "")).filter((rel) => !(isMainCheckout && rel === "node_modules"));
+  const stack = top.map((rel) => path.join(root, rel));
+  while (stack.length) {
+    if (left-- <= 0) return { ms: best, complete: false };
+    const p = stack.pop() as string;
+    let st: any; try { st = fs.lstatSync(p); } catch (e: any) { if (e && e.code === "ENOENT") continue; return { ms: best, complete: false }; }
+    if (best === null || st.mtimeMs > best) best = st.mtimeMs;
+    if (st.isSymbolicLink() || !st.isDirectory()) continue;
+    let names: string[];
+    try { names = fs.readdirSync(p); } catch (e: any) { if (e && e.code === "ENOENT") continue; return { ms: best, complete: false }; }
+    for (const n of names) stack.push(path.join(p, n));
+  }
+  return { ms: best, complete: true };
 }
 // merged-PR head / merge-commit oids that are ancestors of origin/main (delivery evidence for branches deleted locally)
 function collectIntegratedOids(repo: string, prs: any[], base = "origin/main"): string[] {
@@ -661,7 +771,7 @@ function collectClaims(locksDir: string): any[] {
 function collectEvidence(o: any): any {
   const now = num(o.now) ?? Date.now();
   const g = collectGit(o.repo, o.base || "origin/main");
-  const roots = g.worktrees.filter((w: any) => path.resolve(w.path) !== path.resolve(o.repo)).map((w: any) => w.path);
+  const roots = g.worktrees.map((w: any) => w.path); // the MAIN checkout included: its processes count as liveness too
   const procs = collectProcs(roots).filter((p: any) => p.pid !== process.pid);
   const t = o.tasksRoot ? collectTasks(o.tasksRoot, now, o.taskWindowMs ?? DEFAULTS.taskWindowMs) : { tasks: [], older: 0, sessions: 0, shells: { fresh: 0, stale: 0 } };
   const heartbeats = o.heartbeatDir ? readHeartbeats(o.heartbeatDir) : [];
@@ -695,6 +805,8 @@ const AGENT_SUPERVISOR_CONTRACT = freeze({
     "liveness is collected by the gate itself (pid alive ⇒ RUNNING); staleness never releases a heartbeat's write-set or work item — only close/supersede do",
     "a RUNNING agent is never relaunched; only INTERRUPTED with recoverable (isolated) worktree state may be",
     "a corrupt heartbeat blocks assignment (fail-closed)",
+    "observed units (incl. the MAIN checkout) that are RUNNING — live process, or index/dirty/gitignored mtime within staleMs, or an incomplete ignored-file scan — hold UNKNOWN and block every assignment; LIMIT: a writer idle longer than staleMs with no live process is invisible until it writes again",
+    "a MISSION_RERUN recovery handle is usable only with a dead recorded pid, missionId == workItem (case-insensitive) and completion evidence with provenance {source, checkedAt, ids}",
     "every mutation is serialised by a fleet-bridge generation claim; TTL overrun or lost claim ⇒ abort before writing",
     "CLOSED re-classifies from evidence and requires an independent inspector (≠ owner/parent) and a known owner",
     "task-output content is never ingested — structure only (presence, mtime, record type, stop reason, tool name)",
@@ -702,5 +814,5 @@ const AGENT_SUPERVISOR_CONTRACT = freeze({
   ]),
 });
 
-module.exports = { STATES, HOLDING, TERMINAL_HB, PROTECTED_PREFIXES, DEFAULTS, canonPath, resolveRequestWriteSet, parseWorktreePorcelain, summarizeTaskTail, correlate, classify, decideRecovery, metrics, snapshot, freeingProposal, assign, renew, close, readHeartbeats, collectGit, collectIntegratedOids, collectProcs, collectTasks, collectClaims, collectEvidence, normalizePrs, pidAlive, AGENT_SUPERVISOR_CONTRACT };
+module.exports = { STATES, HOLDING, TERMINAL_HB, PROTECTED_PREFIXES, DEFAULTS, canonPath, resolveRequestWriteSet, parseWorktreePorcelain, summarizeTaskTail, correlate, classify, decideRecovery, metrics, snapshot, freeingProposal, assign, renew, close, readHeartbeats, collectGit, collectIntegratedOids, collectProcs, collectTasks, collectClaims, collectEvidence, normalizePrs, pidAlive, ignoredActivity, AGENT_SUPERVISOR_CONTRACT };
 export {};
