@@ -63,7 +63,7 @@
       "source": "docs/odg/evidence/V164_RADAR_SOURCE_CANDIDATES.json (termsRetrieval.hitsVerbatim)"
     },
     "s6": "6. Services Usage Limits — \"You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service, use of the Service, or access to the Service without our express written permission.\"",
-    "s7": "7. Information Usage Restrictions — \"You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any p[ublications resulting from that research are open access] …\" (bracketed tail per the V160/V164 recorded open-access condition; the pinned hit context is truncated at 'only if any p')",
+    "s7": "7. Information Usage Restrictions — \"You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise: Researchers may use public, non-personal information from the Service for research purposes, only if any p[ublications resulting from that research are open access] …\" (the tail is pinned verbatim in a second hit of the same retrieval: '…ny publications resulting from that research are open access'; same condition recorded in the V160 grant)",
     "dependents": {
       "grantInForce": "docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json — google.github.io, microsoft.github.io, github.blog (GitHub open-access condition recorded)",
       "collection": "#920 V160_PRACTICES_COLLECTION.json (pinned; 25 quotes, 22 SUPPORTED, 0 facts) — already collected",
@@ -121,7 +121,7 @@
         "question": "IETF: may the IETF Trust Legal Provisions 5.0 (PDF; copyright licence) be fetched and quoted as the basis for datatracker.ietf.org / www.rfc-editor.org access, or is a separate website-terms basis required?"
       }
     ],
-    "perSourceAssessment": "robots/terms/API/redirect results per host are in docs/odg/evidence/V164_RADAR_SOURCE_ADMISSION.json (decisions[]) — all 8 DEFERRED for terms; none is admitted by this dossier",
+    "perSourceAssessment": "robots/terms/API/redirect results per host are in docs/odg/evidence/V164_RADAR_SOURCE_ADMISSION.json (decisions[]) — all 8 DEFERRED (7 on terms; www.rfc-editor.org on robots-disallowed sub-paths, datatracker.ietf.org on unverified terms); none is admitted by this dossier",
     "alternativesWithoutTermsConflict": {
       "docs.ollama.com": "read the open-source repository docs instead (would need its own admission; GitHub AUP question applies)",
       "IETF": "fetch + quote the TLP 5.0 PDF (one fetch) to settle the basis — needs owner OK",
