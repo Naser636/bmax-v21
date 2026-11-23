@@ -1,0 +1,94 @@
+{
+  "//": "OWNER authorization record — verbatim transcription of CTO directive V165 (2026-11-23) by the PROVIDER (Claude Code coordinating session). This file grants NOTHING beyond the quoted text; every quote is the owner's. Governance rules, the nine primitives and permissions are NOT modified (V165 §7). Boussole V12.4 remains canonical.",
+  "schema": "odg-owner-authorization/1",
+  "directive": "CTO V165",
+  "date": "2026-11-23",
+  "issuer": "OWNER (CTO)",
+  "missionG": {
+    "quote": [
+      "J'autorise la reprise de la mission G.",
+      "réviser son contrat ;",
+      "corriger le critère `admissible()` pour le rendre cohérent, mesurable et testable ;",
+      "préserver les critères qui restent valides ;",
+      "documenter les modifications et leur justification ;",
+      "faire inspecter indépendamment le contrat révisé ;",
+      "lancer les expériences contrôlées après validation de ce contrat.",
+      "Ne jamais transformer rétroactivement un résultat négatif en réussite."
+    ],
+    "appliesTo": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#G",
+    "order": [
+      "revise contract",
+      "independent inspection of the revised contract",
+      "controlled experiments only after that validation"
+    ]
+  },
+  "internalConstruction": {
+    "quote": [
+      "ODG est autorisé à construire, corriger, tester et intégrer dans le dépôt les capacités internes nécessaires à son autonomie",
+      "Réutiliser les composants canoniques. Ne pas construire de systèmes concurrents.",
+      "ODG peut choisir, planifier et exécuter les travaux internes autorisés sans demander mon approbation à chaque mission."
+    ],
+    "listedCapabilities": [
+      "centre de commande GO",
+      "registre stratégique",
+      "sélection et priorisation des missions",
+      "sélection des stratégies NATIF, HYBRIDE et FOURNISSEUR",
+      "allocation et orchestration multi-agents",
+      "supervision et suivi des exécutions",
+      "inspection indépendante",
+      "mémoire et apprentissage à partir des preuves",
+      "récupération après échec",
+      "automatisation et continuité",
+      "amélioration des modèles locaux et du routage",
+      "intégration des résultats sous contrôle"
+    ]
+  },
+  "agents": {
+    "quote": [
+      "Chaque agent doit recevoir une mission bornée, des permissions minimales, un délai et des critères d'acceptation.",
+      "Ne jamais laisser des agents tourner indéfiniment."
+    ]
+  },
+  "radar": {
+    "quote": [
+      "J'autorise ODG à développer et utiliser largement le Radar",
+      "Les sources différées doivent suivre le processus d'admission. Les sources refusées ne doivent pas être contournées.",
+      "Pour GitHub, distinguer clairement recherche, consultation, métadonnées, API autorisée et copie de contenu. Résoudre la contradiction documentaire entre les sections §6 et §7 avant toute collecte de contenu concernée."
+    ],
+    "note": "no grant is widened by this record; admission remains the canonical process"
+  },
+  "providersAndBudget": {
+    "quote": [
+      "J'autorise ODG à utiliser les capacités locales et les fournisseurs déjà configurés dans la limite des crédits et budgets existants et vérifiables.",
+      "Aucune nouvelle dépense, souscription, création de compte ou augmentation de budget sans plafond financier explicite et approbation correspondante.",
+      "Aucun secret ou identifiant ne doit être transmis aux agents.",
+      "Le mode hybride doit fonctionner sans dépendre obligatoirement d'un fournisseur payant."
+    ],
+    "note": "a provider whose spend ceiling is not verifiable stays NOT authorized by this clause"
+  },
+  "integration": {
+    "quote": [
+      "J'autorise les commits, branches, worktrees, PR, corrections et fusions internes lorsque les contrôles sont satisfaits et que les changements restent dans le périmètre autorisé.",
+      "CI verte sur le commit exact ;",
+      "inspection indépendante ;",
+      "tests de non-régression ;",
+      "preuve de provenance ;",
+      "absence de modification non autorisée ;",
+      "possibilité de récupération et de rollback.",
+      "L'auto-commit et l'auto-merge ne doivent être activés que dans un périmètre interne explicitement contrôlé, avec protections et preuves. Aucun contournement du Truth Lock."
+    ]
+  },
+  "exclusions": {
+    "quote": [
+      "Aucune connexion VPS ou production, aucun déploiement, aucune modification de l'hôte, aucun changement système, aucune exposition publique et aucun accès non autorisé.",
+      "Aucune modification silencieuse des règles de gouvernance, des neuf primitives ou des permissions."
+    ]
+  },
+  "v150": {
+    "quote": [
+      "Autorisation donnée à ODG de poursuivre la mise en œuvre et l'évaluation de V15.0, de mesurer le gate 10/12 et de préparer les preuves nécessaires à sa succession.",
+      "Boussole V12.4 demeure la référence canonique jusqu'à validation formelle de la succession."
+    ],
+    "note": "measuring gate 10/12 ≠ signing it; V15.0 not adopted"
+  }
+}
