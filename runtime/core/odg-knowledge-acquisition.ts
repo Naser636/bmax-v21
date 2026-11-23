@@ -19,7 +19,9 @@ const COR = require("./odg-claim-corroboration.js");   // corroboration (indepen
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function norm(s: any): string { return typeof s === "string" ? s.trim().toLowerCase().replace(/\s+/g, " ") : ""; }
 const CLAIM_TYPES = Object.freeze(["FACT", "OPINION", "HYPOTHESIS", "RECOMMENDATION"]);
-function claimType(v: any): string { const s = typeof v === "string" ? v.toUpperCase() : ""; return CLAIM_TYPES.indexOf(s) >= 0 ? s : "FACT"; }
+// FAIL-CLOSED typing: a missing/unknown claim type is a HYPOTHESIS (recorded, never promoted to fact). Defaulting to FACT
+// would let an untyped opinion become FACT_CORROBORATED merely because two sources repeat it.
+function claimType(v: any): string { const s = typeof v === "string" ? v.trim().toUpperCase() : ""; return CLAIM_TYPES.indexOf(s) >= 0 ? s : "HYPOTHESIS"; }
 
 /* acquire({query, capability, sources, asOfEpochMs?}) — sources: [{url, status:"RETRIEVED"|"INACCESSIBLE", httpStatus?,
  * publishedDate?, consultedDate?, claims:[{text, type, stance?}]}]. Returns frozen knowledge records + inaccessible list. */

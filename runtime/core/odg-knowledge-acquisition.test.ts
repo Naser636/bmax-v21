@@ -36,7 +36,13 @@ function main() {
   check("contract: ≥2 independent for fact, 403 never counted, opinion≠fact, reuses corroboration", K.KNOWLEDGE_ACQUISITION_CONTRACT.invariants.some((i: string) => /≥2 INDEPENDENT/.test(i)) && K.KNOWLEDGE_ACQUISITION_CONTRACT.invariants.some((i: string) => /NEVER circumvented/.test(i)) && K.KNOWLEDGE_ACQUISITION_CONTRACT.invariants.some((i: string) => /no second radar/.test(i)));
   check("deterministic + frozen", JSON.stringify(K.acquire(K.REAL_CYCLE)) === JSON.stringify(r) && Object.isFrozen(r) && Object.isFrozen(K.REAL_CYCLE));
 
-  process.stdout.write("\n" + (failures === 0 ? "ALL PASS — knowledge-acquisition (V227 §2/§3: REAL autonomous cycle discover→access→extract→corroborate→classify; SWE-bench '500' FACT_CORROBORATED by 2 independent sources [not official]; 403 recorded/not circumvented; single≠verified; contradiction⇒CONTESTED; opinion≠fact; reuses V221)" : failures + " FAIL") + "\n");
+    // V15.8: an UNTYPED (or unknown-typed) claim repeated by two independent sources must NOT become FACT_CORROBORATED.
+  const untyped = K.acquire({ query: "q", sources: [
+    { url: "https://a.test/x", status: "RETRIEVED", consultedDate: "2026-11-16", claims: [{ text: "approach W is safest" }] },
+    { url: "https://b.test/y", status: "RETRIEVED", consultedDate: "2026-11-16", claims: [{ text: "approach W is safest", type: "Opinionish" }] },
+  ] });
+  check("untyped/unknown claim type ⇒ HYPOTHESIS_RECORDED, never FACT_CORROBORATED", untyped.knowledge[0].type === "HYPOTHESIS" && untyped.knowledge[0].classification === "HYPOTHESIS_RECORDED" && untyped.verifiedCount === 0);
+process.stdout.write("\n" + (failures === 0 ? "ALL PASS — knowledge-acquisition (V227 §2/§3: REAL autonomous cycle discover→access→extract→corroborate→classify; SWE-bench '500' FACT_CORROBORATED by 2 independent sources [not official]; 403 recorded/not circumvented; single≠verified; contradiction⇒CONTESTED; opinion≠fact; reuses V221)" : failures + " FAIL") + "\n");
   process.exit(failures === 0 ? 0 : 1);
 }
 main();
