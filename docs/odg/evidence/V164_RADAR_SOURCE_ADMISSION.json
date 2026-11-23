@@ -323,7 +323,7 @@
       ],
       "reasons": [],
       "termsCondition": null,
-      "evidenceSha256": "1ee5c0a1c83e0516226c9df43b459f6802a56eb928e7ff62152d88e56f2e7e68"
+      "evidenceSha256": "33a17d91ab8fc91b6dce5ab5c7916eaf37d8439b6eed09099f453e0dfebcd99f"
     },
     {
       "host": "docs.pytorch.org",
@@ -359,7 +359,7 @@
       ],
       "reasons": [],
       "termsCondition": null,
-      "evidenceSha256": "ba9697c1553adcad48f1fe7d987d1e8b34c674c0cbb0179fb01fa617e906d95c"
+      "evidenceSha256": "224dfbc5893dbe03e5bf717f5e3e71ba77e9e6c4a45c16bda430a57e137b0142"
     },
     {
       "host": "slsa.dev",

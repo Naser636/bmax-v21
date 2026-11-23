@@ -1378,7 +1378,6 @@
    "termsUrl": "https://www.linuxfoundation.org/legal/terms",
    "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsClause": "Footer 'Policies' → linuxfoundation.org/legal/policies → Linux Foundation Terms of Use (rev. 2020-11-16, apply to 'Linux Foundation websites'; fetched 2026-11-23): conduct/IP/user-content rules only; no clause on robots, crawlers, scraping, data mining or automated access",
    "prefixes": [
     {
      "path": "/blog/",
@@ -1426,7 +1425,24 @@
       "Privacy Policy"
      ]
     ]
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://www.linuxfoundation.org/legal/terms",
+    "finalUrl": "https://www.linuxfoundation.org/legal/terms",
+    "httpStatus": 200,
+    "bytes": 86827,
+    "sha256": "8272bd0f1c5ac91b9867d5d860cd0b3dc6c6264c71ac91ae534702a02f0f608b",
+    "fetchedAt": "2026-11-23T19:42:18Z",
+    "method": "one GET, UA ODG-Radar-probe/0.1, same path as the devblogs/datatracker re-reads; sha256 is of the raw HTML response at fetchedAt (a later fetch of a dynamic page may hash differently)",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot (case-insensitive regex over the tag-stripped full text, script/style removed)",
+    "textChars": 12394,
+    "keywordHits": 0
+   },
+   "termsClausesVerbatim": [
+    "By using Linux Foundation websites you are agreeing to be bound by the following terms and conditions here.",
+    "Revised November 16, 2020"
+   ],
+   "termsFinding": "0 hits for the scanned keyword list in the full terms text ⇒ no clause restricting robots, crawling, scraping, data mining, automated access or AI use; scope sentence quoted verbatim above (pytorch.org footer 'Policies' → linuxfoundation.org/legal/policies → this page)"
   },
   {
    "host": "docs.pytorch.org",
@@ -1552,7 +1568,6 @@
    "termsUrl": "https://lfprojects.org/policies/terms-of-use/",
    "termsForbidAutomation": false,
    "rateLimitDocumented": false,
-   "termsClause": "NEW vs V158: footer states 'For website terms of use, trademark policy and other project policies please see https://lfprojects.org/policies/'; LF Projects Terms of Use (eff. 2017-09-14, 'apply to your use of the web sites of LF Project and the Projects'; fetched 2026-11-23): conduct/IP/user-content/DMCA only — no clause on robots, crawlers, scraping, data mining or automated access",
    "prefixes": [
     {
      "path": "/docs/concepts/",
@@ -1587,7 +1602,24 @@
     "probeUserAgent": "ODG-Radar-probe/0.1",
     "redirectsFollowed": false,
     "footerLegalLinksObserved": []
-   }
+   },
+   "termsRetrieval": {
+    "url": "https://lfprojects.org/policies/terms-of-use/",
+    "finalUrl": "https://lfprojects.org/policies/terms-of-use/",
+    "httpStatus": 200,
+    "bytes": 142415,
+    "sha256": "046e429dba5110d817be36e81d2b2f350d23d01dc643ee68a3c2b7db39adc855",
+    "fetchedAt": "2026-11-23T19:42:18Z",
+    "method": "one GET, UA ODG-Radar-probe/0.1, same path as the devblogs/datatracker re-reads; sha256 is of the raw HTML response at fetchedAt (a later fetch of a dynamic page may hash differently)",
+    "keywordsScanned": "robot|spider|scrap|crawl|data mining|text and data|harvest|automat|extract|artificial intelligence|\\bAI\\b|machine learning|\\bbot (case-insensitive regex over the tag-stripped full text, script/style removed)",
+    "textChars": 11240,
+    "keywordHits": 0
+   },
+   "termsClausesVerbatim": [
+    "These terms of use apply to your use of the web sites of LF Project and the Projects.",
+    "Effective: September 14, 2017"
+   ],
+   "termsFinding": "0 hits for the scanned keyword list in the full terms text ⇒ no clause restricting robots, crawling, scraping, data mining, automated access or AI use; scope sentence quoted verbatim above (kubernetes.io footer: 'For website terms of use, trademark policy and other project policies please see https://lfprojects.org/policies/')"
   },
   {
    "host": "slsa.dev",
@@ -2952,5 +2984,8 @@
    "SWE_AUTOMATION": 8
   }
  },
- "inspectionFix": "#928 inspection (MED): ADMIT must not rest on a paraphrased terms reading. devblogs.microsoft.com and datatracker.ietf.org re-read once each with verbatim quotes + sha256 ⇒ both DEFER."
+ "inspectionFix": "#928 inspection (MED): ADMIT must not rest on a paraphrased terms reading. devblogs.microsoft.com and datatracker.ietf.org re-read once each with verbatim quotes + sha256 ⇒ both DEFER. Second inspection: pytorch.org and kubernetes.io terms re-read once each with retrieval record (sha256) + keyword scan (0 hits) ⇒ ADMIT stands on recorded evidence.",
+ "ownerFollowUps": [
+  "V158 evidence docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json labels the IETF terms reading (trustee.ietf.org Trust Legal Provisions) for www.rfc-editor.org and datatracker.ietf.org as termsVerified=true, but it was a paraphrase: the TLP URL is an index page with no provision text (V164 re-read, sha256 0fec6244…222653). No grant in force relies on it (both hosts DEFERRED in V158 and V164). Owner: correct the V158 record in a separate change (outside this mission's write-set), or accept the TLP 5.0 PDF as the reference to be quoted."
+ ]
 }
