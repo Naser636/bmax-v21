@@ -5,7 +5,7 @@
   "headAtCheckpoint": "5be27612",
   "prsMergedSinceCP5": {
     "902": "verification levels L1/L2/L3 + adaptive concurrency policy (agent-built; REJECT -> fix -> ACCEPT; coordinator fixed the re-inspection LOW: runtime/dist createRequire alias)",
-    "903": "CP5 (coordinator; REJECT on 2 figures -> corrected -> ACCEPT)",
+    "903": "CP5 itself (its merge commit 8342a1df IS headAtCP5; listed for completeness — coordinator; REJECT on 2 figures -> corrected -> ACCEPT)",
     "904": "odg-backup-restore test bundled the main checkout instead of the repo under test (coordinator; ACCEPT)",
     "905": "governed Radar source admission + versioned V158 grant (coordinator; REJECT x2 -> fixes incl. full RFC 9309 robots analysis -> ACCEPT)",
     "906": "dossier knowledge via canonical odg-knowledge-acquisition.acquire() + fail-closed claim typing (coordinator; REJECT -> fix -> ACCEPT)",
@@ -51,7 +51,7 @@
       "storedContent": "none (status, type, bytes, sha256, sanitized title only)",
       "pinnedInCollectionRegistry": false
     },
-    "robotsProvenance": "robots.txt sha256 + bytes recorded per host in V158_RADAR_SOURCE_CANDIDATES.json (fetched 2026-11-23T12:01:49Z-12:02:11Z)"
+    "robotsProvenance": "robots.txt sha256 + bytes recorded for 9 hosts incl. all 6 admitted (+ www.w3.org, www.cisa.gov, pypi.org) in V158_RADAR_SOURCE_CANDIDATES.json (fetched 2026-11-23T12:01:49Z-12:02:11Z)"
   },
   "researchAndKnowledge": {
     "referencesFetchedAndTitleVerified": 27,
@@ -68,7 +68,7 @@
   },
   "inspectionStats": "every PR independently inspected; coordinator-built PRs #903-#908: first-pass REJECT on 3 of 6 (#903 figures, #905 admission evidence, #906 over-attribution); #908 ACCEPTed then REJECTed on a delta (fail-open verdict). Inspections caught real defects each time (robots wildcard miss, fail-open verdict, over-attributed claim) — inspection remains load-bearing.",
   "incidents": [
-    "main CI red 11:45Z-12:05Z (supervisor test time bomb) — fixed by #907",
+    "the supervisor test suite failed on main's code from 11:45Z (time bomb; surfaced in #905/#906 PR CI — the main-branch CI runs that completed in that window were green) — fixed by #907",
     "a merge with conflict markers was committed+pushed on #905 (fixed forward in e97509c8 before merge; guard recorded in memory)",
     "a background auto-merge for #908 was denied by the permission classifier — merged in the foreground on the exact inspected head instead"
   ],
