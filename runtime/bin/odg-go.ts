@@ -92,26 +92,89 @@ function mainCheckoutOf(dir: string): string | null {
   const c = git(dir, ["rev-parse", "--path-format=absolute", "--git-common-dir"]);
   return c ? path.dirname(c) : null;
 }
+/* PHYSICAL path confinement (realpath, never lexical only). A symlink anywhere in the out-dir path is refused; the
+ * physical out dir is realpath(nearest existing ancestor) + the not-yet-existing tail. */
+function realOr(p: string): string { try { return fs.realpathSync(p); } catch { return path.resolve(p); } }
+function symlinkComponent(p: string): string | null {
+  const abs = path.resolve(p); const parts = abs.split(path.sep).filter(Boolean);
+  let cur = path.sep;
+  for (const part of parts) {
+    cur = path.join(cur, part);
+    let st: any; try { st = fs.lstatSync(cur); } catch { return null; }   // first missing component: nothing below exists
+    if (st.isSymbolicLink()) return cur;
+  }
+  return null;
+}
+function physicalPath(p: string): string {
+  let cur = path.resolve(p); const tail: string[] = [];
+  while (!fs.existsSync(cur)) { const up = path.dirname(cur); if (up === cur) break; tail.unshift(path.basename(cur)); cur = up; }
+  return path.join(realOr(cur), ...tail);
+}
+const insideP = (a: string, b: string) => a === b || a.startsWith(b.endsWith(path.sep) ? b : b + path.sep);
+/* forbidden (compared by realpath): every main checkout (incl. runtime/generated|dist|governance), the state repo, the code tree. */
 function forbiddenRoots(repo: string): string[] {
-  const out = new Set<string>([path.join(ROOT, "runtime", "governance"), path.join(repo, "runtime", "governance")]);
-  for (const r of [mainCheckoutOf(repo), mainCheckoutOf(ROOT)]) if (r) { out.add(path.join(r, "runtime", "generated")); out.add(path.join(r, "runtime", "dist")); out.add(path.join(r, "runtime", "governance")); }
+  const out = new Set<string>();
+  for (const r of [mainCheckoutOf(repo), mainCheckoutOf(ROOT), path.resolve(repo), ROOT]) if (r) {
+    for (const x of [r, path.join(r, "runtime", "generated"), path.join(r, "runtime", "dist"), path.join(r, "runtime", "governance")]) out.add(realOr(x));
+  }
   return [...out];
 }
-/* out dir refusal: never inside a main checkout (live root timer state), never inside a forbidden root. */
-function validateOutDir(outDir: string, repo: string): { ok: boolean; reason: string } {
-  const od = path.resolve(outDir);
-  const inside = (a: string, b: string) => a === b || a.startsWith(b + path.sep);
-  for (const f of forbiddenRoots(repo)) if (inside(od, f)) return { ok: false, reason: `out dir ${od} is inside protected ${f}` };
-  for (const m of [mainCheckoutOf(repo), mainCheckoutOf(ROOT)]) if (m && inside(od, m)) return { ok: false, reason: `out dir ${od} is inside the main checkout ${m} (live root timer state)` };
-  return { ok: true, reason: "confined" };
+function validateOutDir(outDir: string, repo: string): { ok: boolean; reason: string; physical?: string } {
+  const link = symlinkComponent(outDir);
+  if (link) return { ok: false, reason: `out dir path has a symlink component ${link} (refused: check and write must resolve the same physical path)` };
+  const od = physicalPath(outDir);
+  for (const f of forbiddenRoots(repo)) if (insideP(od, f)) return { ok: false, reason: `out dir ${od} is inside protected ${f} (main checkout / state repo / code tree)` };
+  return { ok: true, reason: "confined", physical: od };
+}
+/* safeWrite — the ONE write primitive: lexical check (core assertConfinedWrite) + realpath(parent) must equal the
+ * physical out dir + lstat(final) must not be a symlink + open with O_NOFOLLOW (the opened file IS the checked path). */
+function safeWrite(target: string, data: string, mode: "append" | "truncate" | "exclusive", physOut: string, forb: string[]): void {
+  GO.assertConfinedWrite(target, physOut, forb, path);
+  const parent = fs.realpathSync(path.dirname(path.resolve(target)));
+  if (parent !== physOut) throw new Error(`WRITE_PARENT_NOT_OUT_DIR: ${parent} ≠ ${physOut}`);
+  const final = path.join(parent, path.basename(target));
+  for (const f of forb) if (insideP(final, f)) throw new Error(`FORBIDDEN_WRITE: ${final} inside ${f}`);
+  try { if (fs.lstatSync(final).isSymbolicLink()) throw new Error(`SYMLINK_TARGET_REFUSED: ${final}`); } catch (e: any) { if (e && e.code !== "ENOENT") throw e; }
+  const C = fs.constants;
+  const flags = C.O_WRONLY | C.O_CREAT | C.O_NOFOLLOW | (mode === "append" ? C.O_APPEND : mode === "exclusive" ? C.O_EXCL : C.O_TRUNC);
+  const fd = fs.openSync(final, flags, 0o644);
+  try { fs.writeSync(fd, data); } finally { fs.closeSync(fd); }
 }
 
-function readAllowlist(): any {
-  if (process.env.ODG_CANARY_ALLOWLIST !== undefined) return { ids: process.env.ODG_CANARY_ALLOWLIST.split(",").map((s: string) => s.trim()).filter(Boolean), source: "env ODG_CANARY_ALLOWLIST" };
-  for (const [p, label] of [[UNIT_SYSTEM, `${UNIT_SYSTEM} (installed live unit, read-only)`], [path.join(ROOT, UNIT_REPO), `${UNIT_REPO} (repo unit template)`]]) {
-    try { const m = /^Environment=ODG_CANARY_ALLOWLIST=(.*)$/m.exec(fs.readFileSync(p, "utf8")); if (m) return { ids: m[1].split(",").map((s: string) => s.trim()).filter(Boolean), source: label }; } catch { /* next */ }
-  }
-  return { ids: [], source: "none found ⇒ empty (deny-by-default)" };
+/* allowlist: the INSTALLED unit is authoritative (else the repo unit template); env ODG_CANARY_ALLOWLIST may only
+ * NARROW it (intersection), never widen. */
+function readAllowlist(o: any = {}): any {
+  const units: any[] = o.unitPaths || [[UNIT_SYSTEM, `${UNIT_SYSTEM} (installed live unit, read-only)`], [path.join(ROOT, UNIT_REPO), `${UNIT_REPO} (repo unit template)`]];
+  const env = o.env || process.env;
+  const parse = (v: string) => v.split(",").map((x: string) => x.trim()).filter(Boolean);
+  let base: string[] = []; let source = "no unit found ⇒ empty (deny-by-default)";
+  for (const [p, label] of units) { try { const m = /^Environment=ODG_CANARY_ALLOWLIST=(.*)$/m.exec(fs.readFileSync(p, "utf8")); if (m) { base = parse(m[1]); source = label; break; } } catch { /* next */ } }
+  if (env.ODG_CANARY_ALLOWLIST === undefined) return { ids: base, source };
+  const want = parse(env.ODG_CANARY_ALLOWLIST);
+  return { ids: base.filter((id) => want.includes(id)), source: `${source} ∩ env ODG_CANARY_ALLOWLIST (env may only narrow)`, refusedWidening: want.filter((id) => !base.includes(id)) };
+}
+
+/* isolationCheck — the --execute scratch worktree must be FRESH and UNSHARED: a registered LINKED worktree (not a main
+ * checkout, not the state repo, not this code tree), detached HEAD (no branch = nobody's working branch), clean status
+ * incl. untracked, no runtime/generated (never used by a run), no symlink in its path, and the mission is runnable there. */
+function isolationCheck(scratch: string | null, missionId: string, repo: string): any {
+  if (!scratch) return { ok: false, reason: "no --scratch isolated worktree given" };
+  if (symlinkComponent(scratch)) return { ok: false, reason: "scratch path has a symlink component" };
+  const s = realOr(scratch);
+  if (git(s, ["rev-parse", "--is-inside-work-tree"]) !== "true") return { ok: false, reason: "not a git worktree" };
+  const top = realOr(git(s, ["rev-parse", "--show-toplevel"]) || "");
+  if (top !== s) return { ok: false, reason: "scratch is not the top of a worktree" };
+  const main = mainCheckoutOf(s);
+  if (!main || realOr(main) === s) return { ok: false, reason: "scratch is a MAIN checkout, not a linked worktree" };
+  if ([realOr(repo), ROOT, ...[mainCheckoutOf(repo), mainCheckoutOf(ROOT)].filter(Boolean).map((x: any) => realOr(x))].includes(s)) return { ok: false, reason: "scratch is the state repo, the code tree or a main checkout" };
+  const listed = (git(s, ["worktree", "list", "--porcelain"]) || "").split("\n").filter((l: string) => l.startsWith("worktree ")).map((l: string) => realOr(l.slice(9)));
+  if (!listed.includes(s)) return { ok: false, reason: "scratch is not a registered worktree" };
+  if (git(s, ["symbolic-ref", "-q", "HEAD"]) !== null) return { ok: false, reason: "scratch HEAD is on a branch (an active working worktree) — a fresh detached scratch is required" };
+  const st = git(s, ["status", "--porcelain", "--untracked-files=all"]);
+  if (st === null || st !== "") return { ok: false, reason: "scratch worktree is not clean (shared/used)" };
+  if (fs.existsSync(path.join(s, "runtime", "generated"))) return { ok: false, reason: "scratch already has runtime/generated (used by a previous run) — not fresh" };
+  if (!fs.existsSync(path.join(s, "runtime", "missions", `${missionId}.json`))) return { ok: false, reason: `NOT_RUNNABLE: no runtime/missions/${missionId}.json in the scratch worktree` };
+  return { ok: true, workspace: s };
 }
 
 /* readState(repo) — canonical evidence + registers + ledger/attempt-log, all READ-ONLY. */
@@ -166,10 +229,11 @@ function knowledge(repo: string, useAt: number): any {
 function buildPorts(o: any): any {
   const { repo, outDir, scratch, stepDelayMs, signalState } = o;
   const forb = forbiddenRoots(repo);
+  const physOut = fs.realpathSync(outDir);   // validated + created by the caller; no symlink component
   const writes: string[] = [];
-  const guard = (p: string) => { GO.assertConfinedWrite(p, outDir, forb, path); if (!writes.includes(path.resolve(p))) writes.push(path.resolve(p)); };
-  const tracePath = path.join(outDir, "go-trace.jsonl");
-  const stopPath = path.join(outDir, "STOP");
+  const w = (p: string, data: string, mode: "append" | "truncate" | "exclusive") => { safeWrite(p, data, mode, physOut, forb); if (!writes.includes(path.resolve(p))) writes.push(path.resolve(p)); };
+  const tracePath = path.join(physOut, "go-trace.jsonl");
+  const stopPath = path.join(physOut, "STOP");
   return {
     writes,
     now: () => Date.now(),
@@ -182,20 +246,11 @@ function buildPorts(o: any): any {
       return { stop: false };
     },
     trace: {
-      append: (e: any) => { guard(tracePath); fs.appendFileSync(tracePath, JSON.stringify(e) + "\n"); },
+      append: (e: any) => { w(tracePath, JSON.stringify(e) + "\n", "append"); },
       readPrior: () => { try { return fs.readFileSync(tracePath, "utf8").split("\n").filter(Boolean).map((l: string) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { return []; } },
     },
-    writeSummary: (s: any) => { const p = path.join(outDir, "go-cycle.json"); const tmp = `${p}.tmp-${process.pid}`; guard(tmp); guard(p); fs.writeFileSync(tmp, JSON.stringify(s, null, 2) + "\n"); fs.renameSync(tmp, p); },
-    isolation: (next: any) => {
-      if (!scratch) return { ok: false, reason: "no --scratch isolated worktree given" };
-      const s = path.resolve(scratch);
-      if (git(s, ["rev-parse", "--is-inside-work-tree"]) !== "true") return { ok: false, reason: `${s} is not a git worktree` };
-      const top = git(s, ["rev-parse", "--show-toplevel"]);
-      const main = mainCheckoutOf(s);
-      if (!top || path.resolve(top) === main || path.resolve(top) === path.resolve(repo) || path.resolve(top) === ROOT) return { ok: false, reason: `${s} is not an isolated scratch worktree (it is the main checkout, the state repo or this code tree)` };
-      if (!fs.existsSync(path.join(s, "runtime", "missions", `${next.mission}.json`))) return { ok: false, reason: `NOT_RUNNABLE: no runtime/missions/${next.mission}.json in the scratch worktree (not a governed-pipeline mission)` };
-      return { ok: true, workspace: s };
-    },
+    writeSummary: (s: any) => { const p = path.join(physOut, "go-cycle.json"); const tmp = `${p}.tmp-${process.pid}`; w(tmp, JSON.stringify(s, null, 2) + "\n", "exclusive"); GO.assertConfinedWrite(p, physOut, forb, path); try { if (fs.lstatSync(p).isSymbolicLink()) throw new Error(`SYMLINK_TARGET_REFUSED: ${p}`); } catch (e: any) { if (e && e.code !== "ENOENT") { fs.rmSync(tmp, { force: true }); throw e; } } fs.renameSync(tmp, p); if (!writes.includes(p)) writes.push(p); },
+    isolation: (next: any) => isolationCheck(scratch, next.mission, repo),
     dispatchNative: (next: any, c: any) => {
       // governed pipeline in the ISOLATED worktree only (never the main checkout); bounded; nothing committed/merged.
       const r = cp.spawnSync("npx", ["tsx", "runtime/bin/odg-run.ts", next.mission], { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
@@ -213,6 +268,7 @@ async function runOnce(argv: string[]): Promise<{ code: number; result: any; wri
   const v = validateOutDir(outDir, repo);
   if (!v.ok) { process.stderr.write(`REFUSED: ${v.reason}\n`); return { code: 2, result: null, writes: [] }; }
   fs.mkdirSync(outDir, { recursive: true });
+  if (symlinkComponent(outDir) || fs.realpathSync(outDir) !== v.physical) { process.stderr.write("REFUSED: out dir changed between check and use (symlink race)\n"); return { code: 2, result: null, writes: [] }; }
   const signalState: any = { signal: null };
   const onSig = (s: string) => () => { signalState.signal = s; };
   const hInt = onSig("SIGINT"), hTerm = onSig("SIGTERM");
@@ -223,6 +279,13 @@ async function runOnce(argv: string[]): Promise<{ code: number; result: any; wri
     const code = result.status === "STARTUP_REFUSED" ? 2 : result.status === "STOPPED" ? 3 : 0;
     return { code, result, writes: ports.writes };
   } finally { process.removeListener("SIGINT", hInt); process.removeListener("SIGTERM", hTerm); }
+}
+
+/* redact(text, pairs) — host paths → placeholders (longest first), then any leftover /home/… or /tmp/… path. */
+function redact(text: string, pairs: string[][]): string {
+  let t = text;
+  for (const [from, to] of pairs.filter(([f]) => f && f.length > 1).sort((a, b) => b[0].length - a[0].length)) t = t.split(from).join(to);
+  return t.replace(/\/(?:home|tmp)\/[^"\s,)]*/g, "<redacted-path>");
 }
 
 // ---- real scenario harness (child processes of this very CLI) -----------------------------------------------------
@@ -278,7 +341,10 @@ async function scenarioEvidence(argv: string[]): Promise<number> {
   const base = path.resolve(arg(argv, "--out") || path.join(os.tmpdir(), "odg-go-scenario"));
   const v = validateOutDir(base, repo); if (!v.ok) { process.stderr.write(`REFUSED: ${v.reason}\n`); return 2; }
   fs.mkdirSync(base, { recursive: true });
+  if (symlinkComponent(base) || fs.realpathSync(base) !== v.physical) { process.stderr.write("REFUSED: out dir changed between check and use\n"); return 2; }
   const evOut = path.resolve(arg(argv, "--evidence-out") || path.join(ROOT, EVIDENCE_REL));
+  const evDir = realOr(path.join(ROOT, "docs", "odg", "evidence"));
+  if (symlinkComponent(path.dirname(evOut)) || realOr(path.dirname(evOut)) !== evDir || !/^V164_GO_CYCLE[A-Z0-9_]*\.json$/.test(path.basename(evOut))) { process.stderr.write(`REFUSED: --evidence-out must be docs/odg/evidence/V164_GO_CYCLE*.json in this code tree\n`); return 2; }
   const main = mainCheckoutOf(repo);
   const ledgerPath = main ? path.join(main, "runtime", "generated", "mission-ledger.json") : null;
   const before = { gitStatus: main ? git(main, ["status", "--porcelain"]) : null, head: main ? git(main, ["rev-parse", "HEAD"]) : null, ledgerSha256: ledgerPath ? sha256File(ledgerPath) : null };
@@ -352,7 +418,9 @@ async function scenarioEvidence(argv: string[]): Promise<number> {
       "pre-registration is in the same commit as the first evidence write; its precedence is asserted, not cryptographically provable",
     ],
   };
-  fs.writeFileSync(evOut, JSON.stringify(ev, null, 2) + "\n");
+  const text = redact(JSON.stringify(ev, null, 2) + "\n", [[base, "<scratch>"], [ROOT, "<codeTree>"], [main || "", "<mainCheckout>"], [repo, "<stateRepo>"], [os.tmpdir(), "<tmp>"], [os.homedir(), "<home>"]]);
+  try { if (fs.lstatSync(evOut).isSymbolicLink()) { process.stderr.write("REFUSED: evidence target is a symlink\n"); return 2; } } catch { /* absent */ }
+  const fd = fs.openSync(evOut, fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC | fs.constants.O_NOFOLLOW, 0o644); try { fs.writeSync(fd, text); } finally { fs.closeSync(fd); }
   process.stdout.write(JSON.stringify({ evidence: evOut, I: I.grade, Iresults: I.results, J: J.grade, Jresults: jr, dry: { status: runs.dry.status, steps: runs.dry.stepsRun }, selection: I.selection }, null, 1) + "\n");
   return 0;
 }
@@ -360,7 +428,7 @@ async function scenarioEvidence(argv: string[]): Promise<number> {
 async function check(argv: string[]): Promise<number> {
   const evp = path.resolve(arg(argv, "--evidence-out") || path.join(ROOT, EVIDENCE_REL));
   let ev: any; try { ev = readJson(evp); } catch { process.stdout.write("CHECK FAILED: evidence unreadable\n"); return 1; }
-  const repo = path.resolve(arg(argv, "--repo") || ev.host.stateRepo);
+  const repo = path.resolve(arg(argv, "--repo") || mainCheckoutOf(ROOT) || ROOT);
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "odg-go-check-"));
   const r = await runOnce(["--repo", repo, "--out", tmp]);
   const ok = !!r.result && r.result.decisionsDigest === ev.runs.dry.decisionsDigest && r.result.runId === ev.runs.dry.runId;
@@ -368,7 +436,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { PRE_REGISTERED, runOnce, readState, knowledge, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 if (require.main === module) {
   const argv = process.argv.slice(2);

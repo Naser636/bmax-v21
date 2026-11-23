@@ -102,11 +102,11 @@
     }
   },
   "host": {
-    "stateRepo": "/home/ubuntu/bmax-v21",
-    "mainCheckout": "/home/ubuntu/bmax-v21",
-    "codeTreeHead": "9eabf4a4effe245f1f470362350b4928a7624a1f",
+    "stateRepo": "<mainCheckout>",
+    "mainCheckout": "<mainCheckout>",
+    "codeTreeHead": "081048afb71528e7dab85d40f5b9c1cd55160e40",
     "stateRepoHead": "9eabf4a4effe245f1f470362350b4928a7624a1f",
-    "generatedAt": "2026-11-23T20:18:51.573Z"
+    "generatedAt": "2026-11-23T20:26:47.848Z"
   },
   "mainCheckoutUntouched": {
     "before": {
@@ -136,7 +136,7 @@
       "dispatchCalls": 0,
       "providerLaunched": 0,
       "writes": [
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r0-truthlock-codetree/go-trace.jsonl"
+        "<scratch>/r0-truthlock-codetree/go-trace.jsonl"
       ],
       "writesConfined": true,
       "traceEntries": 3,
@@ -165,9 +165,9 @@
       "dispatchCalls": 0,
       "providerLaunched": 0,
       "writes": [
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r1-dry/go-trace.jsonl",
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r1-dry/go-cycle.json.tmp-1131136",
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r1-dry/go-cycle.json"
+        "<scratch>/r1-dry/go-trace.jsonl",
+        "<scratch>/r1-dry/go-cycle.json.tmp-1134009",
+        "<scratch>/r1-dry/go-cycle.json"
       ],
       "writesConfined": true,
       "traceEntries": 12,
@@ -194,14 +194,14 @@
       "idempotent": true,
       "duplicateOf": {
         "cycleSeq": 1,
-        "endedAt": "2026-11-23T20:18:37.000Z"
+        "endedAt": "2026-11-23T20:26:32.706Z"
       },
       "dispatchCalls": 0,
       "providerLaunched": 0,
       "writes": [
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r1-dry/go-trace.jsonl",
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r1-dry/go-cycle.json.tmp-1131160",
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r1-dry/go-cycle.json"
+        "<scratch>/r1-dry/go-trace.jsonl",
+        "<scratch>/r1-dry/go-cycle.json.tmp-1134031",
+        "<scratch>/r1-dry/go-cycle.json"
       ],
       "writesConfined": true,
       "traceEntries": 12,
@@ -230,9 +230,9 @@
       "dispatchCalls": 0,
       "providerLaunched": 0,
       "writes": [
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r3-execute/go-trace.jsonl",
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r3-execute/go-cycle.json.tmp-1131184",
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r3-execute/go-cycle.json"
+        "<scratch>/r3-execute/go-trace.jsonl",
+        "<scratch>/r3-execute/go-cycle.json.tmp-1134053",
+        "<scratch>/r3-execute/go-cycle.json"
       ],
       "writesConfined": true,
       "traceEntries": 12,
@@ -250,8 +250,8 @@
         "kind": "STOP",
         "beforeStep": "SELECT",
         "reason": "STOP_FILE",
-        "source": "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r4-stopfile/STOP",
-        "at": "2026-11-23T20:18:42.947Z",
+        "source": "<scratch>/r4-stopfile/STOP",
+        "at": "2026-11-23T20:26:38.766Z",
         "runId": "67be602e6ec7047a",
         "cycleSeq": 1
       },
@@ -262,13 +262,13 @@
       "dispatchCalls": 0,
       "providerLaunched": 0,
       "writes": [
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r4-stopfile/go-trace.jsonl"
+        "<scratch>/r4-stopfile/go-trace.jsonl"
       ],
       "writesConfined": true,
       "traceEntries": 7,
       "acted": {
         "afterSteps": 3,
-        "at": "2026-11-23T20:18:42.279Z"
+        "at": "2026-11-23T20:26:38.067Z"
       }
     },
     "sigterm": {
@@ -284,7 +284,7 @@
         "beforeStep": "SELECT",
         "reason": "SIGNAL",
         "source": "SIGTERM",
-        "at": "2026-11-23T20:18:46.339Z",
+        "at": "2026-11-23T20:26:42.300Z",
         "runId": "67be602e6ec7047a",
         "cycleSeq": 1
       },
@@ -295,13 +295,13 @@
       "dispatchCalls": 0,
       "providerLaunched": 0,
       "writes": [
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r5-sigterm/go-trace.jsonl"
+        "<scratch>/r5-sigterm/go-trace.jsonl"
       ],
       "writesConfined": true,
       "traceEntries": 7,
       "acted": {
         "afterSteps": 3,
-        "at": "2026-11-23T20:18:45.671Z"
+        "at": "2026-11-23T20:26:41.611Z"
       }
     },
     "emergencyStop": {
@@ -313,7 +313,7 @@
         "beforeStep": "TRUTH_LOCK",
         "reason": "EMERGENCY_STOP",
         "source": "ODG_SCHEDULER_STOP=1 (canonical mission-scheduler emergency stop)",
-        "at": "2026-11-23T20:18:47.346Z",
+        "at": "2026-11-23T20:26:43.370Z",
         "runId": "pending",
         "cycleSeq": 1
       },
@@ -324,7 +324,7 @@
       "dispatchCalls": 0,
       "providerLaunched": 0,
       "writes": [
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r6-emergency/go-trace.jsonl"
+        "<scratch>/r6-emergency/go-trace.jsonl"
       ],
       "writesConfined": true,
       "traceEntries": 4,
@@ -344,7 +344,7 @@
         "beforeStep": "DECOMPOSE",
         "reason": "MAX_STEPS",
         "source": "max steps 4 reached before DECOMPOSE",
-        "at": "2026-11-23T20:18:48.507Z",
+        "at": "2026-11-23T20:26:44.675Z",
         "runId": "67be602e6ec7047a",
         "cycleSeq": 1
       },
@@ -355,7 +355,7 @@
       "dispatchCalls": 0,
       "providerLaunched": 0,
       "writes": [
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r7-maxsteps/go-trace.jsonl"
+        "<scratch>/r7-maxsteps/go-trace.jsonl"
       ],
       "writesConfined": true,
       "traceEntries": 8,
@@ -374,7 +374,7 @@
         "beforeStep": "SELECT",
         "reason": "DEADLINE",
         "source": "wall-clock deadline 1500ms reached before SELECT",
-        "at": "2026-11-23T20:18:51.449Z",
+        "at": "2026-11-23T20:26:47.723Z",
         "runId": "67be602e6ec7047a",
         "cycleSeq": 1
       },
@@ -385,7 +385,7 @@
       "dispatchCalls": 0,
       "providerLaunched": 0,
       "writes": [
-        "/tmp/claude-1000/-home-ubuntu-bmax-v21/6cab89c8-b42c-4fe1-8a23-22912dd25cd7/scratchpad/go-scenario/r8-deadline/go-trace.jsonl"
+        "<scratch>/r8-deadline/go-trace.jsonl"
       ],
       "writesConfined": true,
       "traceEntries": 7,
@@ -398,7 +398,7 @@
       "mode": "DRY",
       "maxSteps": 10,
       "deadlineMs": 120000,
-      "startedAt": "2026-11-23T20:18:36.757Z",
+      "startedAt": "2026-11-23T20:26:32.483Z",
       "runId": "pending",
       "cycleSeq": 1
     },
@@ -407,8 +407,8 @@
       "index": 1,
       "step": "TRUTH_LOCK",
       "status": "PASS",
-      "startedAt": "2026-11-23T20:18:36.760Z",
-      "endedAt": "2026-11-23T20:18:36.806Z",
+      "startedAt": "2026-11-23T20:26:32.486Z",
+      "endedAt": "2026-11-23T20:26:32.526Z",
       "inputsSha256": "a4f1231c3d6cd17b94815431fc34b5267c8374d7a430eb1ab89dfcd21556f861",
       "decision": {
         "status": "PASS",
@@ -434,8 +434,8 @@
       "index": 2,
       "step": "STATE_READ",
       "status": "DONE",
-      "startedAt": "2026-11-23T20:18:36.810Z",
-      "endedAt": "2026-11-23T20:18:36.921Z",
+      "startedAt": "2026-11-23T20:26:32.531Z",
+      "endedAt": "2026-11-23T20:26:32.628Z",
       "inputsSha256": "67f1d2473e57fbd263c93b89b9b726c4e20562ee7d67b0cbb065af09f9184c00",
       "decision": {
         "inputs": [
@@ -573,8 +573,8 @@
       "index": 3,
       "step": "PROBLEMS_OPPORTUNITIES",
       "status": "DONE",
-      "startedAt": "2026-11-23T20:18:36.923Z",
-      "endedAt": "2026-11-23T20:18:36.960Z",
+      "startedAt": "2026-11-23T20:26:32.630Z",
+      "endedAt": "2026-11-23T20:26:32.668Z",
       "inputsSha256": "926b70edd6642cb2647acbe01fbf151ecd929cb347691f42f522665d719b4eb6",
       "decision": {
         "gaps": [
@@ -673,8 +673,8 @@
       "index": 4,
       "step": "SELECT",
       "status": "DONE",
-      "startedAt": "2026-11-23T20:18:36.962Z",
-      "endedAt": "2026-11-23T20:18:36.969Z",
+      "startedAt": "2026-11-23T20:26:32.672Z",
+      "endedAt": "2026-11-23T20:26:32.679Z",
       "inputsSha256": "578fe80f8127437d323ed74cba835f83b298ef570ce13176eada57e7a2f65fbf",
       "decision": {
         "decision": "TIE_EXPLAINED",
@@ -759,8 +759,8 @@
       "index": 5,
       "step": "DECOMPOSE",
       "status": "DONE",
-      "startedAt": "2026-11-23T20:18:36.976Z",
-      "endedAt": "2026-11-23T20:18:36.978Z",
+      "startedAt": "2026-11-23T20:26:32.682Z",
+      "endedAt": "2026-11-23T20:26:32.683Z",
       "inputsSha256": "5df53ebee3566401625936f3ee0162819b71ef8afcc5549d05e09c4ecb787a4d",
       "decision": {
         "rule": "GO-DEC-1 (provider rule): spec.architecture = one entry per WORK_ITEM_CONTRACT.write_set path (role = objective, contract = acceptance_criteria joined); no contract ⇒ NOT_MEASURED",
@@ -781,8 +781,8 @@
       "index": 6,
       "step": "STRATEGY",
       "status": "DONE",
-      "startedAt": "2026-11-23T20:18:36.979Z",
-      "endedAt": "2026-11-23T20:18:36.983Z",
+      "startedAt": "2026-11-23T20:26:32.685Z",
+      "endedAt": "2026-11-23T20:26:32.690Z",
       "inputsSha256": "55b5119c25ddb54dad24fc4a9cf3e5f6794cbe860a8b521b4000c8176f61659a",
       "decision": {
         "missionId": "AP-G",
@@ -819,8 +819,8 @@
       "index": 7,
       "step": "AUTHORIZE",
       "status": "HALTED_AT_GATE",
-      "startedAt": "2026-11-23T20:18:36.985Z",
-      "endedAt": "2026-11-23T20:18:36.987Z",
+      "startedAt": "2026-11-23T20:26:32.691Z",
+      "endedAt": "2026-11-23T20:26:32.694Z",
       "inputsSha256": "84109dfeabc8de0fdafde170a62a593f531e26e17061c033f1e48cd85006c72d",
       "decision": {
         "intelligenceLoop": {
@@ -867,8 +867,8 @@
       "index": 8,
       "step": "EXECUTE",
       "status": "NOTHING_EXECUTED",
-      "startedAt": "2026-11-23T20:18:36.989Z",
-      "endedAt": "2026-11-23T20:18:36.990Z",
+      "startedAt": "2026-11-23T20:26:32.695Z",
+      "endedAt": "2026-11-23T20:26:32.697Z",
       "inputsSha256": "d2cc6aee9aa4f555429a84fa5e53445617663e8b19370eb1d33d300e3239b17d",
       "decision": {
         "scheduler": {
@@ -893,8 +893,8 @@
       "index": 9,
       "step": "EVIDENCE",
       "status": "DONE",
-      "startedAt": "2026-11-23T20:18:36.992Z",
-      "endedAt": "2026-11-23T20:18:36.993Z",
+      "startedAt": "2026-11-23T20:26:32.698Z",
+      "endedAt": "2026-11-23T20:26:32.700Z",
       "inputsSha256": "e3741b890b8a3b39a7e861973cce0d96c81d1125b478833e609c33f7ff89690d",
       "decision": {
         "written": true,
@@ -910,8 +910,8 @@
       "index": 10,
       "step": "NEXT_SELECTION",
       "status": "DONE",
-      "startedAt": "2026-11-23T20:18:36.995Z",
-      "endedAt": "2026-11-23T20:18:36.997Z",
+      "startedAt": "2026-11-23T20:26:32.702Z",
+      "endedAt": "2026-11-23T20:26:32.704Z",
       "inputsSha256": "c1f43bc8f0e14c635da018e1de5eb30367f856f9404a221da1c9745d55cdbc19",
       "decision": {
         "preparedMission": {
@@ -1001,8 +1001,8 @@
         "NEXT_SELECTION:DONE"
       ],
       "decisionsDigest": "254488ab9a2dcf8a9c0995e7d9a0872ddcb5d8b0a5ae1039ea84f09181e5d0d0",
-      "durationMs": 243,
-      "endedAt": "2026-11-23T20:18:37.000Z",
+      "durationMs": 223,
+      "endedAt": "2026-11-23T20:26:32.706Z",
       "dispatchCalls": 0,
       "dispatchedMissions": [],
       "providerLaunched": 0,
@@ -1017,8 +1017,8 @@
     "index": 8,
     "step": "EXECUTE",
     "status": "NOTHING_EXECUTED",
-    "startedAt": "2026-11-23T20:18:39.535Z",
-    "endedAt": "2026-11-23T20:18:39.536Z",
+    "startedAt": "2026-11-23T20:26:35.240Z",
+    "endedAt": "2026-11-23T20:26:35.242Z",
     "inputsSha256": "5a990c31767a0261cffb2e83b9e8aee7afa95b92650f56b1ddfde56870c38c93",
     "decision": {
       "scheduler": {

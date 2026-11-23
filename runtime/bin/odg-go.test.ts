@@ -41,14 +41,70 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
   const r2 = await B.runOnce(["--repo", notRepo, "--out", out2]);
   check("STOP file ⇒ STOPPED (STOP_FILE), exit 3, no step run", r2.code === 3 && r2.result.status === "STOPPED" && r2.result.stop.reason === "STOP_FILE" && r2.result.steps.length === 0);
 
-  // allowlist precedence: env first (even empty = deny-all)
-  const saved = process.env.ODG_CANARY_ALLOWLIST;
-  process.env.ODG_CANARY_ALLOWLIST = "";
-  const al = B.readAllowlist();
-  check("ODG_CANARY_ALLOWLIST='' ⇒ empty allowlist from env (deny-by-default)", al.ids.length === 0 && /env/.test(al.source));
-  process.env.ODG_CANARY_ALLOWLIST = "M1, M2";
-  check("ODG_CANARY_ALLOWLIST parsed", B.readAllowlist().ids.join(",") === "M1,M2");
-  if (saved === undefined) delete process.env.ODG_CANARY_ALLOWLIST; else process.env.ODG_CANARY_ALLOWLIST = saved;
+  // ---- symlink / traversal confinement (REINFORCED inspection regression) ----
+  {
+    const T = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "odg-go-link-")));
+    const target = path.join(T, "victim-dir"); fs.mkdirSync(target);
+    const link = path.join(T, "out-link"); fs.symlinkSync(target, link);
+    check("symlinked out dir ⇒ refused by validateOutDir", B.validateOutDir(link, ROOT).ok === false);
+    const rl = await B.runOnce(["--repo", notRepo, "--out", link]);
+    check("symlinked out dir ⇒ runOnce exit 2, nothing written through the link", rl.code === 2 && fs.readdirSync(target).length === 0);
+    const genLink = path.join(T, "gen-link"); fs.symlinkSync(path.join(main, "runtime", "generated"), genLink);
+    check("symlink to the main checkout runtime/generated ⇒ refused", B.validateOutDir(genLink, ROOT).ok === false && B.validateOutDir(path.join(genLink, "sub"), ROOT).ok === false);
+    const midLink = path.join(T, "mid-link"); fs.symlinkSync(target, midLink);
+    check("symlinked INTERMEDIATE dir ⇒ refused", B.validateOutDir(path.join(midLink, "a", "b"), ROOT).ok === false);
+    const ro = await B.runOnce(["--repo", notRepo, "--out", path.join(midLink, "a")]);
+    check("symlinked intermediate dir ⇒ runOnce exit 2, target untouched", ro.code === 2 && fs.readdirSync(target).length === 0);
+    const realOut = path.join(T, "real-out"); fs.mkdirSync(realOut);
+    const victim = path.join(T, "victim.txt"); fs.writeFileSync(victim, "orig");
+    fs.symlinkSync(victim, path.join(realOut, "go-trace.jsonl"));
+    const forb = B.forbiddenRoots(ROOT);
+    const thrown = (fn: () => void) => { try { fn(); return ""; } catch (e: any) { return String(e.message); } };
+    check("symlinked FINAL file ⇒ safeWrite refuses, victim unchanged", /SYMLINK_TARGET_REFUSED|ELOOP/.test(thrown(() => B.safeWrite(path.join(realOut, "go-trace.jsonl"), "x\n", "append", realOut, forb))) && fs.readFileSync(victim, "utf8") === "orig");
+    let rejected = false; try { await B.runOnce(["--repo", notRepo, "--out", realOut]); } catch { rejected = true; }
+    check("symlinked final trace file ⇒ real cycle refuses to write through it", rejected && fs.readFileSync(victim, "utf8") === "orig");
+    check("'..' traversal ⇒ safeWrite refuses", /WRITE_OUTSIDE_OUT_DIR|WRITE_PARENT_NOT_OUT_DIR/.test(thrown(() => B.safeWrite(path.join(realOut, "..", "evil.txt"), "x", "truncate", realOut, forb))) && !fs.existsSync(path.join(T, "evil.txt")));
+    fs.mkdirSync(path.join(realOut, "sub"));
+    check("write into a sub-dir (parent ≠ out dir) ⇒ refused", /WRITE_PARENT_NOT_OUT_DIR/.test(thrown(() => B.safeWrite(path.join(realOut, "sub", "f"), "x", "truncate", realOut, forb))));
+    check("plain write inside the physical out dir ⇒ allowed", thrown(() => B.safeWrite(path.join(realOut, "ok.json"), "{}", "truncate", realOut, forb)) === "" && fs.readFileSync(path.join(realOut, "ok.json"), "utf8") === "{}");
+    check("out dir inside the code tree ⇒ refused", B.validateOutDir(path.join(ROOT, "docs", "go-out"), ROOT).ok === false);
+  }
+
+  // ---- allowlist: installed unit authoritative, env may only NARROW ----
+  {
+    const T = fs.mkdtempSync(path.join(os.tmpdir(), "odg-go-unit-"));
+    const unit = path.join(T, "u.service"); fs.writeFileSync(unit, "[Service]\nEnvironment=ODG_CANARY_ALLOWLIST=M0001,M9\n");
+    const U = [[unit, "test unit"]];
+    check("no env ⇒ unit allowlist", B.readAllowlist({ unitPaths: U, env: {} }).ids.join(",") === "M0001,M9");
+    const n = B.readAllowlist({ unitPaths: U, env: { ODG_CANARY_ALLOWLIST: "M9,MX" } });
+    check("env narrows (intersection) and can never widen", n.ids.join(",") === "M9" && n.refusedWidening.join(",") === "MX");
+    check("env '' ⇒ empty (narrowed to nothing)", B.readAllowlist({ unitPaths: U, env: { ODG_CANARY_ALLOWLIST: "" } }).ids.length === 0);
+    check("no unit ⇒ env cannot create an allowlist", B.readAllowlist({ unitPaths: [[path.join(T, "absent"), "x"]], env: { ODG_CANARY_ALLOWLIST: "M1" } }).ids.length === 0);
+  }
+
+  // ---- --execute scratch worktree must be fresh + unshared ----
+  {
+    const T = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "odg-go-wt-")));
+    const g = (cwd: string, ...a: string[]) => require("child_process").execFileSync("git", a, { cwd, stdio: ["ignore", "pipe", "ignore"], env: { ...process.env, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@t", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@t" } }).toString();
+    const repo = path.join(T, "repo"); fs.mkdirSync(path.join(repo, "runtime", "missions"), { recursive: true });
+    fs.writeFileSync(path.join(repo, "runtime", "missions", "MX.json"), "{}");
+    g(repo, "init", "-q", "-b", "main"); g(repo, "add", "."); g(repo, "commit", "-q", "-m", "c");
+    const wt = path.join(T, "scratch"); g(repo, "worktree", "add", "-q", "--detach", wt);
+    check("fresh detached clean linked worktree ⇒ isolated ok", B.isolationCheck(wt, "MX", ROOT).ok === true);
+    check("main checkout as scratch ⇒ refused", B.isolationCheck(repo, "MX", ROOT).ok === false);
+    check("this code tree as scratch ⇒ refused", B.isolationCheck(ROOT, "MX", ROOT).ok === false);
+    check("missing mission file ⇒ NOT_RUNNABLE", /NOT_RUNNABLE/.test(B.isolationCheck(wt, "NOPE", ROOT).reason));
+    fs.writeFileSync(path.join(wt, "dirty.txt"), "x");
+    check("dirty (untracked) scratch ⇒ refused (shared/used)", /not clean/.test(B.isolationCheck(wt, "MX", ROOT).reason));
+    fs.rmSync(path.join(wt, "dirty.txt"));
+    fs.mkdirSync(path.join(wt, "runtime", "generated"));
+    check("scratch with runtime/generated (used before) ⇒ refused", /not fresh|not clean/.test(B.isolationCheck(wt, "MX", ROOT).reason));
+    fs.rmSync(path.join(wt, "runtime", "generated"), { recursive: true });
+    g(wt, "checkout", "-q", "-b", "someone-branch");
+    check("scratch on a branch (active working worktree) ⇒ refused", /on a branch/.test(B.isolationCheck(wt, "MX", ROOT).reason));
+    const wl = path.join(T, "wt-link"); fs.symlinkSync(wt, wl);
+    check("symlinked scratch path ⇒ refused", /symlink/.test(B.isolationCheck(wl, "MX", ROOT).reason));
+  }
 
   // pre-registration
   check("pre-registered I1..I4", B.PRE_REGISTERED.I.criteria.map((c: any) => c.id).join(",") === "I1,I2,I3,I4");
@@ -66,6 +122,8 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     check("I grade follows the declared rule", ev.scenarioI.grade === (ir.I1 === "FAIL" ? "FAIL" : ["I2", "I3", "I4"].every((k) => ir[k] === "PASS") ? "PASS" : "PARTIAL"));
     check("real dry trace has the 10 steps in order", ev.realDryCycleTrace.filter((e: any) => e.kind === "STEP").map((e: any) => e.step).join(",") === require("../core/odg-go-cycle.js").STEPS.join(","));
     check("no provider/model/network call, no commit", ev.providerCalls === 0 && ev.modelCalls === 0 && ev.networkCalls === 0 && ev.commits === 0);
+    const raw = fs.readFileSync(evp, "utf8");
+    check("evidence has no /home/… or /tmp/… host path (redacted)", !/\/home\/|\/tmp\//.test(raw));
     check("re-derived I grade from the committed trace equals the recorded one", B.gradeI(ev.realDryCycleTrace, null).grade === ev.scenarioI.grade);
   } else process.stdout.write("# evidence not yet written — evidence checks skipped\n");
 
