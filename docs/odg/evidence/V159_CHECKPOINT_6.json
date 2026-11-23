@@ -1,0 +1,92 @@
+{
+  "checkpoint": "CP6 — CTO directives V15.8 (global intelligence & engineering acceleration) and V15.9 (consolidation, Radar, hybrid engineering)",
+  "date": "2026-11-23",
+  "headAtCP5": "8342a1df",
+  "headAtCheckpoint": "5be27612",
+  "prsMergedSinceCP5": {
+    "902": "verification levels L1/L2/L3 + adaptive concurrency policy (agent-built; REJECT -> fix -> ACCEPT; coordinator fixed the re-inspection LOW: runtime/dist createRequire alias)",
+    "903": "CP5 itself (its merge commit 8342a1df IS headAtCP5; listed for completeness — coordinator; REJECT on 2 figures -> corrected -> ACCEPT)",
+    "904": "odg-backup-restore test bundled the main checkout instead of the repo under test (coordinator; ACCEPT)",
+    "905": "governed Radar source admission + versioned V158 grant (coordinator; REJECT x2 -> fixes incl. full RFC 9309 robots analysis -> ACCEPT)",
+    "906": "dossier knowledge via canonical odg-knowledge-acquisition.acquire() + fail-closed claim typing (coordinator; REJECT -> fix -> ACCEPT)",
+    "907": "supervisor test clock time bomb broke main CI from 11:45Z (coordinator; ACCEPT; repo scanned: no other instance)",
+    "908": "live multi-source Radar runner on the V158 grant with explicit verdicts (coordinator; ACCEPT -> delta REJECT on a fail-open -> fix -> ACCEPT on exact head aab9961d)"
+  },
+  "radar": {
+    "mechanism": "odg-radar-source-admission (pure, deny-by-default) -> docs/odg/V158_RESEARCH_GRANT_GLOBAL_RADAR.json (V16 canonical shape: EXACT hosts + path prefixes, GET only, <=29 days, per-run budget 30 calls) consumed UNCHANGED by research-governor / research-budget / bounded-http-client (ODG_RADAR_LIVE kill-switch, redirects blocked). No Radar code, governor, transport or canonical ALLOWLIST modified.",
+    "candidatesResearched": 28,
+    "refusedAtResearch": 7,
+    "admission": {
+      "admitted": 6,
+      "deferred": 20,
+      "refused": 2
+    },
+    "admittedHosts": [
+      "code.claude.com",
+      "csrc.nist.gov",
+      "huggingface.co",
+      "registry.npmjs.org",
+      "www.postgresql.org",
+      "www.sqlite.org"
+    ],
+    "refusedHosts": {
+      "export.arxiv.org": "robots Disallow: / vs API terms (owner decision)",
+      "www.anthropic.com": "/engineering/ redirects off-host (also explains the V16 REDIRECT_BLOCKED)"
+    },
+    "deferredAudit": {
+      "api.github.com": "60 req/h unauthenticated < 4 x per-run budget; no cumulative/per-host cap in the transport",
+      "api.crossref.org": "public pool 1 rps, concurrency 1; transport has no per-host pacing",
+      "arxiv.org": "robots Crawl-delay 15 s not enforceable by the transport",
+      "pypi.org": "robots 'Disallow: /pypi/*/json' (wildcard) vs documented JSON API — first research pass misread it (wildcard-blind parser), caught before merge",
+      "others": "terms not verified, unknown redirects, robots sub-path rules inside the prefix (w3 /TR/?, rfc-editor, datatracker), POST endpoint (osv), PDF content type (nvlpubs)"
+    },
+    "unblockPath": "per-host pacing/cumulative caps in the Radar transport would admit github/crossref/arxiv — that is a Radar code change: OWNER decision. robots-vs-documented-API conflicts (export.arxiv.org, pypi.org): OWNER decision.",
+    "liveRun": {
+      "at": "2026-11-23T12:17:59Z",
+      "verdict": "LIVE_OK",
+      "planned": 8,
+      "received": 8,
+      "hosts": 6,
+      "bytes": 277953,
+      "storedContent": "none (status, type, bytes, sha256, sanitized title only)",
+      "pinnedInCollectionRegistry": false
+    },
+    "robotsProvenance": "robots.txt sha256 + bytes recorded for 9 hosts incl. all 6 admitted (+ www.w3.org, www.cisa.gov, pypi.org) in V158_RADAR_SOURCE_CANDIDATES.json (fetched 2026-11-23T12:01:49Z-12:02:11Z)"
+  },
+  "researchAndKnowledge": {
+    "referencesFetchedAndTitleVerified": 27,
+    "split": "5 academic, 5 benchmark, 6 standards, 5 implementation, 6 industry/operator",
+    "knowledge": "10 design claims through the canonical acquire(): 3 FACT_CORROBORATED (>=2 independent hosts), 6 CLAIM_SINGLE_SOURCE, 1 RECOMMENDATION_RECORDED; each claim records the admission rule it grounds",
+    "defectFixed": "untyped claims defaulted to FACT in odg-knowledge-acquisition (could promote an opinion repeated by two hosts) -> HYPOTHESIS"
+  },
+  "runtime": "runtime/dist rebuilt after each runtime-touching merge, right after a live tick (fingerprints recorded in-session); live root-timer ticks IDLE (M0001 ALREADY_PROVEN dedup) = normal, not an error",
+  "ollamaRegistry": "unchanged since #898 (99 real trials x 2 runs; 7b 0.909 / 3b 0.545 / 0.5b 0.273; implement = NO_QUALIFIED). Selection recommends only — NOT wired into a live mission path (next step).",
+  "strategyComparison": {
+    "data": "PR open->merge minutes: coordinator-direct #904 6.8 (1 line), #907 4.6 (5 lines), #905 30.1 (+2406), #906 28.6 (+425); agent-built #900 17.2 (+2011), #896 32.8 (+1076), #898 50.5 (+6339), #902 26.9 (+1737). Agent pre-PR build time (15-40 min) is NOT in open->merge.",
+    "finding": "small/medium fixes are fastest done directly (no coordination overhead); medium builds are comparable direct vs agent; agents pay off for research, independent inspection and parallel independent builds. n is small — not a statistically established result.",
+    "notMeasured": "context tokens and external cost per strategy (no instrumentation); CPU/RAM per strategy"
+  },
+  "inspectionStats": "every PR independently inspected; coordinator-built PRs #903-#908: first-pass REJECT on 3 of 6 (#903 figures, #905 admission evidence, #906 over-attribution); #908 ACCEPTed then REJECTed on a delta (fail-open verdict). Inspections caught real defects each time (robots wildcard miss, fail-open verdict, over-attributed claim) — inspection remains load-bearing.",
+  "incidents": [
+    "the supervisor test suite failed on main's code from 11:45Z (time bomb; surfaced in #905/#906 PR CI — the main-branch CI runs that completed in that window were green) — fixed by #907",
+    "a merge with conflict markers was committed+pushed on #905 (fixed forward in e97509c8 before merge; guard recorded in memory)",
+    "a background auto-merge for #908 was denied by the permission classifier — merged in the foreground on the exact inspected head instead"
+  ],
+  "nativeVsProvider": "All construction in this window is provider work: coordinator directly built #903-#908; #902 was agent-built (coordinator fixed its last LOW). ODG-native: the Radar chain's gate decisions (governor/budget/transport are ODG components), tick decisions, verification-level and concurrency-policy decisions when invoked. Native-built code changes: 0 (unchanged).",
+  "truthLock": "verify-historical.sh verified=928 missing=0 changed=0",
+  "boussole": "docs/odg/v124-consolidated-roadmap.json unchanged (last change 53a1dedb)",
+  "residualRisks": [
+    "V158 grant admits 6 hosts on point-in-time evidence; re-run admission before renewal (expires 2026-12-22)",
+    "per-host rate limits are advisory for admitted hosts (only the per-run budget is enforced)",
+    "the 6 admitted sources' content is untrusted and not pinned/integrated as findings",
+    "Ollama selection not wired into missions; production waves still owner-gated"
+  ],
+  "ownerGated": [
+    "per-host pacing in the Radar transport (unblocks github/crossref/arxiv)",
+    "robots-vs-API conflicts (export.arxiv.org, pypi.org)",
+    "production waves (systemd unit env)",
+    "external providers (no verifiable spend ceiling)",
+    "gate 10/12 owner signature, V15.0 adoption"
+  ],
+  "nextAction": "wire the measured Ollama selection (odg-model-router.selectMeasured) into one real local-model mission path behind the existing execution policy, measured before/after; then pin + evaluate selected V158 live-run sources through odg-knowledge-intelligence (COLLECTION_REGISTRY) so Radar output becomes usable knowledge."
+}
