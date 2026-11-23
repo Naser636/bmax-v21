@@ -16,7 +16,7 @@ const spec = {
 const good = async (f: any) => ({ ok: true, content: f.path === "src/ops.js" ? "module.exports={add:(a,b)=>a+b};" : "const ops=require('./ops.js');module.exports=(a,b)=>ops.add(a,b);" });
 (async () => {
   const r = await B.buildProject(spec, { generateFile: good });
-  check(r.filesGenerated === 2 && r.buildOk === true, "2 interdependent files generated + assembled (imports resolve)");
+  check(r.filesGenerated === 2 && r.buildOk === true, "2 interdependent files generated + assembled (imports resolve)" + ` [mode=${r.executionMode} status=${r.executionStatus} buildError=${r.buildError} verifyError=${r.verifyError}]`);
   check(r.verified === true && r.accepted === true, "project accepted ONLY on the independent test (compute(2,3)===5)");
 
   // a BROKEN generator (calc references a missing symbol) ⇒ build fails ⇒ NOT accepted (fail-closed).

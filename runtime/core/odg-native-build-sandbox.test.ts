@@ -15,6 +15,8 @@ const B = require("./native-project-builder");
 const NBO = require("./native-build-outcome");
 const LMB = require("./odg-local-model-benchmark");
 let failures = 0; function check(c: any, l: any): void { if (!c) { failures++; process.stderr.write("FAIL: " + l + "\n"); } }
+// diagnostics: on a failing isolated run, print outcome + reason (never masks the failure)
+const diag = (r: any): string => r ? ` [status=${r.status} outcome=${r.outcome} reason=${String(r.reason || "")} buildError=${String(r.buildError || "")} verifyError=${String(r.verifyError || "")} wallMs=${r.wallMs}]` : " [no result]";
 
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "odg-nbs-"));
 const SECRET = "ODG-HOST-SECRET-" + Date.now();
@@ -50,11 +52,12 @@ function observe(src: string): any {
 (async () => {
   const probe = N.probeSandbox();
   check(probe.ok === true, "bubblewrap sandbox probe OK (required for the isolation tests): " + String(probe.reason));
+  process.stderr.write("diag: probe=" + JSON.stringify(probe) + "\n");
 
   // ---- 1. the 7 in-process escapes, FROM GENERATED SOURCE, through the isolated path ----
   for (const [name, getFs] of ESCAPES) {
     const { r, value } = observe(payload(name, getFs));
-    check(r.status === "EXECUTED" && r.buildOk === true, `escape ${name}: sandbox executed the build`);
+    check(r.status === "EXECUTED" && r.buildOk === true, `escape ${name}: sandbox executed the build` + diag(r));
     check(typeof value === "string" && value.startsWith("BLOCKED:") && !value.includes(SECRET), `escape ${name}: BLOCKED inside the sandbox (observed: ${String(value).slice(0, 90)})`);
     check(!fs.existsSync(marker(name)), `escape ${name}: host marker file ABSENT`);
   }
@@ -84,7 +87,7 @@ function observe(src: string): any {
   ].join("\n");
   const rr = LMB.defaultCodeRunner(raw, { timeoutMs: 15000 });
   const ro = rr.ran ? LMB.parseResult(rr.stdout, nonce) : null;
-  check(ro !== null, "outer-layer probe produced a nonce-stamped report");
+  check(ro !== null, "outer-layer probe produced a nonce-stamped report" + ` [ran=${rr.ran} exitOk=${rr.exitOk} reason=${String(rr.reason || "")}]`);
   if (ro) {
     check(!fs.existsSync(marker("raw-write")) && String(ro.write).startsWith("BLOCKED"), `outer layer: write to a host path fails (${ro.write}) + host marker ABSENT`);
     check(String(ro.read).startsWith("BLOCKED") && !String(ro.read).includes(SECRET), `outer layer: host secret file NOT readable (${ro.read})`);
@@ -96,11 +99,11 @@ function observe(src: string): any {
 
   // ---- 3. timeout, memory bomb, garbage output, nonce forgery ----
   const hang = N.runIsolated({ "f.js": "module.exports = () => { while (true) {} };" }, { kind: "source", source: "(m) => m['f.js']() === 1" }, { stepTimeoutMs: 500 });
-  check(hang.verified === false && hang.outcome === "TIMEOUT", "infinite loop in the candidate ⇒ TIMEOUT (non-pass), host not hung");
+  check(hang.verified === false && hang.outcome === "TIMEOUT", "infinite loop in the candidate ⇒ TIMEOUT (non-pass), host not hung" + diag(hang));
   const hangLoad = N.runIsolated({ "f.js": "while (true) {} module.exports = 1;" }, { kind: "source", source: "(m) => true" }, { stepTimeoutMs: 500 });
-  check(hangLoad.verified === false && hangLoad.buildOk === false && hangLoad.outcome === "TIMEOUT", "infinite loop at module load ⇒ TIMEOUT build failure (non-pass)");
+  check(hangLoad.verified === false && hangLoad.buildOk === false && hangLoad.outcome === "TIMEOUT", "infinite loop at module load ⇒ TIMEOUT build failure (non-pass)" + diag(hangLoad));
   const procHang = N.runIsolated({ "f.js": "module.exports = () => { while (true) {} };" }, { kind: "source", source: "(m) => m['f.js']() === 1" }, { stepTimeoutMs: 60000, processTimeoutMs: 1500 });
-  check(procHang.verified === false && procHang.outcome === "TIMEOUT", "process-level timeout kills the sandbox ⇒ TIMEOUT (non-pass)");
+  check(procHang.verified === false && procHang.outcome === "TIMEOUT", "process-level timeout kills the sandbox ⇒ TIMEOUT (non-pass)" + diag(procHang));
   const bomb = N.runIsolated({ "f.js": "module.exports = () => { const a = []; for (;;) a.push(new Array(1e6).fill(7)); };" }, { kind: "source", source: "(m) => m['f.js']() === 1" });
   check(bomb.verified === false && bomb.status === "EXECUTED" && bomb.outcome !== "PASS", `memory bomb ⇒ bounded by RLIMIT_AS, non-pass (${bomb.outcome})`);
   const garbage = N.runIsolated({ "f.js": "module.exports = 1;" }, { kind: "source", source: "(m) => true" }, { runner: () => ({ ran: true, exitOk: true, stdout: "%%% not json \u0000 garbage" }) });
@@ -124,7 +127,7 @@ function observe(src: string): any {
   check(notRun.executionStatus === "NOT_RUN" && notRun.verified === null && notRun.accepted === false && notRun.repairs === 0 && notRun.repairStopReason === "NOT_RUN_NO_SANDBOX" && genCalls === 1, "no sandbox ⇒ NOT_RUN (verified=null, not accepted, no repair burn) — never an in-process fallback");
   check(NBO.deriveNativeOutcome(notRun, srcSpec, "MONOLITHIC", 1).outcome === "UNKNOWN", "a NOT_RUN build is recorded UNKNOWN (not a capability FAILURE)");
   const iso = await B.buildProject(srcSpec, { generateFile: gen });
-  check(iso.accepted === true && iso.executionMode === "SANDBOX" && iso.executionStatus === "EXECUTED" && iso.isolation.hostExecutesModelCode === false && typeof iso.sandboxWallMs === "number", "serializable test ⇒ SANDBOX execution, accepted, provenance fields present");
+  check(iso.accepted === true && iso.executionMode === "SANDBOX" && iso.executionStatus === "EXECUTED" && iso.isolation.hostExecutesModelCode === false && typeof iso.sandboxWallMs === "number", "serializable test ⇒ SANDBOX execution, accepted, provenance fields present" + ` [mode=${iso.executionMode} status=${iso.executionStatus} buildError=${iso.buildError} verifyError=${iso.verifyError}]`);
   const casesSpec = { ...srcSpec, independentTestSource: undefined, independentTestCases: [{ entry: "f.js", args: [2, 3], expect: 5 }, { entry: "f.js", args: [-1, 1], expect: 0 }] };
   check((await B.buildProject(casesSpec, { generateFile: gen })).accepted === true, "CASES form (host-graded, expected values never enter the sandbox) accepts correct code");
   check((await B.buildProject(casesSpec, { generateFile: async () => ({ ok: true, content: "module.exports = (a, b) => a * b;" }), maxRepair: 0 })).accepted === false, "CASES form rejects wrong code");

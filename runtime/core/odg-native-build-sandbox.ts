@@ -153,7 +153,12 @@ function gradeCases(cases: any[], observations: any): any {
 /** defaultRunner(program, nonce, opts) — REUSES odg-local-model-benchmark.defaultCodeRunner (provider-sandbox bwrap +
  *  RLIMIT_AS). Returns { ran, exitOk, stdout, reason }. ran:false ⇒ the sandbox did not launch (NOT_RUN). */
 function defaultRunner(program: string, _nonce: string, opts: any = {}): any {
-  return LMB.defaultCodeRunner(program, { timeoutMs: Number(opts.processTimeoutMs) > 0 ? Number(opts.processTimeoutMs) : DEFAULT_PROCESS_TIMEOUT_MS, memoryLimitBytes: Number(opts.memoryLimitBytes) > 0 ? Number(opts.memoryLimitBytes) : MEMORY_LIMIT_BYTES });
+  // Same call as odg-local-model-benchmark.defaultCodeRunner (provider-sandbox, `node -`, RLIMIT_AS), but the child's
+  // stderr is KEPT (truncated) in `reason` so a sandbox failure is diagnosable (crash / OOM / missing binary).
+  const PS = require("./provider-sandbox");
+  const r = PS.runProvider(program, { command: "node -", timeoutMs: Number(opts.processTimeoutMs) > 0 ? Number(opts.processTimeoutMs) : DEFAULT_PROCESS_TIMEOUT_MS, memoryLimitBytes: Number(opts.memoryLimitBytes) > 0 ? Number(opts.memoryLimitBytes) : MEMORY_LIMIT_BYTES });
+  if (!r.launched) return { ran: false, reason: String(r.reason || "sandbox did not launch") + (r.stderr ? " | stderr: " + String(r.stderr).slice(0, 300) : "") };
+  return { ran: true, exitOk: r.ok === true, stdout: r.ok ? String(r.text || "") : "", reason: r.ok ? undefined : String(r.reason || "") + (r.stderr ? " | stderr: " + String(r.stderr).slice(-400) : "") };
 }
 
 /**
