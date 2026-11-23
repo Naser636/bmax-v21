@@ -62,6 +62,16 @@ function main(): void {
     M.CAPABILITY_MATURITY_CONTRACT.invariants.some((s: string) => /skips EXECUTED/.test(s)) &&
     M.CAPABILITY_MATURITY_CONTRACT.invariants.some((s: string) => /evidence booleans must be truthful/.test(s)));
 
+  // V15.5 coarse projection (same ladder; no second engine)
+  check("coarse: nothing built ⇒ ABSENT", M.coarseLevel({}).level === "ABSENT");
+  check("coarse: built only ⇒ BUILT_NOT_WIRED", M.coarseLevel({ built: true }).level === "BUILT_NOT_WIRED");
+  check("coarse: built+tested, not wired ⇒ BUILT_NOT_WIRED (gap CONNECTED)", M.coarseLevel({ built: true, tested: true }).level === "BUILT_NOT_WIRED" && M.coarseLevel({ built: true, tested: true }).firstGap === "CONNECTED");
+  check("coarse: wired but untested ⇒ BUILT_NOT_WIRED (monotonic: TESTED precedes CONNECTED)", M.coarseLevel({ built: true, wired: true, exercisedLive: true }).level === "BUILT_NOT_WIRED");
+  check("coarse: built+tested+wired ⇒ WIRED_TESTED", M.coarseLevel({ built: true, tested: true, wired: true }).level === "WIRED_TESTED");
+  check("coarse: + live run ⇒ EXERCISED_LIVE (ladder EVIDENCED, never INTEGRATED/DEMONSTRATED)", M.coarseLevel({ built: true, tested: true, wired: true, exercisedLive: true }).level === "EXERCISED_LIVE" && M.coarseLevel({ built: true, tested: true, wired: true, exercisedLive: true }).ladderLevel === "EVIDENCED");
+  check("coarse: strict booleans (truthy string ≠ true) + non-object ⇒ BAD_FACTS", M.coarseLevel({ built: "yes" }).level === "ABSENT" && M.coarseLevel(null).code === "BAD_FACTS");
+  check("coarse: COARSE_LEVELS exported in order", JSON.stringify(M.COARSE_LEVELS) === JSON.stringify(["ABSENT", "BUILT_NOT_WIRED", "WIRED_TESTED", "EXERCISED_LIVE"]));
+
   process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-capability-maturity (V324 §9 ladder BUILT→DEMONSTRATED: full⇒DEMONSTRATED; monotonic [gap caps, no leapfrog]; planning-only skips EXECUTED [reaches DEMONSTRATED w/o executed]; exec-applicable-not-run⇒INVOKED; built+test-only⇒TESTED NOT operational; strict-boolean rungs; aggregate byLevel+notYetIntegrated honest; non-object/non-array/garbage fail-closed; never-promoted-past-first-gap honest; PURE/deterministic/frozen)" : failures + " FAIL"}\n`);
   process.exit(failures === 0 ? 0 : 1);
 }

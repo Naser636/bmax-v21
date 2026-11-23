@@ -101,6 +101,27 @@ function aggregateMaturity(capabilities: any): any {
   });
 }
 
+/*
+ * V15.5 Step 7 — COARSE PROJECTION of the SAME §9 ladder (no second ladder engine). The CTO's 4-level view
+ * ABSENT → BUILT_NOT_WIRED → WIRED_TESTED → EXERCISED_LIVE is computed BY classifyMaturity, then projected:
+ *   ABSENT          — not even BUILT
+ *   BUILT_NOT_WIRED — BUILT (maybe TESTED) but never CONNECTED to a real consumer (the ladder is monotonic, so a
+ *                     wired-but-untested capability also lands here: TESTED precedes CONNECTED)
+ *   WIRED_TESTED    — TESTED + CONNECTED, but no traceable live run (EVIDENCED not reached)
+ *   EXERCISED_LIVE  — EVIDENCED or higher: a real run on real state left traceable evidence
+ * Facts in: { built, tested, wired, exercisedLive }. exercisedLive feeds fed/invoked/executed/consumed/evidenced
+ * together (one live-run artifact is the evidence for those rungs); INTEGRATED/DEMONSTRATED are NOT claimed here.
+ */
+const COARSE_LEVELS = Object.freeze(["ABSENT", "BUILT_NOT_WIRED", "WIRED_TESTED", "EXERCISED_LIVE"]);
+function coarseLevel(facts: any): any {
+  if (!isObj(facts)) return freeze({ ok: false, code: "BAD_FACTS", detail: "facts must be an object { built, tested, wired, exercisedLive }" });
+  const live = facts.exercisedLive === true;
+  const m = classifyMaturity({ built: facts.built === true, tested: facts.tested === true, connected: facts.wired === true, fed: live, invoked: live, executed: live, consumed: live, evidenced: live });
+  const i = m.levelIndex;
+  const level = i < 0 ? "ABSENT" : i < LADDER.indexOf("CONNECTED") ? "BUILT_NOT_WIRED" : i < LADDER.indexOf("EVIDENCED") ? "WIRED_TESTED" : "EXERCISED_LIVE";
+  return freeze({ ok: true, level, levelIndex: COARSE_LEVELS.indexOf(level), ladderLevel: m.level, firstGap: m.firstGap });
+}
+
 const CAPABILITY_MATURITY_CONTRACT = Object.freeze({
   id: "CAPABILITY-MATURITY-LADDER",
   purpose: "make V324 §9 executable — classify a capability's honest maturity on the BUILT→DEMONSTRATED integration ladder, enforcing that it is never promoted past its first missing rung (prevents 'code exists / unit test passes' being counted as operational)",
@@ -114,5 +135,5 @@ const CAPABILITY_MATURITY_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { classifyMaturity, aggregateMaturity, LADDER, CAPABILITY_MATURITY_CONTRACT };
+module.exports = { classifyMaturity, aggregateMaturity, coarseLevel, COARSE_LEVELS, LADDER, CAPABILITY_MATURITY_CONTRACT };
 export {};
