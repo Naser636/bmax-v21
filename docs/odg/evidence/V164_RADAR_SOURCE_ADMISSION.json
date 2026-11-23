@@ -1,0 +1,652 @@
+{
+  "generatedBy": "runtime/bin/odg-radar-source-admission-run.ts (deterministic, no network)",
+  "candidatesFile": "docs/odg/evidence/V164_RADAR_SOURCE_CANDIDATES.json",
+  "issuedIso": "2026-11-23T00:00:00.000Z",
+  "summary": {
+    "candidates": 46,
+    "admitted": 3,
+    "deferred": 40,
+    "refused": 3
+  },
+  "grantRefusedReason": null,
+  "decisions": [
+    {
+      "host": "nasa.github.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
+      ],
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "ea4ecf9f542b8372d82c1c081c1289302d3930f4951e3d24e6bf844866e56243"
+    },
+    {
+      "host": "swehb.nasa.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "PREFIX_NOT_SAMPLED_200:/display/SWEHBVD/"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "e3df19012583817e685434693ec4a062deaebcf7e22667e64119a9760a613352"
+    },
+    {
+      "host": "ntrs.nasa.gov",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/api/citations/"
+      ],
+      "reasons": [],
+      "termsCondition": "NASA STI terms: copyright status is per document (metadata); copyrighted third-party works must not be modified, reproduced or redistributed without the copyright owner's permission; NASA to be acknowledged as source",
+      "evidenceSha256": "bf43584d0d84e74dcf1d679cafbb8b14924775d041c7e2640f347a2f0fc79e4d"
+    },
+    {
+      "host": "www.tri.global",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/publications (Disallow: /*/media/oembed)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "4be507241c06ae4d36400b4f0eed631c40f25a35b5ccdfd53095dce10050416d"
+    },
+    {
+      "host": "global.toyota",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_REDIRECTED:/en/company/vision-and-philosophy/production-system/ (RFC 9309: 5xx/unreachable ⇒ disallow; redirected robots ⇒ unknown)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "9c642cfb01d07f3addc65bc8f08cb947c3296251fe7793225dcb350764f57af3"
+    },
+    {
+      "host": "sre.google",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/sre-book/introduction/ (Disallow: /*authuser* | Disallow: /*cache*)",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/workbook/table-of-contents/ (Disallow: /*authuser* | Disallow: /*cache*)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "4d571c06a6f6acdb8f24632119f14e75b4e0b0cb2a2757505efd76a190958967"
+    },
+    {
+      "host": "cloud.google.com",
+      "decision": "REFUSE",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OFF_HOST_REDIRECT_ON_PREFIX:/architecture/framework",
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "c085bce986d278f30aa87d5b93431472d4f6e8189e4dbf013875130c2ad32437"
+    },
+    {
+      "host": "abseil.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "39e3b413e810d2589d7824e0e3beedf212e8d241cad59721151b2b91a4b6e399"
+    },
+    {
+      "host": "www.amazon.science",
+      "decision": "REFUSE",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_FORBID_AUTOMATED_ACCESS",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "CRAWL_DELAY_10s_NOT_ENFORCEABLE (no per-host pacing in the transport)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "84e9cbbf9803444e73b94eba279816187b7449aeef3501bac0137e738d9ab12b"
+    },
+    {
+      "host": "www.microsoft.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/en-us/research/publication/ (Disallow: *&solved= | Disallow: */base-en/ | Disallow: */isv/*? …)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "8490693c19e836d70e92e7fc9ddbd19cb407b120091663f5d4b860e7033b6cc0"
+    },
+    {
+      "host": "microsoft.github.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
+      ],
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "f56d8b810896341b0adbf135c36ebae5a86fa95254a5d94dd1b1ed09bcc85b5b"
+    },
+    {
+      "host": "devblogs.microsoft.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: devblogs.microsoft.com: Microsoft ToU 'Documents' clause (informational and non-commercial or personal use only; no copying onto any network computer) — do blog articles fall under it, and is ODG internal research compatible? (also bears on V160's reading of learn.microsoft.com / www.microsoft.com, both deferred for other reasons)"
+      ],
+      "termsCondition": "Microsoft Terms of Use 'Documents' clause: use for 'informational and non-commercial or personal use only'; not to be 'copied or posted on any network computer or broadcast in any media'; no modifications; copyright notice retained",
+      "evidenceSha256": "a63f982e294a7986c5890a4b864f4b7106773043de3cc6fb11a4c3e9fcbb384d"
+    },
+    {
+      "host": "openai.github.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: openai.github.io: GitHub AUP (research use permitted) vs OpenAI Terms ('Automatically or programmatically extracting data') — do OpenAI's terms cover its GitHub-hosted SDK docs? openai.com remains REFUSED (V160)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "93a3723cca6a7f8730450bce39afdd39f0656723137d842137a3e3d1d6a1f1a1"
+    },
+    {
+      "host": "modelcontextprotocol.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "PREFIX_NOT_CANONICAL (same-host redirect; transport blocks redirects — use the canonical form):/specification"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "ca66e22ab2a5b92df667e32108f665de60f5992366524ebd89ed176cace7de57"
+    },
+    {
+      "host": "research.nvidia.com",
+      "decision": "REFUSE",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_FORBID_AUTOMATED_ACCESS",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/publications (Disallow: /*/media/oembed)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "707ba9659192f17842f8a71ac5a590c2dd5f4f6c548afb0701ab916560a8cd85"
+    },
+    {
+      "host": "nvidia.github.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: nvidia.github.io: GitHub AUP (research use permitted) vs NVIDIA ToS linked from the docs footer (robots/scrapers prohibited) — which governs?"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "4b9612c42138ddc304d14d0fc84f17f507c89cc55b352fbbbe1c79af2108641f"
+    },
+    {
+      "host": "research.ibm.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: IBM Terms: robots.txt-compliant crawling permitted vs 'robot ... data mine' conduct prohibition and 'non-commercial' use — and does it cover research.ibm.com?"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "bb33a564846ee9f5afecaccc1c00cea4efbe07d88fc457dedc03817d5329eab3"
+    },
+    {
+      "host": "www.palantir.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "4b5c27413545353f6836e0b7bef9a15e97e88bebc8abdf4747cb58548efd6f28"
+    },
+    {
+      "host": "netflix.github.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
+      ],
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "ca2428694a3de9f4b75a6b9ed8bc516ade2ea493114e5ef563867c59d0a96e8e"
+    },
+    {
+      "host": "github.blog",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer."
+      ],
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "7d4d723cb05db94baa2e9bcd25e3ad7576b5524ace97cd1f4dd72be76d898bd4"
+    },
+    {
+      "host": "stripe.dev",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "e8789f273646010244ecb115924129bb5d56635a842258a7bcaa8f056dc91186"
+    },
+    {
+      "host": "www.bosch-ai.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "ROBOTS_UNREACHABLE_5XX:/research/ (RFC 9309: 5xx/unreachable ⇒ disallow; redirected robots ⇒ unknown)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "c0e43e5462de0ca9e7727d084c2223ddf2bdcc0979d562f901adbcc22ef68bd4"
+    },
+    {
+      "host": "pytorch.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/blog/"
+      ],
+      "reasons": [],
+      "termsCondition": null,
+      "evidenceSha256": "ec9de1381b19fb01cd5743c0dbd62b464922748135af389e17ae7960d1a8ebde"
+    },
+    {
+      "host": "docs.pytorch.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/docs/stable/ (Disallow: /*/_downloads/ | Disallow: /*/_modules/ | Disallow: /*/_sources/ …)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "929fc184a0ed8c7f54af54893e604667cd3988e43aa1efb91a49eb04fa61ff70"
+    },
+    {
+      "host": "opentelemetry.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "234a5899e9bc100f7c62bbb22ad5feaffd1abc98fcd5ba6984a4211cf7d0dbb6"
+    },
+    {
+      "host": "kubernetes.io",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/docs/concepts/"
+      ],
+      "reasons": [],
+      "termsCondition": null,
+      "evidenceSha256": "ac8971167e595cd2664a82597b8ba9d85086d89254c55245dc9f1449b0bc886c"
+    },
+    {
+      "host": "slsa.dev",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "6b91a2365ff262b3510cb12bc7d2ec6d9269f4325cea8d433c2d0bdbab42b51a"
+    },
+    {
+      "host": "www.rfc-editor.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "PREFIX_CONTAINS_ROBOTS_DISALLOWED_SUBPATHS:/rfc/ ⊃ /rfc/authors/,/rfc/rerendered/,/rfc/v3test/ (governor cannot exclude sub-paths — narrow the prefix)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "3c14f1e68b37561fef4c6765f23ae5558a667178719b3fa7b61e8e6577839413"
+    },
+    {
+      "host": "datatracker.ietf.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED"
+      ],
+      "termsCondition": "IETF Trust Legal Provisions 5.0 (PDF) not read/quoted in this run; datatracker website access terms not established",
+      "evidenceSha256": "942109af39f1ee3e1061729234ef6568dd9371a123981fe212bf5be5706e3528"
+    },
+    {
+      "host": "www.w3.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/TR/trace-context/ (Disallow: /*,* | Disallow: /*/wiki/*/edit | Disallow: /*/wiki/*/history …)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "5a2177c33cedd52c759728fe15320e46c4422b730b7ff455d3a50521e91b3448"
+    },
+    {
+      "host": "www.nist.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "ROBOTS_WILDCARD_RULES_MAY_MATCH_INSIDE:/itl/ai-risk-management-framework (Disallow: *&f%5B* | Disallow: *?f%5B* | Disallow: /*/media/oembed)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "8b2a68683366a0267a89d8ef3384cb73e2aa2f89446eaeedd298a2207814de46"
+    },
+    {
+      "host": "cheatsheetseries.owasp.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "fb0a0adb74a6af12c4344f8853117b3e1b3be1ed3d23417746918cb139f4a128"
+    },
+    {
+      "host": "genai.owasp.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "72fc8242d13e3c598bf12253d3469b0dfd8f3610715e102feac8f7aa5e19f20b"
+    },
+    {
+      "host": "www.usenix.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "CRAWL_DELAY_10s_NOT_ENFORCEABLE (no per-host pacing in the transport)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "381defc3a0fd6eeed6c10f797196659eee9d16c6acb1620c96008bf9cba3d9a3"
+    },
+    {
+      "host": "jepsen.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: jepsen.io signals hostility to LLM scraping (/llm/index decoy page) without stating terms — recommend NOT collecting; written permission from Jepsen LLC would be required"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "60d945af7c89e7619ab99f5efcace2df16aef9b0c493a57cb6d7a4dcfdb7880d"
+    },
+    {
+      "host": "martinfowler.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "732c7f3f7c799309d8bb72228fd733062c23495fe6942fa94309c4a98c47e3d3"
+    },
+    {
+      "host": "docs.temporal.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "9ed236702b2296c7ed470145461e6133a2b93ad47a655d0c2574ba0bb363c757"
+    },
+    {
+      "host": "langchain-ai.github.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OWNER_DECISION_REQUIRED: GitHub AUP: s.6 forbids reproducing/copying 'any portion of the Service' without express written permission, while s.7 permits research use of scraped public non-personal information (open-access condition). Does s.7 suffice for ODG internal research on GitHub-hosted docs/blog? NOTE: the V160 grant in force (google.github.io, microsoft.github.io, github.blog) rests on the same AUP and should be re-examined with this answer.",
+        "PREFIX_NOT_SAMPLED_200:/langgraph/"
+      ],
+      "termsCondition": "GitHub AUP s.6 'You will not reproduce, duplicate, copy, sell, resell or exploit any portion of the Service ... without our express written permission' vs s.7 research permission for scraped public information (open-access publications only) — copy limitation present ⇒ DEFERRED pending owner reading",
+      "evidenceSha256": "c4a8861c11d584500642452a7e9f269e5e8ca449dfd41f378638c3489035192e"
+    },
+    {
+      "host": "docs.langchain.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "PREFIX_NOT_CANONICAL (same-host redirect; transport blocks redirects — use the canonical form):/oss/python/langgraph/"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "2e84551ca8d1260a04883a58725b61af3e4a43ebcc61f0f3aa8ad9e6cea44fab"
+    },
+    {
+      "host": "a2a-protocol.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "e88691545aad39ef088433c874cf839f1ca90c4407876c23f39eaf6c94b3f1e4"
+    },
+    {
+      "host": "docs.vllm.ai",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "0d0d6495a81c7ab70fe81c5f2908644289dd671c9ac11e3fa045e6fd7d3bb98a"
+    },
+    {
+      "host": "docs.ollama.com",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "REQUIRESAUTH_NOT_VERIFIED (must be explicitly false)",
+        "PAID_NOT_VERIFIED (must be explicitly false)",
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "BOTCHALLENGEOBSERVED_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: Ollama terms: 'Use automated means to access our services without permission' — does it cover docs.ollama.com? (ODG runs Ollama locally; docs could alternatively be read from the open-source repository)",
+        "PREFIX_NOT_CANONICAL (same-host redirect; transport blocks redirects — use the canonical form):/api"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "cf075e61887f844276bcc4bb2763bcf3117e05baa19f76d0c06c1eb5d5988ad2"
+    },
+    {
+      "host": "crfm.stanford.edu",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "9a53161aa34666bf75a18397ddd46a832e9db7d3a030949edad818f0bb85cca1"
+    },
+    {
+      "host": "bair.berkeley.edu",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "112a826902422a443cf2cdb7dc0eea74a5f2712250d76a36a1c6a1ce0681b85a"
+    },
+    {
+      "host": "www.cs.cmu.edu",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: CMU legal notice: personal viewing / non-commercial use only — compatible with ODG internal research?",
+        "CRAWL_DELAY_10s_NOT_ENFORCEABLE (no per-host pacing in the transport)"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "14484bffb0c63736f449da09092941054082334a1a3e2f1d94337037a6e09ada"
+    },
+    {
+      "host": "hai.stanford.edu",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMSFORBIDAUTOMATION_NOT_VERIFIED (must be explicitly false)",
+        "TERMS_NOT_VERIFIED",
+        "TERMS_URL_MISSING",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: Stanford ToU: download only for 'personal, non-commercial use' — compatible with ODG internal research?"
+      ],
+      "termsCondition": null,
+      "evidenceSha256": "143654e1280412d3ca043c78bf68cb47111156de9dc34eaa787c7faef6a17e7c"
+    }
+  ],
+  "honesty": [
+    "admission evidence (robots/redirect/terms/rate limits) was FETCHED by a provider research agent on 2026-11-23 and normalized by the coordinating session; it is a point-in-time observation — re-run admission before renewal",
+    "an ADMIT means 'allowed to be fetched by the governed chain', not 'trusted content': every finding is still stamped and sanitized as untrusted data",
+    "built by the Claude Code provider (coordinating session), not ODG-native construction"
+  ]
+}
