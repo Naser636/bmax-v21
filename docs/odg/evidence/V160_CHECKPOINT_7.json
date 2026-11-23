@@ -1,0 +1,105 @@
+{
+  "checkpoint": "CP7 — PRs #909–#914 (V15.9 consolidation → V16.0 traceability) + state of the native-build bwrap isolation and follow-ups",
+  "date": "2026-11-23",
+  "producedVia": "ODG canonical delegation: mission runtime/missions/V160_CP7_AP_CONTRACTS.json → odg-delegate --prepare-only brief (scope = this file + the A–P contracts + the mission contract) → provider (Claude Code) wrote within scope → odg-delegate verify/converge. Provider work, ODG-supervised.",
+  "headAtCP6": "5be27612 (CP6 itself merged as #909 → c15deead)",
+  "headAtCheckpoint": "28cade40",
+  "prs": {
+    "909": {
+      "merge": "c15deead",
+      "inspectedHead": "c89dbcf8",
+      "what": "CP6 (docs)",
+      "inspection": "REJECT on 3 wordings → fixed → ACCEPT"
+    },
+    "910": {
+      "merge": "548fbecf",
+      "inspectedHead": "7f1f4d0b",
+      "what": "V158 Radar collection (governed, deterministic quotes) + pin in COLLECTION_REGISTRY + knowledge assessment",
+      "inspection": "REINFORCED ACCEPT"
+    },
+    "911": {
+      "merge": "015273cf",
+      "inspectedHead": "141e7b1e",
+      "what": "official publisher identities for V158 hosts + FRAGMENT cap",
+      "result": "6 SUPPORTED / 8 CANDIDATE / 1 UNKNOWN / 0 facts",
+      "titleCorrection": "the GitHub title says 'V158 claims → SUPPORTED, 0 facts' — the FINAL merged result is 6 SUPPORTED + 8 CANDIDATE (fragments capped), not all SUPPORTED",
+      "inspection": "ACCEPT with MED → fixed (fragment cap) → ACCEPT on exact head"
+    },
+    "912": {
+      "merge": "932d6609",
+      "inspectedHead": "f0098560",
+      "what": "measured local-model registry used by the execution policy (monotone raise-only, size cross-check, escalate on NO_QUALIFIED)",
+      "result": "before/after pass rate 0.75 → 0.75 (n=2 per condition, no gain claimed); implement escalates 2/2",
+      "inspection": "REINFORCED ACCEPT → LOW fixed → ACCEPT on exact head"
+    },
+    "913": {
+      "merge": "4f4fceb2",
+      "inspectedHead": "d842503e",
+      "what": "default-deny require for generated modules — defense in depth, NOT isolation (7 in-process escapes recorded)",
+      "inspection": "REJECT (overclaim in title) → reworded → ACCEPT; merge message uses the corrected title"
+    },
+    "914": {
+      "merge": "a9145c3a",
+      "inspectedHead": "312d479e",
+      "what": "V15.0 traceability matrix (1 VALIDATED / 41 PARTIAL / 9 IN_PROGRESS / 5 TO_BUILD; A–P 2 PASS / 14 PARTIAL) + recovered owner text (PROPOSED, unverified) + arXiv/PyPI access analysis",
+      "author": "another Claude session on the same repo, inspected + merged here",
+      "inspection": "REJECT (false egress statement) → corrected (records RADAR-V360-ALLOWLIST-BYPASSES-GOVERNOR) → ACCEPT"
+    }
+  },
+  "mergedAfter914": {
+    "915": {
+      "merge": "f3195623",
+      "what": "odg-delegate scope keeps contract-authorized NEW files; one admissibility filter (strict charset; no abs/'..'/~/.git/.github/runtime/governance/ALWAYS_PROTECTED) for brief, isolation write-set and conformance",
+      "foundBy": "running THIS mission through odg-delegate (the CP7 file was missing from the brief scope)"
+    },
+    "917": {
+      "merge": "28cade40",
+      "what": "protectedClean: protected roots never writable through delegation even under runtime/**; git status parsed with porcelain v1 -z (both sides of renames, unquoted names, expanded untracked dirs)",
+      "knownLimit": ".git/ internals never appear in git status — only an outer sandbox confines them"
+    }
+  },
+  "nativeBuildIsolation": {
+    "pr": 916,
+    "state": "IN_PROGRESS — NOT MERGED at this checkpoint",
+    "inspection": "REINFORCED ACCEPT at b9fedbce (no default host execution of model code; all escape probes blocked; MED disclosed: SOURCE-form tests run in the candidate's realm, gameable like the legacy in-thread test)",
+    "ci": "FAILED on b9fedbce and af09c030 (sandbox cases not executing on the CI runner after the first escapes); builder pushed a fix (e838fabb) — CI + delta inspection pending",
+    "evidence": "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json on the PR branch: 80/80 deterministic + 54/54 model-generated verdict parity, 8 escapes blocked, in-process control leaks; ~240 ms per isolated evaluation vs ~1 ms in-process"
+  },
+  "radar": {
+    "V158": "after V16.0 research, code.claude.com is DEFERRED to an owner decision (Anthropic terms forbid automated access unless explicitly permitted) — PR #918 (open) regenerates the V158 grant to 5 hosts and retires that target",
+    "V160": "PR #918 (open, under REINFORCED inspection): engineering-practices campaign — 23 candidates qualified, 6 admitted (research.google, google.github.io/eng-practices, deepmind.google, NASA SE handbook, Microsoft engineering playbook, github.blog/engineering), 17 deferred, 15 refused at research (AWS/Meta/OpenAI/Anthropic/Siemens terms forbid automation; Medium/Netflix/Palantir bot challenge; Tesla 403)",
+    "collection": "V160 practices collection being built offline; LIVE run only after #918 merges"
+  },
+  "apContracts": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json — 16 contracts, all PROPOSED (PROPOSED ≠ AUTHORIZED), initial state copied from V150_TRACEABILITY_MATRIX: 2 PASS (B, M) / 14 PARTIAL",
+  "odgPilotingAssessment": {
+    "real": [
+      "odg-agent-supervisor classifies agents/worktrees from evidence (62 units, 0 conflicts, 1 ORPHAN branch governance/f11-operating-contract to review)",
+      "odg-delegate emits scoped briefs and verifies scope/protected roots before verify/converge",
+      "Radar admission/governor/budget/transport decide egress",
+      "tick decides admissions/dedup"
+    ],
+    "notYet": [
+      "ODG cannot itself launch a provider: ClaudeProviderAdapter (claude -p) exists but a live call is billed and no spend ceiling is verifiable ⇒ closed",
+      "provider execution is still performed by this interactive session (Route B: brief → provider → verify)",
+      "no unattended continuity loop beyond the root timer tick (owner-gated systemd)"
+    ]
+  },
+  "ownerQuestions": [
+    "V360 tech-run path egresses on the canonical ALLOWLIST + kill-switch only (export.arxiv.org despite robots Disallow) — remove from ALLOWLIST or route through govern()?",
+    "code.claude.com: is robots 'Content-Signal: ai-input=yes' the explicit permission Anthropic's terms require?",
+    "#911 edited odg-knowledge-intelligence (knowledge evaluation, not transport) — compatible with 'Radar existant inchangé'?",
+    "per-host pacing in the Radar transport (would unblock github/crossref/arxiv); robots-vs-documented-API conflicts (export.arxiv.org, pypi.org)",
+    "production waves (systemd unit env); external providers (no verifiable spend ceiling); gate 10/12 owner signature; V15.0 adoption"
+  ],
+  "truthLock": "verify-historical.sh verified=928 missing=0 changed=0",
+  "boussole": "docs/odg/v124-consolidated-roadmap.json unchanged (last change 53a1dedb); V15.0 remains PROPOSED",
+  "nativeVsProvider": "All construction in this window is provider work (coordinating session + provider agents). ODG-native: gate decisions (Radar admission/governor/transport, delegate scope + conformance + protectedClean, supervisor classification, tick). Native-built code changes: 0.",
+  "nextAction": "merge #916 when CI is green on the exact head with an inspected delta; merge #918; GO LIVE for the V160 practices collection → method cards + ADOPT/ADAPT/EXPERIMENT/DEFER/REJECT matrix mapped to the 9 primitives → pilot (native vs hybrid vs provider) → scenarios G, F, J under their PROPOSED contracts once authorized.",
+  "delegateRunResult": {
+    "run": "odg-delegate V160_CP7_AP_CONTRACTS (full) on the provider's uncommitted patch, 2026-11-23T17:00Z",
+    "writeSetConformance": "PASS (2 changed, all in scope)",
+    "protectedRoots": "PASS",
+    "verify": "FAILED — odg-verify requires build (npm run build) + typescript + gitClean; build=false in the worktree and gitClean=false because the patch is (by design of the conformance step) still uncommitted",
+    "finding": "ODG CAPABILITY GAP (pre-existing): the delegate flow observes conformance on an UNCOMMITTED patch but its verify gate requires a CLEAN tree, so a delegated patch can never pass verify→converge→archive in one run; and the verify build gate is a full Next.js build even for a docs-only mission. Not worked around (no commit-before-conformance, no weakened gate). Integration of this mission therefore goes through the normal PR path (CI + independent inspection). Proposed fix (separate work item): verify the delegated patch against a temporary commit/worktree snapshot and select the build gate by verification level (#902)."
+  }
+}
