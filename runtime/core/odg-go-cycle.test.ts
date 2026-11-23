@@ -102,6 +102,26 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     const au = stepIn(trace, "AUTHORIZE");
     check("committed state + EXECUTE + runnable scratch ⇒ G NOT dispatched (revision-only authorization never opens execution)", calls.dispatch === 0 && calls.provider === 0 && r.status === "HALTED_AT_AUTHORIZATION_GATE" && au.decision.selectedAuthorized === false && au.decision.selfAuthorized === false);
     check("committed state ⇒ STRATEGY stays M0 DECISION_REQUIRED for G", stepIn(trace, "STRATEGY").decision.rule === "M0" && stepIn(trace, "STRATEGY").decision.mode === "DECISION_REQUIRED");
+    // V166 scoped authorization reported at AUTHORIZE (no inspection record committed ⇒ experiments not authorized)
+    const sc = au.decision.scopedAuthorization;
+    check("V166: AUTHORIZE reports scoped state — INSPECT_REVISED_CONTRACT AUTHORIZED (provider/docs work, not native dispatch), next RUN_CONTROLLED_EXPERIMENTS NOT authorized", !!sc && sc.currentStep === "INSPECT_REVISED_CONTRACT" && sc.currentStepAuthorized === true && /not native dispatch/.test(sc.report) && sc.nextStep === "RUN_CONTROLLED_EXPERIMENTS" && sc.nextStepAuthorized === false && sc.executionAuthorized === false && /scoped/.test(stepIn(trace, "NEXT_SELECTION").decision.preparedMission.authorizationNeeded));
+  }
+  // 1c. V166: committed state + a valid inspection ACCEPT record ⇒ the experiments step is derived-authorized and dispatches
+  //     only through the existing NATIVE + isolated path; any defect in the record ⇒ no dispatch
+  {
+    const AS = require("./odg-authorization-scope.js");
+    const g = BASE_LIVE.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
+    const rec = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contractSha256: AS.contractSha256(g), inspector: "independent inspector (test fixture)", inspectedHeadSha: "b".repeat(40), ...o });
+    const withEv = (inspection: any) => { const s = clone(BASE_LIVE); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { G: { inspection, experiment: null } }; return s; };
+    const ok = mkPorts({ state: withEv(rec()) });
+    const r = await GO.runGoCycle({ mode: "EXECUTE" }, ok.ports);
+    const au = stepIn(ok.trace, "AUTHORIZE").decision;
+    check("V166: ACCEPT record bound to the current contract sha ⇒ RUN_CONTROLLED_EXPERIMENTS derived-authorized; STRATEGY leaves M0; one NATIVE isolated dispatch", au.scopedAuthorization.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && au.scopedAuthorization.executionAuthorized === true && au.selectedAuthorized === true && au.selfAuthorized === false && stepIn(ok.trace, "STRATEGY").decision.rule !== "M0" && stepIn(ok.trace, "STRATEGY").decision.mode === "NATIVE" && ok.calls.dispatch === 1 && r.status === "EXECUTED_PASS" && ok.calls.provider === 0);
+    for (const [name, bad] of [["sha mismatch (contract edited after inspection)", rec({ contractSha256: "0".repeat(64) })], ["REJECT", rec({ verdict: "REJECT" })], ["inspector = revision author", rec({ inspector: g.revisionHistory[g.revisionHistory.length - 1].author })], ["no record", null]] as any[]) {
+      const p = mkPorts({ state: withEv(bad) });
+      const rr = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
+      check(`V166: ${name} ⇒ G NOT dispatched, M0 kept`, p.calls.dispatch === 0 && rr.status === "HALTED_AT_AUTHORIZATION_GATE" && stepIn(p.trace, "STRATEGY").decision.rule === "M0" && stepIn(p.trace, "AUTHORIZE").decision.scopedAuthorization.executionAuthorized === false);
+    }
   }
   // 2. --execute on unauthorized work: still no dispatch
   {

@@ -39,6 +39,7 @@ const SM = require("./odg-strategy-mode-selector.js");
 const IL = require("./intelligence-loop.js");
 const SCHED = require("./mission-scheduler.js");
 const SD = require("./odg-sovereign-delegation.js");
+const AS = require("./odg-authorization-scope.js");
 
 const STEPS = Object.freeze(["TRUTH_LOCK", "STATE_READ", "PROBLEMS_OPPORTUNITIES", "SELECT", "DECOMPOSE", "STRATEGY", "AUTHORIZE", "EXECUTE", "EVIDENCE", "NEXT_SELECTION"]);
 const DEFAULTS = Object.freeze({ mode: "DRY", maxSteps: STEPS.length, deadlineMs: 120000 });
@@ -51,7 +52,7 @@ const DECIDED_BY: any = Object.freeze({
   SELECT: "ODG odg-strategic-register.buildRegister + mission-priority-selector.selectNextExplained",
   DECOMPOSE: "ODG decomposition-planner.chooseStrategy (contract→spec mapping is a provider rule)",
   STRATEGY: "ODG odg-strategy-mode-selector.selectStrategyMode",
-  AUTHORIZE: "ODG intelligence-loop.runCycle (DISCOVER→AUTHORIZE) + mission-scheduler.evaluateEligibility",
+  AUTHORIZE: "ODG intelligence-loop.runCycle (DISCOVER→AUTHORIZE) + mission-scheduler.evaluateEligibility + odg-authorization-scope.deriveAuthorizationScope (V166 scoped steps)",
   EXECUTE: "ODG mission-scheduler.schedulerStep (+ odg-sovereign-delegation.createMission records)",
   EVIDENCE: "GO (provider-written digest/summary)",
   NEXT_SELECTION: "ODG mission-priority-selector.selectNextExplained (current item removed) + prepared-mission package",
@@ -93,6 +94,26 @@ function specOf(item: any, contract: any): any {
   const w = contract && isObj(contract.WORK_ITEM_CONTRACT) ? contract.WORK_ITEM_CONTRACT : null;
   if (!w) return null;
   return { name: `${item.id} ${String(w.objective || "")}`, architecture: arr(w.write_set).map((p: any) => ({ path: String(p), role: String(w.objective || ""), contract: arr(w.acceptance_criteria).join("; "), dependsOn: [] })) };
+}
+/* scopedAuthorization(state, contract) — V166: the owner-scoped step state of a contract carrying an `authorization` block
+ * (odg-authorization-scope; PURE derivation over committed evidence — the contract state is never rewritten). Evidence is
+ * read by the STATE port as state.authorizationEvidence[scenario] = { inspection, experiment }. null ⇒ not applicable. */
+function scopedAuthorization(state: any, contract: any): any {
+  if (!contract || !isObj(contract.authorization)) return null;
+  const evAll = state && isObj(state.authorizationEvidence) ? state.authorizationEvidence : {};
+  const s = AS.deriveAuthorizationScope(contract, evAll[String(contract.scenario)] || {});
+  return s && s.applicable ? s : null;
+}
+/* the scoped equivalent of declaredAuthorization: an execution approval ONLY when the CURRENT step is an authorized
+ * execution step (derived from the owner's prior authorization); provider/docs/inspection steps never approve dispatch. */
+function scopedExecutionAuthorization(scope: any): any {
+  if (!scope || scope.executionAuthorized !== true) return null;
+  return { approved: true, authorizedBy: `${scope.owner.by} — ${scope.owner.source} (scoped step ${scope.currentStep}, derived by odg-authorization-scope from the recorded inspection ACCEPT; contract ${scope.contractSha256.slice(0, 12)})` };
+}
+function scopeSummary(scope: any): any {
+  if (!scope) return null;
+  return { scenario: scope.scenario, contractSha256: scope.contractSha256, currentStep: scope.currentStep, currentStepKind: scope.currentStepKind, currentStepAuthorized: scope.currentStepAuthorized, nextStep: scope.nextStep, nextStepAuthorized: scope.nextStepAuthorized, authorizedSteps: scope.authorizedSteps, derivedSteps: scope.derivedSteps.map((d: any) => ({ step: d.step, rule: d.rule })), validatedSteps: scope.validatedSteps.map((v: any) => v.step), executionAuthorized: scope.executionAuthorized, reason: scope.reason,
+    report: scope.executionAuthorized ? `${scope.currentStep} AUTHORIZED (execution step, derived) — dispatch still needs NATIVE + isolated` : scope.currentStepAuthorized ? `${scope.currentStep} AUTHORIZED — provider/docs work, not native dispatch` : `${scope.currentStep} NOT authorized` };
 }
 const SPEC_RULE = "GO-DEC-1 (provider rule): spec.architecture = one entry per WORK_ITEM_CONTRACT.write_set path (role = objective, contract = acceptance_criteria joined); no contract ⇒ NOT_MEASURED";
 
@@ -234,7 +255,8 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const w = contract && isObj(contract.WORK_ITEM_CONTRACT) ? contract.WORK_ITEM_CONTRACT : null;
     const mission: any = { id: contract ? `AP-${item.id}` : item.id, authorizationState: contract ? contract.state : (item.contractState || "PROPOSED") };
     if (w) { mission.writeSet = w.write_set; mission.writeSetSource = `${ctx.state.sources.contracts.path}#contracts[scenario=${item.id}].WORK_ITEM_CONTRACT.write_set`; }
-    const auth = declaredAuthorization(contract);
+    const auth = declaredAuthorization(contract) || scopedExecutionAuthorization(scopedAuthorization(ctx.state, contract));
+    if (auth && contract && contract.state !== "AUTHORIZED") mission.authorizationState = "AUTHORIZED";   // V166: ONLY a derived authorized EXECUTION step (M0 stays for every other state)
     if (auth) mission.authorization = { by: auth.authorizedBy, missionId: mission.id };
     const sel = SM.selectStrategyMode(mission, { measured: ctx.state.measured, now: ctx.state.strategyNow });
     ctx.strategy = sel;
@@ -253,18 +275,20 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     ctx.queue = queue;
     let loop: any = null;
     let loopAuthorized = false;
+    const scope = item ? scopedAuthorization(ctx.state, ctx.contract) : null;
+    ctx.scope = scope;
     if (item) {
       const accepted = ctx.register.items.filter((it: any) => it.status === "ACCEPTED").map((it: any) => ({ id: it.id, title: it.title }));
       let executeCalled = false;
-      loop = IL.runCycle({ discovery: { id: item.id, title: item.title, detail: canon(item.nextStep), origin: "GO/SELECT", evidence: item.statusSource }, existingItems: accepted, authorization: declaredAuthorization(ctx.contract), candidatePlans: [] }, { execute: () => { executeCalled = true; return null; } });
+      loop = IL.runCycle({ discovery: { id: item.id, title: item.title, detail: canon(item.nextStep), origin: "GO/SELECT", evidence: item.statusSource }, existingItems: accepted, authorization: declaredAuthorization(ctx.contract) || scopedExecutionAuthorization(scope), candidatePlans: [] }, { execute: () => { executeCalled = true; return null; } });
       loopAuthorized = arr(loop.trace).some((t: any) => t.step === "AUTHORIZE" && t.authorized === true);
       ctx.loopExecuteCalled = executeCalled;
     }
     ctx.loopAuthorized = loopAuthorized;
     const eligibility = queue.queue.map((q: any) => ({ mission: q.mission, source: q.source, ...SCHED.evaluateEligibility(q, { preAuthorized: allow, isProven: (id: string) => proven.has(id) }) }));
     return { status: loopAuthorized || eligibility.some((e: any) => e.eligible) ? "DONE" : "HALTED_AT_GATE", inputs: { item: item ? item.id : null, contractState: ctx.contract ? ctx.contract.state : null, authorizedBy: ctx.contract ? ctx.contract.authorizedBy : null, allowlist: allow },
-      decision: { intelligenceLoop: loop ? { stage: loop.stage, completed: loop.completed, proposedOnly: loop.proposedOnly === true, duplicate: loop.duplicate === true, reason: loop.reason, trace: loop.trace } : null, selectedAuthorized: loopAuthorized, schedulerEligibility: eligibility, selfAuthorized: false },
-      rationale: loopAuthorized ? "selected item carries an EXTERNAL authorization (contract AUTHORIZED + authorizedBy)" : "no external authorization for the selected item ⇒ the loop stops at PROPOSED (ODG never self-authorizes); scheduler eligibility shows the canonical pre-authorized allowlist + proven dedup" };
+      decision: { intelligenceLoop: loop ? { stage: loop.stage, completed: loop.completed, proposedOnly: loop.proposedOnly === true, duplicate: loop.duplicate === true, reason: loop.reason, trace: loop.trace } : null, selectedAuthorized: loopAuthorized, scopedAuthorization: scopeSummary(scope), schedulerEligibility: eligibility, selfAuthorized: false },
+      rationale: loopAuthorized ? (scope && scope.executionAuthorized ? `selected item: scoped step ${scope.currentStep} authorized by the owner's prior authorization (derived from the recorded inspection ACCEPT)` : "selected item carries an EXTERNAL authorization (contract AUTHORIZED + authorizedBy)") : scope ? `scoped authorization: ${scopeSummary(scope).report} — ${scope.reason}; no native dispatch for this step (ODG never self-authorizes)` : "no external authorization for the selected item ⇒ the loop stops at PROPOSED (ODG never self-authorizes); scheduler eligibility shows the canonical pre-authorized allowlist + proven dedup" };
   });
   if (stopped(r)) return stopped(r);
   const gateHeld = r.status === "HALTED_AT_GATE";
@@ -327,7 +351,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const prepared = item ? { id: item.id, title: item.title, status: item.status, nextStep: item.nextStep, contract: w ? { objective: w.objective, write_set: w.write_set, acceptance_criteria: w.acceptance_criteria, stop_conditions: w.stop_conditions, evidence_required: w.evidence_required } : null,
       decomposition: ctx.decomposition ? { strategy: ctx.decomposition.strategy, complexity: ctx.decomposition.complexity, parts: arr(ctx.decomposition.architecture).map((a: any) => a.path) } : null,
       strategy: ctx.strategy ? { mode: ctx.strategy.mode, tentativeMode: ctx.strategy.tentativeMode || null, rule: ctx.strategy.rule } : null,
-      authorizationNeeded: ctx.loopAuthorized ? null : `owner: contract ${item.id} PROPOSED → AUTHORIZED (authorizedBy) — ODG cannot self-authorize`, executed: execStatus } : null;
+      authorizationNeeded: ctx.loopAuthorized ? null : ctx.scope ? `scoped: current step ${ctx.scope.currentStep} (${ctx.scope.currentStepKind}${ctx.scope.currentStepAuthorized ? ", AUTHORIZED — provider/docs work, not native dispatch" : ", NOT authorized"}); next ${ctx.scope.nextStep} ${ctx.scope.nextStepAuthorized ? "authorized" : "NOT authorized until " + ctx.scope.currentStep + " is validated by its evidence"}` : `owner: contract ${item.id} PROPOSED → AUTHORIZED (authorizedBy) — ODG cannot self-authorize`, executed: execStatus } : null;
     return { status: "DONE", inputs: rest.map((c: any) => c.id),
       decision: { preparedMission: prepared, nextAfterCurrent: { decision: nd.decision, selected: nd.selected ? nd.selected.id : null, proposed: nd.proposed ? nd.proposed.id : null, tiedSet: arr(nd.tiedSet), resolvedBy: nd.resolvedBy || null, justification: nd.justification } },
       rationale: "prepared-mission package for the selected item + the selector's choice once the current item is set aside (PROPOSAL only)" };
@@ -351,12 +375,13 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   id: "V164-ODG-GO-CYCLE",
   source: "owner directive V16.4 §2 ODG GO + §7 close the loop + §10 scenario J",
   steps: STEPS,
-  composes: Object.freeze(["truth-lock-gate", "odg-strategic-register", "mission-priority-selector.selectNextExplained", "decomposition-planner.chooseStrategy", "odg-strategy-mode-selector", "intelligence-loop.runCycle", "mission-scheduler.schedulerStep/evaluateEligibility", "odg-sovereign-delegation.createMission", "odg-knowledge-intelligence (via port)"]),
+  composes: Object.freeze(["truth-lock-gate", "odg-strategic-register", "mission-priority-selector.selectNextExplained", "decomposition-planner.chooseStrategy", "odg-strategy-mode-selector", "intelligence-loop.runCycle", "mission-scheduler.schedulerStep/evaluateEligibility", "odg-sovereign-delegation.createMission", "odg-knowledge-intelligence (via port)", "odg-authorization-scope.deriveAuthorizationScope"]),
   invariants: Object.freeze([
     "one bounded cycle per invocation (maxSteps ≤ 10, wall-clock deadline); no loop, no timer, no second scheduler",
     "Truth-Lock refusal ⇒ STARTUP_REFUSED before any state read",
     "selection is the selector's (TIE_EXPLAINED / DECISION_REQUIRED kept; never an id pick)",
     "ODG never self-authorizes: execution only through schedulerStep with an external authorization or the canonical pre-authorized allowlist",
+    "V166 scoped authorization: an owner-scoped contract dispatches only when its CURRENT step is an execution step derived-authorized by odg-authorization-scope from committed evidence (inspection ACCEPT bound to the contract sha256); non-execution steps are reported, never dispatched",
     "dispatch only in mode EXECUTE, only for NATIVE work in an isolated workspace; PROVIDER/HYBRID ⇒ delegation RECORD only; no provider launch",
     "no commit, no merge, no write outside the out dir (writer guard); ledger/attempt-log read-only",
     "stop between every step: ODG_SCHEDULER_STOP=1, STOP file / signal port, deadline, max steps — each recorded in the trace",
@@ -364,5 +389,5 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, specOf };
+module.exports = { runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};

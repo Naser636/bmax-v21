@@ -330,11 +330,12 @@
           "Truth Lock 928 verified",
           "no second orchestrator/scheduler/radar/memory/decision engine",
           "provider work never counted as ODG-native",
-          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)"
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)",
+          "V165 §1 « Ne jamais transformer rétroactivement un résultat négatif en réussite »: a FAIL / PARTIAL / NOT_MEASURED experiment outcome is recorded as such; the earlier V160 scenario-G result (docs/odg/evidence/V160_SCENARIO_G.json, NOT_ADOPTED, borderline) is never rewritten or re-graded"
         ],
         "acceptance_criteria": [
-          "item from the pinned collection with SUPPORTED/CORROBORATED status and admissible() true for the use",
-          "used by a real mission decision; utility measured vs the same mission without it"
+          "C1 (revised — replaces the incoherent original C1): every knowledge item used is retrieved from the pinned collection docs/odg/evidence/V160_PRACTICES_COLLECTION.json, which odg-knowledge-intelligence.attestCollection authenticates against docs/odg/evidence/COLLECTION_REGISTRY.json (attested === true), and is re-assessed in-process by assessClaim → toMemory; its epistemic level is SUPPORTED or CORROBORATED; at USE time usableFor(record, \"DESIGN_PROPOSAL\", useAt, { assessment }).authorization === \"DESIGN_PROPOSAL\" (provenance: the record is reproduced from its branded assessment; freshness: useAt ≤ record.validUntil). admissible(record, useAt, { assessment }) is evaluated and its verdict recorded for every item, but admissible().trusted === true is REQUIRED only for an item presented as a FACT (epistemic CORROBORATED and isFact true); a SUPPORTED item is never presented as a fact (its expected verdict is NOT_A_FACT) and the decision it informs is at most a DESIGN_PROPOSAL. Any refusal at use time ⇒ the experiment outcome is NOT_MEASURED (never a default fill).",
+          "C2 (kept, operationalized): used by a real mission decision; utility measured vs the same mission without it — operationally: the decision procedure, metric, baseline (same procedure without the knowledge item), dataset/split, decision rule and PASS/PARTIAL/FAIL thresholds are those fixed in WORK_ITEM_CONTRACT.preRegistration BEFORE any experiment, and the outcome is graded only by preRegistration.thresholds"
         ],
         "stop_conditions": [
           "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
@@ -347,7 +348,48 @@
           "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
           "independent inspection verdict on the exact head",
           "CI green on the exact head"
-        ]
+        ],
+        "preRegistration": {
+          "registeredAt": "2026-11-23 (this revision; before any V166 experiment — no V166 experiment code or result exists at registration)",
+          "question": "the V160 scenario-G mission question, unchanged: \"should ODG bound the size of delegated changes?\" (a size-budget DESIGN_PROPOSAL, never an enforced rule)",
+          "knowledgeItem": "G_SMALL_SIZE (V160_PRACTICES_COLLECTION.json, Google eng-practices small-cls page): « 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large » — SUPPORTED single official source",
+          "decisionProcedure": "flag a change as SPLIT_RECOMMENDED iff size > T, size = additions + deletions (same size definition as odg-v160-scenario-g-run)",
+          "withKnowledge": "T_K = 1000 (the item's « 1000 lines is usually too large »); T = 100 (« reasonable size ») is computed and reported as SECONDARY only, never decisive",
+          "outcomeLabel": "HIGH_ITERATION iff commits ≥ 2 (commit count = the V160 proxy for fix cycles); SECONDARY label (reported only): open→merge minutes > median minutes of the TRAIN split",
+          "dataset": {
+            "file": "docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json",
+            "sha256": "09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea",
+            "split": "rows with finite additions/deletions/commits and createdAt/mergedAt, sorted by PR number ascending; TRAIN = first 200 rows, TEST (held-out) = last 200 rows",
+            "egress": "NONE — committed snapshot only"
+          },
+          "baseline": {
+            "B0_primary": "the same decision procedure WITHOUT the knowledge item = status quo, no size bound (no row flagged) ⇒ balanced accuracy 0.5 by construction",
+            "B1_comparator": "data-only threshold T_B fitted on TRAIN only: the size value (over the distinct TRAIN sizes) maximizing TRAIN balanced accuracy for HIGH_ITERATION; ties ⇒ smallest T"
+          },
+          "metric": "balanced accuracy (odg-binary-classification-metrics.classificationMetrics, TP/TN/FP/FN of SPLIT_RECOMMENDED vs HIGH_ITERATION) on the TEST split; Δ0 = BA(T_K) − BA(B0); Δ1 = BA(T_K) − BA(T_B)",
+          "uncertainty": "paired bootstrap over TEST rows, 1000 resamples, fixed-seed LCG as in odg-v160-scenario-g-run (seed 20261124); CI95 = 2.5/97.5 percentiles of Δ0 and Δ1",
+          "decisionRule": "grade = first matching of NOT_MEASURED, PASS, PARTIAL, FAIL per thresholds (evaluated mechanically on the recorded numbers; no re-tuning of T, label, split or seed after the run)",
+          "thresholds": {
+            "NOT_MEASURED": "C1 refused at use time (collection not attested, usableFor ≠ DESIGN_PROPOSAL, stale), OR dataset sha256 ≠ the pinned value, OR TEST has < 20 HIGH_ITERATION or < 20 non-HIGH_ITERATION rows",
+            "PASS": "Δ0 ≥ 0.05 AND CI95 lower bound of Δ0 > 0 AND Δ1 ≥ −0.02 (non-inferior to what ODG learns from its own data alone)",
+            "PARTIAL": "Δ0 > 0 but the PASS conditions are not all met",
+            "FAIL": "Δ0 ≤ 0"
+          },
+          "scopeOfAPass": "a PASS means the SUPPORTED item improved this ODG design decision on held-out ODG data — a DESIGN_PROPOSAL, never a fact, never causation",
+          "honestLimits": [
+            "the whole dataset was already analysed (Spearman, size buckets) by the V160 G run ⇒ the held-out split is not blind to the analyst",
+            "label counts per split were inspected for feasibility before registration (TRAIN 20/200 HIGH_ITERATION, TEST 100/200) — no metric of any threshold was computed",
+            "chronological split ⇒ distribution shift between TRAIN and TEST (later PRs iterate more, e.g. through the inspection loop); recorded, not corrected",
+            "commit count and minutes are confounded proxies (task difficulty, inspection loop)"
+          ],
+          "experimentWriteSet": {
+            "files": [
+              "runtime/bin/odg-v166-scenario-g-experiment.ts",
+              "docs/odg/evidence/V166_G_EXPERIMENT.json"
+            ],
+            "note": "additive files for RUN_CONTROLLED_EXPERIMENTS only; docs/odg/evidence/V160_SCENARIO_G.json (the earlier NOT_ADOPTED result) is never rewritten. Recorded here rather than in WORK_ITEM_CONTRACT.write_set: adding them to write_set changes the register's decomposition input for G and flips the committed selection (TIE G/J → TIE J/G/H, H selected) — disclosed for the inspector to judge, not hidden"
+          }
+        }
       },
       "authorization": {
         "by": "OWNER",
@@ -360,7 +402,27 @@
         ],
         "executionAuthorized": false,
         "executionCondition": "controlled experiments only after an independent inspection ACCEPT of the revised contract is recorded (owner: « lancer les expériences contrôlées après validation de ce contrat »); until then state stays AUTHORIZED_FOR_REVISION, which no execution gate (odg-go declaredAuthorization, strategy-mode M0) treats as AUTHORIZED"
-      }
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-23",
+          "author": "PROVIDER (Claude Code, V166 G-revision session; branch feat/v166-auth-scope-g-revision)",
+          "authorizedBy": "OWNER (CTO) — V165 §1 (docs/odg/V165_OWNER_AUTHORIZATION.json#missionG)",
+          "originalCriteria": [
+            "item from the pinned collection with SUPPORTED/CORROBORATED status and admissible() true for the use",
+            "used by a real mission decision; utility measured vs the same mission without it"
+          ],
+          "originalObjectiveUnchanged": "Use a retrieved knowledge item (freshness + provenance checked) in a real mission and measure its utility",
+          "change": [
+            "C1 replaced: \"admissible() true for the use\" ⇒ use authorized by usableFor(record, \"DESIGN_PROPOSAL\", useAt, {assessment}) with provenance + freshness verified at use time; admissible() recorded for every item and REQUIRED only for an item presented as a FACT (CORROBORATED, isFact)",
+            "C2 kept verbatim, operationalized by WORK_ITEM_CONTRACT.preRegistration (metric, baseline, dataset/split, decision rule, thresholds) fixed before any experiment",
+            "invariant added (not an acceptance criterion — it constrains grading): negative results recorded as such; the V160 G NOT_ADOPTED result is never rewritten",
+            "write_set, the five original invariants, stop_conditions, rollback, evidence_required unchanged; the future experiment's additive files are declared in preRegistration.experimentWriteSet"
+          ],
+          "justification": "CP8 G grading (docs/odg/evidence/V163_CHECKPOINT_8.json scenarios.G.criteria): \"admissible() (facts only ⇒ NOT_A_FACT for a SUPPORTED item) is false and scenario G never calls it ⇒ the criterion as worded cannot be met by a SUPPORTED item\"; and \"utility vs the same decision without the item NOT_MEASURED\". In odg-knowledge-intelligence, admissible() is admission AS FACT (returns NOT_A_FACT unless isFact && status VERIFIED, i.e. CORROBORATED), while usableFor() is the use authorization (provenance via the branded assessment, freshness via validUntil, capped by the record's own authorization). The original C1 required both SUPPORTED-or-CORROBORATED and admissible() true — incoherent for SUPPORTED. The revised C1 uses each function for what it decides; C2 gets a pre-registered measurement.",
+          "priorResultUnchanged": "docs/odg/evidence/V160_SCENARIO_G.json decision NOT_ADOPTED (borderline) — untouched"
+        }
+      ]
     },
     {
       "scenario": "H",

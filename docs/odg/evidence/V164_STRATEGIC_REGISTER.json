@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "82ec235ccc2b76528a791e59382f48d1839b104cd7ca342b22efd086b41aa1dc"
+      "sha256": "b34850ef8250cbad464f52a28aa16d809866a3d59cd7a5ffd87b1cb08745870e"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "f77fc8fc099313c547c1f5cf5784e0ee3042b8035a08ba1361cbc947224b3ac8"
+      "sha256": "7c6125751e715a544c87b9c072516a55d323bfdaa1b2561c016cd2d345a55b2e"
     }
   ],
   "register": {
@@ -9896,5 +9896,5 @@
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): only evidenceLevel is derivable, every other criterion is NOT_MEASURED (uncertainty 0.9), so under uncertaintyMax 0.5 none can be the choice until benefit criteria are measured; the GAP_LINKS dedupe table and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change"
   ],
-  "generatedAtHead": "b93166c230ff9be500499021a08b3928e036d92e"
+  "generatedAtHead": "adb6b0172ce07f70cdb4ec1e3c88faa709c209b4"
 }
