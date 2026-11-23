@@ -93,6 +93,7 @@ function runBuildTsEvidence(opts?: { buildFn?: () => boolean; tscFn?: () => bool
     // keeps a red repo from blocking a read-only mission (directive §4.A). The companion markers make it unambiguous
     // that NO build executed: a build never ran, the gate is satisfied by non-applicability.
     verify = { ...prior, generatedAt: new Date().toISOString(), build: true, typescript: true, buildExecuted: false, skipped: true, skipReason: "non-engineering (read-only/AUDIT) mission — build/TS not run; gate N/A (satisfied by non-applicability)", mission, producedBy: "stage-build-ts-evidence" };
+    dropDelegatedMarkers(verify);
   } else {
     const buildFn = (opts && opts.buildFn) || defaultBuild;
     const tscFn = (opts && opts.tscFn) || defaultTsc;
@@ -106,10 +107,19 @@ function runBuildTsEvidence(opts?: { buildFn?: () => boolean; tscFn?: () => bool
     delete (verify as any).skipped;
     delete (verify as any).buildExecuted;
     delete (verify as any).skipReason;
+    dropDelegatedMarkers(verify);
   }
   fs.mkdirSync(GENERATED_DIR, { recursive: true });
   fs.writeFileSync(VERIFY_PATH, JSON.stringify(verify, null, 2));
   return verify;
+}
+
+// #923 — odg-verify's DELEGATED_PATCH fields describe ONE delegate observation (a specific proven path set at a specific
+// moment). They are never inherited by a later rewrite of this shared, persistent artifact: drop them so a stale delegated
+// verdict can neither leak into another mission's evidence nor outlive the delegate run that produced it.
+function dropDelegatedMarkers(verify: any): void {
+  delete verify.gitCleanScope;
+  delete verify.delegatedPatchClean;
 }
 
 module.exports = { runBuildTsEvidence, resolveMission, isEngineeringMission, defaultBuild, defaultTsc, VERIFY_PATH };
