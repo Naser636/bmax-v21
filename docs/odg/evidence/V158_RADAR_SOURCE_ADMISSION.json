@@ -1,0 +1,322 @@
+{
+  "generatedBy": "runtime/bin/odg-radar-source-admission-run.ts (deterministic, no network)",
+  "candidatesFile": "docs/odg/evidence/V158_RADAR_SOURCE_CANDIDATES.json",
+  "issuedIso": "2026-11-23T00:00:00.000Z",
+  "summary": {
+    "candidates": 28,
+    "admitted": 16,
+    "deferred": 10,
+    "refused": 2
+  },
+  "grantRefusedReason": null,
+  "decisions": [
+    {
+      "host": "api.github.com",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/repos/anthropics/claude-code",
+        "/repos/ggml-org/llama.cpp",
+        "/repos/google/osv.dev",
+        "/repos/ollama/ollama",
+        "/repos/stripe/smokescreen"
+      ],
+      "reasons": [],
+      "evidenceSha256": "07798e594c5cd5983b4d7ac96734bd621d2a96932aedcb9996c70401d087ec6a"
+    },
+    {
+      "host": "export.arxiv.org",
+      "decision": "REFUSE",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "ROBOTS_DISALLOWS:/api/query",
+        "TERMS_NOT_VERIFIED",
+        "OWNER_DECISION_REQUIRED: CONDITIONAL_OWNER_DECISION: CONTRADICTION robots vs ToU. RFC 9309: robots is not access authorization; ToU explicitly licenses API use. Owner must decide which instrument governs; log it."
+      ],
+      "evidenceSha256": "144c8b4a73d8e94d77dfe1ab7702a74671a0ac1411dd241e146b60d8886f0912"
+    },
+    {
+      "host": "arxiv.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "CRAWL_DELAY_15s_NOT_ENFORCEABLE (no per-host pacing in the transport)"
+      ],
+      "evidenceSha256": "4afaa79868afcb528649f16ec90971a5ca1585b913dfabf151e19e3763c8cf04"
+    },
+    {
+      "host": "api.crossref.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/works"
+      ],
+      "reasons": [],
+      "evidenceSha256": "d14a82a0c68d9b95aabc51d818f4205cbaaf6c0bf09e83dd5d24d03534baaf63"
+    },
+    {
+      "host": "api.openalex.org",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: CONDITIONAL_LOW_BUDGET: Usage-priced service; keyless budget ~100 req/day. Key = registration (owner-gated)."
+      ],
+      "evidenceSha256": "0cf7d8c153fbafd1771e0e0db7aac69e56e517d91fdc70d4b7179d7b24529526"
+    },
+    {
+      "host": "api.semanticscholar.org",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED",
+        "RATE_LIMIT_UNDOCUMENTED",
+        "OWNER_DECISION_REQUIRED: CONDITIONAL_UNRELIABLE: Anonymous pool frequently exhausted; treat 429 as normal; license agreement governs API use."
+      ],
+      "evidenceSha256": "58673300cde442f066c9984512540648ae644e276c0af7cc886adedd52635e99"
+    },
+    {
+      "host": "www.rfc-editor.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/rfc/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "f2f356dc41ead1819dd2324d9a915ea6ef9fa20f843e53f2e1e0486fe504486c"
+    },
+    {
+      "host": "datatracker.ietf.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/api/v1/doc/",
+        "/doc/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "61e561a3be26591fa3c922e0a02ccd17d74ab07604ba2b3cd50f8bc0a24a61ec"
+    },
+    {
+      "host": "www.w3.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/TR/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "a43cf6b6fb4b32a26f70924ec590476471fa3f0b2e13d86488bb586d591231b1"
+    },
+    {
+      "host": "csrc.nist.gov",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/pubs/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "a0907c89c0645a58a507be9a1ed28f196f5b673ba4ef7a694e526e181f3a8553"
+    },
+    {
+      "host": "nvlpubs.nist.gov",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/nistpubs/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "904e1252320a3437879bcae1804d8aedee4845b9ba3bb195ab3d3ad294392bda"
+    },
+    {
+      "host": "services.nvd.nist.gov",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED",
+        "RATE_LIMIT_UNDOCUMENTED"
+      ],
+      "evidenceSha256": "28644df2f25e1232fc81ed8c0a19fe4eb65f5ed58a20b8d8e5178441c3925f01"
+    },
+    {
+      "host": "api.osv.dev",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/v1/query",
+        "/v1/vulns/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "91cff8cc15b6ecb04dd32d19cafc722a4476051e6fc50b25753451ab24e75042"
+    },
+    {
+      "host": "www.cisa.gov",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+      ],
+      "reasons": [],
+      "evidenceSha256": "644da813562752abf4436a0ce4f2f846f32c8f19925e55b45f36a793c8bc9178"
+    },
+    {
+      "host": "cheatsheetseries.owasp.org",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED"
+      ],
+      "evidenceSha256": "beaa9bb32d014a5486e1c0283f5c300b8a539e79a61d37d5bdfb9365b6acbfde"
+    },
+    {
+      "host": "genai.owasp.org",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED",
+        "REDIRECT_BEHAVIOUR_UNKNOWN:/llmrisk/llm01-prompt-injection/",
+        "REDIRECT_BEHAVIOUR_UNKNOWN:/llm-top-10/"
+      ],
+      "evidenceSha256": "be38faca4119728419de74b8d8a278b55eb049b28a73cc7857175178acae1452"
+    },
+    {
+      "host": "opentelemetry.io",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/docs/specs/otel/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "a76d0bccf5e5dd23ced9ae1523ed02855d5f91568f60d8e1a7f60ebb587d29dd"
+    },
+    {
+      "host": "kubernetes.io",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED",
+        "REDIRECT_BEHAVIOUR_UNKNOWN:/docs/concepts/"
+      ],
+      "evidenceSha256": "d443f8e5a48070f8efc415098a989840e07945bdb12cb765fde81f338fea3695"
+    },
+    {
+      "host": "www.postgresql.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/docs/current/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "86b723541ef973bcb139b1e93538b085bfe6b7a7629d710d5ae6f8bac825435b"
+    },
+    {
+      "host": "www.sqlite.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/docs.html",
+        "/lang.html"
+      ],
+      "reasons": [],
+      "evidenceSha256": "c12d44ddc7b90afcf1a8f281931e77b94a524c12efafa3e5fb1b43ef9e1412d1"
+    },
+    {
+      "host": "docs.python.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED",
+        "REDIRECT_BEHAVIOUR_UNKNOWN:/3/library/",
+        "REDIRECT_BEHAVIOUR_UNKNOWN:/3/reference/"
+      ],
+      "evidenceSha256": "9594510b2014ba8b4b51fcc059ae2a718845827662a874a98cea6259875fd9ac"
+    },
+    {
+      "host": "pypi.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/pypi/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "6d36089d69f547cf53f8663757154eef08f9a22bac6ccfb992a591b04826302e"
+    },
+    {
+      "host": "registry.npmjs.org",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/next",
+        "/react"
+      ],
+      "reasons": [],
+      "evidenceSha256": "70f4e3b9fb7e50c8ddaa340192c82bc40ce7ec5d27c7b3d5c21c5362f659cbc5"
+    },
+    {
+      "host": "huggingface.co",
+      "decision": "ADMIT",
+      "tier": "T2",
+      "admittedPrefixes": [
+        "/api/daily_papers",
+        "/api/models"
+      ],
+      "reasons": [],
+      "evidenceSha256": "f25335a2db8ce682c45cdc846bd4600af565533ec5e0699ebdd30570f747b8ee"
+    },
+    {
+      "host": "www.anthropic.com",
+      "decision": "REFUSE",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "OFF_HOST_REDIRECT_ON_PREFIX:/engineering/",
+        "REDIRECT_BEHAVIOUR_UNKNOWN:/research/"
+      ],
+      "evidenceSha256": "fc92bc1197a47ed8e1678fffaaa668e19a6358b1544dd0daeb110f5f88b1ebdb"
+    },
+    {
+      "host": "code.claude.com",
+      "decision": "ADMIT",
+      "tier": "T1",
+      "admittedPrefixes": [
+        "/docs/en/"
+      ],
+      "reasons": [],
+      "evidenceSha256": "e2ade0ae11e11b9fc2e900aa09e38e116824fccf1def923513873eb29ac61467"
+    },
+    {
+      "host": "bair.berkeley.edu",
+      "decision": "DEFER",
+      "tier": "T2",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED"
+      ],
+      "evidenceSha256": "ae78b1389757a530c3a1063b43c09eeaabd035056bad6ec8eec6f52cfb8b918a"
+    },
+    {
+      "host": "www.usenix.org",
+      "decision": "DEFER",
+      "tier": "T1",
+      "admittedPrefixes": [],
+      "reasons": [
+        "TERMS_NOT_VERIFIED",
+        "CRAWL_DELAY_10s_NOT_ENFORCEABLE (no per-host pacing in the transport)"
+      ],
+      "evidenceSha256": "f91acbe60849283668fab7ae01c49497fb812effe67e526dd24ca4524ae21bb2"
+    }
+  ],
+  "honesty": [
+    "admission evidence (robots/redirect/terms/rate limits) was FETCHED by a provider research agent on 2026-11-23 and normalized by the coordinating session; it is a point-in-time observation — re-run admission before renewal",
+    "an ADMIT means 'allowed to be fetched by the governed chain', not 'trusted content': every finding is still stamped and sanitized as untrusted data",
+    "built by the Claude Code provider (coordinating session), not ODG-native construction"
+  ]
+}

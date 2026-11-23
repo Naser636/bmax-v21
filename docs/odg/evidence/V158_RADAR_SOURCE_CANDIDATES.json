@@ -1,0 +1,892 @@
+{
+ "generated": "2026-11-23",
+ "source": "V158 research dossier (provider research agent, fetched evidence 2026-11-23); normalized by the coordinating session — unparseable fields become UNKNOWN/undefined (deny-by-default)",
+ "refused_at_research": [
+  {
+   "host": "scholar.google.com",
+   "reason": "robots disallows /scholar for *; probe redirected to google.com/sorry (CAPTCHA) - would require CAPTCHA bypass"
+  },
+  {
+   "host": "dblp.org",
+   "reason": "robots (RFC 9309 merged groups) DISALLOWS /search/publ/api; site is behind Anubis bot challenge (FAQ fetch returned 'Access Denied'); stdlib robotparser wrongly reports ALLOWED"
+  },
+  {
+   "host": "dl.acm.org",
+   "reason": "403 on root and DOI page to automated client"
+  },
+  {
+   "host": "ieeexplore.ieee.org",
+   "reason": "202 bot-challenge response; content largely paywalled"
+  },
+  {
+   "host": "www.iso.org",
+   "reason": "403 on robots.txt and pages; standards are paid"
+  },
+  {
+   "host": "paperswithcode.com",
+   "reason": "defunct - every path 302 -> huggingface.co/papers/trending (cross-host); use huggingface.co instead"
+  },
+  {
+   "host": "api.crossref.org polite pool",
+   "reason": "requires sending an email address (personal data) - public pool only"
+  }
+ ],
+ "candidates": [
+  {
+   "host": "api.github.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api",
+   "prefixes": [
+    {
+     "path": "/repos/anthropics/claude-code",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/repos/ollama/ollama",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/repos/ggml-org/llama.cpp",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/repos/stripe/smokescreen",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/repos/google/osv.dev",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_OFFICIAL_API",
+    "access_type": "anonymous public JSON API",
+    "documented_rate_limit": "60 requests/hour unauthenticated (docs + live header x-ratelimit-limit: 60); honour retry-after / x-ratelimit-reset",
+    "robots_txt": "404 (no robots.txt) => RFC 9309 4xx: allow; AUP states API collection is not 'scraping'",
+    "redirect_observed": "none on sampled paths (200)",
+    "notes": "Already in canonical client ALLOWLIST. Keep repo-scoped prefixes; 60/h budget is tight - cache with ETag.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitPerHour": 60
+  },
+  {
+   "host": "export.arxiv.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "termsVerified": false,
+   "termsUrl": "https://info.arxiv.org/help/api/tou.html",
+   "prefixes": [
+    {
+     "path": "/api/query",
+     "robots": "DISALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_OWNER_DECISION",
+    "proposed_reputation_tier": "T1_OFFICIAL_API",
+    "access_type": "anonymous public Atom API",
+    "documented_rate_limit": "1 request / 3 s, single connection (arXiv API ToU)",
+    "robots_txt": "200 'User-agent: * Disallow: /' => robots DISALLOWS /api/query",
+    "redirect_observed": "http://->https 301; https sample 200",
+    "notes": "CONTRADICTION robots vs ToU. RFC 9309: robots is not access authorization; ToU explicitly licenses API use. Owner must decide which instrument governs; log it.",
+    "probed": "2026-11-23"
+   },
+   "ownerDecisionRequired": "CONDITIONAL_OWNER_DECISION: CONTRADICTION robots vs ToU. RFC 9309: robots is not access authorization; ToU explicitly licenses API use. Owner must decide which instrument governs; log it.",
+   "rateLimitPerHour": 1200
+  },
+  {
+   "host": "arxiv.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://info.arxiv.org/help/api/tou.html",
+   "prefixes": [
+    {
+     "path": "/abs/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_PRIMARY_PUBLISHER",
+    "access_type": "anonymous public HTML (abstract pages)",
+    "documented_rate_limit": "robots Crawl-delay: 15 for *; ToU (API) 1 req/3 s",
+    "robots_txt": "200; /abs/ allowed for *; /pdf/ allowed; /e-print, /src disallowed",
+    "redirect_observed": "none (200)",
+    "notes": "Prefer export.arxiv.org API for metadata; /abs/ only for single-paper verification at <=1 per 15 s. Do not admit /pdf/ in v1 (binary parsing surface).",
+    "probed": "2026-11-23"
+   },
+   "rateLimitPerHour": 240,
+   "crawlDelaySeconds": 15
+  },
+  {
+   "host": "api.crossref.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/access-and-authentication/",
+   "prefixes": [
+    {
+     "path": "/works",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_OFFICIAL_API",
+    "access_type": "anonymous public JSON API (public pool)",
+    "documented_rate_limit": "Public pool: DOI lookup 5 rps, queries 1 rps, concurrency 1 (doc + live headers x-rate-limit-limit:1, x-concurrency-limit:1)",
+    "robots_txt": "404 => allow",
+    "redirect_observed": "none on /works (200); root returned 429 after 2 rapid requests",
+    "notes": "Do NOT use the polite pool (requires an email = personal data).",
+    "probed": "2026-11-23"
+   },
+   "rateLimitPerHour": 3600
+  },
+  {
+   "host": "api.openalex.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T2",
+   "termsVerified": false,
+   "termsUrl": "https://help.openalex.org/api/authentication/",
+   "prefixes": [
+    {
+     "path": "/works",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_LOW_BUDGET",
+    "proposed_reputation_tier": "T2_AGGREGATOR",
+    "access_type": "anonymous public JSON API (keyless basic queries)",
+    "documented_rate_limit": "No key: 10 req/s per IP, ~USD 0.10/day budget (live headers: x-ratelimit-limit 1000 credits, x-ratelimit-limit-usd 0.1, cost 0.001/req); cursor paging needs a key",
+    "robots_txt": "200 'Allow: /'",
+    "redirect_observed": "docs.openalex.org/... redirects to help.openalex.org (cross-host); API sample 200",
+    "notes": "Usage-priced service; keyless budget ~100 req/day. Key = registration (owner-gated).",
+    "probed": "2026-11-23"
+   },
+   "ownerDecisionRequired": "CONDITIONAL_LOW_BUDGET: Usage-priced service; keyless budget ~100 req/day. Key = registration (owner-gated)."
+  },
+  {
+   "host": "api.semanticscholar.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T2",
+   "termsVerified": false,
+   "termsUrl": "https://www.semanticscholar.org/product/api",
+   "prefixes": [
+    {
+     "path": "/graph/v1/paper/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_UNRELIABLE",
+    "proposed_reputation_tier": "T2_AGGREGATOR",
+    "access_type": "anonymous public JSON API (shared pool)",
+    "documented_rate_limit": "1000 req/s SHARED among all unauthenticated users; heavy throttling (live probe got 429 on first request)",
+    "robots_txt": "404 => allow",
+    "redirect_observed": "root 301 -> https://www.semanticscholar.org/product/api (cross-host); API path no redirect",
+    "notes": "Anonymous pool frequently exhausted; treat 429 as normal; license agreement governs API use.",
+    "probed": "2026-11-23"
+   },
+   "ownerDecisionRequired": "CONDITIONAL_UNRELIABLE: Anonymous pool frequently exhausted; treat 429 as normal; license agreement governs API use."
+  },
+  {
+   "host": "www.rfc-editor.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://trustee.ietf.org/documents/trust-legal-provisions/",
+   "prefixes": [
+    {
+     "path": "/rfc/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_STANDARDS_BODY",
+    "access_type": "anonymous public HTML/TXT",
+    "documented_rate_limit": "none documented (no Crawl-delay)",
+    "robots_txt": "200; disallows only /rfc/authors/, /rfc/rerendered/, /rfc/v3test/",
+    "redirect_observed": "none (200)",
+    "notes": "Prefer /rfc/rfcNNNN.txt (plain text, minimal parsing surface).",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "datatracker.ietf.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://trustee.ietf.org/documents/trust-legal-provisions/",
+   "prefixes": [
+    {
+     "path": "/doc/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/api/v1/doc/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_STANDARDS_BODY",
+    "access_type": "anonymous public HTML + JSON API",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200; disallows /doc/pdf/ only",
+    "redirect_observed": "none (200)",
+    "notes": "",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "www.w3.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://www.w3.org/copyright/document-license-2023/",
+   "prefixes": [
+    {
+     "path": "/TR/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_STANDARDS_BODY",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200 (3.8 KB); /TR/ allowed for *",
+    "redirect_observed": "/TR -> /TR/ (same-host 301 trailing slash); /copyright/document-license/ -> -2023/",
+    "notes": "Use exact trailing-slash prefix to avoid same-host redirect being blocked.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "csrc.nist.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://www.nist.gov/copyrights-disclaimers",
+   "prefixes": [
+    {
+     "path": "/pubs/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_GOVERNMENT_STANDARDS",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200; /pubs/ allowed",
+    "redirect_observed": "none (200)",
+    "notes": "",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "nvlpubs.nist.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://www.nist.gov/copyrights-disclaimers",
+   "prefixes": [
+    {
+     "path": "/nistpubs/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_GOVERNMENT_STANDARDS",
+    "access_type": "anonymous public PDF",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "404 => allow",
+    "redirect_observed": "none (200)",
+    "notes": "PDF only: requires sandboxed parser.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "services.nvd.nist.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "termsVerified": false,
+   "termsUrl": "https://nvd.nist.gov/developers/start-here (fetched, content not retrievable)",
+   "prefixes": [
+    {
+     "path": "/rest/json/cves/2.0",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_TERMS_UNVERIFIED",
+    "proposed_reputation_tier": "T1_GOVERNMENT_STANDARDS",
+    "access_type": "anonymous public JSON API",
+    "documented_rate_limit": "NOT VERIFIED: NVD developer pages (nvd.nist.gov/developers/*) returned a 13-byte body to curl and WebFetch could not render them",
+    "robots_txt": "404 => allow",
+    "redirect_observed": "none (200)",
+    "notes": "Do not admit until rate limit is verified from an official source.",
+    "probed": "2026-11-23"
+   }
+  },
+  {
+   "host": "api.osv.dev",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://google.github.io/osv.dev/faq/",
+   "prefixes": [
+    {
+     "path": "/v1/vulns/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/v1/query",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_OFFICIAL_API",
+    "access_type": "anonymous public JSON API",
+    "documented_rate_limit": "FAQ: 'Currently there is not a limit on the API'; 32 MiB response cap on HTTP/1.1",
+    "robots_txt": "404 => allow",
+    "redirect_observed": "root 404; sample 200",
+    "notes": "Self-impose a budget (e.g. <=1 rps) - no limit != unlimited.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "www.cisa.gov",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+   "prefixes": [
+    {
+     "path": "/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_GOVERNMENT",
+    "access_type": "anonymous public JSON file",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200; path allowed",
+    "redirect_observed": "none (200)",
+    "notes": "Single file: fetch at most daily with ETag.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "cheatsheetseries.owasp.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T2",
+   "termsVerified": false,
+   "termsUrl": "https://cheatsheetseries.owasp.org/ (no dedicated terms page verified; owasp licensing URL tried returned 404)",
+   "prefixes": [
+    {
+     "path": "/cheatsheets/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_TERMS_UNVERIFIED",
+    "proposed_reputation_tier": "T2_COMMUNITY_STANDARD",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200 'Allow: /'",
+    "redirect_observed": "none (200)",
+    "notes": "",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "genai.owasp.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T2",
+   "termsVerified": false,
+   "termsUrl": "(no terms page verified)",
+   "prefixes": [
+    {
+     "path": "/llmrisk/llm01-prompt-injection/",
+     "robots": "ALLOW",
+     "redirect": "UNKNOWN",
+     "sampled200": false
+    },
+    {
+     "path": "/llm-top-10/",
+     "robots": "ALLOW",
+     "redirect": "UNKNOWN",
+     "sampled200": false
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_TERMS_UNVERIFIED",
+    "proposed_reputation_tier": "T2_COMMUNITY_STANDARD",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200; paths allowed",
+    "redirect_observed": "/llmrisk/ index 404 => list exact pages",
+    "notes": "/llm-top-10/ not probed - verify before admission.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "opentelemetry.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://opentelemetry.io/docs/ (license notice in footer; not separately verified)",
+   "prefixes": [
+    {
+     "path": "/docs/specs/otel/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_PROJECT_OFFICIAL",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200 'User-agent: *' (no rules) => allow",
+    "redirect_observed": "/docs/specs/otel -> /docs/specs/otel/ (same-host 301)",
+    "notes": "",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "kubernetes.io",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": false,
+   "termsUrl": "https://kubernetes.io/docs/home/",
+   "prefixes": [
+    {
+     "path": "/docs/home/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/docs/concepts/",
+     "robots": "ALLOW",
+     "redirect": "UNKNOWN",
+     "sampled200": false
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_TERMS_UNVERIFIED",
+    "proposed_reputation_tier": "T1_PROJECT_OFFICIAL",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200; /docs/ allowed",
+    "redirect_observed": "/docs/ -> /docs/home/ (same-host 301)",
+    "notes": "/docs/concepts/ not probed.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "www.postgresql.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://www.postgresql.org/about/policies/",
+   "prefixes": [
+    {
+     "path": "/docs/current/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_PROJECT_OFFICIAL",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200; /docs/current/ allowed",
+    "redirect_observed": "none (200)",
+    "notes": "",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "www.sqlite.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://www.sqlite.org/copyright.html",
+   "prefixes": [
+    {
+     "path": "/docs.html",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/lang.html",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_PROJECT_OFFICIAL",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200; disallows /cvstrac,/src,/docsrc,/cgi,/contrib",
+    "redirect_observed": "none (200)",
+    "notes": "Public-domain content. /lang.html not probed.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "docs.python.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": false,
+   "termsUrl": "https://docs.python.org/3/license.html (not fetched)",
+   "prefixes": [
+    {
+     "path": "/3/library/",
+     "robots": "ALLOW",
+     "redirect": "UNKNOWN",
+     "sampled200": false
+    },
+    {
+     "path": "/3/reference/",
+     "robots": "ALLOW",
+     "redirect": "UNKNOWN",
+     "sampled200": false
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_TERMS_UNVERIFIED",
+    "proposed_reputation_tier": "T1_PROJECT_OFFICIAL",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200; allowed",
+    "redirect_observed": "root / -> /3/ (same-host 302)",
+    "notes": "",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "pypi.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://docs.pypi.org/api/",
+   "prefixes": [
+    {
+     "path": "/pypi/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_OFFICIAL_API",
+    "access_type": "anonymous public JSON API (/pypi/<pkg>/json)",
+    "documented_rate_limit": "No edge rate limiting; set identifying User-Agent; use ETag; prefer serial requests; may block irresponsible clients",
+    "robots_txt": "200; /pypi/ allowed",
+    "redirect_observed": "none (200)",
+    "notes": "",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "registry.npmjs.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://docs.npmjs.com/policies/open-source-terms/",
+   "prefixes": [
+    {
+     "path": "/next",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/react",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_OFFICIAL_API",
+    "access_type": "anonymous public JSON API",
+    "documented_rate_limit": "No per-second limit; ToS: >5,000,000 requests/month never reasonable; Website automation forbidden but Public APIs permitted",
+    "robots_txt": "200; sampled path allowed",
+    "redirect_observed": "none (200)",
+    "notes": "Admit per-package paths only.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitPerHour": 6944
+  },
+  {
+   "host": "huggingface.co",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_API",
+   "tier": "T2",
+   "termsVerified": true,
+   "termsUrl": "https://huggingface.co/docs/hub/rate-limits",
+   "prefixes": [
+    {
+     "path": "/api/daily_papers",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    },
+    {
+     "path": "/api/models",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T2_PLATFORM_UGC",
+    "access_type": "anonymous public JSON API",
+    "documented_rate_limit": "Anonymous: 500 API req / 5-min window per IP (rate-limits doc, Sept 2025 values, 'subject to change')",
+    "robots_txt": "200 'Allow: /'",
+    "redirect_observed": "none (200); paperswithcode.com now 302s here",
+    "notes": "User-generated content platform: highest injection risk; metadata only, never model cards into planner context unfiltered.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitPerHour": 6000
+  },
+  {
+   "host": "www.anthropic.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://www.anthropic.com/legal/aup",
+   "prefixes": [
+    {
+     "path": "/engineering/",
+     "robots": "ALLOW",
+     "redirect": "OFF_HOST",
+     "sampled200": true
+    },
+    {
+     "path": "/research/",
+     "robots": "ALLOW",
+     "redirect": "UNKNOWN",
+     "sampled200": false
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_VENDOR_PRIMARY",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200 'Allow: /'",
+    "redirect_observed": "/engineering/ -> /engineering (308, trailing-slash); /engineering/claude-code-best-practices -> code.claude.com/docs/en/best-practices (308 cross-host)",
+    "notes": "FINDING vs V16 grant: the grant's '/engineering/' index itself 308-redirects, and at least one article migrated cross-host => REDIRECT_BLOCKED expected for those URLs.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls",
+   "note": "/engineering/ 308 -> /engineering and at least one article 308 -> code.claude.com (cross-host): REFUSED; also explains V16 REDIRECT_BLOCKED"
+  },
+  {
+   "host": "code.claude.com",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": true,
+   "termsUrl": "https://www.anthropic.com/legal/aup",
+   "prefixes": [
+    {
+     "path": "/docs/en/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CANDIDATE",
+    "proposed_reputation_tier": "T1_VENDOR_PRIMARY",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "200; Content-Signal ai-input=yes; /docs/en/ allowed",
+    "redirect_observed": "root / -> www.claude.com (302); /docs/en/ 200; docs.anthropic.com and docs.claude.com 301 -> code.claude.com (verifies V16 grant's UNVERIFIED expectation)",
+    "notes": "",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "bair.berkeley.edu",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T2",
+   "termsVerified": false,
+   "termsUrl": "(no terms page verified)",
+   "prefixes": [
+    {
+     "path": "/blog/",
+     "robots": "NO_ROBOTS_4XX",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_TERMS_UNVERIFIED",
+    "proposed_reputation_tier": "T2_ACADEMIC_LAB",
+    "access_type": "anonymous public HTML",
+    "documented_rate_limit": "none documented",
+    "robots_txt": "404 => allow",
+    "redirect_observed": "none (200)",
+    "notes": "",
+    "probed": "2026-11-23"
+   },
+   "rateLimitDocumented": false,
+   "rateLimitNote": "none documented (verified by research); bounded only by the grant per-run maxCalls"
+  },
+  {
+   "host": "www.usenix.org",
+   "scheme": "https",
+   "access": "ANONYMOUS_PUBLIC_HTML",
+   "tier": "T1",
+   "termsVerified": false,
+   "termsUrl": "https://www.usenix.org/conferences/byname/179 (index; terms page not found - /about/opening 404)",
+   "prefixes": [
+    {
+     "path": "/conference/",
+     "robots": "ALLOW",
+     "redirect": "NONE",
+     "sampled200": true
+    }
+   ],
+   "raw": {
+    "admission_status": "CONDITIONAL_TERMS_UNVERIFIED",
+    "proposed_reputation_tier": "T1_ACADEMIC_PUBLISHER",
+    "access_type": "anonymous public HTML (open-access proceedings)",
+    "documented_rate_limit": "robots Crawl-delay: 10 for *",
+    "robots_txt": "200; /conference/ allowed",
+    "redirect_observed": "none (200); /system/files/ (PDFs) returned 403 to probe",
+    "notes": "PDF downloads 403 to automated client => exclude /system/files/.",
+    "probed": "2026-11-23"
+   },
+   "rateLimitPerHour": 360,
+   "crawlDelaySeconds": 10
+  }
+ ],
+ "normalization": "explicit per-field mapping from the raw fetched evidence (raw kept under each candidate); unobserved ⇒ UNKNOWN; robots Disallow ⇒ DISALLOW; rate limits converted to requests/hour (Crawl-delay N s ⇒ 3600/N)"
+}
