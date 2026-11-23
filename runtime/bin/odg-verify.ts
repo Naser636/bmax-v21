@@ -105,10 +105,35 @@ function verifyGeneratedContracts(): any {
   return out;
 }
 
+// V16.1 — DELEGATED-PATCH gitClean (odg-delegate only). odg-delegate observes the provider's UNCOMMITTED patch ONCE
+// (scope-observer.gitChangedPathsChecked), proves EVERY observed path in-scope (scopeClean) and outside every protected
+// root (protectedClean) on that SAME observation, and only then hands verify that exact path list
+// (`--delegated-path=<p>`, one per path). Here gitClean is judged on the SAME porcelain surface as the default gate
+// (same artifact excludes) but NUL-delimited with untracked files expanded (so a new file can never hide behind a
+// collapsed directory entry), and a dirty entry is tolerated ONLY when it is EXACTLY one of those proven paths (both
+// sides of a rename/copy must be). Anything else dirty ⇒ gitClean=false; a git error ⇒ false; an empty/invalid list is
+// never "tolerate everything" (it tolerates nothing). Without the flag (Release Manager, local pipeline, adapter
+// refresh, every other caller) runVerify takes the UNCHANGED default branch below — byte-identical behaviour.
+function delegatedGitClean(porcelainZ: string, provenInScope: string[]): { gitClean: boolean; residual: string[] } {
+  const proven = new Set((Array.isArray(provenInScope) ? provenInScope : []).filter((p) => typeof p === "string" && p.length > 0));
+  const fields = String(porcelainZ || "").split("\0");
+  const residual: string[] = [];
+  for (let i = 0; i < fields.length; i++) {
+    const rec = fields[i];
+    if (!rec) continue;
+    if (rec.length < 4) { residual.push(rec); continue; }   // unparseable record ⇒ never tolerated (fail-closed)
+    const xy = rec.slice(0, 2);
+    const paths = [rec.slice(3)];
+    if (/[RC]/.test(xy) && i + 1 < fields.length && fields[i + 1]) { paths.push(fields[i + 1]); i++; }
+    for (const p of paths) if (!proven.has(p)) residual.push(p);
+  }
+  return { gitClean: residual.length === 0, residual };
+}
+
 // Run the full verification and return the computed `verify` object. Side-effect: spawns
 // `npm run build` and `npx tsc --noEmit` and reads the working tree — so it is ONLY ever called
 // from the CLI entrypoint below (never on `require`, which must stay side-effect-free for tests).
-function runVerify(explicitMission?: any): any {
+function runVerify(explicitMission?: any, opts?: { delegatedPaths?: string[] }): any {
   const verify: any={
     generatedAt:new Date().toISOString(),
     build:true,
@@ -129,7 +154,23 @@ function runVerify(explicitMission?: any): any {
   }
 
   const ARTIFACT_EXCLUDES = gitCleanExcludes();
-  try {
+  const delegatedPaths = opts && Array.isArray(opts.delegatedPaths) ? opts.delegatedPaths : null;
+  if (delegatedPaths) {
+    try {
+      const z = cp.execFileSync("git", ["status", "--porcelain=v1", "-z", "--untracked-files=all", "--", ...ARTIFACT_EXCLUDES], { encoding: "utf8" });
+      const d = delegatedGitClean(String(z), delegatedPaths);
+      // #922 inspection MED: the PERSISTED gitClean keeps its default meaning (the tree is NOT clean while the delegated
+      // patch is uncommitted) because other consumers (acceptance-facts → mechanical-acceptance, stage-build-ts-evidence)
+      // read only `gitClean`. The delegated verdict is a SEPARATE field; only verifyExitCode in delegated mode uses it.
+      verify.gitClean = false;
+      verify.delegatedPatchClean = d.gitClean;
+      verify.gitCleanScope = { mode: "DELEGATED_PATCH", provenInScope: delegatedPaths.slice().sort(), residualDirty: d.residual, note: "gitClean=false is the tree state; delegatedPatchClean is the delegate's verdict (exact proven paths only)" };
+    } catch {
+      verify.gitClean = false;   // git unavailable ⇒ the tree cannot be proven clean — fail closed (same as default)
+      verify.delegatedPatchClean = false;
+      verify.gitCleanScope = { mode: "DELEGATED_PATCH", provenInScope: delegatedPaths.slice().sort(), residualDirty: ["<git status failed>"] };
+    }
+  } else try {
     const porcelain = cp
       .execSync(`git status --porcelain -- ${ARTIFACT_EXCLUDES.map((p) => `'${p}'`).join(" ")}`, {
         encoding: "utf8",
@@ -161,13 +202,22 @@ function runVerify(explicitMission?: any): any {
 // into a non-zero exit here. `--report-only` (used by odg-local-pipeline.sh's pre-flight, which does
 // its OWN content gating and deliberately tolerates a dirty tree for FINALIZE_*/CLOSEOUT_* missions)
 // generates the evidence file without propagating the exit code, preserving that pipeline exactly.
+// `--delegated-path=<p>` (repeatable) — ONLY odg-delegate passes it. null when absent ⇒ the default gate, unchanged.
+function parseDelegatedPaths(argv: string[]): string[] | null {
+  const pre = "--delegated-path=";
+  const list = (Array.isArray(argv) ? argv : []).filter((a) => typeof a === "string" && a.startsWith(pre)).map((a) => a.slice(pre.length));
+  return list.length ? list : null;
+}
+
 function verifyExitCode(verify: any, reportOnly?: any): number {
   if(reportOnly)return 0;
-  const green = !!verify && verify.build===true && verify.typescript===true && verify.gitClean===true;
+  // delegated mode (gitCleanScope.mode === DELEGATED_PATCH): the clean verdict is delegatedPatchClean; default: gitClean.
+  const clean = verify && verify.gitCleanScope && verify.gitCleanScope.mode === "DELEGATED_PATCH" ? verify.delegatedPatchClean === true : verify && verify.gitClean === true;
+  const green = !!verify && verify.build===true && verify.typescript===true && clean;
   return green?0:1;
 }
 
-module.exports = { verifyExitCode, runVerify, gitCleanExcludes };
+module.exports = { verifyExitCode, runVerify, gitCleanExcludes, delegatedGitClean, parseDelegatedPaths };
 
 export {};
 
@@ -175,8 +225,9 @@ if(require.main===module){
   const args=process.argv.slice(2);
   const reportOnly=args.includes("--report-only");
   const explicitMission=args.find((a)=>!a.startsWith("--"));
+  const delegatedPaths=parseDelegatedPaths(args);
 
-  const verify=runVerify(explicitMission);
+  const verify=delegatedPaths?runVerify(explicitMission,{delegatedPaths}):runVerify(explicitMission);
 
   fs.writeFileSync(
     "runtime/generated/runtime-verify.json",
