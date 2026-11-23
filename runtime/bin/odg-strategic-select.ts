@@ -81,7 +81,17 @@ function loadSources(root: string): any {
     inputs.push({ source: rel, sha256: sha256(txt) });
     laterEvidence.push({ path: rel, data: { gapRef: data.gapRef } });
   }
-  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, inputs };
+  // BLK-2 / REL-2 / DEP-2 inputs: the declared CP8-or-later benefit evidence files (CP8 itself is already loaded above).
+  const benefitEvidence: any[] = [];
+  const benefitFiles = Array.from(new Set(REG.BLOCKER_FIELDS.concat(REG.PR_RECORD_FIELDS).map((b: any) => b.file).concat([REG.LATEST_CHECKPOINT]))).filter((f: any) => f !== path.basename(CP8_REL)).sort() as string[];
+  for (const f of benefitFiles) {
+    const rel = `${EVIDENCE_DIR_REL}/${f}`;
+    let txt: string;
+    try { txt = fs.readFileSync(path.join(root, rel), "utf8"); } catch { inputs.push({ source: rel, sha256: null, note: "UNAVAILABLE — BLK-2/REL-2/DEP-2 records from it absent" }); continue; }
+    inputs.push({ source: rel, sha256: sha256(txt) });
+    benefitEvidence.push({ path: rel, data: JSON.parse(txt) });
+  }
+  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, inputs };
 }
 
 const SELECTOR_OPTIONS = Object.freeze({ weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
@@ -166,13 +176,13 @@ function compute(sources: any): any {
     grading: grade(register, decision, again, inv),
     honestLimits: [
       "criterion rules, equal weights, epsilon 0.02 and uncertaintyMax 0.5 were written by the provider, not derived from a canonical owner source — ODG applies them; the owner may replace them",
-      "4 of 10 criteria (blocker/repetition reduction, reliability/quality, speed/efficiency, reusability) are NOT_MEASURED for every item: no evidence field supports them; they enter only as uncertainty",
+      "4 of 10 criteria (blocker/repetition reduction, reliability/quality, speed/efficiency, reusability) are NOT_MEASURED for every non-capability-gap item: no evidence field supports them; they enter only as uncertainty",
       "strategicValue and capabilityGain come from V150 summary.top10NextInternal, itself a provider research ranking (V150 meta.generator) made before F/G/J were executed",
       "CP8 is read from main (merged #926); the fallback to origin/docs/v163-checkpoint-8 applies only when it is absent; its sha256 is in inputs, so a CP8 change is detected as drift",
       "owner-authorization flags of CP8_CAPABILITY_GAP items encode the CP8 (pre-V165) state; the owner authorizations of directive V165 (docs/odg/V165_OWNER_AUTHORIZATION.json) are NOT reflected in those flags; contract states ARE read live (e.g. G AUTHORIZED per V165 §1)",
       "dependency edges between items: none are stated in the evidence, so R1 (unblocking) never discriminates",
       "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
-      "CP8_CAPABILITY_GAP items (ODG's own capability gaps): only evidenceLevel is derivable, every other criterion is NOT_MEASURED (uncertainty 0.9), so under uncertaintyMax 0.5 none can be the choice until benefit criteria are measured; the GAP_LINKS dedupe table and OWN-2 were written by the provider; no authorization was created or inferred",
+      "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
       "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
     ],
   };

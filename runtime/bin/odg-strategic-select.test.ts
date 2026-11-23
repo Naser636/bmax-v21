@@ -49,6 +49,10 @@ const committedPath = path.join(ROOT, B.OUT_REL);
 if (fs.existsSync(committedPath)) {
   const committed = JSON.parse(fs.readFileSync(committedPath, "utf8"));
   check("committed record carries pre-registration, inputs sha256, HEAD, decision and grading", !!committed.preRegistration && Array.isArray(committed.inputs) && typeof committed.generatedAtHead === "string" && !!committed.decisionRecord && !!committed.grading);
+  const gaps = committed.register.items.filter((x: any) => x.kind === "CP8_CAPABILITY_GAP");
+  check("committed record: benefit inputs (GO cycle, CP9, closure dossier) pinned by sha256", ["V164_GO_CYCLE.json", "V166_CHECKPOINT_9.json", "V167_V166_CLOSURE_DOSSIER.json"].every((f: string) => committed.inputs.some((i: any) => i.source.endsWith(f) && /^[0-9a-f]{64}$/.test(i.sha256))));
+  check("committed record: every measured gap BLK/REL/DEP value is a BLK-2/REL-2/DEP-2 rule with sources; the rest NOT_MEASURED with value null", gaps.length === 11 && gaps.every((x: any) => ["blockerRepetitionReduction", "reliabilityQuality", "dependencyAvailability"].every((k) => x.criteria[k].status === "MEASURED" ? /^(BLK|REL|DEP)-2$/.test(x.criteria[k].rule) && x.criteria[k].source.length > 0 : x.criteria[k].value === null)));
+  check("committed record: no gap item is the strategic choice while its uncertainty exceeds uncertaintyMax", !gaps.some((x: any) => x.id === committed.decisionRecord.selected));
   const live = B.loadSources(ROOT);
   if (JSON.stringify(live.inputs) === JSON.stringify(committed.inputs)) check("committed record has no drift vs the reachable sources (--check)", quiet(() => B.main(["--check"])).code === 0);
   else process.stdout.write("skip - committed-record drift check (inputs not all reachable here, e.g. CP8 branch not fetched)\n");
