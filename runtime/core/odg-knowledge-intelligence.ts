@@ -55,7 +55,7 @@ const PUBLISHERS: Record<string, any> = Object.freeze({
   "www.postgresql.org": { organization: "PostgreSQL Global Development Group", family: "postgresql", role: "PRIMARY_OFFICIAL" },
   "code.claude.com": { organization: "Anthropic", family: "anthropic", role: "PRIMARY_OFFICIAL" },
   "www.sqlite.org": { organization: "SQLite project (Hwaci)", family: "sqlite", role: "PRIMARY_OFFICIAL" },
-  "registry.npmjs.org": { organization: "npm, Inc. (GitHub)", family: "github-npm", role: "PRIMARY_OFFICIAL" },
+  "registry.npmjs.org": { organization: "npm, Inc. (GitHub, Microsoft)", family: "github", role: "PRIMARY_OFFICIAL" },   // family = owning organisation: a future github.com entry must share it
 });
 function hostOf(u: any): string { try { return new URL(String(u)).hostname.toLowerCase(); } catch { return ""; } }
 function identityOf(url: string): any {
@@ -212,6 +212,11 @@ function assessClaim(claim: any, opts: any): any {
   else if (matching.length >= 1 && officialPrimary && c.nature === "OFFICIAL_DOCUMENTATION") { epistemic = "SUPPORTED"; reasons.push("verified OFFICIAL primary source documenting its own statement (" + (knownFamilies[0] || "?") + ") — supports WHAT THE PUBLISHER STATES, not a general truth"); }
   else if (matching.length >= 1) { epistemic = "CANDIDATE"; reasons.push("verified citation, but nature '" + (c.nature || "?") + "' needs " + (c.nature === "PERFORMANCE_CLAIM" ? "an independent reproducible benchmark" : c.nature === "SCIENTIFIC_PUBLICATION" ? "methodology/reproducibility review" : "evidence appropriate to its nature")); }
   else if (perSource.length) { epistemic = "UNKNOWN"; reasons.push("no source citation verified against the recorded page text"); }
+  // V15.9 (#911 inspection MED): a FRAGMENT citation (page title/heading, keyword list, index summary line, table-row or
+  // dependency-list fragment) states something but does not ground the question it is attached to: it can never rise above
+  // CANDIDATE, whatever the publisher's authority — so it can never unlock implementation-level use. Explicit, fail-closed:
+  // any truthy-but-non-boolean marker is treated as a fragment too.
+  if (c.fragment !== undefined && c.fragment !== false && (epistemic === "SUPPORTED" || epistemic === "CORROBORATED")) { epistemic = "CANDIDATE"; reasons.push("FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"); }
   if (matching.length >= 2 && knownFamilies.length < 2) reasons.push("repetition within ONE publisher family (" + (knownFamilies.join(",") || "unknown") + ") is NOT independent corroboration");
   if (unknownIdentity) reasons.push(unknownIdentity + " source(s) with UNKNOWN publisher identity — not counted for independence");
   if (ungrounded) reasons.push(ungrounded + " verified citation(s) without a GROUNDED own structured key — not counted");

@@ -8,8 +8,8 @@
     "claims": 15,
     "keysAuthored": 14,
     "CORROBORATED": 0,
-    "SUPPORTED": 14,
-    "CANDIDATE": 0,
+    "SUPPORTED": 6,
+    "CANDIDATE": 8,
     "UNKNOWN": 1,
     "citationsVerified": 15,
     "keptInMemory": 15,
@@ -279,7 +279,7 @@
         ]
       },
       "dimensions": {
-        "epistemic": "SUPPORTED",
+        "epistemic": "CANDIDATE",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
@@ -309,7 +309,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified OFFICIAL primary source documenting its own statement (anthropic) — supports WHAT THE PUBLISHER STATES, not a general truth"
+        "verified OFFICIAL primary source documenting its own statement (anthropic) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -429,7 +430,7 @@
         ]
       },
       "dimensions": {
-        "epistemic": "SUPPORTED",
+        "epistemic": "CANDIDATE",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
@@ -459,7 +460,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified OFFICIAL primary source documenting its own statement (anthropic) — supports WHAT THE PUBLISHER STATES, not a general truth"
+        "verified OFFICIAL primary source documenting its own statement (anthropic) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -479,7 +481,7 @@
         ]
       },
       "dimensions": {
-        "epistemic": "SUPPORTED",
+        "epistemic": "CANDIDATE",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
@@ -509,7 +511,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth"
+        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -529,7 +532,7 @@
         ]
       },
       "dimensions": {
-        "epistemic": "SUPPORTED",
+        "epistemic": "CANDIDATE",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
@@ -559,7 +562,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth"
+        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -579,7 +583,7 @@
         ]
       },
       "dimensions": {
-        "epistemic": "SUPPORTED",
+        "epistemic": "CANDIDATE",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
@@ -609,7 +613,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth"
+        "verified OFFICIAL primary source documenting its own statement (nist) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -629,7 +634,7 @@
         ]
       },
       "dimensions": {
-        "epistemic": "SUPPORTED",
+        "epistemic": "CANDIDATE",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
@@ -659,7 +664,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified OFFICIAL primary source documenting its own statement (sqlite) — supports WHAT THE PUBLISHER STATES, not a general truth"
+        "verified OFFICIAL primary source documenting its own statement (sqlite) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -679,7 +685,7 @@
         ]
       },
       "dimensions": {
-        "epistemic": "SUPPORTED",
+        "epistemic": "CANDIDATE",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
@@ -709,7 +715,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified OFFICIAL primary source documenting its own statement (sqlite) — supports WHAT THE PUBLISHER STATES, not a general truth"
+        "verified OFFICIAL primary source documenting its own statement (sqlite) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
@@ -729,7 +736,7 @@
         ]
       },
       "dimensions": {
-        "epistemic": "SUPPORTED",
+        "epistemic": "CANDIDATE",
         "maturity": "USABLE",
         "authorization": "DESIGN_PROPOSAL",
         "risk": "LOW"
@@ -759,7 +766,8 @@
         "usableForIntegrationRequest": "DESIGN_PROPOSAL"
       },
       "reasons": [
-        "verified OFFICIAL primary source documenting its own statement (sqlite) — supports WHAT THE PUBLISHER STATES, not a general truth"
+        "verified OFFICIAL primary source documenting its own statement (sqlite) — supports WHAT THE PUBLISHER STATES, not a general truth",
+        "FRAGMENT citation (title/heading/keyword/index/table-row/dependency line) ⇒ capped at CANDIDATE — states a fragment, does not ground the question"
       ]
     },
     {
