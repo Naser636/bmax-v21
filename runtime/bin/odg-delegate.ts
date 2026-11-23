@@ -95,10 +95,14 @@ function pathTokens(strings: any[]): string[] {
 
 const objectives = Array.isArray(plan.objectives) ? plan.objectives : [];
 const objectiveText = objectives.flatMap((o: any) => [o.goal, ...(o.done_when || [])]);
-const derived =
-  Array.isArray(plan.authorizedPaths) && plan.authorizedPaths.length > 0
-    ? plan.authorizedPaths
-    : pathTokens([...objectiveText, ...(plan.definitionOfDone || [])]);
+const contractDeclared = Array.isArray(plan.authorizedPaths) && plan.authorizedPaths.length > 0;
+const derived = contractDeclared ? plan.authorizedPaths : pathTokens([...objectiveText, ...(plan.definitionOfDone || [])]);
+// V16.0 FIX — a path the CONTRACT explicitly authorizes is part of the scope even if it does not exist yet: a mission
+// whose job is to CREATE a file (a checkpoint, a new module) must have that file in scope, otherwise the provider either
+// cannot do the work or writes outside the brief. Only paths GUESSED from objective text are dropped when absent.
+// Contract-declared paths are still validated as plain repo-relative paths (no absolute, no '..', no NUL/backslash).
+const safeRel = (p: any) => typeof p === "string" && p.length > 0 && !path.isAbsolute(p) && !/(^|\/)\.\.(\/|$)/.test(p) && !/[\0\\]/.test(p);
+const authorizedToCreate = new Set<string>(contractDeclared ? plan.authorizedPaths.filter(safeRel) : []);
 
 const contractPath = plan.source || path.join("runtime", "missions", `${mission}.json`);
 // A scope entry is kept when it is a glob/directory boundary the contract declares (e.g. `runtime/**`)
@@ -106,8 +110,11 @@ const contractPath = plan.source || path.join("runtime", "missions", `${mission}
 // disk. Phantom concrete paths are dropped so the brief stays honest and minimal.
 const isBoundary = (p: string) => p.includes("*") || p.endsWith("/");
 const scope = [...new Set([contractPath, ...derived])]
+  // unsafe paths ('..', absolute, NUL/backslash) NEVER enter the scope — even if they exist on disk (e.g. /etc/passwd)
+  .filter((p: string) => p === contractPath || safeRel(p))
   .filter((p: string) => {
     if (isBoundary(p)) return true;
+    if (authorizedToCreate.has(p)) return true;   // contract-authorized (may be created by the mission)
     try {
       return fs.existsSync(p);
     } catch {
