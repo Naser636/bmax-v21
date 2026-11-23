@@ -26,15 +26,34 @@ function git(args: string[]): { ok: boolean; out: string; code: number | null } 
   return { ok: r.status === 0, out: r.stdout || "", code: r.status };
 }
 
+/** changedFilesOf(base, head, cwd) — the change-set. --no-renames: a rename is reported as delete(old) + add(new), so BOTH
+ *  paths are classified (a `git mv` of a control-surface file can never hide behind its new, innocuous name). */
+function changedFilesOf(base: string, head: string, cwd: string = ROOT): { ok: boolean; files: string[]; error: string | null } {
+  const r = cp.spawnSync("git", ["diff", "--name-only", "--no-renames", "-z", `${base}...${head}`], { cwd, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+  if (r.status !== 0) return { ok: false, files: [], error: `git diff ${base}...${head} failed (exit ${r.status}) ⇒ empty change-set ⇒ L3 (fail closed)` };
+  return { ok: true, files: (r.stdout || "").split("\0").filter((x: string) => x.length), error: null };
+}
+
+/** exitFor(plan, ctx) — PURE exit policy. An L3 plan is NEVER exit < 2, even when L1/L2 were measured (--measure is
+ *  MEASUREMENT_ONLY, not a pass). A suite failure / tsc failure / diff error / an executed tier with 0 suites ⇒ ≥ 1. */
+function exitFor(plan: any, ctx: any): { code: number; status: string } {
+  let code = ctx.errors ? 1 : 0; let status = ctx.errors ? "ERROR" : "PLAN_ONLY";
+  if (ctx.executed) status = "EXECUTED";
+  if (ctx.failed) { code = Math.max(code, 1); status = "FAILED"; }
+  if (ctx.noTestsSelected) { code = Math.max(code, 1); status = "NO_TESTS_SELECTED"; }
+  if (ctx.run && plan.level === "L3") { code = Math.max(code, 2); status = ctx.measuring ? "MEASUREMENT_ONLY_PLAN_IS_L3 (not a pass)" : "L3_FULL_GATE_REQUIRED (not executed here)"; }
+  return { code, status };
+}
+
 async function main(): Promise<number> {
   const base = arg("--base", "origin/main"), head = arg("--head", "HEAD");
   let files: string[] = []; const errors: string[] = [];
   const explicit = arg("--files");
   if (explicit) files = explicit.split(",").filter((x: string) => x.length);
   else {
-    const d = git(["diff", "--name-only", "-z", `${base}...${head}`]);
-    if (!d.ok) errors.push(`git diff ${base}...${head} failed (exit ${d.code}) ⇒ empty change-set ⇒ L3 (fail closed)`);
-    files = d.ok ? d.out.split("\0").filter((x: string) => x.length) : [];
+    const d = changedFilesOf(base, head);
+    if (!d.ok) errors.push(d.error as string);
+    files = d.files;
   }
   let pkg: any = null;
   if (!explicit) {
@@ -51,14 +70,14 @@ async function main(): Promise<number> {
 
   const measure = (arg("--measure", "") as string).split(",").filter(Boolean);
   const run = flag("--run") || measure.length > 0;
-  let exit = errors.length ? 1 : 0;
+  let failed = false, noTestsSelected = false, executed = false;
   if (run) {
     const tiers = measure.length ? measure.filter((t) => t === "L1" || t === "L2") : (plan.level === "L1" || plan.level === "L2" ? [plan.level] : []);
-    if (!measure.length && plan.level === "L3") { out.run = { executed: false, reason: "L3" + (plan.reinforced ? " REINFORCED" : "") + ": run the full gate (build:runtime, tsc, anchor, test:report) + mandatory independent inspection — not executed by this tool" }; exit = Math.max(exit, 2); }
+    if (!measure.length && plan.level === "L3") { out.run = { executed: false, reason: "L3" + (plan.reinforced ? " REINFORCED" : "") + ": run the full gate (build:runtime, tsc, anchor, test:report) + mandatory independent inspection — not executed by this tool" }; }
     if (!measure.length && plan.level === "DOCS_ONLY") {
       const bad: string[] = [];
       for (const f of (plan.steps.find((s: any) => s.step === "doc-lint") || { files: [] }).files) { try { JSON.parse(require("fs").readFileSync(path.join(ROOT, f), "utf8")); } catch { bad.push(f); } }
-      out.run = { executed: true, docLint: { checked: plan.steps[0].files.length, invalidJson: bad } }; if (bad.length) exit = 1;
+      out.run = { executed: true, docLint: { checked: plan.steps[0].files.length, invalidJson: bad } }; executed = true; if (bad.length) failed = true;
     }
     if (tiers.length) {
       const TR = require("./odg-test-report.ts");
@@ -68,23 +87,26 @@ async function main(): Promise<number> {
       const runs: any = {};
       if (!flag("--skip-typecheck")) {
         const t0 = Date.now(); const r = cp.spawnSync(path.join(ROOT, "node_modules", ".bin", "tsc"), ["--noEmit", "-p", "tsconfig.json"], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
-        runs.typecheck = { exitCode: r.status, wallMs: Date.now() - t0 }; if (r.status !== 0) exit = 1;   // exit code unmasked
+        runs.typecheck = { exitCode: r.status, wallMs: Date.now() - t0 }; if (r.status !== 0) failed = true;   // exit code unmasked
       } else runs.typecheck = "NOT_MEASURED (--skip-typecheck)";
       for (const t of tiers) {
         const list: string[] = plan.tests[t];
-        if (!list.length) { runs[t] = { suites: 0, wallMs: 0, note: "no suites selected for this tier (nothing executed — not a pass of anything)" }; continue; }
+        if (!list.length) { runs[t] = { suites: 0, wallMs: 0, note: "no suites selected for this tier (nothing executed — not a pass of anything)" }; noTestsSelected = true; continue; }
         const abs = list.map((f) => path.join(ROOT, f));
         const t0 = Date.now();
         const results = workers > 1 ? await TR.runSuitesParallel(abs, workers) : TR.runSuites(abs);
         const wallMs = Date.now() - t0;
         const s = TR.summarize(results);
-        if (results.length !== abs.length) { exit = 1; errors.push(`runner returned ${results.length} results for ${abs.length} suites`); }
-        if (TR.overallExit(s) !== 0) exit = 1;
+        if (results.length !== abs.length) { failed = true; errors.push(`runner returned ${results.length} results for ${abs.length} suites`); }
+        if (TR.overallExit(s) !== 0) failed = true;
         runs[t] = { suites: list.length, workers, wallMs, counts: s.counts, failing: results.filter((r: any) => r.cls !== "PASS" && r.cls !== "SKIPPED").map((r: any) => ({ suite: path.relative(ROOT, r.file), cls: r.cls, reason: r.reason })) };
       }
+      executed = true;
       out.run = { executed: true, measuredAt: new Date().toISOString(), loadavg: os.loadavg().map((x: number) => +x.toFixed(2)), cpus, runs };
     }
   }
+  const ex = exitFor(plan, { errors: errors.length > 0, run, measuring: measure.length > 0, failed, noTestsSelected, executed });
+  out.status = ex.status; out.exitCode = ex.code;
   if (flag("--json")) process.stdout.write(JSON.stringify(out, null, 2) + "\n");
   else {
     const p = plan;
@@ -94,11 +116,13 @@ async function main(): Promise<number> {
     if (p.adversarialChecklist) { L.push("adversarial checklist:"); for (const c of p.adversarialChecklist) L.push("  [ ] " + c); }
     if (out.run) L.push("run: " + JSON.stringify(out.run));
     for (const e of errors) L.push("ERROR: " + e);
+    L.push(`status: ${ex.status} (exit ${ex.code})`);
     process.stdout.write(L.join("\n") + "\n");
   }
-  return exit;
+  return ex.code;
 }
 
-if (require.main === module) main().then((c) => process.exit(c), (e) => { process.stderr.write(String(e && e.stack || e) + "\n"); process.exit(1); });
-module.exports = { main };
+// process.exitCode (not process.exit): a piped --json larger than the pipe buffer must DRAIN before the process ends.
+if (require.main === module) main().then((c) => { process.exitCode = c; }, (e) => { process.stderr.write(String(e && e.stack || e) + "\n"); process.exitCode = 1; });
+module.exports = { main, changedFilesOf, exitFor };
 export {};

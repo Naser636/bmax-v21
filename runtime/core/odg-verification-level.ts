@@ -50,11 +50,15 @@ const SENSITIVE_RULES = Object.freeze([
   ["odg-schedule-tick", /schedule-tick/],
   ["governance", /governance|constitution|directive|^(claude|agents)\.md$|odg_autonomous_work_protocol/],
   ["agent-supervisor (assignment gate)", /agent-supervisor/],
+  ["mission declarations (write_set / permissions)", /^runtime\/missions\//],
 ] as Array<[string, RegExp]>);
 
 const DOC_RE = /^(docs\/.*|[^\/]+\.md|.*\/README\.md)$/i;
 const BUILD_CONFIG_RE = /^(package\.json|package-lock\.json|tsconfig[^\/]*\.json|next\.config\.[a-z]+|eslint\.config\.[a-z]+|\.github\/.*|scripts\/.*|\.gitignore|\.nvmrc)$/i;
 const CODE_DIRS = Object.freeze(["runtime/core", "runtime/bin"]);
+// Trees OUTSIDE the runtime that may import runtime modules (Next app, src, scripts): scanned recursively for reverse deps.
+const EXTRA_TREES = Object.freeze(["src", "app", "scripts"]);
+const SKIP_DIRS = new Set(["node_modules", ".next", "dist", ".git", "generated"]);
 // Regression suites added at L2: the V251 live catalog scan (any core source change can move it) and the graph's own
 // suite (the selector's correctness rests on it).
 const REGRESSION_SUITES = Object.freeze(["runtime/core/odg-v251-repair-reconciliation.test.ts", "runtime/core/change-impact-graph.test.ts"]);
@@ -89,6 +93,17 @@ function fsReader(root: string): any {
       return r === "" || r.startsWith("..") || path.isAbsolute(r) ? "ESCAPE" : r.split(path.sep).join("/");
     },
     graph: () => graphMod.buildGraph(root),
+    // recursive file list under relDir (repo-relative, '/'-joined); [] when the tree is absent; null on any other error.
+    walk: (relDir: string) => {
+      const out: string[] = [];
+      const rec = (d: string): boolean => {
+        let ents: any[];
+        try { ents = fs.readdirSync(path.join(root, d), { withFileTypes: true }); } catch (e: any) { return !!e && e.code === "ENOENT" && d === relDir; }
+        for (const e of ents) { if (e.isDirectory()) { if (!SKIP_DIRS.has(e.name) && !rec(d + "/" + e.name)) return false; } else if (e.isFile()) out.push(d + "/" + e.name); }
+        return true;
+      };
+      return rec(relDir) ? out.sort() : null;
+    },
   };
 }
 
@@ -156,12 +171,20 @@ function analyzePackageJson(baseText: string | null, headText: string | null): a
  *  ES `import … from` scan. Returns { files:{rel:[resolvedRel]}, unreadable:[rel] }. */
 function scanEdges(reader: any): any {
   const files: any = {}; const unreadable: string[] = [];
+  const targets: string[] = [];
   for (const dir of CODE_DIRS) {
     const names = reader.list(dir);
     if (!names) { unreadable.push(dir + "/"); continue; }
-    for (const n of names) {
-      if (!/\.ts$/.test(n)) continue;
-      const rel = dir + "/" + n;
+    for (const n of names) if (/\.ts$/.test(n)) targets.push(dir + "/" + n);
+  }
+  for (const tree of EXTRA_TREES) {
+    const all = typeof reader.walk === "function" ? reader.walk(tree) : null;
+    if (!all) { unreadable.push(tree + "/ (tree not scannable)"); continue; }
+    for (const f of all) if (/\.(ts|tsx|js|mjs|cjs)$/.test(f)) targets.push(f);
+  }
+  {
+    for (const rel of targets) {
+      const dir = path.posix.dirname(rel);
       const src = reader.read(rel);
       if (src === null) { unreadable.push(rel); continue; }
       let specs: string[] = [];
@@ -171,7 +194,7 @@ function scanEdges(reader: any): any {
       const out = new Set<string>();
       for (const sp of specs) {
         if (!sp.startsWith(".")) continue;
-        const r = path.posix.normalize(path.posix.join(dir, sp)).replace(/\.(js|ts)$/, "") + ".ts";
+        const r = path.posix.normalize(path.posix.join(dir, sp)).replace(/\.(js|ts|tsx|mjs|cjs)$/, "") + ".ts";
         out.add(r);
       }
       files[rel] = [...out].sort();
@@ -216,6 +239,9 @@ function chooseLevel(changedFiles: any, opts: any = {}): any {
   const L1 = new Set<string>(); const impacted = new Set<string>();   // impacted = repo-relative .ts sources (reverse-dep closure seeds)
   const L2extra = new Set<string>();
   let coreSourceChanged = false;
+  const changedSources = new Set<string>();
+  // sources (any scanned tree) whose text NAMES a data file — best-effort readers of non-code inputs
+  const readersOf = (base: string): string[] => { const e = needEdges(); return Object.keys(e.files).filter((f) => { const src = reader.read(f); return !!src && src.includes(base); }); };
 
   for (const raw of changedFiles) {
     const n = normalizeChangedPath(raw, root, reader);
@@ -225,7 +251,12 @@ function chooseLevel(changedFiles: any, opts: any = {}): any {
     const rec: any = { path: n.path, real: n.real, sensitive: hits };
     if (hits.length) { reinforced = true; reasons.push(`SENSITIVE ${n.path}: ${hits.join(", ")} ⇒ REINFORCED`); }
     const p = n.real || n.path;
-    if (DOC_RE.test(p)) {
+    if (DOC_RE.test(p) && /\.json$/i.test(p) && readersOf(path.posix.basename(p)).length) {
+      // a doc/evidence JSON that code READS (grader/oracle/evidence data) is runtime input, not documentation
+      rec.class = "DOC_READ_BY_CODE"; level = maxLevel(level, "L1");
+      unresolved.push({ path: p, reason: "DOC_JSON_READ_BY_CODE (data consumed by code; impact not resolvable by the import graph)" });
+      for (const f of readersOf(path.posix.basename(p))) { if (/\.test\.ts$/.test(f)) L2extra.add(f); else impacted.add(f); }
+    } else if (DOC_RE.test(p)) {
       rec.class = "DOC";
     } else if (p === "package.json") {
       const a = analyzePackageJson(opts.packageJson ? opts.packageJson.base : null, opts.packageJson ? opts.packageJson.head : reader.read("package.json"));
@@ -242,7 +273,7 @@ function chooseLevel(changedFiles: any, opts: any = {}): any {
         if (exists) L1.add(p); else { rec.deleted = true; unresolved.push({ path: p, reason: "DELETED_TEST" }); }
         const subj = p.replace(/\.test\.ts$/, ".ts"); if (reader.exists(subj)) impacted.add(subj);
       } else {
-        rec.class = "SOURCE"; level = maxLevel(level, "L1");
+        rec.class = "SOURCE"; level = maxLevel(level, "L1"); changedSources.add(p);
         if (p.startsWith("runtime/core/")) coreSourceChanged = true;
         if (!exists) { rec.deleted = true; unresolved.push({ path: p, reason: "DELETED_MODULE (consumers no longer resolvable from the head graph)" }); files.push(rec); continue; }
         const own = ownTestOf(p, reader); if (own) L1.add(own); else rec.noOwnTest = true;
@@ -253,8 +284,7 @@ function chooseLevel(changedFiles: any, opts: any = {}): any {
       rec.class = "RUNTIME_DATA"; level = maxLevel(level, "L1");
       unresolved.push({ path: p, reason: "NON_TS_RUNTIME_FILE (consumers not resolvable by the import graph)" });
       // best-effort: sources that NAME this file get their tests at L2 (escalation still applies)
-      const base = path.posix.basename(p); const e = needEdges();
-      for (const f of Object.keys(e.files)) { const src = reader.read(f); if (src && src.includes(base) && !/\.test\.ts$/.test(f)) impacted.add(f); else if (src && src.includes(base)) L2extra.add(f); }
+      for (const f of readersOf(path.posix.basename(p))) { if (/\.test\.ts$/.test(f)) L2extra.add(f); else impacted.add(f); }
     } else {
       rec.class = "OUT_OF_GRAPH_DOMAIN"; level = "L3"; reasons.push(`OUT_OF_GRAPH_DOMAIN ${p} (src/app/other — only the full gate covers it) ⇒ L3`);
     }
@@ -263,6 +293,17 @@ function chooseLevel(changedFiles: any, opts: any = {}): any {
 
   // ---- L2: reverse-dependent closure (core graph + scanned bin/test edges) ----
   const closure = new Set<string>(impacted);
+  const outside: string[] = [];
+  if (changedSources.size) {
+    // a change to a module that IMPORTS a control surface can alter how that surface is driven ⇒ REINFORCED
+    const e = needEdges(); const imp: string[] = [];
+    for (const s of changedSources) {
+      const deps = new Set<string>(e.files[s] || []);
+      if (graph && s.startsWith("runtime/core/")) for (const d of graph.deps[path.posix.basename(s, ".ts")] || []) deps.add("runtime/core/" + d + ".ts");
+      for (const d of deps) if (sensitiveHits(d.toLowerCase()).length) imp.push(s + " → " + d);
+    }
+    if (imp.length) { reinforced = true; reasons.push(`IMPORTS_SENSITIVE_MODULE: ${imp.slice(0, 5).join(", ")}${imp.length > 5 ? " (+" + (imp.length - 5) + ")" : ""} ⇒ REINFORCED`); }
+  }
   if (impacted.size) {
     const e = needEdges();
     if (e.unreadable.length) { for (const u of e.unreadable) unresolved.push({ path: u, reason: "UNREADABLE_SOURCE (edge scan incomplete)" }); }
@@ -275,7 +316,8 @@ function chooseLevel(changedFiles: any, opts: any = {}): any {
       if (graph && cur.startsWith("runtime/core/")) for (const c of graph.consumers[path.posix.basename(cur, ".ts")] || []) next.push("runtime/core/" + c + ".ts");
       for (const imp of importersOf[cur] || []) next.push(imp);
       for (const x of next) {
-        if (/\.test\.ts$/.test(x)) { L2extra.add(x); continue; }
+        if (!/^runtime\/(core|bin)\//.test(x)) { if (!outside.includes(x)) outside.push(x); }
+        else if (/\.test\.ts$/.test(x)) { L2extra.add(x); continue; }
         if (!closure.has(x)) { closure.add(x); stack.push(x); }
       }
     }
@@ -285,6 +327,7 @@ function chooseLevel(changedFiles: any, opts: any = {}): any {
       reinforced = true;
       reasons.push(`IMPACTS_SENSITIVE_CONSUMER: ${consumerHits.slice(0, 5).map((x) => x.m).join(", ")}${consumerHits.length > 5 ? " (+" + (consumerHits.length - 5) + ")" : ""} ⇒ REINFORCED`);
     }
+    if (outside.length) { level = "L3"; reasons.push(`CONSUMED_OUTSIDE_RUNTIME: ${outside.slice(0, 5).join(", ")}${outside.length > 5 ? " (+" + (outside.length - 5) + ")" : ""} (src/app/scripts — only the full gate covers them) ⇒ L3`); }
     const reverseDeps = closure.size - impacted.size;
     if (reverseDeps > 0) { level = maxLevel(level, "L2"); reasons.push(`REVERSE_DEPENDENTS: ${reverseDeps} module(s) depend on the change ⇒ L2`); }
   }
@@ -292,11 +335,13 @@ function chooseLevel(changedFiles: any, opts: any = {}): any {
     const before = level; level = escalate(level);
     reasons.push(`UNRESOLVED_IMPACT (${unresolved.length}: ${unresolved.slice(0, 3).map((u) => u.path + " " + u.reason.split(" ")[0]).join("; ")}) ⇒ escalate ${before} → ${level} (fail closed)`);
   }
-  if (reinforced) level = "L3";
-  if (level === "DOCS_ONLY") reasons.push("DOCS_ONLY: only docs/evidence changed ⇒ no build/test; doc lint only. Merge STILL requires CI (never lowered)");
-
   const l1 = [...L1].sort();
   const l2 = [...new Set([...l1, ...L2extra, ...(coreSourceChanged ? REGRESSION_SUITES : [])])].filter((t) => reader.exists(t)).sort();
+  // a code-level plan that selects NO suite would pass on typecheck alone ⇒ escalate (fail closed)
+  if (level === "L1" && l1.length === 0) { level = "L2"; reasons.push("NO_TESTS_SELECTED at L1 ⇒ escalate L1 → L2"); }
+  if (level === "L2" && l2.length === 0) { level = "L3"; reasons.push("NO_TESTS_SELECTED at L2 ⇒ escalate L2 → L3"); }
+  if (reinforced) level = "L3";
+  if (level === "DOCS_ONLY") reasons.push("DOCS_ONLY: only docs/evidence changed ⇒ no build/test; doc lint only. Merge STILL requires CI (never lowered)");
   return finish(level, reinforced, { files, l1, l2, unresolved, closureSize: closure.size, graphOk: !!graph, graphModules: graph ? graph.modules.length : null });
 
   function finish(lv: string, reinf: boolean, x: any = {}): any {
@@ -329,12 +374,13 @@ const VERIFICATION_LEVEL_CONTRACT = freeze({
   id: "ODG-VERIFICATION-LEVEL", levels: LEVELS, regressionSuites: REGRESSION_SUITES,
   invariants: freeze([
     "mandatoryPreMergeCI is ALWAYS true — the selector scopes LOCAL verification only, never the CI gate",
-    "unresolved impact escalates one level; invalid path / empty change-set ⇒ L3 REINFORCED",
+    "unresolved impact escalates one level; invalid path / empty change-set ⇒ L3 REINFORCED; a code plan selecting 0 suites escalates",
+    "a changed source that IMPORTS a control surface ⇒ REINFORCED; a doc JSON read by code is data (escalated), not DOCS_ONLY; consumers in src/app/scripts ⇒ L3",
     "any control-surface path, protected path, or sensitive reverse-dependent ⇒ REINFORCED (L3 + mandatory inspection + checklist)",
     "a suite REMOVED from test:report ⇒ REINFORCED; any other package.json/build-config change ⇒ L3",
     "reuses change-impact-graph + js-require-scan + supervisor canonPath/PROTECTED_PREFIXES — no second graph or parser",
   ]),
 });
 
-module.exports = { LEVELS, SENSITIVE_RULES, REGRESSION_SUITES, ADVERSARIAL_CHECKLIST, fsReader, normalizeChangedPath, sensitiveHits, testReportList, analyzePackageJson, scanEdges, chooseLevel, escalate, VERIFICATION_LEVEL_CONTRACT };
+module.exports = { EXTRA_TREES, LEVELS, SENSITIVE_RULES, REGRESSION_SUITES, ADVERSARIAL_CHECKLIST, fsReader, normalizeChangedPath, sensitiveHits, testReportList, analyzePackageJson, scanEdges, chooseLevel, escalate, VERIFICATION_LEVEL_CONTRACT };
 export {};

@@ -20,12 +20,17 @@ function fixture(over: any = {}): any {
     "runtime/bin/tool.ts": 'const L = require("../core/lone.js");', "runtime/bin/tool.test.ts": 'require("./tool.ts")',
     "runtime/core/data.json": "{}", "runtime/core/uses-data.ts": 'const f = "data.json";', "runtime/core/uses-data.test.ts": "",
     "docs/odg/evidence/X.json": "{}", "docs/notes.md": "# n",
+    "docs/odg/evidence/ORACLE.json": "{}", "runtime/core/grader.ts": 'const p = "docs/odg/evidence/ORACLE.json";', "runtime/core/grader.test.ts": "",
+    "runtime/core/bench.ts": 'const sb = require("./provider-sandbox.js");', "runtime/core/bench.test.ts": "", "runtime/core/provider-sandbox.ts": "",
+    "runtime/core/notest.ts": "", "runtime/bin/notest.ts": "",
+    "runtime/core/ui-shared.ts": "", "runtime/core/ui-shared.test.ts": "", "src/app/page.tsx": 'import x from "../../runtime/core/ui-shared";',
+    "runtime/missions/M1.json": "{}",
     ...(over.files || {}),
   };
   const graph = over.graphThrows ? null : {
-    modules: ["a", "b", "c", "lone", "guard", "fleet-bridge", "uses-data"],
-    deps: { a: [], b: ["a"], c: ["b"], lone: [], guard: [], "fleet-bridge": ["guard"], "uses-data": [] },
-    consumers: { a: ["b"], b: ["c"], c: [], lone: [], guard: ["fleet-bridge"], "fleet-bridge": [], "uses-data": [] },
+    modules: ["a", "b", "c", "lone", "guard", "fleet-bridge", "uses-data", "grader", "bench", "provider-sandbox", "notest", "ui-shared"],
+    deps: { a: [], b: ["a"], c: ["b"], lone: [], guard: [], "fleet-bridge": ["guard"], "uses-data": [], grader: [], bench: ["provider-sandbox"], "provider-sandbox": [], notest: [], "ui-shared": [] },
+    consumers: { a: ["b"], b: ["c"], c: [], lone: [], guard: ["fleet-bridge"], "fleet-bridge": [], "uses-data": [], grader: [], bench: [], "provider-sandbox": ["bench"], notest: [], "ui-shared": [] },
   };
   return {
     exists: (r: string) => Object.prototype.hasOwnProperty.call(files, r),
@@ -33,6 +38,7 @@ function fixture(over: any = {}): any {
     list: (d: string) => { const p = d + "/"; const out = Object.keys(files).filter((f) => f.startsWith(p) && !f.slice(p.length).includes("/")).map((f) => f.slice(p.length)).sort(); return out; },
     realRel: (r: string) => (over.symlinks && r in over.symlinks ? over.symlinks[r] : (Object.prototype.hasOwnProperty.call(files, r) ? r : null)),
     graph: () => { if (over.graphThrows) throw new Error("boom"); return graph; },
+    walk: over.noWalk ? undefined : (d: string) => Object.keys(files).filter((f) => f.startsWith(d + "/")).sort(),
   };
 }
 const ROOT = "/repo";
@@ -111,6 +117,24 @@ function main(): void {
   check("package.json without base ⇒ UNKNOWN ⇒ L3 (fail closed)", p.level === "L3");
   p = plan(["runtime/core/c.ts"], { files: { "package.json": "{not json" } });
   check("full test:report list unreadable ⇒ L3", p.level === "L3" && p.tests.L3.length === 0);
+
+  // ---- inspection #902 regressions ----
+  p = plan(["runtime/missions/M1.json"]);
+  check("#902 MED: runtime/missions/*.json (write_set/permission declarations) ⇒ REINFORCED", p.level === "L3" && p.reinforced);
+  p = plan(["runtime/core/bench.ts"]);
+  check("#902 LOW: a changed source that IMPORTS a control surface (provider-sandbox) ⇒ REINFORCED", p.reinforced && p.reasons.some((r: string) => /IMPORTS_SENSITIVE_MODULE: runtime\/core\/bench\.ts → runtime\/core\/provider-sandbox\.ts/.test(r)));
+  p = plan(["docs/odg/evidence/ORACLE.json"]);
+  check("#902 LOW: a doc JSON read by code is NOT DOCS_ONLY (escalated ≥ L2, reader's test selected)", p.level !== "DOCS_ONLY" && (p.level === "L2" || p.level === "L3") && p.tests.L2.includes("runtime/core/grader.test.ts"));
+  check("an unread doc JSON stays DOCS_ONLY", plan(["docs/odg/evidence/X.json"]).level === "DOCS_ONLY");
+  p = plan(["runtime/core/ui-shared.ts"]);
+  check("#902 LOW: a runtime module imported from src/app ⇒ L3 (CONSUMED_OUTSIDE_RUNTIME)", p.level === "L3" && p.reasons.some((r: string) => /CONSUMED_OUTSIDE_RUNTIME: src\/app\/page\.tsx/.test(r)));
+  p = plan(["runtime/core/c.ts"], { noWalk: true });
+  check("extra trees not scannable ⇒ unresolved ⇒ escalate (fail closed)", p.level === "L2" && p.unresolved.some((u: any) => /tree not scannable/.test(u.path)));
+  p = plan(["runtime/core/notest.ts"]);
+  check("#902 LOW/MED: L1 source change selecting 0 suites ⇒ escalated (never passes on typecheck alone)", p.level !== "L1" && p.reasons.some((r: string) => /NO_TESTS_SELECTED/.test(r)));
+  check("core source with no own test ⇒ L2 (regression suites at least)", p.level === "L2" && p.tests.L2.length > 0);
+  p = plan(["runtime/bin/notest.ts"]);
+  check("bin source selecting 0 suites at L1 AND L2 ⇒ L3", p.level === "L3" && p.reasons.some((r: string) => /NO_TESTS_SELECTED at L2/.test(r)));
 
   // never lowers CI; L3 lists full gate
   p = plan(["src/x.ts"]);
