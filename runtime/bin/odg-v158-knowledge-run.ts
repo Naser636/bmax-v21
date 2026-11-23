@@ -39,8 +39,21 @@ const STRUCT: Record<string, any> = {
 function patternOf(query: string): string { const m = String(query).match(/::\s*([A-Z_]+)$/); return m ? m[1] : ""; }
 function hostOf(u: string): string { try { return new URL(u).hostname; } catch { return ""; } }
 
-/** derive(col, registry): PURE re-derivation of the assessment from the committed collection. */
-function derive(col: any, registry: any): any {
+const V158_LIMITS = Object.freeze([
+  "the 5 V158 hosts are NOT in odg-knowledge-intelligence PUBLISHERS ⇒ publisher identity UNKNOWN ⇒ no claim can reach SUPPORTED (official-primary) — extending that explicit map is a separate reviewed change",
+  "every claim is SINGLE-SOURCE (one page) ⇒ never CORROBORATED; claims bind to WHAT THE PAGE STATES, not to a general truth",
+  "structured keys authored by the provider from the recorded quotes, not model-inferred; quotes from a deterministic pattern extractor, verbatim w.r.t. the documented normalisation",
+  "knowledge usefulness for ODG is NOT_MEASURED until a mission applies it",
+]);
+/* V16.0 generalisation: derive() is driven by a CONFIG; the default is the V158 one (output unchanged). Other campaigns
+ * (odg-v160-practices-knowledge-run.ts) pass { collectionPath, outPath, struct, natureOf, freshnessDays, lot, limits }. */
+const DEFAULT_CONFIG = Object.freeze({ collectionPath: COLLECTION_PATH, outPath: OUT_PATH, struct: STRUCT, natureOf: null as any, freshnessDays: FRESHNESS_DAYS, lot: "V15.9 §10 — V158 Radar collection → canonical knowledge assessment (KI-V2 four dimensions)", limits: V158_LIMITS, sourceMetaKeys: [] as string[] });
+function configOf(c: any): any { const x = c && typeof c === "object" ? c : {}; return { ...DEFAULT_CONFIG, ...x }; }
+
+/** derive(col, registry, config?): PURE re-derivation of the assessment from the committed collection. */
+function derive(col: any, registry: any, config?: any): any {
+  const cfg = configOf(config); const COLLECTION_PATH = cfg.collectionPath; const STRUCT = cfg.struct; const FRESHNESS_DAYS = cfg.freshnessDays;
+  const srcByUrl: Record<string, any> = {}; for (const s of (col.sources || [])) srcByUrl[s.url] = s;
   const asOf = Date.parse(col.consultedDate + "T12:00:00Z");
   if (!Number.isFinite(asOf)) throw new Error("collection consultedDate missing/invalid");
   const pins = (registry.collections || []).filter((c: any) => c.path === COLLECTION_PATH).map((c: any) => c.sha256);
@@ -49,12 +62,16 @@ function derive(col: any, registry: any): any {
   const quarantined = col.sources.filter((s: any) => s.status === "RETRIEVED" && FR.sanitizeExternal({ title: s.title, body: (s.quotes || []).join("\n") }).untrusted).map((s: any) => s.url);
   const results = col.cycles.map((cy: any) => {
     const pid = patternOf(cy.query); const st = STRUCT[pid] || null;
-    const a = K.assessClaim({ ...(st || {}), nature: "OFFICIAL_DOCUMENTATION", text: cy.claim, sources: (cy.support || []).map((sp: any) => ({ url: sp.url, citation: sp.quote, structured: st })) },
+    const url0 = (cy.support || [])[0] && cy.support[0].url;
+    const nature = typeof cfg.natureOf === "function" ? cfg.natureOf(srcByUrl[url0], cy) : "OFFICIAL_DOCUMENTATION";
+    const a = K.assessClaim({ ...(st || {}), nature, text: cy.claim, sources: (cy.support || []).map((sp: any) => ({ url: sp.url, citation: sp.quote, structured: st })) },
       { asOfEpochMs: asOf, collection, quarantined, missionAuthorization: "DESIGN_PROPOSAL" });
     const mem = K.toMemory(a, asOf);
     const host = hostOf((cy.support || [])[0] && cy.support[0].url);
     const fd = FRESHNESS_DAYS[host];
-    return { query: cy.query, question: cy.question, claim: cy.claim, keyAuthored: !!st, structured: st ? a.structured : null, dimensions: a.dimensions, isFact: a.isFact,
+    const meta: Record<string, any> = {}; for (const k of cfg.sourceMetaKeys) if (srcByUrl[url0] && typeof srcByUrl[url0][k] === "string") meta[k] = srcByUrl[url0][k];
+    if (cfg.natureOf) meta.nature = nature;
+    return { query: cy.query, ...meta, question: cy.question, claim: cy.claim, keyAuthored: !!st, structured: st ? a.structured : null, dimensions: a.dimensions, isFact: a.isFact,
       independentFamilies: a.independentFamilies,
       sources: a.sources.map((s: any) => ({ url: s.url, citationVerified: s.citationVerified, keyGrounded: s.keyGrounded, publisherKnown: s.identity.known, organization: s.identity.organization })),
       consultedDate: col.consultedDate, freshness: fd ? { timeSensitive: true, staleAfter: new Date(asOf + fd * 86400000).toISOString().slice(0, 10) } : { timeSensitive: false },
@@ -67,7 +84,7 @@ function derive(col: any, registry: any): any {
   for (const s of col.sources) for (const id of (s.unmatchedPatterns || [])) unanswered.push({ url: s.url, patternId: id, status: "NOT_MEASURED (no pre-registered pattern matched the fetched page)" });
   const timeSensitive = col.sources.filter((s: any) => FRESHNESS_DAYS[hostOf(s.url)]).map((s: any) => ({ url: s.url, consultedDate: col.consultedDate, quotes: (s.quotes || []).length, value: (s.quotes || []).length ? "see quotes" : "NOT_MEASURED", staleAfterDays: FRESHNESS_DAYS[hostOf(s.url)] }));
   return {
-    lot: "V15.9 §10 — V158 Radar collection → canonical knowledge assessment (KI-V2 four dimensions)",
+    lot: cfg.lot,
     input: COLLECTION_PATH + " (no new network call)",
     collectionAuthenticated: collection.via, collectionSha256: collection.sha256, consultedDate: col.consultedDate,
     summary: { claims: results.length, keysAuthored: results.filter((r: any) => r.keyAuthored).length, CORROBORATED: count("CORROBORATED"), SUPPORTED: count("SUPPORTED"), CANDIDATE: count("CANDIDATE"), UNKNOWN: count("UNKNOWN"),
@@ -75,20 +92,16 @@ function derive(col: any, registry: any): any {
       admittedAsFact: results.filter((r: any) => r.memory.admittedAsFactByTrustGate).length, presentedAsFact: results.filter((r: any) => r.isFact).length, unansweredQuestions: unanswered.length },
     crossFamilyOverlap: K.crossFamilyOverlap(col),
     unanswered, timeSensitive, results,
-    limits: [
-      "the 5 V158 hosts are NOT in odg-knowledge-intelligence PUBLISHERS ⇒ publisher identity UNKNOWN ⇒ no claim can reach SUPPORTED (official-primary) — extending that explicit map is a separate reviewed change",
-      "every claim is SINGLE-SOURCE (one page) ⇒ never CORROBORATED; claims bind to WHAT THE PAGE STATES, not to a general truth",
-      "structured keys authored by the provider from the recorded quotes, not model-inferred; quotes from a deterministic pattern extractor, verbatim w.r.t. the documented normalisation",
-      "knowledge usefulness for ODG is NOT_MEASURED until a mission applies it",
-    ],
+    limits: cfg.limits.slice(),
   };
 }
 
-function main(): void {
+function main(config?: any): void {
+  const cfg = configOf(config); const COLLECTION_PATH = cfg.collectionPath; const OUT_PATH = cfg.outPath;
   const argv = process.argv.slice(2);
   const col = JSON.parse(fs.readFileSync(path.join(ROOT, COLLECTION_PATH), "utf8"));
   const registry = JSON.parse(fs.readFileSync(path.join(ROOT, REGISTRY_PATH), "utf8"));
-  const ev = derive(col, registry);
+  const ev = derive(col, registry, cfg);
   const json = JSON.stringify(ev, null, 2) + "\n";
   if (argv.includes("--check")) {
     const cur = fs.existsSync(path.join(ROOT, OUT_PATH)) ? fs.readFileSync(path.join(ROOT, OUT_PATH), "utf8") : null;
@@ -99,5 +112,5 @@ function main(): void {
   process.stdout.write(JSON.stringify(ev.summary) + "\n" + ev.results.map((r: any) => `${r.dimensions.epistemic.padEnd(12)} grounded=${r.sources.some((s: any) => s.keyGrounded)} mem=${r.memory.status} ${r.query}`).join("\n") + "\n");
 }
 if (require.main === module) main();
-module.exports = { derive, STRUCT, COLLECTION_PATH, REGISTRY_PATH, OUT_PATH };
+module.exports = { main, configOf, DEFAULT_CONFIG, derive, STRUCT, COLLECTION_PATH, REGISTRY_PATH, OUT_PATH };
 export {};

@@ -1,0 +1,856 @@
+{
+  "lot": "V16.0 — METHOD CARDS + selection-matrix input from the pinned V160 engineering-practices collection",
+  "inputs": {
+    "collection": "docs/odg/evidence/V160_PRACTICES_COLLECTION.json",
+    "collectionSha256": "2675846657b7c4c528ec7256f398f1b934f288fcec1087c3ed57c8bd7c170f49",
+    "knowledge": "docs/odg/evidence/V160_PRACTICES_KNOWLEDGE.json",
+    "consultedDate": "2026-11-23"
+  },
+  "basisLegend": {
+    "QUOTE": "verbatim pinned quote(s), resolved by patternId; epistemic status from the knowledge file",
+    "COLLECTION_RECORD": "fact about the collection itself",
+    "HYPOTHESIS": "ODG's own reading/mapping — NOT evidence"
+  },
+  "primitivesVocabulary": [
+    "IDENTITY",
+    "STATE",
+    "CONTRACT",
+    "POLICY",
+    "RESOLVER",
+    "EXECUTOR",
+    "EVIDENCE",
+    "RECOVERY",
+    "ALLOCATOR"
+  ],
+  "cards": [
+    {
+      "id": "MC-CR-APPROVAL-STANDARD",
+      "title": {
+        "basis": "HYPOTHESIS",
+        "text": "Approve when the change improves overall code health (not when perfect)"
+      },
+      "org": "Google",
+      "practiceArea": "code review",
+      "source": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+          "consultedDate": "2026-11-23"
+        }
+      ],
+      "problemSolved": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "G_STD_PURPOSE",
+            "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+            "quote": "The primary purpose of code review is to make sure that the overall code health of Google’s code base is improving over time.",
+            "pageSha256": "0da3ce85bdc5d0901a49e44e8289a1953c47f356a73d15acc3e635bc202afcec",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "howItWorks": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "G_STD_HEALTH",
+            "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+            "quote": "In general, reviewers should favor approving a CL once it is in a state where it definitely improves the overall code health of the system being worked on, even if the CL isn’t perfect.",
+            "pageSha256": "0da3ce85bdc5d0901a49e44e8289a1953c47f356a73d15acc3e635bc202afcec",
+            "epistemic": "SUPPORTED"
+          },
+          {
+            "patternId": "G_STD_PERFECT",
+            "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+            "quote": "A key point here is that there is no such thing as “perfect” code—there is only better code.",
+            "pageSha256": "0da3ce85bdc5d0901a49e44e8289a1953c47f356a73d15acc3e635bc202afcec",
+            "epistemic": "SUPPORTED"
+          },
+          {
+            "patternId": "G_STD_FACTS",
+            "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+            "quote": "Technical facts and data overrule opinions and personal preferences.",
+            "pageSha256": "0da3ce85bdc5d0901a49e44e8289a1953c47f356a73d15acc3e635bc202afcec",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "conditions": [
+        {
+          "basis": "HYPOTHESIS",
+          "text": "a measurable code-health signal exists for the change (the recorded quotes give no metric or threshold)"
+        }
+      ],
+      "limits": [
+        {
+          "basis": "HYPOTHESIS",
+          "text": "'improves code health' is a reviewer judgement in the quotes; ODG would need an explicit, measured proxy"
+        }
+      ],
+      "primitives": {
+        "basis": "HYPOTHESIS",
+        "values": [
+          "POLICY",
+          "EVIDENCE"
+        ]
+      },
+      "odgComponents": {
+        "basis": "HYPOTHESIS",
+        "files": [
+          {
+            "path": "runtime/core/code-review-service.ts",
+            "exists": true
+          },
+          {
+            "path": "runtime/core/evaluator-independence.ts",
+            "exists": true
+          }
+        ]
+      },
+      "demonstrationTest": {
+        "basis": "HYPOTHESIS",
+        "text": "a review gate ACCEPTS a change that raises a measured health proxy while carrying only non-blocking remarks, and REJECTS one that lowers it; both decisions cite the measured evidence",
+        "status": "PROPOSED — not implemented, not run"
+      },
+      "matrixInput": {
+        "howItWorksEpistemic": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "quotedFields": 2,
+        "hypothesisFields": 2,
+        "supportedQuotes": 4,
+        "candidateOrUnknownQuotes": 0,
+        "primitives": [
+          "POLICY",
+          "EVIDENCE"
+        ],
+        "odgComponentsExist": true,
+        "demonstrated": false,
+        "score": "NOT_MEASURED"
+      }
+    },
+    {
+      "id": "MC-CR-LATENCY",
+      "title": {
+        "basis": "HYPOTHESIS",
+        "text": "Respond to a review request within one business day"
+      },
+      "org": "Google",
+      "practiceArea": "code review",
+      "source": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+          "consultedDate": "2026-11-23"
+        }
+      ],
+      "problemSolved": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "G_SPD_SLOW",
+            "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+            "quote": "When reviews are slow, there is increased pressure to allow developers to submit CLs that are not as good as they could be.",
+            "pageSha256": "3c495e756023d3bdc35153557d63d8057a09137ebed23dd8a3069624714c8c1c",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "howItWorks": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "G_SPD_ONEDAY",
+            "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+            "quote": "One business day is the maximum time it should take to respond to a code review request (i.e., first thing the next morning).",
+            "pageSha256": "3c495e756023d3bdc35153557d63d8057a09137ebed23dd8a3069624714c8c1c",
+            "epistemic": "SUPPORTED"
+          },
+          {
+            "patternId": "G_SPD_FOCUS",
+            "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+            "quote": "If you are not in the middle of a focused task, you should do a code review shortly after it comes in.",
+            "pageSha256": "3c495e756023d3bdc35153557d63d8057a09137ebed23dd8a3069624714c8c1c",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "conditions": [
+        {
+          "basis": "QUOTE",
+          "note": "stated condition: not in the middle of a focused task",
+          "quotes": [
+            {
+              "patternId": "G_SPD_FOCUS",
+              "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+              "quote": "If you are not in the middle of a focused task, you should do a code review shortly after it comes in.",
+              "pageSha256": "3c495e756023d3bdc35153557d63d8057a09137ebed23dd8a3069624714c8c1c",
+              "epistemic": "SUPPORTED"
+            }
+          ]
+        }
+      ],
+      "limits": [
+        {
+          "basis": "HYPOTHESIS",
+          "text": "a maximum response time, not a review-completion time; ODG reviewers are agents whose 'business day' needs an explicit clock"
+        }
+      ],
+      "primitives": {
+        "basis": "HYPOTHESIS",
+        "values": [
+          "ALLOCATOR",
+          "POLICY"
+        ]
+      },
+      "odgComponents": {
+        "basis": "HYPOTHESIS",
+        "files": [
+          {
+            "path": "runtime/core/odg-mission-scheduler.ts",
+            "exists": true
+          }
+        ]
+      },
+      "demonstrationTest": {
+        "basis": "HYPOTHESIS",
+        "text": "a review-queue monitor flags every review request without a first response after the configured window, and the flag is recorded as evidence (fake clock, offline)",
+        "status": "PROPOSED — not implemented, not run"
+      },
+      "matrixInput": {
+        "howItWorksEpistemic": [
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "quotedFields": 3,
+        "hypothesisFields": 1,
+        "supportedQuotes": 4,
+        "candidateOrUnknownQuotes": 0,
+        "primitives": [
+          "ALLOCATOR",
+          "POLICY"
+        ],
+        "odgComponentsExist": true,
+        "demonstrated": false,
+        "score": "NOT_MEASURED"
+      }
+    },
+    {
+      "id": "MC-SMALL-CHANGES",
+      "title": {
+        "basis": "HYPOTHESIS",
+        "text": "Keep each change one self-contained unit, with its tests"
+      },
+      "org": "Google",
+      "practiceArea": "code review",
+      "source": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "consultedDate": "2026-11-23"
+        }
+      ],
+      "problemSolved": {
+        "basis": "HYPOTHESIS",
+        "text": "small changes are easier to review (the recorded list item 'Reviewed more quickly.' is too short to verify as a citation)"
+      },
+      "howItWorks": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "G_SMALL_ONE",
+            "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+            "quote": "In general, the right size for a CL is one self-contained change.",
+            "pageSha256": "0637b70bbb8235a8a3dfe86041e206bd91db35b4b8a4c34cb938f4d8fd6bf5c3",
+            "epistemic": "SUPPORTED"
+          },
+          {
+            "patternId": "G_SMALL_TESTS",
+            "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+            "quote": "The CL should include related test code.",
+            "pageSha256": "0637b70bbb8235a8a3dfe86041e206bd91db35b4b8a4c34cb938f4d8fd6bf5c3",
+            "epistemic": "SUPPORTED"
+          },
+          {
+            "patternId": "G_SMALL_SIZE",
+            "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+            "quote": "There are no hard and fast rules about how large is “too large.” 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large, but it’s up to the judgment of your reviewer.",
+            "pageSha256": "0637b70bbb8235a8a3dfe86041e206bd91db35b4b8a4c34cb938f4d8fd6bf5c3",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "conditions": [
+        {
+          "basis": "HYPOTHESIS",
+          "text": "ODG missions can be split along write-set boundaries"
+        }
+      ],
+      "limits": [
+        {
+          "basis": "QUOTE",
+          "note": "no hard rule; size thresholds are left to the reviewer's judgement",
+          "quotes": [
+            {
+              "patternId": "G_SMALL_SIZE",
+              "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+              "quote": "There are no hard and fast rules about how large is “too large.” 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large, but it’s up to the judgment of your reviewer.",
+              "pageSha256": "0637b70bbb8235a8a3dfe86041e206bd91db35b4b8a4c34cb938f4d8fd6bf5c3",
+              "epistemic": "SUPPORTED"
+            }
+          ]
+        }
+      ],
+      "primitives": {
+        "basis": "HYPOTHESIS",
+        "values": [
+          "CONTRACT",
+          "ALLOCATOR"
+        ]
+      },
+      "odgComponents": {
+        "basis": "HYPOTHESIS",
+        "files": [
+          {
+            "path": "runtime/core/odg-writeset-contention.ts",
+            "exists": true
+          },
+          {
+            "path": "runtime/core/patch-executor.ts",
+            "exists": true
+          }
+        ]
+      },
+      "demonstrationTest": {
+        "basis": "HYPOTHESIS",
+        "text": "a mission contract whose diff exceeds a configured line budget, or that changes code without a related test, is flagged for split / reviewer override before execution",
+        "status": "PROPOSED — not implemented, not run"
+      },
+      "matrixInput": {
+        "howItWorksEpistemic": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "quotedFields": 2,
+        "hypothesisFields": 2,
+        "supportedQuotes": 4,
+        "candidateOrUnknownQuotes": 0,
+        "primitives": [
+          "CONTRACT",
+          "ALLOCATOR"
+        ],
+        "odgComponentsExist": true,
+        "demonstrated": false,
+        "score": "NOT_MEASURED"
+      }
+    },
+    {
+      "id": "MC-REVIEW-FOCUS",
+      "title": {
+        "basis": "HYPOTHESIS",
+        "text": "Review design first; reject over-engineering; require appropriate tests"
+      },
+      "org": "Google",
+      "practiceArea": "code review",
+      "source": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "consultedDate": "2026-11-23"
+        }
+      ],
+      "problemSolved": {
+        "basis": "HYPOTHESIS",
+        "text": "reviews that only check style miss design-level and test-coverage defects"
+      },
+      "howItWorks": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "G_LOOK_DESIGN",
+            "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+            "quote": "The most important thing to cover in a review is the overall design of the CL.",
+            "pageSha256": "5946a2fa713dbafed9a2846e187be7705e3f3240c2b925f13d45530791c0e4af",
+            "epistemic": "SUPPORTED"
+          },
+          {
+            "patternId": "G_LOOK_OVERENG",
+            "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+            "quote": "A particular type of complexity is over-engineering, where developers have made the code more generic than it needs to be, or added functionality that isn’t presently needed by the system.",
+            "pageSha256": "5946a2fa713dbafed9a2846e187be7705e3f3240c2b925f13d45530791c0e4af",
+            "epistemic": "SUPPORTED"
+          },
+          {
+            "patternId": "G_LOOK_TESTS",
+            "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+            "quote": "Ask for unit, integration, or end-to-end tests as appropriate for the change.",
+            "pageSha256": "5946a2fa713dbafed9a2846e187be7705e3f3240c2b925f13d45530791c0e4af",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "conditions": [
+        {
+          "basis": "HYPOTHESIS",
+          "text": "a design description is available to the reviewer (e.g. the mission contract)"
+        }
+      ],
+      "limits": [
+        {
+          "basis": "COLLECTION_RECORD",
+          "text": "the functionality question was recorded only as a question ('Does this CL do what the developer intended?') — no key authored"
+        }
+      ],
+      "primitives": {
+        "basis": "HYPOTHESIS",
+        "values": [
+          "EVIDENCE",
+          "POLICY"
+        ]
+      },
+      "odgComponents": {
+        "basis": "HYPOTHESIS",
+        "files": [
+          {
+            "path": "runtime/core/code-review-service.ts",
+            "exists": true
+          }
+        ]
+      },
+      "demonstrationTest": {
+        "basis": "HYPOTHESIS",
+        "text": "the review checklist emitted for a change contains design, over-engineering and test items, and a change adding unused generic code is flagged",
+        "status": "PROPOSED — not implemented, not run"
+      },
+      "matrixInput": {
+        "howItWorksEpistemic": [
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "quotedFields": 1,
+        "hypothesisFields": 2,
+        "supportedQuotes": 3,
+        "candidateOrUnknownQuotes": 0,
+        "primitives": [
+          "EVIDENCE",
+          "POLICY"
+        ],
+        "odgComponentsExist": true,
+        "demonstrated": false,
+        "score": "NOT_MEASURED"
+      }
+    },
+    {
+      "id": "MC-PEER-REVIEW-EVERY-PR",
+      "title": {
+        "basis": "HYPOTHESIS",
+        "text": "Peer review on every pull request"
+      },
+      "org": "Microsoft",
+      "practiceArea": "code review",
+      "source": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+          "consultedDate": "2026-11-23"
+        }
+      ],
+      "problemSolved": {
+        "basis": "HYPOTHESIS",
+        "text": "unreviewed changes reach shared branches"
+      },
+      "howItWorks": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "M_CR_PR",
+            "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+            "quote": "Developers working on projects should conduct peer code reviews on every pull request (or check-in to a shared branch).",
+            "pageSha256": "4db58d3ad154ec6ceedfe65c16313a37686951d2e5e6daf7c90c9b92b618f80b",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "conditions": [
+        {
+          "basis": "HYPOTHESIS",
+          "text": "the reviewer is independent of the author (author ≠ reviewer)"
+        }
+      ],
+      "limits": [
+        {
+          "basis": "COLLECTION_RECORD",
+          "text": "the playbook's review goals, automation and turnaround questions matched nothing on the fetched page (M_CR_GOAL, M_CR_AUTO, M_CR_TIME)"
+        }
+      ],
+      "primitives": {
+        "basis": "HYPOTHESIS",
+        "values": [
+          "POLICY",
+          "IDENTITY"
+        ]
+      },
+      "odgComponents": {
+        "basis": "HYPOTHESIS",
+        "files": [
+          {
+            "path": "runtime/core/evaluator-independence.ts",
+            "exists": true
+          }
+        ]
+      },
+      "demonstrationTest": {
+        "basis": "HYPOTHESIS",
+        "text": "a merge request authored and approved by the same identity is refused; one approved by an independent identity passes",
+        "status": "PROPOSED — not implemented, not run"
+      },
+      "matrixInput": {
+        "howItWorksEpistemic": [
+          "SUPPORTED"
+        ],
+        "quotedFields": 1,
+        "hypothesisFields": 2,
+        "supportedQuotes": 1,
+        "candidateOrUnknownQuotes": 0,
+        "primitives": [
+          "POLICY",
+          "IDENTITY"
+        ],
+        "odgComponentsExist": true,
+        "demonstrated": false,
+        "score": "NOT_MEASURED"
+      }
+    },
+    {
+      "id": "MC-CI-BEFORE-REVIEW",
+      "title": {
+        "basis": "HYPOTHESIS",
+        "text": "CI must pass (protected main) before code review starts; failed builds report logs"
+      },
+      "org": "Microsoft",
+      "practiceArea": "continuous integration",
+      "source": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+          "consultedDate": "2026-11-23"
+        }
+      ],
+      "problemSolved": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "M_CI_DEF",
+            "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+            "quote": "Continuous integration automation is an integral part of the software development lifecycle intended to reduce build integration errors and maximize velocity across a dev crew.",
+            "pageSha256": "170b437b20e7c88a9744b29104f17cf1d384047959a3e46a35236e5b6ca79f56",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "howItWorks": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "M_CI_MAIN",
+            "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+            "quote": "Protected branch policies should be setup on the main branch to ensure that CI stage(s) have passed prior to starting a code review.",
+            "pageSha256": "170b437b20e7c88a9744b29104f17cf1d384047959a3e46a35236e5b6ca79f56",
+            "epistemic": "SUPPORTED"
+          },
+          {
+            "patternId": "M_CI_BROKEN",
+            "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+            "quote": "If the build step happens to fail then the build pipeline run status should be reported as failed including relevant logs and stack traces.",
+            "pageSha256": "170b437b20e7c88a9744b29104f17cf1d384047959a3e46a35236e5b6ca79f56",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "conditions": [
+        {
+          "basis": "HYPOTHESIS",
+          "text": "branch protection is configurable on the repository (on this repo main is PR-protected with a required CI check)"
+        }
+      ],
+      "limits": [
+        {
+          "basis": "QUOTE",
+          "note": "the linter/style gate is only a cross-reference to another section (fragment, CANDIDATE)",
+          "quotes": [
+            {
+              "patternId": "M_CI_GATE",
+              "url": "https://microsoft.github.io/code-with-engineering-playbook/CI-CD/continuous-integration/",
+              "quote": "The Code Review recipes section of the playbook has suggestions for linters and preferred styles for a number of languages.",
+              "pageSha256": "170b437b20e7c88a9744b29104f17cf1d384047959a3e46a35236e5b6ca79f56",
+              "epistemic": "CANDIDATE"
+            }
+          ]
+        }
+      ],
+      "primitives": {
+        "basis": "HYPOTHESIS",
+        "values": [
+          "POLICY",
+          "EVIDENCE",
+          "EXECUTOR"
+        ]
+      },
+      "odgComponents": {
+        "basis": "HYPOTHESIS",
+        "files": [
+          {
+            "path": "runtime/bin/odg-test-report.ts",
+            "exists": true
+          },
+          {
+            "path": "runtime/core/validation-engine.ts",
+            "exists": true
+          }
+        ]
+      },
+      "demonstrationTest": {
+        "basis": "HYPOTHESIS",
+        "text": "a review request on a change whose CI status is not 'passed' is refused, and a failed build record always carries its logs",
+        "status": "PROPOSED — not implemented, not run"
+      },
+      "matrixInput": {
+        "howItWorksEpistemic": [
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "quotedFields": 3,
+        "hypothesisFields": 1,
+        "supportedQuotes": 3,
+        "candidateOrUnknownQuotes": 1,
+        "primitives": [
+          "POLICY",
+          "EVIDENCE",
+          "EXECUTOR"
+        ],
+        "odgComponentsExist": true,
+        "demonstrated": false,
+        "score": "NOT_MEASURED"
+      }
+    },
+    {
+      "id": "MC-MERGE-QUEUE",
+      "title": {
+        "basis": "HYPOTHESIS",
+        "text": "Merge queue: group PRs, build+test them, never update main to a failing commit"
+      },
+      "org": "GitHub",
+      "practiceArea": "delivery engineering",
+      "source": [
+        {
+          "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+          "consultedDate": "2026-11-23"
+        }
+      ],
+      "problemSolved": {
+        "basis": "HYPOTHESIS",
+        "text": "concurrent merges can each pass alone yet break main together"
+      },
+      "howItWorks": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "GH_MQ_MAIN",
+            "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+            "quote": "For GitHub and our \"deploy the merge process,\" merge queue dynamically forms groups of pull requests that are candidates for deployment, kicks off builds and tests via GitHub Actions, and ensures our main branch is never updated to a failing commit by enforcing branch protection rules.",
+            "pageSha256": "02b58c8769c2c5971f155a96958edb74ad6b2e044bddb8553893c66909b9e848",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "conditions": [
+        {
+          "basis": "QUOTE",
+          "note": "adopted progressively: small internal repositories first, phased rollout",
+          "quotes": [
+            {
+              "patternId": "GH_MQ_SCALE",
+              "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+              "quote": "By rolling out changes to the process in phases (and sometimes testing and rolling back changes early in the morning before most developers started working) we were able to slowly transition our large monorepo and all of our repositories responsible for production services onto merge queue by 2023.",
+              "pageSha256": "02b58c8769c2c5971f155a96958edb74ad6b2e044bddb8553893c66909b9e848",
+              "epistemic": "SUPPORTED"
+            },
+            {
+              "patternId": "GH_MQ_WHAT",
+              "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+              "quote": "By mid-2021, a few small, internal repositories started testing merge queue, but moving our large monorepo would not happen until the next year for a few reasons.",
+              "pageSha256": "02b58c8769c2c5971f155a96958edb74ad6b2e044bddb8553893c66909b9e848",
+              "epistemic": "SUPPORTED"
+            }
+          ]
+        }
+      ],
+      "limits": [
+        {
+          "basis": "QUOTE",
+          "note": "earlier approach recorded; what made it insufficient is not in the recorded quotes",
+          "quotes": [
+            {
+              "patternId": "GH_MQ_TRAINS",
+              "url": "https://github.blog/engineering/engineering-principles/how-github-uses-merge-queue-to-ship-hundreds-of-changes-every-day/",
+              "quote": "Our solution at this time was trains.",
+              "pageSha256": "02b58c8769c2c5971f155a96958edb74ad6b2e044bddb8553893c66909b9e848",
+              "epistemic": "SUPPORTED"
+            }
+          ]
+        }
+      ],
+      "primitives": {
+        "basis": "HYPOTHESIS",
+        "values": [
+          "RESOLVER",
+          "EXECUTOR",
+          "RECOVERY",
+          "STATE"
+        ]
+      },
+      "odgComponents": {
+        "basis": "HYPOTHESIS",
+        "files": [
+          {
+            "path": "runtime/core/odg-writeset-contention.ts",
+            "exists": true
+          },
+          {
+            "path": "runtime/core/mission-scheduler.ts",
+            "exists": true
+          }
+        ]
+      },
+      "demonstrationTest": {
+        "basis": "HYPOTHESIS",
+        "text": "two changes that pass separately but fail together are queued; the combined candidate fails, main is not advanced, and the failing group is split and retried",
+        "status": "PROPOSED — not implemented, not run"
+      },
+      "matrixInput": {
+        "howItWorksEpistemic": [
+          "SUPPORTED"
+        ],
+        "quotedFields": 3,
+        "hypothesisFields": 1,
+        "supportedQuotes": 4,
+        "candidateOrUnknownQuotes": 0,
+        "primitives": [
+          "RESOLVER",
+          "EXECUTOR",
+          "RECOVERY",
+          "STATE"
+        ],
+        "odgComponentsExist": true,
+        "demonstrated": false,
+        "score": "NOT_MEASURED"
+      }
+    },
+    {
+      "id": "MC-LESSONS-LEARNED",
+      "title": {
+        "basis": "HYPOTHESIS",
+        "text": "Document lessons learned from failures in reports"
+      },
+      "org": "NASA",
+      "practiceArea": "systems engineering",
+      "source": [
+        {
+          "url": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+          "consultedDate": "2026-11-23"
+        }
+      ],
+      "problemSolved": {
+        "basis": "HYPOTHESIS",
+        "text": "the same failure causes recur when lessons are not captured"
+      },
+      "howItWorks": {
+        "basis": "QUOTE",
+        "quotes": [
+          {
+            "patternId": "N_LESSONS",
+            "url": "https://www.nasa.gov/reference/systems-engineering-handbook/",
+            "quote": "Lessons learned on systems engineering were documented in reports such as those by the NASA Integrated Action Team (NIAT), the Columbia Accident Investigation Board (CAIB), and the follow-on Diaz Report.",
+            "pageSha256": "5d7eada0761cc7cd763ce6be2da9c57c88e79c60f1796c3abd039f4dfca6b98d",
+            "epistemic": "SUPPORTED"
+          }
+        ]
+      },
+      "conditions": [
+        {
+          "basis": "HYPOTHESIS",
+          "text": "failures/incidents are recorded with causes"
+        }
+      ],
+      "limits": [
+        {
+          "basis": "COLLECTION_RECORD",
+          "text": "only the handbook INDEX page is inside the admitted prefix; verification & validation, technical review and risk-management questions matched nothing there (N_VV, N_REVIEW, N_RISK)"
+        }
+      ],
+      "primitives": {
+        "basis": "HYPOTHESIS",
+        "values": [
+          "EVIDENCE",
+          "RECOVERY"
+        ]
+      },
+      "odgComponents": {
+        "basis": "HYPOTHESIS",
+        "files": [
+          {
+            "path": "runtime/core/odg-lesson-decision-loop.ts",
+            "exists": true
+          },
+          {
+            "path": "runtime/core/incident-recurrence.ts",
+            "exists": true
+          }
+        ]
+      },
+      "demonstrationTest": {
+        "basis": "HYPOTHESIS",
+        "text": "a recurring incident class is linked to a recorded lesson and the next mission of that class is required to cite it",
+        "status": "PROPOSED — not implemented, not run"
+      },
+      "matrixInput": {
+        "howItWorksEpistemic": [
+          "SUPPORTED"
+        ],
+        "quotedFields": 1,
+        "hypothesisFields": 2,
+        "supportedQuotes": 1,
+        "candidateOrUnknownQuotes": 0,
+        "primitives": [
+          "EVIDENCE",
+          "RECOVERY"
+        ],
+        "odgComponentsExist": true,
+        "demonstrated": false,
+        "score": "NOT_MEASURED"
+      }
+    }
+  ],
+  "notCarded": {
+    "quotesNotUsed": [
+      "G_LOOK_FUNC",
+      "G_SMALL_WHY"
+    ],
+    "pagesWithoutQuotes": [
+      {
+        "url": "https://microsoft.github.io/code-with-engineering-playbook/automated-testing/",
+        "org": "Microsoft",
+        "reason": "no pre-registered pattern matched (NOT_MEASURED)"
+      },
+      {
+        "url": "https://research.google/pubs/modern-code-review-a-case-study-at-google/",
+        "org": "Google",
+        "reason": "no pre-registered pattern matched (NOT_MEASURED)"
+      }
+    ]
+  },
+  "honesty": [
+    "no card is a fact: quoted statements are at most SUPPORTED ('what the publisher states'), single-source, never CORROBORATED",
+    "primitives, ODG components, conditions and demonstrating tests are HYPOTHESES (ODG mapping), not findings; no demonstrating test has been implemented or run",
+    "the selection matrix input carries no score (NOT_MEASURED) — ranking needs measured ODG outcomes"
+  ]
+}
