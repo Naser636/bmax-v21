@@ -191,3 +191,6 @@ module.exports = { ENV_DIR, ENV_ROOT, SHARED_STATE, PER_RUN_ARTIFACTS, PER_RUN_D
 
 // Preload entry: `node --require <this file>` installs the overlay as soon as the descendant starts (no-op when unset).
 if (isActive()) { try { install(); } catch (e: any) { console.error("STOP: run-output isolation refused —", e && e.message); process.exit(1); } }
+
+// Module-scope marker (repo dual-export convention; adds NO runtime export).
+export {};
