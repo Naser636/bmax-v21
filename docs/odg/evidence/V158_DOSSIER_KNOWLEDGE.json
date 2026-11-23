@@ -195,7 +195,7 @@
       "grounds": "OFF_HOST redirect on a prefix ⇒ REFUSE; same-host redirect ⇒ non-canonical prefix ⇒ DEFER (transport blocks redirects)"
     },
     {
-      "claim": "current prompt-injection defenses reduce but do not eliminate the risk for agents that process untrusted content",
+      "claim": "current prompt-injection defenses do not eliminate the risk for agents that process untrusted content",
       "type": "FACT",
       "classification": "FACT_CORROBORATED",
       "corroborationLevel": "CORROBORATED",
