@@ -1,0 +1,368 @@
+#!/usr/bin/env node
+"use strict";
+
+/*
+ * V16.4 §2 "ODG GO" + §7 (close the loop) + §10 scenario J — ONE bounded, governed, traced, stoppable cycle.
+ *
+ * NOT a second orchestrator / scheduler / decision engine and NOT a button that launches a provider. It COMPOSES the
+ * canonical components, in a fixed order, for ONE cycle:
+ *   1 TRUTH_LOCK            truth-lock-gate result (injected port; fail-closed ⇒ STARTUP_REFUSED, nothing else runs)
+ *   2 STATE_READ            canonical evidence/registers + mission-ledger proven set + attempt-log (READ-ONLY port)
+ *   3 PROBLEMS_OPPORTUNITIES CP8 gaps + register statuses + Radar grant/admission + knowledge usableFor/admissible
+ *   4 SELECT                odg-strategic-register.buildRegister → mission-priority-selector.selectNextExplained
+ *                           (TIE_EXPLAINED / DECISION_REQUIRED kept verbatim; never an id pick)
+ *   5 DECOMPOSE             decomposition-planner.chooseStrategy on the selected item's contract
+ *   6 STRATEGY              odg-strategy-mode-selector.selectStrategyMode (nextStrategyAfterFailure only after a failure)
+ *   7 AUTHORIZE             intelligence-loop.runCycle (DISCOVER→AUTHORIZE; halts at PROPOSED without an EXTERNAL
+ *                           authorization) + mission-scheduler eligibility (pre-authorized allowlist, proven dedup)
+ *   8 EXECUTE               mission-scheduler.schedulerStep (stop → bounds → select → authorize → dedup → dispatch).
+ *                           dispatch is an injected port; it is reachable ONLY for a canonically authorized NATIVE mission
+ *                           in an isolated workspace, and ONLY with mode EXECUTE. PROVIDER/HYBRID ⇒ odg-sovereign-delegation
+ *                           RECORD (state CREATED) only — no provider is ever launched by this module.
+ *   9 EVIDENCE              decisions digest + cycle summary written through the injected (out-dir-confined) writer
+ *  10 NEXT_SELECTION        prepared-mission package + the selector's next choice after the current item
+ * STOP between every step: canonical emergency stop (ODG_SCHEDULER_STOP=1, as schedulerStep) + injected stop port
+ * (STOP file / SIGINT / SIGTERM) + wall-clock deadline + max steps. Every step and every stop is appended to the trace.
+ * Idempotent re-run: runId = digest of the state inputs + mode; a prior identical cycle is reported (duplicateOf) and an
+ * already-dispatched (runId, mission) is never dispatched again (plus the ledger proven-gate inside schedulerStep).
+ *
+ * PURE apart from the injected ports (no fs, no child_process, no network in this file). Honesty: the step order, the
+ * contract→spec mapping used for DECOMPOSE, the stop rules and the pass criteria were written by the technical provider
+ * (Claude Code); every DECISION in the trace is produced by the named ODG component.
+ */
+
+const crypto = require("crypto");
+const REG = require("./odg-strategic-register.js");
+const SEL = require("./mission-priority-selector.js");
+const DP = require("./decomposition-planner.js");
+const SM = require("./odg-strategy-mode-selector.js");
+const IL = require("./intelligence-loop.js");
+const SCHED = require("./mission-scheduler.js");
+const SD = require("./odg-sovereign-delegation.js");
+
+const STEPS = Object.freeze(["TRUTH_LOCK", "STATE_READ", "PROBLEMS_OPPORTUNITIES", "SELECT", "DECOMPOSE", "STRATEGY", "AUTHORIZE", "EXECUTE", "EVIDENCE", "NEXT_SELECTION"]);
+const DEFAULTS = Object.freeze({ mode: "DRY", maxSteps: STEPS.length, deadlineMs: 120000 });
+const DRY_MARK = "DRY_RUN_NOT_DISPATCHED";
+
+const DECIDED_BY: any = Object.freeze({
+  TRUTH_LOCK: "ODG truth-lock-gate.truthLockGate (evaluateTruthLock policy)",
+  STATE_READ: "GO state port (provider-written reader) over canonical files; mission-ledger.verifyLedger + mission-attempt-log.readAttempts (read-only)",
+  PROBLEMS_OPPORTUNITIES: "CP8.gaps + odg-strategic-register statuses + Radar grant/admission evidence + odg-knowledge-intelligence.usableFor/admissible",
+  SELECT: "ODG odg-strategic-register.buildRegister + mission-priority-selector.selectNextExplained",
+  DECOMPOSE: "ODG decomposition-planner.chooseStrategy (contract→spec mapping is a provider rule)",
+  STRATEGY: "ODG odg-strategy-mode-selector.selectStrategyMode",
+  AUTHORIZE: "ODG intelligence-loop.runCycle (DISCOVER→AUTHORIZE) + mission-scheduler.evaluateEligibility",
+  EXECUTE: "ODG mission-scheduler.schedulerStep (+ odg-sovereign-delegation.createMission records)",
+  EVIDENCE: "GO (provider-written digest/summary)",
+  NEXT_SELECTION: "ODG mission-priority-selector.selectNextExplained (current item removed) + prepared-mission package",
+});
+
+function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
+function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
+function canon(v: any): string {
+  if (v === undefined) return "null";
+  if (v === null || typeof v !== "object") return JSON.stringify(v);
+  if (Array.isArray(v)) return "[" + v.map(canon).join(",") + "]";
+  return "{" + Object.keys(v).sort().filter((k) => v[k] !== undefined).map((k) => JSON.stringify(k) + ":" + canon(v[k])).join(",") + "}";
+}
+function sha(v: any): string { return crypto.createHash("sha256").update(typeof v === "string" ? v : canon(v)).digest("hex"); }
+function iso(ms: number): string { return new Date(ms).toISOString(); }
+/* decisions digest: every step decision except TRUTH_LOCK git details and any `volatile` block (e.g. the attempt-log
+ * size, which the live timer grows independently of this cycle's decisions). Same state ⇒ same digest. */
+function digestOf(steps: any[]): string {
+  return sha(steps.map((s: any) => {
+    const d = s.step === "TRUTH_LOCK" ? { status: s.decision && s.decision.status } : (isObj(s.decision) ? Object.fromEntries(Object.entries(s.decision).filter(([k]) => k !== "volatile")) : s.decision);
+    return { step: s.step, status: s.status, decision: d };
+  }));
+}
+function plain(v: any): any { return v === undefined ? null : JSON.parse(JSON.stringify(v)); }
+
+/* contractOf(state, id) — the WORK_ITEM_CONTRACT record of an A–P register item (null for other items). */
+function contractOf(state: any, id: string): any {
+  const cs = state && state.sources && state.sources.contracts && state.sources.contracts.data ? arr(state.sources.contracts.data.contracts) : [];
+  return cs.find((c: any) => String(c.scenario) === id) || null;
+}
+/* contract authorization as declared DATA (never minted here): approved only when state AUTHORIZED + authorizedBy set. */
+function declaredAuthorization(contract: any): any {
+  if (!contract || contract.state !== "AUTHORIZED" || typeof contract.authorizedBy !== "string" || !contract.authorizedBy.trim()) return null;
+  return { approved: true, authorizedBy: contract.authorizedBy };
+}
+/* PROVIDER RULE (declared): the decomposition-planner spec for a work item = one architecture entry per write_set path,
+ * role = objective, contract = acceptance criteria. Items without a contract have no declared scope ⇒ NOT_MEASURED. */
+function specOf(item: any, contract: any): any {
+  const w = contract && isObj(contract.WORK_ITEM_CONTRACT) ? contract.WORK_ITEM_CONTRACT : null;
+  if (!w) return null;
+  return { name: `${item.id} ${String(w.objective || "")}`, architecture: arr(w.write_set).map((p: any) => ({ path: String(p), role: String(w.objective || ""), contract: arr(w.acceptance_criteria).join("; "), dependsOn: [] })) };
+}
+const SPEC_RULE = "GO-DEC-1 (provider rule): spec.architecture = one entry per WORK_ITEM_CONTRACT.write_set path (role = objective, contract = acceptance_criteria joined); no contract ⇒ NOT_MEASURED";
+
+function selectorOptions(): any { return { weights: REG.WEIGHTS, directions: REG.DIRECTIONS }; }
+function chosenId(d: any): string | null { return d && (d.decision === "SELECTED" || d.decision === "TIE_EXPLAINED") && d.selected ? d.selected.id : null; }
+
+/*
+ * runGoCycle(opts, ports) -> Promise<result>. ports:
+ *   now() → ms; truthLock() → truthLockGate result; readState() → { inputs:[{source,sha256}], sources:{contracts,v150,cp8,
+ *   scenarioEvidence}, strategyEvidence, registerEvidence, radar:{grant,admission}, ledger:{proven:[],integrity},
+ *   attempts:{count,last}, allowlist:{ids,source}, measured, strategyNow }; knowledge() → { claims:[…] };
+ *   stopRequested() → { stop, reason, source }; trace:{ append(entry), readPrior() → entries[] }; writeSummary(obj);
+ *   isolation(item) → { ok, workspace, reason }; dispatchNative(item, ctx) → { verified, detail } (EXECUTE only);
+ *   pause() → Promise (between steps; real CLI may delay to make a mid-cycle STOP observable).
+ */
+async function runGoCycle(opts: any, ports: any): Promise<any> {
+  const o = { ...DEFAULTS, ...(isObj(opts) ? opts : {}) };
+  const mode = o.mode === "EXECUTE" ? "EXECUTE" : "DRY";
+  const maxSteps = Math.max(0, Math.min(STEPS.length, Number.isFinite(o.maxSteps) ? Math.floor(o.maxSteps) : STEPS.length));
+  const deadlineMs = Number.isFinite(o.deadlineMs) && o.deadlineMs > 0 ? o.deadlineMs : DEFAULTS.deadlineMs;
+  const now = () => Number(ports.now());
+  const t0 = now();
+  const prior = (() => { try { return arr(ports.trace.readPrior()); } catch { return []; } })();
+  const cycleSeq = prior.filter((e: any) => e && e.kind === "CYCLE_START").length + 1;
+  let runId = "pending";
+  const steps: any[] = [];
+  const counters = { dispatchCalls: 0, providerLaunched: 0, dispatchedMissions: [] as string[] };
+  const append = (e: any) => { ports.trace.append({ ...e, runId, cycleSeq }); };
+  const ctx: any = {};
+
+  const stopCheck = (nextStep: string): any => {
+    if (process.env.ODG_SCHEDULER_STOP === "1") return { reason: "EMERGENCY_STOP", source: "ODG_SCHEDULER_STOP=1 (canonical mission-scheduler emergency stop)" };
+    let s: any = null; try { s = ports.stopRequested(); } catch { s = null; }
+    if (s && s.stop === true) return { reason: s.reason || "STOP_REQUESTED", source: s.source || "stop port" };
+    if (now() - t0 >= deadlineMs) return { reason: "DEADLINE", source: `wall-clock deadline ${deadlineMs}ms reached before ${nextStep}` };
+    if (steps.filter((x) => x.counted).length >= maxSteps) return { reason: "MAX_STEPS", source: `max steps ${maxSteps} reached before ${nextStep}` };
+    return null;
+  };
+  const finish = (status: string, extra: any = {}): any => {
+    const decisionsDigest = digestOf(steps);
+    const priorSame = prior.filter((e: any) => e && e.kind === "CYCLE_END" && e.runId === runId && e.decisionsDigest === decisionsDigest);
+    const end = { kind: "CYCLE_END", status, mode, stepsRun: steps.map((s) => `${s.step}:${s.status}`), decisionsDigest, durationMs: now() - t0, endedAt: iso(now()),
+      dispatchCalls: counters.dispatchCalls, dispatchedMissions: counters.dispatchedMissions, providerLaunched: counters.providerLaunched,
+      idempotent: priorSame.length > 0, duplicateOf: priorSame.length ? { cycleSeq: priorSame[0].cycleSeq, endedAt: priorSame[0].endedAt } : null, ...extra };
+    append(end);
+    return Object.freeze({ ...end, runId, cycleSeq, steps, context: ctx });
+  };
+
+  append({ kind: "CYCLE_START", mode, maxSteps, deadlineMs, startedAt: iso(t0) });
+
+  // the step runner: stop-check BEFORE every step, uniform trace entry AFTER it.
+  const run = async (step: string, fn: () => any, counted = true): Promise<any> => {
+    const st = stopCheck(step);
+    if (st) { append({ kind: "STOP", beforeStep: step, ...st, at: iso(now()) }); return { stopped: st }; }
+    const startedAt = now();
+    let r: any;
+    try { r = fn(); } catch (e: any) { r = { status: "ERROR", inputs: null, decision: { error: String((e && e.message) || e) }, rationale: "step threw — fail-closed (cycle halts)" }; }
+    const entry = { kind: "STEP", index: STEPS.indexOf(step) + 1, step, status: r.status, startedAt: iso(startedAt), endedAt: iso(now()), inputsSha256: sha(r.inputs), decision: plain(r.decision), rationale: r.rationale, decidedBy: DECIDED_BY[step] };
+    steps.push({ ...entry, counted });
+    append(entry);
+    try { if (typeof ports.pause === "function") await ports.pause(step); } catch { /* best-effort */ }
+    return r;
+  };
+  const stopped = (r: any) => r && r.stopped ? finish("STOPPED", { stop: r.stopped }) : null;
+
+  // 1 TRUTH_LOCK
+  let r: any = await run("TRUTH_LOCK", () => {
+    const tl = ports.truthLock();
+    const ok = !!tl && tl.ok === true && tl.blocked !== true;
+    return { status: ok ? "PASS" : "REFUSED", inputs: tl && tl.gitState, decision: { status: tl && tl.status, ok: !!(tl && tl.ok), blocked: !!(tl && tl.blocked), enforce: !!(tl && tl.enforce), detail: tl && tl.verdict && tl.verdict.detail, gitState: tl && tl.gitState }, rationale: ok ? "repo on expected branch, HEAD == origin/main, index empty" : "Truth-Lock refused — fail-closed: no state read, no selection, no execution" };
+  });
+  if (stopped(r)) return stopped(r);
+  if (r.status !== "PASS") return finish("STARTUP_REFUSED");
+
+  // 2 STATE_READ
+  r = await run("STATE_READ", () => {
+    const s = ports.readState();
+    ctx.state = s;
+    runId = sha({ inputs: s.inputs, sourcesDigest: sha(s.sources && { contracts: s.sources.contracts, v150: s.sources.v150, cp8: s.sources.cp8 }), proven: arr(s.ledger && s.ledger.proven).slice().sort(), allowlist: arr(s.allowlist && s.allowlist.ids).slice().sort(), mode }).slice(0, 16);
+    return { status: "DONE", inputs: s.inputs, decision: { inputs: s.inputs, ledger: { provenCount: arr(s.ledger && s.ledger.proven).length, integrityOk: !!(s.ledger && s.ledger.integrity && s.ledger.integrity.ok) }, allowlist: s.allowlist, codeTreeParity: s.codeTreeParity || null, runId, volatile: { attempts: s.attempts, ledgerIntegrity: s.ledger && s.ledger.integrity } }, rationale: "canonical evidence + registers hashed; mission-ledger and attempt-log read-only (never written by GO)" };
+  });
+  if (stopped(r)) return stopped(r);
+
+  // 3 PROBLEMS_OPPORTUNITIES
+  r = await run("PROBLEMS_OPPORTUNITIES", () => {
+    const s = ctx.state;
+    const register = REG.buildRegister(s.sources);
+    ctx.register = register;
+    const cp8 = s.sources.cp8 && s.sources.cp8.data ? s.sources.cp8.data : {};
+    const g = s.radar && s.radar.grant && s.radar.grant.grant ? s.radar.grant.grant : null;
+    const tn = now();
+    const grantActive = !!g && g.authorized === true && Number.isFinite(g.issuedMs) && Number.isFinite(g.expiresMs) && tn >= g.issuedMs && tn < g.expiresMs;
+    const k = ports.knowledge();
+    ctx.knowledge = k;
+    const claims = arr(k && k.claims);
+    const decision = {
+      gaps: arr(cp8.gaps),
+      registerStatusCounts: register.statusCounts,
+      blockedOrOwnerGated: register.items.filter((it: any) => it.status === "BLOCKED" || it.requiresOwnerAuthorization === true).map((it: any) => it.id),
+      executedPartial: register.items.filter((it: any) => it.status === "EXECUTED_PARTIAL").map((it: any) => it.id),
+      radar: { grant: g ? { authorized: g.authorized === true, issuedIso: g.issuedIso, expiresIso: g.expiresIso, allowedDomains: arr(g.allowedDomains), active: grantActive } : null, admissionSummary: s.radar && s.radar.admission ? s.radar.admission.summary : null, liveEgress: "NONE (GO never sets ODG_RADAR_LIVE; pinned collections only)" },
+      knowledge: { collection: k && k.collection, ok: !!(k && k.ok), claims: claims.map((c: any) => ({ id: c.id, epistemic: c.epistemic, isFact: c.isFact === true, usableFor: c.useAuthorization, admissibleAsFact: c.admissible ? c.admissible.trusted === true : false, admissibleVerdict: c.admissible ? c.admissible.verdict : null })) },
+    };
+    return { status: "DONE", inputs: { register: sha(register), cp8: sha(cp8.gaps || null), grant: sha(g), knowledge: sha(decision.knowledge) }, decision, rationale: "problems = CP8 gaps + blocked/owner-gated register items; opportunities = selectable register items + usable (not fact-admitted) pinned knowledge; Radar read-only" };
+  });
+  if (stopped(r)) return stopped(r);
+
+  // 4 SELECT
+  r = await run("SELECT", () => {
+    const d = SEL.selectNextExplained(REG.toSelectorCandidates(ctx.register), selectorOptions());
+    ctx.selection = d;
+    const id = chosenId(d);
+    ctx.item = id ? ctx.register.items.find((it: any) => it.id === id) : null;
+    const committed = ctx.state.registerEvidence && ctx.state.registerEvidence.decisionRecord ? ctx.state.registerEvidence.decisionRecord : null;
+    const consistent = committed ? committed.decision === d.decision && committed.selected === (d.selected ? d.selected.id : null) && canon(arr(committed.tiedSet)) === canon(arr(d.tiedSet)) : null;
+    return { status: id ? "DONE" : "HALTED", inputs: REG.toSelectorCandidates(ctx.register),
+      decision: { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, resolutionSteps: d.resolutionSteps || null, justification: d.justification, uncertainty: d.selected ? d.selected.uncertainty : d.proposed ? d.proposed.uncertainty : null, ownerAuthorizationRequired: arr(d.ownerAuthorizationRequired).map((x: any) => x.id), consistentWithCommittedRegisterEvidence: consistent },
+      rationale: id ? `selector decision ${d.decision}${d.decision === "TIE_EXPLAINED" ? ` (tie ${arr(d.tiedSet).join("/")} resolved by ${d.resolvedBy})` : ""} — a PROPOSAL, not an authorization` : `selector decision ${d.decision}: ODG does not pick (no id tie-break) — owner/ODG decision required` };
+  });
+  if (stopped(r)) return stopped(r);
+  const item = ctx.item;
+  const skip = (why: string) => () => ({ status: "SKIPPED", inputs: null, decision: { skipped: why }, rationale: why });
+
+  // 5 DECOMPOSE
+  r = await run("DECOMPOSE", item ? () => {
+    const contract = contractOf(ctx.state, item.id);
+    ctx.contract = contract;
+    const spec = specOf(item, contract);
+    if (!spec) return { status: "NOT_MEASURED", inputs: { item: item.id }, decision: { rule: SPEC_RULE, strategy: null, reason: "no WORK_ITEM_CONTRACT ⇒ no declared scope to decompose" }, rationale: "decomposition NOT_MEASURED (never default-filled)" };
+    const c = DP.chooseStrategy(spec);
+    ctx.decomposition = c;
+    return { status: "DONE", inputs: spec, decision: { rule: SPEC_RULE, strategy: c.strategy, complexity: c.complexity, reason: c.reason, parts: arr(c.architecture).map((a: any) => a.path) }, rationale: `decomposition-planner: ${c.strategy} (${c.complexity})` };
+  } : skip("no selected item (selection halted)"));
+  if (stopped(r)) return stopped(r);
+
+  // 6 STRATEGY
+  r = await run("STRATEGY", item ? () => {
+    const contract = ctx.contract;
+    const w = contract && isObj(contract.WORK_ITEM_CONTRACT) ? contract.WORK_ITEM_CONTRACT : null;
+    const mission: any = { id: contract ? `AP-${item.id}` : item.id, authorizationState: contract ? contract.state : (item.contractState || "PROPOSED") };
+    if (w) { mission.writeSet = w.write_set; mission.writeSetSource = `${ctx.state.sources.contracts.path}#contracts[scenario=${item.id}].WORK_ITEM_CONTRACT.write_set`; }
+    const auth = declaredAuthorization(contract);
+    if (auth) mission.authorization = { by: auth.authorizedBy, missionId: mission.id };
+    const sel = SM.selectStrategyMode(mission, { measured: ctx.state.measured, now: ctx.state.strategyNow });
+    ctx.strategy = sel;
+    const committed = arr(ctx.state.strategyEvidence && ctx.state.strategyEvidence.missions).find((m: any) => m.id === mission.id);
+    const consistent = committed && committed.current ? committed.current.mode === sel.mode && committed.current.tentativeMode === sel.tentativeMode && committed.current.rule === sel.rule : null;
+    return { status: "DONE", inputs: mission, decision: { missionId: mission.id, mode: sel.mode, tentativeMode: sel.tentativeMode || null, rule: sel.rule, rationale: sel.rationale, uncertainty: sel.uncertainty, authorizationRequired: sel.authorizationRequired, providerExecutable: sel.providerExecutable, launchedBySelector: sel.launchedBySelector, fallbackChain: sel.fallbackChain, delegationRecords: sel.delegationRecords, nextStrategyAfterFailure: "NOT_INVOKED (no execution failure in this cycle)", consistentWithCommittedStrategyEvidence: consistent },
+      rationale: `strategy-mode-selector: ${sel.mode}${sel.tentativeMode ? ` (tentative ${sel.tentativeMode})` : ""} by rule ${sel.rule}` };
+  } : skip("no selected item (selection halted)"));
+  if (stopped(r)) return stopped(r);
+
+  // 7 AUTHORIZE
+  r = await run("AUTHORIZE", () => {
+    const allow = arr(ctx.state.allowlist && ctx.state.allowlist.ids);
+    const proven = new Set(arr(ctx.state.ledger && ctx.state.ledger.proven));
+    const queue = { queue: [...(item ? [{ mission: item.id, status: "PENDING", source: "SELECT" }] : []), ...allow.filter((id: string) => !item || id !== item.id).map((id: string) => ({ mission: id, status: "PENDING", source: ctx.state.allowlist.source }))] };
+    ctx.queue = queue;
+    let loop: any = null;
+    let loopAuthorized = false;
+    if (item) {
+      const accepted = ctx.register.items.filter((it: any) => it.status === "ACCEPTED").map((it: any) => ({ id: it.id, title: it.title }));
+      let executeCalled = false;
+      loop = IL.runCycle({ discovery: { id: item.id, title: item.title, detail: canon(item.nextStep), origin: "GO/SELECT", evidence: item.statusSource }, existingItems: accepted, authorization: declaredAuthorization(ctx.contract), candidatePlans: [] }, { execute: () => { executeCalled = true; return null; } });
+      loopAuthorized = arr(loop.trace).some((t: any) => t.step === "AUTHORIZE" && t.authorized === true);
+      ctx.loopExecuteCalled = executeCalled;
+    }
+    ctx.loopAuthorized = loopAuthorized;
+    const eligibility = queue.queue.map((q: any) => ({ mission: q.mission, source: q.source, ...SCHED.evaluateEligibility(q, { preAuthorized: allow, isProven: (id: string) => proven.has(id) }) }));
+    return { status: loopAuthorized || eligibility.some((e: any) => e.eligible) ? "DONE" : "HALTED_AT_GATE", inputs: { item: item ? item.id : null, contractState: ctx.contract ? ctx.contract.state : null, authorizedBy: ctx.contract ? ctx.contract.authorizedBy : null, allowlist: allow },
+      decision: { intelligenceLoop: loop ? { stage: loop.stage, completed: loop.completed, proposedOnly: loop.proposedOnly === true, duplicate: loop.duplicate === true, reason: loop.reason, trace: loop.trace } : null, selectedAuthorized: loopAuthorized, schedulerEligibility: eligibility, selfAuthorized: false },
+      rationale: loopAuthorized ? "selected item carries an EXTERNAL authorization (contract AUTHORIZED + authorizedBy)" : "no external authorization for the selected item ⇒ the loop stops at PROPOSED (ODG never self-authorizes); scheduler eligibility shows the canonical pre-authorized allowlist + proven dedup" };
+  });
+  if (stopped(r)) return stopped(r);
+  const gateHeld = r.status === "HALTED_AT_GATE";
+
+  // 8 EXECUTE (via the canonical schedulerStep; dispatch reachable only for authorized NATIVE isolated work)
+  r = await run("EXECUTE", () => {
+    const allow = arr(ctx.state.allowlist && ctx.state.allowlist.ids);
+    const proven = new Set(arr(ctx.state.ledger && ctx.state.ledger.proven));
+    const already = new Set(prior.filter((e: any) => e && e.kind === "DISPATCHED" && e.runId === runId).map((e: any) => e.mission));
+    const strategyNative = !!ctx.strategy && ctx.strategy.mode === "NATIVE";
+    const delegation: any[] = [];
+    if (ctx.strategy && (["PROVIDER", "HYBRID"].includes(ctx.strategy.mode) || ["PROVIDER", "HYBRID"].includes(ctx.strategy.tentativeMode))) {
+      const rec = SD.createMission({ id: ctx.strategy.missionId || (item && item.id), objective: ctx.contract && ctx.contract.WORK_ITEM_CONTRACT ? ctx.contract.WORK_ITEM_CONTRACT.objective : null, reason: `strategy ${ctx.strategy.mode}/${ctx.strategy.tentativeMode || "-"} — delegated part(s) recorded only` });
+      delegation.push({ state: rec.state, missionId: rec.missionId, authority: rec.authority, providerLaunched: false });
+    }
+    let isolationSeen: any = null;
+    const authorize = (next: any) => {
+      const isSelected = !!item && next.mission === item.id;
+      if (isSelected && !ctx.loopAuthorized) return { ok: false, reason: "selected item NOT AUTHORIZED (PROPOSED; no external authorization)" };
+      if (isSelected && !strategyNative) return { ok: false, reason: `strategy mode ${ctx.strategy ? ctx.strategy.mode : "UNKNOWN"} ≠ NATIVE ⇒ native execution refused (PROVIDER/HYBRID parts are delegation RECORDS only)` };
+      if (!isSelected && !allow.includes(next.mission)) return { ok: false, reason: "not on the canonical pre-authorized allowlist" };
+      const iso2 = (() => { try { return ports.isolation(next); } catch (e: any) { return { ok: false, reason: String((e && e.message) || e) }; } })();
+      isolationSeen = iso2;
+      if (!iso2 || iso2.ok !== true) return { ok: false, reason: `NO_ISOLATED_WORKSPACE: ${iso2 && iso2.reason}` };
+      return { ok: true, reason: "authorized + native + isolated" };
+    };
+    const dispatch = (next: any) => {
+      if (mode !== "EXECUTE") return { detail: `${DRY_MARK}: would dispatch ${next.mission} via the governed pipeline in ${isolationSeen && isolationSeen.workspace}` };
+      counters.dispatchCalls++; counters.dispatchedMissions.push(next.mission);
+      append({ kind: "DISPATCHED", mission: next.mission, workspace: isolationSeen && isolationSeen.workspace, at: iso(now()) });
+      return ports.dispatchNative(next, { workspace: isolationSeen && isolationSeen.workspace });
+    };
+    const d = SCHED.schedulerStep({ queue: ctx.queue, preAuthorized: [...allow, ...(item && ctx.loopAuthorized ? [item.id] : [])], isProven: (id: string) => proven.has(id) || already.has(id), stopSignal: () => { const s = stopCheck("EXECUTE/dispatch"); return !!s && s.reason !== "MAX_STEPS"; }, authorize, dispatch, policy: { maxAttemptsPerMission: 3 } });
+    const dry = mode !== "EXECUTE" && d.status === "NOT_MEASURABLE" && String(d.reason).startsWith(DRY_MARK);
+    let failureNext: any = null;
+    if (d.status === "FAIL" && ctx.strategy) failureNext = SM.nextStrategyAfterFailure({ mode: ctx.strategy.mode, strategy: "DEFAULT" }, { accepted: false, stopReason: "VERIFICATION_FAILED" });
+    const status = d.status === "PASS" || d.status === "FAIL" ? `EXECUTED_${d.status}` : dry ? "WOULD_DISPATCH" : d.status === "STOPPED" ? "STOPPED" : gateHeld || d.status === "IDLE" || d.status === "BLOCKED" ? "NOTHING_EXECUTED" : d.status;
+    return { status, inputs: { queue: ctx.queue, mode },
+      decision: { scheduler: { status: d.status, mission: d.mission, reason: d.reason }, mode, dispatchCalls: counters.dispatchCalls, providerLaunched: false, delegationRecords: delegation, nextStrategyAfterFailure: failureNext ? { next: failureNext.next, rule: failureNext.rule } : null, commitOrMerge: "NONE (GO never commits/merges)" },
+      rationale: status === "NOTHING_EXECUTED" ? `authorization gate held: ${d.reason}` : status === "WOULD_DISPATCH" ? "dry run: an authorized native isolated mission would be dispatched (not executed)" : `scheduler ${d.status}: ${d.reason}` };
+  });
+  if (stopped(r)) return stopped(r);
+  if (r.status === "STOPPED") return finish("STOPPED", { stop: { reason: "EMERGENCY_STOP", source: "schedulerStep stopSignal" } });
+  const execStatus = r.status;
+
+  // 9 EVIDENCE
+  r = await run("EVIDENCE", () => {
+    const digest = digestOf(steps);
+    const summary = { runId, cycleSeq, mode, stepsSoFar: steps.map((s) => `${s.step}:${s.status}`), decisionsDigestSoFar: digest, selection: ctx.selection ? ctx.selection.decision : null, item: item ? item.id : null, execute: execStatus };
+    try { ports.writeSummary(summary); } catch (e: any) { return { status: "ERROR", inputs: summary, decision: { written: false, error: String((e && e.message) || e) }, rationale: "summary write refused (out-dir confinement) — fail-closed" }; }
+    return { status: "DONE", inputs: summary, decision: { written: true, decisionsDigestSoFar: digest }, rationale: "cycle summary written via the out-dir-confined writer; trace is append-only" };
+  });
+  if (stopped(r)) return stopped(r);
+
+  // 10 NEXT_SELECTION
+  r = await run("NEXT_SELECTION", () => {
+    const rest = REG.toSelectorCandidates(ctx.register).filter((c: any) => !item || c.id !== item.id);
+    const nd = SEL.selectNextExplained(rest, selectorOptions());
+    const w = ctx.contract && isObj(ctx.contract.WORK_ITEM_CONTRACT) ? ctx.contract.WORK_ITEM_CONTRACT : null;
+    const prepared = item ? { id: item.id, title: item.title, status: item.status, nextStep: item.nextStep, contract: w ? { objective: w.objective, write_set: w.write_set, acceptance_criteria: w.acceptance_criteria, stop_conditions: w.stop_conditions, evidence_required: w.evidence_required } : null,
+      decomposition: ctx.decomposition ? { strategy: ctx.decomposition.strategy, complexity: ctx.decomposition.complexity, parts: arr(ctx.decomposition.architecture).map((a: any) => a.path) } : null,
+      strategy: ctx.strategy ? { mode: ctx.strategy.mode, tentativeMode: ctx.strategy.tentativeMode || null, rule: ctx.strategy.rule } : null,
+      authorizationNeeded: ctx.loopAuthorized ? null : `owner: contract ${item.id} PROPOSED → AUTHORIZED (authorizedBy) — ODG cannot self-authorize`, executed: execStatus } : null;
+    return { status: "DONE", inputs: rest.map((c: any) => c.id),
+      decision: { preparedMission: prepared, nextAfterCurrent: { decision: nd.decision, selected: nd.selected ? nd.selected.id : null, proposed: nd.proposed ? nd.proposed.id : null, tiedSet: arr(nd.tiedSet), resolvedBy: nd.resolvedBy || null, justification: nd.justification } },
+      rationale: "prepared-mission package for the selected item + the selector's choice once the current item is set aside (PROPOSAL only)" };
+  });
+  if (stopped(r)) return stopped(r);
+
+  const status = !item ? "HALTED_DECISION_REQUIRED" : execStatus === "NOTHING_EXECUTED" ? "HALTED_AT_AUTHORIZATION_GATE" : execStatus === "WOULD_DISPATCH" ? "DRY_COMPLETE" : execStatus.startsWith("EXECUTED_") ? execStatus : execStatus;
+  return finish(status);
+}
+
+/* assertConfinedWrite(target, outDir, forbiddenRoots) — the writer guard used by the CLI ports (exported for tests). */
+function assertConfinedWrite(target: string, outDir: string, forbiddenRoots: string[], pathMod: any): void {
+  const p = pathMod || require("path");
+  const t = p.resolve(target), od = p.resolve(outDir);
+  const inside = (a: string, b: string) => a === b || a.startsWith(b.endsWith(p.sep) ? b : b + p.sep);
+  for (const f of arr(forbiddenRoots)) if (inside(t, p.resolve(f))) throw new Error(`FORBIDDEN_WRITE: ${t} is inside protected ${f}`);
+  if (!inside(t, od)) throw new Error(`WRITE_OUTSIDE_OUT_DIR: ${t} not inside ${od}`);
+}
+
+const GO_CYCLE_CONTRACT = Object.freeze({
+  id: "V164-ODG-GO-CYCLE",
+  source: "owner directive V16.4 §2 ODG GO + §7 close the loop + §10 scenario J",
+  steps: STEPS,
+  composes: Object.freeze(["truth-lock-gate", "odg-strategic-register", "mission-priority-selector.selectNextExplained", "decomposition-planner.chooseStrategy", "odg-strategy-mode-selector", "intelligence-loop.runCycle", "mission-scheduler.schedulerStep/evaluateEligibility", "odg-sovereign-delegation.createMission", "odg-knowledge-intelligence (via port)"]),
+  invariants: Object.freeze([
+    "one bounded cycle per invocation (maxSteps ≤ 10, wall-clock deadline); no loop, no timer, no second scheduler",
+    "Truth-Lock refusal ⇒ STARTUP_REFUSED before any state read",
+    "selection is the selector's (TIE_EXPLAINED / DECISION_REQUIRED kept; never an id pick)",
+    "ODG never self-authorizes: execution only through schedulerStep with an external authorization or the canonical pre-authorized allowlist",
+    "dispatch only in mode EXECUTE, only for NATIVE work in an isolated workspace; PROVIDER/HYBRID ⇒ delegation RECORD only; no provider launch",
+    "no commit, no merge, no write outside the out dir (writer guard); ledger/attempt-log read-only",
+    "stop between every step: ODG_SCHEDULER_STOP=1, STOP file / signal port, deadline, max steps — each recorded in the trace",
+    "idempotent re-run: same state ⇒ same decisions digest (duplicateOf); a (runId, mission) is never dispatched twice",
+  ]),
+});
+
+module.exports = { runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, specOf };
+export {};

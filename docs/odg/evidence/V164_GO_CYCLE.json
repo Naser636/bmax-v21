@@ -1,0 +1,1191 @@
+{
+  "schema": "V164_GO_CYCLE_EVIDENCE/1",
+  "directive": "owner V16.4 §2 ODG GO + §7 close the loop + §10 scenarios I and J",
+  "component": {
+    "id": "V164-ODG-GO-CYCLE",
+    "source": "owner directive V16.4 §2 ODG GO + §7 close the loop + §10 scenario J",
+    "steps": [
+      "TRUTH_LOCK",
+      "STATE_READ",
+      "PROBLEMS_OPPORTUNITIES",
+      "SELECT",
+      "DECOMPOSE",
+      "STRATEGY",
+      "AUTHORIZE",
+      "EXECUTE",
+      "EVIDENCE",
+      "NEXT_SELECTION"
+    ],
+    "composes": [
+      "truth-lock-gate",
+      "odg-strategic-register",
+      "mission-priority-selector.selectNextExplained",
+      "decomposition-planner.chooseStrategy",
+      "odg-strategy-mode-selector",
+      "intelligence-loop.runCycle",
+      "mission-scheduler.schedulerStep/evaluateEligibility",
+      "odg-sovereign-delegation.createMission",
+      "odg-knowledge-intelligence (via port)"
+    ],
+    "invariants": [
+      "one bounded cycle per invocation (maxSteps ≤ 10, wall-clock deadline); no loop, no timer, no second scheduler",
+      "Truth-Lock refusal ⇒ STARTUP_REFUSED before any state read",
+      "selection is the selector's (TIE_EXPLAINED / DECISION_REQUIRED kept; never an id pick)",
+      "ODG never self-authorizes: execution only through schedulerStep with an external authorization or the canonical pre-authorized allowlist",
+      "dispatch only in mode EXECUTE, only for NATIVE work in an isolated workspace; PROVIDER/HYBRID ⇒ delegation RECORD only; no provider launch",
+      "no commit, no merge, no write outside the out dir (writer guard); ledger/attempt-log read-only",
+      "stop between every step: ODG_SCHEDULER_STOP=1, STOP file / signal port, deadline, max steps — each recorded in the trace",
+      "idempotent re-run: same state ⇒ same decisions digest (duplicateOf); a (runId, mission) is never dispatched twice"
+    ]
+  },
+  "preRegistration": {
+    "registeredIn": "runtime/bin/odg-go.ts (same commit as the first evidence write; precedence over the results is asserted, not cryptographically provable)",
+    "I": {
+      "scenario": "V16.4 §10 I — ODG sélectionne et prépare la mission suivante",
+      "criteria": [
+        {
+          "id": "I1",
+          "test": "the real dry cycle's SELECT step is mission-priority-selector.selectNextExplained over odg-strategic-register built from the real repo state; decision SELECTED or TIE_EXPLAINED (tiedSet + resolvedBy recorded) — never an id pick; the selected item is not owner-gated"
+        },
+        {
+          "id": "I2",
+          "test": "the selected item is PREPARED: NEXT_SELECTION.preparedMission carries the contract (objective, write_set, acceptance_criteria), the decomposition-planner verdict, the strategy-mode-selector verdict and an explicit authorizationNeeded when unauthorized"
+        },
+        {
+          "id": "I3",
+          "test": "consistency: the SELECT decision equals the committed V164_STRATEGIC_REGISTER decisionRecord and the STRATEGY verdict equals the committed V164_STRATEGY_MODE_SELECTION entry for that item"
+        },
+        {
+          "id": "I4",
+          "test": "the selector's next choice after the current item is recorded (NEXT_SELECTION.nextAfterCurrent)"
+        }
+      ],
+      "gradingRule": "FAIL if I1 fails or an owner-gated item is selected; PASS iff I1–I4 pass; otherwise PARTIAL (a DECISION_REQUIRED that is explained ⇒ PARTIAL)"
+    },
+    "J": {
+      "scenario": "V16.4 §10 J — le bouton GO déclenche réellement ce cycle, avec traces et possibilité d'arrêt",
+      "criteria": [
+        {
+          "id": "J1",
+          "test": "a real `odg-go` run (child process) on the real repo state performs the 10 steps in order, each STEP trace entry carrying step, inputsSha256, decision, rationale, decidedBy, startedAt, endedAt"
+        },
+        {
+          "id": "J2",
+          "test": "unauthorized work halts at the authorization gate: AUTHORIZE stops the intelligence loop at PROPOSED for the unauthorized selected item, and EXECUTE records NOTHING_EXECUTED (or the run is HALTED_DECISION_REQUIRED)"
+        },
+        {
+          "id": "J3",
+          "test": "nothing unauthorized executed: dispatchCalls=0 and providerLaunched=0 in every run whose selected item is unauthorized; every file written by every run is inside its --out dir; the main checkout's git status and mission-ledger sha256 are unchanged"
+        },
+        {
+          "id": "J4",
+          "test": "a STOP file created mid-cycle (after ≥3 steps) stops the real run before step 10 with a STOP trace entry and CYCLE_END status STOPPED"
+        },
+        {
+          "id": "J5",
+          "test": "SIGTERM sent mid-cycle (after ≥3 steps) stops the real run cleanly: STOP trace entry + CYCLE_END STOPPED, process exit code 3"
+        },
+        {
+          "id": "J6",
+          "test": "canonical emergency stop ODG_SCHEDULER_STOP=1 ⇒ STOPPED with trace; --max-steps and --deadline-ms bounds ⇒ STOPPED (MAX_STEPS / DEADLINE) with trace"
+        },
+        {
+          "id": "J7",
+          "test": "re-running the same dry cycle on the same state is idempotent: same runId + same decisionsDigest, CYCLE_END.idempotent=true (duplicateOf recorded), no dispatch"
+        },
+        {
+          "id": "J8",
+          "test": "EXECUTE path proven for real: an `--execute` run dispatches a canonically authorized NATIVE mission in an isolated scratch worktree and records its verified outcome — NOT_MEASURED when no canonically authorized native mission exists (an authorization is never created to make it pass)"
+        }
+      ],
+      "gradingRule": "FAIL if any of J1–J7 fails; PASS iff J1–J7 pass AND J8 passes; J8 NOT_MEASURED ⇒ PARTIAL (the governed cycle and its stop are proven; the execution leg is not)"
+    }
+  },
+  "host": {
+    "stateRepo": "<mainCheckout>",
+    "mainCheckout": "<mainCheckout>",
+    "codeTreeHead": "081048afb71528e7dab85d40f5b9c1cd55160e40",
+    "stateRepoHead": "9eabf4a4effe245f1f470362350b4928a7624a1f",
+    "generatedAt": "2026-11-23T20:26:47.848Z"
+  },
+  "mainCheckoutUntouched": {
+    "before": {
+      "gitStatus": "",
+      "head": "9eabf4a4effe245f1f470362350b4928a7624a1f",
+      "ledgerSha256": "bf7852e8e71e204becfeb4f92148d5a9e8d62e7c58c2244c34a4b7b2e30606ea"
+    },
+    "after": {
+      "gitStatus": "",
+      "head": "9eabf4a4effe245f1f470362350b4928a7624a1f",
+      "ledgerSha256": "bf7852e8e71e204becfeb4f92148d5a9e8d62e7c58c2244c34a4b7b2e30606ea"
+    },
+    "equal": true
+  },
+  "runs": {
+    "truthLockOnCodeTree": {
+      "exitCode": 2,
+      "status": "STARTUP_REFUSED",
+      "stepsRun": [
+        "TRUTH_LOCK:REFUSED"
+      ],
+      "stop": null,
+      "runId": "pending",
+      "decisionsDigest": "5c9bd8ca2c25f40bc18e7c5920a16db60b2b6ce277ae12b78e4a2ec9bea6646b",
+      "idempotent": false,
+      "duplicateOf": null,
+      "dispatchCalls": 0,
+      "providerLaunched": 0,
+      "writes": [
+        "<scratch>/r0-truthlock-codetree/go-trace.jsonl"
+      ],
+      "writesConfined": true,
+      "traceEntries": 3,
+      "acted": null
+    },
+    "dry": {
+      "exitCode": 0,
+      "status": "HALTED_AT_AUTHORIZATION_GATE",
+      "stepsRun": [
+        "TRUTH_LOCK:PASS",
+        "STATE_READ:DONE",
+        "PROBLEMS_OPPORTUNITIES:DONE",
+        "SELECT:DONE",
+        "DECOMPOSE:DONE",
+        "STRATEGY:DONE",
+        "AUTHORIZE:HALTED_AT_GATE",
+        "EXECUTE:NOTHING_EXECUTED",
+        "EVIDENCE:DONE",
+        "NEXT_SELECTION:DONE"
+      ],
+      "stop": null,
+      "runId": "67be602e6ec7047a",
+      "decisionsDigest": "254488ab9a2dcf8a9c0995e7d9a0872ddcb5d8b0a5ae1039ea84f09181e5d0d0",
+      "idempotent": false,
+      "duplicateOf": null,
+      "dispatchCalls": 0,
+      "providerLaunched": 0,
+      "writes": [
+        "<scratch>/r1-dry/go-trace.jsonl",
+        "<scratch>/r1-dry/go-cycle.json.tmp-1134009",
+        "<scratch>/r1-dry/go-cycle.json"
+      ],
+      "writesConfined": true,
+      "traceEntries": 12,
+      "acted": null
+    },
+    "dryRerun": {
+      "exitCode": 0,
+      "status": "HALTED_AT_AUTHORIZATION_GATE",
+      "stepsRun": [
+        "TRUTH_LOCK:PASS",
+        "STATE_READ:DONE",
+        "PROBLEMS_OPPORTUNITIES:DONE",
+        "SELECT:DONE",
+        "DECOMPOSE:DONE",
+        "STRATEGY:DONE",
+        "AUTHORIZE:HALTED_AT_GATE",
+        "EXECUTE:NOTHING_EXECUTED",
+        "EVIDENCE:DONE",
+        "NEXT_SELECTION:DONE"
+      ],
+      "stop": null,
+      "runId": "67be602e6ec7047a",
+      "decisionsDigest": "254488ab9a2dcf8a9c0995e7d9a0872ddcb5d8b0a5ae1039ea84f09181e5d0d0",
+      "idempotent": true,
+      "duplicateOf": {
+        "cycleSeq": 1,
+        "endedAt": "2026-11-23T20:26:32.706Z"
+      },
+      "dispatchCalls": 0,
+      "providerLaunched": 0,
+      "writes": [
+        "<scratch>/r1-dry/go-trace.jsonl",
+        "<scratch>/r1-dry/go-cycle.json.tmp-1134031",
+        "<scratch>/r1-dry/go-cycle.json"
+      ],
+      "writesConfined": true,
+      "traceEntries": 12,
+      "acted": null
+    },
+    "execute": {
+      "exitCode": 0,
+      "status": "HALTED_AT_AUTHORIZATION_GATE",
+      "stepsRun": [
+        "TRUTH_LOCK:PASS",
+        "STATE_READ:DONE",
+        "PROBLEMS_OPPORTUNITIES:DONE",
+        "SELECT:DONE",
+        "DECOMPOSE:DONE",
+        "STRATEGY:DONE",
+        "AUTHORIZE:HALTED_AT_GATE",
+        "EXECUTE:NOTHING_EXECUTED",
+        "EVIDENCE:DONE",
+        "NEXT_SELECTION:DONE"
+      ],
+      "stop": null,
+      "runId": "9456298d88af7439",
+      "decisionsDigest": "e7e76ca1bf12f65b16ccee5745147dd85599ef5c2a75a01d7bc990f73fd1e56a",
+      "idempotent": false,
+      "duplicateOf": null,
+      "dispatchCalls": 0,
+      "providerLaunched": 0,
+      "writes": [
+        "<scratch>/r3-execute/go-trace.jsonl",
+        "<scratch>/r3-execute/go-cycle.json.tmp-1134053",
+        "<scratch>/r3-execute/go-cycle.json"
+      ],
+      "writesConfined": true,
+      "traceEntries": 12,
+      "acted": null
+    },
+    "stopFile": {
+      "exitCode": 3,
+      "status": "STOPPED",
+      "stepsRun": [
+        "TRUTH_LOCK:PASS",
+        "STATE_READ:DONE",
+        "PROBLEMS_OPPORTUNITIES:DONE"
+      ],
+      "stop": {
+        "kind": "STOP",
+        "beforeStep": "SELECT",
+        "reason": "STOP_FILE",
+        "source": "<scratch>/r4-stopfile/STOP",
+        "at": "2026-11-23T20:26:38.766Z",
+        "runId": "67be602e6ec7047a",
+        "cycleSeq": 1
+      },
+      "runId": "67be602e6ec7047a",
+      "decisionsDigest": "9c456ece48ca8bed4382b5a4cc34b308256cb78d2b415bacfe6bd3b3853ee227",
+      "idempotent": false,
+      "duplicateOf": null,
+      "dispatchCalls": 0,
+      "providerLaunched": 0,
+      "writes": [
+        "<scratch>/r4-stopfile/go-trace.jsonl"
+      ],
+      "writesConfined": true,
+      "traceEntries": 7,
+      "acted": {
+        "afterSteps": 3,
+        "at": "2026-11-23T20:26:38.067Z"
+      }
+    },
+    "sigterm": {
+      "exitCode": 3,
+      "status": "STOPPED",
+      "stepsRun": [
+        "TRUTH_LOCK:PASS",
+        "STATE_READ:DONE",
+        "PROBLEMS_OPPORTUNITIES:DONE"
+      ],
+      "stop": {
+        "kind": "STOP",
+        "beforeStep": "SELECT",
+        "reason": "SIGNAL",
+        "source": "SIGTERM",
+        "at": "2026-11-23T20:26:42.300Z",
+        "runId": "67be602e6ec7047a",
+        "cycleSeq": 1
+      },
+      "runId": "67be602e6ec7047a",
+      "decisionsDigest": "9c456ece48ca8bed4382b5a4cc34b308256cb78d2b415bacfe6bd3b3853ee227",
+      "idempotent": false,
+      "duplicateOf": null,
+      "dispatchCalls": 0,
+      "providerLaunched": 0,
+      "writes": [
+        "<scratch>/r5-sigterm/go-trace.jsonl"
+      ],
+      "writesConfined": true,
+      "traceEntries": 7,
+      "acted": {
+        "afterSteps": 3,
+        "at": "2026-11-23T20:26:41.611Z"
+      }
+    },
+    "emergencyStop": {
+      "exitCode": 3,
+      "status": "STOPPED",
+      "stepsRun": [],
+      "stop": {
+        "kind": "STOP",
+        "beforeStep": "TRUTH_LOCK",
+        "reason": "EMERGENCY_STOP",
+        "source": "ODG_SCHEDULER_STOP=1 (canonical mission-scheduler emergency stop)",
+        "at": "2026-11-23T20:26:43.370Z",
+        "runId": "pending",
+        "cycleSeq": 1
+      },
+      "runId": "pending",
+      "decisionsDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "idempotent": false,
+      "duplicateOf": null,
+      "dispatchCalls": 0,
+      "providerLaunched": 0,
+      "writes": [
+        "<scratch>/r6-emergency/go-trace.jsonl"
+      ],
+      "writesConfined": true,
+      "traceEntries": 4,
+      "acted": null
+    },
+    "maxSteps": {
+      "exitCode": 3,
+      "status": "STOPPED",
+      "stepsRun": [
+        "TRUTH_LOCK:PASS",
+        "STATE_READ:DONE",
+        "PROBLEMS_OPPORTUNITIES:DONE",
+        "SELECT:DONE"
+      ],
+      "stop": {
+        "kind": "STOP",
+        "beforeStep": "DECOMPOSE",
+        "reason": "MAX_STEPS",
+        "source": "max steps 4 reached before DECOMPOSE",
+        "at": "2026-11-23T20:26:44.675Z",
+        "runId": "67be602e6ec7047a",
+        "cycleSeq": 1
+      },
+      "runId": "67be602e6ec7047a",
+      "decisionsDigest": "3faf388cf79a0e028fe36a8953e62860d0c70f33e02ced2437ae4ca93e638dad",
+      "idempotent": false,
+      "duplicateOf": null,
+      "dispatchCalls": 0,
+      "providerLaunched": 0,
+      "writes": [
+        "<scratch>/r7-maxsteps/go-trace.jsonl"
+      ],
+      "writesConfined": true,
+      "traceEntries": 8,
+      "acted": null
+    },
+    "deadline": {
+      "exitCode": 3,
+      "status": "STOPPED",
+      "stepsRun": [
+        "TRUTH_LOCK:PASS",
+        "STATE_READ:DONE",
+        "PROBLEMS_OPPORTUNITIES:DONE"
+      ],
+      "stop": {
+        "kind": "STOP",
+        "beforeStep": "SELECT",
+        "reason": "DEADLINE",
+        "source": "wall-clock deadline 1500ms reached before SELECT",
+        "at": "2026-11-23T20:26:47.723Z",
+        "runId": "67be602e6ec7047a",
+        "cycleSeq": 1
+      },
+      "runId": "67be602e6ec7047a",
+      "decisionsDigest": "9c456ece48ca8bed4382b5a4cc34b308256cb78d2b415bacfe6bd3b3853ee227",
+      "idempotent": false,
+      "duplicateOf": null,
+      "dispatchCalls": 0,
+      "providerLaunched": 0,
+      "writes": [
+        "<scratch>/r8-deadline/go-trace.jsonl"
+      ],
+      "writesConfined": true,
+      "traceEntries": 7,
+      "acted": null
+    }
+  },
+  "realDryCycleTrace": [
+    {
+      "kind": "CYCLE_START",
+      "mode": "DRY",
+      "maxSteps": 10,
+      "deadlineMs": 120000,
+      "startedAt": "2026-11-23T20:26:32.483Z",
+      "runId": "pending",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 1,
+      "step": "TRUTH_LOCK",
+      "status": "PASS",
+      "startedAt": "2026-11-23T20:26:32.486Z",
+      "endedAt": "2026-11-23T20:26:32.526Z",
+      "inputsSha256": "a4f1231c3d6cd17b94815431fc34b5267c8374d7a430eb1ab89dfcd21556f861",
+      "decision": {
+        "status": "PASS",
+        "ok": true,
+        "blocked": false,
+        "enforce": true,
+        "detail": "repo on expected branch, HEAD == origin/main, index empty; candidate built from committed HEAD (unstaged local changes isolated by git-archive, never overwritten/incorporated)",
+        "gitState": {
+          "isRepo": true,
+          "branch": "main",
+          "head": "9eabf4a4effe245f1f470362350b4928a7624a1f",
+          "originMain": "9eabf4a4effe245f1f470362350b4928a7624a1f",
+          "staged": 0
+        }
+      },
+      "rationale": "repo on expected branch, HEAD == origin/main, index empty",
+      "decidedBy": "ODG truth-lock-gate.truthLockGate (evaluateTruthLock policy)",
+      "runId": "pending",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 2,
+      "step": "STATE_READ",
+      "status": "DONE",
+      "startedAt": "2026-11-23T20:26:32.531Z",
+      "endedAt": "2026-11-23T20:26:32.628Z",
+      "inputsSha256": "67f1d2473e57fbd263c93b89b9b726c4e20562ee7d67b0cbb065af09f9184c00",
+      "decision": {
+        "inputs": [
+          {
+            "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+            "sha256": "e56797b02d0b4d2110669ca6c72746a9b2715f8cb241adedecb890c6546a5cc0"
+          },
+          {
+            "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+            "sha256": "6e1abe2898c582f95d3325f9e15a98769da88b50cc6bf56490fc0ad7147c2ae3"
+          },
+          {
+            "source": "docs/odg/evidence/V163_CHECKPOINT_8.json",
+            "sha256": "7a29ae850f41de89bd0919755deb2bb568216cd2e35421e94cb676242e8d15e6"
+          },
+          {
+            "source": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+            "sha256": "86eb8a3c6416861dcacecdd1a102a7327374fe92798b2da8eddc17c493f98f9a"
+          },
+          {
+            "source": "docs/odg/evidence/V150_SCENARIO_L_CONCURRENCY.json",
+            "sha256": "89298e46e5cda4637fc3c24b1610bc22a41208dd5b3ba9e38e50c40aabcc509c"
+          },
+          {
+            "source": "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+            "sha256": "fb6bf1b7d70550761c5b5ac7995f0d694d822acb790ddd9d62d2e6f3aaaa45e1"
+          },
+          {
+            "source": "docs/odg/evidence/V160_SCENARIO_G.json",
+            "sha256": "ef5dc2937ef74836b2e64c181488fd653828fdbeb039a0435daf25bfd74a702c"
+          },
+          {
+            "source": "docs/odg/evidence/V161_SCENARIO_F.json",
+            "sha256": "02519233db44ff1cc214969f1b45136276d91cc709ebbb954cd707c27f8997ab"
+          },
+          {
+            "source": "docs/odg/evidence/V161_SCENARIO_J.json",
+            "sha256": "11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff"
+          },
+          {
+            "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+            "sha256": "613074362998559c7df40b95ee73695fcc7a4348619460a2a525e731edcb92c9"
+          },
+          {
+            "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+            "sha256": "41f2c693b3b4580121c80e47549f6f584f63faf5ad4e1d070fa78abaa8810144"
+          },
+          {
+            "source": "docs/odg/evidence/V164_RADAR_SOURCE_ADMISSION.json",
+            "sha256": "e3fb21bfd01705e4179aa0583cbe7806a78de83c08da28445eede6979c693362"
+          },
+          {
+            "source": "docs/odg/V164_RESEARCH_GRANT_BROAD_ADMISSION.json",
+            "sha256": "756026031a9f0e1aef7a404688b5575d6ace9c9676f9a6bdc15702c926188f62"
+          },
+          {
+            "source": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json",
+            "sha256": "288f46b7686e04f28df8d520610f211defd4f30b5e609f884aa374f8c4c567fc"
+          }
+        ],
+        "ledger": {
+          "provenCount": 188,
+          "integrityOk": true
+        },
+        "allowlist": {
+          "ids": [
+            "M0001"
+          ],
+          "source": "/etc/systemd/system/odg-mission-runner.service (installed live unit, read-only)"
+        },
+        "codeTreeParity": [
+          {
+            "file": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+            "codeTreeEqualsRepo": true
+          },
+          {
+            "file": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+            "codeTreeEqualsRepo": true
+          },
+          {
+            "file": "docs/odg/evidence/V164_RADAR_SOURCE_ADMISSION.json",
+            "codeTreeEqualsRepo": true
+          },
+          {
+            "file": "docs/odg/V164_RESEARCH_GRANT_BROAD_ADMISSION.json",
+            "codeTreeEqualsRepo": true
+          },
+          {
+            "file": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json",
+            "codeTreeEqualsRepo": true
+          },
+          {
+            "file": "docs/odg/evidence/V160_PRACTICES_COLLECTION.json",
+            "codeTreeEqualsRepo": true
+          },
+          {
+            "file": "docs/odg/evidence/COLLECTION_REGISTRY.json",
+            "codeTreeEqualsRepo": true
+          },
+          {
+            "file": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json",
+            "codeTreeEqualsRepo": true
+          },
+          {
+            "file": "docs/odg/evidence/V161_SCENARIO_J.json",
+            "codeTreeEqualsRepo": true
+          }
+        ],
+        "runId": "67be602e6ec7047a",
+        "volatile": {
+          "attempts": {
+            "count": 2690,
+            "last": {
+              "mission": "(none)",
+              "status": "IDLE",
+              "recordedAt": "2026-11-23T20:12:51.120Z"
+            }
+          },
+          "ledgerIntegrity": {
+            "ok": true,
+            "total": 1798,
+            "verified": 386,
+            "legacyUnsealed": 1412,
+            "reason": "sealed chain intact"
+          }
+        }
+      },
+      "rationale": "canonical evidence + registers hashed; mission-ledger and attempt-log read-only (never written by GO)",
+      "decidedBy": "GO state port (provider-written reader) over canonical files; mission-ledger.verifyLedger + mission-attempt-log.readAttempts (read-only)",
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 3,
+      "step": "PROBLEMS_OPPORTUNITIES",
+      "status": "DONE",
+      "startedAt": "2026-11-23T20:26:32.630Z",
+      "endedAt": "2026-11-23T20:26:32.668Z",
+      "inputsSha256": "926b70edd6642cb2647acbe01fbf151ecd929cb347691f42f522665d719b4eb6",
+      "decision": {
+        "gaps": [
+          "no canonical V15.0 mission register carrying priority attributes and dependencies",
+          "no EXECUTED_PARTIAL status in the candidate mapping: the selector only knows status==='ACCEPTED', so callers must either re-offer executed-PARTIAL items or wrongly exclude them as accepted",
+          "supervisor cannot assign on the real repo",
+          "ODG cannot launch a provider",
+          "integration is human",
+          "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results"
+        ],
+        "registerStatusCounts": {
+          "ACCEPTED": 1,
+          "PASS_IN_SCOPE": 2,
+          "EXECUTED_PARTIAL": 3,
+          "PARTIAL": 11,
+          "NOT_ADOPTED": 1,
+          "BLOCKED": 14,
+          "FAILED": 0,
+          "NOT_MEASURED": 1,
+          "PROPOSED": 12
+        },
+        "blockedOrOwnerGated": [
+          "A",
+          "C",
+          "K",
+          "V150-OG01",
+          "V150-OG02",
+          "V150-OG03",
+          "V150-OG04",
+          "V150-OG05",
+          "V150-OG06",
+          "V150-OG07",
+          "V150-OG08",
+          "V150-OG09",
+          "V150-OG10",
+          "V150-OG11",
+          "V150-OG12",
+          "V150-OG13",
+          "V150-OG14"
+        ],
+        "executedPartial": [
+          "F",
+          "G",
+          "J"
+        ],
+        "radar": {
+          "grant": {
+            "authorized": true,
+            "issuedIso": "2026-11-23T00:00:00.000Z",
+            "expiresIso": "2026-12-22T00:00:00.000Z",
+            "allowedDomains": [
+              "kubernetes.io",
+              "ntrs.nasa.gov",
+              "pytorch.org"
+            ],
+            "active": true
+          },
+          "admissionSummary": {
+            "candidates": 46,
+            "admitted": 3,
+            "deferred": 40,
+            "refused": 3
+          },
+          "liveEgress": "NONE (GO never sets ODG_RADAR_LIVE; pinned collections only)"
+        },
+        "knowledge": {
+          "collection": "docs/odg/evidence/V160_PRACTICES_COLLECTION.json",
+          "ok": true,
+          "claims": [
+            {
+              "id": "G_SMALL_ONE",
+              "epistemic": "SUPPORTED",
+              "isFact": false,
+              "usableFor": "DESIGN_PROPOSAL",
+              "admissibleAsFact": false,
+              "admissibleVerdict": "NOT_A_FACT"
+            },
+            {
+              "id": "G_SMALL_SIZE",
+              "epistemic": "SUPPORTED",
+              "isFact": false,
+              "usableFor": "DESIGN_PROPOSAL",
+              "admissibleAsFact": false,
+              "admissibleVerdict": "NOT_A_FACT"
+            }
+          ]
+        }
+      },
+      "rationale": "problems = CP8 gaps + blocked/owner-gated register items; opportunities = selectable register items + usable (not fact-admitted) pinned knowledge; Radar read-only",
+      "decidedBy": "CP8.gaps + odg-strategic-register statuses + Radar grant/admission evidence + odg-knowledge-intelligence.usableFor/admissible",
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 4,
+      "step": "SELECT",
+      "status": "DONE",
+      "startedAt": "2026-11-23T20:26:32.672Z",
+      "endedAt": "2026-11-23T20:26:32.679Z",
+      "inputsSha256": "578fe80f8127437d323ed74cba835f83b298ef570ce13176eada57e7a2f65fbf",
+      "decision": {
+        "decision": "TIE_EXPLAINED",
+        "selected": "G",
+        "proposed": null,
+        "tiedSet": [
+          "G",
+          "J"
+        ],
+        "resolvedBy": "R3_LOWER_RISK",
+        "resolutionSteps": [
+          {
+            "rule": "R1_MORE_UNBLOCKING",
+            "values": [
+              {
+                "id": "G",
+                "value": 0
+              },
+              {
+                "id": "J",
+                "value": 0
+              }
+            ],
+            "kept": [
+              "G",
+              "J"
+            ],
+            "outcome": "NO_DISCRIMINATION"
+          },
+          {
+            "rule": "R2_LOWER_UNCERTAINTY",
+            "values": [
+              {
+                "id": "G",
+                "value": 0.5
+              },
+              {
+                "id": "J",
+                "value": 0.5
+              }
+            ],
+            "kept": [
+              "G",
+              "J"
+            ],
+            "outcome": "NO_DISCRIMINATION"
+          },
+          {
+            "rule": "R3_LOWER_RISK",
+            "values": [
+              {
+                "id": "G",
+                "value": 0.3
+              },
+              {
+                "id": "J",
+                "value": 0.5
+              }
+            ],
+            "kept": [
+              "G"
+            ],
+            "outcome": "RESOLVED"
+          }
+        ],
+        "justification": "ODG proposes 'G': evidence score 0.35 (uncertainty 0.5 ≤ 0.5); tie of 2 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 22 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, H, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, V150-T09, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+        "uncertainty": 0.5,
+        "ownerAuthorizationRequired": [
+          "K",
+          "C",
+          "A"
+        ],
+        "consistentWithCommittedRegisterEvidence": true
+      },
+      "rationale": "selector decision TIE_EXPLAINED (tie G/J resolved by R3_LOWER_RISK) — a PROPOSAL, not an authorization",
+      "decidedBy": "ODG odg-strategic-register.buildRegister + mission-priority-selector.selectNextExplained",
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 5,
+      "step": "DECOMPOSE",
+      "status": "DONE",
+      "startedAt": "2026-11-23T20:26:32.682Z",
+      "endedAt": "2026-11-23T20:26:32.683Z",
+      "inputsSha256": "5df53ebee3566401625936f3ee0162819b71ef8afcc5549d05e09c4ecb787a4d",
+      "decision": {
+        "rule": "GO-DEC-1 (provider rule): spec.architecture = one entry per WORK_ITEM_CONTRACT.write_set path (role = objective, contract = acceptance_criteria joined); no contract ⇒ NOT_MEASURED",
+        "strategy": "MONOLITHIC",
+        "complexity": "TRIVIAL",
+        "reason": "TRIVIAL — a single-pass generation suffices (don't fragment an easy project)",
+        "parts": [
+          "docs/odg/evidence/V160_SCENARIO_G.json"
+        ]
+      },
+      "rationale": "decomposition-planner: MONOLITHIC (TRIVIAL)",
+      "decidedBy": "ODG decomposition-planner.chooseStrategy (contract→spec mapping is a provider rule)",
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 6,
+      "step": "STRATEGY",
+      "status": "DONE",
+      "startedAt": "2026-11-23T20:26:32.685Z",
+      "endedAt": "2026-11-23T20:26:32.690Z",
+      "inputsSha256": "55b5119c25ddb54dad24fc4a9cf3e5f6794cbe860a8b521b4000c8176f61659a",
+      "decision": {
+        "missionId": "AP-G",
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-G:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-G",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "delegationRecords": [],
+        "nextStrategyAfterFailure": "NOT_INVOKED (no execution failure in this cycle)",
+        "consistentWithCommittedStrategyEvidence": true
+      },
+      "rationale": "strategy-mode-selector: DECISION_REQUIRED (tentative NATIVE) by rule M0",
+      "decidedBy": "ODG odg-strategy-mode-selector.selectStrategyMode",
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 7,
+      "step": "AUTHORIZE",
+      "status": "HALTED_AT_GATE",
+      "startedAt": "2026-11-23T20:26:32.691Z",
+      "endedAt": "2026-11-23T20:26:32.694Z",
+      "inputsSha256": "84109dfeabc8de0fdafde170a62a593f531e26e17061c033f1e48cd85006c72d",
+      "decision": {
+        "intelligenceLoop": {
+          "stage": "AUTHORIZE",
+          "completed": false,
+          "proposedOnly": true,
+          "duplicate": false,
+          "reason": "not authorized — the cycle stops at PROPOSED (discovery ≠ authorization, no self-promotion)",
+          "trace": [
+            {
+              "step": "DISCOVER",
+              "status": "PROPOSED"
+            },
+            {
+              "step": "AUTHORIZE",
+              "authorized": false
+            }
+          ]
+        },
+        "selectedAuthorized": false,
+        "schedulerEligibility": [
+          {
+            "mission": "G",
+            "source": "SELECT",
+            "eligible": false,
+            "reason": "NOT_PRE_AUTHORIZED: G"
+          },
+          {
+            "mission": "M0001",
+            "source": "/etc/systemd/system/odg-mission-runner.service (installed live unit, read-only)",
+            "eligible": false,
+            "reason": "ALREADY_PROVEN (dedup): M0001"
+          }
+        ],
+        "selfAuthorized": false
+      },
+      "rationale": "no external authorization for the selected item ⇒ the loop stops at PROPOSED (ODG never self-authorizes); scheduler eligibility shows the canonical pre-authorized allowlist + proven dedup",
+      "decidedBy": "ODG intelligence-loop.runCycle (DISCOVER→AUTHORIZE) + mission-scheduler.evaluateEligibility",
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 8,
+      "step": "EXECUTE",
+      "status": "NOTHING_EXECUTED",
+      "startedAt": "2026-11-23T20:26:32.695Z",
+      "endedAt": "2026-11-23T20:26:32.697Z",
+      "inputsSha256": "d2cc6aee9aa4f555429a84fa5e53445617663e8b19370eb1d33d300e3239b17d",
+      "decision": {
+        "scheduler": {
+          "status": "IDLE",
+          "mission": null,
+          "reason": "no eligible pre-authorized PENDING mission [G: NOT_PRE_AUTHORIZED: G; M0001: ALREADY_PROVEN (dedup): M0001]"
+        },
+        "mode": "DRY",
+        "dispatchCalls": 0,
+        "providerLaunched": false,
+        "delegationRecords": [],
+        "nextStrategyAfterFailure": null,
+        "commitOrMerge": "NONE (GO never commits/merges)"
+      },
+      "rationale": "authorization gate held: no eligible pre-authorized PENDING mission [G: NOT_PRE_AUTHORIZED: G; M0001: ALREADY_PROVEN (dedup): M0001]",
+      "decidedBy": "ODG mission-scheduler.schedulerStep (+ odg-sovereign-delegation.createMission records)",
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 9,
+      "step": "EVIDENCE",
+      "status": "DONE",
+      "startedAt": "2026-11-23T20:26:32.698Z",
+      "endedAt": "2026-11-23T20:26:32.700Z",
+      "inputsSha256": "e3741b890b8a3b39a7e861973cce0d96c81d1125b478833e609c33f7ff89690d",
+      "decision": {
+        "written": true,
+        "decisionsDigestSoFar": "03b708eda315942caf184a73d9859aacc7378c6469dba2621dca1959ab419db4"
+      },
+      "rationale": "cycle summary written via the out-dir-confined writer; trace is append-only",
+      "decidedBy": "GO (provider-written digest/summary)",
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "STEP",
+      "index": 10,
+      "step": "NEXT_SELECTION",
+      "status": "DONE",
+      "startedAt": "2026-11-23T20:26:32.702Z",
+      "endedAt": "2026-11-23T20:26:32.704Z",
+      "inputsSha256": "c1f43bc8f0e14c635da018e1de5eb30367f856f9404a221da1c9745d55cdbc19",
+      "decision": {
+        "preparedMission": {
+          "id": "G",
+          "title": "G — Mémoire",
+          "status": "EXECUTED_PARTIAL",
+          "nextStep": {
+            "remainingCriteria": [
+              {
+                "criterion": "used by a real mission decision; utility measured vs without it",
+                "grade": "PARTIAL — used in a real decision on 400 real PRs ⇒ NOT_ADOPTED (borderline); utility vs the same decision without the item NOT_MEASURED"
+              },
+              {
+                "criterion": "SUPPORTED/CORROBORATED item with admissible() true",
+                "grade": "PARTIAL — the item is SUPPORTED and usableFor(DESIGN_PROPOSAL) is met; admissible() (facts only ⇒ NOT_A_FACT for a SUPPORTED item) is false and scenario G never calls it ⇒ the criterion as worded cannot be met by a SUPPORTED item"
+              }
+            ],
+            "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.criteria"
+          },
+          "contract": {
+            "objective": "Use a retrieved knowledge item (freshness + provenance checked) in a real mission and measure its utility",
+            "write_set": [
+              "docs/odg/evidence/V160_SCENARIO_G.json"
+            ],
+            "acceptance_criteria": [
+              "item from the pinned collection with SUPPORTED/CORROBORATED status and admissible() true for the use",
+              "used by a real mission decision; utility measured vs the same mission without it"
+            ],
+            "stop_conditions": [
+              "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+              "evidence cannot be produced without fabrication",
+              "independent inspection REJECTs twice on the same defect"
+            ],
+            "evidence_required": [
+              "initial + final Truth Lock",
+              "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+              "independent inspection verdict on the exact head",
+              "CI green on the exact head"
+            ]
+          },
+          "decomposition": {
+            "strategy": "MONOLITHIC",
+            "complexity": "TRIVIAL",
+            "parts": [
+              "docs/odg/evidence/V160_SCENARIO_G.json"
+            ]
+          },
+          "strategy": {
+            "mode": "DECISION_REQUIRED",
+            "tentativeMode": "NATIVE",
+            "rule": "M0"
+          },
+          "authorizationNeeded": "owner: contract G PROPOSED → AUTHORIZED (authorizedBy) — ODG cannot self-authorize",
+          "executed": "NOTHING_EXECUTED"
+        },
+        "nextAfterCurrent": {
+          "decision": "TIE_EXPLAINED",
+          "selected": "H",
+          "proposed": null,
+          "tiedSet": [
+            "J",
+            "H"
+          ],
+          "resolvedBy": "R3_LOWER_RISK",
+          "justification": "ODG proposes 'H': evidence score 0.32 (uncertainty 0.5 ≤ 0.5); tie of 2 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 21 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, V150-T09, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS"
+        }
+      },
+      "rationale": "prepared-mission package for the selected item + the selector's choice once the current item is set aside (PROPOSAL only)",
+      "decidedBy": "ODG mission-priority-selector.selectNextExplained (current item removed) + prepared-mission package",
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    },
+    {
+      "kind": "CYCLE_END",
+      "status": "HALTED_AT_AUTHORIZATION_GATE",
+      "mode": "DRY",
+      "stepsRun": [
+        "TRUTH_LOCK:PASS",
+        "STATE_READ:DONE",
+        "PROBLEMS_OPPORTUNITIES:DONE",
+        "SELECT:DONE",
+        "DECOMPOSE:DONE",
+        "STRATEGY:DONE",
+        "AUTHORIZE:HALTED_AT_GATE",
+        "EXECUTE:NOTHING_EXECUTED",
+        "EVIDENCE:DONE",
+        "NEXT_SELECTION:DONE"
+      ],
+      "decisionsDigest": "254488ab9a2dcf8a9c0995e7d9a0872ddcb5d8b0a5ae1039ea84f09181e5d0d0",
+      "durationMs": 223,
+      "endedAt": "2026-11-23T20:26:32.706Z",
+      "dispatchCalls": 0,
+      "dispatchedMissions": [],
+      "providerLaunched": 0,
+      "idempotent": false,
+      "duplicateOf": null,
+      "runId": "67be602e6ec7047a",
+      "cycleSeq": 1
+    }
+  ],
+  "executeRunExecuteStep": {
+    "kind": "STEP",
+    "index": 8,
+    "step": "EXECUTE",
+    "status": "NOTHING_EXECUTED",
+    "startedAt": "2026-11-23T20:26:35.240Z",
+    "endedAt": "2026-11-23T20:26:35.242Z",
+    "inputsSha256": "5a990c31767a0261cffb2e83b9e8aee7afa95b92650f56b1ddfde56870c38c93",
+    "decision": {
+      "scheduler": {
+        "status": "IDLE",
+        "mission": null,
+        "reason": "no eligible pre-authorized PENDING mission [G: NOT_PRE_AUTHORIZED: G; M0001: ALREADY_PROVEN (dedup): M0001]"
+      },
+      "mode": "EXECUTE",
+      "dispatchCalls": 0,
+      "providerLaunched": false,
+      "delegationRecords": [],
+      "nextStrategyAfterFailure": null,
+      "commitOrMerge": "NONE (GO never commits/merges)"
+    },
+    "rationale": "authorization gate held: no eligible pre-authorized PENDING mission [G: NOT_PRE_AUTHORIZED: G; M0001: ALREADY_PROVEN (dedup): M0001]",
+    "decidedBy": "ODG mission-scheduler.schedulerStep (+ odg-sovereign-delegation.createMission records)",
+    "runId": "9456298d88af7439",
+    "cycleSeq": 1
+  },
+  "executionCandidates": {
+    "selectedItem": "G",
+    "selectedAuthorized": false,
+    "schedulerEligibility": [
+      {
+        "mission": "G",
+        "source": "SELECT",
+        "eligible": false,
+        "reason": "NOT_PRE_AUTHORIZED: G"
+      },
+      {
+        "mission": "M0001",
+        "source": "/etc/systemd/system/odg-mission-runner.service (installed live unit, read-only)",
+        "eligible": false,
+        "reason": "ALREADY_PROVEN (dedup): M0001"
+      }
+    ],
+    "finding": "NO canonically authorized native mission exists: the selected item is PROPOSED with authorizedBy=null (every A–P contract is PROPOSED); the canonical pre-authorized allowlist (live unit ODG_CANARY_ALLOWLIST) holds only already-proven read-only canaries ⇒ --execute dispatched nothing; no authorization was created"
+  },
+  "scenarioI": {
+    "results": {
+      "I1": "PASS",
+      "I2": "PASS",
+      "I3": "PASS",
+      "I4": "PASS"
+    },
+    "grade": "PASS",
+    "rule": "FAIL if I1 fails or an owner-gated item is selected; PASS iff I1–I4 pass; otherwise PARTIAL (a DECISION_REQUIRED that is explained ⇒ PARTIAL)",
+    "selection": {
+      "decision": "TIE_EXPLAINED",
+      "selected": "G",
+      "tiedSet": [
+        "G",
+        "J"
+      ],
+      "resolvedBy": "R3_LOWER_RISK"
+    },
+    "preparedMission": {
+      "id": "G",
+      "title": "G — Mémoire",
+      "status": "EXECUTED_PARTIAL",
+      "nextStep": {
+        "remainingCriteria": [
+          {
+            "criterion": "used by a real mission decision; utility measured vs without it",
+            "grade": "PARTIAL — used in a real decision on 400 real PRs ⇒ NOT_ADOPTED (borderline); utility vs the same decision without the item NOT_MEASURED"
+          },
+          {
+            "criterion": "SUPPORTED/CORROBORATED item with admissible() true",
+            "grade": "PARTIAL — the item is SUPPORTED and usableFor(DESIGN_PROPOSAL) is met; admissible() (facts only ⇒ NOT_A_FACT for a SUPPORTED item) is false and scenario G never calls it ⇒ the criterion as worded cannot be met by a SUPPORTED item"
+          }
+        ],
+        "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.criteria"
+      },
+      "contract": {
+        "objective": "Use a retrieved knowledge item (freshness + provenance checked) in a real mission and measure its utility",
+        "write_set": [
+          "docs/odg/evidence/V160_SCENARIO_G.json"
+        ],
+        "acceptance_criteria": [
+          "item from the pinned collection with SUPPORTED/CORROBORATED status and admissible() true for the use",
+          "used by a real mission decision; utility measured vs the same mission without it"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
+          "independent inspection verdict on the exact head",
+          "CI green on the exact head"
+        ]
+      },
+      "decomposition": {
+        "strategy": "MONOLITHIC",
+        "complexity": "TRIVIAL",
+        "parts": [
+          "docs/odg/evidence/V160_SCENARIO_G.json"
+        ]
+      },
+      "strategy": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0"
+      },
+      "authorizationNeeded": "owner: contract G PROPOSED → AUTHORIZED (authorizedBy) — ODG cannot self-authorize",
+      "executed": "NOTHING_EXECUTED"
+    },
+    "nextAfterCurrent": {
+      "decision": "TIE_EXPLAINED",
+      "selected": "H",
+      "proposed": null,
+      "tiedSet": [
+        "J",
+        "H"
+      ],
+      "resolvedBy": "R3_LOWER_RISK",
+      "justification": "ODG proposes 'H': evidence score 0.32 (uncertainty 0.5 ≤ 0.5); tie of 2 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 21 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: J, F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, V150-T09, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS"
+    },
+    "stateNote": null
+  },
+  "scenarioJ": {
+    "results": {
+      "J1": "PASS",
+      "J2": "PASS",
+      "J3": "PASS",
+      "J4": "PASS",
+      "J5": "PASS",
+      "J6": "PASS",
+      "J7": "PASS",
+      "J8": "NOT_MEASURED"
+    },
+    "grade": "PARTIAL",
+    "rule": "FAIL if any of J1–J7 fails; PASS iff J1–J7 pass AND J8 passes; J8 NOT_MEASURED ⇒ PARTIAL (the governed cycle and its stop are proven; the execution leg is not)"
+  },
+  "decidedByOdgVsProvider": {
+    "odgComponents": [
+      "truth-lock-gate (startup verdict)",
+      "odg-strategic-register + mission-priority-selector.selectNextExplained (selection, tie resolution)",
+      "decomposition-planner.chooseStrategy",
+      "odg-strategy-mode-selector.selectStrategyMode (mode + M0 DECISION_REQUIRED)",
+      "intelligence-loop.runCycle (halt at PROPOSED)",
+      "mission-scheduler.evaluateEligibility/schedulerStep (allowlist, proven dedup, emergency stop, dispatch gate)",
+      "odg-knowledge-intelligence.usableFor/admissible",
+      "mission-ledger.verifyLedger"
+    ],
+    "providerRules": [
+      "the 10-step order and the composition itself (odg-go-cycle.ts)",
+      "GO-DEC-1 (provider rule): spec.architecture = one entry per WORK_ITEM_CONTRACT.write_set path (role = objective, contract = acceptance_criteria joined); no contract ⇒ NOT_MEASURED",
+      "stop rules (STOP file, signals, deadline, max steps) and the out-dir confinement",
+      "the state reader (which files are canonical inputs) and the allowlist source order (env → installed unit → repo unit)",
+      "the pre-registered I/J criteria and this harness",
+      "the decisions-digest definition (excludes TRUTH_LOCK git details and the volatile attempt-log size)"
+    ]
+  },
+  "providerCalls": 0,
+  "modelCalls": 0,
+  "networkCalls": 0,
+  "commits": 0,
+  "honestLimits": [
+    "J8 NOT_MEASURED: no canonically authorized NATIVE mission exists, so the dispatch leg (odg-run in an isolated scratch worktree) was never exercised for real — it is covered only by offline tests with injected ports",
+    "the selected item and its preparation are a PROPOSAL; ODG did not (and cannot) authorize it; whether the prepared mission would succeed is not measured",
+    "state is read from the main checkout READ-ONLY (Truth-Lock passes there); the code runs from the feature worktree, whose own Truth-Lock refuses (branch ≠ main) — recorded as run truthLockOnCodeTree; loaders that read the code tree (strategy-mode evaluation instant) are parity-checked against the state repo (STATE_READ codeTreeParity)",
+    "the canonical allowlist was read from the installed systemd unit file (read-only); in CI/another host the source and therefore runId differ — --check is host-dependent",
+    "stop is cooperative (between steps); a step already running (e.g. a dispatched odg-run) is bounded by its own timeout, not interrupted",
+    "the live root timer appends to the attempt-log independently; its size is recorded as volatile and excluded from the decisions digest",
+    "pre-registration is in the same commit as the first evidence write; its precedence is asserted, not cryptographically provable"
+  ]
+}
