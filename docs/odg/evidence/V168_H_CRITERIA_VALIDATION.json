@@ -11,7 +11,7 @@
     "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
     "pr": 946,
     "mergedAs": "b8de9a04",
-    "producedBy": "ODG GO --execute native dispatch of the contract-declared target (run 86a7a424d358dce8, main bd6f5c62, isolated scratch, bwrap --unshare-net, offline)"
+    "producedBy": "ODG GO --execute native dispatch of the contract-declared target (GO run 86a7a424d358dce8; GO code at main bd6f5c62; scratch tree at 5d3cf713 = record run.head; isolated detached scratch, bwrap --unshare-net, offline); GO trace: docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl"
   },
   "experimentInspection": {
     "pr": 946,

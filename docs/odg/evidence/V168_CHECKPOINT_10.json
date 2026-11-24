@@ -84,10 +84,17 @@
     "what": "ODG GO --execute dispatched the contract-declared experiment target itself",
     "how": "fresh detached scratch worktree; bwrap --unshare-net (no DNS/TCP proven); npm_config_offline=true; --allow-unsandboxed-target opt-in recorded; write confinement incl. ignored paths",
     "outcome": "EXECUTE:EXECUTED_PASS, 1 dispatch, only the declared file written, main + ledger unchanged",
-    "limit": "GO stopped on its default 120 s deadline before its EVIDENCE step — next runs must pass --deadline-ms ≥ 600000; the runner code itself was provider-written"
+    "limit": "GO stopped on its default 120 s deadline before its EVIDENCE step — next runs must pass --deadline-ms ≥ 600000; the runner code itself was provider-written",
+    "evidence": {
+      "trace": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+      "note": "the GO run's own append-only go-trace.jsonl (13 entries: CYCLE_START … STEP EXECUTE EXECUTED_PASS, DISPATCHED, STOP DEADLINE, CYCLE_END STOPPED); paths redacted (<scratch>, <goOut>, <mainCheckout>, <tmp>, <home>)",
+      "originalSha256": "e6bca3def1559021166026505d09497c1b678f97d1881bd92906123da8ca3f53",
+      "partial": "stopped on the 120 s deadline before EVIDENCE/NEXT_SELECTION; no go-cycle.json summary was written"
+    },
+    "codeAndTree": "GO code at main bd6f5c62 (incl. #945); scratch tree (where the target ran) at 5d3cf713 (#944 merge, ancestor of bd6f5c62) = experiment record run.head"
   },
   "scenarioJ_V164": {
-    "J8": "MEASURED for the first time (real --execute dispatch of an authorized native step) — V164_GO_CYCLE.json not regenerated (host-dependent)"
+    "J8": "MEASURED by a committed GO trace (docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl: DISPATCHED + EXECUTE EXECUTED_PASS of an authorized scoped native step in an isolated scratch) — PARTIAL run (deadline stop before EVIDENCE); V164_GO_CYCLE.json NOT regenerated (host-dependent), so the V164 J grade itself is not re-graded here"
   },
   "nativeVsProvider": {
     "odgNative": [
@@ -121,5 +128,6 @@
     "provider spend ceiling",
     "gate 10/12 signature"
   ],
-  "nextAction": "rerun GO; expected: strategic DECISION_REQUIRED (J/G) + no authorized actionable item ⇒ halt with owner request"
+  "nextAction": "rerun GO; expected: strategic DECISION_REQUIRED (J/G) + no authorized actionable item ⇒ halt with owner request",
+  "nativeMeaning": "'native' = launched by ODG GO itself (--execute, --allow-unsandboxed-target opt-in recorded), network isolation by wrapping the whole GO run in bwrap --unshare-net; the dispatched runner code is provider-written"
 }
