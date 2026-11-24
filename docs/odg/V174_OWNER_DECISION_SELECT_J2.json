@@ -1,0 +1,36 @@
+{
+  "//": "OWNER selection-decision record — verbatim transcription (2026-11-24) by the PROVIDER (Claude Code) of the owner command relayed by the coordinating session. It resolves ONE undecided actionable selection (DECISION_REQUIRED for uncertainty, no tie) in favour of an item that is already authorized. Grants nothing; changes no score, contract, criterion, threshold, selection rule or allocation rule; at most one dispatch.",
+  "schema": "odg-owner-selection-decision/1",
+  "kind": "OWNER_SELECTION_DECISION",
+  "directive": "COMMANDE CTO — FINALISATION G2 → J2 → CHECKPOINT DE TRANSITION",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "source": "owner command \"COMMANDE CTO — FINALISATION G2 → J2 → CHECKPOINT DE TRANSITION\", 2026-11-24 (relayed by the coordinating session)",
+  "quote": [
+    "Ordre obligatoire : #965 → J2 → validation indépendante → checkpoint.",
+    "Uniquement après fusion valide de #965 :",
+    "GO doit prendre en charge le cycle J2 conformément à son contrat et à son inspection valide (#961).",
+    "Ne pas lancer plusieurs expériences concurrentes. Un seul envoi J2 autorisé.",
+    "Ne pas ajouter de nouvelle autorisation réseau."
+  ],
+  "item": "J2",
+  "contractSha256": "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b",
+  "precondition": {
+    "pr": 965,
+    "merged": true
+  },
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED for UNCERTAINTY (no tie: tiedSet empty or singleton) with proposed = item",
+    "neverAppliesTo": [
+      "strategicSelection",
+      "ties (GO-ORD-1)",
+      "authorization (the item must already be actionable)",
+      "scores / ranking / register / thresholds",
+      "any other item",
+      "any other contract sha"
+    ],
+    "maxDispatches": 1,
+    "consumedBy": "runtime/core/odg-go-cycle.ts (GO-ORD-2), loaded by runtime/bin/odg-go.ts readState from OWNER_SELECTION_DECISIONS"
+  },
+  "appliedBy": "GO-ORD-2 (runtime/core/odg-go-cycle.ts) — a provider-written GO rule that consumes this owner decision ONLY to resolve the undecided actionable selection of J2 (DECISION_REQUIRED for uncertainty) that GO itself requested; it changes no score, criterion, threshold, selection or allocation rule, and is not applied once J2 has been dispatched or has an experiment record"
+}

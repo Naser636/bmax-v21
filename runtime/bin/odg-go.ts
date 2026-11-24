@@ -61,6 +61,9 @@ const AUTH_EVIDENCE = Object.freeze({ G: Object.freeze({ inspection: "docs/odg/e
 /* V17.4 GO-ORD-1 owner ORDER-decision records (fixed declared list; committed records ONLY; absent ⇒ skipped). They only
  * resolve an actionable DECISION_REQUIRED tie whose tiedSet equals theirs — never authorization, never scores. */
 const OWNER_ORDER_DECISIONS = Object.freeze(["docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json"]);
+/* V17.4 GO-ORD-2 owner SELECTION-decision records (fixed declared list; committed records ONLY; absent ⇒ skipped). They only
+ * resolve an actionable DECISION_REQUIRED that is NOT a tie (uncertainty) for their own item + contract sha, max 1 dispatch. */
+const OWNER_SELECTION_DECISIONS = Object.freeze(["docs/odg/V174_OWNER_DECISION_SELECT_J2.json"]);
 const UNIT_SYSTEM = "/etc/systemd/system/odg-mission-runner.service";
 const UNIT_REPO = "deploy/odg-mission-runner.service";
 const MAX_STEP_DELAY_MS = 5000;
@@ -165,6 +168,29 @@ function physicalPath(p: string): string {
 }
 const insideP = (a: string, b: string) => a === b || a.startsWith(b.endsWith(path.sep) ? b : b + path.sep);
 /* forbidden (compared by realpath): every main checkout (incl. runtime/generated|dist|governance), the state repo, the code tree. */
+/* GO-ORD-2 one-shot claim store: a FIXED directory, independent of --out — <git common dir of --repo>/odg-go-claims (not
+ * tracked; shared by every worktree of the repo). Claims are created with O_EXCL ('wx') and NEVER deleted by GO. */
+function claimDirOf(repo: string): string | null { const c = git(repo, ["rev-parse", "--path-format=absolute", "--git-common-dir"]); return c ? path.join(c, "odg-go-claims") : null; }
+function makeClaimStore(dir: string | null, opts: any = {}): any {
+  const experimentOf = opts.experimentOf || ((item: string) => (AUTH_EVIDENCE as any)[item] ? (AUTH_EVIDENCE as any)[item].experiment : null);
+  const fileOf = (key: string) => { if (!dir || !/^[0-9a-f]{16}-[A-Za-z0-9._-]{1,64}$/.test(key)) return null; return path.join(dir, `${key}.claim`); };
+  return {
+    dir,
+    exists: (key: string) => { const f = fileOf(key); if (!f) return { error: "invalid claim key or no claim dir" }; try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch (e: any) { return e && e.code === "ENOENT" ? null : { error: String((e && e.message) || e) }; } },
+    claim: (q: any) => {
+      const f = fileOf(q && q.key); if (!f) return { ok: false, code: "GO-ORD-2_NO_CLAIM_STORE", reason: "invalid claim key or no claim dir" };
+      const rel = experimentOf(q.item);
+      if (!rel) return { ok: false, code: "GO-ORD-2_NO_EXPERIMENT_PATH", reason: `no declared experiment record path for ${q.item}` };
+      if (q.workspace && fs.existsSync(path.join(q.workspace, rel))) return { ok: false, code: "GO-ORD-2_SCRATCH_EXPERIMENT_PRESENT", reason: `scratch ${q.workspace} already contains ${rel}` };
+      if (symlinkComponent(dir as string)) return { ok: false, code: "GO-ORD-2_CLAIM_ERROR", reason: "claim dir path has a symlink component" };
+      try { fs.mkdirSync(dir as string, { recursive: true }); } catch (e: any) { return { ok: false, code: "GO-ORD-2_CLAIM_ERROR", reason: String(e && e.message) }; }
+      let fd: number;
+      try { fd = fs.openSync(f, "wx", 0o644); } catch (e: any) { return e && e.code === "EEXIST" ? { ok: false, code: "GO-ORD-2_ALREADY_CLAIMED", reason: `claim ${path.basename(f)} already exists`, path: f } : { ok: false, code: "GO-ORD-2_CLAIM_ERROR", reason: String(e && e.message) }; }
+      try { fs.writeSync(fd, JSON.stringify(q.data || {}, null, 2) + "\n"); } finally { fs.closeSync(fd); }
+      return { ok: true, path: f };
+    },
+  };
+}
 function forbiddenRoots(repo: string): string[] {
   const out = new Set<string>();
   for (const r of [mainCheckoutOf(repo), mainCheckoutOf(ROOT), path.resolve(repo), ROOT]) if (r) {
@@ -284,6 +310,7 @@ function readState(repo: string): any {
   // V16.9 Phase 1b — R7 proof-currency probes: the SAME read-only local-git probe object the canonical loader built for this repo.
   for (const [sc, files] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(files.inspection), experiment: optional(files.experiment), validation: optional(files.validation), probes: src.proofProbes };
   const ownerOrderDecisions = OWNER_ORDER_DECISIONS.map((rel: string) => optional(rel)).filter(Boolean);
+  const ownerSelectionDecisions = OWNER_SELECTION_DECISIONS.map((rel: string) => optional(rel)).filter(Boolean);
   inputs.push({ source: F.MEASURED, sha256: sha256File(path.join(repo, F.MEASURED)) });
   let ledgerPayload: any = null;
   try { ledgerPayload = readJson(path.join(repo, "runtime", "generated", "mission-ledger.json")); } catch { ledgerPayload = null; }
@@ -299,7 +326,7 @@ function readState(repo: string): any {
     // EXACTLY the canonical loader's sources (odg-strategic-select.loadSources minus its inputs list, which is merged above):
     // no hand-picked subset, so LAND-1 laterEvidence and the BLK-2/REL-2/DEP-2 benefitEvidence reach the in-cycle register.
     repo, inputs, sources: registerSources(src),
-    registerEvidence, strategyEvidence, radar: { grant, admission }, authorizationEvidence, ownerOrderDecisions,
+    registerEvidence, strategyEvidence, radar: { grant, admission }, authorizationEvidence, ownerOrderDecisions, ownerSelectionDecisions,
     ledger: { proven, integrity }, attempts: { count: att.length, last: last ? { mission: last.mission, status: last.status, recordedAt: last.recordedAt } : null },
     allowlist: readAllowlist(), measured: POL.loadMeasuredRegistry(F.MEASURED, { root: repo }), strategyNow: smr.now, codeTreeParity: parity,
   };
@@ -353,6 +380,7 @@ function buildPorts(o: any): any {
     },
     writeSummary: (s: any) => { const p = path.join(physOut, "go-cycle.json"); const tmp = `${p}.tmp-${process.pid}`; w(tmp, JSON.stringify(s, null, 2) + "\n", "exclusive"); try { GO.assertConfinedWrite(p, physOut, forb, path); } catch (e: any) { throw writeRefusal(e); } try { if (fs.lstatSync(p).isSymbolicLink()) throw writeRefusal(new Error(`SYMLINK_TARGET_REFUSED: ${p}`)); } catch (e: any) { if (e && e.code !== "ENOENT") { fs.rmSync(tmp, { force: true }); throw writeRefusal(e); } } fs.renameSync(tmp, p); if (!writes.includes(p)) writes.push(p); },
     isolation: (next: any) => isolationCheck(scratch, next.mission, repo, next.dispatchTarget),
+    claims: o.claims || makeClaimStore(claimDirOf(repo)),
     dispatchNative: (next: any, c: any) => {
       if (c && c.dispatchTarget) {
         if (c.allowUnsandboxedTarget !== true) return { verified: false, detail: "UNSANDBOXED_TARGET_NOT_OPTED_IN: refused (out-of-scratch writes not confined)" };
@@ -567,7 +595,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { runGroup, groupAlive, targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { makeClaimStore, claimDirOf, runGroup, groupAlive, targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, OWNER_SELECTION_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 /* CLI flag validation: --help/-h ⇒ usage on stdout, exit 0, no cycle; any unknown flag (or a value flag missing its
  * value) ⇒ usage on stderr, exit 2, no cycle. Never starts a cycle on a mistyped flag. */

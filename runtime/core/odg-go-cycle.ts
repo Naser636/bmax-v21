@@ -241,6 +241,59 @@ function resolveOwnerOrder(state: any, register: any, tied: string[]): any {
   }
   return { rule: OWNER_ORDER_RULE, applied: false, chosen: null, considered };
 }
+/* V17.4 GO-ORD-2 (provider rule; owner command "COMMANDE CTO — FINALISATION G2 → J2 → CHECKPOINT DE TRANSITION", 2026-11-24):
+ * consume a COMMITTED owner selection-decision record ONLY to resolve an actionable DECISION_REQUIRED that is NOT a tie
+ * (the selector's uncertainty rule: proposed but not selected). Never strategic, never a tie (GO-ORD-1), never an
+ * authorization (the item must already be actionable), never a score/threshold change, at most one dispatch. */
+const OWNER_SELECTION_RULE = "GO-ORD-2: when actionableSelection is DECISION_REQUIRED with no tie (tiedSet empty or singleton) and a PROPOSED item P, a committed record applies iff schema = odg-owner-selection-decision/1, kind = OWNER_SELECTION_DECISION, issuer OWNER, an owner source and non-empty verbatim quotes, record.item = P, record.contractSha256 = contractSha256(current contract of P) (stale ⇒ ignored), P is actionable (actionabilityOf — never creates authorization), and P was never dispatched under it (no DISPATCHED P in the GO trace, P not proven in the ledger, no committed experiment record for P, and NO persistent one-shot claim — maxDispatches 1), and its precondition is verified in code (pr 965 merged ⇔ the GO-DTO-1 rule is present in this GO); otherwise the record is ignored (reason recorded). The selector's uncertainty explanation is kept verbatim. ONE-SHOT CLAIM: in EXECUTE mode only, right before dispatch (last authorization check), GO atomically creates (O_EXCL) a claim <git common dir of --repo>/odg-go-claims/<sha256(canon(record))[0..16]>-<item>.claim through the injected claims port — independent of --out; EEXIST ⇒ GO-ORD-2_ALREADY_CLAIMED (0 dispatch); the declared scratch already holding the item's experiment record ⇒ GO-ORD-2_SCRATCH_EXPERIMENT_PRESENT; no claims port ⇒ GO-ORD-2_NO_CLAIM_STORE. SELECT also refuses an already-claimed record. DRY never claims. GO never deletes a claim: a failed or killed run stays claimed — a re-run needs a NEW owner decision record. Strategic selection, ties, authorization, scores and thresholds are untouched.";
+/* GO-ORD-2 precondition verification BY CODE (a record's precondition is never taken on trust). */
+const OWNER_SELECTION_PRECONDITIONS: Record<string, () => any> = {
+  "965": () => ({ ok: typeof DISPATCH_TIMEOUT_RULE === "string" && /^GO-DTO-1/.test(DISPATCH_TIMEOUT_RULE) && typeof deriveDispatchTimeout === "function", evidence: "GO-DTO-1 (#965) present: DISPATCH_TIMEOUT_RULE + deriveDispatchTimeout in odg-go-cycle" }),
+};
+function ownerSelectionClaimKey(rec: any): string { const { recordPath: _p, ...body } = rec || {}; return `${sha(canon(body)).slice(0, 16)}-${String(rec && rec.item)}`; }
+function resolveOwnerSelection(state: any, register: any, act: any, priorTrace: any[], claims?: any): any {
+  const records = arr(state && state.ownerSelectionDecisions).filter((x: any) => x && typeof x === "object");
+  if (!records.length || !act || act.decision !== "DECISION_REQUIRED") return null;
+  const tied = arr(act.tiedSet).map((x: any) => String(x && typeof x === "object" ? x.id : x));
+  const proposed = act.proposed ? String(act.proposed.id) : null;
+  const selector = { decision: act.decision, proposed: act.proposed || null, tiedSet: tied, thresholds: act.thresholds || null, justification: act.justification || null };
+  if (new Set(tied).size > 1) return { rule: OWNER_SELECTION_RULE, applied: false, chosen: null, notApplicable: `actionable DECISION_REQUIRED is a tie (${tied.join("/")}) ⇒ GO-ORD-1 territory, GO-ORD-2 not applicable`, selector, considered: [] };
+  if (!proposed) return { rule: OWNER_SELECTION_RULE, applied: false, chosen: null, notApplicable: "no proposed item", selector, considered: [] };
+  const considered: any[] = [];
+  for (const rec of records) {
+    const at = rec.recordPath || null;
+    const no = (reason: string) => considered.push({ record: at, applied: false, reason });
+    if (rec.schema !== "odg-owner-selection-decision/1") { no(`schema ${rec.schema} ≠ odg-owner-selection-decision/1`); continue; }
+    if (rec.kind !== "OWNER_SELECTION_DECISION") { no(`kind ${rec.kind} ≠ OWNER_SELECTION_DECISION`); continue; }
+    if (typeof rec.issuer !== "string" || !rec.issuer.trim().toUpperCase().startsWith("OWNER")) { no("issuer is not the OWNER"); continue; }
+    if (typeof rec.source !== "string" || !rec.source.trim() || !Array.isArray(rec.quote) || !rec.quote.length || !rec.quote.every((q: any) => typeof q === "string" && q.trim())) { no("record lacks an owner source citation and verbatim quotes"); continue; }
+    if (rec.item !== proposed) { no(`record item ${rec.item} ≠ proposed ${proposed}`); continue; }
+    const contract = contractOf(state, proposed);
+    const cur = contract ? AS.contractSha256(contract) : null;
+    if (!cur || rec.contractSha256 !== cur) { no(`STALE: record contractSha256 ${String(rec.contractSha256).slice(0, 12)} ≠ current ${cur ? cur.slice(0, 12) : "none"} ⇒ ignored`); continue; }
+    const pc = rec.precondition;
+    let preconditionCheck: any = null;
+    if (pc !== undefined) {
+      const f = isObj(pc) && pc.merged === true ? OWNER_SELECTION_PRECONDITIONS[String(pc.pr)] : null;
+      preconditionCheck = f ? { pr: pc.pr, ...f() } : { pr: isObj(pc) ? pc.pr : null, ok: false, evidence: "precondition not verifiable by code" };
+      if (!preconditionCheck.ok) { no(`precondition not met: ${preconditionCheck.evidence}`); continue; }
+    }
+    const claimKey = ownerSelectionClaimKey(rec);
+    if (!claims || typeof claims.exists !== "function" || typeof claims.claim !== "function") { no("GO-ORD-2_NO_CLAIM_STORE: no persistent one-shot claim store ⇒ not applied (fail-closed)"); continue; }
+    let claimed: any = null; try { claimed = claims.exists(claimKey); } catch (e: any) { claimed = { error: String((e && e.message) || e) }; }
+    if (claimed) { no(`GO-ORD-2_ALREADY_CLAIMED: one-shot claim ${claimKey} exists (${claimed.error ? `unreadable: ${claimed.error}` : `runId ${claimed.runId || "?"} at ${claimed.at || "?"}`}) — maxDispatches 1 used; a re-run needs a new owner decision`); continue; }
+    const it = register.items.find((x: any) => x.id === proposed);
+    const a = actionabilityOf(state, it);
+    if (!a.actionable) { no(`not actionable: ${a.reason} (GO-ORD-2 never creates authorization)`); continue; }
+    const dispatchedBefore = arr(priorTrace).some((e: any) => e && e.kind === "DISPATCHED" && e.mission === proposed);
+    const proven = arr(state.ledger && state.ledger.proven).map(String).includes(proposed);
+    const ev = state.authorizationEvidence && state.authorizationEvidence[proposed];
+    const experimentRecorded = !!(ev && ev.experiment);
+    if (dispatchedBefore || proven || experimentRecorded) { no(`maxDispatches ${rec.scope && rec.scope.maxDispatches !== undefined ? rec.scope.maxDispatches : 1} already used: ${[dispatchedBefore ? "DISPATCHED in the GO trace" : null, proven ? "proven in the ledger" : null, experimentRecorded ? "committed experiment record present" : null].filter(Boolean).join(", ")}`); continue; }
+    return { rule: OWNER_SELECTION_RULE, applied: true, chosen: proposed, resolvedBy: `OWNER_SELECTION_DECISION ${at}`, record: at, date: rec.date || null, directive: rec.directive || null, source: rec.source, quote: rec.quote.slice(), contractSha256: cur, recordSha256: sha(canon((({ recordPath: _p, ...b }: any) => b)(rec))), claimKey, preconditionCheck, maxDispatches: 1, actionability: a, selector, considered, item: it };
+  }
+  return { rule: OWNER_SELECTION_RULE, applied: false, chosen: null, selector, considered };
+}
 function selectionSummary(d: any): any {
   return { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, justification: d.justification };
 }
@@ -427,7 +480,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const strategicItem = id ? ctx.register.items.find((it: any) => it.id === id) : null;
     // V166 GO-ACT-1: feasibility (authorization) filters, priority (the same selector) ranks.
     const strategicAct = actionabilityOf(ctx.state, strategicItem);
-    let act: any = null, actItem: any = null, ownerOrder: any = null;
+    let act: any = null, actItem: any = null, ownerOrder: any = null, ownerSelection: any = null;
     if (strategicItem && strategicAct.actionable) { act = d; actItem = strategicItem; }
     else {
       // GO-ACT-1 also applies when the strategic selection is UNDECIDED (DECISION_REQUIRED / NO_ELIGIBLE): ODG still
@@ -440,6 +493,11 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       if (!actItem && act && act.decision === "DECISION_REQUIRED") {
         ownerOrder = resolveOwnerOrder(ctx.state, ctx.register, arr(act.tiedSet).map((x: any) => (x && typeof x === "object" ? x.id : x)));
         if (ownerOrder && ownerOrder.applied) { actItem = ownerOrder.item; delete ownerOrder.item; }
+      }
+      // V17.4 GO-ORD-2: an actionable DECISION_REQUIRED that is NOT a tie (uncertainty) may be resolved by an owner selection record
+      if (!actItem && act && act.decision === "DECISION_REQUIRED") {
+        ownerSelection = resolveOwnerSelection(ctx.state, ctx.register, act, prior, ports.claims);
+        if (ownerSelection && ownerSelection.applied) { actItem = ownerSelection.item; delete ownerSelection.item; ctx.ownerSelection = ownerSelection; }
       }
     }
     const proceedWithActionable = !!actItem && (!strategicItem || !strategicAct.actionable);
@@ -454,13 +512,15 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       strategicActionable: strategicItem ? strategicAct : null,
       selection: act ? (act === d ? { sameAsStrategic: true, ...selectionSummary(d) } : { sameAsStrategic: false, ...selectionSummary(act), excludedNotAuthorizedNow: arr(act.excluded).filter((x: any) => x.status === NOT_AUTHORIZED_NOW).map((x: any) => x.id) }) : null,
       item: actItem ? actItem.id : null, basis: actItem ? actionabilityOf(ctx.state, actItem) : null, proceedingWith: ctx.item ? ctx.item.id : null, proceedingWithActionable: proceedWithActionable,
-      ...(ownerOrder ? { ownerOrderDecision: ownerOrder, ...(ownerOrder.applied ? { resolvedBy: ownerOrder.resolvedBy } : {}) } : {}) };
+      ...(ownerOrder ? { ownerOrderDecision: ownerOrder, ...(ownerOrder.applied ? { resolvedBy: ownerOrder.resolvedBy } : {}) } : {}),
+      ...(ownerSelection ? { ownerSelectionDecision: ownerSelection, ...(ownerSelection.applied ? { resolvedBy: ownerSelection.resolvedBy } : {}) } : {}) };
     const committed = ctx.state.registerEvidence && ctx.state.registerEvidence.decisionRecord ? ctx.state.registerEvidence.decisionRecord : null;
     const consistent = committed ? committed.decision === d.decision && committed.selected === (d.selected ? d.selected.id : null) && canon(arr(committed.tiedSet)) === canon(arr(d.tiedSet)) : null;
     return { status: id || proceedWithActionable ? "DONE" : "HALTED", inputs: REG.toSelectorCandidates(ctx.register),
       decision: { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, resolutionSteps: d.resolutionSteps || null, justification: d.justification, uncertainty: d.selected ? d.selected.uncertainty : d.proposed ? d.proposed.uncertainty : null, ownerAuthorizationRequired: arr(d.ownerAuthorizationRequired).map((x: any) => x.id), consistentWithCommittedRegisterEvidence: consistent,
         strategicSelection: selectionSummary(d), actionableSelection: ctx.actionable, ownerRequest: ctx.ownerRequest, workingOn: ctx.item ? ctx.item.id : null },
       rationale: (ownerOrder && ownerOrder.applied ? `actionable tie ${ownerOrder.tiedSet.join("/")} resolved by ${ownerOrder.resolvedBy} (owner order ${ownerOrder.order.join(" → ")}, ${ownerOrder.date}: « ${ownerOrder.quote[0] || ""} ») — order arbitration only, no score/authorization change (GO-ORD-1); ` : "")
+        + (ownerSelection && ownerSelection.applied ? `actionable selection DECISION_REQUIRED (selector: ${ownerSelection.selector.justification}) resolved for ${ownerSelection.chosen} by ${ownerSelection.resolvedBy} (${ownerSelection.date}: « ${ownerSelection.quote[2] || ownerSelection.quote[0]} ») — owner selection of an already-authorized item, max 1 dispatch, no score/threshold/authorization change (GO-ORD-2); ` : "")
         + (!id && proceedWithActionable ? `strategic selector decision ${d.decision} (tie ${arr(d.tiedSet).join("/")}; owner/ODG decision requested) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : id ? `selector decision ${d.decision}${d.decision === "TIE_EXPLAINED" ? ` (tie ${arr(d.tiedSet).join("/")} resolved by ${d.resolvedBy})` : ""} — a PROPOSAL, not an authorization` : `selector decision ${d.decision}: ODG does not pick (no id tie-break) — owner/ODG decision required`)
         + (proceedWithActionable && id ? `; strategic ${id} lacks authorization (owner request recorded) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : strategicItem && !strategicAct.actionable ? (actTieText ? `; strategic ${id} lacks authorization and ${actTieText} ⇒ the gate will hold (owner request recorded)` : `; strategic ${id} lacks authorization and no other item has an AUTHORIZED next step ⇒ the gate will hold (owner request recorded)`) : !strategicItem && actTieText ? `; ${actTieText}` : "") };
   });
@@ -565,6 +625,17 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       const iso2 = (() => { try { return ports.isolation(isoArg); } catch (e: any) { return { ok: false, reason: String((e && e.message) || e) }; } })();
       isolationSeen = iso2;
       if (!iso2 || iso2.ok !== true) return { ok: false, reason: `NO_ISOLATED_WORKSPACE: ${iso2 && iso2.reason}` };
+      // GO-ORD-2 one-shot claim: EXECUTE only, the LAST check before dispatch; never in DRY; never deleted by GO
+      const os = ctx.ownerSelection;
+      if (isSelected && os && os.applied && os.chosen === next.mission) {
+        if (!ports.claims || typeof ports.claims.claim !== "function") return { ok: false, reason: "GO-ORD-2_NO_CLAIM_STORE: no persistent claim store ⇒ dispatch refused" };
+        if (mode === "EXECUTE") {
+          let c: any; try { c = ports.claims.claim({ key: os.claimKey, item: next.mission, workspace: iso2.workspace, data: { record: os.record, recordSha256: os.recordSha256, item: next.mission, contractSha256: os.contractSha256, runId, at: iso(now()), scratch: iso2.workspace } }); } catch (e: any) { c = { ok: false, code: "GO-ORD-2_CLAIM_ERROR", reason: String((e && e.message) || e) }; }
+          ctx.ownerSelectionClaim = c;
+          if (!c || c.ok !== true) return { ok: false, reason: `${(c && c.code) || "GO-ORD-2_CLAIM_ERROR"}: ${(c && c.reason) || "claim not created"} ⇒ dispatch refused (0 dispatch)` };
+          append({ kind: "OWNER_SELECTION_CLAIMED", rule: "GO-ORD-2", mission: next.mission, claimKey: os.claimKey, claimPath: c.path || null, record: os.record, at: iso(now()) });
+        }
+      }
       return { ok: true, reason: "authorized + native + isolated" };
     };
     const dispatch = (next: any) => {
@@ -592,7 +663,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     if (d.status === "FAIL" && ctx.strategy) failureNext = SM.nextStrategyAfterFailure({ mode: ctx.strategy.mode, strategy: "DEFAULT" }, { accepted: false, stopReason: "VERIFICATION_FAILED" });
     const status = d.status === "PASS" || d.status === "FAIL" ? `EXECUTED_${d.status}` : dry ? "WOULD_DISPATCH" : d.status === "STOPPED" ? "STOPPED" : gateHeld || d.status === "IDLE" || d.status === "BLOCKED" ? "NOTHING_EXECUTED" : d.status;
     return { status, inputs: { queue: ctx.queue, mode },
-      decision: { scheduler: { status: d.status, mission: d.mission, reason: d.reason }, dispatchTarget: dt ? { ok: dt.ok, code: dt.code || null, step: dt.step, target: dt.target || null, reason: dt.reason || null, rule: DISPATCH_TARGET_RULE, sandbox: SANDBOX_LIMIT, unsandboxedOptIn: optIn, dispatchTimeout: dto } : null, ...(cycleDeadline || dispatchProcess ? { volatile: { cycleDeadline, dispatchProcess } } : {}), mode, dispatchCalls: counters.dispatchCalls, providerLaunched: false, delegationRecords: delegation, nextStrategyAfterFailure: failureNext ? { next: failureNext.next, rule: failureNext.rule } : null, commitOrMerge: "NONE (GO never commits/merges)" },
+      decision: { scheduler: { status: d.status, mission: d.mission, reason: d.reason }, dispatchTarget: dt ? { ok: dt.ok, code: dt.code || null, step: dt.step, target: dt.target || null, reason: dt.reason || null, rule: DISPATCH_TARGET_RULE, sandbox: SANDBOX_LIMIT, unsandboxedOptIn: optIn, dispatchTimeout: dto } : null, ...(ctx.ownerSelectionClaim ? { ownerSelectionClaim: ctx.ownerSelectionClaim } : {}), ...(cycleDeadline || dispatchProcess ? { volatile: { cycleDeadline, dispatchProcess } } : {}), mode, dispatchCalls: counters.dispatchCalls, providerLaunched: false, delegationRecords: delegation, nextStrategyAfterFailure: failureNext ? { next: failureNext.next, rule: failureNext.rule } : null, commitOrMerge: "NONE (GO never commits/merges)" },
       rationale: status === "NOTHING_EXECUTED" ? (dt && !dt.ok ? `scoped execution step ${dt.step} authorized but ${dt.reason} — fail-closed, nothing dispatched` : `authorization gate held: ${d.reason}`) : status === "WOULD_DISPATCH" ? "dry run: an authorized native isolated mission would be dispatched (not executed)" : `scheduler ${d.status}: ${d.reason}` };
   });
   if (stopped(r)) return stopped(r);
@@ -660,5 +731,5 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { deriveDispatchTimeout, DISPATCH_TIMEOUT_RULE, DISPATCH_TIMEOUT_DEFAULT_MS, DISPATCH_TIMEOUT_CEILING_MS, DISPATCH_TIMEOUT_MARGIN_MS, DISPATCH_DEADLINE_MARGIN_MS, OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
+module.exports = { deriveDispatchTimeout, DISPATCH_TIMEOUT_RULE, DISPATCH_TIMEOUT_DEFAULT_MS, DISPATCH_TIMEOUT_CEILING_MS, DISPATCH_TIMEOUT_MARGIN_MS, DISPATCH_DEADLINE_MARGIN_MS, OWNER_SELECTION_RULE, resolveOwnerSelection, ownerSelectionClaimKey, OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};
