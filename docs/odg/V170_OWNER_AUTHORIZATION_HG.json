@@ -1,0 +1,56 @@
+{
+  "//": "OWNER authorization record — verbatim transcription of the owner directive 'REPRISE CONTINUE H + G, PUIS RÉCONCILIATION V14.4 / V15.0' (2026-11-24) by the PROVIDER (Claude Code coordinating session). Grants NOTHING beyond the quoted text; applies to campaigns H and G ONLY; nothing for J.",
+  "schema": "odg-owner-authorization/1",
+  "directive": "CTO V170 — H + G",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "appliesTo": [
+    "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#H",
+    "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#G (and any NEW, distinct, versioned G/H contract)"
+  ],
+  "quote": [
+    "L'utilisateur autorise, dans le périmètre strict des campagnes H et G :",
+    "Les audits, diagnostics, corrections internes et prototypes nécessaires.",
+    "La révision de contrats expérimentaux lorsque nécessaire, avant toute nouvelle mesure.",
+    "La construction et l'amélioration des runners, calibrations, contrôles, tests et outils de mesure.",
+    "Les expériences dans des espaces isolés et contrôlés, avec données et sorties déclarées.",
+    "Les exécutions hors ligne et les simulations clairement identifiées.",
+    "Les recalculs indépendants, inspections renforcées, validations et contrôles de reproductibilité.",
+    "Les commits, ouvertures de PR et fusions lorsque les protections, l'inspection indépendante et la CI sont satisfaites.",
+    "La reprise automatique de toute étape interrompue et la poursuite des étapes indépendantes autorisées.",
+    "Ces autorisations ne permettent jamais de contourner un contrat, un contrôle d'accès, Truth Lock ou une protection de dépôt."
+  ],
+  "H": {
+    "quote": [
+      "H est déjà enregistrée CLOSED_FAIL / NOT_ADOPTED. Son résultat historique doit rester intact.",
+      "Si une nouvelle hypothèse H est techniquement justifiée, créer une nouvelle version distincte du contrat, fixer ses critères et son protocole avant de consulter les résultats de test, puis la faire inspecter avant exécution.",
+      "Ne jamais relancer H1 à l'identique dans le seul but d'obtenir un meilleur score.",
+      "Un FAIL valide reste un FAIL."
+    ]
+  },
+  "G": {
+    "quote": [
+      "G est actuellement CLOSED_PARTIAL. Ne pas effacer cette clôture ni son historique.",
+      "Préparer une nouvelle expérience distincte, avec critères, métriques, référence de comparaison, jeu de données et méthode d'évaluation fixés avant les mesures.",
+      "Contrôler l'absence de fuite de données, de contamination des étiquettes et de sélection opportuniste des métriques.",
+      "Faire recalculer les résultats par un inspecteur indépendant.",
+      "N'adopter une amélioration que si les critères préétablis sont satisfaits et si l'inspection indépendante l'accepte.",
+      "Ne jamais modifier les critères après observation des résultats pour obtenir un PASS."
+    ]
+  },
+  "J": {
+    "quote": [
+      "Aucune autorisation n'est accordée pour J par cette directive. Ne lance pas J et ne déduis aucune permission de sa sélection par GO. Enregistre cette décision comme attente explicite."
+    ],
+    "state": "WAITING_OWNER_AUTHORIZATION (explicit)"
+  },
+  "exclusions": {
+    "quote": [
+      "Aucun nouvel engagement financier ni appel fournisseur payant non déjà autorisé et budgété.",
+      "Aucun VPS, SSH, déploiement, production, systemd, sudo, modification d'hôte ou exposition publique.",
+      "Aucun reset destructif, force-push, nettoyage global ou écrasement de travail concurrent.",
+      "Le sujet des métiers reste entièrement hors du périmètre de cette séquence."
+    ]
+  },
+  "machineNote": "a NEW versioned G/H contract may carry an authorization block citing this record (source must cite V170); the per-scenario owner-source binding (odg-authorization-scope) must bind it to that new scenario only; the closed G/H contracts and their records stay untouched"
+}
