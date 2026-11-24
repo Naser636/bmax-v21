@@ -9,8 +9,15 @@
  *   npx tsx runtime/bin/odg-v176-radar-build-proposals.ts            write the record
  *   npx tsx runtime/bin/odg-v176-radar-build-proposals.ts --check    recompute from the committed sources; exit 1 on byte drift
  *
- * Freshness input: each source file's last commit time (`git log -1 --format=%ct -- <file>`, read-only local git); "now" =
- * the newest of those epochs, so the record is a function of the committed tree (no wall clock).
+ * Freshness input (no wall clock): each source file's epoch, PINNED in the record (inputs[].epochMs) next to its sha256.
+ * An input whose content (sha256) is unchanged since the committed record keeps its pinned epoch; only an input whose
+ * content changed (or a new input) is re-dated from read-only local git — its last commit time
+ * (`git log -1 --format=%ct -- <file>`), or, if it is uncommitted/dirty, the current commit's time (its content postdates
+ * that commit). "now" = the newest of those epochs. Why pin instead of re-reading git on --check: the record is usually
+ * committed TOGETHER with its regenerated inputs, so their commit time only exists after the commit — re-deriving it made
+ * --check drift on every following merge while no input byte had changed. Pinning keeps the record a function of its
+ * inputs' CONTENT (any content change still re-dates and drifts), and freshness stays honest: every age is relative to
+ * the stated instant freshness.nowEpochMs, with each source's epoch stated beside its hash.
  */
 const fs = require("fs");
 const path = require("path");
@@ -37,14 +44,45 @@ const DECLARED = Object.freeze({
 const TEST_REPORT_RE = /TEST_REPORT[^/]*\.json$/;
 const sha256 = (s: string): string => crypto.createHash("sha256").update(s).digest("hex");
 
-function loadSources(root: string): any {
-  const inputs: any[] = [], epochs: any = {};
-  const epochOf = (rel: string): number | undefined => {
-    try { const s = execFileSync("git", ["-C", root, "log", "-1", "--format=%ct", "--", rel], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim(); return s ? Number(s) * 1000 : undefined; } catch { return undefined; }
-  };
+/** pinned { source → {sha256, epochMs} } from a previously written record (absent/unparseable ⇒ none pinned). */
+function pinnedInputsOf(rec: any): any {
+  const out: any = {};
+  for (const i of (rec && Array.isArray(rec.inputs) ? rec.inputs : [])) if (i && typeof i.source === "string" && Object.prototype.hasOwnProperty.call(i, "epochMs")) out[i.source] = i;
+  return out;
+}
+
+/** git-derived epoch of a source: last commit time when clean; the current commit's time when dirty/untracked; undefined without git. */
+function gitEpochOf(root: string, rel: string): number | undefined {
+  const git = (args: string[]): string => execFileSync("git", ["-C", root, ...args], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  try {
+    const dirty = git(["status", "--porcelain", "--", rel]) !== "";
+    const s = dirty ? git(["log", "-1", "--format=%ct"]) : git(["log", "-1", "--format=%ct", "--", rel]);
+    return s ? Number(s) * 1000 : undefined;
+  } catch { return undefined; }
+}
+
+/** resolve each input's epoch (pure given derive): reuse the pinned epoch iff the content hash is unchanged, else derive. */
+function resolveEpochs(inputs: any[], pinned: any, derive: (rel: string) => number | undefined): any {
+  const epochs: any = {};
+  for (const i of inputs) {
+    if (i.sha256 === null) continue;
+    const p = pinned[i.source];
+    const e = p && p.sha256 === i.sha256 ? (p.epochMs === null ? undefined : p.epochMs) : derive(i.source);
+    i.epochMs = e === undefined ? null : e;
+    if (e !== undefined) epochs[i.source] = e;
+  }
+  return epochs;
+}
+
+function readPinned(root: string): any {
+  try { return pinnedInputsOf(JSON.parse(fs.readFileSync(path.join(root, OUT_REL), "utf8"))); } catch { return {}; }
+}
+
+function loadSources(root: string, pinned: any = readPinned(root), derive: (rel: string) => number | undefined = (rel) => gitEpochOf(root, rel)): any {
+  const inputs: any[] = [];
   const read = (rel: string): any => {
     let txt: string; try { txt = fs.readFileSync(path.join(root, rel), "utf8"); } catch { inputs.push({ source: rel, sha256: null, note: "ABSENT" }); return null; }
-    inputs.push({ source: rel, sha256: sha256(txt) }); const e = epochOf(rel); if (e !== undefined) epochs[rel] = e;
+    inputs.push({ source: rel, sha256: sha256(txt) });
     return { path: rel, data: JSON.parse(txt) };
   };
   const src: any = {};
@@ -54,11 +92,12 @@ function loadSources(root: string): any {
   src.checkpoint = latest ? read(`${EV}/${latest}`) : null;
   src.externalRadar = DECLARED.externalRadar.map(read).filter(Boolean);
   src.testReports = names.filter((f: string) => TEST_REPORT_RE.test(f)).map((f: string) => read(`${EV}/${f}`)).filter(Boolean);
+  const epochs = resolveEpochs(inputs, pinned, derive);
   return { src, inputs, epochs };
 }
 
-function compute(root: string): any {
-  const { src, inputs, epochs } = loadSources(root);
+function compute(root: string, pinned?: any): any {
+  const { src, inputs, epochs } = loadSources(root, pinned === undefined ? readPinned(root) : pinned);
   const graph = CIG.buildGraph(root);
   const rec = GP.loadRecord(root);
   const nowEpochMs = Math.max(0, ...Object.values(epochs).map(Number));
@@ -74,7 +113,7 @@ function compute(root: string): any {
     },
     rules: ENGINE.RADAR_BUILD_ENGINE_CONTRACT.rules,
     invariants: ENGINE.RADAR_BUILD_ENGINE_CONTRACT.invariants,
-    freshness: { nowEpochMs, rule: "now = newest last-commit epoch among the source files (no wall clock); a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED" },
+    freshness: { nowEpochMs, rule: "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED" },
     inputs,
     ...result,
     honesty: [
@@ -100,6 +139,6 @@ function main(argv: string[]): number {
   process.stdout.write(`wrote ${OUT_REL}\n`); return 0;
 }
 
-module.exports = { DECLARED, OUT_REL, loadSources, compute, render, main };
+module.exports = { DECLARED, OUT_REL, loadSources, resolveEpochs, pinnedInputsOf, gitEpochOf, compute, render, main };
 if (require.main === module) process.exit(main(process.argv.slice(2)));
 export {};
