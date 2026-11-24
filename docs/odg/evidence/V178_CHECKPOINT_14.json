@@ -1,0 +1,100 @@
+{
+  "//": "Checkpoint CP14 — operational transition V177 → V178 (owner directives V177 « ENGINEERING FLOW & RADAR INTELLIGENCE », V178 « ODG LOCAL INTELLIGENCE & NATIVE ENGINEERING INFRASTRUCTURE » + addendum « CONTINUITÉ DE LA BOUSSOLE ET REPRISE V177 », 2026-11-24). Canonical checkpoint series (LCP-1). Provider-written from committed evidence only. Machine resume view: docs/odg/evidence/V175_RESUME_POINT.json (runtime/bin/odg-resume-point.ts --check). V12.4 remains the canonical Boussole; this checkpoint records an OPERATIONAL priority, it adopts no successor.",
+  "checkpoint": "CP14",
+  "date": "2026-11-24",
+  "headAtCheckpoint": "85fdc362",
+  "previous": "docs/odg/evidence/V176_CHECKPOINT_13.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5,
+    "mainCheckout": "main, clean"
+  },
+  "boussole": "V12.4 canonical (unchanged). V14.4 adopted; V15.0 PROPOSED. Precedence record V175_GOVERNANCE_PRECEDENCE.json (Q-CTR2 ANSWERED STAGE).",
+  "v177": {
+    "status": "CLOSED_FOR_SCOPE (engaged work integrated; no new V177 chantier during V178)",
+    "prsMerged": [
+      {
+        "pr": 998,
+        "merge": "ee42b1d1",
+        "what": "pre-open gate gaps (evidence-input test selection, topological regeneration)"
+      },
+      {
+        "pr": 999,
+        "merge": "c029beba",
+        "what": "J CLOSED_PARTIAL + CP13"
+      },
+      {
+        "pr": 1000,
+        "merge": "539840e1",
+        "what": "owner authorization: GO builds internal roadmap missions in its own order"
+      },
+      {
+        "pr": 1001,
+        "merge": "c655465f",
+        "what": "Radar proposals → 3 PROPOSED contracts (RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD)"
+      },
+      {
+        "pr": 1002,
+        "merge": "7aaa2586",
+        "what": "NB3 repair-diversity contract + runner (fake-model tests only)"
+      },
+      {
+        "pr": 1005,
+        "merge": "35750b6b",
+        "what": "NB3 contract inspection ACCEPT (sha 5c551b0d…)"
+      },
+      {
+        "pr": 1004,
+        "merge": "ebf99354",
+        "what": "F revised (sha 323da9a1…): odg-go-wave.ts library + F runner (fixture-mechanics, outcome capped PARTIAL); waves NOT yet wired into GO"
+      },
+      {
+        "pr": 1003,
+        "merge": "85fdc362",
+        "what": "OWN-1 owner-gate: only registered component ids exempt; never-exempt protected locations; 0 reclassified"
+      }
+    ],
+    "missionsState": {
+      "F": "AUTHORIZED_FOR_REVISION — contract revised + inspected-ACCEPT verdict given on #1004 (inspection RECORD not yet committed) ⇒ next: commit V176_F_CONTRACT_INSPECTION.json, then GO decides",
+      "V176-NB3": "AUTHORIZED_FOR_REVISION + inspection ACCEPT committed (#1005) ⇒ RUN-authorized; GO has not selected it (own order)",
+      "D": "strategic pick after F's honest write_set (TIE_EXPLAINED D/F by R3_LOWER_RISK); contract PROPOSED ⇒ not actionable",
+      "RB-REATTEMPT-CHANGED-INPUT / RB-RECORD-INSPECTION-VERDICT-TIME / RB-SELECTION-AT-RUN-HEAD": "PROPOSED contracts (#1001), not bound/inspected",
+      "G/G2/J": "CLOSED_PARTIAL",
+      "H/J2/V175-NB2": "CLOSED_FAIL",
+      "V175-NB1": "CLOSED_PASS (integrated native code)"
+    },
+    "notDelivered": [
+      "GO waves wiring into odg-go-cycle EXECUTE (separate contract)",
+      "F single GO execution (after its inspection record)",
+      "NB3 single GO execution (only if GO selects it)",
+      "ODG-designed code integrated = 0"
+    ],
+    "preservedNotIntegrated": [
+      {
+        "branch": "feat/v175-register-criteria-measurement",
+        "worktree": "/home/ubuntu/wt-v175-crit",
+        "why": "#968 closed unmerged (rejected measurer) — kept for history"
+      },
+      {
+        "branch": "governance/f11-operating-contract",
+        "worktree": null,
+        "why": "older unmerged branch — kept"
+      }
+    ],
+    "processHygiene": "an orphan polling loop (3h38m, waiting on any pre-open gate to finish) was found and stopped; no other stale process"
+  },
+  "v178": {
+    "priority": "ODG LOCAL INTELLIGENCE & NATIVE ENGINEERING INFRASTRUCTURE (owner directive V178)",
+    "phase": "PHASE 0 — VPS discovery, READ-ONLY",
+    "nextAction": "read-only VPS inventory (CPU/RAM/GPU/storage/OS/runtimes/services/ports/network/backups/Ollama/ODG install) — no secrets in reports; no installation or modification before qualification",
+    "authorization": "discovery, design, qualified internal reversible installations, local experiments (V178 §9); NOT production, public exposure, spend, client data egress, destructive infra changes"
+  },
+  "ownerQuestionsOpen": [
+    "none blocking for Phase 0"
+  ],
+  "resumeActions": [
+    "read this checkpoint + runtime/bin/odg-resume-point.ts --check",
+    "V177: commit F inspection record, then let GO decide (no forcing)",
+    "V178: run Phase 0 read-only VPS inventory"
+  ]
+}

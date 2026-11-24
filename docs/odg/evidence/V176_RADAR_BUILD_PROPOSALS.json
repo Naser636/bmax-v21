@@ -24,14 +24,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795561479000,
+    "nowEpochMs": 1795562885000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "857a0bba712c8176b95f10f4f55316e84192039113de0bc92d7be9c06a7128ae",
-      "epochMs": 1795561479000
+      "sha256": "7746d47677403eeff0fc78ef96d3e2be5e0fcb4671d8a344d304af982b313e48",
+      "epochMs": 1795562885000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -64,9 +64,9 @@
       "epochMs": 1795532572000
     },
     {
-      "source": "docs/odg/evidence/V176_CHECKPOINT_13.json",
-      "sha256": "22936725d52728540ef15b60607c12394d541f043e33a7c0462593c8b7c8c592",
-      "epochMs": 1795555108000
+      "source": "docs/odg/evidence/V178_CHECKPOINT_14.json",
+      "sha256": "8aaea6214cfe1e020c8e6aea2eb0fda576fc1accf879068804c8de6af08de4e1",
+      "epochMs": 1795562885000
     },
     {
       "source": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_EVIDENCE.json",
@@ -1391,7 +1391,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[8]"
       ],
-      "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V176_CHECKPOINT_13.json (LCP-1)",
+      "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V178_CHECKPOINT_14.json (LCP-1)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-3",
