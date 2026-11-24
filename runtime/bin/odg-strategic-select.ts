@@ -143,10 +143,37 @@ function loadSources(root: string): any {
   // every committed .ts/.js write_set file (canonical parser), resolved to repo paths. Committed tree only; no register,
   // selector or GO output is read (NO-CIRCULARITY).
   const dependencyEvidence = loadDependencyEvidence(root, contracts, inputs);
+  // V17.5 PRIORITY 3 BREF-1 inputs: the boussole crosswalk records (read-only; sha256 in inputs ⇒ a change is drift).
+  const boussoleEvidence = loadBoussoleEvidence(root, inputs);
   const seen = new Set<string>();
   const uniqInputs = inputs.filter((i: any) => (seen.has(i.source) ? false : (seen.add(i.source), true)));
   inputs.length = 0; inputs.push(...uniqInputs);
-  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, proofProbes, dependencyEvidence, inputs };
+  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, proofProbes, dependencyEvidence, boussoleEvidence, inputs };
+}
+
+/* BREF-1 sources: V171 matrix (requirement rows: id, v150.section, anchors only), the canonical V12.4 companion (mission
+ * id/section/status), the ADOPTED V14.4 roadmap text, the V150 phase-1 correspondence (census summary), the precedence. */
+const BOUSSOLE_FILES = Object.freeze({
+  matrix: "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json",
+  v124: "docs/odg/v124-consolidated-roadmap.json",
+  v144: "docs/odg/V14_4_ROADMAP.md",
+  correspondence: "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json",
+  precedence: "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
+});
+function loadBoussoleEvidence(root: string, inputs: any[]): any {
+  const out: any = {};
+  for (const [k, rel] of Object.entries(BOUSSOLE_FILES) as any) {
+    let txt: string;
+    try { txt = fs.readFileSync(path.join(root, rel), "utf8"); } catch { inputs.push({ source: rel, sha256: null, note: "UNAVAILABLE — BREF-1 refs from it absent" }); out[k] = null; continue; }
+    inputs.push({ source: rel, sha256: sha256(txt) });
+    if (k === "v144") { out[k] = { path: rel, text: txt }; continue; }
+    const d = JSON.parse(txt);
+    if (k === "matrix") out[k] = { path: rel, data: { status: d.status, requirements: (Array.isArray(d.requirements) ? d.requirements : []).map((r: any) => ({ id: r.id, v150: { section: r.v150 && r.v150.section }, anchors: { v12_4: r.anchors && r.anchors.v12_4, v14_4: r.anchors && r.anchors.v14_4 } })) } };
+    else if (k === "v124") out[k] = { path: rel, data: { directeur: d.directeur, missions: (Array.isArray(d.missions) ? d.missions : []).map((m: any) => ({ id: m.id, section: m.section, status: m.status })) } };
+    else if (k === "correspondence") out[k] = { path: rel, data: { missions: (Array.isArray(d.missions) ? d.missions : []).map((m: any) => ({ id: m.id, section: m.section, summary: m.summary })) } };
+    else out[k] = { path: rel, data: { precedence: d.precedence ? { order: d.precedence.order } : null } };
+  }
+  return out;
 }
 
 /* loadDependencyEvidence(root, contracts, inputs) — DEPG-1 file facts { files:{path:{exists, sha256}}, requires:{path:[{specifier, resolved}]} }. */
@@ -266,6 +293,7 @@ function compute(sources: any): any {
       "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
       "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
       "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
+      "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
       "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)",
     ],
   };
@@ -295,5 +323,5 @@ function main(argv: string[]): number {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { loadSources, compute, grade, idInvariance, main, PRE_REGISTRATION, OUT_REL };
+module.exports = { BOUSSOLE_FILES, loadBoussoleEvidence, loadSources, compute, grade, idInvariance, main, PRE_REGISTRATION, OUT_REL };
 export {};
