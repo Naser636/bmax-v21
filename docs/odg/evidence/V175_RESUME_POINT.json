@@ -10,12 +10,12 @@
   },
   "inputs": [
     {
-      "source": "docs/odg/evidence/V176_CHECKPOINT_12.json",
-      "sha256": "5b2a93ef1fb53314ae4f1c524f4e9531e673609102f830169c7f101820105e51"
+      "source": "docs/odg/evidence/V176_CHECKPOINT_13.json",
+      "sha256": "22936725d52728540ef15b60607c12394d541f043e33a7c0462593c8b7c8c592"
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "60110b37a8f77bb535bcbce622cd027bb0423bb6ad925d27cb58b830586660ff"
+      "sha256": "0d756d245d7dcb377fa17e2cb23323c39af8c481697ad5709794f70641d97f72"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -86,6 +86,10 @@
       "sha256": "91e69c663efb194e77d036bf065a047e8165f7a4baa02b7cb75f6c4ebc669d6c"
     },
     {
+      "source": "docs/odg/evidence/V176_J_CRITERIA_VALIDATION.json",
+      "sha256": "f60f719edab2b64d8d68f8d57cd5d3d97902bc3da2ec0cd0a8dfe45c7a5e4c68"
+    },
+    {
       "source": "docs/odg/evidence/V172_G2_CONTRACT_INSPECTION.json",
       "sha256": "7ed12f31756c9f7b214d6b1fe0ea353cb88daab64a5f34270cf30adddfd4b993"
     },
@@ -135,15 +139,15 @@
     }
   ],
   "checkpoint": {
-    "path": "docs/odg/evidence/V176_CHECKPOINT_12.json",
-    "checkpoint": "CP12",
+    "path": "docs/odg/evidence/V176_CHECKPOINT_13.json",
+    "checkpoint": "CP13",
     "date": "2026-11-24",
-    "headAtCheckpoint": "bc2caffd",
+    "headAtCheckpoint": "7add359e",
     "nextPriority": [
-      "P0 native engineering: NB2 pipeline fixes ODG-side (bounded lesson digest, adaptive per-call timeout, idle-host scheduling) then NB2 inspection + ONE GO run",
-      "P0 brain: pre-open self-inspection gate (Radar RB-PRE-OPEN-SELF-INSPECTION) to cut rework time",
-      "P1: outcome-feedback-to-scoring is a SCORE change ⇒ owner-gated (owner rule: do not modify scores)",
-      "P1 parallel GO waves (write-set disjoint)"
+      "merge pre-open gate fix",
+      "native engineering NB3: repair-diversity lever (new contract, owner V175 family) — target the canonical-json undefined gap",
+      "parallel GO waves (disjoint write-sets)",
+      "promote top radar proposals into PROPOSED contracts"
     ],
     "rule": "LCP-1"
   },
@@ -203,6 +207,36 @@
     "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.boussole"
   },
   "trackedItems": [
+    {
+      "id": "F",
+      "title": "F — Multi-agents",
+      "registerStatus": "EXECUTED_PARTIAL",
+      "contractState": "PROPOSED",
+      "boussoleRef": {
+        "status": "MEASURED",
+        "v124MissionId": "CM-V237-ORCHESTRATION",
+        "v124Section": "F",
+        "v144Phase": 3,
+        "v150RequirementIds": [
+          "V150-AP-F"
+        ]
+      },
+      "contractSha256": "cd913c76d98b3b157cd5a8a0c8b496c6d3953ed0e9b2bd3e0be23f5b3ec9e3fb",
+      "ownerRecord": null,
+      "currentStep": null,
+      "scope": null,
+      "records": null,
+      "lastGoRun": null,
+      "pending": [],
+      "next": {
+        "actor": "OWNER",
+        "action": "F contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=F]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5]"
+      ]
+    },
     {
       "id": "G",
       "title": "G — Mémoire",
@@ -332,7 +366,7 @@
     {
       "id": "J",
       "title": "J — Gestion d'échec",
-      "registerStatus": "EXECUTED_PARTIAL",
+      "registerStatus": "CLOSED_PARTIAL",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "MEASURED",
@@ -350,18 +384,19 @@
       },
       "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_J.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822"
       },
       "records": {
@@ -374,8 +409,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V176_J_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -385,21 +420,10 @@
         "endedAt": "2026-11-24T21:01:42.944Z",
         "dispatched": true
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/V176_J_EXPERIMENT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 2ddb8734dacf and experiment docs/odg/evidence/V176_J_EXPERIMENT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PARTIAL, CLOSE-1 docs/odg/evidence/V176_J_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=J]",
@@ -662,12 +686,12 @@
     }
   ],
   "otherRegisterItems": {
-    "count": 53,
+    "count": 52,
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
-      "EXECUTED_PARTIAL": 2,
-      "CLOSED_PARTIAL": 2,
+      "EXECUTED_PARTIAL": 1,
+      "CLOSED_PARTIAL": 3,
       "CLOSED_FAIL": 3,
       "CLOSED_PASS": 1,
       "ACCEPTED": 1,
@@ -797,32 +821,27 @@
     "rule": "RSP-5",
     "strategic": {
       "decision": "SELECTED",
-      "item": "J",
-      "contractState": "AUTHORIZED_FOR_REVISION",
+      "item": "F",
+      "contractState": "PROPOSED",
       "boussoleRef": {
         "status": "MEASURED",
-        "v124MissionId": null,
-        "v124Section": null,
-        "v144Phase": null,
+        "v124MissionId": "CM-V237-ORCHESTRATION",
+        "v124Section": "F",
+        "v144Phase": 3,
         "v150RequirementIds": [
-          "V150-AP-J"
-        ],
-        "fieldReasons": {
-          "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
-          "v124Section": "no V12.4 section stated",
-          "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
-        }
+          "V150-AP-F"
+        ]
       },
-      "ownerAuthorizationNeeded": null,
+      "ownerAuthorizationNeeded": "owner — F PROPOSED → AUTHORIZED (authorizedBy)",
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
     "dispatchable": [],
     "verdict": "no tracked item has an authorized, not-yet-dispatched EXECUTION step ⇒ a GO --execute run has nothing to dispatch; the pending steps are provider / inspector / owner steps (see trackedItems[].next)",
     "pendingNonGo": [
       {
-        "item": "J",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 2ddb8734dacf and experiment docs/odg/evidence/V176_J_EXPERIMENT.json, then an independent inspection — never auto-graded"
+        "item": "F",
+        "actor": "OWNER",
+        "action": "F contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
       }
     ],
     "lastGoRun": {

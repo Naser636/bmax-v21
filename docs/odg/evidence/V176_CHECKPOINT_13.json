@@ -1,0 +1,204 @@
+{
+  "//": "Checkpoint CP13 (owner directives V176, « DÉBLOCAGE FINAL », « FINALISATION ET CONTINUITÉ », 2026-11-24). Canonical checkpoint series (LCP-1). Provider-written from committed evidence. Machine resume view: docs/odg/evidence/V175_RESUME_POINT.json (runtime/bin/odg-resume-point.ts --check).",
+  "checkpoint": "CP13",
+  "date": "2026-11-24",
+  "headAtCheckpoint": "7add359e",
+  "previous": "docs/odg/evidence/V176_CHECKPOINT_12.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5,
+    "mainCheckout": "main, clean"
+  },
+  "boussole": "V12.4 canonical (unchanged). V14.4 adopted; V15.0 PROPOSED. Precedence record V175_GOVERNANCE_PRECEDENCE.json: Q-CTR2 ANSWERED (STAGE, by PREC-1), CTR-2 RESOLVED (#991).",
+  "prsMerged": [
+    {
+      "pr": 986,
+      "merge": "144df4c6",
+      "what": "NB2 pipeline ODG-side fixes (lesson digest, adaptive timeout — over-cap NOT_MEASURED only before the first work call, idle-host start check)"
+    },
+    {
+      "pr": 987,
+      "merge": "06540b8c",
+      "what": "pre-open gate odg-pre-open-gate.ts"
+    },
+    {
+      "pr": 988,
+      "merge": "379595ea",
+      "what": "radar proposals --check reproducible across commits"
+    },
+    {
+      "pr": 989,
+      "merge": "6294ef39",
+      "what": "NB2 contract inspection record"
+    },
+    {
+      "pr": 990,
+      "merge": "6cd8e5d0",
+      "what": "owner selection decision NB2 (verbatim)"
+    },
+    {
+      "pr": 991,
+      "merge": "518ec362",
+      "what": "Q-CTR2 answered STAGE via PREC-1; owner record V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json"
+    },
+    {
+      "pr": 992,
+      "merge": "b9c89c07",
+      "what": "NB2 result FAIL (single GO run) + incident fix (native runners refuse to overwrite a result)"
+    },
+    {
+      "pr": 993,
+      "merge": "74143178",
+      "what": "J PROPOSED → AUTHORIZED_FOR_REVISION (owner V176)"
+    },
+    {
+      "pr": 994,
+      "merge": "22dbdac1",
+      "what": "outcome feedback into scoring — controlled, attributable-only (OFB-CAL-2); multipliers {} (none attributable)"
+    },
+    {
+      "pr": 995,
+      "merge": "ca9ac06b",
+      "what": "J contract revision (runner, replication pre-registration, caps, one-shot)"
+    },
+    {
+      "pr": 996,
+      "merge": "08186c5d",
+      "what": "J contract inspection record"
+    },
+    {
+      "pr": 997,
+      "merge": "7add359e",
+      "what": "J result PARTIAL (single GO run) + NB2 CLOSED_FAIL + feedback rebind"
+    }
+  ],
+  "missions": {
+    "G": "CLOSED_PARTIAL",
+    "H": "CLOSED_FAIL",
+    "G2": "CLOSED_PARTIAL",
+    "J2": "CLOSED_FAIL",
+    "V175-NB1": "CLOSED_PASS (integrated native code)",
+    "V175-NB2": "CLOSED_FAIL (ODG-designed repair: best 27/33)",
+    "J": "CLOSED_PARTIAL (C2 ∧ C3; C1 not met; report-only: alternative 2/2 on parse-range — first alternative success in the series)"
+  },
+  "ownerDecisionsResolved": {
+    "Q-CTR2": "ANSWERED STAGE by PREC-1 (FUNCTION reading kept as owner-overridable alternative)",
+    "J": "authorized (V176) ⇒ single GO execution done ⇒ CLOSED_PARTIAL",
+    "outcomeFeedback": "built + active, attributable-only; no criterion attributable at n=6 ⇒ no score changed",
+    "#976": "timeline: closed 16:21:46Z by the repo account (no provider command), reopened 16:46:41Z, merged 2e4bda63 16:53:18Z — consistent, nothing to reopen"
+  },
+  "nativeVsProvider": {
+    "goExecutedSteps": [
+      "H",
+      "G2",
+      "J2",
+      "V175-NB1",
+      "V175-NB2",
+      "J"
+    ],
+    "nativeCodeIntegrated": {
+      "files": 2,
+      "by": "local model (provider-specified algorithm)",
+      "pr": 978
+    },
+    "odgDesignedCodeIntegrated": 0
+  },
+  "incidents": [
+    "2026-11-24 19:24Z unintended NATIVE start of NB2 by a test (NOT_MEASURED, 1 warm-up call) — root-cause fixed (#992)",
+    "permission classifier refused a provider-transcribed NB2 selection record from generic text (correct) — explicit owner decision obtained (#990)"
+  ],
+  "v176Roadmap": {
+    "executiveBrain": {
+      "status": "PARTIAL",
+      "done": [
+        "single authorization-evidence map GO=register (#981)",
+        "dependency graph (#969)",
+        "boussoleRef + resume view (#982)",
+        "outcome feedback attributable-only (#994)",
+        "Q-CTR2/CTR-1/2/4 resolved (#974/#991)"
+      ],
+      "remaining": [
+        "decisions still DECISION_REQUIRED for most items (4 criteria NOT_MEASURED — honest)",
+        "22/59 items without provable boussoleRef"
+      ]
+    },
+    "institutionalMemory": {
+      "status": "PARTIAL",
+      "done": [
+        "lesson reuse in native pipeline (DIGEST-1)",
+        "outcome learning record (#973)",
+        "checkpoints CP11–CP13 + machine resume point"
+      ],
+      "remaining": [
+        "lessons not yet consumed outside the native pipeline"
+      ]
+    },
+    "nativeEngineering": {
+      "status": "PARTIAL",
+      "done": [
+        "NB1 PASS integrated (#978)",
+        "NB2 ODG-designed pipeline (#980/#986) — run FAIL (#992)"
+      ],
+      "remaining": [
+        "ODG-designed code integrated = 0; next lever: repair diversity (temperature/seed schedule, alternative design on stall) declared before a new contract"
+      ]
+    },
+    "radar": {
+      "status": "PARTIAL",
+      "done": [
+        "internal build engine (#983, reproducible #988)"
+      ],
+      "remaining": [
+        "external egress OWNER_GATED (no live collection)",
+        "proposals not yet auto-promoted into contracts"
+      ]
+    },
+    "orchestration": {
+      "status": "PARTIAL",
+      "done": [
+        "GO-DTO-1 timeouts + process groups (#965)",
+        "one-shot claims (#966)",
+        "pre-open gate (#987)"
+      ],
+      "remaining": [
+        "parallel GO waves on disjoint write-sets (not built)",
+        "pre-open gate gaps (test selection, regeneration order) — fix PR in progress"
+      ]
+    },
+    "learningAndMeasurement": {
+      "status": "DONE_FOR_SCOPE",
+      "done": [
+        "production metric (#973)",
+        "outcome learning (#973)",
+        "outcome feedback (#994)"
+      ]
+    },
+    "security": {
+      "status": "DONE_FOR_SCOPE",
+      "done": [
+        "deep versioned canon (#976)",
+        "ledger deep seal (#979)"
+      ],
+      "remaining": [
+        "radar-source-admission stable() shallow (LOW, pinned chain)"
+      ]
+    }
+  },
+  "ownerQuestionsOpen": [
+    "none blocking; optional: override Q-CTR2 to the FUNCTION reading",
+    "V15.0 adoption",
+    "GitHub AUP §6/§7",
+    "provider spend ceiling",
+    "gate 10/12 signature"
+  ],
+  "nextPriority": [
+    "merge pre-open gate fix",
+    "native engineering NB3: repair-diversity lever (new contract, owner V175 family) — target the canonical-json undefined gap",
+    "parallel GO waves (disjoint write-sets)",
+    "promote top radar proposals into PROPOSED contracts"
+  ],
+  "resumeActions": [
+    "odg-resume-point.ts --check",
+    "GO has nothing authorized to dispatch (all tracked items closed)"
+  ]
+}
