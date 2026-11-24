@@ -32,7 +32,6 @@
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
-const cp = require("child_process");
 const NRI = require("../core/odg-native-repair-item.js");
 const BUILDER = require("../core/native-project-builder.js");
 const NBS = require("../core/odg-native-build-sandbox.js");
@@ -40,6 +39,7 @@ const GEN = require("../core/local-model-generator.js");
 const NE = require("../core/odg-native-engineering.js");
 const AS = require("../core/odg-authorization-scope.js");
 const OCUR = require("../core/odg-observation-currency.js");
+const PIPE = require("../core/odg-native-design-pipeline.js");   // V17.5 NB2: shared native-engineering stages
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const SELF = "runtime/bin/odg-v175-native-build-run.ts";
@@ -54,48 +54,10 @@ const OLLAMA = Object.freeze({ protocol: "http:", host: "127.0.0.1", port: "1143
 const BUDGETS = Object.freeze({ model: "qwen2.5-coder:7b", temperature: 0, seed: 42, numPredict: 900, maxRepairPerRound: 3, maxRounds: 2, maxModelCalls: 10, wallMs: 1500000, perCallTimeoutMs: 300000 });
 const sha256 = (s: any): string => crypto.createHash("sha256").update(String(s)).digest("hex");
 
-/* ---------------- network guard ---------------- */
-function makeGuard(transport: any, caps: any = BUDGETS): any {
-  const st: any = { modelCalls: 0, refused: [] as any[], prompts: [] as any[], capHit: null as any, deadline: Date.now() + caps.wallMs };
-  const fetchImpl = async (url: any, init: any = {}): Promise<any> => {
-    let u: any = null; try { u = new URL(String(url)); } catch { /* refused */ }
-    if (!u || u.protocol !== OLLAMA.protocol || u.hostname !== OLLAMA.host || u.port !== OLLAMA.port || u.pathname !== "/api/generate") {
-      st.refused.push(String(url).slice(0, 200));
-      throw new Error("V175 network guard: only http://127.0.0.1:11434/api/generate is allowed");
-    }
-    if (st.modelCalls >= caps.maxModelCalls) { st.capHit = st.capHit || "maxModelCalls"; throw new Error("V175 cap: maxModelCalls"); }
-    if (Date.now() > st.deadline) { st.capHit = st.capHit || "wallMs"; throw new Error("V175 cap: wallMs"); }
-    const body = init && typeof init.body === "string" ? JSON.parse(init.body) : {};
-    body.options = { ...(body.options || {}), seed: caps.seed, temperature: caps.temperature, num_predict: caps.numPredict };
-    st.modelCalls++;
-    st.prompts.push({ i: st.modelCalls, model: body.model, promptSha256: sha256(body.prompt || ""), promptChars: String(body.prompt || "").length });
-    return transport(String(url), { ...init, body: JSON.stringify(body) });
-  };
-  return { st, fetchImpl };
-}
-
-/* ---------------- TypeScript build steps (no semantic change) ---------------- */
-function transpile(tsSrc: string): any {
-  const ts = require("typescript");
-  const r = ts.transpileModule(tsSrc, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, reportDiagnostics: true });
-  const diags = (r.diagnostics || []).map((d: any) => ts.flattenDiagnosticMessageText(d.messageText, "\n"));
-  return { js: r.outputText, syntaxErrors: diags };
-}
-/* typecheck(tsSrc) — strict + isolatedModules in-memory program; CommonJS globals declared `any` (no @types needed). */
-function typecheck(tsSrc: string): any {
-  const ts = require("typescript");
-  const F = "/odg-v175/odg-canonical-json.ts", A = "/odg-v175/ambient.d.ts";
-  const mem: any = { [F]: tsSrc, [A]: "declare var module: any;\ndeclare var require: any;\ndeclare var exports: any;\n" };
-  const options = { strict: true, noEmit: true, isolatedModules: true, target: ts.ScriptTarget.ES2020, lib: ["lib.es2020.d.ts"], types: [], skipLibCheck: true };
-  const host = ts.createCompilerHost(options);
-  const gsf = host.getSourceFile.bind(host);
-  host.getSourceFile = (n: string, lv: any, ...rest: any[]) => mem[n] !== undefined ? ts.createSourceFile(n, mem[n], lv) : gsf(n, lv, ...rest);
-  const fe = host.fileExists.bind(host); host.fileExists = (n: string) => mem[n] !== undefined || fe(n);
-  const rf = host.readFile.bind(host); host.readFile = (n: string) => mem[n] !== undefined ? mem[n] : rf(n);
-  const prog = ts.createProgram([F, A], options, host);
-  const diags = ts.getPreEmitDiagnostics(prog).map((d: any) => (d.file ? path.basename(d.file.fileName) + (d.start !== undefined ? ":" + (d.file.getLineAndCharacterOfPosition(d.start).line + 1) : "") + " " : "") + ts.flattenDiagnosticMessageText(d.messageText, " "));
-  return { ok: diags.length === 0, diagnostics: diags.slice(0, 10) };
-}
+/* ---------------- shared stages (V17.5 NB2: moved to runtime/core/odg-native-design-pipeline.ts — same code, one copy) ---- */
+const makeGuard = (transport: any, caps: any = BUDGETS): any => PIPE.makeGuard(transport, caps);
+const transpile = PIPE.transpile;
+const typecheck = (tsSrc: string): any => PIPE.typecheck(tsSrc, "odg-canonical-json.ts");
 
 /* ---------------- the local-model seam (prompt for a TS module; same Ollama call shape as local-model-generator) ---- */
 function buildPrompt(fileSpec: any): string {
@@ -141,12 +103,8 @@ function makeGenerator(fetchImpl: any, log: any[], round: number, extraHint: any
   };
 }
 
-/* ---------------- branch-ready diff ---------------- */
-function newFileDiff(rel: string, content: string): string {
-  const body = content.endsWith("\n") ? content : content + "\n";
-  const ls = body.slice(0, -1).split("\n");
-  return [`diff --git a/${rel} b/${rel}`, "new file mode 100644", "--- /dev/null", `+++ b/${rel}`, `@@ -0,0 +1,${ls.length} @@`, ...ls.map((l) => "+" + l)].join("\n") + "\n" + (content.endsWith("\n") ? "" : "\\ No newline at end of file\n");
-}
+/* ---------------- branch-ready diff (shared stage) ---------------- */
+const newFileDiff = PIPE.newFileDiff;
 /* oracle test file — authored by ODG RULES from the computed oracle (deterministic; not model, not hand-written) */
 function oracleTestSource(oracle: any): string {
   const all = oracle.repairExamples.map((r: any) => ({ args: r.args, expect: r.expect })).concat(oracle.acceptanceCases.map((c: any) => ({ args: c.args, expect: c.expect })));
@@ -164,11 +122,8 @@ function oracleTestSource(oracle: any): string {
     "",
   ].join("\n");
 }
-function gitApplyCheck(root: string, diff: string): any {
-  const r = cp.spawnSync("git", ["-C", root, "apply", "--check", "-"], { input: diff, encoding: "utf8", timeout: 30000 });
-  return { ok: r.status === 0, stderr: String(r.stderr || "").slice(0, 500) };
-}
-function headOf(root: string): string | null { try { return String(cp.execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] })).trim(); } catch { return null; } }
+const gitApplyCheck = PIPE.gitApplyCheck;
+const headOf = PIPE.headOf;
 
 /* ---------------- the native build ---------------- */
 async function runNativeBuild(opts: any): Promise<any> {
