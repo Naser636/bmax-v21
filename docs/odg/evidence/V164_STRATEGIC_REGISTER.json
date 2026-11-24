@@ -110,6 +110,10 @@
       "sha256": "8054086e356e2f4d8a23e708f2214559b27287c871c1233a49f8385bee435363"
     },
     {
+      "source": "docs/odg/evidence/V172_J2_EXPERIMENT.json",
+      "sha256": "bc5c76488689a84f63abef5f1959170ec7409c4141f74fa116538b7bbd315c14"
+    },
+    {
       "source": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
       "sha256": "d0a45dfef1865ec90a51114d4fc60e6a1982715ac63d8c1b21886624893c3e1c"
     },
@@ -554,7 +558,7 @@
         {
           "scenario": "J2",
           "inspection": "docs/odg/evidence/V172_J2_CONTRACT_INSPECTION.json",
-          "experiment": null,
+          "experiment": "docs/odg/evidence/V172_J2_EXPERIMENT.json",
           "validation": null
         }
       ],
@@ -2861,8 +2865,8 @@
         "closure": {
           "closed": false,
           "rule": "CLOSE-1",
-          "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-          "reason": "inspection ACCEPT bound to contract d5a8b0db7f77 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+          "currentStep": "VALIDATE_CRITERIA",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         }
       },
@@ -10611,5 +10615,5 @@
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "2fbdd4e53f2692e44747451bd1dc7ee28262f65a"
+  "generatedAtHead": "e9ec57ba1cd914ed968989c5fe894c148297aadc"
 }
