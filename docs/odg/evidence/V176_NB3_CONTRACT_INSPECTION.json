@@ -1,0 +1,25 @@
+{
+  "//": "Independent inspection record of the V176-NB3 native-design (repair-diversity) contract (owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS). Transcribed verbatim from the inspector's verdicts by the coordinating session. Independence DECLARED by distinct session ids (not cryptographic). Inspection ≠ selection: GO selects in its own strategic order (currently F).",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V176-NB3",
+  "verdict": "ACCEPT",
+  "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68",
+  "inspectedHeadSha": "4e7bb559fe451f3e73aec45bce25e52902e70779",
+  "inspectedPr": 1002,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab245bf3019f79340",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "nb3-v176",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-24",
+  "findings": [
+    "budgets equal NB2's except the added diversity block (0.5/1042 → 0.9/2042 → design switch; escalationModels [] — no model larger than 7b in V155); maxVariations 8 inside the same 12-call cap",
+    "AC1–AC6 byte-identical to NB2's; AC7 (diversity recorded) added; no existing contract changed (23 → 24, NB3 appended)",
+    "gate refuses a contract whose budgets/schedule differ from the runner's (budgetsMatch); runner refuses ALREADY_RECORDED; guard refuses (model, temperature, seed) outside allowedCallOptions before sending; NOT_MEASURED only before the first work call (#986)",
+    "NB2 run path = same code under NB2_PROFILE; no diversity block ⇒ no new path runs; NB3 test never calls main",
+    "binding exclusive: NB1/NB2/J/J2 citing the build-missions record refused; NB3 citing V175/V176-J records refused; unbound NB4 refused",
+    "LOW (pre-existing, separate): NB2 runner test 'origin + WORK_ITEM_CONTRACT = ODG-rules derivation' fails on main (derivation drift, no runtime effect)"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V176-NB3 only; RUN via ODG GO --execute only, in GO's own strategic order; one initial execution; grades nothing."
+}
