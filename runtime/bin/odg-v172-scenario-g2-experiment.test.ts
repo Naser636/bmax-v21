@@ -24,6 +24,11 @@ for (const args of [[], ["docs/odg/evidence/OTHER.json"], [E.HELDOUT], ["./" + E
 const live = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8")).contracts.find((c: any) => c.scenario === "G2");
 check("runner constants equal the frozen G2 preRegistration text", E.constantsMismatch(live).length === 0);
 check("gate refuses without an inspection record", E.gate(live, null).ok === false);
+{ const HB = require("./odg-v172-scenario-g2-heldout-build.ts");
+  const doc = { blocks: { HB: { rows: [{ number: 1 }], excluded: [{ number: 2, reason: "LABEL_NOT_RECOVERABLE_LOCALLY", parents: 1 }, { number: 3, reason: "LABEL_NOT_RECOVERABLE_LOCALLY", parents: 2 }, { number: 4, reason: "AMBIGUOUS", commits: ["a", "b"] }] } } };
+  const before = JSON.stringify(doc); const d = HB.contractDiagnostics(doc);
+  check("builder contractDiagnostics: flags a squash exclusion without exactly 1 parent (contract '(#N)', 1 parent') and lists AMBIGUOUS — diagnostic only, input untouched", d.ok === false && d.squashNotOneParent.length === 1 && d.squashNotOneParent[0].number === 3 && d.ambiguous.length === 1 && d.ambiguous[0].number === 4 && JSON.stringify(doc) === before);
+  check("runner ambiguities list the AMBIGUOUS (merge + '(#N)' subject) exclusion and the squash 1-parent diagnostic", /merge AND a '\(#N\)' squash subject\) is EXCLUDED AMBIGUOUS/.test(fs.readFileSync(path.join(ROOT, E.SELF), "utf8")) && /contractDiagnostics/.test(fs.readFileSync(path.join(ROOT, E.SELF), "utf8"))); }
 check("declared outputs untouched by the tests", (exists(E.OUT) ? fs.readFileSync(path.join(ROOT, E.OUT), "utf8") : null) === before.out && (exists(E.HELDOUT) ? fs.readFileSync(path.join(ROOT, E.HELDOUT), "utf8") : null) === before.held);
 process.stdout.write(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}\n`);
 process.exitCode = failures === 0 ? 0 : 1;

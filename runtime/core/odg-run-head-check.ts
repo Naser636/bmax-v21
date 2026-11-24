@@ -15,7 +15,8 @@
  *   2. materializes that commit in a temporary DETACHED `git worktree` (local objects only — no fetch, no network);
  *   3. places the record under test (the bytes of the file being checked) at its path in that worktree;
  *   4. runs the runner's OWN `--check` of that commit there (its own code version; the recomputation is unchanged);
- *   5. removes the worktree (`git worktree remove --force` + prune) in a finally block.
+ *   5. removes the worktree (`git worktree remove --force` + prune) in a finally block — also on SIGINT/SIGTERM
+ *      (then exits with the signal's code; see installSignalCleanup).
  * It writes nothing in the caller's tree and never modifies the record. Verdict: CHECK_OK | DRIFT | ERROR.
  *
  * diffLeafPaths() lists the JSON leaf paths where two values differ (used by G to separate context-only drift).
@@ -46,6 +47,35 @@ function resolveRunCommit(repoRoot: string, runHead: any, runnerRel: string, rec
   return { ok: true, rule: "RECORD_COMMIT_CHILD", runHead, commit: first };
 }
 
+/* Signal cleanup (SIGINT / SIGTERM during a check): without a listener the default disposition kills the process
+ * immediately — mid-spawnSync — skipping the finally block and leaking the temp worktree. A listener is installed once
+ * (on the first check) so the kill is deferred: the synchronous check finishes its finally (worktree remove + prune),
+ * then the handler removes any worktree still registered as active (defensive), prunes, and exits with the signal's
+ * code (128 + signal number). If the host process has its OWN listener for that signal, the handler only cleans up and
+ * leaves the exit to it. Stated residual: spawnSync blocks the event loop, so a signal sent to this process alone is
+ * acted on when the runner child returns (the child keeps its own bounded timeout); a process-group signal (Ctrl-C)
+ * stops the child too. */
+const ACTIVE = new Set<any>();
+let signalCleanupInstalled = false;
+function cleanupActive(): void {
+  for (const a of Array.from(ACTIVE)) {
+    git(a.repoRoot, ["worktree", "remove", "--force", a.wt]);
+    try { fs.rmSync(a.base, { recursive: true, force: true }); } catch { /* best effort */ }
+    git(a.repoRoot, ["worktree", "prune"]);
+    ACTIVE.delete(a);
+  }
+}
+function onSignal(sig: string): void {
+  cleanupActive();
+  if (process.listenerCount(sig) > 1) return;   // the host has its own handler for this signal
+  process.exit(128 + ((os.constants.signals as any)[sig] || 0));
+}
+function installSignalCleanup(): void {
+  if (signalCleanupInstalled) return;
+  signalCleanupInstalled = true;
+  for (const sig of ["SIGINT", "SIGTERM"]) process.on(sig, onSignal);
+}
+
 /* opts: { repoRoot, recordRel, runnerRel, checkArgs: string[], runHead?, tmpBase?, timeoutMs?, command?: (wt) => [bin, args] } */
 function checkAtRunHead(opts: any): any {
   const repoRoot = path.resolve(String(opts.repoRoot));
@@ -55,8 +85,11 @@ function checkAtRunHead(opts: any): any {
   const runHead = opts.runHead !== undefined ? opts.runHead : (record && record.run ? record.run.head : null);
   const res = resolveRunCommit(repoRoot, runHead, opts.runnerRel, opts.recordRel);
   if (!res.ok) return { verdict: "ERROR", ...res };
+  installSignalCleanup();
   const base = fs.mkdtempSync(path.join(opts.tmpBase || os.tmpdir(), "odg-run-head-check-"));
   const wt = path.join(base, "wt");
+  const active = { repoRoot, wt, base };
+  ACTIVE.add(active);
   let added = false;
   try {
     const add = git(repoRoot, ["worktree", "add", "--detach", "-q", wt, res.commit]);
@@ -76,6 +109,7 @@ function checkAtRunHead(opts: any): any {
     if (added) { git(repoRoot, ["worktree", "remove", "--force", wt]); }
     try { fs.rmSync(base, { recursive: true, force: true }); } catch { /* best effort */ }
     git(repoRoot, ["worktree", "prune"]);
+    ACTIVE.delete(active);
   }
 }
 

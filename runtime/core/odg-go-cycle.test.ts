@@ -387,6 +387,9 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       const r = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
       const as = stepIn(p.trace, "SELECT").decision.actionableSelection;
       check("GO-ACT tie J/G among actionable ⇒ DECISION_REQUIRED propagated verbatim (tiedSet J,G), no pick, H kept, no dispatch", as.selection.decision === "DECISION_REQUIRED" && as.selection.tiedSet.join(",") === "J,G" && as.item === null && stepIn(p.trace, "SELECT").decision.workingOn === "H" && p.calls.dispatch === 0 && r.status === "HALTED_AT_AUTHORIZATION_GATE");
+      const st = stepIn(p.trace, "SELECT");
+      check("GO-ACT tie among actionable ⇒ rationale names the authorized tie (2 items J/G, DECISION_REQUIRED, no id tie-break) and never claims 'no other item has an AUTHORIZED next step'", /2 authorized items tie \(J\/G\) — DECISION_REQUIRED, no id tie-break; owner\/ODG decision requested/.test(st.rationale) && !/no other item has an AUTHORIZED next step/.test(st.rationale));
+      check("GO-ACT tie among actionable ⇒ ownerRequest records decisionNeeded among the tied actionable set (J/G), authorization request for H kept", st.decision.ownerRequest.item === "H" && /among J\/G/.test(String(st.decision.ownerRequest.decisionNeeded)) && st.decision.ownerRequest.actionableTiedSet.join(",") === "J,G" && /H PROPOSED → AUTHORIZED/.test(st.decision.ownerRequest.authorizationNeeded));
     }
   }
   // 7. writer confinement + provider never launched (source scan)
