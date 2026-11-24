@@ -1,486 +1,489 @@
 {
- "//": "V17.1 §5 J — READ-ONLY root-cause diagnosis of scenario J (eight strategies; REPAIR_BUDGET_EXHAUSTED). Diagnosis only: no code changed, no model run, no provider call, no spend. Every FACT carries a file+field pointer into committed evidence or code at the stated base; every HYPOTHESIS is labelled and says what would confirm/refute it. The J2 protocol at the end is PROPOSED — NOT authorized, NOT executed.",
- "schema": "ODG_DIAGNOSIS/1",
- "mission": "V17.1 §5 J",
- "ownerDirectiveText": "Reprendre le diagnostic des huit stratégies et du blocage REPAIR_BUDGET_EXHAUSTED. Déterminer pourquoi elles n'ont pas été exécutées, vérifier les autorisations et les budgets disponibles, corriger les défauts internes lorsque c'est autorisé, puis poursuivre les stratégies réalisables. Ne pas confondre un budget de réparation interne avec une autorisation de dépense externe.",
- "date": "2026-11-24",
- "base": {
-  "commit": "c6a3df99",
-  "ref": "origin/main",
-  "note": "diagnosis read at this base; J evidence itself was measured at bc64cb1e (V161_SCENARIO_J.json#head)"
- },
- "method": {
-  "readOnly": true,
-  "codeChanged": false,
-  "modelRun": false,
-  "ollamaUsed": false,
-  "providerCalled": false,
-  "network": "none (except the final push/PR)",
-  "offlineReproduction": {
-   "command": "npx tsx runtime/bin/odg-v161-scenario-j-run.ts --check",
-   "result": "CHECK OK (8 rows; REAL)",
-   "meaning": "summaries and rule selections re-derive from the committed rows at base c6a3df99 (offline, no model call); it does NOT re-run any model"
+  "//": "V17.1 §5 J — READ-ONLY root-cause diagnosis of scenario J (eight strategies; REPAIR_BUDGET_EXHAUSTED). Diagnosis only: no code changed, no model run, no provider call, no spend. Every FACT carries a file+field pointer into committed evidence or code at the stated base; every HYPOTHESIS is labelled and says what would confirm/refute it. The J2 protocol at the end is PROPOSED — NOT authorized, NOT executed.",
+  "schema": "ODG_DIAGNOSIS/1",
+  "mission": "V17.1 §5 J",
+  "ownerDirectiveText": "Reprendre le diagnostic des huit stratégies et du blocage REPAIR_BUDGET_EXHAUSTED. Déterminer pourquoi elles n'ont pas été exécutées, vérifier les autorisations et les budgets disponibles, corriger les défauts internes lorsque c'est autorisé, puis poursuivre les stratégies réalisables. Ne pas confondre un budget de réparation interne avec une autorisation de dépense externe.",
+  "date": "2026-11-24",
+  "base": {
+    "commit": "c6a3df99",
+    "ref": "origin/main",
+    "note": "diagnosis read at this base; J evidence itself was measured at bc64cb1e (V161_SCENARIO_J.json#head)"
   },
-  "sourcesRead": [
-   "docs/odg/evidence/V161_SCENARIO_J.json",
-   "runtime/bin/odg-v161-scenario-j-run.ts",
-   "runtime/core/native-project-builder.ts",
-   "runtime/core/odg-decomposed-execution.ts",
-   "runtime/core/odg-repair-feedback.ts",
-   "runtime/core/odg-native-build-sandbox.ts",
-   "runtime/core/odg-local-model-execution-policy.ts",
-   "runtime/core/odg-native-escalation.ts",
-   "runtime/core/odg-sovereign-delegation.ts",
-   "runtime/core/odg-strategy-mode-selector.ts",
-   "runtime/core/decomposition-planner.ts",
-   "runtime/bin/native-hard-corpus.ts",
-   "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-   "docs/odg/evidence/V163_CHECKPOINT_8.json",
-   "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-   "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-   "docs/odg/evidence/V168_CHECKPOINT_10.json",
-   "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
-   "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json",
-   "git show 793d041b (the #940 fix commit)"
+  "method": {
+    "readOnly": true,
+    "codeChanged": false,
+    "modelRun": false,
+    "ollamaUsed": false,
+    "providerCalled": false,
+    "network": "none (except the final push/PR)",
+    "offlineReproduction": {
+      "command": "npx tsx runtime/bin/odg-v161-scenario-j-run.ts --check",
+      "result": "CHECK OK (8 rows; REAL)",
+      "meaning": "summaries and rule selections re-derive from the committed rows at base c6a3df99 (offline, no model call); it does NOT re-run any model"
+    },
+    "sourcesRead": [
+      "docs/odg/evidence/V161_SCENARIO_J.json",
+      "runtime/bin/odg-v161-scenario-j-run.ts",
+      "runtime/core/native-project-builder.ts",
+      "runtime/core/odg-decomposed-execution.ts",
+      "runtime/core/odg-repair-feedback.ts",
+      "runtime/core/odg-native-build-sandbox.ts",
+      "runtime/core/odg-local-model-execution-policy.ts",
+      "runtime/core/odg-native-escalation.ts",
+      "runtime/core/odg-sovereign-delegation.ts",
+      "runtime/core/odg-strategy-mode-selector.ts",
+      "runtime/core/decomposition-planner.ts",
+      "runtime/bin/native-hard-corpus.ts",
+      "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+      "docs/odg/evidence/V163_CHECKPOINT_8.json",
+      "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+      "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+      "docs/odg/evidence/V168_CHECKPOINT_10.json",
+      "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+      "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json",
+      "git show 793d041b (the #940 fix commit)"
+    ]
+  },
+  "q1_whatAreTheEight": {
+    "answer": "The 'eight' are the 8 TRIALS of scenario J (4 tasks × 2 trials). Each trial ran TWO strategies — a default and one rule-selected alternative — so 8 alternative-strategy executions exist (6 DECOMPOSED_INTERMEDIATE_VERIFICATION + 2 LARGER_MODEL_REPAIR_DEPTH), and each trial ended with 1 sovereign-delegation record (8 total). The 8 alternatives WERE executed (executionStatus EXECUTED, sandboxed) and all failed. What was NOT executed are the 8 delegation records (state CREATED, never AUTHORIZED, 0 provider calls). 'Not executed' therefore applies to the provider handoffs, not to the local strategies.",
+    "facts": [
+      {
+        "fact": "8 rows; trialsPerTask 2; 4 tasks",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#summary.overall.trials, #trialsPerTask, #tasks"
+      },
+      {
+        "fact": "defaultPasses 0/8, alternativePasses 0/8, alternativeMeasured 8, escalationRecordsCreated 8, providerCalls 0",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#summary.overall"
+      },
+      {
+        "fact": "selection: R4 LARGER_MODEL_REPAIR_DEPTH (qwen2.5-coder:7b, maxRepair 3) for v159-implement-parse-range ×2; R3 DECOMPOSED_INTERMEDIATE_VERIFICATION (qwen2.5-coder:3b, maxRepair 1) for rle-codec, csv-typed-validator, range-clamp-pipeline ×2 each",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].selection.rule/.strategy/.model/.maxRepair"
+      },
+      {
+        "fact": "all 8 alternatives executionStatus EXECUTED",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].alternative.executionStatus"
+      },
+      {
+        "fact": "all 8 escalations: escalate true, delegationState CREATED, providerCalled false",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].escalation"
+      }
+    ],
+    "perTrial": [
+      {
+        "task": "v159-implement-parse-range",
+        "trials": [
+          1,
+          2
+        ],
+        "default": "3b/maxRepair 1, PROBE tier, architecture extract-a.js+extract-b.js+f.js, 1 repair ⇒ REPAIR_BUDGET_EXHAUSTED",
+        "alternative": "7b/maxRepair 3 on the SAME architecture, 2 repairs ⇒ NO_PROGRESS_IDENTICAL_REGENERATION (repair 2 regenerated byte-identical files)",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range].default/.alternative"
+      },
+      {
+        "task": "rle-codec",
+        "trials": [
+          1,
+          2
+        ],
+        "default": "3b/maxRepair 1 whole-task ⇒ REPAIR_BUDGET_EXHAUSTED",
+        "alternative": "decomposed: parse.js ✓, encode.js ✓ (after 1 repair with structured examples), decode.js ✓, report.js ✗ 'case 0: entry report.js is not a function' after 1 repair ⇒ REPAIR_BUDGET_EXHAUSTED; whole-task test NOT_EVALUATED",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=rle-codec].alternative.subproblems"
+      },
+      {
+        "task": "csv-typed-validator",
+        "trials": [
+          1,
+          2
+        ],
+        "default": "3b/maxRepair 1 ⇒ REPAIR_BUDGET_EXHAUSTED",
+        "alternative": "decomposed: parse.js ✓, validate.js ✓, collect.js ✗ 'case 0: threw: input.split is not a function' after 1 repair ⇒ REPAIR_BUDGET_EXHAUSTED; report.js never reached",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=csv-typed-validator].alternative.subproblems"
+      },
+      {
+        "task": "range-clamp-pipeline",
+        "trials": [
+          1,
+          2
+        ],
+        "default": "3b/maxRepair 1 ⇒ REPAIR_BUDGET_EXHAUSTED",
+        "alternative": "decomposed: parse.js ✓, clamp.js ✓ (1 repair), flagged.js ✓, report.js ✗ 'entry report.js is not a function' ⇒ NO_PROGRESS_IDENTICAL_REGENERATION",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=range-clamp-pipeline].alternative.subproblems"
+      }
+    ],
+    "trialIndependence": "FACT: temperature 0 + seed 42 ⇒ trial 2 reproduced trial 1 on every field compared (stops, sub-problem verdicts, errors) ⇒ effectively 4 distinct observations, not 8 (docs/odg/evidence/V161_SCENARIO_J.json#options, #honestLimits[2])"
+  },
+  "q1_whyEachFailed": {
+    "REPAIR_BUDGET_EXHAUSTED_semantics": {
+      "fact": "buildProject sets repairStopReason REPAIR_BUDGET_EXHAUSTED when the loop ends unverified with repairs >= maxRepair; maxRepair = Number(deps.maxRepair) || 1. With maxRepair 1 it means: first pass failed, ONE repair round regenerated the files with the failure hint, still failed. It is an internal compute bound (repair rounds), NOT money and NOT an authorization.",
+      "pointer": "runtime/core/native-project-builder.ts buildProject: `const maxRepair = Number(deps.maxRepair) || 1;` and `if (repairStopReason === null && !(build.ok && verified) && repairs >= maxRepair && maxRepair > 0) repairStopReason = \"REPAIR_BUDGET_EXHAUSTED\";`",
+      "corroboration": "docs/odg/evidence/V161_SCENARIO_J.json#honestLimits[1] ('one repair attempted and failed, not a deep repair search')"
+    },
+    "NO_PROGRESS_semantics": {
+      "fact": "NO_PROGRESS_IDENTICAL_REGENERATION fires when every file regenerated successfully AND the snapshot is byte-identical to the previous round (an identical retry carries no information at temperature 0).",
+      "pointer": "runtime/core/native-project-builder.ts buildProject anti-loop (`if (regenFailed === 0 && snapshot() === before) { repairStopReason = \"NO_PROGRESS_IDENTICAL_REGENERATION\"; break; }`)"
+    },
+    "rootCauses": [
+      {
+        "id": "RC-1",
+        "kind": "FACT",
+        "title": "The default arm was a PROBE, not a capability attempt",
+        "detail": "The policy had no CALIBRATED evidence for implement ⇒ tier PROBE (3b, maxRepair 1). The V15.9 measured overlay (NO_QUALIFIED_LOCAL_MODEL) sets escalateIfStillFails=true but by design NEVER changes maxRepair/tier. So the 8 default stops are 'one cheap repair failed', and the escalation decision is taken after a probe-sized local budget.",
+        "pointers": [
+          "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].policy (tier PROBE, maxRepair 1, measuredDecision NO_QUALIFIED_LOCAL_MODEL, escalateIfStillFails true)",
+          "runtime/core/odg-local-model-execution-policy.ts chooseExecutionPolicy (PROBE branch: 3b, maxRepair 1) and overlay comment '(b) set escalateIfStillFails=true when the class is NO_QUALIFIED_LOCAL_MODEL … maxRepair / tier / quality / pForPlanner are NEVER changed'"
+        ]
+      },
+      {
+        "id": "RC-2",
+        "kind": "FACT",
+        "title": "Single-lever alternatives: the decomposed arm inherited the probe budget",
+        "detail": "Rule R3 keeps the SAME model and maxRepair as the default (3b, 1); R4 (7b, 3) is only reachable when no intermediate oracle exists. The rules are mutually exclusive and not chained, so for the 3 decomposable tasks the localized failing part (report.js / collect.js) received exactly ONE 3b repair; the max-local tier was never applied to it.",
+        "pointers": [
+          "runtime/bin/odg-v161-scenario-j-run.ts ALTERNATIVE_RULE R3/R4 and selectAlternative()",
+          "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=rle-codec|csv-typed-validator|range-clamp-pipeline].selection"
+        ]
+      },
+      {
+        "id": "RC-3",
+        "kind": "FACT",
+        "title": "Localisation worked; the failures are concentrated on the composing/top file",
+        "detail": "Across the 6 decomposed runs 8 of the 11 distinct (task,part) sub-problems attempted verified (parse/encode/decode, parse/validate, parse/clamp/flagged); each chain stopped at exactly one part: report.js (rle, range-clamp: 'entry report.js is not a function') or collect.js (csv: 'threw: input.split is not a function').",
+        "pointers": [
+          "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].alternative.subproblems[*].verified/.verifyError",
+          "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].alternative.firstFailure"
+        ]
+      },
+      {
+        "id": "RC-4",
+        "kind": "HYPOTHESIS",
+        "title": "'entry report.js is not a function' = export-shape error, not logic",
+        "detail": "The sandbox grader emits this exact message when the observation is `missing` (the loaded entry export is not callable). The report.js contracts read 'Export (s) = { encoded, roundtrip }' / 'Export (s) = { clamped, flaggedCount }', which a 3b model can plausibly read as 'export an object'. Generated sources were NOT retained in the evidence, so this cannot be confirmed from committed data.",
+        "pointers": [
+          "runtime/core/odg-native-build-sandbox.ts gradeCases (`if (o.missing) return { pass:false, error: `case ${i}: entry ${c.entry} is not a function` }`)",
+          "runtime/bin/native-hard-corpus.ts rle-codec/range-clamp-pipeline report.js contracts"
+        ],
+        "confirmBy": "J2 retains sha256 + source of every generated file (C6 below)"
+      },
+      {
+        "id": "RC-5",
+        "kind": "HYPOTHESIS",
+        "title": "csv collect.js mis-composed the dependency contract",
+        "detail": "validate.js is specified 'string -> boolean[]'; a collect.js that passes parsed rows (an array) to validate (whose frozen parse.js calls .split on its input) or calls .split on a non-string would throw 'input.split is not a function'. Not confirmable without the generated source.",
+        "pointers": [
+          "runtime/bin/native-hard-corpus.ts csv-typed-validator contracts",
+          "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=csv-typed-validator].alternative.subproblems[id=collect.js].verifyError"
+        ],
+        "confirmBy": "J2 C6 source retention"
+      },
+      {
+        "id": "RC-6",
+        "kind": "FACT",
+        "title": "The failing parts got only the GENERIC repair hint",
+        "detail": "The runner supplies structured repairExamples only when every expected result is primitive (isPrim), because odg-repair-feedback compared with === at the time. report.js/collect.js return objects ⇒ structuredRepairExamples false ⇒ generic 'BUILDS but FAILS' hint. Only encode.js (rle) and flagged.js (range-clamp) — primitive results — got structured examples; encode.js and clamp.js were the parts that recovered after 1 repair (clamp.js without structured examples).",
+        "pointers": [
+          "runtime/bin/odg-v161-scenario-j-run.ts hardTask(): `if (cases.every((c) => isPrim(c.expect))) spec.repairExamples = …`",
+          "docs/odg/evidence/V161_SCENARIO_J.json#tasks[*].intermediateOracle.subproblems[*].structuredRepairExamples"
+        ]
+      },
+      {
+        "id": "RC-7",
+        "kind": "FACT",
+        "title": "parse-range: genuine local plateau at the max-local tier",
+        "detail": "7b/maxRepair 3 reached NO_PROGRESS_IDENTICAL_REGENERATION after 2 repairs on the decomposition-planner's generic META split (extract-a/extract-b/f.js, triggered because the contract contains the word 'parse'). The R4 arm deliberately reused that architecture; a single-file 7b attempt was not tried. Whether the generic META split itself hurts is a HYPOTHESIS (V155 registry: all three models 0/3 on the TS form of this task, so the task is hard independently of the split).",
+        "pointers": [
+          "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range].alternative",
+          "runtime/core/decomposition-planner.ts assessComplexity metaEngineering regex /\\b(parse|parser|…)\\b/",
+          "docs/odg/evidence/V161_SCENARIO_J.json#tasks[0].selectedBecause"
+        ]
+      }
+    ]
+  },
+  "q1_effectOfPR940": {
+    "summary": "Neither canonical defect changed J's measured outcome; a re-run of the SAME runner at the current base would, by hypothesis, reproduce 0/8 (temperature 0, seed 42, same prompts).",
+    "DEFECT_J1_decomposedExecutionModules": {
+      "fact": "Pre-#940 odg-decomposed-execution threaded only bo.modules, which a SANDBOXED build never returns. The J runner COMPENSATED by freezing verified files through its own generator seam (runDecomposedAlt `gen` serves verified[f.path]); so in J the later sub-problems DID compose on the verified sources. The defect was real in the canonical module but did not affect J's arm.",
+      "pointers": [
+        "runtime/bin/odg-v161-scenario-j-run.ts runDecomposedAlt (`const gen = async (f, bc) => (… hasOwnProperty.call(verified, f.path) ? { ok:true, content: verified[f.path] } : gen0(f, bc))`)",
+        "docs/odg/evidence/V161_SCENARIO_J.json#honestLimits[4]",
+        "git show 793d041b -- runtime/core/odg-decomposed-execution.ts"
+      ]
+    },
+    "DEFECT_J2_repairFeedbackStrictEq": {
+      "fact": "Pre-#940 buildExecutionFeedback used `actual === ex.expect`. The J runner AVOIDED the defect by never passing structured examples for non-primitive results (RC-6). So J2 did not corrupt any J feedback; it explains WHY the object-returning failing parts got only generic hints. The current runner still contains the isPrim filter, so re-running it unchanged would still give them generic hints.",
+      "pointers": [
+        "git show 793d041b -- runtime/core/odg-repair-feedback.ts (=== → structuralEqual)",
+        "runtime/bin/odg-v161-scenario-j-run.ts hardTask() isPrim filter (unchanged at base c6a3df99)"
+      ]
+    },
+    "wouldRerunDiffer": {
+      "kind": "HYPOTHESIS",
+      "answer": "NO for an unchanged re-run (deterministic decoding; both canonical fixes were already compensated/avoided by the runner). A DIFFERENT experiment could differ: (a) structured object-result repair examples are now meaningful (structuralEqual), (b) the canonical runDecomposed can now be used without the runner's freezing seam, (c) the failing part could get the max-local tier. That is what J2 tests.",
+      "refuteBy": "J2 arm A0'/A1 reproducing J rows byte-for-byte on the J tasks (control)"
+    }
+  },
+  "q2_sovereignDelegationRecords": {
+    "facts": [
+      {
+        "fact": "each of the 8 trials produced decideEscalation(...) ⇒ escalate true, attribution CLAUDE_CODE_PROVIDER, delegation state CREATED; providerCalled false",
+        "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].escalation"
+      },
+      {
+        "fact": "the record is created by SD.createMission in state CREATED with authority ODG; the next transition authorize() is required before CONTRACT_ISSUED/PROVIDER_ACCEPTED/EXECUTION; the provider cannot authorize/accept/close",
+        "pointer": "runtime/core/odg-native-escalation.ts decideEscalation; runtime/core/odg-sovereign-delegation.ts STATES, createMission, authorize, enforcementAudit"
+      },
+      {
+        "fact": "odg-sovereign-delegation carries NO budget/cost/ceiling field at all (grep 'budget|cost|spend|ceiling' = 0 matches) — there is no verifiable spend ceiling anywhere in the chain",
+        "pointer": "runtime/core/odg-sovereign-delegation.ts"
+      },
+      {
+        "fact": "the strategy-mode selector classifies all 4 J tasks as needing a provider part with authorizationRequired true, budgetRequired true, providerExecutable false (provider cost UNKNOWN without a verifiable budget {currency, ceiling>0, enforcedBy, evidenceRef} AND an OWNER authorization bound to the mission id)",
+        "pointer": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json#missions[4..7].prior/.current; runtime/core/odg-strategy-mode-selector.ts budgetCheck, C1/C2"
+      },
+      {
+        "fact": "the owner question 'provider spend ceiling for pilot arm C?' is open",
+        "pointer": "docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[1]"
+      },
+      {
+        "fact": "the J WORK_ITEM_CONTRACT scope excludes external spend and lists 'requires an owner-gated action (… spend …)' as a stop condition",
+        "pointer": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.scope/.stop_conditions"
+      }
+    ],
+    "conclusion": "The 8 delegation records are PROVIDER handoffs that would consume EXTERNAL spend (provider calls) under an authorization ODG/provider cannot grant itself. They are OWNER-GATED: they need (1) an owner authorization bound to each mission id and (2) a verifiable spend ceiling, which does not exist in the chain today. They are NOT part of the internal repair budget: REPAIR_BUDGET_EXHAUSTED is a count of local repair rounds (€0, loopback Ollama) inside native-project-builder. Raising maxRepair or switching to 7b costs local compute only and needs no spend authorization; executing a delegation record does.",
+    "status": "OWNER_GATED — not executed, correctly"
+  },
+  "q3_contractCriterion1": {
+    "criterionAsWorded": "stop triggered by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
+    "pointer": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.acceptance_criteria[0]",
+    "grade": "NOT MET as worded (CP8): the 8 triggers were REPAIR_BUDGET_EXHAUSTED; the runner's ODG_STOPS widened the trigger set to include REPAIR_BUDGET_EXHAUSTED. NO_PROGRESS was observed only inside alternatives (parse-range 7b ×2, range-clamp report.js ×2); NO_QUALIFIED_LOCAL_MODEL is recorded as the policy's measuredDecision, not as a stop.",
+    "gradePointer": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.J.criteria; runtime/bin/odg-v161-scenario-j-run.ts ODG_STOPS",
+    "otherContractFacts": [
+      "contract state PROPOSED, authorizedBy null (docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].state/.authorizedBy)",
+      "write_set names V160_SCENARIO_J.json / odg-v160-scenario-j-run.ts while the delivered files are V161_* — naming drift, not a scope violation by content, but it is a literal mismatch with the write_set"
+    ],
+    "isRevisionJustified": {
+      "answer": "A RETROACTIVE revision to make J pass is NOT justified: it would turn a criterion failure into a pass after seeing the data (post-hoc). J stays EXECUTED_PARTIAL on its own evidence. A FORWARD revision is defensible on substance — REPAIR_BUDGET_EXHAUSTED is also an ODG-decided repetitive-failure stop, and the criterion's intent ('arrête les tentatives répétitives') is served by either stop — but only as a NEW pre-registered criterion for a NEW experiment (J2), decided by the owner/CTO since the contract is PROPOSED and the scenario contracts are governance artefacts.",
+      "decisionOwner": "OWNER/CTO (contract revision); provider may only propose"
+    }
+  },
+  "q4_defects": {
+    "internalNoSpend": [
+      {
+        "id": "D-1",
+        "where": "runtime/bin/odg-v161-scenario-j-run.ts hardTask() isPrim filter",
+        "what": "post-#940 the primitive-only restriction on repairExamples is obsolete; object-result parts (report.js, collect.js) could now receive structured feedback",
+        "authorization": "INTERNAL — fixable under a V17.1 internal WORK_ITEM_CONTRACT; but changing feedback changes information parity ⇒ must be done in a NEW runner (J2), not by editing the J runner whose evidence is committed",
+        "confidence": "FACT"
+      },
+      {
+        "id": "D-2",
+        "where": "runtime/bin/odg-v161-scenario-j-run.ts ALTERNATIVE_RULE R3/R4",
+        "what": "single-lever, non-chained alternatives: the localized failing sub-problem never gets the max-local tier (7b, maxRepair 3)",
+        "authorization": "INTERNAL (runner-level rule; local compute only)",
+        "confidence": "FACT"
+      },
+      {
+        "id": "D-3",
+        "where": "runtime/core/odg-local-model-execution-policy.ts measured overlay",
+        "what": "NO_QUALIFIED sets escalateIfStillFails on a PROBE (3b, maxRepair 1) without raising tier ⇒ provider escalation records are created after a probe-sized local attempt",
+        "authorization": "INTERNAL code, but it changes a canonical policy's semantics (when ODG escalates) ⇒ needs its own explicitly AUTHORIZED contract; recommend measuring first (J2) before changing the policy",
+        "confidence": "FACT (behaviour) / design judgement (whether it is a defect)"
+      },
+      {
+        "id": "D-4",
+        "where": "runtime/bin/odg-v161-scenario-j-run.ts rows",
+        "what": "generated sources/hashes are not retained ⇒ RC-4/RC-5 cannot be confirmed",
+        "authorization": "INTERNAL (evidence instrumentation in a new runner)",
+        "confidence": "FACT"
+      },
+      {
+        "id": "D-5",
+        "where": "runtime/core/native-project-builder.ts",
+        "what": "`Number(deps.maxRepair) || 1` maps an explicit maxRepair 0 to 1 (latent; did not affect J, all arms used 1 or 3)",
+        "authorization": "INTERNAL, low priority; canonical module ⇒ own contract",
+        "confidence": "FACT"
+      },
+      {
+        "id": "D-6",
+        "where": "runtime/core/decomposition-planner.ts assessComplexity",
+        "what": "keyword 'parse' classifies a single-file parser as META and forces a generic extract-a/extract-b split",
+        "authorization": "INTERNAL; effect on outcome is HYPOTHESIS (RC-7) ⇒ measure before changing",
+        "confidence": "HYPOTHESIS (impact)"
+      }
+    ],
+    "alreadyFixed": [
+      {
+        "id": "DEFECT-J1/J2",
+        "by": "#940 merge 613bf2cd (fix 793d041b)",
+        "pointer": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json"
+      }
+    ],
+    "ownerGated": [
+      {
+        "id": "OG-1",
+        "what": "executing any of the 8 sovereign-delegation records (provider calls = external spend; AUTHORIZED transition; verifiable spend ceiling that does not exist)",
+        "pointer": "q2_sovereignDelegationRecords"
+      },
+      {
+        "id": "OG-2",
+        "what": "(UPDATED after owner V171, docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json) J2 as a new, distinct, local €0 experiment and a forward-only criterion wording are now covered by V171 ('Préparation de nouvelles expériences', 'Expériences isolées et reproductibles'); still required: a WORK_ITEM_CONTRACT under that authority, fixed and inspected before any run. NOT retroactive for J.",
+        "pointer": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].state",
+        "state": "AUTHORIZED_UNDER_V171 (contract required)"
+      },
+      {
+        "id": "OG-3",
+        "what": "changing the escalation semantics of the canonical policy (D-3) if treated as governance rather than an internal defect",
+        "pointer": "runtime/core/odg-local-model-execution-policy.ts"
+      }
+    ],
+    "notDone": "No defect was fixed in this mission (diagnosis only)."
+  },
+  "j2_protocol": {
+    "status": "PROPOSED",
+    "authorized": false,
+    "executed": false,
+    "title": "J2 — alternative-strategy loop after the #940 fixes (local-only, offline, €0)",
+    "distinctFromJ": "new runner + new evidence file; J's evidence and runner stay untouched; J's grade is not revised by J2",
+    "proposedWriteSet": [
+      "runtime/bin/odg-v171-scenario-j2-run.ts",
+      "docs/odg/evidence/V171_J2_EXPERIMENT.json"
+    ],
+    "scope": "internal repo only; loopback Ollama 127.0.0.1:11434 only; model code only in the bwrap native-build sandbox; NO provider call, NO delegation beyond CREATED, NO spend, NO network egress, NO change to canonical modules",
+    "preRegistration": "this block (criteria, arms, tasks, thresholds, caps) is committed BEFORE any run; the runner must refuse to write evidence whose embedded protocol hash differs from the committed one",
+    "tasks": {
+      "replication": [
+        "rle-codec",
+        "csv-typed-validator",
+        "range-clamp-pipeline",
+        "v159-implement-parse-range"
+      ],
+      "heldOut": [
+        "number-stats-suite",
+        "word-metrics",
+        "grade-report",
+        "roman-codec",
+        "bank-ledger",
+        "voting-tally",
+        "temperature-pipeline"
+      ],
+      "heldOutBasis": "runtime/bin/native-hard-corpus.ts HARD_TASKS; each REJECTED with REPAIR_BUDGET_EXHAUSTED at 3b/maxRepair 1 in docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json and NOT used in J"
+    },
+    "decoding": {
+      "temperature": 0,
+      "seeds": [
+        42,
+        7
+      ],
+      "num_predict": 600,
+      "note": "two seeds to obtain non-identical repeats; still NOT a statistical sample"
+    },
+    "arms": [
+      {
+        "id": "A0",
+        "name": "default (control)",
+        "def": "odg-intelligent-native-cycle.runIntelligentCycle exactly as J (policy as chosen; expected PROBE 3b/maxRepair 1)"
+      },
+      {
+        "id": "A1",
+        "name": "canonical decomposed, no expected outputs in prompts (decomposed arms still gate on per-module task-author oracles — extra verification signal vs A0; NOT equal-information)",
+        "def": "odg-decomposed-execution.runDecomposed (post-#940, its OWN verified-file freezing — the runner adds NO freezing seam), same model/maxRepair as A0, GENERIC repair hints only (no repairExamples) so no expected output of acceptance inputs reaches any prompt"
+      },
+      {
+        "id": "A2",
+        "name": "decomposed + escalated local tier on the localized failure",
+        "def": "A1, then ONLY the first failing sub-problem is re-run at the policy max-local tier (qwen2.5-coder:7b, maxRepair 3) on top of the frozen verified parts; generic hints only"
+      },
+      {
+        "id": "A3",
+        "name": "A2 + structured feedback (labelled NOT equal-information)",
+        "def": "A2 with structured repairExamples for ALL sub-problems including object results (structuralEqual post-#940); reported separately, never pooled with A0–A2"
+      },
+      {
+        "id": "A4",
+        "name": "single-file larger model (parse-range only)",
+        "def": "7b/maxRepair 3 on the single declared file f.js (no META split) — tests RC-7"
+      }
+    ],
+    "trigger": "an alternative runs only if A0 ends with an ODG stop recorded by native-project-builder (NO_PROGRESS_IDENTICAL_REGENERATION or REPAIR_BUDGET_EXHAUSTED); the exact stop name is recorded per row; NO_QUALIFIED_LOCAL_MODEL is recorded as the policy decision, never counted as a stop",
+    "acceptanceCriteria": [
+      {
+        "id": "C1",
+        "criterion": "every row records A0's stop name verbatim from the builder outcome; rows without an ODG stop run no alternative (fail-closed)"
+      },
+      {
+        "id": "C2",
+        "criterion": "each alternative executionStatus EXECUTED in the sandbox; NOT_RUN rows are reported as NOT_MEASURED and excluded from pass counts"
+      },
+      {
+        "id": "C3",
+        "criterion": "primary outcome = whole-task independent test (the task's ORIGINAL test, same oracle for all arms), pass counts per arm with n"
+      },
+      {
+        "id": "C4",
+        "criterion": "control: A0 on the 4 replication tasks at seed 42 reproduces J's default stop and verdict; a mismatch is reported (environment drift) and limits all comparisons"
+      },
+      {
+        "id": "C5",
+        "criterion": "0 provider calls; delegation records may be CREATED but none transitions past CREATED; asserted in the evidence"
+      },
+      {
+        "id": "C6",
+        "criterion": "every generated file is retained as sha256 + source in the evidence (to confirm/refute RC-4/RC-5)"
+      }
+    ],
+    "hypotheses": [
+      {
+        "id": "H1",
+        "statement": "A2 is accepted on at least 2 of the 7 held-out tasks where A0 failed (seed 42)",
+        "refutedIf": "A2 accepted on 0 or 1 held-out tasks"
+      },
+      {
+        "id": "H2",
+        "statement": "RC-4: on the replication tasks, A1's failing report.js exports a non-function (object) in ≥1 run",
+        "refutedIf": "every retained failing report.js exports a function"
+      },
+      {
+        "id": "H3",
+        "statement": "A1 reproduces J's decomposed verdict pattern on the replication tasks (the #940 canonical fixes change mechanics, not outcomes)",
+        "refutedIf": "any replication sub-problem verdict differs at seed 42"
+      }
+    ],
+    "caps": {
+      "perTrialWallMs": 1800000,
+      "maxModelCallsTotal": 600,
+      "maxRepairCeiling": 3,
+      "note": "hard caps; exceeding one stops the run with NOT_MEASURED for the remainder — no unbounded loop"
+    },
+    "stopConditions": [
+      "Ollama not reachable on loopback ⇒ NOT_RUN (no fallback)",
+      "any egress other than 127.0.0.1:11434 ⇒ stop",
+      "sandbox probe fails ⇒ NOT_RUN",
+      "any step requiring spend/authorization ⇒ stop and ask"
+    ],
+    "honestLimitsPreDeclared": [
+      "n small; temperature 0 ⇒ repeats near-deterministic; no statistical claim",
+      "task oracles authored by the provider (task-author oracle)",
+      "shared host ⇒ wall time confounded; compare on pass rate only",
+      "VERIFIED in-repo ≠ DEPLOYED"
+    ],
+    "authorizationNeeded": "a WORK_ITEM_CONTRACT for J2 moved PROPOSED → AUTHORIZED by the owner/CTO before any run"
+  },
+  "whatIsProven": [
+    "the 8 alternatives were executed and failed (committed rows re-derive offline: CHECK OK)",
+    "REPAIR_BUDGET_EXHAUSTED in J = one 3b repair round, an internal €0 bound",
+    "the 8 delegation records are CREATED-only provider handoffs, owner-gated, with no verifiable spend ceiling in the chain",
+    "neither #940 defect altered J's measured outcome (runner compensated/avoided them)"
+  ],
+  "whatIsNotProven": [
+    "the cause of 'entry report.js is not a function' and 'input.split is not a function' (RC-4/RC-5 are hypotheses; sources not retained)",
+    "that any alternative would succeed now (no run performed)",
+    "that the decomposition-planner META split hurts parse-range (RC-7 hypothesis)"
+  ],
+  "nextAction": "Under owner V171 (internal, €0): (1) write the J2 WORK_ITEM_CONTRACT (new id), fix + hash its criteria, have it independently inspected BEFORE any run; (2) keep the 8 delegation records unexecuted (provider spend stays owner-gated: no verifiable ceiling); (3) J's criterion 1 is not revised retroactively.",
+  "honestLimits": [
+    "written by the technical provider (Claude Code) from committed evidence and code; not independently inspected",
+    "no model run; all outcome statements about a re-run are hypotheses",
+    "pointers use '[*]' / '[task=…]' selectors over rows; line numbers are omitted because they drift",
+    "J2 held-out tasks were selected BECAUSE they already failed at 3b/maxRepair 1 in V159 (failure-conditional selection) — a selection limit on any J2 result",
+    "wording updated after #952 inspection (LOWs): OG-2/nextAction reflect V171; A1/A2 labelled 'no expected outputs in prompts', not equal-information"
   ]
- },
- "q1_whatAreTheEight": {
-  "answer": "The 'eight' are the 8 TRIALS of scenario J (4 tasks × 2 trials). Each trial ran TWO strategies — a default and one rule-selected alternative — so 8 alternative-strategy executions exist (6 DECOMPOSED_INTERMEDIATE_VERIFICATION + 2 LARGER_MODEL_REPAIR_DEPTH), and each trial ended with 1 sovereign-delegation record (8 total). The 8 alternatives WERE executed (executionStatus EXECUTED, sandboxed) and all failed. What was NOT executed are the 8 delegation records (state CREATED, never AUTHORIZED, 0 provider calls). 'Not executed' therefore applies to the provider handoffs, not to the local strategies.",
-  "facts": [
-   {
-    "fact": "8 rows; trialsPerTask 2; 4 tasks",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#summary.overall.trials, #trialsPerTask, #tasks"
-   },
-   {
-    "fact": "defaultPasses 0/8, alternativePasses 0/8, alternativeMeasured 8, escalationRecordsCreated 8, providerCalls 0",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#summary.overall"
-   },
-   {
-    "fact": "selection: R4 LARGER_MODEL_REPAIR_DEPTH (qwen2.5-coder:7b, maxRepair 3) for v159-implement-parse-range ×2; R3 DECOMPOSED_INTERMEDIATE_VERIFICATION (qwen2.5-coder:3b, maxRepair 1) for rle-codec, csv-typed-validator, range-clamp-pipeline ×2 each",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].selection.rule/.strategy/.model/.maxRepair"
-   },
-   {
-    "fact": "all 8 alternatives executionStatus EXECUTED",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].alternative.executionStatus"
-   },
-   {
-    "fact": "all 8 escalations: escalate true, delegationState CREATED, providerCalled false",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].escalation"
-   }
-  ],
-  "perTrial": [
-   {
-    "task": "v159-implement-parse-range",
-    "trials": [
-     1,
-     2
-    ],
-    "default": "3b/maxRepair 1, PROBE tier, architecture extract-a.js+extract-b.js+f.js, 1 repair ⇒ REPAIR_BUDGET_EXHAUSTED",
-    "alternative": "7b/maxRepair 3 on the SAME architecture, 2 repairs ⇒ NO_PROGRESS_IDENTICAL_REGENERATION (repair 2 regenerated byte-identical files)",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range].default/.alternative"
-   },
-   {
-    "task": "rle-codec",
-    "trials": [
-     1,
-     2
-    ],
-    "default": "3b/maxRepair 1 whole-task ⇒ REPAIR_BUDGET_EXHAUSTED",
-    "alternative": "decomposed: parse.js ✓, encode.js ✓ (after 1 repair with structured examples), decode.js ✓, report.js ✗ 'case 0: entry report.js is not a function' after 1 repair ⇒ REPAIR_BUDGET_EXHAUSTED; whole-task test NOT_EVALUATED",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=rle-codec].alternative.subproblems"
-   },
-   {
-    "task": "csv-typed-validator",
-    "trials": [
-     1,
-     2
-    ],
-    "default": "3b/maxRepair 1 ⇒ REPAIR_BUDGET_EXHAUSTED",
-    "alternative": "decomposed: parse.js ✓, validate.js ✓, collect.js ✗ 'case 0: threw: input.split is not a function' after 1 repair ⇒ REPAIR_BUDGET_EXHAUSTED; report.js never reached",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=csv-typed-validator].alternative.subproblems"
-   },
-   {
-    "task": "range-clamp-pipeline",
-    "trials": [
-     1,
-     2
-    ],
-    "default": "3b/maxRepair 1 ⇒ REPAIR_BUDGET_EXHAUSTED",
-    "alternative": "decomposed: parse.js ✓, clamp.js ✓ (1 repair), flagged.js ✓, report.js ✗ 'entry report.js is not a function' ⇒ NO_PROGRESS_IDENTICAL_REGENERATION",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=range-clamp-pipeline].alternative.subproblems"
-   }
-  ],
-  "trialIndependence": "FACT: temperature 0 + seed 42 ⇒ trial 2 reproduced trial 1 on every field compared (stops, sub-problem verdicts, errors) ⇒ effectively 4 distinct observations, not 8 (docs/odg/evidence/V161_SCENARIO_J.json#options, #honestLimits[2])"
- },
- "q1_whyEachFailed": {
-  "REPAIR_BUDGET_EXHAUSTED_semantics": {
-   "fact": "buildProject sets repairStopReason REPAIR_BUDGET_EXHAUSTED when the loop ends unverified with repairs >= maxRepair; maxRepair = Number(deps.maxRepair) || 1. With maxRepair 1 it means: first pass failed, ONE repair round regenerated the files with the failure hint, still failed. It is an internal compute bound (repair rounds), NOT money and NOT an authorization.",
-   "pointer": "runtime/core/native-project-builder.ts buildProject: `const maxRepair = Number(deps.maxRepair) || 1;` and `if (repairStopReason === null && !(build.ok && verified) && repairs >= maxRepair && maxRepair > 0) repairStopReason = \"REPAIR_BUDGET_EXHAUSTED\";`",
-   "corroboration": "docs/odg/evidence/V161_SCENARIO_J.json#honestLimits[1] ('one repair attempted and failed, not a deep repair search')"
-  },
-  "NO_PROGRESS_semantics": {
-   "fact": "NO_PROGRESS_IDENTICAL_REGENERATION fires when every file regenerated successfully AND the snapshot is byte-identical to the previous round (an identical retry carries no information at temperature 0).",
-   "pointer": "runtime/core/native-project-builder.ts buildProject anti-loop (`if (regenFailed === 0 && snapshot() === before) { repairStopReason = \"NO_PROGRESS_IDENTICAL_REGENERATION\"; break; }`)"
-  },
-  "rootCauses": [
-   {
-    "id": "RC-1",
-    "kind": "FACT",
-    "title": "The default arm was a PROBE, not a capability attempt",
-    "detail": "The policy had no CALIBRATED evidence for implement ⇒ tier PROBE (3b, maxRepair 1). The V15.9 measured overlay (NO_QUALIFIED_LOCAL_MODEL) sets escalateIfStillFails=true but by design NEVER changes maxRepair/tier. So the 8 default stops are 'one cheap repair failed', and the escalation decision is taken after a probe-sized local budget.",
-    "pointers": [
-     "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].policy (tier PROBE, maxRepair 1, measuredDecision NO_QUALIFIED_LOCAL_MODEL, escalateIfStillFails true)",
-     "runtime/core/odg-local-model-execution-policy.ts chooseExecutionPolicy (PROBE branch: 3b, maxRepair 1) and overlay comment '(b) set escalateIfStillFails=true when the class is NO_QUALIFIED_LOCAL_MODEL … maxRepair / tier / quality / pForPlanner are NEVER changed'"
-    ]
-   },
-   {
-    "id": "RC-2",
-    "kind": "FACT",
-    "title": "Single-lever alternatives: the decomposed arm inherited the probe budget",
-    "detail": "Rule R3 keeps the SAME model and maxRepair as the default (3b, 1); R4 (7b, 3) is only reachable when no intermediate oracle exists. The rules are mutually exclusive and not chained, so for the 3 decomposable tasks the localized failing part (report.js / collect.js) received exactly ONE 3b repair; the max-local tier was never applied to it.",
-    "pointers": [
-     "runtime/bin/odg-v161-scenario-j-run.ts ALTERNATIVE_RULE R3/R4 and selectAlternative()",
-     "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=rle-codec|csv-typed-validator|range-clamp-pipeline].selection"
-    ]
-   },
-   {
-    "id": "RC-3",
-    "kind": "FACT",
-    "title": "Localisation worked; the failures are concentrated on the composing/top file",
-    "detail": "Across the 6 decomposed runs 8 of the 11 distinct (task,part) sub-problems attempted verified (parse/encode/decode, parse/validate, parse/clamp/flagged); each chain stopped at exactly one part: report.js (rle, range-clamp: 'entry report.js is not a function') or collect.js (csv: 'threw: input.split is not a function').",
-    "pointers": [
-     "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].alternative.subproblems[*].verified/.verifyError",
-     "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].alternative.firstFailure"
-    ]
-   },
-   {
-    "id": "RC-4",
-    "kind": "HYPOTHESIS",
-    "title": "'entry report.js is not a function' = export-shape error, not logic",
-    "detail": "The sandbox grader emits this exact message when the observation is `missing` (the loaded entry export is not callable). The report.js contracts read 'Export (s) = { encoded, roundtrip }' / 'Export (s) = { clamped, flaggedCount }', which a 3b model can plausibly read as 'export an object'. Generated sources were NOT retained in the evidence, so this cannot be confirmed from committed data.",
-    "pointers": [
-     "runtime/core/odg-native-build-sandbox.ts gradeCases (`if (o.missing) return { pass:false, error: `case ${i}: entry ${c.entry} is not a function` }`)",
-     "runtime/bin/native-hard-corpus.ts rle-codec/range-clamp-pipeline report.js contracts"
-    ],
-    "confirmBy": "J2 retains sha256 + source of every generated file (C6 below)"
-   },
-   {
-    "id": "RC-5",
-    "kind": "HYPOTHESIS",
-    "title": "csv collect.js mis-composed the dependency contract",
-    "detail": "validate.js is specified 'string -> boolean[]'; a collect.js that passes parsed rows (an array) to validate (whose frozen parse.js calls .split on its input) or calls .split on a non-string would throw 'input.split is not a function'. Not confirmable without the generated source.",
-    "pointers": [
-     "runtime/bin/native-hard-corpus.ts csv-typed-validator contracts",
-     "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=csv-typed-validator].alternative.subproblems[id=collect.js].verifyError"
-    ],
-    "confirmBy": "J2 C6 source retention"
-   },
-   {
-    "id": "RC-6",
-    "kind": "FACT",
-    "title": "The failing parts got only the GENERIC repair hint",
-    "detail": "The runner supplies structured repairExamples only when every expected result is primitive (isPrim), because odg-repair-feedback compared with === at the time. report.js/collect.js return objects ⇒ structuredRepairExamples false ⇒ generic 'BUILDS but FAILS' hint. Only encode.js (rle) and flagged.js (range-clamp) — primitive results — got structured examples; encode.js and clamp.js were the parts that recovered after 1 repair (clamp.js without structured examples).",
-    "pointers": [
-     "runtime/bin/odg-v161-scenario-j-run.ts hardTask(): `if (cases.every((c) => isPrim(c.expect))) spec.repairExamples = …`",
-     "docs/odg/evidence/V161_SCENARIO_J.json#tasks[*].intermediateOracle.subproblems[*].structuredRepairExamples"
-    ]
-   },
-   {
-    "id": "RC-7",
-    "kind": "FACT",
-    "title": "parse-range: genuine local plateau at the max-local tier",
-    "detail": "7b/maxRepair 3 reached NO_PROGRESS_IDENTICAL_REGENERATION after 2 repairs on the decomposition-planner's generic META split (extract-a/extract-b/f.js, triggered because the contract contains the word 'parse'). The R4 arm deliberately reused that architecture; a single-file 7b attempt was not tried. Whether the generic META split itself hurts is a HYPOTHESIS (V155 registry: all three models 0/3 on the TS form of this task, so the task is hard independently of the split).",
-    "pointers": [
-     "docs/odg/evidence/V161_SCENARIO_J.json#rows[task=v159-implement-parse-range].alternative",
-     "runtime/core/decomposition-planner.ts assessComplexity metaEngineering regex /\\b(parse|parser|…)\\b/",
-     "docs/odg/evidence/V161_SCENARIO_J.json#tasks[0].selectedBecause"
-    ]
-   }
-  ]
- },
- "q1_effectOfPR940": {
-  "summary": "Neither canonical defect changed J's measured outcome; a re-run of the SAME runner at the current base would, by hypothesis, reproduce 0/8 (temperature 0, seed 42, same prompts).",
-  "DEFECT_J1_decomposedExecutionModules": {
-   "fact": "Pre-#940 odg-decomposed-execution threaded only bo.modules, which a SANDBOXED build never returns. The J runner COMPENSATED by freezing verified files through its own generator seam (runDecomposedAlt `gen` serves verified[f.path]); so in J the later sub-problems DID compose on the verified sources. The defect was real in the canonical module but did not affect J's arm.",
-   "pointers": [
-    "runtime/bin/odg-v161-scenario-j-run.ts runDecomposedAlt (`const gen = async (f, bc) => (… hasOwnProperty.call(verified, f.path) ? { ok:true, content: verified[f.path] } : gen0(f, bc))`)",
-    "docs/odg/evidence/V161_SCENARIO_J.json#honestLimits[4]",
-    "git show 793d041b -- runtime/core/odg-decomposed-execution.ts"
-   ]
-  },
-  "DEFECT_J2_repairFeedbackStrictEq": {
-   "fact": "Pre-#940 buildExecutionFeedback used `actual === ex.expect`. The J runner AVOIDED the defect by never passing structured examples for non-primitive results (RC-6). So J2 did not corrupt any J feedback; it explains WHY the object-returning failing parts got only generic hints. The current runner still contains the isPrim filter, so re-running it unchanged would still give them generic hints.",
-   "pointers": [
-    "git show 793d041b -- runtime/core/odg-repair-feedback.ts (=== → structuralEqual)",
-    "runtime/bin/odg-v161-scenario-j-run.ts hardTask() isPrim filter (unchanged at base c6a3df99)"
-   ]
-  },
-  "wouldRerunDiffer": {
-   "kind": "HYPOTHESIS",
-   "answer": "NO for an unchanged re-run (deterministic decoding; both canonical fixes were already compensated/avoided by the runner). A DIFFERENT experiment could differ: (a) structured object-result repair examples are now meaningful (structuralEqual), (b) the canonical runDecomposed can now be used without the runner's freezing seam, (c) the failing part could get the max-local tier. That is what J2 tests.",
-   "refuteBy": "J2 arm A0'/A1 reproducing J rows byte-for-byte on the J tasks (control)"
-  }
- },
- "q2_sovereignDelegationRecords": {
-  "facts": [
-   {
-    "fact": "each of the 8 trials produced decideEscalation(...) ⇒ escalate true, attribution CLAUDE_CODE_PROVIDER, delegation state CREATED; providerCalled false",
-    "pointer": "docs/odg/evidence/V161_SCENARIO_J.json#rows[*].escalation"
-   },
-   {
-    "fact": "the record is created by SD.createMission in state CREATED with authority ODG; the next transition authorize() is required before CONTRACT_ISSUED/PROVIDER_ACCEPTED/EXECUTION; the provider cannot authorize/accept/close",
-    "pointer": "runtime/core/odg-native-escalation.ts decideEscalation; runtime/core/odg-sovereign-delegation.ts STATES, createMission, authorize, enforcementAudit"
-   },
-   {
-    "fact": "odg-sovereign-delegation carries NO budget/cost/ceiling field at all (grep 'budget|cost|spend|ceiling' = 0 matches) — there is no verifiable spend ceiling anywhere in the chain",
-    "pointer": "runtime/core/odg-sovereign-delegation.ts"
-   },
-   {
-    "fact": "the strategy-mode selector classifies all 4 J tasks as needing a provider part with authorizationRequired true, budgetRequired true, providerExecutable false (provider cost UNKNOWN without a verifiable budget {currency, ceiling>0, enforcedBy, evidenceRef} AND an OWNER authorization bound to the mission id)",
-    "pointer": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json#missions[4..7].prior/.current; runtime/core/odg-strategy-mode-selector.ts budgetCheck, C1/C2"
-   },
-   {
-    "fact": "the owner question 'provider spend ceiling for pilot arm C?' is open",
-    "pointer": "docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[1]"
-   },
-   {
-    "fact": "the J WORK_ITEM_CONTRACT scope excludes external spend and lists 'requires an owner-gated action (… spend …)' as a stop condition",
-    "pointer": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.scope/.stop_conditions"
-   }
-  ],
-  "conclusion": "The 8 delegation records are PROVIDER handoffs that would consume EXTERNAL spend (provider calls) under an authorization ODG/provider cannot grant itself. They are OWNER-GATED: they need (1) an owner authorization bound to each mission id and (2) a verifiable spend ceiling, which does not exist in the chain today. They are NOT part of the internal repair budget: REPAIR_BUDGET_EXHAUSTED is a count of local repair rounds (€0, loopback Ollama) inside native-project-builder. Raising maxRepair or switching to 7b costs local compute only and needs no spend authorization; executing a delegation record does.",
-  "status": "OWNER_GATED — not executed, correctly"
- },
- "q3_contractCriterion1": {
-  "criterionAsWorded": "stop triggered by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
-  "pointer": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.acceptance_criteria[0]",
-  "grade": "NOT MET as worded (CP8): the 8 triggers were REPAIR_BUDGET_EXHAUSTED; the runner's ODG_STOPS widened the trigger set to include REPAIR_BUDGET_EXHAUSTED. NO_PROGRESS was observed only inside alternatives (parse-range 7b ×2, range-clamp report.js ×2); NO_QUALIFIED_LOCAL_MODEL is recorded as the policy's measuredDecision, not as a stop.",
-  "gradePointer": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.J.criteria; runtime/bin/odg-v161-scenario-j-run.ts ODG_STOPS",
-  "otherContractFacts": [
-   "contract state PROPOSED, authorizedBy null (docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].state/.authorizedBy)",
-   "write_set names V160_SCENARIO_J.json / odg-v160-scenario-j-run.ts while the delivered files are V161_* — naming drift, not a scope violation by content, but it is a literal mismatch with the write_set"
-  ],
-  "isRevisionJustified": {
-   "answer": "A RETROACTIVE revision to make J pass is NOT justified: it would turn a criterion failure into a pass after seeing the data (post-hoc). J stays EXECUTED_PARTIAL on its own evidence. A FORWARD revision is defensible on substance — REPAIR_BUDGET_EXHAUSTED is also an ODG-decided repetitive-failure stop, and the criterion's intent ('arrête les tentatives répétitives') is served by either stop — but only as a NEW pre-registered criterion for a NEW experiment (J2), decided by the owner/CTO since the contract is PROPOSED and the scenario contracts are governance artefacts.",
-   "decisionOwner": "OWNER/CTO (contract revision); provider may only propose"
-  }
- },
- "q4_defects": {
-  "internalNoSpend": [
-   {
-    "id": "D-1",
-    "where": "runtime/bin/odg-v161-scenario-j-run.ts hardTask() isPrim filter",
-    "what": "post-#940 the primitive-only restriction on repairExamples is obsolete; object-result parts (report.js, collect.js) could now receive structured feedback",
-    "authorization": "INTERNAL — fixable under a V17.1 internal WORK_ITEM_CONTRACT; but changing feedback changes information parity ⇒ must be done in a NEW runner (J2), not by editing the J runner whose evidence is committed",
-    "confidence": "FACT"
-   },
-   {
-    "id": "D-2",
-    "where": "runtime/bin/odg-v161-scenario-j-run.ts ALTERNATIVE_RULE R3/R4",
-    "what": "single-lever, non-chained alternatives: the localized failing sub-problem never gets the max-local tier (7b, maxRepair 3)",
-    "authorization": "INTERNAL (runner-level rule; local compute only)",
-    "confidence": "FACT"
-   },
-   {
-    "id": "D-3",
-    "where": "runtime/core/odg-local-model-execution-policy.ts measured overlay",
-    "what": "NO_QUALIFIED sets escalateIfStillFails on a PROBE (3b, maxRepair 1) without raising tier ⇒ provider escalation records are created after a probe-sized local attempt",
-    "authorization": "INTERNAL code, but it changes a canonical policy's semantics (when ODG escalates) ⇒ needs its own explicitly AUTHORIZED contract; recommend measuring first (J2) before changing the policy",
-    "confidence": "FACT (behaviour) / design judgement (whether it is a defect)"
-   },
-   {
-    "id": "D-4",
-    "where": "runtime/bin/odg-v161-scenario-j-run.ts rows",
-    "what": "generated sources/hashes are not retained ⇒ RC-4/RC-5 cannot be confirmed",
-    "authorization": "INTERNAL (evidence instrumentation in a new runner)",
-    "confidence": "FACT"
-   },
-   {
-    "id": "D-5",
-    "where": "runtime/core/native-project-builder.ts",
-    "what": "`Number(deps.maxRepair) || 1` maps an explicit maxRepair 0 to 1 (latent; did not affect J, all arms used 1 or 3)",
-    "authorization": "INTERNAL, low priority; canonical module ⇒ own contract",
-    "confidence": "FACT"
-   },
-   {
-    "id": "D-6",
-    "where": "runtime/core/decomposition-planner.ts assessComplexity",
-    "what": "keyword 'parse' classifies a single-file parser as META and forces a generic extract-a/extract-b split",
-    "authorization": "INTERNAL; effect on outcome is HYPOTHESIS (RC-7) ⇒ measure before changing",
-    "confidence": "HYPOTHESIS (impact)"
-   }
-  ],
-  "alreadyFixed": [
-   {
-    "id": "DEFECT-J1/J2",
-    "by": "#940 merge 613bf2cd (fix 793d041b)",
-    "pointer": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json"
-   }
-  ],
-  "ownerGated": [
-   {
-    "id": "OG-1",
-    "what": "executing any of the 8 sovereign-delegation records (provider calls = external spend; AUTHORIZED transition; verifiable spend ceiling that does not exist)",
-    "pointer": "q2_sovereignDelegationRecords"
-   },
-   {
-    "id": "OG-2",
-    "what": "revising J's acceptance criterion / authorizing J2 as a WORK_ITEM_CONTRACT (contracts are PROPOSED; authority is owner/CTO)",
-    "pointer": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].state"
-   },
-   {
-    "id": "OG-3",
-    "what": "changing the escalation semantics of the canonical policy (D-3) if treated as governance rather than an internal defect",
-    "pointer": "runtime/core/odg-local-model-execution-policy.ts"
-   }
-  ],
-  "notDone": "No defect was fixed in this mission (diagnosis only)."
- },
- "j2_protocol": {
-  "status": "PROPOSED",
-  "authorized": false,
-  "executed": false,
-  "title": "J2 — alternative-strategy loop after the #940 fixes (local-only, offline, €0)",
-  "distinctFromJ": "new runner + new evidence file; J's evidence and runner stay untouched; J's grade is not revised by J2",
-  "proposedWriteSet": [
-   "runtime/bin/odg-v171-scenario-j2-run.ts",
-   "docs/odg/evidence/V171_J2_EXPERIMENT.json"
-  ],
-  "scope": "internal repo only; loopback Ollama 127.0.0.1:11434 only; model code only in the bwrap native-build sandbox; NO provider call, NO delegation beyond CREATED, NO spend, NO network egress, NO change to canonical modules",
-  "preRegistration": "this block (criteria, arms, tasks, thresholds, caps) is committed BEFORE any run; the runner must refuse to write evidence whose embedded protocol hash differs from the committed one",
-  "tasks": {
-   "replication": [
-    "rle-codec",
-    "csv-typed-validator",
-    "range-clamp-pipeline",
-    "v159-implement-parse-range"
-   ],
-   "heldOut": [
-    "number-stats-suite",
-    "word-metrics",
-    "grade-report",
-    "roman-codec",
-    "bank-ledger",
-    "voting-tally",
-    "temperature-pipeline"
-   ],
-   "heldOutBasis": "runtime/bin/native-hard-corpus.ts HARD_TASKS; each REJECTED with REPAIR_BUDGET_EXHAUSTED at 3b/maxRepair 1 in docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json and NOT used in J"
-  },
-  "decoding": {
-   "temperature": 0,
-   "seeds": [
-    42,
-    7
-   ],
-   "num_predict": 600,
-   "note": "two seeds to obtain non-identical repeats; still NOT a statistical sample"
-  },
-  "arms": [
-   {
-    "id": "A0",
-    "name": "default (control)",
-    "def": "odg-intelligent-native-cycle.runIntelligentCycle exactly as J (policy as chosen; expected PROBE 3b/maxRepair 1)"
-   },
-   {
-    "id": "A1",
-    "name": "canonical decomposed, equal information",
-    "def": "odg-decomposed-execution.runDecomposed (post-#940, its OWN verified-file freezing — the runner adds NO freezing seam), same model/maxRepair as A0, GENERIC repair hints only (no repairExamples) so no expected output of acceptance inputs reaches any prompt"
-   },
-   {
-    "id": "A2",
-    "name": "decomposed + escalated local tier on the localized failure",
-    "def": "A1, then ONLY the first failing sub-problem is re-run at the policy max-local tier (qwen2.5-coder:7b, maxRepair 3) on top of the frozen verified parts; generic hints only"
-   },
-   {
-    "id": "A3",
-    "name": "A2 + structured feedback (labelled NOT equal-information)",
-    "def": "A2 with structured repairExamples for ALL sub-problems including object results (structuralEqual post-#940); reported separately, never pooled with A0–A2"
-   },
-   {
-    "id": "A4",
-    "name": "single-file larger model (parse-range only)",
-    "def": "7b/maxRepair 3 on the single declared file f.js (no META split) — tests RC-7"
-   }
-  ],
-  "trigger": "an alternative runs only if A0 ends with an ODG stop recorded by native-project-builder (NO_PROGRESS_IDENTICAL_REGENERATION or REPAIR_BUDGET_EXHAUSTED); the exact stop name is recorded per row; NO_QUALIFIED_LOCAL_MODEL is recorded as the policy decision, never counted as a stop",
-  "acceptanceCriteria": [
-   {
-    "id": "C1",
-    "criterion": "every row records A0's stop name verbatim from the builder outcome; rows without an ODG stop run no alternative (fail-closed)"
-   },
-   {
-    "id": "C2",
-    "criterion": "each alternative executionStatus EXECUTED in the sandbox; NOT_RUN rows are reported as NOT_MEASURED and excluded from pass counts"
-   },
-   {
-    "id": "C3",
-    "criterion": "primary outcome = whole-task independent test (the task's ORIGINAL test, same oracle for all arms), pass counts per arm with n"
-   },
-   {
-    "id": "C4",
-    "criterion": "control: A0 on the 4 replication tasks at seed 42 reproduces J's default stop and verdict; a mismatch is reported (environment drift) and limits all comparisons"
-   },
-   {
-    "id": "C5",
-    "criterion": "0 provider calls; delegation records may be CREATED but none transitions past CREATED; asserted in the evidence"
-   },
-   {
-    "id": "C6",
-    "criterion": "every generated file is retained as sha256 + source in the evidence (to confirm/refute RC-4/RC-5)"
-   }
-  ],
-  "hypotheses": [
-   {
-    "id": "H1",
-    "statement": "A2 is accepted on at least 2 of the 7 held-out tasks where A0 failed (seed 42)",
-    "refutedIf": "A2 accepted on 0 or 1 held-out tasks"
-   },
-   {
-    "id": "H2",
-    "statement": "RC-4: on the replication tasks, A1's failing report.js exports a non-function (object) in ≥1 run",
-    "refutedIf": "every retained failing report.js exports a function"
-   },
-   {
-    "id": "H3",
-    "statement": "A1 reproduces J's decomposed verdict pattern on the replication tasks (the #940 canonical fixes change mechanics, not outcomes)",
-    "refutedIf": "any replication sub-problem verdict differs at seed 42"
-   }
-  ],
-  "caps": {
-   "perTrialWallMs": 1800000,
-   "maxModelCallsTotal": 600,
-   "maxRepairCeiling": 3,
-   "note": "hard caps; exceeding one stops the run with NOT_MEASURED for the remainder — no unbounded loop"
-  },
-  "stopConditions": [
-   "Ollama not reachable on loopback ⇒ NOT_RUN (no fallback)",
-   "any egress other than 127.0.0.1:11434 ⇒ stop",
-   "sandbox probe fails ⇒ NOT_RUN",
-   "any step requiring spend/authorization ⇒ stop and ask"
-  ],
-  "honestLimitsPreDeclared": [
-   "n small; temperature 0 ⇒ repeats near-deterministic; no statistical claim",
-   "task oracles authored by the provider (task-author oracle)",
-   "shared host ⇒ wall time confounded; compare on pass rate only",
-   "VERIFIED in-repo ≠ DEPLOYED"
-  ],
-  "authorizationNeeded": "a WORK_ITEM_CONTRACT for J2 moved PROPOSED → AUTHORIZED by the owner/CTO before any run"
- },
- "whatIsProven": [
-  "the 8 alternatives were executed and failed (committed rows re-derive offline: CHECK OK)",
-  "REPAIR_BUDGET_EXHAUSTED in J = one 3b repair round, an internal €0 bound",
-  "the 8 delegation records are CREATED-only provider handoffs, owner-gated, with no verifiable spend ceiling in the chain",
-  "neither #940 defect altered J's measured outcome (runner compensated/avoided them)"
- ],
- "whatIsNotProven": [
-  "the cause of 'entry report.js is not a function' and 'input.split is not a function' (RC-4/RC-5 are hypotheses; sources not retained)",
-  "that any alternative would succeed now (no run performed)",
-  "that the decomposition-planner META split hurts parse-range (RC-7 hypothesis)"
- ],
- "nextAction": "owner/CTO decision: (1) authorize or not the J2 contract above (local-only, €0); (2) keep the 8 delegation records unexecuted unless an owner authorization + verifiable spend ceiling are supplied; (3) decide whether J's criterion 1 is revised for future experiments (not retroactively).",
- "honestLimits": [
-  "written by the technical provider (Claude Code) from committed evidence and code; not independently inspected",
-  "no model run; all outcome statements about a re-run are hypotheses",
-  "pointers use '[*]' / '[task=…]' selectors over rows; line numbers are omitted because they drift"
- ]
 }
