@@ -93,27 +93,43 @@ function discoverLatestCheckpoint(): string | null {
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 /* OWN-1 clarification (V17.6, classification defect found in #1001 — rule meaning unchanged): OWN-1 matches owner-gated
- * INTENT in prose. A keyword that is only a SUBSTRING of a file path or code identifier (e.g. `odg-production-metric`,
- * `runtime/core/odg-deploy-x.ts`, `productionMetric.cost_eur`) states no intent ⇒ not a match. A token is path/identifier-like
- * when it contains '/', a source-file extension, '_' or '.' between word chars, or is a lowercase kebab identifier of ≥3
- * segments / prefixed odg-. Location keywords that NAME protected paths (ROADMAP.json, governance, systemd) still match
- * inside paths (touching them is owner-gated). */
-const OWN1_PATH_CLARIFICATION = "OWN-1 clarification (not a criteria change): a keyword occurring only inside a file-path / code-identifier token (contains '/', a source-file extension, '_' or '.' between word chars, or a lowercase kebab identifier of ≥3 segments or prefixed odg-) is not owner-gated intent and is ignored — except ROADMAP.json / governance / systemd, which name protected locations and still match inside paths";
+ * INTENT. FAIL-CLOSED exemption (#1003 inspection): a keyword is ignored ONLY when its whole enclosing token is EXACTLY an
+ * actually committed repository path (git ls-files at the evaluated root) or a registered component id (basename, without
+ * .ts/.js/.test.ts, of a committed runtime/core|runtime/bin module) — e.g. `odg-production-metric`. Anything else
+ * (`deploy-to-production`, `spend/budget`, `deploy.sh` when not committed, URLs, any case variant) keeps matching. The
+ * keyword match itself stays case-insensitive. ROADMAP.json / governance / systemd are never exempted (protected
+ * locations). No repository listing available ⇒ no exemption (fail closed). */
+const OWN1_PATH_CLARIFICATION = "OWN-1 clarification (not a criteria change): a keyword whose whole enclosing token is EXACTLY a committed repository path (git ls-files at the evaluated root) or a registered component id (basename without .ts/.js/.test.ts of a committed runtime/core or runtime/bin module) is not owner-gated intent and is ignored; every other token keeps matching (case-insensitive); ROADMAP.json / governance / systemd are never exempted; no repository listing ⇒ no exemption (fail closed)";
 const OWN1_PATH_KEEP = /^(?:ROADMAP\.json|governance|systemd)$/i;
-function isPathLikeToken(tok: string): boolean {
-  const t = tok.replace(/^[^\w~./-]+|[^\w/]+$/g, "");
-  if (!t) return false;
-  if (t.includes("/")) return true;
-  if (/\.(?:[cm]?[jt]sx?|json|md|sh|ya?ml|py|html?|css)$/i.test(t)) return true;
-  if (/\w[._]\w/.test(t)) return true;
-  if (/^odg-[\w-]+$/i.test(t)) return true;
-  if (/^[a-z0-9]+(?:-[a-z0-9]+){2,}$/.test(t)) return true;
-  return false;
+let KNOWN_CACHE: any = null;
+/* committedKnown(root?) — {paths, ids} from `git ls-files` at the repo root (walk up from __dirname); empty on any failure. */
+function committedKnown(root?: string): any {
+  if (!root && KNOWN_CACHE) return KNOWN_CACHE;
+  const paths = new Set<string>(), ids = new Set<string>();
+  try {
+    const fs = require("fs"), path = require("path"), cp = require("child_process");
+    let d = root || __dirname;
+    if (!root) for (let i = 0; i < 6 && !fs.existsSync(path.join(d, ".git")); i++) d = path.dirname(d);
+    const out = cp.execFileSync("git", ["-C", d, "ls-files", "-z"], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"] });
+    for (const f of out.split("\0")) {
+      if (!f) continue;
+      paths.add(f);
+      const m = /^runtime\/(?:core|bin)\/([^/]+?)(?:\.test)?\.[cm]?[jt]s$/.exec(f);
+      if (m) ids.add(m[1]);
+    }
+  } catch { /* no listing ⇒ empty ⇒ no exemption (fail closed) */ }
+  const k = { paths, ids };
+  if (!root) KNOWN_CACHE = k;
+  return k;
 }
-function ownerMatches(text: string): string[] {
+function isCommittedToken(tok: string, known: any): boolean {
+  const t = tok.replace(/^[`'"(\[{<]+|[`'"),.;:!?\]}>]+$/g, "").replace(/^\.\//, "");
+  return !!t && (known.paths.has(t) || known.ids.has(t));
+}
+function ownerMatches(text: string, known?: any): string[] {
   const out: string[] = [];
   const re = new RegExp(OWNER_RE.source, "gi");
-  let m: any;
+  let m: any, K: any = null;
   while ((m = re.exec(text)) !== null) {
     const before = text.slice(Math.max(0, m.index - 12), m.index);
     if (/\b(no|without|not|never)\s+$/i.test(before)) continue;
@@ -121,7 +137,8 @@ function ownerMatches(text: string): string[] {
       let s = m.index, e = m.index + m[0].length;
       while (s > 0 && !/[\s`'"(),;\[\]{}<>‖]/.test(text[s - 1])) s--;
       while (e < text.length && !/[\s`'"(),;\[\]{}<>‖]/.test(text[e])) e++;
-      if (isPathLikeToken(text.slice(s, e))) continue;
+      K = K || known || committedKnown();
+      if (isCommittedToken(text.slice(s, e), K)) continue;
     }
     out.push(m[0]);
   }
@@ -710,6 +727,6 @@ const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, isPathLikeToken, OWN1_PATH_CLARIFICATION, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
+module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, committedKnown, isCommittedToken, OWN1_PATH_CLARIFICATION, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(STRATEGIC_REGISTER_CONTRACT, null, 2) + "\n"); }
 export {};
