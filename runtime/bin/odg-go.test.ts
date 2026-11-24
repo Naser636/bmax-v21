@@ -232,8 +232,8 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     const runDry = (state: any, prior: any[] = []) => runCycle(state, { prior });
     // V17.5: J2 has now RUN (committed V172_J2_EXPERIMENT.json) ⇒ on the REAL state GO-ORD-2's one-shot rule must refuse (asserted below).
     // The GO-ORD-2 behaviour tests that follow run on a LABELLED fixture = the real state with only J2's experiment record removed
-    // (the pre-run state GO actually saw at deaf0844).
-    const preRun = (() => { const c = cloneS(real); c.authorizationEvidence.J2 = { ...c.authorizationEvidence.J2, experiment: null }; return c; })();
+    // (the pre-run state GO actually saw at deaf0844); V17.5: J2's validation record (CLOSED_FAIL) is removed too.
+    const preRun = (() => { const c = cloneS(real); c.authorizationEvidence.J2 = { ...c.authorizationEvidence.J2, experiment: null, validation: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence.J2) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, J2: { ...c.sources.authorizationEvidence.J2, experiment: null, validation: null } } }; return c; })();
     const j2c = real.sources.contracts.data.contracts.find((x: any) => x.scenario === "J2");
     check("GO-ORD-2: committed record loaded from the declared list (OWNER_SELECTION_DECISIONS) and bound to the CURRENT J2 contract sha", B.OWNER_SELECTION_DECISIONS.join() === "docs/odg/V174_OWNER_DECISION_SELECT_J2.json" && real.ownerSelectionDecisions.length === 1 && real.ownerSelectionDecisions[0].contractSha256 === ASc.contractSha256(j2c) && real.ownerSelectionDecisions[0].contractSha256 === "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b");
     const base = await runDry((() => { const c = cloneS(preRun); c.ownerSelectionDecisions = []; return c; })());
@@ -270,10 +270,10 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     }
     // maxDispatches 1: a prior DISPATCHED J2 in the GO trace ⇒ not applied
     const prior = [{ kind: "CYCLE_START", runId: "r0", cycleSeq: 1 }, { kind: "DISPATCHED", mission: "J2", runId: "r0", cycleSeq: 1 }, { kind: "CYCLE_END", status: "EXECUTED_FAIL", runId: "r0", cycleSeq: 1, decisionsDigest: "x" }];
-    const pd = await runDry(real, prior);
+    const pd = await runDry(preRun, prior);
     check("GO-ORD-2 refusal: J2 already DISPATCHED in the GO trace ⇒ maxDispatches 1 used, not applied", pd.sel.decision.actionableSelection.ownerSelectionDecision.applied === false && /maxDispatches 1 already used: DISPATCHED in the GO trace/.test(pd.sel.decision.actionableSelection.ownerSelectionDecision.considered[0].reason) && pd.sel.decision.actionableSelection.item !== "J2");
     // tie present ⇒ GO-ORD-2 not applicable (unit, exported resolver)
-    const reg = require("../core/odg-strategic-register.js").buildRegister(real.sources);
+    const reg = require("../core/odg-strategic-register.js").buildRegister(preRun.sources);
     const tie = GOC.resolveOwnerSelection(preRun, reg, { decision: "DECISION_REQUIRED", tiedSet: [{ id: "J2" }, { id: "G2" }], proposed: null }, []);
     check("GO-ORD-2: an actionable TIE ⇒ not applicable (GO-ORD-1 territory), nothing chosen", tie.applied === false && /tie \(J2\/G2\)/.test(tie.notApplicable));
     const sing = GOC.resolveOwnerSelection(preRun, reg, { decision: "DECISION_REQUIRED", tiedSet: [{ id: "J2" }], proposed: { id: "J2", uncertainty: 0.6 } }, [], B.makeClaimStore(tmpClaims()));
