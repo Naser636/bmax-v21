@@ -1,0 +1,4052 @@
+{
+ "//": "V171 §8 / V170 §6 — documentary reconciliation of the V15.0 master directive (PROPOSED) with Boussole V14.4 (ADOPTED V372), its addendum 'Boussole vivante' (RECORDED) and Boussole V12.4 (canonical). Prepared by the technical PROVIDER (Claude Code). Adopts nothing; modifies no canonical register, no code. Métiers OUT of scope.",
+ "schema": "odg-v150-reconciliation-matrix/1",
+ "date": "2026-11-24",
+ "headAtReconciliation": "c6a3df99 (revised after inspection of 846e45de, on a merge of origin/main bd81d856)",
+ "status": "PROPOSED (documentary reconciliation; V15.0 NOT adopted; V12.4 NOT modified)",
+ "inputs": [
+  {
+   "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+   "sha256": "d98740550cd50d38a4ac9a8790a2ae8919ca021401b711b491b85e65291ea4b8"
+  },
+  {
+   "path": "docs/odg/evidence/V150_CANONICAL_SOURCES.json",
+   "sha256": "e127dc7113c4f0a4b90e32781001c056595b763ec5f78556d0c72d0d7bc04594"
+  },
+  {
+   "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+   "sha256": "6e1abe2898c582f95d3325f9e15a98769da88b50cc6bf56490fc0ad7147c2ae3"
+  },
+  {
+   "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+   "sha256": "726abb4c39e05bdc6f2d2251e8b71ec169cbeb34b749f1b37a494cd3f7ae0055"
+  },
+  {
+   "path": "docs/odg/V14_4_ROADMAP.md",
+   "sha256": "9bae181c0c67e1410c67169badb6adb6c4f25ceaca6c960c2968dbce7b1132bc"
+  },
+  {
+   "path": "docs/odg/V14_4_LOT_PLAN_AND_RADAR_AUDIT.md",
+   "sha256": "17b4969bb39f0b0b737022923e7e3e6bd6e8f29cae59d45f42992b78346b005c"
+  },
+  {
+   "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+   "sha256": "3c5950660f19125f9c6cd4718a33ac817ac8b9a2df717acf68ea9db40d3e1138"
+  },
+  {
+   "path": "docs/odg/evidence/V169_V14_4_ADDENDUM_RECONCILIATION.json",
+   "sha256": "a7b784070ee2f69b1bdb429de6e3c6177605fbbfc001e570ff5d4b77150b1f3f"
+  },
+  {
+   "path": "docs/odg/v124-consolidated-roadmap.json",
+   "sha256": "198de7f60f5eadb485f54196eec978a3cc6b7378c4551ea5580027149ad3c105"
+  },
+  {
+   "path": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+   "sha256": "52913c51fdd79aaedc52e96d66639b38154033d45c9a7ce5f1519ea5fc051f81"
+  },
+  {
+   "path": "docs/odg/evidence/V169_ADDENDUM_PHASE0_INVENTORY.json",
+   "sha256": "ce5d9dbbc20153382a4a5507df15c9ea8ad9cdd4ce77aee5fa448b1901e97f13"
+  },
+  {
+   "path": "docs/odg/evidence/V169_CONTINUITY_BASELINE.json",
+   "sha256": "2c096831f1f36e0749edaf30c34162202b85667e3209348f28f0aef368aeaa16"
+  },
+  {
+   "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+   "sha256": "91c455f9e9b40ea6cb25b3c310a192e472bd277ca277ed60bd039358357be63f"
+  }
+ ],
+ "sourceLimits": [
+  "The V15.0 text is NOT committed in the repository. Quotes come from docs/odg/evidence/V150_CANONICAL_SOURCES.json (owner paste recovered from a session transcript, sha256 recorded there, UNVERIFIED against a signed source); each quote is an EXCERPT of acceptance lines, never the whole section. Nothing is paraphrased as a quote.",
+  "V14.4 master text §1–§19 is NOT in the repository (only V14_4_ROADMAP.md with 5 sections and the lot plan). Every comparison with V14.4 §1–§19 is NOT_MEASURED; 'v14_4' anchors cite V14_4_ROADMAP.md sections only.",
+  "The 13 V17.0 programmes and the V18.0 continuity text are known only through the V15.0 directive (V15_0_MASTER_DIRECTIVE.md §1).",
+  "Inspection of 846e45de (ACCEPT, 3 LOWs): every USED row re-checked — USED requires a live caller run, a named test run or a committed run record of a real (non-synthetic) run; S00, S28, S43, S52 → DOCUMENTED; S27 → CONNECTED; S35, S39 → TESTED; S25, S45, S47, S48 kept USED with an added real-run pointer.",
+  "Implementation states are provider assessments at c6a3df99 from committed evidence and tests run here; they are not an independent inspection."
+ ],
+ "vocabulary": {
+  "relation": {
+   "COMMON": "V14.4/addendum/V12.4 already require the same thing",
+   "IMPROVEMENT": "V15.0 refines an existing requirement (stricter criteria, metrics or detail)",
+   "GAP": "V15.0 requirement with no counterpart in V14.4 (repo text), addendum or V12.4",
+   "CONTRADICTION": "V15.0 text conflicts with a V14.4/addendum/V12.4 rule",
+   "DUPLICATE": "restates another V15.0 requirement (phase deliverable of a thematic section)",
+   "DEPENDENCY": "listed in 'dependencies' per row"
+  },
+  "implementationState": {
+   "DOCUMENTED": "only in documents/records",
+   "IMPLEMENTED": "code committed, no test/caller/run evidence",
+   "TESTED": "a named test of the implementing component passes",
+   "CONNECTED": "a non-test canonical caller wires it",
+   "USED": "a committed evidence record of a real (non-synthetic) run",
+   "VALIDATED": "committed, inspected evidence demonstrates the requirement's OWN acceptance text, within the stated scope",
+   "NOT_MEASURED": "no evidence either way"
+  },
+  "rule": "state = highest rung proven by a cited pointer; a module merely existing never counts; mission results (PASS/PARTIAL/FAIL, addendum §23) are kept separate in 'missionResult'"
+ },
+ "testsRunByThisReconciliation": {
+  "head": "c6a3df99",
+  "command": "npx tsx <file> (offline; TMPDIR and ODG_ATTEMPTS_LOG redirected to a scratch directory)",
+  "result": "32/32 exit 0",
+  "files": [
+   "runtime/core/odg-go-cycle.test.ts",
+   "runtime/core/odg-strategic-register.test.ts",
+   "runtime/core/odg-authorization-scope.test.ts",
+   "runtime/core/odg-radar-source-admission.test.ts",
+   "runtime/core/odg-verification-level.test.ts",
+   "runtime/core/odg-concurrency-policy.test.ts",
+   "runtime/core/odg-agent-supervisor.test.ts",
+   "runtime/core/odg-multimodal-ingest.test.ts",
+   "runtime/core/odg-hybrid-reasoning.test.ts",
+   "runtime/core/memory-trust-gate.test.ts",
+   "runtime/core/frontier-lab.test.ts",
+   "runtime/core/odg-self-improvement-cycle.test.ts",
+   "runtime/core/odg-resident-driver.test.ts",
+   "runtime/core/mission-attempt-log.test.ts",
+   "runtime/core/odg-knowledge-intelligence.test.ts",
+   "runtime/core/repair-workflow.test.ts",
+   "runtime/core/odg-writeset-contention.test.ts",
+   "runtime/core/odg-verification-risk-calibration.test.ts",
+   "runtime/core/continuous-planner.test.ts",
+   "runtime/core/idempotency-guard.test.ts",
+   "runtime/core/odg-native-engineering-loop.test.ts",
+   "runtime/core/odg-strategy-mode-selector.test.ts",
+   "runtime/core/odg-component-judgment.test.ts",
+   "runtime/core/odg-radar-gate-chain.test.ts",
+   "runtime/core/research-governor.test.ts",
+   "runtime/core/slo-collector.test.ts",
+   "runtime/core/odg-program-continuity.test.ts",
+   "runtime/core/memory-scenario-battery.test.ts",
+   "runtime/core/odg-reuse-validity-gate.test.ts",
+   "runtime/core/odg-sovereign-delegation.test.ts",
+   "runtime/bin/odg-v169-continuity-baseline.test.ts",
+   "runtime/bin/odg-go.test.ts"
+  ],
+  "limit": "host run, not CI; tests marked 'present; not run by this reconciliation' were not executed"
+ },
+ "requirementSet": {
+  "definition": "one row per recovered V15.0 section §0–§55 (56) + one row per §45 scenario A–P (16) = 72; sub-items of §13 (Radar V2 lots 1–5) and §26 (programmes A–M) are listed inside those rows",
+  "count": 72
+ },
+ "requirements": [
+  {
+   "id": "V150-S00",
+   "v150": {
+    "section": "§0",
+    "title": "PARTIE 0 — ORDRE EXÉCUTIF DU PROPRIÉTAIRE",
+    "quote": "Une capacité n'a de valeur opérationnelle que si son existence, son fonctionnement, ses raccordements, ses consommateurs, son utilisation, ses résultats et ses preuves sont démontrés.\nUne simulation n'est jamais une preuve d'exécution réelle.\nUn agent qui produit du code ne prouve pas qu'ODG sait construire nativement.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§0].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     113,
+     132,
+     140
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§1 'invariants carried over'; §3 'Statuses use the 12-value taxonomy'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§23 'Ne pas confondre un module présent avec une capacité opérationnelle. Ne jamais transformer une simulation en preuve d'exécution réelle.'",
+    "v12_4": "transversal (no mission)"
+   },
+   "relation": "COMMON",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+     "commit": "2006fb70 (PR #947)",
+     "what": "nativeVsProvider: nativeBuiltCodeMerged 0, nativeExecutedSteps 1; '~80% native target NOT met, not claimed'"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_ADDENDUM_PHASE0_INVENTORY.json",
+     "commit": "2c17d616 (PR #948)",
+     "what": "states justified by test/live caller/committed record, never file existence (componentCensus.stateRule)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§0] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Principle applied in every checkpoint since CP1; enforced by inspection practice, not by one mechanism.",
+   "openGaps": [
+    "no mechanism refuses a 'module exists' claim automatically; compliance rests on independent inspection"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S01",
+   "v150": {
+    "section": "§1",
+    "title": "1. AUTORITÉ ET RESPONSABILITÉS",
+    "quote": "La décision, l'autorisation, l'exécution et la vérification doivent rester distinctes.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§1].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     244
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§4 'Every work item needs a WORK_ITEM_CONTRACT authorized by a human'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§30 'Validation indépendante des changements sensibles'; §21.2 role split",
+    "v12_4": "transversal"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-authorization-scope.ts",
+     "commit": "587650b0",
+     "what": "R0 owner authorization required, R3 sha-bound inspection, R5b criteria record; provider cannot self-validate"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-authorization-scope.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+     "commit": "94c029eb (PR #947)",
+     "what": "mission H advanced step by step, each step validated only by committed evidence"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§1] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Separation decision/authorization/execution/verification is enforced for scoped owner authorizations (G, H).",
+   "openGaps": [
+    "inspector identity is a declared session id, not cryptographic (CP10 openGaps)",
+    "gate 10/12 owner signature absent"
+   ],
+   "dependencies": [
+    "owner: signed review / identity-bound inspector"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S02",
+   "v150": {
+    "section": "§2",
+    "title": "2. ENREGISTREMENT OFFICIEL DE LA V15.0",
+    "quote": "La roadmap ne doit pas être déclarée enregistrée, adoptée ou intégrée tant que les preuves correspondantes n'existent pas.\n- PROPOSED.\n- RECONCILIATION_IN_PROGRESS.\n- VALIDATION_PENDING.\n- ACCEPTED.\n- INTEGRATED.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§2].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     312,
+     318,
+     319,
+     320,
+     321,
+     322
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "header 'Status: ADOPTED … Adoption is additive'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "header 'Statut : RECORDED'; §30.6 'Mise à jour de la Boussole par le processus de gouvernance'",
+    "v12_4": "transversal"
+   },
+   "relation": "GAP",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+     "what": "status PROPOSED; next RECONCILIATION_IN_PROGRESS (not recorded as reached)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§2] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "The 5-state registration ladder (PROPOSED→RECONCILIATION_IN_PROGRESS→VALIDATION_PENDING→ACCEPTED→INTEGRATED) is unique to V15.0; V14.4 uses ADOPTED/RECORDED and the work protocol uses PROPOSED→AUTHORIZED→EXECUTING→VERIFIED→ACCEPTED.",
+   "openGaps": [
+    "no state transition beyond PROPOSED recorded; this matrix is reconciliation work but does not change the status (owner)"
+   ],
+   "dependencies": [
+    "owner decision on V15.0 status"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-S03",
+   "v150": {
+    "section": "§3",
+    "title": "3. LES NEUF PRIMITIVES CANONIQUES",
+    "quote": "Aucune dixième primitive.\nAucun second orchestrateur.\nAucun second scheduler.\nAucun deuxième Radar.\nAucune mémoire concurrente.\nLes nouvelles capacités doivent être des améliorations, des composants spécialisés ou des responsabilités internes aux mécanismes existants.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§3].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     358,
+     360,
+     362,
+     366,
+     368,
+     374
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§1 '9 primitives, no 10th; a single orchestrator, mission chain, Radar and memory'; §2 'no new engine'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§21.2 'Ces fonctions ne justifient pas la création de systèmes parallèles'; §30 'neuf primitives canoniques'",
+    "v12_4": "9 primitives (companion programs)"
+   },
+   "relation": "COMMON",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+     "what": "header: 'V15.0 adds no new primitive, orchestrator, scheduler, queue, Radar, memory or permission engine'"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_ADDENDUM_PHASE0_INVENTORY.json",
+     "commit": "2c17d616",
+     "what": "noParallelSystem: every gap is a missing link/field on an existing component"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§3] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Held by inspection; no structural check.",
+   "openGaps": [
+    "no automated check that no second scheduler/queue/orchestrator exists",
+    "§3.1 responsibility mapping of campaign components onto the nine primitives not produced"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S04",
+   "v150": {
+    "section": "§4",
+    "title": "4. HIÉRARCHIE DE VÉRITÉ",
+    "quote": "En cas de contradiction, appliquer une hiérarchie vérifiable :\n1. Preuves techniques actuelles et reproductibles.\nUne affirmation récente ne remplace pas automatiquement une preuve antérieure valide.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§4].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     392,
+     394,
+     405
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "NONE in V14_4_ROADMAP.md (V14.4 master §1–§19 NOT in repo ⇒ comparison NOT_MEASURED)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§23 'Ne jamais supprimer un résultat négatif ou promouvoir un résultat sans nouvelle preuve'",
+    "v12_4": "NONE"
+   },
+   "relation": "GAP",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "ODG_AUTONOMOUS_WORK_PROTOCOL.json",
+     "what": "truth_lock block (HEAD/branch/worktree verification)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+     "commit": "2006fb70",
+     "what": "truthLock.verifyHistorical verified=928 missing=0 changed=0"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§4] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "The explicit truth hierarchy (current reproducible technical evidence first; a recent claim never automatically replaces a valid earlier proof) is unique to V15.0 in text; applied by practice.",
+   "openGaps": [
+    "hierarchy not encoded in any mechanism"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-S05",
+   "v150": {
+    "section": "§5",
+    "title": "5. ARCHITECTURE COMPACTE ET COHÉRENTE",
+    "quote": "Préférer le raccordement et l'amélioration à la duplication.\n**Construire uniquement ce qui n'existe pas et ce qui est nécessaire. Corriger et raccorder le reste.**",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§5].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     422,
+     441
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 'phases mapped onto existing V12.4 missions (no new engine)'; §5 extension not duplicate",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28 'réutiliser les composants existants ; éviter les reconstructions inutiles'",
+    "v12_4": "NONE"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-component-judgment.ts",
+     "commit": "64ab5d72",
+     "what": "disposition of NO_CONSUMER modules"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-component-judgment-run.ts",
+     "what": "live caller of the judgment"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-component-judgment.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_199_RECONCILIATION.json",
+     "commit": "e7e59ec8",
+     "what": "198 items read individually; actuallyLoaded true 16 / false 182"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§5] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Reconciliation surface measured; most items still carry only a diagnosis.",
+   "openGaps": [
+    "~190 items with diagnosis only (minimalFix backlog)",
+    "no measured duplication/complexity reduction"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S06",
+   "v150": {
+    "section": "§6",
+    "title": "6. CONSTRUIRE LE CERVEAU CENTRAL",
+    "quote": "ODG doit progresser de la compréhension d'une demande à une décision structurée et à une réalisation vérifiée.\nOBJECTIF → CONTEXTE → CONNAISSANCES → HYPOTHÈSES → STRATÉGIES → RISQUES → DÉCISION → CONTRAT → AUTORISATION → EXÉCUTION → VÉRIFICATION → APPRENTISSAGE.\nNe pas construire un moteur décisionnel parallèle.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§6].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     449,
+     557,
+     559
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 2 'Brain & memory: per-axis measured gains on held-out cases'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26 loop steps 1–15",
+    "v12_4": "B CM-V235-OBS-CURRENCY (ACCEPTED)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-hybrid-reasoning.ts",
+     "commit": "520de3fd",
+     "what": "hybrid reasoning"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-hybrid-reasoning.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-hybrid-reasoning-run.ts",
+     "what": "bin caller (no committed real-mission run cited)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "IN_PROGRESS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§6] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 adds a single explicit decision chain OBJECTIF→…→VÉRIFICATION; V14.4 phase 2 states only an exit criterion.",
+   "openGaps": [
+    "chain not demonstrated end-to-end on a real mission",
+    "several intelligence axes NOT_MEASURED on real data"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S07",
+   "v150": {
+    "section": "§7",
+    "title": "7. CAPABILITY DISCOVERY & UTILIZATION",
+    "quote": "Un graphe des capacités réellement disponibles, de leurs consommateurs, de leurs dépendances, de leur utilisation et de leurs preuves.\n4. Exécuter un scénario qui l'utilise réellement.\n7. Vérifier qu'il ne s'agit pas d'un mock ou d'un simple test isolé.\n10. Conserver une preuve reproductible.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§7].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     642,
+     651,
+     654,
+     657
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§3 correspondence register (census status CONNECTED/NO_CONSUMER)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§20 'ce qui existe mais n'est pas raccordé ; ce qui est raccordé mais inutilisé'",
+    "v12_4": "C CM-V236-CARTOGRAPHY (ACCEPTED)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-component-census.ts",
+     "commit": "24aad673",
+     "what": "census"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-v150-correspondence-run.ts",
+     "what": "generator of the correspondence register"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json",
+     "commit": "5f7921b4",
+     "what": "786 modules: 562 CONNECTED / 224 NO_CONSUMER"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_ADDENDUM_PHASE0_INVENTORY.json",
+     "commit": "2c17d616",
+     "what": "caller census re-derived by recorded git-grep"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§7] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Census exists and was run; §7.6 real-use (traced scenario, not mock) shown for a handful of components only.",
+   "openGaps": [
+    "static consumers only (dynamic/spawn missed)",
+    "real-use verification rare"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S08",
+   "v150": {
+    "section": "§8",
+    "title": "8. GRAPHE DES CAPACITÉS ET DÉPENDANCES",
+    "quote": "Construire ou renforcer un graphe vivant, sans créer une deuxième base de vérité.\n- Trouver immédiatement les modules utiles à une mission.\n- Identifier les fichiers qui peuvent être travaillés en parallèle.\n- Préparer les tests à exécuter après une modification.\n- Détecter les conflits avant qu'ils apparaissent.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§8].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     665,
+     720,
+     722,
+     724,
+     726
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§3 register 'derived from existing modules'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§25 'représentation des dépendances sans créer un deuxième système de pilotage'",
+    "v12_4": "C CM-V236-CARTOGRAPHY (ACCEPTED)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "CONNECTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/change-impact-graph.ts",
+     "commit": "df588510",
+     "what": "impact graph"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/change-impact-graph.test.ts",
+     "result": "present; not run by this reconciliation"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-verification-level.ts",
+     "commit": "60282845",
+     "what": "selects tests from change impact"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-verification-level.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-verification-level-run.ts",
+     "what": "bin caller"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-writeset-contention.ts",
+     "commit": "40c3bec1",
+     "what": "parallel-safety of write-sets"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-writeset-contention.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§8] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 asks for a living graph usable for parallelism and test selection; V14.4/addendum only require a dependency representation.",
+   "openGaps": [
+    "graph↔repo synchronisation not demonstrated",
+    "reuse of still-valid impact analyses not measured"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S09",
+   "v150": {
+    "section": "§9",
+    "title": "9. CENTRE DE PILOTAGE STRATÉGIQUE",
+    "quote": "ODG doit savoir piloter l'ensemble de son évolution.\nLe score de priorité est un outil de décision, pas une autorisation.\nUn blocage isolé ne doit pas arrêter tout le portefeuille.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§9].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     735,
+     796,
+     812
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3; lot plan §2 strategic ranking (weights are HYPOTHESES)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "v14_4_lotPlan": "§2 G0–G11 ranking",
+    "addendum": "§25 'A. Priorité stratégique globale. B. Meilleure mission autorisée et réalisable maintenant'; 'Aucun score arbitraire ne doit remplacer une justification vérifiable'",
+    "v12_4": "F CM-V237-ORCHESTRATION (REVIEW)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-strategic-register.ts",
+     "commit": "1f021c35 (PR #949)",
+     "what": "register + selectNextExplained"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-strategic-register.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-go-cycle.ts",
+     "commit": "52da09b5 (PR #945)",
+     "what": "GO-ACT-1: best AUTHORIZED item when strategic choice undecided"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-go-cycle.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-go.ts",
+     "what": "GO entry point"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+     "commit": "1f021c35",
+     "what": "§29 S9 'autorisé plutôt que bloqué' PASS"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§9] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 §9 and addendum §25 converge (score ≠ authorization; an isolated block does not stop the portfolio).",
+   "openGaps": [
+    "two 'next mission' answers not reconciled (V12.4 companion vs A–P register; V169 inventory overlaps[0])"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S10",
+   "v150": {
+    "section": "§10",
+    "title": "10. CONSTRUIRE ET AMÉLIORER SON PROPRE SYSTÈME",
+    "quote": "L'autonomie native est la priorité stratégique numéro un.\nLa réussite fournisseur ne prouve jamais la capacité native d'ODG.\nL'objectif est de transformer progressivement les interventions fournisseurs en compétences réutilisables d'ODG.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§10].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     831,
+     935,
+     952
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3 'one internal mission selected → executed → independently verified'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§30.7 'Reprise et sélection autonomes des missions autorisées'",
+    "v12_4": "E CM-V234-RESIDENT-DRIVER (IN_PROGRESS)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+     "commit": "f82f3b6f",
+     "what": "first native GO dispatch: EXECUTE:EXECUTED_PASS, 1 step"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+     "commit": "2006fb70",
+     "what": "nativeBuiltCodeMerged 0; dispatched runner code provider-written"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§10] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 makes native autonomy priority #1 and states provider success never proves native capability; V14.4 phase 3 has the same direction without the priority statement.",
+   "openGaps": [
+    "no native-built code merged",
+    "provider→native skill transfer not measured"
+   ],
+   "dependencies": [
+    "owner: L1+ (V150-S23)"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S11",
+   "v150": {
+    "section": "§11",
+    "title": "11. BOUCLE D'ÉVOLUTION",
+    "quote": "La boucle sera considérée comme opérationnellement utile lorsque des preuves démontreront qu'ODG sait :\n1. Détecter une incapacité ou une performance insuffisante.\n4. Déclencher le Radar canonique lorsque nécessaire.\n8. Comparer plusieurs approches sur des critères explicites.\n13. Faire inspecter indépendamment.\n14. Mesurer le gain et les régressions.\n16. Démontrer son utilisation réelle.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§11].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1458,
+     1460,
+     1463,
+     1467,
+     1472,
+     1473,
+     1475
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 2/3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26 'La boucle obligatoire' (15 steps)",
+    "v12_4": "I CM-RADAR-GATE-CHAIN (READY)"
+   },
+   "relation": "COMMON",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-self-improvement-cycle.ts",
+     "commit": "1c016fdc",
+     "what": "PROPOSED-only cycle"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-self-improvement-cycle.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-self-improvement-cycle-run.ts",
+     "what": "bin caller"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "IN_PROGRESS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§11] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 §11 and addendum §26 express the same loop; V15.0 lists measurable usefulness criteria (1–18).",
+   "openGaps": [
+    "criteria 10–18 not demonstrated end-to-end once",
+    "Radar not yet triggered by an ODG-detected incapacity"
+   ],
+   "dependencies": [
+    "owner: self-improvement real-repo execution = OWNER_DECISION_ONLY"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S12",
+   "v150": {
+    "section": "§12",
+    "title": "12. MÉMOIRE COGNITIVE",
+    "quote": "Ne créer aucune mémoire concurrente.\n- Précision de récupération.\n- Fraîcheur.\n- Exactitude de provenance.\n- Détection des contradictions.\n- Amélioration obtenue grâce à la mémoire.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§12].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1495,
+     1533,
+     1535,
+     1536,
+     1537,
+     1540
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 2 (memory-trust-gate, knowledge-engine, mission-context-builder)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§21.2 'Mémoire : connaissances, contexte et expériences réutilisables'; §29 metrics 'précision de récupération'",
+    "v12_4": "B CM-V235-OBS-CURRENCY (ACCEPTED)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/memory-trust-gate.ts",
+     "commit": "bdeea511",
+     "what": "trust gate"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/memory-trust-gate.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/memory-scenario-battery.ts",
+     "commit": "606d3bb2",
+     "what": "memory scenarios"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/memory-scenario-battery.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-reuse-validity-gate.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+     "commit": "1f021c35",
+     "what": "recoveryPrecision measured on mission records (continuity, not cognitive memory)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§12] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 adds memory metrics (precision, freshness, provenance, contradiction, gain).",
+   "openGaps": [
+    "'amélioration obtenue grâce à la mémoire' NOT_MEASURED"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S13",
+   "v150": {
+    "section": "§13",
+    "title": "13. ODG KNOWLEDGE INTELLIGENCE V2 — FRONTIER RADAR : DISCOVERY TO ENGINEERING",
+    "quote": "Le Radar V2 sera considéré comme utile lorsque des preuves montreront qu'il sait :\n4. Distinguer répétition et corroboration indépendante.\n8. Ne pas transformer une hypothèse en fait.\n11. Détecter des lacunes réelles d'ODG.\n14. Faire utiliser une connaissance dans une mission réelle autorisée.\n15. Mesurer le gain obtenu.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§13].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     2175,
+     2180,
+     2184,
+     2187,
+     2190,
+     2191
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 1 'traced chain Radar→knowledge→memory→decision with reuse proof'; §5 Radar reconciliation",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "v14_4_lotPlan": "§1 Radar utility audit; lot B corroboration",
+    "addendum": "§27 Radar protocol per weakness",
+    "v12_4": "I CM-RADAR-GATE-CHAIN (READY; steps 1–2 merged; companion commit null)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-radar-gate-chain.ts",
+     "commit": "ce88cca9",
+     "what": "gate chain"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-radar-gate-chain.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-knowledge-intelligence.ts",
+     "commit": "80b1b667",
+     "what": "KI-V2 qualification"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-knowledge-intelligence.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-radar-source-admission.ts",
+     "commit": "55989cc9",
+     "what": "source admission"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-radar-source-admission.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V158_RADAR_LIVE_RUN.json",
+     "commit": "410208c0",
+     "what": "LIVE_OK 8/8 on 6 hosts"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V160_SCENARIO_G.json",
+     "commit": "54e891c9",
+     "what": "SUPPORTED item used in a real decision ⇒ NOT_ADOPTED"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§13] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Radar V2 lots (V15_0_MASTER_DIRECTIVE.md §2): Lot 1 largely built (V373/V374, #867/#871); Lot 2 to be verified; Lots 3–5 NOT_STARTED.",
+   "openGaps": [
+    "0 CORROBORATED claims",
+    "criteria 11–15 (gap detection from Radar output, mission fed, measured gain) not met"
+   ],
+   "dependencies": [
+    "V150-S38 (Radar-unchanged rule)",
+    "grant V372 expires 2026-12-22"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S14",
+   "v150": {
+    "section": "§14",
+    "title": "14. FRONTIER LAB",
+    "quote": "Ne pas créer une architecture de recherche concurrente.\nUn prototype ne devient pas automatiquement une capacité canonique.\n4. Inspection indépendante.\n10. Démonstration d'utilisation réelle.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§14].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     2206,
+     2240,
+     2247,
+     2253
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "NONE in V14_4_ROADMAP.md (V14.4 master §1–§19 NOT in repo ⇒ comparison NOT_MEASURED)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§27 'proposer une expérience adaptée à ODG'",
+    "v12_4": "I CM-RADAR-GATE-CHAIN ('…→experiment→gate')"
+   },
+   "relation": "GAP",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/frontier-lab.ts",
+     "commit": "f55ba6bf",
+     "what": "frontier lab"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/frontier-lab.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/frontier-lab-experiment.ts",
+     "commit": "0ae67464",
+     "what": "experiment record"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "IN_PROGRESS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§14] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Frontier Lab (prototype ≠ canonical capability; independent inspection; real-use demonstration) has no V14.4 phase of its own.",
+   "openGaps": [
+    "injected/synthetic runners only; promotion path never exercised"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-S15",
+   "v150": {
+    "section": "§15",
+    "title": "15. ORCHESTRATION INTELLIGENTE",
+    "quote": "Utiliser exclusivement la chaîne canonique existante.\n- Tâches acceptées.\n- Temps de coordination.\n- Coût par résultat accepté.\n- Taux de conflits.\n- Gain par rapport à une exécution séquentielle.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§15].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     2281,
+     2657,
+     2661,
+     2662,
+     2664,
+     2668
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3 (F orchestration, G A–Z scenario)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28 'paralléliser uniquement les travaux indépendants'",
+    "v12_4": "F CM-V237-ORCHESTRATION (REVIEW); G CM-V237-AZ-SCENARIO (REVIEW)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-agent-supervisor.ts",
+     "commit": "0a2e1b30",
+     "what": "supervisor"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-agent-supervisor.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-agent-supervisor-run.ts",
+     "what": "bin caller"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V155_REAL_WAVE_EVIDENCE.json",
+     "commit": "63218f57",
+     "what": "real wave of 5 canary missions ×5.08, 0 lost/duplicated"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§15] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 adds orchestration metrics (coordination time, cost per accepted result, conflict rate).",
+   "openGaps": [
+    "production waves inactive",
+    "cost per accepted result and coordination time NOT_MEASURED"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S16",
+   "v150": {
+    "section": "§16",
+    "title": "16. PRIORITÉ P0 : CONTINUITÉ DES MISSIONS",
+    "quote": "La continuité est une fondation préalable à l'augmentation du nombre de missions simultanées.\nMesurer les pertes, incohérences, répétitions et délais de reprise.\nNe pas promettre zéro perte pour les données non durablement enregistrées.\nNe jamais prétendre qu'une mission continue en arrière-plan si aucun mécanisme persistant réel n'est actif.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§16].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     2676,
+     2802,
+     2804,
+     2819
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 0 'D continuity (ACCEPTED)'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§24 continuity protocol; §29 #1–#2; §31 Phase 1 'Continuité vérifiable'",
+    "v12_4": "D CM-V234-CONTINUATION (ACCEPTED d1c042f); D CM-V237-PROGRAM-CONTINUITY (ACCEPTED 0293c86)"
+   },
+   "relation": "COMMON",
+   "alsoRelations": [
+    "CONTRADICTION on ordering: V15.0 makes continuity P0 'préalable' (§16, phase 2) whereas V14.4 orders Radar as phase 1; the addendum sides with continuity-first"
+   ],
+   "implementationState": "VALIDATED",
+   "statePointers": [
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-scenario-m-resume.ts",
+     "what": "scenario M runner"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/bin/odg-scenario-m-resume.test.ts",
+     "result": "present; not run by this reconciliation"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+     "commit": "257bc049",
+     "what": "real SIGKILL ×2, 0 ops repeated, inspected REJECT→ACCEPT (#890)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+     "commit": "1f021c35",
+     "what": "§29 S1 PARTIAL→FAIL (GO-level resume rule), S2/S5/S11 → PASS"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§16] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "VALIDATED only within scope (process death, single host, synthetic ops). Mission-level continuity (addendum §29) still 8 PARTIAL / 2 FAIL.",
+   "openGaps": [
+    "power loss, integration-time interruption, corrupted checkpoint not covered",
+    "unattended long-mission resume not active (L0)"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S17",
+   "v150": {
+    "section": "§17",
+    "title": "17. SURVEILLANCE, DIAGNOSTIC ET RÉPARATION",
+    "quote": "5. Construire dans le sandbox autorisé.\n9. Inspecter indépendamment.\n10. Comparer avant/après.\n14. Vérifier que le défaut ne réapparaît pas sur un scénario distinct.\nMesurer les prévisions sur les événements réellement observés.\nUne réparation qui échoue plusieurs fois doit déclencher une réévaluation de stratégie.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§17].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     2893,
+     2897,
+     2898,
+     2902,
+     2908,
+     2923
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 4 'resilience measured before/after'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26 steps 10–13",
+    "v12_4": "D continuity (ACCEPTED) per V15_0_MASTER_DIRECTIVE.md §2 programme G"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/repair-workflow.ts",
+     "commit": "100b3970",
+     "what": "repair workflow"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/repair-workflow.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-scenario-e-self-healing.ts",
+     "what": "scenario E runner"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+     "commit": "9a12738d",
+     "what": "8/8 cases on a synthetic sandbox module"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§17] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Synthetic sandbox only; fix candidate provider-scripted.",
+   "openGaps": [
+    "prevention (forecast vs observed) not done",
+    "recurrence on a distinct scenario not shown"
+   ],
+   "dependencies": [
+    "owner: repair-apply on real repo"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S18",
+   "v150": {
+    "section": "§18",
+    "title": "18. RAPIDITÉ RÉELLE ET EFFICACITÉ",
+    "quote": "**VERIFIED ACCEPTED OUTPUT / TOTAL COST / TOTAL TIME.**\nAucune accélération ne doit compromettre les contrôles critiques.\nL'ambition d'une accélération ×2, ×5, ×10 ou davantage doit être mesurée par catégorie de mission. Ne jamais annoncer un gain sans comparaison reproductible.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§18].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3064,
+     3066,
+     3085
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 4 'p50/p95, resources, resilience measured before/after'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "v14_4_lotPlan": "G3 CI SLO (owner)",
+    "addendum": "§28 metrics incl. 'coût par résultat vérifié'",
+    "v12_4": "K CM-BENCHMARK-AUDIT (REVIEW)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V157_PERFORMANCE_BASELINE.json",
+     "commit": "e0c21660",
+     "what": "gate timings baseline"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_L_CONCURRENCY.json",
+     "commit": "02b298ec",
+     "what": "1/2/4/8 workers"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§18] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Central metric VERIFIED ACCEPTED OUTPUT / TOTAL COST / TOTAL TIME is unique to V15.0; addendum §28 lists a close metric set.",
+   "openGaps": [
+    "central metric not computed (tokens/cost NOT_MEASURED)",
+    "single-run timings"
+   ],
+   "dependencies": [
+    "owner: provider spend ceiling",
+    "owner: CI SLO (lot plan G3)"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S19",
+   "v150": {
+    "section": "§19",
+    "title": "19. ÉVOLUTION CONTRÔLÉE",
+    "quote": "11. Tester dans le sandbox.\n12. Faire inspecter.\nAucune mise à jour ne doit entraîner un déploiement, une modification VPS ou une action de production dans le cadre de cette directive.\nLa préparation d'une mise à jour ne vaut pas autorisation de déploiement.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§19].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3124,
+     3125,
+     3131,
+     3133
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§4 'Deploy, VPS changes … remain closed'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "NONE",
+    "v12_4": "NONE"
+   },
+   "relation": "GAP",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json",
+     "commit": "10baa9af",
+     "what": "versioned local-model qualification (not a §19 update pipeline run)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "IN_PROGRESS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§19] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Controlled evolution of dependencies/models (qualify in sandbox, inspect, no deploy) is unique to V15.0.",
+   "openGaps": [
+    "qualification pipeline for a dependency/model update not exercised"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-S20",
+   "v150": {
+    "section": "§20",
+    "title": "20. CAPACITÉS TRANSVERSALES",
+    "quote": "Examiner et renforcer les capacités existantes.\nRaccorder les capacités communes aux consommateurs canoniques via des contrats cohérents.\nTester les parcours complets, les cas limites, les documents dégradés, les données contradictoires, les erreurs d'extraction et les reprises après interruption.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§20].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3156,
+     3207,
+     3213
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 5 'Multimodality'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "NONE",
+    "v12_4": "P CM-MULTIMODAL-VIDEO (BLOCKED)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-multimodal-ingest.ts",
+     "commit": "c8246042",
+     "what": "ingest"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-multimodal-ingest.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-multimodal-ingest-run.ts",
+     "what": "bin caller (no committed real-media run cited)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "IN_PROGRESS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§20] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Transversal capabilities (documents, degraded inputs, contradictory data). Evidence citing BTP journeys is métier and not evaluated here.",
+   "openGaps": [
+    "end-to-end/degraded-document tests not run"
+   ],
+   "dependencies": [
+    "resources (video/ASR/vision BLOCKED)"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S21",
+   "v150": {
+    "section": "§21",
+    "title": "21. SÉCURITÉ TRANSVERSALE",
+    "quote": "- Moindre privilège.\n- Isolation.\n- Protection contre les injections.\nÉvaluer les mécanismes d'isolation réellement disponibles :\nLa simple séparation des contextes conversationnels ne constitue pas une isolation des fichiers ou des effets de bord.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§21].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3223,
+     3226,
+     3230,
+     3287,
+     3298
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 7 'security'; §4 gates",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "NONE",
+    "v12_4": "transversal"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/native-project-builder.ts",
+     "commit": "b9fedbce",
+     "what": "model code only in outer bwrap (PR #916)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json",
+     "commit": "b9fedbce",
+     "what": "parity 80/80, 54/54; 8 escapes blocked"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/research-governor.ts",
+     "commit": "e8382065",
+     "what": "egress grant enforcement"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/research-governor.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+     "commit": "f82f3b6f",
+     "what": "GO run under bwrap --unshare-net"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§21] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 adds 'context separation is not isolation' and an isolation evaluation requirement.",
+   "openGaps": [
+    "identity-bound inspector/provenance absent",
+    "production on next@16.2.9, no host firewall (lot plan G11, owner/root)"
+   ],
+   "dependencies": [
+    "owner/root: deploy + firewall"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S22",
+   "v150": {
+    "section": "§22",
+    "title": "22. ASSURANCE QUALITÉ INDÉPENDANTE",
+    "quote": "Une amélioration importante doit être :\n- Testée.\n- Raccordée.\n- Utilisée.\n- Mesurée.\n- Inspectée.\n- Reprenable.\n- Réversible selon le mécanisme approprié.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§22].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3371,
+     3373,
+     3374,
+     3375,
+     3377,
+     3378,
+     3381,
+     3382
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 7 'independent audit'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26.12 'Faire inspecter indépendamment'",
+    "v12_4": "transversal"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+     "commit": "2006fb70",
+     "what": "every PR: CI green on exact head + independent inspection ACCEPT"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+     "commit": "f31dbe99 (PR #943, merge 7bee0173)",
+     "what": "sha-bound inspection record"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§22] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Inspections are provider sub-agents; independence declared.",
+   "openGaps": [
+    "'utilisée/mesurée' rarely shown for merged improvements",
+    "owner-signed review (gate 10/12) absent"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S23",
+   "v150": {
+    "section": "§23",
+    "title": "23. ÉCHELLE L0 À L8",
+    "quote": "Ces niveaux décrivent des compétences démontrées. Ils ne constituent jamais des permissions.\nChaque niveau exige des scénarios réussis, reproductibles et évalués indépendamment.\nUne réussite fournisseur ne permet pas de déclarer un niveau natif.\nNe pas promouvoir automatiquement L1 ou un niveau supérieur.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§23].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3390,
+     3410,
+     3412,
+     3420
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3 'L0 only; L1+ owner-gated'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§23 (12 implementation states — orthogonal vocabulary)",
+    "v12_4": "E CM-V234-RESIDENT-DRIVER (IN_PROGRESS)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-resident-driver.ts",
+     "commit": "8b2b74f9",
+     "what": "resident driver L0"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-resident-driver.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-resident-driver-tick.ts",
+     "what": "tick caller"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§23] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "The L0–L8 competence ladder (levels are competences, never permissions) is unique to V15.0; V12.4/V14.4 only know L0/L1+.",
+   "openGaps": [
+    "no native level above L0 demonstrated with independent evaluation"
+   ],
+   "dependencies": [
+    "owner: L1+ promotion"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-S24",
+   "v150": {
+    "section": "§24",
+    "title": "24. TABLEAU DE MESURE",
+    "quote": "Établir des références initiales avant de fixer des objectifs chiffrés.\nComparer plusieurs générations de missions comparables.\nToute amélioration doit rester soumise à la qualité et à la sécurité.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§24].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3454,
+     3502,
+     3515
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 4",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§29 'Établir une base de référence avant les améliorations'",
+    "v12_4": "K CM-BENCHMARK-AUDIT (REVIEW)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_BASELINE.json",
+     "commit": "2c17d616",
+     "what": "continuity baseline before any improvement: 2 PASS / 11 PARTIAL / 2 FAIL"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V157_PERFORMANCE_BASELINE.json",
+     "commit": "e0c21660",
+     "what": "performance baseline"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§24] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Baselines exist for continuity and performance only.",
+   "openGaps": [
+    "no baseline for comprehension, reasoning, Radar discoveries→improvements, security incidents, automation, cost"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S25",
+   "v150": {
+    "section": "§25",
+    "title": "25. WORK_ITEM_CONTRACT",
+    "quote": "Chaque chantier doit disposer d'un contrat explicite.\n- ACCEPTANCE_CRITERIA.\n- INDEPENDENT_REVIEW.\n- ROLLBACK_PLAN.\n- CHECKPOINT_PLAN.\n- EVIDENCE_REQUIREMENTS.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§25].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3523,
+     3542,
+     3544,
+     3545,
+     3546,
+     3547
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§4 'Every work item needs a WORK_ITEM_CONTRACT authorized by a human'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§22 fields 2–3 (périmètre, autorisation et preuve)",
+    "v12_4": "transversal"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "ODG_AUTONOMOUS_WORK_PROTOCOL.json",
+     "what": "work_item_contract_schema"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+     "commit": "8b155eb6 (PR #919)",
+     "what": "16 A–P contracts: 14 PROPOSED, 2 AUTHORIZED_FOR_REVISION (G, H)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+     "commit": "f82f3b6f",
+     "what": "real GO run dispatched the contract-declared target of contract H"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§25] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Contracts exist for A–P and selected lots.",
+   "openGaps": [
+    "most V15.0 lots #880–#913 have no committed WIC file"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S26",
+   "v150": {
+    "section": "§26",
+    "title": "26. LES TREIZE PROGRAMMES INTÉGRÉS",
+    "quote": "Les treize programmes de la V17.0 sont conservés comme axes de construction, et non comme nouvelles architectures indépendantes.\nChaque programme doit être mappé sur les neuf primitives et les composants existants.\nLe Radar V2 alimente ces programmes à travers les mécanismes canoniques. Il ne devient pas un programme de gouvernance parallèle.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§26].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3602,
+     3656,
+     3658
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phases (V15_0_MASTER_DIRECTIVE.md §2 maps programmes A–M onto V14.4 phases)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "NONE",
+    "v12_4": "per-programme anchors in V15_0_MASTER_DIRECTIVE.md §2"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+     "what": "§2 table: programmes A–M → existing components → V14.4 phase / V12.4 anchor (hand-written)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§26] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Programmes recorded in the registration record (§2): A Intelligence & metacognition, B Cognitive memory, C World Radar/KI V2, D Native autonomy, E Orchestration, F Routing, G Self-healing, H Performance, I Living graph, J Multimodality, K Security, L Excellence, M Simplification. The V17.0 programme text itself is NOT in the repository ⇒ fidelity of this list to V17.0 NOT_MEASURED.",
+   "openGaps": [
+    "mapping onto the nine primitives (required by §26) not produced",
+    "table hand-written, not generated"
+   ],
+   "dependencies": [
+    "owner: provide V17.0 programme text"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-S27",
+   "v150": {
+    "section": "§27",
+    "title": "27. AUTOMATISATION DES TÂCHES INTERNES",
+    "quote": "ODG doit poursuivre les missions éligibles selon une boucle contrôlée :\nPour chaque automatisation, mesurer :\n- Temps manuel supprimé.\nUne automatisation n'est conservée que si elle apporte un bénéfice réel.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§27].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3717,
+     3855,
+     3857,
+     3866
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3 (E resident driver)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§30 progressive automation (7 steps)",
+    "v12_4": "E CM-V234-RESIDENT-DRIVER (IN_PROGRESS)"
+   },
+   "relation": "COMMON",
+   "implementationState": "CONNECTED",
+   "statePointers": [
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-schedule-tick.ts",
+     "what": "live tick (Truth Lock → eligible missions → dedup)"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/bin/odg-schedule-tick.test.ts",
+     "result": "present; not run by this reconciliation"
+    },
+    {
+     "kind": "document",
+     "path": "docs/odg/V14_4_LOT_PLAN_AND_RADAR_AUDIT.md",
+     "what": "§1/§2 G0: 2566 real attempts, 1183 STARTUP_REFUSED (mission-attempt-log)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§27] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Automation loop runs live but the read-only canary queue is exhausted (IDLE).",
+   "openGaps": [
+    "manual-time-removed and error-rate measures not done"
+   ],
+   "dependencies": [
+    "owner: production waves / unattended continuation"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S28",
+   "v150": {
+    "section": "§28",
+    "title": "28. PHASE 0 — VÉRITÉ ET PRÉSERVATION",
+    "quote": "Livrables :\n- État technique vérifié.\n- Matrice de filiation.\n- Matrice de correspondance.\n- Registre des divergences.\n- Checkpoint initial.\n- Liste des travaux à reprendre.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§28].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3888,
+     3890,
+     3891,
+     3892,
+     3893,
+     3894,
+     3895
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 0 'Truth & foundations'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§31 Phase 0 'Vérité et préservation'",
+    "v12_4": "C CM-V237-REPO-VPS-MAP (READY); D continuity (ACCEPTED)"
+   },
+   "relation": "COMMON",
+   "alsoRelations": [
+    "DUPLICATE of addendum §31 Phase 0 (same intent)"
+   ],
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/V15_CLOSURE_DOSSIER.md",
+     "what": "verified state"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_CHECKPOINT_1.json",
+     "commit": "6d679b86",
+     "what": "initial checkpoint"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_ADDENDUM_PHASE0_INVENTORY.json",
+     "commit": "2c17d616",
+     "what": "addendum Phase 0 inventory"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§28] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Three Phase-0s (V15.0, V14.4, addendum) overlap; deliverables mostly present.",
+   "openGaps": [
+    "no standalone 'Registre des divergences'"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S29",
+   "v150": {
+    "section": "§29",
+    "title": "29. PHASE 1 — ENREGISTREMENT V15.0 ET CARTOGRAPHIE",
+    "quote": "Livrables :\n- Roadmap V15.0 proposée et correctement référencée.\n- Matrice des exigences.\n- Cartographie technique.\n- Inventaire des capacités.\n- État réel des raccordements.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§29].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3912,
+     3914,
+     3915,
+     3916,
+     3917,
+     3918
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§3 correspondence register",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§31 Phase 2 'Boussole et suivi opérationnel'",
+    "v12_4": "all 24 missions (via correspondence)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json",
+     "commit": "5f7921b4",
+     "what": "generated by existing modules under WIC-V150-PHASE1-CORRESPONDENCE"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+     "commit": "8f8423d0",
+     "what": "requirements matrix §0–§55"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§29] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "This file (V171) refreshes the 'Matrice des exigences' deliverable against V14.4/addendum/V12.4.",
+   "openGaps": [
+    "nine-primitive cartography not produced",
+    "Boussole reconciliation owner-gated"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S30",
+   "v150": {
+    "section": "§30",
+    "title": "30. PHASE 2 — CONTINUITÉ ET RECOVERY",
+    "quote": "Priorité P0.\nLivrable : démonstration reproductible de reprise.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§30].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3922,
+     3937
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 0 / D continuity",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§31 Phase 1 'Continuité vérifiable'",
+    "v12_4": "D CM-V234-CONTINUATION (ACCEPTED)"
+   },
+   "relation": "DUPLICATE",
+   "alsoRelations": [
+    "DUPLICATE of V150-S16",
+    "CONTRADICTION on ordering with V14.4 (see V150-S16)"
+   ],
+   "implementationState": "VALIDATED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+     "commit": "257bc049",
+     "what": "reproducible resume demonstration, inspected (#890)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§30] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Phase 2 deliverable ('démonstration reproductible de reprise') is VALIDATED in scope; it restates §16.",
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S31",
+   "v150": {
+    "section": "§31",
+    "title": "31. PHASE 3 — ORCHESTRATION ET PILOTAGE",
+    "quote": "Livrable : missions sélectionnées et poursuivies par la chaîne canonique.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§31].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3956
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3 'Autonomy & orchestration'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§31 Phase 3 'Dépendances et valeur'",
+    "v12_4": "F CM-V237-ORCHESTRATION (REVIEW)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+     "commit": "f82f3b6f",
+     "what": "GO selected and dispatched H through the canonical chain (partial run, deadline stop)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§31] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "One mission pursued by the canonical chain once (H).",
+   "openGaps": [
+    "GO default deadline too short (CP10)",
+    "live queue exhausted"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S32",
+   "v150": {
+    "section": "§32",
+    "title": "32. PHASE 4 — DISCOVERY ET GRAPHE VIVANT",
+    "quote": "Livrable : capacités existantes identifiées, qualifiées et exploitées.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§32].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3971
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§3 register; lot plan G6",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "v14_4_lotPlan": "G6 224 NO_CONSUMER",
+    "addendum": "§20 categories",
+    "v12_4": "C CM-V236-CARTOGRAPHY (ACCEPTED)"
+   },
+   "relation": "COMMON",
+   "alsoRelations": [
+    "DUPLICATE of V150-S07"
+   ],
+   "implementationState": "CONNECTED",
+   "statePointers": [
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-component-judgment-run.ts",
+     "what": "judgment caller"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_199_RECONCILIATION.json",
+     "commit": "e7e59ec8",
+     "what": "12-class diagnosis"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§32] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "'exploitées' for ~5 of 198 items.",
+   "openGaps": [
+    "63 MISSING_CONSUMER + 33 MISSING_INTEGRATION remain",
+    "3 DUPLICATE / 3 OBSOLETE not retired"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S33",
+   "v150": {
+    "section": "§33",
+    "title": "33. PHASE 5 — CERVEAU ET RAISONNEMENT",
+    "quote": "Livrable : batterie cognitive mesurée.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§33].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     3988
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 2",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§31 Phase 4 'Auto-diagnostic'",
+    "v12_4": "B CM-V235-OBS-CURRENCY (ACCEPTED)"
+   },
+   "relation": "IMPROVEMENT",
+   "alsoRelations": [
+    "DUPLICATE of V150-S06 (phase deliverable)"
+   ],
+   "implementationState": "NOT_MEASURED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+     "what": "§33 TO_BUILD: measured cognitive battery does not exist"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "TO_BUILD",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§33] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Deliverable 'batterie cognitive mesurée' does not exist; precursors tested (odg-hybrid-reasoning).",
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S34",
+   "v150": {
+    "section": "§34",
+    "title": "34. PHASE 6 — MÉMOIRE ET APPRENTISSAGE",
+    "quote": "Livrable : amélioration mesurée grâce à la mémoire.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§34].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     4005
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 2",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§29 metrics",
+    "v12_4": "B CM-V235-OBS-CURRENCY (ACCEPTED)"
+   },
+   "relation": "IMPROVEMENT",
+   "alsoRelations": [
+    "DUPLICATE of V150-S12 (phase deliverable)"
+   ],
+   "implementationState": "NOT_MEASURED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+     "what": "§34 TO_BUILD: no with/without-memory measurement"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "TO_BUILD",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§34] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Improvement attributable to memory never measured.",
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S35",
+   "v150": {
+    "section": "§35",
+    "title": "35. PHASE 7 — AUTONOMIE NATIVE",
+    "quote": "Livrable : missions techniques réussies nativement.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§35].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     4022
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§31 Phase 8 per V169 mapping (A8 Automatisation)",
+    "v12_4": "E CM-V234-RESIDENT-DRIVER (IN_PROGRESS)"
+   },
+   "relation": "COMMON",
+   "alsoRelations": [
+    "DUPLICATE of V150-S10 (phase deliverable)"
+   ],
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json",
+     "commit": "1cd169d8",
+     "what": "local-model native builds on 4 SYNTHETIC missions (6/8) — a test run, not a real-mission use"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+     "commit": "2006fb70",
+     "what": "nativeBuiltCodeMerged 0"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§35] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "No native success on a real repository task.",
+   "dependencies": [
+    "owner: real-repo native apply write-set"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S36",
+   "v150": {
+    "section": "§36",
+    "title": "36. PHASE 8 — AUTO-AMÉLIORATION RÉCURSIVE",
+    "quote": "Livrable : plusieurs cycles d'amélioration démontrés.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§36].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     4036
+    ],
+    "ownerPasteFile": "line7971.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 2/3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26 loop; §31 Phase 6 'Auto-amélioration' (A6)",
+    "v12_4": "I CM-RADAR-GATE-CHAIN (READY)"
+   },
+   "relation": "COMMON",
+   "alsoRelations": [
+    "DUPLICATE of V150-S11 (phase deliverable)"
+   ],
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+     "commit": "4cf3379a",
+     "what": "cycle G ⇒ PARTIAL"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+     "commit": "94c029eb",
+     "what": "cycle H ⇒ FAIL (NOT_ADOPTED)"
+    }
+   ],
+   "missionResult": "NOT met (0 cycles with adopted measured gain)",
+   "priorAssessmentV160": {
+    "status": "TO_BUILD",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§36] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Two pre-registered improvement cycles ran (G PARTIAL, H FAIL); 'plusieurs cycles démontrés' with a measured gain: 0.",
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S37",
+   "v150": {
+    "section": "§37",
+    "title": "5. PHASE 9 — §37 — AUTO-GUÉRISON",
+    "quote": "Construire une capacité interne de détection, diagnostic, réparation contrôlée, vérification et prévention des anomalies.\nUne capacité d'auto-guérison démontrée par des scénarios reproductibles, avec diagnostic causal, réparation réversible, validation indépendante, prévention et preuves.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§37].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     316,
+     477
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 4",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26",
+    "v12_4": "D continuity (ACCEPTED)"
+   },
+   "relation": "DUPLICATE",
+   "alsoRelations": [
+    "DUPLICATE of V150-S17"
+   ],
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+     "commit": "9a12738d",
+     "what": "8 reproducible synthetic cases"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§37] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Phase 9 restates §17.",
+   "openGaps": [
+    "missing scenarios: incoherent contract, missing dependency, invalid proof, corrupted artefact, performance degradation, agent conflict"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S38",
+   "v150": {
+    "section": "§38",
+    "title": "6. PHASE 10 — §38 — RADAR ET FRONTIER LAB",
+    "quote": "**Rappel impératif : le Radar existant ne doit subir aucune modification dans cette campagne.**\nDes connaissances qualifiées, traçables, comparées et transformées en améliorations internes réellement utilisées, avec mesures avant/après.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§38].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     487,
+     628
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 1; §5 Step 1 EXTENDS odg-radar-gate-chain",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "v14_4_lotPlan": "lot B 'grant additions' for corroboration",
+    "addendum": "§27 'Le Radar existant doit alimenter cette boucle'",
+    "v12_4": "I CM-RADAR-GATE-CHAIN (READY)"
+   },
+   "relation": "CONTRADICTION",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V160_PRACTICES_KNOWLEDGE.json",
+     "commit": "1eb6b084",
+     "what": "25 quotes, 22 SUPPORTED, 0 facts"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+     "commit": "4cf3379a",
+     "what": "knowledge item used in experiment G ⇒ PARTIAL"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§38] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 §38: 'le Radar existant ne doit subir aucune modification dans cette campagne'. V14.4 phase 1 / V12.4 I extends the Radar gate chain and lot B proposes grant additions; #911 changed odg-knowledge-intelligence.ts (REVIEW flag in V150_TRACEABILITY_MATRIX §13). Scope of 'Radar' is undefined.",
+   "openGaps": [
+    "knowledge transformed into a used internal improvement with before/after gain: not shown"
+   ],
+   "dependencies": [
+    "owner: which rule prevails and what 'Radar' covers"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S39",
+   "v150": {
+    "section": "§39",
+    "title": "7. PHASE 11 — §39 — PERFORMANCE ET ROUTAGE",
+    "quote": "Un gain de vitesse n'est accepté que si :\n- La qualité reste au moins équivalente.\n- Le coût total est mesuré.\nUn routage mesuré et une amélioration réelle du temps par résultat accepté.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§39].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     745,
+     747,
+     751,
+     755
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 4",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28",
+    "v12_4": "K CM-BENCHMARK-AUDIT (REVIEW)"
+   },
+   "relation": "IMPROVEMENT",
+   "alsoRelations": [
+    "DUPLICATE of V150-S18 (phase)"
+   ],
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-execution-routing.ts",
+     "commit": "653f0adb",
+     "what": "routing"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-execution-routing.test.ts",
+     "result": "present; not run by this reconciliation"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json",
+     "commit": "1cd169d8",
+     "what": "measured registry used by execution policy; pass rate unchanged 6/8→6/8"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§39] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Gain-acceptance conditions (quality ≥, total cost measured) unique in wording to V15.0.",
+   "openGaps": [
+    "total cost not measured"
+   ],
+   "dependencies": [
+    "owner: external model providers / spend ceiling"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S40",
+   "v150": {
+    "section": "§40",
+    "title": "8. PHASE 12 — §40 — MULTIMODALITÉ",
+    "quote": "Chaque capacité multimodale doit être raccordée à un consommateur réel et testée de bout en bout.\nNe pas créer un consommateur artificiel uniquement pour déclarer un raccordement.\nDes capacités multimodales réellement utilisables, avec contrats communs, preuves et résultats reproductibles.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§40].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     843,
+     845,
+     849
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 5",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "NONE",
+    "v12_4": "P CM-MULTIMODAL-VIDEO (BLOCKED)"
+   },
+   "relation": "COMMON",
+   "alsoRelations": [
+    "DUPLICATE of V150-S20 (phase)"
+   ],
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-multimodal-ingest.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "TO_BUILD",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§40] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "'Ne pas créer un consommateur artificiel uniquement pour déclarer un raccordement' is a V15.0-specific guard.",
+   "openGaps": [
+    "phase 12 lot NOT_STARTED: no common contract, no evaluation corpus, no real consumer"
+   ],
+   "dependencies": [
+    "resources BLOCKED"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S41",
+   "v150": {
+    "section": "§41",
+    "title": "9. PHASE 13 — §41 — ORCHESTRATION MASSIVE ET MULTI-AGENTS",
+    "quote": "Comparer plusieurs niveaux de concurrence sur des missions équivalentes.\nNe pas augmenter la concurrence si le gain est nul ou négatif.\nUne orchestration adaptative, isolée, mesurée et capable de reprendre les missions sans perte de travail.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§41].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     963,
+     978,
+     993
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28 'gain réel du parallélisme'",
+    "v12_4": "F CM-V237-ORCHESTRATION (REVIEW); G CM-V237-AZ-SCENARIO (REVIEW)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-concurrency-policy.ts",
+     "commit": "e0c21660",
+     "what": "adaptive concurrency"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-concurrency-policy.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-concurrency-policy-run.ts",
+     "what": "bin caller"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_L_CONCURRENCY.json",
+     "commit": "02b298ec",
+     "what": "levels 1/2/4/8 → 6.58×"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§41] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Massive multi-agent orchestration comparisons are unique to V15.0 phase 13.",
+   "openGaps": [
+    "cost, CPU/RAM, conflicts, coordination time not measured across levels",
+    "agent replacement not demonstrated"
+   ],
+   "dependencies": [
+    "owner: production waves (systemd)"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S42",
+   "v150": {
+    "section": "§42",
+    "title": "10. PHASE 14 — §42 — AUTOMATISATION ET CONTINUITÉ",
+    "quote": "Réduire les interventions manuelles répétitives et les interruptions inutiles, sans affaiblir les contrôles.\nDes automatisations réversibles, idempotentes, vérifiées, avec continuité et réduction mesurée des interventions manuelles.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§42].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1001,
+     1103
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§30",
+    "v12_4": "E CM-V234-RESIDENT-DRIVER (IN_PROGRESS)"
+   },
+   "relation": "COMMON",
+   "alsoRelations": [
+    "DUPLICATE of V150-S27 (phase)"
+   ],
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/idempotency-guard.ts",
+     "commit": "8c1c7136",
+     "what": "idempotency"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/idempotency-guard.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "IN_PROGRESS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§42] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "No automation with a measured reduction of manual interventions.",
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S43",
+   "v150": {
+    "section": "§43",
+    "title": "11. PHASE 15 — §43 — SÉCURITÉ ET SIMPLIFICATION",
+    "quote": "Renforcer la sécurité, réduire les duplications et améliorer la cohérence générale sans casser les mécanismes validés.\n- D'une preuve de non-régression.\nUne architecture plus simple, plus cohérente et mieux protégée, sans perte de capacités validées.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§43].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1111,
+     1190,
+     1206
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 7 (security only)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28 'supprimer les répétitions'",
+    "v12_4": "transversal"
+   },
+   "relation": "GAP",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_199_RECONCILIATION.json",
+     "commit": "e7e59ec8",
+     "what": "3 DUPLICATE / 3 OBSOLETE identified (diagnosis only; no retirement mechanism run)"
+    },
+    {
+     "kind": "document",
+     "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+     "what": "§43: security fixes with fail-before/pass-after (#896, #901, #907, #913)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§43] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Simplification as a phase (retire/merge with non-regression proof) is unique to V15.0.",
+   "openGaps": [
+    "no module retired/merged; no measured complexity reduction"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-S44",
+   "v150": {
+    "section": "§44",
+    "title": "12. PHASE 16 — §44 — VALIDATION GLOBALE ET ÉVOLUTION CONTINUE",
+    "quote": "Vérifier que les phases précédentes fonctionnent ensemble et que les améliorations sont réellement cumulatives.\nComparer les résultats à la baseline initiale.\nUn système intégré, mesuré et capable de poursuivre des cycles d'amélioration avec des preuves indépendantes.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§44].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1214,
+     1249,
+     1284
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 7 'Global validation' (NOT_STARTED)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§31 Phase 9 'Validation globale'",
+    "v12_4": "none (new exit criteria)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V155_TRANSVERSAL_VALIDATION.json",
+     "commit": "a203b5a8",
+     "what": "12 combined scenarios (V15.5 lettering) 8 REAL / 4 PARTIAL"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§44] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Cumulative comparison against the initial baseline not produced.",
+   "openGaps": [
+    "12.3 cumulative evaluation vs baseline absent"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S45",
+   "v150": {
+    "section": "§45",
+    "title": "13. §45 — BATTERIE DE DÉMONSTRATION DE L'AUTONOMIE",
+    "quote": "Construire et exécuter les seize scénarios suivants dans les environnements autorisés.\nChaque scénario doit posséder un contrat, un état initial, un résultat attendu, des tests, des mesures, des preuves et une inspection indépendante.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§45].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1290,
+     1292
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "NONE in V14_4_ROADMAP.md (V14.4 master §1–§19 NOT in repo ⇒ comparison NOT_MEASURED)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§29 15 baseline scenarios (partial overlap: B/M↔#1–2, I/O↔#9–10, P↔#11, G/K↔#13)",
+    "v12_4": "G CM-V237-AZ-SCENARIO (REVIEW) partially"
+   },
+   "relation": "GAP",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+     "commit": "8b155eb6",
+     "what": "contract + initial state for all 16 scenarios"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+     "commit": "4cf3379a",
+     "what": "real run record: G experiment graded PARTIAL"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+     "commit": "f82f3b6f",
+     "what": "real run record: H dispatched by GO"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§45] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "The A–P battery is unique to V15.0; per-scenario rows V150-AP-A…P below.",
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-S46",
+   "v150": {
+    "section": "§46",
+    "title": "14. §46 — CHECKPOINTS ET CONTINUITÉ",
+    "quote": "Chaque lot doit conserver :\n- HEAD initial.\n- HEAD final.\n- Contrats.\n- Inspection indépendante.\n- Prochaine action.\nNe pas recommencer les travaux validés.\nÀ la fin de chaque lot, enregistrer l'état permettant de poursuivre sans perte.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§46].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1362,
+     1365,
+     1366,
+     1370,
+     1374,
+     1381,
+     1408,
+     1412
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "lot plan (checkpoint 2026-11-22)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§22 (15 fields, append-only); §24 'Préserver des checkpoints cohérents'",
+    "v12_4": "D CM-V237-PROGRAM-CONTINUITY (ACCEPTED)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+     "commit": "2006fb70",
+     "what": "CP10 (CP1–CP10 chain)"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-strategic-register.ts",
+     "commit": "1f021c35",
+     "what": "LATEST_CHECKPOINT discovered by number (LCP-1)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+     "commit": "1f021c35",
+     "what": "§29 S2 'retrouver le dernier checkpoint' PASS"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§46] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "V15.0 per-lot checkpoint fields and addendum §22 fields overlap; addendum is more detailed (15 fields + 7 proof attributes).",
+   "openGaps": [
+    "'Contrats' field absent from checkpoints",
+    "four checkpoint notions not reconciled (V169 inventory overlaps)"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S47",
+   "v150": {
+    "section": "§47",
+    "title": "15. §47 — LIMITES ET PERMISSIONS",
+    "quote": "L'autorisation du propriétaire décrite au §2 s'applique aux travaux internes légaux, réversibles et confinés.\nL'autonomie technique n'accorde jamais de permission supplémentaire.\nLa préparation d'une release ne vaut pas autorisation de déploiement.\nLe Radar reste inchangé.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§47].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1418,
+     1422,
+     1426,
+     1428
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§4 'Every work item needs a WORK_ITEM_CONTRACT authorized by a human'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§30 'Aucune autorisation ne peut être déduite d'une priorité ou d'un résultat Radar'",
+    "v12_4": "transversal"
+   },
+   "relation": "CONTRADICTION",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/V16_PERMISSION_INVENTORY.md",
+     "what": "'Not unlocked on purpose'"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/V165_OWNER_AUTHORIZATION.json",
+     "commit": "b144c977 (merged via PR #932, adb6b017)",
+     "what": "scoped owner authorization (quotes only)"
+    },
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-authorization-scope.ts",
+     "commit": "587650b0",
+     "what": "scoped authorization derivation"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+     "commit": "94c029eb",
+     "what": "real run record: scoped authorization applied to mission H"
+    },
+    {
+     "kind": "document",
+     "path": "docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json",
+     "what": "owner V171 (1911e7a1, merged 7f939535): internal work on missions selected by ODG, J included; provider spend / new permissions NOT granted"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§47] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Update V171: the owner portfolio authorization now covers internal work on the open missions ODG selects (J included); a WORK_ITEM_CONTRACT per mission is still required and provider spend stays excluded. The residual tension is textual only. Original analysis: V15.0 §47 refers to an owner authorization 'décrite au §2' covering internal legal, reversible, confined work (a blanket grant); V14.4 §4 and the work protocol require a human authorization per work item. Practice since V165 uses scoped per-mission authorizations. The §2 text granting it is not recovered in quotes.",
+   "dependencies": [
+    "owner: confirm blanket vs scoped authorization model"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S48",
+   "v150": {
+    "section": "§48",
+    "title": "16. §48 — EXÉCUTION IMMÉDIATE ET CONTINUE",
+    "quote": "Ne pas relancer la campagne précédente.\nCompléter son travail à partir de son état réel.\nExécuter les scénarios A à P, progressivement, selon leurs dépendances.\nNe pas attendre une nouvelle directive pour les opérations internes déjà autorisées.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§48].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1436,
+     1438,
+     1510,
+     1522
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§4",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§30.7",
+    "v12_4": "transversal"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-go-cycle.ts",
+     "commit": "52da09b5",
+     "what": "GO halts with owner request when nothing is authorized"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-go-cycle.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+     "commit": "1f021c35",
+     "what": "runner record over committed state: S9 GO-ACT-1 PASS"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "IN_PROGRESS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§48] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "'Ne pas attendre une nouvelle directive pour les opérations internes déjà autorisées' is compatible with per-item authorization when contracts are already AUTHORIZED.",
+   "openGaps": [
+    "Actions 9 (multimodality), 11 (automation), 15 (release prep) not started"
+   ],
+   "dependencies": [
+    "V150-S47"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S49",
+   "v150": {
+    "section": "§49",
+    "title": "17. §49 — RAPPORTS ET TRANSPARENCE",
+    "quote": "Le rapport exécutif doit rester concis et indiquer :\nNe jamais masquer un résultat négatif.\nNe jamais inventer une preuve.\nNe jamais présenter une estimation comme un fait observé.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§49].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1528,
+     1543,
+     1545,
+     1547
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "lot plan §4 'Limits'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§22 proof attributes 'ce qu'elle n'établit pas … ses limites'",
+    "v12_4": "transversal"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+     "commit": "1f021c35",
+     "what": "S1 regression PARTIAL→FAIL reported, rule not edited"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§49] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Negative results are recorded (G PARTIAL, H FAIL, S1 regression).",
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S50",
+   "v150": {
+    "section": "§50",
+    "title": "18. §50 — CRITÈRES FINAUX DE RÉUSSITE",
+    "quote": "La réussite se mesure sur la capacité d'ODG à :\n- Construire nativement.\n- Augmenter le débit de résultats acceptés.\n- Réduire le temps et le coût par résultat vérifié.\nL'objectif d'une amélioration de dix fois est une ambition à mesurer, jamais une affirmation.\nAucune perfection ne doit être promise.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§50].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1553,
+     1563,
+     1576,
+     1577,
+     1579,
+     1581
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "NONE in V14_4_ROADMAP.md (V14.4 master §1–§19 NOT in repo ⇒ comparison NOT_MEASURED)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "NONE",
+    "v12_4": "NONE"
+   },
+   "relation": "GAP",
+   "implementationState": "NOT_MEASURED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+     "commit": "2006fb70",
+     "what": "native target ~80% NOT met; nativeBuiltCodeMerged 0"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§50] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Final success criteria (build natively, raise accepted throughput, cut time/cost per verified result; ×10 is an ambition to measure) are unique to V15.0; throughput and cost per result NOT_MEASURED.",
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-S51",
+   "v150": {
+    "section": "§51",
+    "title": "19. §51 — RÈGLES D'OR PERMANENTES",
+    "quote": "1. V15.0 reste la directive unique de cette campagne.\n2. V12.4 reste la Boussole canonique jusqu'à succession formelle.\n7. Aucune permission auto-attribuée.\n16. Chaque chantier possède un contrat.\n17. Chaque lot possède un checkpoint.\n54. Aucun déploiement réel n'est autorisé.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§51].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1612,
+     1613,
+     1618,
+     1627,
+     1628,
+     1665
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§1 invariants; header 'Boussole V12.4 is fully preserved'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§30; header 'Référence canonique : Boussole V12.4'",
+    "v12_4": "canonical status of V12.4"
+   },
+   "relation": "CONTRADICTION",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+     "what": "header: 'V12.4 plus V14.4 remain in force until the owner formally adopts a succession'"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§51] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Rule 1 'V15.0 reste la directive unique de cette campagne' conflicts with V14.4 being ADOPTED and the addendum RECORDED as its extension; rule 2 (V12.4 canonical) is COMMON. Only rules 1, 2, 7, 16, 17, 54 are quoted in the recovered excerpt; the full list (≥54 rules) is NOT_MEASURED.",
+   "dependencies": [
+    "owner: V15.0 status vs V14.4"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S52",
+   "v150": {
+    "section": "§52",
+    "title": "20. §52 — RÉFÉRENCES MONDIALES ET VEILLE TECHNOLOGIQUE",
+    "quote": "Ne pas annoncer qu'ODG est meilleur qu'une référence mondiale sans benchmark comparable et reproductible.\nUn registre de veille technique avec sources, versions, comparaisons, expériences, décisions et résultats.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§52].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1799,
+     1803
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "NONE in V14_4_ROADMAP.md (V14.4 master §1–§19 NOT in repo ⇒ comparison NOT_MEASURED)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§27 'identifier les meilleures références mondiales'; §29 'benchmarks externes … ne remplacent pas'",
+    "v12_4": "K CM-BENCHMARK-AUDIT (REVIEW)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/evidence/V158_RADAR_ADMISSION_REFERENCES.json",
+     "what": "provider-written references list (27 references, title-verified, added b056a4f7); not a run record"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "PARTIALLY_VALIDATED",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§52] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "A technology-watch register (sources, versions, comparisons, experiments, decisions, results) is unique in form to V15.0.",
+   "openGaps": [
+    "no local benchmark against references"
+   ],
+   "dependencies": [
+    "owner: Radar host widening"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S53",
+   "v150": {
+    "section": "§53",
+    "title": "21. §53 — ACCÉLÉRATION GLOBALE",
+    "quote": "Mesurer les étapes qui déterminent réellement la durée des missions :\nUne réduction mesurée du temps par résultat accepté, sans baisse de qualité.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§53].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1811,
+     1883
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 4",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28 'temps total … coût par résultat vérifié'",
+    "v12_4": "K CM-BENCHMARK-AUDIT (REVIEW)"
+   },
+   "relation": "DUPLICATE",
+   "alsoRelations": [
+    "DUPLICATE of V150-S18",
+    "COMMON with addendum §28"
+   ],
+   "implementationState": "NOT_MEASURED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+     "what": "§53: deliverable 'réduction mesurée du temps par résultat accepté' not measured"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "IN_PROGRESS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§53] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "Restates §18 and duplicates addendum §28.",
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S54",
+   "v150": {
+    "section": "§54",
+    "title": "22. §54 — PRÉPARATION DE RELEASE SANS DÉPLOIEMENT",
+    "quote": "Préparer un dossier technique complet.\n**Aucun déploiement ne doit être exécuté.**",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§54].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1889,
+     1969
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 8 'Release readiness: release dossier + rollback + owner authorization'",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§30 'aucune action externe sans autorisation'",
+    "v12_4": "none (existing release pipeline)"
+   },
+   "relation": "COMMON",
+   "implementationState": "DOCUMENTED",
+   "statePointers": [
+    {
+     "kind": "document",
+     "path": "scripts/odg-release.sh",
+     "what": "existing release pipeline (not run for V15.0)"
+    },
+    {
+     "kind": "document",
+     "path": "docs/odg/V93_RELEASE_RUNBOOK.json",
+     "what": "pre-V15.0 runbook (9d709f94)"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "TO_BUILD",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§54] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "No V15.0 release dossier; deployment forbidden/owner-gated.",
+   "openGaps": [
+    "release dossier (version, changes, migration, backup/recovery, checklist) absent"
+   ],
+   "dependencies": [
+    "owner/root: deploy"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-S55",
+   "v150": {
+    "section": "§55",
+    "title": "23. §55 — BOUCLE FONDAMENTALE D'ODG",
+    "quote": "OBSERVER → COMPRENDRE → CONTEXTUALISER → RECHERCHER → RAISONNER → COMPARER → DÉCIDER → PLANIFIER → CONTRACTUALISER → AUTORISER → DÉCOMPOSER → ALLOUER → PARALLÉLISER → CONSTRUIRE → RACCORDER → AUTOMATISER → TESTER → INSPECTER → MESURER → INTÉGRER → PRÉSERVER → APPRENDRE → REPRENDRE → S'AMÉLIORER → POURSUIVRE.\nNe pas rester dans la planification.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#sections[id=§55].acceptance.quote (copied exactly; an EXCERPT of acceptance lines, not the full section; owner paste recovered from a session transcript, UNVERIFIED against a signed source)",
+    "quoteLinesInOwnerPaste": [
+     1977,
+     1979
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "NONE in V14_4_ROADMAP.md (V14.4 master §1–§19 NOT in repo ⇒ comparison NOT_MEASURED)",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28 'COMPRENDRE → CHOISIR LE CHEMIN LE PLUS COURT → EXÉCUTER → VÉRIFIER → APPRENDRE → CONTINUER'; §26 loop",
+    "v12_4": "transversal"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+     "commit": "f82f3b6f",
+     "what": "GO cycle steps observed natively (SELECT … EXECUTE); BUILD/WIRE steps provider-driven"
+    }
+   ],
+   "priorAssessmentV160": {
+    "status": "IN_PROGRESS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§55] (assessment at 4f4fceb2, 2026-11-23)"
+   },
+   "note": "The 23-verb fundamental loop is a superset of the addendum §28 work rule.",
+   "openGaps": [
+    "RESEARCH→…→BUILD→WIRE→MEASURE driven by the provider, not ODG"
+   ],
+   "uniqueToV150": false
+  },
+  {
+   "id": "V150-AP-A",
+   "v150": {
+    "section": "§45 scenario A",
+    "title": "A — Ingénierie native",
+    "quote": "ODG découvre un défaut, identifie sa cause, conçoit un correctif, crée les tests, les exécute et fait inspecter le résultat.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=A].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1294,
+     1296
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26 steps 1–12",
+    "v12_4": "E CM-V234-RESIDENT-DRIVER (IN_PROGRESS)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-native-engineering-loop.ts",
+     "commit": "e319c5cc",
+     "what": "OBSERVE→DIAGNOSE→… deterministic"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-native-engineering-loop.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json",
+     "commit": "1cd169d8",
+     "what": "synthetic missions"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=A] (4f4fceb2)"
+   },
+   "note": "Synthetic missions only.",
+   "openGaps": [
+    "no native fix on a real repo defect"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-B",
+   "v150": {
+    "section": "§45 scenario B",
+    "title": "B — Continuité",
+    "quote": "ODG commence une mission, produit des modifications, subit une interruption simulée, restaure son état et reprend uniquement les opérations manquantes.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=B].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1298,
+     1300
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 0 / D",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§29 #1–#2; §24 'À la reprise'",
+    "v12_4": "D CM-V234-CONTINUATION (ACCEPTED)"
+   },
+   "relation": "COMMON",
+   "implementationState": "VALIDATED",
+   "statePointers": [
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-native-continuity-run.ts",
+     "what": "two-process resume"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+     "commit": "257bc049",
+     "what": "only missing ops re-run"
+    }
+   ],
+   "missionResult": "PASS within scope (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PASS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=B] (4f4fceb2)"
+   },
+   "note": "Process-level resume validated; GO-level resume (addendum §29 S1) FAIL after Phase 1 under its pre-registered rule.",
+   "openGaps": [
+    "mission-level resume of an interrupted GO cycle: S1 FAIL (V169_CONTINUITY_PHASE1_AFTER)"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-C",
+   "v150": {
+    "section": "§45 scenario C",
+    "title": "C — Capacité dormante",
+    "quote": "ODG découvre un module existant non utilisé, identifie ses consommateurs, détermine s'il doit être raccordé, réalise le raccordement autorisé et démontre l'utilisation réelle.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=C].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1302,
+     1304
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§3 census status",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§20 'existe mais n'est pas raccordé'",
+    "v12_4": "C CM-V236-CARTOGRAPHY (ACCEPTED)"
+   },
+   "relation": "COMMON",
+   "implementationState": "CONNECTED",
+   "statePointers": [
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-component-judgment-run.ts",
+     "what": "judgment caller"
+    },
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-cto-dashboard-run.ts",
+     "what": "dashboard runner wired (#882)"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/bin/odg-cto-dashboard-run.test.ts",
+     "result": "present; not run by this reconciliation"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=C] (4f4fceb2)"
+   },
+   "note": "Discovery and wiring shown for few components; real use demonstrated only on a métier journey (not evaluated).",
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-D",
+   "v150": {
+    "section": "§45 scenario D",
+    "title": "D — Recherche et construction",
+    "quote": "ODG recherche une méthode, compare les solutions, construit la meilleure solution adaptée à ses contraintes et mesure le gain.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=D].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1306,
+     1308
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 1",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§27 'proposer une expérience adaptée à ODG'",
+    "v12_4": "I CM-RADAR-GATE-CHAIN (READY)"
+   },
+   "relation": "COMMON",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "test",
+     "path": "runtime/core/frontier-lab.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+     "commit": "55729589",
+     "what": "V164 scenario D (different lettering) FAIL"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=D] (4f4fceb2)"
+   },
+   "note": "Research grounded the Radar admission design (provider-initiated); gain not measured.",
+   "openGaps": [
+    "no compared build with measured gain"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-E",
+   "v150": {
+    "section": "§45 scenario E",
+    "title": "E — Auto-guérison",
+    "quote": "ODG détecte une anomalie, identifie sa cause racine, répare en sandbox, vérifie et conserve les preuves.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=E].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1310,
+     1312
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 4",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26",
+    "v12_4": "D continuity (ACCEPTED)"
+   },
+   "relation": "IMPROVEMENT",
+   "alsoRelations": [
+    "DUPLICATE of V150-S17/S37"
+   ],
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+     "commit": "9a12738d",
+     "what": "8/8 synthetic"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/repair-workflow.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=E] (4f4fceb2)"
+   },
+   "note": "See V150-S17.",
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-F",
+   "v150": {
+    "section": "§45 scenario F",
+    "title": "F — Multi-agents",
+    "quote": "ODG décompose une mission, affecte des fournisseurs, réceptionne leurs résultats, détecte les incompatibilités et valide l'intégration.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=F].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1314,
+     1316
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28 parallelism",
+    "v12_4": "F CM-V237-ORCHESTRATION (REVIEW)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-v161-scenario-f-run.ts",
+     "what": "runner"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V161_SCENARIO_F.json",
+     "commit": "957945c6 (PR #924)",
+     "what": "3 REAL trials; controlled incompatibility detected"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=F] (4f4fceb2)"
+   },
+   "note": "Real-repo assign refused fail-closed (UNKNOWN write-sets).",
+   "openGaps": [
+    "0 natural incompatibilities observed"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-G",
+   "v150": {
+    "section": "§45 scenario G",
+    "title": "G — Mémoire",
+    "quote": "ODG retrouve une connaissance, vérifie sa fraîcheur, sa provenance et ses conditions, puis démontre son utilité.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=G].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1318,
+     1320
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 1/2",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§29 #13 'Retrouver une découverte Radar et évaluer sa fiabilité'",
+    "v12_4": "I CM-RADAR-GATE-CHAIN (READY); B (ACCEPTED)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "liveCaller",
+     "path": "runtime/bin/odg-v166-scenario-g-experiment.ts",
+     "what": "experiment runner"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+     "commit": "4cf3379a",
+     "what": "C1 MET, C2 PARTIAL"
+    }
+   ],
+   "missionResult": "CLOSED_PARTIAL",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=G] (4f4fceb2)"
+   },
+   "note": "Δ0 +0.09 vs no knowledge; Δ1 −0.185 vs locally calibrated threshold.",
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-H",
+   "v150": {
+    "section": "§45 scenario H",
+    "title": "H — Amélioration récursive",
+    "quote": "ODG améliore un mécanisme de planification ou de vérification et démontre sur des tests indépendants que la nouvelle version est meilleure.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=H].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1322,
+     1324
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 2",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26 step 13 'Mesurer le gain avant/après'",
+    "v12_4": "none"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-verification-risk-calibration.ts",
+     "commit": "144f143c (PR #944)",
+     "what": "advisory calibration"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-verification-risk-calibration.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+     "commit": "f82f3b6f",
+     "what": "native GO dispatch"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+     "commit": "94c029eb",
+     "what": "C2 FAIL"
+    }
+   ],
+   "missionResult": "CLOSED_FAIL (NOT_ADOPTED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=H] (4f4fceb2)"
+   },
+   "note": "AUC H1 0.578 < B0 0.686 < B1 0.817.",
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-I",
+   "v150": {
+    "section": "§45 scenario I",
+    "title": "I — Révision stratégique",
+    "quote": "ODG compare plusieurs plans, détecte une nouvelle dépendance et réorganise le portefeuille sans perdre les travaux validés.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=I].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1326,
+     1328
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§25; §29 #10",
+    "v12_4": "F CM-V237-ORCHESTRATION (REVIEW)"
+   },
+   "relation": "COMMON",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/continuous-planner.ts",
+     "commit": "60e42fe3",
+     "what": "plan repair"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/continuous-planner.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=I] (4f4fceb2)"
+   },
+   "note": "Not to be confused with V164 scenario I (PASS, different lettering).",
+   "openGaps": [
+    "§29 S10 'dépendance bloquant plusieurs missions' PARTIAL"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-J",
+   "v150": {
+    "section": "§45 scenario J",
+    "title": "J — Gestion d'échec",
+    "quote": "ODG détecte une stratégie inefficace, arrête les tentatives répétitives, construit une alternative et mesure le résultat.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=J].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1330,
+     1332
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§26; §28 'arrêter rapidement une piste sans valeur'",
+    "v12_4": "none"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V161_SCENARIO_J.json",
+     "commit": "ba66d53f (PR #925)",
+     "what": "alternatives executed; 0/8 vs 0/8"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+     "commit": "1f021c35",
+     "what": "2 canonical defects fixed by #940"
+    }
+   ],
+   "missionResult": "PARTIAL (selected next by the register after Phase 1; internal work authorized by owner V171 portfolio, contract still required)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=J] (4f4fceb2)"
+   },
+   "note": "Trigger signal criterion not met as worded.",
+   "dependencies": [
+    "WORK_ITEM_CONTRACT for J under docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json; provider spend excluded"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-K",
+   "v150": {
+    "section": "§45 scenario K",
+    "title": "K — Knowledge Intelligence",
+    "quote": "ODG découvre une connaissance, identifie ses sources, structure ses affirmations, distingue les corroborations indépendantes, qualifie la connaissance, identifie une lacune interne et mesure le résultat de son utilisation.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=K].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1334,
+     1336
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 1",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§27",
+    "v12_4": "I CM-RADAR-GATE-CHAIN (READY)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V158_RADAR_LIVE_RUN.json",
+     "commit": "410208c0",
+     "what": "live"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V160_PRACTICES_KNOWLEDGE.json",
+     "commit": "1eb6b084",
+     "what": "22 SUPPORTED, 0 facts"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=K] (4f4fceb2)"
+   },
+   "note": "Independent corroboration absent.",
+   "openGaps": [
+    "0 CORROBORATED"
+   ],
+   "dependencies": [
+    "owner: 8 deferred Radar sources + per-host pacing"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-L",
+   "v150": {
+    "section": "§45 scenario L",
+    "title": "L — Concurrence adaptative",
+    "quote": "ODG compare plusieurs niveaux de concurrence et mesure les ressources, le temps, les coûts, les conflits et les résultats acceptés.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=L].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1338,
+     1340
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 4",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28",
+    "v12_4": "K CM-BENCHMARK-AUDIT (REVIEW)"
+   },
+   "relation": "IMPROVEMENT",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_L_CONCURRENCY.json",
+     "commit": "02b298ec",
+     "what": "1/2/4/8"
+    },
+    {
+     "kind": "test",
+     "path": "runtime/core/odg-concurrency-policy.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=L] (4f4fceb2)"
+   },
+   "note": "Costs/conflicts not measured.",
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-M",
+   "v150": {
+    "section": "§45 scenario M",
+    "title": "M — Reprise multi-agents",
+    "quote": "ODG interrompt plusieurs tâches en simulation, récupère leurs états, vérifie les artefacts et reprend uniquement les opérations manquantes.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=M].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1342,
+     1344
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§29 #1",
+    "v12_4": "G CM-V237-AZ-SCENARIO (REVIEW)"
+   },
+   "relation": "COMMON",
+   "implementationState": "VALIDATED",
+   "statePointers": [
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+     "commit": "257bc049",
+     "what": "allProven=true, inspected"
+    }
+   ],
+   "missionResult": "PASS within scope (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PASS",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=M] (4f4fceb2)"
+   },
+   "note": "Multi-task resume without loss, synthetic ops.",
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-N",
+   "v150": {
+    "section": "§45 scenario N",
+    "title": "N — Automatisation",
+    "quote": "ODG identifie une tâche répétitive autorisée, réutilise ou construit son automatisation, vérifie son comportement et mesure le temps économisé.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=N].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1346,
+     1348
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§30",
+    "v12_4": "E CM-V234-RESIDENT-DRIVER (IN_PROGRESS)"
+   },
+   "relation": "COMMON",
+   "implementationState": "TESTED",
+   "statePointers": [
+    {
+     "kind": "test",
+     "path": "runtime/core/idempotency-guard.test.ts",
+     "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=N] (4f4fceb2)"
+   },
+   "note": "Automation measurement is SIMULATED.",
+   "openGaps": [
+    "time saved not measured"
+   ],
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-O",
+   "v150": {
+    "section": "§45 scenario O",
+    "title": "O — Blocage isolé",
+    "quote": "Une tâche est bloquée par une dépendance. ODG poursuit les missions indépendantes et reprend la tâche bloquée lorsque sa condition est satisfaite.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=O].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1350,
+     1352
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§25 'Une mission stratégique bloquée ne doit pas empêcher une autre mission indépendante autorisée'; §29 #9",
+    "v12_4": "F CM-V237-ORCHESTRATION (REVIEW)"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-go-cycle.ts",
+     "commit": "52da09b5",
+     "what": "GO-ACT-1"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+     "commit": "1f021c35",
+     "what": "§29 S9 PASS"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=O] (4f4fceb2)"
+   },
+   "note": "'reprend la tâche bloquée lorsque sa condition est satisfaite' not demonstrated.",
+   "uniqueToV150": true
+  },
+  {
+   "id": "V150-AP-P",
+   "v150": {
+    "section": "§45 scenario P",
+    "title": "P — Réduction des répétitions",
+    "quote": "ODG démontre qu'il réutilise des analyses, tests et preuves encore valides sans répéter inutilement les travaux.",
+    "quoteSource": "docs/odg/evidence/V150_CANONICAL_SOURCES.json#battery_A_P_exact[id=P].text (copied exactly; UNVERIFIED recovered owner paste)",
+    "quoteLinesInOwnerPaste": [
+     1354,
+     1356
+    ],
+    "ownerPasteFile": "ordre_37_55.md"
+   },
+   "anchors": {
+    "v14_4": "§2 phase 3",
+    "v14_4_masterSections1to19": "NOT_MEASURED (text not in repository)",
+    "addendum": "§28 'réutiliser les résultats encore valides'; §29 #11",
+    "v12_4": "none"
+   },
+   "relation": "COMMON",
+   "implementationState": "USED",
+   "statePointers": [
+    {
+     "kind": "component",
+     "path": "runtime/core/odg-strategic-register.ts",
+     "commit": "1f021c35",
+     "what": "closures reach the register"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+     "commit": "1f021c35",
+     "what": "§29 S11 'empêcher de refaire un travail validé' PARTIAL→PASS"
+    }
+   ],
+   "missionResult": "PARTIAL (contract PROPOSED)",
+   "priorAssessmentV160": {
+    "status": "PARTIAL",
+    "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=P] (4f4fceb2)"
+   },
+   "note": "Reuse of analyses/tests (not only closures) not measured.",
+   "uniqueToV150": true
+  }
+ ],
+ "counts": {
+  "requirements": 72,
+  "byRelation": {
+   "COMMON": 36,
+   "IMPROVEMENT": 23,
+   "GAP": 7,
+   "CONTRADICTION": 3,
+   "DUPLICATE": 3
+  },
+  "rowsWithDependencies": 24,
+  "byImplementationState": {
+   "DOCUMENTED": 11,
+   "IMPLEMENTED": 0,
+   "TESTED": 17,
+   "CONNECTED": 4,
+   "USED": 32,
+   "VALIDATED": 4,
+   "NOT_MEASURED": 4
+  },
+  "uniqueToV150Rows": 25,
+  "validatedScopeNote": "all 4 VALIDATED rows (§16, §30, AP-B, AP-M) are validated only within 'process death on a single host with synthetic ops'",
+  "secondaryRelationMentions": {
+   "COMMON": 1,
+   "CONTRADICTION": 2,
+   "DUPLICATE": 13
+  },
+  "dependencyRowsWithOwnerGate": 19,
+  "note": "primary relation per row; secondary relations in alsoRelations. Counts are on this matrix only."
+ },
+ "outOfScope": {
+  "rule": "métier requirements are OUT_OF_SCOPE (owner V170 §6 / V171 §8) — listed, not evaluated",
+  "items": [
+   {
+    "source": "V14_4_ROADMAP.md §2 phase 6 '20 métiers'",
+    "status": "OUT_OF_SCOPE"
+   },
+   {
+    "source": "v124-consolidated-roadmap.json section L: CM-METIER-BASELINES, CM-METIER-P5-PLATFORM, CM-METIER-P8-API (REVIEW)",
+    "status": "OUT_OF_SCOPE"
+   },
+   {
+    "source": "v124-consolidated-roadmap.json section S: 10 SX-BTP-* missions (ACCEPTED, M2 BTP frozen)",
+    "status": "OUT_OF_SCOPE"
+   },
+   {
+    "source": "V14_4_LOT_PLAN_AND_RADAR_AUDIT.md G7 + lot D (métier baselines)",
+    "status": "OUT_OF_SCOPE"
+   },
+   {
+    "source": "V15.0 text outside the recovered acceptance excerpts (any métier content of the 128 058-char paste)",
+    "status": "OUT_OF_SCOPE / NOT_MEASURED"
+   },
+   {
+    "source": "métier-journey evidence cited by earlier assessments (#884 FR invoice in the BTP journey)",
+    "status": "cited only as context in V150-AP-C; not evaluated"
+   }
+  ]
+ },
+ "uniqueElements": {
+  "V15_0": [
+   "§2 five-state registration ladder",
+   "§4 explicit truth hierarchy",
+   "§14 Frontier Lab",
+   "§18/§50 central metric VERIFIED ACCEPTED OUTPUT / TOTAL COST / TOTAL TIME and ×10 ambition 'à mesurer'",
+   "§19 controlled evolution of dependencies/models",
+   "§23 L0–L8 competence ladder (levels ≠ permissions)",
+   "§26 thirteen programmes A–M (V17.0)",
+   "§13 Radar V2 usefulness criteria 1–15 and lots 1–5",
+   "§41 concurrency-level comparison on equivalent missions",
+   "§43 simplification phase",
+   "§45 A–P demonstration battery (16 scenarios with contracts)",
+   "§51 golden rules (only 6 quoted)",
+   "§52 technology-watch register",
+   "§55 23-verb fundamental loop",
+   "phases 9–16 (§37–§44)"
+  ],
+  "V14_4_repoText": [
+   "§1 lineage facts: DEC-V60-166-RETIREMENT, A02–A53 NOT_RECOVERED, closure register 427 byte-identical, 20 métiers frozen",
+   "§2 phase → V12.4 mission anchor table with exit criteria",
+   "§3 correspondence register generated by odg-mission-crosswalk + capability-traceability + odg-component-census",
+   "§4 grant V372 (expires 2026-12-22) and first contract WIC-CM-RADAR-GATE-CHAIN-STEP1",
+   "§5 CM-RADAR-GATE-CHAIN reconciliation (companion still READY, commit null)",
+   "lot plan: Radar utility audit, gap ranking G0–G11 with weights as hypotheses, lots A–D + owner track"
+  ],
+  "addendum": [
+   "§20 eleven self-knowledge categories",
+   "§21.2 role split + Boussole link on every operational record + bidirectional continuity",
+   "§22 fifteen mission-memory fields + seven proof attributes + append-only history",
+   "§23 separation of mission-result statuses from the 12 implementation states",
+   "§24 before/during/closure/resume protocol",
+   "§25 seven dependency relation types + eleven value criteria + A/B distinction",
+   "§26 nine weakness attributes",
+   "§29 fifteen continuity baseline scenarios",
+   "§30 seven-step automation progression",
+   "§31 phases 0–9 (continuity track)"
+  ],
+  "V12_4": [
+   "24 missions in sections A–S with statuses (14 ACCEPTED, 6 REVIEW, 2 READY, 1 IN_PROGRESS, 1 BLOCKED)",
+   "9 primitives",
+   "CM-V237-REPO-VPS-MAP (READY)",
+   "CM-BENCHMARK-AUDIT world-benchmark list",
+   "métier missions L/S (OUT_OF_SCOPE)"
+  ]
+ },
+ "topContradictions": [
+  {
+   "id": "CTR-1",
+   "rows": [
+    "V150-S51"
+   ],
+   "what": "§51 rule 1 'V15.0 reste la directive unique de cette campagne' vs V14.4 ADOPTED (V372) + addendum RECORDED as its extension",
+   "currentResolution": "V15.0 PROPOSED ⇒ V14.4/V12.4 prevail (V15_0_MASTER_DIRECTIVE.md header)"
+  },
+  {
+   "id": "CTR-2",
+   "rows": [
+    "V150-S38",
+    "V150-S13"
+   ],
+   "what": "§38 'le Radar existant ne doit subir aucune modification dans cette campagne' vs V14.4 phase 1 / V12.4 I extending odg-radar-gate-chain, lot B grant additions, #911 change to odg-knowledge-intelligence.ts",
+   "currentResolution": "none — scope of 'Radar' undefined"
+  },
+  {
+   "id": "CTR-3",
+   "rows": [
+    "V150-S47",
+    "V150-S48"
+   ],
+   "what": "§47 blanket owner authorization ('décrite au §2') for internal reversible confined work vs per-work-item human authorization (V14.4 §4, work protocol)",
+   "currentResolution": "LARGELY RESOLVED by owner V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json, merged 7f939535): internal work on the missions ODG selects, J included, is authorized; a WORK_ITEM_CONTRACT per mission is still required; provider spend and new permissions stay excluded. This does not adopt V15.0 §47."
+  },
+  {
+   "id": "CTR-4",
+   "rows": [
+    "V150-S16",
+    "V150-S30"
+   ],
+   "what": "ordering: V15.0 continuity P0 first (phase 2) and Radar late (phase 10) vs V14.4 Radar phase 1 then brain/autonomy; the addendum sides with continuity first",
+   "currentResolution": "none; three phase numberings coexist (V15.0 0–16, V14.4 0–8, addendum 0–9)"
+  }
+ ],
+ "topGaps": [
+  "§45 A–P: 14/16 contracts PROPOSED (internal work now coverable by the owner V171 portfolio authorization, each with its own contract); only G and H executed (G PARTIAL, H FAIL); B and M PASS within scope",
+  "§50/§18: central metric (accepted output / cost / time) and throughput NOT_MEASURED",
+  "§10/§35: nativeBuiltCodeMerged = 0",
+  "§13/§38: 0 CORROBORATED Radar claims; Radar V2 lots 3–5 NOT_STARTED; no measured gain from Radar knowledge",
+  "§33/§34: cognitive battery and memory-attributable gain NOT_MEASURED",
+  "§26: programmes not mapped onto the nine primitives; V17.0 text absent",
+  "§43: no simplification performed (3 DUPLICATE / 3 OBSOLETE identified, none retired)",
+  "§54: no release dossier"
+ ],
+ "consolidatedProposal": {
+  "status": "PROPOSED — not adopted; integrates nothing by itself; V12.4, V14.4 sections, ROADMAP.json, closure-register.json and runtime/governance/** untouched",
+  "principle": "V15.0 contributes requirements and exit criteria, not a roadmap: each unique V15.0 requirement is attached to an existing V14.4 phase (and to the addendum continuity track where it fits), executed by existing components through the existing contract chain (ODG_AUTONOMOUS_WORK_PROTOCOL + odg-authorization-scope + odg-strategic-register + ODG GO). No second roadmap, register, scheduler or Radar.",
+  "phaseMapping": [
+   {
+    "v14_4Phase": "0 Truth & foundations",
+    "v150": [
+     "§28 (Ph0)",
+     "§29 (Ph1)",
+     "§4",
+     "§2"
+    ],
+    "addendum": [
+     "A0",
+     "A2"
+    ],
+    "proposedAddition": "keep this matrix as the requirements matrix of record; add a 'Registre des divergences' as a section of the existing correspondence register (not a new file family)"
+   },
+   {
+    "v14_4Phase": "1 Radar & knowledge",
+    "v150": [
+     "§13 (lots 1–5)",
+     "§14",
+     "§38 (Ph10)",
+     "§52",
+     "AP-D",
+     "AP-G",
+     "AP-K"
+    ],
+    "addendum": [
+     "A5"
+    ],
+    "proposedAddition": "Radar V2 usefulness criteria 11–15 as phase-1 exit criteria; Frontier Lab = experiment stage of CM-RADAR-GATE-CHAIN; technology-watch register = view over existing collection/knowledge records",
+    "blockedBy": "CTR-2"
+   },
+   {
+    "v14_4Phase": "2 Brain & memory",
+    "v150": [
+     "§6",
+     "§11",
+     "§12",
+     "§33 (Ph5)",
+     "§34 (Ph6)",
+     "§36 (Ph8)",
+     "AP-H"
+    ],
+    "addendum": [
+     "A4",
+     "A6"
+    ],
+    "proposedAddition": "cognitive battery + with/without-memory measurement as phase-2 exit criteria"
+   },
+   {
+    "v14_4Phase": "3 Autonomy & orchestration",
+    "v150": [
+     "§9",
+     "§10",
+     "§15",
+     "§16",
+     "§23",
+     "§27",
+     "§30 (Ph2)",
+     "§31 (Ph3)",
+     "§35 (Ph7)",
+     "§41 (Ph13)",
+     "§42 (Ph14)",
+     "§48",
+     "AP-A",
+     "AP-B",
+     "AP-F",
+     "AP-I",
+     "AP-J",
+     "AP-M",
+     "AP-N",
+     "AP-O",
+     "AP-P"
+    ],
+    "addendum": [
+     "A1",
+     "A3",
+     "A8"
+    ],
+    "proposedAddition": "L0–L8 as a competence scale recorded per mission (never a permission); continuity (§16) as the entry gate of phase 3, consistent with addendum A1",
+    "blockedBy": "CTR-4"
+   },
+   {
+    "v14_4Phase": "4 Reliability & performance",
+    "v150": [
+     "§17",
+     "§18",
+     "§24",
+     "§37 (Ph9)",
+     "§39 (Ph11)",
+     "§53",
+     "AP-E",
+     "AP-L"
+    ],
+    "addendum": [
+     "A7"
+    ],
+    "proposedAddition": "central metric VERIFIED ACCEPTED OUTPUT / TOTAL COST / TOTAL TIME computed by slo-collector over mission-attempt-log (lot plan G1), per mission category",
+    "note": "V15_0_MASTER_DIRECTIVE.md §2 anchors self-healing at phase 0 / D; this proposal places it at phase 4 (resilience) — owner choice"
+   },
+   {
+    "v14_4Phase": "5 Multimodality",
+    "v150": [
+     "§20",
+     "§40 (Ph12)"
+    ],
+    "addendum": [],
+    "proposedAddition": "§40 guard 'no artificial consumer' as exit criterion",
+    "blockedBy": "resources"
+   },
+   {
+    "v14_4Phase": "6 20 métiers",
+    "v150": [],
+    "addendum": [],
+    "proposedAddition": "OUT_OF_SCOPE (not evaluated)"
+   },
+   {
+    "v14_4Phase": "7 Global validation",
+    "v150": [
+     "§21",
+     "§22",
+     "§43 (Ph15)",
+     "§44 (Ph16)",
+     "§45 battery",
+     "§50"
+    ],
+    "addendum": [
+     "A9"
+    ],
+    "proposedAddition": "A–P battery + addendum §29 scenarios as the phase-7 evidence set; simplification with non-regression proof as a phase-7 lot"
+   },
+   {
+    "v14_4Phase": "8 Release readiness",
+    "v150": [
+     "§19",
+     "§54"
+    ],
+    "addendum": [],
+    "proposedAddition": "release dossier without deployment; dependency/model update qualification"
+   },
+   {
+    "v14_4Phase": "transversal (every phase)",
+    "v150": [
+     "§0",
+     "§1",
+     "§3",
+     "§5",
+     "§25",
+     "§26",
+     "§46",
+     "§47",
+     "§49",
+     "§51",
+     "§55"
+    ],
+    "addendum": [
+     "§21–§24",
+     "§30"
+    ],
+    "proposedAddition": "governance invariants applied through the existing protocol; programmes A–M kept as tags on missions, mapped onto the nine primitives"
+   }
+  ],
+  "linkingMechanism": "reuse V169 Phase-0 proposal BUP-1 (boussoleRef {v124MissionId, v124Section, v144Phase} on A–P contracts, strategic-register items and GO trace) extended with v150RequirementIds from this matrix — a field on existing records, not a new registry",
+  "firstLotsProposed": [
+   "map the 13 programmes onto the nine primitives (documentary; §26)",
+   "compute the §18 central metric from mission-attempt-log for one mission category (depends on owner SLO/cost decisions)",
+   "attach boussoleRef + v150RequirementIds to the 16 A–P contracts (needs its own WORK_ITEM_CONTRACT)"
+  ],
+  "ownerDecisionsNeeded": [
+   "OD-1: V15.0 status — successor of V14.4, or a requirements set integrated into V14.4 phases as proposed here (resolves CTR-1); V12.4 stays canonical either way",
+   "OD-2: phase ordering — continuity first (V15.0 §16 + addendum) vs V14.4 order (CTR-4)",
+   "OD-3: scope of 'Radar unchanged' (§38) vs V14.4 phase 1 Radar extension and lot B grant additions; status of #911 (CTR-2)",
+   "OD-4: (mostly settled by the owner V171 portfolio authorization for internal work, with a WORK_ITEM_CONTRACT per mission) remaining: confirm whether V15.0 §47 is to be read as that V171 mandate; provider spend ceiling stays open (OD-7)",
+   "OD-5: provide the V14.4 master text §1–§19, a signed V15.0 text and the V17.0 programme text (all comparisons with them stay NOT_MEASURED)",
+   "OD-6: (internal work on ODG-selected missions, J included, now authorized by owner V171; each still needs its WORK_ITEM_CONTRACT) remaining: external / provider-spend steps of A–P contracts stay unauthorized",
+   "OD-7: CI SLO, provider spend ceiling (needed for the §18 central metric)",
+   "OD-8: L1+ promotion of the resident driver; identity-bound inspection / gate 10/12 signature",
+   "OD-9: companion update of CM-RADAR-GATE-CHAIN (READY, commit null, steps 1–2 merged) — hard register"
+  ]
+ },
+ "governance": {
+  "v15_0Adopted": false,
+  "v12_4Modified": false,
+  "v14_4Modified": false,
+  "addendumModified": false,
+  "protectedPathsTouched": false,
+  "codeTouched": false
+ }
+}
