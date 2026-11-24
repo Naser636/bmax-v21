@@ -20,7 +20,8 @@
     "inspectorSessionId": "ab245bf3019f79340",
     "authorSessionId": "odg-go-run-3fb020e7be02f800",
     "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
-    "findings": "independent recomputation from the 58 committed rows: E = 6; A2@42 0/6, A0@7 0/6, A1@42 0/6, A0@42 0/6; sign test no discordant pairs; no NOT_MEASURED condition (|E| 6 ≥ 4, pins match, caps held 377/600 calls, max trial 97 s); FAIL by the first matching rule; --check OK; --check-at-run-head CHECK_OK at deaf0844"
+    "findings": "independent recomputation from the 58 committed rows: E = 6; A2@42 0/6, A0@7 0/6, A1@42 0/6, A0@42 0/6; sign test no discordant pairs; no NOT_MEASURED condition (|E| 6 ≥ 4, pins match, caps held 377/600 calls, max trial 97 s); FAIL by the first matching rule; --check OK; --check-at-run-head CHECK_OK at deaf0844 when run with node_modules supplied (the plain CLI reported ERROR in the PR worktree for lack of node_modules — environment, not drift)",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session; the inspector cannot verify its own session id"
   },
   "criteria": [
     {
@@ -47,7 +48,7 @@
       "id": "C5",
       "status": "MET",
       "evidence": "0 provider calls; no delegation past CREATED; every request passes the exact-allowlist loopback guard (only path; globalThis.fetch guarded); nonLoopbackRefused empty",
-      "limit": "an empty refusal list shows no refused attempt reached the guard; it cannot exclude contact by a path outside the guard — none exists by construction (inspector note)"
+      "limit": "inspector (#970): an empty nonLoopbackRefused list cannot show whether any contact was attempted. Author's (provider's) design claim, NOT verified by the inspector: the runner routes every request through the guard and guards globalThis.fetch."
     },
     {
       "id": "C6",
@@ -61,7 +62,7 @@
   },
   "scenarioGrade": "FAIL",
   "adoption": "NOT_ADOPTED (only PASS ⇒ adoption candidate)",
-  "lesson": "hypothesis only (n = 6, failure-selected tasks): with the local 3b/7b models, neither decomposition nor escalation to the local max model recovers tasks on which ODG's default loop stopped — the bottleneck is model capability on these tasks, not the stop/repair strategy; native construction should target tasks within local-model reach first",
+  "lesson": "hypothesis only (n = 6, failure-selected tasks): with the local 3b/7b models, neither decomposition nor escalation to the local max model recovered any task on which ODG's default loop stopped — consistent with local-model capability being a bottleneck on these tasks (not established; strategy effects cannot be excluded at n = 6); native construction should target tasks within local-model reach first",
   "methodVsResult": "the experimental result is FAIL; the METHOD (pre-registration, revised anti-leak rule, native GO dispatch with a one-shot claim, loopback-only network, independent recomputation) worked as designed — a process observation, not a validation of the hypothesis",
   "limits": [
     "prompt texts not stored (sha only) ⇒ anti-leak check not independently recomputable from text; A0–A2 0 leak hits, 24 hits all in report-only A3",
