@@ -255,8 +255,27 @@ async function selftest(): Promise<number> {
   let n = 0; const seen: string[] = [];
   const fake = async (url: string, init: any) => { n++; seen.push(url); const b = JSON.parse(init.body); return { ok: true, json: async () => ({ model: b.model, eval_count: 1, response: "```ts\n" + (n === 1 ? WRONG : RIGHT) + "```" }) }; };
   const probe = NBS.probeSandbox();
-  const r = await runNativeBuild({ root: ROOT, label: "SELFTEST", transport: fake });
-  check("detection: real defect found in this repo (NESTED_KEY_DROP in audit-log + agent-identity)", r.detection.defect === true && r.detection.defectiveSites.some((s: any) => s.file === "runtime/core/audit-log.ts" && s.verdict === "NESTED_KEY_DROP") && r.detection.defectiveSites.some((s: any) => s.file === "runtime/core/agent-identity.ts"));
+  // V17.5: after the native module is INTEGRATED and the defect FIXED (#976), the real tree no longer has the defect, so the
+  // selftest ALWAYS runs on a LABELLED fixture root = symlink view of this repo WITHOUT the 2 native files, in which the 3
+  // formerly-defective modules are replaced by FROZEN pre-fix copies (runtime/bin/fixtures/nb1-prefix-canon.json, 492db6c0).
+  const SROOT = (() => {
+    const T = ["odg-canonical-json.ts", "odg-canonical-json.test.ts"];
+    const FX = JSON.parse(fs.readFileSync(path.join(ROOT, "runtime", "bin", "fixtures", "nb1-prefix-canon.json"), "utf8"));
+    const os = require("os"); const d = fs.mkdtempSync(path.join(os.tmpdir(), "nb1-selftest-root-"));
+    for (const e of fs.readdirSync(ROOT)) if (e !== "runtime") fs.symlinkSync(path.join(ROOT, e), path.join(d, e));
+    fs.mkdirSync(path.join(d, "runtime"));
+    for (const e of fs.readdirSync(path.join(ROOT, "runtime"))) if (e !== "core") fs.symlinkSync(path.join(ROOT, "runtime", e), path.join(d, "runtime", e));
+    fs.mkdirSync(path.join(d, "runtime", "core"));
+    for (const e of fs.readdirSync(path.join(ROOT, "runtime", "core"))) {
+      if (T.includes(e)) continue;
+      if (Object.prototype.hasOwnProperty.call(FX.files, e)) fs.writeFileSync(path.join(d, "runtime", "core", e), FX.files[e]);
+      else fs.symlinkSync(path.join(ROOT, "runtime", "core", e), path.join(d, "runtime", "core", e));
+    }
+    process.stdout.write(`note - selftest on a LABELLED fixture root (pre-integration, FROZEN pre-fix canon modules from ${FX.sourceCommit}; not the live tree)\n`);
+    return d;
+  })();
+  const r = await runNativeBuild({ root: SROOT, label: "SELFTEST", transport: fake });
+  check("detection: defect found in the FROZEN pre-fix fixture (NESTED_KEY_DROP in audit-log + agent-identity)", r.detection.defect === true && r.detection.defectiveSites.some((s: any) => s.file === "runtime/core/audit-log.ts" && s.verdict === "NESTED_KEY_DROP") && r.detection.defectiveSites.some((s: any) => s.file === "runtime/core/agent-identity.ts"));
   if (probe && probe.ok === true) {
     check("fake model: wrong first ⇒ repaired ⇒ PASS", r.verdict === "PASS" && r.rounds[0].repairs >= 1 && r.rounds[0].firstPass.verified === false);
     check("typecheck AC2 ran and passed", r.rounds[0].typecheck && r.rounds[0].typecheck.ok === true);
@@ -269,7 +288,7 @@ async function selftest(): Promise<number> {
   check("guard refuses a non-loopback URL and records it", refused && g.st.refused.length === 1);
   const tc = typecheck("function f(x) { return x; }\nmodule.exports = { f };\nexport {};\n");
   check("typecheck rejects implicit any (strict)", tc.ok === false);
-  const drift = await runNativeBuild({ root: ROOT, label: "SELFTEST", transport: fake, expectedDigest: "0".repeat(64) });
+  const drift = await runNativeBuild({ root: SROOT, label: "SELFTEST", transport: fake, expectedDigest: "0".repeat(64) });
   check("detection drift ⇒ NOT_MEASURED before any model call", drift.verdict === "NOT_MEASURED" && /drift/.test(drift.reason));
   return f;
 }

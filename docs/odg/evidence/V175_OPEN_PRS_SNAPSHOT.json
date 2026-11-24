@@ -1,0 +1,20 @@
+{
+  "//": "V17.5 PRIORITY 3 — frozen read of `gh pr list --state open --json number,title,headRefName,state` used as the open-PR input of runtime/bin/odg-resume-point.ts (no network in the view or --check). Refresh by re-running that command into this file, then regenerate V175_RESUME_POINT.json.",
+  "schema": "ODG_OPEN_PRS_SNAPSHOT/1",
+  "snapshotAt": "2026-11-24T17:19:54.423Z",
+  "command": "gh pr list --state open --json number,title,headRefName,state --limit 100",
+  "prs": [
+    {
+      "number": 980,
+      "title": "native(v17.5): NB2 — ODG designs the change (shared native-design pipeline, V175-NB2 contract, live PROBEs FAIL ×2)",
+      "headRefName": "feat/v175-nb2-native-design",
+      "state": "OPEN"
+    },
+    {
+      "number": 982,
+      "title": "feat(v17.5): Boussole reliée à l'exécution — boussoleRef on every register item, GO trace refs, resume-point view",
+      "headRefName": "feat/v175-boussole-ref",
+      "state": "OPEN"
+    }
+  ]
+}

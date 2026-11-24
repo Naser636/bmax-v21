@@ -69,11 +69,14 @@ function readAuditChain(): any[] { try { const c = JSON.parse(fs.readFileSync(AU
 // an ABSENT/empty chain is fine (fresh start); a PRESENT-but-broken chain is an integrity incident ⇒ refuse
 // (fail-closed), never silently trusted or overwritten. (Full-rewrite forgery still needs a keyed HMAC/signature
 // — owner-gated secret decision, out of scope here; this makes the EXISTING tamper-evidence load-bearing.)
-function auditIntegrityGate(chain: any[]): { ok: boolean; reason: string; brokenAt: number } {
-  if (!Array.isArray(chain) || chain.length === 0) return { ok: true, reason: "empty/absent chain (fresh start)", brokenAt: -1 };
+// V17.5: canonStatus/legacyShallowCanon are SURFACED (pre-fix entries whose nested payload fields are NOT hash-covered);
+// they never change `ok` (persisted legacy chains stay valid) — honest reporting only.
+function auditIntegrityGate(chain: any[]): { ok: boolean; reason: string; brokenAt: number; canonStatus: string | null; legacyShallowCanon: number } {
+  if (!Array.isArray(chain) || chain.length === 0) return { ok: true, reason: "empty/absent chain (fresh start)", brokenAt: -1, canonStatus: null, legacyShallowCanon: 0 };
   const v = AUDIT.verifyChain(chain);
-  return { ok: v.ok === true, reason: v.reason, brokenAt: v.brokenAt };
+  return { ok: v.ok === true, reason: v.reason, brokenAt: v.brokenAt, canonStatus: v.canonStatus || null, legacyShallowCanon: v.legacyShallowCanon || 0 };
 }
+function noteLegacyCanon(integ: any): void { if (integ && integ.ok && integ.legacyShallowCanon > 0) console.error(`AUDIT_CHAIN_NOTICE: ${integ.legacyShallowCanon} ${integ.canonStatus} entr${integ.legacyShallowCanon === 1 ? "y" : "ies"} (pre-fix; nested payload fields not hash-covered) — chain verified, new entries sealed cv-2.`); }
 function persistAuditChain(chain: any[]): void { try { fs.mkdirSync(path.dirname(AUDIT_CHAIN_PATH), { recursive: true }); const tmp = `${AUDIT_CHAIN_PATH}.tmp-${process.pid}`; fs.writeFileSync(tmp, JSON.stringify(chain, null, 2)); try { fs.renameSync(tmp, AUDIT_CHAIN_PATH); } catch (e) { try { fs.rmSync(tmp, { force: true }); } catch { /* best-effort */ } throw e; } } catch { /* best-effort audit (crash-atomic temp+rename so a torn write can't silently truncate the tamper-evident chain) */ } }
 
 function gitExec(args: string[]): string | null {
@@ -179,6 +182,7 @@ function main(): void {
     console.error(`STARTUP_REFUSED: audit-chain integrity — ${integ.reason} (brokenAt ${integ.brokenAt}); refusing to extend an untrusted tamper-evident chain (evidence preserved, not overwritten).`);
     process.exit(2);
   }
+  noteLegacyCanon(integ);
   const d = tickOnce({ chain: loadedChain });
   persistAuditChain(d.auditChain || []);                               // tamper-evident canary decision log (audit artifact)
   console.log(`[odg-schedule-tick] ${d.status} — ${d.reason || ""}${d.item ? " (mission " + d.item.mission + ")" : ""}`);
@@ -589,6 +593,7 @@ async function mainWave(): Promise<void> {
     console.error(`STARTUP_REFUSED: audit-chain integrity — ${integ.reason} (brokenAt ${integ.brokenAt}); refusing to extend an untrusted tamper-evident chain (evidence preserved, not overwritten).`);
     process.exit(2);
   }
+  noteLegacyCanon(integ);
   const d = await tickWave({ chain: loadedChain });
   persistAuditChain(d.auditChain || []);
   console.log(`[odg-schedule-tick wave] ${d.status} — ${d.reason || ""}${d.wave && d.wave.length ? " (missions " + d.wave.join(",") + ")" : ""}`);

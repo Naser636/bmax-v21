@@ -971,13 +971,15 @@
     "goTraces": [
       "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl",
-      "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl"
+      "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl",
+      "docs/odg/evidence/V175_NB1_GO_EXECUTE_TRACE.jsonl"
     ],
     "odgWrittenPaths": [
       "docs/odg/evidence/V168_H_EXPERIMENT.json",
       "docs/odg/evidence/V172_G2_EXPERIMENT.json",
       "docs/odg/evidence/V172_G2_HELDOUT.json",
-      "docs/odg/evidence/V172_J2_EXPERIMENT.json"
+      "docs/odg/evidence/V172_J2_EXPERIMENT.json",
+      "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json"
     ],
     "commits": 25,
     "providerAuthoredCommits": 24,

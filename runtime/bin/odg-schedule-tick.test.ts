@@ -57,6 +57,8 @@ const okDispatch = () => ({ verified: true, detail: "stub (no real odg-run)" });
   ok("SEC#3 auditIntegrityGate: TAMPERED chain ⇒ fail-closed (ok:false, brokenAt named)", (() => { const g = tick.auditIntegrityGate(t); return g.ok === false && g.brokenAt === 0 && typeof g.reason === "string"; })());
   ok("SEC#3 auditIntegrityGate: empty/absent chain ⇒ ok (fresh start, not blocked)", tick.auditIntegrityGate([]).ok === true && tick.auditIntegrityGate(null).ok === true);
   // truncation/reorder of a persisted chain is likewise refused on read.
+  ok("V17.5 auditIntegrityGate: cv-2 chain ⇒ canonStatus DEEP_CANON_V2, 0 legacy", (() => { const g = tick.auditIntegrityGate(d2.auditChain); return g.canonStatus === "DEEP_CANON_V2" && g.legacyShallowCanon === 0; })());
+  ok("V17.5 auditIntegrityGate: legacy entry SURFACED (LEGACY_SHALLOW_CANON) but still ok", (() => { const AL = require("../core/audit-log.js"); const p = { status: "S", mission: "m", reason: "r" }; const g = tick.auditIntegrityGate([{ seq: 0, prevHash: AL.GENESIS, payload: p, hash: AL.entryHash(0, AL.GENESIS, p) }]); return g.ok === true && g.canonStatus === "LEGACY_SHALLOW_CANON" && g.legacyShallowCanon === 1; })());
   ok("SEC#3 auditIntegrityGate: truncated chain ⇒ fail-closed", tick.auditIntegrityGate([d2.auditChain[1]]).ok === false);
 }
 

@@ -140,6 +140,14 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     check("prepared mission recorded with contract + decomposition + strategy + authorizationNeeded", nx.preparedMission.id === sel.selected && !!nx.preparedMission.contract.objective && !!nx.preparedMission.decomposition && !!nx.preparedMission.strategy && /PROPOSED → AUTHORIZED/.test(nx.preparedMission.authorizationNeeded));
     check("next-after-current selection recorded (selector, not id order)", typeof nx.nextAfterCurrent.decision === "string" && nx.nextAfterCurrent.selected !== sel.selected);
     check("summary written through the confined writer", calls.writes.length === 1);
+    // V17.5 PRIORITY 3 GO-BREF-1: SELECT / EXECUTE / NEXT_SELECTION carry the working item's boussoleRef + contract sha + owner record (read-only, from the register)
+    const regOf = (id: string) => REG.buildRegister(mirrorAuthEvidence(BASE_UNAUTH).sources).items.find((it: any) => it.id === id);
+    const selItem = regOf(sel.selected);
+    const sb = sel.boussole, eb = stepIn(trace, "EXECUTE").decision.boussole, nb = nx.boussole;
+    check("GO-BREF-1: SELECT carries strategic + workingOn boussoleRef exactly as the register derived it", !!sb && sb.rule === GO.BOUSSOLE_TRACE_RULE && sb.workingOn.id === sel.workingOn && JSON.stringify(sb.workingOn.boussoleRef) === JSON.stringify(regOf(sel.workingOn).boussoleRef) && JSON.stringify(sb.strategic.boussoleRef) === JSON.stringify(selItem.boussoleRef));
+    check("GO-BREF-1: SELECT carries the contract sha256 (CREF-1) of the working item", sb.workingOn.contractSha256 === regOf(sel.workingOn).contractRef.contractSha256 && /^[0-9a-f]{64}$/.test(sb.workingOn.contractSha256));
+    check("GO-BREF-1: EXECUTE and NEXT_SELECTION carry the same working-item ref", !!eb && JSON.stringify(eb.workingOn) === JSON.stringify(sb.workingOn) && !!nb && JSON.stringify(nb.prepared) === JSON.stringify(sb.workingOn) && (nb.nextAfterCurrent === null || nb.nextAfterCurrent.id === (nx.nextAfterCurrent.selected || nx.nextAfterCurrent.proposed)));
+    check("GO-BREF-1: a measured boussoleRef in the trace cites ≥1 source; a NOT_MEASURED one carries a reason", [sb.workingOn, sb.strategic, nb.nextAfterCurrent].filter(Boolean).every((v: any) => v.boussoleRef && (v.boussoleRef.status === "MEASURED" ? v.boussoleRef.source.length > 0 : typeof v.boussoleRef.reason === "string")));
   }
   // 1b. committed state after V165: the owner authorized REVISION + INSPECTION of G's contract, NOT execution
   //     ("lancer les expériences contrôlées après validation de ce contrat") ⇒ state AUTHORIZED_FOR_REVISION
