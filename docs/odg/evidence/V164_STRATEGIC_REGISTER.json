@@ -215,7 +215,7 @@
     },
     {
       "source": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json",
-      "sha256": "a217ee85cc0b9a86cb248110b4b700d99f167a31e56a2f03979fdbc4bda549be"
+      "sha256": "ea09d9b40d4928d0a1bc684dbc74442b53f5ab7d16379ce4ab402e9ed1ce7c34"
     },
     {
       "source": "docs/odg/v124-consolidated-roadmap.json",
@@ -231,7 +231,7 @@
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
-      "sha256": "617bfca543c23af5031174ebbb19cefe2906744ea4ed7fe455a4f8babf981b7f"
+      "sha256": "8e15c4aced4c2db13b73a2e57de868191e538df3e317729ef6f270c9d413a91f"
     }
   ],
   "register": {
@@ -14081,5 +14081,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "978d317d8744201c75e96bf7456d2bfc50a8c0b6"
+  "generatedAtHead": "2583e0c6ff79e9b5b103ad94faaf8f65144c5299"
 }

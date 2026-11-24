@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "a4a6036252bed41f87b9bd22ee52a7d6f88001b6a505c9cfa76c65d3dd5a9c95"
+      "sha256": "4f5952ba08cd693dcb4315f732545bff4a9a9b22948b8a40302ed658ea3b5f4d"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -23,7 +23,7 @@
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
-      "sha256": "617bfca543c23af5031174ebbb19cefe2906744ea4ed7fe455a4f8babf981b7f"
+      "sha256": "8e15c4aced4c2db13b73a2e57de868191e538df3e317729ef6f270c9d413a91f"
     },
     {
       "source": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
@@ -332,7 +332,7 @@
           "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
         }
       },
-      "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822",
+      "contractSha256": "2914ffcace51b2f7c047316db16a8bec310b740ba51656c15b18b5275be181f1",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_J.json",
       "currentStep": "INSPECT_REVISED_CONTRACT",
       "scope": {
@@ -359,6 +359,17 @@
           "path": null,
           "basis": "NONE"
         }
+      },
+      "divergence": {
+        "register": "current step REVISE_CONTRACT",
+        "registerSource": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=J].closure",
+        "view": "current step INSPECT_REVISED_CONTRACT",
+        "viewBasis": {
+          "inspection": "NONE",
+          "experiment": "NONE",
+          "validation": "NONE"
+        },
+        "note": "REPORTED, not resolved: the register's CLOSE-1 loader and the contract-declared records disagree (RSP-2); a loader/record-name fix needs its own reviewed change"
       },
       "lastGoRun": null,
       "pending": [
@@ -661,15 +672,7 @@
     },
     "note": "not tracked by RSP-1 — see the register for each record"
   },
-  "ownerQuestionsOpen": [
-    {
-      "id": "Q-CTR2",
-      "blocking": true,
-      "interimApplied": "RADAR-1",
-      "question": "For V15.0 §38 « le Radar existant ne doit subir aucune modification dans cette campagne » and §47 « Le Radar reste inchangé » : does 'le Radar existant' cover only the Radar stage (discovery/collection, governor, transport, allowlists, grants — interim RADAR-1), or also the knowledge-qualification stage (runtime/core/odg-knowledge-*, e.g. #911)? And inside a V15.0-campaign item, does adding a NEW versioned grant file or a NEW Radar module count as a modification?",
-      "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json#ownerQuestions[0]"
-    }
-  ],
+  "ownerQuestionsOpen": [],
   "ownerDecisionsOpenAtCheckpoint": [],
   "checkpointVsRegister": [],
   "openPrs": {
