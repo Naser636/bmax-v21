@@ -21,6 +21,8 @@ const EXC = require("./excellence-policy.js");
 const AUDIT = require("./audit-log.js");
 const prov = require("./evidence-provenance.js");
 
+// V17.5: auditVerified unchanged; auditCanonStatus/auditLegacyShallowCanon SURFACE pre-fix (nested-uncovered) entries.
+function auditStatus(chain: any[]): any { const v = AUDIT.verifyChain(chain); return { auditVerified: v.ok, auditCanonStatus: v.canonStatus || null, auditLegacyShallowCanon: v.legacyShallowCanon || 0 }; }
 function safeReview(reviewer: any, subject: any, fallback: any): { review: any; errored: boolean } {
   if (typeof reviewer !== "function") return { review: fallback, errored: false };
   try { const r = reviewer(subject); return { review: r && typeof r === "object" ? r : fallback, errored: false }; }
@@ -47,7 +49,7 @@ function gateLearningReuse(input: any): any {
   const appliedPractice = applied ? learning.practice : null;
   const outcome = { kind: "learning-reuse", learningId: (learning && learning.id) || null, provOk, provReason, reviewVerdict: review && review.verdict, gateAdmit: gate.admit, reviewerErrored: errored, applied, appliedPractice };
   const newChain = AUDIT.appendEntry(chain, { at: now, ...outcome });
-  return { ...outcome, excellence: { verdict: review && review.verdict, admit: gate.admit, advisory: gate.advisory, reason: gate.reason }, chain: newChain, auditVerified: AUDIT.verifyChain(newChain).ok };
+  return { ...outcome, excellence: { verdict: review && review.verdict, admit: gate.admit, advisory: gate.advisory, reason: gate.reason }, chain: newChain, ...auditStatus(newChain) };
 }
 
 /**
@@ -80,7 +82,7 @@ function gateRecovery(input: any): any {
   const proceed = !!action && evidenceOk && gate.admit === true;
   const outcome = { kind: "recovery", actionId: (action && action.id) || null, evidenceOk, evidenceReason, reviewVerdict: review && review.verdict, gateAdmit: gate.admit, reviewerErrored: errored, proceed };
   const newChain = AUDIT.appendEntry(chain, { at: now, ...outcome });
-  return { ...outcome, excellence: { verdict: review && review.verdict, admit: gate.admit, advisory: gate.advisory, reason: gate.reason }, chain: newChain, auditVerified: AUDIT.verifyChain(newChain).ok };
+  return { ...outcome, excellence: { verdict: review && review.verdict, admit: gate.admit, advisory: gate.advisory, reason: gate.reason }, chain: newChain, ...auditStatus(newChain) };
 }
 
 export { gateLearningReuse, decideWithLearning, gateRecovery };
