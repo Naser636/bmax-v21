@@ -111,13 +111,13 @@
     "openContradictions": [
       "CTR-1 §51 'V15.0 directive unique' vs V14.4 ADOPTED",
       "CTR-2 §38 Radar untouched vs V14.4/V12.4 Radar extensions",
-      "CTR-3 §47 blanket authorization vs per-work-item authorization",
+      "CTR-3 §47 blanket authorization vs per-work-item authorization — LARGELY RESOLVED by owner V171 (per the reconciliation matrix)",
       "CTR-4 ordering continuity-first vs Radar-first"
     ],
     "addendum": "RECORDED as V14.4 extension (docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md)"
   },
   "ownerDecisionsOpen": [
-    "strategic DECISION_REQUIRED on J (contract PROPOSED)",
+    "J: strategic selection is SELECTED (J) but its contract is PROPOSED — the open owner step is PROPOSED → AUTHORIZED",
     "V15.0 adoption / contradictions CTR-1..4",
     "GitHub AUP §6/§7",
     "8 deferred Radar sources + per-host pacing",
