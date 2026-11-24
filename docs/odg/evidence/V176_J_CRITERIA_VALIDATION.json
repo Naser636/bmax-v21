@@ -1,0 +1,65 @@
+{
+  "//": "VALIDATE_CRITERIA for J (owner V176 item 2: « Une seule exécution initiale, avec résultat enregistré honnêtement. »). Graded only from committed evidence after the independent inspection of PR #997 (recomputation from the 8 rows). Nothing upgraded.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "J",
+  "date": "2026-11-24",
+  "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V176_J_EXPERIMENT.json",
+    "sha256": "91e69c663efb194e77d036bf065a047e8165f7a4baa02b7cb75f6c4ebc669d6c",
+    "experimentSha256": "eb4d2dc88af30aee016f4de2b6ade2a1efe4250a0d18a0c0700438f0505ef03a",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 997,
+    "mergedAs": "7add359e",
+    "producedBy": "ODG GO --execute native dispatch (run e2aec9a403fb6263; J selected strategically, no GO-ORD-2; J-runner one-shot claim); trace docs/odg/evidence/V176_J_GO_EXECUTE_TRACE.jsonl (original sha 2c3d137c…)"
+  },
+  "experimentInspection": {
+    "pr": 997,
+    "inspectedHead": "65c01d8e",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "ab245bf3019f79340",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-e2aec9a403fb6263",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "findings": "byte-identical to the GO scratch output; recomputation from the 8 rows: defaults 0/8 (all REPAIR_BUDGET_EXHAUSTED), alternatives executed 8/8 (LARGER_MODEL ×2, DECOMPOSED ×6), alternative passes 2/2 on parse-range, 0 elsewhere; 104 calls, 0 provider, 0 refusals, no caps; pins match; H-REP NOT_REPRODUCED (report-only)"
+  },
+  "criteria": [
+    {
+      "id": "C1",
+      "text": "stop triggered by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
+      "status": "NOT_MET",
+      "evidence": "8/8 default stops REPAIR_BUDGET_EXHAUSTED; none NO_PROGRESS / NO_QUALIFIED under the pre-registered (CP8) reading",
+      "note": "all 8 policy rows record NO_QUALIFIED_LOCAL_MODEL, counted report-only by the pre-registered reading — a literal reading could count it; the strict pre-registered reading is applied (no upgrade)"
+    },
+    {
+      "id": "C2",
+      "text": "alternative (decomposition / different model / repair depth) actually executed",
+      "status": "MET",
+      "evidence": "8/8 alternatives EXECUTED in the sandbox"
+    },
+    {
+      "id": "C3",
+      "text": "outcome compared on the same task and recorded with n",
+      "status": "MET",
+      "evidence": "n = 8, default 0/8 vs alternative 2/8, same task and seed"
+    }
+  ],
+  "result": {
+    "outcome": "PARTIAL",
+    "basis": "C2 ∧ C3 met, C1 not met as worded (pre-registered rule)"
+  },
+  "scenarioGrade": "PARTIAL",
+  "adoption": "NOT_ADOPTED",
+  "lesson": "hypothesis only (n = 8, 4 tasks): the larger-model repair-depth alternative recovered parse-range 2/2 where the default loop failed — first alternative success in the J series (V161 0/8, J2 0/6); decomposition 0/6. Suggests escalation helps on single-file tasks within 7b reach; not established",
+  "limits": [
+    "single initial execution (owner)",
+    "oneShotClaim.path in the record holds a local path (byte fidelity)",
+    "GO's EXECUTE status reads EXECUTED_FAIL because the runner exits 1 on any non-PASS — not the grade",
+    "independence declared by session ids"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PARTIAL)",
+    "missionJ": "CLOSED_PARTIAL — NOT_ADOPTED"
+  }
+}
