@@ -13,6 +13,8 @@
  *   - classifyPath / campaignContracts / checkRadarScope : CTR-2 — V15.0-campaign contracts never write a Radar-stage path
  *                         and their scope excludes Radar change; Radar-stage changes sit under V12.4 I / V14.4 phase-1 anchors;
  *   - phaseOrder / checkOrdering : CTR-4 — in all three numberings continuity is placed no later than the Radar;
+ *   - checkQctr2Derivation : V176 — Q-CTR2 answer (owner V176 item 1) is consistent: answered only if part A is coherent and
+ *                         part B is resolved by PREC-1 (applied reading rests on a strictly higher layer); else blocking;
  *   - checkMatrix       : the reconciliation matrix rows/topContradictions cite this record and no longer carry the
  *                         CONTRADICTION reading the record resolved.
  * It never edits any file. Dual export.
@@ -47,7 +49,55 @@ function allQuotes(rec: any): any[] {
   for (const s of rec.sources || []) if (s.statusEvidence) out.push(s.statusEvidence);
   for (const q of (rec.authority || {}).quotes || []) out.push(q);
   for (const r of rec.resolutions || []) for (const q of r.conflictingTexts || []) out.push(q);
+  for (const oq of rec.ownerQuestions || []) {
+    const d = oq.v176Derivation; if (!d) continue;
+    if (d.authority) out.push(d.authority);
+    for (const q of (d.partA || {}).basis || []) out.push(q);
+    for (const k of ["readingStage", "readingFunction"]) for (const q of ((d.partB || {})[k] || {}).quotes || []) out.push(q);
+    for (const q of ((d.partB || {}).resolution || {}).basis || []) out.push(q);
+    if (oq.ownerDirective) out.push(oq.ownerDirective);
+  }
   return out;
+}
+
+/* V176 — Q-CTR2 derivation consistency (owner V176 item 1): Q-CTR2 may be answered (block lifted) ONLY when part A is
+ * coherent and part B is coherent or resolved by PREC-1 — i.e. the reading applied rests on a STRICTLY higher layer of
+ * precedence.order than the disclosed alternative (ranks derived from the quotes' source tags, never asserted). An
+ * unresolved part keeps answer null + blocking + a stated residual question (never invented). */
+const READINGS: Record<string, string> = { STAGE: "readingStage", FUNCTION: "readingFunction" };
+function bestRank(rec: any, quotes: any[]): number {
+  const order: string[] = (rec.precedence || {}).order || [];
+  const ranks = (quotes || []).map((q: any) => order.indexOf(q.source)).filter((i: number) => i >= 0);
+  return ranks.length ? Math.min(...ranks) : Infinity;
+}
+function checkQctr2Derivation(rec: any): string[] {
+  const v: string[] = [];
+  const q2 = (rec.ownerQuestions || []).find((q: any) => q.id === "Q-CTR2");
+  if (!q2) return ["Q-CTR2 missing from ownerQuestions"];
+  const d = q2.v176Derivation;
+  if (!d) return v;
+  if (!d.authority || d.authority.record !== "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json") v.push("Q-CTR2 derivation does not cite the V176 owner record");
+  const pa = d.partA || {}, pb = d.partB || {};
+  const res = pb.resolution || null;
+  let pbResolved = pb.coherent === true && !res;
+  if (res) {
+    const applied = READINGS[res.reading], other = Object.keys(READINGS).find((k) => k !== res.reading);
+    const ra = applied ? bestRank(rec, (pb[applied] || {}).quotes) : Infinity, ro = other ? bestRank(rec, (pb[READINGS[other]] || {}).quotes) : Infinity;
+    if (res.rule !== "PREC-1") v.push("partB resolution must apply PREC-1");
+    else if (!(ra < ro)) v.push(`partB: reading ${res.reading} (best layer rank ${ra}) does not rest on a strictly higher layer than the alternative (rank ${ro}) ⇒ PREC-1 does not resolve it`);
+    else pbResolved = pb.coherent === true;
+  }
+  const allResolved = pa.coherent === true && pbResolved && !v.length;
+  const answered = q2.answer !== null && q2.answer !== undefined;
+  if (answered && !allResolved) v.push("Q-CTR2 answered although its derivation is not coherent / not resolved by precedence");
+  if (answered && (q2.blocking !== false || !res || q2.answerReading !== res.reading)) v.push("answered Q-CTR2 must be non-blocking and carry answerReading = partB.resolution.reading");
+  if (answered && !(q2.ownerDirective && q2.ownerDirective.record === "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json" && /^PROVIDER applying owner V176 item 1/.test(String(q2.resolvedBy || "")))) v.push("answered Q-CTR2 must cite the V176 owner directive and resolvedBy");
+  if (!answered && (q2.blocking !== true || !(typeof q2.residualQuestion === "string" && q2.residualQuestion.length > 0))) v.push("unanswered Q-CTR2 must stay blocking with a residualQuestion");
+  // part A (new grant / new Radar module = modification) must be what the classifier enforces for NEW paths
+  if (pa.coherent === true) for (const p of ["docs/odg/V999_RESEARCH_GRANT.json", "runtime/core/odg-radar-new-stage.ts"]) if (classifyPath(rec, p) !== "RADAR_STAGE") v.push(`partA: new path ${p} is not classified RADAR_STAGE`);
+  // STAGE answer: knowledge-stage modules must stay outside the Radar scope
+  if (answered && q2.answerReading === "STAGE") for (const p of ["runtime/core/odg-knowledge-intelligence.ts", "runtime/core/odg-knowledge-acquisition.ts"]) if (classifyPath(rec, p) === "RADAR_STAGE") v.push(`STAGE answer but ${p} is classified RADAR_STAGE`);
+  return v;
 }
 
 /* verifyQuotes → [{text, where, ok}] ; a missing source or a non-verbatim quote is NOT ok (fail-closed). */
@@ -127,6 +177,10 @@ function checkRadarScope(rec: any, root: string = ROOT, contracts?: any[]): stri
       const q2 = (rec.ownerQuestions || []).find((q: any) => q.id === "Q-CTR2");
       const know = c.writeSet.filter((p: string) => classifyPath(rec, p) === "KNOWLEDGE_STAGE");
       if (q2 && q2.blocking && (q2.answer === null || q2.answer === undefined) && know.length) v.push(`${c.id}: BLOCKED by Q-CTR2 — V15.0-campaign contract writes knowledge-stage paths ${know.join(", ")}`);
+      // V176: once answered, the ANSWERED reading is enforced — STAGE: knowledge stage is outside 'le Radar existant' (allowed);
+      // FUNCTION (owner override): knowledge-stage writes count as Radar modifications inside a V15.0-campaign item
+      if (q2 && q2.answer !== null && q2.answer !== undefined && q2.answerReading === "FUNCTION" && know.length) v.push(`${c.id}: V15.0-campaign contract writes knowledge-stage paths ${know.join(", ")} — Radar under Q-CTR2 answer FUNCTION (§38/§47)`);
+      if (q2 && q2.answer !== null && q2.answer !== undefined && !READINGS[q2.answerReading] && know.length) v.push(`${c.id}: Q-CTR2 answered without a known answerReading — knowledge-stage write ${know.join(", ")} refused (fail-closed)`);
       if (radar.length) v.push(`${c.id}: V15.0-campaign contract writes Radar-stage paths ${radar.join(", ")} (§38/§47)`);
       const excl = ((rec.campaignScope || {}).radarExclusionPatterns || []).some((re: string) => new RegExp(re, "i").test(c.scope));
       if (!excl) v.push(`${c.id}: V15.0-campaign contract scope does not exclude Radar change`);
@@ -201,5 +255,5 @@ function checkMatrix(rec: any, ctrId: string, root: string = ROOT): string[] {
   return v;
 }
 
-module.exports = { RECORD_PATH, MATRIX_PATH, loadRecord, verifyQuotes, sourceStatuses, checkPrecedence, classifyPath, campaignContracts, checkRadarScope, phaseOrder, checkOrdering, checkMatrix };
+module.exports = { RECORD_PATH, MATRIX_PATH, loadRecord, verifyQuotes, checkQctr2Derivation, sourceStatuses, checkPrecedence, classifyPath, campaignContracts, checkRadarScope, phaseOrder, checkOrdering, checkMatrix };
 export {};

@@ -129,7 +129,7 @@
     "campaignScenarioPattern": "^[A-P][0-9]*$"
   },
   "radarScope": {
-    "rule": "RADAR-1 (INTERIM provider derivation, pending BLOCKING owner question Q-CTR2): 'le Radar existant' = the Radar STAGE of the canonical chain, i.e. discovery/collection and its governor, transport, allowlists and grants. The knowledge, memory and decision stages are distinct stages of the same canonical chain and are NOT 'le Radar'. A module shared with the Radar whose change alters Radar behaviour (e.g. idempotency-guard, as V150_CHECKPOINT_1 recorded) is REVIEW_REQUIRED inside a V15.0 campaign item.",
+    "rule": "RADAR-1 (RESOLVED V176 — Q-CTR2 answered STAGE by PREC-1, see ownerQuestions[Q-CTR2]): 'le Radar existant' = the Radar STAGE of the canonical chain, i.e. discovery/collection and its governor, transport, allowlists and grants (new grant files / new Radar-stage modules included). The knowledge, memory and decision stages are distinct stages of the same canonical chain and are NOT 'le Radar'. A module shared with the Radar whose change alters Radar behaviour (e.g. idempotency-guard, as V150_CHECKPOINT_1 recorded) is REVIEW_REQUIRED inside a V15.0 campaign item.",
     "derivedFrom": [
       {
         "source": "V14_4",
@@ -168,7 +168,8 @@
       "^runtime/core/odg-claim-[a-z-]+\\.ts$",
       "^runtime/core/memory-trust-gate\\.ts$"
     ],
-    "v14_4RadarContracts": "A Radar-stage change is made under a contract anchored on V12.4 I CM-RADAR-GATE-CHAIN / V14.4 phase 1 (fields v124Anchor|v124Link and/or v144Phase), never under a V15.0 campaign contract."
+    "v14_4RadarContracts": "A Radar-stage change is made under a contract anchored on V12.4 I CM-RADAR-GATE-CHAIN / V14.4 phase 1 (fields v124Anchor|v124Link and/or v144Phase), never under a V15.0 campaign contract.",
+    "ruleBefore": "RADAR-1 (INTERIM provider derivation, pending BLOCKING owner question Q-CTR2): 'le Radar existant' = the Radar STAGE of the canonical chain, i.e. discovery/collection and its governor, transport, allowlists and grants. The knowledge, memory and decision stages are distinct stages of the same canonical chain and are NOT 'le Radar'. A module shared with the Radar whose change alters Radar behaviour (e.g. idempotency-guard, as V150_CHECKPOINT_1 recorded) is REVIEW_REQUIRED inside a V15.0 campaign item."
   },
   "numbering": {
     "rule": "NUM-1: the phase numbering of record is V14.4 §2 (phases 0–8). Addendum phases are cited 'addendum phase An' and V15.0 phases 'V15.0 phase Pn'; each maps onto a V14.4 phase through the existing mappings (V169 comparisonWithRepoV14_4[0].mapping for the addendum; V171 consolidatedProposal.phaseMapping for V15.0). No source states that the V14.4 phases are a strict sequence; the addendum states they must not become one. Ordering among independent work is chosen by ODG selection (strategic register / GO) under owner arbitration (e.g. docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json).",
@@ -297,12 +298,18 @@
         }
       ],
       "rootCause": "Missing scope binding. 'dans cette campagne' limits §38 to V15.0-campaign work items, while the Radar extension (WIC-CM-RADAR-GATE-CHAIN-STEP1, V372) and Radar development (V165) are authorized under V12.4 I / V14.4 phase 1 contracts, outside that campaign. Nothing checked which contract a Radar change belonged to, so every Radar change looked like a breach of §38.",
-      "resolution": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2 (SCOPE-1 resolved by precedence; RADAR-1 is a PROVIDER derivation of what V150_TRACEABILITY_MATRIX recorded as an owner interpretation question): §38/§47 are preserved in full for every V15.0-campaign contract (no Radar-stage path in its write_set; scope must exclude Radar change). Radar-stage changes are legitimate only under contracts anchored on V12.4 I / V14.4 phase 1. #911 (runtime/core/odg-knowledge-intelligence.ts, FRAGMENT citations capped at CANDIDATE — a stricter, fail-closed qualification rule) is KNOWLEDGE_STAGE under RADAR-1, hence not a §38 modification under the interim; it is not reverted.",
-      "ownerChoiceNeeded": true,
-      "interim": "RADAR-1 stage boundary (least disruptive: preserves §38 for campaign items, keeps the V372/V165-authorized Radar work, does not revert a fail-closed fix). Past additions of new versioned grant files and new Radar modules during the campaign are NOT re-adjudicated here.",
-      "matrixRelationAfter": "CONTRADICTION (kept until Q-CTR2 is answered; row carries precedence.status = RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2)",
+      "resolution": "RESOLVED_BY_SCOPE + RESOLVED_BY_PRECEDENCE (SCOPE-1 + RADAR-1 confirmed by PREC-1 under owner V176 item 1): §38/§47 are preserved in full for every V15.0-campaign contract (no Radar-stage path — existing or new, grants included — in its write_set; scope must exclude Radar change). Radar-stage changes are legitimate only under contracts anchored on V12.4 I / V14.4 phase 1. The knowledge stage (odg-knowledge-*, odg-claim-*, memory-trust-gate) is not 'le Radar existant'; #911 is legitimate (knowledge stage). The FUNCTION reading stays disclosed and owner-overridable.",
+      "ownerChoiceNeeded": false,
+      "matrixRelationAfter": "COMMON (V150-S38); V150-S13 keeps IMPROVEMENT",
       "regressionTest": "runtime/core/odg-governance-precedence.test.ts#CTR-2",
-      "status": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2"
+      "status": "RESOLVED_BY_SCOPE + RESOLVED_BY_PRECEDENCE (Q-CTR2 answered V176: STAGE)",
+      "statusBefore": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2",
+      "ownerChoiceNeededBefore": true,
+      "interimBefore": "RADAR-1 stage boundary (least disruptive: preserves §38 for campaign items, keeps the V372/V165-authorized Radar work, does not revert a fail-closed fix). Past additions of new versioned grant files and new Radar modules during the campaign are NOT re-adjudicated here.",
+      "resolutionBefore": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2 (SCOPE-1 resolved by precedence; RADAR-1 is a PROVIDER derivation of what V150_TRACEABILITY_MATRIX recorded as an owner interpretation question): §38/§47 are preserved in full for every V15.0-campaign contract (no Radar-stage path in its write_set; scope must exclude Radar change). Radar-stage changes are legitimate only under contracts anchored on V12.4 I / V14.4 phase 1. #911 (runtime/core/odg-knowledge-intelligence.ts, FRAGMENT citations capped at CANDIDATE — a stricter, fail-closed qualification rule) is KNOWLEDGE_STAGE under RADAR-1, hence not a §38 modification under the interim; it is not reverted.",
+      "matrixRelationAfterBefore": "CONTRADICTION (kept until Q-CTR2 is answered; row carries precedence.status = RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2)",
+      "v176ReviewBefore": "V176 item 1 re-derivation (ownerQuestions[Q-CTR2].v176Derivation): part A (new grant / new Radar module = modification inside a V15.0-campaign item) coherent and recorded; part B (knowledge stage) NOT_COHERENT across V12.4 / V14.4 / addendum / V15.0 ⇒ status unchanged, Q-CTR2 stays BLOCKING on the residual question",
+      "v176Review": "V176 item 1: Q-CTR2 answered STAGE (part A coherent; part B by PREC-1); CTR-2 RESOLVED, Q-CTR2-BLOCK lifted; history kept in *Before fields"
     },
     {
       "id": "CTR-4",
@@ -375,9 +382,192 @@
       "id": "Q-CTR2",
       "question": "For V15.0 §38 « le Radar existant ne doit subir aucune modification dans cette campagne » and §47 « Le Radar reste inchangé » : does 'le Radar existant' cover only the Radar stage (discovery/collection, governor, transport, allowlists, grants — interim RADAR-1), or also the knowledge-qualification stage (runtime/core/odg-knowledge-*, e.g. #911)? And inside a V15.0-campaign item, does adding a NEW versioned grant file or a NEW Radar module count as a modification?",
       "interimApplied": "RADAR-1",
-      "blocking": true,
-      "answer": null,
-      "blockingRule": "Q-CTR2-BLOCK: while answer is null, any V15.0-campaign contract whose write_set holds a KNOWLEDGE_STAGE path (radarScope.knowledgeStagePatterns, e.g. runtime/core/odg-knowledge-*) is BLOCKED (validator: checkRadarScope). Not retroactive: #911 stays, not reverted, under the interim."
+      "blocking": false,
+      "answer": "STAGE: 'le Radar existant' (V15.0 §38/§47) = the Radar STAGE of the canonical chain (discovery/collection, its governor, transport, allowlists, grants, source admission — radarScope.radarStagePatterns). The knowledge-qualification stage (odg-knowledge-*, odg-claim-*, memory-trust-gate) is a distinct stage, NOT 'le Radar existant'; a V15.0-campaign contract may write it (scope must still exclude Radar change). Inside a V15.0-campaign item, adding a NEW grant file or a NEW Radar-stage module IS a modification (forbidden). #911 (odg-knowledge-intelligence.ts) is knowledge stage ⇒ legitimate, not a §38 modification.",
+      "v176Derivation": {
+        "date": "2026-11-24",
+        "authority": {
+          "record": "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json",
+          "path": "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json",
+          "text": "Q-CTR2 : résoudre la question à partir de la Boussole canonique V12.4, des contrats et des preuves existantes. Enregistrer la résolution et lever le blocage si les éléments sont cohérents."
+        },
+        "derivedBy": "PROVIDER applying owner V176 item 1 from canonical sources (Claude Code = TECHNICAL_PROVIDER_ONLY; derivation only, no owner text edited)",
+        "outcome": "RESOLVED — part A coherent; part B resolved by PREC-1 (STAGE): the stage reading rests on higher layers (V12.4 canonical, V14.4 ADOPTED) than the function reading (addendum RECORDED, V15.0 PROPOSED); Q-CTR2 answered, block lifted",
+        "partA": {
+          "question": "inside a V15.0-campaign item, does adding a NEW versioned grant file or a NEW Radar-stage module count as a modification of 'le Radar existant'?",
+          "answer": "YES. The V15.0-campaign contracts exclude any 'Radar code/grant change' (a new Radar code file or a new grant is such a change); a grant is the access condition the Radar governor enforces, so a new grant changes what the existing Radar collects; a separate new Radar would be a second Radar (§3). Such additions stay legitimate only under contracts anchored on V12.4 I CM-RADAR-GATE-CHAIN / V14.4 phase 1, with owner-accepted grants. Already enforced: radarScope.radarStagePatterns match new paths as well as existing ones (checkRadarScope).",
+          "coherent": true,
+          "basis": [
+            {
+              "source": "CONTRACTS",
+              "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+              "text": "no Radar code/grant change"
+            },
+            {
+              "source": "V15_0",
+              "v150Section": "§3",
+              "field": "quote",
+              "text": "Aucun deuxième Radar."
+            },
+            {
+              "source": "ADDENDUM",
+              "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+              "text": "Le Radar respecte les grants, les allowlists, les quotas et les conditions d'accès existants."
+            },
+            {
+              "source": "V14_4",
+              "path": "docs/odg/V14_4_ROADMAP.md",
+              "text": "Radar real collection needs an accepted, unexpired grant"
+            },
+            {
+              "source": "CODE",
+              "path": "runtime/core/research-governor.ts",
+              "text": "DENY (deny-by-default) when: no/!authorized grant (EGRESS_NOT_AUTHORIZED)"
+            },
+            {
+              "source": "V15_0_CAMPAIGN_RECORD",
+              "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+              "text": "New Radar hosts / grant renewal (V158 grant expires 2026-12-22) (§13, §52)"
+            }
+          ],
+          "enforcedBy": "runtime/core/odg-governance-precedence.test.ts#CTR-2 (new grant / new Radar module in a V15.0 item ⇒ violation)"
+        },
+        "partB": {
+          "question": "does 'le Radar existant' also cover the knowledge-qualification stage (runtime/core/odg-knowledge-*, odg-claim-*, e.g. #911)?",
+          "coherent": true,
+          "readingStage": {
+            "reading": "RADAR-1 (interim): Radar = discovery/collection stage; knowledge qualification is the next stage ⇒ V15.0-campaign writes to odg-knowledge-* are not §38 modifications",
+            "quotes": [
+              {
+                "source": "V14_4",
+                "path": "docs/odg/V14_4_ROADMAP.md",
+                "text": "traced chain Radar→knowledge→memory→decision with reuse proof"
+              },
+              {
+                "source": "V12_4",
+                "path": "docs/odg/v124-consolidated-roadmap.json",
+                "text": "compose existing radar+acquisition+gate into one traced chain"
+              },
+              {
+                "source": "ADDENDUM",
+                "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+                "text": "Le Radar découvre les possibilités."
+              },
+              {
+                "source": "ADDENDUM",
+                "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+                "text": "L'intelligence comprend, diagnostique et décide."
+              },
+              {
+                "source": "CODE",
+                "path": "runtime/core/odg-knowledge-acquisition.ts",
+                "text": "search/fetch tools OUTSIDE this module; their REAL results are injected here so the pipeline is deterministic + testable."
+              },
+              {
+                "source": "CODE",
+                "path": "runtime/core/odg-knowledge-intelligence.ts",
+                "text": "A LAYER over the EXISTING memory"
+              }
+            ]
+          },
+          "readingFunction": {
+            "reading": "Radar = research AND qualification of external knowledge ⇒ the existing knowledge-qualification modules are part of 'le Radar existant'; #911 would then be a §38 modification needing owner ratification or revert",
+            "quotes": [
+              {
+                "source": "ADDENDUM",
+                "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+                "text": "Radar : recherche et qualification des connaissances externes."
+              },
+              {
+                "source": "ADDENDUM",
+                "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+                "text": "Le Radar existant doit alimenter cette boucle d'amélioration."
+              },
+              {
+                "source": "ADDENDUM",
+                "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+                "text": "- rechercher des corroborations indépendantes ;"
+              },
+              {
+                "source": "ADDENDUM",
+                "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+                "text": "- distinguer faits, hypothèses et recommandations ;"
+              },
+              {
+                "source": "V15_0",
+                "v150Section": "§13",
+                "field": "title",
+                "text": "13. ODG KNOWLEDGE INTELLIGENCE V2 — FRONTIER RADAR : DISCOVERY TO ENGINEERING"
+              },
+              {
+                "source": "V15_0",
+                "v150Section": "§13",
+                "field": "quote",
+                "text": "Le Radar V2 sera considéré comme utile lorsque des preuves montreront qu'il sait :"
+              },
+              {
+                "source": "V15_0_REGISTRATION",
+                "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+                "text": "| C World Radar / KI V2 |"
+              }
+            ]
+          },
+          "consequenceIfStage": "lift Q-CTR2-BLOCK; knowledgeStagePatterns stay non-Radar; #911 legitimate",
+          "consequenceIfFunction": "knowledgeStagePatterns become Radar-stage for V15.0-campaign items (no V15.0-campaign write to odg-knowledge-*/odg-claim-*); #911 needs owner ratification or revert",
+          "coherentBefore": false,
+          "whyNotCoherentBefore": "Both readings are supported by canonical-layer text and neither is derivable by precedence: V12.4 I names the chain 'Radar→memory→…' with no separate knowledge stage and lists odg-knowledge-acquisition as a component of that chain beside the radar (it does not say on which side of the Radar boundary it sits); V14.4 §2 names a distinct 'knowledge' stage after the Radar; the RECORDED addendum (§21.2, §27) assigns qualification of external knowledge (corroboration, fact/hypothesis distinction, provenance) to 'Le Radar existant', while its final rule says 'Le Radar découvre' and 'L'intelligence comprend'; V15.0 itself (§13 title, registration programme C) names KI V2 as 'Radar V2' / 'World Radar'. PREC-1 orders rules, it does not define a term of a V15.0 clause, and the two readings give opposite verdicts on #911 — a substantive choice the provider may not make (V175 §3: 'Ne pas inventer leur signification').",
+          "resolution": {
+            "rule": "PREC-1",
+            "ruleText": "PREC-1: (1) owner decisions/authorization records, within their own quoted scope; (2) Boussole V12.4 = canonical reference; (3) Boussole V14.4 = ADOPTED organisation of the execution of V12.4 (additive; numbering of record); (4) addendum 'Boussole vivante' = RECORDED extension of V14.4 (may refine V14.4, never removes a V14.4 requirement); (5) V15.0 = PROPOSED campaign directive: its requirements attach to V14.4 phases as exit criteria, and its campaign-scoped clauses ('dans/de cette campagne') bind ONLY work items whose contract cites V15.0 as its source. A lower layer never overrides a higher one; while V15.0 is not ADOPTED it never outranks (2)–(4). Re-evaluate this record if any status in 'sources' changes (the test fails when it does).",
+            "reading": "STAGE",
+            "reasoning": "PREC-1: « A lower layer never overrides a higher one ». The highest layer supporting the STAGE reading is V12.4 (I CM-RADAR-GATE-CHAIN lists odg-global-opportunity-radar and odg-knowledge-acquisition as separate components: « compose existing radar+acquisition+gate ») then the ADOPTED V14.4 §2 (distinct knowledge stage « Radar→knowledge→memory→decision »). The FUNCTION reading rests only on the RECORDED addendum (§21.2, §27 — whose final rule itself says « Le Radar découvre les possibilités. » / « L'intelligence comprend, diagnostique et décide. ») and the PROPOSED V15.0 (§13 title, registration programme C). Ranks are checked by the validator from precedence.order (checkQctr2Derivation).",
+            "basis": [
+              {
+                "source": "V12_4",
+                "path": "docs/odg/v124-consolidated-roadmap.json",
+                "text": "odg-knowledge-acquisition"
+              },
+              {
+                "source": "V12_4",
+                "path": "docs/odg/v124-consolidated-roadmap.json",
+                "text": "compose existing radar+acquisition+gate into one traced chain"
+              },
+              {
+                "source": "V14_4",
+                "path": "docs/odg/V14_4_ROADMAP.md",
+                "text": "traced chain Radar→knowledge→memory→decision with reuse proof"
+              },
+              {
+                "source": "ADDENDUM",
+                "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+                "text": "Le Radar découvre les possibilités."
+              },
+              {
+                "source": "ADDENDUM",
+                "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+                "text": "L'intelligence comprend, diagnostique et décide."
+              }
+            ],
+            "alternativeDisclosed": "FUNCTION reading (readingFunction) kept as a disclosed alternative the owner may adopt by override; it is not applied because it rests only on lower layers."
+          }
+        },
+        "residualQuestion": "Q-CTR2 (residual, part B only): in V15.0 §38/§47, does 'le Radar existant' include the existing knowledge-qualification modules (runtime/core/odg-knowledge-*, odg-claim-*, memory-trust-gate) — reading FUNCTION (addendum §21.2 « Radar : recherche et qualification des connaissances externes », V15.0 §13 « KNOWLEDGE INTELLIGENCE V2 — FRONTIER RADAR ») — or only the discovery/collection stage — reading STAGE (V14.4 §2 « Radar→knowledge→memory→decision », V12.4 I radar and acquisition as distinct components)? If FUNCTION: is #911 (odg-knowledge-intelligence.ts, FRAGMENT citations capped at CANDIDATE) ratified or reverted?",
+        "answerBefore": null,
+        "blockingBefore": true,
+        "outcomeBefore": "PARTIAL — part A coherent and recorded; part B NOT_COHERENT ⇒ Q-CTR2 stays BLOCKING (answer null), residualQuestion below",
+        "consequenceApplied": "lift Q-CTR2-BLOCK; knowledgeStagePatterns stay non-Radar; #911 legitimate"
+      },
+      "answerReading": "STAGE",
+      "blockingRuleBefore": "Q-CTR2-BLOCK: while answer is null, any V15.0-campaign contract whose write_set holds a KNOWLEDGE_STAGE path (radarScope.knowledgeStagePatterns, e.g. runtime/core/odg-knowledge-*) is BLOCKED (validator: checkRadarScope). Not retroactive: #911 stays, not reverted, under the interim.",
+      "blockingRule": "Q-CTR2-BLOCK LIFTED (V176): answer non-null ⇒ the validator no longer blocks V15.0-campaign knowledge-stage writes; it enforces the answered reading (answerReading STAGE: knowledge paths outside the Radar scope; FUNCTION would make them Radar-stage for V15.0-campaign items).",
+      "resolvedBy": "PROVIDER applying owner V176 item 1 from canonical sources",
+      "ownerDirective": {
+        "record": "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json",
+        "path": "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json",
+        "text": "Q-CTR2 : résoudre la question à partir de la Boussole canonique V12.4, des contrats et des preuves existantes. Enregistrer la résolution et lever le blocage si les éléments sont cohérents."
+      },
+      "residualQuestionBefore": "Q-CTR2 (residual, part B only): in V15.0 §38/§47, does 'le Radar existant' include the existing knowledge-qualification modules (runtime/core/odg-knowledge-*, odg-claim-*, memory-trust-gate) — reading FUNCTION (addendum §21.2 « Radar : recherche et qualification des connaissances externes », V15.0 §13 « KNOWLEDGE INTELLIGENCE V2 — FRONTIER RADAR ») — or only the discovery/collection stage — reading STAGE (V14.4 §2 « Radar→knowledge→memory→decision », V12.4 I radar and acquisition as distinct components)? If FUNCTION: is #911 (odg-knowledge-intelligence.ts, FRAGMENT citations capped at CANDIDATE) ratified or reverted?",
+      "overridable": "The owner may override this answer at any time (e.g. adopt the FUNCTION reading disclosed in v176Derivation.partB.readingFunction); the validator then applies answerReading FUNCTION."
     }
   ],
   "notTouched": [

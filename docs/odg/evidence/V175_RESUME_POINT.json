@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "d20abcc7b8a8100ea54343805bbe5c9a6eb44fcb806a83eff0b8f5e976030196"
+      "sha256": "4f5952ba08cd693dcb4315f732545bff4a9a9b22948b8a40302ed658ea3b5f4d"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -23,7 +23,7 @@
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
-      "sha256": "617bfca543c23af5031174ebbb19cefe2906744ea4ed7fe455a4f8babf981b7f"
+      "sha256": "8e15c4aced4c2db13b73a2e57de868191e538df3e317729ef6f270c9d413a91f"
     },
     {
       "source": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
@@ -653,15 +653,7 @@
     },
     "note": "not tracked by RSP-1 — see the register for each record"
   },
-  "ownerQuestionsOpen": [
-    {
-      "id": "Q-CTR2",
-      "blocking": true,
-      "interimApplied": "RADAR-1",
-      "question": "For V15.0 §38 « le Radar existant ne doit subir aucune modification dans cette campagne » and §47 « Le Radar reste inchangé » : does 'le Radar existant' cover only the Radar stage (discovery/collection, governor, transport, allowlists, grants — interim RADAR-1), or also the knowledge-qualification stage (runtime/core/odg-knowledge-*, e.g. #911)? And inside a V15.0-campaign item, does adding a NEW versioned grant file or a NEW Radar module count as a modification?",
-      "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json#ownerQuestions[0]"
-    }
-  ],
+  "ownerQuestionsOpen": [],
   "ownerDecisionsOpenAtCheckpoint": [],
   "checkpointVsRegister": [],
   "openPrs": {
