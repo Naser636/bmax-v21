@@ -22,6 +22,7 @@ const REG = require("../core/odg-strategic-register.js");
 const SEL = require("../core/mission-priority-selector.js");
 const OCUR = require("../core/odg-observation-currency.js");   // V16.9 Phase 1b — proof-currency probes (read-only local git)
 const DEPG = require("../core/odg-register-dependency-graph.js");   // V17.5 — which committed files DEPG-1 needs
+const OFB = require("../core/odg-outcome-feedback.js");   // V17.6 — outcome feedback on scores (OFB-1; OFF unless a committed activation binds it)
 const { parseRequiresFromSource } = require("../../scripts/lib/js-require-scan");   // the canonical require parser (change-impact-graph composes it)
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -145,10 +146,26 @@ function loadSources(root: string): any {
   const dependencyEvidence = loadDependencyEvidence(root, contracts, inputs);
   // V17.5 PRIORITY 3 BREF-1 inputs: the boussole crosswalk records (read-only; sha256 in inputs ⇒ a change is drift).
   const boussoleEvidence = loadBoussoleEvidence(root, inputs);
+  // V17.6 OFB-ACT-1 — outcome feedback: its files enter `inputs` ONLY when ACTIVE (inactive ⇒ byte-identical base register).
+  const outcomeFeedback = loadOutcomeFeedback(root, inputs);
   const seen = new Set<string>();
   const uniqInputs = inputs.filter((i: any) => (seen.has(i.source) ? false : (seen.add(i.source), true)));
   inputs.length = 0; inputs.push(...uniqInputs);
-  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, proofProbes, dependencyEvidence, boussoleEvidence, inputs };
+  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, proofProbes, dependencyEvidence, boussoleEvidence, outcomeFeedback, inputs };
+}
+
+/* V17.6 loadOutcomeFeedback(root, inputs) — OFB-ACT-1 over the COMMITTED activation record + feedback layer (+ the owner
+ * record when present). Returns { state, multipliers } — multipliers only when ACTIVE; inputs extended only when ACTIVE. */
+function loadOutcomeFeedback(root: string, inputs: any[]): any {
+  const txt = (rel: string) => { try { return fs.readFileSync(path.join(root, rel), "utf8"); } catch { return null; } };
+  const json = (t: string | null) => { if (t === null) return null; try { return JSON.parse(t); } catch { return null; } };
+  const actTxt = txt(OFB.ACTIVATION_REL), layerTxt = txt(OFB.LAYER_REL), ownerTxt = txt(OFB.OWNER_RECORD);
+  const layer = json(layerTxt);
+  const state = OFB.activationState(json(actTxt), layer, ownerTxt);
+  if (!state.active) return { state, multipliers: null };
+  inputs.push({ source: OFB.ACTIVATION_REL, sha256: sha256(actTxt as string) }, { source: OFB.LAYER_REL, sha256: sha256(layerTxt as string) });
+  if (ownerTxt !== null) inputs.push({ source: OFB.OWNER_RECORD, sha256: sha256(ownerTxt) });
+  return { state, multipliers: layer.adjustmentsCanonical.multipliers };
 }
 
 /* BREF-1 sources: V171 matrix (requirement rows: id, v150.section, anchors only), the canonical V12.4 companion (mission
@@ -203,8 +220,11 @@ function loadDependencyEvidence(root: string, contracts: any, inputs: any[]): an
 }
 
 const SELECTOR_OPTIONS = Object.freeze({ weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
+/* V17.6 — the options every decision of this record uses: base options + OFB multipliers ONLY when the feedback is ACTIVE. */
+let ACTIVE_OPTIONS: any = SELECTOR_OPTIONS;
+function optionsFor(sources: any): any { return OFB.selectorOptions(SELECTOR_OPTIONS, sources ? sources.outcomeFeedback : null); }
 
-function decide(register: any): any { return SEL.selectNextExplained(REG.toSelectorCandidates(register), SELECTOR_OPTIONS); }
+function decide(register: any): any { return SEL.selectNextExplained(REG.toSelectorCandidates(register), ACTIVE_OPTIONS); }
 function underlyingChoice(d: any): string | null { return d.selected ? d.selected.id : d.proposed ? d.proposed.id : null; }
 
 /* invariance probe for c2: shuffle + relabel ids in reverse order; the decision must land on the same item. */
@@ -214,7 +234,7 @@ function idInvariance(register: any, base: any): any {
   const relabel: any = {}; ids.forEach((id: string, i: number) => { relabel[id] = "Z" + String(ids.length - i).padStart(3, "0"); });
   const back: any = Object.fromEntries(Object.entries(relabel).map(([a, b]) => [b, a]));
   const moved = cands.map((c: any) => ({ ...c, id: relabel[c.id], deps: c.deps.map((d: string) => relabel[d] || d) })).reverse();
-  const d2 = SEL.selectNextExplained(moved, SELECTOR_OPTIONS);
+  const d2 = SEL.selectNextExplained(moved, ACTIVE_OPTIONS);
   const c2 = underlyingChoice(d2);
   const sameTied = JSON.stringify((d2.tiedSet || []).map((x: string) => back[x]).sort()) === JSON.stringify((base.tiedSet || []).slice().sort());
   return { decisionUnderRelabel: d2.decision, choiceUnderRelabel: c2 ? back[c2] : null, sameDecision: d2.decision === base.decision && (c2 ? back[c2] : null) === underlyingChoice(base), sameTiedSet: sameTied };
@@ -223,7 +243,7 @@ function idInvariance(register: any, base: any): any {
 function sensitivity(register: any): any[] {
   const cands = REG.toSelectorCandidates(register);
   return [{ epsilon: 0.02, uncertaintyMax: 0.4 }, { epsilon: 0.05, uncertaintyMax: 0.5 }, { epsilon: 0.0001, uncertaintyMax: 0.5 }].map((t) => {
-    const d = SEL.selectNextExplained(cands, { ...SELECTOR_OPTIONS, ...t });
+    const d = SEL.selectNextExplained(cands, { ...ACTIVE_OPTIONS, ...t });
     return { ...t, decision: d.decision, choice: underlyingChoice(d), tiedSet: d.tiedSet || [] };
   });
 }
@@ -254,6 +274,8 @@ function gitHead(root: string): string | null { try { return execFileSync("git",
 
 /* compute(sources) — the deterministic part of the record (everything --check compares). */
 function compute(sources: any): any {
+  ACTIVE_OPTIONS = optionsFor(sources);
+  const fb = sources && sources.outcomeFeedback && sources.outcomeFeedback.state && sources.outcomeFeedback.state.active === true ? sources.outcomeFeedback : null;
   const register = REG.buildRegister(sources);
   const decision = decide(register);
   const again = JSON.stringify(decide(REG.buildRegister(sources))) === JSON.stringify(decision);
@@ -266,7 +288,8 @@ function compute(sources: any): any {
     preRegistration: PRE_REGISTRATION,
     inputs: sources.inputs,
     register,
-    selector: { component: "runtime/core/mission-priority-selector.ts selectNextExplained (selectNext unchanged)", options: { weights: SELECTOR_OPTIONS.weights, directions: SELECTOR_OPTIONS.directions, ...SEL.EXPLAINED_DEFAULTS }, contract: SEL.STRATEGIC_SELECTION_CONTRACT },
+    selector: { component: "runtime/core/mission-priority-selector.ts selectNextExplained (selectNext unchanged)", options: { weights: SELECTOR_OPTIONS.weights, directions: SELECTOR_OPTIONS.directions, ...SEL.EXPLAINED_DEFAULTS }, contract: SEL.STRATEGIC_SELECTION_CONTRACT,
+      ...(fb ? { outcomeFeedback: { active: true, rule: "OFB-APPLY-1", rules: OFB.RULES, multipliers: fb.multipliers, adjustmentsSha256: fb.state.boundSha256, ownerRecordStatus: fb.state.ownerRecordStatus, activationRecord: OFB.ACTIVATION_REL, layerRecord: OFB.LAYER_REL, history: OFB.HISTORY_REL, rollback: "set active:false in " + OFB.ACTIVATION_REL + " ⇒ this record is byte-identical to the base register (OFB-RB-1)" } } : {}) },
     decision,
     decisionRecord: {
       decision: decision.decision,
@@ -283,6 +306,7 @@ function compute(sources: any): any {
     sensitivity: sensitivity(register),
     grading: grade(register, decision, again, inv),
     honestLimits: [
+      ...(fb ? [`V17.6 OFB-1 ACTIVE (owner « V176 : DÉBLOCAGE FINAL » item 3, ${OFB.OWNER_RECORD}): ranking.evidenceScore is the ADJUSTED score (MEASURED contributions × the per-criterion multipliers ${JSON.stringify(fb.multipliers)}); baseEvidenceScore is kept on every row. The multipliers are a bounded LEVEL calibration from ${OFB.MIN_N}+ admitted graded items per criterion (criteria below MIN_N are not adjusted) — not evidence that any criterion discriminates outcomes; statuses, criterion values, weights and thresholds are unchanged`] : []),
       "criterion rules, equal weights, epsilon 0.02 and uncertaintyMax 0.5 were written by the provider, not derived from a canonical owner source — ODG applies them; the owner may replace them",
       "4 of 10 criteria (blocker/repetition reduction, reliability/quality, speed/efficiency, reusability) are NOT_MEASURED for every non-capability-gap item: no evidence field supports them; they enter only as uncertainty",
       "strategicValue and capabilityGain come from V150 summary.top10NextInternal, itself a provider research ranking (V150 meta.generator) made before F/G/J were executed",
@@ -323,5 +347,5 @@ function main(argv: string[]): number {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { BOUSSOLE_FILES, loadBoussoleEvidence, loadSources, compute, grade, idInvariance, main, PRE_REGISTRATION, OUT_REL };
+module.exports = { BOUSSOLE_FILES, loadBoussoleEvidence, loadOutcomeFeedback, loadSources, compute, grade, idInvariance, main, PRE_REGISTRATION, OUT_REL };
 export {};

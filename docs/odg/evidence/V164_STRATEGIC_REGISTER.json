@@ -224,6 +224,14 @@
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
       "sha256": "617bfca543c23af5031174ebbb19cefe2906744ea4ed7fe455a4f8babf981b7f"
+    },
+    {
+      "source": "docs/odg/V176_OUTCOME_FEEDBACK_ACTIVATION.json",
+      "sha256": "a6528243b8636b8eb44e8d90e67c0400a3ff323895440351fe6771c14f990277"
+    },
+    {
+      "source": "docs/odg/evidence/V176_OUTCOME_FEEDBACK.json",
+      "sha256": "1f08a0116dd536a04cbb9733aca33c3358c403e95d237a2dde902babe63d1bff"
     }
   ],
   "register": {
@@ -10425,14 +10433,39 @@
         "requiresOwnerAuthorization items are ranked but never auto-selected",
         "eligibility gates are scoreMission's (reused, not duplicated); output is a PROPOSAL, never an authorization"
       ]
+    },
+    "outcomeFeedback": {
+      "active": true,
+      "rule": "OFB-APPLY-1",
+      "rules": {
+        "OFB-ADM-1": "an outcome is ADMITTED iff (a) the register item is CLOSE-1 closed with grade PASS|PARTIAL|FAIL (CLOSED_NOT_MEASURED ⇒ refused); (b) its criteria-validation record has schema odg-criteria-validation/1, names the item, grades it with the SAME grade, and is bound to the closure's contract sha256 AND experiment sha256; (c) the record carries an independent inspection ACCEPT (experimentInspection.verdict ACCEPT, distinct opaque inspectorSessionId / authorSessionId); (d) neither the validation nor the experiment record is a PROBE / simulation / fixture / hypothesis / synthetic / mock / dry-run / prediction (identity fields path, schema, label, kind, basis; or a true simulated/probe/fixture/hypothesis flag); (e) a selection-time prediction is attributable (register criteria read from committed git history, with a source pointer). Anything else is REFUSED with its reason and never used",
+        "OFB-PRED-1": "the prediction of an admitted item is the register's criteria AT SELECTION TIME — odg-v175-outcome-learning gatherSelection over the committed history of V164_STRATEGIC_REGISTER.json up to the experiment's run head (the same rule the V17.5 outcome-learning record uses); favourability = value (HIGHER_IS_BETTER) or 1 − value (LOWER_IS_BETTER), only for MEASURED criteria",
+        "OFB-CAL-1": "per criterion c: n = admitted items where c was MEASURED at selection time; n < 5 ⇒ multiplier 1 (BELOW_MIN_N, no adjustment); otherwise bias = mean(favourability) − mean(utility) with utility PASS=1 / PARTIAL=0.5 / FAIL=0 (odg-outcome-learning.GRADE_UTILITY) and multiplier = clamp(1 − bias, 0.8, 1.2) rounded to 4 decimals. A LEVEL calibration only (over/under-prediction on these items), never a discrimination claim",
+        "OFB-APPLY-1": "when ACTIVE, mission-priority-selector.scoreExplained multiplies each MEASURED criterion contribution by its multiplier (absent ⇒ 1); NOT_MEASURED criteria still contribute 0 and their full weight to uncertainty (never imputed); every breakdown row keeps baseContribution + multiplier and every ranked row keeps baseEvidenceScore + scoreDelta; thresholds, weights, criteria values, statuses, eligibility and the secondary rules are unchanged",
+        "OFB-ACT-1": "OFF by default. ACTIVE iff the committed activation record (docs/odg/V176_OUTCOME_FEEDBACK_ACTIVATION.json) has schema odg-outcome-feedback-activation/1, active === true, feedbackVersion OFB-1, the owner quote VERBATIM, ownerRecord docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json (when that file is present on the tree it must contain the quote, else OFF), and adjustmentsSha256 equal to sha256(canon(adjustments)) of the layer being applied; any other state ⇒ OFF with its reason",
+        "OFB-RB-1": "rollback = set active:false in the activation record (and append a DEACTIVATE history entry): the selector then receives no multipliers and the strategic register is byte-identical to the base register; a new set of adjustments (e.g. a new graded item) is NEVER applied until a new activation record binds its sha",
+        "OFB-HIST-1": "docs/odg/evidence/V176_OUTCOME_FEEDBACK_HISTORY.jsonl is append-only JSON lines, hash-chained (prevSha256 = sha256 of the previous line); every ACTIVATE / DEACTIVATE appends the adjustments sha, the multipliers, the base and adjusted score of every ranked item and the strategic + actionable decisions before/after; earlier lines are never rewritten"
+      },
+      "multipliers": {
+        "autonomyBenefit": 0.9,
+        "costRiskComplexity": 1.06,
+        "evidenceLevel": 1
+      },
+      "adjustmentsSha256": "7248ad5784c8f3396b2fc41300e17c48ba5fe80886f5aebdce7777cdd9952ebc",
+      "ownerRecordStatus": "ABSENT_ON_THIS_TREE (cited by path; activation rests on the verbatim quote transcribed in the activation record)",
+      "activationRecord": "docs/odg/V176_OUTCOME_FEEDBACK_ACTIVATION.json",
+      "layerRecord": "docs/odg/evidence/V176_OUTCOME_FEEDBACK.json",
+      "history": "docs/odg/evidence/V176_OUTCOME_FEEDBACK_HISTORY.jsonl",
+      "rollback": "set active:false in docs/odg/V176_OUTCOME_FEEDBACK_ACTIVATION.json ⇒ this record is byte-identical to the base register (OFB-RB-1)"
     }
   },
   "decision": {
     "decision": "SELECTED",
     "selected": {
       "id": "J",
-      "evidenceScore": 0.335,
-      "upperBound": 0.835,
+      "evidenceScore": 0.333,
+      "baseEvidenceScore": 0.335,
+      "upperBound": 0.833,
       "uncertainty": 0.5,
       "breakdown": [
         {
@@ -10441,8 +10474,10 @@
           "value": 0.5,
           "direction": "HIGHER_IS_BETTER",
           "weight": 0.1,
-          "contribution": 0.05,
-          "uncertaintyContribution": 0
+          "contribution": 0.045,
+          "uncertaintyContribution": 0,
+          "baseContribution": 0.05,
+          "multiplier": 0.9
         },
         {
           "criterion": "blockerRepetitionReduction",
@@ -10458,7 +10493,9 @@
           "direction": "HIGHER_IS_BETTER",
           "weight": 0.1,
           "contribution": 0.075,
-          "uncertaintyContribution": 0
+          "uncertaintyContribution": 0,
+          "baseContribution": 0.075,
+          "multiplier": 1
         },
         {
           "criterion": "costRiskComplexity",
@@ -10466,8 +10503,10 @@
           "value": 0.5,
           "direction": "LOWER_IS_BETTER",
           "weight": 0.1,
-          "contribution": 0.05,
-          "uncertaintyContribution": 0
+          "contribution": 0.053,
+          "uncertaintyContribution": 0,
+          "baseContribution": 0.05,
+          "multiplier": 1.06
         },
         {
           "criterion": "dependencyAvailability",
@@ -10483,7 +10522,9 @@
           "direction": "HIGHER_IS_BETTER",
           "weight": 0.1,
           "contribution": 0.1,
-          "uncertaintyContribution": 0
+          "uncertaintyContribution": 0,
+          "baseContribution": 0.1,
+          "multiplier": 1
         },
         {
           "criterion": "reliabilityQuality",
@@ -10513,7 +10554,9 @@
           "direction": "HIGHER_IS_BETTER",
           "weight": 0.1,
           "contribution": 0.06,
-          "uncertaintyContribution": 0
+          "uncertaintyContribution": 0,
+          "baseContribution": 0.06,
+          "multiplier": 1
         }
       ]
     },
@@ -10526,8 +10569,8 @@
       "L",
       "P",
       "O",
-      "N",
       "V150-T07",
+      "N",
       "E",
       "I",
       "V150-T10",
@@ -10546,7 +10589,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V175-NB2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'J': evidence score 0.333 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, V150-T07, N, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V175-NB2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -10573,8 +10616,10 @@
       {
         "id": "J",
         "status": "EXECUTED_PARTIAL",
-        "evidenceScore": 0.335,
-        "upperBound": 0.835,
+        "evidenceScore": 0.333,
+        "baseEvidenceScore": 0.335,
+        "scoreDelta": -0.002,
+        "upperBound": 0.833,
         "uncertainty": 0.5,
         "measuredWeightShare": 0.5,
         "breakdown": [
@@ -10584,8 +10629,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -10601,7 +10648,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.075,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.075,
+            "multiplier": 1
           },
           {
             "criterion": "costRiskComplexity",
@@ -10609,8 +10658,10 @@
             "value": 0.5,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.053,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -10626,7 +10677,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.1,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.1,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -10656,7 +10709,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.06,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.06,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -10667,8 +10722,10 @@
       {
         "id": "F",
         "status": "EXECUTED_PARTIAL",
-        "evidenceScore": 0.31,
-        "upperBound": 0.81,
+        "evidenceScore": 0.3074,
+        "baseEvidenceScore": 0.31,
+        "scoreDelta": -0.0026,
+        "upperBound": 0.8074,
         "uncertainty": 0.5,
         "measuredWeightShare": 0.5,
         "breakdown": [
@@ -10678,8 +10735,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -10695,7 +10754,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "costRiskComplexity",
@@ -10703,8 +10764,10 @@
             "value": 0.6,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.04,
-            "uncertaintyContribution": 0
+            "contribution": 0.0424,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.04,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -10720,7 +10783,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.1,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.1,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -10750,7 +10815,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.07,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.07,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -10761,8 +10828,10 @@
       {
         "id": "K",
         "status": "PARTIAL",
-        "evidenceScore": 0.285,
-        "upperBound": 0.685,
+        "evidenceScore": 0.2818,
+        "baseEvidenceScore": 0.285,
+        "scoreDelta": -0.0032,
+        "upperBound": 0.6818,
         "uncertainty": 0.4,
         "measuredWeightShare": 0.6,
         "breakdown": [
@@ -10772,8 +10841,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -10789,7 +10860,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "costRiskComplexity",
@@ -10797,8 +10870,10 @@
             "value": 0.7,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.03,
-            "uncertaintyContribution": 0
+            "contribution": 0.0318,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.03,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -10807,7 +10882,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "evidenceLevel",
@@ -10816,7 +10893,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.075,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.075,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -10846,7 +10925,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.08,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.08,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -10857,8 +10938,10 @@
       {
         "id": "D",
         "status": "PARTIAL",
-        "evidenceScore": 0.28,
-        "upperBound": 0.78,
+        "evidenceScore": 0.278,
+        "baseEvidenceScore": 0.28,
+        "scoreDelta": -0.002,
+        "upperBound": 0.778,
         "uncertainty": 0.5,
         "measuredWeightShare": 0.5,
         "breakdown": [
@@ -10868,8 +10951,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -10885,7 +10970,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "costRiskComplexity",
@@ -10893,8 +10980,10 @@
             "value": 0.5,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.053,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -10910,7 +10999,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -10940,7 +11031,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.08,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.08,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -10951,8 +11044,10 @@
       {
         "id": "V150-T02",
         "status": "PROPOSED",
-        "evidenceScore": 0.24,
-        "upperBound": 0.84,
+        "evidenceScore": 0.235,
+        "baseEvidenceScore": 0.24,
+        "scoreDelta": -0.005,
+        "upperBound": 0.835,
         "uncertainty": 0.6,
         "measuredWeightShare": 0.4,
         "breakdown": [
@@ -10962,8 +11057,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -10979,7 +11076,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.1,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.1,
+            "multiplier": 1
           },
           {
             "criterion": "costRiskComplexity",
@@ -11002,7 +11101,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -11032,7 +11133,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.09,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.09,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -11043,8 +11146,10 @@
       {
         "id": "C",
         "status": "PARTIAL",
-        "evidenceScore": 0.225,
-        "upperBound": 0.725,
+        "evidenceScore": 0.2212,
+        "baseEvidenceScore": 0.225,
+        "scoreDelta": -0.0038,
+        "upperBound": 0.7212,
         "uncertainty": 0.5,
         "measuredWeightShare": 0.5,
         "breakdown": [
@@ -11054,8 +11159,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -11071,7 +11178,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "costRiskComplexity",
@@ -11079,8 +11188,10 @@
             "value": 0.8,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.02,
-            "uncertaintyContribution": 0
+            "contribution": 0.0212,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.02,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -11096,7 +11207,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.075,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.075,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -11126,7 +11239,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.03,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.03,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -11137,8 +11252,10 @@
       {
         "id": "L",
         "status": "PARTIAL",
-        "evidenceScore": 0.19,
-        "upperBound": 0.79,
+        "evidenceScore": 0.1886,
+        "baseEvidenceScore": 0.19,
+        "scoreDelta": -0.0014,
+        "upperBound": 0.7886,
         "uncertainty": 0.6,
         "measuredWeightShare": 0.4,
         "breakdown": [
@@ -11148,8 +11265,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -11171,8 +11290,10 @@
             "value": 0.4,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.06,
-            "uncertaintyContribution": 0
+            "contribution": 0.0636,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.06,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -11188,7 +11309,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.075,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.075,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -11218,7 +11341,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.005,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.005,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -11229,8 +11354,10 @@
       {
         "id": "P",
         "status": "PARTIAL",
-        "evidenceScore": 0.17,
-        "upperBound": 0.87,
+        "evidenceScore": 0.1692,
+        "baseEvidenceScore": 0.17,
+        "scoreDelta": -0.0008,
+        "upperBound": 0.8692,
         "uncertainty": 0.7,
         "measuredWeightShare": 0.3,
         "breakdown": [
@@ -11240,8 +11367,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -11263,8 +11392,10 @@
             "value": 0.3,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.07,
-            "uncertaintyContribution": 0
+            "contribution": 0.0742,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.07,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -11280,7 +11411,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -11319,8 +11452,10 @@
       {
         "id": "O",
         "status": "PARTIAL",
-        "evidenceScore": 0.165,
-        "upperBound": 0.765,
+        "evidenceScore": 0.1636,
+        "baseEvidenceScore": 0.165,
+        "scoreDelta": -0.0014,
+        "upperBound": 0.7636,
         "uncertainty": 0.6,
         "measuredWeightShare": 0.4,
         "breakdown": [
@@ -11330,8 +11465,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -11353,8 +11490,10 @@
             "value": 0.4,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.06,
-            "uncertaintyContribution": 0
+            "contribution": 0.0636,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.06,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -11370,7 +11509,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -11400,99 +11541,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.005,
-            "uncertaintyContribution": 0
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": false,
-        "ownerReason": null,
-        "autoSelectable": true
-      },
-      {
-        "id": "N",
-        "status": "PARTIAL",
-        "evidenceScore": 0.14,
-        "upperBound": 0.74,
-        "uncertainty": 0.6,
-        "measuredWeightShare": 0.4,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 0.4,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.06,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0.25,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.025,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "MEASURED",
-            "value": 0.05,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.005,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.005,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -11504,6 +11555,8 @@
         "id": "V150-T07",
         "status": "PROPOSED",
         "evidenceScore": 0.14,
+        "baseEvidenceScore": 0.14,
+        "scoreDelta": 0,
         "upperBound": 0.74,
         "uncertainty": 0.6,
         "measuredWeightShare": 0.4,
@@ -11515,7 +11568,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -11531,7 +11586,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.1,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.1,
+            "multiplier": 1
           },
           {
             "criterion": "costRiskComplexity",
@@ -11554,7 +11611,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -11584,7 +11643,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.04,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.04,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -11593,12 +11654,14 @@
         "autoSelectable": true
       },
       {
-        "id": "E",
+        "id": "N",
         "status": "PARTIAL",
-        "evidenceScore": 0.135,
-        "upperBound": 0.835,
-        "uncertainty": 0.7,
-        "measuredWeightShare": 0.3,
+        "evidenceScore": 0.1386,
+        "baseEvidenceScore": 0.14,
+        "scoreDelta": -0.0014,
+        "upperBound": 0.7386,
+        "uncertainty": 0.6,
+        "measuredWeightShare": 0.4,
         "breakdown": [
           {
             "criterion": "autonomyBenefit",
@@ -11606,8 +11669,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -11629,8 +11694,10 @@
             "value": 0.4,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.06,
-            "uncertaintyContribution": 0
+            "contribution": 0.0636,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.06,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -11646,7 +11713,111 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "MEASURED",
+            "value": 0.05,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.005,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.005,
+            "multiplier": 1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "E",
+        "status": "PARTIAL",
+        "evidenceScore": 0.1336,
+        "baseEvidenceScore": 0.135,
+        "scoreDelta": -0.0014,
+        "upperBound": 0.8336,
+        "uncertainty": 0.7,
+        "measuredWeightShare": 0.3,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.4,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.0636,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.06,
+            "multiplier": 1.06
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.025,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -11685,8 +11856,10 @@
       {
         "id": "I",
         "status": "PARTIAL",
-        "evidenceScore": 0.135,
-        "upperBound": 0.835,
+        "evidenceScore": 0.1336,
+        "baseEvidenceScore": 0.135,
+        "scoreDelta": -0.0014,
+        "upperBound": 0.8336,
         "uncertainty": 0.7,
         "measuredWeightShare": 0.3,
         "breakdown": [
@@ -11696,8 +11869,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -11719,8 +11894,10 @@
             "value": 0.4,
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.06,
-            "uncertaintyContribution": 0
+            "contribution": 0.0636,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.06,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -11736,7 +11913,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -11773,101 +11952,11 @@
         "autoSelectable": true
       },
       {
-        "id": "A",
-        "status": "PARTIAL",
-        "evidenceScore": 0.1,
-        "upperBound": 0.7,
-        "uncertainty": 0.6,
-        "measuredWeightShare": 0.4,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 1,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "MEASURED",
-            "value": 0,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": true,
-        "ownerReason": "OWN-1 matched [owner-authorized, owner-authorized] in objective/acceptance_criteria/missingForPass",
-        "autoSelectable": false
-      },
-      {
         "id": "CP8-GAP-4-authorizeProvider",
         "status": "PARTIAL",
         "evidenceScore": 0.1,
+        "baseEvidenceScore": 0.1,
+        "scoreDelta": 0,
         "upperBound": 0.9,
         "uncertainty": 0.8,
         "measuredWeightShare": 0.2,
@@ -11886,7 +11975,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "capabilityGain",
@@ -11916,7 +12007,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -11953,9 +12046,113 @@
         "autoSelectable": false
       },
       {
+        "id": "A",
+        "status": "PARTIAL",
+        "evidenceScore": 0.095,
+        "baseEvidenceScore": 0.1,
+        "scoreDelta": -0.005,
+        "upperBound": 0.695,
+        "uncertainty": 0.6,
+        "measuredWeightShare": 0.4,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 1,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1.06
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "MEASURED",
+            "value": 0,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "OWN-1 matched [owner-authorized, owner-authorized] in objective/acceptance_criteria/missingForPass",
+        "autoSelectable": false
+      },
+      {
         "id": "V150-T10",
         "status": "PROPOSED",
         "evidenceScore": 0.085,
+        "baseEvidenceScore": 0.085,
+        "scoreDelta": 0,
         "upperBound": 0.685,
         "uncertainty": 0.6,
         "measuredWeightShare": 0.4,
@@ -11967,7 +12164,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -11983,7 +12182,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.075,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.075,
+            "multiplier": 1
           },
           {
             "criterion": "costRiskComplexity",
@@ -12006,7 +12207,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12036,7 +12239,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.01,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.01,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -12048,6 +12253,8 @@
         "id": "CP8-GAP-1-selectNextMission",
         "status": "PARTIAL",
         "evidenceScore": 0.075,
+        "baseEvidenceScore": 0.075,
+        "scoreDelta": 0,
         "upperBound": 0.875,
         "uncertainty": 0.8,
         "measuredWeightShare": 0.2,
@@ -12066,7 +12273,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "capabilityGain",
@@ -12096,7 +12305,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12136,6 +12347,8 @@
         "id": "CP8-GAP-2-setPriorities",
         "status": "PARTIAL",
         "evidenceScore": 0.075,
+        "baseEvidenceScore": 0.075,
+        "scoreDelta": 0,
         "upperBound": 0.875,
         "uncertainty": 0.8,
         "measuredWeightShare": 0.2,
@@ -12154,7 +12367,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "capabilityGain",
@@ -12184,7 +12399,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12224,6 +12441,8 @@
         "id": "CP8-GAP-6-recoverResults",
         "status": "PARTIAL",
         "evidenceScore": 0.075,
+        "baseEvidenceScore": 0.075,
+        "scoreDelta": 0,
         "upperBound": 0.875,
         "uncertainty": 0.8,
         "measuredWeightShare": 0.2,
@@ -12270,7 +12489,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12279,7 +12500,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "reusability",
@@ -12312,6 +12535,8 @@
         "id": "CP8-GAP-8-integrateResult",
         "status": "NOT_IMPLEMENTED",
         "evidenceScore": 0.075,
+        "baseEvidenceScore": 0.075,
+        "scoreDelta": 0,
         "upperBound": 0.875,
         "uncertainty": 0.8,
         "measuredWeightShare": 0.2,
@@ -12330,7 +12555,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "capabilityGain",
@@ -12360,7 +12587,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12400,6 +12629,8 @@
         "id": "CP8-GAP-9-chooseFollowing",
         "status": "PARTIAL",
         "evidenceScore": 0.075,
+        "baseEvidenceScore": 0.075,
+        "scoreDelta": 0,
         "upperBound": 0.875,
         "uncertainty": 0.8,
         "measuredWeightShare": 0.2,
@@ -12418,7 +12649,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "capabilityGain",
@@ -12448,7 +12681,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12488,6 +12723,8 @@
         "id": "V150-T09",
         "status": "PROPOSED",
         "evidenceScore": 0.07,
+        "baseEvidenceScore": 0.07,
+        "scoreDelta": 0,
         "upperBound": 0.67,
         "uncertainty": 0.6,
         "measuredWeightShare": 0.4,
@@ -12499,7 +12736,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -12515,7 +12754,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "costRiskComplexity",
@@ -12538,7 +12779,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12568,7 +12811,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.02,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.02,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -12580,6 +12825,8 @@
         "id": "CP8-GAP-3-chooseMode",
         "status": "PARTIAL",
         "evidenceScore": 0.05,
+        "baseEvidenceScore": 0.05,
+        "scoreDelta": 0,
         "upperBound": 0.95,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -12626,7 +12873,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12666,6 +12915,8 @@
         "id": "CP8-GAP-5-superviseExecution",
         "status": "PARTIAL",
         "evidenceScore": 0.05,
+        "baseEvidenceScore": 0.05,
+        "scoreDelta": 0,
         "upperBound": 0.95,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -12712,7 +12963,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12752,6 +13005,8 @@
         "id": "CP8-GAP-7-validateIndependently",
         "status": "PARTIAL",
         "evidenceScore": 0.05,
+        "baseEvidenceScore": 0.05,
+        "scoreDelta": 0,
         "upperBound": 0.85,
         "uncertainty": 0.8,
         "measuredWeightShare": 0.2,
@@ -12770,7 +13025,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "capabilityGain",
@@ -12800,7 +13057,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12839,8 +13098,10 @@
       {
         "id": "V175-NB2",
         "status": "NOT_STARTED",
-        "evidenceScore": 0.05,
-        "upperBound": 0.75,
+        "evidenceScore": 0.045,
+        "baseEvidenceScore": 0.05,
+        "scoreDelta": -0.005,
+        "upperBound": 0.745,
         "uncertainty": 0.7,
         "measuredWeightShare": 0.3,
         "breakdown": [
@@ -12850,8 +13111,10 @@
             "value": 0.5,
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
+            "contribution": 0.045,
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.05,
+            "multiplier": 0.9
           },
           {
             "criterion": "blockerRepetitionReduction",
@@ -12874,7 +13137,9 @@
             "direction": "LOWER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1.06
           },
           {
             "criterion": "dependencyAvailability",
@@ -12890,7 +13155,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -12930,6 +13197,8 @@
         "id": "CP8-GAP-canonicalDefectsJ",
         "status": "PROPOSED",
         "evidenceScore": 0.025,
+        "baseEvidenceScore": 0.025,
+        "scoreDelta": 0,
         "upperBound": 0.925,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -12976,7 +13245,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13016,6 +13287,8 @@
         "id": "CP8-GAP-executedPartialMapping",
         "status": "PROPOSED",
         "evidenceScore": 0.025,
+        "baseEvidenceScore": 0.025,
+        "scoreDelta": 0,
         "upperBound": 0.925,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -13062,7 +13335,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.025,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.025,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13102,6 +13377,8 @@
         "id": "V150-AI4",
         "status": "PROPOSED",
         "evidenceScore": 0.005,
+        "baseEvidenceScore": 0.005,
+        "scoreDelta": 0,
         "upperBound": 0.805,
         "uncertainty": 0.8,
         "measuredWeightShare": 0.2,
@@ -13148,7 +13425,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13178,7 +13457,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.005,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0.005,
+            "multiplier": 1
           }
         ],
         "unblocks": 0,
@@ -13190,6 +13471,8 @@
         "id": "MC-CI-BEFORE-REVIEW",
         "status": "PROPOSED",
         "evidenceScore": 0,
+        "baseEvidenceScore": 0,
+        "scoreDelta": 0,
         "upperBound": 0.9,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -13236,7 +13519,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13276,6 +13561,8 @@
         "id": "MC-CR-APPROVAL-STANDARD",
         "status": "PROPOSED",
         "evidenceScore": 0,
+        "baseEvidenceScore": 0,
+        "scoreDelta": 0,
         "upperBound": 0.9,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -13322,7 +13609,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13362,6 +13651,8 @@
         "id": "MC-CR-LATENCY",
         "status": "PROPOSED",
         "evidenceScore": 0,
+        "baseEvidenceScore": 0,
+        "scoreDelta": 0,
         "upperBound": 0.9,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -13408,7 +13699,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13448,6 +13741,8 @@
         "id": "MC-LESSONS-LEARNED",
         "status": "PROPOSED",
         "evidenceScore": 0,
+        "baseEvidenceScore": 0,
+        "scoreDelta": 0,
         "upperBound": 0.9,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -13494,7 +13789,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13534,6 +13831,8 @@
         "id": "MC-MERGE-QUEUE",
         "status": "PROPOSED",
         "evidenceScore": 0,
+        "baseEvidenceScore": 0,
+        "scoreDelta": 0,
         "upperBound": 0.9,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -13580,7 +13879,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13620,6 +13921,8 @@
         "id": "MC-PEER-REVIEW-EVERY-PR",
         "status": "PROPOSED",
         "evidenceScore": 0,
+        "baseEvidenceScore": 0,
+        "scoreDelta": 0,
         "upperBound": 0.9,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -13666,7 +13969,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13706,6 +14011,8 @@
         "id": "MC-REVIEW-FOCUS",
         "status": "PROPOSED",
         "evidenceScore": 0,
+        "baseEvidenceScore": 0,
+        "scoreDelta": 0,
         "upperBound": 0.9,
         "uncertainty": 0.9,
         "measuredWeightShare": 0.1,
@@ -13752,7 +14059,9 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0,
+            "baseContribution": 0,
+            "multiplier": 1
           },
           {
             "criterion": "reliabilityQuality",
@@ -13914,23 +14223,23 @@
     "ownerAuthorizationRequired": [
       {
         "id": "K",
-        "evidenceScore": 0.285,
+        "evidenceScore": 0.2818,
         "ownerReason": "OWN-1 matched [owner-gated, owner-gated] in objective/acceptance_criteria/missingForPass"
       },
       {
         "id": "C",
-        "evidenceScore": 0.225,
+        "evidenceScore": 0.2212,
         "ownerReason": "OWN-1 matched [owner AUTHORIZED] in objective/acceptance_criteria/missingForPass"
-      },
-      {
-        "id": "A",
-        "evidenceScore": 0.1,
-        "ownerReason": "OWN-1 matched [owner-authorized, owner-authorized] in objective/acceptance_criteria/missingForPass"
       },
       {
         "id": "CP8-GAP-4-authorizeProvider",
         "evidenceScore": 0.1,
         "ownerReason": "OWN-2 matched [provider launch, billed, spend, launch a provider, spend] in the cited CP8 text; open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[1]"
+      },
+      {
+        "id": "A",
+        "evidenceScore": 0.095,
+        "ownerReason": "OWN-1 matched [owner-authorized, owner-authorized] in objective/acceptance_criteria/missingForPass"
       },
       {
         "id": "CP8-GAP-2-setPriorities",
@@ -13964,7 +14273,23 @@
       }
     ],
     "isProposalOnly": true,
-    "selectionIsNotAuthorization": "the selected item is a PROPOSAL: it still needs PROPOSED → AUTHORIZED before EXECUTING"
+    "selectionIsNotAuthorization": "the selected item is a PROPOSAL: it still needs PROPOSED → AUTHORIZED before EXECUTING",
+    "scoreAdjustment": {
+      "multipliers": {
+        "autonomyBenefit": 0.9,
+        "costRiskComplexity": 1.06,
+        "evidenceLevel": 1
+      },
+      "provenance": {
+        "rule": "OFB-APPLY-1",
+        "feedbackVersion": "OFB-1",
+        "adjustmentsSha256": "7248ad5784c8f3396b2fc41300e17c48ba5fe80886f5aebdce7777cdd9952ebc",
+        "activationRecord": "docs/odg/V176_OUTCOME_FEEDBACK_ACTIVATION.json",
+        "layerRecord": "docs/odg/evidence/V176_OUTCOME_FEEDBACK.json",
+        "history": "docs/odg/evidence/V176_OUTCOME_FEEDBACK_HISTORY.jsonl"
+      },
+      "note": "OFB-APPLY-1: evidenceScore = adjusted score (MEASURED contributions × multiplier); baseEvidenceScore kept on every ranked row; thresholds / eligibility / secondary rules unchanged"
+    }
   },
   "decisionRecord": {
     "decision": "SELECTED",
@@ -13972,7 +14297,7 @@
     "proposed": null,
     "tiedSet": [],
     "resolvedBy": null,
-    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V175-NB2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'J': evidence score 0.333 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, V150-T07, N, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V175-NB2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
       "remainingCriteria": [
@@ -13986,8 +14311,8 @@
     "ownerAuthorizationRequired": [
       "K",
       "C",
-      "A",
       "CP8-GAP-4-authorizeProvider",
+      "A",
       "CP8-GAP-2-setPriorities",
       "CP8-GAP-6-recoverResults",
       "CP8-GAP-8-integrateResult",
@@ -14052,6 +14377,7 @@
     }
   },
   "honestLimits": [
+    "V17.6 OFB-1 ACTIVE (owner « V176 : DÉBLOCAGE FINAL » item 3, docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json): ranking.evidenceScore is the ADJUSTED score (MEASURED contributions × the per-criterion multipliers {\"autonomyBenefit\":0.9,\"costRiskComplexity\":1.06,\"evidenceLevel\":1}); baseEvidenceScore is kept on every row. The multipliers are a bounded LEVEL calibration from 5+ admitted graded items per criterion (criteria below MIN_N are not adjusted) — not evidence that any criterion discriminates outcomes; statuses, criterion values, weights and thresholds are unchanged",
     "criterion rules, equal weights, epsilon 0.02 and uncertaintyMax 0.5 were written by the provider, not derived from a canonical owner source — ODG applies them; the owner may replace them",
     "4 of 10 criteria (blocker/repetition reduction, reliability/quality, speed/efficiency, reusability) are NOT_MEASURED for every non-capability-gap item: no evidence field supports them; they enter only as uncertainty",
     "strategicValue and capabilityGain come from V150 summary.top10NextInternal, itself a provider research ranking (V150 meta.generator) made before F/G/J were executed",
@@ -14065,5 +14391,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "144df4c694f0391ce73e0d0b81628a45ea99678d"
+  "generatedAtHead": "6cd8e5d08e1bf6dbc6de72d19ac3a78afd9612b8"
 }

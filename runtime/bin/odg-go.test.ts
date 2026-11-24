@@ -39,7 +39,17 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
       const { [k]: _gone, ...rest } = st.sources;
       try { return JSON.stringify(REG.buildRegister(rest)) === JSON.stringify(inCycle); } catch { return false; }
     });
-    check("dropping ANY source key (incl. laterEvidence / benefitEvidence) is detected (register differs or build refuses)", dropped.length === 0 && ["laterEvidence", "benefitEvidence"].every((k) => k in st.sources));
+    // V17.6 (labelled change): sources.outcomeFeedback is consumed by the SELECTOR (odg-outcome-feedback.selectorOptions), not by
+    // buildRegister ⇒ it is exempt here and checked below on the selector output instead.
+    check("dropping ANY register source key (incl. laterEvidence / benefitEvidence) is detected (register differs or build refuses)", dropped.filter((k) => k !== "outcomeFeedback").length === 0 && ["laterEvidence", "benefitEvidence"].every((k) => k in st.sources));
+    {
+      const SEL = require("../core/mission-priority-selector.js"); const GOC = require("../core/odg-go-cycle.js");
+      const withFb = JSON.stringify(SEL.selectNextExplained(REG.toSelectorCandidates(inCycle), GOC.selectorOptions(st)).ranking);
+      const { outcomeFeedback: _fb, ...noFb } = st.sources;
+      const without = JSON.stringify(SEL.selectNextExplained(REG.toSelectorCandidates(inCycle), GOC.selectorOptions({ ...st, sources: noFb })).ranking);
+      check("V17.6 sources.outcomeFeedback reaches GO's selector: ACTIVE ⇒ dropping it changes the ranking scores; OFF ⇒ identical", "outcomeFeedback" in st.sources && (st.sources.outcomeFeedback.state.active === true ? withFb !== without : withFb === without));
+      check("V17.6 GO SELECT ranking (with outcome feedback) equals the committed register ranking", withFb === JSON.stringify(committed.decision.ranking));
+    }
   }
 
   // a refused out dir exits 2 and writes nothing

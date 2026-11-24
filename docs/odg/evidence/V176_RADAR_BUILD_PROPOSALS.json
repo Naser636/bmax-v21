@@ -22,14 +22,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795545644000,
+    "nowEpochMs": 1795547608000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "8e5a48aab34bf873ef031b5e66b87fcad15885692448e178b71887240bc81312",
-      "epochMs": 1795545644000
+      "sha256": "a94fc37560f7c0686b8a4e8a3c81d8d8b0fc6aaae8ee77570c1820c60327bebf",
+      "epochMs": 1795547608000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -1361,7 +1361,7 @@
             "component": "odg-native-outcome-calibration",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 3
+            "transitiveDependents": 5
           },
           {
             "component": "mission-priority-selector",
@@ -1603,8 +1603,8 @@
           {
             "component": "odg-outcome-learning",
             "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
+            "directConsumers": 1,
+            "transitiveDependents": 2
           },
           {
             "component": "mission-priority-selector",
@@ -1663,8 +1663,8 @@
           {
             "component": "odg-outcome-learning",
             "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
+            "directConsumers": 1,
+            "transitiveDependents": 2
           },
           {
             "component": "mission-priority-selector",
@@ -4945,8 +4945,8 @@
             {
               "component": "odg-outcome-learning",
               "inCoreGraph": true,
-              "directConsumers": 0,
-              "transitiveDependents": 0
+              "directConsumers": 1,
+              "transitiveDependents": 2
             },
             {
               "component": "mission-priority-selector",

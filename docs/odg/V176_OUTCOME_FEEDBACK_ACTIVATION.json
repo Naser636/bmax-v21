@@ -1,0 +1,25 @@
+{
+  "//": "Outcome-feedback ACTIVATION record (OFB-ACT-1). Written by the technical PROVIDER (Claude Code) under the owner CTO directive « V176 : DÉBLOCAGE FINAL » item 3, quoted verbatim below. It activates EXACTLY the adjustments whose sha256 is bound here (docs/odg/evidence/V176_OUTCOME_FEEDBACK.json#adjustmentsSha256); new adjustments (e.g. a new graded item) are NOT applied until a new activation binds them. ROLLBACK (OFB-RB-1): set \"active\": false (one flag, this record) and append a DEACTIVATE entry (npx tsx runtime/bin/odg-v176-outcome-feedback.ts --append-history) ⇒ the strategic register is byte-identical to the base register. Grants nothing else: no authorization, no status, criterion, weight, threshold or eligibility change.",
+  "schema": "odg-outcome-feedback-activation/1",
+  "feedbackVersion": "OFB-1",
+  "active": true,
+  "date": "2026-11-24",
+  "ownerDirective": {
+    "record": "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json",
+    "directive": "V176 : DÉBLOCAGE FINAL",
+    "item": 3,
+    "date": "2026-11-24",
+    "issuer": "OWNER (CTO)",
+    "quote": "Rétroaction des résultats sur les scores : j'autorise désormais son développement et son activation contrôlée. Utiliser uniquement des résultats mesurés et attribuables, conserver l'historique des scores, rendre les changements traçables et réversibles. Ne jamais transformer une hypothèse ou une simulation en preuve réelle.",
+    "liftsRule": "« Ne pas modifier les scores » — lifted ONLY for this controlled, measured, attributable, traceable and reversible feedback",
+    "recordNote": "the owner record is created by another provider session (branch fix/v176-qctr2-resolution); while it is absent on a tree OFB-ACT-1 rests on this verbatim quote, and once present it MUST contain the quote or the feedback is OFF"
+  },
+  "adjustmentsSha256": "7248ad5784c8f3396b2fc41300e17c48ba5fe80886f5aebdce7777cdd9952ebc",
+  "layerRecord": "docs/odg/evidence/V176_OUTCOME_FEEDBACK.json",
+  "history": "docs/odg/evidence/V176_OUTCOME_FEEDBACK_HISTORY.jsonl",
+  "consumers": [
+    "runtime/bin/odg-strategic-select.ts (loadSources → sources.outcomeFeedback)",
+    "runtime/core/odg-go-cycle.ts selectorOptions(state) (GO SELECT / actionable / NEXT_SELECTION)"
+  ],
+  "recordedBy": "technical provider (Claude Code) — PROVIDER_CONTRACT: transcription + mechanical binding only"
+}
