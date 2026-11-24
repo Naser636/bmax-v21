@@ -1,0 +1,13 @@
+{
+  "//": "OWNER directive record — verbatim transcription by the PROVIDER (Claude Code) of the EXCERPT (§3 only) of the owner CTO directive « DIRECTIVE DE REPRISE IMMÉDIATE » (2026-11-24) as relayed to the provider by the coordinating session. Only the relayed §3 text is quoted; the rest of the directive is NOT in this record (NOT_MEASURED). Grants nothing beyond the quoted text.",
+  "schema": "odg-owner-authorization/1",
+  "directive": "CTO — DIRECTIVE DE REPRISE IMMÉDIATE",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "source": "owner directive relayed by the coordinating session (excerpt §3); full text not stored in the repository",
+  "section3": {
+    "quote": "RÉGLER CTR-1, CTR-2 ET CTR-4 À LA SOURCE. Retrouver leur définition exacte dans les sources canoniques. Pour chaque contradiction : 1. identifier les composants, contrats ou registres responsables ; 2. comprendre pourquoi les règles se contredisent ; 3. choisir la résolution cohérente avec la gouvernance canonique ; 4. corriger directement la source ; 5. mettre à jour les références dépendantes ; 6. ajouter uniquement le test nécessaire pour empêcher la réapparition. Ne pas simplement changer leur statut dans un rapport. Ne pas inventer leur signification et ne pas contourner une contradiction par une exception locale. Le propriétaire autorise leur résolution technique dans le cadre de la gouvernance existante. Si un choix modifie substantiellement une règle canonique, préserver cette règle et appliquer la solution compatible la moins disruptive."
+  },
+  "appliesTo": ["V171-CTR-1", "V171-CTR-2", "V171-CTR-4"],
+  "consumedBy": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json#authority"
+}

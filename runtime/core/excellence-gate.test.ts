@@ -73,4 +73,5 @@ ok("recovery: prohibited superlative ⇒ do NOT proceed", G.gateRecovery({ actio
 // (14) reviewer unavailable ⇒ advisory, non-blocking
 ok("recovery: reviewer error ⇒ advisory, proceeds", G.gateRecovery({ action, evidence: recEvidence, registry: REG, now: NOW, reviewer: () => { throw new Error("x"); } }).proceed === true);
 
+ok("V17.5: canon status surfaced next to auditVerified (cv-2 ⇒ DEEP_CANON_V2, 0 legacy)", r1.auditCanonStatus === "DEEP_CANON_V2" && r1.auditLegacyShallowCanon === 0 && rr1.auditCanonStatus === "DEEP_CANON_V2");
 console.log(`\nEXCELLENCE-GATE suite — ${pass} assertions passed.`);

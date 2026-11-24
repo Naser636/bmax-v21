@@ -84,4 +84,39 @@ t("JS/TS parity", () => {
   assert.strictEqual(TS.verifyStatement(b.att, b.env, PUB, { artifactBytes }).ok, true);
 });
 
+// ===== V17.5 SECURITY FIX — order-independent deep canon, versioned envelope, legacy compat =====
+t("V17.5 new envelope carries canonVersion 2 and verifies as DEEP_V2", () => {
+  const { sbom, att, env } = mk(TS);
+  assert.strictEqual(env.canonVersion, 2);
+  const v = TS.verifyStatement(att, env, PUB, { artifactBytes, sbom });
+  assert.strictEqual(v.ok, true); assert.strictEqual(v.canon, "DEEP_V2");
+});
+t("V17.5 key-ORDER of a semantically identical statement/SBOM no longer breaks verification (was a false 'tampered')", () => {
+  const { sbom, att, env } = mk(TS);
+  const reorder = (o) => Array.isArray(o) ? o.map(reorder) : (o && typeof o === "object" ? Object.fromEntries(Object.keys(o).reverse().map((k) => [k, reorder(o[k])])) : o);
+  const att2 = reorder(att), sbom2 = reorder(sbom);
+  assert.notStrictEqual(JSON.stringify(att2), JSON.stringify(att));          // legacy bytes WOULD differ
+  assert.strictEqual(TS.verifyStatement(att2, env, PUB, { artifactBytes, sbom: sbom2 }).ok, true);
+});
+t("V17.5 nested tamper still detected (deep canon covers every depth)", () => {
+  const { sbom, att, env } = mk(TS);
+  const bad = JSON.parse(JSON.stringify(att)); bad.predicate.builder.id = "attacker";
+  assert.strictEqual(TS.verifyStatement(bad, env, PUB, {}).ok, false);
+  const badSbom = JSON.parse(JSON.stringify(sbom)); badSbom.components[0].version = "9.9.9";
+  assert.strictEqual(TS.verifyStatement(att, env, PUB, { sbom: badSbom }).ok, false);
+});
+t("V17.5 LEGACY (pre-fix, insertion-order) attestation without canonVersion still verifies, reported LEGACY_INSERTION_ORDER", () => {
+  const sbom = TS.buildSbom(LOCK, { name: "bmax-v21", version: "0.1.0" });
+  const att = TS.buildAttestation({ name: "odg-release", sha256: TS.sha256(artifactBytes) }, sbom, { commit: "abc" });
+  att.predicate.sbomDigest = TS.sha256(JSON.stringify(sbom));                // legacy digest, as pre-fix code wrote it
+  const payload = Buffer.from(JSON.stringify(att));                           // legacy signed bytes
+  const env = { payloadType: "application/vnd.in-toto+json", payloadSha256: TS.sha256(payload), signature: crypto.sign(null, payload, PRIV).toString("base64") };
+  const v = TS.verifyStatement(att, env, PUB, { artifactBytes, sbom });
+  assert.strictEqual(v.ok, true); assert.strictEqual(v.canon, "LEGACY_INSERTION_ORDER");
+  // a canonVersion:2 claim on legacy bytes is refused (no silent fallback once versioned)
+  assert.strictEqual(TS.verifyStatement(att, { ...env, canonVersion: 2 }, PUB, { sbom }).ok, false);
+  // unknown canonVersion ⇒ fail-closed
+  assert.strictEqual(TS.verifyStatement(att, { ...env, canonVersion: 3 }, PUB, {}).ok, false);
+});
+
 console.log(`\nALL PASS — supply-chain-attest (${n} tests)`);

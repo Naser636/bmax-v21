@@ -111,4 +111,27 @@ ok("verify result contains no private key / PEM material", !/PRIVATE KEY|BEGIN .
   ok("V10 concurrent: closed session S ⇒ DENY", ID.verifyAuth(r, { challenge: cSclosed, signature: sign(kp2.privateKey, cSclosed), now: 2000 }).ok === false);
 }
 
+// ===== V17.5 SECURITY FIX — signatures cover NESTED fields (deep canon, version-tagged) =====
+{
+  const legacyCanon = (o) => JSON.stringify(o, Object.keys(o).sort()); // the PRE-FIX serializer (reproduced verbatim)
+  const a = { tenantId: "T1", agentId: "A", sessionId: "S1", contractSha: "C1", nonce: "n", scope: { op: "read", paths: ["a"] } };
+  const b = { ...a, scope: { op: "WRITE", paths: ["/"] } };
+  ok("DEFECT reproduced: legacy canon drops nested fields ⇒ two different challenges have IDENTICAL signed bytes", legacyCanon(a) === legacyCanon(b));
+  ok("FIX: deep canon distinguishes them (nested fields signed)", ID.canon(a) !== ID.canon(b));
+  ok("canon is version-tagged (domain-separated from legacy bytes)", ID.canon(a).startsWith(ID.CANON_TAG) && ID.canon(a) !== legacyCanon(a));
+  ok("canon is key-order independent at every depth", ID.canon({ x: { b: 1, a: 2 }, y: 1 }) === ID.canon({ y: 1, x: { a: 2, b: 1 } }));
+  // end-to-end: a signature over a challenge with a nested field does NOT verify for a nested-tampered copy
+  const r = ID.createRegistry(); const kp = keypair();
+  ID.register(r, { tenantId: "T1", agentId: "A", publicKeyPem: pem(kp.publicKey) });
+  ID.openSession(r, { sessionId: "S1", tenantId: "T1", agentId: "A", contractSha: "C1" });
+  const c1 = { ...ID.issueChallenge(r, { tenantId: "T1", agentId: "A", sessionId: "S1", contractSha: "C1" }), scope: { op: "read" } };
+  const sig1 = sign(kp.privateKey, c1);
+  ok("nested-tampered challenge ⇒ DENY (signature covers nested scope)", ID.verifyAuth(r, { challenge: { ...c1, scope: { op: "WRITE" } }, signature: sig1 }).ok === false);
+  ok("genuine nested challenge ⇒ ok", ID.verifyAuth(r, { challenge: c1, signature: sig1 }).ok === true);
+  // a signature over the LEGACY bytes is NOT accepted (no legacy path: TEST_ONLY in-memory registry, single-use nonces)
+  const c2 = ID.issueChallenge(r, { tenantId: "T1", agentId: "A", sessionId: "S1", contractSha: "C1" });
+  const legacySig = crypto.sign(null, Buffer.from(legacyCanon(c2)), kp.privateKey).toString("base64");
+  ok("signature over legacy shallow bytes ⇒ DENY (no downgrade)", ID.verifyAuth(r, { challenge: c2, signature: legacySig }).ok === false);
+}
+
 console.log(`\nAGENT-IDENTITY suite — ${pass} assertions passed.`);

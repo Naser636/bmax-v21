@@ -100,7 +100,7 @@ function countDecisions(attempts: any[], auditChain: any, win: any): any {
     byClass: freeze(byClass),
     trigger: TRIGGER.UNATTENDED,
     cadence: cadence(rows),
-    schedulerAuditChain: chain ? freeze({ entries: chain.length, verify: freeze({ ok: v.ok, reason: v.reason, keyed: v.keyed, tipAnchored: v.tipAnchored }) }) : NOT_MEASURED,
+    schedulerAuditChain: chain ? freeze({ entries: chain.length, verify: freeze({ ok: v.ok, reason: v.reason, keyed: v.keyed, tipAnchored: v.tipAnchored, canonStatus: v.canonStatus || null, legacyShallowCanon: v.legacyShallowCanon || 0 }) }) : NOT_MEASURED,
     source: "runtime/generated/mission-attempt-log.jsonl (one row per tick decision by odg-schedule-tick) + runtime/generated/scheduler-audit-chain.json (audit-log.verifyChain)",
     note: "every row is a decision TAKEN BY ODG CODE, but ROWS ARE NOT DISTINCT DECISIONS: the periodic runner repeats the same no-op (e.g. the same ALREADY_PROVEN dedup) every tick, and truth-lock refusals mostly record a runner OUTAGE (main checkout off main), not threats. Read meaningfulDecisions + distinctDecisionKinds, not value. The per-row trigger is NOT recorded; the 15-min cadence share is the evidence of the periodic runner. Wave selection / write-set refusals / repair-stop reasons only count when they appear in this persistent log — worktree runs a provider launched are reported separately (providerInvokedDecisions).",
   });
