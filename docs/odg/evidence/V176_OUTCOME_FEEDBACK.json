@@ -908,6 +908,27 @@
       "uncertainty": 0.7
     },
     {
+      "id": "RB-REATTEMPT-CHANGED-INPUT",
+      "baseScore": 0.09,
+      "adjustedScore": 0.09,
+      "delta": 0,
+      "uncertainty": 0.7
+    },
+    {
+      "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
+      "baseScore": 0.09,
+      "adjustedScore": 0.09,
+      "delta": 0,
+      "uncertainty": 0.7
+    },
+    {
+      "id": "RB-SELECTION-AT-RUN-HEAD",
+      "baseScore": 0.09,
+      "adjustedScore": 0.09,
+      "delta": 0,
+      "uncertainty": 0.7
+    },
+    {
       "id": "V150-AI4",
       "baseScore": 0.005,
       "adjustedScore": 0.005,

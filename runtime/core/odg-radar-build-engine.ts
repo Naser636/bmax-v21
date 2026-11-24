@@ -24,6 +24,14 @@
  *   6 CONSTRUIRE is NOT done here: the draft enters the existing PROPOSED → AUTHORIZED path; nothing self-authorizes.
  *   7/8 MEASURE/LEARN: each proposal records the before-metric it intends to move (source-cited) and the rule a later run
  *               uses to compare after (after = null until a later committed record exists).
+ *   SUPERSEDED  (V17.6 R2C) a proposal whose improvement already landed (declared SUPERSEDED table: delivering PRs + the
+ *               artifact that proves it, VERIFIED present through the injected ctx.artifactExists) is marked supersededBy
+ *               and never enters `top` (a delivered improvement is not re-proposed; absent artifact ⇒ NOT superseded).
+ *   CONVERT     (V17.6 R2C, owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json « Transformer les
+ *               meilleures propositions Radar en contrats exécutables, sans créer de système parallèle ») convertToContracts():
+ *               the top-N eligible drafts become WORK_ITEM_CONTRACT entries APPENDED to the EXISTING contracts file
+ *               (V160_AP_WORK_ITEM_CONTRACTS.json — no new registry) in state PROPOSED, authorizedBy null, write_set still
+ *               flagged ESTIMATE; binding (concrete write_set + inspection) is a later per-contract step when GO selects it.
  */
 const crypto = require("crypto");
 const LOOP = require("./odg-radar-to-mission-loop.js");
@@ -107,6 +115,20 @@ const LINKS: readonly any[] = Object.freeze([
     objective: "experiment: apply the admitted jidoka principle (stop on defect, human touch) as a completeness check on ODG's own pipeline stops", writeSet: ["runtime/core/odg-jidoka-completeness.ts", "runtime/core/odg-jidoka-completeness.test.ts"],
     acceptance: ["every pipeline stop path is enumerated and each has a stop-on-defect test", "external claim stays RETURN_TO_EXPERIMENT until the experiment is graded"], metric: { text: "admitted external observation, verdict RETURN_TO_EXPERIMENT" } },
 ] as any[]);
+/* ── SUPERSEDED — provider-declared: improvements a merged PR already delivered. Applies ONLY when the cited artifact
+ * exists (ctx.artifactExists, injected): a declaration without its artifact is not evidence ⇒ the proposal stays live. */
+const SUPERSEDED: readonly any[] = Object.freeze([
+  Object.freeze({ key: "RB-OUTCOME-FEEDBACK-TO-SCORING", deliveredBy: Object.freeze(["#994"]), artifact: "runtime/core/odg-outcome-feedback.ts",
+    note: "outcome feedback → selector scoring delivered (odg-outcome-feedback OFB-CAL-2 attribution, report-only until ACTIVATE)" }),
+  Object.freeze({ key: "RB-PRE-OPEN-SELF-INSPECTION", deliveredBy: Object.freeze(["#987", "#998"]), artifact: "runtime/bin/odg-pre-open-gate.ts",
+    note: "pre-open self-inspection gate delivered (#987) and its test-selection / regeneration-order gaps fixed (#998)" }),
+]);
+const SUPERSEDED_RULE = "SUP-1: a proposal is SUPERSEDED iff its key is in the declared SUPERSEDED table AND the cited artifact exists in the repository (injected ctx.artifactExists); superseded proposals stay listed (supersededBy = delivering PRs + artifact) but never enter top or a conversion; no artifact (or no predicate) ⇒ NOT superseded";
+function supersededOf(key: string, ctx: any): any {
+  const d = SUPERSEDED.find((x: any) => x.key === key);
+  if (!d || !ctx || typeof ctx.artifactExists !== "function" || ctx.artifactExists(d.artifact) !== true) return null;
+  return { rule: "SUP-1", prs: d.deliveredBy.slice(), artifact: d.artifact, note: d.note };
+}
 const LINKS_RULE = "LINK-1: provider-authored declared table (DEDUP-1 precedent): the FIRST link whose regex matches the signal statement gives its key/components; registerItem / inFlight links make the signal a DUPLICATE of that existing item (it reinforces it, never re-creates it); a statement matching no link gets no component ⇒ the deny-by-default gate refuses it NO_COMPONENT_ATTACHED (never an invented target)";
 
 /* ── 1 DETECT ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -303,26 +325,142 @@ function buildProposals(src: any, ctx: any): any {
     if (!head) continue;
     const group = g.filter((x: any) => x.t.gate.verdict !== "REFUSED" || x.t.gate.reasons.every((r: string) => r === "DUPLICATE")).map((x: any) => x.s);
     const draft = designContract(head.s, group, head.t.gate, ctx);
-    proposals.push({ id: key, verdict: head.t.gate.verdict, status: "PROPOSED", requiresOwnerAuthorization: head.t.gate.verdict === "OWNER_GATED", ownerReason: head.t.gate.verdict === "OWNER_GATED" ? head.t.gate.reasons.join("; ") : null, components: head.s.targetComponents, signalCount: group.length, criteria: candidateCriteria(group, draft), draft });
+    proposals.push({ id: key, supersededBy: supersededOf(key, ctx), verdict: head.t.gate.verdict, status: "PROPOSED", requiresOwnerAuthorization: head.t.gate.verdict === "OWNER_GATED", ownerReason: head.t.gate.verdict === "OWNER_GATED" ? head.t.gate.reasons.join("; ") : null, components: head.s.targetComponents, signalCount: group.length, criteria: candidateCriteria(group, draft), draft });
   }
   const candidates = proposals.map((p) => ({ id: p.id, status: p.status, deps: [], requiresOwnerAuthorization: p.requiresOwnerAuthorization, ownerReason: p.ownerReason, criteria: Object.fromEntries(Object.entries(p.criteria).map(([k, v]: any) => [k, { status: v.status, value: v.value }])) }));
   const selection = SEL.selectNextExplained(candidates, { weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
-  const order = selection.ranking.filter((r: any) => r.autoSelectable).map((r: any) => r.id);
-  const top = order.slice(0, TOP_N).map((id: string, i: number) => { const p = proposals.find((x) => x.id === id); const r = selection.ranking.find((x: any) => x.id === id); const tiedWith = selection.ranking.filter((x: any) => x.autoSelectable && x.id !== id && x.evidenceScore === r.evidenceScore).map((x: any) => x.id); return { rank: i + 1, id, evidenceScore: r.evidenceScore, uncertainty: r.uncertainty, upperBound: r.upperBound, tiedWith, rankNote: tiedWith.length ? "equal evidenceScore: order among tied proposals is the selector's display order (by id) — NOT a decision" : null, contract: p.draft }; });
+  const superseded = new Set(proposals.filter((p) => p.supersededBy).map((p) => p.id));
+  const order = selection.ranking.filter((r: any) => r.autoSelectable && !superseded.has(r.id)).map((r: any) => r.id);
+  const top = order.slice(0, TOP_N).map((id: string, i: number) => { const p = proposals.find((x) => x.id === id); const r = selection.ranking.find((x: any) => x.id === id); const tiedWith = selection.ranking.filter((x: any) => x.autoSelectable && !superseded.has(x.id) && x.id !== id && x.evidenceScore === r.evidenceScore).map((x: any) => x.id); return { rank: i + 1, id, evidenceScore: r.evidenceScore, uncertainty: r.uncertainty, upperBound: r.upperBound, tiedWith, rankNote: tiedWith.length ? "equal evidenceScore: order among tied proposals is the selector's display order (by id) — NOT a decision" : null, contract: p.draft }; });
   const byVerdict = run.byVerdict;
   return {
     counts: { signals: signals.length, byVerdict, proposals: proposals.length, ownerGated: proposals.filter((p) => p.requiresOwnerAuthorization).length, reinforcingExisting: reinforces.length, ignored: det.ignored.length },
     signals, ignored: det.ignored, absentSources: det.absent, inFlightBuilds: inFlight, knownKeysCount: seenKeys.length,
     proposals: proposals.map(({ draft, ...p }) => p), reinforcesExisting: reinforces,
+    superseded: { rule: SUPERSEDED_RULE, items: proposals.filter((p) => p.supersededBy).map((p) => ({ id: p.id, prs: p.supersededBy.prs, artifact: p.supersededBy.artifact })) },
+    convertedContracts: convertedContractsOf(src),
     selection: { decision: selection.decision, selected: selection.selected ? selection.selected.id : null, proposed: selection.proposed ? selection.proposed.id : null, tiedSet: selection.tiedSet || [], justification: selection.justification, ranking: selection.ranking.map((r: any) => ({ id: r.id, evidenceScore: r.evidenceScore, uncertainty: r.uncertainty, upperBound: r.upperBound, autoSelectable: r.autoSelectable })), selectionIsNotAuthorization: selection.selectionIsNotAuthorization },
     top,
     loopInvariants: { canonicalWritesPerformed: run.canonicalWritesPerformed, executionsPerformed: run.executionsPerformed, authorizedCount: signals.filter((s: any) => s.gate.authorized).length, executedCount: signals.filter((s: any) => s.gate.executed).length },
   };
 }
 
+/* ── CONVERT (RB-CONV-1) ────────────────────────────────────────────────────────────────────────────────────────────── */
+const CONVERSION_N = 3;
+const CONVERSION_BATCH = "V176-R2C-1";
+const CONVERTED_BY = "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)";
+const OWNER_RECORD = "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json";
+const CONVERSION_RULE = "RB-CONV-1: walk `top` (selector rank order, superseded already excluded) and convert the first N eligible drafts; a draft is SKIPPED when: SUPERSEDED (SUP-1) · DUPLICATE (its id is already a contract scenario or a register item id, or names an in-flight build / IN_FLIGHT link) · OWNER_GATED (engine gate or draft.ownerGate.required) · NO_DECLARED_OBJECTIVE (objective NOT_DERIVED) · NO_WRITE_SET_ESTIMATE · OWN1_MATCH (the contract text would trip the register's OWN-1 owner rule ⇒ never silently converted). One batch id per conversion: a batch already present in the contracts file ⇒ ALREADY_CONVERTED, nothing appended (idempotent). Append-only: existing entries are never rewritten; only the header count / initialStatusCounts are recomputed from the array.";
+
+function convertedContractsOf(src: any): any[] {
+  const cs = src && src.contracts && src.contracts.data && Array.isArray(src.contracts.data.contracts) ? src.contracts.data.contracts : [];
+  return cs.filter((c: any) => c && isObj(c.origin) && c.origin.detectedBy === CONVERTED_BY).map((c: any) => ({ scenario: String(c.scenario), state: c.state, authorizedBy: c.authorizedBy || null, sourceProposal: c.origin.sourceProposal, conversionBatch: c.origin.conversionBatch }));
+}
+
+function contractFromDraft(t: any, opts: any): any {
+  const d = t.contract;
+  const testFile = d.write_set.paths.find((p: string) => /\.test\.ts$/.test(p)) || null;
+  const named = (Array.isArray(d.acceptance_criteria) ? d.acceptance_criteria : []).filter((a: string) => !/^tsc clean|^the before-metric is recomputed/.test(a));
+  // the test FILE lives in the structured acceptance_tests (a module path in the criterion text would be scanned by OWN-1)
+  const ac = named.map((a: string, i: number) => `AC${i + 1} test '${t.id}/AC${i + 1}' (file: acceptance_tests[${i}]): ${a}`);
+  const tests = named.map((a: string, i: number) => ({ id: `${t.id}/AC${i + 1}`, file: testFile || "NOT_DERIVED — name it when binding", criterion: `AC${i + 1}` }));
+  ac.push(`AC${named.length + 1} measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED`);
+  ac.push(`AC${named.length + 2} tsc clean; each touched test file passes run one at a time`);
+  return {
+    scenario: t.id,
+    title: d.objective,
+    state: "PROPOSED",
+    authorizedBy: null,
+    origin: {
+      detectedBy: CONVERTED_BY,
+      sourceProposal: t.id,
+      sourceRecord: opts.sourceRecord || null,
+      sourceRecordSha256AtConversion: opts.sourceRecordSha256 || null,
+      conversionBatch: opts.batch,
+      ownerRecord: OWNER_RECORD,
+      signals: d.source.signals.slice(),
+      selection: { rank: t.rank, evidenceScore: t.evidenceScore, uncertainty: t.uncertainty, upperBound: t.upperBound, tiedWith: t.tiedWith.slice(), scoreIsNotAuthorization: true },
+      multiplier: { maxDirectConsumers: d.multiplier.maxDirectConsumers, maxTransitiveDependents: d.multiplier.maxTransitiveDependents, perComponent: d.multiplier.perComponent.map((x: any) => Object.assign({}, x)), rationale: d.multiplier.rationale },
+    },
+    binding: { status: "UNBOUND", rule: "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected" },
+    initialState: {
+      status: "NOT_STARTED",
+      note: "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+      evidence: [],
+      missingForPass: "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+      asOf: opts.asOf || null,
+    },
+    beforeMetric: d.measure.before.map((b: any) => Object.assign({}, b)),
+    measure: { after: null, compareRule: d.measure.compareRule },
+    WORK_ITEM_CONTRACT: {
+      objective: d.objective,
+      scope: d.scope,
+      write_set: d.write_set.paths.slice(),
+      write_set_estimate: { estimate: true, basis: d.write_set.basis, mustBeConcreteBefore: "independent inspection (binding step)" },
+      authorized_symbols: [],
+      invariants: d.invariants.slice(),
+      acceptance_criteria: ac,
+      acceptance_tests: tests,
+      stop_conditions: d.stop_conditions.slice(),
+      rollback: d.rollback,
+      evidence_required: d.evidence_required.slice(),
+    },
+  };
+}
+
+/* recount initialState.status; keeps the existing header's key order (append-only diff), new statuses appended sorted */
+function statusCounts(cs: any[], prior: any): any {
+  const out: any = {};
+  for (const c of cs) { const k = String(c && c.initialState ? c.initialState.status : "UNKNOWN"); out[k] = (out[k] || 0) + 1; }
+  const order = Object.keys(isObj(prior) ? prior : {}).filter((k) => k in out).concat(Object.keys(out).filter((k) => !(isObj(prior) && k in prior)).sort());
+  return Object.fromEntries(order.map((k) => [k, out[k]]));
+}
+
+/* convertToContracts(result, contractsData, opts) — PURE. result = buildProposals(...) output; contractsData = the parsed
+ * contracts file; opts: { n, batch, registerItemIds, sourceRecord, sourceRecordSha256, asOf }. Returns
+ * { status, batch, n, appended:[contract], skipped:[{id,reason}], cut, data } where data is the NEW file object (the input
+ * is never mutated; prior entries are carried by reference-equal JSON). */
+function convertToContracts(result: any, contractsData: any, opts?: any): any {
+  const o = Object.assign({ n: CONVERSION_N, batch: CONVERSION_BATCH, registerItemIds: [] }, opts || {});
+  if (!isObj(contractsData) || !Array.isArray(contractsData.contracts)) throw new Error("contracts data missing or malformed");
+  const cs: any[] = contractsData.contracts;
+  const base = { batch: o.batch, n: o.n, rule: CONVERSION_RULE };
+  if (cs.some((c: any) => c && isObj(c.origin) && c.origin.conversionBatch === o.batch)) return Object.assign(base, { status: "ALREADY_CONVERTED", appended: [], skipped: [], cut: null, data: contractsData });
+  const known = new Set<string>(cs.map((c: any) => String(c.scenario)).concat((o.registerItemIds || []).map(String)).concat((result.inFlightBuilds || []).map(String)));
+  const props = new Map<string, any>((result.proposals || []).map((p: any) => [p.id, p]));
+  const appended: any[] = [], skipped: any[] = [], eligible: any[] = [];
+  for (const t of (Array.isArray(result.top) ? result.top : [])) {
+    const p = props.get(t.id) || {}, d = t.contract || {};
+    let reason: string | null = null;
+    if (p.supersededBy) reason = `SUPERSEDED by ${p.supersededBy.prs.join("/")}`;
+    else if (cs.some((c: any) => String(c.scenario) === t.id)) reason = "DUPLICATE (already a contract scenario)";
+    else if (/^IN_FLIGHT:/.test(t.id) || (result.inFlightBuilds || []).map(String).includes(t.id)) reason = "DUPLICATE (IN_FLIGHT link: names an in-flight build, not a new improvement)";
+    else if (known.has(t.id)) reason = "DUPLICATE (already a register item)";
+    else if (p.requiresOwnerAuthorization === true || p.verdict === "OWNER_GATED" || (d.ownerGate && d.ownerGate.required)) reason = "OWNER_GATED";
+    else if (!d.objective || /^NOT_DERIVED/.test(String(d.objective))) reason = "NO_DECLARED_OBJECTIVE";
+    else if (!(d.write_set && Array.isArray(d.write_set.paths) && d.write_set.paths.length)) reason = "NO_WRITE_SET_ESTIMATE";
+    let c: any = null;
+    if (!reason) {
+      c = contractFromDraft(t, o);
+      const scanned = [c.WORK_ITEM_CONTRACT.objective, ...c.WORK_ITEM_CONTRACT.acceptance_criteria, c.initialState.missingForPass].join(" ‖ ");
+      const om = REG.ownerMatches(scanned);
+      if (om.length) reason = `OWN1_MATCH [${om.join(", ")}]`;
+    }
+    if (reason) { skipped.push({ id: t.id, rank: t.rank, reason }); continue; }
+    eligible.push({ t, c });
+  }
+  for (const e of eligible.slice(0, o.n)) appended.push(e.c);
+  const last = eligible[o.n - 1], next = eligible[o.n];
+  const cut = { lastConvertedScore: last ? last.t.evidenceScore : null, firstNotConvertedScore: next ? next.t.evidenceScore : null, clean: !last || !next || next.t.evidenceScore < last.t.evidenceScore, note: "clean ⇔ the cut does not split a tie (first eligible draft left out scores strictly lower)" };
+  const all = cs.concat(appended);
+  const note = appended.length ? ` V17.6 R2C (batch ${o.batch}, owner record ${OWNER_RECORD}): ${appended.map((c: any) => c.scenario).join(", ")} appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged.` : "";
+  const data = Object.assign({}, contractsData, typeof contractsData["//"] === "string" ? { "//": contractsData["//"] + note } : {}, { count: all.length, initialStatusCounts: statusCounts(all, contractsData.initialStatusCounts), contracts: all });
+  return Object.assign(base, { status: appended.length ? "CONVERTED" : "NOTHING_ELIGIBLE", appended, skipped, cut, notConvertedEligible: eligible.slice(o.n).map((e) => e.t.id), data });
+}
+
 const RADAR_BUILD_ENGINE_CONTRACT = Object.freeze({
   id: "V176-RADAR-BUILD-ENGINE",
-  rules: Object.freeze({ NM: `RB-NM-1: register criterion NOT_MEASURED on ≥ ${NM_THRESHOLD * 100}% of items ⇒ signal`, PM: `RB-PM-1: production-metric NOT_MEASURED field recurring ≥ ${PM_MIN_COUNT} ⇒ signal; RB-PM-2: open→last-commit share ≥ ${REWORK_SHARE} ⇒ signal`, LINK: LINKS_RULE, EXT: "RB-EXT-1: only ADMITTED external Radar observations are signals", TOP: `top ${TOP_N} auto-selectable proposals by the existing selector ranking get a contract draft` }),
+  rules: Object.freeze({ NM: `RB-NM-1: register criterion NOT_MEASURED on ≥ ${NM_THRESHOLD * 100}% of items ⇒ signal`, PM: `RB-PM-1: production-metric NOT_MEASURED field recurring ≥ ${PM_MIN_COUNT} ⇒ signal; RB-PM-2: open→last-commit share ≥ ${REWORK_SHARE} ⇒ signal`, LINK: LINKS_RULE, EXT: "RB-EXT-1: only ADMITTED external Radar observations are signals", TOP: `top ${TOP_N} auto-selectable, not-superseded proposals by the existing selector ranking get a contract draft`, SUP: SUPERSEDED_RULE, CONV: CONVERSION_RULE }),
   invariants: Object.freeze([
     "composition only: reuses odg-radar-to-mission-loop (gate+dedup), mission-priority-selector (ranking with the register's WEIGHTS/DIRECTIONS), odg-strategic-register (CRITERIA, CRC-1), change-impact-graph (multiplier) — no second radar/scheduler/registry/formula",
     "every signal cites a committed source pointer; external observations only when ADMITTED",
@@ -332,5 +470,5 @@ const RADAR_BUILD_ENGINE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { SCHEMA, LINKS, LINKS_RULE, NM_THRESHOLD, PM_MIN_COUNT, REWORK_SHARE, TOP_N, detectSignals, analyse, multiplierOf, inFlightBuilds, knownKeys, designContract, buildProposals, RADAR_BUILD_ENGINE_CONTRACT };
+module.exports = { SCHEMA, LINKS, LINKS_RULE, SUPERSEDED, SUPERSEDED_RULE, supersededOf, CONVERSION_N, CONVERSION_BATCH, CONVERSION_RULE, CONVERTED_BY, convertToContracts, convertedContractsOf, contractFromDraft, NM_THRESHOLD, PM_MIN_COUNT, REWORK_SHARE, TOP_N, detectSignals, analyse, multiplierOf, inFlightBuilds, knownKeys, designContract, buildProposals, RADAR_BUILD_ENGINE_CONTRACT };
 export {};
