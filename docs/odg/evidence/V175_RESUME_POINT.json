@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "c8a48c5e01aee9ed993090e185a02d298708fb1e98b128079636a1b26ab89777"
+      "sha256": "d20abcc7b8a8100ea54343805bbe5c9a6eb44fcb806a83eff0b8f5e976030196"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "935347e4d671bc17436a49524e8fe6dcc3060f297c842e94bbfecd79071afad2"
+      "sha256": "3a0a4c7e67b84853255e3310454a2e5d315a14588694c44370033ae7a3a9a6ab"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -317,7 +317,7 @@
       "id": "J",
       "title": "J — Gestion d'échec",
       "registerStatus": "EXECUTED_PARTIAL",
-      "contractState": "PROPOSED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "MEASURED",
         "v124MissionId": null,
@@ -332,16 +332,37 @@
           "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
         }
       },
-      "contractSha256": "687d6b285cc8c0239fdf5e34f59df50203243a3602012099431b9f0855055941",
-      "ownerRecord": null,
-      "currentStep": null,
-      "scope": null,
-      "records": null,
+      "contractSha256": "2914ffcace51b2f7c047316db16a8bec310b740ba51656c15b18b5275be181f1",
+      "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_J.json",
+      "currentStep": "REVISE_CONTRACT",
+      "scope": {
+        "currentStep": "REVISE_CONTRACT",
+        "currentStepKind": "PROVIDER_DOCS_WORK",
+        "currentStepAuthorized": true,
+        "nextStep": "INSPECT_REVISED_CONTRACT",
+        "validatedSteps": [],
+        "reason": "REVISE_CONTRACT not validated: WORK_ITEM_CONTRACT.preRegistration missing",
+        "contractSha256": "2914ffcace51b2f7c047316db16a8bec310b740ba51656c15b18b5275be181f1"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
       "lastGoRun": null,
       "pending": [],
       "next": {
-        "actor": "OWNER",
-        "action": "J contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+        "actor": "UNKNOWN",
+        "action": "current step REVISE_CONTRACT"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=J]",
@@ -746,7 +767,7 @@
     "strategic": {
       "decision": "SELECTED",
       "item": "J",
-      "contractState": "PROPOSED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "MEASURED",
         "v124MissionId": null,
@@ -761,7 +782,7 @@
           "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
         }
       },
-      "ownerAuthorizationNeeded": "owner — J PROPOSED → AUTHORIZED (authorizedBy)",
+      "ownerAuthorizationNeeded": null,
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
     "dispatchable": [],
@@ -769,8 +790,8 @@
     "pendingNonGo": [
       {
         "item": "J",
-        "actor": "OWNER",
-        "action": "J contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+        "actor": "UNKNOWN",
+        "action": "current step REVISE_CONTRACT"
       },
       {
         "item": "V175-NB2",

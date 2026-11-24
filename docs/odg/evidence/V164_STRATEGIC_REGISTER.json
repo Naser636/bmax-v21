@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "935347e4d671bc17436a49524e8fe6dcc3060f297c842e94bbfecd79071afad2"
+      "sha256": "3a0a4c7e67b84853255e3310454a2e5d315a14588694c44370033ae7a3a9a6ab"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "d76a507b5df7289c75466cc05754ac0324a99add4ab81c7c6efc02b14061809e"
+      "sha256": "f40a3af97a54e545b6a0129ecf0e2b38d3d99550d356c458f11c8a889cb53eb9"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -1010,6 +1010,12 @@
           "inspection": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
           "experiment": "docs/odg/evidence/V168_H_EXPERIMENT.json",
           "validation": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json"
+        },
+        {
+          "scenario": "J",
+          "inspection": null,
+          "experiment": null,
+          "validation": null
         },
         {
           "scenario": "J2",
@@ -2742,8 +2748,8 @@
         "id": "J",
         "kind": "WORK_ITEM_CONTRACT",
         "title": "J — Gestion d'échec",
-        "contractState": "PROPOSED",
-        "authorizedBy": null,
+        "contractState": "AUTHORIZED_FOR_REVISION",
+        "authorizedBy": "OWNER (CTO) — directive « V176 : DÉBLOCAGE FINAL » item 2 (2026-11-24), docs/odg/V176_OWNER_AUTHORIZATION_J.json: « J : autoriser son passage de PROPOSED à AUTHORIZED. GO peut le sélectionner et l'exécuter selon son contrat, dès que les conditions requises sont conformes. Une seule exécution initiale, avec résultat enregistré honnêtement. » « Aucun déploiement en production, dépense, engagement externe ou appel payant non autorisé. » — encoded through the canonical scoped mechanism (odg-authorization-scope, like G/H/G2/J2/V175-NB1/V175-NB2): the execution step RUN_CONTROLLED_EXPERIMENTS becomes AUTHORIZED (derived, R4) only once the required conditions hold (R2 revision + preRegistration, R3 independent inspection ACCEPT bound to the contract sha, GO-DT-1 declared dispatch target); one single initial execution; result recorded as measured. J's prior result (V161_SCENARIO_J.json) and J2 (CLOSED_FAIL) untouched.",
         "status": "EXECUTED_PARTIAL",
         "statusSource": [
           "docs/odg/evidence/V161_SCENARIO_J.json#scenario",
@@ -2862,6 +2868,13 @@
             "basis": "k=4 (initialState.evidence 2 + executed file + CP8 grading)"
           }
         },
+        "closure": {
+          "closed": false,
+          "rule": "CLOSE-1",
+          "currentStep": "REVISE_CONTRACT",
+          "reason": "REVISE_CONTRACT not validated: WORK_ITEM_CONTRACT.preRegistration missing",
+          "component": "odg-authorization-scope.deriveAuthorizationScope"
+        },
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
@@ -2903,11 +2916,11 @@
           "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         },
         "contractRef": {
-          "contractSha256": "687d6b285cc8c0239fdf5e34f59df50203243a3602012099431b9f0855055941",
+          "contractSha256": "2914ffcace51b2f7c047316db16a8bec310b740ba51656c15b18b5275be181f1",
           "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9]",
-          "ownerRecord": null,
-          "ownerRecordSource": null,
-          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+          "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_J.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].authorization.source",
+          "ownerRecordReason": null
         }
       },
       {
