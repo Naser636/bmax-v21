@@ -33,6 +33,19 @@ function main() {
   const answered = { ...rec, ownerQuestions: rec.ownerQuestions.map((q: any) => (q.id === "Q-CTR2" ? { ...q, answer: "owner answer (synthetic)" } : q)) };
   const nonCampaign = G.checkRadarScope(rec, undefined, [{ ...kw, id: "synthetic-v124", v150Campaign: false }]);
   check("CTR-2 Q-CTR2-BLOCK: V15.0-campaign knowledge-stage write BLOCKED while unanswered; lifted once answered; non-campaign unaffected", blocked.length === 1 && /BLOCKED by Q-CTR2/.test(blocked[0]) && G.checkRadarScope(answered, undefined, [kw]).length === 0 && nonCampaign.length === 0, { blocked, nonCampaign });
+  // V176 (owner item 1) — Q-CTR2 re-derived from canonical sources: part A coherent (new grant / new Radar module inside a
+  // V15.0-campaign item = modification, enforced on NEW paths); part B NOT coherent ⇒ still BLOCKING with a residual question
+  const qd = G.checkQctr2Derivation(rec);
+  const q2 = rec.ownerQuestions.find((q: any) => q.id === "Q-CTR2");
+  const d = q2.v176Derivation;
+  check("V176 Q-CTR2 derivation consistent: cites V176 owner record; part A coherent; part B NOT_COHERENT with both readings quoted ⇒ answer null, blocking, residual question", qd.length === 0 && d.partA.coherent === true && d.partB.coherent === false && q2.answer === null && q2.blocking === true && /^Q-CTR2 \(residual, part B only\)/.test(q2.residualQuestion), qd);
+  const newAdds = G.checkRadarScope(rec, undefined, [
+    { id: "synthetic-v150-new-grant", v150Campaign: true, scope: "internal only; no Radar code/grant change", writeSet: ["docs/odg/V999_RESEARCH_GRANT.json"], anchored: false },
+    { id: "synthetic-v150-new-radar-module", v150Campaign: true, scope: "internal only; no Radar code/grant change", writeSet: ["runtime/core/odg-radar-new-stage.ts"], anchored: false },
+  ]);
+  check("V176 part A enforced: a NEW grant file / NEW Radar module in a V15.0-campaign item is a Radar modification", newAdds.length === 2 && newAdds.every((x: string) => /writes Radar-stage paths/.test(x)), newAdds);
+  const liftedWrongly = { ...rec, ownerQuestions: rec.ownerQuestions.map((q: any) => (q.id === "Q-CTR2" ? { ...q, answer: "RADAR-1", blocking: false } : q)) };
+  check("V176 guard: lifting Q-CTR2 while part B is NOT_COHERENT is refused", G.checkQctr2Derivation(liftedWrongly).length >= 2);
   const r2 = rec.resolutions.find((x: any) => x.id === "CTR-2");
   check("CTR-2 interim is never presented as plainly RESOLVED (status INTERIM pending Q-CTR2, Q-CTR2 blocking, owner record quoted)", r2.ownerChoiceNeeded === true && r2.status === "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2" && rec.ownerQuestions[0].blocking === true && rec.authority.record === "docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json" && rec.authority.quotes.length === 4);
 

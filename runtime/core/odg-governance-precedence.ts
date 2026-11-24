@@ -13,6 +13,8 @@
  *   - classifyPath / campaignContracts / checkRadarScope : CTR-2 — V15.0-campaign contracts never write a Radar-stage path
  *                         and their scope excludes Radar change; Radar-stage changes sit under V12.4 I / V14.4 phase-1 anchors;
  *   - phaseOrder / checkOrdering : CTR-4 — in all three numberings continuity is placed no later than the Radar;
+ *   - checkQctr2Derivation : V176 — Q-CTR2 re-derivation (owner V176 item 1) is consistent: the block is lifted only if every
+ *                         part is coherent; otherwise answer null + blocking + residual question;
  *   - checkMatrix       : the reconciliation matrix rows/topContradictions cite this record and no longer carry the
  *                         CONTRADICTION reading the record resolved.
  * It never edits any file. Dual export.
@@ -47,7 +49,36 @@ function allQuotes(rec: any): any[] {
   for (const s of rec.sources || []) if (s.statusEvidence) out.push(s.statusEvidence);
   for (const q of (rec.authority || {}).quotes || []) out.push(q);
   for (const r of rec.resolutions || []) for (const q of r.conflictingTexts || []) out.push(q);
+  for (const oq of rec.ownerQuestions || []) {
+    const d = oq.v176Derivation; if (!d) continue;
+    if (d.authority) out.push(d.authority);
+    for (const q of (d.partA || {}).basis || []) out.push(q);
+    for (const k of ["readingStage", "readingFunction"]) for (const q of ((d.partB || {})[k] || {}).quotes || []) out.push(q);
+  }
   return out;
+}
+
+/* V176 — Q-CTR2 derivation consistency (owner V176 item 1): the blocking rule may be lifted ONLY when every part of the
+ * derivation is coherent; a NOT_COHERENT part keeps answer null + blocking + a stated residual question (never invented). */
+function checkQctr2Derivation(rec: any): string[] {
+  const v: string[] = [];
+  const q2 = (rec.ownerQuestions || []).find((q: any) => q.id === "Q-CTR2");
+  if (!q2) return ["Q-CTR2 missing from ownerQuestions"];
+  const d = q2.v176Derivation;
+  if (!d) return v;
+  if (!d.authority || d.authority.record !== "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json") v.push("Q-CTR2 derivation does not cite the V176 owner record");
+  const parts = [d.partA, d.partB].filter(Boolean);
+  const allCoherent = parts.length === 2 && parts.every((p: any) => p.coherent === true);
+  const answered = q2.answer !== null && q2.answer !== undefined;
+  if (answered && !allCoherent) v.push("Q-CTR2 answered although a part of its derivation is NOT coherent");
+  if (!allCoherent && (q2.blocking !== true || answered)) v.push("Q-CTR2 derivation not coherent ⇒ must stay blocking with answer null");
+  if (!allCoherent && !(typeof q2.residualQuestion === "string" && q2.residualQuestion.length > 0)) v.push("Q-CTR2 not coherent but no residualQuestion stated");
+  const pb = d.partB || {};
+  if (pb.coherent === false && !((pb.readingStage || {}).quotes || []).length) v.push("partB NOT_COHERENT without the quotes of the stage reading");
+  if (pb.coherent === false && !((pb.readingFunction || {}).quotes || []).length) v.push("partB NOT_COHERENT without the quotes of the function reading");
+  // part A (new grant / new Radar module = modification) must be what the classifier enforces for NEW paths
+  if ((d.partA || {}).coherent === true) for (const p of ["docs/odg/V999_RESEARCH_GRANT.json", "runtime/core/odg-radar-new-stage.ts"]) if (classifyPath(rec, p) !== "RADAR_STAGE") v.push(`partA: new path ${p} is not classified RADAR_STAGE`);
+  return v;
 }
 
 /* verifyQuotes → [{text, where, ok}] ; a missing source or a non-verbatim quote is NOT ok (fail-closed). */
@@ -201,5 +232,5 @@ function checkMatrix(rec: any, ctrId: string, root: string = ROOT): string[] {
   return v;
 }
 
-module.exports = { RECORD_PATH, MATRIX_PATH, loadRecord, verifyQuotes, sourceStatuses, checkPrecedence, classifyPath, campaignContracts, checkRadarScope, phaseOrder, checkOrdering, checkMatrix };
+module.exports = { RECORD_PATH, MATRIX_PATH, loadRecord, verifyQuotes, checkQctr2Derivation, sourceStatuses, checkPrecedence, classifyPath, campaignContracts, checkRadarScope, phaseOrder, checkOrdering, checkMatrix };
 export {};

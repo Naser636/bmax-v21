@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "8e5a48aab34bf873ef031b5e66b87fcad15885692448e178b71887240bc81312"
+      "sha256": "7b46ae546213796d5c860ba8b2bafcdaf9a60d996eeaf8aef57fc52b078d94e7"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -23,7 +23,7 @@
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
-      "sha256": "617bfca543c23af5031174ebbb19cefe2906744ea4ed7fe455a4f8babf981b7f"
+      "sha256": "d2b60437d16a0921659c06264d7555ef2e588f990e5051c5c20a3c1a201dbd27"
     },
     {
       "source": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
