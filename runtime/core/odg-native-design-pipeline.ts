@@ -287,6 +287,9 @@ function implementPromptSegments(problem: any, currentSource: string, impact: an
     ...evidenceBlocks(problem, currentSource, impact, lessons),
     E("Design to implement:\n" + JSON.stringify({ summary: design.summary, steps: design.steps }, null, 1), `S3 design ${design.id} (LOCAL MODEL)`),
   ];
+  // V17.5 NB2 (PROBE 1+2 diagnosis): the repair prompt must show the FAILED ATTEMPT itself — without it the model only sees
+  // the original source + the same hint, and at temperature 0 regenerates the identical attempt (NO_PROGRESS stop).
+  if (hint && typeof hint.attemptSource === "string" && hint.attemptSource.trim()) segs.push(E("Previous attempt (this exact code was executed):\n<<<ATTEMPT\n" + hint.attemptSource.replace(/\s+$/, "") + "\nATTEMPT>>>", "the failed generation (LOCAL MODEL output), as executed in the sandbox"));
   if (hint && hint.buildError) segs.push(T("A previous attempt FAILED to build with this error:"), E("  " + String(hint.buildError), "sandbox build error"));
   if (hint && hint.verifyError) segs.push(T("A previous attempt BUILT but still gives a wrong output:"), E("  " + String(hint.verifyError), "sandbox observation (shown case)"));
   if (hint && hint.typeError) segs.push(T("A previous attempt was correct but FAILED the strict TypeScript typecheck:"), E("  " + String(hint.typeError), "typecheck diagnostics"));

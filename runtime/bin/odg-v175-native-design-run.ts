@@ -170,8 +170,8 @@ async function runNativeDesign(opts: any): Promise<any> {
     repairExamples: problem.cases.filter((c: any) => problem.shown.includes(c.i)).map((c: any) => ({ args: [c.i], expect: c.expect })),
   };
   const rounds: any[] = []; let accepted: any = null; let typeHint: any = null; let firstUse = true;
+  const current: any = { gen: null };   // the last generation fed to the sandbox (its source is shown on repair)
   for (let round = 1; round <= BUDGETS.maxRounds && !accepted; round++) {
-    const current: any = { gen: null };
     const generateFile = async (fileSpec: any): Promise<any> => {
       if (fileSpec.path === PIPE.HARNESS_FILE) return { ok: true, content: harness };
       if (firstUse && !fileSpec.buildError && !fileSpec.verifyError) { firstUse = false; current.gen = candidates[sel.chosen]; return { ok: true, content: current.gen.content }; }   // S4's implementation of the chosen design (no new call)
@@ -179,6 +179,7 @@ async function runNativeDesign(opts: any): Promise<any> {
       if (fileSpec.buildError) hint = { buildError: fileSpec.buildError };
       else if (fileSpec.verifyError) { const c = caseOfArgs(fileSpec.verifyError); hint = { verifyError: c ? `for input ${c.src} the return value is still wrong (expected return value ${PIPE.renderOut(c.expect)}).` + (/returned (.*) but the expected/.exec(fileSpec.verifyError) ? " It returned " + /returned (.*) but the expected/.exec(fileSpec.verifyError)![1] + "." : " It threw.") : String(fileSpec.verifyError).replace(/with \((\d+)\)/, "on a shown input") }; repairTrace.push({ round, kind: c ? c.kind : null, case: c ? c.i : null }); }
       else if (typeHint) hint = typeHint;
+      if (hint && current.gen && typeof current.gen.tsSource === "string") hint = { ...hint, attemptSource: current.gen.tsSource };   // show the failed attempt
       const g = await implement(`S5 ${hint && hint.typeError ? "typefix" : hint ? "repair" : "implement"} ${sel.chosen} r${round}`, chosenDesign, hint);
       if (!g) return { ok: false };
       current.gen = g; return { ok: true, content: g.content };
