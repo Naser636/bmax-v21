@@ -1,0 +1,26 @@
+{
+  "//": "OWNER authorization record — verbatim transcription (2026-11-24) by the PROVIDER (Claude Code coordinating session). Authorizes ODG GO to select and execute INTERNAL roadmap construction missions in its OWN strategic order once their contracts are conforming (inspected) and conditions are green. Grants no production, spend or external engagement; changes no score, criterion, threshold or selection rule.",
+  "schema": "odg-owner-authorization/1",
+  "kind": "OWNER_AUTHORIZATION",
+  "directive": "CTO — CONTINUATION APRÈS CP13 — AUTONOMIE NATIVE",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "source": "owner message \"CTO — CONTINUATION APRÈS CP13 — AUTONOMIE NATIVE\", 2026-11-24 (relayed by the coordinating session)",
+  "quote": [
+    "« J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3, les vagues GO parallèles et la conversion des propositions Radar en contrats, dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. »",
+    "Respecter la sélection stratégique actuelle de GO, notamment F. Ne pas forcer NB3 si GO sélectionne une autre mission prioritaire.",
+    "Préparer NB3 avec le nouveau levier de diversité des réparations. Faire inspecter son contrat, puis laisser GO décider et exécuter une fois si les conditions sont conformes.",
+    "Construire les vagues GO parallèles sur des zones d'écriture indépendantes.",
+    "Transformer les meilleures propositions Radar en contrats exécutables, sans créer de système parallèle.",
+    "Ne pas confondre autorisation de construction interne et autorisation de production, dépense ou engagement externe."
+  ],
+  "scope": {
+    "appliesTo": "internal roadmap construction missions whose contract binds this record (e.g. F multi-agents / parallel GO waves, V176-NB3, Radar-proposal contracts) — selection by GO's OWN strategic order (no forced item); RUN only after an independent contract inspection ACCEPT; one initial execution per contract revision",
+    "neverAppliesTo": [
+      "production / deployment / VPS / systemd / sudo",
+      "spend, paid calls, external engagement",
+      "score / criterion / threshold / selection-rule changes",
+      "items not bound to this record"
+    ]
+  }
+}
