@@ -64,3 +64,6 @@ Statuses use the 12-value taxonomy; anything without data is NOT_MEASURED. It is
     - `bounded-http-client`: `NOT_HTTPS` and SSRF `PRIVATE_HOST_BLOCKED` enforced.
   - The grant expires on 2026-12-22. V141 remains expired and unused.
 - **Métiers.** Under V372, construction and tests are allowed in development/sandbox only. Real operation still requires a separate owner decision.
+
+## Extensions (additive; existing sections unchanged)
+- **Addendum « Boussole vivante » (§20–§31)** — owner text recorded verbatim in `docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md` (status RECORDED, 2026-11-24; formal adoption not performed by this pointer). Reconciliation: `docs/odg/evidence/V169_V14_4_ADDENDUM_RECONCILIATION.json`. Boussole V12.4 remains canonical.

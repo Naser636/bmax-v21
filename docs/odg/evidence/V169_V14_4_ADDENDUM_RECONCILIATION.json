@@ -1,0 +1,107 @@
+{
+  "//": "Reconciliation of the owner's V14.4 addendum 'Boussole vivante' (§20–§31) with what V14.4 / V12.4 / V15.0 actually contain in the repository. Prepared by the PROVIDER (coordinating session). Adopts nothing; modifies no canonical register.",
+  "schema": "odg-addendum-reconciliation/1",
+  "date": "2026-11-24",
+  "headAtReconciliation": "54f335f6",
+  "addendum": {
+    "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+    "sha256": "3c5950660f19125f9c6cd4718a33ac817ac8b9a2df717acf68ea9db40d3e1138",
+    "status": "RECORDED (owner text verbatim; formal adoption via the governance process: NOT performed by this record)"
+  },
+  "lineageTruth": {
+    "v14_4_files": {
+      "docs/odg/V14_4_ROADMAP.md": "ADOPTED by owner V372 (commit 0d4cd2b5, PR #852); 5 sections (1 Lineage, 2 Structure phases 0–8 → V12.4 anchors, 3 Correspondence register method, 4 Gates closed, 5 Reconciliation notes)",
+      "docs/odg/V14_4_LOT_PLAN_AND_RADAR_AUDIT.md": "Phase-1 checkpoint (PR #859); 4 sections"
+    },
+    "masterTextSections1to19": "NOT_IN_REPOSITORY — the addendum numbers its sections from §20, implying a V14.4 master text with §1–§19; no such text exists in the repo (grep + git log --all --grep=V14.4). Section-by-section comparison with §1–§19: NOT_MEASURED until the owner provides that text; no path is invented for it.",
+    "v12_4": "canonical (docs/odg/v124-consolidated-roadmap.json, 24 missions: 14 ACCEPTED, 6 REVIEW, 2 READY, 1 IN_PROGRESS, 1 BLOCKED); unchanged",
+    "v15_0": "docs/odg/V15_0_MASTER_DIRECTIVE.md status PROPOSED (registration record); unchanged; not adopted"
+  },
+  "comparisonWithRepoV14_4": [
+    {
+      "addendum": "§31 Phases 0–9 (continuity track)",
+      "v14_4": "§2 Phases 0–8 (program track: truth, Radar&knowledge, brain&memory, autonomy, reliability&perf, multimodality, métiers, global validation, release)",
+      "relation": "COMPLEMENTARY — different axes with overlapping names; no contradiction if the addendum phases are read as a continuity sub-track mapped onto V14.4 phases",
+      "mapping": {
+        "A0 Vérité": "V14.4 P0",
+        "A1 Continuité": "V14.4 P0 + V12.4 D CM-V234-CONTINUATION/CM-V237-PROGRAM-CONTINUITY",
+        "A2 Boussole & suivi": "V14.4 §3 correspondence register",
+        "A3 Dépendances & valeur": "V14.4 P3 (orchestration) + strategic register",
+        "A4 Auto-diagnostic": "V14.4 P2",
+        "A5 Radar": "V14.4 P1 + V12.4 I CM-RADAR-GATE-CHAIN",
+        "A6 Auto-amélioration": "V14.4 P2/P3",
+        "A7 Rapidité": "V14.4 P4 + V12.4 K CM-BENCHMARK-AUDIT",
+        "A8 Automatisation": "V14.4 P3 + V12.4 E CM-V234-RESIDENT-DRIVER",
+        "A9 Validation globale": "V14.4 P7"
+      },
+      "risk": "two phase numberings ⇒ always cite 'addendum phase An' vs 'V14.4 phase n'"
+    },
+    {
+      "addendum": "§23 implementation states (12 values)",
+      "v14_4": "§3 'Statuses use the 12-value taxonomy'",
+      "relation": "DUPLICATE (consistent) — the addendum lists the same 12 values explicitly; plus NEW: separation of mission-result statuses (PASS/PARTIAL/FAIL/BLOCKED/NOT_MEASURED) from implementation states"
+    },
+    {
+      "addendum": "§21.2 roles reuse canonical components; no parallel system",
+      "v14_4": "§2 'no new engine', §3 'method, not a new system'",
+      "relation": "DUPLICATE (consistent)"
+    },
+    {
+      "addendum": "§30 OWNER_GATED kept, no V12.4 change, no spend/external action",
+      "v14_4": "§4 gates remain closed",
+      "relation": "DUPLICATE (consistent)"
+    },
+    {
+      "addendum": "§21.2 'Chaque enregistrement opérationnel doit être relié à la référence correspondante dans la Boussole'",
+      "v14_4": "§3 maps V12.4 mission → components → V14.4 phase",
+      "relation": "NEW requirement on records (link from each operational record back to a Boussole ref) — measured absent on the A–P track (Phase 0 gap #1)"
+    },
+    {
+      "addendum": "§22 15 mission-memory fields + 7 proof attributes + append-only history",
+      "v14_4": "—",
+      "relation": "NEW (Phase 0: no mechanism covers > 8 of the 15 fields)"
+    },
+    {
+      "addendum": "§25 A strategic priority vs B best authorized feasible",
+      "v14_4": "—",
+      "relation": "NEW in text; already implemented by GO-ACT-1 (#936, #945)"
+    },
+    {
+      "addendum": "§26 self-diagnosis loop, §27 Radar feeding it, §28 proportional speed + metrics, §29 15 baseline scenarios",
+      "v14_4": "P1/P2/P4 exit criteria in summary form",
+      "relation": "NEW detail (refines existing phases); §29 baseline executed (#948)"
+    }
+  ],
+  "coverageOfRequiredTopics": {
+    "continuité des missions": "§22, §24",
+    "état opérationnel et preuves": "§22, §23",
+    "historique des statuts et échecs": "§22 (append-only), §23",
+    "dépendances et valeur débloquée": "§25",
+    "Boussole et suivi opérationnel": "§21",
+    "mémoire fiable": "§21.2, §22",
+    "Radar mondial": "§27",
+    "auto-diagnostic": "§26",
+    "auto-amélioration": "§26",
+    "rapidité proportionnée": "§28",
+    "base de mesure": "§29",
+    "automatisation gouvernée": "§30",
+    "reprise après interruption": "§24 (À la reprise), §29 #1–#2",
+    "verdict": "13/13 covered by the addendum text"
+  },
+  "contradictions": [],
+  "implementationState": {
+    "phase0": "DONE (#948: inventory + baseline 2/11/2)",
+    "phase1": "IN_PROGRESS (#949 merged: closures→register, contradictions, latest CP ⇒ baseline 5/8/2; proof currency + GO resume in progress)",
+    "note": "technical work started after H's verified closure, as the addendum requires"
+  },
+  "governance": {
+    "v12_4Modified": false,
+    "v14_4SectionsRewritten": false,
+    "v14_4Change": "one additive 'Extensions' pointer appended at the end of V14_4_ROADMAP.md",
+    "adoptionDeclared": false,
+    "ownerActionsForFormalIntegration": [
+      "provide the V14.4 master text §1–§19 (or confirm that V14_4_ROADMAP.md is the whole of V14.4) so the section-by-section comparison can be completed",
+      "decide whether the addendum is adopted into V14.4 through the governance process (this record only registers it)"
+    ]
+  }
+}
