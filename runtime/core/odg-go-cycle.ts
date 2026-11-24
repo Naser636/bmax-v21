@@ -202,6 +202,13 @@ function actionabilityOf(state: any, item: any): any {
   if (scope && scope.currentStepAuthorized === true) return { actionable: true, basis: "SCOPED_STEP_AUTHORIZED", step: scope.currentStep, stepKind: scope.currentStepKind, executionAuthorized: scope.executionAuthorized === true, reason: `scoped step ${scope.currentStep} (${scope.currentStepKind}) authorized by ${scope.owner.by.split(" — ")[0]} (odg-authorization-scope)` };
   return { actionable: false, basis: null, reason: scope ? `scoped: current step ${scope.currentStep} NOT authorized (${scope.reason})` : `contract ${contract.state || "PROPOSED"} — no authorized next step (ODG never self-authorizes)` };
 }
+/* V17.5 dependencyView(item) — READ-ONLY projection of the register's DEPG-1 fields for the SELECT trace (never recomputed here). */
+function dependencyView(it: any): any {
+  if (!it) return null;
+  const g = it.dependencyGraph || null;
+  const da = it.criteria && it.criteria.dependencyAvailability ? it.criteria.dependencyAvailability : null;
+  return { id: it.id, deps: arr(it.deps), dependsOn: g && g.dependsOn ? g.dependsOn : [], dependents: g ? arr(g.dependents) : [], fanOut: g ? g.fanOut : 0, blockingFanOut: g ? g.blockingFanOut : 0, graphStatus: g ? g.status : "NOT_MEASURED", edges: arr(it.dependencyEdges).map((e: any) => ({ to: e.to, kind: e.kind, satisfied: e.satisfied, source: e.source })), dependencyAvailability: da ? { status: da.status, value: da.value, rule: da.rule } : null };
+}
 function actionableCandidates(state: any, register: any): any[] {
   const byId = new Map(register.items.map((it: any) => [it.id, it]));
   return REG.toSelectorCandidates(register).map((c: any) => actionabilityOf(state, byId.get(c.id)).actionable ? c : { ...c, status: NOT_AUTHORIZED_NOW });
@@ -518,7 +525,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const consistent = committed ? committed.decision === d.decision && committed.selected === (d.selected ? d.selected.id : null) && canon(arr(committed.tiedSet)) === canon(arr(d.tiedSet)) : null;
     return { status: id || proceedWithActionable ? "DONE" : "HALTED", inputs: REG.toSelectorCandidates(ctx.register),
       decision: { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, resolutionSteps: d.resolutionSteps || null, justification: d.justification, uncertainty: d.selected ? d.selected.uncertainty : d.proposed ? d.proposed.uncertainty : null, ownerAuthorizationRequired: arr(d.ownerAuthorizationRequired).map((x: any) => x.id), consistentWithCommittedRegisterEvidence: consistent,
-        strategicSelection: selectionSummary(d), actionableSelection: ctx.actionable, ownerRequest: ctx.ownerRequest, workingOn: ctx.item ? ctx.item.id : null },
+        strategicSelection: selectionSummary(d), actionableSelection: ctx.actionable, ownerRequest: ctx.ownerRequest, workingOn: ctx.item ? ctx.item.id : null, dependencies: { rule: "read-only view of odg-strategic-register DEPG-1 (register.dependencyGraph): deps = unsatisfied prerequisites, fanOut = dependents", strategic: dependencyView(strategicItem), workingOn: dependencyView(ctx.item) } },
       rationale: (ownerOrder && ownerOrder.applied ? `actionable tie ${ownerOrder.tiedSet.join("/")} resolved by ${ownerOrder.resolvedBy} (owner order ${ownerOrder.order.join(" → ")}, ${ownerOrder.date}: « ${ownerOrder.quote[0] || ""} ») — order arbitration only, no score/authorization change (GO-ORD-1); ` : "")
         + (ownerSelection && ownerSelection.applied ? `actionable selection DECISION_REQUIRED (selector: ${ownerSelection.selector.justification}) resolved for ${ownerSelection.chosen} by ${ownerSelection.resolvedBy} (${ownerSelection.date}: « ${ownerSelection.quote[2] || ownerSelection.quote[0]} ») — owner selection of an already-authorized item, max 1 dispatch, no score/threshold/authorization change (GO-ORD-2); ` : "")
         + (!id && proceedWithActionable ? `strategic selector decision ${d.decision} (tie ${arr(d.tiedSet).join("/")}; owner/ODG decision requested) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : id ? `selector decision ${d.decision}${d.decision === "TIE_EXPLAINED" ? ` (tie ${arr(d.tiedSet).join("/")} resolved by ${d.resolvedBy})` : ""} — a PROPOSAL, not an authorization` : `selector decision ${d.decision}: ODG does not pick (no id tie-break) — owner/ODG decision required`)
@@ -731,5 +738,5 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { deriveDispatchTimeout, DISPATCH_TIMEOUT_RULE, DISPATCH_TIMEOUT_DEFAULT_MS, DISPATCH_TIMEOUT_CEILING_MS, DISPATCH_TIMEOUT_MARGIN_MS, DISPATCH_DEADLINE_MARGIN_MS, OWNER_SELECTION_RULE, resolveOwnerSelection, ownerSelectionClaimKey, OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
+module.exports = { dependencyView, deriveDispatchTimeout, DISPATCH_TIMEOUT_RULE, DISPATCH_TIMEOUT_DEFAULT_MS, DISPATCH_TIMEOUT_CEILING_MS, DISPATCH_TIMEOUT_MARGIN_MS, DISPATCH_DEADLINE_MARGIN_MS, OWNER_SELECTION_RULE, resolveOwnerSelection, ownerSelectionClaimKey, OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};
