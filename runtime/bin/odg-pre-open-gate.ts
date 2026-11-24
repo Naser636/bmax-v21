@@ -229,8 +229,8 @@ function selectTests(root: string, changes: Change[], graph: any, testSources?: 
     const nameRe = new RegExp(`(^|[^A-Za-z0-9_-])${escapeRe(stem)}([^A-Za-z0-9_-]|$)`);
     for (const t of tests) if (!picked.has(t) && nameRe.test(sources[t])) add(t, `names ${stem}`);
     if (c.status === "A" || c.status === "D") {
-      const dir = path.dirname(p); const segs = dir.split("/");
-      const dirRe = new RegExp(`${escapeRe(dir)}|${segs.map((s) => `"${escapeRe(s)}"`).join("\\s*,\\s*")}`);
+      const dir = path.dirname(p); const segs: string[] = dir.split("/");
+      const dirRe = new RegExp(`${escapeRe(dir)}|${segs.map((s: string) => `"${escapeRe(s)}"`).join("\\s*,\\s*")}`);
       for (const t of tests) if (!picked.has(t) && /readdirSync/.test(sources[t]) && dirRe.test(sources[t])) add(t, `scans ${dir}/ (file ${c.status === "A" ? "added" : "deleted"})`);
     }
   }
@@ -425,7 +425,7 @@ function main(argv: string[]): number {
   const o = parseArgs(argv);
   if (o.error) { process.stderr.write(`${o.error}\n`); return 2; }
   const root = process.cwd();
-  const r = gate(root, o, o.json ? () => {} : (s) => process.stderr.write(`· ${s}\n`));
+  const r = gate(root, o, o.json ? () => {} : (s: string) => process.stderr.write(`· ${s}\n`));
   if (r.error) { process.stderr.write(`${r.error}\n`); return 2; }
   process.stdout.write(o.json ? JSON.stringify(r, null, 2) + "\n" : renderText(r) + "\n");
   return r.verdict === "READY" ? 0 : 1;

@@ -106,3 +106,5 @@ ok("discovery: the strategic register CLI is discovered with its record + cited 
 ok("discovery: the gate never lists itself", !disc.some((c: any) => c.cli === "runtime/bin/odg-pre-open-gate.ts"));
 
 console.log(`\nodg-pre-open-gate: ${passed} passed`);
+
+export {};
