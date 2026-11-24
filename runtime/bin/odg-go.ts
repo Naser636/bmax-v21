@@ -522,8 +522,37 @@ async function check(argv: string[]): Promise<number> {
 
 module.exports = { WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
+/* CLI flag validation: --help/-h ⇒ usage on stdout, exit 0, no cycle; any unknown flag (or a value flag missing its
+ * value) ⇒ usage on stderr, exit 2, no cycle. Never starts a cycle on a mistyped flag. */
+const VALUE_FLAGS = ["--repo", "--out", "--max-steps", "--deadline-ms", "--scratch", "--step-delay-ms", "--evidence-out"];
+const BOOL_FLAGS = ["--dry", "--execute", "--resume", "--allow-unsandboxed-target", "--scenario-evidence", "--check"];
+const USAGE = [
+  "Usage:",
+  "  npx tsx runtime/bin/odg-go.ts [--dry] [--execute] [--repo <dir>] [--out <dir>] [--max-steps N] [--deadline-ms MS]",
+  "                                [--scratch <isolated git worktree>] [--step-delay-ms MS] [--resume] [--allow-unsandboxed-target]",
+  "  npx tsx runtime/bin/odg-go.ts --scenario-evidence --repo <dir> --out <dir> [--evidence-out <file>]",
+  "  npx tsx runtime/bin/odg-go.ts --check --repo <dir> [--evidence-out <file>]",
+  "  npx tsx runtime/bin/odg-go.ts --help | -h",
+  "Exit codes: 0 cycle ran (or --help) · 2 refused at startup (unknown flag / out dir / Truth-Lock) · 3 STOPPED · 4 REFUSED mid-run · 1 unexpected error.",
+].join("\n") + "\n";
+function parseCliFlags(argv: string[]): { help: boolean; error: string | null } {
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === "--help" || a === "-h") return { help: true, error: null };
+    if (BOOL_FLAGS.includes(a)) continue;
+    if (VALUE_FLAGS.includes(a)) { if (i + 1 >= argv.length) return { help: false, error: `flag ${a} requires a value` }; i++; continue; }
+    return { help: false, error: `unknown argument: ${a}` };
+  }
+  return { help: false, error: null };
+}
+module.exports.parseCliFlags = parseCliFlags;
+module.exports.USAGE = USAGE;
+
 if (require.main === module) {
   const argv = process.argv.slice(2);
+  const flags = parseCliFlags(argv);
+  if (flags.help) { process.stdout.write(USAGE); process.exit(0); }
+  if (flags.error) { process.stderr.write(`odg-go: ${flags.error}\n${USAGE}`); process.exit(2); }
   const p = argv.includes("--scenario-evidence") ? scenarioEvidence(argv) : argv.includes("--check") ? check(argv) : runOnce(argv).then((r) => {
     if (r.result) process.stdout.write(JSON.stringify({ status: r.result.status, runId: r.result.runId, cycleSeq: r.result.cycleSeq, stepsRun: r.result.stepsRun, stop: r.result.stop || null, idempotent: r.result.idempotent, dispatchCalls: r.result.dispatchCalls, writes: r.writes }) + "\n");
     return r.code;

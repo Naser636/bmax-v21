@@ -393,6 +393,7 @@ function run(mode: string, useAtIso: string): any {
       "git is run with -c diff.renames=true (git's default) --no-ext-diff --no-textconv so a user config cannot change sizes",
       "the held-out file is written only if absent; if present it must equal the rebuild byte-for-byte, else NOT_MEASURED and it is not overwritten",
       "a NOT_MEASURED outcome stops at the first failing pre-condition; expected subject counts (168/32, 34/0) are informational, recorded in heldout.counts",
+      "held-out exclusions: a PR number with > 1 first-parent subject (e.g. a 'Merge pull request #N' merge AND a '(#N)' squash subject) is EXCLUDED AMBIGUOUS and listed; the squash exclusion LABEL_NOT_RECOVERABLE_LOCALLY is decided on the '(#N)' subject — the contract's '1 parent' condition is reported by the builder's contractDiagnostics (measured: every squash exclusion at e97bcc43 has 1 parent), not re-applied",
     ],
     honesty: [
       "simulation ≠ test ≠ demonstration ≠ real operation: this is a controlled offline experiment on committed/local-git data",

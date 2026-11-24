@@ -117,6 +117,7 @@
       "PASS_IN_SCOPE": "contract initial state PASS within its declared scope (extensions recorded separately)",
       "EXECUTED_PARTIAL": "executed (scenario evidence file exists) and graded PARTIAL — remains ELIGIBLE, never treated as ACCEPTED",
       "PARTIAL": "contract initial state PARTIAL, not yet executed against its contract",
+      "NOT_STARTED": "contract initial state NOT_STARTED (nothing executed yet), not executed against its contract — selectable like PARTIAL, never upgraded to PARTIAL",
       "NOT_ADOPTED": "tested under a stated rule and not adopted (re-test only with new data)",
       "BLOCKED": "next step is owner-gated / external (V150 summary.ownerGated)",
       "FAILED": "executed and graded FAIL",
@@ -553,7 +554,8 @@
       "ACCEPTED": 1,
       "PASS_IN_SCOPE": 2,
       "EXECUTED_PARTIAL": 2,
-      "PARTIAL": 20,
+      "PARTIAL": 18,
+      "NOT_STARTED": 2,
       "NOT_ADOPTED": 1,
       "BLOCKED": 14,
       "FAILED": 0,
@@ -2547,7 +2549,7 @@
         "title": "G2 — Mémoire : calibration guidée par la connaissance (nouvelle expérience distincte de G)",
         "contractState": "AUTHORIZED_FOR_REVISION",
         "authorizedBy": "OWNER (CTO) — directive V170 (2026-11-24), docs/odg/V170_OWNER_AUTHORIZATION_HG.json, G clause: « Préparer une nouvelle expérience distincte, avec critères, métriques, référence de comparaison, jeu de données et méthode d'évaluation fixés avant les mesures. Contrôler l'absence de fuite de données, de contamination des étiquettes et de sélection opportuniste des métriques. » — G2 only (a NEW, distinct, versioned G contract per the record's appliesTo); G stays CLOSED_PARTIAL and its records are untouched.",
-        "status": "PARTIAL",
+        "status": "NOT_STARTED",
         "statusSource": [
           "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].initialState.status"
         ],
@@ -2664,7 +2666,7 @@
         "title": "J2 — Gestion d'échec : boucle de stratégie alternative après les correctifs #940 (local, hors ligne, 0 €)",
         "contractState": "AUTHORIZED_FOR_REVISION",
         "authorizedBy": "OWNER (CTO) — directive V171 (2026-11-24), docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json: « Cette autorisation couvre les travaux internes nécessaires sur J et les autres missions sélectionnées par ODG. » « Préparation de nouvelles expériences. » « Expériences isolées et reproductibles. » « Ne jamais rouvrir artificiellement une mission déjà clôturée. Une nouvelle expérience doit avoir un nouvel identifiant et préserver l'historique précédent. » « Ne pas modifier les critères après observation des résultats pour obtenir un PASS. » — J2 only, internal, €0; provider spend / delegation launches NOT granted (« Dépenses fournisseurs non déjà autorisées »); J's contract and records untouched.",
-        "status": "PARTIAL",
+        "status": "NOT_STARTED",
         "statusSource": [
           "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].initialState.status"
         ],
@@ -9045,7 +9047,7 @@
       },
       {
         "id": "G2",
-        "status": "PARTIAL",
+        "status": "NOT_STARTED",
         "evidenceScore": 0.06,
         "upperBound": 0.76,
         "uncertainty": 0.7,
@@ -9135,7 +9137,7 @@
       },
       {
         "id": "J2",
-        "status": "PARTIAL",
+        "status": "NOT_STARTED",
         "evidenceScore": 0.06,
         "upperBound": 0.76,
         "uncertainty": 0.7,
@@ -10606,5 +10608,5 @@
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "04e80fcccad44f4ee11f7af2f5f3c00eaf59ccc4"
+  "generatedAtHead": "2e00b932354d84a8e180327dd0122ef070c40a25"
 }

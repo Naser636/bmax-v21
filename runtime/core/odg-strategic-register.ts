@@ -20,6 +20,7 @@ const STATUS = Object.freeze({
   PASS_IN_SCOPE: "contract initial state PASS within its declared scope (extensions recorded separately)",
   EXECUTED_PARTIAL: "executed (scenario evidence file exists) and graded PARTIAL — remains ELIGIBLE, never treated as ACCEPTED",
   PARTIAL: "contract initial state PARTIAL, not yet executed against its contract",
+  NOT_STARTED: "contract initial state NOT_STARTED (nothing executed yet), not executed against its contract — selectable like PARTIAL, never upgraded to PARTIAL",
   NOT_ADOPTED: "tested under a stated rule and not adopted (re-test only with new data)",
   BLOCKED: "next step is owner-gated / external (V150 summary.ownerGated)",
   FAILED: "executed and graded FAIL",
@@ -176,6 +177,7 @@ function buildRegister(sources: any): any {
       const remaining = cp8Graded ? Object.keys(g.criteria).filter((k) => !/^MET\b/.test(String(g.criteria[k]))).map((k) => ({ criterion: k, grade: g.criteria[k] })) : [];
       nextStep = cp8Graded ? { remainingCriteria: remaining, source: `${pf}#scenarios.${L}.criteria` } : { text: init.missingForPass, source: `${base}.initialState.missingForPass` };
     } else if (ev && g && /FAIL/.test(String(g.status))) { status = "FAILED"; statusSource = [`${pf}#scenarios.${L}.status`]; nextStep = null; }
+    else if (init.status === "NOT_STARTED") { status = "NOT_STARTED"; statusSource = [`${base}.initialState.status`]; nextStep = { text: init.missingForPass, source: `${base}.initialState.missingForPass` }; }
     else { status = "PARTIAL"; statusSource = [`${base}.initialState.status`]; nextStep = { text: init.missingForPass, source: `${base}.initialState.missingForPass` }; }
     // CLOSE-1 (V16.9 Phase 1): closure from the committed scoped-step records, via the canonical odg-authorization-scope.
     let closure: any = null, statusHistory: any = null;

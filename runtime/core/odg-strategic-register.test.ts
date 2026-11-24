@@ -27,6 +27,8 @@ const it = (id: string) => R.items.find((x: any) => x.id === id);
 // ── taxonomy mapping ──
 check("PASS contract ⇒ PASS_IN_SCOPE (source initialState.status)", it("B").status === "PASS_IN_SCOPE" && it("B").statusSource.some((s: string) => /initialState\.status/.test(s)));
 check("PARTIAL contract, not executed ⇒ PARTIAL", it("D").status === "PARTIAL");
+{ const RNS = REG.buildRegister(sources({ contracts: contracts.concat([contract("Q2", "NOT_STARTED")]) })); const q = RNS.items.find((x: any) => x.id === "Q2");
+  check("NOT_STARTED contract, not executed ⇒ NOT_STARTED (not the PARTIAL fallback), source initialState.status, still selectable", q.status === "NOT_STARTED" && q.statusSource[0].endsWith("initialState.status") && RNS.statusCounts.NOT_STARTED === 1 && !("NOT_STARTED" in SEL.EXPLAINED_DEFAULTS.nonSelectableStatuses)); }
 check("executed V16x evidence + CP8 PARTIAL ⇒ EXECUTED_PARTIAL with remaining criterion as next step", it("G").status === "EXECUTED_PARTIAL" && it("G").nextStep.remainingCriteria.length === 1 && it("G").nextStep.remainingCriteria[0].criterion === "utility");
 check("executed evidence + CP8 FAIL ⇒ FAILED", it("H").status === "FAILED");
 check("SCN-1: pre-contract V150_SCENARIO_E file is ignored (E stays PARTIAL)", it("E").status === "PARTIAL" && R.sourcesUsed.preContractEvidenceIgnored.includes("docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json"));
@@ -212,6 +214,7 @@ check("fieldRecords / auditRefs helpers", REG.fieldRecords({ a: { b: ["x", "y"] 
   check("LCP-1 synthetic fixture (no checkpoint names) ⇒ latest = highest supplied doc (CP9 in the V16.7 benefit fixture) — DEP-2 tests above unchanged", RB.latestCheckpoint.file === "V166_CHECKPOINT_9.json");
   // prior items otherwise unchanged
   const RP = REG.buildRegister({ ...rs, authorizationEvidence: {}, resolutionEvidence: [], checkpoints: [] });
+  check("real: G2/J2 (contract initialState NOT_STARTED) ⇒ NOT_STARTED, scoped-authorization derivation kept (closure via odg-authorization-scope, not closed)", ["G2", "J2"].every((k) => ri(RR, k).status === "NOT_STARTED" && ri(RR, k).closure && ri(RR, k).closure.closed === false && ri(RR, k).closure.component === "odg-authorization-scope.deriveAuthorizationScope"));
   // V17.2: G2/J2 carry their OWN inspection records (#957) ⇒ their scoped state legitimately differs; excluded by name, nothing else
   check("prior items otherwise unchanged: every item except G, H, canonicalDefectsJ (and G2/J2, which carry their own V172 inspection records) is byte-identical with and without the Phase-1 records", RR.items.filter((x: any) => !["G", "H", "CP8-GAP-canonicalDefectsJ", "G2", "J2"].includes(x.id)).every((x: any) => JSON.stringify(x) === JSON.stringify(ri(RP, x.id))) && RR.itemCount === RP.itemCount);
   check("synthetic V16.4 fixture has no closure/resolution fields (no authorization blocks, no records)", R.items.every((x: any) => !x.closure && !x.statusHistory && !x.resolution));

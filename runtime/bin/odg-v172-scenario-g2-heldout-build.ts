@@ -154,9 +154,28 @@ function verifyRule(root: string, doc: any, ruleBlocks: any = RULE.blocks): any 
   return { ok: violations.length === 0, violations: violations.slice(0, 20), violationCount: violations.length };
 }
 
+/* contractDiagnostics(doc) — DIAGNOSTIC ONLY (never feeds build(), verifyRule() or the experiment; cannot alter any row,
+ * exclusion, file text or sha256). The frozen G2 contract (sha 94ca64ca…) states the squash exclusion as "subject ending
+ * '(#N)', 1 parent"; build() excludes on the subject alone. This reports every LABEL_NOT_RECOVERABLE_LOCALLY exclusion
+ * whose commit does NOT have exactly 1 parent (a deviation from the contract's wording, surfaced — not silently fixed),
+ * and every AMBIGUOUS exclusion (incl. a PR number with both a merge subject and a '(#N)' squash subject).
+ * Measured at e97bcc43: HB 32/32 squash exclusions have 1 parent, 0 AMBIGUOUS; HF none ⇒ no deviation. */
+function contractDiagnostics(doc: any): any {
+  const squashNotOneParent: any[] = [], ambiguous: any[] = [];
+  for (const [id, blk] of Object.entries((doc && doc.blocks) || {}) as any) {
+    for (const e of (blk && blk.excluded) || []) {
+      if (e.reason === "LABEL_NOT_RECOVERABLE_LOCALLY" && e.parents !== 1) squashNotOneParent.push({ block: id, number: e.number, parents: e.parents });
+      if (e.reason === "AMBIGUOUS") ambiguous.push({ block: id, number: e.number, commits: (e.commits || []).length });
+    }
+  }
+  return { ok: squashNotOneParent.length === 0, squashNotOneParent, ambiguous, note: "diagnostic only — does not change the built file; a non-empty squashNotOneParent is a contract-wording deviation to report to the owner/inspector" };
+}
+
 if (require.main === module) {
   const b = build(ROOT);
   const counts = Object.fromEntries(Object.entries(b.doc.blocks).map(([k, v]: any) => [k, v.counts]));
+  const diag = contractDiagnostics(b.doc);
+  if (!diag.ok) process.stderr.write(`DIAGNOSTIC (contract wording "(#N)', 1 parent"): ${diag.squashNotOneParent.length} squash exclusion(s) without exactly 1 parent: ${JSON.stringify(diag.squashNotOneParent)} — output unchanged\n`);
   if (process.argv.includes("--check")) {
     let cur: string | null = null; try { cur = fs.readFileSync(path.join(ROOT, OUT), "utf8"); } catch { cur = null; }
     const same = cur !== null && cur === b.text;
@@ -166,5 +185,5 @@ if (require.main === module) {
     process.stdout.write(`${JSON.stringify({ dryRun: true, counts, sha256: b.sha256, note: "counts only — no label, commit count or size printed; nothing written" })}\n`);
   }
 }
-module.exports = { build, verifyRule, firstParentIndex, measureRange, numstatSize, commitCount, RULE, OUT, SELF };
+module.exports = { build, verifyRule, contractDiagnostics, firstParentIndex, measureRange, numstatSize, commitCount, RULE, OUT, SELF };
 export {};

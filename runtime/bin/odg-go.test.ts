@@ -109,6 +109,21 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
       const pr = cp.spawnSync(process.execPath, [...process.execArgv, path.join(__dirname, "odg-go.ts"), "--repo", notRepo, "--out", pOut], { encoding: "utf8", timeout: 60000 });
       check("CLI process: mid-run write refusal ⇒ exit 4, one-line REFUSED stderr, no stack, victim unchanged", pr.status === 4 && /^REFUSED: /.test(pr.stderr) && !/\n\s+at |odg-go error/.test(pr.stderr) && fs.readFileSync(v2, "utf8") === "orig");
     }
+    // CLI flags: --help/-h ⇒ usage, exit 0, no cycle; unknown flag ⇒ usage on stderr, exit 2, no cycle
+    {
+      const cp = require("child_process");
+      const hOut = path.join(T, "help-out"); fs.mkdirSync(hOut);
+      const run = (...a: string[]) => cp.spawnSync(process.execPath, [...process.execArgv, path.join(__dirname, "odg-go.ts"), ...a], { encoding: "utf8", timeout: 60000 });
+      for (const h of ["--help", "-h"]) {
+        const pr = run(h, "--repo", notRepo, "--out", hOut);
+        check(`CLI ${h} ⇒ usage on stdout, exit 0, no cycle (no trace written)`, pr.status === 0 && /^Usage:/.test(pr.stdout) && !/"status"/.test(pr.stdout) && fs.readdirSync(hOut).length === 0);
+      }
+      const bad = run("--repo", notRepo, "--out", hOut, "--exectue");
+      check("CLI unknown flag ⇒ usage on stderr, exit 2, no cycle (no trace written)", bad.status === 2 && /unknown argument: --exectue/.test(bad.stderr) && /Usage:/.test(bad.stderr) && bad.stdout === "" && fs.readdirSync(hOut).length === 0);
+      const miss = run("--out");
+      check("CLI value flag missing its value ⇒ exit 2, no cycle", miss.status === 2 && /requires a value/.test(miss.stderr));
+      check("parseCliFlags accepts every documented flag", B.parseCliFlags(["--dry", "--execute", "--resume", "--allow-unsandboxed-target", "--repo", "x", "--out", "y", "--max-steps", "3", "--deadline-ms", "9", "--scratch", "s", "--step-delay-ms", "1", "--evidence-out", "e"]).error === null);
+    }
     check("'..' traversal ⇒ safeWrite refuses", /WRITE_OUTSIDE_OUT_DIR|WRITE_PARENT_NOT_OUT_DIR/.test(thrown(() => B.safeWrite(path.join(realOut, "..", "evil.txt"), "x", "truncate", realOut, forb))) && !fs.existsSync(path.join(T, "evil.txt")));
     fs.mkdirSync(path.join(realOut, "sub"));
     check("write into a sub-dir (parent ≠ out dir) ⇒ refused", /WRITE_PARENT_NOT_OUT_DIR/.test(thrown(() => B.safeWrite(path.join(realOut, "sub", "f"), "x", "truncate", realOut, forb))));
