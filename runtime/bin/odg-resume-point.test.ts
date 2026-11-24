@@ -9,7 +9,7 @@ const ROOT = path.resolve(__dirname, "..", "..");
 let failures = 0;
 function check(name: string, cond: boolean): void { process.stdout.write(`${cond ? "ok" : "NOT OK"} - ${name}\n`); if (!cond) failures++; }
 
-const DEF = "docs/odg/evidence/V175_PR_TIMELINE_SNAPSHOT.json";
+const DEF = "docs/odg/evidence/V175_OPEN_PRS_SNAPSHOT.json";
 const a = RP.buildResumePoint(RP.loadInputs(ROOT, DEF));
 const b = RP.buildResumePoint(RP.loadInputs(ROOT, DEF));
 check("deterministic: two builds byte-identical", JSON.stringify(a) === JSON.stringify(b));

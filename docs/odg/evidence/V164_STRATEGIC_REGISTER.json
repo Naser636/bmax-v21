@@ -13758,5 +13758,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "2e4bda638383fad36cfa8e6848200ea3e2fcba0c"
+  "generatedAtHead": "f111ee149130a3d54ee15d681b20341d6d3db918"
 }

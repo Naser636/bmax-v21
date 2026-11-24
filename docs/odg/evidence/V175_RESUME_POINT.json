@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "d6cd0181a53258202c37ecc657bc3c41482ed4cf8a314e91bbdaa2c965a01ea9"
+      "sha256": "5d73a1d4a1ef5fedd367d79a552dc1816e2ae9401db9f57b80e622e5e3974567"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -42,8 +42,8 @@
       "sha256": "e8d8eb98d2c9d7b627906d4a542dd938b60775c4cf8a734ec9d8efa6c95772eb"
     },
     {
-      "source": "docs/odg/evidence/V175_PR_TIMELINE_SNAPSHOT.json",
-      "sha256": "498b5a48dc4635924fa47d3ebddd8a83dad82fca5bf70cefd9b9e7650eaa1f2f"
+      "source": "docs/odg/evidence/V175_OPEN_PRS_SNAPSHOT.json",
+      "sha256": "d29b6d5715d3573fab4691447cae9b927f0bb170ee20d8ed75bf0d9100e3244c"
     },
     {
       "source": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
@@ -100,6 +100,10 @@
     {
       "source": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
       "sha256": "a5537e9d2a8708e8e99d9b726b45a51c5850b39445444798b79a6426cd1b1c37"
+    },
+    {
+      "source": "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json",
+      "sha256": "19bc215556a89ae951e837fa068e15552ae8bbc31f0402c9f7a56fda3b5232c6"
     }
   ],
   "checkpoint": {
@@ -462,7 +466,7 @@
     {
       "id": "V175-NB1",
       "title": "First ODG-native software construction: shared canonical-JSON helper (local model authors, ODG tests/repairs/verifies)",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_PASS",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -474,44 +478,34 @@
       },
       "contractSha256": "953d064ad2fffd3711a9f4efa50592e96b06182349d801e22f7813b17b31b777",
       "ownerRecord": "docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "953d064ad2fffd3711a9f4efa50592e96b06182349d801e22f7813b17b31b777"
       },
       "records": {
         "inspection": {
           "path": "docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json",
-          "basis": "CONTRACT_DECLARED"
+          "basis": "REGISTER_LOADER"
         },
         "experiment": {
           "path": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
-          "basis": "CONTRACT_DECLARED"
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
-      },
-      "divergence": {
-        "register": "current step INSPECT_REVISED_CONTRACT",
-        "registerSource": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB1].closure",
-        "view": "current step VALIDATE_CRITERIA",
-        "viewBasis": {
-          "inspection": "CONTRACT_DECLARED: docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json",
-          "experiment": "CONTRACT_DECLARED: docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
-          "validation": "NONE"
-        },
-        "note": "REPORTED, not resolved: the register's CLOSE-1 loader and the contract-declared records disagree (RSP-2); a loader/record-name fix needs its own reviewed change"
       },
       "lastGoRun": {
         "trace": "docs/odg/evidence/V175_NB1_GO_EXECUTE_TRACE.jsonl",
@@ -520,21 +514,10 @@
         "endedAt": "2026-11-24T14:49:21.156Z",
         "dispatched": true
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 953d064ad2ff and experiment docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PASS, CLOSE-1 docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB1]",
@@ -550,7 +533,7 @@
       "EXECUTED_PARTIAL": 2,
       "CLOSED_PARTIAL": 2,
       "CLOSED_FAIL": 2,
-      "NOT_STARTED": 1,
+      "CLOSED_PASS": 1,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -618,13 +601,21 @@
     }
   ],
   "openPrs": {
-    "snapshot": "docs/odg/evidence/V175_PR_TIMELINE_SNAPSHOT.json",
-    "snapshotAt": "2026-11-24T14:08:42.506Z",
-    "window": [
-      955,
-      971
+    "snapshot": "docs/odg/evidence/V175_OPEN_PRS_SNAPSHOT.json",
+    "snapshotAt": "2026-11-24T17:19:54.423Z",
+    "window": null,
+    "open": [
+      {
+        "number": 980,
+        "title": "native(v17.5): NB2 — ODG designs the change (shared native-design pipeline, V175-NB2 contract, live PROBEs FAIL ×2)",
+        "headRefName": "feat/v175-nb2-native-design"
+      },
+      {
+        "number": 982,
+        "title": "feat(v17.5): Boussole reliée à l'exécution — boussoleRef on every register item, GO trace refs, resume-point view",
+        "headRefName": "feat/v175-boussole-ref"
+      }
     ],
-    "open": [],
     "note": "frozen snapshot passed in (no network); refresh by passing --prs <file> written from `gh pr list --json number,title,headRefName,state`"
   },
   "goRuns": [
@@ -724,11 +715,6 @@
         "item": "J",
         "actor": "OWNER",
         "action": "J contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V175-NB1",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 953d064ad2ff and experiment docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {

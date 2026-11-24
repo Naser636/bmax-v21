@@ -12,7 +12,7 @@
  *   - the merged GO traces (docs/odg/evidence/*_GO_EXECUTE_TRACE.jsonl);
  *   - the open owner questions (V175_GOVERNANCE_PRECEDENCE.ownerQuestions with answer null) and the checkpoint's
  *     ownerDecisionsOpen;
- *   - an open-PR snapshot FILE passed in (--prs <file>; default: the committed frozen V175_PR_TIMELINE_SNAPSHOT.json).
+ *   - an open-PR snapshot FILE passed in (--prs <file>; default: the committed frozen V175_OPEN_PRS_SNAPSHOT.json).
  * Output: per tracked item its current step, last GO run, pending inspection/validation, the next action and who takes
  * it; the open owner questions; and the next GO action — so a new session resumes without reconstructing history.
  * `--check` recomputes from the committed files and exits 1 on drift (no network, no timestamps in the record).
@@ -35,7 +35,7 @@ const OUT_REL = `${EV}/V175_RESUME_POINT.json`;
 const REGISTER_REL = `${EV}/V164_STRATEGIC_REGISTER.json`;
 const CONTRACTS_REL = `${EV}/V160_AP_WORK_ITEM_CONTRACTS.json`;
 const PRECEDENCE_REL = `${EV}/V175_GOVERNANCE_PRECEDENCE.json`;
-const DEFAULT_PRS_REL = `${EV}/V175_PR_TIMELINE_SNAPSHOT.json`;
+const DEFAULT_PRS_REL = `${EV}/V175_OPEN_PRS_SNAPSHOT.json`;
 const TRACE_RE = /_GO_EXECUTE_TRACE\.jsonl$/;
 
 const RULES = Object.freeze({
