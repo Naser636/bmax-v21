@@ -60,7 +60,8 @@ const SCN_RULE = "SCN-1: a scenario evidence file (contractRef/contract '#X' or 
 
 const AS = require("./odg-authorization-scope.js");
 const OCUR = require("./odg-observation-currency.js");   // V16.9 Phase 1b — RES-1 proof currency (composed)
-const DEPG = require("./odg-register-dependency-graph.js");   // V17.5 — item→item dependency edges (DEPG-1) + contention (CONT-1)
+const DEPG = require("./odg-register-dependency-graph.js");
+const BREF = require("./odg-boussole-ref.js");   // V17.5 PRIORITY 3 — BREF-1 boussoleRef on every item (composed)   // V17.5 — item→item dependency edges (DEPG-1) + contention (CONT-1)
 
 /*
  * V16.9 addendum Phase 1 — "Continuité vérifiable". Declared rules (provider-authored; ODG applies them mechanically):
@@ -393,6 +394,20 @@ function buildRegister(sources: any): any {
   }
   const dependencyGraph = { rule: DG.rule, edgeKinds: DG.edgeKinds, completedStatuses: DG.completedStatuses, counts: DG.counts, fanOut: Object.fromEntries(Object.keys(DG.byItem).filter((k) => DG.byItem[k].status === "DERIVED").sort().map((k) => [k, { fanOut: DG.byItem[k].fanOut, dependents: DG.byItem[k].dependents, blockingFanOut: DG.byItem[k].blockingFanOut, blockingDependents: DG.byItem[k].blockingDependents }])), edges: DG.edges, contention: DG.contention, dep1Kinds: DG.dep1Kinds, structuralKinds: DG.structuralKinds, staleWriteSets: DG.staleWriteSets, independenceStated: DG.independenceStated, independenceNote: DG.independenceNote, notMeasuredKinds: Array.from(new Set(items.filter((it: any) => DG.byItem[it.id].status === "NOT_MEASURED").map((it: any) => it.kind))).sort() };
 
+  // ── 9. V17.5 PRIORITY 3 BREF-1: a source-cited boussoleRef on EVERY item (after every status rule; read-only over the
+  // committed boussole evidence — changes no status/criterion/selection) + the contract identity GO traces carry.
+  const BREFS = BREF.deriveBoussoleRefs({ items, contracts: C, v150: V, evidence: sources.boussoleEvidence });
+  for (const it of items) {
+    it.boussoleRef = BREFS.get(it.id);
+    if (it.kind !== "WORK_ITEM_CONTRACT") continue;
+    const ci = C.data.contracts.findIndex((x: any) => String(x.scenario) === it.id);
+    const x = C.data.contracts[ci];
+    const auth = isObj(x.authorization) ? x.authorization : null;
+    const orec = auth && typeof auth.source === "string" ? (/^(docs\/[^\s]+\.json)/.exec(auth.source) || [])[1] || null : null;
+    it.contractRef = { contractSha256: AS.contractSha256(x), contractSource: `${cf}#contracts[${ci}]`, ownerRecord: orec, ownerRecordSource: orec ? `${cf}#contracts[${ci}].authorization.source` : null, ownerRecordReason: orec ? null : auth ? "authorization.source names no committed docs/*.json record" : "no authorization block (contract not owner-scoped)" };
+  }
+  const boussole = { rule: BREF.BREF_RULE, coverage: BREF.boussoleCoverage(items), contractRefRule: "CREF-1: WORK_ITEM_CONTRACT items carry contractRef {contractSha256 = odg-authorization-scope.contractSha256(contract entry), ownerRecord = the docs/*.json path that authorization.source starts with, else null + reason}", precedence: sources.boussoleEvidence && sources.boussoleEvidence.precedence && sources.boussoleEvidence.precedence.data && sources.boussoleEvidence.precedence.data.precedence ? { order: sources.boussoleEvidence.precedence.data.precedence.order, source: `${sources.boussoleEvidence.precedence.path}#precedence.order` } : null, sources: sources.boussoleEvidence ? Object.fromEntries(Object.entries(sources.boussoleEvidence).filter(([, v]: any) => v && v.path).map(([k, v]: any) => [k, v.path]).sort()) : {} };
+
   const statusCounts: any = Object.fromEntries(Object.keys(STATUS).map((s) => [s, 0]));
   for (const it of items) statusCounts[it.status] = (statusCounts[it.status] || 0) + 1;
   return deepFreeze({
@@ -403,6 +418,7 @@ function buildRegister(sources: any): any {
     continuityRules: { closure: CLOSE_RULE, resolution: RES_RULE, latestCheckpoint: LATEST_CP_RULE, contradictions: CONTRADICTION_RULES, history: "append-only statusHistory [{status, source, since, rule}] on every item whose status CLOSE-1 or RES-1 changed; earlier statuses are never deleted" },
     latestCheckpoint,
     dependencyGraph,
+    boussole,
     contradictions: { rules: CONTRADICTION_RULES, count: contradictions.length, detected: contradictions, note: "reported, never auto-resolved by the detector" },
     sourcesUsed: { contracts: cf, v150: vf, cp8: pf, laterEvidence: (Array.isArray(sources.laterEvidence) ? sources.laterEvidence : []).map((e: any) => e.path).sort(), benefitEvidence: (Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).map((e: any) => e.path).sort(), scenarioEvidence: Object.keys(scen).sort().map((k) => ({ scenario: k, path: scen[k].path })), preContractEvidenceIgnored: ignoredEvidence, scenarioEvidenceRule: SCN_RULE, authorizationEvidence: Object.keys(isObj(sources.authorizationEvidence) ? sources.authorizationEvidence : {}).sort().map((k) => ({ scenario: k, ...Object.fromEntries(["inspection", "experiment", "validation"].map((t) => [t, sources.authorizationEvidence[k][t] && sources.authorizationEvidence[k][t].recordPath ? sources.authorizationEvidence[k][t].recordPath : null])) })), resolutionEvidence: resolutions.map((r: any) => r.path), checkpoints: cps.map((c: any) => c.path), checkpointNames: (Array.isArray(sources.checkpointNames) ? sources.checkpointNames.map(String) : []).slice().sort() },
     itemCount: items.length, statusCounts, items,
