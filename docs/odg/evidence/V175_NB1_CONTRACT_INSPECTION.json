@@ -1,0 +1,27 @@
+{
+  "//": "Independent inspection record of the V175-NB1 native-build contract (owner 2026-11-24 directive « DIRECTIVE DE REPRISE IMMÉDIATE »; owner record docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json). Transcribed verbatim from the inspector's verdict by the coordinating session. Independence DECLARED by distinct session ids (not cryptographic).",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V175-NB1",
+  "verdict": "ACCEPT",
+  "contractSha256": "953d064ad2fffd3711a9f4efa50592e96b06182349d801e22f7813b17b31b777",
+  "inspectedHeadSha": "297c98d9e53c08a0e15dda087ccd28d338dabf21",
+  "inspectedPr": 975,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab245bf3019f79340",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session; the inspector cannot verify its own session id",
+  "authorSessionId": "nb1-go-path-v175",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-24",
+  "findings": [
+    "objective precise; nativePatchWriteSet = the 2 native files; the runner writes only the declared result file (gate requires args/writeSet = [result])",
+    "AC1–AC5 each mechanically checked by the runner (sandbox oracle on 14 held-out cases, strict typecheck, git apply --check, provenance, detection-digest reproduction)",
+    "oracle independent of the model: expected values from reference sha 4d375b7f…, oracle sha e1cc8524…; only the 4 repair examples ever reach the model",
+    "caps: 10 model calls; 1,800,000 ms wall + per-call timeout; NOT_MEASURED on no sandbox / network refusal / detection or oracle drift; one dispatch, no re-run to obtain a PASS",
+    "honest limit stated: 'local model implemented a provider-specified function'; stop conditions and rollback (discard the record) present",
+    "LOW: PASS threshold names AC1–AC3 only (AC5 drift ⇒ NOT_MEASURED, AC4 always recorded)",
+    "LOW: FAIL text says 'budgets exhausted' but an AC3 apply failure also yields FAIL",
+    "LOW (PR #975): write_set also lists the runner file itself"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V175-NB1 only; authorizes RUN_CONTROLLED_EXPERIMENTS through owner V175 (native build); grades nothing."
+}

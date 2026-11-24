@@ -232,16 +232,16 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     const runDry = (state: any, prior: any[] = []) => runCycle(state, { prior });
     // V17.5: J2 has now RUN (committed V172_J2_EXPERIMENT.json) ⇒ on the REAL state GO-ORD-2's one-shot rule must refuse (asserted below).
     // The GO-ORD-2 behaviour tests that follow run on a LABELLED fixture = the real state with only J2's experiment record removed
-    // (the pre-run state GO actually saw at deaf0844).
-    const preRun = (() => { const c = cloneS(real); c.authorizationEvidence.J2 = { ...c.authorizationEvidence.J2, experiment: null }; return c; })();
+    // (the pre-run state GO actually saw at deaf0844); V17.5: J2's validation record (CLOSED_FAIL) is removed too.
+    const preRun = (() => { const c = cloneS(real); c.authorizationEvidence.J2 = { ...c.authorizationEvidence.J2, experiment: null, validation: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence.J2) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, J2: { ...c.sources.authorizationEvidence.J2, experiment: null, validation: null } } }; return c; })();
     const j2c = real.sources.contracts.data.contracts.find((x: any) => x.scenario === "J2");
-    check("GO-ORD-2: committed record loaded from the declared list (OWNER_SELECTION_DECISIONS) and bound to the CURRENT J2 contract sha", B.OWNER_SELECTION_DECISIONS.join() === "docs/odg/V174_OWNER_DECISION_SELECT_J2.json" && real.ownerSelectionDecisions.length === 1 && real.ownerSelectionDecisions[0].contractSha256 === ASc.contractSha256(j2c) && real.ownerSelectionDecisions[0].contractSha256 === "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b");
+    check("GO-ORD-2: committed record loaded from the declared list (OWNER_SELECTION_DECISIONS) and bound to the CURRENT J2 contract sha", B.OWNER_SELECTION_DECISIONS[0] === "docs/odg/V174_OWNER_DECISION_SELECT_J2.json" && real.ownerSelectionDecisions[0].item === "J2" && real.ownerSelectionDecisions[0].contractSha256 === ASc.contractSha256(j2c) && real.ownerSelectionDecisions[0].contractSha256 === "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b");
     const base = await runDry((() => { const c = cloneS(preRun); c.ownerSelectionDecisions = []; return c; })());
     const ba = base.sel.decision.actionableSelection;
     check("GO-ORD-2 baseline (no selection record): actionable DECISION_REQUIRED, no tie, proposed J2 (uncertainty) ⇒ nothing worked on", ba.selection.decision === "DECISION_REQUIRED" && ba.selection.tiedSet.length <= 1 && ba.selection.proposed === "J2" && ba.item === null && !("ownerSelectionDecision" in ba));
     {
       const after = await runDry(real); const aa = after.sel.decision.actionableSelection; const ad = aa.ownerSelectionDecision;
-      check("GO-ORD-2 REAL state after the J2 run (experiment record committed) ⇒ one-shot: record NOT applied, J2 not worked on via GO-ORD-2", !(ad && ad.applied) && after.sel.decision.workingOn !== "J2");
+      check("GO-ORD-2 REAL state after the J2 run (experiment record committed) ⇒ one-shot: record NOT applied, J2 not worked on via GO-ORD-2", !(ad && ad.applied && ad.chosen === "J2") && after.sel.decision.workingOn !== "J2");
     }
     const ok = await runDry(preRun);
     const oa = ok.sel.decision.actionableSelection; const osd = oa.ownerSelectionDecision;
@@ -270,10 +270,10 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     }
     // maxDispatches 1: a prior DISPATCHED J2 in the GO trace ⇒ not applied
     const prior = [{ kind: "CYCLE_START", runId: "r0", cycleSeq: 1 }, { kind: "DISPATCHED", mission: "J2", runId: "r0", cycleSeq: 1 }, { kind: "CYCLE_END", status: "EXECUTED_FAIL", runId: "r0", cycleSeq: 1, decisionsDigest: "x" }];
-    const pd = await runDry(real, prior);
+    const pd = await runDry(preRun, prior);
     check("GO-ORD-2 refusal: J2 already DISPATCHED in the GO trace ⇒ maxDispatches 1 used, not applied", pd.sel.decision.actionableSelection.ownerSelectionDecision.applied === false && /maxDispatches 1 already used: DISPATCHED in the GO trace/.test(pd.sel.decision.actionableSelection.ownerSelectionDecision.considered[0].reason) && pd.sel.decision.actionableSelection.item !== "J2");
     // tie present ⇒ GO-ORD-2 not applicable (unit, exported resolver)
-    const reg = require("../core/odg-strategic-register.js").buildRegister(real.sources);
+    const reg = require("../core/odg-strategic-register.js").buildRegister(preRun.sources);
     const tie = GOC.resolveOwnerSelection(preRun, reg, { decision: "DECISION_REQUIRED", tiedSet: [{ id: "J2" }, { id: "G2" }], proposed: null }, []);
     check("GO-ORD-2: an actionable TIE ⇒ not applicable (GO-ORD-1 territory), nothing chosen", tie.applied === false && /tie \(J2\/G2\)/.test(tie.notApplicable));
     const sing = GOC.resolveOwnerSelection(preRun, reg, { decision: "DECISION_REQUIRED", tiedSet: [{ id: "J2" }], proposed: { id: "J2", uncertainty: 0.6 } }, [], B.makeClaimStore(tmpClaims()));
@@ -309,6 +309,36 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
       const r4 = await runCycle(preRun, { claims: B.makeClaimStore(dir4), isolation: () => ({ ok: true, workspace: ws4 }), mode: "EXECUTE" });
       check("GO-ORD-2: scratch already contains docs/odg/evidence/V172_J2_EXPERIMENT.json ⇒ REFUSED GO-ORD-2_SCRATCH_EXPERIMENT_PRESENT, no claim, J2 not dispatched", !r4.calls.missions.includes("J2") && r4.exec.decision.ownerSelectionClaim.code === "GO-ORD-2_SCRATCH_EXPERIMENT_PRESENT" && (!fs.existsSync(dir4) || fs.readdirSync(dir4).length === 0));
       check("GO-ORD-2: claim dir = <git common dir>/odg-go-claims (fixed, independent of --out, outside the worktree)", B.claimDirOf(ROOT) === path.join(String(require("child_process").execFileSync("git", ["-C", ROOT, "rev-parse", "--path-format=absolute", "--git-common-dir"], { encoding: "utf8" })).trim(), "odg-go-claims"));
+    }
+    // ---- V17.5 V175-NB1 (first ODG-native build) on the REAL committed state: GO selects it via its own owner selection
+    // record (GO-ORD-2), AUTHORIZE stops at INSPECT without an inspection record; with a LABELLED simulated inspection ACCEPT
+    // (fixture — the real record is written by an independent inspector) RUN_CONTROLLED_EXPERIMENTS is derived and the
+    // declared dispatch target (the V175 runner, writeSet = the result record) is resolved; dry ⇒ nothing dispatched.
+    {
+      const nb1c = real.sources.contracts.data.contracts.find((x: any) => x.scenario === "V175-NB1");
+      const nbRec = real.ownerSelectionDecisions.find((x: any) => x.item === "V175-NB1");
+      check("V175-NB1: owner selection record declared in OWNER_SELECTION_DECISIONS, loaded, bound to the CURRENT NB1 contract sha", B.OWNER_SELECTION_DECISIONS.includes("docs/odg/V175_OWNER_DECISION_SELECT_NB1.json") && !!nbRec && nbRec.contractSha256 === ASc.contractSha256(nb1c));
+      const noRec = await runDry((() => { const c = cloneS(real); c.ownerSelectionDecisions = c.ownerSelectionDecisions.filter((x: any) => x.item !== "V175-NB1"); return c; })());
+      const na = noRec.sel.decision.actionableSelection;
+      check("V175-NB1 baseline (no NB1 selection record): actionable DECISION_REQUIRED, no tie, proposed V175-NB1 ⇒ nothing worked on", na.selection.decision === "DECISION_REQUIRED" && na.selection.tiedSet.length <= 1 && na.selection.proposed === "V175-NB1" && na.item === null);
+      const d0 = await runDry(real);
+      const a0 = d0.sel.decision.actionableSelection;
+      check("V175-NB1 real state ⇒ GO dry selects V175-NB1 via GO-ORD-2 (record applied); strategic selection unchanged", a0.item === "V175-NB1" && d0.sel.decision.workingOn === "V175-NB1" && a0.ownerSelectionDecision.applied === true && a0.resolvedBy === "OWNER_SELECTION_DECISION docs/odg/V175_OWNER_DECISION_SELECT_NB1.json" && JSON.stringify(d0.sel.decision.strategicSelection) === JSON.stringify(noRec.sel.decision.strategicSelection));
+      // V17.5: the NB1 contract inspection (ACCEPT, #975) is now committed ⇒ on the REAL state AUTHORIZE grants RUN (asserted);
+      // the "no inspection" refusal is kept on a LABELLED fixture = real state with only NB1's inspection record removed.
+      check("V175-NB1 REAL state (inspection ACCEPT committed) ⇒ AUTHORIZE: RUN_CONTROLLED_EXPERIMENTS authorized under owner V175", d0.auth.decision.scopedAuthorization.scenario === "V175-NB1" && d0.auth.decision.scopedAuthorization.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && d0.auth.decision.scopedAuthorization.executionAuthorized === true);
+      const d0x = await runDry((() => { const c = cloneS(real); c.authorizationEvidence["V175-NB1"] = { ...c.authorizationEvidence["V175-NB1"], inspection: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence["V175-NB1"]) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, "V175-NB1": { ...c.sources.authorizationEvidence["V175-NB1"], inspection: null } } }; return c; })());
+      check("V175-NB1 without inspection record (labelled fixture) ⇒ AUTHORIZE: current step INSPECT_REVISED_CONTRACT, execution NOT authorized (refused)", d0x.auth.decision.scopedAuthorization.scenario === "V175-NB1" && d0x.auth.decision.scopedAuthorization.currentStep === "INSPECT_REVISED_CONTRACT" && d0x.auth.decision.scopedAuthorization.executionAuthorized === false && d0.r.dispatchCalls === 0);
+      const H40 = "a".repeat(40);
+      const fixtureProbes = { label: "TEST FIXTURE — commit 'a'×40 declared present + ancestor of main", mainRef: "fixture-main", commitExists: (x: string) => x === H40, isAncestorOfMain: (x: string) => x === H40, fileSha256: (rel: string) => { try { return require("crypto").createHash("sha256").update(fs.readFileSync(path.join(ROOT, rel))).digest("hex"); } catch { return null; } } };
+      const simInsp = { scenario: "V175-NB1", verdict: "ACCEPT", contractSha256: ASc.contractSha256(nb1c), inspector: "SIMULATED (test fixture)", inspectorSessionId: "sim-inspector-nb1-01", authorSessionId: nb1c.revisionHistory[nb1c.revisionHistory.length - 1].revisionAuthorSessionId, inspectedHeadSha: H40, inspectedPr: 997, recordPath: "docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json" };
+      const withInsp = (() => { const c = cloneS(real); c.authorizationEvidence["V175-NB1"] = { ...c.authorizationEvidence["V175-NB1"], inspection: simInsp, probes: fixtureProbes }; return c; })();
+      const d1 = await runDry(withInsp);
+      const sa = d1.auth.decision.scopedAuthorization;
+      check("V175-NB1 with SIMULATED inspection ACCEPT ⇒ selected, AUTHORIZE derives RUN_CONTROLLED_EXPERIMENTS (execution authorized by owner V175), dry ⇒ 0 dispatch", d1.sel.decision.workingOn === "V175-NB1" && sa.scenario === "V175-NB1" && sa.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && sa.executionAuthorized === true && d1.r.dispatchCalls === 0);
+      const dt = d1.exec && d1.exec.decision && d1.exec.decision.dispatchTarget;
+      check("V175-NB1 EXECUTE (dry) resolves the declared target: runner + [result record] (dry, no opt-in ⇒ UNSANDBOXED_TARGET_NOT_OPTED_IN, never a fallback)", !!dt && (dt.ok === true || dt.code === "UNSANDBOXED_TARGET_NOT_OPTED_IN") && !!dt.target && dt.target.command === "runtime/bin/odg-v175-native-build-run.ts" && JSON.stringify(dt.target.writeSet) === JSON.stringify(["docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json"]));
+      check("V175-NB1 GO-DTO-1: dispatch kill bound derived from preRegistration.caps.maxRunWallMs (1 800 000 + 120 000 margin)", (() => { const x = GOC.deriveDispatchTimeout(nb1c, dt && dt.target); return x.ok === true && x.basis === "MAX_RUN_WALL_MS" && x.timeoutMs === 1920000; })());
     }
     check("GO-ORD-2: a non-DECISION_REQUIRED selection ⇒ resolver returns null (not consulted)", GOC.resolveOwnerSelection(real, reg, { decision: "SELECTED", selected: { id: "J2" } }, []) === null);
   }

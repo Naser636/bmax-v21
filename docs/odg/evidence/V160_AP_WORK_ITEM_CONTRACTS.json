@@ -1,11 +1,11 @@
 {
-  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged.",
+  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 18,
+  "count": 19,
   "initialStatusCounts": {
     "PASS": 2,
     "PARTIAL": 14,
-    "NOT_STARTED": 2
+    "NOT_STARTED": 3
   },
   "contracts": [
     {
@@ -1409,6 +1409,172 @@
           "previousInspection": "docs/odg/evidence/V172_J2_CONTRACT_INSPECTION.json — bound to the previous contract sha256 893a809fe6d9d2caea9e72ef2de1804ea29e126f80305ba6cdbb4059f3ca2543 ⇒ OBSOLETE for the revised contract; J2 not executable until a new independent inspection ACCEPT is recorded",
           "priorResultUnchanged": "no J2 run has ever occurred",
           "revisionAuthorSessionId": "coordinator-v173-j2r2"
+        }
+      ]
+    },
+    {
+      "scenario": "V175-NB1",
+      "title": "First ODG-native software construction: shared canonical-JSON helper (local model authors, ODG tests/repairs/verifies)",
+      "ownerText": "Objectif : obtenir une première construction logicielle réellement produite par ODG lui-même, et non simplement par Claude Code. Ne pas confondre pilotage d'un agent et construction native.",
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — directive V175 (2026-11-24), docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json: « Le propriétaire autorise ODG à poursuivre sans nouvelle demande pour chaque décision technique ordinaire : » « développer et tester la boucle d'ingénierie native d'ODG ; » « modifier les composants et contrats internes concernés ; » « Aucun déploiement ni changement de production. » — V175-NB1 only, local model, €0, 0 provider calls; native write set = the helper module + its test, integrated via normal PR controls",
+      "parent": {
+        "scenario": null,
+        "relation": "NEW contract (no parent): first ODG-native construction, PRIORITY 2 of the V175 directive; derived by ODG rules from the executed detection (origin)"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "new contract: the runner exists (PR #972) but no GO-dispatched native run exists; the provider-run PROBE of PR #972 is context, not this contract's status",
+        "evidence": [
+          "docs/odg/evidence/V175_NATIVE_BUILD_CONTRACT.json"
+        ],
+        "missingForPass": "the GO-dispatched native build (local model generates, sandbox tests, bounded repair, strict typecheck, branch-ready diff) has not been executed",
+        "asOf": "main b16c4f33 (2026-11-24)"
+      },
+      "origin": {
+        "detectedBy": "runtime/core/odg-native-repair-item.ts detectCanonDefects (executed probes)",
+        "defectClass": "NON_CANONICAL_CANON",
+        "evidenceDigest": "c4058c8976c01dde5f61d8a9285f48c75db83c404d704719d5e75c6671c97d8e",
+        "defectiveSites": [
+          "runtime/core/agent-identity.ts:20 NESTED_KEY_DROP",
+          "runtime/core/audit-log.ts:25 NESTED_KEY_DROP",
+          "runtime/core/supply-chain-attest.ts:14 ORDER_SENSITIVE"
+        ],
+        "reference": {
+          "sourceSha256": "4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734",
+          "copies": [
+            "runtime/core/odg-authorization-scope.ts:97",
+            "runtime/core/odg-go-cycle.ts:72",
+            "runtime/core/odg-verification-risk-calibration.ts:118"
+          ],
+          "rule": "REF-1: largest group of byte-identical CANONICAL definitions (tie ⇒ smallest sha256)"
+        },
+        "oracleSha256": "e1cc85243b1364b3d704ae6c50590970562faf3056dea8d63f2d0d9200431156"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Add the missing shared canonical-JSON helper runtime/core/odg-canonical-json.ts (export canonicalJson) whose code is generated by ODG's LOCAL model and accepted only on ODG's sandboxed oracle + strict typecheck — the prerequisite for repairing 3 defective private canon() serializers (runtime/core/agent-identity.ts:20 NESTED_KEY_DROP; runtime/core/audit-log.ts:25 NESTED_KEY_DROP; runtime/core/supply-chain-attest.ts:14 ORDER_SENSITIVE)",
+        "scope": "internal repo only; loopback Ollama 127.0.0.1:11434 only; model code executes only in the bwrap native-build sandbox; €0; 0 provider calls; the patch is produced as a branch-ready diff (record) — never written into any checkout by the runner; caller migration (audit-log / agent-identity / supply-chain-attest) is OUT OF SCOPE (OWNER_GATED: changes persisted hash/signature preimages)",
+        "write_set": [
+          "runtime/core/odg-canonical-json.ts",
+          "runtime/core/odg-canonical-json.test.ts",
+          "runtime/bin/odg-v175-native-build-run.ts",
+          "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json"
+        ],
+        "nativePatchWriteSet": [
+          "runtime/core/odg-canonical-json.ts",
+          "runtime/core/odg-canonical-json.test.ts"
+        ],
+        "authorized_symbols": [
+          "canonicalJson"
+        ],
+        "moduleSpec": "Export exactly one function, canonicalJson(value), that returns a deterministic canonical JSON STRING for any JSON-compatible value (null, boolean, number, string, array, plain object).\nRules, applied recursively at EVERY nesting level:\n- null, booleans, numbers and strings: return JSON.stringify(value).\n- arrays: \"[\" + each element converted with canonicalJson + joined with \",\" + \"]\" (element order kept).\n- plain objects: sort the keys with the default Array.prototype.sort(), emit each key as JSON.stringify(key) + \":\" + canonicalJson(child), join with \",\", wrap in \"{\" and \"}\".\n- no whitespace anywhere. Do not use a JSON.stringify replacer array (it drops nested keys).\nExport it as: module.exports = { canonicalJson };",
+        "invariants": [
+          "the patch module content is authored by the local model only — no provider/Claude Code edit of generated code (sha256 of every generation recorded)",
+          "the test file is authored by ODG rules from the computed oracle (ORC-1/REF-1), not by the model and not by hand",
+          "acceptance is decided only by the sandboxed held-out oracle + strict typecheck — never by the model's claim",
+          "a FAIL is recorded as FAIL; criteria and budgets are not changed after observation",
+          "no canonical module is modified; no ROADMAP.json / selector weights / V12.4 change"
+        ],
+        "acceptance_criteria": [
+          "AC1 held-out oracle: all 14 acceptanceCases PASS inside odg-native-build-sandbox.runIsolated (executionStatus EXECUTED, executionMode SANDBOX)",
+          "AC2 strict typecheck: the generated TypeScript has 0 diagnostics under strict + isolatedModules (in-memory TypeScript program)",
+          "AC3 branch-ready: the produced diff adds exactly runtime/core/odg-canonical-json.ts and runtime/core/odg-canonical-json.test.ts and passes git apply --check against the run HEAD",
+          "AC4 provenance: record carries actor=ODG, executionClass ODG_LOCAL_MODEL_EXECUTION, model, every prompt sha256, every generation sha256, attempts, per-round test + typecheck results, providerCalls 0",
+          "AC5 detection reproduced at run time: the fresh detection evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)"
+        ],
+        "stop_conditions": [
+          "model call cap reached",
+          "wall cap reached",
+          "sandbox unavailable (NOT_RUN ⇒ NOT_MEASURED)",
+          "any non-loopback network request (refused + recorded ⇒ NOT_MEASURED)",
+          "detection drift (AC5)"
+        ],
+        "rollback": "nothing is written into any checkout; discard the record",
+        "evidence_required": [
+          "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json"
+        ],
+        "budgets": {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42,
+          "numPredict": 900,
+          "maxRepairPerRound": 3,
+          "maxRounds": 2,
+          "maxModelCalls": 10,
+          "wallMs": 1500000,
+          "perCallTimeoutMs": 300000
+        },
+        "preRegistration": {
+          "metric": "verdict of runNativeBuild (PASS ⇔ AC1 ∧ AC2 ∧ AC3 on one local-model generation, within budgets)",
+          "baseline": "PROBE (provider-run feasibility probe, PR #972, NOT the native result): qwen2.5-coder:7b PASS on the first generation, 0 repairs, 1 model call, 154 s",
+          "dataset": {
+            "oracleRule": "ORC-1/REF-1",
+            "oracleSha256": "e1cc85243b1364b3d704ae6c50590970562faf3056dea8d63f2d0d9200431156",
+            "acceptanceCases": 14,
+            "repairExamples": 4,
+            "referenceSha256": "4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734"
+          },
+          "decisionRule": "outcome = runner verdict, recorded verbatim: PASS / FAIL / NOT_MEASURED (sandbox NOT_RUN, refused network request, detection or oracle drift); one dispatch; no re-run to obtain a PASS",
+          "caps": {
+            "maxRunWallMs": 1800000,
+            "maxModelCalls": 10,
+            "basis": "runner guard: no new model call after budgets.wallMs; one in-flight call may still last perCallTimeoutMs ⇒ maxRunWallMs = wallMs + perCallTimeoutMs (GO-DTO-1 derives the dispatch kill bound from it)"
+          },
+          "thresholds": {
+            "PASS": "all acceptanceCases pass in the sandbox AND 0 strict typecheck diagnostics AND git apply --check OK",
+            "FAIL": "budgets exhausted without PASS",
+            "NOT_MEASURED": "no sandbox verdict / network refusal / drift"
+          },
+          "honestLimits": "the function to build is specified by the provider-written MODULE_SPEC + ORC-1 input corpus (expected values computed from the in-repo reference); a PASS means the LOCAL MODEL implemented a provider-specified function under ODG's loop — not that ODG designed the change"
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json (V175)",
+        "transcribedBy": "PROVIDER (Claude Code, V17.5 NB1 GO-path session) — verbatim owner quotes in authorizedBy and in the owner record",
+        "date": "2026-11-24",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "isolated, reproducible, loopback-only (127.0.0.1:11434) local-model build at €0 with 0 provider calls; model code only in the bwrap sandbox; only after an independent inspection ACCEPT of this contract is recorded",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v175-native-build-run.ts",
+            "args": [
+              "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json"
+            ]
+          }
+        },
+        "inspectionRecord": "docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.5 NB1 GO-path session; branch feat/v175-nb1-go-path)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json: « modifier les composants et contrats internes concernés ; »",
+          "originalCriteria": [
+            "AC1 held-out oracle: all 14 acceptanceCases PASS inside odg-native-build-sandbox.runIsolated (executionStatus EXECUTED, executionMode SANDBOX)",
+            "AC2 strict typecheck: the generated TypeScript has 0 diagnostics under strict + isolatedModules (in-memory TypeScript program)",
+            "AC3 branch-ready: the produced diff adds exactly runtime/core/odg-canonical-json.ts and runtime/core/odg-canonical-json.test.ts and passes git apply --check against the run HEAD",
+            "AC4 provenance: record carries actor=ODG, executionClass ODG_LOCAL_MODEL_EXECUTION, model, every prompt sha256, every generation sha256, attempts, per-round test + typecheck results, providerCalls 0",
+            "AC5 detection reproduced at run time: the fresh detection evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)"
+          ],
+          "originalCriteriaNote": "the acceptance criteria of the PROPOSED derivation merged in PR #972 (docs/odg/evidence/V175_NATIVE_BUILD_CONTRACT.json at b16c4f33), verbatim",
+          "change": [
+            "entered into the canonical contracts file so GO can select / authorize / dispatch it",
+            "dispatch step RUN_NATIVE_BUILD renamed to RUN_CONTROLLED_EXPERIMENTS (the canonical odg-authorization-scope execution step), same target",
+            "write_set lists the runner + result record (GO-DT-1); the native patch write set (2 files) is nativePatchWriteSet",
+            "preRegistration (metric, baseline, dataset, decisionRule, thresholds, honestLimits) fixed before any native run"
+          ],
+          "justification": "owner V175 authorizes modifying the internal contracts concerned so GO itself runs ODG's native build; criteria and budgets are fixed before any native run",
+          "revisionAuthorSessionId": "nb1-go-path-v175"
         }
       ]
     }
