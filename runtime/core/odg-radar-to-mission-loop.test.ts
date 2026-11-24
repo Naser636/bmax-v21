@@ -63,6 +63,15 @@ function main() {
 
   // contract + determinism
   check("contract: composition-only, hypothesis≠fact, score≠auth, PROPOSED≠AUTHORIZED≠EXECUTED", L.RADAR_TO_MISSION_CONTRACT.invariants.some((i: string) => /NO second radar\/scheduler\/registry/.test(i)) && L.RADAR_TO_MISSION_CONTRACT.invariants.some((i: string) => /PROPOSED ≠ AUTHORIZED ≠ EXECUTED/.test(i)));
+  // V17.6 — ODG_INTERNAL scope (odg-radar-build-engine): components instead of métiers, no ICP qualification, owner_decision gate, seenKeys dedup
+  const isig = (o: any) => Object.assign({ scope: L.INTERNAL_SCOPE, provenance: "OBSERVED_EVIDENCE", sources: ["docs/odg/evidence/X.json#a"], consultedEpochMs: NOW - D }, o);
+  const ir = L.runLoop([isig({ id: "i-ok", targetComponents: ["odg-go-cycle"] }), isig({ id: "i-nocomp", targetComponents: [] }), isig({ id: "i-owner", targetComponents: ["odg-governance-precedence"], ownerGatedKind: "owner_decision" }), isig({ id: "REG-1", targetComponents: ["x"] }), sig({ id: "c-owner-decision", ownerGatedKind: "owner_decision" })], { nowEpochMs: NOW, seenKeys: ["REG-1"] });
+  const ib: any = {}; for (const t of ir.traces) ib[t.signalId] = t;
+  check("internal signal with a component ⇒ PROPOSED, tier INTERNAL_IMPROVEMENT, never authorized", ib["i-ok"].gate.verdict === "PROPOSED" && ib["i-ok"].qualify.tier === "INTERNAL_IMPROVEMENT" && ib["i-ok"].gate.authorized === false && ib["i-ok"].proposal.components[0] === "odg-go-cycle");
+  check("internal signal without a component ⇒ REFUSED NO_COMPONENT_ATTACHED", ib["i-nocomp"].gate.verdict === "REFUSED" && ib["i-nocomp"].gate.reasons.includes("NO_COMPONENT_ATTACHED"));
+  check("internal owner_decision ⇒ OWNER_GATED", ib["i-owner"].gate.verdict === "OWNER_GATED");
+  check("opts.seenKeys ⇒ already-known key REFUSED DUPLICATE", ib["REG-1"].gate.reasons.includes("DUPLICATE"));
+  check("owner_decision kind does NOT change non-internal signals (commercial path unchanged)", ib["c-owner-decision"].gate.verdict === "PROPOSED");
   check("deterministic given injected nowEpochMs", JSON.stringify(L.runLoop(signals, { nowEpochMs: NOW }).byVerdict) === JSON.stringify(r.byVerdict) && Object.isFrozen(r));
 
   process.stdout.write("\n" + (failures === 0 ? "ALL PASS — radar-to-mission-loop (V184: 12 synthetic-signal scenarios + 6 invariant assertions; hypothesis≠fact, signal≠client, score≠authorization, expired⇒no mission, no owner-gate bypass, dedup, refused≠executed; composition-only [no 2nd radar/scheduler/registry]; 0 canonical writes / 0 executions; K=OWNER_GATED; scheduler NOT_MEASURED)" : failures + " FAIL") + "\n");
