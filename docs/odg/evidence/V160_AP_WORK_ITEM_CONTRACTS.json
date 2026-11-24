@@ -1657,7 +1657,9 @@
           "sandbox unavailable (NOT_RUN ⇒ NOT_MEASURED)",
           "any non-loopback request (refused ⇒ NOT_MEASURED)",
           "problem drift (AC1)",
-          "a TEMPLATE denylist hit (prompt not sent)"
+          "a TEMPLATE denylist hit (prompt not sent)",
+          "HOST-1 busy host at start: loadavg-1m > nproc × 0.75 before the first model call ⇒ NOT_MEASURED (no model call)",
+          "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent: BEFORE the first work call ⇒ NOT_MEASURED, AFTER it ⇒ a FAILED generation (counts towards FAIL, prediction recorded)"
         ],
         "rollback": "nothing is written into any checkout; discard the record",
         "evidence_required": [
@@ -1674,7 +1676,19 @@
           "maxRounds": 2,
           "maxModelCalls": 12,
           "wallMs": 1800000,
-          "perCallTimeoutMs": 300000
+          "perCallTimeout": {
+            "rule": "ADAPT-1",
+            "minMs": 60000,
+            "maxMs": 300000,
+            "safetyFactor": 3,
+            "overheadMs": 15000,
+            "charsPerToken": 3
+          },
+          "maxWarmupCalls": 1,
+          "warmupNumPredict": 16,
+          "warmupTimeoutMs": 180000,
+          "hostIdleFactor": 0.75,
+          "lessonDigestChars": 600
         },
         "preRegistration": {
           "metric": "verdict of runNativeDesign (PASS ⇔ AC2 ∧ AC3 ∧ AC4 within budgets)",
@@ -1693,12 +1707,17 @@
           "thresholds": {
             "PASS": "≥2 designs measured AND all PROB-1 cases pass in the sandbox AND 0 strict typecheck diagnostics AND git apply --check OK",
             "FAIL": "<2 designs, or budgets exhausted without PASS",
-            "NOT_MEASURED": "no sandbox verdict / network refusal / problem drift"
+            "NOT_MEASURED": "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured, or predicted call over cap BEFORE the first work call"
           },
           "caps": {
             "maxRunWallMs": 2100000,
             "maxModelCalls": 12,
-            "basis": "no new model call after wallMs; one in-flight call may last perCallTimeoutMs"
+            "maxWarmupCalls": 1,
+            "perCallTimeoutMs": {
+              "min": 60000,
+              "max": 300000
+            },
+            "basis": "no new model call after wallMs; one in-flight call may last at most perCallTimeout.maxMs; per-call timeout = ADAPT-1 from one warm-up call (own cap, not counted in maxModelCalls); lessons enter prompts via DIGEST-1 (≤ lessonDigestChars)"
           },
           "honestLimits": "ORC-2 input literals, prompt templates and the runner are provider-written; the reference semantics are the in-repo canon() (REF-1), not an independent specification; a PASS means ODG's local model designed+implemented a repair of a defect ODG derived — not that ODG chose the corpus"
         }
@@ -1750,6 +1769,138 @@
           ],
           "justification": "owner V175 authorizes developing and testing ODG's native-engineering loop and modifying the internal contracts concerned; criteria and budgets fixed before any native run",
           "revisionAuthorSessionId": "nb2-native-design-v175"
+        },
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.6 NB2 pipeline-fixes session; branch feat/v176-nb2-pipeline-fixes)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json: « modifier les composants et contrats internes concernés ; » + owner V176 §5 P0 Native Engineering (« Faire concevoir les solutions par ODG. Utiliser son modèle local pour les implémentations. Générer les tests. Corriger les échecs. Réutiliser les apprentissages. », as relayed)",
+          "originalCriteria": [
+            "AC1 problem reproduced at run time: fresh PROB-1 evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)",
+            "AC2 designs: ≥2 parseable designs from the local model, each implemented and measured in the sandbox; SEL-1 choice recorded with all scores",
+            "AC3 held-out oracle: all 33 PROB-1 cases PASS inside odg-native-build-sandbox (EXECUTED, SANDBOX) + strict typecheck 0 diagnostics",
+            "AC4 branch-ready: the diff modifies runtime/core/odg-canonical-json.ts, adds runtime/core/odg-canonical-json-extended.test.ts, passes git apply --check at the run HEAD",
+            "AC5 authorship ledger + provenance: per-stage authorship, every prompt sha256 + its segment kinds + denylist hits (0), every generation sha256, providerCalls 0",
+            "AC6 learning: lessons read before the run (memory-taxonomy CONSOLIDATED) and lessons derived from this run are both in the record"
+          ],
+          "originalCriteriaNote": "acceptance criteria AC1–AC6 UNCHANGED by this revision (verbatim); PASS and FAIL thresholds unchanged; only run conditions (budgets, caps, stop conditions, NOT_MEASURED threshold) change",
+          "reason": "V175_NB2_PROBE_3 (provider-run, FAIL): the S3 design call hit the FIXED 300 s per-call timeout (prompt 3271 chars incl. 4 verbatim lessons) while a concurrent full test:report run loaded the host — a coordination confound, so the repair-prompt fix 41c5027b is untested. Fixes: (1) DIGEST-1 bounded lesson digest (≤600 chars, newest-first, dedup) — prompt growth; (2) ADAPT-1 per-call timeout derived from a measured warm-up tokens/s on the same model, bounded by minMs/maxMs with maxMs = the former fixed 300000 (no cap loosened; maxRunWallMs unchanged 2100000) — fixed timeout not tied to measured speed; (3) HOST-1 idle-host start precondition (loadavg-1m > nproc×0.75 ⇒ NOT_MEASURED, no model call) — PROBE 3 confound. A busy host, an unmeasurable warm-up rate or a call predicted to exceed the cap are recorded NOT_MEASURED (no verdict), never FAIL and never PASS.",
+          "before": {
+            "stop_conditions": [
+              "model call cap",
+              "wall cap",
+              "sandbox unavailable (NOT_RUN ⇒ NOT_MEASURED)",
+              "any non-loopback request (refused ⇒ NOT_MEASURED)",
+              "problem drift (AC1)",
+              "a TEMPLATE denylist hit (prompt not sent)"
+            ],
+            "budgets": {
+              "model": "qwen2.5-coder:7b",
+              "temperature": 0,
+              "seed": 42,
+              "numPredict": 900,
+              "designs": 3,
+              "minDesigns": 2,
+              "maxRepairPerRound": 3,
+              "maxRounds": 2,
+              "maxModelCalls": 12,
+              "wallMs": 1800000,
+              "perCallTimeoutMs": 300000
+            },
+            "preRegistration.thresholds.NOT_MEASURED": "no sandbox verdict / network refusal / problem drift",
+            "preRegistration.caps": {
+              "maxRunWallMs": 2100000,
+              "maxModelCalls": 12,
+              "basis": "no new model call after wallMs; one in-flight call may last perCallTimeoutMs"
+            }
+          },
+          "after": {
+            "stop_conditions": [
+              "model call cap",
+              "wall cap",
+              "sandbox unavailable (NOT_RUN ⇒ NOT_MEASURED)",
+              "any non-loopback request (refused ⇒ NOT_MEASURED)",
+              "problem drift (AC1)",
+              "a TEMPLATE denylist hit (prompt not sent)",
+              "HOST-1 busy host at start: loadavg-1m > nproc × 0.75 before the first model call ⇒ NOT_MEASURED (no model call)",
+              "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent ⇒ NOT_MEASURED"
+            ],
+            "budgets": {
+              "model": "qwen2.5-coder:7b",
+              "temperature": 0,
+              "seed": 42,
+              "numPredict": 900,
+              "designs": 3,
+              "minDesigns": 2,
+              "maxRepairPerRound": 3,
+              "maxRounds": 2,
+              "maxModelCalls": 12,
+              "wallMs": 1800000,
+              "perCallTimeout": {
+                "rule": "ADAPT-1",
+                "minMs": 60000,
+                "maxMs": 300000,
+                "safetyFactor": 3,
+                "overheadMs": 15000,
+                "charsPerToken": 3
+              },
+              "maxWarmupCalls": 1,
+              "warmupNumPredict": 16,
+              "warmupTimeoutMs": 180000,
+              "hostIdleFactor": 0.75,
+              "lessonDigestChars": 600
+            },
+            "preRegistration.thresholds.NOT_MEASURED": "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured or predicted call over cap",
+            "preRegistration.caps": {
+              "maxRunWallMs": 2100000,
+              "maxModelCalls": 12,
+              "maxWarmupCalls": 1,
+              "perCallTimeoutMs": {
+                "min": 60000,
+                "max": 300000
+              },
+              "basis": "no new model call after wallMs; one in-flight call may last at most perCallTimeout.maxMs; per-call timeout = ADAPT-1 from one warm-up call (own cap, not counted in maxModelCalls); lessons enter prompts via DIGEST-1 (≤ lessonDigestChars)"
+            }
+          },
+          "change": [
+            "budgets.perCallTimeoutMs 300000 (fixed) → budgets.perCallTimeout ADAPT-1 {minMs 60000, maxMs 300000, safetyFactor 3, overheadMs 15000, charsPerToken 3}",
+            "budgets + maxWarmupCalls 1, warmupNumPredict 16, warmupTimeoutMs 180000 (the warm-up call has its own cap; maxModelCalls 12 unchanged and not consumed by it)",
+            "budgets + hostIdleFactor 0.75 (HOST-1) and lessonDigestChars 600 (DIGEST-1)",
+            "stop_conditions + HOST-1 busy host at start ⇒ NOT_MEASURED; + ADAPT-1 rate not measured / predicted call over cap ⇒ NOT_MEASURED",
+            "preRegistration.thresholds.NOT_MEASURED extended accordingly; preRegistration.caps: maxRunWallMs = wallMs + perCallTimeout.maxMs (same 2100000), maxWarmupCalls, perCallTimeoutMs {min,max}",
+            "the previous contract sha256 58e54c7c42d633b80e00046964c32e8190db341a564641969dedf2e2380685bc is superseded; no inspection existed for it; this revision needs an independent inspection before any GO run"
+          ],
+          "justification": "run conditions changed BEFORE any native (GO) run and without any new PROBE; no acceptance criterion, PASS/FAIL threshold or work budget (maxModelCalls, wallMs, numPredict, repairs, rounds) is changed; the changes can only turn a would-be confounded run into NOT_MEASURED",
+          "revisionAuthorSessionId": "nb2-pipeline-fixes-v176"
+        },
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.6 NB2 pipeline-fixes session; branch feat/v176-nb2-pipeline-fixes)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json: « modifier les composants et contrats internes concernés ; »",
+          "originalCriteria": [
+            "AC1 problem reproduced at run time: fresh PROB-1 evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)",
+            "AC2 designs: ≥2 parseable designs from the local model, each implemented and measured in the sandbox; SEL-1 choice recorded with all scores",
+            "AC3 held-out oracle: all 33 PROB-1 cases PASS inside odg-native-build-sandbox (EXECUTED, SANDBOX) + strict typecheck 0 diagnostics",
+            "AC4 branch-ready: the diff modifies runtime/core/odg-canonical-json.ts, adds runtime/core/odg-canonical-json-extended.test.ts, passes git apply --check at the run HEAD",
+            "AC5 authorship ledger + provenance: per-stage authorship, every prompt sha256 + its segment kinds + denylist hits (0), every generation sha256, providerCalls 0",
+            "AC6 learning: lessons read before the run (memory-taxonomy CONSOLIDATED) and lessons derived from this run are both in the record"
+          ],
+          "originalCriteriaNote": "acceptance criteria AC1–AC6, PASS/FAIL thresholds, budgets and caps UNCHANGED by this revision",
+          "reason": "independent inspection of #986 REJECT (MED): ADAPT-1 predictedOverCap halted the run at ANY stage, so a run going badly (growing repair prompts) could end NOT_MEASURED and discard recorded failures, and the conservative warm-up estimate could refuse calls that would have finished. Fix: over-cap ⇒ NOT_MEASURED ONLY before the first work call; after it, the refused call is a FAILED generation (towards FAIL, prediction recorded in prompts[].timeout + overCapFailures).",
+          "before": {
+            "stop_conditions[-1]": "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent ⇒ NOT_MEASURED",
+            "preRegistration.thresholds.NOT_MEASURED": "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured or predicted call over cap"
+          },
+          "after": {
+            "stop_conditions[-1]": "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent: BEFORE the first work call ⇒ NOT_MEASURED, AFTER it ⇒ a FAILED generation (counts towards FAIL, prediction recorded)",
+            "preRegistration.thresholds.NOT_MEASURED": "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured, or predicted call over cap BEFORE the first work call"
+          },
+          "change": [
+            "stop_conditions ADAPT-1 entry restricted: NOT_MEASURED only before the first work call; after it ⇒ counted failed generation",
+            "preRegistration.thresholds.NOT_MEASURED: 'predicted call over cap' → 'predicted call over cap BEFORE the first work call'",
+            "previous sha d6709407eb4fcb4b6cf67d16099add931a8a2de119f92b2951c2ad97456e82c9 (inspected, REJECTED) superseded"
+          ],
+          "justification": "narrows NOT_MEASURED (fewer runs can escape a FAIL); made before any native GO run, without any new PROBE",
+          "revisionAuthorSessionId": "nb2-pipeline-fixes-v176"
         }
       ]
     }

@@ -22,17 +22,17 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795541819000,
+    "nowEpochMs": 1795544267000,
     "rule": "now = newest last-commit epoch among the source files (no wall clock); a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "1edd9e03e90b3f1730ed902722961cca1d9d8991caa566ca3265d0d01e0189f5"
+      "sha256": "92822aa7cfdf8f72a7209a51af74ba5dd8b6df59f72022278da7de2b3fedeafb"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "323080d9dd47e06f45f11c2a11fd86993acfcdcff57fef2857ee1ecfccbb944a"
+      "sha256": "935347e4d671bc17436a49524e8fe6dcc3060f297c842e94bbfecd79071afad2"
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -2269,15 +2269,14 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
-          "EXPIRED_OR_UNDATED_SIGNAL",
           "NO_COMPONENT_ATTACHED"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": null,
-        "fresh": false,
+        "ageDays": 0,
+        "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -2309,15 +2308,14 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
-          "EXPIRED_OR_UNDATED_SIGNAL",
           "NO_COMPONENT_ATTACHED"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": null,
-        "fresh": false,
+        "ageDays": 0,
+        "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -2349,15 +2347,14 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
-          "EXPIRED_OR_UNDATED_SIGNAL",
           "NO_COMPONENT_ATTACHED"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": null,
-        "fresh": false,
+        "ageDays": 0,
+        "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -2389,15 +2386,14 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
-          "EXPIRED_OR_UNDATED_SIGNAL",
           "NO_COMPONENT_ATTACHED"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": null,
-        "fresh": false,
+        "ageDays": 0,
+        "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -2443,15 +2439,14 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
-          "EXPIRED_OR_UNDATED_SIGNAL",
           "DUPLICATE"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": null,
-        "fresh": false,
+        "ageDays": 0,
+        "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -2483,15 +2478,14 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
-          "EXPIRED_OR_UNDATED_SIGNAL",
           "NO_COMPONENT_ATTACHED"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": null,
-        "fresh": false,
+        "ageDays": 0,
+        "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -2523,15 +2517,14 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
-          "EXPIRED_OR_UNDATED_SIGNAL",
           "NO_COMPONENT_ATTACHED"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": null,
-        "fresh": false,
+        "ageDays": 0,
+        "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -2563,15 +2556,14 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
-          "EXPIRED_OR_UNDATED_SIGNAL",
           "NO_COMPONENT_ATTACHED"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": null,
-        "fresh": false,
+        "ageDays": 0,
+        "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -2933,7 +2925,7 @@
       "components": [
         "odg-strategic-register"
       ],
-      "signalCount": 10,
+      "signalCount": 11,
       "criteria": {
         "autonomyBenefit": {
           "status": "NOT_MEASURED",
@@ -2951,7 +2943,7 @@
           "status": "MEASURED",
           "value": 1,
           "rule": "RB-BLK",
-          "basis": "n=10 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
+          "basis": "n=11 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
         },
         "reliabilityQuality": {
           "status": "NOT_MEASURED",
@@ -2991,9 +2983,9 @@
         },
         "evidenceLevel": {
           "status": "MEASURED",
-          "value": 0.5,
+          "value": 0.75,
           "rule": "RB-EVD",
-          "basis": "k=2 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
+          "basis": "k=3 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
         }
       }
     },
@@ -4137,9 +4129,9 @@
     "ranking": [
       {
         "id": "IN_FLIGHT:native-criteria-measurement",
-        "evidenceScore": 0.28,
+        "evidenceScore": 0.305,
         "uncertainty": 0.6,
-        "upperBound": 0.88,
+        "upperBound": 0.905,
         "autoSelectable": true
       },
       {
@@ -4254,9 +4246,9 @@
     {
       "rank": 1,
       "id": "IN_FLIGHT:native-criteria-measurement",
-      "evidenceScore": 0.28,
+      "evidenceScore": 0.305,
       "uncertainty": 0.6,
-      "upperBound": 0.88,
+      "upperBound": 0.905,
       "tiedWith": [],
       "rankNote": null,
       "contract": {
@@ -4277,7 +4269,8 @@
             "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.strategicValue",
             "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.costRiskComplexity",
             "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability",
-            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[6]"
+            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[6]",
+            "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[4]"
           ]
         },
         "scope": "improve odg-strategic-register only; no Radar egress, no spend, no canonical-authority change",
@@ -4873,6 +4866,11 @@
                 "H: uncertainty 0.5, 5/10 criteria NOT_MEASURED",
                 "J2: uncertainty 0.7, 7/10 criteria NOT_MEASURED"
               ]
+            },
+            {
+              "source": "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[4]",
+              "name": "checkpoint.openGap",
+              "value": "OPEN"
             }
           ],
           "after": null,
