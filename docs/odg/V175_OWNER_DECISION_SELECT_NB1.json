@@ -1,0 +1,22 @@
+{
+  "//": "OWNER selection-decision record — verbatim transcription (2026-11-24) by the PROVIDER (Claude Code, V17.5 NB1 GO-path session) of the owner directive relayed by the coordinating session. It resolves ONE undecided actionable selection (DECISION_REQUIRED for uncertainty, no tie) in favour of V175-NB1, which must already be actionable. Grants nothing; changes no score, contract, criterion, threshold, selection rule or allocation rule; at most one dispatch (GO-ORD-2 one-shot claim).",
+  "schema": "odg-owner-selection-decision/1",
+  "kind": "OWNER_SELECTION_DECISION",
+  "directive": "CTO — DIRECTIVE DE REPRISE IMMÉDIATE — V14.4 / V15.0 — BRAIN, NATIVE AUTONOMY & EXECUTION SPEED",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "source": "owner directive \"CTO — DIRECTIVE DE REPRISE IMMÉDIATE — V14.4 / V15.0 — BRAIN, NATIVE AUTONOMY & EXECUTION SPEED\", 2026-11-24 (relayed by the coordinating session); authorization record docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json",
+  "quote": [
+    "Donner à ODG la responsabilité de sélectionner, distribuer et suivre les missions.",
+    "Objectif : obtenir une première construction logicielle réellement produite par ODG lui-même, et non simplement par Claude Code."
+  ],
+  "item": "V175-NB1",
+  "contractSha256": "953d064ad2fffd3711a9f4efa50592e96b06182349d801e22f7813b17b31b777",
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED for UNCERTAINTY (no tie: tiedSet empty or singleton) with proposed = V175-NB1",
+    "neverAppliesTo": ["strategicSelection", "ties (GO-ORD-1)", "authorization (the item must already be actionable; RUN still needs the independent inspection ACCEPT)", "scores / ranking / register / thresholds", "any other item", "any other contract sha"],
+    "maxDispatches": 1,
+    "consumedBy": "runtime/core/odg-go-cycle.ts (GO-ORD-2), loaded by runtime/bin/odg-go.ts readState from OWNER_SELECTION_DECISIONS"
+  },
+  "appliedBy": "GO-ORD-2 (runtime/core/odg-go-cycle.ts) — provider-written GO rule; one-shot claim in <git common dir>/odg-go-claims"
+}
