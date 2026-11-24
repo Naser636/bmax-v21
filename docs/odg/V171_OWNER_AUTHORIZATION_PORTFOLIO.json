@@ -1,0 +1,45 @@
+{
+  "//": "OWNER authorization record — verbatim transcription of the owner directive 'CTO — DIRECTIVE D'EXÉCUTION CONTINUE MAXIMALE — ODG AUTONOMIE ET PORTFOLIO COMPLET' (2026-11-24) by the PROVIDER (Claude Code coordinating session). Grants NOTHING beyond the quoted text. Supersedes the V170 J clause ('Aucune autorisation n'est accordée pour J') for INTERNAL work only.",
+  "schema": "odg-owner-authorization/1",
+  "directive": "CTO V171 — portfolio",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "quote": [
+    "L'utilisateur autorise ODG à reprendre et terminer l'ensemble des travaux internes restant à réaliser, à sélectionner les missions, à organiser les ressources et à prendre les décisions techniques nécessaires dans les limites de cette directive.",
+    "L'utilisateur autorise expressément ODG à sélectionner, prioriser et exécuter les travaux internes nécessaires à la progression des missions ouvertes, notamment :",
+    "Audits et diagnostics.",
+    "Analyse des causes racines.",
+    "Corrections et améliorations du code.",
+    "Construction de prototypes et modules internes.",
+    "Tests unitaires, intégration, régression et scénarios réels contrôlés.",
+    "Expériences isolées et reproductibles.",
+    "Reprise de missions interrompues.",
+    "Amélioration des composants existants.",
+    "Préparation de nouvelles expériences.",
+    "Documentation, preuves, checkpoints et rapports.",
+    "Commits, PR et fusions après les contrôles obligatoires.",
+    "Cette autorisation couvre les travaux internes nécessaires sur J et les autres missions sélectionnées par ODG. Il n'est pas nécessaire de redemander une autorisation pour chaque correction interne déjà couverte par ce mandat.",
+    "Cependant, cette autorisation ne permet pas de contourner les protections existantes, de s'accorder soi-même une permission interdite ou de modifier les frontières de sécurité.",
+    "Ne jamais rouvrir artificiellement une mission déjà clôturée. Une nouvelle expérience doit avoir un nouvel identifiant et préserver l'historique précédent.",
+    "Ne pas confondre un budget de réparation interne avec une autorisation de dépense externe.",
+    "Ne pas modifier les critères après observation des résultats pour obtenir un PASS."
+  ],
+  "notGranted": {
+    "quote": [
+      "Aucune permission nouvelle n'est accordée pour :",
+      "Déploiement ou production.",
+      "VPS, SSH, systemd, sudo ou modification de l'hôte.",
+      "Exposition publique ou modification réseau externe.",
+      "Achats, abonnements, créations de comptes ou augmentation de budgets.",
+      "Dépenses fournisseurs non déjà autorisées.",
+      "Exposition de secrets ou accès à des données non autorisées.",
+      "Si une action nécessite une permission de cette catégorie, la bloquer proprement, enregistrer la raison et continuer les autres missions."
+    ]
+  },
+  "J": {
+    "state": "INTERNAL_WORK_AUTHORIZED (V171) — provider spend / delegation launches remain NOT authorized (no verifiable ceiling)"
+  },
+  "scope": "internal work on open missions selected by ODG; métiers excluded (\"Le périmètre des métiers reste exclu de cette campagne.\")",
+  "machineNote": "provider reading (not owner text): a contract selected by ODG may carry an authorization block citing this record (source cites V171) and enter the scoped sequence starting at REVISE_CONTRACT; closed contracts are never reopened — a new experiment gets a new id",
+  "scopeQuote": "Le périmètre des métiers reste exclu de cette campagne."
+}
