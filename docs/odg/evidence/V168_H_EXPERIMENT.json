@@ -1,0 +1,355 @@
+{
+  "schema": "odg-scenario-experiment/1",
+  "scenario": "H",
+  "step": "RUN_CONTROLLED_EXPERIMENTS",
+  "contract": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#H",
+  "contractSha256": "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2",
+  "authorization": {
+    "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+    "authorizedSteps": [
+      "REVISE_CONTRACT",
+      "INSPECT_REVISED_CONTRACT",
+      "RUN_CONTROLLED_EXPERIMENTS",
+      "VALIDATE_CRITERIA"
+    ],
+    "derivedSteps": [
+      {
+        "step": "RUN_CONTROLLED_EXPERIMENTS",
+        "rule": "R4",
+        "coveredBy": "OWNER — docs/odg/V168_OWNER_AUTHORIZATION_H.json (V168) (executionCondition: offline controlled experiments only after an independent inspection ACCEPT of the revised contract is recorded (owner V168: « Expériences hors ligne prévues par le contrat » after « Inspection indépendante du contrat révisé »))"
+      }
+    ],
+    "reason": "inspection ACCEPT bound to contract 8436885a2d48 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "selfAuthorized": false,
+    "inspection": {
+      "path": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+      "verdict": "ACCEPT",
+      "inspectedHeadSha": "98eed7f23c20bd20a576c0c33a84d9b088c97d3f",
+      "inspectedPr": 942,
+      "inspectorSessionId": "ab6a445c9679c2387",
+      "authorSessionId": "h-reviser-v168"
+    },
+    "note": "authorized automatically by odg-authorization-scope R4 under the owner's V168 authorization (docs/odg/V168_OWNER_AUTHORIZATION_H.json); the provider did not self-authorize"
+  },
+  "outcome": "FAIL",
+  "grade": {
+    "outcome": "FAIL",
+    "passConditions": {
+      "delta0_ge_0_05": false,
+      "ci95Low_delta0_gt_0": false,
+      "delta1_gt_0": false,
+      "ci95Low_delta1_gt_0": false,
+      "aucH1_ge_0_55": true
+    },
+    "because": [
+      "Δ0 = -0.10737373737373734 ≤ 0"
+    ],
+    "rule": "first matching of NOT_MEASURED, PASS, PARTIAL, FAIL per WORK_ITEM_CONTRACT.preRegistration.thresholds (mechanical; no re-tuning)",
+    "gradedBy": "pre-registered rule only — NOT the independent VALIDATE_CRITERIA step (pending)"
+  },
+  "adoptionDecision": "NOT_ADOPTED",
+  "inputs": {
+    "contracts": {
+      "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+      "sha256File": "726abb4c39e05bdc6f2d2251e8b71ec169cbeb34b749f1b37a494cd3f7ae0055"
+    },
+    "inspection": {
+      "path": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+      "sha256File": "dc5b12081618f5fbd1d123af260a82a8aa8b6f318d45fe7b79704d93ee1d2cbf"
+    },
+    "dataset": {
+      "path": "docs/odg/evidence/V168_H_HELDOUT.json",
+      "sha256": "d8bf4a3f5e4b3a6bdc0700183b710c38acc2ae0d786aa6303ff7868ddd26fcb1",
+      "pinned": "d8bf4a3f5e4b3a6bdc0700183b710c38acc2ae0d786aa6303ff7868ddd26fcb1",
+      "matches": true,
+      "counts": {
+        "rows": 399,
+        "dev": 200,
+        "heldout": 199,
+        "devPrRange": [
+          519,
+          719
+        ],
+        "heldoutPrRange": [
+          720,
+          920
+        ]
+      }
+    }
+  },
+  "preRegistration": {
+    "dataset": "docs/odg/evidence/V168_H_HELDOUT.json",
+    "datasetSha256": "d8bf4a3f5e4b3a6bdc0700183b710c38acc2ae0d786aa6303ff7868ddd26fcb1",
+    "devN": 200,
+    "heldoutN": 199,
+    "positiveLabel": "HIGH_ITERATION",
+    "negativeLabel": "LOW_ITERATION",
+    "resamples": 2000,
+    "bootstrapSeed": 20261128,
+    "secondarySplitSeed": 20261129,
+    "maxSkippedFraction": 0.05,
+    "minHeldoutPerClass": 20,
+    "minDevPerClass": 10,
+    "pass": {
+      "minDelta0": 0.05,
+      "ciLowDelta0GreaterThan": 0,
+      "delta1GreaterThan": 0,
+      "ciLowDelta1GreaterThan": 0,
+      "minAucH1": 0.55
+    },
+    "hyper": {
+      "lambda": 1,
+      "learningRate": 0.1,
+      "iterations": 5000,
+      "init": "all-zero",
+      "sd": "population",
+      "interceptPenalized": false
+    }
+  },
+  "featureComputation": {
+    "rows": 399,
+    "chooseLevelErrors": [],
+    "levelHistogram": {
+      "L3": 180,
+      "L3+REINFORCED": 144,
+      "DOCS_ONLY": 27,
+      "L1": 19,
+      "L2": 29
+    },
+    "reader": "fsReader(root) memoized (exists/read/list/realRel/walk/graph) on the scratch tree"
+  },
+  "dev": {
+    "n": 200,
+    "highIteration": 20,
+    "lowIteration": 180
+  },
+  "fitted": {
+    "model": {
+      "schema": "odg-verification-risk-model/1",
+      "featureNames": [
+        "f1_levelRank",
+        "f2_reinforced",
+        "f3_distinctSensitiveLabels",
+        "f4_log1pChangedFiles",
+        "f5_log1pTestsL2",
+        "f6_log1pReverseClosure",
+        "f7_log1pUnresolved",
+        "f8_docFileFraction"
+      ],
+      "hyper": {
+        "lambda": 1,
+        "learningRate": 0.1,
+        "iterations": 5000,
+        "init": "all-zero",
+        "sd": "population",
+        "interceptPenalized": false
+      },
+      "nDev": 200,
+      "mean": [
+        2.735,
+        0.385,
+        0.195,
+        1.5459474293467397,
+        1.8574658197268314,
+        1.4668045137188446,
+        0.06787630769373564,
+        0.14664682539682544
+      ],
+      "sd": [
+        0.6669145372534623,
+        0.4865953144040735,
+        0.5069270164431944,
+        0.37351422163042636,
+        0.8471382433345339,
+        0.9880741917803222,
+        0.2113488180959772,
+        0.239628770872902
+      ],
+      "frozenFeatures": [],
+      "intercept": -2.505094355647528,
+      "weights": [
+        0.060466534919827106,
+        -0.4249876130543797,
+        -0.08542120564575977,
+        -0.11981831458684793,
+        0.5851438776903181,
+        -0.6058734723175969,
+        0.49584351428128043,
+        -0.7562741568788398
+      ],
+      "finalLoss": 0.2957415015729517,
+      "finite": true
+    },
+    "modelSha256": "c84e680430ac407209a28391a4e6a6f1a21875881c2dd3bae019036cebef7289",
+    "sealedBeforeHeldoutLabels": true
+  },
+  "primary": {
+    "split": "rows sorted by PR number ascending; DEV = first 200 (#519–#719), HELDOUT = last 199 (#720–#920)",
+    "counts": {
+      "n": 199,
+      "highIteration": 99,
+      "lowIteration": 100
+    },
+    "auc": {
+      "H1": 0.5782828282828283,
+      "B0": 0.6856565656565656,
+      "B1": 0.8171212121212121
+    },
+    "delta0": -0.10737373737373734,
+    "delta1": -0.23883838383838385,
+    "bootstrap": {
+      "resamples": 2000,
+      "seed": 20261128,
+      "usedResamples": 2000,
+      "skippedResamples": 0,
+      "skippedFraction": 0,
+      "ci95Delta0": [
+        -0.2132771231206827,
+        -0.004299754299754266
+      ],
+      "ci95Delta1": [
+        -0.32509157509157516,
+        -0.15496749288906952
+      ]
+    }
+  },
+  "secondaryRobustness": {
+    "role": "REPORT-ONLY — never part of PASS/PARTIAL/FAIL",
+    "split": "Fisher–Yates with LCG seed 20261129 over the PR-sorted rows; first 200 = DEV, last 199 = HELDOUT; H1 refitted on that DEV",
+    "dev": {
+      "n": 200,
+      "highIteration": 70,
+      "lowIteration": 130
+    },
+    "fitted": {
+      "model": {
+        "schema": "odg-verification-risk-model/1",
+        "featureNames": [
+          "f1_levelRank",
+          "f2_reinforced",
+          "f3_distinctSensitiveLabels",
+          "f4_log1pChangedFiles",
+          "f5_log1pTestsL2",
+          "f6_log1pReverseClosure",
+          "f7_log1pUnresolved",
+          "f8_docFileFraction"
+        ],
+        "hyper": {
+          "lambda": 1,
+          "learningRate": 0.1,
+          "iterations": 5000,
+          "init": "all-zero",
+          "sd": "population",
+          "interceptPenalized": false
+        },
+        "nDev": 200,
+        "mean": [
+          2.68,
+          0.355,
+          0.215,
+          1.5176432547591128,
+          1.796893706807366,
+          1.5371645171327313,
+          0.11208137924615504,
+          0.1475112942612942
+        ],
+        "sd": [
+          0.8292164976651158,
+          0.4785133226985424,
+          0.5646016294698412,
+          0.43337565062006067,
+          0.9893312532061157,
+          1.0625387245269664,
+          0.2940325929132128,
+          0.2863885692920867
+        ],
+        "frozenFeatures": [],
+        "intercept": -0.6990736441527365,
+        "weights": [
+          0.08682283668823279,
+          -0.04920896142420554,
+          -0.040450229101407977,
+          0.6277376472812431,
+          -1.0651745335225422,
+          0.696543844463376,
+          0.6183763578327486,
+          -0.4212256064269047
+        ],
+        "finalLoss": 0.5465562588635755,
+        "finite": true
+      },
+      "modelSha256": "682b382dd90e7a4431e89e754d294c44d0cc7dfbdae28c6f50fbd7013bc9fc05"
+    },
+    "counts": {
+      "n": 199,
+      "highIteration": 49,
+      "lowIteration": 150
+    },
+    "auc": {
+      "H1": 0.7048299319727891,
+      "B0": 0.5517687074829932,
+      "B1": 0.6287074829931972
+    },
+    "delta0": 0.15306122448979587,
+    "delta1": 0.07612244897959186,
+    "bootstrap": {
+      "resamples": 2000,
+      "seed": 20261128,
+      "usedResamples": 2000,
+      "skippedResamples": 0,
+      "skippedFraction": 0,
+      "ci95Delta0": [
+        0.03195430688484091,
+        0.2683698672429762
+      ],
+      "ci95Delta1": [
+        0.005664877757901032,
+        0.15043290043290047
+      ]
+    },
+    "aucF1LevelRankAlone_primaryHeldout": 0.6117676767676767
+  },
+  "antiLeakage": {
+    "log": [
+      "FEATURES_COMPUTED 399/399 rows (no label read)",
+      "DEV_LABELS_READ",
+      "WEIGHTS_SEALED c84e680430ac407209a28391a4e6a6f1a21875881c2dd3bae019036cebef7289",
+      "HELDOUT_LABELS_READ",
+      "ALL_LABELS_READ"
+    ],
+    "rule": "features of all rows computed before any label; only DEV labels feed the fit; weights + sha256 sealed before HELDOUT labels are released (LabelVault throws otherwise)"
+  },
+  "controls": {
+    "changed": false,
+    "note": "H1 is an additive advisory score; chooseLevel's level / reinforced / independentInspection / mandatoryPreMergeCI / tests are unchanged and nothing is wired into any gate"
+  },
+  "priorResult": {
+    "initialState": "PARTIAL (V159 routing 0.75→0.75; #902 gain not measured)",
+    "note": "untouched; not re-graded by this experiment"
+  },
+  "ambiguities": [
+    "label = the per-row 'label' field written by the builder (preRegistration.outcomeLabel 'stored per row in the dataset as written by the builder'); commits are not re-derived",
+    "primary split recomputed from the PR-number sort (first 200 / last 199) and cross-checked against the stored 'split' field (any disagreement ⇒ NOT_MEASURED)",
+    "reader memoization covers exists/read/list/realRel/walk/graph (all pure on the static scratch tree ⇒ identical answers); a graph build failure is memoized as the same throw",
+    "f3 counts distinct label STRINGS over plan.files[].sensitive (a 'protected path (<prefix>)' label is one string per prefix); f6 uses plan.graph.reverseClosure (0 when absent, e.g. empty change-set plans)",
+    "sd = 0 is decided exactly (a feature constant over DEV ⇒ sd 0, never a floating residue); such a feature standardizes to 0 everywhere and its weight is held at 0 at every iteration",
+    "AUC and Δ values are full IEEE-754 doubles (no rounding) — thresholds compared on those values",
+    "bootstrap: one LCG stream (seed 20261128) draws HELDOUT.length indices per resample in order; AUC(H1/B0/B1) on the same resample; skipped if 0 positives or 0 negatives; percentiles sorted[floor(p·n)] as in odg-v166-scenario-g-experiment",
+    "secondary: Fisher–Yates i = n−1 … 1, j = floor(rnd()·(i+1)) over the PR-sorted rows; refit on its DEV with the same hyper-parameters; same bootstrap seed restarted",
+    "a NOT_MEASURED outcome stops at the first failing pre-condition (later steps are not computed)"
+  ],
+  "honesty": [
+    "a validated RUN_CONTROLLED_EXPERIMENTS step is DONE with this recorded outcome, never upgraded; VALIDATE_CRITERIA (independent inspection of this result) is pending",
+    "PASS ⇒ ADOPTION_CANDIDATE only (advisory score); PARTIAL / FAIL / NOT_MEASURED ⇒ NOT_ADOPTED",
+    "chronological split ⇒ distribution shift; era confounding; commit count is a confounded rework proxy — a PASS shows held-out discrimination, never causation",
+    "anachronistic reader: historical change-sets classified against the CURRENT tree (identical for B0, B1 and H1 — paired)",
+    "provider (Claude Code) wrote this runner; the run is ODG GO's dispatch of the contract-declared target"
+  ],
+  "run": {
+    "head": "5d3cf713193682154aae7e224b473a2566d81205",
+    "command": "npx tsx runtime/bin/odg-v168-scenario-h-experiment.ts docs/odg/evidence/V168_H_EXPERIMENT.json",
+    "dispatchedBy": "ODG GO (odg-go --execute --allow-unsandboxed-target) — contract-declared target",
+    "note": "head = HEAD of the tree the run executed in"
+  }
+}
