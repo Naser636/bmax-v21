@@ -78,6 +78,14 @@
       "sha256": "22936725d52728540ef15b60607c12394d541f043e33a7c0462593c8b7c8c592"
     },
     {
+      "source": "docs/odg/evidence/V178_CHECKPOINT_14.json",
+      "sha256": "8aaea6214cfe1e020c8e6aea2eb0fda576fc1accf879068804c8de6af08de4e1"
+    },
+    {
+      "source": "docs/odg/evidence/V176_F_CONTRACT_INSPECTION.json",
+      "sha256": "6dfe1222d80a0e1ac148eb817a5e3ee29b8a84a94be06b8c1b60d2a816e597c0"
+    },
+    {
       "source": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
       "sha256": "d606c6e296a759fd291028faf76833ff1828d23b3ec87570455f6af1da664534"
     },
@@ -267,7 +275,7 @@
     },
     {
       "source": "runtime/core/odg-strategic-register.test.ts",
-      "sha256": "6646f20e6a41bf9ccf1dd7e4cc2068b54f9165049d082e5e504475f4ff0d92f2"
+      "sha256": "9008cd6df8ef1efb9456275f6654567cdaf421b1b840bdcc053ea4af46c94aeb"
     },
     {
       "source": "runtime/core/odg-strategic-register.ts",
@@ -555,7 +563,7 @@
             ]
           }
         ],
-        "latestCheckpoint": "V176_CHECKPOINT_13.json",
+        "latestCheckpoint": "V178_CHECKPOINT_14.json",
         "notDerived": [
           "autonomyBenefit (AUT-1), capabilityGain (CAP-1), strategicValue (STR-1): no V150 section / top10 / alsoInternal entry references a CP8 capability gap",
           "speedEfficiency (SPD-0), reusability (REU-0): no committed field records a speed or reuse effect per gap",
@@ -575,13 +583,13 @@
       "history": "append-only statusHistory [{status, source, since, rule}] on every item whose status CLOSE-1 or RES-1 changed; earlier statuses are never deleted"
     },
     "latestCheckpoint": {
-      "file": "V176_CHECKPOINT_13.json",
+      "file": "V178_CHECKPOINT_14.json",
       "rule": "LCP-1: the latest checkpoint is the committed docs/odg/evidence/*_CHECKPOINT_<n>.json with the highest <n> (discovered, not hard-coded); buildRegister uses sources.latestCheckpoint, else the highest-numbered checkpoint among the documents it was given",
-      "source": "docs/odg/evidence/V176_CHECKPOINT_13.json",
+      "source": "docs/odg/evidence/V178_CHECKPOINT_14.json",
       "declaredFieldsPresent": {
         "ownerQuestions": false
       },
-      "dep2Note": "V176_CHECKPOINT_13.json has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)"
+      "dep2Note": "V178_CHECKPOINT_14.json has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)"
     },
     "dependencyGraph": {
       "rule": "DEPG-1 (provider-authored, V17.5): item→item dependency edges are derived ONLY from explicit committed evidence — DATASET_INPUT, CODE_IMPORT, STATED_TEXT (definitions in edgeKinds); every edge cites its source (path#field) and the producer-side pointer; self-edges are dropped; a path containing '<' (a placeholder such as runtime/core/<defect-module>.ts) is not a concrete file and never matches. Applied UNIFORMLY to every register item kind: only WORK_ITEM_CONTRACT items declare inputs (preRegistration.dataset), a write_set or missingForPass, so every other kind gets dependencyGraph NOT_MEASURED with the reason (no edge is invented for them). Lineage (contract.parent) and shared inputs that no item produces are NOT dependencies. deps[] = the targets of UNSATISFIED edges (what the selector's eligibility gate and R1_MORE_UNBLOCKING read: an item is 'unblocked' by Y only while its dependency on Y is unsatisfied); DATASET_INPUT and STATED_TEXT edges (satisfaction can fail: pin/commit check, completion status) are stated dependencies for DEP-1 (depsStated) together with the register's existing owner-authorization prerequisites; CODE_IMPORT edges are STRUCTURAL ONLY (satisfied by construction ⇒ counted in fanOut, never in DEP-1 or deps[]); a write_set entry naming a file that is not committed is recorded in staleWriteSets (a limit, contracts are not edited). NO DEPENDENCY STATED ≠ NO DEPENDENCY: an item without a prerequisite edge keeps dependencyAvailability NOT_MEASURED with the reason 'no dependency stated'; 'measured: no dependency' would require a committed field STATING independence for that item, and no such field exists (independenceStated = [] — never inferred from absence)",
@@ -1153,9 +1161,9 @@
             "odg-strategic-register.BLOCKER_FIELDS",
             "odg-strategic-register.PR_RECORD_FIELDS"
           ],
-          "b": "newest committed checkpoint V176_CHECKPOINT_13.json (LCP-1)",
+          "b": "newest committed checkpoint V178_CHECKPOINT_14.json (LCP-1)",
           "bSource": [
-            "docs/odg/evidence/V176_CHECKPOINT_13.json"
+            "docs/odg/evidence/V178_CHECKPOINT_14.json"
           ],
           "state": "OPEN",
           "autoResolved": false,
@@ -1175,7 +1183,7 @@
         "docs/odg/evidence/V164_GO_CYCLE.json",
         "docs/odg/evidence/V166_CHECKPOINT_9.json",
         "docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json",
-        "docs/odg/evidence/V176_CHECKPOINT_13.json"
+        "docs/odg/evidence/V178_CHECKPOINT_14.json"
       ],
       "scenarioEvidence": [
         {
@@ -1200,7 +1208,7 @@
       "authorizationEvidence": [
         {
           "scenario": "F",
-          "inspection": null,
+          "inspection": "docs/odg/evidence/V176_F_CONTRACT_INSPECTION.json",
           "experiment": null,
           "validation": null
         },
@@ -1261,7 +1269,8 @@
         "docs/odg/evidence/V168_CHECKPOINT_10.json",
         "docs/odg/evidence/V174_CHECKPOINT_11.json",
         "docs/odg/evidence/V176_CHECKPOINT_12.json",
-        "docs/odg/evidence/V176_CHECKPOINT_13.json"
+        "docs/odg/evidence/V176_CHECKPOINT_13.json",
+        "docs/odg/evidence/V178_CHECKPOINT_14.json"
       ],
       "checkpointNames": [
         "V150_CHECKPOINT_1.json",
@@ -1276,7 +1285,8 @@
         "V168_CHECKPOINT_10.json",
         "V174_CHECKPOINT_11.json",
         "V176_CHECKPOINT_12.json",
-        "V176_CHECKPOINT_13.json"
+        "V176_CHECKPOINT_13.json",
+        "V178_CHECKPOINT_14.json"
       ]
     },
     "itemCount": 64,
@@ -2269,8 +2279,8 @@
         "closure": {
           "closed": false,
           "rule": "CLOSE-1",
-          "currentStep": "INSPECT_REVISED_CONTRACT",
-          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+          "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+          "reason": "inspection ACCEPT bound to contract 323da9a12215 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         },
         "dependencyGraph": {
@@ -9233,7 +9243,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V176_CHECKPOINT_13.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V178_CHECKPOINT_14.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -9492,7 +9502,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V176_CHECKPOINT_13.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V178_CHECKPOINT_14.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -10247,7 +10257,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V176_CHECKPOINT_13.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V178_CHECKPOINT_14.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -10376,7 +10386,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V176_CHECKPOINT_13.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V178_CHECKPOINT_14.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -15312,5 +15322,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "223646b1d208b65ef99b96828abec1bfdd76e118"
+  "generatedAtHead": "85fdc3624457df34b0e8df302162789607de47db"
 }

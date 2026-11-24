@@ -1,0 +1,26 @@
+{
+  "//": "Independent inspection record of the REVISED contract F (« F — Multi-agents »; owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json). Transcribed verbatim from the inspector's verdicts by the coordinating session. Independence DECLARED by distinct session ids (not cryptographic). Inspection ≠ selection: GO decides in its own strategic order.",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "F",
+  "verdict": "ACCEPT",
+  "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1",
+  "inspectedHeadSha": "c65eb6dc4ef3035a7a02f769cc4e1fbc09c41cc0",
+  "inspectedPr": 1004,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab6a445c9679c2387",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "f-revision-v176-r2",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-24",
+  "findings": [
+    "write_set lists all 5 files the mission builds (earlier REJECT at 52c68037 for an inaccurate, selection-steering write_set superseded)",
+    "acceptance criteria unchanged and verbatim",
+    "FIXTURE-CAP-1: outcome capped at PARTIAL (fixture-mechanics only); V161 live-provider natural-detection point kept open",
+    "GO-wiring of waves into odg-go-cycle is the remaining delivery step under a separate contract",
+    "all 7 pins match; wave, F-runner, auth-scope, go-cycle tests pass; select --check OK",
+    "D/F strategic tie resolved by the selector's declared R3_LOWER_RISK (D 0.5 < F 0.9) — not an id pick",
+    "F shares the V176-BUILD-MISSIONS family with NB3, consistent with the owner quote"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of the revised F only; RUN via ODG GO --execute only, in GO's own order; one initial execution; grades nothing."
+}
