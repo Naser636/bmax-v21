@@ -1,0 +1,65 @@
+{
+  "//": "VALIDATE_CRITERIA for G2 (owner V170: 'Vérifier les critères sans les modifier après observation'; 'Conserver honnêtement PASS, PARTIAL, FAIL ou NOT_MEASURED'). Graded ONLY from committed evidence after an independent inspection with recomputation (PR #963, ACCEPT). Nothing upgraded.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "G2",
+  "date": "2026-11-24",
+  "contractSha256": "94ca64cab00782649944b6dd3825ca6f1ed9f868943c89e0e86f7827d1d704a1",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+    "sha256": "37cdaae6e51cf237f6c66d7c69022adca8c870c6bd98369692ad65a009cd8056",
+    "experimentSha256": "b54206e6a4730a6728a3b1dbe393498073eb062fd464155b248d9f1cff5c5ce1",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 963,
+    "mergedAs": "baf1101c",
+    "producedBy": "ODG GO --execute native dispatch (owner order V174 via GO-ORD-1; GO code + scratch at 43aa42a4; bwrap --unshare-net; offline); trace docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl (original sha 6365a555…)"
+  },
+  "experimentInspection": {
+    "pr": 963,
+    "inspectedHead": "35927560",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "ab6a445c9679c2387",
+    "authorSessionId": "odg-go-run-b4d59263fc5efe7f",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "findings": "independent offline recomputation (own code): HB rebuilt from git 0 mismatches; T_B=T_KG=164; BA 0.684028 both; ΔB 0 CI [0,0]; Δ0 0.184028 CI [0.0856,0.27]; rolling-origin mean ΔB 0.004464; seal order verified; no NOT_MEASURED condition triggered; PARTIAL by the first matching rule"
+  },
+  "criteria": [
+    {
+      "id": "C1",
+      "status": "MET",
+      "evidence": "record C1: attested, SUPPORTED, usableFor DESIGN_PROPOSAL, admissible NOT_A_FACT (expected for a SUPPORTED item)"
+    },
+    {
+      "id": "C2",
+      "status": "MET",
+      "evidence": "contract preRegistration (sha 94ca64ca, inspected #957) fixed before HB was built; outcome graded only by preRegistration.thresholds"
+    },
+    {
+      "id": "C3",
+      "status": "MET",
+      "evidence": "seal log ROLLING_ORIGIN → THRESHOLDS_SEALED → CONCORDANCE → HB_BUILT → HB_LABELS_READ → PRIMARY_GRADED; one primary metric/comparison; other numbers report-only (inspector verified)"
+    },
+    {
+      "id": "C4",
+      "status": "MET",
+      "evidence": "runner --check CHECK OK + builder --check byte-for-byte; independent recomputation ACCEPT (#963)"
+    }
+  ],
+  "result": {
+    "outcome": "PARTIAL",
+    "basis": "PASS requires ΔB > 0 with CI95-low > 0: KG and B1 chose the same threshold (164) ⇒ ΔB = 0 (flag KG_EQUALS_B1); Δ0 +0.184 vs no-flag holds"
+  },
+  "scenarioGrade": "PARTIAL",
+  "adoption": "NOT_ADOPTED (only PASS ⇒ adoption candidate)",
+  "lesson": "hypothesis only: on this backward era (n=168, 24 HIGH), the knowledge prior (1000-line heuristic, α 0.05/decade) does not move a locally fitted threshold — local calibration alone carries the signal; consistent with G's earlier lesson (G CLOSED_PARTIAL)",
+  "methodVsResult": "the experimental result is PARTIAL; the METHOD (pre-registration, sealed thresholds, unseen held-out era, native GO dispatch, independent recomputation) worked as designed — that is a process observation, not a validation of the hypothesis",
+  "limits": [
+    "concordance used 69 rows where the contract counted 70 by subject (above the 30 minimum; unexplained gap — LOW)",
+    "dispatch target ran unsandboxed on the host with the recorded opt-in; network isolation was applied around the whole GO run (bwrap --unshare-net), not inside the trace",
+    "independence declared by session ids (not cryptographic)"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PARTIAL)",
+    "missionG2": "CLOSED_PARTIAL — NOT_ADOPTED"
+  }
+}
