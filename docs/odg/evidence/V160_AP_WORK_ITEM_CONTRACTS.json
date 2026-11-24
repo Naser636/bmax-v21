@@ -1,5 +1,5 @@
 {
-  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged.",
+  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 F: F moved PROPOSED → AUTHORIZED_FOR_REVISION under the owner build-missions record (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json) and revised (REVISE_CONTRACT): authorization block, write_set 1:1 replacement, preRegistration (GO parallel-wave capability on a deterministic fixture), dispatch target; F's criteria verbatim; every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
   "count": 20,
   "initialStatusCounts": {
@@ -258,8 +258,8 @@
       "scenario": "F",
       "title": "F — Multi-agents",
       "ownerText": "ODG décompose une mission, affecte des fournisseurs, réceptionne leurs résultats, détecte les incompatibilités et valide l'intégration.",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — « CTO — CONTINUATION APRÈS CP13 — AUTONOMIE NATIVE » (2026-11-24), docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3, les vagues GO parallèles et la conversion des propositions Radar en contrats, dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. » « Construire les vagues GO parallèles sur des zones d'écriture indépendantes. » « Respecter la sélection stratégique actuelle de GO, notamment F. » « Ne pas confondre autorisation de construction interne et autorisation de production, dépense ou engagement externe. » — encoded through the canonical scoped mechanism (odg-authorization-scope, like G/H/G2/J2/V175-NB1/V175-NB2/J): RUN_CONTROLLED_EXPERIMENTS becomes AUTHORIZED (derived, R4) only once the necessary conditions are green (R2 revision + preRegistration, R3 independent inspection ACCEPT bound to the contract sha, GO-DT-1 declared dispatch target, GO-DTO-1 caps); one initial execution per contract revision; internal construction only — no production, spend or external engagement. F's prior result (V161_SCENARIO_F.json) untouched.",
       "initialState": {
         "status": "PARTIAL",
         "evidence": [
@@ -273,8 +273,8 @@
         "objective": "Decompose a mission, assign two providers/agents, detect incompatible outputs after receipt, and validate an integration step",
         "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
         "write_set": [
-          "docs/odg/evidence/V160_SCENARIO_F.json",
-          "runtime/bin/odg-v160-scenario-f-run.ts"
+          "runtime/bin/odg-v176-scenario-f-run.ts",
+          "docs/odg/evidence/V176_F_EXPERIMENT.json"
         ],
         "authorized_symbols": [],
         "invariants": [
@@ -301,8 +301,172 @@
           "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
           "independent inspection verdict on the exact head",
           "CI green on the exact head"
-        ]
-      }
+        ],
+        "preRegistration": {
+          "registeredAt": "2026-11-24 (branch feat/v176-f-parallel-waves; no V176 F run exists at registration; the fixture was exercised only by the runner tests / --selftest on temp dirs — see contamination)",
+          "kind": "NEW EXPERIMENT on F's original question — the GO PARALLEL-WAVE capability (runtime/core/odg-go-wave.ts) exercised on a DETERMINISTIC INTERNAL FIXTURE (F-WAVE-FIXTURE-1). Label: test-grade demonstration (fixture producers, PRE-SCRIPTED outputs, PLANTED incompatibilities) — NOT real operation, NOT provider capability",
+          "question": "F's original question, unchanged (ownerText + objective): « ODG décompose une mission, affecte des fournisseurs, réceptionne leurs résultats, détecte les incompatibilités et valide l'intégration. » — via the owner's « vagues GO parallèles sur des zones d'écriture indépendantes »",
+          "criteria": {
+            "rule": "F's ORIGINAL acceptance_criteria, VERBATIM and unchanged; operationalized below (gradeF in the runner); an operationalization may be stricter than the text, never looser",
+            "C1": {
+              "text": "decomposition + assignment through odg-agent-supervisor (write-sets declared)",
+              "operationalization": "MET iff the decomposition's GO-ranked candidates (4 work items) yield a selectWave wave of mode PARALLEL with ≥2 members (k = min(caps.k, odg-concurrency-policy admitted builders)), and every dispatched member was ASSIGNED by odg-agent-supervisor.assign with its declared write-set recorded verbatim (heartbeat). Report-only: the overlapping candidate (W-PARSE-LOCALE) and the UNKNOWN-write-set candidate (W-NOTES) are excluded with their reasons."
+            },
+            "C2": {
+              "text": "two independently produced outputs received",
+              "operationalization": "MET iff in round 1 the wave was dispatched PARALLEL and ≥2 items delivered a commit, each by a DISTINCT producer process (pid), in a distinct scratch (git worktree), on a distinct branch, with distinct commits — the receipt is the commit ODG reads on the item's branch, not the producer's report."
+            },
+            "C3": {
+              "text": "an incompatibility is DETECTED by an ODG check (not by the coordinator)",
+              "operationalization": "MET iff round 1's findings (odg-go-wave.detectIncompatibilities after receipt) contain ≥1 incompatibility of kind WRITESET_VIOLATION / OVERLAPPING_WRITES / MERGE_CONFLICT / CHECK_FAILED, EVERY planted incompatibility is among them (WRITESET_VIOLATION on W-TOTAL, CHECK_FAILED on W-PARSE), and every such finding's detectedBy is git (diff / merge-tree) or a declared check's exit code — never a coordinator flag."
+            },
+            "C4": {
+              "text": "integration validated by tests + independent inspection",
+              "operationalization": "tests part (graded by the run): MET iff the final round has 0 findings and odg-go-wave.integrate returns INTEGRATED_VALIDATED (merged commit = git merge-tree of the received commits; changed files base→merge = union of the items' change-sets; all 5 declared integration checks exit 0 in an integration scratch). independent-inspection part: NOT graded by the run — it is the VALIDATE_CRITERIA step (odg-authorization-scope R5b: a criteria-validation record citing an independent inspection ACCEPT of the experiment result; scenarioGrade never above the experiment outcome)."
+            }
+          },
+          "dataset": {
+            "fixture": "F-WAVE-FIXTURE-1",
+            "fixtureSha256": "79ebdd989d53e218c6ede53b754846182d7e5d3bfc8e989845cbcf37b2d1c745",
+            "description": "invoice mini-project (base: format-cents implemented, parse-line + invoice-total stubs, glue invoice.js, own / interface / integration tests); 4 GO-ranked candidates: W-PARSE [src/parse-line.js], W-TOTAL [src/invoice-total.js], W-PARSE-LOCALE [src/parse-line.js] (overlaps W-PARSE), W-NOTES (no write-set ⇒ UNKNOWN). Producers = separate node processes (runner's PRODUCER_SRC), each in its own git worktree on its own branch; outputs v1 (round 1, two PLANTED incompatibilities: W-TOTAL also writes src/parse-line.js; W-PARSE omits Math.round ⇒ non-integer unitCents for 0.29/1.15/19.99/0.07 while its own test passes) and v2 (delivered once ODG's detection feedback names the item)",
+            "source": "runtime/bin/odg-v176-scenario-f-run.ts (BASE_FILES, WORK_ITEMS, INTEGRATION_CHECKS, PLANTED, PRODUCER_SRC — FIXTURE_SHA256 = sha256 of their JSON)",
+            "pins": [
+              {
+                "file": "runtime/bin/odg-v176-scenario-f-run.ts",
+                "sha256": "bc74d5dc3166355ce75a302e9f3e9601b86c5400d5f7580bad2ccc6b57bbafae",
+                "use": "this runner + the fixture (any edit after inspection ⇒ pin mismatch ⇒ NOT_MEASURED)"
+              },
+              {
+                "file": "runtime/core/odg-go-wave.ts",
+                "sha256": "eb0b841cd59031d73eb6d8765f7ec0a0c7bdb0273a608f87c1c0edd874519a41",
+                "use": "the GO-wave capability under test"
+              },
+              {
+                "file": "runtime/core/parallel-execution-planner.ts",
+                "sha256": "881e3070b75a4005281adcd62716ac1bb16d7371616a1f6b07b4f63f92b72e4c",
+                "use": "composed (wave re-verification)"
+              },
+              {
+                "file": "runtime/core/odg-writeset-contention.ts",
+                "sha256": "f9c099274d53372105306689b36567a02a1962ec75671e8ee34fa136c5f640eb",
+                "use": "composed (write-isolation verdict, overlap detection)"
+              },
+              {
+                "file": "runtime/core/odg-concurrency-policy.ts",
+                "sha256": "caa0d2baecffc6c85aa7149e88b97a5ddd91f23242cfcbe14490cd3686d604a0",
+                "use": "composed (admitted builders bound k)"
+              },
+              {
+                "file": "runtime/core/odg-agent-supervisor.ts",
+                "sha256": "68ed12a338d5d58e5257cbda498ed6509226c6c2b1c03d8406909a3561589748",
+                "use": "composed (assign / renew / close with write-sets)"
+              },
+              {
+                "file": "docs/odg/evidence/V161_SCENARIO_F.json",
+                "sha256": "02519233db44ff1cc214969f1b45136276d91cc709ebbb954cd707c27f8997ab",
+                "use": "prior result (baseline) — never written"
+              }
+            ],
+            "refusal": "the runner records NOT_MEASURED (no dispatch) if any pinned sha256 differs at run time; planOf refuses (exit 2) if fixture / fixtureSha256 differ from the runner"
+          },
+          "metric": "per round: wave mode, dispatched items, receipts (commit, branch, scratch, producer pid, own-test exit, wall ms), findings (kind, items, files, detectedBy), merge simulation (status, steps), integration (status, checks with exit codes, unionOk); supervisor outcomes; grade = C1 ∧ C2 ∧ C3 ∧ C4(tests) per the decision rule. REPORT-ONLY: wall time of the v2 wave PARALLEL vs SERIAL (caps.timingRepetitions alternating repetitions, fresh scratches, medians, speedup = serial/parallel)",
+          "baseline": "docs/odg/evidence/V161_SCENARIO_F.json (pinned; live local 3b/7b models, CP8 grade PARTIAL: real-repo supervisor assign refused fail-closed, mechanics on a throw-away workspace, closures CLOSED_NO_RESULT; incompatibility detected only for the CONTROLLED perturbation; 0 natural incompatibilities in 3 real trials). Wall-time baseline = SERIAL dispatch of the same wave in the same run (report-only)",
+          "hypothesis": {
+            "main": "H-WAVE (fixed now): on the fixture, GO's wave (a) forms {W-PARSE, W-TOTAL} PARALLEL and excludes W-PARSE-LOCALE (WRITESET_OVERLAP) and W-NOTES (WRITESET_UNKNOWN), (b) detects BOTH planted incompatibilities after receipt, (c) re-dispatches only the offending items and (d) integrates with every declared check green ⇒ predicted outcome PASS",
+            "wallTime": "H-SPEED (REPORT-ONLY, never changes the grade): parallel median < serial median for the 2-item wave (predicted speedup > 1; no threshold)",
+            "refutedIf": "a measured run (outcome ≠ NOT_MEASURED) is not PASS, or the selection / exclusion reasons differ from (a)",
+            "note": "the fixture is DESIGNED so that a correct capability passes: a PASS shows the mechanics work on planted cases; it is NOT evidence of natural incompatibility detection between live providers (V161's open point)"
+          },
+          "decisionRule": "outcome = first matching of NOT_MEASURED, PASS, PARTIAL, FAIL per thresholds, evaluated mechanically by gradeF on the recorded run; no change of fixture, candidates, k, checks, caps, rule or criteria after any run; one execution; no re-run to obtain a different outcome",
+          "thresholds": {
+            "NOT_MEASURED": "any pinned sha256 differs; OR HOST-1 busy at start; OR fixture build failed; OR git merge-tree --write-tree unavailable; OR the oracle self-test fails (integration check does not fail on the base); OR no PARALLEL wave could be formed (odg-concurrency-policy admitted < 2 builders); OR a supervisor assign ≠ ASSIGNED; OR any cap hit (maxRunWallMs, perItemWallMs)",
+            "PASS": "C1 ∧ C2 ∧ C3 ∧ C4(tests) met",
+            "PARTIAL": "C1 ∧ C2 ∧ C3 met, C4(tests) not met",
+            "FAIL": "measured, but C1, C2 or C3 not met"
+          },
+          "caps": {
+            "k": 3,
+            "maxRounds": 3,
+            "maxRunWallMs": 300000,
+            "perItemWallMs": 60000,
+            "timingRepetitions": 5,
+            "hostIdleFactor": 0.75,
+            "basis": "selftest on this host: whole run ≈ 10–15 s (2 rounds + timing); per-item producer ≈ 0.2–0.5 s; k=3 requested so that k is bounded by the concurrency policy (2 builders by default) rather than chosen to fit; hostIdleFactor = J/NB2's HOST-1",
+            "note": "hard caps; maxRunWallMs checked between rounds and timing repetitions, perItemWallMs = SIGKILL of a producer / check process; GO-DTO-1 dispatch timeout = maxRunWallMs + 120000"
+          },
+          "hostRule": "HOST-1 (odg-native-design-pipeline.hostLoad): loadavg-1m > nproc × hostIdleFactor at start ⇒ the runner does NOT start (exit 5, no claim, nothing written); the reading is recorded in the result",
+          "oneShot": "one initial execution per contract revision: (a) ALREADY_RECORDED if docs/odg/evidence/V176_F_EXPERIMENT.json exists (exit 4); (b) ALREADY_CLAIMED if any <16hex>-F-runner.claim exists in <git common dir>/odg-go-claims (exit 4) — GO's own GO-ORD-2 claim <16hex>-F.claim, if GO created one for this dispatch, is NOT a refusal reason (J-runner lesson: a runner must not refuse its own dispatch's claim); (c) O_EXCL claim <contractSha256[0..16]>-F-runner.claim created right before the run (odg-go.makeClaimStore; never deleted) ⇒ a failed or killed run stays claimed; a re-run needs a new owner decision",
+          "network": "none: no model, no provider, no HTTP; 0 calls (recorded)",
+          "isolation": "fixture repositories, scratches (git worktrees) and producer processes live ONLY under a fresh os.tmpdir() directory, removed at the end (tempDirRemoved recorded; absolute temp paths redacted as <tmp>); the producers execute fixture code authored in this runner (never model code); the GO dispatch scratch receives only docs/odg/evidence/V176_F_EXPERIMENT.json",
+          "contamination": {
+            "known": "V161_SCENARIO_F.json and the CP8 F grading are known to the reviser; the fixture, planted defects and expected detections were designed by the reviser (the PASS prediction follows from the design)",
+            "looked": "the runner was exercised on temp dirs during development (selftest-style runs: PASS, speedup ≈ 1.9–2.0 on this host) — no V176_F_EXPERIMENT.json was written; those runs are not results"
+          },
+          "honestLimits": [
+            "deterministic fixture with PLANTED incompatibilities and PRE-SCRIPTED repairs: measures ODG's selection / detection / integration mechanics, not provider capability nor repair intelligence; « fournisseurs » are fixture producer processes, not providers (V161's live-model run stays the provider evidence)",
+            "supervisor in REPO mode on a throw-away workspace (as V161; the real repository refuses fail-closed while sibling worktrees hold UNKNOWN write-sets); closures are expected CLOSED_NO_RESULT (no git delivery to a PR), not CLOSED_ACCEPTED",
+            "write isolation ≠ semantic independence: the semantic incompatibility (W-PARSE) is caught by a declared interface check authored with the fixture",
+            "GO's odg-go-cycle EXECUTE still dispatches ONE item per cycle: this experiment validates the wave capability as a module; wiring waves into the cycle (k > 1 dispatches per cycle) is a separate, later GO change",
+            "wall-time comparison is report-only, n = timingRepetitions on a shared host (confounded); tiny items ⇒ process start-up dominates",
+            "VERIFIED in-repo ≠ DEPLOYED"
+          ]
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json (V176 BUILD_MISSIONS)",
+        "transcribedBy": "PROVIDER (Claude Code, V17.6 F-revision session; branch feat/v176-f-parallel-waves) — verbatim owner quote in authorizedBy",
+        "date": "2026-11-24",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "« dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes »: the contract revised with a preRegistration (R2), an independent inspection ACCEPT bound to the revised contract sha recorded (R3) — the owner record's scope: « RUN only after an independent contract inspection ACCEPT; one initial execution per contract revision » —, a declared authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS ⊆ write_set (GO-DT-1) with caps (GO-DTO-1); internal repo, €0, no model / provider / network call, no production, no spend, no external engagement (« Ne pas confondre autorisation de construction interne et autorisation de production, dépense ou engagement externe. »); result recorded as measured (PASS/PARTIAL/FAIL/NOT_MEASURED, never upgraded)",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v176-scenario-f-run.ts",
+            "args": [
+              "docs/odg/evidence/V176_F_EXPERIMENT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V176_F_EXPERIMENT.json"
+            ]
+          }
+        }
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.6 F-revision session; branch feat/v176-f-parallel-waves)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json (« CTO — CONTINUATION APRÈS CP13 — AUTONOMIE NATIVE »): F PROPOSED → AUTHORIZED_FOR_REVISION and the REVISE_CONTRACT step (scoped, R1)",
+          "originalCriteria": [
+            "decomposition + assignment through odg-agent-supervisor (write-sets declared)",
+            "two independently produced outputs received",
+            "an incompatibility is DETECTED by an ODG check (not by the coordinator)",
+            "integration validated by tests + independent inspection"
+          ],
+          "originalCriteriaNote": "acceptance_criteria UNCHANGED (verbatim); objective, scope, invariants, stop_conditions, rollback, evidence_required unchanged",
+          "previousWriteSet": [
+            "docs/odg/evidence/V160_SCENARIO_F.json",
+            "runtime/bin/odg-v160-scenario-f-run.ts"
+          ],
+          "change": [
+            "state PROPOSED → AUTHORIZED_FOR_REVISION (canonical encoding of an owner authorization: scoped sequence REVISE_CONTRACT → INSPECT_REVISED_CONTRACT → RUN_CONTROLLED_EXPERIMENTS → VALIDATE_CRITERIA); authorizedBy = verbatim owner quote; authorization block bound EXCLUSIVELY to docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json (odg-authorization-scope OWNER_SOURCES.F, R0 — no family: any other scenario citing that record is refused until bound explicitly)",
+            "write_set: stale runtime/bin/odg-v160-scenario-f-run.ts, docs/odg/evidence/V160_SCENARIO_F.json (never committed; the committed runner is odg-v161-scenario-f-run.ts, outside the write_set) ⇒ 1:1 replacement [runtime/bin/odg-v176-scenario-f-run.ts, docs/odg/evidence/V176_F_EXPERIMENT.json]. REVISION ARTIFACTS of this PR, not written by the execution and NOT listed (as J's runner test): runtime/core/odg-go-wave.ts (+ test), runtime/bin/odg-v176-scenario-f-run.test.ts — the capability is PINNED by sha256 in preRegistration.dataset.pins instead. DISCLOSED side effect considered: listing them (|write_set| 4) raises CRC-1 (0.6 → 0.8) and could move GO's strategic selection away from F, which the owner asked to respect (« Respecter la sélection stratégique actuelle de GO, notamment F. »)",
+            "new GO-wave capability runtime/core/odg-go-wave.ts (selectWave / selectWaveFromState / dispatchWave / detectIncompatibilities / integrate) COMPOSING odg-go-cycle actionability + GO-DT-1, parallel-execution-planner, odg-writeset-contention, odg-concurrency-policy and git merge-tree — no second orchestrator",
+            "new runner: positional output = declared writeSet entry; record carries contractSha256 + mechanically graded outcome; never writes V161_SCENARIO_F.json; deterministic internal fixture (no model needed — the original contract does not require one)",
+            "preRegistration added: F's criteria verbatim with their operationalization, metric / baseline / dataset (fixture sha + pins) / hypothesis / decisionRule / thresholds / caps / HOST-1 / one-shot fixed before any run; wall-time PARALLEL vs SERIAL report-only",
+            "authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS declared (runner, args [OUT], writeSet [OUT]) + caps.maxRunWallMs for GO-DTO-1",
+            "one-shot: ALREADY_RECORDED + F-RUNNER claim refusal + O_EXCL F-runner claim before the run; GO's own <16hex>-F.claim never refuses (J-runner lesson)"
+          ],
+          "justification": "F was PROPOSED with a contract not executable as written (stale runner path never committed, no preRegistration, no dispatch target, no caps). The owner authorizes GO to execute internal construction missions in its own strategic order « dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes » and asks to « Construire les vagues GO parallèles sur des zones d'écriture indépendantes » while respecting GO's current selection (F). This revision makes F conform WITHOUT changing its criteria or question, and delivers the wave capability F's criteria (decompose → assign with write-sets → receive → detect incompatibilities → validate integration) measure. Execution stays gated by an independent inspection ACCEPT bound to this contract sha.",
+          "priorResultUnchanged": "docs/odg/evidence/V161_SCENARIO_F.json (pinned) untouched, not re-graded",
+          "revisionAuthorSessionId": "f-revision-v176"
+        }
+      ]
     },
     {
       "scenario": "G",

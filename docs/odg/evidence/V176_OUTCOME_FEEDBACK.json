@@ -151,7 +151,13 @@
         "validation": "docs/odg/evidence/V175_NB2_PROBE_3.json"
       }
     ],
-    "notGraded": []
+    "notGraded": [
+      {
+        "id": "F",
+        "status": "EXECUTED_PARTIAL",
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+      }
+    ]
   },
   "perCriterion": [
     {
@@ -992,20 +998,32 @@
     "actionable": {
       "rule": "GO-ACT-1 (same selector, items without an AUTHORIZED next step excluded as NOT_AUTHORIZED_NOW); GO-ORD-1/GO-ORD-2 owner records apply on top, unchanged",
       "base": {
-        "decision": "NO_ELIGIBLE",
-        "selected": null,
+        "decision": "SELECTED",
+        "selected": "F",
         "proposed": null,
         "tiedSet": [],
         "resolvedBy": null,
-        "top3AutoSelectable": []
+        "top3AutoSelectable": [
+          {
+            "id": "F",
+            "evidenceScore": 0.31,
+            "uncertainty": 0.5
+          }
+        ]
       },
       "adjusted": {
-        "decision": "NO_ELIGIBLE",
-        "selected": null,
+        "decision": "SELECTED",
+        "selected": "F",
         "proposed": null,
         "tiedSet": [],
         "resolvedBy": null,
-        "top3AutoSelectable": []
+        "top3AutoSelectable": [
+          {
+            "id": "F",
+            "evidenceScore": 0.31,
+            "uncertainty": 0.5
+          }
+        ]
       },
       "changed": false
     },
@@ -1013,7 +1031,7 @@
     "inEffect": "ADJUSTED (activation bound to these adjustments)"
   },
   "honesty": [
-    "7 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL]; 3 refused (incl. every PROBE record); 0 declared item(s) not graded",
+    "7 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL]; 3 refused (incl. every PROBE record); 1 declared item(s) not graded",
     "adjusted (attributable) criteria: [NONE]; NOT_ATTRIBUTABLE (×1): [autonomyBenefit CONSTANT_VALUES n=7; blockerRepetitionReduction NO_MEASURED_PREDICTION n=0; capabilityGain BELOW_MIN_N n=3; costRiskComplexity NO_MEASURED_ASSOCIATION n=7 ρ=0.101057; dependencyAvailability NO_MEASURED_PREDICTION n=0; evidenceLevel NO_MEASURED_ASSOCIATION n=7 ρ=0.363803; reliabilityQuality NO_MEASURED_PREDICTION n=0; reusability NO_MEASURED_PREDICTION n=0; speedEfficiency NO_MEASURED_PREDICTION n=0; strategicValue BELOW_MIN_N n=3] ⇒ every multiplier is 1: the activation stays recorded but the register is byte-identical to the base register",
     "OFB-CAL-2 replaces the base-rate rule OFB-CAL-1 (rejected at inspection: it adjusted criteria constant across items, e.g. autonomyBenefit = 0.5 on all 5); a multiplier now requires a MEASURED, SIGNED rank association — an order association on few items, never a claim that the criterion predicts or discriminates outcomes; n is tiny",
     "NOT_MEASURED criteria stay NOT_MEASURED (multipliers scale MEASURED contributions only); statuses, criterion values, weights, thresholds and eligibility are unchanged",
@@ -1035,6 +1053,8 @@
     "docs/odg/evidence/V175_NB2_CRITERIA_VALIDATION.json",
     "docs/odg/evidence/V176_J_EXPERIMENT.json",
     "docs/odg/evidence/V176_J_CRITERIA_VALIDATION.json",
+    "docs/odg/evidence/V176_F_EXPERIMENT.json",
+    "docs/odg/evidence/V176_F_CRITERIA_VALIDATION.json",
     "docs/odg/V176_OUTCOME_FEEDBACK_ACTIVATION.json",
     "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json"
   ]

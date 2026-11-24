@@ -22,19 +22,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795555108000,
+    "nowEpochMs": 1795557335000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "0d756d245d7dcb377fa17e2cb23323c39af8c481697ad5709794f70641d97f72",
-      "epochMs": 1795555108000
+      "sha256": "1c8765324f1aa22ce3843f96991b7d630f857c386a746715da0dea7435c3b5cc",
+      "epochMs": 1795557335000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "6d57728a30dfd577696cb46d8d21da36669f9d247b9cd37f230e2dfbe4eebbb3",
-      "epochMs": 1795550272000
+      "sha256": "73a7df1270476a56ac9c3427edc904fd3f5ed1f005a060afaa39b637b69c1563",
+      "epochMs": 1795557335000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -154,11 +154,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -258,11 +258,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -368,11 +368,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -483,11 +483,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -599,11 +599,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -715,11 +715,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -814,11 +814,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -910,11 +910,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1022,11 +1022,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1383,11 +1383,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1439,17 +1439,17 @@
             "component": "odg-native-outcome-calibration",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 5
+            "transitiveDependents": 6
           },
           {
             "component": "mission-priority-selector",
             "inCoreGraph": true,
             "directConsumers": 5,
-            "transitiveDependents": 6
+            "transitiveDependents": 7
           }
         ],
         "maxDirectConsumers": 5,
-        "maxTransitiveDependents": 6,
+        "maxTransitiveDependents": 7,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1498,18 +1498,18 @@
           {
             "component": "odg-go-cycle",
             "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
+            "directConsumers": 1,
+            "transitiveDependents": 1
           },
           {
             "component": "mission-priority-selector",
             "inCoreGraph": true,
             "directConsumers": 5,
-            "transitiveDependents": 6
+            "transitiveDependents": 7
           }
         ],
         "maxDirectConsumers": 5,
-        "maxTransitiveDependents": 6,
+        "maxTransitiveDependents": 7,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1558,18 +1558,18 @@
           {
             "component": "odg-go-cycle",
             "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
+            "directConsumers": 1,
+            "transitiveDependents": 1
           },
           {
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1619,18 +1619,18 @@
           {
             "component": "odg-go-cycle",
             "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
+            "directConsumers": 1,
+            "transitiveDependents": 1
           },
           {
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1682,17 +1682,17 @@
             "component": "odg-outcome-learning",
             "inCoreGraph": true,
             "directConsumers": 1,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           },
           {
             "component": "mission-priority-selector",
             "inCoreGraph": true,
             "directConsumers": 5,
-            "transitiveDependents": 6
+            "transitiveDependents": 7
           }
         ],
         "maxDirectConsumers": 5,
-        "maxTransitiveDependents": 6,
+        "maxTransitiveDependents": 7,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1742,17 +1742,17 @@
             "component": "odg-outcome-learning",
             "inCoreGraph": true,
             "directConsumers": 1,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           },
           {
             "component": "mission-priority-selector",
             "inCoreGraph": true,
             "directConsumers": 5,
-            "transitiveDependents": 6
+            "transitiveDependents": 7
           }
         ],
         "maxDirectConsumers": 5,
-        "maxTransitiveDependents": 6,
+        "maxTransitiveDependents": 7,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1807,11 +1807,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1861,17 +1861,17 @@
             "component": "mission-priority-selector",
             "inCoreGraph": true,
             "directConsumers": 5,
-            "transitiveDependents": 6
+            "transitiveDependents": 7
           },
           {
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 5,
-        "maxTransitiveDependents": 6,
+        "maxTransitiveDependents": 7,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -1923,12 +1923,12 @@
           {
             "component": "odg-go-cycle",
             "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
+            "directConsumers": 1,
+            "transitiveDependents": 1
           }
         ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
+        "maxDirectConsumers": 1,
+        "maxTransitiveDependents": 1,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -2028,12 +2028,12 @@
           {
             "component": "odg-go-cycle",
             "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
+            "directConsumers": 1,
+            "transitiveDependents": 1
           }
         ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
+        "maxDirectConsumers": 1,
+        "maxTransitiveDependents": 1,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -2081,11 +2081,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -2136,12 +2136,12 @@
           {
             "component": "odg-go-cycle",
             "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
+            "directConsumers": 1,
+            "transitiveDependents": 1
           }
         ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
+        "maxDirectConsumers": 1,
+        "maxTransitiveDependents": 1,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -2248,12 +2248,12 @@
           {
             "component": "odg-go-cycle",
             "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
+            "directConsumers": 1,
+            "transitiveDependents": 1
           }
         ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
+        "maxDirectConsumers": 1,
+        "maxTransitiveDependents": 1,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -2360,11 +2360,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -2412,11 +2412,11 @@
             "component": "odg-strategic-register",
             "inCoreGraph": true,
             "directConsumers": 2,
-            "transitiveDependents": 2
+            "transitiveDependents": 3
           }
         ],
         "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
+        "maxTransitiveDependents": 3,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -2469,7 +2469,7 @@
             "component": "audit-log",
             "inCoreGraph": true,
             "directConsumers": 11,
-            "transitiveDependents": 43
+            "transitiveDependents": 44
           },
           {
             "component": "supply-chain-attest",
@@ -2479,7 +2479,7 @@
           }
         ],
         "maxDirectConsumers": 11,
-        "maxTransitiveDependents": 43,
+        "maxTransitiveDependents": 44,
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
@@ -2967,9 +2967,9 @@
         },
         "reusability": {
           "status": "MEASURED",
-          "value": 0,
+          "value": 0.25,
           "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 0 (n/4 scale)"
+          "basis": "max direct consumers of the target components = 1 (n/4 scale)"
         },
         "strategicValue": {
           "status": "NOT_MEASURED",
@@ -3484,9 +3484,9 @@
         },
         "reusability": {
           "status": "MEASURED",
-          "value": 0,
+          "value": 0.25,
           "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 0 (n/4 scale)"
+          "basis": "max direct consumers of the target components = 1 (n/4 scale)"
         },
         "strategicValue": {
           "status": "NOT_MEASURED",
@@ -3558,9 +3558,9 @@
         },
         "reusability": {
           "status": "MEASURED",
-          "value": 0,
+          "value": 0.25,
           "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 0 (n/4 scale)"
+          "basis": "max direct consumers of the target components = 1 (n/4 scale)"
         },
         "strategicValue": {
           "status": "NOT_MEASURED",
@@ -3830,17 +3830,17 @@
         "autoSelectable": true
       },
       {
+        "id": "RB-RECORD-RUN-ACCOUNTING",
+        "evidenceScore": 0.15,
+        "uncertainty": 0.6,
+        "upperBound": 0.75,
+        "autoSelectable": true
+      },
+      {
         "id": "RB-REGISTER-CHECKPOINT-POINTERS",
         "evidenceScore": 0.13,
         "uncertainty": 0.6,
         "upperBound": 0.73,
-        "autoSelectable": true
-      },
-      {
-        "id": "RB-RECORD-RUN-ACCOUNTING",
-        "evidenceScore": 0.125,
-        "uncertainty": 0.6,
-        "upperBound": 0.725,
         "autoSelectable": true
       },
       {
@@ -3852,9 +3852,16 @@
       },
       {
         "id": "RB-RECORD-WORK-START",
-        "evidenceScore": 0.09,
+        "evidenceScore": 0.115,
         "uncertainty": 0.6,
-        "upperBound": 0.69,
+        "upperBound": 0.715,
+        "autoSelectable": true
+      },
+      {
+        "id": "RB-NATIVE-CODE-CONSTRUCTION",
+        "evidenceScore": 0.095,
+        "uncertainty": 0.6,
+        "upperBound": 0.695,
         "autoSelectable": true
       },
       {
@@ -3863,13 +3870,6 @@
         "uncertainty": 0.6,
         "upperBound": 0.68,
         "autoSelectable": false
-      },
-      {
-        "id": "RB-NATIVE-CODE-CONSTRUCTION",
-        "evidenceScore": 0.07,
-        "uncertainty": 0.6,
-        "upperBound": 0.67,
-        "autoSelectable": true
       }
     ],
     "selectionIsNotAuthorization": "the selected item is a PROPOSAL: it still needs PROPOSED → AUTHORIZED before EXECUTING"
@@ -3937,13 +3937,13 @@
               "component": "odg-strategic-register",
               "inCoreGraph": true,
               "directConsumers": 2,
-              "transitiveDependents": 2
+              "transitiveDependents": 3
             }
           ],
           "maxDirectConsumers": 2,
-          "maxTransitiveDependents": 2,
+          "maxTransitiveDependents": 3,
           "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)",
-          "rationale": "a change to odg-strategic-register reaches ≤ 2 transitive dependents (2 direct) — reach, not benefit"
+          "rationale": "a change to odg-strategic-register reaches ≤ 3 transitive dependents (2 direct) — reach, not benefit"
         },
         "ownerGate": {
           "required": false,
@@ -4563,19 +4563,19 @@
               "component": "odg-outcome-learning",
               "inCoreGraph": true,
               "directConsumers": 1,
-              "transitiveDependents": 2
+              "transitiveDependents": 3
             },
             {
               "component": "mission-priority-selector",
               "inCoreGraph": true,
               "directConsumers": 5,
-              "transitiveDependents": 6
+              "transitiveDependents": 7
             }
           ],
           "maxDirectConsumers": 5,
-          "maxTransitiveDependents": 6,
+          "maxTransitiveDependents": 7,
           "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)",
-          "rationale": "a change to odg-outcome-learning/mission-priority-selector reaches ≤ 6 transitive dependents (5 direct) — reach, not benefit"
+          "rationale": "a change to odg-outcome-learning/mission-priority-selector reaches ≤ 7 transitive dependents (5 direct) — reach, not benefit"
         },
         "ownerGate": {
           "required": false,
@@ -4802,19 +4802,19 @@
               "component": "mission-priority-selector",
               "inCoreGraph": true,
               "directConsumers": 5,
-              "transitiveDependents": 6
+              "transitiveDependents": 7
             },
             {
               "component": "odg-strategic-register",
               "inCoreGraph": true,
               "directConsumers": 2,
-              "transitiveDependents": 2
+              "transitiveDependents": 3
             }
           ],
           "maxDirectConsumers": 5,
-          "maxTransitiveDependents": 6,
+          "maxTransitiveDependents": 7,
           "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)",
-          "rationale": "a change to mission-priority-selector/odg-strategic-register reaches ≤ 6 transitive dependents (5 direct) — reach, not benefit"
+          "rationale": "a change to mission-priority-selector/odg-strategic-register reaches ≤ 7 transitive dependents (5 direct) — reach, not benefit"
         },
         "ownerGate": {
           "required": false,

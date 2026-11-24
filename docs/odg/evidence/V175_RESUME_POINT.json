@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "0d756d245d7dcb377fa17e2cb23323c39af8c481697ad5709794f70641d97f72"
+      "sha256": "1c8765324f1aa22ce3843f96991b7d630f857c386a746715da0dea7435c3b5cc"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "6d57728a30dfd577696cb46d8d21da36669f9d247b9cd37f230e2dfbe4eebbb3"
+      "sha256": "73a7df1270476a56ac9c3427edc904fd3f5ed1f005a060afaa39b637b69c1563"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -211,7 +211,7 @@
       "id": "F",
       "title": "F — Multi-agents",
       "registerStatus": "EXECUTED_PARTIAL",
-      "contractState": "PROPOSED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "MEASURED",
         "v124MissionId": "CM-V237-ORCHESTRATION",
@@ -221,16 +221,45 @@
           "V150-AP-F"
         ]
       },
-      "contractSha256": "cd913c76d98b3b157cd5a8a0c8b496c6d3953ed0e9b2bd3e0be23f5b3ec9e3fb",
-      "ownerRecord": null,
-      "currentStep": null,
-      "scope": null,
-      "records": null,
+      "contractSha256": "52c68037f56166a28d0747099618d3169458f10b16d358c50895eeef40475174",
+      "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "52c68037f56166a28d0747099618d3169458f10b16d358c50895eeef40475174"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
       "lastGoRun": null,
-      "pending": [],
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 52c68037f561",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
       "next": {
-        "actor": "OWNER",
-        "action": "F contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 52c68037f56166a28d0747099618d3169458f10b16d358c50895eeef40475174) and commit the inspection record"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=F]",
@@ -822,7 +851,7 @@
     "strategic": {
       "decision": "SELECTED",
       "item": "F",
-      "contractState": "PROPOSED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "MEASURED",
         "v124MissionId": "CM-V237-ORCHESTRATION",
@@ -832,7 +861,7 @@
           "V150-AP-F"
         ]
       },
-      "ownerAuthorizationNeeded": "owner — F PROPOSED → AUTHORIZED (authorizedBy)",
+      "ownerAuthorizationNeeded": null,
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
     "dispatchable": [],
@@ -840,8 +869,8 @@
     "pendingNonGo": [
       {
         "item": "F",
-        "actor": "OWNER",
-        "action": "F contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 52c68037f56166a28d0747099618d3169458f10b16d358c50895eeef40475174) and commit the inspection record"
       }
     ],
     "lastGoRun": {

@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "6d57728a30dfd577696cb46d8d21da36669f9d247b9cd37f230e2dfbe4eebbb3"
+      "sha256": "73a7df1270476a56ac9c3427edc904fd3f5ed1f005a060afaa39b637b69c1563"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "dc26b204b65b53a448bfd1b4054d598fa09ebc4195bfce0ecf6bd9ddb1b9e5b2"
+      "sha256": "83e87d8ea64488c3c1f37f91a925537060dc2b1a28f0c5f673151f6c10b389ff"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -212,6 +212,10 @@
     {
       "source": "runtime/bin/odg-v175-native-design-run.ts",
       "sha256": "fd95b6c6ebe684435b72c10d73c50a21ccc4751c44e1862f9147c8d445cc1573"
+    },
+    {
+      "source": "runtime/bin/odg-v176-scenario-f-run.ts",
+      "sha256": "bc74d5dc3166355ce75a302e9f3e9601b86c5400d5f7580bad2ccc6b57bbafae"
     },
     {
       "source": "runtime/bin/odg-v176-scenario-j-run.ts",
@@ -765,11 +769,6 @@
       ],
       "staleWriteSets": [
         {
-          "item": "F",
-          "file": "runtime/bin/odg-v160-scenario-f-run.ts",
-          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[1]"
-        },
-        {
           "item": "V175-NB2",
           "file": "runtime/core/odg-canonical-json-extended.test.ts",
           "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[1]"
@@ -1046,6 +1045,12 @@
       ],
       "scenarioEvidenceRule": "SCN-1: a scenario evidence file (contractRef/contract '#X' or scenario field naming X) counts as executed against contract X only if its basename version V<n>_ ≥ the contracts file's version; earlier files are pre-contract evidence already cited in initialState.evidence",
       "authorizationEvidence": [
+        {
+          "scenario": "F",
+          "inspection": null,
+          "experiment": null,
+          "validation": null
+        },
         {
           "scenario": "G",
           "inspection": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
@@ -1984,8 +1989,8 @@
         "id": "F",
         "kind": "WORK_ITEM_CONTRACT",
         "title": "F — Multi-agents",
-        "contractState": "PROPOSED",
-        "authorizedBy": null,
+        "contractState": "AUTHORIZED_FOR_REVISION",
+        "authorizedBy": "OWNER (CTO) — « CTO — CONTINUATION APRÈS CP13 — AUTONOMIE NATIVE » (2026-11-24), docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3, les vagues GO parallèles et la conversion des propositions Radar en contrats, dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. » « Construire les vagues GO parallèles sur des zones d'écriture indépendantes. » « Respecter la sélection stratégique actuelle de GO, notamment F. » « Ne pas confondre autorisation de construction interne et autorisation de production, dépense ou engagement externe. » — encoded through the canonical scoped mechanism (odg-authorization-scope, like G/H/G2/J2/V175-NB1/V175-NB2/J): RUN_CONTROLLED_EXPERIMENTS becomes AUTHORIZED (derived, R4) only once the necessary conditions are green (R2 revision + preRegistration, R3 independent inspection ACCEPT bound to the contract sha, GO-DT-1 declared dispatch target, GO-DTO-1 caps); one initial execution per contract revision; internal construction only — no production, spend or external engagement. F's prior result (V161_SCENARIO_F.json) untouched.",
         "status": "EXECUTED_PARTIAL",
         "statusSource": [
           "docs/odg/evidence/V161_SCENARIO_F.json#contractRef",
@@ -2102,6 +2107,13 @@
             "basis": "k=4 (initialState.evidence 2 + executed file + CP8 grading)"
           }
         },
+        "closure": {
+          "closed": false,
+          "rule": "CLOSE-1",
+          "currentStep": "INSPECT_REVISED_CONTRACT",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+          "component": "odg-authorization-scope.deriveAuthorizationScope"
+        },
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
@@ -2150,11 +2162,11 @@
           "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         },
         "contractRef": {
-          "contractSha256": "cd913c76d98b3b157cd5a8a0c8b496c6d3953ed0e9b2bd3e0be23f5b3ec9e3fb",
+          "contractSha256": "52c68037f56166a28d0747099618d3169458f10b16d358c50895eeef40475174",
           "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5]",
-          "ownerRecord": null,
-          "ownerRecordSource": null,
-          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+          "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].authorization.source",
+          "ownerRecordReason": null
         }
       },
       {
@@ -14072,5 +14084,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "7add359efe384d8e99ea8f3648e7d7511ef0c61d"
+  "generatedAtHead": "539840e18f57e1ba98140f059e037b8effd1bea0"
 }
