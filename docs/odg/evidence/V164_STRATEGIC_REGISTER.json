@@ -192,6 +192,26 @@
     {
       "source": "runtime/core/odg-verification-risk-calibration.ts",
       "sha256": "926e04cdb7f6d0edc51a57b5aec131b822893239c729b5baa924ea658db3991b"
+    },
+    {
+      "source": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json",
+      "sha256": "a217ee85cc0b9a86cb248110b4b700d99f167a31e56a2f03979fdbc4bda549be"
+    },
+    {
+      "source": "docs/odg/v124-consolidated-roadmap.json",
+      "sha256": "198de7f60f5eadb485f54196eec978a3cc6b7378c4551ea5580027149ad3c105"
+    },
+    {
+      "source": "docs/odg/V14_4_ROADMAP.md",
+      "sha256": "9bae181c0c67e1410c67169badb6adb6c4f25ceaca6c960c2968dbce7b1132bc"
+    },
+    {
+      "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json",
+      "sha256": "1bac0e0671e693d46894d90dd21b67a274d8e010d8c070d373a6ef6945ceb4cd"
+    },
+    {
+      "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
+      "sha256": "617bfca543c23af5031174ebbb19cefe2906744ea4ed7fe455a4f8babf981b7f"
     }
   ],
   "register": {
@@ -697,6 +717,68 @@
         "V150_TOP10_ITEM"
       ]
     },
+    "boussole": {
+      "rule": "BREF-1 (provider-authored; applied uniformly to every register item): (1) v150RequirementIds — WORK_ITEM_CONTRACT: the V171 matrix row whose v150.section is '§45 scenario X' for X = the contract scenario when it is an A–P letter, else contract.parent.scenario when that is an A–P letter (stated lineage); V150_TOP10_ITEM: rows of each V150 summary.top10NextInternal[i].advances entry ('§45-X' ⇒ '§45 scenario X', '§N…' ⇒ '§N'); V150_ALSO_INTERNAL / V150_OWNER_GATED: rows of the '§N' citations of the item's own V150 summary text (a citation directly preceded by a document name, e.g. 'V15_CLOSURE_DOSSIER §8', is not a V15.0 section and is skipped); every other kind: no field links it ⇒ []. (2) V12.4 — each row's anchors.v12_4 segment '<S> <MISSION-ID>' counts only if the canonical V12.4 companion lists MISSION-ID with section S; a section-only segment '<S> …' counts as section S only if the companion has a mission in S; 'none' / 'transversal' state no mission; v124MissionId = the single distinct mission over all rows, else null (ambiguous or none); v124Section = that mission's section, else the single distinct section, else null. (3) v144Phase — from the ADOPTED docs/odg/V14_4_ROADMAP.md §2 table: a phase matches a mission candidate when its 'V12.4 anchor(s)' cell names that mission id, or names its section letter without a mission id; a section-only candidate matches cells naming that letter without a mission id; v144Phase = the single distinct matched phase, else null. status = MEASURED iff ≥1 requirement row resolved (each measured ref cites ≥1 source pointer), else NOT_MEASURED with the reason; per-field nulls carry fieldReasons.",
+      "coverage": {
+        "rule": "BREF-1",
+        "items": 59,
+        "measured": 37,
+        "notMeasured": 22,
+        "withV124MissionId": 22,
+        "withV124Section": 23,
+        "withV144Phase": 21,
+        "byKind": {
+          "WORK_ITEM_CONTRACT": {
+            "items": 19,
+            "measured": 18,
+            "notMeasured": 1
+          },
+          "V150_TOP10_ITEM": {
+            "items": 5,
+            "measured": 5,
+            "notMeasured": 0
+          },
+          "V150_ALSO_INTERNAL": {
+            "items": 2,
+            "measured": 0,
+            "notMeasured": 2
+          },
+          "V150_OWNER_GATED": {
+            "items": 14,
+            "measured": 14,
+            "notMeasured": 0
+          },
+          "CP8_CAPABILITY_GAP": {
+            "items": 11,
+            "measured": 0,
+            "notMeasured": 11
+          },
+          "CP8_METHOD_CARD": {
+            "items": 8,
+            "measured": 0,
+            "notMeasured": 8
+          }
+        }
+      },
+      "contractRefRule": "CREF-1: WORK_ITEM_CONTRACT items carry contractRef {contractSha256 = odg-authorization-scope.contractSha256(contract entry), ownerRecord = the docs/*.json path that authorization.source starts with, else null + reason}",
+      "precedence": {
+        "order": [
+          "OWNER_RECORDS_IN_SCOPE",
+          "V12_4",
+          "V14_4",
+          "ADDENDUM",
+          "V15_0"
+        ],
+        "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json#precedence.order"
+      },
+      "sources": {
+        "correspondence": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json",
+        "matrix": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json",
+        "precedence": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
+        "v124": "docs/odg/v124-consolidated-roadmap.json",
+        "v144": "docs/odg/V14_4_ROADMAP.md"
+      }
+    },
     "contradictions": {
       "rules": {
         "CTR-1": "GAP_STATED_FIXED: a CP8_CAPABILITY_GAP item whose status (before RES-1) is open while a PR record of a checkpoint LATER than CP8 (prs[*].what) contains one of the gap's usable blockerAnchors (anchor present in the gap's own CP8 text, normalized as BLK-2) AND the word 'fixed' ⇒ reported; resolved only by a RES-1 record (then state RESOLVED_BY_EVIDENCE + citation), never by the detector",
@@ -1071,7 +1153,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V234-RESIDENT-DRIVER",
+          "v124Section": "E",
+          "v144Phase": 3,
+          "v150RequirementIds": [
+            "V150-AP-A"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[0].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[56].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[56].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V234-RESIDENT-DRIVER].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-A",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              }
+            ],
+            "v144Phases": [
+              3
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[1].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "e09802471d8378311132be02ef405b5ae895275d9e8af3924addc529e0252d3b",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[0]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "B",
@@ -1194,7 +1318,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V234-CONTINUATION",
+          "v124Section": "D",
+          "v144Phase": 0,
+          "v150RequirementIds": [
+            "V150-AP-B"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[1].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[57].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[57].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V234-CONTINUATION].section",
+            "docs/odg/V14_4_ROADMAP.md#L32 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-B",
+                "missionId": "CM-V234-CONTINUATION",
+                "section": "D"
+              }
+            ],
+            "v144Phases": [
+              0
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[0].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "b7c57207eff8f34fb5a8c348f450e0336803fe438a227058af72b48938ad531f",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[1]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "C",
@@ -1321,7 +1487,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V236-CARTOGRAPHY",
+          "v124Section": "C",
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-AP-C"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[2].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[58].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[58].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V236-CARTOGRAPHY].section"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-C",
+                "missionId": "CM-V236-CARTOGRAPHY",
+                "section": "C"
+              }
+            ],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[3].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "3e2992b482cadc1deb1e867831182b7ba111936e2237eb3105d69064b12ab8e5",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[2]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "D",
@@ -1448,7 +1656,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-RADAR-GATE-CHAIN",
+          "v124Section": "I",
+          "v144Phase": 1,
+          "v150RequirementIds": [
+            "V150-AP-D"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[3].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[59].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[59].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-RADAR-GATE-CHAIN].section",
+            "docs/odg/V14_4_ROADMAP.md#L33 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-D",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              }
+            ],
+            "v144Phases": [
+              1
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[8].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "e6aaa9c977f2f7f8f29bd5f9043aa77b4fdbf3fbae7f72ed1c3c6c62895dc338",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[3]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "E",
@@ -1570,7 +1820,47 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": "D",
+          "v144Phase": 0,
+          "v150RequirementIds": [
+            "V150-AP-E"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[4].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[60].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[60].anchors.v12_4",
+            "docs/odg/V14_4_ROADMAP.md#L32 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-E",
+                "missionId": null,
+                "section": "D"
+              }
+            ],
+            "v144Phases": [
+              0
+            ]
+          },
+          "fieldReasons": {
+            "v124MissionId": "no row anchor names a V12.4 mission id (section-only or none)"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "b00437d0384877cab4de6211d7e3a075bda8902b9a8cde97758c6cc902717756",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[4]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "F",
@@ -1705,7 +1995,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V237-ORCHESTRATION",
+          "v124Section": "F",
+          "v144Phase": 3,
+          "v150RequirementIds": [
+            "V150-AP-F"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[61].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[61].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V237-ORCHESTRATION].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-F",
+                "missionId": "CM-V237-ORCHESTRATION",
+                "section": "F"
+              }
+            ],
+            "v144Phases": [
+              3
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[6].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "cd913c76d98b3b157cd5a8a0c8b496c6d3953ed0e9b2bd3e0be23f5b3ec9e3fb",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "G",
@@ -1902,7 +2234,59 @@
           "fanOut": 1,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-RADAR-GATE-CHAIN",
+          "v124Section": "I",
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-AP-G"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[62].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[62].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-RADAR-GATE-CHAIN].section",
+            "docs/odg/V14_4_ROADMAP.md#L33 (§2 phase table)",
+            "docs/odg/V14_4_ROADMAP.md#L34 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-G",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              },
+              {
+                "requirement": "V150-AP-G",
+                "missionId": null,
+                "section": "B"
+              }
+            ],
+            "v144Phases": [
+              1,
+              2
+            ]
+          },
+          "fieldReasons": {
+            "v144Phase": "AMBIGUOUS: V14.4 phases [1, 2]"
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[8].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6]",
+          "ownerRecord": "docs/odg/V165_OWNER_AUTHORIZATION.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].authorization.source",
+          "ownerRecordReason": null
+        }
       },
       {
         "id": "H",
@@ -2098,7 +2482,40 @@
           "fanOut": 1,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-AP-H"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[63].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[63].anchors.v12_4"
+          ],
+          "candidates": {
+            "v124": [],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+            "v124Section": "no V12.4 section stated",
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7]",
+          "ownerRecord": "docs/odg/V168_OWNER_AUTHORIZATION_H.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].authorization.source",
+          "ownerRecordReason": null
+        }
       },
       {
         "id": "I",
@@ -2220,7 +2637,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V237-ORCHESTRATION",
+          "v124Section": "F",
+          "v144Phase": 3,
+          "v150RequirementIds": [
+            "V150-AP-I"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[8].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[64].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[64].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V237-ORCHESTRATION].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-I",
+                "missionId": "CM-V237-ORCHESTRATION",
+                "section": "F"
+              }
+            ],
+            "v144Phases": [
+              3
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[6].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "1fcff58eae04dd11a5bf9fe2e392231c153ba58718cfa5fbc4b95b61efbe905d",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[8]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "J",
@@ -2359,7 +2818,40 @@
           "fanOut": 1,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-AP-J"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[65].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[65].anchors.v12_4"
+          ],
+          "candidates": {
+            "v124": [],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+            "v124Section": "no V12.4 section stated",
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "687d6b285cc8c0239fdf5e34f59df50203243a3602012099431b9f0855055941",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "K",
@@ -2494,7 +2986,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-RADAR-GATE-CHAIN",
+          "v124Section": "I",
+          "v144Phase": 1,
+          "v150RequirementIds": [
+            "V150-AP-K"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[10].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[66].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[66].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-RADAR-GATE-CHAIN].section",
+            "docs/odg/V14_4_ROADMAP.md#L33 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-K",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              }
+            ],
+            "v144Phases": [
+              1
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[8].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "5664bc96d4f134cd43d2649947b7ec535170ded6415ab141c14fed9e70a80f02",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[10]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "L",
@@ -2616,7 +3150,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-BENCHMARK-AUDIT",
+          "v124Section": "K",
+          "v144Phase": 4,
+          "v150RequirementIds": [
+            "V150-AP-L"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[11].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[67].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[67].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-BENCHMARK-AUDIT].section",
+            "docs/odg/V14_4_ROADMAP.md#L36 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-L",
+                "missionId": "CM-BENCHMARK-AUDIT",
+                "section": "K"
+              }
+            ],
+            "v144Phases": [
+              4
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[12].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "c1e43bd64406831086f077313da1b575e3ff90cb3e092d1e47d8ccdf25f9be1e",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[11]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "M",
@@ -2739,7 +3315,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V237-AZ-SCENARIO",
+          "v124Section": "G",
+          "v144Phase": 3,
+          "v150RequirementIds": [
+            "V150-AP-M"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[12].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[68].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[68].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V237-AZ-SCENARIO].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-M",
+                "missionId": "CM-V237-AZ-SCENARIO",
+                "section": "G"
+              }
+            ],
+            "v144Phases": [
+              3
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[5].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "67aabb12f653e43f745a7d97482001ea0c653de91068e9478c7673a2f2d9e2d0",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[12]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "N",
@@ -2861,7 +3479,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V234-RESIDENT-DRIVER",
+          "v124Section": "E",
+          "v144Phase": 3,
+          "v150RequirementIds": [
+            "V150-AP-N"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[13].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[69].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[69].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V234-RESIDENT-DRIVER].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-N",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              }
+            ],
+            "v144Phases": [
+              3
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[1].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "2057d1b404e7614b6010cb51352716e7ff55d9d9042fc509ca4fbe0904d64c86",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[13]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "O",
@@ -2983,7 +3643,49 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V237-ORCHESTRATION",
+          "v124Section": "F",
+          "v144Phase": 3,
+          "v150RequirementIds": [
+            "V150-AP-O"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[14].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[70].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[70].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V237-ORCHESTRATION].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-O",
+                "missionId": "CM-V237-ORCHESTRATION",
+                "section": "F"
+              }
+            ],
+            "v144Phases": [
+              3
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[6].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "0ff50449d374836bc95f1dfa07353ac338e6a18ce155908db7eb0e355590dd03",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[14]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "P",
@@ -3105,7 +3807,40 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-AP-P"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[15].scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[71].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[71].anchors.v12_4"
+          ],
+          "candidates": {
+            "v124": [],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+            "v124Section": "no V12.4 section stated",
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "b3388fa9d415cc2d1092b0ad8a6b90222a5d6e2d0c12b31643056852280d475a",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[15]",
+          "ownerRecord": null,
+          "ownerRecordSource": null,
+          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
       },
       {
         "id": "G2",
@@ -3318,7 +4053,59 @@
             "satisfied": true,
             "satisfiedBasis": "runtime/core/odg-verification-risk-calibration.ts committed"
           }
-        ]
+        ],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-RADAR-GATE-CHAIN",
+          "v124Section": "I",
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-AP-G"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].parent.scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[62].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[62].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-RADAR-GATE-CHAIN].section",
+            "docs/odg/V14_4_ROADMAP.md#L33 (§2 phase table)",
+            "docs/odg/V14_4_ROADMAP.md#L34 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-AP-G",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              },
+              {
+                "requirement": "V150-AP-G",
+                "missionId": null,
+                "section": "B"
+              }
+            ],
+            "v144Phases": [
+              1,
+              2
+            ]
+          },
+          "fieldReasons": {
+            "v144Phase": "AMBIGUOUS: V14.4 phases [1, 2]"
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[8].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "94ca64cab00782649944b6dd3825ca6f1ed9f868943c89e0e86f7827d1d704a1",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16]",
+          "ownerRecord": "docs/odg/V170_OWNER_AUTHORIZATION_HG.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].authorization.source",
+          "ownerRecordReason": null
+        }
       },
       {
         "id": "J2",
@@ -3528,7 +4315,40 @@
             "satisfied": true,
             "satisfiedBasis": "docs/odg/evidence/V161_SCENARIO_J.json committed, sha256 = pinned 11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff"
           }
-        ]
+        ],
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-AP-J"
+          ],
+          "source": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].parent.scenario",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[65].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[65].anchors.v12_4"
+          ],
+          "candidates": {
+            "v124": [],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+            "v124Section": "no V12.4 section stated",
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
+        },
+        "contractRef": {
+          "contractSha256": "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17]",
+          "ownerRecord": "docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].authorization.source",
+          "ownerRecordReason": null
+        }
       },
       {
         "id": "V175-NB1",
@@ -3715,7 +4535,25 @@
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": []
+        "dependencyEdges": [],
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "contract scenario 'V175-NB1' is not an A–P §45 scenario and contract.parent.scenario is null ⇒ no committed field links it to a V15.0 requirement row"
+        },
+        "contractRef": {
+          "contractSha256": "953d064ad2fffd3711a9f4efa50592e96b06182349d801e22f7813b17b31b777",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[18]",
+          "ownerRecord": "docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[18].authorization.source",
+          "ownerRecordReason": null
+        }
       },
       {
         "id": "V150-T01",
@@ -3835,6 +4673,73 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-S25",
+            "V150-S45",
+            "V150-S46",
+            "V150-S49",
+            "V150-S51"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[0].advances[0]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[25].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[0].advances[1]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[45].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[0].advances[2]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[46].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[0].advances[3]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[49].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[0].advances[4]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[51].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[25].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[45].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[46].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[49].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[51].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V237-AZ-SCENARIO].section",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V237-PROGRAM-CONTINUITY].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)",
+            "docs/odg/V14_4_ROADMAP.md#L32 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S45",
+                "missionId": "CM-V237-AZ-SCENARIO",
+                "section": "G"
+              },
+              {
+                "requirement": "V150-S46",
+                "missionId": "CM-V237-PROGRAM-CONTINUITY",
+                "section": "D"
+              }
+            ],
+            "v144Phases": [
+              0,
+              3
+            ]
+          },
+          "fieldReasons": {
+            "v124MissionId": "AMBIGUOUS: rows anchor 2 V12.4 missions [CM-V237-AZ-SCENARIO, CM-V237-PROGRAM-CONTINUITY]",
+            "v124Section": "AMBIGUOUS: sections [D, G]",
+            "v144Phase": "AMBIGUOUS: V14.4 phases [0, 3]"
+          },
+          "rejectedAnchors": [
+            {
+              "segment": "canonical status of V12.4",
+              "reason": "no '<section> <mission-id>' or known section letter",
+              "requirement": "V150-S51"
+            }
+          ],
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -3957,6 +4862,63 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V234-RESIDENT-DRIVER",
+          "v124Section": "E",
+          "v144Phase": 3,
+          "v150RequirementIds": [
+            "V150-S10",
+            "V150-S23",
+            "V150-S35",
+            "V150-S50"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[1].advances[0]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[10].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[1].advances[1]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[23].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[1].advances[2]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[35].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[1].advances[3]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[50].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[10].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[23].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[35].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[50].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V234-RESIDENT-DRIVER].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S10",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              },
+              {
+                "requirement": "V150-S23",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              },
+              {
+                "requirement": "V150-S35",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              }
+            ],
+            "v144Phases": [
+              3
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[1].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -4078,6 +5040,68 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-BENCHMARK-AUDIT",
+          "v124Section": "K",
+          "v144Phase": 4,
+          "v150RequirementIds": [
+            "V150-S18",
+            "V150-S39",
+            "V150-S53",
+            "V150-S24"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[6].advances[0]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[18].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[6].advances[1]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[39].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[6].advances[2]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[53].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[6].advances[3]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[24].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[18].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[39].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[53].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[24].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-BENCHMARK-AUDIT].section",
+            "docs/odg/V14_4_ROADMAP.md#L36 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S18",
+                "missionId": "CM-BENCHMARK-AUDIT",
+                "section": "K"
+              },
+              {
+                "requirement": "V150-S39",
+                "missionId": "CM-BENCHMARK-AUDIT",
+                "section": "K"
+              },
+              {
+                "requirement": "V150-S53",
+                "missionId": "CM-BENCHMARK-AUDIT",
+                "section": "K"
+              },
+              {
+                "requirement": "V150-S24",
+                "missionId": "CM-BENCHMARK-AUDIT",
+                "section": "K"
+              }
+            ],
+            "v144Phases": [
+              4
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[12].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -4195,6 +5219,36 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-S54",
+            "V150-S48"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[8].advances[0]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[54].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[8].advances[1]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[48].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[54].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[48].anchors.v12_4"
+          ],
+          "candidates": {
+            "v124": [],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+            "v124Section": "no V12.4 section stated",
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -4314,6 +5368,54 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-MULTIMODAL-VIDEO",
+          "v124Section": "P",
+          "v144Phase": 5,
+          "v150RequirementIds": [
+            "V150-S20",
+            "V150-S40",
+            "V150-S48"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[9].advances[0]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[20].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[9].advances[1]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[40].v150.section",
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal[9].advances[2]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[48].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[20].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[40].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[48].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-MULTIMODAL-VIDEO].section",
+            "docs/odg/V14_4_ROADMAP.md#L37 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S20",
+                "missionId": "CM-MULTIMODAL-VIDEO",
+                "section": "P"
+              },
+              {
+                "requirement": "V150-S40",
+                "missionId": "CM-MULTIMODAL-VIDEO",
+                "section": "P"
+              }
+            ],
+            "v144Phases": [
+              5
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[13].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -4418,6 +5520,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "the item's V150 summary text cites no V15.0 '§' section"
         }
       },
       {
@@ -4531,6 +5644,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "the item's V150 summary text cites no V15.0 '§' section"
         }
       },
       {
@@ -4639,6 +5763,77 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": 3,
+          "v150RequirementIds": [
+            "V150-S15",
+            "V150-S27",
+            "V150-S31",
+            "V150-S41"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[0]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[15].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[27].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[31].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[41].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[15].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[27].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[31].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[41].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V234-RESIDENT-DRIVER].section",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V237-AZ-SCENARIO].section",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V237-ORCHESTRATION].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S15",
+                "missionId": "CM-V237-ORCHESTRATION",
+                "section": "F"
+              },
+              {
+                "requirement": "V150-S15",
+                "missionId": "CM-V237-AZ-SCENARIO",
+                "section": "G"
+              },
+              {
+                "requirement": "V150-S27",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              },
+              {
+                "requirement": "V150-S31",
+                "missionId": "CM-V237-ORCHESTRATION",
+                "section": "F"
+              },
+              {
+                "requirement": "V150-S41",
+                "missionId": "CM-V237-ORCHESTRATION",
+                "section": "F"
+              },
+              {
+                "requirement": "V150-S41",
+                "missionId": "CM-V237-AZ-SCENARIO",
+                "section": "G"
+              }
+            ],
+            "v144Phases": [
+              3
+            ]
+          },
+          "fieldReasons": {
+            "v124MissionId": "AMBIGUOUS: rows anchor 3 V12.4 missions [CM-V234-RESIDENT-DRIVER, CM-V237-AZ-SCENARIO, CM-V237-ORCHESTRATION]",
+            "v124Section": "AMBIGUOUS: sections [E, F, G]"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -4747,6 +5942,49 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-BENCHMARK-AUDIT",
+          "v124Section": "K",
+          "v144Phase": 4,
+          "v150RequirementIds": [
+            "V150-S18",
+            "V150-S39"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[1]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[18].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[39].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[18].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[39].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-BENCHMARK-AUDIT].section",
+            "docs/odg/V14_4_ROADMAP.md#L36 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S18",
+                "missionId": "CM-BENCHMARK-AUDIT",
+                "section": "K"
+              },
+              {
+                "requirement": "V150-S39",
+                "missionId": "CM-BENCHMARK-AUDIT",
+                "section": "K"
+              }
+            ],
+            "v144Phases": [
+              4
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[12].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -4855,6 +6093,61 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-RADAR-GATE-CHAIN",
+          "v124Section": "I",
+          "v144Phase": 1,
+          "v150RequirementIds": [
+            "V150-S13",
+            "V150-S38"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[2]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[13].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[38].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[13].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[38].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-RADAR-GATE-CHAIN].section",
+            "docs/odg/V14_4_ROADMAP.md#L33 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S13",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              },
+              {
+                "requirement": "V150-S38",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              }
+            ],
+            "v144Phases": [
+              1
+            ]
+          },
+          "rejectedAnchors": [
+            {
+              "segment": "steps 1–2 merged",
+              "reason": "no '<section> <mission-id>' or known section letter",
+              "requirement": "V150-S13"
+            },
+            {
+              "segment": "companion commit null)",
+              "reason": "no '<section> <mission-id>' or known section letter",
+              "requirement": "V150-S13"
+            }
+          ],
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[8].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -4963,6 +6256,65 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-S13",
+            "V150-S52"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[3]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[13].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[52].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[13].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[52].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-BENCHMARK-AUDIT].section",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-RADAR-GATE-CHAIN].section",
+            "docs/odg/V14_4_ROADMAP.md#L33 (§2 phase table)",
+            "docs/odg/V14_4_ROADMAP.md#L36 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S13",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              },
+              {
+                "requirement": "V150-S52",
+                "missionId": "CM-BENCHMARK-AUDIT",
+                "section": "K"
+              }
+            ],
+            "v144Phases": [
+              1,
+              4
+            ]
+          },
+          "fieldReasons": {
+            "v124MissionId": "AMBIGUOUS: rows anchor 2 V12.4 missions [CM-BENCHMARK-AUDIT, CM-RADAR-GATE-CHAIN]",
+            "v124Section": "AMBIGUOUS: sections [I, K]",
+            "v144Phase": "AMBIGUOUS: V14.4 phases [1, 4]"
+          },
+          "rejectedAnchors": [
+            {
+              "segment": "steps 1–2 merged",
+              "reason": "no '<section> <mission-id>' or known section letter",
+              "requirement": "V150-S13"
+            },
+            {
+              "segment": "companion commit null)",
+              "reason": "no '<section> <mission-id>' or known section letter",
+              "requirement": "V150-S13"
+            }
+          ],
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -5071,6 +6423,53 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-RADAR-GATE-CHAIN",
+          "v124Section": "I",
+          "v144Phase": 1,
+          "v150RequirementIds": [
+            "V150-S13"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[4]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[13].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[13].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-RADAR-GATE-CHAIN].section",
+            "docs/odg/V14_4_ROADMAP.md#L33 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S13",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              }
+            ],
+            "v144Phases": [
+              1
+            ]
+          },
+          "rejectedAnchors": [
+            {
+              "segment": "steps 1–2 merged",
+              "reason": "no '<section> <mission-id>' or known section letter",
+              "requirement": "V150-S13"
+            },
+            {
+              "segment": "companion commit null)",
+              "reason": "no '<section> <mission-id>' or known section letter",
+              "requirement": "V150-S13"
+            }
+          ],
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[8].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -5179,6 +6578,44 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-RADAR-GATE-CHAIN",
+          "v124Section": "I",
+          "v144Phase": 1,
+          "v150RequirementIds": [
+            "V150-S38",
+            "V150-S47"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[5]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[38].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[47].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[38].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[47].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-RADAR-GATE-CHAIN].section",
+            "docs/odg/V14_4_ROADMAP.md#L33 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S38",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              }
+            ],
+            "v144Phases": [
+              1
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[8].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -5287,6 +6724,50 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-S02",
+            "V150-S29",
+            "V150-S51"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[6]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[2].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[29].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[51].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[2].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[29].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[51].anchors.v12_4"
+          ],
+          "candidates": {
+            "v124": [],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+            "v124Section": "no V12.4 section stated",
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "rejectedAnchors": [
+            {
+              "segment": "all 24 missions (via correspondence)",
+              "reason": "no '<section> <mission-id>' or known section letter",
+              "requirement": "V150-S29"
+            },
+            {
+              "segment": "canonical status of V12.4",
+              "reason": "no '<section> <mission-id>' or known section letter",
+              "requirement": "V150-S51"
+            }
+          ],
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -5395,6 +6876,35 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-S01",
+            "V150-S22"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[7]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[1].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[22].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[1].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[22].anchors.v12_4"
+          ],
+          "candidates": {
+            "v124": [],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+            "v124Section": "no V12.4 section stated",
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -5503,6 +7013,32 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-S21"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[8]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[21].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[21].anchors.v12_4"
+          ],
+          "candidates": {
+            "v124": [],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+            "v124Section": "no V12.4 section stated",
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -5611,6 +7147,67 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-S16",
+            "V150-S23",
+            "V150-S27"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[9]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[16].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[23].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[27].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[16].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[23].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[27].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V234-CONTINUATION].section",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V234-RESIDENT-DRIVER].section",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V237-PROGRAM-CONTINUITY].section",
+            "docs/odg/V14_4_ROADMAP.md#L32 (§2 phase table)",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S16",
+                "missionId": "CM-V234-CONTINUATION",
+                "section": "D"
+              },
+              {
+                "requirement": "V150-S16",
+                "missionId": "CM-V237-PROGRAM-CONTINUITY",
+                "section": "D"
+              },
+              {
+                "requirement": "V150-S23",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              },
+              {
+                "requirement": "V150-S27",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              }
+            ],
+            "v144Phases": [
+              0,
+              3
+            ]
+          },
+          "fieldReasons": {
+            "v124MissionId": "AMBIGUOUS: rows anchor 3 V12.4 missions [CM-V234-CONTINUATION, CM-V234-RESIDENT-DRIVER, CM-V237-PROGRAM-CONTINUITY]",
+            "v124Section": "AMBIGUOUS: sections [D, E]",
+            "v144Phase": "AMBIGUOUS: V14.4 phases [0, 3]"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -5719,6 +7316,71 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-S10",
+            "V150-S17",
+            "V150-S35",
+            "V150-S36"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[10]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[10].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[17].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[35].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[36].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[10].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[17].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[35].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[36].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-RADAR-GATE-CHAIN].section",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V234-RESIDENT-DRIVER].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)",
+            "docs/odg/V14_4_ROADMAP.md#L32 (§2 phase table)",
+            "docs/odg/V14_4_ROADMAP.md#L33 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S10",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              },
+              {
+                "requirement": "V150-S17",
+                "missionId": null,
+                "section": "D"
+              },
+              {
+                "requirement": "V150-S35",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              },
+              {
+                "requirement": "V150-S36",
+                "missionId": "CM-RADAR-GATE-CHAIN",
+                "section": "I"
+              }
+            ],
+            "v144Phases": [
+              0,
+              1,
+              3
+            ]
+          },
+          "fieldReasons": {
+            "v124MissionId": "AMBIGUOUS: rows anchor 2 V12.4 missions [CM-RADAR-GATE-CHAIN, CM-V234-RESIDENT-DRIVER]",
+            "v124Section": "AMBIGUOUS: sections [D, E, I]",
+            "v144Phase": "AMBIGUOUS: V14.4 phases [0, 1, 3]"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -5827,6 +7489,44 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-V234-RESIDENT-DRIVER",
+          "v124Section": "E",
+          "v144Phase": 3,
+          "v150RequirementIds": [
+            "V150-S10",
+            "V150-S22"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[11]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[10].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[22].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[10].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[22].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-V234-RESIDENT-DRIVER].section",
+            "docs/odg/V14_4_ROADMAP.md#L35 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S10",
+                "missionId": "CM-V234-RESIDENT-DRIVER",
+                "section": "E"
+              }
+            ],
+            "v144Phases": [
+              3
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[1].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -5935,6 +7635,41 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": "CM-BENCHMARK-AUDIT",
+          "v124Section": "K",
+          "v144Phase": 4,
+          "v150RequirementIds": [
+            "V150-S18"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[12]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[18].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[18].anchors.v12_4",
+            "docs/odg/v124-consolidated-roadmap.json#missions[id=CM-BENCHMARK-AUDIT].section",
+            "docs/odg/V14_4_ROADMAP.md#L36 (§2 phase table)"
+          ],
+          "candidates": {
+            "v124": [
+              {
+                "requirement": "V150-S18",
+                "missionId": "CM-BENCHMARK-AUDIT",
+                "section": "K"
+              }
+            ],
+            "v144Phases": [
+              4
+            ]
+          },
+          "v124MissionCensus": {
+            "summary": "ALL_CORE_CONNECTED",
+            "source": "docs/odg/evidence/V150_PHASE1_CORRESPONDENCE.json#missions[12].summary"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -6043,6 +7778,38 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [
+            "V150-S19",
+            "V150-S47",
+            "V150-S54"
+          ],
+          "source": [
+            "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.ownerGated[13]",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[19].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[47].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[54].v150.section",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[19].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[47].anchors.v12_4",
+            "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#requirements[54].anchors.v12_4"
+          ],
+          "candidates": {
+            "v124": [],
+            "v144Phases": []
+          },
+          "fieldReasons": {
+            "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+            "v124Section": "no V12.4 section stated",
+            "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+          },
+          "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         }
       },
       {
@@ -6155,6 +7922,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -6268,6 +8046,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -6391,6 +8180,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -6505,6 +8305,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -6625,6 +8436,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -6743,6 +8565,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -6852,6 +8685,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -6965,6 +8809,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -7075,6 +8930,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -7193,6 +9059,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -7338,6 +9215,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_CAPABILITY_GAP item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -7442,6 +9330,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_METHOD_CARD item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -7546,6 +9445,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_METHOD_CARD item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -7647,6 +9557,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_METHOD_CARD item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -7751,6 +9672,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_METHOD_CARD item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -7855,6 +9787,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_METHOD_CARD item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -7959,6 +9902,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_METHOD_CARD item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -8063,6 +10017,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_METHOD_CARD item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       },
       {
@@ -8167,6 +10132,17 @@
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
+        },
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "no committed field links a CP8_METHOD_CARD item to a V15.0 requirement, V12.4 mission or V14.4 phase (CP8 records carry no section/mission/phase reference)"
         }
       }
     ]
@@ -11779,7 +13755,8 @@
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
+    "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "2e4bda638383fad36cfa8e6848200ea3e2fcba0c"
+  "generatedAtHead": "f111ee149130a3d54ee15d681b20341d6d3db918"
 }
