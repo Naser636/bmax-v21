@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "43c38d865914e6eaa989401b0de757f081a9df03cb5c977c61077eaa66f1e107"
+      "sha256": "888d128ef52212e358e6d5e02c50fd7f1a2707b3a42eb1773624808a20acdcff"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "99478c928d94c526e8f64a189457a52251b14262140b77eeaddd852a19e19b04"
+      "sha256": "0da338b20a14ec2e77680fc2c57c1b7ba68fa40a53db4f6423c604d8a61fbaad"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -222,6 +222,14 @@
       "sha256": "c4bfe387a801ca1add1513dc3aa65271b2d2e9928f1693142c07825490e2933d"
     },
     {
+      "source": "runtime/bin/odg-v176-scenario-f-run.test.ts",
+      "sha256": "7cdd87c6103d39ce94ff31d2ec0e8d3cfdb6832ad55bf679857cbe32e0efffbb"
+    },
+    {
+      "source": "runtime/bin/odg-v176-scenario-f-run.ts",
+      "sha256": "4b2d939fde0a77642191bdfecc560b9a8c745a4f5d940469a8497531e6b17bba"
+    },
+    {
       "source": "runtime/bin/odg-v176-scenario-j-run.ts",
       "sha256": "064c45c51438dc04b05314a6a35f767cdd2f12d03bd9f3cd82f68f636c693de1"
     },
@@ -235,11 +243,19 @@
     },
     {
       "source": "runtime/core/odg-go-cycle.test.ts",
-      "sha256": "c60fe81b0bc23db1636669442e765567931276b53f733af1b2efc3a92e53c97a"
+      "sha256": "08f460d20c3d41cd81045cb34de14fe17c87ef226797e56afb0f981e4395bfa4"
     },
     {
       "source": "runtime/core/odg-go-cycle.ts",
       "sha256": "e167b142edfc86edac89bcd04161a0d3f45e4fbf5f99e6f3550db0c66f514f4c"
+    },
+    {
+      "source": "runtime/core/odg-go-wave.test.ts",
+      "sha256": "0195aa993f03465e0fa258c0803ab5af775f065e679bf8ab1bd9f67df6a7e319"
+    },
+    {
+      "source": "runtime/core/odg-go-wave.ts",
+      "sha256": "eb0b841cd59031d73eb6d8765f7ec0a0c7bdb0273a608f87c1c0edd874519a41"
     },
     {
       "source": "runtime/core/odg-production-metric.test.ts",
@@ -580,15 +596,15 @@
         "RESOLVED_BY_EVIDENCE"
       ],
       "counts": {
-        "edges": 8,
+        "edges": 9,
         "byKind": {
           "DATASET_INPUT": 1,
-          "CODE_IMPORT": 7,
+          "CODE_IMPORT": 8,
           "STATED_TEXT": 0
         },
-        "satisfied": 8,
+        "satisfied": 9,
         "unsatisfied": 0,
-        "itemsWithDeps": 5,
+        "itemsWithDeps": 6,
         "itemsNotMeasured": 40
       },
       "fanOut": {
@@ -721,8 +737,10 @@
           "blockingDependents": []
         },
         "RB-SELECTION-AT-RUN-HEAD": {
-          "fanOut": 0,
-          "dependents": [],
+          "fanOut": 1,
+          "dependents": [
+            "F"
+          ],
           "blockingFanOut": 0,
           "blockingDependents": []
         },
@@ -751,6 +769,17 @@
         }
       },
       "edges": [
+        {
+          "from": "F",
+          "to": "RB-SELECTION-AT-RUN-HEAD",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/core/odg-go-wave.ts#require(\"./odg-go-cycle.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[2]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[22].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
         {
           "from": "G2",
           "to": "G",
@@ -887,11 +916,6 @@
         "CODE_IMPORT"
       ],
       "staleWriteSets": [
-        {
-          "item": "F",
-          "file": "runtime/bin/odg-v160-scenario-f-run.ts",
-          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[1]"
-        },
         {
           "item": "V175-NB2",
           "file": "runtime/core/odg-canonical-json-extended.test.ts",
@@ -1174,6 +1198,12 @@
       ],
       "scenarioEvidenceRule": "SCN-1: a scenario evidence file (contractRef/contract '#X' or scenario field naming X) counts as executed against contract X only if its basename version V<n>_ ≥ the contracts file's version; earlier files are pre-contract evidence already cited in initialState.evidence",
       "authorizationEvidence": [
+        {
+          "scenario": "F",
+          "inspection": null,
+          "experiment": null,
+          "validation": null
+        },
         {
           "scenario": "G",
           "inspection": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
@@ -2118,8 +2148,8 @@
         "id": "F",
         "kind": "WORK_ITEM_CONTRACT",
         "title": "F — Multi-agents",
-        "contractState": "PROPOSED",
-        "authorizedBy": null,
+        "contractState": "AUTHORIZED_FOR_REVISION",
+        "authorizedBy": "OWNER (CTO) — « CTO — CONTINUATION APRÈS CP13 — AUTONOMIE NATIVE » (2026-11-24), docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3, les vagues GO parallèles et la conversion des propositions Radar en contrats, dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. » « Construire les vagues GO parallèles sur des zones d'écriture indépendantes. » « Respecter la sélection stratégique actuelle de GO, notamment F. » « Ne pas confondre autorisation de construction interne et autorisation de production, dépense ou engagement externe. » — encoded through the canonical scoped mechanism (odg-authorization-scope, like G/H/G2/J2/V175-NB1/V175-NB2/J): RUN_CONTROLLED_EXPERIMENTS becomes AUTHORIZED (derived, R4) only once the necessary conditions are green (R2 revision + preRegistration, R3 independent inspection ACCEPT bound to the contract sha, GO-DT-1 declared dispatch target, GO-DTO-1 caps); one initial execution per contract revision; internal construction only — no production, spend or external engagement. F's prior result (V161_SCENARIO_F.json) untouched.",
         "status": "EXECUTED_PARTIAL",
         "statusSource": [
           "docs/odg/evidence/V161_SCENARIO_F.json#contractRef",
@@ -2136,7 +2166,7 @@
         },
         "executedEvidence": "docs/odg/evidence/V161_SCENARIO_F.json",
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []",
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 1 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
         "depsStated": [],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
@@ -2207,13 +2237,13 @@
           },
           "costRiskComplexity": {
             "status": "MEASURED",
-            "value": 0.6,
+            "value": 0.9,
             "rule": "CRC-1",
             "source": [
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.acceptance_criteria",
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set"
             ],
-            "basis": "|AC|=4, |write_set|=2, ownerGatedStep=false"
+            "basis": "|AC|=4, |write_set|=5, ownerGatedStep=false"
           },
           "dependencyAvailability": {
             "status": "NOT_MEASURED",
@@ -2236,18 +2266,39 @@
             "basis": "k=4 (initialState.evidence 2 + executed file + CP8 grading)"
           }
         },
+        "closure": {
+          "closed": false,
+          "rule": "CLOSE-1",
+          "currentStep": "INSPECT_REVISED_CONTRACT",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+          "component": "odg-authorization-scope.deriveAuthorizationScope"
+        },
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
-          "edgesOut": 0,
-          "dependsOn": [],
+          "edgesOut": 1,
+          "dependsOn": [
+            "RB-SELECTION-AT-RUN-HEAD"
+          ],
           "unsatisfiedDeps": [],
           "dependents": [],
           "blockingDependents": [],
           "fanOut": 0,
           "blockingFanOut": 0
         },
-        "dependencyEdges": [],
+        "dependencyEdges": [
+          {
+            "from": "F",
+            "to": "RB-SELECTION-AT-RUN-HEAD",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/core/odg-go-wave.ts#require(\"./odg-go-cycle.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[22].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          }
+        ],
         "boussoleRef": {
           "status": "MEASURED",
           "rule": "BREF-1",
@@ -2284,11 +2335,11 @@
           "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         },
         "contractRef": {
-          "contractSha256": "cd913c76d98b3b157cd5a8a0c8b496c6d3953ed0e9b2bd3e0be23f5b3ec9e3fb",
+          "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1",
           "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5]",
-          "ownerRecord": null,
-          "ownerRecordSource": null,
-          "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+          "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].authorization.source",
+          "ownerRecordReason": null
         }
       },
       {
@@ -5500,9 +5551,11 @@
             "RB-REATTEMPT-CHANGED-INPUT"
           ],
           "unsatisfiedDeps": [],
-          "dependents": [],
+          "dependents": [
+            "F"
+          ],
           "blockingDependents": [],
-          "fanOut": 0,
+          "fanOut": 1,
           "blockingFanOut": 0
         },
         "dependencyEdges": [
@@ -11368,11 +11421,11 @@
     }
   },
   "decision": {
-    "decision": "SELECTED",
+    "decision": "TIE_EXPLAINED",
     "selected": {
-      "id": "F",
-      "evidenceScore": 0.31,
-      "upperBound": 0.81,
+      "id": "D",
+      "evidenceScore": 0.28,
+      "upperBound": 0.78,
       "uncertainty": 0.5,
       "breakdown": [
         {
@@ -11403,10 +11456,10 @@
         {
           "criterion": "costRiskComplexity",
           "status": "MEASURED",
-          "value": 0.6,
+          "value": 0.5,
           "direction": "LOWER_IS_BETTER",
           "weight": 0.1,
-          "contribution": 0.04,
+          "contribution": 0.05,
           "uncertaintyContribution": 0
         },
         {
@@ -11419,10 +11472,10 @@
         {
           "criterion": "evidenceLevel",
           "status": "MEASURED",
-          "value": 1,
+          "value": 0.5,
           "direction": "HIGHER_IS_BETTER",
           "weight": 0.1,
-          "contribution": 0.1,
+          "contribution": 0.05,
           "uncertaintyContribution": 0
         },
         {
@@ -11449,18 +11502,79 @@
         {
           "criterion": "strategicValue",
           "status": "MEASURED",
-          "value": 0.7,
+          "value": 0.8,
           "direction": "HIGHER_IS_BETTER",
           "weight": 0.1,
-          "contribution": 0.07,
+          "contribution": 0.08,
           "uncertaintyContribution": 0
         }
       ]
     },
     "proposed": null,
-    "tiedSet": [],
-    "couldOvertakeIfUnmeasuredWereFavourable": [
+    "tiedSet": [
       "D",
+      "F"
+    ],
+    "tieExplanation": "2 candidates within epsilon 0.02 of the leader (0.28)",
+    "resolutionSteps": [
+      {
+        "rule": "R1_MORE_UNBLOCKING",
+        "values": [
+          {
+            "id": "D",
+            "value": 0
+          },
+          {
+            "id": "F",
+            "value": 0
+          }
+        ],
+        "kept": [
+          "D",
+          "F"
+        ],
+        "outcome": "NO_DISCRIMINATION"
+      },
+      {
+        "rule": "R2_LOWER_UNCERTAINTY",
+        "values": [
+          {
+            "id": "D",
+            "value": 0.5
+          },
+          {
+            "id": "F",
+            "value": 0.5
+          }
+        ],
+        "kept": [
+          "D",
+          "F"
+        ],
+        "outcome": "NO_DISCRIMINATION"
+      },
+      {
+        "rule": "R3_LOWER_RISK",
+        "values": [
+          {
+            "id": "D",
+            "value": 0.5
+          },
+          {
+            "id": "F",
+            "value": 0.9
+          }
+        ],
+        "kept": [
+          "D"
+        ],
+        "outcome": "RESOLVED"
+      }
+    ],
+    "resolvedBy": "R3_LOWER_RISK",
+    "resolvedByText": "prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED)",
+    "couldOvertakeIfUnmeasuredWereFavourable": [
+      "F",
       "V150-T02",
       "L",
       "P",
@@ -11488,7 +11602,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'F': evidence score 0.31 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 27 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: D, V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); tie of 2 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 27 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -11512,100 +11626,6 @@
       }
     ],
     "ranking": [
-      {
-        "id": "F",
-        "status": "EXECUTED_PARTIAL",
-        "evidenceScore": 0.31,
-        "upperBound": 0.81,
-        "uncertainty": 0.5,
-        "measuredWeightShare": 0.5,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 0.6,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.04,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 1,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.1,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "MEASURED",
-            "value": 0.7,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.07,
-            "uncertaintyContribution": 0
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": false,
-        "ownerReason": null,
-        "autoSelectable": true
-      },
       {
         "id": "K",
         "status": "PARTIAL",
@@ -11788,6 +11808,100 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.08,
+            "uncertaintyContribution": 0
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "F",
+        "status": "EXECUTED_PARTIAL",
+        "evidenceScore": 0.28,
+        "upperBound": 0.78,
+        "uncertainty": 0.5,
+        "measuredWeightShare": 0.5,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.9,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.01,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 1,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.1,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "MEASURED",
+            "value": 0.7,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.07,
             "uncertaintyContribution": 0
           }
         ],
@@ -15095,21 +15209,19 @@
     "selectionIsNotAuthorization": "the selected item is a PROPOSAL: it still needs PROPOSED → AUTHORIZED before EXECUTING"
   },
   "decisionRecord": {
-    "decision": "SELECTED",
-    "selected": "F",
+    "decision": "TIE_EXPLAINED",
+    "selected": "D",
     "proposed": null,
-    "tiedSet": [],
-    "resolvedBy": null,
-    "justification": "ODG proposes 'F': evidence score 0.31 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 27 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: D, V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "tiedSet": [
+      "D",
+      "F"
+    ],
+    "resolvedBy": "R3_LOWER_RISK",
+    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); tie of 2 resolved by R3_LOWER_RISK: prefer the candidate with the lower MEASURED cost/risk/complexity value (not applicable if any tied candidate has it NOT_MEASURED); 27 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
-      "remainingCriteria": [
-        {
-          "criterion": "decomposition+supervisor assignment",
-          "grade": "PARTIAL — real-repo assign REFUSED fail-closed (UNKNOWN write-sets); mechanics shown on a throw-away workspace; closures CLOSED_NO_RESULT (never CLOSED_ACCEPTED)"
-        }
-      ],
-      "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.F.criteria"
+      "text": "comparison of ≥2 researched methods on a real task and a measured gain vs baseline",
+      "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[3].initialState.missingForPass"
     },
     "ownerAuthorizationRequired": [
       "K",
@@ -15130,8 +15242,11 @@
       "epsilon": 0.02,
       "uncertaintyMax": 0.4,
       "decision": "DECISION_REQUIRED",
-      "choice": "F",
-      "tiedSet": []
+      "choice": "D",
+      "tiedSet": [
+        "D",
+        "F"
+      ]
     },
     {
       "epsilon": 0.05,
@@ -15139,16 +15254,20 @@
       "decision": "TIE_EXPLAINED",
       "choice": "D",
       "tiedSet": [
+        "D",
         "F",
-        "D"
+        "V150-T02"
       ]
     },
     {
       "epsilon": 0.0001,
       "uncertaintyMax": 0.5,
-      "decision": "SELECTED",
-      "choice": "F",
-      "tiedSet": []
+      "decision": "TIE_EXPLAINED",
+      "choice": "D",
+      "tiedSet": [
+        "D",
+        "F"
+      ]
     }
   ],
   "grading": {
@@ -15172,8 +15291,8 @@
         "c5": true
       },
       "idInvariance": {
-        "decisionUnderRelabel": "SELECTED",
-        "choiceUnderRelabel": "F",
+        "decisionUnderRelabel": "TIE_EXPLAINED",
+        "choiceUnderRelabel": "D",
         "sameDecision": true,
         "sameTiedSet": true
       }
@@ -15193,5 +15312,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "d2165069b963d084c67ce1395cc4199ba7227490"
+  "generatedAtHead": "223646b1d208b65ef99b96828abec1bfdd76e118"
 }
