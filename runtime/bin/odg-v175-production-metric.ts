@@ -8,8 +8,8 @@
  *
  * Inputs (committed): odg-outcome-learning.CLOSED_MISSIONS experiment / validation records + GO traces, the contracts'
  * caps, the PR snapshot (gh data frozen at snapshot time — PR open/merge, commits, latest check run, reviews, comments),
- * and read-only git history: the PR of a record = the first first-parent merge on main containing the commit that added the
- * record ("Merge pull request #N"); per-commit additions = `git log --numstat <merge>^1..<merge>^2`, provider authorship =
+ * and read-only git history: the PR of a record = the earliest (topological, ancestry-path) "Merge pull request #N" commit containing the
+ * commit that added the record; per-commit additions = `git log --numstat <merge>^1..<merge>^2`, provider authorship =
  * a Co-Authored-By trailer naming Claude. The pure computation is odg-production-metric.measureProduction.
  * HISTORY-DEPENDENT (full clone; CI fetch-depth 0). No network except --snapshot-prs (gh GET only); no git write.
  */
@@ -24,7 +24,7 @@ const ROOT = path.resolve(__dirname, "..", "..");
 const OUT = "docs/odg/evidence/V175_PRODUCTION_METRIC.json";
 const SNAP = "docs/odg/evidence/V175_PR_TIMELINE_SNAPSHOT.json";
 const CONTRACTS = "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json";
-const WINDOW = [955, 970];
+const WINDOW = [955, 971];
 const MISSION_PRS = [935, 937, 946, 947]; // G / H experiment + validation PRs (outside the window, needed for mission times)
 
 function git(args: string[]): string { return String(execFileSync("git", ["-C", ROOT, ...args], { encoding: "utf8", maxBuffer: 256 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"] })); }
@@ -48,13 +48,14 @@ function snapshotPrs(): void {
   process.stdout.write(`wrote ${SNAP} (${rows.length} PRs)\n`);
 }
 
-/* prOfFile(rel) — the PR whose merge (first-parent on main) first contains the commit that added rel. */
+/* prOfFile(rel) — the PR whose "Merge pull request #N" commit is the earliest (topological) merge containing the commit that added rel. */
 function prOfFile(rel: string): number | null {
   const add = git(["log", "--diff-filter=A", "--format=%H", "--", rel]).split("\n").filter(Boolean).pop();
   if (!add) return null;
-  const merges = git(["log", "--first-parent", "--merges", "--reverse", "--format=%H %s", `${add}..HEAD`]).split("\n").filter(Boolean);
+  const merges = git(["log", "--merges", "--ancestry-path", "--topo-order", "--reverse", "--format=%H %s", `${add}..HEAD`]).split("\n").filter(Boolean); // earliest PR merge containing add (independent of which branch HEAD is on)
   for (const line of merges) {
     const [sha, ...rest] = line.split(" ");
+    if (!/Merge pull request #\d+/.test(rest.join(" "))) continue; // branch-local merges of main are not PR merges
     try { execFileSync("git", ["-C", ROOT, "merge-base", "--is-ancestor", add, sha], { stdio: "ignore" }); } catch { continue; }
     const m = rest.join(" ").match(/Merge pull request #(\d+)/); return m ? Number(m[1]) : null;
   }
@@ -98,7 +99,7 @@ function build(): string {
   const nativePaths = Array.from(new Set(traces.flatMap((f: string) => PM.traceSummary(fs.readFileSync(path.join(ROOT, "docs/odg/evidence", f), "utf8").split("\n").filter((l: string) => l.trim()).map((l: string) => JSON.parse(l))).writeSet))).sort() as string[];
   const windowCommits = snap.prs.filter((p: any) => p.number >= WINDOW[0] && p.number <= WINDOW[1] && p.mergeCommit && p.mergedAt).flatMap((p: any) => prCommits(p.mergeCommit));
   const rec = PM.measureProduction({ missions, prs: snap.prs, windowPrs: WINDOW });
-  const out = { "//": "V17.5 PRIORITY 5 — verified production measure per mission (G, H, G2, J2) + PR #955–#970 wall-time split. READ-ONLY; NOT_MEASURED preserved. Recompute: npx tsx runtime/bin/odg-v175-production-metric.ts --check",
+  const out = { "//": "V17.5 PRIORITY 5 — verified production measure per mission (G, H, G2, J2) + PR #955–#971 wall-time split. READ-ONLY; NOT_MEASURED preserved. Recompute: npx tsx runtime/bin/odg-v175-production-metric.ts --check",
     ...rec,
     windowShare: { prs: `#${WINDOW[0]}–#${WINDOW[1]} merged`, goTraces: traces.map((f: string) => `docs/odg/evidence/${f}`), odgWrittenPaths: nativePaths, ...PM.splitLines(windowCommits, nativePaths) },
     sources: { snapshot: SNAP, snapshotAt: snap.snapshotAt, contracts: CONTRACTS, git: "git log --numstat <merge>^1..<merge>^2 per merged PR; git log --diff-filter=A + first-parent merges for record → PR" } };

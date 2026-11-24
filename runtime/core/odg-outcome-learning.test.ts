@@ -54,7 +54,7 @@ function main(): void {
   const fresh = BIN.build(root);
   check("V175_OUTCOME_LEARNING.json is byte-identical to a fresh computation (--check)", committed === fresh);
   const rec = JSON.parse(committed);
-  check("real record: 4 items G, G2, H, J2; J2 not yet validated", rec.items.map((i: any) => i.id).join() === "G,G2,H,J2" && rec.items.find((i: any) => i.id === "J2").realized.validated === false);
+  check("real record: 4 items G, G2, H, J2; each realized grade is the validated one (J2 validated by #971)", rec.items.map((i: any) => i.id).join() === "G,G2,H,J2" && rec.items.every((i: any) => i.realized.validated === true));
   check("real record: every contract bound to its experiment (contractSha256)", rec.items.every((i: any) => i.preRegistered.contractBoundToExperiment === true));
 
   process.stdout.write(failures ? `\n${failures} FAILED\n` : "\nall passed\n");

@@ -598,16 +598,17 @@
       },
       "realized": {
         "grade": "FAIL",
-        "gradeBasis": "EXPERIMENT_OUTCOME_ONLY — VALIDATE_CRITERIA PENDING (pre-registered rule grade, not the independent validation)",
-        "validated": false,
+        "gradeBasis": "VALIDATED (VALIDATE_CRITERIA record bound to the experiment sha)",
+        "validated": true,
         "experimentOutcome": "FAIL",
-        "validatedGrade": null,
+        "validatedGrade": "FAIL",
         "utility": 0,
         "utilityMapping": "report-only PASS=1 / PARTIAL=0.5 / FAIL=0 (provider-declared; not a selector quantity)",
-        "lesson": null,
+        "lesson": "hypothesis only (n = 6, failure-selected tasks): with the local 3b/7b models, neither decomposition nor escalation to the local max model recovered any task on which ODG's default loop stopped — consistent with local-model capability being a bottleneck on these tasks (not established; strategy effects cannot be excluded at n = 6); native construction should target tasks within local-model reach first",
         "source": [
           "docs/odg/evidence/V172_J2_EXPERIMENT.json#outcome",
-          "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json ABSENT ⇒ VALIDATE_CRITERIA PENDING"
+          "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json#scenarioGrade",
+          "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
         ]
       },
       "dispatch": {
@@ -1212,9 +1213,9 @@
   "passRateCalibration": {
     "reused": "odg-native-outcome-calibration.calibrateFromBuildOutcomes",
     "quality": "DEGRADED",
-    "observations": 3,
+    "observations": 4,
     "successes": 0,
-    "failures": 3,
+    "failures": 4,
     "pForPlanner": null
   },
   "findings": [
@@ -1229,7 +1230,7 @@
         "H=FAIL",
         "J2=FAIL"
       ],
-      "statement": "0/4 graded items reached PASS by their pre-registered rule (3 validated, 1 experiment-outcome only); the selector produced no probability of PASS for any of them, so this rate cannot be compared to a predicted rate — only to the ordering below"
+      "statement": "0/4 graded items reached PASS by their pre-registered rule (4 validated, 0 experiment-outcome only); the selector produced no probability of PASS for any of them, so this rate cannot be compared to a predicted rate — only to the ordering below"
     },
     {
       "id": "OL-2",

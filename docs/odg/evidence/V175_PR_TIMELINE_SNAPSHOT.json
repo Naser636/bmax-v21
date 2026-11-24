@@ -1,10 +1,10 @@
 {
   "//": "V17.5 — frozen gh READ of the PRs used by V175_PRODUCTION_METRIC (PR open/merge, commits, latest check run, review/comment timestamps only). Refresh: npx tsx runtime/bin/odg-v175-production-metric.ts --snapshot-prs",
   "schema": "ODG_V175_PR_TIMELINE_SNAPSHOT/1",
-  "snapshotAt": "2026-11-24T14:00:17.729Z",
+  "snapshotAt": "2026-11-24T14:08:42.506Z",
   "window": [
     955,
-    970
+    971
   ],
   "missionPrs": [
     935,
@@ -641,6 +641,43 @@
           "name": "build + typecheck + parity + tests",
           "startedAt": "2026-11-24T13:40:58Z",
           "completedAt": "2026-11-24T13:47:22Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 971,
+      "title": "docs(v17.5): J2 criteria validation — CLOSED_FAIL (NOT_ADOPTED)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T13:55:49Z",
+      "mergedAt": "2026-11-24T14:07:08Z",
+      "closedAt": "2026-11-24T14:07:08Z",
+      "mergeCommit": "492db6c04cf612ccdddc442c454b625b60637a58",
+      "headRefOid": "2b70939dfcbeeec2d4fc78784cb56cba902854ef",
+      "commits": [
+        {
+          "oid": "f4b762d6117500dc264f6df8548284d238469ec5",
+          "committedDate": "2026-11-24T13:55:44Z",
+          "messageHeadline": "docs(v17.5): J2 VALIDATE_CRITERIA (R5b) — C1–C6 MET, result FAIL (A2@…"
+        },
+        {
+          "oid": "e0f840c9c4d3bc16eee9a5f0f5067c1dce648c4f",
+          "committedDate": "2026-11-24T13:57:36Z",
+          "messageHeadline": "docs(v17.5): #971 inspection — C5 limit no longer attributes the by-c…"
+        },
+        {
+          "oid": "2b70939dfcbeeec2d4fc78784cb56cba902854ef",
+          "committedDate": "2026-11-24T14:00:06Z",
+          "messageHeadline": "merge origin/main (#969) — register regenerated (no conflict markers;…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T14:00:36Z",
+          "completedAt": "2026-11-24T14:07:02Z",
           "conclusion": "SUCCESS"
         }
       ],

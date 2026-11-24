@@ -1,5 +1,5 @@
 {
-  "//": "V17.5 PRIORITY 5 — verified production measure per mission (G, H, G2, J2) + PR #955–#970 wall-time split. READ-ONLY; NOT_MEASURED preserved. Recompute: npx tsx runtime/bin/odg-v175-production-metric.ts --check",
+  "//": "V17.5 PRIORITY 5 — verified production measure per mission (G, H, G2, J2) + PR #955–#971 wall-time split. READ-ONLY; NOT_MEASURED preserved. Recompute: npx tsx runtime/bin/odg-v175-production-metric.ts --check",
   "schema": "ODG_V175_PRODUCTION_METRIC/1",
   "missions": [
     {
@@ -322,18 +322,19 @@
         }
       },
       "outputsAccepted": {
-        "accepted": false,
+        "accepted": true,
         "merged": true,
         "experimentPr": 970,
         "experimentMergedAt": "2026-11-24T13:50:11Z",
         "inspection": {
-          "status": "NOT_MEASURED",
-          "reason": "no VALIDATE_CRITERIA record yet ⇒ the independent inspection verdict of the experiment result is not recorded"
+          "verdict": "ACCEPT",
+          "inspectedPr": 970,
+          "source": "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json#experimentInspection"
         },
-        "validatedGrade": "PENDING",
-        "validationBoundToExperiment": null,
-        "validationPr": null,
-        "validationMergedAt": null
+        "validatedGrade": "FAIL",
+        "validationBoundToExperiment": true,
+        "validationPr": 971,
+        "validationMergedAt": "2026-11-24T14:07:08Z"
       },
       "time": {
         "goCycleMs": 2368716,
@@ -342,14 +343,8 @@
         "goStop": null,
         "runEndToExperimentPrOpenMs": 291821,
         "experimentPrOpenToMergeMs": 560000,
-        "experimentMergeToValidationMergeMs": {
-          "status": "NOT_MEASURED",
-          "reason": "validation not merged yet"
-        },
-        "runEndToClosureMs": {
-          "status": "NOT_MEASURED",
-          "reason": "validation not merged yet"
-        }
+        "experimentMergeToValidationMergeMs": 1017000,
+        "runEndToClosureMs": 1868821
       },
       "cost": {
         "costAvailableEur": {
@@ -396,26 +391,26 @@
           "source": "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl"
         },
         "lines": {
-          "commits": 1,
-          "providerAuthoredCommits": 1,
+          "commits": 3,
+          "providerAuthoredCommits": 3,
           "nonProviderCommits": 0,
           "nativeWrittenLinesMerged": 11906,
           "nativeWrittenFiles": [
             "docs/odg/evidence/V172_J2_EXPERIMENT.json"
           ],
           "nativeCodeLinesMerged": 0,
-          "providerLinesMerged": 43,
-          "nativeLineShare": 0.9964,
+          "providerLinesMerged": 235,
+          "nativeLineShare": 0.9806,
           "note": "native = additions to files in the GO DISPATCHED writeSet (ODG-written evidence data, committed by the provider); provider = every other added line; the git author of every commit is the shared 'ODG Runtime' identity, so a Claude Co-Authored-By trailer is the only authorship signal; nonProviderCommits = commits WITHOUT that trailer (authorship not attributable from git — not evidence of ODG authorship)"
         },
-        "linesScope": "commits of the experiment PR #970 (the runner, contract and inspection PRs are not attributed to one mission)"
+        "linesScope": "commits of the experiment PR #970 and the validation PR #971 (the runner, contract and inspection PRs are not attributed to one mission)"
       }
     }
   ],
   "prTimeline": {
     "window": [
       955,
-      970
+      971
     ],
     "prs": [
       {
@@ -894,28 +889,61 @@
         "inspectionFindingCommits": [],
         "reviewCount": 0,
         "commentCount": 0
+      },
+      {
+        "number": 971,
+        "state": "MERGED",
+        "title": "docs(v17.5): J2 criteria validation — CLOSED_FAIL (NOT_ADOPTED)",
+        "openedAt": "2026-11-24T13:55:49Z",
+        "mergedAt": "2026-11-24T14:07:08Z",
+        "commits": 3,
+        "firstCommitToOpenMs": 5000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 257000,
+        "lastCommitToCiStartMs": 30000,
+        "ciMs": 386000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 6000,
+        "openToMergeMs": 679000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [
+          {
+            "sha": "e0f840c9",
+            "committedDate": "2026-11-24T13:57:36Z",
+            "headline": "docs(v17.5): #971 inspection — C5 limit no longer attributes the by-c…",
+            "verdictExistedBefore": "2026-11-24T13:57:36Z"
+          }
+        ],
+        "reviewCount": 0,
+        "commentCount": 0
       }
     ],
     "aggregate": {
-      "prs": 16,
-      "merged": 15,
+      "prs": 17,
+      "merged": 16,
       "notMerged": [
         "#968 CLOSED"
       ],
-      "totalOpenToMergeMs": 38485000,
-      "medianOpenToMergeMs": 559000,
-      "medianCiMs": 318000,
-      "medianOpenToLastCommitMs": 109000,
-      "medianCiEndToMergeMs": 25000,
+      "totalOpenToMergeMs": 39164000,
+      "medianOpenToMergeMs": 559500,
+      "medianCiMs": 341500,
+      "medianOpenToLastCommitMs": 132500,
+      "medianCiEndToMergeMs": 23500,
       "longestOpenToMerge": {
         "number": 959,
         "openToMergeMs": 30209000,
-        "shareOfTotal": 0.785
+        "shareOfTotal": 0.7713
       },
       "split": {
-        "afterOpenUntilLastCommitShare": 0.8516,
-        "ciQueueShare": 0.0072,
-        "ciVerifyShare": 0.1298,
+        "afterOpenUntilLastCommitShare": 0.8434,
+        "ciQueueShare": 0.0079,
+        "ciVerifyShare": 0.1374,
         "waitAfterCiShare": 0.0123,
         "note": "phases are sequential per PR: open → last commit (building/rework incl. inspection fixes and main merges, OR idle waiting between commits — e.g. for an owner decision; git cannot separate the two) → CI start (queue) → CI end (verify) → merge (wait: merge decision); shares of the summed open→merge time over merged PRs. The phases can overlap with an earlier CI run that the snapshot does not keep (latest run only) — report-only"
       },
@@ -926,7 +954,8 @@
         "#965",
         "#966",
         "#967",
-        "#969"
+        "#969",
+        "#971"
       ],
       "reviewsOrCommentsOnPr": 1
     }
@@ -938,7 +967,7 @@
     "inspection timing is an upper bound from commit subjects naming an inspection finding, never a recorded verdict time"
   ],
   "windowShare": {
-    "prs": "#955–#970 merged",
+    "prs": "#955–#971 merged",
     "goTraces": [
       "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl",
@@ -950,8 +979,8 @@
       "docs/odg/evidence/V172_G2_HELDOUT.json",
       "docs/odg/evidence/V172_J2_EXPERIMENT.json"
     ],
-    "commits": 23,
-    "providerAuthoredCommits": 22,
+    "commits": 25,
+    "providerAuthoredCommits": 24,
     "nonProviderCommits": 1,
     "nativeWrittenLinesMerged": 15036,
     "nativeWrittenFiles": [
@@ -960,13 +989,13 @@
       "docs/odg/evidence/V172_J2_EXPERIMENT.json"
     ],
     "nativeCodeLinesMerged": 0,
-    "providerLinesMerged": 5913,
-    "nativeLineShare": 0.7177,
+    "providerLinesMerged": 6105,
+    "nativeLineShare": 0.7112,
     "note": "native = additions to files in the GO DISPATCHED writeSet (ODG-written evidence data, committed by the provider); provider = every other added line; the git author of every commit is the shared 'ODG Runtime' identity, so a Claude Co-Authored-By trailer is the only authorship signal; nonProviderCommits = commits WITHOUT that trailer (authorship not attributable from git — not evidence of ODG authorship)"
   },
   "sources": {
     "snapshot": "docs/odg/evidence/V175_PR_TIMELINE_SNAPSHOT.json",
-    "snapshotAt": "2026-11-24T14:00:17.729Z",
+    "snapshotAt": "2026-11-24T14:08:42.506Z",
     "contracts": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
     "git": "git log --numstat <merge>^1..<merge>^2 per merged PR; git log --diff-filter=A + first-parent merges for record → PR"
   }
