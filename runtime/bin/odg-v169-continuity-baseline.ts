@@ -4,6 +4,8 @@
  * Runs the 15 §29 scenarios against the CURRENT canonical components (no new engine, no fix) on the REAL committed
  * records, and grades each with the rule PRE-REGISTERED below. Writes docs/odg/evidence/V169_CONTINUITY_BASELINE.json.
  * `--check` recomputes from the committed sources and exits 1 on drift (generatedAtHead excluded).
+ * HOST/HISTORY-DEPENDENT: S6/S7 read full git history (git log -1 per file, git diff <recorded sha>..HEAD, git cat-file -e),
+ * so --check drifts in a shallow or single-commit clone and whenever HEAD moves; it is valid on a full clone at the PR head.
  *
  * Every decision in a result is produced by the named ODG component (odg-strategic-register, mission-priority-selector,
  * odg-authorization-scope, odg-go-cycle.actionabilityOf, odg-program-continuity, odg-v124-consolidation, campaign-controller,
@@ -378,6 +380,7 @@ function compute(root: string): any {
     inputs: state.inputs.concat(["docs/odg/v124-consolidated-roadmap.json", "docs/odg/closure-register.json", `${EV}/V168_CHECKPOINT_10.json`, `${EV}/V168_H_GO_EXECUTE_TRACE.jsonl`, `${EV}/V164_RADAR_SOURCE_ADMISSION.json`, "docs/odg/V372_RESEARCH_GRANT.json"].map((rel) => ({ source: rel, sha256: sha256(fs.readFileSync(path.join(root, rel), "utf8")) }))),
     scenarios,
     summary: { counts, perScenario: scenarios.map((s: any) => `${s.n}:${s.grade}`) },
+    reproducibility: { class: "HOST_AND_HISTORY_DEPENDENT", needs: "full git clone (S6: git log -1 / git diff <sha>..HEAD; S7: git cat-file -e on cited shas)", drifts: "shallow or single-commit clone; any HEAD move that changes the diff sets or adds a checkpoint", validAt: "a full clone at the PR head (generatedAtHead's child commit carrying this record)" },
     honestLimits: [
       "the owner's addendum text (§21–§31) is NOT committed in the repository; scenario wording follows the owner text relayed by the coordinator (§29 verbatim list)",
       "scenarios #3 and #4 were PRE-REGISTERED AFTER the first run of the other 13 (the owner text arrived later; the first run recorded them NOT_MEASURED); their rules were written before #3/#4 were first run; no other rule was changed",

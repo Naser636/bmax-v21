@@ -1,5 +1,5 @@
 {
-  "generatedAtHead": "2c17d616b03068e9ae448ea08d603bfbd0cc28b0",
+  "generatedAtHead": "4482b659ab37ca152cc0a4b7894e4a01249c0149",
   "//": "V16.9 addendum Phase 0 — §29 continuity BASELINE before any improvement. Read-only, offline; produced by runtime/bin/odg-v169-continuity-baseline.ts over committed records; nothing fixed. Mutations/fixtures are labelled and never committed.",
   "schema": "ODG_V169_CONTINUITY_BASELINE/1",
   "preRegistration": {
@@ -956,6 +956,12 @@
       "15:PARTIAL"
     ]
   },
+  "reproducibility": {
+    "class": "HOST_AND_HISTORY_DEPENDENT",
+    "needs": "full git clone (S6: git log -1 / git diff <sha>..HEAD; S7: git cat-file -e on cited shas)",
+    "drifts": "shallow or single-commit clone; any HEAD move that changes the diff sets or adds a checkpoint",
+    "validAt": "a full clone at the PR head (generatedAtHead's child commit carrying this record)"
+  },
   "honestLimits": [
     "the owner's addendum text (§21–§31) is NOT committed in the repository; scenario wording follows the owner text relayed by the coordinator (§29 verbatim list)",
     "scenarios #3 and #4 were PRE-REGISTERED AFTER the first run of the other 13 (the owner text arrived later; the first run recorded them NOT_MEASURED); their rules were written before #3/#4 were first run; no other rule was changed",
@@ -1039,7 +1045,7 @@
   "hostObservations": {
     "//": "host-state reads (NOT committed, NOT recomputed by --check); recorded once on 2026-11-24 by the provider, read-only",
     "goDryRunOnMainCheckout": {
-      "command": "npx tsx runtime/bin/odg-go.ts --dry --repo /home/ubuntu/bmax-v21 --out <scratchpad>/go1 --deadline-ms 200000 (main checkout read-only at 2006fb70 = origin/main)",
+      "command": "npx tsx runtime/bin/odg-go.ts --dry --repo <main-checkout> --out <scratchpad>/go1 --deadline-ms 200000 (main checkout read-only at 2006fb70 = origin/main)",
       "status": "HALTED_DECISION_REQUIRED",
       "runId": "8bad1c768f200f20",
       "decisionsDigest": "c21f4d803319ac6f78701f012b3cb806da9efd0b2067c6ae25ec493b476bb96e",
@@ -1062,7 +1068,7 @@
       "alsoObserved": "the same command with --repo = this feature worktree is STARTUP_REFUSED by Truth-Lock (branch ≠ main) — fail-closed as designed"
     },
     "repetitionsAvoided": {
-      "source": "/home/ubuntu/bmax-v21/runtime/generated/mission-attempt-log.jsonl (live root timer)",
+      "source": "<main-checkout>/runtime/generated/mission-attempt-log.jsonl (live root timer)",
       "attempts": 2708,
       "window": [
         "2026-10-21T20:39:49.916Z",
@@ -1078,14 +1084,14 @@
       "note": "1505 scheduler ticks refused to re-run the already-proven M0001 (dedup) — repetition avoided; 1183 STARTUP_REFUSED are the documented truth-lock outage (main checkout on feature branches), not repetitions"
     },
     "missionLedger": {
-      "source": "/home/ubuntu/bmax-v21/runtime/generated/mission-ledger.json",
+      "source": "<main-checkout>/runtime/generated/mission-ledger.json",
       "entries": 1798,
       "distinctMissions": 188,
       "provenEntries": 1798,
       "note": "proven-only status-of-record; no V12.4 mission id / Boussole reference field in its entries (keys: recordedAt, mission, state, authorized, nextStates, lifecyclePath, archived, constitutionVersion, policyVersion, strategy, objectives, proven, validated, projectFiles, projectDirectories, seal)"
     },
     "compassCheckpoint": {
-      "source": "/home/ubuntu/bmax-v21/runtime/generated/compass-checkpoint.json (scripts/compass-update.ts)",
+      "source": "<main-checkout>/runtime/generated/compass-checkpoint.json (scripts/compass-update.ts)",
       "verifiedCheckpoint": {
         "commit": "5c0d7c95",
         "mission": "TEST_CONSEQUENTIAL_EXEC_GATE",
