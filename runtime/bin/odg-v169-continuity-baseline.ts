@@ -48,8 +48,8 @@ const PRE_REGISTRATION = Object.freeze({
   scenarios: Object.freeze([
     { n: 1, name: "reprendre une mission après interruption", test: "(a) GO SELECT recomputed from committed records (odg-strategic-register + selectNextExplained + odg-go-cycle.actionabilityOf over the committed contracts + authorization evidence) vs CP10.nextAction; (b) does a component identify the step the interrupted GO run (V168_H_GO_EXECUTE_TRACE.jsonl, DEADLINE before EVIDENCE) did not complete; (c) V12.4 companion → odg-v124-consolidation.toContinuityProgram → odg-program-continuity.buildDossier nextEligible vs V14.4 §2 Phase-1 anchor", PASS: "(a) matches CP10.nextAction AND (b) a component names the missing step AND (c) nextEligible = CM-RADAR-GATE-CHAIN", PARTIAL: "(a) and (c) hold, (b) does not", FAIL: "(a) or (c) mismatches" },
     { n: 2, name: "retrouver le dernier checkpoint", test: "(a) odg-authorization-scope.deriveAuthorizationScope(H, committed evidence) → validated steps + currentStep; (b) the checkpoint the canonical register reads as latest (odg-strategic-register.LATEST_CHECKPOINT) vs the head of the committed checkpoint chain (the CP file not cited as `previous` by any other)", PASS: "(a) 4/4 H steps validated with evidence pointers AND (b) canonical latest = chain head", PARTIAL: "exactly one of (a),(b)", FAIL: "neither" },
-    { n: 3, name: "§29 scenario #3 (text not provided in the brief nor committed)", test: "none — not invented", NOT_MEASURED: "always" },
-    { n: 4, name: "§29 scenario #4 (text not provided in the brief nor committed)", test: "none — not invented", NOT_MEASURED: "always" },
+    { n: 3, name: "retrouver une décision et sa justification", addedAfterFirstRun: true, addedNote: "pre-registered after the first run of scenarios 1,2,5–15 (owner text received later); written before #3 was first run", test: "two committed decisions: D1 = H's Δ1 tightening (non-inferiority ⇒ superiority vs B1, after inspection REJECT @587650b0); D2 = G's write_set restore (after inspection REJECT @b994ca69). (a) does a canonical component (odg-authorization-scope validatedSteps evidence) return a pointer to the record holding the decision; (b) does a component return the decision + justification itself; (c) are decision + justification + provenance (record path, head) present in the committed records (runner extraction)", PASS: "(b) for D1 and D2 with provenance", PARTIAL: "(a) and (c) for D1 and D2 but not (b) — the decision is reachable only by reading the record the component points to", FAIL: "(c) fails for D1 or D2 (decision or justification absent from the records)" },
+    { n: 4, name: "identifier les tests réussis, échoués et absents", addedAfterFirstRun: true, addedNote: "pre-registered after the first run of scenarios 1,2,5–15 (owner text received later); written before #4 was first run", test: "for H and G: (a) acceptance-criterion results (pass/fail per criterion) in the committed criteria-validation records; (b) a per-PR CI result (head + green/red) recorded for the mission's PRs in a committed record; (c) tests NOT run listed with a reason; (d) a canonical component enumerating (a)–(c)", PASS: "(a),(b),(c) for H and G AND (d)", PARTIAL: "(a) for H and G but (b) or (c) missing, or (d) absent (runner extraction only)", FAIL: "(a) missing for H or G" },
     { n: 5, name: "préserver PARTIAL/FAIL", test: "status of G (CLOSED_PARTIAL per V167 dossier/CP9) and H (CLOSED_FAIL per CP10) in the canonical register odg-strategic-register.buildRegister", PASS: "G status in the PARTIAL family AND H status in the FAIL family (FAIL/CLOSED_FAIL/NOT_ADOPTED)", PARTIAL: "neither is upgraded to PASS/ACCEPTED but at least one closure verdict is absent from the register status", FAIL: "a PARTIAL/FAIL is shown as PASS/ACCEPTED" },
     { n: 6, name: "preuve périmée (head/sha ne correspond plus)", test: "odg-observation-currency.assess with the REAL git changed-set (observedCommit..HEAD) on: V164_GO_CYCLE.json (labelled STALE: CP10.scenarioJ_V164 'NOT regenerated'), V164_STRATEGIC_REGISTER.json (labelled FRESH: odg-strategic-select --check recomputes it byte-identical); plus sha-bound proofs V168_H_CRITERIA_VALIDATION.experimentEvidence.sha256 vs the current file", PASS: "every labelled-STALE detected, no labelled-FRESH flagged, and a live (non-test) caller applies the check to evidence records", PARTIAL: "every labelled-STALE detected only when this runner invokes the component, or a labelled-FRESH is flagged (false-stale)", FAIL: "a labelled-STALE record is not detected" },
     { n: 7, name: "preuve du mauvais commit", test: "odg-authorization-scope on H with labelled mutations: (m1) inspection.contractSha256 := G's inspection sha; (m2) contract objective edited; (m3) inspection.inspectedHeadSha := a well-formed 40-hex sha that does NOT exist in git; plus git cat-file -e on the merge shas cited in CP10.prs", PASS: "real chain valid AND m1,m2,m3 all invalidate the step", PARTIAL: "real chain valid AND m1,m2 invalidate BUT m3 accepted (commit existence never verified)", FAIL: "real chain invalid OR m1 or m2 accepted" },
@@ -127,6 +127,51 @@ function s2(root: string, state: any): any {
 }
 
 const PARTIAL_FAMILY = /PARTIAL/; const FAIL_FAMILY = /^(FAIL|CLOSED_FAIL|NOT_ADOPTED|REJECTED)/; const PASS_FAMILY = /^(PASS|ACCEPTED|CLOSED_PASS)$/;
+function s3(root: string, state: any): any {
+  const H = contractOf(state, "H"), G = contractOf(state, "G");
+  const hRev = (H.revisionHistory || [])[0] || {}, gRev = (G.revisionHistory || [])[0] || {};
+  const hIns = rj(root, `${EV}/V168_H_CONTRACT_INSPECTION.json`), gIns = rj(root, `${EV}/V166_G_CONTRACT_INSPECTION.json`);
+  const find = (hist: any[], v: string) => (hist || []).find((x: any) => x.verdict === v) || null;
+  const d1 = { decision: "H thresholds.PASS tightened Δ1 ≥ −0.02 ⇒ Δ1 > 0 AND CI95-low(Δ1) > 0", record: `${EV}/V160_AP_WORK_ITEM_CONTRACTS.json#H.revisionHistory[0].inspectionFixes + ${EV}/V168_H_CONTRACT_INSPECTION.json#history`,
+    justification: hRev.inspectionFixes && hRev.inspectionFixes.inspection ? String(hRev.inspectionFixes.inspection) : null, reject: find(hIns.history, "REJECT"), accept: find(hIns.history, "ACCEPT") };
+  const gFix = typeof gRev.inspectionFixes === "string" ? gRev.inspectionFixes : JSON.stringify(gRev.inspectionFixes || null);
+  const d2 = { decision: "G experiment files moved back into write_set", record: `${EV}/V160_AP_WORK_ITEM_CONTRACTS.json#G.revisionHistory[0].inspectionFixes + ${EV}/V166_G_CONTRACT_INSPECTION.json#history`,
+    justification: /write_set/.test(gFix) ? gFix : null, reject: find(gIns.history, "REJECT"), accept: find(gIns.history, "ACCEPT") };
+  const present = (d: any) => !!d.justification && !!d.reject && !!d.accept && typeof d.reject.head === "string" && typeof d.accept.head === "string";
+  const c = present(d1) && present(d2);
+  const ptr = (sc: string) => { const v = scopeOf(state, sc).validatedSteps.find((x: any) => x.step === "INSPECT_REVISED_CONTRACT"); return v && v.evidence ? v.evidence.recordPath : null; };
+  const pH = ptr("H"), pG = ptr("G");
+  const a = pH === `${EV}/V168_H_CONTRACT_INSPECTION.json` && pG === `${EV}/V166_G_CONTRACT_INSPECTION.json`;
+  const b = false; // no exported component returns a decision + its justification (authorization-scope returns verdict/sha/session ids + recordPath only)
+  const grade = !c ? "FAIL" : b ? "PASS" : a ? "PARTIAL" : "FAIL";
+  const brief = (d: any) => ({ decision: d.decision, record: d.record, justification: d.justification ? d.justification.slice(0, 400) : null, rejectAt: d.reject ? d.reject.head : null, acceptAt: d.accept ? d.accept.head : null, acceptFindings: d.accept ? d.accept.findings : null });
+  return { grade, measured: { D1_H_delta1: brief(d1), D2_G_writeSet: brief(d2), a_componentPointer: { H: pH, G: pG, ok: a }, b_componentReturnsDecision: b, c_recordsHoldDecision: c },
+    metrics: { decisionsRetrieved: [present(d1), present(d2)].filter(Boolean).length, decisionsAsked: 2, decisionsReturnedByComponent: 0 } };
+}
+
+function s4(root: string, state: any): any {
+  const cp10 = rj(root, `${EV}/V168_CHECKPOINT_10.json`);
+  const per = (sc: string, valRel: string, prs: number[]) => {
+    const v = rj(root, valRel);
+    const crit = (v.criteria || []).map((c: any) => ({ id: c.id, status: c.status, outcome: /FAIL/.test(String(c.status)) ? "FAIL" : /PARTIAL/.test(String(c.status)) ? "PARTIAL" : /^MET/.test(String(c.status)) ? "PASS" : "UNKNOWN" }));
+    const prRecs = cp10.prs.filter((p: any) => prs.includes(p.pr)).map((p: any) => ({ pr: p.pr, merge: p.merge, gates: p.gates || null, perPrCiResultRecorded: /\b(green|red|pass|fail)\b.*\b[0-9a-f]{7,40}\b/i.test(String(p.gates || "")) && !/exact head \+ independent inspection ACCEPT on exact head \(or/.test(String(p.gates || "")) }));
+    const txt = JSON.stringify(v);
+    const notRun = /not run|NOT_RUN|not executed/i.test(txt);
+    return { scenario: sc, record: valRel, criteria: crit, scenarioGrade: v.scenarioGrade, prsInCP10: prRecs, a_criteriaResults: crit.length > 0 && crit.every((c: any) => c.outcome !== "UNKNOWN"), b_perPrCiResult: prRecs.length > 0 && prRecs.every((p: any) => p.perPrCiResultRecorded), c_notRunListed: notRun };
+  };
+  const H = per("H", `${EV}/V168_H_CRITERIA_VALIDATION.json`, [942, 943, 944, 945, 946]);
+  const cp9 = rj(root, `${EV}/V166_CHECKPOINT_9.json`);
+  const G: any = per("G", `${EV}/V166_G_CRITERIA_VALIDATION.json`, []);
+  const gPrs = Array.isArray(cp9.prs) ? cp9.prs.map((p: any) => ({ pr: p.pr, gates: p.gates || null })) : [];
+  G.prsInCP9 = gPrs; G.b_perPrCiResult = false;
+  const goTraceNotRun = ["EVIDENCE", "NEXT_SELECTION"]; // S1: GO steps not completed in the H execute run (DEADLINE)
+  const d = false; // no canonical component enumerates passed/failed/not-run tests per A–P mission
+  const a = H.a_criteriaResults && G.a_criteriaResults, b = H.b_perPrCiResult && G.b_perPrCiResult, c = H.c_notRunListed && G.c_notRunListed;
+  const grade = !a ? "FAIL" : (a && b && c && d) ? "PASS" : "PARTIAL";
+  return { grade, measured: { H, G, hGoStepsNotRun: goTraceNotRun, d_componentEnumerates: d, ciNote: "CP9/CP10 record a generic gate policy per PR ('CI green on exact head + …'), not a per-PR CI result; the only per-head CI outcome found (CI red on f82f3b6f) is in a git commit message (0c675fc4), not in a record" },
+    metrics: { criteriaWithResult: H.criteria.length + G.criteria.length, perPrCiResultsRecorded: 0 } };
+}
+
 function s5(register: any): any {
   const g = register.items.find((i: any) => i.id === "G"), h = register.items.find((i: any) => i.id === "H");
   const gOk = PARTIAL_FAMILY.test(g.status), hOk = FAIL_FAMILY.test(h.status);
@@ -279,7 +324,10 @@ function s13(root: string): any {
   const allowed = (r: any) => r && (r.allowed === true || r.decision === "ALLOW" || r.ok === true);
   const b = allowed(allow) && !allowed(deny) && !allowed(exp);
   const grade = !(a && b) ? "FAIL" : "PARTIAL";
-  return { grade, measured: { a_admission: { summary: adm.summary, everyDecisionHasReasonsShaTier: a }, b_governor: { allowlisted: allow, nonAllowlisted: deny, afterExpiry: exp, ok: b }, c_newDiscovery: "NOT_MEASURED — real collection is network-gated (grant V372 active until 2026-12-22, but this baseline is offline)" },
+  const aLoose = adm.decisions.every((d: any) => typeof d.evidenceSha256 === "string" && d.tier !== undefined && (d.decision === "ADMIT" || (Array.isArray(d.reasons) && d.reasons.length > 0)));
+  const emptyReasonAdmits = adm.decisions.filter((d: any) => d.decision === "ADMIT" && !(Array.isArray(d.reasons) && d.reasons.length)).map((d: any) => d.host);
+  const untightenedReading = { reportOnly: true, notGraded: true, reading: "reasons required only for DEFER/REFUSE (ADMIT justified by tier/admittedPrefixes/termsCondition)", a: aLoose, wouldGrade: !(aLoose && b) ? "FAIL" : "PARTIAL" };
+  return { grade, gradeCause: a ? null : `FAIL is due to the pre-registered wording 'every decision carries reasons': the ${emptyReasonAdmits.length} ADMIT decisions carry an empty reasons[] (${emptyReasonAdmits.join(", ")}); governor checks (b) pass`, untightenedReading, measured: { a_admission: { summary: adm.summary, everyDecisionHasReasonsShaTier: a }, b_governor: { allowlisted: allow, nonAllowlisted: deny, afterExpiry: exp, ok: b }, c_newDiscovery: "NOT_MEASURED — real collection is network-gated (grant V372 active until 2026-12-22, but this baseline is offline)" },
     metrics: { admissionDecisionsWithEvidence: adm.decisions.length, newDiscoveriesMeasured: null } };
 }
 
@@ -315,12 +363,11 @@ function compute(root: string): any {
   const state = loadState(root);
   const register = REG.buildRegister({ ...state.sources, inputs: state.inputs });
   const cp10 = rj(root, `${EV}/V168_CHECKPOINT_10.json`);
-  const nm = (n: number) => ({ grade: "NOT_MEASURED", measured: { reason: "scenario text not provided in the brief nor committed in the repository; not invented" }, metrics: {} });
   const results: any = {
-    1: s1(root, state, register, cp10), 2: s2(root, state), 3: nm(3), 4: nm(4), 5: s5(register), 6: s6(root, cp10), 7: s7(root, state),
+    1: s1(root, state, register, cp10), 2: s2(root, state), 3: s3(root, state), 4: s4(root, state), 5: s5(register), 6: s6(root, cp10), 7: s7(root, state),
     8: s8(state, register), 9: s9(state, register), 10: s10(root), 11: s11(root, state, register), 12: s12(root, register, cp10), 13: s13(root), 14: s14(root, register), 15: s15(root, state),
   };
-  const scenarios = PRE_REGISTRATION.scenarios.map((s: any) => ({ n: s.n, name: s.name, grade: results[s.n].grade, measured: results[s.n].measured, metrics: results[s.n].metrics }));
+  const scenarios = PRE_REGISTRATION.scenarios.map((s: any) => ({ n: s.n, name: s.name, grade: results[s.n].grade, ...(results[s.n].gradeCause ? { gradeCause: results[s.n].gradeCause, untightenedReading: results[s.n].untightenedReading } : {}), ...(s.addedAfterFirstRun ? { preRegisteredAfterFirstRunOfOthers: true } : {}), measured: results[s.n].measured, metrics: results[s.n].metrics }));
   const counts: any = {}; for (const s of scenarios) counts[s.grade] = (counts[s.grade] || 0) + 1;
   const m = (n: number) => results[n].metrics;
   const permR = m(8).permissionChecksRespected + m(9).permissionChecksRespected, permT = m(8).permissionChecksTried + m(9).permissionChecksTried;
@@ -332,10 +379,11 @@ function compute(root: string): any {
     scenarios,
     summary: { counts, perScenario: scenarios.map((s: any) => `${s.n}:${s.grade}`) },
     honestLimits: [
-      "the owner's addendum text (§21–§31) is NOT committed in the repository; scenario wording here follows the caller's brief; scenarios #3 and #4 were not described there and are NOT_MEASURED rather than invented",
+      "the owner's addendum text (§21–§31) is NOT committed in the repository; scenario wording follows the owner text relayed by the coordinator (§29 verbatim list)",
+      "scenarios #3 and #4 were PRE-REGISTERED AFTER the first run of the other 13 (the owner text arrived later; the first run recorded them NOT_MEASURED); their rules were written before #3/#4 were first run; no other rule was changed",
       "scenarios, labelled mutations/fixtures, ground-truth labels and grading rules were written by the technical provider after read-only exploration of the records (e.g. the GO dry-run halt and H's register status were seen before this bin was written); they were not edited after its first execution",
       "first-execution correction (measurement code, not a rule): S15 read the AUCs from a wrong field path (null ⇒ vacuous consistency); fixed to ex.primary.auc.{H1,B0}; the S15 grading rule is unchanged",
-      "S13 is FAIL on the pre-registered wording 'every decision carries reasons': the 3 ADMIT decisions carry an empty reasons[] (reasons record refusal/deferral causes only; ADMIT is justified by tier/admittedPrefixes/termsCondition). Kept as FAIL — not re-graded after seeing the result; the rule wording is flagged for owner review",
+      "S13 is FAIL on the pre-registered wording 'every decision carries reasons': the 3 ADMIT decisions carry an empty reasons[] (reasons record refusal/deferral causes only; ADMIT is justified by tier/admittedPrefixes/termsCondition). Kept as FAIL — not re-graded; the scenario record carries gradeCause + an untightenedReading (report-only, NOT graded); the rule wording is flagged for owner review",
       "S6 ground truth: STALE = a committed record says so (CP10); FRESH = content-identical recomputation (odg-strategic-select --check). odg-observation-currency is path-based and conservative ⇒ the FRESH register is flagged HISTORICAL (false-stale 1/1)",
       "S1 runs the GO SELECT/actionability logic over committed records, not odg-go itself (odg-go Truth-Locks on branch main and reads host state); one real `odg-go --dry` on the main checkout is recorded under hostObservations",
       "S10: neither register has a BLOCKED item whose dependents are still open except p01-demand-validation → p01-billing-sandbox (itself BLOCKED); fan-out is computed by this runner, no component exposes it",
@@ -350,6 +398,11 @@ function compute(root: string): any {
       repetitionsAvoided: { value: "see hostObservations (live attempt log — host state, not committed)", deterministicChecks: m(11).reExecutionsRefused, closedItemsStillStatusSelectable: m(11).closedItemsStillStatusSelectable },
       resumeTimeMs: { value: "NOT_MEASURED (deterministic record; wall-clock excluded — see hostObservations)" },
       resumeCost: { value: 0, unit: "paid calls", basis: "offline: no network, no model, no provider" },
+      decisionQuality: { value: `${m(3).decisionsRetrieved}/${m(3).decisionsAsked} decisions + justifications retrievable from records; ${m(3).decisionsReturnedByComponent} returned by a component`, basis: "S3" },
+      missionsUnblocked: { value: "NOT_MEASURED", basis: "Phase 0 applies no change (baseline); measured after a fix phase" },
+      regressions: { value: "NOT_MEASURED", basis: "no before/after in Phase 0 — this record IS the 'before'" },
+      improvementObtained: { value: m(15).improvementsProven, basis: "S15: adopted held-out-verified improvements in the committed records" },
+      ownerMetricNames: ["précision de récupération=recoveryPrecision", "taux de reprise correcte=correctResumeRate", "qualité des décisions=decisionQuality", "erreurs de statut=statusErrors", "preuves périmées détectées=staleProofsDetected", "respect des permissions=permissionRespect", "répétitions évitées=repetitionsAvoided", "missions débloquées=missionsUnblocked", "temps et coût de reprise=resumeTimeMs+resumeCost", "régressions=regressions", "amélioration réellement obtenue=improvementObtained"],
     },
   };
 }

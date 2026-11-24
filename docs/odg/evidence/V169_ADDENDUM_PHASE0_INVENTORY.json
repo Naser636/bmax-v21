@@ -10,27 +10,10 @@
     "precondition": "H CLOSED_FAIL (docs/odg/evidence/V168_CHECKPOINT_10.json#missionH) — verified"
   },
   "sourceLimits": [
-    "the addendum text (§21–§31) is NOT committed in the repository; §21.2 roles and §29 scenarios follow the caller's brief",
-    "§22 '15 fields' are not enumerated in the brief nor in the repo: the list below is a PROVIDER WORKING LIST (F01–F15) to be re-mapped against the owner's §22 text — coverage claims are relative to it",
+    "the addendum text (§21–§31) is NOT committed in the repository; §22 fields, proof attributes and §29 scenarios were relayed verbatim by the coordinator",
+    "the first commit of this PR mapped coverage to a provider working list (F01–F15); this revision re-maps every mechanism to the owner's 15 fields + 7 proof attributes + append-only history",
     "§23 vocabulary used as given in the brief (12 values)"
   ],
-  "fields22WorkingList": {
-    "F01_id": "stable identifier",
-    "F02_boussoleRef": "link to V12.4 mission/section and V14.4 phase (§21.2 last line)",
-    "F03_objective": "objective / title",
-    "F04_status": "status (ideally §23 taxonomy)",
-    "F05_priority": "priority / importance",
-    "F06_dependencies": "dependencies",
-    "F07_authorization": "authorization (by, source, scope)",
-    "F08_actorOwner": "actor / responsible",
-    "F09_evidence": "evidence pointers (path, sha)",
-    "F10_commitHeadBinding": "commit / head the state is bound to",
-    "F11_lastCheckpoint": "last checkpoint / last validated step",
-    "F12_nextAction": "next action",
-    "F13_blockersRisks": "blockers / risks",
-    "F14_decisionRationale": "decision + rationale",
-    "F15_updatedAt": "last update instant"
-  },
   "states23": [
     "IMPLEMENTED_AND_VERIFIED",
     "IMPLEMENTED_NOT_VERIFIED",
@@ -104,23 +87,23 @@
         "stores": "24 V12.4 missions (sections A–S): id, source, section, objective, components, deps, status, commit, evidence, owner, risk, authorizations, nextAction",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F12_nextAction",
-            "F13_blockersRisks"
+            "O01",
+            "O06",
+            "O07",
+            "O12",
+            "O14",
+            "O15"
           ],
           "missing": [
-            "F05_priority",
-            "F11_lastCheckpoint",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O13"
           ]
         },
         "linksToBoussole": {
@@ -138,7 +121,22 @@
           "CM-RADAR-GATE-CHAIN READY with commit null although the module exists (V14.4 §5, hand-noted; S12 K3 unflagged)",
           "no lastCheckpoint / priority / updatedAt fields",
           "no link to the A–P work items (V160 contracts) that GO actually executes"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P5"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P4",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "O12 evidence = free-text PR/gate string; O15 nextAction not authorization-checked; commit null on several missions; no dates/checkpoints/tests/inspections fields"
       },
       {
         "id": "BOUSSOLE-V144-ROADMAP",
@@ -149,23 +147,23 @@
         "stores": "V14.4 phases 0–8 mapped onto V12.4 anchors, gates, reconciliation notes (prose)",
         "fields22": {
           "covered": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F13_blockersRisks",
-            "F12_nextAction"
+            "O01",
+            "O07",
+            "O13",
+            "O14"
           ],
           "missing": [
-            "F01_id",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O12",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -179,7 +177,21 @@
         "gapsOnThisComponent": [
           "the addendum §21–§31 text is not committed here",
           "§3 correspondence register (V12.4 mission → components → census → tests → evidence → V14.4 phase) still NOT generated"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [],
+          "missing": [
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "prose; 'Current real state' column = O14 (hand-written)"
       },
       {
         "id": "BOUSSOLE-ROADMAP-JSON",
@@ -190,23 +202,23 @@
         "stores": "execution roadmap of record (PROTECTED; read only here)",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F03_objective",
-            "F04_status"
+            "O01",
+            "O14"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O07",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O12",
+            "O13",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -217,7 +229,21 @@
         "stateEvidence": [
           "read by odg-v124-consolidation.validate (baseline S12 ran it)",
           "protected path — never modified"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [],
+          "missing": [
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "protected manifest; read only"
       },
       {
         "id": "BOUSSOLE-COMPASS-VIEW",
@@ -231,23 +257,23 @@
         "stores": "V360 capability compass view + a machine-readable 'compass checkpoint' (verifiedCheckpoint commit/mission, lastMission, nextAction advisory)",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F04_status",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F15_updatedAt"
+            "O01",
+            "O04",
+            "O05",
+            "O12",
+            "O14",
+            "O15"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F13_blockersRisks",
-            "F14_decisionRationale"
+            "O02",
+            "O03",
+            "O06",
+            "O07",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O13"
           ]
         },
         "linksToBoussole": {
@@ -266,7 +292,22 @@
         "gapsOnThisComponent": [
           "stale with no staleness flag",
           "not fed by the V16.x GO / checkpoint chain"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P4",
+            "P5"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": true,
+        "fields22Note": "compass-update keeps an idempotent history; stale (370 commits) — P6 never computed"
       }
     ],
     "mission_operational_tracking": [
@@ -279,23 +320,23 @@
         "stores": "16 A–P WORK_ITEM_CONTRACTs: scenario, ownerText, state, authorizedBy, initialState, contract (objective/scope/write_set/criteria), authorization block, revisionHistory",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F03_objective",
-            "F04_status",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F09_evidence",
-            "F13_blockersRisks",
-            "F14_decisionRationale"
+            "O01",
+            "O02",
+            "O03",
+            "O04",
+            "O06",
+            "O08",
+            "O13",
+            "O15"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F05_priority",
-            "F06_dependencies",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F15_updatedAt"
+            "O05",
+            "O07",
+            "O09",
+            "O10",
+            "O11",
+            "O12",
+            "O14"
           ]
         },
         "linksToBoussole": {
@@ -310,7 +351,22 @@
         "gapsOnThisComponent": [
           "no boussoleRef",
           "H state AUTHORIZED_FOR_REVISION + initialState PARTIAL although H is CLOSED_FAIL (closure only implicit via authorization-scope)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P4",
+            "P7"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P5",
+            "P6"
+          ]
+        },
+        "appendOnlyHistory": true,
+        "fields22Note": "revisionHistory[] = append-only per contract (decision + justification + inspection fixes: S3); O04 only revision dates; no O05/O09–O11/O14 (result lives in criteria-validation records)"
       },
       {
         "id": "OPS-STRATEGIC-REGISTER",
@@ -323,23 +379,23 @@
         "stores": "derived register of A–P + V150 + CP8 gaps + method cards: status+statusSource, 10 criteria (MEASURED/NOT_MEASURED with rule+source), requiresOwnerAuthorization, nextStep, deps (only when stated)",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F03_objective",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F09_evidence",
-            "F12_nextAction",
-            "F13_blockersRisks",
-            "F14_decisionRationale"
+            "O01",
+            "O03",
+            "O07",
+            "O12",
+            "O13",
+            "O15"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F08_actorOwner",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F15_updatedAt"
+            "O02",
+            "O04",
+            "O05",
+            "O06",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O14"
           ]
         },
         "linksToBoussole": {
@@ -358,7 +414,22 @@
           "CP8-GAP-canonicalDefectsJ PROPOSED although #940 fixed it (S12 K1)",
           "closed items stay status-selectable (S11)",
           "441/560 criteria NOT_MEASURED (S14)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P5",
+            "P7"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P4",
+            "P6"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "every status/criterion carries source pointer + rule (P3); NOT_MEASURED with reason (O13); recomputed, not append-only; O14 wrong for H (S5)"
       },
       {
         "id": "OPS-GO-CYCLE",
@@ -372,23 +443,23 @@
         "stores": "one bounded governed cycle; JSONL trace of every step/stop with inputsSha256, decision, decidedBy; runId idempotence",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F04_status",
-            "F07_authorization",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F12_nextAction",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O01",
+            "O03",
+            "O04",
+            "O05",
+            "O08",
+            "O12",
+            "O15"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F05_priority",
-            "F06_dependencies",
-            "F08_actorOwner",
-            "F11_lastCheckpoint",
-            "F13_blockersRisks"
+            "O02",
+            "O06",
+            "O07",
+            "O09",
+            "O10",
+            "O11",
+            "O13",
+            "O14"
           ]
         },
         "linksToBoussole": {
@@ -404,7 +475,22 @@
         "gapsOnThisComponent": [
           "no resume of an interrupted cycle's missing steps (EVIDENCE/NEXT_SELECTION after DEADLINE) — S1(b)",
           "V164_GO_CYCLE.json not regenerated, no staleness flag (S6)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P4",
+            "P5"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": true,
+        "fields22Note": "JSONL trace append-only with inputsSha256, decidedBy, startedAt/endedAt, Truth-Lock head; no O09–O11"
       },
       {
         "id": "OPS-AUTHORIZATION-SCOPE",
@@ -415,23 +501,23 @@
         "stores": "derived (never stored) per-step authorization + validation over contract + sha-bound inspection/experiment/validation records",
         "fields22": {
           "covered": [
-            "F04_status",
-            "F07_authorization",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction"
+            "O03",
+            "O04",
+            "O11",
+            "O12",
+            "O15"
           ],
           "missing": [
-            "F01_id",
-            "F02_boussoleRef",
-            "F03_objective",
-            "F05_priority",
-            "F06_dependencies",
-            "F08_actorOwner",
-            "F13_blockersRisks",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O01",
+            "O02",
+            "O05",
+            "O06",
+            "O07",
+            "O08",
+            "O09",
+            "O10",
+            "O13",
+            "O14"
           ]
         },
         "linksToBoussole": {
@@ -446,7 +532,22 @@
         "gapsOnThisComponent": [
           "inspectedHeadSha checked for format only — a non-existent commit is accepted (S7 m3)",
           "STEP_SEQUENCES only for G/H"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P1",
+            "P3",
+            "P5"
+          ],
+          "missing": [
+            "P2",
+            "P4",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "derived per call: validated steps + evidence pointer (inspection verdict, sha, session ids) — O04 = last validated step; O11 = inspection verdict only, no CI; P6 not checked (inspectedHeadSha format-only: S7)"
       },
       {
         "id": "OPS-MISSION-LEDGER",
@@ -458,23 +559,23 @@
         "stores": "immutable proven-only status-of-record, sealed entries (mission, state, authorized, lifecyclePath, objectives, proven, validated, seal)",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F04_status",
-            "F07_authorization",
-            "F09_evidence",
-            "F15_updatedAt"
+            "O01",
+            "O03",
+            "O06",
+            "O12",
+            "O14"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F05_priority",
-            "F06_dependencies",
-            "F08_actorOwner",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks",
-            "F14_decisionRationale"
+            "O02",
+            "O04",
+            "O05",
+            "O07",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O13",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -489,7 +590,22 @@
         "gapsOnThisComponent": [
           "cannot represent PARTIAL/FAIL (by design — attempt-log covers it)",
           "A–P scenario work (G/H) never enters it"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P4"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": true,
+        "fields22Note": "append-only sealed entries (projectFiles = O06); proven-only ⇒ no PARTIAL/FAIL O14"
       },
       {
         "id": "OPS-MISSION-ATTEMPT-LOG",
@@ -501,23 +617,23 @@
         "stores": "append-only attempt outcomes incl. SKIPPED/IDLE/REFUSED + reason",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F04_status",
-            "F13_blockersRisks",
-            "F15_updatedAt"
+            "O01",
+            "O10",
+            "O14"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F14_decisionRationale"
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O07",
+            "O08",
+            "O09",
+            "O11",
+            "O12",
+            "O13",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -527,7 +643,22 @@
         "stateEvidence": [
           "mission-attempt-log.test.ts exit 0",
           "host log 2708 attempts 2026-10-21→2026-11-24; last 2026-11-24T00:45 IDLE ALREADY_PROVEN dedup"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P4"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P3",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": true,
+        "fields22Note": "append-only; records SKIPPED/IDLE/REFUSED + reason (O10 at mission level)"
       },
       {
         "id": "OPS-CAMPAIGN-CONTROLLER",
@@ -542,23 +673,23 @@
         "stores": "register load/save (crash-atomic), selectNextLot, staleAcceptances, layering, reconcile, promotion authorization; lifecycle/loop drivers",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F09_evidence",
-            "F12_nextAction",
-            "F13_blockersRisks"
+            "O01",
+            "O07",
+            "O12",
+            "O14",
+            "O15"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F08_actorOwner",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O13"
           ]
         },
         "linksToBoussole": {
@@ -573,7 +704,22 @@
         ],
         "gapsOnThisComponent": [
           "summary().blocked lists blockReason but not the missions each blocker blocks (S10)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P1"
+          ],
+          "missing": [
+            "P2",
+            "P3",
+            "P4",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "crash-atomic register, not append-only; staleAcceptances = dependency freshness only"
       },
       {
         "id": "OPS-PROGRAM-CONTINUITY",
@@ -586,23 +732,23 @@
         "stores": "resumable dossier: done / mustRevalidate (dep-regressed, evidence-historical, component-changed) / blocked / nextEligible + boussoleRef",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F06_dependencies",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F12_nextAction",
-            "F13_blockersRisks"
+            "O01",
+            "O05",
+            "O07",
+            "O12",
+            "O14",
+            "O15"
           ],
           "missing": [
-            "F05_priority",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F11_lastCheckpoint",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O02",
+            "O03",
+            "O04",
+            "O06",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O13"
           ]
         },
         "linksToBoussole": {
@@ -617,7 +763,22 @@
         "gapsOnThisComponent": [
           "the V12.4 companion carries no `observation` and no snapshots ⇒ 2 of the 3 staleness sources are never exercised on real data (mustRevalidate 0 = not measured, not 'fresh')",
           "odg-cto-continuity-protocol: no non-test importer (CONNECTED_NOT_USED)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P1",
+            "P5",
+            "P6"
+          ],
+          "missing": [
+            "P2",
+            "P3",
+            "P4",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "mustRevalidate = freshness (P6) — only when observations/snapshots are present (absent on the real companion)"
       },
       {
         "id": "OPS-CHECKPOINTS",
@@ -629,23 +790,23 @@
         "stores": "CP1–CP10 session checkpoints (headAtCheckpoint, truthLock, prs, mission status, openGaps, ownerDecisions, nextAction, previous); checkpoint-engine = pipeline-stage checkpoint for odg-run",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F04_status",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O01",
+            "O04",
+            "O05",
+            "O08",
+            "O11",
+            "O13",
+            "O14",
+            "O15"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner"
+            "O02",
+            "O03",
+            "O06",
+            "O07",
+            "O09",
+            "O10",
+            "O12"
           ]
         },
         "linksToBoussole": {
@@ -660,7 +821,22 @@
         "gapsOnThisComponent": [
           "no component locates the latest checkpoint (chain head) — S2",
           "`previous` links only from CP8 on"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P2",
+            "P3",
+            "P4",
+            "P7"
+          ],
+          "missing": [
+            "P1",
+            "P5",
+            "P6"
+          ]
+        },
+        "appendOnlyHistory": true,
+        "fields22Note": "CP chain via `previous` (append-only by file); O11 = generic gate policy per PR, not per-PR CI results (S4); O09/O10 not per mission"
       },
       {
         "id": "OPS-STRATEGY-MODE",
@@ -672,23 +848,23 @@
         "stores": "per-item strategy mode (NATIVE/PROVIDER/HYBRID/DECISION_REQUIRED)",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F12_nextAction",
-            "F14_decisionRationale"
+            "O08",
+            "O15"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F13_blockersRisks",
-            "F15_updatedAt"
+            "O01",
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O07",
+            "O09",
+            "O10",
+            "O11",
+            "O12",
+            "O13",
+            "O14"
           ]
         },
         "linksToBoussole": {
@@ -697,7 +873,21 @@
         "state23": "CONNECTED_AND_USED",
         "stateEvidence": [
           "read by odg-go STATE_READ; exercised by odg-go-cycle.test.ts"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P4",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false
       }
     ],
     "closure_register": [
@@ -712,23 +902,23 @@
         "stores": "427 items (program, title, status, deps, priority, evidence, acceptance, staleEvidence on 181)",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F03_objective",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F09_evidence",
-            "F13_blockersRisks"
+            "O01",
+            "O02",
+            "O07",
+            "O12",
+            "O14"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O13",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -746,7 +936,22 @@
         "gapsOnThisComponent": [
           "V16.x A–P / G / H closures are absent from it (closure of record lives only in CP9/CP10 + V167 dossier)",
           "staleEvidence is a hand-set boolean, not computed"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P4",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "acceptance + evidence text; staleEvidence hand-set boolean (≈P6, not computed); hard register (byte-identical)"
       }
     ],
     "decision_journal": [
@@ -759,23 +964,23 @@
         "stores": "DEC-### CTO decisions / findings with status, source, checkpoint, affects (prose)",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F04_status",
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O01",
+            "O05",
+            "O08",
+            "O12",
+            "O14"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks"
+            "O02",
+            "O03",
+            "O04",
+            "O06",
+            "O07",
+            "O09",
+            "O10",
+            "O11",
+            "O13",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -785,7 +990,22 @@
         "state23": "DORMANT",
         "stateEvidence": [
           "documentary only (header); last commit touching it 2026-11-11 — V165/V168 owner decisions and CP9/CP10 ownerDecisions are NOT in it"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P4",
+            "P7"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P5",
+            "P6"
+          ]
+        },
+        "appendOnlyHistory": true,
+        "fields22Note": "append-only prose DEC-###; stopped 2026-11-11"
       },
       {
         "id": "DECISION-OWNER-RECORDS",
@@ -802,23 +1022,23 @@
         "stores": "per-directive owner authorizations/grants; pending owner questions",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F09_evidence",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O01",
+            "O02",
+            "O03",
+            "O04",
+            "O08",
+            "O13"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks"
+            "O05",
+            "O06",
+            "O07",
+            "O09",
+            "O10",
+            "O11",
+            "O12",
+            "O14",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -830,7 +1050,22 @@
         ],
         "gapsOnThisComponent": [
           "no single index of decisions; pending owner decisions live only in checkpoint prose (CP10.ownerDecisions)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P7"
+          ],
+          "missing": [
+            "P5",
+            "P6"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "owner directives state scope + exclusions (P2) + expiry (V372 grant)"
       },
       {
         "id": "DECISION-PRECEDENT-GOVERNANCE",
@@ -843,23 +1078,23 @@
         "stores": "reusable decision precedents keyed by goal signature; decision-vs-evidence integrity audit",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F09_evidence",
-            "F14_decisionRationale"
+            "O08",
+            "O12"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks",
-            "F15_updatedAt"
+            "O01",
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O07",
+            "O09",
+            "O10",
+            "O11",
+            "O13",
+            "O14",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -869,7 +1104,22 @@
         "stateEvidence": [
           "both tests exit 0",
           "decision-precedent consumers memory-scenario-battery, capability-executors; decision-governance: NO non-test importer (CONNECTED_NOT_USED) — never run over the real decision records"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P1",
+            "P3"
+          ],
+          "missing": [
+            "P2",
+            "P4",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "decision-governance checks provenance/FACT_FROM_NONFACT but has no live caller"
       },
       {
         "id": "DECISION-AUDIT-LOG",
@@ -881,23 +1131,23 @@
         "stores": "hash-chained audit events (scheduler decisions etc.)",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F09_evidence",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O08",
+            "O12"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks"
+            "O01",
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O07",
+            "O09",
+            "O10",
+            "O11",
+            "O13",
+            "O14",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -909,7 +1159,22 @@
         ],
         "gapsOnThisComponent": [
           "keyed-HMAC integrity BLOCKED (closure-register p0e-audit-log-keyed-integrity)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P4"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": true,
+        "fields22Note": "hash-chained append-only events"
       }
     ],
     "memory": [
@@ -925,23 +1190,23 @@
         "stores": "memory classes/quality at write, trust/staleness at retrieval, currency (memory ≠ current state)",
         "fields22": {
           "covered": [
-            "F09_evidence",
-            "F10_commitHeadBinding",
-            "F15_updatedAt"
+            "O12",
+            "O13"
           ],
           "missing": [
-            "F01_id",
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks",
-            "F14_decisionRationale"
+            "O01",
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O07",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O14",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -954,7 +1219,22 @@
         ],
         "gapsOnThisComponent": [
           "no live caller applies currency to committed evidence records (S6)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P4",
+            "P5",
+            "P6",
+            "P7"
+          ],
+          "missing": [
+            "P1",
+            "P2"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "observation-currency = P5/P6 (commit/scope/time boundary); trust-gate = provenance/tamper; not applied to evidence records live"
       },
       {
         "id": "MEMORY-KNOWLEDGE",
@@ -969,23 +1249,23 @@
         "stores": "attested knowledge items, claims, usableFor/admissible",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F09_evidence",
-            "F15_updatedAt"
+            "O01",
+            "O12",
+            "O13"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks",
-            "F14_decisionRationale"
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O06",
+            "O07",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O14",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -995,7 +1275,22 @@
         "stateEvidence": [
           "odg-knowledge-intelligence.test.ts exit 0 (48 ok); consumers odg-go (PROBLEMS_OPPORTUNITIES), scenario-G runs",
           "knowledge-engine.ts: no test, no importer ⇒ DORMANT"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P1",
+            "P2",
+            "P3",
+            "P4",
+            "P6"
+          ],
+          "missing": [
+            "P5",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "attested claims with usableFor (what it establishes/doesn't), freshness at use"
       },
       {
         "id": "MEMORY-REUSE",
@@ -1009,23 +1304,23 @@
         "stores": "patch/decision reuse with measured reuse accounting",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F09_evidence"
+            "O06",
+            "O12"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F04_status",
-            "F05_priority",
-            "F06_dependencies",
-            "F07_authorization",
-            "F08_actorOwner",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction",
-            "F13_blockersRisks",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O01",
+            "O02",
+            "O03",
+            "O04",
+            "O05",
+            "O07",
+            "O08",
+            "O09",
+            "O10",
+            "O11",
+            "O13",
+            "O14",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -1038,7 +1333,22 @@
         ],
         "gapsOnThisComponent": [
           "no reuse link to A–P mission outcomes (H lesson recorded only as CP10 prose)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P4",
+            "P5",
+            "P6",
+            "P7"
+          ]
+        },
+        "appendOnlyHistory": true,
+        "fields22Note": "patch-memory/reuse-ledger append records"
       }
     ],
     "radar": [
@@ -1056,23 +1366,23 @@
         "stores": "source admission decisions (ADMIT/DEFER/REFUSE + tier + evidenceSha256), grant governance (allowlist, expiry, https), radar-owned collection, gate-chain coverage",
         "fields22": {
           "covered": [
-            "F01_id",
-            "F04_status",
-            "F07_authorization",
-            "F09_evidence",
-            "F13_blockersRisks",
-            "F14_decisionRationale",
-            "F15_updatedAt"
+            "O01",
+            "O03",
+            "O08",
+            "O12",
+            "O13"
           ],
           "missing": [
-            "F02_boussoleRef",
-            "F03_objective",
-            "F05_priority",
-            "F06_dependencies",
-            "F08_actorOwner",
-            "F10_commitHeadBinding",
-            "F11_lastCheckpoint",
-            "F12_nextAction"
+            "O02",
+            "O04",
+            "O05",
+            "O06",
+            "O07",
+            "O09",
+            "O10",
+            "O11",
+            "O14",
+            "O15"
           ]
         },
         "linksToBoussole": {
@@ -1088,7 +1398,22 @@
         "gapsOnThisComponent": [
           "ADMIT decisions carry empty reasons[] (S13)",
           "40/46 candidates DEFER (owner decision on 8 sources pending, CP10)"
-        ]
+        ],
+        "proofAttributes": {
+          "covered": [
+            "P3",
+            "P4",
+            "P7"
+          ],
+          "missing": [
+            "P1",
+            "P2",
+            "P5",
+            "P6"
+          ]
+        },
+        "appendOnlyHistory": false,
+        "fields22Note": "admission decision + tier + evidenceSha256 + termsCondition; grant expiry; ADMIT reasons empty"
       }
     ]
   },
@@ -1156,6 +1481,12 @@
       "blockedValue": "stale V164_GO_CYCLE/compass checkpoint unflagged (S6), 0/2 interrupted steps recovered (S1), wrong-commit accepted (S7 m3)"
     },
     {
+      "rank": "3b",
+      "gap": "§22 fields O09/O10/O11 (tests run/failed/not-run, CI results) and proof attributes P2/P6 are recorded per mission by no existing component",
+      "component": "criteria-validation records (V166/V168) + checkpoints prs[] (existing) — missing fields",
+      "blockedValue": "S4 PARTIAL; a resume cannot tell which tests are absent"
+    },
+    {
       "rank": 4,
       "gap": "§3 correspondence register of V14.4 not generated; addendum §21–§31 text not committed",
       "component": "odg-mission-crosswalk / capability-traceability / odg-component-census (per V14.4 §3)",
@@ -1219,7 +1550,348 @@
         "what": "generate the V14.4 §3 correspondence register (Phase 0 lot 2) and bring V12.4 statuses onto the §23 12-value taxonomy in a VIEW (not by rewriting the companion)",
         "gain": "§23 states machine-checkable per mission",
         "touches": "odg-mission-crosswalk / odg-component-census (existing)"
+      },
+      {
+        "id": "BUP-9",
+        "what": "extend the existing criteria-validation record schema with testsRun / testsFailed / testsNotRun(+reason) / ciResults(head, conclusion) and every evidence pointer with {establishes, doesNotEstablish, provenance, date, commit, contractSha, freshness, limits}",
+        "gain": "S4 PASS candidate; §22 O09–O11 + 7 proof attributes covered",
+        "touches": "odg-authorization-scope validationValid (reads it), V16x criteria-validation records going forward (never rewrite past ones)"
       }
+    ]
+  },
+  "fields22": {
+    "source": "owner §22 'Mémoire opérationnelle des missions' (verbatim, relayed by the coordinator after the first commit of this PR; this re-mapping replaces the provider working list F01–F15)",
+    "fields": {
+      "O01": "Identifiant et objectif",
+      "O02": "Périmètre et critères d'acceptation",
+      "O03": "Autorisation applicable et preuve",
+      "O04": "Date de début et derniers checkpoints",
+      "O05": "Commit et état du dépôt concernés",
+      "O06": "Composants et fichiers touchés",
+      "O07": "Dépendances et blocages",
+      "O08": "Décisions et justifications synthétiques",
+      "O09": "Tests exécutés et résultats",
+      "O10": "Tests échoués ou non exécutés et raisons",
+      "O11": "Inspections et résultats CI",
+      "O12": "Empreintes et preuves",
+      "O13": "Risques, incertitudes et limites",
+      "O14": "Résultat final",
+      "O15": "Prochaine action sûre et autorisée"
+    },
+    "proofAttributes": {
+      "P1": "ce qu'elle établit",
+      "P2": "ce qu'elle n'établit pas",
+      "P3": "sa provenance",
+      "P4": "sa date",
+      "P5": "son lien avec le commit et le contrat",
+      "P6": "sa fraîcheur",
+      "P7": "ses limites"
+    },
+    "appendOnlyHistory": "historique append-only des événements importants",
+    "boussoleLink": "§21.2 last line — tracked separately per mechanism (linksToBoussole)"
+  },
+  "fieldCoverageMatrix": {
+    "perField": {
+      "O01": {
+        "label": "Identifiant et objectif",
+        "coveredBy": [
+          "BOUSSOLE-V124-COMPANION",
+          "BOUSSOLE-V144-ROADMAP",
+          "BOUSSOLE-ROADMAP-JSON",
+          "BOUSSOLE-COMPASS-VIEW",
+          "OPS-AP-CONTRACTS",
+          "OPS-STRATEGIC-REGISTER",
+          "OPS-GO-CYCLE",
+          "OPS-MISSION-LEDGER",
+          "OPS-MISSION-ATTEMPT-LOG",
+          "OPS-CAMPAIGN-CONTROLLER",
+          "OPS-PROGRAM-CONTINUITY",
+          "OPS-CHECKPOINTS",
+          "CLOSURE-REGISTER",
+          "DECISION-CHANGELOG",
+          "DECISION-OWNER-RECORDS",
+          "MEMORY-KNOWLEDGE",
+          "RADAR-ADMISSION-GOVERNOR"
+        ],
+        "count": 17
+      },
+      "O02": {
+        "label": "Périmètre et critères d'acceptation",
+        "coveredBy": [
+          "OPS-AP-CONTRACTS",
+          "CLOSURE-REGISTER",
+          "DECISION-OWNER-RECORDS"
+        ],
+        "count": 3
+      },
+      "O03": {
+        "label": "Autorisation applicable et preuve",
+        "coveredBy": [
+          "OPS-AP-CONTRACTS",
+          "OPS-STRATEGIC-REGISTER",
+          "OPS-GO-CYCLE",
+          "OPS-AUTHORIZATION-SCOPE",
+          "OPS-MISSION-LEDGER",
+          "DECISION-OWNER-RECORDS",
+          "RADAR-ADMISSION-GOVERNOR"
+        ],
+        "count": 7
+      },
+      "O04": {
+        "label": "Date de début et derniers checkpoints",
+        "coveredBy": [
+          "BOUSSOLE-COMPASS-VIEW",
+          "OPS-AP-CONTRACTS",
+          "OPS-GO-CYCLE",
+          "OPS-AUTHORIZATION-SCOPE",
+          "OPS-CHECKPOINTS",
+          "DECISION-OWNER-RECORDS"
+        ],
+        "count": 6
+      },
+      "O05": {
+        "label": "Commit et état du dépôt concernés",
+        "coveredBy": [
+          "BOUSSOLE-COMPASS-VIEW",
+          "OPS-GO-CYCLE",
+          "OPS-PROGRAM-CONTINUITY",
+          "OPS-CHECKPOINTS",
+          "DECISION-CHANGELOG"
+        ],
+        "count": 5
+      },
+      "O06": {
+        "label": "Composants et fichiers touchés",
+        "coveredBy": [
+          "BOUSSOLE-V124-COMPANION",
+          "OPS-AP-CONTRACTS",
+          "OPS-MISSION-LEDGER",
+          "MEMORY-REUSE"
+        ],
+        "count": 4
+      },
+      "O07": {
+        "label": "Dépendances et blocages",
+        "coveredBy": [
+          "BOUSSOLE-V124-COMPANION",
+          "BOUSSOLE-V144-ROADMAP",
+          "OPS-STRATEGIC-REGISTER",
+          "OPS-CAMPAIGN-CONTROLLER",
+          "OPS-PROGRAM-CONTINUITY",
+          "CLOSURE-REGISTER"
+        ],
+        "count": 6
+      },
+      "O08": {
+        "label": "Décisions et justifications synthétiques",
+        "coveredBy": [
+          "OPS-AP-CONTRACTS",
+          "OPS-GO-CYCLE",
+          "OPS-CHECKPOINTS",
+          "OPS-STRATEGY-MODE",
+          "DECISION-CHANGELOG",
+          "DECISION-OWNER-RECORDS",
+          "DECISION-PRECEDENT-GOVERNANCE",
+          "DECISION-AUDIT-LOG",
+          "RADAR-ADMISSION-GOVERNOR"
+        ],
+        "count": 9
+      },
+      "O09": {
+        "label": "Tests exécutés et résultats",
+        "coveredBy": [],
+        "count": 0
+      },
+      "O10": {
+        "label": "Tests échoués ou non exécutés et raisons",
+        "coveredBy": [
+          "OPS-MISSION-ATTEMPT-LOG"
+        ],
+        "count": 1
+      },
+      "O11": {
+        "label": "Inspections et résultats CI",
+        "coveredBy": [
+          "OPS-AUTHORIZATION-SCOPE",
+          "OPS-CHECKPOINTS"
+        ],
+        "count": 2
+      },
+      "O12": {
+        "label": "Empreintes et preuves",
+        "coveredBy": [
+          "BOUSSOLE-V124-COMPANION",
+          "BOUSSOLE-COMPASS-VIEW",
+          "OPS-STRATEGIC-REGISTER",
+          "OPS-GO-CYCLE",
+          "OPS-AUTHORIZATION-SCOPE",
+          "OPS-MISSION-LEDGER",
+          "OPS-CAMPAIGN-CONTROLLER",
+          "OPS-PROGRAM-CONTINUITY",
+          "CLOSURE-REGISTER",
+          "DECISION-CHANGELOG",
+          "DECISION-PRECEDENT-GOVERNANCE",
+          "DECISION-AUDIT-LOG",
+          "MEMORY-TRUST-TAXONOMY",
+          "MEMORY-KNOWLEDGE",
+          "MEMORY-REUSE",
+          "RADAR-ADMISSION-GOVERNOR"
+        ],
+        "count": 16
+      },
+      "O13": {
+        "label": "Risques, incertitudes et limites",
+        "coveredBy": [
+          "BOUSSOLE-V144-ROADMAP",
+          "OPS-AP-CONTRACTS",
+          "OPS-STRATEGIC-REGISTER",
+          "OPS-CHECKPOINTS",
+          "DECISION-OWNER-RECORDS",
+          "MEMORY-TRUST-TAXONOMY",
+          "MEMORY-KNOWLEDGE",
+          "RADAR-ADMISSION-GOVERNOR"
+        ],
+        "count": 8
+      },
+      "O14": {
+        "label": "Résultat final",
+        "coveredBy": [
+          "BOUSSOLE-V124-COMPANION",
+          "BOUSSOLE-V144-ROADMAP",
+          "BOUSSOLE-ROADMAP-JSON",
+          "BOUSSOLE-COMPASS-VIEW",
+          "OPS-MISSION-LEDGER",
+          "OPS-MISSION-ATTEMPT-LOG",
+          "OPS-CAMPAIGN-CONTROLLER",
+          "OPS-PROGRAM-CONTINUITY",
+          "OPS-CHECKPOINTS",
+          "CLOSURE-REGISTER",
+          "DECISION-CHANGELOG"
+        ],
+        "count": 11
+      },
+      "O15": {
+        "label": "Prochaine action sûre et autorisée",
+        "coveredBy": [
+          "BOUSSOLE-V124-COMPANION",
+          "BOUSSOLE-COMPASS-VIEW",
+          "OPS-AP-CONTRACTS",
+          "OPS-STRATEGIC-REGISTER",
+          "OPS-GO-CYCLE",
+          "OPS-AUTHORIZATION-SCOPE",
+          "OPS-CAMPAIGN-CONTROLLER",
+          "OPS-PROGRAM-CONTINUITY",
+          "OPS-CHECKPOINTS",
+          "OPS-STRATEGY-MODE"
+        ],
+        "count": 10
+      }
+    },
+    "perProofAttribute": {
+      "P1": {
+        "label": "ce qu'elle établit",
+        "coveredBy": [
+          "OPS-AUTHORIZATION-SCOPE",
+          "OPS-CAMPAIGN-CONTROLLER",
+          "OPS-PROGRAM-CONTINUITY",
+          "DECISION-OWNER-RECORDS",
+          "DECISION-PRECEDENT-GOVERNANCE",
+          "MEMORY-KNOWLEDGE"
+        ],
+        "count": 6
+      },
+      "P2": {
+        "label": "ce qu'elle n'établit pas",
+        "coveredBy": [
+          "OPS-CHECKPOINTS",
+          "DECISION-OWNER-RECORDS",
+          "MEMORY-KNOWLEDGE"
+        ],
+        "count": 3
+      },
+      "P3": {
+        "label": "sa provenance",
+        "coveredBy": [
+          "BOUSSOLE-V124-COMPANION",
+          "BOUSSOLE-COMPASS-VIEW",
+          "OPS-AP-CONTRACTS",
+          "OPS-STRATEGIC-REGISTER",
+          "OPS-GO-CYCLE",
+          "OPS-AUTHORIZATION-SCOPE",
+          "OPS-MISSION-LEDGER",
+          "OPS-CHECKPOINTS",
+          "OPS-STRATEGY-MODE",
+          "CLOSURE-REGISTER",
+          "DECISION-CHANGELOG",
+          "DECISION-OWNER-RECORDS",
+          "DECISION-PRECEDENT-GOVERNANCE",
+          "DECISION-AUDIT-LOG",
+          "MEMORY-TRUST-TAXONOMY",
+          "MEMORY-KNOWLEDGE",
+          "MEMORY-REUSE",
+          "RADAR-ADMISSION-GOVERNOR"
+        ],
+        "count": 18
+      },
+      "P4": {
+        "label": "sa date",
+        "coveredBy": [
+          "BOUSSOLE-COMPASS-VIEW",
+          "OPS-AP-CONTRACTS",
+          "OPS-GO-CYCLE",
+          "OPS-MISSION-LEDGER",
+          "OPS-MISSION-ATTEMPT-LOG",
+          "OPS-CHECKPOINTS",
+          "DECISION-CHANGELOG",
+          "DECISION-OWNER-RECORDS",
+          "DECISION-AUDIT-LOG",
+          "MEMORY-TRUST-TAXONOMY",
+          "MEMORY-KNOWLEDGE",
+          "RADAR-ADMISSION-GOVERNOR"
+        ],
+        "count": 12
+      },
+      "P5": {
+        "label": "son lien avec le commit et le contrat",
+        "coveredBy": [
+          "BOUSSOLE-V124-COMPANION",
+          "BOUSSOLE-COMPASS-VIEW",
+          "OPS-STRATEGIC-REGISTER",
+          "OPS-GO-CYCLE",
+          "OPS-AUTHORIZATION-SCOPE",
+          "OPS-PROGRAM-CONTINUITY",
+          "MEMORY-TRUST-TAXONOMY"
+        ],
+        "count": 7
+      },
+      "P6": {
+        "label": "sa fraîcheur",
+        "coveredBy": [
+          "OPS-PROGRAM-CONTINUITY",
+          "MEMORY-TRUST-TAXONOMY",
+          "MEMORY-KNOWLEDGE"
+        ],
+        "count": 3
+      },
+      "P7": {
+        "label": "ses limites",
+        "coveredBy": [
+          "OPS-AP-CONTRACTS",
+          "OPS-STRATEGIC-REGISTER",
+          "OPS-CHECKPOINTS",
+          "DECISION-CHANGELOG",
+          "DECISION-OWNER-RECORDS",
+          "MEMORY-TRUST-TAXONOMY",
+          "RADAR-ADMISSION-GOVERNOR"
+        ],
+        "count": 7
+      }
+    },
+    "noSingleMechanismCoversAll15": 8,
+    "weakest": [
+      "O09/O10 tests executed / failed-or-not-run per mission: no mechanism (criteria-validation records hold criterion results only; S4)",
+      "O11 CI results: only generic gate policy in checkpoints (S4)",
+      "P2 'ce qu'elle n'établit pas' and P6 'fraîcheur': present only in owner/knowledge records and observation-currency, not on mission evidence"
     ]
   }
 }

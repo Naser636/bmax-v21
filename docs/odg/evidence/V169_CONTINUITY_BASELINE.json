@@ -1,5 +1,5 @@
 {
-  "generatedAtHead": "2006fb70191a49a8f5f90d36f19cdd3dce039ebd",
+  "generatedAtHead": "2c17d616b03068e9ae448ea08d603bfbd0cc28b0",
   "//": "V16.9 addendum Phase 0 — §29 continuity BASELINE before any improvement. Read-only, offline; produced by runtime/bin/odg-v169-continuity-baseline.ts over committed records; nothing fixed. Mutations/fixtures are labelled and never committed.",
   "schema": "ODG_V169_CONTINUITY_BASELINE/1",
   "preRegistration": {
@@ -29,15 +29,23 @@
       },
       {
         "n": 3,
-        "name": "§29 scenario #3 (text not provided in the brief nor committed)",
-        "test": "none — not invented",
-        "NOT_MEASURED": "always"
+        "name": "retrouver une décision et sa justification",
+        "addedAfterFirstRun": true,
+        "addedNote": "pre-registered after the first run of scenarios 1,2,5–15 (owner text received later); written before #3 was first run",
+        "test": "two committed decisions: D1 = H's Δ1 tightening (non-inferiority ⇒ superiority vs B1, after inspection REJECT @587650b0); D2 = G's write_set restore (after inspection REJECT @b994ca69). (a) does a canonical component (odg-authorization-scope validatedSteps evidence) return a pointer to the record holding the decision; (b) does a component return the decision + justification itself; (c) are decision + justification + provenance (record path, head) present in the committed records (runner extraction)",
+        "PASS": "(b) for D1 and D2 with provenance",
+        "PARTIAL": "(a) and (c) for D1 and D2 but not (b) — the decision is reachable only by reading the record the component points to",
+        "FAIL": "(c) fails for D1 or D2 (decision or justification absent from the records)"
       },
       {
         "n": 4,
-        "name": "§29 scenario #4 (text not provided in the brief nor committed)",
-        "test": "none — not invented",
-        "NOT_MEASURED": "always"
+        "name": "identifier les tests réussis, échoués et absents",
+        "addedAfterFirstRun": true,
+        "addedNote": "pre-registered after the first run of scenarios 1,2,5–15 (owner text received later); written before #4 was first run",
+        "test": "for H and G: (a) acceptance-criterion results (pass/fail per criterion) in the committed criteria-validation records; (b) a per-PR CI result (head + green/red) recorded for the mission's PRs in a committed record; (c) tests NOT run listed with a reason; (d) a canonical component enumerating (a)–(c)",
+        "PASS": "(a),(b),(c) for H and G AND (d)",
+        "PARTIAL": "(a) for H and G but (b) or (c) missing, or (d) absent (runner extraction only)",
+        "FAIL": "(a) missing for H or G"
       },
       {
         "n": 5,
@@ -303,21 +311,181 @@
     },
     {
       "n": 3,
-      "name": "§29 scenario #3 (text not provided in the brief nor committed)",
-      "grade": "NOT_MEASURED",
+      "name": "retrouver une décision et sa justification",
+      "grade": "PARTIAL",
+      "preRegisteredAfterFirstRunOfOthers": true,
       "measured": {
-        "reason": "scenario text not provided in the brief nor committed in the repository; not invented"
+        "D1_H_delta1": {
+          "decision": "H thresholds.PASS tightened Δ1 ≥ −0.02 ⇒ Δ1 > 0 AND CI95-low(Δ1) > 0",
+          "record": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#H.revisionHistory[0].inspectionFixes + docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json#history",
+          "justification": "independent inspection of #942 @587650b0 REJECT (MED): the sentence 'a PASS cannot come from breadth alone' was false — H1 contains f4 = log1p(#changedFiles) and PASS only required Δ1 ≥ −0.02 (non-inferiority) while B0 may sit near AUC 0.5",
+          "rejectAt": "587650b0",
+          "acceptAt": "98eed7f2",
+          "acceptFindings": [
+            "PASS now requires superiority over breadth (Δ1 > 0 and CI95-low(Δ1) > 0) — tightened before any metric was computed",
+            "decision table complete (NOT_MEASURED → PASS → PARTIAL → FAIL; every non-PASS ⇒ NOT_ADOPTED)",
+            "dataset sha d8bf4a3f unchanged; contract G unchanged"
+          ]
+        },
+        "D2_G_writeSet": {
+          "decision": "G experiment files moved back into write_set",
+          "record": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#G.revisionHistory[0].inspectionFixes + docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json#history",
+          "justification": "independent inspection of #933 @b994ca69 REJECT: (3) experiment files moved back into write_set (the register selection is allowed to change honestly); (4) inspector independence bound to opaque session ids (DECLARED_SESSION_INDEPENDENCE); (2) secondary random split pre-registered",
+          "rejectAt": "b994ca69",
+          "acceptAt": "83427f93",
+          "acceptFindings": [
+            "write_set restored; selection changed honestly to H (G waits on priority)",
+            "session-id independence (declared)",
+            "secondaryRobustness report-only split added",
+            "pre-registration otherwise unchanged vs b994ca69"
+          ]
+        },
+        "a_componentPointer": {
+          "H": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+          "G": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
+          "ok": true
+        },
+        "b_componentReturnsDecision": false,
+        "c_recordsHoldDecision": true
       },
-      "metrics": {}
+      "metrics": {
+        "decisionsRetrieved": 2,
+        "decisionsAsked": 2,
+        "decisionsReturnedByComponent": 0
+      }
     },
     {
       "n": 4,
-      "name": "§29 scenario #4 (text not provided in the brief nor committed)",
-      "grade": "NOT_MEASURED",
+      "name": "identifier les tests réussis, échoués et absents",
+      "grade": "PARTIAL",
+      "preRegisteredAfterFirstRunOfOthers": true,
       "measured": {
-        "reason": "scenario text not provided in the brief nor committed in the repository; not invented"
+        "H": {
+          "scenario": "H",
+          "record": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+          "criteria": [
+            {
+              "id": "C1",
+              "status": "MET",
+              "outcome": "PASS"
+            },
+            {
+              "id": "C2",
+              "status": "MET_AS_MEASUREMENT — outcome FAIL",
+              "outcome": "FAIL"
+            }
+          ],
+          "scenarioGrade": "FAIL",
+          "prsInCP10": [
+            {
+              "pr": 942,
+              "merge": "a0370aae",
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+              "perPrCiResultRecorded": false
+            },
+            {
+              "pr": 943,
+              "merge": "7bee0173",
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+              "perPrCiResultRecorded": false
+            },
+            {
+              "pr": 944,
+              "merge": "5d3cf713",
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+              "perPrCiResultRecorded": false
+            },
+            {
+              "pr": 945,
+              "merge": "bd6f5c62",
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+              "perPrCiResultRecorded": false
+            },
+            {
+              "pr": 946,
+              "merge": "b8de9a04",
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+              "perPrCiResultRecorded": false
+            }
+          ],
+          "a_criteriaResults": true,
+          "b_perPrCiResult": false,
+          "c_notRunListed": false
+        },
+        "G": {
+          "scenario": "G",
+          "record": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+          "criteria": [
+            {
+              "id": "C1",
+              "status": "MET",
+              "outcome": "PASS"
+            },
+            {
+              "id": "C2",
+              "status": "MET_AS_MEASUREMENT — utility PARTIAL",
+              "outcome": "PARTIAL"
+            }
+          ],
+          "scenarioGrade": "PARTIAL",
+          "prsInCP10": [],
+          "a_criteriaResults": true,
+          "b_perPrCiResult": false,
+          "c_notRunListed": false,
+          "prsInCP9": [
+            {
+              "pr": 927,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            },
+            {
+              "pr": 928,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            },
+            {
+              "pr": 929,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            },
+            {
+              "pr": 930,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            },
+            {
+              "pr": 931,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            },
+            {
+              "pr": 932,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            },
+            {
+              "pr": 933,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            },
+            {
+              "pr": 934,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            },
+            {
+              "pr": 935,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            },
+            {
+              "pr": 936,
+              "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+            }
+          ]
+        },
+        "hGoStepsNotRun": [
+          "EVIDENCE",
+          "NEXT_SELECTION"
+        ],
+        "d_componentEnumerates": false,
+        "ciNote": "CP9/CP10 record a generic gate policy per PR ('CI green on exact head + …'), not a per-PR CI result; the only per-head CI outcome found (CI red on f82f3b6f) is in a git commit message (0c675fc4), not in a record"
       },
-      "metrics": {}
+      "metrics": {
+        "criteriaWithResult": 4,
+        "perPrCiResultsRecorded": 0
+      }
     },
     {
       "n": 5,
@@ -666,6 +834,14 @@
       "n": 13,
       "name": "découverte Radar + fiabilité",
       "grade": "FAIL",
+      "gradeCause": "FAIL is due to the pre-registered wording 'every decision carries reasons': the 3 ADMIT decisions carry an empty reasons[] (ntrs.nasa.gov, pytorch.org, kubernetes.io); governor checks (b) pass",
+      "untightenedReading": {
+        "reportOnly": true,
+        "notGraded": true,
+        "reading": "reasons required only for DEFER/REFUSE (ADMIT justified by tier/admittedPrefixes/termsCondition)",
+        "a": true,
+        "wouldGrade": "PARTIAL"
+      },
       "measured": {
         "a_admission": {
           "summary": {
@@ -758,16 +934,15 @@
   ],
   "summary": {
     "counts": {
-      "PARTIAL": 9,
-      "NOT_MEASURED": 2,
+      "PARTIAL": 11,
       "PASS": 2,
       "FAIL": 2
     },
     "perScenario": [
       "1:PARTIAL",
       "2:PARTIAL",
-      "3:NOT_MEASURED",
-      "4:NOT_MEASURED",
+      "3:PARTIAL",
+      "4:PARTIAL",
       "5:PARTIAL",
       "6:PARTIAL",
       "7:PARTIAL",
@@ -782,10 +957,11 @@
     ]
   },
   "honestLimits": [
-    "the owner's addendum text (§21–§31) is NOT committed in the repository; scenario wording here follows the caller's brief; scenarios #3 and #4 were not described there and are NOT_MEASURED rather than invented",
+    "the owner's addendum text (§21–§31) is NOT committed in the repository; scenario wording follows the owner text relayed by the coordinator (§29 verbatim list)",
+    "scenarios #3 and #4 were PRE-REGISTERED AFTER the first run of the other 13 (the owner text arrived later; the first run recorded them NOT_MEASURED); their rules were written before #3/#4 were first run; no other rule was changed",
     "scenarios, labelled mutations/fixtures, ground-truth labels and grading rules were written by the technical provider after read-only exploration of the records (e.g. the GO dry-run halt and H's register status were seen before this bin was written); they were not edited after its first execution",
     "first-execution correction (measurement code, not a rule): S15 read the AUCs from a wrong field path (null ⇒ vacuous consistency); fixed to ex.primary.auc.{H1,B0}; the S15 grading rule is unchanged",
-    "S13 is FAIL on the pre-registered wording 'every decision carries reasons': the 3 ADMIT decisions carry an empty reasons[] (reasons record refusal/deferral causes only; ADMIT is justified by tier/admittedPrefixes/termsCondition). Kept as FAIL — not re-graded after seeing the result; the rule wording is flagged for owner review",
+    "S13 is FAIL on the pre-registered wording 'every decision carries reasons': the 3 ADMIT decisions carry an empty reasons[] (reasons record refusal/deferral causes only; ADMIT is justified by tier/admittedPrefixes/termsCondition). Kept as FAIL — not re-graded; the scenario record carries gradeCause + an untightenedReading (report-only, NOT graded); the rule wording is flagged for owner review",
     "S6 ground truth: STALE = a committed record says so (CP10); FRESH = content-identical recomputation (odg-strategic-select --check). odg-observation-currency is path-based and conservative ⇒ the FRESH register is flagged HISTORICAL (false-stale 1/1)",
     "S1 runs the GO SELECT/actionability logic over committed records, not odg-go itself (odg-go Truth-Locks on branch main and reads host state); one real `odg-go --dry` on the main checkout is recorded under hostObservations",
     "S10: neither register has a BLOCKED item whose dependents are still open except p01-demand-validation → p01-billing-sandbox (itself BLOCKED); fan-out is computed by this runner, no component exposes it"
@@ -829,7 +1005,36 @@
       "value": 0,
       "unit": "paid calls",
       "basis": "offline: no network, no model, no provider"
-    }
+    },
+    "decisionQuality": {
+      "value": "2/2 decisions + justifications retrievable from records; 0 returned by a component",
+      "basis": "S3"
+    },
+    "missionsUnblocked": {
+      "value": "NOT_MEASURED",
+      "basis": "Phase 0 applies no change (baseline); measured after a fix phase"
+    },
+    "regressions": {
+      "value": "NOT_MEASURED",
+      "basis": "no before/after in Phase 0 — this record IS the 'before'"
+    },
+    "improvementObtained": {
+      "value": 0,
+      "basis": "S15: adopted held-out-verified improvements in the committed records"
+    },
+    "ownerMetricNames": [
+      "précision de récupération=recoveryPrecision",
+      "taux de reprise correcte=correctResumeRate",
+      "qualité des décisions=decisionQuality",
+      "erreurs de statut=statusErrors",
+      "preuves périmées détectées=staleProofsDetected",
+      "respect des permissions=permissionRespect",
+      "répétitions évitées=repetitionsAvoided",
+      "missions débloquées=missionsUnblocked",
+      "temps et coût de reprise=resumeTimeMs+resumeCost",
+      "régressions=regressions",
+      "amélioration réellement obtenue=improvementObtained"
+    ]
   },
   "hostObservations": {
     "//": "host-state reads (NOT committed, NOT recomputed by --check); recorded once on 2026-11-24 by the provider, read-only",
