@@ -10,12 +10,12 @@
   },
   "inputs": [
     {
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json",
-      "sha256": "8e28176b0052a790fa66cd1e47883dad4646869e13dc3b65635576342bb9935b"
+      "source": "docs/odg/evidence/V176_CHECKPOINT_12.json",
+      "sha256": "5b2a93ef1fb53314ae4f1c524f4e9531e673609102f830169c7f101820105e51"
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "0cc298b7adbe630f2d98a0d2d880482689fd44abcbaa63a4c80a5bbf96b88dec"
+      "sha256": "1edd9e03e90b3f1730ed902722961cca1d9d8991caa566ca3265d0d01e0189f5"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -107,11 +107,16 @@
     }
   ],
   "checkpoint": {
-    "path": "docs/odg/evidence/V174_CHECKPOINT_11.json",
-    "checkpoint": "CP11",
+    "path": "docs/odg/evidence/V176_CHECKPOINT_12.json",
+    "checkpoint": "CP12",
     "date": "2026-11-24",
-    "headAtCheckpoint": "deaf0844",
-    "nextPriority": "brain & native autonomy build (owner 2026-11-24): 1 central brain decisions — first: measure NOT_MEASURED register criteria so ODG's selector decides robustly without owner arbitration; then the ranked multiplier list",
+    "headAtCheckpoint": "bc2caffd",
+    "nextPriority": [
+      "P0 native engineering: NB2 pipeline fixes ODG-side (bounded lesson digest, adaptive per-call timeout, idle-host scheduling) then NB2 inspection + ONE GO run",
+      "P0 brain: pre-open self-inspection gate (Radar RB-PRE-OPEN-SELF-INSPECTION) to cut rework time",
+      "P1: outcome-feedback-to-scoring is a SCORE change ⇒ owner-gated (owner rule: do not modify scores)",
+      "P1 parallel GO waves (write-set disjoint)"
+    ],
     "rule": "LCP-1"
   },
   "boussole": {
@@ -611,54 +616,8 @@
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json#ownerQuestions[0]"
     }
   ],
-  "ownerDecisionsOpenAtCheckpoint": [
-    {
-      "text": "J: strategic selection is SELECTED (J) but its contract is PROPOSED — the open owner step is PROPOSED → AUTHORIZED",
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[0]",
-      "asRecordedAt": "CP11"
-    },
-    {
-      "text": "V15.0 adoption / contradictions CTR-1..4",
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[1]",
-      "asRecordedAt": "CP11"
-    },
-    {
-      "text": "GitHub AUP §6/§7",
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[2]",
-      "asRecordedAt": "CP11"
-    },
-    {
-      "text": "8 deferred Radar sources + per-host pacing",
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[3]",
-      "asRecordedAt": "CP11"
-    },
-    {
-      "text": "provider spend ceiling",
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[4]",
-      "asRecordedAt": "CP11"
-    },
-    {
-      "text": "gate 10/12 signature",
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[5]",
-      "asRecordedAt": "CP11"
-    }
-  ],
-  "checkpointVsRegister": [
-    {
-      "item": "G2",
-      "checkpointStatus": "CLOSED_PARTIAL",
-      "registerStatus": "CLOSED_PARTIAL",
-      "superseded": false,
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#missionG2.status"
-    },
-    {
-      "item": "J2",
-      "checkpointStatus": "RUNNING",
-      "registerStatus": "CLOSED_FAIL",
-      "superseded": true,
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#missionJ2.status"
-    }
-  ],
+  "ownerDecisionsOpenAtCheckpoint": [],
+  "checkpointVsRegister": [],
   "openPrs": {
     "snapshot": "docs/odg/evidence/V175_OPEN_PRS_SNAPSHOT.json",
     "snapshotAt": "2026-11-24T17:19:54.423Z",
