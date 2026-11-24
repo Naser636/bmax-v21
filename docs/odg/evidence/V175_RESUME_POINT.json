@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "0d756d245d7dcb377fa17e2cb23323c39af8c481697ad5709794f70641d97f72"
+      "sha256": "785a1c0cbf61c751fda21566dd52344e96f32ad75fff2407f3cd57205e1bb72e"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "6d57728a30dfd577696cb46d8d21da36669f9d247b9cd37f230e2dfbe4eebbb3"
+      "sha256": "5b75fcc2f27825be71d07f2f8571d37abb36d417da6600b30681ae8f9b5bdd6f"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -165,17 +165,17 @@
     },
     "coverage": {
       "rule": "BREF-1",
-      "items": 60,
+      "items": 63,
       "measured": 37,
-      "notMeasured": 23,
+      "notMeasured": 26,
       "withV124MissionId": 22,
       "withV124Section": 23,
       "withV144Phase": 21,
       "byKind": {
         "WORK_ITEM_CONTRACT": {
-          "items": 20,
+          "items": 23,
           "measured": 18,
-          "notMeasured": 2
+          "notMeasured": 5
         },
         "V150_TOP10_ITEM": {
           "items": 5,
@@ -686,7 +686,7 @@
     }
   ],
   "otherRegisterItems": {
-    "count": 52,
+    "count": 55,
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
@@ -694,6 +694,7 @@
       "CLOSED_PARTIAL": 3,
       "CLOSED_FAIL": 3,
       "CLOSED_PASS": 1,
+      "NOT_STARTED": 3,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,

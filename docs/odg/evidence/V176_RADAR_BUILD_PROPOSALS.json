@@ -12,7 +12,9 @@
     "PM": "RB-PM-1: production-metric NOT_MEASURED field recurring ≥ 2 ⇒ signal; RB-PM-2: open→last-commit share ≥ 0.5 ⇒ signal",
     "LINK": "LINK-1: provider-authored declared table (DEDUP-1 precedent): the FIRST link whose regex matches the signal statement gives its key/components; registerItem / inFlight links make the signal a DUPLICATE of that existing item (it reinforces it, never re-creates it); a statement matching no link gets no component ⇒ the deny-by-default gate refuses it NO_COMPONENT_ATTACHED (never an invented target)",
     "EXT": "RB-EXT-1: only ADMITTED external Radar observations are signals",
-    "TOP": "top 5 auto-selectable proposals by the existing selector ranking get a contract draft"
+    "TOP": "top 5 auto-selectable, not-superseded proposals by the existing selector ranking get a contract draft",
+    "SUP": "SUP-1: a proposal is SUPERSEDED iff its key is in the declared SUPERSEDED table AND the cited artifact exists in the repository (injected ctx.artifactExists); superseded proposals stay listed (supersededBy = delivering PRs + artifact) but never enter top or a conversion; no artifact (or no predicate) ⇒ NOT superseded",
+    "CONV": "RB-CONV-1: walk `top` (selector rank order, superseded already excluded) and convert the first N eligible drafts; a draft is SKIPPED when: SUPERSEDED (SUP-1) · DUPLICATE (its id is already a contract scenario or a register item id, or names an in-flight build / IN_FLIGHT link) · OWNER_GATED (engine gate or draft.ownerGate.required) · NO_DECLARED_OBJECTIVE (objective NOT_DERIVED) · NO_WRITE_SET_ESTIMATE · OWN1_MATCH (the contract text would trip the register's OWN-1 owner rule ⇒ never silently converted). One batch id per conversion: a batch already present in the contracts file ⇒ ALREADY_CONVERTED, nothing appended (idempotent). Append-only: existing entries are never rewritten; only the header count / initialStatusCounts are recomputed from the array."
   },
   "invariants": [
     "composition only: reuses odg-radar-to-mission-loop (gate+dedup), mission-priority-selector (ranking with the register's WEIGHTS/DIRECTIONS), odg-strategic-register (CRITERIA, CRC-1), change-impact-graph (multiplier) — no second radar/scheduler/registry/formula",
@@ -22,19 +24,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795555108000,
+    "nowEpochMs": 1795557335000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "0d756d245d7dcb377fa17e2cb23323c39af8c481697ad5709794f70641d97f72",
-      "epochMs": 1795555108000
+      "sha256": "785a1c0cbf61c751fda21566dd52344e96f32ad75fff2407f3cd57205e1bb72e",
+      "epochMs": 1795557335000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "6d57728a30dfd577696cb46d8d21da36669f9d247b9cd37f230e2dfbe4eebbb3",
-      "epochMs": 1795550272000
+      "sha256": "5b75fcc2f27825be71d07f2f8571d37abb36d417da6600b30681ae8f9b5bdd6f",
+      "epochMs": 1795557335000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -75,13 +77,13 @@
   "counts": {
     "signals": 39,
     "byVerdict": {
-      "REFUSED": 24,
+      "REFUSED": 27,
       "OWNER_GATED": 2,
-      "PROPOSED": 13
+      "PROPOSED": 10
     },
-    "proposals": 15,
+    "proposals": 12,
     "ownerGated": 2,
-    "reinforcingExisting": 3,
+    "reinforcingExisting": 6,
     "ignored": 6
   },
   "signals": [
@@ -90,12 +92,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.autonomyBenefit"
       ],
-      "statement": "criterion autonomyBenefit NOT_MEASURED on 35/60 register items",
+      "statement": "criterion autonomyBenefit NOT_MEASURED on 35/63 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.autonomyBenefit.notMeasuredItems",
         "value": 35,
-        "of": 60,
+        "of": 63,
         "items": [
           "V150-AI4",
           "V150-AI5",
@@ -181,12 +183,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.capabilityGain"
       ],
-      "statement": "criterion capabilityGain NOT_MEASURED on 48/60 register items",
+      "statement": "criterion capabilityGain NOT_MEASURED on 51/63 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.capabilityGain.notMeasuredItems",
-        "value": 48,
-        "of": 60,
+        "value": 51,
+        "of": 63,
         "items": [
           "A",
           "B",
@@ -201,6 +203,9 @@
           "J2",
           "V175-NB1",
           "V175-NB2",
+          "RB-REATTEMPT-CHANGED-INPUT",
+          "RB-RECORD-INSPECTION-VERDICT-TIME",
+          "RB-SELECTION-AT-RUN-HEAD",
           "V150-AI4",
           "V150-AI5",
           "V150-OG01",
@@ -285,12 +290,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.blockerRepetitionReduction"
       ],
-      "statement": "criterion blockerRepetitionReduction NOT_MEASURED on 54/60 register items",
+      "statement": "criterion blockerRepetitionReduction NOT_MEASURED on 57/63 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.blockerRepetitionReduction.notMeasuredItems",
-        "value": 54,
-        "of": 60,
+        "value": 57,
+        "of": 63,
         "items": [
           "A",
           "B",
@@ -312,6 +317,9 @@
           "J2",
           "V175-NB1",
           "V175-NB2",
+          "RB-REATTEMPT-CHANGED-INPUT",
+          "RB-RECORD-INSPECTION-VERDICT-TIME",
+          "RB-SELECTION-AT-RUN-HEAD",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -395,12 +403,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reliabilityQuality"
       ],
-      "statement": "criterion reliabilityQuality NOT_MEASURED on 59/60 register items",
+      "statement": "criterion reliabilityQuality NOT_MEASURED on 62/63 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.reliabilityQuality.notMeasuredItems",
-        "value": 59,
-        "of": 60,
+        "value": 62,
+        "of": 63,
         "items": [
           "A",
           "B",
@@ -422,6 +430,9 @@
           "J2",
           "V175-NB1",
           "V175-NB2",
+          "RB-REATTEMPT-CHANGED-INPUT",
+          "RB-RECORD-INSPECTION-VERDICT-TIME",
+          "RB-SELECTION-AT-RUN-HEAD",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -510,12 +521,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.speedEfficiency"
       ],
-      "statement": "criterion speedEfficiency NOT_MEASURED on 60/60 register items",
+      "statement": "criterion speedEfficiency NOT_MEASURED on 63/63 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.speedEfficiency.notMeasuredItems",
-        "value": 60,
-        "of": 60,
+        "value": 63,
+        "of": 63,
         "items": [
           "A",
           "B",
@@ -537,6 +548,9 @@
           "J2",
           "V175-NB1",
           "V175-NB2",
+          "RB-REATTEMPT-CHANGED-INPUT",
+          "RB-RECORD-INSPECTION-VERDICT-TIME",
+          "RB-SELECTION-AT-RUN-HEAD",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -626,12 +640,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reusability"
       ],
-      "statement": "criterion reusability NOT_MEASURED on 60/60 register items",
+      "statement": "criterion reusability NOT_MEASURED on 63/63 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.reusability.notMeasuredItems",
-        "value": 60,
-        "of": 60,
+        "value": 63,
+        "of": 63,
         "items": [
           "A",
           "B",
@@ -653,6 +667,9 @@
           "J2",
           "V175-NB1",
           "V175-NB2",
+          "RB-REATTEMPT-CHANGED-INPUT",
+          "RB-RECORD-INSPECTION-VERDICT-TIME",
+          "RB-SELECTION-AT-RUN-HEAD",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -742,12 +759,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.strategicValue"
       ],
-      "statement": "criterion strategicValue NOT_MEASURED on 43/60 register items",
+      "statement": "criterion strategicValue NOT_MEASURED on 46/63 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.strategicValue.notMeasuredItems",
-        "value": 43,
-        "of": 60,
+        "value": 46,
+        "of": 63,
         "items": [
           "A",
           "B",
@@ -759,6 +776,9 @@
           "J2",
           "V175-NB1",
           "V175-NB2",
+          "RB-REATTEMPT-CHANGED-INPUT",
+          "RB-RECORD-INSPECTION-VERDICT-TIME",
+          "RB-SELECTION-AT-RUN-HEAD",
           "V150-OG01",
           "V150-OG02",
           "V150-OG03",
@@ -841,12 +861,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.costRiskComplexity"
       ],
-      "statement": "criterion costRiskComplexity NOT_MEASURED on 40/60 register items",
+      "statement": "criterion costRiskComplexity NOT_MEASURED on 40/63 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.costRiskComplexity.notMeasuredItems",
         "value": 40,
-        "of": 60,
+        "of": 63,
         "items": [
           "V150-T01",
           "V150-T02",
@@ -937,12 +957,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability"
       ],
-      "statement": "criterion dependencyAvailability NOT_MEASURED on 56/60 register items",
+      "statement": "criterion dependencyAvailability NOT_MEASURED on 59/63 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.dependencyAvailability.notMeasuredItems",
-        "value": 56,
-        "of": 60,
+        "value": 59,
+        "of": 63,
         "items": [
           "B",
           "C",
@@ -961,6 +981,9 @@
           "G2",
           "V175-NB1",
           "V175-NB2",
+          "RB-REATTEMPT-CHANGED-INPUT",
+          "RB-RECORD-INSPECTION-VERDICT-TIME",
+          "RB-SELECTION-AT-RUN-HEAD",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -1513,9 +1536,9 @@
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
-        "verdict": "PROPOSED",
+        "verdict": "REFUSED",
         "reasons": [
-          "admissible (INSUFFICIENTLY_VALIDATED, INTERNAL_IMPROVEMENT) — NOT YET authorized to execute; a score is not an authorization"
+          "DUPLICATE"
         ],
         "authorized": false,
         "executed": false
@@ -1875,9 +1898,9 @@
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
-        "verdict": "PROPOSED",
+        "verdict": "REFUSED",
         "reasons": [
-          "admissible (INSUFFICIENTLY_VALIDATED, INTERNAL_IMPROVEMENT) — NOT YET authorized to execute; a score is not an authorization"
+          "DUPLICATE"
         ],
         "authorized": false,
         "executed": false
@@ -2201,9 +2224,9 @@
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
-        "verdict": "PROPOSED",
+        "verdict": "REFUSED",
         "reasons": [
-          "admissible (INSUFFICIENTLY_VALIDATED, INTERNAL_IMPROVEMENT) — NOT YET authorized to execute; a score is not an authorization"
+          "DUPLICATE"
         ],
         "authorized": false,
         "executed": false
@@ -2626,10 +2649,11 @@
   "inFlightBuilds": [
     "V175-NB2"
   ],
-  "knownKeysCount": 60,
+  "knownKeysCount": 63,
   "proposals": [
     {
       "id": "IN_FLIGHT:native-criteria-measurement",
+      "supersededBy": null,
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -2703,6 +2727,7 @@
     },
     {
       "id": "RB-CANON-CALLER-MIGRATION",
+      "supersededBy": null,
       "verdict": "OWNER_GATED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": true,
@@ -2778,6 +2803,7 @@
     },
     {
       "id": "RB-DISPATCH-SELECTION-ALIGNMENT",
+      "supersededBy": null,
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -2852,6 +2878,7 @@
     },
     {
       "id": "RB-EXT-JIDOKA-STOP-ON-DEFECT",
+      "supersededBy": null,
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -2925,6 +2952,7 @@
     },
     {
       "id": "RB-NATIVE-CODE-CONSTRUCTION",
+      "supersededBy": null,
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -2999,6 +3027,14 @@
     },
     {
       "id": "RB-OUTCOME-FEEDBACK-TO-SCORING",
+      "supersededBy": {
+        "rule": "SUP-1",
+        "prs": [
+          "#994"
+        ],
+        "artifact": "runtime/core/odg-outcome-feedback.ts",
+        "note": "outcome feedback → selector scoring delivered (odg-outcome-feedback OFB-CAL-2 attribution, report-only until ACTIVATE)"
+      },
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -3073,6 +3109,7 @@
     },
     {
       "id": "RB-OWNER-BUDGET-FIELD",
+      "supersededBy": null,
       "verdict": "OWNER_GATED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": true,
@@ -3146,6 +3183,7 @@
     },
     {
       "id": "RB-PASS-PROBABILITY-CALIBRATION",
+      "supersededBy": null,
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -3220,6 +3258,15 @@
     },
     {
       "id": "RB-PRE-OPEN-SELF-INSPECTION",
+      "supersededBy": {
+        "rule": "SUP-1",
+        "prs": [
+          "#987",
+          "#998"
+        ],
+        "artifact": "runtime/bin/odg-pre-open-gate.ts",
+        "note": "pre-open self-inspection gate delivered (#987) and its test-selection / regeneration-order gaps fixed (#998)"
+      },
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -3293,155 +3340,8 @@
       }
     },
     {
-      "id": "RB-REATTEMPT-CHANGED-INPUT",
-      "verdict": "PROPOSED",
-      "status": "PROPOSED",
-      "requiresOwnerAuthorization": false,
-      "ownerReason": null,
-      "components": [
-        "mission-priority-selector",
-        "odg-strategic-register"
-      ],
-      "signalCount": 1,
-      "criteria": {
-        "autonomyBenefit": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "capabilityGain": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "blockerRepetitionReduction": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-BLK",
-          "basis": "n=1 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
-        },
-        "reliabilityQuality": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "speedEfficiency": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "reusability": {
-          "status": "MEASURED",
-          "value": 1,
-          "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 5 (n/4 scale)"
-        },
-        "strategicValue": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "costRiskComplexity": {
-          "status": "MEASURED",
-          "value": 0.6,
-          "rule": "CRC-1",
-          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
-        },
-        "dependencyAvailability": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "evidenceLevel": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-EVD",
-          "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
-        }
-      }
-    },
-    {
-      "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
-      "verdict": "PROPOSED",
-      "status": "PROPOSED",
-      "requiresOwnerAuthorization": false,
-      "ownerReason": null,
-      "components": [
-        "odg-production-metric",
-        "evaluator-independence"
-      ],
-      "signalCount": 1,
-      "criteria": {
-        "autonomyBenefit": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "capabilityGain": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "blockerRepetitionReduction": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-BLK",
-          "basis": "n=1 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
-        },
-        "reliabilityQuality": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "speedEfficiency": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "reusability": {
-          "status": "MEASURED",
-          "value": 1,
-          "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 4 (n/4 scale)"
-        },
-        "strategicValue": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "costRiskComplexity": {
-          "status": "MEASURED",
-          "value": 0.6,
-          "rule": "CRC-1",
-          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
-        },
-        "dependencyAvailability": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "evidenceLevel": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-EVD",
-          "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
-        }
-      }
-    },
-    {
       "id": "RB-RECORD-RUN-ACCOUNTING",
+      "supersededBy": null,
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -3516,6 +3416,7 @@
     },
     {
       "id": "RB-RECORD-WORK-START",
+      "supersededBy": null,
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -3590,6 +3491,7 @@
     },
     {
       "id": "RB-REGISTER-CHECKPOINT-POINTERS",
+      "supersededBy": null,
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
@@ -3660,80 +3562,6 @@
           "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
         }
       }
-    },
-    {
-      "id": "RB-SELECTION-AT-RUN-HEAD",
-      "verdict": "PROPOSED",
-      "status": "PROPOSED",
-      "requiresOwnerAuthorization": false,
-      "ownerReason": null,
-      "components": [
-        "odg-go-cycle",
-        "mission-priority-selector"
-      ],
-      "signalCount": 1,
-      "criteria": {
-        "autonomyBenefit": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "capabilityGain": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "blockerRepetitionReduction": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-BLK",
-          "basis": "n=1 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
-        },
-        "reliabilityQuality": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "speedEfficiency": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "reusability": {
-          "status": "MEASURED",
-          "value": 1,
-          "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 5 (n/4 scale)"
-        },
-        "strategicValue": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "costRiskComplexity": {
-          "status": "MEASURED",
-          "value": 0.6,
-          "rule": "CRC-1",
-          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
-        },
-        "dependencyAvailability": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "evidenceLevel": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-EVD",
-          "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
-        }
-      }
     }
   ],
   "reinforcesExisting": [
@@ -3742,6 +3570,27 @@
       "kind": "REGISTER_ITEM_OR_CONTRACT",
       "signals": [
         "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json#limits[2]"
+      ]
+    },
+    {
+      "existing": "RB-REATTEMPT-CHANGED-INPUT",
+      "kind": "REGISTER_ITEM_OR_CONTRACT",
+      "signals": [
+        "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[7]"
+      ]
+    },
+    {
+      "existing": "RB-RECORD-INSPECTION-VERDICT-TIME",
+      "kind": "REGISTER_ITEM_OR_CONTRACT",
+      "signals": [
+        "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.prs[*].inspectionVerdictAt"
+      ]
+    },
+    {
+      "existing": "RB-SELECTION-AT-RUN-HEAD",
+      "kind": "REGISTER_ITEM_OR_CONTRACT",
+      "signals": [
+        "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[1]"
       ]
     },
     {
@@ -3757,6 +3606,49 @@
       "signals": [
         "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json#limits[0]"
       ]
+    }
+  ],
+  "superseded": {
+    "rule": "SUP-1: a proposal is SUPERSEDED iff its key is in the declared SUPERSEDED table AND the cited artifact exists in the repository (injected ctx.artifactExists); superseded proposals stay listed (supersededBy = delivering PRs + artifact) but never enter top or a conversion; no artifact (or no predicate) ⇒ NOT superseded",
+    "items": [
+      {
+        "id": "RB-OUTCOME-FEEDBACK-TO-SCORING",
+        "prs": [
+          "#994"
+        ],
+        "artifact": "runtime/core/odg-outcome-feedback.ts"
+      },
+      {
+        "id": "RB-PRE-OPEN-SELF-INSPECTION",
+        "prs": [
+          "#987",
+          "#998"
+        ],
+        "artifact": "runtime/bin/odg-pre-open-gate.ts"
+      }
+    ]
+  },
+  "convertedContracts": [
+    {
+      "scenario": "RB-REATTEMPT-CHANGED-INPUT",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "sourceProposal": "RB-REATTEMPT-CHANGED-INPUT",
+      "conversionBatch": "V176-R2C-1"
+    },
+    {
+      "scenario": "RB-RECORD-INSPECTION-VERDICT-TIME",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "sourceProposal": "RB-RECORD-INSPECTION-VERDICT-TIME",
+      "conversionBatch": "V176-R2C-1"
+    },
+    {
+      "scenario": "RB-SELECTION-AT-RUN-HEAD",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "sourceProposal": "RB-SELECTION-AT-RUN-HEAD",
+      "conversionBatch": "V176-R2C-1"
     }
   ],
   "selection": {
@@ -3782,27 +3674,6 @@
       },
       {
         "id": "RB-PRE-OPEN-SELF-INSPECTION",
-        "evidenceScore": 0.19,
-        "uncertainty": 0.6,
-        "upperBound": 0.79,
-        "autoSelectable": true
-      },
-      {
-        "id": "RB-REATTEMPT-CHANGED-INPUT",
-        "evidenceScore": 0.19,
-        "uncertainty": 0.6,
-        "upperBound": 0.79,
-        "autoSelectable": true
-      },
-      {
-        "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
-        "evidenceScore": 0.19,
-        "uncertainty": 0.6,
-        "upperBound": 0.79,
-        "autoSelectable": true
-      },
-      {
-        "id": "RB-SELECTION-AT-RUN-HEAD",
         "evidenceScore": 0.19,
         "uncertainty": 0.6,
         "upperBound": 0.79,
@@ -3964,7 +3835,7 @@
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.autonomyBenefit",
               "name": "register.autonomyBenefit.notMeasuredItems",
               "value": 35,
-              "of": 60,
+              "of": 63,
               "items": [
                 "V150-AI4",
                 "V150-AI5",
@@ -4006,8 +3877,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.capabilityGain",
               "name": "register.capabilityGain.notMeasuredItems",
-              "value": 48,
-              "of": 60,
+              "value": 51,
+              "of": 63,
               "items": [
                 "A",
                 "B",
@@ -4022,6 +3893,9 @@
                 "J2",
                 "V175-NB1",
                 "V175-NB2",
+                "RB-REATTEMPT-CHANGED-INPUT",
+                "RB-RECORD-INSPECTION-VERDICT-TIME",
+                "RB-SELECTION-AT-RUN-HEAD",
                 "V150-AI4",
                 "V150-AI5",
                 "V150-OG01",
@@ -4062,8 +3936,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.blockerRepetitionReduction",
               "name": "register.blockerRepetitionReduction.notMeasuredItems",
-              "value": 54,
-              "of": 60,
+              "value": 57,
+              "of": 63,
               "items": [
                 "A",
                 "B",
@@ -4085,6 +3959,9 @@
                 "J2",
                 "V175-NB1",
                 "V175-NB2",
+                "RB-REATTEMPT-CHANGED-INPUT",
+                "RB-RECORD-INSPECTION-VERDICT-TIME",
+                "RB-SELECTION-AT-RUN-HEAD",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",
@@ -4124,8 +4001,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reliabilityQuality",
               "name": "register.reliabilityQuality.notMeasuredItems",
-              "value": 59,
-              "of": 60,
+              "value": 62,
+              "of": 63,
               "items": [
                 "A",
                 "B",
@@ -4147,6 +4024,9 @@
                 "J2",
                 "V175-NB1",
                 "V175-NB2",
+                "RB-REATTEMPT-CHANGED-INPUT",
+                "RB-RECORD-INSPECTION-VERDICT-TIME",
+                "RB-SELECTION-AT-RUN-HEAD",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",
@@ -4191,8 +4071,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.speedEfficiency",
               "name": "register.speedEfficiency.notMeasuredItems",
-              "value": 60,
-              "of": 60,
+              "value": 63,
+              "of": 63,
               "items": [
                 "A",
                 "B",
@@ -4214,6 +4094,9 @@
                 "J2",
                 "V175-NB1",
                 "V175-NB2",
+                "RB-REATTEMPT-CHANGED-INPUT",
+                "RB-RECORD-INSPECTION-VERDICT-TIME",
+                "RB-SELECTION-AT-RUN-HEAD",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",
@@ -4259,8 +4142,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reusability",
               "name": "register.reusability.notMeasuredItems",
-              "value": 60,
-              "of": 60,
+              "value": 63,
+              "of": 63,
               "items": [
                 "A",
                 "B",
@@ -4282,6 +4165,9 @@
                 "J2",
                 "V175-NB1",
                 "V175-NB2",
+                "RB-REATTEMPT-CHANGED-INPUT",
+                "RB-RECORD-INSPECTION-VERDICT-TIME",
+                "RB-SELECTION-AT-RUN-HEAD",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",
@@ -4327,8 +4213,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.strategicValue",
               "name": "register.strategicValue.notMeasuredItems",
-              "value": 43,
-              "of": 60,
+              "value": 46,
+              "of": 63,
               "items": [
                 "A",
                 "B",
@@ -4340,6 +4226,9 @@
                 "J2",
                 "V175-NB1",
                 "V175-NB2",
+                "RB-REATTEMPT-CHANGED-INPUT",
+                "RB-RECORD-INSPECTION-VERDICT-TIME",
+                "RB-SELECTION-AT-RUN-HEAD",
                 "V150-OG01",
                 "V150-OG02",
                 "V150-OG03",
@@ -4379,7 +4268,7 @@
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.costRiskComplexity",
               "name": "register.costRiskComplexity.notMeasuredItems",
               "value": 40,
-              "of": 60,
+              "of": 63,
               "items": [
                 "V150-T01",
                 "V150-T02",
@@ -4426,8 +4315,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability",
               "name": "register.dependencyAvailability.notMeasuredItems",
-              "value": 56,
-              "of": 60,
+              "value": 59,
+              "of": 63,
               "items": [
                 "B",
                 "C",
@@ -4446,6 +4335,9 @@
                 "G2",
                 "V175-NB1",
                 "V175-NB2",
+                "RB-REATTEMPT-CHANGED-INPUT",
+                "RB-RECORD-INSPECTION-VERDICT-TIME",
+                "RB-SELECTION-AT-RUN-HEAD",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",
@@ -4506,37 +4398,37 @@
     },
     {
       "rank": 2,
-      "id": "RB-OUTCOME-FEEDBACK-TO-SCORING",
-      "evidenceScore": 0.215,
+      "id": "RB-PASS-PROBABILITY-CALIBRATION",
+      "evidenceScore": 0.18,
       "uncertainty": 0.6,
-      "upperBound": 0.815,
+      "upperBound": 0.78,
       "tiedWith": [],
       "rankNote": null,
       "contract": {
-        "id": "RB-OUTCOME-FEEDBACK-TO-SCORING",
+        "id": "RB-PASS-PROBABILITY-CALIBRATION",
         "kind": "WORK_ITEM_CONTRACT_DRAFT",
         "state": "PROPOSED",
         "authorizedBy": null,
-        "objective": "propose an inspected, owner-visible change that lets outcome learning adjust criterion trust (report-only today: feedsScoring=false)",
+        "objective": "the selector reports a calibrated P(PASS) per candidate from realized grades (report-only first), so a prediction can be compared to outcomes",
         "source": {
           "directive": "owner CTO directive V176 2026-11-24 §4 (Radar → construction)",
           "signals": [
-            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[4]",
-            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[5]"
+            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[0]"
           ]
         },
-        "scope": "improve odg-outcome-learning, mission-priority-selector only; no Radar egress, no spend, no canonical-authority change",
+        "scope": "improve odg-native-outcome-calibration, mission-priority-selector only; no Radar egress, no spend, no canonical-authority change",
         "write_set": {
           "estimate": true,
           "paths": [
             "runtime/core/odg-outcome-learning.ts",
-            "runtime/core/odg-outcome-learning.test.ts"
+            "runtime/core/odg-outcome-learning.test.ts",
+            "runtime/bin/odg-v175-outcome-learning.ts"
           ],
           "basis": "provider-declared LINK-1 guess — an ESTIMATE to be confirmed when the contract is authored; NOT an authorized write_set"
         },
         "acceptance_criteria": [
-          "the adjustment is computed from ≥ minSupport outcomes and cited",
-          "weights are unchanged unless an independent inspection accepts the change",
+          "passRateCalibration.pForPlanner is non-null once ≥ the calibrator's minimum observations exist",
+          "NOT fed into scoring without a separate inspected change",
           "tsc clean; each touched test file passes run one at a time",
           "the before-metric is recomputed from committed evidence and compared (MEASURE/LEARN)"
         ],
@@ -4560,10 +4452,10 @@
         "multiplier": {
           "perComponent": [
             {
-              "component": "odg-outcome-learning",
+              "component": "odg-native-outcome-calibration",
               "inCoreGraph": true,
-              "directConsumers": 1,
-              "transitiveDependents": 2
+              "directConsumers": 2,
+              "transitiveDependents": 5
             },
             {
               "component": "mission-priority-selector",
@@ -4575,7 +4467,7 @@
           "maxDirectConsumers": 5,
           "maxTransitiveDependents": 6,
           "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)",
-          "rationale": "a change to odg-outcome-learning/mission-priority-selector reaches ≤ 6 transitive dependents (5 direct) — reach, not benefit"
+          "rationale": "a change to odg-native-outcome-calibration/mission-priority-selector reaches ≤ 6 transitive dependents (5 direct) — reach, not benefit"
         },
         "ownerGate": {
           "required": false,
@@ -4593,6 +4485,10 @@
             {
               "path": "runtime/core/odg-outcome-learning.test.ts",
               "class": "OTHER"
+            },
+            {
+              "path": "runtime/bin/odg-v175-outcome-learning.ts",
+              "class": "OTHER"
             }
           ],
           "radarStagePaths": [],
@@ -4602,23 +4498,14 @@
         "measure": {
           "before": [
             {
-              "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[4]",
-              "name": "outcomeLearning.OL-5.n",
+              "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[0]",
+              "name": "outcomeLearning.OL-1.n",
               "value": 4,
               "support": [
-                "G: score 0.35 → PARTIAL",
-                "G2: score 0.06 → PARTIAL",
-                "H: score 0.32 → FAIL",
-                "J2: score 0.06 → FAIL"
-              ]
-            },
-            {
-              "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[5]",
-              "name": "outcomeLearning.OL-6-evidenceLevel.n",
-              "value": 2,
-              "support": [
-                "G",
-                "H"
+                "G=PARTIAL",
+                "G2=PARTIAL",
+                "H=FAIL",
+                "J2=FAIL"
               ]
             }
           ],
@@ -4629,40 +4516,37 @@
     },
     {
       "rank": 3,
-      "id": "RB-PRE-OPEN-SELF-INSPECTION",
-      "evidenceScore": 0.19,
+      "id": "RB-DISPATCH-SELECTION-ALIGNMENT",
+      "evidenceScore": 0.165,
       "uncertainty": 0.6,
-      "upperBound": 0.79,
-      "tiedWith": [
-        "RB-REATTEMPT-CHANGED-INPUT",
-        "RB-RECORD-INSPECTION-VERDICT-TIME",
-        "RB-SELECTION-AT-RUN-HEAD"
-      ],
-      "rankNote": "equal evidenceScore: order among tied proposals is the selector's display order (by id) — NOT a decision",
+      "upperBound": 0.765,
+      "tiedWith": [],
+      "rankNote": null,
       "contract": {
-        "id": "RB-PRE-OPEN-SELF-INSPECTION",
+        "id": "RB-DISPATCH-SELECTION-ALIGNMENT",
         "kind": "WORK_ITEM_CONTRACT_DRAFT",
         "state": "PROPOSED",
         "authorizedBy": null,
-        "objective": "run the inspection checklist (tests one file at a time, --check, fail-closed review) BEFORE a PR opens, to cut post-open rework",
+        "objective": "make the register's choice actionable (contract + owner step stated) so GO dispatches the register selection instead of an override",
         "source": {
           "directive": "owner CTO directive V176 2026-11-24 §4 (Radar → construction)",
           "signals": [
-            "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.aggregate.split.afterOpenUntilLastCommitShare"
+            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[2]",
+            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[3]"
           ]
         },
-        "scope": "improve evaluator-independence, inspection-boundary only; no Radar egress, no spend, no canonical-authority change",
+        "scope": "improve odg-go-cycle, odg-strategic-register only; no Radar egress, no spend, no canonical-authority change",
         "write_set": {
           "estimate": true,
           "paths": [
-            "runtime/core/inspection-boundary.ts",
-            "runtime/core/evaluator-independence.test.ts"
+            "runtime/core/odg-go-cycle.ts",
+            "runtime/core/odg-go-cycle.test.ts"
           ],
           "basis": "provider-declared LINK-1 guess — an ESTIMATE to be confirmed when the contract is authored; NOT an authorized write_set"
         },
         "acceptance_criteria": [
-          "afterOpenUntilLastCommitShare falls in a later production-metric window",
-          "PRs with inspection-finding commits fall",
+          "a GO run over the committed register dispatches the register selection or states the missing owner step",
+          "owner overrides stay recorded",
           "tsc clean; each touched test file passes run one at a time",
           "the before-metric is recomputed from committed evidence and compared (MEASURE/LEARN)"
         ],
@@ -4686,22 +4570,22 @@
         "multiplier": {
           "perComponent": [
             {
-              "component": "evaluator-independence",
+              "component": "odg-go-cycle",
               "inCoreGraph": true,
-              "directConsumers": 4,
-              "transitiveDependents": 12
+              "directConsumers": 0,
+              "transitiveDependents": 0
             },
             {
-              "component": "inspection-boundary",
+              "component": "odg-strategic-register",
               "inCoreGraph": true,
               "directConsumers": 2,
-              "transitiveDependents": 3
+              "transitiveDependents": 2
             }
           ],
-          "maxDirectConsumers": 4,
-          "maxTransitiveDependents": 12,
+          "maxDirectConsumers": 2,
+          "maxTransitiveDependents": 2,
           "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)",
-          "rationale": "a change to evaluator-independence/inspection-boundary reaches ≤ 12 transitive dependents (4 direct) — reach, not benefit"
+          "rationale": "a change to odg-go-cycle/odg-strategic-register reaches ≤ 2 transitive dependents (2 direct) — reach, not benefit"
         },
         "ownerGate": {
           "required": false,
@@ -4713,11 +4597,11 @@
         "governance": {
           "classes": [
             {
-              "path": "runtime/core/inspection-boundary.ts",
+              "path": "runtime/core/odg-go-cycle.ts",
               "class": "OTHER"
             },
             {
-              "path": "runtime/core/evaluator-independence.test.ts",
+              "path": "runtime/core/odg-go-cycle.test.ts",
               "class": "OTHER"
             }
           ],
@@ -4728,11 +4612,23 @@
         "measure": {
           "before": [
             {
-              "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.aggregate.split.afterOpenUntilLastCommitShare",
-              "name": "prTimeline.aggregate.split.afterOpenUntilLastCommitShare",
-              "value": 0.8434,
-              "prsWithInspectionFindingCommits": 8,
-              "prs": 17
+              "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[2]",
+              "name": "outcomeLearning.OL-3.n",
+              "value": 4,
+              "support": [
+                "G2: evidenceScore 0.06, uncertainty 0.7 (max 0.5), rank 23/37; dispatched via docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json",
+                "J2: evidenceScore 0.06, uncertainty 0.7 (max 0.5), rank 23/36; dispatched via docs/odg/V174_OWNER_DECISION_SELECT_J2.json"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[3]",
+              "name": "outcomeLearning.OL-4.n",
+              "value": 3,
+              "support": [
+                "G2: GO strategic SELECT = SELECTED J; actionable = G2 (resolved by OWNER_ORDER_DECISION docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json); dispatched G2",
+                "H: GO strategic SELECT = DECISION_REQUIRED; actionable = H (GO actionable rule); dispatched H",
+                "J2: GO strategic SELECT = SELECTED J; actionable = J2 (resolved by OWNER_SELECTION_DECISION docs/odg/V174_OWNER_DECISION_SELECT_J2.json); dispatched J2"
+              ]
             }
           ],
           "after": null,
@@ -4742,40 +4638,37 @@
     },
     {
       "rank": 4,
-      "id": "RB-REATTEMPT-CHANGED-INPUT",
-      "evidenceScore": 0.19,
+      "id": "RB-REGISTER-CHECKPOINT-POINTERS",
+      "evidenceScore": 0.13,
       "uncertainty": 0.6,
-      "upperBound": 0.79,
-      "tiedWith": [
-        "RB-PRE-OPEN-SELF-INSPECTION",
-        "RB-RECORD-INSPECTION-VERDICT-TIME",
-        "RB-SELECTION-AT-RUN-HEAD"
-      ],
-      "rankNote": "equal evidenceScore: order among tied proposals is the selector's display order (by id) — NOT a decision",
+      "upperBound": 0.73,
+      "tiedWith": [],
+      "rankNote": null,
       "contract": {
-        "id": "RB-REATTEMPT-CHANGED-INPUT",
+        "id": "RB-REGISTER-CHECKPOINT-POINTERS",
         "kind": "WORK_ITEM_CONTRACT_DRAFT",
         "state": "PROPOSED",
         "authorizedBy": null,
-        "objective": "a re-attempt of a non-PASS parent must cite a measured changed input (new data/strategy) before it is selectable",
+        "objective": "extend the declared BLOCKER_FIELDS / PR_RECORD_FIELDS to the latest checkpoint under an inspected rule change",
         "source": {
           "directive": "owner CTO directive V176 2026-11-24 §4 (Radar → construction)",
           "signals": [
-            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[7]"
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[8]"
           ]
         },
-        "scope": "improve mission-priority-selector, odg-strategic-register only; no Radar egress, no spend, no canonical-authority change",
+        "scope": "improve odg-strategic-register only; no Radar egress, no spend, no canonical-authority change",
         "write_set": {
           "estimate": true,
           "paths": [
             "runtime/core/odg-strategic-register.ts",
-            "runtime/core/odg-strategic-register.test.ts"
+            "runtime/core/odg-strategic-register.test.ts",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json"
           ],
           "basis": "provider-declared LINK-1 guess — an ESTIMATE to be confirmed when the contract is authored; NOT an authorized write_set"
         },
         "acceptance_criteria": [
-          "a re-attempt with no stated changed input is NOT selectable",
-          "one with a cited changed input is",
+          "CTR-3 no longer detected",
+          "BLK-2/REL-2 changes are listed and inspected",
           "tsc clean; each touched test file passes run one at a time",
           "the before-metric is recomputed from committed evidence and compared (MEASURE/LEARN)"
         ],
@@ -4799,22 +4692,16 @@
         "multiplier": {
           "perComponent": [
             {
-              "component": "mission-priority-selector",
-              "inCoreGraph": true,
-              "directConsumers": 5,
-              "transitiveDependents": 6
-            },
-            {
               "component": "odg-strategic-register",
               "inCoreGraph": true,
               "directConsumers": 2,
               "transitiveDependents": 2
             }
           ],
-          "maxDirectConsumers": 5,
-          "maxTransitiveDependents": 6,
+          "maxDirectConsumers": 2,
+          "maxTransitiveDependents": 2,
           "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)",
-          "rationale": "a change to mission-priority-selector/odg-strategic-register reaches ≤ 6 transitive dependents (5 direct) — reach, not benefit"
+          "rationale": "a change to odg-strategic-register reaches ≤ 2 transitive dependents (2 direct) — reach, not benefit"
         },
         "ownerGate": {
           "required": false,
@@ -4832,6 +4719,10 @@
             {
               "path": "runtime/core/odg-strategic-register.test.ts",
               "class": "OTHER"
+            },
+            {
+              "path": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+              "class": "OTHER"
             }
           ],
           "radarStagePaths": [],
@@ -4841,13 +4732,9 @@
         "measure": {
           "before": [
             {
-              "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[7]",
-              "name": "outcomeLearning.OL-8.n",
-              "value": 2,
-              "support": [
-                "G2 (parent G, parent status CLOSED_PARTIAL) → PARTIAL",
-                "J2 (parent J, parent status EXECUTED_PARTIAL) → FAIL"
-              ]
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[8]",
+              "name": "register.contradictions.CTR-3",
+              "value": "OPEN"
             }
           ],
           "after": null,
@@ -4857,29 +4744,26 @@
     },
     {
       "rank": 5,
-      "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
-      "evidenceScore": 0.19,
+      "id": "RB-RECORD-RUN-ACCOUNTING",
+      "evidenceScore": 0.125,
       "uncertainty": 0.6,
-      "upperBound": 0.79,
-      "tiedWith": [
-        "RB-PRE-OPEN-SELF-INSPECTION",
-        "RB-REATTEMPT-CHANGED-INPUT",
-        "RB-SELECTION-AT-RUN-HEAD"
-      ],
-      "rankNote": "equal evidenceScore: order among tied proposals is the selector's display order (by id) — NOT a decision",
+      "upperBound": 0.725,
+      "tiedWith": [],
+      "rankNote": null,
       "contract": {
-        "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
+        "id": "RB-RECORD-RUN-ACCOUNTING",
         "kind": "WORK_ITEM_CONTRACT_DRAFT",
         "state": "PROPOSED",
         "authorizedBy": null,
-        "objective": "record the inspection verdict timestamp in the committed inspection record so verdict latency is measured, not bounded",
+        "objective": "experiment records carry run start/finish and local-model call counts",
         "source": {
           "directive": "owner CTO directive V176 2026-11-24 §4 (Radar → construction)",
           "signals": [
-            "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.prs[*].inspectionVerdictAt"
+            "docs/odg/evidence/V175_PRODUCTION_METRIC.json#missions[*].cost.localModelCalls",
+            "docs/odg/evidence/V175_PRODUCTION_METRIC.json#missions[*].time.recordRunMs"
           ]
         },
-        "scope": "improve odg-production-metric, evaluator-independence only; no Radar egress, no spend, no canonical-authority change",
+        "scope": "improve odg-production-metric, odg-go-cycle only; no Radar egress, no spend, no canonical-authority change",
         "write_set": {
           "estimate": true,
           "paths": [
@@ -4889,8 +4773,7 @@
           "basis": "provider-declared LINK-1 guess — an ESTIMATE to be confirmed when the contract is authored; NOT an authorized write_set"
         },
         "acceptance_criteria": [
-          "inspectionVerdictAt MEASURED for PRs inspected after the change",
-          "older PRs stay NOT_MEASURED (no backfill guess)",
+          "recordRunMs and localModelCalls MEASURED for new experiment records",
           "tsc clean; each touched test file passes run one at a time",
           "the before-metric is recomputed from committed evidence and compared (MEASURE/LEARN)"
         ],
@@ -4920,16 +4803,16 @@
               "transitiveDependents": 0
             },
             {
-              "component": "evaluator-independence",
+              "component": "odg-go-cycle",
               "inCoreGraph": true,
-              "directConsumers": 4,
-              "transitiveDependents": 12
+              "directConsumers": 0,
+              "transitiveDependents": 0
             }
           ],
-          "maxDirectConsumers": 4,
-          "maxTransitiveDependents": 12,
+          "maxDirectConsumers": 0,
+          "maxTransitiveDependents": 0,
           "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)",
-          "rationale": "a change to odg-production-metric/evaluator-independence reaches ≤ 12 transitive dependents (4 direct) — reach, not benefit"
+          "rationale": "a change to odg-production-metric/odg-go-cycle reaches ≤ 0 transitive dependents (0 direct) — reach, not benefit"
         },
         "ownerGate": {
           "required": false,
@@ -4956,9 +4839,14 @@
         "measure": {
           "before": [
             {
-              "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.prs[*].inspectionVerdictAt",
-              "name": "productionMetric.inspectionVerdictAt.notMeasured",
-              "value": 17
+              "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json#missions[*].cost.localModelCalls",
+              "name": "productionMetric.localModelCalls.notMeasured",
+              "value": 3
+            },
+            {
+              "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json#missions[*].time.recordRunMs",
+              "name": "productionMetric.recordRunMs.notMeasured",
+              "value": 3
             }
           ],
           "after": null,

@@ -8,6 +8,11 @@
  *
  *   npx tsx runtime/bin/odg-v176-radar-build-proposals.ts            write the record
  *   npx tsx runtime/bin/odg-v176-radar-build-proposals.ts --check    recompute from the committed sources; exit 1 on byte drift
+ *   npx tsx runtime/bin/odg-v176-radar-build-proposals.ts --convert-contracts
+ *        RB-CONV-1 (owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json): APPEND the top-N eligible drafts
+ *        (ENGINE.CONVERSION_N, batch ENGINE.CONVERSION_BATCH) to V160_AP_WORK_ITEM_CONTRACTS.json as PROPOSED contracts
+ *        (authorizedBy null; write_set ESTIMATE). Idempotent per batch; existing entries are never rewritten. Regenerate the
+ *        register and this record afterwards (the converted ids then dedup as existing contracts).
  *
  * Freshness input (no wall clock): each source file's epoch, PINNED in the record (inputs[].epochMs) next to its sha256.
  * An input whose content (sha256) is unchanged since the committed record keeps its pinned epoch; only an input whose
@@ -101,7 +106,7 @@ function compute(root: string, pinned?: any): any {
   const graph = CIG.buildGraph(root);
   const rec = GP.loadRecord(root);
   const nowEpochMs = Math.max(0, ...Object.values(epochs).map(Number));
-  const result = ENGINE.buildProposals(src, { graph, nowEpochMs, sourceEpochMs: epochs, classifyPath: (p: string) => GP.classifyPath(rec, p) });
+  const result = ENGINE.buildProposals(src, { graph, nowEpochMs, sourceEpochMs: epochs, classifyPath: (p: string) => GP.classifyPath(rec, p), artifactExists: (p: string) => fs.existsSync(path.join(root, p)) });
   return {
     "//": "V17.6 — Radar → construction (owner CTO directive V176 §4): internal improvement signals detected from COMMITTED evidence → analysed against existing components (change-impact-graph multiplier) → gated + deduplicated by odg-radar-to-mission-loop (ODG_INTERNAL) → ranked by mission-priority-selector with the register's weights → PROPOSED WORK_ITEM_CONTRACT drafts for the top proposals. PROPOSAL record: nothing authorized, nothing executed, no network. Recompute: npx tsx runtime/bin/odg-v176-radar-build-proposals.ts --check",
     schema: ENGINE.SCHEMA,
@@ -128,7 +133,26 @@ function compute(root: string, pinned?: any): any {
 
 function render(root: string): string { return JSON.stringify(compute(root), null, 2) + "\n"; }
 
+/** RB-CONV-1 — compute the conversion against the CURRENT sources (pure engine call) and return the new contracts text. */
+function convert(root: string, opts?: any): any {
+  const rec = compute(root);
+  const text = JSON.stringify(rec, null, 2) + "\n";
+  const cRel = (DECLARED as any).contracts;
+  const contracts = JSON.parse(fs.readFileSync(path.join(root, cRel), "utf8"));
+  let regIds: string[] = [];
+  try { const r = JSON.parse(fs.readFileSync(path.join(root, (DECLARED as any).register), "utf8")); regIds = (r.register && Array.isArray(r.register.items) ? r.register.items : []).map((it: any) => String(it.id)); } catch { regIds = []; }
+  const asOf = (() => { try { return execFileSync("git", ["-C", root, "rev-parse", "--short=8", "HEAD"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim(); } catch { return null; } })();
+  const res = ENGINE.convertToContracts(rec, contracts, Object.assign({ registerItemIds: regIds, sourceRecord: OUT_REL, sourceRecordSha256: sha256(text), asOf: asOf ? `base ${asOf} (V17.6 R2C)` : null }, opts || {}));
+  return { res, contractsRel: cRel, contractsText: JSON.stringify(res.data, null, 2) + "\n" };
+}
+
 function main(argv: string[]): number {
+  if (argv.includes("--convert-contracts")) {
+    const { res, contractsRel, contractsText } = convert(ROOT);
+    if (res.status === "CONVERTED") fs.writeFileSync(path.join(ROOT, contractsRel), contractsText);
+    process.stdout.write(JSON.stringify({ status: res.status, batch: res.batch, appended: res.appended.map((c: any) => c.scenario), skipped: res.skipped, cut: res.cut, notConvertedEligible: res.notConvertedEligible || [] }, null, 2) + "\n");
+    return 0;
+  }
   const text = render(ROOT);
   if (argv.includes("--check")) {
     let cur = ""; try { cur = fs.readFileSync(path.join(ROOT, OUT_REL), "utf8"); } catch { process.stderr.write(`MISSING ${OUT_REL}\n`); return 1; }
@@ -139,6 +163,6 @@ function main(argv: string[]): number {
   process.stdout.write(`wrote ${OUT_REL}\n`); return 0;
 }
 
-module.exports = { DECLARED, OUT_REL, loadSources, resolveEpochs, pinnedInputsOf, gitEpochOf, compute, render, main };
+module.exports = { DECLARED, OUT_REL, loadSources, resolveEpochs, pinnedInputsOf, gitEpochOf, compute, render, convert, main };
 if (require.main === module) process.exit(main(process.argv.slice(2)));
 export {};
