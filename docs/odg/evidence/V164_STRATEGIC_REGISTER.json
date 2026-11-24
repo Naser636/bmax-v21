@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "5b75fcc2f27825be71d07f2f8571d37abb36d417da6600b30681ae8f9b5bdd6f"
+      "sha256": "43c38d865914e6eaa989401b0de757f081a9df03cb5c977c61077eaa66f1e107"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "4b5d6b549643424e1630da013f9ee37ca539aca811711c2a6d6a872e3d7682d3"
+      "sha256": "99478c928d94c526e8f64a189457a52251b14262140b77eeaddd852a19e19b04"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -211,7 +211,11 @@
     },
     {
       "source": "runtime/bin/odg-v175-native-design-run.ts",
-      "sha256": "fd95b6c6ebe684435b72c10d73c50a21ccc4751c44e1862f9147c8d445cc1573"
+      "sha256": "a71d1297c91051c15ff633eeaff9f458901411eaac451c54094b3231192b9f55"
+    },
+    {
+      "source": "runtime/bin/odg-v176-nb3-native-design-run.ts",
+      "sha256": "c4bfe387a801ca1add1513dc3aa65271b2d2e9928f1693142c07825490e2933d"
     },
     {
       "source": "runtime/bin/odg-v176-scenario-j-run.ts",
@@ -572,15 +576,15 @@
         "RESOLVED_BY_EVIDENCE"
       ],
       "counts": {
-        "edges": 6,
+        "edges": 8,
         "byKind": {
           "DATASET_INPUT": 1,
-          "CODE_IMPORT": 5,
+          "CODE_IMPORT": 7,
           "STATED_TEXT": 0
         },
-        "satisfied": 6,
+        "satisfied": 8,
         "unsatisfied": 0,
-        "itemsWithDeps": 4,
+        "itemsWithDeps": 5,
         "itemsNotMeasured": 40
       },
       "fanOut": {
@@ -725,6 +729,15 @@
           "blockingDependents": []
         },
         "V175-NB2": {
+          "fanOut": 2,
+          "dependents": [
+            "V175-NB1",
+            "V176-NB3"
+          ],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "V176-NB3": {
           "fanOut": 1,
           "dependents": [
             "V175-NB1"
@@ -798,6 +811,28 @@
           "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[0]",
           "satisfied": true,
           "satisfiedBasis": "runtime/core/odg-canonical-json.ts committed"
+        },
+        {
+          "from": "V175-NB1",
+          "to": "V176-NB3",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-canonical-json.ts",
+          "source": "runtime/core/odg-canonical-json.test.ts#require(\"./odg-canonical-json.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[18].WORK_ITEM_CONTRACT.write_set[1]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-canonical-json.ts committed"
+        },
+        {
+          "from": "V176-NB3",
+          "to": "V175-NB2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-v175-native-design-run.ts",
+          "source": "runtime/bin/odg-v176-nb3-native-design-run.ts#require(\"./odg-v175-native-design-run.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[2]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
         }
       ],
       "contention": {
@@ -816,11 +851,28 @@
             "shared": [
               "runtime/core/odg-canonical-json.ts"
             ]
+          },
+          {
+            "a": "V175-NB1",
+            "b": "V176-NB3",
+            "reason": "WRITESET_OVERLAP",
+            "shared": [
+              "runtime/core/odg-canonical-json.ts"
+            ]
+          },
+          {
+            "a": "V175-NB2",
+            "b": "V176-NB3",
+            "reason": "WRITESET_OVERLAP",
+            "shared": [
+              "runtime/core/odg-canonical-json.ts",
+              "runtime/core/odg-canonical-json-extended.test.ts"
+            ]
           }
         ],
         "pairsNote": "pairs lists WRITESET_OVERLAP pairs; UNKNOWN_WRITESET pairs (every pair involving an unknownWriteSets item) are counted in unknownPairs, not listed",
-        "overlapPairs": 1,
-        "unknownPairs": 63,
+        "overlapPairs": 3,
+        "unknownPairs": 66,
         "note": "contention is NOT a dependency: never in deps[], depsStated or any criterion"
       },
       "dep1Kinds": [
@@ -840,6 +892,11 @@
           "item": "V175-NB2",
           "file": "runtime/core/odg-canonical-json-extended.test.ts",
           "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[1]"
+        },
+        {
+          "item": "V176-NB3",
+          "file": "runtime/core/odg-canonical-json-extended.test.ts",
+          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[1]"
         }
       ],
       "independenceStated": [],
@@ -856,17 +913,17 @@
       "rule": "BREF-1 (provider-authored; applied uniformly to every register item): (1) v150RequirementIds — WORK_ITEM_CONTRACT: the V171 matrix row whose v150.section is '§45 scenario X' for X = the contract scenario when it is an A–P letter, else contract.parent.scenario when that is an A–P letter (stated lineage); V150_TOP10_ITEM: rows of each V150 summary.top10NextInternal[i].advances entry ('§45-X' ⇒ '§45 scenario X', '§N…' ⇒ '§N'); V150_ALSO_INTERNAL / V150_OWNER_GATED: rows of the '§N' citations of the item's own V150 summary text (a citation directly preceded by a document name, e.g. 'V15_CLOSURE_DOSSIER §8', is not a V15.0 section and is skipped); every other kind: no field links it ⇒ []. (2) V12.4 — each row's anchors.v12_4 segment '<S> <MISSION-ID>' counts only if the canonical V12.4 companion lists MISSION-ID with section S; a section-only segment '<S> …' counts as section S only if the companion has a mission in S; 'none' / 'transversal' state no mission; v124MissionId = the single distinct mission over all rows, else null (ambiguous or none); v124Section = that mission's section, else the single distinct section, else null. (3) v144Phase — from the ADOPTED docs/odg/V14_4_ROADMAP.md §2 table: a phase matches a mission candidate when its 'V12.4 anchor(s)' cell names that mission id, or names its section letter without a mission id; a section-only candidate matches cells naming that letter without a mission id; v144Phase = the single distinct matched phase, else null. status = MEASURED iff ≥1 requirement row resolved (each measured ref cites ≥1 source pointer), else NOT_MEASURED with the reason; per-field nulls carry fieldReasons.",
       "coverage": {
         "rule": "BREF-1",
-        "items": 63,
+        "items": 64,
         "measured": 37,
-        "notMeasured": 26,
+        "notMeasured": 27,
         "withV124MissionId": 22,
         "withV124Section": 23,
         "withV144Phase": 21,
         "byKind": {
           "WORK_ITEM_CONTRACT": {
-            "items": 23,
+            "items": 24,
             "measured": 18,
-            "notMeasured": 5
+            "notMeasured": 6
           },
           "V150_TOP10_ITEM": {
             "items": 5,
@@ -1154,6 +1211,12 @@
           "inspection": "docs/odg/evidence/V175_NB2_CONTRACT_INSPECTION.json",
           "experiment": "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json",
           "validation": "docs/odg/evidence/V175_NB2_CRITERIA_VALIDATION.json"
+        },
+        {
+          "scenario": "V176-NB3",
+          "inspection": null,
+          "experiment": null,
+          "validation": null
         }
       ],
       "resolutionEvidence": [
@@ -1182,13 +1245,13 @@
         "V176_CHECKPOINT_13.json"
       ]
     },
-    "itemCount": 63,
+    "itemCount": 64,
     "statusCounts": {
       "ACCEPTED": 1,
       "PASS_IN_SCOPE": 2,
       "EXECUTED_PARTIAL": 1,
       "PARTIAL": 18,
-      "NOT_STARTED": 3,
+      "NOT_STARTED": 4,
       "NOT_ADOPTED": 1,
       "BLOCKED": 14,
       "FAILED": 0,
@@ -4613,7 +4676,7 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 1 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 2 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
         "depsStated": [],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
@@ -4772,9 +4835,10 @@
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
-          "edgesOut": 1,
+          "edgesOut": 2,
           "dependsOn": [
-            "V175-NB2"
+            "V175-NB2",
+            "V176-NB3"
           ],
           "unsatisfiedDeps": [],
           "dependents": [],
@@ -4791,6 +4855,17 @@
             "source": "runtime/core/odg-canonical-json.test.ts#require(\"./odg-canonical-json.js\")",
             "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[18].WORK_ITEM_CONTRACT.write_set[1]",
             "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-canonical-json.ts committed"
+          },
+          {
+            "from": "V175-NB1",
+            "to": "V176-NB3",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-canonical-json.ts",
+            "source": "runtime/core/odg-canonical-json.test.ts#require(\"./odg-canonical-json.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[18].WORK_ITEM_CONTRACT.write_set[1]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[0]",
             "satisfied": true,
             "satisfiedBasis": "runtime/core/odg-canonical-json.ts committed"
           }
@@ -4995,10 +5070,11 @@
           "dependsOn": [],
           "unsatisfiedDeps": [],
           "dependents": [
-            "V175-NB1"
+            "V175-NB1",
+            "V176-NB3"
           ],
           "blockingDependents": [],
-          "fanOut": 1,
+          "fanOut": 2,
           "blockingFanOut": 0
         },
         "dependencyEdges": [],
@@ -5466,6 +5542,169 @@
           "ownerRecord": null,
           "ownerRecordSource": null,
           "ownerRecordReason": "no authorization block (contract not owner-scoped)"
+        }
+      },
+      {
+        "id": "V176-NB3",
+        "kind": "WORK_ITEM_CONTRACT",
+        "title": "NB3: ODG repairs odg-canonical-json's undefined gap again (NB2's target + oracle) with the pre-registered DIV-1 repair-diversity lever",
+        "contractState": "AUTHORIZED_FOR_REVISION",
+        "authorizedBy": "OWNER (CTO) — directive « CTO — CONTINUATION APRÈS CP13 — AUTONOMIE NATIVE » (2026-11-24), docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3 […] dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. » « Préparer NB3 avec le nouveau levier de diversité des réparations. Faire inspecter son contrat, puis laisser GO décider et exécuter une fois si les conditions sont conformes. » « Ne pas forcer NB3 si GO sélectionne une autre mission prioritaire. » — V176-NB3 only, internal, local model, €0, 0 provider calls; no production / spend / external engagement; native write set = the helper module + an ODG-rules test, integrated via normal PR controls",
+        "status": "NOT_STARTED",
+        "statusSource": [
+          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].initialState.status"
+        ],
+        "nextStep": {
+          "text": "an independent inspection ACCEPT of this contract, then GO's own strategic selection of V176-NB3 and the single GO-dispatched native run",
+          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].initialState.missingForPass"
+        },
+        "executedEvidence": null,
+        "deps": [],
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 1 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsStated": [],
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "sectionsAdvanced": [
+          "§45"
+        ],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "AUT-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].scenario",
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[45].title"
+            ],
+            "basis": "sections advanced matching /AUTONOM/: [§45]"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal"
+            ],
+            "reason": "not referenced by any V150 top10NextInternal item ('§45-V176-NB3')"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary"
+            ],
+            "reason": "absent from top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "MEASURED",
+            "value": 1,
+            "rule": "CRC-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.acceptance_criteria",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set"
+            ],
+            "basis": "|AC|=7, |write_set|=4, ownerGatedStep=false"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].initialState.missingForPass"
+            ],
+            "reason": "no dependency stated in the evidence ⇒ deps [] (absence of a statement is not availability)"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].initialState.evidence"
+            ],
+            "basis": "k=0 (initialState.evidence 0)"
+          }
+        },
+        "closure": {
+          "closed": false,
+          "rule": "CLOSE-1",
+          "currentStep": "INSPECT_REVISED_CONTRACT",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+          "component": "odg-authorization-scope.deriveAuthorizationScope"
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 1,
+          "dependsOn": [
+            "V175-NB2"
+          ],
+          "unsatisfiedDeps": [],
+          "dependents": [
+            "V175-NB1"
+          ],
+          "blockingDependents": [],
+          "fanOut": 1,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": [
+          {
+            "from": "V176-NB3",
+            "to": "V175-NB2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-v175-native-design-run.ts",
+            "source": "runtime/bin/odg-v176-nb3-native-design-run.ts#require(\"./odg-v175-native-design-run.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+          }
+        ],
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "contract scenario 'V176-NB3' is not an A–P §45 scenario and contract.parent.scenario is \"V175-NB2\" ⇒ no committed field links it to a V15.0 requirement row"
+        },
+        "contractRef": {
+          "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23]",
+          "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].authorization.source",
+          "ownerRecordReason": null
         }
       },
       {
@@ -11235,6 +11474,7 @@
       "V150-T09",
       "CP8-GAP-3-chooseMode",
       "CP8-GAP-5-superviseExecution",
+      "V176-NB3",
       "V150-AI4",
       "MC-CI-BEFORE-REVIEW",
       "MC-CR-APPROVAL-STANDARD",
@@ -11244,7 +11484,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'F': evidence score 0.31 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: D, V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'F': evidence score 0.31 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 27 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: D, V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -13711,6 +13951,96 @@
         "autoSelectable": false
       },
       {
+        "id": "V176-NB3",
+        "status": "NOT_STARTED",
+        "evidenceScore": 0.05,
+        "upperBound": 0.75,
+        "uncertainty": 0.7,
+        "measuredWeightShare": 0.3,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 1,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
         "id": "CP8-GAP-canonicalDefectsJ",
         "status": "PROPOSED",
         "evidenceScore": 0.025,
@@ -14766,7 +15096,7 @@
     "proposed": null,
     "tiedSet": [],
     "resolvedBy": null,
-    "justification": "ODG proposes 'F': evidence score 0.31 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: D, V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'F': evidence score 0.31 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 27 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: D, V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
       "remainingCriteria": [
@@ -14826,7 +15156,7 @@
         "b3": true,
         "b4": false
       },
-      "meanMeasuredWeightShareOverSelectable": 0.263
+      "meanMeasuredWeightShareOverSelectable": 0.2643
     },
     "C": {
       "grade": "PASS",
@@ -14859,5 +15189,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "95d7fd63955e90efdf561e3960d282864e0ed1d6"
+  "generatedAtHead": "92855d8116fcda820c9c03cb603757e9339e6317"
 }
