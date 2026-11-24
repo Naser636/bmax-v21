@@ -211,6 +211,64 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     check("re-derived I grade from the committed trace equals the recorded one", B.gradeI(ev.realDryCycleTrace, null).grade === ev.scenarioI.grade);
   } else process.stdout.write("# evidence not yet written — evidence checks skipped\n");
 
+  // ---- V17.4 GO-ORD-2: owner SELECTION record on the REAL committed state of this tree (in-memory ports; no write) ----
+  {
+    const GOC = require("../core/odg-go-cycle.js");
+    const ASc = require("../core/odg-authorization-scope.js");
+    const real = B.readState(ROOT);
+    // shallow copies only: the state carries live proof-probe functions (R7) that a JSON clone would drop
+    const cloneS = (o: any) => ({ ...o, authorizationEvidence: { ...o.authorizationEvidence } });
+    const runDry = async (state: any, prior: any[] = []) => {
+      const trace: any[] = prior.slice(); let t = 1_000_000;
+      const ports = { now: () => (t += 5), truthLock: () => ({ ok: true, blocked: false, status: "PASS", gitState: {} }), readState: () => state, knowledge: () => ({ ok: true, claims: [] }), stopRequested: () => ({ stop: false }),
+        trace: { append: (e: any) => trace.push(JSON.parse(JSON.stringify(e))), readPrior: () => prior.slice() }, writeSummary: () => {}, isolation: () => ({ ok: false, reason: "test: no scratch" }), dispatchNative: () => { throw new Error("must not dispatch"); }, pause: () => Promise.resolve() };
+      const r = await GOC.runGoCycle({ mode: "DRY" }, ports);
+      const cur = trace.slice(prior.length); const st = (k: string) => cur.find((e: any) => e.kind === "STEP" && e.step === k);
+      return { r, sel: st("SELECT"), auth: st("AUTHORIZE"), trace: cur };
+    };
+    const j2c = real.sources.contracts.data.contracts.find((x: any) => x.scenario === "J2");
+    check("GO-ORD-2: committed record loaded from the declared list (OWNER_SELECTION_DECISIONS) and bound to the CURRENT J2 contract sha", B.OWNER_SELECTION_DECISIONS.join() === "docs/odg/V174_OWNER_DECISION_SELECT_J2.json" && real.ownerSelectionDecisions.length === 1 && real.ownerSelectionDecisions[0].contractSha256 === ASc.contractSha256(j2c) && real.ownerSelectionDecisions[0].contractSha256 === "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b");
+    const base = await runDry((() => { const c = cloneS(real); c.ownerSelectionDecisions = []; return c; })());
+    const ba = base.sel.decision.actionableSelection;
+    check("GO-ORD-2 baseline (no selection record): actionable DECISION_REQUIRED, no tie, proposed J2 (uncertainty) ⇒ nothing worked on", ba.selection.decision === "DECISION_REQUIRED" && ba.selection.tiedSet.length <= 1 && ba.selection.proposed === "J2" && ba.item === null && !("ownerSelectionDecision" in ba));
+    const ok = await runDry(real);
+    const oa = ok.sel.decision.actionableSelection; const os = oa.ownerSelectionDecision;
+    check("GO-ORD-2 real state ⇒ GO dry selects J2 (ownerSelection applied, actionable, resolvedBy the record, quotes + selector uncertainty justification kept verbatim)", oa.item === "J2" && ok.sel.decision.workingOn === "J2" && os.applied === true && os.chosen === "J2" && oa.resolvedBy === "OWNER_SELECTION_DECISION docs/odg/V174_OWNER_DECISION_SELECT_J2.json" && os.quote.length === 5 && os.quote[3] === "Ne pas lancer plusieurs expériences concurrentes. Un seul envoi J2 autorisé." && os.selector.justification === base.sel.decision.actionableSelection.selection.justification && os.actionability.actionable === true && /GO-ORD-2/.test(os.rule) && /GO-ORD-2/.test(ok.sel.rationale));
+    check("GO-ORD-2 real state ⇒ AUTHORIZE passes on J2's own scoped authorization (no authorization created), dry ⇒ nothing dispatched", ok.auth.status === "DONE" && ok.auth.decision.scopedAuthorization.scenario === "J2" && ok.auth.decision.selfAuthorized === false && ok.r.dispatchCalls === 0);
+    check("GO-ORD-2 strategicSelection + the actionable selector decision unchanged by the record", JSON.stringify(ok.sel.decision.strategicSelection) === JSON.stringify(base.sel.decision.strategicSelection) && ok.sel.decision.decision === base.sel.decision.decision && oa.selection.decision === "DECISION_REQUIRED" && oa.selection.proposed === "J2");
+    const rec0 = real.ownerSelectionDecisions[0];
+    const withRec = (o: any, mut?: (c: any) => void) => { const c = cloneS(real); c.ownerSelectionDecisions = [{ ...rec0, ...o }]; if (mut) mut(c); return c; };
+    for (const [label, o, mut, re] of [
+      ["wrong item", { item: "G2" }, null, /record item G2 ≠ proposed J2/],
+      ["stale contract sha", { contractSha256: "0".repeat(64) }, null, /STALE/],
+      ["non-OWNER issuer", { issuer: "PROVIDER (Claude Code)" }, null, /issuer is not the OWNER/],
+      ["missing schema", { schema: undefined }, null, /schema/],
+      ["no quote", { quote: [] }, null, /verbatim quotes/],
+      ["experiment record already present", {}, (c: any) => { c.authorizationEvidence.J2 = { ...c.authorizationEvidence.J2, experiment: { scenario: "J2", recordPath: "docs/odg/evidence/V172_J2_EXPERIMENT.json" } }; }, null],
+    ] as any[]) {
+      const x = await runDry(withRec(o, mut || undefined));
+      const xa = x.sel.decision.actionableSelection; const xs = xa.ownerSelectionDecision;
+      const reason = xs && xs.considered && xs.considered[0] ? xs.considered[0].reason : "";
+      check(`GO-ORD-2 refusal: ${label} ⇒ not applied (reason recorded), J2 not worked on via the record`, (!xs || xs.applied === false) && xa.item !== "J2" && (re ? re.test(reason) : true));
+    }
+    // maxDispatches 1: a prior DISPATCHED J2 in the GO trace ⇒ not applied
+    const prior = [{ kind: "CYCLE_START", runId: "r0", cycleSeq: 1 }, { kind: "DISPATCHED", mission: "J2", runId: "r0", cycleSeq: 1 }, { kind: "CYCLE_END", status: "EXECUTED_FAIL", runId: "r0", cycleSeq: 1, decisionsDigest: "x" }];
+    const pd = await runDry(real, prior);
+    check("GO-ORD-2 refusal: J2 already DISPATCHED in the GO trace ⇒ maxDispatches 1 used, not applied", pd.sel.decision.actionableSelection.ownerSelectionDecision.applied === false && /maxDispatches 1 already used: DISPATCHED in the GO trace/.test(pd.sel.decision.actionableSelection.ownerSelectionDecision.considered[0].reason) && pd.sel.decision.actionableSelection.item !== "J2");
+    // tie present ⇒ GO-ORD-2 not applicable (unit, exported resolver)
+    const reg = require("../core/odg-strategic-register.js").buildRegister(real.sources);
+    const tie = GOC.resolveOwnerSelection(real, reg, { decision: "DECISION_REQUIRED", tiedSet: [{ id: "J2" }, { id: "G2" }], proposed: null }, []);
+    check("GO-ORD-2: an actionable TIE ⇒ not applicable (GO-ORD-1 territory), nothing chosen", tie.applied === false && /tie \(J2\/G2\)/.test(tie.notApplicable));
+    const sing = GOC.resolveOwnerSelection(real, reg, { decision: "DECISION_REQUIRED", tiedSet: [{ id: "J2" }], proposed: { id: "J2", uncertainty: 0.6 } }, []);
+    check("GO-ORD-2: singleton tiedSet with proposed J2 ⇒ applicable (applied)", sing.applied === true && sing.chosen === "J2");
+    const gated = { ...reg, items: reg.items.map((it: any) => (it.id === "J2" ? { ...it, requiresOwnerAuthorization: true, ownerReason: "test fixture gate" } : it)) };
+    const ng = GOC.resolveOwnerSelection(real, gated, { decision: "DECISION_REQUIRED", tiedSet: [], proposed: { id: "J2", uncertainty: 0.6 } }, []);
+    check("GO-ORD-2 refusal: item not actionable (owner-gated fixture) ⇒ not applied, reason names actionability (never creates authorization)", ng.applied === false && /not actionable: owner-gated/.test(ng.considered[0].reason));
+    const noInsp = await runDry((() => { const c = cloneS(real); c.authorizationEvidence.J2 = { ...c.authorizationEvidence.J2, inspection: null }; return c; })());
+    check("GO-ORD-2: J2 inspection record absent ⇒ J2 actionable only at its INSPECT step ⇒ selected, but AUTHORIZE grants no execution (scope current step INSPECT_REVISED_CONTRACT)", noInsp.sel.decision.actionableSelection.item === "J2" && noInsp.auth.decision.scopedAuthorization.currentStep === "INSPECT_REVISED_CONTRACT" && noInsp.auth.decision.scopedAuthorization.executionAuthorized === false);
+    check("GO-ORD-2: a non-DECISION_REQUIRED selection ⇒ resolver returns null (not consulted)", GOC.resolveOwnerSelection(real, reg, { decision: "SELECTED", selected: { id: "J2" } }, []) === null);
+  }
+
   // ---- V17.4 GO-DTO-1 MED-2: process-group dispatch (real tiny processes; bounded; no network) ----
   {
     const cpm = require("child_process");
