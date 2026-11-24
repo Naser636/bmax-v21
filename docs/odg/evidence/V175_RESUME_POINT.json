@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "5d73a1d4a1ef5fedd367d79a552dc1816e2ae9401db9f57b80e622e5e3974567"
+      "sha256": "0cc298b7adbe630f2d98a0d2d880482689fd44abcbaa63a4c80a5bbf96b88dec"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "a460ef1e80866563ef4f6e60439fe8d65de301cc7061ec20e512e919be5e7194"
+      "sha256": "323080d9dd47e06f45f11c2a11fd86993acfcdcff57fef2857ee1ecfccbb944a"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -128,17 +128,17 @@
     },
     "coverage": {
       "rule": "BREF-1",
-      "items": 59,
+      "items": 60,
       "measured": 37,
-      "notMeasured": 22,
+      "notMeasured": 23,
       "withV124MissionId": 22,
       "withV124Section": 23,
       "withV144Phase": 21,
       "byKind": {
         "WORK_ITEM_CONTRACT": {
-          "items": 19,
+          "items": 20,
           "measured": 18,
-          "notMeasured": 1
+          "notMeasured": 2
         },
         "V150_TOP10_ITEM": {
           "items": 5,
@@ -523,6 +523,64 @@
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB1]",
         "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[18]"
       ]
+    },
+    {
+      "id": "V175-NB2",
+      "title": "ODG designs the change: repair odg-canonical-json's undefined handling from executed failing cases (local model proposes ≥2 designs, ODG selects/tests/repairs)",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'V175-NB2' is not an A–P §45 scenario and contract.parent.scenario is \"V175-NB1\" ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "58e54c7c42d633b80e00046964c32e8190db341a564641969dedf2e2380685bc",
+      "ownerRecord": "docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "58e54c7c42d633b80e00046964c32e8190db341a564641969dedf2e2380685bc"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 58e54c7c42d6",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 58e54c7c42d633b80e00046964c32e8190db341a564641969dedf2e2380685bc) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB2]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19]"
+      ]
     }
   ],
   "otherRegisterItems": {
@@ -534,6 +592,7 @@
       "CLOSED_PARTIAL": 2,
       "CLOSED_FAIL": 2,
       "CLOSED_PASS": 1,
+      "NOT_STARTED": 1,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -715,6 +774,11 @@
         "item": "J",
         "actor": "OWNER",
         "action": "J contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V175-NB2",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 58e54c7c42d633b80e00046964c32e8190db341a564641969dedf2e2380685bc) and commit the inspection record"
       }
     ],
     "lastGoRun": {
