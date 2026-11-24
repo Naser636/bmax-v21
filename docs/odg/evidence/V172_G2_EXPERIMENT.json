@@ -1,0 +1,1470 @@
+{
+  "schema": "odg-scenario-experiment/1",
+  "scenario": "G2",
+  "step": "RUN_CONTROLLED_EXPERIMENTS",
+  "contract": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#G2",
+  "contractSha256": "94ca64cab00782649944b6dd3825ca6f1ed9f868943c89e0e86f7827d1d704a1",
+  "authorization": {
+    "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+    "authorizedSteps": [
+      "REVISE_CONTRACT",
+      "INSPECT_REVISED_CONTRACT",
+      "RUN_CONTROLLED_EXPERIMENTS",
+      "VALIDATE_CRITERIA"
+    ],
+    "derivedSteps": [
+      {
+        "step": "RUN_CONTROLLED_EXPERIMENTS",
+        "rule": "R4",
+        "coveredBy": "OWNER — docs/odg/V170_OWNER_AUTHORIZATION_HG.json#G (V170) (executionCondition: offline controlled experiments in an isolated scratch, with declared data and outputs, only after an independent inspection ACCEPT of this contract is recorded (owner V170: « Les expériences dans des espaces isolés et contrôlés, avec données et sorties déclarées »; criteria fixed « avant les mesures »))"
+      }
+    ],
+    "reason": "inspection ACCEPT bound to contract 94ca64cab007 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "selfAuthorized": false,
+    "inspection": {
+      "path": "docs/odg/evidence/V172_G2_CONTRACT_INSPECTION.json",
+      "verdict": "ACCEPT",
+      "contractSha256": "94ca64cab00782649944b6dd3825ca6f1ed9f868943c89e0e86f7827d1d704a1",
+      "inspectedHeadSha": "28ed13b053d05f1f00a05176930b445373ddce0c",
+      "inspectedPr": 956,
+      "inspectorSessionId": "ab245bf3019f79340",
+      "authorSessionId": "g2j2-reviser-v172"
+    },
+    "owner": "docs/odg/V170_OWNER_AUTHORIZATION_HG.json#G (V170)",
+    "note": "authorized automatically by odg-authorization-scope (R4) under the owner's V170 authorization after an independent inspection ACCEPT; the provider did not self-authorize"
+  },
+  "outcome": "PARTIAL",
+  "grade": {
+    "outcome": "PARTIAL",
+    "passConditions": {
+      "deltaB_gt_0": false,
+      "ci95Low_deltaB_gt_0": false,
+      "delta0_ge_0_05": true,
+      "ci95Low_delta0_gt_0": true,
+      "meanRollingDeltaB_ge_0": true
+    },
+    "flags": [
+      "KG_EQUALS_B1 (T_KG = T_B: no evidence that the knowledge helps)"
+    ],
+    "because": [
+      "PASS condition not met: deltaB_gt_0",
+      "PASS condition not met: ci95Low_deltaB_gt_0"
+    ],
+    "rule": "first matching of NOT_MEASURED, PASS, PARTIAL, FAIL per WORK_ITEM_CONTRACT.preRegistration.thresholds (mechanical; no re-tuning)",
+    "gradedBy": "pre-registered rule only — NOT the independent VALIDATE_CRITERIA step (pending: C4 independent recomputation)"
+  },
+  "adoptionDecision": "NOT_ADOPTED",
+  "useAt": "2026-11-24T12:00:40Z",
+  "inputs": {
+    "contracts": {
+      "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+      "sha256File": "8283ad374a1f640894aeca9cc1d0bdcaff700df851ff9428b6a3636737845320"
+    },
+    "inspection": {
+      "path": "docs/odg/evidence/V172_G2_CONTRACT_INSPECTION.json",
+      "sha256File": "7ed12f31756c9f7b214d6b1fe0ea353cb88daab64a5f34270cf30adddfd4b993"
+    },
+    "dev": {
+      "path": "docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json",
+      "sha256": "09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea",
+      "pinned": "09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea",
+      "matches": true,
+      "rows": {
+        "raw": 400,
+        "eligible": 400,
+        "dropped": 0,
+        "registered": 400,
+        "matchesRegistration": true,
+        "prRange": [
+          519,
+          920
+        ]
+      },
+      "counts": {
+        "n": 400,
+        "highIteration": 120,
+        "lowIteration": 280
+      }
+    },
+    "heldout": {
+      "path": "docs/odg/evidence/V172_G2_HELDOUT.json",
+      "sha256": "46e2f568cc213b6b9a54d3e6e6f8d0dbdbdac81afcc15e03ea07835c513cbba9",
+      "baseCommit": "e97bcc43bf1ca59db5b779329ce1b0409211cf3e",
+      "reproducible": true,
+      "rule": {
+        "ok": true,
+        "violations": [],
+        "violationCount": 0
+      },
+      "builderOk": true,
+      "builderReasons": [],
+      "counts": {
+        "HB": {
+          "rows": 168,
+          "excluded": 32,
+          "excludedByReason": {
+            "LABEL_NOT_RECOVERABLE_LOCALLY": 32
+          },
+          "expectedMergeStyleAtRegistration": 168,
+          "expectedSquashStyleAtRegistration": 32
+        },
+        "HF": {
+          "rows": 34,
+          "excluded": 0,
+          "excludedByReason": {},
+          "expectedMergeStyleAtRegistration": 34,
+          "expectedSquashStyleAtRegistration": 0
+        }
+      }
+    }
+  },
+  "preRegistration": {
+    "knowledgeItem": "G_SMALL_SIZE",
+    "T_prior": 1000,
+    "log10Prior": 3,
+    "alpha": 0.05,
+    "alphaReportOnly": [
+      0.02,
+      0.1
+    ],
+    "K_reportOnly": [
+      1000,
+      100
+    ],
+    "highIterationMinCommits": 2,
+    "dev": "docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json",
+    "devSha256": "09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea",
+    "devRowsRegistered": 400,
+    "devRange": [
+      519,
+      920
+    ],
+    "heldoutBaseCommit": "e97bcc43",
+    "HB": [
+      319,
+      518
+    ],
+    "HF": [
+      921,
+      954
+    ],
+    "folds": {
+      "origins": [
+        100,
+        200,
+        300
+      ],
+      "testLen": 100,
+      "minPerClassTrain": 5,
+      "minPerClassTest": 5
+    },
+    "concordance": {
+      "minRows": 30,
+      "minLabelAgreement": 0.9,
+      "minSizeAgreement": 0.8,
+      "sizeAbsTol": 10,
+      "sizeRelTol": 0.1
+    },
+    "resamples": 2000,
+    "bootstrapSeed": 20261202,
+    "maxSkippedFraction": 0.05,
+    "minHbPerClass": 20,
+    "minDevPerClass": 10,
+    "minValidFolds": 2,
+    "minHfPerClassReportOnly": 5,
+    "pass": {
+      "deltaBGreaterThan": 0,
+      "ciLowDeltaBGreaterThan": 0,
+      "minDelta0": 0.05,
+      "ciLowDelta0GreaterThan": 0,
+      "minMeanRollingDeltaB": 0
+    },
+    "partial": {
+      "delta0GreaterThan": 0,
+      "minDeltaB": -0.02
+    }
+  },
+  "C1": {
+    "ok": true,
+    "refusal": null,
+    "collection": "docs/odg/evidence/V160_PRACTICES_COLLECTION.json",
+    "registry": "docs/odg/evidence/COLLECTION_REGISTRY.json",
+    "collectionSha256": "749af2eacc3193adc253cdc514c4316de9b04e5d174f1c77446a603b78412b13",
+    "registryPins": [
+      "2675846657b7c4c528ec7256f398f1b934f288fcec1087c3ed57c8bd7c170f49"
+    ],
+    "attested": true,
+    "useAt": "2026-11-24T12:00:40.000Z",
+    "item": {
+      "id": "G_SMALL_SIZE",
+      "claim": "The page states: There are no hard and fast rules about how large is “too large.” 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large, but it’s up to the judgment of your reviewer.",
+      "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+      "epistemic": "SUPPORTED",
+      "isFact": false,
+      "provenance": "ASSESSMENT:kc:e353da6e42eab8d9",
+      "useAuthorization": "DESIGN_PROPOSAL",
+      "useReason": "within attested record + contract",
+      "validUntil": "2027-02-21T12:00:00.000Z",
+      "fresh": true,
+      "admissible": {
+        "trusted": false,
+        "verdict": "NOT_A_FACT",
+        "reasons": [
+          "only a REPO-authenticated CORROBORATED fact is admissible as fact"
+        ]
+      },
+      "presentedAs": "DESIGN_PROPOSAL (not a fact)"
+    },
+    "expectedAdmissibleVerdictForSupported": "NOT_A_FACT",
+    "admissibleVerdictAsExpected": true
+  },
+  "rollingOrigin": {
+    "folds": [
+      {
+        "origin": 100,
+        "valid": false,
+        "train": {
+          "n": 100,
+          "highIteration": 2,
+          "lowIteration": 98
+        },
+        "test": {
+          "n": 100,
+          "highIteration": 18,
+          "lowIteration": 82
+        }
+      },
+      {
+        "origin": 200,
+        "valid": true,
+        "train": {
+          "n": 200,
+          "highIteration": 20,
+          "lowIteration": 180
+        },
+        "test": {
+          "n": 100,
+          "highIteration": 28,
+          "lowIteration": 72
+        },
+        "T_B": 144,
+        "T_KG": 164,
+        "BA": {
+          "B1": 0.767857,
+          "KG": 0.776786,
+          "T1000": 0.5
+        },
+        "deltaB": 0.008929
+      },
+      {
+        "origin": 300,
+        "valid": true,
+        "train": {
+          "n": 300,
+          "highIteration": 48,
+          "lowIteration": 252
+        },
+        "test": {
+          "n": 100,
+          "highIteration": 72,
+          "lowIteration": 28
+        },
+        "T_B": 164,
+        "T_KG": 164,
+        "BA": {
+          "B1": 0.820437,
+          "KG": 0.820437,
+          "T1000": 0.625
+        },
+        "deltaB": 0
+      }
+    ],
+    "validFolds": 2,
+    "meanDeltaB": 0.004464,
+    "role": "DEV is CONTAMINATED — necessary condition only (can BLOCK a PASS, never grant one)"
+  },
+  "fitted": {
+    "B1": {
+      "T_B": 164,
+      "trainBalancedAccuracy": 0.697619,
+      "candidates": 252
+    },
+    "KG": {
+      "T_KG": 164,
+      "objective": 0.6583611924023849,
+      "trainBalancedAccuracy": 0.697619,
+      "priorDistanceDecades": 0.785156151952302,
+      "alpha": 0.05,
+      "candidates": 253,
+      "undefinedCandidates": 0
+    },
+    "reportOnlyKG": [
+      {
+        "T_KG": 164,
+        "objective": 0.6819158769609539,
+        "trainBalancedAccuracy": 0.697619,
+        "priorDistanceDecades": 0.785156151952302,
+        "alpha": 0.02,
+        "candidates": 253,
+        "undefinedCandidates": 0
+      },
+      {
+        "T_KG": 192,
+        "objective": 0.620592122870355,
+        "trainBalancedAccuracy": 0.692262,
+        "priorDistanceDecades": 0.7166987712964503,
+        "alpha": 0.1,
+        "candidates": 253,
+        "undefinedCandidates": 0
+      }
+    ],
+    "frozen": {
+      "T_B": 164,
+      "T_KG": 164,
+      "alpha": 0.05,
+      "T_prior": 1000,
+      "reportOnly_T_KG_byAlpha": [
+        {
+          "alpha": 0.02,
+          "T_KG": 164
+        },
+        {
+          "alpha": 0.1,
+          "T_KG": 192
+        }
+      ]
+    },
+    "frozenSha256": "ae267b1cb80342a522bfb33f7ac7f1f57cbe8d6d583d792d8cfad7ca2c9aa0ad",
+    "canonical": "{\"T_B\":164,\"T_KG\":164,\"T_prior\":1000,\"alpha\":0.05,\"reportOnly_T_KG_byAlpha\":[{\"T_KG\":164,\"alpha\":0.02},{\"T_KG\":192,\"alpha\":0.1}]}",
+    "sealedBeforeHeldoutBuilt": true
+  },
+  "concordance": {
+    "ok": true,
+    "n": 69,
+    "labelAgreement": 1,
+    "sizeAgreement": 1,
+    "required": {
+      "minRows": 30,
+      "minLabelAgreement": 0.9,
+      "minSizeAgreement": 0.8,
+      "sizeAbsTol": 10,
+      "sizeRelTol": 0.1
+    },
+    "pairs": [
+      {
+        "number": 850,
+        "snapshot": {
+          "size": 1133,
+          "commits": 7
+        },
+        "local": {
+          "size": 1133,
+          "commits": 7
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 851,
+        "snapshot": {
+          "size": 164,
+          "commits": 1
+        },
+        "local": {
+          "size": 164,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 852,
+        "snapshot": {
+          "size": 173,
+          "commits": 3
+        },
+        "local": {
+          "size": 173,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 853,
+        "snapshot": {
+          "size": 549,
+          "commits": 5
+        },
+        "local": {
+          "size": 549,
+          "commits": 5
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 854,
+        "snapshot": {
+          "size": 699,
+          "commits": 4
+        },
+        "local": {
+          "size": 699,
+          "commits": 4
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 855,
+        "snapshot": {
+          "size": 46,
+          "commits": 1
+        },
+        "local": {
+          "size": 46,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 856,
+        "snapshot": {
+          "size": 790,
+          "commits": 4
+        },
+        "local": {
+          "size": 790,
+          "commits": 4
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 857,
+        "snapshot": {
+          "size": 548,
+          "commits": 4
+        },
+        "local": {
+          "size": 548,
+          "commits": 4
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 858,
+        "snapshot": {
+          "size": 8293,
+          "commits": 2
+        },
+        "local": {
+          "size": 8293,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 859,
+        "snapshot": {
+          "size": 62,
+          "commits": 3
+        },
+        "local": {
+          "size": 62,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 860,
+        "snapshot": {
+          "size": 425,
+          "commits": 2
+        },
+        "local": {
+          "size": 425,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 861,
+        "snapshot": {
+          "size": 207,
+          "commits": 3
+        },
+        "local": {
+          "size": 207,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 862,
+        "snapshot": {
+          "size": 2,
+          "commits": 1
+        },
+        "local": {
+          "size": 2,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 863,
+        "snapshot": {
+          "size": 190,
+          "commits": 3
+        },
+        "local": {
+          "size": 190,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 864,
+        "snapshot": {
+          "size": 193,
+          "commits": 3
+        },
+        "local": {
+          "size": 193,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 865,
+        "snapshot": {
+          "size": 447,
+          "commits": 3
+        },
+        "local": {
+          "size": 447,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 866,
+        "snapshot": {
+          "size": 399,
+          "commits": 2
+        },
+        "local": {
+          "size": 399,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 867,
+        "snapshot": {
+          "size": 107,
+          "commits": 2
+        },
+        "local": {
+          "size": 107,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 868,
+        "snapshot": {
+          "size": 295,
+          "commits": 3
+        },
+        "local": {
+          "size": 295,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 869,
+        "snapshot": {
+          "size": 260,
+          "commits": 2
+        },
+        "local": {
+          "size": 260,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 870,
+        "snapshot": {
+          "size": 334,
+          "commits": 5
+        },
+        "local": {
+          "size": 334,
+          "commits": 5
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 871,
+        "snapshot": {
+          "size": 331,
+          "commits": 4
+        },
+        "local": {
+          "size": 331,
+          "commits": 4
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 872,
+        "snapshot": {
+          "size": 9129,
+          "commits": 3
+        },
+        "local": {
+          "size": 9129,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 873,
+        "snapshot": {
+          "size": 323,
+          "commits": 3
+        },
+        "local": {
+          "size": 323,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 874,
+        "snapshot": {
+          "size": 400,
+          "commits": 3
+        },
+        "local": {
+          "size": 400,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 875,
+        "snapshot": {
+          "size": 221,
+          "commits": 2
+        },
+        "local": {
+          "size": 221,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 876,
+        "snapshot": {
+          "size": 324,
+          "commits": 3
+        },
+        "local": {
+          "size": 324,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 877,
+        "snapshot": {
+          "size": 276,
+          "commits": 1
+        },
+        "local": {
+          "size": 276,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 878,
+        "snapshot": {
+          "size": 91,
+          "commits": 1
+        },
+        "local": {
+          "size": 91,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 879,
+        "snapshot": {
+          "size": 1057,
+          "commits": 2
+        },
+        "local": {
+          "size": 1057,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 880,
+        "snapshot": {
+          "size": 25,
+          "commits": 1
+        },
+        "local": {
+          "size": 25,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 881,
+        "snapshot": {
+          "size": 7143,
+          "commits": 3
+        },
+        "local": {
+          "size": 7143,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 882,
+        "snapshot": {
+          "size": 98,
+          "commits": 4
+        },
+        "local": {
+          "size": 98,
+          "commits": 4
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 883,
+        "snapshot": {
+          "size": 25,
+          "commits": 1
+        },
+        "local": {
+          "size": 25,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 884,
+        "snapshot": {
+          "size": 38,
+          "commits": 3
+        },
+        "local": {
+          "size": 38,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 885,
+        "snapshot": {
+          "size": 28,
+          "commits": 2
+        },
+        "local": {
+          "size": 28,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 886,
+        "snapshot": {
+          "size": 218,
+          "commits": 3
+        },
+        "local": {
+          "size": 218,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 887,
+        "snapshot": {
+          "size": 75,
+          "commits": 1
+        },
+        "local": {
+          "size": 75,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 888,
+        "snapshot": {
+          "size": 39,
+          "commits": 1
+        },
+        "local": {
+          "size": 39,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 889,
+        "snapshot": {
+          "size": 1168,
+          "commits": 2
+        },
+        "local": {
+          "size": 1168,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 890,
+        "snapshot": {
+          "size": 1037,
+          "commits": 3
+        },
+        "local": {
+          "size": 1037,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 891,
+        "snapshot": {
+          "size": 436,
+          "commits": 2
+        },
+        "local": {
+          "size": 436,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 892,
+        "snapshot": {
+          "size": 18,
+          "commits": 1
+        },
+        "local": {
+          "size": 18,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 893,
+        "snapshot": {
+          "size": 609,
+          "commits": 3
+        },
+        "local": {
+          "size": 609,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 894,
+        "snapshot": {
+          "size": 17,
+          "commits": 1
+        },
+        "local": {
+          "size": 17,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 895,
+        "snapshot": {
+          "size": 5638,
+          "commits": 2
+        },
+        "local": {
+          "size": 5638,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 896,
+        "snapshot": {
+          "size": 1097,
+          "commits": 3
+        },
+        "local": {
+          "size": 1097,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 897,
+        "snapshot": {
+          "size": 586,
+          "commits": 1
+        },
+        "local": {
+          "size": 586,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 898,
+        "snapshot": {
+          "size": 6345,
+          "commits": 6
+        },
+        "local": {
+          "size": 6345,
+          "commits": 6
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 899,
+        "snapshot": {
+          "size": 4035,
+          "commits": 2
+        },
+        "local": {
+          "size": 4035,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 900,
+        "snapshot": {
+          "size": 2012,
+          "commits": 3
+        },
+        "local": {
+          "size": 2012,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 901,
+        "snapshot": {
+          "size": 265,
+          "commits": 3
+        },
+        "local": {
+          "size": 265,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 902,
+        "snapshot": {
+          "size": 1738,
+          "commits": 4
+        },
+        "local": {
+          "size": 1738,
+          "commits": 4
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 903,
+        "snapshot": {
+          "size": 54,
+          "commits": 2
+        },
+        "local": {
+          "size": 54,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 904,
+        "snapshot": {
+          "size": 2,
+          "commits": 1
+        },
+        "local": {
+          "size": 2,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 905,
+        "snapshot": {
+          "size": 2407,
+          "commits": 6
+        },
+        "local": {
+          "size": 2407,
+          "commits": 6
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 906,
+        "snapshot": {
+          "size": 428,
+          "commits": 4
+        },
+        "local": {
+          "size": 428,
+          "commits": 4
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 907,
+        "snapshot": {
+          "size": 6,
+          "commits": 1
+        },
+        "local": {
+          "size": 6,
+          "commits": 1
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 908,
+        "snapshot": {
+          "size": 447,
+          "commits": 6
+        },
+        "local": {
+          "size": 447,
+          "commits": 6
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 909,
+        "snapshot": {
+          "size": 92,
+          "commits": 2
+        },
+        "local": {
+          "size": 92,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 910,
+        "snapshot": {
+          "size": 1563,
+          "commits": 3
+        },
+        "local": {
+          "size": 1563,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 911,
+        "snapshot": {
+          "size": 223,
+          "commits": 2
+        },
+        "local": {
+          "size": 223,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 912,
+        "snapshot": {
+          "size": 996,
+          "commits": 3
+        },
+        "local": {
+          "size": 996,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 914,
+        "snapshot": {
+          "size": 3531,
+          "commits": 2
+        },
+        "local": {
+          "size": 3531,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 915,
+        "snapshot": {
+          "size": 86,
+          "commits": 2
+        },
+        "local": {
+          "size": 86,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 917,
+        "snapshot": {
+          "size": 101,
+          "commits": 3
+        },
+        "local": {
+          "size": 101,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 918,
+        "snapshot": {
+          "size": 2000,
+          "commits": 2
+        },
+        "local": {
+          "size": 2000,
+          "commits": 2
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 919,
+        "snapshot": {
+          "size": 961,
+          "commits": 3
+        },
+        "local": {
+          "size": 961,
+          "commits": 3
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      },
+      {
+        "number": 920,
+        "snapshot": {
+          "size": 3440,
+          "commits": 6
+        },
+        "local": {
+          "size": 3440,
+          "commits": 6
+        },
+        "labelAgree": true,
+        "sizeAgree": true
+      }
+    ]
+  },
+  "primary": {
+    "block": "HB #319–#518 (backward era)",
+    "counts": {
+      "n": 168,
+      "highIteration": 24,
+      "lowIteration": 144
+    },
+    "T": {
+      "KG": 164,
+      "B1": 164
+    },
+    "BA": {
+      "KG": 0.684028,
+      "B1": 0.684028,
+      "B0": 0.5
+    },
+    "arms": {
+      "KG": {
+        "T": 164,
+        "tp": 19,
+        "tn": 83,
+        "fp": 61,
+        "fn": 5,
+        "balancedAccuracy": 0.684028,
+        "recall": 0.791667,
+        "specificity": 0.576389
+      },
+      "B1": {
+        "T": 164,
+        "tp": 19,
+        "tn": 83,
+        "fp": 61,
+        "fn": 5,
+        "balancedAccuracy": 0.684028,
+        "recall": 0.791667,
+        "specificity": 0.576389
+      },
+      "B0": {
+        "T": null,
+        "tp": 0,
+        "tn": 144,
+        "fp": 0,
+        "fn": 24,
+        "balancedAccuracy": 0.5,
+        "recall": 0,
+        "specificity": 1
+      }
+    },
+    "deltaB": 0,
+    "delta0": 0.184028,
+    "kgEqualsB1": true,
+    "bootstrap": {
+      "resamples": 2000,
+      "seed": 20261202,
+      "usedResamples": 2000,
+      "skippedResamples": 0,
+      "skippedFraction": 0,
+      "ci95DeltaB": [
+        0,
+        0
+      ],
+      "ci95Delta0": [
+        0.085556,
+        0.27
+      ]
+    }
+  },
+  "reportOnly": {
+    "role": "REPORT-ONLY — never part of PASS/PARTIAL/FAIL",
+    "HF": {
+      "block": "HF #921–#954 (forward era)",
+      "counts": {
+        "n": 34,
+        "highIteration": 27,
+        "lowIteration": 7
+      },
+      "T": {
+        "KG": 164,
+        "B1": 164
+      },
+      "BA": {
+        "KG": 0.65873,
+        "B1": 0.65873,
+        "B0": 0.5
+      },
+      "arms": {
+        "KG": {
+          "T": 164,
+          "tp": 24,
+          "tn": 3,
+          "fp": 4,
+          "fn": 3,
+          "balancedAccuracy": 0.65873,
+          "recall": 0.888889,
+          "specificity": 0.428571
+        },
+        "B1": {
+          "T": 164,
+          "tp": 24,
+          "tn": 3,
+          "fp": 4,
+          "fn": 3,
+          "balancedAccuracy": 0.65873,
+          "recall": 0.888889,
+          "specificity": 0.428571
+        },
+        "B0": {
+          "T": null,
+          "tp": 0,
+          "tn": 7,
+          "fp": 0,
+          "fn": 27,
+          "balancedAccuracy": 0.5,
+          "recall": 0,
+          "specificity": 1
+        }
+      },
+      "deltaB": 0,
+      "delta0": 0.15873,
+      "kgEqualsB1": true,
+      "bootstrap": {
+        "resamples": 2000,
+        "seed": 20261202,
+        "usedResamples": 2000,
+        "skippedResamples": 0,
+        "skippedFraction": 0,
+        "ci95DeltaB": [
+          0,
+          0
+        ],
+        "ci95Delta0": [
+          -0.053571,
+          0.373016
+        ]
+      }
+    },
+    "alphaVariantsOnHB": [
+      {
+        "alpha": 0.02,
+        "T_KG": 164,
+        "BA": 0.684028,
+        "deltaB": 0
+      },
+      {
+        "alpha": 0.1,
+        "T_KG": 192,
+        "BA": 0.649305,
+        "deltaB": -0.034723
+      }
+    ],
+    "K_armsOnHB": [
+      {
+        "T": 1000,
+        "tp": 6,
+        "tn": 144,
+        "fp": 0,
+        "fn": 18,
+        "balancedAccuracy": 0.625,
+        "recall": 0.25,
+        "specificity": 1
+      },
+      {
+        "T": 100,
+        "tp": 20,
+        "tn": 50,
+        "fp": 94,
+        "fn": 4,
+        "balancedAccuracy": 0.590278,
+        "recall": 0.833333,
+        "specificity": 0.347222
+      }
+    ],
+    "rocAucRawSizeOnHB": 0.7443576388888888,
+    "rollingOriginPerFold": "see rollingOrigin.folds"
+  },
+  "antiLeakage": {
+    "log": [
+      "ROLLING_ORIGIN_DONE 2 valid folds (DEV only)",
+      "THRESHOLDS_SEALED ae267b1cb80342a522bfb33f7ac7f1f57cbe8d6d583d792d8cfad7ca2c9aa0ad",
+      "CONCORDANCE_DONE n=69 ok=true",
+      "HB_BUILT 168 rows (labels vaulted)",
+      "HF_BUILT 34 rows (labels vaulted)",
+      "HB_LABELS_READ",
+      "PRIMARY_GRADED PARTIAL",
+      "HF_LABELS_READ"
+    ],
+    "rule": "fits see DEV rows only; T_B / T_KG (+ report-only α variants) sealed (sha256 of canonical JSON) before the held-out block is built; HB labels released only after the seal, HF only after the primary grade"
+  },
+  "contamination": "as disclosed in WORK_ITEM_CONTRACT.preRegistration.contamination (part of this record by reference; contract sha256 bound above)",
+  "controls": {
+    "changed": false,
+    "note": "a PASS yields at most a DESIGN_PROPOSAL (size-budget advice); no rule, gate or control is changed by G2; G and H untouched"
+  },
+  "ambiguities": [
+    "useAt = the dispatch instant (UTC, seconds) recorded here; --check re-evaluates C1 at this recorded useAt",
+    "DEV rows = odg-v166-scenario-g-experiment.loadRows (G's row rule: finite additions/deletions/commits and parseable createdAt/mergedAt), sorted by PR number",
+    "balanced accuracies are the 6-decimal values of classificationMetrics (as in G); Δ values are rounded to 6 decimals; the KG objective uses that BA minus the full-double penalty; ties = exact equality",
+    "a KG/B1 candidate with undefined training BA is not eligible (counted); SPLIT_RECOMMENDED iff size > T is strict",
+    "bootstrap: one stream st (initial st = seed 20261202) advanced once per draw, index = st % n; n draws per resample; a resample with 0 HIGH or 0 LOW is skipped and counted; percentiles sorted[floor(p·n)] as in G",
+    "concordance: size tolerance max(10, 10% of the SNAPSHOT size); DEV PRs with a unique 2-parent 'Merge pull request #N' first-parent commit at e97bcc43 (builder's measureRange over #519–#920)",
+    "git is run with -c diff.renames=true (git's default) --no-ext-diff --no-textconv so a user config cannot change sizes",
+    "the held-out file is written only if absent; if present it must equal the rebuild byte-for-byte, else NOT_MEASURED and it is not overwritten",
+    "a NOT_MEASURED outcome stops at the first failing pre-condition; expected subject counts (168/32, 34/0) are informational, recorded in heldout.counts",
+    "held-out exclusions: a PR number with > 1 first-parent subject (e.g. a 'Merge pull request #N' merge AND a '(#N)' squash subject) is EXCLUDED AMBIGUOUS and listed; the squash exclusion LABEL_NOT_RECOVERABLE_LOCALLY is decided on the '(#N)' subject — the contract's '1 parent' condition is reported by the builder's contractDiagnostics (measured: every squash exclusion at e97bcc43 has 1 parent), not re-applied"
+  ],
+  "honesty": [
+    "simulation ≠ test ≠ demonstration ≠ real operation: this is a controlled offline experiment on committed/local-git data",
+    "HB is an earlier era (robustness to an era shift, not a forecast); HB keeps merge-style PRs only; commit count is a confounded rework proxy — a PASS is a design proposal, never causation",
+    "provider (Claude Code) wrote this runner; the run is ODG GO's dispatch of the contract-declared target; VALIDATE_CRITERIA (independent recomputation) is pending"
+  ],
+  "run": {
+    "head": "43aa42a4c881cdd3dc1582d6fae3fac0db3c8e19",
+    "command": "npx tsx runtime/bin/odg-v172-scenario-g2-experiment.ts docs/odg/evidence/V172_G2_EXPERIMENT.json",
+    "dispatchedBy": "ODG GO — contract-declared target authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS",
+    "note": "head = HEAD of the tree the run executed in"
+  }
+}
