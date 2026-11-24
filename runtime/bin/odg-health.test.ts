@@ -88,8 +88,16 @@ ok("dashboards exited (health/status produced output)", hout.length > 0 && sout.
 // F2b present-case (no over-block): from the real repo root (sources present) the Missions line is a real count and
 // NEXT ACTION is not UNKNOWN — the availability flags must not force a loaded source into UNKNOWN.
 {
-  const missionsReal = hout.split("\n").find((l) => /^\s*Missions\s*:/.test(l)) || "";
-  ok("present mission-ledger ⇒ Missions shows a real recorded count (not over-blocked to UNKNOWN)", /\d+\s*recorded/.test(missionsReal) && !/UNKNOWN/.test(missionsReal));
+  // HERMETIC (V17.5 test:report root cause): the repo's runtime/generated/mission-ledger.json is GITIGNORED and absent on
+  // a fresh checkout — it only existed when another suite had left residue there, so this assertion depended on suite
+  // ORDER. Run the real compiled dashboard from a temp cwd holding a fixture ledger instead.
+  const present = fs.mkdtempSync(path.join(require("node:os").tmpdir(), "odg-health-ledger-"));
+  fs.mkdirSync(path.join(present, "runtime", "generated"), { recursive: true });
+  fs.writeFileSync(path.join(present, "runtime", "generated", "mission-ledger.json"), JSON.stringify({ count: 2, entries: [{ mission: "FIXTURE_A", state: "QUALIFIED" }, { mission: "FIXTURE_B", state: "QUALIFIED" }] }));
+  const hp = spawnSync("node", [HEALTH], { cwd: present, encoding: "utf8" });
+  const pout = (hp.stdout || "") + (hp.stderr || "");
+  const missionsReal = pout.split("\n").find((l) => /^\s*Missions\s*:/.test(l)) || "";
+  ok("present mission-ledger ⇒ Missions shows a real recorded count (not over-blocked to UNKNOWN)", /\b2\s*recorded/.test(missionsReal) && !/UNKNOWN/.test(missionsReal));
 }
 
 console.log(`\nODG-HEALTH/STATUS dist integration — ${pass} assertions passed. (production dist dashboards; §G Supervision restored; §F Compass + CM-4 classified fail-VISIBLE not silently dropped; absent capability-registry ⇒ UNKNOWN not fabricated 100%/None; read-only)`);

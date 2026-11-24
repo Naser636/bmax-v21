@@ -8,7 +8,15 @@ let failures = 0; function check(n: string, c: boolean) { process.stdout.write((
 function hasProvenance(i: any): boolean { return i && i.provenance && i.method && i.confidence && ("value" in i); }
 
 function main() {
-  const d = D.build({ registerPath: "docs/odg/closure-register.json", asOfEpochMs: 1763000000000 });
+  // HERMETIC ledger (V17.5 test:report root cause): runtime/generated/mission-ledger.json is GITIGNORED and absent on a
+  // fresh checkout — it only appeared mid-run as RESIDUE written by another suite (consequential-executor-gate's
+  // TEST_CONSEQUENTIAL_EXEC_GATE entry), so these assertions passed or failed with suite ORDER. Inject a fixture ledger
+  // of the same shape (legacy entry, no execution actor) via the existing opts.ledgerPath seam instead.
+  const fsx = require("fs"), pathx = require("path"), osx = require("os");
+  const ledgerDir = fsx.mkdtempSync(pathx.join(osx.tmpdir(), "odg-cto-ledger-"));
+  const ledgerPath = pathx.join(ledgerDir, "mission-ledger.json");
+  fsx.writeFileSync(ledgerPath, JSON.stringify({ count: 1, entries: [{ mission: "FIXTURE_LEGACY_MISSION", state: "QUALIFIED", proven: true }] }));
+  const d = D.build({ registerPath: "docs/odg/closure-register.json", ledgerPath, asOfEpochMs: 1763000000000 });
 
   check("reads the REAL register: total 427, counts 415/6/3/3", d.missions.total.value === 427 && d.missions.counts.value.ACCEPTED === 415 && d.missions.counts.value.BLOCKED === 6);
   check("is explicitly a READ-ONLY projection, not a new source of truth", /READ-ONLY projection, NOT a new source of truth/.test(d.sourceOfTruth));
