@@ -148,5 +148,40 @@ if (probe && probe.ok === true) {
 } else process.stdout.write("SKIP - sandbox unavailable: " + String(probe && probe.reason) + "\n");
 check("pipeline contract lists 6 stages + reused canonical components", P.NATIVE_DESIGN_PIPELINE_CONTRACT.stages.length === 6 && P.NATIVE_DESIGN_PIPELINE_CONTRACT.reuses.includes("native-project-builder.buildProject"));
 
-if (failures) { process.stdout.write(`${failures} failure(s)\n`); process.exit(1); }
+// ---- V17.6 NB3 DIV-1: bounded repair-diversity ladder (fake generators only; no model) ----
+(async () => {
+  const SPEC = { base: { temperature: 0, seed: 42 }, sampling: [{ temperature: 0.5, seed: 1042 }, { temperature: 0.9, seed: 2042 }], designSwitch: true, escalationModels: ["big:14b"], maxVariations: 20 };
+  const L = P.diversityLadder(SPEC, ["D2", "D1"], "m:7b");
+  check("DIV-1 ladder order: sampling on rank 1 → design switch (SEL-1 order) + its sampling → model escalation last", L.map((x: any) => `${x.kind}:${x.design}:${x.model}:${x.temperature}`).join() === "BASE:D2:m:7b:0,SAMPLING:D2:m:7b:0.5,SAMPLING:D2:m:7b:0.9,DESIGN_SWITCH:D1:m:7b:0,SAMPLING:D1:m:7b:0.5,SAMPLING:D1:m:7b:0.9,MODEL_ESCALATION:D2:big:14b:0");
+  check("DIV-1 allowedCallOptions: distinct (model, temperature, seed) points incl. the base", P.allowedCallOptions(SPEC, "m:7b").length === 4);
+  check("largerModels: parameterSize-ordered, AVAILABLE only, strictly larger", JSON.stringify(P.largerModels({ registry: { models: [{ id: "a", available: true, parameterSize: "7.6B" }, { id: "b", available: true, parameterSize: "14B" }, { id: "c", available: false, parameterSize: "32B" }, { id: "d", available: true, parameterSize: "494.03M" }] } }, "a")) === "[\"b\"]" && Math.abs(P.paramB("494.03M") - 0.49403) < 1e-9);
+  // guard: a declared point is applied + recorded; an undeclared point is refused before sending
+  const sent: any[] = [];
+  const tr = async (_u: string, init: any) => { const b = JSON.parse(init.body); sent.push(b); return { ok: true, json: async () => ({ response: "x" }) }; };
+  const caps = { maxModelCalls: 3, wallMs: 60000, seed: 42, temperature: 0, numPredict: 10, allowedCallOptions: P.allowedCallOptions(SPEC, "m:7b") };
+  const g = P.makeGuard(tr, caps);
+  const a = await P.ollamaGenerate(g.fetchImpl, { model: "m:7b", prompt: "p", timeoutMs: 5000, callOptions: { temperature: 0.5, seed: 1042 } });
+  const b = await P.ollamaGenerate(g.fetchImpl, { model: "m:7b", prompt: "p", timeoutMs: 5000, callOptions: { temperature: 0.7, seed: 1 } });
+  const c0 = await P.ollamaGenerate(g.fetchImpl, { model: "m:7b", prompt: "p", timeoutMs: 5000 });
+  check("guard DIV-1: declared point applied + recorded; undeclared point refused (not sent, not counted); no override ⇒ base", a.ok && !b.ok && c0.ok && sent.length === 2 && sent[0].options.temperature === 0.5 && sent[0].options.seed === 1042 && sent[1].options.temperature === 0 && g.st.modelCalls === 2 && g.st.refused.length === 1 && g.st.prompts[0].temperature === 0.5 && g.st.prompts[1].seed === 42 && !("odgCallOptions" in sent[0]));
+  // diverseGenerate: a generator that repeats itself at temperature 0 and changes when sampled
+  const mk = (sha: string, i: number, extra: any = {}) => ({ i, content: sha, sandboxContentSha256: sha, ...extra });
+  const runDG = async (gen: (pt: any, n: number) => any, ctlSpec: any, seenInit: string[], cands: any = {}) => {
+    const ctl = P.makeDiversityController(ctlSpec, ["D1", "D2"], "m:7b"); const seen = new Set(seenInit); const ev: any[] = []; let n = 0; const pts: any[] = [];
+    const r = await P.diverseGenerate({ controller: ctl, seen, events: ev, candidateFor: (d: string) => cands[d] || null, generate: async (pt: any) => { n++; pts.push(pt); return gen(pt, n); } });
+    return { r, ctl, ev, n, pts };
+  };
+  const x1 = await runDG((pt: any, n: number) => mk(pt.temperature > 0 ? "NEW" : "OLD", n), { ...SPEC, escalationModels: [], maxVariations: 8 }, ["OLD"]);
+  check("diverseGenerate breaks an identical-regeneration stall: 1 stall → SAMPLING point → novel content (2 generate calls)", x1.r.gen.content === "NEW" && x1.r.stalls === 1 && x1.n === 2 && x1.ctl.st.transitions.length === 1 && x1.ctl.st.transitions[0].kind === "SAMPLING" && x1.ev[0].kind === "STALL_IDENTICAL_REGENERATION");
+  const x2 = await runDG((_pt: any, n: number) => mk("OLD", n), { ...SPEC, escalationModels: [], maxVariations: 8 }, ["OLD"], { D2: mk("S4-D2", 99) });
+  check("diverseGenerate: on reaching the design switch the next design's S4 implementation is reused first (no generate call)", x2.r.gen.content === "S4-D2" && x2.r.reusedS4 === true && x2.n === 3 && x2.ev.some((e: any) => e.kind === "DESIGN_SWITCH_REUSED_S4"));
+  const x3 = await runDG((_pt: any, n: number) => mk("OLD", n), { ...SPEC, escalationModels: [], maxVariations: 2 }, ["OLD"]);
+  check("diverseGenerate: bounded — maxVariations 2 ⇒ 3 generate calls, exhausted, the identical generation returned (buildProject then stops NO_PROGRESS)", x3.r.exhausted === true && x3.n === 3 && x3.r.gen.content === "OLD" && x3.ctl.st.transitions.length === 2);
+  const x4 = await runDG((pt: any, n: number) => pt.temperature === 0 ? mk("OLD", n, { notSent: true }) : mk("NEW", n), { ...SPEC, escalationModels: [], maxVariations: 8 }, ["OLD"]);
+  check("diverseGenerate: a predicted-identical (not sent) generation is a stall with its own event kind", x4.ev[0].kind === "STALL_PREDICTED_IDENTICAL_NOT_SENT" && x4.ctl.st.transitions[0].reason === "PREDICTED_IDENTICAL" && x4.r.gen.content === "NEW");
+  const x5 = await runDG(() => null, { ...SPEC, escalationModels: [], maxVariations: 8 }, ["OLD"]);
+  check("diverseGenerate: a FAILED generation is not a stall (no advance; buildProject keeps its retry budget)", x5.r.gen === null && x5.ctl.st.transitions.length === 0);
+  check("DIV-1 template plumbing unchanged: TEMPLATE segments still denylist-clean", P.denylistHits(P.implementPromptSegments(p1, item.currentSource, P.analyseImpact(ROOT, item.targetPath), [], { id: "D1", summary: "s", steps: [] }, { verifyError: "x", attemptSource: "y" })).length === 0);
+  if (failures) { process.stdout.write(`${failures} failure(s)\n`); process.exit(1); }
+})();
 export {};
