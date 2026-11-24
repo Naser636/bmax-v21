@@ -93,19 +93,23 @@ function discoverLatestCheckpoint(): string | null {
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 /* OWN-1 clarification (V17.6, classification defect found in #1001 — rule meaning unchanged): OWN-1 matches owner-gated
- * INTENT. FAIL-CLOSED exemption (#1003 inspection): a keyword is ignored ONLY when its whole enclosing token is EXACTLY an
- * actually committed repository path (git ls-files at the evaluated root) or a registered component id (basename, without
- * .ts/.js/.test.ts, of a committed runtime/core|runtime/bin module) — e.g. `odg-production-metric`. Anything else
- * (`deploy-to-production`, `spend/budget`, `deploy.sh` when not committed, URLs, any case variant) keeps matching. The
- * keyword match itself stays case-insensitive. ROADMAP.json / governance / systemd are never exempted (protected
- * locations). No repository listing available ⇒ no exemption (fail closed). */
-const OWN1_PATH_CLARIFICATION = "OWN-1 clarification (not a criteria change): a keyword whose whole enclosing token is EXACTLY a committed repository path (git ls-files at the evaluated root) or a registered component id (basename without .ts/.js/.test.ts of a committed runtime/core or runtime/bin module) is not owner-gated intent and is ignored; every other token keeps matching (case-insensitive); ROADMAP.json / governance / systemd are never exempted; no repository listing ⇒ no exemption (fail closed)";
+ * INTENT. FAIL-CLOSED exemption (#1003 inspections): a keyword is ignored ONLY when its whole enclosing token is EXACTLY
+ * a registered component id (basename, without .ts/.js/.test.ts, of a committed runtime/core|runtime/bin module — e.g.
+ * `odg-production-metric`) or such a committed module path itself (runtime/core/… or runtime/bin/…). Any other token,
+ * committed or not (deploy/** units, scripts, URLs, `deploy-to-production`, `spend/budget`, any case variant), keeps
+ * matching; the keyword match stays case-insensitive. A NEVER-EXEMPT guard runs first (OWN1_NEVER_EXEMPT: deploy/**,
+ * *.service/*.timer/*.socket/*.sudoers (incl. .candidate/.user/.d suffixes), systemd/**, ROADMAP.json, governance/**,
+ * the canonical closure register, constitution files — union of the governance-path guard
+ * (capability-executors.PROTECTED_GOVERNANCE_PREFIXES = runtime/governance) and sovereign-delegation.ALWAYS_PROTECTED).
+ * No repository listing ⇒ no exemption (fail closed). */
+const OWN1_PATH_CLARIFICATION = "OWN-1 clarification (not a criteria change): a keyword whose whole enclosing token is EXACTLY a registered component id (basename without .ts/.js/.test.ts of a committed runtime/core or runtime/bin module) or that committed module path itself is not owner-gated intent and is ignored; every other token keeps matching (case-insensitive); never exempt: deploy/**, *.service, *.timer, *.socket, *.sudoers, systemd/**, ROADMAP.json, governance/**, closure-register.json, constitution files; no repository listing ⇒ no exemption (fail closed)";
 const OWN1_PATH_KEEP = /^(?:ROADMAP\.json|governance|systemd)$/i;
+const OWN1_NEVER_EXEMPT = /(?:^|\/)deploy(?:\/|$)|\.(?:service|timer|socket|sudoers)(?:\.|\/|$)|(?:^|\/)systemd(?:\/|$)|ROADMAP\.json|(?:^|\/)governance(?:\/|$)|closure-register\.json|constitution/i;
 let KNOWN_CACHE: any = null;
 /* committedKnown(root?) — {paths, ids} from `git ls-files` at the repo root (walk up from __dirname); empty on any failure. */
 function committedKnown(root?: string): any {
   if (!root && KNOWN_CACHE) return KNOWN_CACHE;
-  const paths = new Set<string>(), ids = new Set<string>();
+  const paths = new Set<string>(), ids = new Set<string>();   // paths = committed module files only (not the whole tree)
   try {
     const fs = require("fs"), path = require("path"), cp = require("child_process");
     let d = root || __dirname;
@@ -115,7 +119,7 @@ function committedKnown(root?: string): any {
       if (!f) continue;
       paths.add(f);
       const m = /^runtime\/(?:core|bin)\/([^/]+?)(?:\.test)?\.[cm]?[jt]s$/.exec(f);
-      if (m) ids.add(m[1]);
+      if (m) { ids.add(m[1]); paths.add(f); }   // only committed runtime/core|bin MODULE paths are exemptable
     }
   } catch { /* no listing ⇒ empty ⇒ no exemption (fail closed) */ }
   const k = { paths, ids };
@@ -124,7 +128,8 @@ function committedKnown(root?: string): any {
 }
 function isCommittedToken(tok: string, known: any): boolean {
   const t = tok.replace(/^[`'"(\[{<]+|[`'"),.;:!?\]}>]+$/g, "").replace(/^\.\//, "");
-  return !!t && (known.paths.has(t) || known.ids.has(t));
+  if (!t || OWN1_NEVER_EXEMPT.test(t)) return false;
+  return /^runtime\/(?:core|bin)\/[^/]+$/.test(t) ? known.paths.has(t) : known.ids.has(t);
 }
 function ownerMatches(text: string, known?: any): string[] {
   const out: string[] = [];
@@ -727,6 +732,6 @@ const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, committedKnown, isCommittedToken, OWN1_PATH_CLARIFICATION, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
+module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, committedKnown, isCommittedToken, OWN1_PATH_CLARIFICATION, OWN1_NEVER_EXEMPT, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(STRATEGIC_REGISTER_CONTRACT, null, 2) + "\n"); }
 export {};
