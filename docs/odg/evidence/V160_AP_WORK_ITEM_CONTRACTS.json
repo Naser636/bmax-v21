@@ -1320,7 +1320,7 @@
             "note": "hard caps; exceeding one stops the run with NOT_MEASURED for the remainder — no unbounded loop"
           },
           "antiLeakage": {
-            "prompts": "A0–A2 prompts carry no expected output of the acceptance inputs (generic hints only); the runner records every prompt's sha256 and asserts that no oracle expected-output literal of length ≥ 4 appears in an A0–A2 prompt (violation ⇒ that row NOT_MEASURED)",
+            "prompts": "A0–A2 prompts carry no expected output of the HIDDEN grading cases (held-out tests, per-module oracles, repair examples); the runner records every prompt's sha256 and asserts that no hidden-case expected-output literal of length ≥ 4 appears in an A0–A2 prompt, EXCLUDING literals already present in the frozen task-contract text given identically to every arm (static overlap, listed: roman-codec 1994/MCMXCIV, rle-codec aaab/a3b1, range-clamp-pipeline [0,100], parse-range [1,2,3,5,7,8]) (violation ⇒ that row NOT_MEASURED)",
             "oracle": "the whole-task test is the task's ORIGINAL test, identical for all arms, read only after generation"
           },
           "contamination": {
@@ -1389,6 +1389,26 @@
           "justification": "J's alternatives were executed but all failed (0/8) and two canonical defects were fixed afterwards (#940); the V171 diagnosis proposes J2 to measure the alternative loop after those fixes on replication and held-out tasks. Owner V171 covers this internal €0 work but requires a new id, unchanged history and criteria fixed before results; this contract fixes them before any run.",
           "priorResultUnchanged": "J PROPOSED / initialState PARTIAL; V161_SCENARIO_J.json — untouched",
           "revisionAuthorSessionId": "g2j2-reviser-v172"
+        },
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code coordinating session) applying the owner-authorized change verbatim",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V173_OWNER_AUTHORIZATION_J2_REVISION.json (2026-11-24)",
+          "originalCriteria": [
+            "C1 stop trigger: every row records A0's stop name verbatim from the native-project-builder outcome; an alternative runs only after an ODG stop (NO_PROGRESS_IDENTICAL_REGENERATION or REPAIR_BUDGET_EXHAUSTED); rows without one run no alternative (fail-closed); NO_QUALIFIED_LOCAL_MODEL is recorded as a policy decision, never counted as a stop",
+            "C2 executed: each alternative's executionStatus is EXECUTED in the sandbox; NOT_RUN rows are NOT_MEASURED and excluded from pass counts",
+            "C3 same oracle: primary outcome = the task's ORIGINAL whole-task independent test (same oracle for every arm), pass counts per arm with n",
+            "C4 control: A0 on the 4 replication tasks at seed 42 reproduces J's default stop and verdict (V161_SCENARIO_J.json); a mismatch is reported as environment drift and caps the grade at PARTIAL",
+            "C5 €0: 0 provider calls; no delegation record transitions past CREATED; only 127.0.0.1:11434 contacted — asserted in the evidence",
+            "C6 retention: every generated file is retained as sha256 + source in the evidence; every prompt is retained by sha256"
+          ],
+          "originalCriteriaNote": "acceptance criteria unchanged by this revision (kept verbatim); the ONLY changed field is preRegistration.antiLeakage.prompts, whose previous text is in previousAntiLeakagePrompts",
+          "previousAntiLeakagePrompts": "A0–A2 prompts carry no expected output of the acceptance inputs (generic hints only); the runner records every prompt's sha256 and asserts that no oracle expected-output literal of length ≥ 4 appears in an A0–A2 prompt (violation ⇒ that row NOT_MEASURED)",
+          "change": "preRegistration.antiLeakage.prompts replaced by the owner-authorized text (hidden grading cases only; static task-contract literals excluded and listed)",
+          "justification": "defect found by the J2 runner builder (PR #959) BEFORE any run and BEFORE any result was observed: the frozen task contracts given identically to every arm already contain expected-output literals (roman-codec 1994/MCMXCIV, rle-codec aaab/a3b1, range-clamp-pipeline [0,100], parse-range [1,2,3,5,7,8]), so the literal rule made PASS unreachable (roman-codec drops out of E; C4 cannot hold); the rule's intent is to protect HIDDEN grading cases",
+          "previousInspection": "docs/odg/evidence/V172_J2_CONTRACT_INSPECTION.json — bound to the previous contract sha256 893a809fe6d9d2caea9e72ef2de1804ea29e126f80305ba6cdbb4059f3ca2543 ⇒ OBSOLETE for the revised contract; J2 not executable until a new independent inspection ACCEPT is recorded",
+          "priorResultUnchanged": "no J2 run has ever occurred",
+          "revisionAuthorSessionId": "coordinator-v173-j2r2"
         }
       ]
     }

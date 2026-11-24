@@ -1,0 +1,24 @@
+{
+  "//": "OWNER authorization record — verbatim transcription (2026-11-24) by the PROVIDER (Claude Code coordinating session). Grants nothing beyond the quoted text.",
+  "schema": "odg-owner-authorization/1",
+  "directive": "AUTORISATION PROPRIÉTAIRE — J2 / NOUVELLE INSPECTION / SÉLECTION GO DE G2",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "appliesTo": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#J2 (preRegistration.antiLeakage.prompts only)",
+  "quote": [
+    "L'autorisation explicite du propriétaire est confirmée le 24 novembre 2026.",
+    "Appliquer exactement la modification limitée du contrat J2 proposée :",
+    "« A0–A2 prompts carry no expected output of the HIDDEN grading cases (held-out tests, per-module oracles, repair examples); the runner records every prompt's sha256 and asserts that no hidden-case expected-output literal of length ≥ 4 appears in an A0–A2 prompt, EXCLUDING literals already present in the frozen task-contract text given identically to every arm (static overlap, listed: roman-codec 1994/MCMXCIV, rle-codec aaab/a3b1, range-clamp-pipeline [0,100], parse-range [1,2,3,5,7,8]) (violation ⇒ that row NOT_MEASURED) »",
+    "Conserver intégralement les critères originaux dans revisionHistory.",
+    "Ajouter auteur, date, justification et référence à l'autorisation du propriétaire.",
+    "Justifier que le défaut a été découvert avant tout run et avant observation de résultats.",
+    "Ne modifier aucun autre critère, contrat ou mission.",
+    "Calculer et enregistrer la nouvelle empreinte du contrat.",
+    "L'ancienne inspection J2 ne valide plus le nouveau contrat.",
+    "Maintenir J2 non exécutable jusqu'à satisfaction de toutes ces conditions.",
+    "Ne jamais contourner le système de permissions.",
+    "Ne pas modifier les scores, les critères de sélection ou l'ALLOCATOR.",
+    "Ne pas effectuer de départage artificiel.",
+    "L'exécution doit être déclenchée par GO dans l'espace isolé prévu, jamais par un lancement manuel du runner sur main."
+  ]
+}
