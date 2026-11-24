@@ -56,33 +56,64 @@ function readJsonSafe(file: string): any {
  * and deliberately OUT of this mission (see p0e-audit-log-keyed-integrity).
  */
 function canonEntry(entry: any): any { if (!entry || typeof entry !== "object") return entry; const { seal, ...rest } = entry; return rest; } // eslint-disable-line no-unused-vars
-function sealFor(index: number, prevSeal: string, entry: any): string { return audit.entryHash(index, prevSeal, canonEntry(entry)); }
+/*
+ * V17.5 DEEP SEAL (security fix). The historical seal hashed audit-log's LEGACY shallow canon, whose array replacer
+ * DROPS every nested key not also present at the top level ⇒ nested fields (objectives, projectFiles, strategy, …) were
+ * NOT covered by the seal. New entries carry `sv: 2` INSIDE the sealed material and are sealed with audit-log's
+ * version-tagged deep-canon preimage (`index\0prevSeal\0cv2\0canonDeep(entry-minus-seal)`): stripping or changing
+ * `sv` changes the preimage ⇒ the seal no longer matches. Entries WITHOUT `sv` are LEGACY: verified (and chained through)
+ * with the byte-identical legacy function and REPORTED (legacyShallowSeal / sealStatus LEGACY_SHALLOW_SEAL), never
+ * claimed fully covered. NO DOWNGRADE: after the first v2 seal, a legacy-sealed or an unsealed entry ⇒ FAIL; an unknown
+ * `sv`, or an `sv` on an unsealed entry (stripped seal) ⇒ FAIL (fail-closed). opts.requireDeepSeal:true refuses any
+ * legacy-sealed entry. Keyless semantics (no HMAC), count + tipSeal anchor: UNCHANGED.
+ */
+const SEAL_VERSION = 2;
+const LEGACY_SHALLOW_SEAL = "LEGACY_SHALLOW_SEAL";
+function hasSv(entry: any): boolean { return !!entry && typeof entry === "object" && Object.prototype.hasOwnProperty.call(entry, "sv"); }
+// sealFor dispatches on the entry's OWN seal version: sv absent ⇒ the legacy (byte-identical, history) seal; sv === 2 ⇒
+// the deep, version-tagged seal; any other sv THROWS (never a silent fallback).
+function sealFor(index: number, prevSeal: string, entry: any): string {
+  if (!hasSv(entry)) return audit.entryHash(index, prevSeal, canonEntry(entry));
+  if (entry.sv === SEAL_VERSION) return audit.entryHash(index, prevSeal, canonEntry(entry), undefined, 2);
+  throw new Error(`mission-ledger: unsupported seal version ${JSON.stringify(entry.sv)}`);
+}
 
-// verifyLedger(payload) — VERIFY-ON-READ. Walk the chain; detect any tamper. Returns
-// { ok, verified, legacyUnsealed, total, tamperEvident, tip, brokenAt, reason }. FAIL-CLOSED on malformation.
-function verifyLedger(payload: any): any {
+// verifyLedger(payload, opts?) — VERIFY-ON-READ. Walk the chain; detect any tamper. Returns
+// { ok, verified, legacyUnsealed, total, tamperEvident, tip, brokenAt, reason, deepSealed, legacyShallowSeal, sealStatus }.
+// FAIL-CLOSED on malformation, unknown seal version and seal downgrade.
+function verifyLedger(payload: any, opts?: any): any {
+  const requireDeep = !!(opts && typeof opts === "object" && opts.requireDeepSeal === true);
+  let verified = 0; let legacy = 0; let deep = 0; let shallow = 0; let prevSeal = audit.GENESIS;
+  const status = () => (verified === 0 ? "UNSEALED" : shallow > 0 ? LEGACY_SHALLOW_SEAL : "DEEP_SEAL_V2");
+  const res = (ok: boolean, total: number, tip: string, brokenAt: number, reason: string) => ({ ok, verified, legacyUnsealed: legacy, total, tamperEvident: verified > 0, tip, brokenAt, reason, deepSealed: deep, legacyShallowSeal: shallow, sealStatus: status() });
   const entries = payload && Array.isArray(payload.entries) ? payload.entries : null;
-  if (!entries) return { ok: false, verified: 0, legacyUnsealed: 0, total: 0, tamperEvident: false, tip: audit.GENESIS, brokenAt: 0, reason: "no entries array" };
+  if (!entries) return res(false, 0, audit.GENESIS, 0, "no entries array");
   if (Number.isInteger(payload.count) && payload.count !== entries.length) {
-    return { ok: false, verified: 0, legacyUnsealed: 0, total: entries.length, tamperEvident: false, tip: audit.GENESIS, brokenAt: entries.length, reason: `count ${payload.count} != entries.length ${entries.length} (truncation/insertion)` };
+    return res(false, entries.length, audit.GENESIS, entries.length, `count ${payload.count} != entries.length ${entries.length} (truncation/insertion)`);
   }
-  let prevSeal = audit.GENESIS; let verified = 0; let legacy = 0;
   for (let i = 0; i < entries.length; i++) {
     const e = entries[i];
-    if (!e || typeof e !== "object") return { ok: false, verified, legacyUnsealed: legacy, total: entries.length, tamperEvident: verified > 0, tip: prevSeal, brokenAt: i, reason: `malformed entry at ${i}` };
+    if (!e || typeof e !== "object") return res(false, entries.length, prevSeal, i, `malformed entry at ${i}`);
+    const v2 = hasSv(e);
+    if (v2 && e.sv !== SEAL_VERSION) return res(false, entries.length, prevSeal, i, `unsupported seal version ${JSON.stringify(e.sv)} at entry ${i} (fail-closed)`);
+    const sealed = typeof e.seal === "string";
+    if (v2 && !sealed) return res(false, entries.length, prevSeal, i, `entry ${i} declares sv ${e.sv} but carries no seal (stripped seal - refused)`);
+    if (!v2 && deep > 0) return res(false, entries.length, prevSeal, i, `seal DOWNGRADE - ${sealed ? "legacy shallow-sealed" : "unsealed"} entry ${i} after a v2 deep seal (refused)`);
+    if (!v2 && sealed && requireDeep) return res(false, entries.length, prevSeal, i, `${LEGACY_SHALLOW_SEAL} entry ${i} refused (requireDeepSeal)`);
     const expected = sealFor(i, prevSeal, e);
-    if (typeof e.seal === "string") {
-      if (e.seal !== expected) return { ok: false, verified, legacyUnsealed: legacy, total: entries.length, tamperEvident: verified > 0, tip: prevSeal, brokenAt: i, reason: `seal mismatch at entry ${i} (payload/metadata tampered, reordered or deleted)` };
-      verified++; prevSeal = e.seal;
+    if (sealed) {
+      if (e.seal !== expected) return res(false, entries.length, prevSeal, i, `seal mismatch at entry ${i} (payload/metadata tampered, reordered or deleted)`);
+      verified++; if (v2) deep++; else shallow++; prevSeal = e.seal;
     } else {
       legacy++; prevSeal = expected; // chain THROUGH the legacy entry using its current content (binds later sealed entries to it)
     }
   }
   // Tip anchor: a stored tipSeal pins the full length + tail content ⇒ trailing truncation/extension of sealed entries is caught.
   if (typeof payload.tipSeal === "string" && payload.tipSeal !== prevSeal) {
-    return { ok: false, verified, legacyUnsealed: legacy, total: entries.length, tamperEvident: verified > 0, tip: prevSeal, brokenAt: entries.length, reason: "tip seal mismatch (tail truncation/extension)" };
+    return res(false, entries.length, prevSeal, entries.length, "tip seal mismatch (tail truncation/extension)");
   }
-  return { ok: true, verified, legacyUnsealed: legacy, total: entries.length, tamperEvident: verified > 0, tip: prevSeal, brokenAt: -1, reason: verified > 0 ? "sealed chain intact" : "legacy unsealed (no seals yet — NOT tamper-evident)" };
+  const note = shallow > 0 ? ` (${shallow} ${LEGACY_SHALLOW_SEAL} entr${shallow === 1 ? "y" : "ies"} - nested fields NOT covered by their seal)` : "";
+  return res(true, entries.length, prevSeal, -1, verified > 0 ? `sealed chain intact${note}` : "legacy unsealed (no seals yet — NOT tamper-evident)");
 }
 
 /*
@@ -339,6 +370,7 @@ function recordMission(mission: string): any {
   }
 
   // KEYLESS SEAL: chain the NEW entry to the prior tip (append-only — past entries are never rewritten).
+  entry.sv = SEAL_VERSION; // V17.5: the seal version is INSIDE the sealed material (stripping/changing it breaks the seal)
   entry.seal = sealFor(entries.length, priorTip, entry);
   entries.push(entry);
 
@@ -385,7 +417,7 @@ function recordMission(mission: string): any {
   return { skipped: false, entry, count: entries.length };
 }
 
-module.exports = { recordMission, verifyLedger, sealFor, claimLedger, withLedgerClaim, LEDGER_CLAIM_ID, LEDGER_CLAIM_DEFAULTS };
+module.exports = { recordMission, verifyLedger, sealFor, SEAL_VERSION, LEGACY_SHALLOW_SEAL, claimLedger, withLedgerClaim, LEDGER_CLAIM_ID, LEDGER_CLAIM_DEFAULTS };
 
 if (require.main === module) {
   const mission = process.argv[2] || "BUILD_RUNTIME";

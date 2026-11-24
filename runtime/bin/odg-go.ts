@@ -317,7 +317,7 @@ function readState(repo: string): any {
   const entries = ledgerPayload ? (Array.isArray(ledgerPayload) ? ledgerPayload : (ledgerPayload.entries || ledgerPayload.missions || [])) : [];
   const proven = [...new Set(entries.filter((x: any) => x && x.proven === true).map((x: any) => String(x.mission)))].sort();
   let integrity: any = { ok: false, reason: "ledger absent" };
-  if (ledgerPayload) { try { const v = LEDGER.verifyLedger(ledgerPayload); integrity = { ok: v.ok === true, total: v.total, verified: v.verified, legacyUnsealed: v.legacyUnsealed, reason: v.reason || null }; } catch (e: any) { integrity = { ok: false, reason: String(e && e.message) }; } }
+  if (ledgerPayload) { try { const v = LEDGER.verifyLedger(ledgerPayload); integrity = { ok: v.ok === true, total: v.total, verified: v.verified, legacyUnsealed: v.legacyUnsealed, deepSealed: v.deepSealed, legacyShallowSeal: v.legacyShallowSeal, sealStatus: v.sealStatus, reason: v.reason || null }; } catch (e: any) { integrity = { ok: false, reason: String(e && e.message) }; } }
   const att = MAL.readAttempts(path.join(repo, "runtime", "generated", "mission-attempt-log.jsonl"));
   const last = att.length ? att[att.length - 1] : null;
   const smr = SMR.loadSources();   // canonical strategy-mode evaluation instant (code tree; parity recorded below)
