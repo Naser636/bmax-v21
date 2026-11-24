@@ -27,6 +27,7 @@
  *
  * Usage:  <out-path>            run + write the record to <out-path> (must be the declared writeSet entry)
  *         --check <out-path>    recompute and compare with the committed record (exit 1 on drift; writes nothing)
+ *         --check-at-run-head <out-path>  V17.2: the record's OWN --check at record.run.head (temp detached worktree)
  *         --selftest            offline synthetic checks (no dataset, no label, nothing written)
  */
 const fs = require("fs");
@@ -37,6 +38,7 @@ const AS = require("../core/odg-authorization-scope.js");
 const OCUR = require("../core/odg-observation-currency.js");   // V16.9 Phase 1b — R7 proof-currency probes
 const VL = require("../core/odg-verification-level.js");
 const RC = require("../core/odg-verification-risk-calibration.js");
+const RHC = require("../core/odg-run-head-check.js");      // V17.2 — reproducibility at the record's own run head
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const CONTRACTS = "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json";
@@ -396,6 +398,17 @@ if (require.main === module) {
   const argv = process.argv.slice(2);
   const positional = argv.filter((a) => !a.startsWith("-"));
   if (argv.includes("--selftest")) { process.exitCode = selftest(); }
+  else if (argv.includes("--check-at-run-head")) {
+    /* V17.2 — H's features are computed from the tree (change graph etc.), so the record only reproduces at the tree it
+     * ran in: re-run this record's OWN `--check <OUT>` at record.run.head in a temporary detached worktree (local objects
+     * only, removed afterwards). Nothing is written in this tree; the recomputation itself is unchanged. */
+    if (positional.length !== 1 || !outputPathOk(positional[0])) { process.stdout.write(`REFUSED — --check-at-run-head takes exactly ${OUT}; got ${JSON.stringify(positional)}\n`); process.exitCode = 3; }
+    else {
+      const r = RHC.checkAtRunHead({ repoRoot: ROOT, recordRel: OUT, runnerRel: SELF, checkArgs: ["--check", OUT] });
+      process.stdout.write(RHC.format("V168 H", r) + `  current tree HEAD (not used for recomputation): ${gitHead(ROOT)}\n` + (r.verdict === "CHECK_OK" ? "RESULT: CHECK OK at run head\n" : "RESULT: FAILED\n"));
+      process.exitCode = r.verdict === "CHECK_OK" ? 0 : 1;
+    }
+  }
   else if (positional.length !== 1 || !outputPathOk(positional[0])) {
     process.stdout.write(`REFUSED — output path must be exactly the contract-declared writeSet entry ${OUT} (got ${JSON.stringify(positional)}); nothing written\n`); process.exitCode = 3;
   } else {
