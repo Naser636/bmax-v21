@@ -27,27 +27,35 @@ function main() {
     { id: "synthetic-unanchored", v150Campaign: false, scope: "", writeSet: ["runtime/core/research-governor.ts"], anchored: false },
   ]);
   check("CTR-2 guard is not vacuous (re-introduced contradiction ⇒ 3 violations)", reintro.length === 3, reintro);
-  // Q-CTR2 is BLOCKING: a future V15.0-campaign contract writing the knowledge stage is refused while unanswered; not otherwise
+  // Q-CTR2 history: the BLOCK rule still works when unanswered (record copy with answer null); non-campaign unaffected
   const kw = { id: "synthetic-v150-knowledge", v150Campaign: true, scope: "internal only; no Radar code/grant change", writeSet: ["runtime/core/odg-knowledge-intelligence.ts"], anchored: false };
-  const blocked = G.checkRadarScope(rec, undefined, [kw]);
-  const answered = { ...rec, ownerQuestions: rec.ownerQuestions.map((q: any) => (q.id === "Q-CTR2" ? { ...q, answer: "owner answer (synthetic)" } : q)) };
-  const nonCampaign = G.checkRadarScope(rec, undefined, [{ ...kw, id: "synthetic-v124", v150Campaign: false }]);
-  check("CTR-2 Q-CTR2-BLOCK: V15.0-campaign knowledge-stage write BLOCKED while unanswered; lifted once answered; non-campaign unaffected", blocked.length === 1 && /BLOCKED by Q-CTR2/.test(blocked[0]) && G.checkRadarScope(answered, undefined, [kw]).length === 0 && nonCampaign.length === 0, { blocked, nonCampaign });
-  // V176 (owner item 1) — Q-CTR2 re-derived from canonical sources: part A coherent (new grant / new Radar module inside a
-  // V15.0-campaign item = modification, enforced on NEW paths); part B NOT coherent ⇒ still BLOCKING with a residual question
-  const qd = G.checkQctr2Derivation(rec);
+  const withQ = (patch: any) => ({ ...rec, ownerQuestions: rec.ownerQuestions.map((q: any) => (q.id === "Q-CTR2" ? { ...q, ...patch } : q)) });
+  const unanswered = withQ({ answer: null, answerReading: undefined, blocking: true });
+  const blocked = G.checkRadarScope(unanswered, undefined, [kw]);
+  const nonCampaign = G.checkRadarScope(unanswered, undefined, [{ ...kw, id: "synthetic-v124", v150Campaign: false }]);
+  check("CTR-2 Q-CTR2-BLOCK (history): V15.0-campaign knowledge-stage write BLOCKED while unanswered; non-campaign unaffected", blocked.length === 1 && /BLOCKED by Q-CTR2/.test(blocked[0]) && nonCampaign.length === 0, { blocked, nonCampaign });
+  // V176 (owner item 1) — Q-CTR2 ANSWERED = STAGE: part A coherent; part B resolved by PREC-1 (stage reading rests on V12.4/V14.4,
+  // function reading only on the addendum / PROPOSED V15.0) ⇒ block lifted, the resolved reading is enforced
   const q2 = rec.ownerQuestions.find((q: any) => q.id === "Q-CTR2");
   const d = q2.v176Derivation;
-  check("V176 Q-CTR2 derivation consistent: cites V176 owner record; part A coherent; part B NOT_COHERENT with both readings quoted ⇒ answer null, blocking, residual question", qd.length === 0 && d.partA.coherent === true && d.partB.coherent === false && q2.answer === null && q2.blocking === true && /^Q-CTR2 \(residual, part B only\)/.test(q2.residualQuestion), qd);
+  const qd = G.checkQctr2Derivation(rec);
+  check("V176 Q-CTR2 answered STAGE by PREC-1: cites V176 owner record + resolvedBy; blocking=false; history kept; FUNCTION reading disclosed", qd.length === 0 && q2.answer !== null && q2.answerReading === "STAGE" && q2.blocking === false && q2.blockingBefore === undefined && d.blockingBefore === true && d.answerBefore === null && typeof q2.residualQuestionBefore === "string" && d.partA.coherent === true && d.partB.coherentBefore === false && d.partB.resolution.rule === "PREC-1" && d.partB.readingFunction.quotes.length > 0 && /^PROVIDER applying owner V176 item 1/.test(q2.resolvedBy), qd);
+  check("V176 resolved reading enforced: a V15.0-campaign contract writing odg-knowledge-* is now evaluated by the STAGE rule (allowed; #911 legitimate)", G.checkRadarScope(rec, undefined, [kw]).length === 0 && G.classifyPath(rec, "runtime/core/odg-knowledge-intelligence.ts") === "KNOWLEDGE_STAGE");
+  const fnOverride = G.checkRadarScope(withQ({ answerReading: "FUNCTION" }), undefined, [kw]);
+  const noReading = G.checkRadarScope(withQ({ answerReading: undefined }), undefined, [kw]);
+  check("V176 answered reading drives the rule: owner override FUNCTION ⇒ knowledge-stage write is a Radar modification; unknown reading ⇒ refused (fail-closed)", fnOverride.length === 1 && /answer FUNCTION/.test(fnOverride[0]) && noReading.length === 1, { fnOverride, noReading });
   const newAdds = G.checkRadarScope(rec, undefined, [
     { id: "synthetic-v150-new-grant", v150Campaign: true, scope: "internal only; no Radar code/grant change", writeSet: ["docs/odg/V999_RESEARCH_GRANT.json"], anchored: false },
     { id: "synthetic-v150-new-radar-module", v150Campaign: true, scope: "internal only; no Radar code/grant change", writeSet: ["runtime/core/odg-radar-new-stage.ts"], anchored: false },
   ]);
   check("V176 part A enforced: a NEW grant file / NEW Radar module in a V15.0-campaign item is a Radar modification", newAdds.length === 2 && newAdds.every((x: string) => /writes Radar-stage paths/.test(x)), newAdds);
-  const liftedWrongly = { ...rec, ownerQuestions: rec.ownerQuestions.map((q: any) => (q.id === "Q-CTR2" ? { ...q, answer: "RADAR-1", blocking: false } : q)) };
-  check("V176 guard: lifting Q-CTR2 while part B is NOT_COHERENT is refused", G.checkQctr2Derivation(liftedWrongly).length >= 2);
+  // premature-lift guard: the answer is refused when PREC-1 does not actually resolve part B (alternative on an equal/higher layer)
+  const pbWith = (fq: any[]) => withQ({ v176Derivation: { ...d, partB: { ...d.partB, readingFunction: { ...d.partB.readingFunction, quotes: fq } } } });
+  const higherAlt = pbWith(d.partB.readingFunction.quotes.concat([{ source: "V12_4", path: "docs/odg/v124-consolidated-roadmap.json", text: "odg-global-opportunity-radar" }]));
+  const noRes = withQ({ v176Derivation: { ...d, partB: { ...d.partB, resolution: undefined, coherent: false } } });
+  check("V176 guard: Q-CTR2 answer refused when PREC-1 does not resolve part B (alternative as high as V12.4) or part B unresolved", G.checkQctr2Derivation(higherAlt).some((x: string) => /PREC-1 does not resolve/.test(x)) && G.checkQctr2Derivation(noRes).length >= 1);
   const r2 = rec.resolutions.find((x: any) => x.id === "CTR-2");
-  check("CTR-2 interim is never presented as plainly RESOLVED (status INTERIM pending Q-CTR2, Q-CTR2 blocking, owner record quoted)", r2.ownerChoiceNeeded === true && r2.status === "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2" && rec.ownerQuestions[0].blocking === true && rec.authority.record === "docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json" && rec.authority.quotes.length === 4);
+  check("CTR-2 RESOLVED (no longer INTERIM), history kept, matrix row V150-S38 no longer CONTRADICTION", r2.ownerChoiceNeeded === false && r2.ownerChoiceNeededBefore === true && /^RESOLVED_BY_SCOPE \+ RESOLVED_BY_PRECEDENCE/.test(r2.status) && r2.statusBefore === "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2" && !/INTERIM/.test(r2.status) && rec.authority.record === "docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json" && rec.authority.quotes.length === 4 && G.checkMatrix(rec, "CTR-2").length === 0);
 
   // CTR-4 — ordering continuity-first vs Radar-first; three numberings
   const po = G.phaseOrder();

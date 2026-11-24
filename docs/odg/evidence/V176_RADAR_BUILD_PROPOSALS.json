@@ -3,7 +3,7 @@
   "schema": "odg-v176-radar-build-proposals/1",
   "governance": {
     "directive": "owner CTO directive V176 2026-11-24 §4 « LE RADAR DEVIENT UN MOTEUR DE CONSTRUCTION » + §6 « aucun changement substantiel des autorités ou permissions canoniques »",
-    "anchor": "V12.4 I CM-RADAR-GATE-CHAIN / V14.4 phase 1 (RADAR-1 interim of docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json; NOT a V15.0-campaign item; Q-CTR2 open and untouched)",
+    "anchor": "V12.4 I CM-RADAR-GATE-CHAIN / V14.4 phase 1 (RADAR-1 of docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json, resolved V176: Q-CTR2 answered STAGE by PREC-1; NOT a V15.0-campaign item)",
     "radarStageChange": "runtime/core/odg-radar-to-mission-loop.ts: additive ODG_INTERNAL scope (component attachment, internal qualification tier, owner_decision gate kind, opts.seenKeys) — collection, governor, transport, allowlists and grants unchanged",
     "egress": "NONE — no live collection; external observations are read from committed, already-ADMITTED Radar evidence"
   },
@@ -22,14 +22,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795547608000,
+    "nowEpochMs": 1795548602000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "7b46ae546213796d5c860ba8b2bafcdaf9a60d996eeaf8aef57fc52b078d94e7",
-      "epochMs": 1795547608000
+      "sha256": "aa28a89a6b6ee84d3acdcfdeed0563f90eac2e3dbaaf9bc00c963fc88bb30ca4",
+      "epochMs": 1795548602000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -48,8 +48,8 @@
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
-      "sha256": "d2b60437d16a0921659c06264d7555ef2e588f990e5051c5c20a3c1a201dbd27",
-      "epochMs": 1795547608000
+      "sha256": "8e15c4aced4c2db13b73a2e57de868191e538df3e317729ef6f270c9d413a91f",
+      "epochMs": 1795548602000
     },
     {
       "source": "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json",
@@ -73,14 +73,14 @@
     }
   ],
   "counts": {
-    "signals": 46,
+    "signals": 45,
     "byVerdict": {
       "REFUSED": 30,
-      "OWNER_GATED": 3,
+      "OWNER_GATED": 2,
       "PROPOSED": 13
     },
-    "proposals": 16,
-    "ownerGated": 3,
+    "proposals": 15,
+    "ownerGated": 2,
     "reinforcingExisting": 3,
     "ignored": 6
   },
@@ -2578,55 +2578,6 @@
       "qualification": "INTERNAL_IMPROVEMENT"
     },
     {
-      "origin": "OWNER_DECISION",
-      "sources": [
-        "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json#ownerQuestions[0]"
-      ],
-      "statement": "Q-CTR2 (blocking=true): For V15.0 §38 « le Radar existant ne doit subir aucune modification dans cette campagne » and §47 « Le Radar reste inchangé » : does 'le Radar existant' cover only the Radar stage (discovery/collection, governor, transport, allowlists, grants — interim RADAR-1), or also the knowledge-qualification stage (runtime/core/odg-knowledge-*, e.g. #911)? And inside a V15.0-campaign item, does adding a NEW versioned grant file or a NEW Radar module count as a modification?",
-      "claimStatus": "OBSERVED",
-      "ownerGatedKind": "owner_decision",
-      "before": {
-        "name": "ownerQuestions.Q-CTR2.answer",
-        "value": null
-      },
-      "id": "RB-OWNER-Q-CTR2",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "key": "RB-OWNER-Q-CTR2"
-      },
-      "targetComponents": [
-        "odg-governance-precedence"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-governance-precedence",
-            "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
-          }
-        ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "OWNER_GATED",
-        "reasons": [
-          "requires owner authorization: owner_decision"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
       "origin": "NATIVE_LESSON",
       "sources": [
         "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json#limits[0]"
@@ -3442,79 +3393,6 @@
       }
     },
     {
-      "id": "RB-OWNER-Q-CTR2",
-      "verdict": "OWNER_GATED",
-      "status": "PROPOSED",
-      "requiresOwnerAuthorization": true,
-      "ownerReason": "requires owner authorization: owner_decision",
-      "components": [
-        "odg-governance-precedence"
-      ],
-      "signalCount": 1,
-      "criteria": {
-        "autonomyBenefit": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "capabilityGain": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "blockerRepetitionReduction": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-BLK",
-          "basis": "n=1 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
-        },
-        "reliabilityQuality": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "speedEfficiency": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "reusability": {
-          "status": "MEASURED",
-          "value": 0,
-          "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 0 (n/4 scale)"
-        },
-        "strategicValue": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "costRiskComplexity": {
-          "status": "MEASURED",
-          "value": 0.7,
-          "rule": "CRC-1",
-          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
-        },
-        "dependencyAvailability": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "evidenceLevel": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-EVD",
-          "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
-        }
-      }
-    },
-    {
       "id": "RB-PASS-PROBABILITY-CALIBRATION",
       "verdict": "PROPOSED",
       "status": "PROPOSED",
@@ -4229,13 +4107,6 @@
       },
       {
         "id": "RB-OWNER-BUDGET-FIELD",
-        "evidenceScore": 0.08,
-        "uncertainty": 0.6,
-        "upperBound": 0.68,
-        "autoSelectable": false
-      },
-      {
-        "id": "RB-OWNER-Q-CTR2",
         "evidenceScore": 0.08,
         "uncertainty": 0.6,
         "upperBound": 0.68,

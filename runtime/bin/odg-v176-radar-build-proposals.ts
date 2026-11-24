@@ -107,7 +107,7 @@ function compute(root: string, pinned?: any): any {
     schema: ENGINE.SCHEMA,
     governance: {
       directive: "owner CTO directive V176 2026-11-24 §4 « LE RADAR DEVIENT UN MOTEUR DE CONSTRUCTION » + §6 « aucun changement substantiel des autorités ou permissions canoniques »",
-      anchor: "V12.4 I CM-RADAR-GATE-CHAIN / V14.4 phase 1 (RADAR-1 interim of docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json; NOT a V15.0-campaign item; Q-CTR2 open and untouched)",
+      anchor: "V12.4 I CM-RADAR-GATE-CHAIN / V14.4 phase 1 (RADAR-1 of docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json, resolved V176: Q-CTR2 answered STAGE by PREC-1; NOT a V15.0-campaign item)",
       radarStageChange: "runtime/core/odg-radar-to-mission-loop.ts: additive ODG_INTERNAL scope (component attachment, internal qualification tier, owner_decision gate kind, opts.seenKeys) — collection, governor, transport, allowlists and grants unchanged",
       egress: "NONE — no live collection; external observations are read from committed, already-ADMITTED Radar evidence",
     },
