@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "92822aa7cfdf8f72a7209a51af74ba5dd8b6df59f72022278da7de2b3fedeafb"
+      "sha256": "8e5a48aab34bf873ef031b5e66b87fcad15885692448e178b71887240bc81312"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -104,6 +104,10 @@
     {
       "source": "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json",
       "sha256": "19bc215556a89ae951e837fa068e15552ae8bbc31f0402c9f7a56fda3b5232c6"
+    },
+    {
+      "source": "docs/odg/evidence/V175_NB2_CONTRACT_INSPECTION.json",
+      "sha256": "bd86b56bc5a97b57e28b398d5d65c937f9fe70d438b37a234dbf145238c595b0"
     }
   ],
   "checkpoint": {
@@ -544,22 +548,23 @@
       },
       "contractSha256": "bab2106a63ce26a35b546ff92df08b214c2f5a047fc8128d1d19e580cb2664e9",
       "ownerRecord": "docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json",
-      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
       "scope": {
-        "currentStep": "INSPECT_REVISED_CONTRACT",
-        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "currentStepKind": "EXECUTION",
         "currentStepAuthorized": true,
-        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "nextStep": "VALIDATE_CRITERIA",
         "validatedSteps": [
-          "REVISE_CONTRACT"
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT"
         ],
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "reason": "inspection ACCEPT bound to contract bab2106a63ce ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
         "contractSha256": "bab2106a63ce26a35b546ff92df08b214c2f5a047fc8128d1d19e580cb2664e9"
       },
       "records": {
         "inspection": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V175_NB2_CONTRACT_INSPECTION.json",
+          "basis": "REGISTER_LOADER"
         },
         "experiment": {
           "path": null,
@@ -571,16 +576,10 @@
         }
       },
       "lastGoRun": null,
-      "pending": [
-        {
-          "kind": "INSPECTION",
-          "of": "contract bab2106a63ce",
-          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha bab2106a63ce26a35b546ff92df08b214c2f5a047fc8128d1d19e580cb2664e9) and commit the inspection record"
+        "actor": "GO",
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v175-native-design-run.ts"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB2]",
@@ -726,18 +725,18 @@
       "ownerAuthorizationNeeded": "owner — J PROPOSED → AUTHORIZED (authorizedBy)",
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
-    "dispatchable": [],
-    "verdict": "no tracked item has an authorized, not-yet-dispatched EXECUTION step ⇒ a GO --execute run has nothing to dispatch; the pending steps are provider / inspector / owner steps (see trackedItems[].next)",
+    "dispatchable": [
+      {
+        "item": "V175-NB2",
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v175-native-design-run.ts"
+      }
+    ],
+    "verdict": "GO --execute could dispatch: V175-NB2",
     "pendingNonGo": [
       {
         "item": "J",
         "actor": "OWNER",
         "action": "J contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V175-NB2",
-        "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha bab2106a63ce26a35b546ff92df08b214c2f5a047fc8128d1d19e580cb2664e9) and commit the inspection record"
       }
     ],
     "lastGoRun": {

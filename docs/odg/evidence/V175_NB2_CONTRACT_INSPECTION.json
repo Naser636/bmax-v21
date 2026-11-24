@@ -1,0 +1,26 @@
+{
+  "//": "Independent inspection record of the V175-NB2 native-DESIGN contract (owner record docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json, family V175-NATIVE-LOOP). Transcribed verbatim from the inspector's verdicts by the coordinating session. Independence DECLARED by distinct session ids (not cryptographic). Inspection ≠ selection: GO selection of NB2 needs an explicit owner selection decision (the permission classifier refused a provider-transcribed one built from generic directive text).",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V175-NB2",
+  "verdict": "ACCEPT",
+  "contractSha256": "bab2106a63ce26a35b546ff92df08b214c2f5a047fc8128d1d19e580cb2664e9",
+  "inspectedHeadSha": "9863b9b284f09092052cf075acb4237a43cce6f1",
+  "inspectedPr": 986,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab245bf3019f79340",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "nb2-pipeline-fixes-v176",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-24",
+  "findings": [
+    "problem derived by PROB-1 from executed failing cases (9/33; 5 shown, 28 held out) against the in-repo reference (sha 4d375b7f…); TEMPLATE denylist enforced before sending",
+    "SEL-1 design selection mechanical (lexicographic on sandbox scores), no model in the choice",
+    "caps: 12 work calls, 2,100,000 ms, 1 warm-up; AC5 covers the authorship ledger; rollback = discard the record",
+    "ADAPT-1: over-cap ⇒ NOT_MEASURED only before the first work call; afterwards a refused call counts as a failed generation (mid-run test grades FAIL) — fixes the escape hatch found on 00ade918",
+    "HOST-1 load check at start only; DIGEST-1 bounded deterministic lessons",
+    "owner binding V175 via V175-NATIVE-LOOP verified exclusive (#980)",
+    "earlier REJECT at sha d6709407 (unbounded over-cap NOT_MEASURED) superseded by this ACCEPT at bab2106a"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V175-NB2 only; RUN via ODG GO --execute only; grades nothing; does not select."
+}
