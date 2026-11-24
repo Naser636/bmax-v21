@@ -1,22 +1,49 @@
 {
+  "//": "Independent inspection record of the REVISED contract J2 (owner V173: 'Demander une inspection indépendante renforcée … Exiger ACCEPT sur le commit exact'). Supersedes the inspection bound to the previous contract sha 893a809f (kept below in history). Independence DECLARED by distinct session ids (not cryptographic).",
   "schema": "odg-contract-inspection/1",
+  "scenario": "J2",
   "verdict": "ACCEPT",
-  "inspectedHeadSha": "28ed13b053d05f1f00a05176930b445373ddce0c",
-  "inspectedPr": 956,
+  "contractSha256": "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b",
+  "inspectedHeadSha": "2a6a069adf7bf37b7562443d9d8b8aa74084789d",
+  "inspectedPr": 959,
   "inspector": "independent REINFORCED inspector (Claude Code provider session)",
-  "inspectorSessionId": "ab245bf3019f79340",
-  "authorSessionId": "g2j2-reviser-v172",
+  "inspectorSessionId": "ab6a445c9679c2387",
+  "authorSessionId": "coordinator-v173-j2r2",
   "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
   "recordedBy": "coordinating provider session (Claude Code)",
-  "sessionIdNote": "inspectorSessionId = harness-assigned id of the inspector session (the inspector cannot see it itself)",
   "date": "2026-11-24",
-  "//": "Independent inspection record of the NEW contract J2 (owner V171).",
-  "scenario": "J2",
-  "contractSha256": "893a809fe6d9d2caea9e72ef2de1804ea29e126f80305ba6cdbb4059f3ca2543",
   "findings": [
-    "H1 ≥2 passes over E at seed 42 strictly beating the A0@seed-7 control + C4 reproduction; NOT_MEASURED rules (shas, |E|<4, caps, C5 provider/egress, C6 retention)",
-    "#952 LOWs applied: A1/A2 not equal-information; failure-conditional selection stated with A0@7 mitigation; caps; 0 provider calls; prompt-leak assertion",
-    "LOW: register shows PARTIAL fallback for NOT_STARTED; LOW: odg-go lacks --help handling"
+    "only J2 antiLeakage.prompts + one revisionHistory entry changed; text equals the owner quote exactly; all other contracts byte-identical",
+    "exclusion narrow: computed task-contract overlap equals the listed one on all 11 tasks; mismatch ⇒ NOT_MEASURED (selftest)",
+    "runner gate refuses while the inspection is bound to 893a809f (exit 2, nothing written); exit 3 on wrong path; loopback-only network guard; 0 provider calls",
+    "LOW: runner header comment still cites 893a809f; LOW: verbatim-only literal matching (limit of the owner's rule)"
   ],
-  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of J2 only; authorizes RUN_CONTROLLED_EXPERIMENTS through owner V171 (local, €0); grades nothing."
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of the revised J2 only; authorizes RUN_CONTROLLED_EXPERIMENTS through owner V171 (+ V173 revision); grades nothing.",
+  "history": [
+    {
+      "supersededRecord": {
+        "schema": "odg-contract-inspection/1",
+        "verdict": "ACCEPT",
+        "inspectedHeadSha": "28ed13b053d05f1f00a05176930b445373ddce0c",
+        "inspectedPr": 956,
+        "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+        "inspectorSessionId": "ab245bf3019f79340",
+        "authorSessionId": "g2j2-reviser-v172",
+        "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+        "recordedBy": "coordinating provider session (Claude Code)",
+        "sessionIdNote": "inspectorSessionId = harness-assigned id of the inspector session (the inspector cannot see it itself)",
+        "date": "2026-11-24",
+        "//": "Independent inspection record of the NEW contract J2 (owner V171).",
+        "scenario": "J2",
+        "contractSha256": "893a809fe6d9d2caea9e72ef2de1804ea29e126f80305ba6cdbb4059f3ca2543",
+        "findings": [
+          "H1 ≥2 passes over E at seed 42 strictly beating the A0@seed-7 control + C4 reproduction; NOT_MEASURED rules (shas, |E|<4, caps, C5 provider/egress, C6 retention)",
+          "#952 LOWs applied: A1/A2 not equal-information; failure-conditional selection stated with A0@7 mitigation; caps; 0 provider calls; prompt-leak assertion",
+          "LOW: register shows PARTIAL fallback for NOT_STARTED; LOW: odg-go lacks --help handling"
+        ],
+        "scopeNote": "Validates INSPECT_REVISED_CONTRACT of J2 only; authorizes RUN_CONTROLLED_EXPERIMENTS through owner V171 (local, €0); grades nothing."
+      },
+      "reason": "bound to the previous J2 contract sha 893a809f — OBSOLETE after the owner-authorized revision (V173)"
+    }
+  ]
 }
