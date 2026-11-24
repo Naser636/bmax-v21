@@ -1,0 +1,71 @@
+{
+  "//": "VALIDATE_CRITERIA for V175-NB1 (owner 2026-11-24 « Ne jamais transformer un résultat PARTIAL, FAIL ou NOT_MEASURED en PASS »). Graded only from committed evidence after the independent REINFORCED inspection of PR #978 (which re-applied the patch, re-ran the oracle and the strict typecheck). Nothing upgraded.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V175-NB1",
+  "date": "2026-11-24",
+  "contractSha256": "953d064ad2fffd3711a9f4efa50592e96b06182349d801e22f7813b17b31b777",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
+    "sha256": "a5537e9d2a8708e8e99d9b726b45a51c5850b39445444798b79a6426cd1b1c37",
+    "experimentSha256": "c2858e8b155b24ed03a9842a5b90a4aeb75be30a3f034821615ceb004a6320fe",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 978,
+    "mergedAs": "2f4c94a0",
+    "producedBy": "ODG GO --execute native dispatch (run bd7cafe24ceec2e4; owner selection V175 via GO-ORD-2; one-shot claim; loopback-only Ollama); trace docs/odg/evidence/V175_NB1_GO_EXECUTE_TRACE.jsonl (original sha bdd2e8b5…)"
+  },
+  "experimentInspection": {
+    "pr": 978,
+    "inspectedHead": "f97958f5",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "ab245bf3019f79340",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "findings": "patch re-applied on origin/main: files byte-identical (module c4a6e2e9…, test 6a71a478…), separate commit, no provider edit; generation sha matches; oracle test re-run 18/18; strict typecheck 0 diagnostics; no refusals/cap; 0 provider calls; PASS per the contract rule; GO trace 10 steps, 1 dispatch",
+    "verdictNote": "the inspector ACCEPTED the result record, patch fidelity, provenance and GO trace at f97958f5; the PR-level REJECT at that head concerned ONLY a regenerable register drift (fixed mechanically in d2714a86; V251 scan exclusion 8cc28a70; CI green), not the experiment result",
+    "authorSessionId": "odg-go-run-bd7cafe24ceec2e4"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET",
+      "evidence": "14 held-out acceptance cases PASS in odg-native-build-sandbox (EXECUTED, SANDBOX); re-run by the inspector"
+    },
+    {
+      "id": "AC2",
+      "status": "MET",
+      "evidence": "0 strict-typecheck diagnostics (re-run by the inspector)"
+    },
+    {
+      "id": "AC3",
+      "status": "MET",
+      "evidence": "diff adds exactly the 2 files; git apply --check OK; applied byte-identical in #978"
+    },
+    {
+      "id": "AC4",
+      "status": "MET",
+      "evidence": "actor ODG, ODG_LOCAL_MODEL_EXECUTION, qwen2.5-coder:7b, prompt + generation sha256, 1 attempt, per-round results, providerCalls 0"
+    },
+    {
+      "id": "AC5",
+      "status": "MET",
+      "evidence": "detection evidenceDigest reproduced at run time (no NOT_MEASURED drift)"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "all acceptance cases pass in the sandbox AND 0 strict diagnostics AND git apply --check OK"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "INTEGRATED (#978) — first ODG-native code merged; callers NOT migrated (owner-gated: changes persisted hash/signature preimages)",
+  "scope": "local model implemented a provider-specified function (MODULE_SPEC + oracle corpus by the provider) — NOT ODG designing the change",
+  "limits": [
+    "oracle lacked undefined/toJSON cases: [undefined] ⇒ '[]' (collision with []) and {a: undefined} ⇒ invalid JSON (inspector MED) — target of V175-NB2 (ODG-designed repair)",
+    "module lacks 'use strict' (V251 scan finding, not a defect; declared post-baseline file)",
+    "independence declared by session ids (not cryptographic)"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionNB1": "CLOSED_PASS — INTEGRATED"
+  }
+}

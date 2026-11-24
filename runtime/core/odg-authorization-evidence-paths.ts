@@ -1,0 +1,9 @@
+"use strict";
+/* V17.5 — SINGLE declared map of each scoped item's committed authorization-evidence records (inspection / experiment /
+ * criteria validation), consumed by BOTH ODG GO (runtime/bin/odg-go.ts readState) and the strategic register loader
+ * (runtime/bin/odg-strategic-select.ts loadSources). Before V17.5 GO used this explicit map while the register derived
+ * file names by convention (V<n>_<scenario>_<KIND>.json) ⇒ items whose records do not follow the convention (V175-NB1)
+ * were CLOSED for GO but NOT_STARTED in the register. One source of truth now; absent file ⇒ null (nothing derived). */
+const AUTH_EVIDENCE = Object.freeze({ G: Object.freeze({ inspection: "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V166_G_EXPERIMENT.json", validation: "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json" }), H: Object.freeze({ inspection: "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V168_H_EXPERIMENT.json", validation: "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json" }), G2: Object.freeze({ inspection: "docs/odg/evidence/V172_G2_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V172_G2_EXPERIMENT.json", validation: "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json" }), J2: Object.freeze({ inspection: "docs/odg/evidence/V172_J2_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V172_J2_EXPERIMENT.json", validation: "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json" }), "V175-NB1": Object.freeze({ inspection: "docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json", validation: "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json" }) });
+module.exports = { AUTH_EVIDENCE };
+export {};
