@@ -22,14 +22,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795552382000,
+    "nowEpochMs": 1795553408000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "1d26ddb35807a86549035874daf7f79884bd779383dbc5d269ab6f803fc15dcb",
-      "epochMs": 1795552382000
+      "sha256": "60110b37a8f77bb535bcbce622cd027bb0423bb6ad925d27cb58b830586660ff",
+      "epochMs": 1795553408000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -43,8 +43,8 @@
     },
     {
       "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json",
-      "sha256": "b32d1fa4fd53ddaa4ab93482709541b6468dc466e51d66605446f22b99b27464",
-      "epochMs": 1795547608000
+      "sha256": "34d6dd91fcba52ced0be73ae488b30eadbd763f08707788cad4971295bac8759",
+      "epochMs": 1795553408000
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -73,9 +73,9 @@
     }
   ],
   "counts": {
-    "signals": 45,
+    "signals": 46,
     "byVerdict": {
-      "REFUSED": 30,
+      "REFUSED": 31,
       "OWNER_GATED": 2,
       "PROPOSED": 13
     },
@@ -1244,10 +1244,10 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[5]"
       ],
-      "statement": "CTR-1 GAP_STATED_FIXED: register status PROPOSED vs J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
       "claimStatus": "OBSERVED",
       "before": {
-        "name": "register.contradictions.CTR-1",
+        "name": "register.contradictions.CTR-2",
         "value": "OPEN"
       },
       "id": "RB-UNMAPPED-REGISTER_CONTRADICTION-2dc88bd0",
@@ -1282,6 +1282,45 @@
       "origin": "REGISTER_CONTRADICTION",
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[6]"
+      ],
+      "statement": "CTR-1 GAP_STATED_FIXED: register status PROPOSED vs J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+      "claimStatus": "OBSERVED",
+      "before": {
+        "name": "register.contradictions.CTR-1",
+        "value": "OPEN"
+      },
+      "id": "RB-UNMAPPED-REGISTER_CONTRADICTION-26904395",
+      "link": {
+        "rule": "LINK-1",
+        "matched": false
+      },
+      "ownerGatedKind": null,
+      "targetComponents": [],
+      "multiplier": {
+        "perComponent": [],
+        "maxDirectConsumers": null,
+        "maxTransitiveDependents": null,
+        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
+      },
+      "gate": {
+        "verdict": "REFUSED",
+        "reasons": [
+          "NO_COMPONENT_ATTACHED"
+        ],
+        "authorized": false,
+        "executed": false
+      },
+      "assess": {
+        "ageDays": 0,
+        "fresh": true,
+        "corroboration": "UNCORROBORATED"
+      },
+      "qualification": "INTERNAL_IMPROVEMENT"
+    },
+    {
+      "origin": "REGISTER_CONTRADICTION",
+      "sources": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[7]"
       ],
       "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V176_CHECKPOINT_12.json (LCP-1)",
       "claimStatus": "OBSERVED",

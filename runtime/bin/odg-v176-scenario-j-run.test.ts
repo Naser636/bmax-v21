@@ -71,7 +71,7 @@ const silent = async (f: () => Promise<any>) => { const w = process.stdout.write
     const fake = R.makeFake(() => "module.exports = function parseRange(s) { return s.split(',').map(Number); };");
     const run = (argv: string[], o: any = {}) => silent(() => R.main(argv, { root: tmp, claimDir, probes, allowUnderTest: true, transport: fake.fake, loadProbe: R.IDLE, ...o }));
     check("wrong / extra argument ⇒ exit 3", (await run(["docs/odg/evidence/V161_SCENARIO_J.json"])).v === 3 && (await run([R.OUT, "--x"])).v === 3);
-    check("real tree refused under test (ODG_TEST_NO_NATIVE) even with allowUnderTest", (await silent(() => R.main([R.OUT], { allowUnderTest: true, transport: fake.fake }))).v === 2 && (await silent(() => R.main([R.OUT], { root: tmp, allowUnderTest: true }))).v === 2);
+    check("real tree refused under test (ODG_TEST_NO_NATIVE, or ALREADY_RECORDED once J's single execution is committed) even with allowUnderTest", [2, 4].includes((await silent(() => R.main([R.OUT], { allowUnderTest: true, transport: fake.fake }))).v) && (await silent(() => R.main([R.OUT], { root: tmp, allowUnderTest: true }))).v === 2);
     const na = await run([R.OUT]);
     check("no inspection record ⇒ NOT_AUTHORIZED (exit 2), nothing written, no claim", na.v === 2 && /INSPECT_REVISED_CONTRACT/.test(na.out) && !fs.existsSync(path.join(tmp, R.OUT)) && !fs.existsSync(claimDir));
     const insp = { scenario: "J", verdict: "ACCEPT", contractSha256: AS.contractSha256(J), inspector: "SIMULATED (test fixture)", inspectorSessionId: "sim-inspector-j-01", authorSessionId: J.revisionHistory[J.revisionHistory.length - 1].revisionAuthorSessionId, inspectedHeadSha: HEAD, inspectedPr: 999 };

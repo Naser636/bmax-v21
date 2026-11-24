@@ -14,7 +14,7 @@
     "liftsRule": "« Ne pas modifier les scores » — lifted ONLY for this controlled, measured, attributable, traceable and reversible feedback",
     "recordNote": "owner record merged on main (#991); OFB-ACT-1 verifies it contains the quote verbatim (PRESENT_QUOTE_MATCH)"
   },
-  "adjustmentsSha256": "0b964894a5a90de1d46bc7655210c88f6e4aed3beb048839037263e7325afb44",
+  "adjustmentsSha256": "b737ac4c73e0dc6e3c5e7e50befe625889b2500d401270b1aba931333b7d63e3",
   "layerRecord": "docs/odg/evidence/V176_OUTCOME_FEEDBACK.json",
   "history": "docs/odg/evidence/V176_OUTCOME_FEEDBACK_HISTORY.jsonl",
   "consumers": [
@@ -26,5 +26,7 @@
     "from": "7248ad5784c8f3396b2fc41300e17c48ba5fe80886f5aebdce7777cdd9952ebc",
     "to": "0b964894a5a90de1d46bc7655210c88f6e4aed3beb048839037263e7325afb44",
     "reason": "#994 inspection REJECT of the base-rate rule OFB-CAL-1 (not attribution) ⇒ OFB-CAL-2 (varying values AND |Spearman ρ| ≥ 0.5, n ≥ 5); under OFB-CAL-2 NO criterion is attributable at this tree ⇒ every multiplier 1 ⇒ register byte-identical to the base register; history entry #1 (OFB-CAL-1) kept, #2 records this rebinding"
-  }
+  },
+  "adjustmentsSha256Before": "0b964894a5a90de1d46bc7655210c88f6e4aed3beb048839037263e7325afb44",
+  "rebindNote": "V17.6 rebind after the NB2 CLOSED_FAIL grade (n 5→6): OFB-CAL-2 still finds no attributable criterion ⇒ multipliers {} (register byte-identical to base); activation re-bound so the layer stays ACTIVE and auditable"
 }

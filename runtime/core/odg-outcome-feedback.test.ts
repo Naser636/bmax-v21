@@ -148,7 +148,7 @@ function main(): void {
   const rec = BIN.build(root);
   check("V176_OUTCOME_FEEDBACK.json is byte-identical to a fresh computation (--check)", committedTxt === BIN.text(rec));
   check("real: no PROBE among admitted; every committed *_PROBE_*.json listed as refused", rec.admission.admitted.every((a: any) => !/PROBE/.test(a.validation)) && fs.readdirSync(path.join(root, "docs/odg/evidence")).filter((f: string) => /_PROBE_\d+\.json$/.test(f)).every((f: string) => rec.admission.refused.some((x: any) => x.validation === `docs/odg/evidence/${f}`)));
-  check("real: admitted = CLOSE-1 graded items only (G, G2, H, J2, V175-NB1 at this tree)", rec.admission.admitted.map((a: any) => `${a.id}=${a.grade}`).join() === "G=PARTIAL,G2=PARTIAL,H=FAIL,J2=FAIL,V175-NB1=PASS");
+  check("real: admitted = CLOSE-1 graded items only (G, G2, H, J2, V175-NB1, V175-NB2 at this tree — V17.6 NB2 CLOSED_FAIL)", rec.admission.admitted.map((a: any) => `${a.id}=${a.grade}`).join() === "G=PARTIAL,G2=PARTIAL,H=FAIL,J2=FAIL,V175-NB1=PASS,V175-NB2=FAIL");
   check("real (OFB-CAL-2): every criterion NOT_ATTRIBUTABLE at this tree — autonomyBenefit constant, costRiskComplexity / evidenceLevel |ρ| < RHO_MIN, the rest below MIN_N ⇒ empty multipliers", rec.perCriterion.every((p: any) => p.status === "NOT_ATTRIBUTABLE" && p.multiplier === 1) && Object.keys(rec.adjustmentsCanonical.multipliers).length === 0 && rec.perCriterion.find((p: any) => p.criterion === "autonomyBenefit").why === "CONSTANT_VALUES");
   check("real: history chain valid and its last entry matches the activation state", BIN.checkHistory(root, rec) === null);
   const sources = SS.loadSources(root);

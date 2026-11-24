@@ -104,6 +104,20 @@
           "git log fe4b65d6f769 -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting V175-NB1: none)"
         ],
         "predictionBasis": "NOT_REGISTER_SELECTED"
+      },
+      {
+        "id": "V175-NB2",
+        "grade": "FAIL",
+        "utility": 0,
+        "validation": "docs/odg/evidence/V175_NB2_CRITERIA_VALIDATION.json",
+        "experiment": "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json",
+        "closureRule": "CLOSE-1",
+        "predictionSource": [
+          "git show 61f0ec180a35:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decision.ranking[id=V175-NB2]",
+          "git show 61f0ec180a35:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB2].criteria",
+          "git log 6cd8e5d08e1b -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting V175-NB2: none)"
+        ],
+        "predictionBasis": "NOT_REGISTER_SELECTED"
       }
     ],
     "refused": [
@@ -127,11 +141,6 @@
       {
         "id": "J",
         "status": "EXECUTED_PARTIAL",
-        "reason": "inspection ACCEPT bound to contract 2ddb8734dacf ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
-      },
-      {
-        "id": "V175-NB2",
-        "status": "NOT_STARTED",
         "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
       }
     ]
@@ -140,11 +149,11 @@
     {
       "criterion": "autonomyBenefit",
       "direction": "HIGHER_IS_BETTER",
-      "n": 5,
+      "n": 6,
       "minN": 5,
       "rhoMin": 0.5,
       "meanFavourability": 0.5,
-      "meanUtility": 0.4,
+      "meanUtility": 0.3333,
       "observations": [
         {
           "item": "G",
@@ -180,6 +189,13 @@
           "favourability": 0.5,
           "grade": "PASS",
           "utility": 1
+        },
+        {
+          "item": "V175-NB2",
+          "predictedValue": 0.5,
+          "favourability": 0.5,
+          "grade": "FAIL",
+          "utility": 0
         }
       ],
       "notMeasuredOn": [],
@@ -188,7 +204,7 @@
       "why": "CONSTANT_VALUES",
       "multiplier": 1,
       "spearman": null,
-      "reading": "selection-time favourability is 0.5 on all 5 items ⇒ it carries no information about the grade ⇒ ×1"
+      "reading": "selection-time favourability is 0.5 on all 6 items ⇒ it carries no information about the grade ⇒ ×1"
     },
     {
       "criterion": "blockerRepetitionReduction",
@@ -204,7 +220,8 @@
         "G2",
         "H",
         "J2",
-        "V175-NB1"
+        "V175-NB1",
+        "V175-NB2"
       ],
       "rule": "OFB-CAL-2",
       "status": "NOT_ATTRIBUTABLE",
@@ -240,7 +257,8 @@
       "notMeasuredOn": [
         "G2",
         "J2",
-        "V175-NB1"
+        "V175-NB1",
+        "V175-NB2"
       ],
       "rule": "OFB-CAL-2",
       "status": "NOT_ATTRIBUTABLE",
@@ -252,11 +270,11 @@
     {
       "criterion": "costRiskComplexity",
       "direction": "LOWER_IS_BETTER",
-      "n": 5,
+      "n": 6,
       "minN": 5,
       "rhoMin": 0.5,
-      "meanFavourability": 0.34,
-      "meanUtility": 0.4,
+      "meanFavourability": 0.2833,
+      "meanUtility": 0.3333,
       "observations": [
         {
           "item": "G",
@@ -292,6 +310,13 @@
           "favourability": 0.1,
           "grade": "PASS",
           "utility": 1
+        },
+        {
+          "item": "V175-NB2",
+          "predictedValue": 1,
+          "favourability": 0,
+          "grade": "FAIL",
+          "utility": 0
         }
       ],
       "notMeasuredOn": [],
@@ -301,12 +326,12 @@
       "multiplier": 1,
       "spearman": {
         "ok": true,
-        "n": 5,
-        "rho": -0.30429,
+        "n": 6,
+        "rho": 0.116667,
         "strength": "WEAK",
         "note": "Spearman ρ = Pearson of average ranks (tie-correct); measures MONOTONIC order association — NOT causation/accuracy/linear agreement on raw values."
       },
-      "reading": "Spearman ρ = -0.30429 (|ρ| < 0.5) between predicted favourability and realized utility on these 5 items ⇒ no attributable association ⇒ ×1"
+      "reading": "Spearman ρ = 0.116667 (|ρ| < 0.5) between predicted favourability and realized utility on these 6 items ⇒ no attributable association ⇒ ×1"
     },
     {
       "criterion": "dependencyAvailability",
@@ -322,7 +347,8 @@
         "G2",
         "H",
         "J2",
-        "V175-NB1"
+        "V175-NB1",
+        "V175-NB2"
       ],
       "rule": "OFB-CAL-2",
       "status": "NOT_ATTRIBUTABLE",
@@ -334,11 +360,11 @@
     {
       "criterion": "evidenceLevel",
       "direction": "HIGHER_IS_BETTER",
-      "n": 5,
+      "n": 6,
       "minN": 5,
       "rhoMin": 0.5,
-      "meanFavourability": 0.4,
-      "meanUtility": 0.4,
+      "meanFavourability": 0.3333,
+      "meanUtility": 0.3333,
       "observations": [
         {
           "item": "G",
@@ -374,6 +400,13 @@
           "favourability": 0.25,
           "grade": "PASS",
           "utility": 1
+        },
+        {
+          "item": "V175-NB2",
+          "predictedValue": 0,
+          "favourability": 0,
+          "grade": "FAIL",
+          "utility": 0
         }
       ],
       "notMeasuredOn": [],
@@ -383,12 +416,12 @@
       "multiplier": 1,
       "spearman": {
         "ok": true,
-        "n": 5,
-        "rho": 0.108148,
+        "n": 6,
+        "rho": 0.295122,
         "strength": "WEAK",
         "note": "Spearman ρ = Pearson of average ranks (tie-correct); measures MONOTONIC order association — NOT causation/accuracy/linear agreement on raw values."
       },
-      "reading": "Spearman ρ = 0.108148 (|ρ| < 0.5) between predicted favourability and realized utility on these 5 items ⇒ no attributable association ⇒ ×1"
+      "reading": "Spearman ρ = 0.295122 (|ρ| < 0.5) between predicted favourability and realized utility on these 6 items ⇒ no attributable association ⇒ ×1"
     },
     {
       "criterion": "reliabilityQuality",
@@ -404,7 +437,8 @@
         "G2",
         "H",
         "J2",
-        "V175-NB1"
+        "V175-NB1",
+        "V175-NB2"
       ],
       "rule": "OFB-CAL-2",
       "status": "NOT_ATTRIBUTABLE",
@@ -427,7 +461,8 @@
         "G2",
         "H",
         "J2",
-        "V175-NB1"
+        "V175-NB1",
+        "V175-NB2"
       ],
       "rule": "OFB-CAL-2",
       "status": "NOT_ATTRIBUTABLE",
@@ -450,7 +485,8 @@
         "G2",
         "H",
         "J2",
-        "V175-NB1"
+        "V175-NB1",
+        "V175-NB2"
       ],
       "rule": "OFB-CAL-2",
       "status": "NOT_ATTRIBUTABLE",
@@ -486,7 +522,8 @@
       "notMeasuredOn": [
         "G2",
         "J2",
-        "V175-NB1"
+        "V175-NB1",
+        "V175-NB2"
       ],
       "rule": "OFB-CAL-2",
       "status": "NOT_ATTRIBUTABLE",
@@ -496,7 +533,7 @@
       "reading": "2 observation(s) < MIN_N 5 ⇒ ×1 (reported, not applied)"
     }
   ],
-  "adjustmentsSha256": "0b964894a5a90de1d46bc7655210c88f6e4aed3beb048839037263e7325afb44",
+  "adjustmentsSha256": "b737ac4c73e0dc6e3c5e7e50befe625889b2500d401270b1aba931333b7d63e3",
   "adjustmentsCanonical": {
     "feedbackVersion": "OFB-1",
     "calibrationRule": "OFB-CAL-2",
@@ -573,6 +610,20 @@
           "git log fe4b65d6f769 -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting V175-NB1: none)"
         ],
         "predictionBasis": "NOT_REGISTER_SELECTED"
+      },
+      {
+        "id": "V175-NB2",
+        "grade": "FAIL",
+        "utility": 0,
+        "validation": "docs/odg/evidence/V175_NB2_CRITERIA_VALIDATION.json",
+        "experiment": "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json",
+        "closureRule": "CLOSE-1",
+        "predictionSource": [
+          "git show 61f0ec180a35:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decision.ranking[id=V175-NB2]",
+          "git show 61f0ec180a35:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB2].criteria",
+          "git log 6cd8e5d08e1b -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting V175-NB2: none)"
+        ],
+        "predictionBasis": "NOT_REGISTER_SELECTED"
       }
     ],
     "multipliers": {}
@@ -580,9 +631,9 @@
   "activation": {
     "record": "docs/odg/V176_OUTCOME_FEEDBACK_ACTIVATION.json",
     "active": true,
-    "reason": "ACTIVE — activation record bound to adjustments 0b964894a5a9…, owner quote verbatim",
+    "reason": "ACTIVE — activation record bound to adjustments b737ac4c73e0…, owner quote verbatim",
     "ownerRecordStatus": "PRESENT_QUOTE_MATCH",
-    "boundSha256": "0b964894a5a90de1d46bc7655210c88f6e4aed3beb048839037263e7325afb44"
+    "boundSha256": "b737ac4c73e0dc6e3c5e7e50befe625889b2500d401270b1aba931333b7d63e3"
   },
   "scores": [
     {
@@ -829,13 +880,6 @@
       "adjustedScore": 0.085,
       "delta": 0,
       "uncertainty": 0.6
-    },
-    {
-      "id": "V175-NB2",
-      "baseScore": 0.05,
-      "adjustedScore": 0.05,
-      "delta": 0,
-      "uncertainty": 0.7
     }
   ],
   "decisions": {
@@ -903,11 +947,6 @@
             "id": "J",
             "evidenceScore": 0.335,
             "uncertainty": 0.5
-          },
-          {
-            "id": "V175-NB2",
-            "evidenceScore": 0.05,
-            "uncertainty": 0.7
           }
         ]
       },
@@ -922,11 +961,6 @@
             "id": "J",
             "evidenceScore": 0.335,
             "uncertainty": 0.5
-          },
-          {
-            "id": "V175-NB2",
-            "evidenceScore": 0.05,
-            "uncertainty": 0.7
           }
         ]
       },
@@ -936,8 +970,8 @@
     "inEffect": "ADJUSTED (activation bound to these adjustments)"
   },
   "honesty": [
-    "5 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J2=FAIL, V175-NB1=PASS]; 3 refused (incl. every PROBE record); 2 declared item(s) not graded",
-    "adjusted (attributable) criteria: [NONE]; NOT_ATTRIBUTABLE (×1): [autonomyBenefit CONSTANT_VALUES n=5; blockerRepetitionReduction NO_MEASURED_PREDICTION n=0; capabilityGain BELOW_MIN_N n=2; costRiskComplexity NO_MEASURED_ASSOCIATION n=5 ρ=-0.30429; dependencyAvailability NO_MEASURED_PREDICTION n=0; evidenceLevel NO_MEASURED_ASSOCIATION n=5 ρ=0.108148; reliabilityQuality NO_MEASURED_PREDICTION n=0; reusability NO_MEASURED_PREDICTION n=0; speedEfficiency NO_MEASURED_PREDICTION n=0; strategicValue BELOW_MIN_N n=2] ⇒ every multiplier is 1: the activation stays recorded but the register is byte-identical to the base register",
+    "6 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL]; 3 refused (incl. every PROBE record); 1 declared item(s) not graded",
+    "adjusted (attributable) criteria: [NONE]; NOT_ATTRIBUTABLE (×1): [autonomyBenefit CONSTANT_VALUES n=6; blockerRepetitionReduction NO_MEASURED_PREDICTION n=0; capabilityGain BELOW_MIN_N n=2; costRiskComplexity NO_MEASURED_ASSOCIATION n=6 ρ=0.116667; dependencyAvailability NO_MEASURED_PREDICTION n=0; evidenceLevel NO_MEASURED_ASSOCIATION n=6 ρ=0.295122; reliabilityQuality NO_MEASURED_PREDICTION n=0; reusability NO_MEASURED_PREDICTION n=0; speedEfficiency NO_MEASURED_PREDICTION n=0; strategicValue BELOW_MIN_N n=2] ⇒ every multiplier is 1: the activation stays recorded but the register is byte-identical to the base register",
     "OFB-CAL-2 replaces the base-rate rule OFB-CAL-1 (rejected at inspection: it adjusted criteria constant across items, e.g. autonomyBenefit = 0.5 on all 5); a multiplier now requires a MEASURED, SIGNED rank association — an order association on few items, never a claim that the criterion predicts or discriminates outcomes; n is tiny",
     "NOT_MEASURED criteria stay NOT_MEASURED (multipliers scale MEASURED contributions only); statuses, criterion values, weights, thresholds and eligibility are unchanged",
     "no hypothesis, probe, simulation or fixture is used as an outcome; the V17.5 outcome-learning record stays report-only (feedsScoring false) — this layer is the separate, owner-authorized consumption"
