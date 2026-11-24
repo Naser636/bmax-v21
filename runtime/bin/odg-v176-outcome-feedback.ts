@@ -83,14 +83,13 @@ function build(root: string): any {
   const pick = (d: any) => { const x = OFB.decisionSummary(d); return JSON.stringify([x.decision, x.selected, x.proposed, x.tiedSet, x.resolvedBy]); };
   const changed = (a: any, b: any) => pick(a) !== pick(b);   // the DECISION (decision / selected / proposed / tiedSet / resolvedBy), not the scores
   const adjusted = adj.perCriterion.filter((p: any) => p.status === "ADJUSTED").map((p: any) => p.criterion);
-  const below = adj.perCriterion.filter((p: any) => p.status !== "ADJUSTED").map((p: any) => `${p.criterion} (n=${p.n})`);
   return {
-    "//": "V17.6 OFB-1 — outcome feedback on scores (owner « V176 : DÉBLOCAGE FINAL » item 3). Per-criterion bounded LEVEL calibration from measured + attributable closure grades only; applied to the strategic register ONLY while the committed activation record binds these adjustments. Recompute: npx tsx runtime/bin/odg-v176-outcome-feedback.ts --check",
+    "//": "V17.6 OFB-1 — outcome feedback on scores (owner « V176 : DÉBLOCAGE FINAL » item 3). Per-criterion ATTRIBUTION rule OFB-CAL-2 (varying selection-time values AND |Spearman ρ| ≥ RHO_MIN with the realized utility, n ≥ MIN_N) from measured + inspected closure grades only; applied to the strategic register ONLY while the committed activation record binds these adjustments. Recompute: npx tsx runtime/bin/odg-v176-outcome-feedback.ts --check",
     schema: OFB.LAYER_SCHEMA,
     feedbackVersion: OFB.FEEDBACK_VERSION,
     ownerDirective: { record: OFB.OWNER_RECORD, recordPresentOnThisTree: ownerTxt !== null, item: 3, quote: OFB.OWNER_QUOTE },
     rules: OFB.RULES,
-    constants: { minN: OFB.MIN_N, cap: OFB.CAP, multiplierRange: [1 - OFB.CAP, 1 + OFB.CAP], gradeUtility: require("../core/odg-outcome-learning.js").GRADE_UTILITY, note: "provider-declared (Claude Code) before the first computation; the owner may replace them" },
+    constants: { minN: OFB.MIN_N, cap: OFB.CAP, rhoMin: OFB.RHO_MIN, calibrationRule: "OFB-CAL-2", multiplierRange: [1 - OFB.CAP, 1 + OFB.CAP], gradeUtility: require("../core/odg-outcome-learning.js").GRADE_UTILITY, note: "provider-declared (Claude Code) before the first computation; the owner may replace them" },
     admission: { admitted: adj.admitted, refused: adj.refused, notGraded },
     perCriterion: adj.perCriterion,
     adjustmentsSha256: adj.adjustmentsSha256,
@@ -105,8 +104,8 @@ function build(root: string): any {
     },
     honesty: [
       `${adj.admitted.length} admitted graded item(s) [${adj.admitted.map((a: any) => `${a.id}=${a.grade}`).join(", ")}]; ${adj.refused.length} refused (incl. every PROBE record); ${notGraded.length} declared item(s) not graded`,
-      `adjusted criteria (n ≥ MIN_N ${OFB.MIN_N}): [${adjusted.join(", ")}]; NOT adjusted (below MIN_N or never measured): [${below.join(", ")}]`,
-      "a multiplier is a bounded LEVEL correction (did this criterion's favourability run above/below the realized utility on these items) — never a claim that the criterion predicts or discriminates outcomes; n is tiny",
+      `adjusted (attributable) criteria: [${adjusted.join(", ") || "NONE"}]; NOT_ATTRIBUTABLE (×1): [${adj.perCriterion.filter((p: any) => p.status !== "ADJUSTED").map((p: any) => `${p.criterion} ${p.why} n=${p.n}${p.spearman && p.spearman.rho !== undefined && p.spearman.rho !== null ? ` ρ=${p.spearman.rho}` : ""}`).join("; ")}]${adjusted.length ? "" : " ⇒ every multiplier is 1: the activation stays recorded but the register is byte-identical to the base register"}`,
+      "OFB-CAL-2 replaces the base-rate rule OFB-CAL-1 (rejected at inspection: it adjusted criteria constant across items, e.g. autonomyBenefit = 0.5 on all 5); a multiplier now requires a MEASURED, SIGNED rank association — an order association on few items, never a claim that the criterion predicts or discriminates outcomes; n is tiny",
       "NOT_MEASURED criteria stay NOT_MEASURED (multipliers scale MEASURED contributions only); statuses, criterion values, weights, thresholds and eligibility are unchanged",
       "no hypothesis, probe, simulation or fixture is used as an outcome; the V17.5 outcome-learning record stays report-only (feedsScoring false) — this layer is the separate, owner-authorized consumption",
     ],

@@ -122,7 +122,7 @@ function r4(n: number): number { return Number(n.toFixed(4)); }
  * V17.6 OFB-APPLY-1 (odg-outcome-feedback, owner « V176 : DÉBLOCAGE FINAL » item 3): optional per-criterion `multipliers`
  * (name → finite number > 0; absent/invalid ⇒ 1) scale MEASURED contributions only; NOT_MEASURED still adds 0 + its weight to
  * uncertainty. When multipliers are given each row also carries baseContribution + multiplier and the result carries
- * baseEvidenceScore + scoreDelta (base kept). Without multipliers the output is byte-identical to the pre-V17.6 output. */
+ * baseEvidenceScore + scoreDelta (base kept); the adjusted evidenceScore and upperBound are clamped to [0, 1] (scoreClamped flags it). Without multipliers the output is byte-identical to the pre-V17.6 output. */
 function scoreExplained(m: any, weights: any, directions: any, multipliers?: any): any {
   const mult = isObj(multipliers) ? multipliers : null;
   const names = Object.keys(weights).sort();
@@ -141,7 +141,7 @@ function scoreExplained(m: any, weights: any, directions: any, multipliers?: any
     lower += mult ? w * eff * mk : w * eff;
     breakdown.push({ criterion: k, status: "MEASURED", value: v, direction: directions && directions[k] === "LOWER_IS_BETTER" ? "LOWER_IS_BETTER" : "HIGHER_IS_BETTER", weight: r4(w), contribution: r4(mult ? w * eff * mk : w * eff), uncertaintyContribution: 0, ...(mult ? { baseContribution: r4(w * eff), multiplier: mk } : {}) });
   }
-  if (mult) return Object.freeze({ evidenceScore: r4(lower), baseEvidenceScore: r4(base), scoreDelta: r4(r4(lower) - r4(base)), upperBound: r4(lower + unc), uncertainty: r4(unc), measuredWeightShare: r4(1 - unc), breakdown: Object.freeze(breakdown) });
+  if (mult) { const adj = clamp01(lower); return Object.freeze({ evidenceScore: r4(adj), baseEvidenceScore: r4(base), scoreDelta: r4(r4(adj) - r4(base)), upperBound: r4(clamp01(adj + unc)), scoreClamped: adj !== lower || adj + unc > 1, uncertainty: r4(unc), measuredWeightShare: r4(1 - unc), breakdown: Object.freeze(breakdown) }); }
   return Object.freeze({ evidenceScore: r4(lower), upperBound: r4(lower + unc), uncertainty: r4(unc), measuredWeightShare: r4(1 - unc), breakdown: Object.freeze(breakdown) });
 }
 

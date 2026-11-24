@@ -163,9 +163,12 @@ function loadOutcomeFeedback(root: string, inputs: any[]): any {
   const layer = json(layerTxt);
   const state = OFB.activationState(json(actTxt), layer, ownerTxt);
   if (!state.active) return { state, multipliers: null };
+  const multipliers = layer.adjustmentsCanonical.multipliers;
+  // active but no attributable criterion (every multiplier 1) ⇒ no effect ⇒ nothing recorded (register byte-identical to base)
+  if (!Object.values(multipliers).some((m: any) => m !== 1)) return { state, multipliers };
   inputs.push({ source: OFB.ACTIVATION_REL, sha256: sha256(actTxt as string) }, { source: OFB.LAYER_REL, sha256: sha256(layerTxt as string) });
   if (ownerTxt !== null) inputs.push({ source: OFB.OWNER_RECORD, sha256: sha256(ownerTxt) });
-  return { state, multipliers: layer.adjustmentsCanonical.multipliers };
+  return { state, multipliers };
 }
 
 /* BREF-1 sources: V171 matrix (requirement rows: id, v150.section, anchors only), the canonical V12.4 companion (mission
@@ -275,7 +278,7 @@ function gitHead(root: string): string | null { try { return execFileSync("git",
 /* compute(sources) — the deterministic part of the record (everything --check compares). */
 function compute(sources: any): any {
   ACTIVE_OPTIONS = optionsFor(sources);
-  const fb = sources && sources.outcomeFeedback && sources.outcomeFeedback.state && sources.outcomeFeedback.state.active === true ? sources.outcomeFeedback : null;
+  const fb = ACTIVE_OPTIONS !== SELECTOR_OPTIONS ? sources.outcomeFeedback : null;   // active AND ≥1 attributable multiplier ≠ 1
   const register = REG.buildRegister(sources);
   const decision = decide(register);
   const again = JSON.stringify(decide(REG.buildRegister(sources))) === JSON.stringify(decision);
@@ -306,7 +309,7 @@ function compute(sources: any): any {
     sensitivity: sensitivity(register),
     grading: grade(register, decision, again, inv),
     honestLimits: [
-      ...(fb ? [`V17.6 OFB-1 ACTIVE (owner « V176 : DÉBLOCAGE FINAL » item 3, ${OFB.OWNER_RECORD}): ranking.evidenceScore is the ADJUSTED score (MEASURED contributions × the per-criterion multipliers ${JSON.stringify(fb.multipliers)}); baseEvidenceScore is kept on every row. The multipliers are a bounded LEVEL calibration from ${OFB.MIN_N}+ admitted graded items per criterion (criteria below MIN_N are not adjusted) — not evidence that any criterion discriminates outcomes; statuses, criterion values, weights and thresholds are unchanged`] : []),
+      ...(fb ? [`V17.6 OFB-1 ACTIVE (owner « V176 : DÉBLOCAGE FINAL » item 3, ${OFB.OWNER_RECORD}): ranking.evidenceScore is the ADJUSTED score (MEASURED contributions × the per-criterion multipliers ${JSON.stringify(fb.multipliers)}, clamped to [0, 1]); baseEvidenceScore is kept on every row. A multiplier requires OFB-CAL-2: varying selection-time values AND |Spearman ρ| ≥ ${OFB.RHO_MIN} with the realized utility over n ≥ ${OFB.MIN_N} admitted graded items — an order association on few items, not causation; statuses, criterion values, weights and thresholds are unchanged`] : []),
       "criterion rules, equal weights, epsilon 0.02 and uncertaintyMax 0.5 were written by the provider, not derived from a canonical owner source — ODG applies them; the owner may replace them",
       "4 of 10 criteria (blocker/repetition reduction, reliability/quality, speed/efficiency, reusability) are NOT_MEASURED for every non-capability-gap item: no evidence field supports them; they enter only as uncertainty",
       "strategicValue and capabilityGain come from V150 summary.top10NextInternal, itself a provider research ranking (V150 meta.generator) made before F/G/J were executed",
