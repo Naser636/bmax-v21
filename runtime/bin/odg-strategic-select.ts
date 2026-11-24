@@ -20,6 +20,8 @@ const { execFileSync } = require("child_process");
 const REG = require("../core/odg-strategic-register.js");
 const SEL = require("../core/mission-priority-selector.js");
 const OCUR = require("../core/odg-observation-currency.js");   // V16.9 Phase 1b — proof-currency probes (read-only local git)
+const DEPG = require("../core/odg-register-dependency-graph.js");   // V17.5 — which committed files DEPG-1 needs
+const { parseRequiresFromSource } = require("../../scripts/lib/js-require-scan");   // the canonical require parser (change-impact-graph composes it)
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const OUT_REL = "docs/odg/evidence/V164_STRATEGIC_REGISTER.json";
@@ -134,10 +136,40 @@ function loadSources(root: string): any {
     inputs.push({ source: rel, sha256: sha256(txt) });
     benefitEvidence.push({ path: rel, data: JSON.parse(txt) });
   }
+  // V17.5 DEPG-1 inputs: existence + sha256 of every declared dataset file / write_set file, and the relative requires of
+  // every committed .ts/.js write_set file (canonical parser), resolved to repo paths. Committed tree only; no register,
+  // selector or GO output is read (NO-CIRCULARITY).
+  const dependencyEvidence = loadDependencyEvidence(root, contracts, inputs);
   const seen = new Set<string>();
   const uniqInputs = inputs.filter((i: any) => (seen.has(i.source) ? false : (seen.add(i.source), true)));
   inputs.length = 0; inputs.push(...uniqInputs);
-  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, proofProbes, inputs };
+  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, proofProbes, dependencyEvidence, inputs };
+}
+
+/* loadDependencyEvidence(root, contracts, inputs) — DEPG-1 file facts { files:{path:{exists, sha256}}, requires:{path:[{specifier, resolved}]} }. */
+function loadDependencyEvidence(root: string, contracts: any, inputs: any[]): any {
+  const req = DEPG.dependencyEvidenceRequest(contracts);
+  const files: any = {}, requires: any = {};
+  const isFile = (rel: string) => { try { return fs.statSync(path.join(root, rel)).isFile(); } catch { return false; } };
+  const fact = (rel: string) => { if (files[rel]) return files[rel]; if (rel === OUT_REL || !isFile(rel)) return (files[rel] = { exists: false, sha256: null }); return (files[rel] = { exists: true, sha256: sha256(fs.readFileSync(path.join(root, rel), "utf8")) }); };
+  for (const rel of req.stat) fact(rel);
+  for (const rel of req.parse) {
+    if (!files[rel] || !files[rel].exists) continue;
+    const txt = fs.readFileSync(path.join(root, rel), "utf8");
+    inputs.push({ source: rel, sha256: sha256(txt) });
+    const out: any[] = [];
+    for (const spec of parseRequiresFromSource(txt).literal.slice().sort()) {
+      if (!/^\.\.?\//.test(spec)) continue;
+      const j = path.posix.normalize(path.posix.join(path.posix.dirname(rel), spec));
+      const cands = /\.js$/.test(j) ? [j, j.replace(/\.js$/, ".ts")] : /\.ts$/.test(j) ? [j] : [j + ".ts", j + ".js", j];
+      const hit = cands.find((c) => !c.startsWith("..") && isFile(c));
+      if (!hit) continue;
+      fact(hit);
+      out.push({ specifier: spec, resolved: hit });
+    }
+    requires[rel] = out;
+  }
+  return { files, requires, request: req };
 }
 
 const SELECTOR_OPTIONS = Object.freeze({ weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
@@ -226,7 +258,7 @@ function compute(sources: any): any {
       "strategicValue and capabilityGain come from V150 summary.top10NextInternal, itself a provider research ranking (V150 meta.generator) made before F/G/J were executed",
       "CP8 is read from main (merged #926); the fallback to origin/docs/v163-checkpoint-8 applies only when it is absent; its sha256 is in inputs, so a CP8 change is detected as drift",
       "owner-authorization flags of CP8_CAPABILITY_GAP items encode the CP8 (pre-V165) state; the owner authorizations of directive V165 (docs/odg/V165_OWNER_AUTHORIZATION.json) are NOT reflected in those flags; contract states ARE read live (e.g. G AUTHORIZED per V165 §1)",
-      "dependency edges between items: none are stated in the evidence, so R1 (unblocking) never discriminates",
+      "V17.5 DEPG-1: item→item dependency edges are now derived from explicit committed evidence (contract preRegistration.dataset files that are another item's declared output, relative requires of committed write_set files into another item's write_set, the existing 'scenario X' statements); see register.dependencyGraph (edges, fanOut, contention). Only WORK_ITEM_CONTRACT items declare inputs, so every other kind is NOT_MEASURED for edges; deps[] holds only UNSATISFIED edges (the selector gate defers on them), so R1 discriminates only when some item is still blocked on another — with every derived edge satisfied, R1 still has nothing to count; contract.parent lineage and shared inputs no item produces are not dependencies",
       "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
       "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
       "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",

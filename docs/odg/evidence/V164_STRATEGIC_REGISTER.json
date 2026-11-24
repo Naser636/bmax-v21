@@ -120,6 +120,46 @@
     {
       "source": "docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json",
       "sha256": "503bf71a21de598809717d5e33ecaf4388a53f01086c1bdc529498ab24106538"
+    },
+    {
+      "source": "runtime/bin/odg-v166-scenario-g-experiment.ts",
+      "sha256": "bdf4ff89d2ec8b638c210d53a83f824a6bfce443f893dae0655af8bc7fc610ea"
+    },
+    {
+      "source": "runtime/bin/odg-v168-scenario-h-experiment.ts",
+      "sha256": "e6292ba3264f0c083d76ab1a11320c14b76277f9cc4d6a817e2080e998fe55f2"
+    },
+    {
+      "source": "runtime/bin/odg-v168-scenario-h-heldout-build.ts",
+      "sha256": "ce133fd648c4ac6313de198713c42a2512e4491bf82c21638dfeb5416801b267"
+    },
+    {
+      "source": "runtime/bin/odg-v172-scenario-g2-experiment.test.ts",
+      "sha256": "7d02b6438750cc09b6e19285ed373931fb74853f0259606e7441a02572be733e"
+    },
+    {
+      "source": "runtime/bin/odg-v172-scenario-g2-experiment.ts",
+      "sha256": "cf3928809700fe436b17c05e8b457462cd8fcad4bb678b1ac8dbe7d20147bbc2"
+    },
+    {
+      "source": "runtime/bin/odg-v172-scenario-g2-heldout-build.ts",
+      "sha256": "95860aa70802d84641ba523e61984c460e6e8f97dadc132cc842d8e04a5d3701"
+    },
+    {
+      "source": "runtime/bin/odg-v172-scenario-j2-run.test.ts",
+      "sha256": "1a85cb0bbf61ff4cbe1329362f40e6e886c5d9c1f528b8b314e015e7d6d17fe5"
+    },
+    {
+      "source": "runtime/bin/odg-v172-scenario-j2-run.ts",
+      "sha256": "8df28c30464370d0b0a3de7fd2e5824d6d4d5cf8b653a975bc5d5382be5c5660"
+    },
+    {
+      "source": "runtime/core/odg-verification-risk-calibration.test.ts",
+      "sha256": "a7c3b79806acc6b41fdfbda2b3666b9ed7756e081f42e67b5e4d7baa1d14819a"
+    },
+    {
+      "source": "runtime/core/odg-verification-risk-calibration.ts",
+      "sha256": "926e04cdb7f6d0edc51a57b5aec131b822893239c729b5baa924ea658db3991b"
     }
   ],
   "register": {
@@ -401,6 +441,202 @@
         "ownerQuestions": false
       },
       "dep2Note": "V174_CHECKPOINT_11.json has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)"
+    },
+    "dependencyGraph": {
+      "rule": "DEPG-1 (provider-authored, V17.5): item→item dependency edges are derived ONLY from explicit committed evidence — DATASET_INPUT, CODE_IMPORT, STATED_TEXT (definitions in edgeKinds); every edge cites its source (path#field) and the producer-side pointer; self-edges are dropped; a path containing '<' (a placeholder such as runtime/core/<defect-module>.ts) is not a concrete file and never matches. Applied UNIFORMLY to every register item kind: only WORK_ITEM_CONTRACT items declare inputs (preRegistration.dataset), a write_set or missingForPass, so every other kind gets dependencyGraph NOT_MEASURED with the reason (no edge is invented for them). Lineage (contract.parent) and shared inputs that no item produces are NOT dependencies. deps[] = the targets of UNSATISFIED edges (what the selector's eligibility gate and R1_MORE_UNBLOCKING read: an item is 'unblocked' by Y only while its dependency on Y is unsatisfied); every edge, satisfied or not, is a stated dependency for DEP-1 (depsStated) and is counted in fanOut",
+      "edgeKinds": {
+        "DATASET_INPUT": "item X's contract declares, in WORK_ITEM_CONTRACT.preRegistration.dataset (any depth), a `file` that is a declared OUTPUT of item Y (a path in Y's WORK_ITEM_CONTRACT.write_set, or Y's executed scenario evidence file); satisfied iff that file is committed AND, when the dataset entry pins a sha256, its sha256 equals the pin (the runner refuses otherwise)",
+        "CODE_IMPORT": "a committed file in item X's WORK_ITEM_CONTRACT.write_set requires (relative require, canonical parser) a file that is in item Y's WORK_ITEM_CONTRACT.write_set; satisfied iff the required file is committed",
+        "STATED_TEXT": "item X's initialState.missingForPass names 'scenario Y' (the register's existing statement rule); satisfied iff Y's register status states completion (ACCEPTED, CLOSED_PASS or RESOLVED_BY_EVIDENCE) — no other field states it landed"
+      },
+      "completedStatuses": [
+        "ACCEPTED",
+        "CLOSED_PASS",
+        "RESOLVED_BY_EVIDENCE"
+      ],
+      "counts": {
+        "edges": 3,
+        "byKind": {
+          "DATASET_INPUT": 1,
+          "CODE_IMPORT": 2,
+          "STATED_TEXT": 0
+        },
+        "satisfied": 3,
+        "unsatisfied": 0,
+        "itemsWithDeps": 2,
+        "itemsNotMeasured": 40
+      },
+      "fanOut": {
+        "A": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "B": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "C": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "D": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "E": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "F": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "G": {
+          "fanOut": 1,
+          "dependents": [
+            "G2"
+          ],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "G2": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "H": {
+          "fanOut": 1,
+          "dependents": [
+            "G2"
+          ],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "I": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "J": {
+          "fanOut": 1,
+          "dependents": [
+            "J2"
+          ],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "J2": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "K": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "L": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "M": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "N": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "O": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "P": {
+          "fanOut": 0,
+          "dependents": [],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        }
+      },
+      "edges": [
+        {
+          "from": "G2",
+          "to": "G",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-v166-scenario-g-experiment.ts",
+          "source": "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"./odg-v166-scenario-g-experiment.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set[2]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].WORK_ITEM_CONTRACT.write_set[1]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-v166-scenario-g-experiment.ts committed"
+        },
+        {
+          "from": "G2",
+          "to": "H",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-verification-risk-calibration.ts",
+          "source": "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"../core/odg-verification-risk-calibration.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set[2]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[3]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-verification-risk-calibration.ts committed"
+        },
+        {
+          "from": "J2",
+          "to": "J",
+          "kind": "DATASET_INPUT",
+          "via": "docs/odg/evidence/V161_SCENARIO_J.json",
+          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.controlReference.file",
+          "targetSource": "docs/odg/evidence/V161_SCENARIO_J.json#scenario (executed scenario evidence naming J, SCN-1)",
+          "satisfied": true,
+          "satisfiedBasis": "docs/odg/evidence/V161_SCENARIO_J.json committed, sha256 = pinned 11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff"
+        }
+      ],
+      "contention": {
+        "rule": "CONT-1 (provider-authored, V17.5): write-set CONTENTION between WORK_ITEM_CONTRACT items = odg-writeset-contention.computeLayerContention over one layer of all contract items (path equal or directory-ancestor); a write_set containing a placeholder entry ('<…>') cannot be proven isolated ⇒ UNKNOWN (fail-closed, conflicts with every item). Contention is NOT a dependency: it never enters deps[], depsStated or any criterion",
+        "component": "odg-writeset-contention.computeLayerContention",
+        "unknownWriteSets": [
+          "A",
+          "C",
+          "D"
+        ],
+        "pairs": [],
+        "pairsNote": "pairs lists WRITESET_OVERLAP pairs; UNKNOWN_WRITESET pairs (every pair involving an unknownWriteSets item) are counted in unknownPairs, not listed",
+        "overlapPairs": 0,
+        "unknownPairs": 48,
+        "note": "contention is NOT a dependency: never in deps[], depsStated or any criterion"
+      },
+      "notMeasuredKinds": [
+        "CP8_CAPABILITY_GAP",
+        "CP8_METHOD_CARD",
+        "V150_ALSO_INTERNAL",
+        "V150_OWNER_GATED",
+        "V150_TOP10_ITEM"
+      ]
     },
     "contradictions": {
       "rules": {
@@ -724,7 +960,19 @@
             ],
             "basis": "k=2 (initialState.evidence 2)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "B",
@@ -835,7 +1083,19 @@
             ],
             "basis": "k=3 (initialState.evidence 3)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "C",
@@ -950,7 +1210,19 @@
             ],
             "basis": "k=3 (initialState.evidence 3)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "D",
@@ -1065,7 +1337,19 @@
             ],
             "basis": "k=2 (initialState.evidence 2)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "E",
@@ -1175,7 +1459,19 @@
             ],
             "basis": "k=1 (initialState.evidence 1)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "F",
@@ -1298,7 +1594,19 @@
             ],
             "basis": "k=4 (initialState.evidence 2 + executed file + CP8 grading)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "G",
@@ -1481,7 +1789,21 @@
             "autoResolved": false,
             "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
           }
-        ]
+        ],
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [
+            "G2"
+          ],
+          "blockingDependents": [],
+          "fanOut": 1,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "H",
@@ -1663,7 +1985,21 @@
             "autoResolved": false,
             "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
           }
-        ]
+        ],
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [
+            "G2"
+          ],
+          "blockingDependents": [],
+          "fanOut": 1,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "I",
@@ -1773,7 +2109,19 @@
             ],
             "basis": "k=1 (initialState.evidence 1)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "J",
@@ -1898,7 +2246,21 @@
             ],
             "basis": "k=4 (initialState.evidence 2 + executed file + CP8 grading)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [
+            "J2"
+          ],
+          "blockingDependents": [],
+          "fanOut": 1,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "K",
@@ -2021,7 +2383,19 @@
             ],
             "basis": "k=3 (initialState.evidence 3)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "L",
@@ -2131,7 +2505,19 @@
             ],
             "basis": "k=3 (initialState.evidence 3)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "M",
@@ -2242,7 +2628,19 @@
             ],
             "basis": "k=2 (initialState.evidence 2)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "N",
@@ -2352,7 +2750,19 @@
             ],
             "basis": "k=1 (initialState.evidence 1)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "O",
@@ -2462,7 +2872,19 @@
             ],
             "basis": "k=2 (initialState.evidence 2)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "P",
@@ -2572,7 +2994,19 @@
             ],
             "basis": "k=2 (initialState.evidence 2)"
           }
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 0,
+          "dependsOn": [],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": []
       },
       {
         "id": "G2",
@@ -2592,8 +3026,27 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []",
-        "depsStated": [],
+        "depsNote": "DEPG-1: 2 stated item dependency edge(s), all satisfied ⇒ deps [] (nothing to unblock)",
+        "depsStated": [
+          {
+            "kind": "ITEM_CODE_IMPORT",
+            "item": "G",
+            "text": "CODE_IMPORT on G via runtime/bin/odg-v166-scenario-g-experiment.ts",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v166-scenario-g-experiment.ts committed",
+            "source": "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"./odg-v166-scenario-g-experiment.ts\")",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].WORK_ITEM_CONTRACT.write_set[1]"
+          },
+          {
+            "kind": "ITEM_CODE_IMPORT",
+            "item": "H",
+            "text": "CODE_IMPORT on H via runtime/core/odg-verification-risk-calibration.ts",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-verification-risk-calibration.ts committed",
+            "source": "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"../core/odg-verification-risk-calibration.js\")",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[3]"
+          }
+        ],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
         "sectionsAdvanced": [
@@ -2667,13 +3120,14 @@
             "basis": "|AC|=4, |write_set|=5, ownerGatedStep=false"
           },
           "dependencyAvailability": {
-            "status": "NOT_MEASURED",
-            "value": null,
+            "status": "MEASURED",
+            "value": 1,
             "rule": "DEP-1",
             "source": [
-              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].initialState.missingForPass"
+              "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"./odg-v166-scenario-g-experiment.ts\")",
+              "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"../core/odg-verification-risk-calibration.js\")"
             ],
-            "reason": "no dependency stated in the evidence ⇒ deps [] (absence of a statement is not availability)"
+            "basis": "2/2 stated dependencies satisfied (ITEM_CODE_IMPORT G=satisfied, ITEM_CODE_IMPORT H=satisfied)"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -2747,6 +3201,44 @@
             "autoResolved": false,
             "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
           }
+        ],
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 2,
+          "dependsOn": [
+            "G",
+            "H"
+          ],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": [
+          {
+            "from": "G2",
+            "to": "G",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-v166-scenario-g-experiment.ts",
+            "source": "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"./odg-v166-scenario-g-experiment.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].WORK_ITEM_CONTRACT.write_set[1]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v166-scenario-g-experiment.ts committed"
+          },
+          {
+            "from": "G2",
+            "to": "H",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-verification-risk-calibration.ts",
+            "source": "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"../core/odg-verification-risk-calibration.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[3]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-verification-risk-calibration.ts committed"
+          }
         ]
       },
       {
@@ -2765,8 +3257,18 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []",
-        "depsStated": [],
+        "depsNote": "DEPG-1: 1 stated item dependency edge(s), all satisfied ⇒ deps [] (nothing to unblock)",
+        "depsStated": [
+          {
+            "kind": "ITEM_DATASET_INPUT",
+            "item": "J",
+            "text": "DATASET_INPUT on J via docs/odg/evidence/V161_SCENARIO_J.json",
+            "satisfied": true,
+            "satisfiedBasis": "docs/odg/evidence/V161_SCENARIO_J.json committed, sha256 = pinned 11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff",
+            "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.controlReference.file",
+            "targetSource": "docs/odg/evidence/V161_SCENARIO_J.json#scenario (executed scenario evidence naming J, SCN-1)"
+          }
+        ],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
         "sectionsAdvanced": [
@@ -2840,13 +3342,13 @@
             "basis": "|AC|=6, |write_set|=3, ownerGatedStep=false"
           },
           "dependencyAvailability": {
-            "status": "NOT_MEASURED",
-            "value": null,
+            "status": "MEASURED",
+            "value": 1,
             "rule": "DEP-1",
             "source": [
-              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].initialState.missingForPass"
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.controlReference.file"
             ],
-            "reason": "no dependency stated in the evidence ⇒ deps [] (absence of a statement is not availability)"
+            "basis": "1/1 stated dependencies satisfied (ITEM_DATASET_INPUT J=satisfied)"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -2864,7 +3366,32 @@
           "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
           "reason": "inspection ACCEPT bound to contract d5a8b0db7f77 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
-        }
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 1,
+          "dependsOn": [
+            "J"
+          ],
+          "unsatisfiedDeps": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": [
+          {
+            "from": "J2",
+            "to": "J",
+            "kind": "DATASET_INPUT",
+            "via": "docs/odg/evidence/V161_SCENARIO_J.json",
+            "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.controlReference.file",
+            "targetSource": "docs/odg/evidence/V161_SCENARIO_J.json#scenario (executed scenario evidence naming J, SCN-1)",
+            "satisfied": true,
+            "satisfiedBasis": "docs/odg/evidence/V161_SCENARIO_J.json committed, sha256 = pinned 11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff"
+          }
+        ]
       },
       {
         "id": "V150-T01",
@@ -2974,6 +3501,16 @@
             ],
             "basis": "k=1"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_TOP10_ITEM items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -3086,6 +3623,16 @@
             ],
             "basis": "k=0"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_TOP10_ITEM items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -3197,6 +3744,16 @@
             ],
             "basis": "k=0"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_TOP10_ITEM items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -3304,6 +3861,16 @@
             ],
             "basis": "k=0"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_TOP10_ITEM items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -3413,6 +3980,16 @@
             ],
             "basis": "k=0"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_TOP10_ITEM items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -3507,6 +4084,16 @@
             ],
             "basis": "k=0"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_ALSO_INTERNAL items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -3610,6 +4197,16 @@
             ],
             "basis": "k=0"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_ALSO_INTERNAL items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -3708,6 +4305,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -3806,6 +4413,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -3904,6 +4521,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4002,6 +4629,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4100,6 +4737,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4198,6 +4845,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4296,6 +4953,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4394,6 +5061,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4492,6 +5169,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4590,6 +5277,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4688,6 +5385,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4786,6 +5493,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4884,6 +5601,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -4982,6 +5709,16 @@
             "source": [],
             "reason": "BLOCKED item — not scored for selection"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "V150_OWNER_GATED items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -5084,6 +5821,16 @@
             ],
             "basis": "k=1 (audit entry)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -5187,6 +5934,16 @@
             ],
             "basis": "k=2 (audit entry + 1 gaps entry)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -5300,6 +6057,16 @@
             ],
             "basis": "k=2 (audit entry + 1 landed evidence)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -5404,6 +6171,16 @@
             ],
             "basis": "k=2 (audit entry + 1 gaps entry)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -5514,6 +6291,16 @@
             ],
             "basis": "k=2 (audit entry + 1 gaps entry)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -5622,6 +6409,16 @@
             ],
             "basis": "k=1 (audit entry)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -5721,6 +6518,16 @@
             ],
             "basis": "k=1 (audit entry)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -5824,6 +6631,16 @@
             ],
             "basis": "k=2 (audit entry + 1 gaps entry)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -5924,6 +6741,16 @@
             ],
             "basis": "k=1 (audit entry)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -6032,6 +6859,16 @@
             ],
             "basis": "k=1 ( + 1 gaps entry)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -6167,7 +7004,17 @@
             "resolvedBy": null,
             "autoResolved": false
           }
-        ]
+        ],
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_CAPABILITY_GAP items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
+        }
       },
       {
         "id": "MC-CR-APPROVAL-STANDARD",
@@ -6261,6 +7108,16 @@
             ],
             "basis": "k=0 (demonstration not run)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_METHOD_CARD items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -6355,6 +7212,16 @@
             ],
             "basis": "k=0 (demonstration not run)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_METHOD_CARD items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -6446,6 +7313,16 @@
             ],
             "basis": "k=0 (demonstration not run)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_METHOD_CARD items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -6540,6 +7417,16 @@
             ],
             "basis": "k=0 (demonstration not run)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_METHOD_CARD items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -6634,6 +7521,16 @@
             ],
             "basis": "k=0 (demonstration not run)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_METHOD_CARD items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -6728,6 +7625,16 @@
             ],
             "basis": "k=0 (demonstration not run)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_METHOD_CARD items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -6822,6 +7729,16 @@
             ],
             "basis": "k=0 (demonstration not run)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_METHOD_CARD items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       },
       {
@@ -6916,6 +7833,16 @@
             ],
             "basis": "k=0 (demonstration not run)"
           }
+        },
+        "dependencyGraph": {
+          "status": "NOT_MEASURED",
+          "rule": "DEPG-1",
+          "reason": "CP8_METHOD_CARD items declare no inputs (preRegistration.dataset), write_set or missingForPass ⇒ no dependency edge can be derived (absence is not independence)",
+          "edgesOut": [],
+          "dependents": [],
+          "blockingDependents": [],
+          "fanOut": 0,
+          "blockingFanOut": 0
         }
       }
     ]
@@ -7083,6 +8010,7 @@
       "L",
       "P",
       "O",
+      "J2",
       "N",
       "V150-T07",
       "E",
@@ -7091,7 +8019,6 @@
       "CP8-GAP-1-selectNextMission",
       "CP8-GAP-9-chooseFollowing",
       "V150-T09",
-      "J2",
       "CP8-GAP-3-chooseMode",
       "CP8-GAP-5-superviseExecution",
       "V150-AI4",
@@ -7103,7 +8030,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, J2, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, J2, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -7958,6 +8885,98 @@
             "weight": 0.1,
             "contribution": 0.005,
             "uncertaintyContribution": 0
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "J2",
+        "status": "NOT_STARTED",
+        "evidenceScore": 0.16,
+        "upperBound": 0.76,
+        "uncertainty": 0.6,
+        "measuredWeightShare": 0.4,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.9,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.01,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "MEASURED",
+            "value": 1,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.1,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
           }
         ],
         "unblocks": 0,
@@ -9126,96 +10145,6 @@
             "weight": 0.1,
             "contribution": 0.02,
             "uncertaintyContribution": 0
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": false,
-        "ownerReason": null,
-        "autoSelectable": true
-      },
-      {
-        "id": "J2",
-        "status": "NOT_STARTED",
-        "evidenceScore": 0.06,
-        "upperBound": 0.76,
-        "uncertainty": 0.7,
-        "measuredWeightShare": 0.3,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 0.9,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.01,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
           }
         ],
         "unblocks": 0,
@@ -10519,7 +11448,7 @@
     "proposed": null,
     "tiedSet": [],
     "resolvedBy": null,
-    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, J2, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, J2, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
       "remainingCriteria": [
@@ -10579,7 +11508,7 @@
         "b3": true,
         "b4": false
       },
-      "meanMeasuredWeightShareOverSelectable": 0.2692
+      "meanMeasuredWeightShareOverSelectable": 0.2731
     },
     "C": {
       "grade": "PASS",
@@ -10604,12 +11533,12 @@
     "strategicValue and capabilityGain come from V150 summary.top10NextInternal, itself a provider research ranking (V150 meta.generator) made before F/G/J were executed",
     "CP8 is read from main (merged #926); the fallback to origin/docs/v163-checkpoint-8 applies only when it is absent; its sha256 is in inputs, so a CP8 change is detected as drift",
     "owner-authorization flags of CP8_CAPABILITY_GAP items encode the CP8 (pre-V165) state; the owner authorizations of directive V165 (docs/odg/V165_OWNER_AUTHORIZATION.json) are NOT reflected in those flags; contract states ARE read live (e.g. G AUTHORIZED per V165 §1)",
-    "dependency edges between items: none are stated in the evidence, so R1 (unblocking) never discriminates",
+    "V17.5 DEPG-1: item→item dependency edges are now derived from explicit committed evidence (contract preRegistration.dataset files that are another item's declared output, relative requires of committed write_set files into another item's write_set, the existing 'scenario X' statements); see register.dependencyGraph (edges, fanOut, contention). Only WORK_ITEM_CONTRACT items declare inputs, so every other kind is NOT_MEASURED for edges; deps[] holds only UNSATISFIED edges (the selector gate defers on them), so R1 discriminates only when some item is still blocked on another — with every derived edge satisfied, R1 still has nothing to count; contract.parent lineage and shared inputs no item produces are not dependencies",
     "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "2fbdd4e53f2692e44747451bd1dc7ee28262f65a"
+  "generatedAtHead": "e9ec57ba1cd914ed968989c5fe894c148297aadc"
 }
