@@ -163,7 +163,7 @@
     },
     {
       "source": "runtime/bin/odg-v175-native-build-run.ts",
-      "sha256": "e2f8f8d24798a7e2a7d47e7f125faefc8ae4b848fd46b5e81691b01683f277b4"
+      "sha256": "7b6228439c2754d837e7105557cf2d9cdcb21ae3446cf8c26fe17e35bf3ab550"
     },
     {
       "source": "runtime/bin/odg-v175-native-design-run.ts",
@@ -12059,5 +12059,5 @@
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "5e40a0cfe0dc777dceb5a2d4f4224f6ed5f2de06"
+  "generatedAtHead": "9d2c49a0ef32617a6e0e75fbcae4baa2fcc0267e"
 }
