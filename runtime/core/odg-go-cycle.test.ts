@@ -49,6 +49,8 @@ const BASE_PRE_V168 = (() => {
   // committed BEFORE V176 (PROPOSED, no authorization) so the tests below still exercise a NON-actionable strategic leader.
   const j = contracts.data.contracts.find((x: any) => x.scenario === "J");
   j.state = "PROPOSED"; j.authorizedBy = null; delete j.authorization; delete j.revisionHistory; delete j.proposedRevision;
+  // V17.6 F: F likewise as committed BEFORE its V176 BUILD_MISSIONS revision (PROPOSED, original write_set, no preRegistration).
+  const f = contracts.data.contracts.find((x: any) => x.scenario === "F"); f.state = "PROPOSED"; f.authorizedBy = null; delete f.authorization; delete f.revisionHistory; delete f.WORK_ITEM_CONTRACT.preRegistration; f.WORK_ITEM_CONTRACT.write_set = ["docs/odg/evidence/V160_SCENARIO_F.json", "runtime/bin/odg-v160-scenario-f-run.ts"];
   const s = clone(BASE); s.measured = BASE.measured;
   s.sources.contracts = contracts;
   // V16.9: authorizationEvidence {} — this fixture's GO state carries no authorization evidence (mirrored below)
@@ -180,7 +182,8 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
   // actually acted on in the V168 native dispatch (#946). Labelled fixture, derived from the committed records.
   // V17.6: labelled helper — J as committed BEFORE the owner V176 authorization (PROPOSED, no authorization block), for the
   // fixtures below whose purpose is a NON-actionable strategic leader J (committed J is now actionable at REVISE_CONTRACT).
-  const preV176J = (s: any) => { const j = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "J"); j.state = "PROPOSED"; j.authorizedBy = null; delete j.authorization; delete j.revisionHistory; delete j.proposedRevision; return s; };
+  // V17.6 F: the helper also puts F back as committed before its V176 BUILD_MISSIONS revision (PROPOSED).
+  const preV176J = (s: any) => { const j = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "J"); j.state = "PROPOSED"; j.authorizedBy = null; delete j.authorization; delete j.revisionHistory; delete j.proposedRevision; const f = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "F"); if (f) { f.state = "PROPOSED"; f.authorizedBy = null; delete f.authorization; delete f.revisionHistory; if (f.WORK_ITEM_CONTRACT) { delete f.WORK_ITEM_CONTRACT.preRegistration; f.WORK_ITEM_CONTRACT.write_set = ["docs/odg/evidence/V160_SCENARIO_F.json", "runtime/bin/odg-v160-scenario-f-run.ts"]; } } return s; };
   const BASE_H_AT_RUN = (() => { const s = preV176J(clone(BASE_LIVE_EV)); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { ...COMMITTED_AUTH_EV, H: { ...COMMITTED_AUTH_EV.H, experiment: null, validation: null } }; return s; })();
   // 1d. V16.8 COMMITTED state (no fixture): H AUTHORIZED_FOR_REVISION (V168) with its revised contract ⇒ the register
   //     decision is DECISION_REQUIRED (J/G tie), kept verbatim (no id pick) ⇒ HALTED_DECISION_REQUIRED, nothing dispatched

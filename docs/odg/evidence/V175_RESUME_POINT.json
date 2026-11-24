@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "14a800367c715f788158dffcdf69cfd925089c57973f11188d5c2e28f935fd93"
+      "sha256": "d0182d8ec4ed657efbc4c2937b2693b7df5c49fa9b6f53b4e9fb387a65a68ef4"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "43c38d865914e6eaa989401b0de757f081a9df03cb5c977c61077eaa66f1e107"
+      "sha256": "888d128ef52212e358e6d5e02c50fd7f1a2707b3a42eb1773624808a20acdcff"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -212,10 +212,40 @@
   },
   "trackedItems": [
     {
+      "id": "D",
+      "title": "D — Recherche et construction",
+      "registerStatus": "PARTIAL",
+      "contractState": "PROPOSED",
+      "boussoleRef": {
+        "status": "MEASURED",
+        "v124MissionId": "CM-RADAR-GATE-CHAIN",
+        "v124Section": "I",
+        "v144Phase": 1,
+        "v150RequirementIds": [
+          "V150-AP-D"
+        ]
+      },
+      "contractSha256": "e6aaa9c977f2f7f8f29bd5f9043aa77b4fdbf3fbae7f72ed1c3c6c62895dc338",
+      "ownerRecord": null,
+      "currentStep": null,
+      "scope": null,
+      "records": null,
+      "lastGoRun": null,
+      "pending": [],
+      "next": {
+        "actor": "OWNER",
+        "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=D]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[3]"
+      ]
+    },
+    {
       "id": "F",
       "title": "F — Multi-agents",
       "registerStatus": "EXECUTED_PARTIAL",
-      "contractState": "PROPOSED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "MEASURED",
         "v124MissionId": "CM-V237-ORCHESTRATION",
@@ -225,16 +255,45 @@
           "V150-AP-F"
         ]
       },
-      "contractSha256": "cd913c76d98b3b157cd5a8a0c8b496c6d3953ed0e9b2bd3e0be23f5b3ec9e3fb",
-      "ownerRecord": null,
-      "currentStep": null,
-      "scope": null,
-      "records": null,
+      "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1",
+      "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
       "lastGoRun": null,
-      "pending": [],
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 323da9a12215",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
       "next": {
-        "actor": "OWNER",
-        "action": "F contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1) and commit the inspection record"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=F]",
@@ -743,7 +802,7 @@
     }
   ],
   "otherRegisterItems": {
-    "count": 55,
+    "count": 54,
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
@@ -878,19 +937,19 @@
   "nextGoAction": {
     "rule": "RSP-5",
     "strategic": {
-      "decision": "SELECTED",
-      "item": "F",
+      "decision": "TIE_EXPLAINED",
+      "item": "D",
       "contractState": "PROPOSED",
       "boussoleRef": {
         "status": "MEASURED",
-        "v124MissionId": "CM-V237-ORCHESTRATION",
-        "v124Section": "F",
-        "v144Phase": 3,
+        "v124MissionId": "CM-RADAR-GATE-CHAIN",
+        "v124Section": "I",
+        "v144Phase": 1,
         "v150RequirementIds": [
-          "V150-AP-F"
+          "V150-AP-D"
         ]
       },
-      "ownerAuthorizationNeeded": "owner — F PROPOSED → AUTHORIZED (authorizedBy)",
+      "ownerAuthorizationNeeded": "owner — D PROPOSED → AUTHORIZED (authorizedBy)",
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
     "dispatchable": [
@@ -902,9 +961,14 @@
     "verdict": "GO --execute could dispatch: V176-NB3",
     "pendingNonGo": [
       {
-        "item": "F",
+        "item": "D",
         "actor": "OWNER",
-        "action": "F contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+        "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "F",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1) and commit the inspection record"
       }
     ],
     "lastGoRun": {
