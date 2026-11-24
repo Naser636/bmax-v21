@@ -1,0 +1,536 @@
+{
+  "schema": "odg-native-design-result/1",
+  "label": "PROBE (provider-run feasibility probe — NOT the ODG-native GO result)",
+  "scenario": "V175-NB2",
+  "contractSha256": null,
+  "nativeClaim": "a PASS means: from a problem DERIVED BY ODG RULES (executed failing cases vs the in-repo reference — no provider-written algorithm in any prompt), ODG's LOCAL MODEL proposed ≥2 designs, ODG selected one mechanically on sandbox-measured scores, the local model implemented it, and ODG tested/repaired/typechecked it. The INPUT corpus (ORC-2 literals), the prompt templates and the runner are provider-written",
+  "run": {
+    "head": "cd41fd50366deabd63a93d4bfe2458153d71e223",
+    "startedAt": "2026-11-24T17:22:13.552Z",
+    "runner": "runtime/bin/odg-v175-native-design-run.ts"
+  },
+  "budgets": {
+    "model": "qwen2.5-coder:7b",
+    "temperature": 0,
+    "seed": 42,
+    "numPredict": 900,
+    "designs": 3,
+    "minDesigns": 2,
+    "maxRepairPerRound": 3,
+    "maxRounds": 2,
+    "maxModelCalls": 12,
+    "wallMs": 1800000,
+    "perCallTimeoutMs": 300000
+  },
+  "problem": {
+    "rule": "PROB-1: execute the CURRENT module and the in-repo REFERENCE on the corpus; failing = output ≠ reference; reference output not valid JSON ⇒ excluded; SHOWN = first failing case per kind (+ one more per lesson kind tag), rest HELD OUT",
+    "targetPath": "runtime/core/odg-canonical-json.ts",
+    "exportName": "canonicalJson",
+    "currentSourceSha256": "c4a6e2e979548aa90a8b9c6f7de3c0ed4e5e421cd5ac46e3af66a98ad797a604",
+    "defect": true,
+    "cases": [
+      {
+        "i": 0,
+        "src": "{\"b\":1,\"a\":2}",
+        "kind": "json",
+        "expect": "{\"a\":2,\"b\":1}",
+        "actual": "{\"a\":2,\"b\":1}",
+        "failing": false
+      },
+      {
+        "i": 1,
+        "src": "{\"a\":{\"y\":1,\"x\":2}}",
+        "kind": "json",
+        "expect": "{\"a\":{\"x\":2,\"y\":1}}",
+        "actual": "{\"a\":{\"x\":2,\"y\":1}}",
+        "failing": false
+      },
+      {
+        "i": 2,
+        "src": "[3,\"x\",null]",
+        "kind": "json",
+        "expect": "[3,\"x\",null]",
+        "actual": "[3,\"x\",null]",
+        "failing": false
+      },
+      {
+        "i": 3,
+        "src": "\"plain\"",
+        "kind": "json",
+        "expect": "\"plain\"",
+        "actual": "\"plain\"",
+        "failing": false
+      },
+      {
+        "i": 4,
+        "src": "null",
+        "kind": "json",
+        "expect": "null",
+        "actual": "null",
+        "failing": false
+      },
+      {
+        "i": 5,
+        "src": "42",
+        "kind": "json",
+        "expect": "42",
+        "actual": "42",
+        "failing": false
+      },
+      {
+        "i": 6,
+        "src": "1.5",
+        "kind": "json",
+        "expect": "1.5",
+        "actual": "1.5",
+        "failing": false
+      },
+      {
+        "i": 7,
+        "src": "true",
+        "kind": "json",
+        "expect": "true",
+        "actual": "true",
+        "failing": false
+      },
+      {
+        "i": 8,
+        "src": "\"q\\\"uote\\n\"",
+        "kind": "json",
+        "expect": "\"q\\\"uote\\n\"",
+        "actual": "\"q\\\"uote\\n\"",
+        "failing": false
+      },
+      {
+        "i": 9,
+        "src": "[]",
+        "kind": "json",
+        "expect": "[]",
+        "actual": "[]",
+        "failing": false
+      },
+      {
+        "i": 10,
+        "src": "{}",
+        "kind": "json",
+        "expect": "{}",
+        "actual": "{}",
+        "failing": false
+      },
+      {
+        "i": 11,
+        "src": "[[],[{}]]",
+        "kind": "nested",
+        "expect": "[[],[{}]]",
+        "actual": "[[],[{}]]",
+        "failing": false
+      },
+      {
+        "i": 12,
+        "src": "{\"z\":null,\"a\":[1,\"x\",false]}",
+        "kind": "json",
+        "expect": "{\"a\":[1,\"x\",false],\"z\":null}",
+        "actual": "{\"a\":[1,\"x\",false],\"z\":null}",
+        "failing": false
+      },
+      {
+        "i": 13,
+        "src": "[{\"b\":1,\"a\":[3,{\"d\":1,\"c\":2}]}]",
+        "kind": "nested",
+        "expect": "[{\"a\":[3,{\"c\":2,\"d\":1}],\"b\":1}]",
+        "actual": "[{\"a\":[3,{\"c\":2,\"d\":1}],\"b\":1}]",
+        "failing": false
+      },
+      {
+        "i": 14,
+        "src": "{\"a\":{\"b\":{\"c\":{\"e\":2,\"d\":1}}}}",
+        "kind": "nested",
+        "expect": "{\"a\":{\"b\":{\"c\":{\"d\":1,\"e\":2}}}}",
+        "actual": "{\"a\":{\"b\":{\"c\":{\"d\":1,\"e\":2}}}}",
+        "failing": false
+      },
+      {
+        "i": 15,
+        "src": "{\"k\\\"q\":\"v\",\"\":0,\"B\":1,\"a\":2}",
+        "kind": "json",
+        "expect": "{\"\":0,\"B\":1,\"a\":2,\"k\\\"q\":\"v\"}",
+        "actual": "{\"\":0,\"B\":1,\"a\":2,\"k\\\"q\":\"v\"}",
+        "failing": false
+      },
+      {
+        "i": 16,
+        "src": "{\"x\":[{\"b\":2,\"a\":1},{\"a\":1}]}",
+        "kind": "nested",
+        "expect": "{\"x\":[{\"a\":1,\"b\":2},{\"a\":1}]}",
+        "actual": "{\"x\":[{\"a\":1,\"b\":2},{\"a\":1}]}",
+        "failing": false
+      },
+      {
+        "i": 17,
+        "src": "{\"n\":-7,\"f\":0.25,\"s\":\"\",\"t\":false}",
+        "kind": "json",
+        "expect": "{\"f\":0.25,\"n\":-7,\"s\":\"\",\"t\":false}",
+        "actual": "{\"f\":0.25,\"n\":-7,\"s\":\"\",\"t\":false}",
+        "failing": false
+      },
+      {
+        "i": 18,
+        "src": "undefined",
+        "kind": "undefined@top",
+        "expect": "null",
+        "actual": "<undefined>",
+        "failing": true
+      },
+      {
+        "i": 19,
+        "src": "[undefined]",
+        "kind": "undefined@array",
+        "expect": "[null]",
+        "actual": "[]",
+        "failing": true
+      },
+      {
+        "i": 20,
+        "src": "[1, undefined, 2]",
+        "kind": "undefined@array",
+        "expect": "[1,null,2]",
+        "actual": "[1,,2]",
+        "failing": true
+      },
+      {
+        "i": 21,
+        "src": "{ a: undefined }",
+        "kind": "undefined@object",
+        "expect": "{}",
+        "actual": "{\"a\":undefined}",
+        "failing": true
+      },
+      {
+        "i": 22,
+        "src": "{ a: undefined, b: 1 }",
+        "kind": "undefined@object",
+        "expect": "{\"b\":1}",
+        "actual": "{\"a\":undefined,\"b\":1}",
+        "failing": true
+      },
+      {
+        "i": 23,
+        "src": "{ a: { b: undefined, c: 1 } }",
+        "kind": "undefined@object",
+        "expect": "{\"a\":{\"c\":1}}",
+        "actual": "{\"a\":{\"b\":undefined,\"c\":1}}",
+        "failing": true
+      },
+      {
+        "i": 24,
+        "src": "[{ a: undefined }, [undefined]]",
+        "kind": "undefined@array+undefined@object",
+        "expect": "[{},[null]]",
+        "actual": "[{\"a\":undefined},[]]",
+        "failing": true
+      },
+      {
+        "i": 25,
+        "src": "{ x: [undefined, { y: undefined, z: [1, undefined] }] }",
+        "kind": "nested+undefined@array+undefined@object",
+        "expect": "{\"x\":[null,{\"z\":[1,null]}]}",
+        "actual": "{\"x\":[,{\"y\":undefined,\"z\":[1,]}]}",
+        "failing": true
+      },
+      {
+        "i": 26,
+        "src": "{ k: [undefined, undefined], j: undefined }",
+        "kind": "undefined@array+undefined@object",
+        "expect": "{\"k\":[null,null]}",
+        "actual": "{\"j\":undefined,\"k\":[,]}",
+        "failing": true
+      },
+      {
+        "i": 27,
+        "src": "new Date(0)",
+        "kind": "toJSON",
+        "expect": "{}",
+        "actual": "{}",
+        "failing": false
+      },
+      {
+        "i": 28,
+        "src": "{ when: new Date(0), v: 1 }",
+        "kind": "toJSON",
+        "expect": "{\"v\":1,\"when\":{}}",
+        "actual": "{\"v\":1,\"when\":{}}",
+        "failing": false
+      },
+      {
+        "i": 29,
+        "src": "-0",
+        "kind": "negative-zero",
+        "expect": "0",
+        "actual": "0",
+        "failing": false
+      },
+      {
+        "i": 30,
+        "src": "[-0, 0]",
+        "kind": "negative-zero",
+        "expect": "[0,0]",
+        "actual": "[0,0]",
+        "failing": false
+      },
+      {
+        "i": 31,
+        "src": "{ z: -0 }",
+        "kind": "negative-zero",
+        "expect": "{\"z\":0}",
+        "actual": "{\"z\":0}",
+        "failing": false
+      },
+      {
+        "i": 32,
+        "src": "[NaN, Infinity, -Infinity]",
+        "kind": "non-finite",
+        "expect": "[null,null,null]",
+        "actual": "[null,null,null]",
+        "failing": false
+      }
+    ],
+    "failing": [
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+    ],
+    "shown": [
+      18,
+      19,
+      20,
+      21,
+      22,
+      24,
+      25
+    ],
+    "heldOut": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      23,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "excluded": [
+      {
+        "src": "{ toJSON: function () { return 1; } }",
+        "reason": "reference output is not valid JSON text (reference behaviour undefined here)"
+      }
+    ],
+    "kinds": [
+      "nested+undefined@array+undefined@object",
+      "undefined@array",
+      "undefined@array+undefined@object",
+      "undefined@object",
+      "undefined@top"
+    ],
+    "evidenceDigest": "b00c44dcf95fb9a3f36e0c05bed9fa2d0c106db13fd7f91478c63a10dbae28bb",
+    "corpusRule": "ORC-2: ORC-1 inputs as JSON literals + 16 non-JSON-transportable input literals (provider-written inputs; expected = executed REF-1)",
+    "corpusSha256": "d373cec92ff3f794f3418ad25bebaf4f1155a64d8c1085bf1dbd39c74574a69c",
+    "reference": {
+      "sourceSha256": "4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734",
+      "copies": [
+        "runtime/core/odg-authorization-scope.ts:103",
+        "runtime/core/odg-go-cycle.ts:72",
+        "runtime/core/odg-verification-risk-calibration.ts:118"
+      ],
+      "rule": "REF-1: largest group of byte-identical CANONICAL definitions (tie ⇒ smallest sha256)"
+    },
+    "priorAcceptance": {
+      "record": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
+      "verdict": "PASS",
+      "sha256": "c4a6e2e979548aa90a8b9c6f7de3c0ed4e5e421cd5ac46e3af66a98ad797a604"
+    }
+  },
+  "lessonsRead": {
+    "rule": "LESSON-1: memory-taxonomy.retrieve(family engineering, CONSOLIDATED) over prior run records' lessons",
+    "considered": 6,
+    "lessons": [
+      {
+        "id": "lesson:V175-NB2:CORPUS_GAP:c24355e51404",
+        "provenance": "PROBE probe1.json",
+        "kind": "CORPUS_GAP",
+        "hint": "A module of runtime/core/odg-canonical-json.ts accepted earlier (docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json) was later wrong on inputs of kind nested+undefined@array+undefined@object, undefined@array, undefined@array+undefined@object, undefined@object, undefined@top: an oracle without those input kinds was incomplete.",
+        "caseKinds": [
+          "nested+undefined@array+undefined@object",
+          "undefined@array",
+          "undefined@array+undefined@object",
+          "undefined@object",
+          "undefined@top"
+        ]
+      },
+      {
+        "id": "lesson:V175-NB2:DESIGNS_REJECTED:d79619f04a14",
+        "provenance": "PROBE probe1.json",
+        "kind": "DESIGNS_REJECTED",
+        "hint": "In a previous build of runtime/core/odg-canonical-json.ts, 1 of 3 proposed designs did not reach every expected output; make each design cover every shown wrong output.",
+        "caseKinds": []
+      },
+      {
+        "id": "lesson:V175-NB2:REPAIR_NEEDED:338ddf35444d",
+        "provenance": "PROBE probe2.json",
+        "kind": "REPAIR_NEEDED",
+        "hint": "A previous build of runtime/core/odg-canonical-json.ts needed 5 repair(s); its first attempts were wrong on inputs of kind undefined@top — check those inputs.",
+        "caseKinds": [
+          "undefined@top"
+        ]
+      },
+      {
+        "id": "lesson:V175-NB2:REPAIR_NEEDED:6074f7618193",
+        "provenance": "PROBE probe1.json",
+        "kind": "REPAIR_NEEDED",
+        "hint": "A previous build of runtime/core/odg-canonical-json.ts needed 4 repair(s); its first attempts were wrong on inputs of kind undefined@top — check those inputs.",
+        "caseKinds": [
+          "undefined@top"
+        ]
+      }
+    ],
+    "reusedIds": [
+      "lesson:V175-NB2:CORPUS_GAP:c24355e51404",
+      "lesson:V175-NB2:DESIGNS_REJECTED:d79619f04a14",
+      "lesson:V175-NB2:REPAIR_NEEDED:338ddf35444d",
+      "lesson:V175-NB2:REPAIR_NEEDED:6074f7618193"
+    ],
+    "kinds": [
+      "nested+undefined@array+undefined@object",
+      "undefined@array",
+      "undefined@array+undefined@object",
+      "undefined@object",
+      "undefined@top"
+    ]
+  },
+  "impact": {
+    "rule": "IMP-1 change-impact-graph.impactOf (consumers / closure / hazards) + IMP-2 *.test.ts in runtime/core|bin that require the module (impactOf.impactedTests scans *.test.js only)",
+    "module": "odg-canonical-json",
+    "exists": true,
+    "consumers": [],
+    "directDeps": [],
+    "closureHazards": {
+      "dynamicRequire": false,
+      "externalRequire": false,
+      "pathHazard": false,
+      "modules": []
+    },
+    "impactedTestsImpactOf": [],
+    "impactedTestsTs": [
+      "runtime/core/odg-canonical-json.test.ts"
+    ]
+  },
+  "verdict": "FAIL",
+  "reason": "S3: the local model proposed 0 parseable design(s) (< 2)",
+  "design": {
+    "by": "LOCAL_MODEL",
+    "model": "qwen2.5-coder:7b",
+    "count": 0,
+    "designs": [],
+    "rawSha256": null,
+    "raw": null
+  },
+  "prompts": [
+    {
+      "i": 1,
+      "stage": "S3 design",
+      "promptSha256": "d4382ea7862e4d9f028dc7cca1f7271061e94a9e47e710f0630a42d2dbfc8d3d",
+      "promptChars": 3271,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "79eb1e04910d189d50a8c42bccce389e5da1dedd0410dc179d81d9c65f905198"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "3fad1cd1b1cdda2fcae9b5356bbbfd087fa000824827466f0d137f8a4e9ea2de"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "d99a5b799088086a86da2bef8633ea7b82734eda541c41a7799f4aa8a8f18bab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "0210514b253909146fb9f5bfacda3fca8241536b6a9daafdbc4f77aef835ba3a"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "LESSON-1 (memory-taxonomy CONSOLIDATED records)",
+          "sha256": "367e19189fc21ed62be53eff5e08aeca1302de1cb32d0c6017b7d0903a9da999"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "bc6dd4ad1c301bd66439929802ddf8462f215031cb01d9f677b33e97122acf39"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "eb3011e29ad62d1ed17a040166eb1f7f3ad7a4bb32ae42cf9428d38367957028"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are a software engineer working in a strict TypeScript repository that uses CommonJS modules.\nA module below gives wrong outputs for some inputs. The evidence is its current source and executed input/output observations.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (2 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current return value:  undefined (no string returned)\n    expected return value: \"null\"\n  input: [undefined]\n    current return value:  \"[]\"\n    expected return value: \"[null]\"\n  input: [1, undefined, 2]\n    current return value:  \"[1,,2]\"\n    expected return value: \"[1,null,2]\"\n  input: { a: undefined }\n    current return value:  \"{\\\"a\\\":undefined}\"\n    expected return value: \"{}\"\n  input: { a: undefined, b: 1 }\n    current return value:  \"{\\\"a\\\":undefined,\\\"b\\\":1}\"\n    expected return value: \"{\\\"b\\\":1}\"\n  input: [{ a: undefined }, [undefined]]\n    current return value:  \"[{\\\"a\\\":undefined},[]]\"\n    expected return value: \"[{},[null]]\"\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current return value:  \"{\\\"x\\\":[,{\\\"y\\\":undefined,\\\"z\\\":[1,]}]}\"\n    expected return value: \"{\\\"x\\\":[null,{\\\"z\\\":[1,null]}]}\"\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nLessons from ODG's previous native builds:\n  - A module of runtime/core/odg-canonical-json.ts accepted earlier (docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json) was later wrong on inputs of kind nested+undefined@array+undefined@object, undefined@array, undefined@array+undefined@object, undefined@object, undefined@top: an oracle without those input kinds was incomplete.\n  - In a previous build of runtime/core/odg-canonical-json.ts, 1 of 3 proposed designs did not reach every expected output; make each design cover every shown wrong output.\n  - A previous build of runtime/core/odg-canonical-json.ts needed 5 repair(s); its first attempts were wrong on inputs of kind undefined@top — check those inputs.\n  - A previous build of runtime/core/odg-canonical-json.ts needed 4 repair(s); its first attempts were wrong on inputs of kind undefined@top — check those inputs.\nTask: propose 3 DIFFERENT designs that would correct the module while keeping every currently-correct output unchanged. Do not write the code.\nAnswer with ONLY a JSON array, no prose, no markdown. Each element: {\"summary\": \"one sentence\", \"steps\": [\"short step\", ...at most 5], \"changesExportedApi\": true|false, \"files\": [\"paths you would change\"]}.",
+      "ok": false,
+      "ms": 300119,
+      "evalCount": null,
+      "reason": "aborted (generator timeout)",
+      "responseSha256": null
+    }
+  ],
+  "generations": [],
+  "network": {
+    "modelCalls": 1,
+    "refused": [],
+    "capHit": null,
+    "providerCalls": 0
+  },
+  "outcome": "FAIL",
+  "wallMs": 301349
+}
