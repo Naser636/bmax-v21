@@ -194,11 +194,11 @@ check("fieldRecords / auditRefs helpers", REG.fieldRecords({ a: { b: ["x", "y"] 
   check("CTR-1 fixture: without the resolution record the gap stays PROPOSED and the contradiction is OPEN (reported, not auto-resolved)", ri(noRes, "CP8-GAP-canonicalDefectsJ").status === "PROPOSED" && ctr(noRes, "CTR-1")[0].state === "OPEN");
   const noFix = clone(rs); for (const c of noFix.checkpoints) c.data.prs = c.data.prs.map((p: any) => ({ ...p, what: String(p.what).replace(/fixed/g, "touched") }));
   check("CTR-1 fixture: same anchors without the word 'fixed' ⇒ not reported", ctr(REG.buildRegister({ ...noFix, resolutionEvidence: [] }), "CTR-1").length === 0);
-  check("CTR-2 real: G, H, G2 (#964) and J2 (V17.5) contract state AUTHORIZED_FOR_REVISION vs their closure records ⇒ reported OPEN (contract never rewritten)", (() => { const c = ctr(RR, "CTR-2"); return c.length === 4 && c.every((x: any) => x.kind === "CONTRACT_STATE_VS_CLOSURE" && x.state === "OPEN") && ri(RR, "H").contradictions.length === 1; })());
+  check("CTR-2 real: G, H, G2 (#964), J2 and V175-NB1 (V17.5) contract state AUTHORIZED_FOR_REVISION vs their closure records ⇒ reported OPEN (contract never rewritten)", (() => { const c = ctr(RR, "CTR-2"); return c.length === 5 && c.every((x: any) => x.kind === "CONTRACT_STATE_VS_CLOSURE" && x.state === "OPEN") && ri(RR, "H").contradictions.length === 1; })());
   // labelled fixture: G/H contract state set to a CLOSED_ value, records re-bound to the edited contract sha (as a real
   // authorized contract edit would require) — then CTR-2 has nothing to report
   const stClosed = clone(rs);
-  for (const c of stClosed.contracts.data.contracts) if (c.scenario === "G" || c.scenario === "H" || c.scenario === "G2" || c.scenario === "J2") {
+  for (const c of stClosed.contracts.data.contracts) if (c.scenario === "G" || c.scenario === "H" || c.scenario === "G2" || c.scenario === "J2" || c.scenario === "V175-NB1") {
     c.state = "CLOSED (fixture)"; const sha = AS.contractSha256(c); const ev = stClosed.authorizationEvidence[c.scenario];
     ev.inspection.contractSha256 = sha; ev.experiment.contractSha256 = sha; ev.validation.contractSha256 = sha; ev.validation.experimentEvidence.experimentSha256 = AS.experimentSha256(ev.experiment);
   }
@@ -207,7 +207,7 @@ check("fieldRecords / auditRefs helpers", REG.fieldRecords({ a: { b: ["x", "y"] 
   check("CTR-2 fixture: checkpoint missionH.status CLOSED_PASS vs derived CLOSED_FAIL ⇒ CHECKPOINT_MISSION_STATUS_VS_CLOSURE reported", ctr(REG.buildRegister(cpBad), "CTR-2").some((c: any) => c.kind === "CHECKPOINT_MISSION_STATUS_VS_CLOSURE" && c.item === "H"));
   check("CTR-3 real: declared record sets stop at CP9 < newest committed CP11 (V17.4) ⇒ reported (not auto-extended)", (() => { const c = ctr(RR, "CTR-3"); return c.length === 1 && /V166_CHECKPOINT_9/.test(c[0].a) && /V174_CHECKPOINT_11/.test(c[0].b) && c[0].autoResolved === false; })());
   check("CTR-3 fixture: when the newest committed checkpoint is CP9 ⇒ not reported", ctr(REG.buildRegister({ ...rs, latestCheckpoint: "V166_CHECKPOINT_9.json" }), "CTR-3").length === 0);
-  check("no contradiction key on items without one (S12 regex cannot match a bare key)", RR.items.filter((x: any) => !["G", "H", "G2", "J2", "CP8-GAP-canonicalDefectsJ"].includes(x.id)).every((x: any) => !("contradictions" in x)));
+  check("no contradiction key on items without one (S12 regex cannot match a bare key)", RR.items.filter((x: any) => !["G", "H", "G2", "J2", "V175-NB1", "CP8-GAP-canonicalDefectsJ"].includes(x.id)).every((x: any) => !("contradictions" in x)));
   // LCP-1
   check("LCP-1: latest checkpoint by NUMBER, not lexicographic order", REG.latestCheckpointOf(["docs/odg/evidence/Z150_CHECKPOINT_9.json", "A1_CHECKPOINT_10.json", "V150_CHECKPOINT_4.json", "other.json"]) === "A1_CHECKPOINT_10.json" && REG.latestCheckpointOf([]) === null);
   check("LCP-1 real: module LATEST_CHECKPOINT discovered = V174_CHECKPOINT_11.json (CP11 written V17.4; no longer hard-coded); register output agrees", REG.LATEST_CHECKPOINT === "V174_CHECKPOINT_11.json" && RR.latestCheckpoint.file === "V174_CHECKPOINT_11.json" && RR.capabilityGapRules.benefit.latestCheckpoint === "V174_CHECKPOINT_11.json");
@@ -218,7 +218,7 @@ check("fieldRecords / auditRefs helpers", REG.fieldRecords({ a: { b: ["x", "y"] 
   check("real: J2 closed by its committed records (V17.5) ⇒ CLOSED_FAIL via odg-authorization-scope", ri(RR, "J2").status === "CLOSED_FAIL" && ri(RR, "J2").closure && ri(RR, "J2").closure.closed === true);
   if (false) check("(retired V17.5: J2 no longer NOT_STARTED)", ["J2"].every((k) => ri(RR, k).status === "NOT_STARTED" && ri(RR, k).closure && ri(RR, k).closure.closed === false && ri(RR, k).closure.component === "odg-authorization-scope.deriveAuthorizationScope"));
   // V17.2: G2/J2 carry their OWN inspection records (#957) ⇒ their scoped state legitimately differs; excluded by name, nothing else
-  check("prior items otherwise unchanged: every item except G, H, canonicalDefectsJ (and G2/J2, which carry their own V172 inspection records) is byte-identical with and without the Phase-1 records", RR.items.filter((x: any) => !["G", "H", "CP8-GAP-canonicalDefectsJ", "G2", "J2"].includes(x.id)).every((x: any) => JSON.stringify(x) === JSON.stringify(ri(RP, x.id))) && RR.itemCount === RP.itemCount);
+  check("prior items otherwise unchanged: every item except G, H, canonicalDefectsJ (and G2/J2/V175-NB1, which carry their own inspection records) is byte-identical with and without the Phase-1 records", RR.items.filter((x: any) => !["G", "H", "CP8-GAP-canonicalDefectsJ", "G2", "J2", "V175-NB1"].includes(x.id)).every((x: any) => JSON.stringify(x) === JSON.stringify(ri(RP, x.id))) && RR.itemCount === RP.itemCount);
   check("synthetic V16.4 fixture has no closure/resolution fields (no authorization blocks, no records)", R.items.every((x: any) => !x.closure && !x.statusHistory && !x.resolution));
 }
 

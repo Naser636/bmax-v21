@@ -14,6 +14,7 @@
  */
 
 const fs = require("fs");
+const AEP = require("../core/odg-authorization-evidence-paths.js");
 const path = require("path");
 const crypto = require("crypto");
 const { execFileSync } = require("child_process");
@@ -106,7 +107,9 @@ function loadSources(root: string): any {
     if (!x || typeof x.authorization !== "object" || x.authorization === null) continue;
     const L = String(x.scenario);
     const ev: any = {};
+    const declared: any = (AEP.AUTH_EVIDENCE as any)[L] || null;   // V17.5: the SAME declared map GO reads wins over the naming convention
     for (const [k, suffix] of Object.entries(KINDS) as any) {
+      if (declared && declared[k]) { const rel = declared[k]; try { const txt = fs.readFileSync(path.join(root, rel), "utf8"); inputs.push({ source: rel, sha256: sha256(txt) }); ev[k] = { ...JSON.parse(txt), recordPath: rel }; } catch { ev[k] = null; } continue; }
       const re = new RegExp(`^V(\\d+)_${L}_${suffix}\\.json$`);
       const cand = evFiles.filter((f: string) => re.test(f)).sort((a: string, b: string) => Number(re.exec(a)![1]) - Number(re.exec(b)![1]));
       if (!cand.length) { ev[k] = null; continue; }

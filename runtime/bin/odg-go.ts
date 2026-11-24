@@ -57,7 +57,7 @@ const F = Object.freeze({
   COLLECTION_REGISTRY: "docs/odg/evidence/COLLECTION_REGISTRY.json",
 });
 /* V166 scoped-authorization evidence (odg-authorization-scope): committed records ONLY; absent ⇒ null (nothing derived). */
-const AUTH_EVIDENCE = Object.freeze({ G: Object.freeze({ inspection: "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V166_G_EXPERIMENT.json", validation: "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json" }), H: Object.freeze({ inspection: "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V168_H_EXPERIMENT.json", validation: "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json" }), G2: Object.freeze({ inspection: "docs/odg/evidence/V172_G2_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V172_G2_EXPERIMENT.json", validation: "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json" }), J2: Object.freeze({ inspection: "docs/odg/evidence/V172_J2_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V172_J2_EXPERIMENT.json", validation: "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json" }), "V175-NB1": Object.freeze({ inspection: "docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json", validation: "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json" }), "V175-NB2": Object.freeze({ inspection: "docs/odg/evidence/V175_NB2_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json", validation: "docs/odg/evidence/V175_NB2_CRITERIA_VALIDATION.json" }) });
+const AUTH_EVIDENCE = require("../core/odg-authorization-evidence-paths.js").AUTH_EVIDENCE;   // V17.5: single shared map (GO + register)
 /* V17.4 GO-ORD-1 owner ORDER-decision records (fixed declared list; committed records ONLY; absent ⇒ skipped). They only
  * resolve an actionable DECISION_REQUIRED tie whose tiedSet equals theirs — never authorization, never scores. */
 const OWNER_ORDER_DECISIONS = Object.freeze(["docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json"]);
@@ -317,7 +317,7 @@ function readState(repo: string): any {
   const entries = ledgerPayload ? (Array.isArray(ledgerPayload) ? ledgerPayload : (ledgerPayload.entries || ledgerPayload.missions || [])) : [];
   const proven = [...new Set(entries.filter((x: any) => x && x.proven === true).map((x: any) => String(x.mission)))].sort();
   let integrity: any = { ok: false, reason: "ledger absent" };
-  if (ledgerPayload) { try { const v = LEDGER.verifyLedger(ledgerPayload); integrity = { ok: v.ok === true, total: v.total, verified: v.verified, legacyUnsealed: v.legacyUnsealed, reason: v.reason || null }; } catch (e: any) { integrity = { ok: false, reason: String(e && e.message) }; } }
+  if (ledgerPayload) { try { const v = LEDGER.verifyLedger(ledgerPayload); integrity = { ok: v.ok === true, total: v.total, verified: v.verified, legacyUnsealed: v.legacyUnsealed, deepSealed: v.deepSealed, legacyShallowSeal: v.legacyShallowSeal, sealStatus: v.sealStatus, reason: v.reason || null }; } catch (e: any) { integrity = { ok: false, reason: String(e && e.message) }; } }
   const att = MAL.readAttempts(path.join(repo, "runtime", "generated", "mission-attempt-log.jsonl"));
   const last = att.length ? att[att.length - 1] : null;
   const smr = SMR.loadSources();   // canonical strategy-mode evaluation instant (code tree; parity recorded below)

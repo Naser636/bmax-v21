@@ -67,4 +67,38 @@ console.log("mission-ledger — keyless tamper-evidence");
 { ok("no entries array ⇒ fail-closed", ML.verifyLedger({}).ok === false && ML.verifyLedger(null).ok === false);
   const p = clone(build(CORES)); p.entries[1] = 42; const v = ML.verifyLedger(p); ok("malformed entry ⇒ fail-closed", v.ok === false && /malformed/.test(v.reason)); }
 
+// (12) V17.5 DEEP SEAL — new seals (sv:2) cover NESTED fields; legacy seals still verify but are REPORTED; no downgrade.
+const NESTED = [
+  { mission: "N1", proven: true, state: "RELEASED", recordedAt: "t1", objectives: [{ id: "o1", done: true }], strategy: { mode: "safe", depth: 1 } },
+  { mission: "N2", proven: true, state: "RELEASED", recordedAt: "t2", objectives: [{ id: "o2", done: true }], strategy: { mode: "safe", depth: 2 } },
+  { mission: "N3", proven: true, state: "RELEASED", recordedAt: "t3", objectives: [{ id: "o3", done: true }], strategy: { mode: "safe", depth: 3 } },
+];
+const v2 = (cores) => cores.map((c) => ({ ...c, sv: ML.SEAL_VERSION }));
+{ const p = build(v2(NESTED)); const v = ML.verifyLedger(p);
+  ok("v2 deep-sealed chain ⇒ ok, deepSealed=3, legacyShallowSeal=0, DEEP_SEAL_V2", v.ok === true && v.verified === 3 && v.deepSealed === 3 && v.legacyShallowSeal === 0 && v.sealStatus === "DEEP_SEAL_V2");
+  const t = clone(p); t.entries[1].objectives[0].done = false; const vt = ML.verifyLedger(t);
+  ok("v2: NESTED tamper (objectives[0].done) ⇒ BROKEN at that entry", vt.ok === false && vt.brokenAt === 1 && /seal mismatch/.test(vt.reason));
+  const t2 = clone(p); t2.entries[2].strategy.mode = "unsafe"; ok("v2: nested object tamper (strategy.mode) ⇒ BROKEN", ML.verifyLedger(t2).ok === false && ML.verifyLedger(t2).brokenAt === 2);
+  const st = clone(p); delete st.entries[1].sv; const vs = ML.verifyLedger(st);
+  ok("v2: STRIPPED sv ⇒ refused (downgrade)", vs.ok === false && vs.brokenAt === 1 && /DOWNGRADE/.test(vs.reason));
+  const st0 = clone(p); delete st0.entries[0].sv; ok("v2: stripped sv on FIRST entry ⇒ seal mismatch (version is inside the sealed material)", ML.verifyLedger(st0).ok === false && ML.verifyLedger(st0).brokenAt === 0);
+  const uv = clone(p); uv.entries[1].sv = 3; ok("unknown seal version ⇒ fail-closed", ML.verifyLedger(uv).ok === false && /unsupported seal version/.test(ML.verifyLedger(uv).reason));
+  const ss = clone(p); delete ss.entries[2].seal; ok("v2 entry with seal stripped ⇒ refused", ML.verifyLedger(ss).ok === false && /stripped seal/.test(ML.verifyLedger(ss).reason));
+}
+{ // BEFORE the fix (legacy seal): the same nested tamper was NOT caught — the residual this closes.
+  const p = build(NESTED); const t = clone(p); t.entries[1].objectives[0].done = false; t.entries[2].strategy.mode = "unsafe"; const v = ML.verifyLedger(t);
+  ok("legacy seal: nested tamper NOT caught (pre-fix residual) — reported LEGACY_SHALLOW_SEAL", v.ok === true && v.legacyShallowSeal === 3 && v.sealStatus === "LEGACY_SHALLOW_SEAL");
+  ok("requireDeepSeal refuses legacy shallow seals", ML.verifyLedger(p, { requireDeepSeal: true }).ok === false);
+}
+{ // compat: legacy unsealed prefix + legacy sealed + v2 tail verifies; downgrade after v2 refused
+  const mixed = build([NESTED[0], NESTED[1], v2([NESTED[2]])[0]], 1);
+  const v = ML.verifyLedger(mixed);
+  ok("legacy-unsealed + legacy-sealed + v2 ⇒ ok, legacyUnsealed=1, legacyShallowSeal=1, deepSealed=1", v.ok === true && v.legacyUnsealed === 1 && v.legacyShallowSeal === 1 && v.deepSealed === 1 && v.sealStatus === "LEGACY_SHALLOW_SEAL");
+  const down = build([v2([NESTED[0]])[0], NESTED[1]]); const vd = ML.verifyLedger(down);
+  ok("legacy-sealed entry AFTER a v2 seal ⇒ DOWNGRADE refused", vd.ok === false && vd.brokenAt === 1 && /DOWNGRADE/.test(vd.reason));
+  const down2 = build([v2([NESTED[0]])[0], NESTED[1]], 0); delete down2.entries[1].seal; delete down2.tipSeal;
+  ok("unsealed entry AFTER a v2 seal ⇒ DOWNGRADE refused", ML.verifyLedger(down2).ok === false && /DOWNGRADE/.test(ML.verifyLedger(down2).reason));
+  ok("sealFor throws on an unknown sv (no silent fallback)", (() => { try { ML.sealFor(0, audit.GENESIS, { sv: 9 }); return false; } catch { return true; } })());
+}
+
 console.log(`\nMISSION-LEDGER INTEGRITY — ${pass} assertions passed. (keyless hash-chain: detects modify/reorder/delete/truncate/partial-write; legacy honestly unsealed; keyed authenticity is owner-gated out of scope)`);
