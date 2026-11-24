@@ -92,13 +92,59 @@ function discoverLatestCheckpoint(): string | null {
 }
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
-function ownerMatches(text: string): string[] {
+/* OWN-1 clarification (V17.6, classification defect found in #1001 — rule meaning unchanged): OWN-1 matches owner-gated
+ * INTENT. FAIL-CLOSED exemption (#1003 inspections): a keyword is ignored ONLY when its whole enclosing token is EXACTLY
+ * a registered component id (basename, without .ts/.js/.test.ts, of a committed runtime/core|runtime/bin module — e.g.
+ * `odg-production-metric`) or such a committed module path itself (runtime/core/… or runtime/bin/…). Any other token,
+ * committed or not (deploy/** units, scripts, URLs, `deploy-to-production`, `spend/budget`, any case variant), keeps
+ * matching; the keyword match stays case-insensitive. A NEVER-EXEMPT guard runs first (OWN1_NEVER_EXEMPT: deploy/**,
+ * *.service/*.timer/*.socket/*.sudoers (incl. .candidate/.user/.d suffixes), systemd/**, ROADMAP.json, governance/**,
+ * the canonical closure register, constitution files — union of the governance-path guard
+ * (capability-executors.PROTECTED_GOVERNANCE_PREFIXES = runtime/governance) and sovereign-delegation.ALWAYS_PROTECTED).
+ * No repository listing ⇒ no exemption (fail closed). */
+const OWN1_PATH_CLARIFICATION = "OWN-1 clarification (not a criteria change): a keyword whose whole enclosing token is EXACTLY a registered component id (basename without .ts/.js/.test.ts of a committed runtime/core or runtime/bin module) or that committed module path itself is not owner-gated intent and is ignored; every other token keeps matching (case-insensitive); never exempt: deploy/**, *.service, *.timer, *.socket, *.sudoers, systemd/**, ROADMAP.json, governance/**, closure-register.json, constitution files; no repository listing ⇒ no exemption (fail closed)";
+const OWN1_PATH_KEEP = /^(?:ROADMAP\.json|governance|systemd)$/i;
+const OWN1_NEVER_EXEMPT = /(?:^|\/)deploy(?:\/|$)|\.(?:service|timer|socket|sudoers)(?:\.|\/|$)|(?:^|\/)systemd(?:\/|$)|ROADMAP\.json|(?:^|\/)governance(?:\/|$)|closure-register\.json|constitution/i;
+let KNOWN_CACHE: any = null;
+/* committedKnown(root?) — {paths, ids} from `git ls-files` at the repo root (walk up from __dirname); empty on any failure. */
+function committedKnown(root?: string): any {
+  if (!root && KNOWN_CACHE) return KNOWN_CACHE;
+  const paths = new Set<string>(), ids = new Set<string>();   // paths = committed module files only (not the whole tree)
+  try {
+    const fs = require("fs"), path = require("path"), cp = require("child_process");
+    let d = root || __dirname;
+    if (!root) for (let i = 0; i < 6 && !fs.existsSync(path.join(d, ".git")); i++) d = path.dirname(d);
+    const out = cp.execFileSync("git", ["-C", d, "ls-files", "-z"], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"] });
+    for (const f of out.split("\0")) {
+      if (!f) continue;
+      paths.add(f);
+      const m = /^runtime\/(?:core|bin)\/([^/]+?)(?:\.test)?\.[cm]?[jt]s$/.exec(f);
+      if (m) { ids.add(m[1]); paths.add(f); }   // only committed runtime/core|bin MODULE paths are exemptable
+    }
+  } catch { /* no listing ⇒ empty ⇒ no exemption (fail closed) */ }
+  const k = { paths, ids };
+  if (!root) KNOWN_CACHE = k;
+  return k;
+}
+function isCommittedToken(tok: string, known: any): boolean {
+  const t = tok.replace(/^[`'"(\[{<]+|[`'"),.;:!?\]}>]+$/g, "").replace(/^\.\//, "");
+  if (!t || OWN1_NEVER_EXEMPT.test(t)) return false;
+  return /^runtime\/(?:core|bin)\/[^/]+$/.test(t) ? known.paths.has(t) : known.ids.has(t);
+}
+function ownerMatches(text: string, known?: any): string[] {
   const out: string[] = [];
   const re = new RegExp(OWNER_RE.source, "gi");
-  let m: any;
+  let m: any, K: any = null;
   while ((m = re.exec(text)) !== null) {
     const before = text.slice(Math.max(0, m.index - 12), m.index);
     if (/\b(no|without|not|never)\s+$/i.test(before)) continue;
+    if (!OWN1_PATH_KEEP.test(m[0])) {
+      let s = m.index, e = m.index + m[0].length;
+      while (s > 0 && !/[\s`'"(),;\[\]{}<>‖]/.test(text[s - 1])) s--;
+      while (e < text.length && !/[\s`'"(),;\[\]{}<>‖]/.test(text[e])) e++;
+      K = K || known || committedKnown();
+      if (isCommittedToken(text.slice(s, e), K)) continue;
+    }
     out.push(m[0]);
   }
   return out;
@@ -413,7 +459,7 @@ function buildRegister(sources: any): any {
   return deepFreeze({
     schema: "ODG_STRATEGIC_REGISTER/1",
     statusTaxonomy: STATUS,
-    criteria: CRITERIA, weights: WEIGHTS, weightsNote: WEIGHTS_NOTE, ownerRule: OWNER_RULE,
+    criteria: CRITERIA, weights: WEIGHTS, weightsNote: WEIGHTS_NOTE, ownerRule: OWNER_RULE, ownerRuleClarification: OWN1_PATH_CLARIFICATION,
     capabilityGapRules: { dedupe: GAP_DEDUP_RULE, owner: OWNER_RULE_GAP, landed: LAND_RULE, links: GAP_LINKS.map((l: any) => ({ id: l.id, audit: l.audit, gapRe: l.gapRe ? String(l.gapRe) : null, ownerQuestionRe: l.oqRe ? String(l.oqRe) : null, blockerAnchors: l.anchors || [] })), benefit: { blocker: BLK2_RULE, reliability: REL2_RULE, dependency: DEP2_RULE, blockerFields: BLOCKER_FIELDS, prRecordFields: PR_RECORD_FIELDS, latestCheckpoint: latestCp, notDerived: BENEFIT_NOT_DERIVED } },
     continuityRules: { closure: CLOSE_RULE, resolution: RES_RULE, latestCheckpoint: LATEST_CP_RULE, contradictions: CONTRADICTION_RULES, history: "append-only statusHistory [{status, source, since, rule}] on every item whose status CLOSE-1 or RES-1 changed; earlier statuses are never deleted" },
     latestCheckpoint,
@@ -686,6 +732,6 @@ const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
+module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, committedKnown, isCommittedToken, OWN1_PATH_CLARIFICATION, OWN1_NEVER_EXEMPT, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(STRATEGIC_REGISTER_CONTRACT, null, 2) + "\n"); }
 export {};

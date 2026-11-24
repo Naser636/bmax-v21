@@ -267,11 +267,11 @@
     },
     {
       "source": "runtime/core/odg-strategic-register.test.ts",
-      "sha256": "a2744716d68e1f07949f505598cf3612ca39ec427784103efb80aa97b7223823"
+      "sha256": "6646f20e6a41bf9ccf1dd7e4cc2068b54f9165049d082e5e504475f4ff0d92f2"
     },
     {
       "source": "runtime/core/odg-strategic-register.ts",
-      "sha256": "ad291503ea352b5ea2d9b2bd51b76da33430a433e1a0e845e12fc59c83694819"
+      "sha256": "ea147f7817594a510bce689a05036c2ea10b6ea7a6bc2154cf890ac5809f1cbe"
     },
     {
       "source": "runtime/core/odg-verification-risk-calibration.test.ts",
@@ -388,6 +388,7 @@
     },
     "weightsNote": "equal weights (1 each) DECLARED by the provider — no canonical source weights these criteria; owner may replace",
     "ownerRule": "OWN-1: requiresOwnerAuthorization iff /owner-gated|owner-authorized|owner decision|spend|budget|billing|paid|egress|systemd|deploy|production|ROADMAP.json|governance|Boussole/i matches the item's objective, acceptance_criteria or initialState.missingForPass (contracts) or its own text (other items), ignoring matches directly preceded by no/without/not/never; contract `scope` and `stop_conditions` are NOT scanned (they are negative lists / identical boilerplate on all 16 contracts)",
+    "ownerRuleClarification": "OWN-1 clarification (not a criteria change): a keyword whose whole enclosing token is EXACTLY a registered component id (basename without .ts/.js/.test.ts of a committed runtime/core or runtime/bin module) or that committed module path itself is not owner-gated intent and is ignored; every other token keeps matching (case-insensitive); never exempt: deploy/**, *.service, *.timer, *.socket, *.sudoers, systemd/**, ROADMAP.json, governance/**, closure-register.json, constitution files; no repository listing ⇒ no exemption (fail closed)",
     "capabilityGapRules": {
       "dedupe": "DEDUP-1: provider-authored pairing table GAP_LINKS — a CP8.gaps entry matching a link's gapRe is the same gap as that link's odgCapabilityAudit entry (one item, both cited); a CP8.gaps entry matching no link becomes its own item (status PROPOSED, CP8 lists it open without an audit status)",
       "owner": "OWN-2 (capability-gap items only; prior items keep OWN-1): requiresOwnerAuthorization iff the item's cited CP8 text matches /cryptograph|provider launch|launch a provider|billed|spend|auto-commit|commit/merge|human/coordinator-gated|\bhost\b|systemd|sudo|deploy/i (negation guard as OWN-1), OR OWN-1 matches, OR a CP8.ownerQuestions entry is linked (open owner question). No authorization is created or inferred.",
@@ -15311,5 +15312,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "c65eb6dc4ef3035a7a02f769cc4e1fbc09c41cc0"
+  "generatedAtHead": "223646b1d208b65ef99b96828abec1bfdd76e118"
 }
