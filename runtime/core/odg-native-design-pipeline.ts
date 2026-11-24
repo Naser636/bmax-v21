@@ -54,7 +54,7 @@ const OLLAMA_URL = `http://${OLLAMA.host}:${OLLAMA.port}/api/generate`;
 
 /* makeGuard(transport, caps) — exact loopback allowlist + call/wall caps + per-prompt sha record. */
 function makeGuard(transport: any, caps: any): any {
-  const st: any = { modelCalls: 0, refused: [] as any[], prompts: [] as any[], capHit: null as any, deadline: Date.now() + caps.wallMs };
+  const st: any = { modelCalls: 0, warmupCalls: 0, refused: [] as any[], prompts: [] as any[], capHit: null as any, deadline: Date.now() + caps.wallMs };
   const fetchImpl = async (url: any, init: any = {}): Promise<any> => {
     let u: any = null; try { u = new URL(String(url)); } catch { /* refused */ }
     if (!u || u.protocol !== OLLAMA.protocol || u.hostname !== OLLAMA.host || u.port !== OLLAMA.port || u.pathname !== "/api/generate") {
@@ -64,6 +64,18 @@ function makeGuard(transport: any, caps: any): any {
     if (st.modelCalls >= caps.maxModelCalls) { st.capHit = st.capHit || "maxModelCalls"; throw new Error("V175 cap: maxModelCalls"); }
     if (Date.now() > st.deadline) { st.capHit = st.capHit || "wallMs"; throw new Error("V175 cap: wallMs"); }
     const body = init && typeof init.body === "string" ? JSON.parse(init.body) : {};
+    // V17.6 ADAPT-1: the warm-up call (rate measurement) has its OWN cap (maxWarmupCalls) and num_predict (warmupNumPredict);
+    // it never consumes the work budget maxModelCalls. Same allowlist, same deadline.
+    const warm = !!(init && init.odgWarmup === true);
+    if (warm) {
+      if (st.warmupCalls >= (Number(caps.maxWarmupCalls) || 0)) { st.capHit = st.capHit || "maxWarmupCalls"; throw new Error("V176 cap: maxWarmupCalls"); }
+      if (Date.now() > st.deadline) { st.capHit = st.capHit || "wallMs"; throw new Error("V175 cap: wallMs"); }
+      body.options = { ...(body.options || {}), seed: caps.seed, temperature: caps.temperature, num_predict: caps.warmupNumPredict };
+      st.warmupCalls++;
+      st.prompts.push({ i: "W" + st.warmupCalls, model: body.model, promptSha256: sha256(body.prompt || ""), promptChars: String(body.prompt || "").length, warmup: true });
+      const { odgWarmup, ...rest } = init;
+      return transport(String(url), { ...rest, body: JSON.stringify(body) });
+    }
     body.options = { ...(body.options || {}), seed: caps.seed, temperature: caps.temperature, num_predict: caps.numPredict };
     st.modelCalls++;
     st.prompts.push({ i: st.modelCalls, model: body.model, promptSha256: sha256(body.prompt || ""), promptChars: String(body.prompt || "").length });
@@ -138,11 +150,73 @@ async function ollamaGenerate(fetchImpl: any, o: any): Promise<any> {
   const t0 = Date.now();
   try {
     const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), Number(o.timeoutMs) || 300000);
-    let res: any; try { res = await fetchImpl(OLLAMA_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ model: o.model, prompt: o.prompt, stream: false }), signal: ctl.signal }); } finally { clearTimeout(timer); }
+    let res: any; try { res = await fetchImpl(OLLAMA_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ model: o.model, prompt: o.prompt, stream: false }), signal: ctl.signal, ...(o.warmup === true ? { odgWarmup: true } : {}) }); } finally { clearTimeout(timer); }
     if (!res || res.ok !== true) return { ok: false, ms: Date.now() - t0, reason: `HTTP ${res && res.status}` };
     const j = await res.json();
-    return { ok: true, ms: Date.now() - t0, response: String((j && j.response) || ""), evalCount: (j && j.eval_count) || null, respondedModel: (j && j.model) || null };
+    const num = (v: any) => (typeof v === "number" && Number.isFinite(v) ? v : null);
+    return { ok: true, ms: Date.now() - t0, response: String((j && j.response) || ""), evalCount: (j && j.eval_count) || null, respondedModel: (j && j.model) || null,
+      timings: { evalCount: num(j && j.eval_count), evalDurationNs: num(j && j.eval_duration), promptEvalCount: num(j && j.prompt_eval_count), promptEvalDurationNs: num(j && j.prompt_eval_duration), loadDurationNs: num(j && j.load_duration), totalDurationNs: num(j && j.total_duration) } };
   } catch (e: any) { return { ok: false, ms: Date.now() - t0, reason: String((e && e.message) || e).slice(0, 300) }; }
+}
+
+/* =========================== V17.6 run conditions: ADAPT-1 (per-call timeout) + HOST-1 (idle host) =========================== */
+/* Reason (PROBE 3): the S3 design call hit a FIXED 300 s timeout while a concurrent full test run loaded the host — the
+ * timeout was not derived from the model's measured speed, and the run started on a busy host (coordination confound). */
+const WARMUP_PROMPT = "Reply with the single word: ready";   // TEMPLATE plumbing (denylist-clean, tested)
+/* measureRate(g) — tokens/s from Ollama's own counters of ONE warm-up call (eval_count / eval_duration; prompt_eval_count /
+ * prompt_eval_duration). load_duration (model load) is excluded by construction. Missing / non-positive ⇒ null (not measured).
+ * A tiny prompt under-states prompt-eval throughput (batching) ⇒ the derived estimate errs long (conservative). */
+function measureRate(g: any): any {
+  const t = g && g.ok && g.timings ? g.timings : null;
+  if (!t) return null;
+  const gen = t.evalCount && t.evalDurationNs ? t.evalCount / (t.evalDurationNs / 1e9) : null;
+  if (!(typeof gen === "number" && Number.isFinite(gen) && gen > 0)) return null;
+  const pr = t.promptEvalCount && t.promptEvalDurationNs ? t.promptEvalCount / (t.promptEvalDurationNs / 1e9) : null;
+  const promptOk = typeof pr === "number" && Number.isFinite(pr) && pr > 0;
+  return Object.freeze({ genTokPerS: gen, promptTokPerS: promptOk ? pr : gen, promptRateSource: promptOk ? "prompt_eval_count/prompt_eval_duration" : "FALLBACK gen rate (prompt counters absent)", wallMs: g.ms, loadDurationNs: t.loadDurationNs, timings: t });
+}
+const ADAPT_RULE = "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)";
+/* adaptiveTimeout({ promptChars, numPredict, rate, policy }) -> { estimateMs, timeoutMs, clamped, predictedOverCap, rule } */
+function adaptiveTimeout(x: any): any {
+  const p = x.policy, r = x.rate;
+  if (!r) return Object.freeze({ estimateMs: null, timeoutMs: null, clamped: null, predictedOverCap: null, rule: ADAPT_RULE, reason: "rate not measured" });
+  const promptTokens = Math.ceil(Number(x.promptChars) / p.charsPerToken);
+  const estimateMs = Math.ceil(1000 * (promptTokens / r.promptTokPerS + Number(x.numPredict) / r.genTokPerS));
+  const raw = Math.ceil(p.safetyFactor * estimateMs) + p.overheadMs;
+  const timeoutMs = Math.min(p.maxMs, Math.max(p.minMs, raw));
+  return Object.freeze({ promptTokensEstimate: promptTokens, estimateMs, timeoutMs, clamped: timeoutMs !== raw, predictedOverCap: estimateMs > p.maxMs, rule: ADAPT_RULE });
+}
+const HOST_RULE = "HOST-1: loadavg-1m and nproc are recorded before EVERY model call (warm-up included); the run refuses to START (NOT_MEASURED, no model call) when loadavg-1m > nproc×idleFactor. A later reading above the threshold is recorded (hostLoadAboveThreshold) but does not stop the run: the model server's own inference raises loadavg-1m, so a mid-run reading cannot separate ODG's load from a concurrent one";
+/* hostLoad(idleFactor, probe?) — probe() -> { loadavg:[1m,5m,15m], nproc } (injectable; default os) */
+function hostLoad(idleFactor: number, probe?: any): any {
+  const os = require("os");
+  const s = probe ? probe() : { loadavg: os.loadavg(), nproc: typeof os.availableParallelism === "function" ? os.availableParallelism() : os.cpus().length };
+  const nproc = Number(s.nproc) || 1; const la = arr(s.loadavg).map(Number);
+  const threshold = nproc * idleFactor;
+  return Object.freeze({ at: new Date().toISOString(), load1: la[0], load5: la[1], load15: la[2], nproc, idleFactor, threshold, aboveThreshold: !(la[0] <= threshold) });
+}
+
+/* =========================== V17.6 DIGEST-1: bounded lesson digest =========================== */
+/* Reason (PROBE 3): every CONSOLIDATED lesson's full hint was injected verbatim (4 lessons, ~750 chars) — the prompt grows
+ * with every run. The digest is deterministic: newest-first (lesson.at = its run's startedAt; ties id asc), dedup by
+ * (kind, case kinds) keeping the newest, each line ≤ maxLineChars (cut + "…"), the WHOLE segment ≤ budgetChars; lessons
+ * that do not fit are listed as omitted (ids recorded — never silently dropped). */
+const LESSON_DIGEST = Object.freeze({ budgetChars: 600, maxLineChars: 200, rule: "DIGEST-1: newest-first (run startedAt desc, id asc), dedup by (kind, caseKinds) keeping the newest, each line ≤ maxLineChars, whole segment ≤ budgetChars; non-fitting lessons recorded as omitted" });
+function lessonDigest(lessons: any[], budget: any = LESSON_DIGEST): any {
+  const sorted = [...arr(lessons)].sort((a, b) => (String(b.at || "") < String(a.at || "") ? -1 : String(b.at || "") > String(a.at || "") ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  const seen = new Set<string>(); const unique: any[] = []; const deduped: string[] = [];
+  for (const l of sorted) { const k = l.kind + "|" + arr(l.caseKinds).slice().sort().join(","); if (seen.has(k)) { deduped.push(l.id); continue; } seen.add(k); unique.push(l); }
+  const head = (n: number) => `Lessons from ODG's previous native builds (newest first, ${n} of ${unique.length}):`;
+  const lines: string[] = []; const included: string[] = []; const omitted: string[] = [];
+  for (const l of unique) {
+    let h = String(l.hint); const room = budget.maxLineChars - 4;
+    if (h.length > room) h = h.slice(0, room - 1) + "…";
+    const line = "  - " + h;
+    const next = [head(included.length + 1), ...lines, line].join("\n");
+    if (omitted.length === 0 && next.length <= budget.budgetChars) { lines.push(line); included.push(l.id); } else omitted.push(l.id);
+  }
+  const text = included.length ? [head(included.length), ...lines].join("\n") : "";
+  return Object.freeze({ rule: budget.rule, budgetChars: budget.budgetChars, chars: text.length, text, included, omitted, deduped, considered: arr(lessons).length });
 }
 
 /* =========================== S1 PROBLEM (PROB-1) =========================== */
@@ -265,7 +339,8 @@ function evidenceBlocks(problem: any, currentSource: string, impact: any, lesson
     E("Wrong outputs (executed):\n" + shown.map((c: any) => renderCase(c, true)).join("\n"), "PROB-1 shown failing cases (expected = in-repo reference, executed)"),
     E(`Dependents of this module: ${impact.consumers.length ? impact.consumers.join(", ") : "none"}; tests that load it: ${[...impact.impactedTestsImpactOf, ...impact.impactedTestsTs].join(", ") || "none"}.`, "IMP-1/IMP-2"),
   ];
-  if (lessons.length) segs.push(E("Lessons from ODG's previous native builds:\n" + lessons.map((l: any) => "  - " + l.hint).join("\n"), "LESSON-1 (memory-taxonomy CONSOLIDATED records)"));
+  const dg = lessonDigest(lessons);
+  if (dg.text) segs.push(E(dg.text, "LESSON-1 (memory-taxonomy CONSOLIDATED records) via DIGEST-1 (bounded)"));
   return segs;
 }
 /* S3 design prompt */
@@ -385,13 +460,14 @@ function collectLessons(sources: any[]): any {
   for (const s of arr(sources)) {
     if (!isObj(s) || !isObj(s.record)) continue;
     const ls = Array.isArray(s.record.lessons) ? s.record.lessons : deriveLessons(s.record, s.provenance);
-    for (const l of ls) if (isObj(l)) all.push(l);
+    const at = isObj(s.record.run) && typeof s.record.run.startedAt === "string" ? s.record.run.startedAt : null;   // DIGEST-1 recency
+    for (const l of ls) if (isObj(l)) all.push({ l, at });
   }
-  const ok = new Set(MEM.retrieve(all, { family: "engineering", consolidation: "CONSOLIDATED" }).map((c: any) => c.id));
-  const byId = new Map<string, any>(); for (const l of all) if (ok.has(l.id) && !byId.has(l.id)) byId.set(l.id, l);
-  const lessons = [...byId.values()].sort((a, b) => (a.id < b.id ? -1 : 1)).map((l) => ({ id: l.id, provenance: l.provenance, kind: l.value.kind, hint: String(l.value.hint), caseKinds: arr(l.value.caseKinds) }));
+  const ok = new Set(MEM.retrieve(all.map((x) => x.l), { family: "engineering", consolidation: "CONSOLIDATED" }).map((c: any) => c.id));
+  const byId = new Map<string, any>(); for (const x of all) if (ok.has(x.l.id) && !byId.has(x.l.id)) byId.set(x.l.id, x);
+  const lessons = [...byId.values()].sort((a, b) => (a.l.id < b.l.id ? -1 : 1)).map(({ l, at }) => ({ id: l.id, provenance: l.provenance, at, kind: l.value.kind, hint: String(l.value.hint), caseKinds: arr(l.value.caseKinds) }));
   const kinds = [...new Set(lessons.flatMap((l) => l.caseKinds))].sort();
-  return Object.freeze({ rule: "LESSON-1: memory-taxonomy.retrieve(family engineering, CONSOLIDATED) over prior run records' lessons", considered: all.length, lessons, reusedIds: lessons.map((l) => l.id), kinds });
+  return Object.freeze({ rule: "LESSON-1: memory-taxonomy.retrieve(family engineering, CONSOLIDATED) over prior run records' lessons", considered: all.length, lessons, reusedIds: lessons.map((l) => l.id), kinds, digest: lessonDigest(lessons) });
 }
 
 /* =========================== AUTHORSHIP LEDGER =========================== */
@@ -420,6 +496,8 @@ const NATIVE_DESIGN_PIPELINE_CONTRACT = Object.freeze({
     "design selection is mechanical (SEL-1) over ODG-measured scores; model claims never lower a measured impact",
     "model code runs only in the bwrap sandbox; the host executes only repo code (reference + integrated module)",
     "lessons are memory-taxonomy records in the run records (no new store); only CONSOLIDATED (executed) lessons are reused",
+    "lessons enter prompts only through DIGEST-1 (deterministic, bounded to LESSON_DIGEST.budgetChars; omitted ids recorded)",
+    "per-call timeouts follow ADAPT-1 from a measured warm-up rate (bounded by the declared caps); a run never starts on a busy host (HOST-1 ⇒ NOT_MEASURED)",
   ]),
 });
 
@@ -429,5 +507,6 @@ module.exports = {
   ALGORITHM_HINT_DENYLIST, renderPrompt, denylistHits, designPromptSegments, implementPromptSegments, parseDesigns,
   HARNESS_FILE, harnessSource, oracleRun, writeSetOk, scoreCandidate, selectDesign, SELECTION_RULE,
   deriveLessons, collectLessons, authorshipLedger, NATIVE_DESIGN_PIPELINE_CONTRACT, extractCode: GEN.extractCode,
+  WARMUP_PROMPT, measureRate, adaptiveTimeout, ADAPT_RULE, hostLoad, HOST_RULE, LESSON_DIGEST, lessonDigest,
 };
 export {};

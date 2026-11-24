@@ -48,7 +48,12 @@ const OUT = "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json";
 const NB1_RESULT = "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json";
 const LESSON_SOURCES = Object.freeze([NB1_RESULT, OUT]);   // committed run records whose lessons the next run reads
 const NATIVE_CLAIM = "a PASS means: from a problem DERIVED BY ODG RULES (executed failing cases vs the in-repo reference — no provider-written algorithm in any prompt), ODG's LOCAL MODEL proposed ≥2 designs, ODG selected one mechanically on sandbox-measured scores, the local model implemented it, and ODG tested/repaired/typechecked it. The INPUT corpus (ORC-2 literals), the prompt templates and the runner are provider-written";
-const BUDGETS = Object.freeze({ model: "qwen2.5-coder:7b", temperature: 0, seed: 42, numPredict: 900, designs: 3, minDesigns: 2, maxRepairPerRound: 3, maxRounds: 2, maxModelCalls: 12, wallMs: 1800000, perCallTimeoutMs: 300000 });
+/* V17.6 (PROBE 3 diagnosis): the fixed perCallTimeoutMs 300000 became ADAPT-1 (derived from a measured warm-up rate,
+ * bounded by perCallTimeout.minMs/maxMs — maxMs = the former fixed cap, so no cap is loosened); + one warm-up call with
+ * its own cap (never consumes maxModelCalls); + HOST-1 idle-host start precondition (hostIdleFactor × nproc). */
+const BUDGETS = Object.freeze({ model: "qwen2.5-coder:7b", temperature: 0, seed: 42, numPredict: 900, designs: 3, minDesigns: 2, maxRepairPerRound: 3, maxRounds: 2, maxModelCalls: 12, wallMs: 1800000,
+  perCallTimeout: Object.freeze({ rule: "ADAPT-1", minMs: 60000, maxMs: 300000, safetyFactor: 3, overheadMs: 15000, charsPerToken: 3 }),
+  maxWarmupCalls: 1, warmupNumPredict: 16, warmupTimeoutMs: 180000, hostIdleFactor: 0.75, lessonDigestChars: PIPE.LESSON_DIGEST.budgetChars });
 const sha256 = PIPE.sha256;
 
 function readJson(p: string): any { try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return null; } }
@@ -104,6 +109,20 @@ async function runNativeDesign(opts: any): Promise<any> {
   base.impact = impact;
 
   const guard = PIPE.makeGuard(opts.transport, BUDGETS);
+  const network = () => ({ modelCalls: guard.st.modelCalls, warmupCalls: guard.st.warmupCalls, refused: guard.st.refused, capHit: guard.st.capHit, providerCalls: 0 });
+  // HOST-1: a reading before EVERY model call; the run refuses to START on a busy host (NOT_MEASURED, not FAIL)
+  const hostReadings: any[] = [];
+  const readHost = (before: string) => { const h = { before, ...PIPE.hostLoad(BUDGETS.hostIdleFactor, opts.loadProbe) }; hostReadings.push(h); return h; };
+  base.host = { rule: PIPE.HOST_RULE, readings: hostReadings };
+  const h0 = readHost("W0 warm-up");
+  if (h0.aboveThreshold) return finish({ verdict: "NOT_MEASURED", reason: `HOST-1: host busy at start — loadavg-1m ${h0.load1} > nproc ${h0.nproc} × ${BUDGETS.hostIdleFactor} = ${h0.threshold}; no model call made`, network: network() });
+  // ADAPT-1: one warm-up call on the same model measures tokens/s; every later timeout is derived from it
+  const wg = await PIPE.ollamaGenerate(guard.fetchImpl, { model: BUDGETS.model, prompt: PIPE.WARMUP_PROMPT, timeoutMs: BUDGETS.warmupTimeoutMs, warmup: true });
+  const rate = PIPE.measureRate(wg);
+  base.warmup = { prompt: PIPE.WARMUP_PROMPT, promptSha256: sha256(PIPE.WARMUP_PROMPT), denylistHits: PIPE.denylistHits([{ kind: "TEMPLATE", text: PIPE.WARMUP_PROMPT }]).length, ok: wg.ok, ms: wg.ms, reason: wg.reason || null, timings: wg.timings || null, rate, timeoutMs: BUDGETS.warmupTimeoutMs };
+  if (guard.st.refused.length) return finish({ verdict: "NOT_MEASURED", reason: "non-loopback request refused", network: network() });
+  if (!rate) return finish({ verdict: "NOT_MEASURED", reason: "ADAPT-1: the warm-up call did not yield a measurable rate (" + (wg.ok ? "Ollama eval counters absent" : wg.reason) + ") — no per-call timeout can be derived", network: network() });
+  const halt: any = { reason: null };
   const prompts: any[] = []; const generations: any[] = [];
   const ask = async (stage: string, segments: any[]): Promise<any> => {
     const prompt = PIPE.renderPrompt(segments);
@@ -111,8 +130,12 @@ async function runNativeDesign(opts: any): Promise<any> {
     const rec: any = { i: prompts.length + 1, stage, promptSha256: sha256(prompt), promptChars: prompt.length, segments: segments.map((s: any) => ({ kind: s.kind, source: s.source || null, sha256: sha256(s.text) })), denylistHits: hits, prompt };
     prompts.push(rec);
     if (hits.length) { rec.refused = "TEMPLATE text matches ALGORITHM_HINT_DENYLIST — prompt not sent (fail-closed)"; return { ok: false, reason: rec.refused }; }
-    const g = await PIPE.ollamaGenerate(guard.fetchImpl, { model: BUDGETS.model, prompt, timeoutMs: BUDGETS.perCallTimeoutMs });
-    rec.ok = g.ok; rec.ms = g.ms; rec.evalCount = g.evalCount || null; rec.reason = g.reason || null; rec.responseSha256 = g.ok ? sha256(g.response) : null;
+    if (halt.reason) { rec.refused = "run halted: " + halt.reason; return { ok: false, reason: rec.refused }; }
+    rec.hostLoad = readHost(stage);
+    rec.timeout = PIPE.adaptiveTimeout({ promptChars: prompt.length, numPredict: BUDGETS.numPredict, rate, policy: BUDGETS.perCallTimeout });
+    if (rec.timeout.predictedOverCap) { halt.reason = `ADAPT-1: predicted duration ${rec.timeout.estimateMs} ms of "${stage}" exceeds the cap ${BUDGETS.perCallTimeout.maxMs} ms — call not sent`; rec.refused = halt.reason; return { ok: false, reason: rec.refused }; }
+    const g = await PIPE.ollamaGenerate(guard.fetchImpl, { model: BUDGETS.model, prompt, timeoutMs: rec.timeout.timeoutMs });
+    rec.ok = g.ok; rec.ms = g.ms; rec.evalCount = g.evalCount || null; rec.timings = g.timings || null; rec.reason = g.reason || null; rec.responseSha256 = g.ok ? sha256(g.response) : null;
     return g;
   };
   const harness = PIPE.harnessSource(item.sandboxFile, item.exportName, problem.cases.map((c: any) => c.src));
@@ -128,20 +151,21 @@ async function runNativeDesign(opts: any): Promise<any> {
     rec.content = t.syntaxErrors.length ? tsSrc : t.js; rec.sandboxContentSha256 = sha256(rec.content);
     return rec;
   };
-  const network = () => ({ modelCalls: guard.st.modelCalls, refused: guard.st.refused, capHit: guard.st.capHit, providerCalls: 0 });
   const strip = (gs: any[]) => gs.map(({ content, ...rest }: any) => rest);
 
   // S3 DESIGN
   const dg = await ask("S3 design", PIPE.designPromptSegments(problem, item.currentSource, impact, lessonsIn.lessons, BUDGETS.designs));
   const designs = dg.ok ? PIPE.parseDesigns(dg.response, BUDGETS.designs) : [];
   const designRecord = { by: "LOCAL_MODEL", model: BUDGETS.model, count: designs.length, designs, rawSha256: dg.ok ? sha256(dg.response) : null, raw: dg.ok ? String(dg.response).slice(0, 4000) : null };
-  const nm = () => guard.st.refused.length > 0;
-  if (nm()) return finish({ verdict: "NOT_MEASURED", reason: "non-loopback request refused", design: designRecord, prompts, generations: strip(generations), network: network() });
+  const nm = () => guard.st.refused.length > 0 || !!halt.reason;
+  const nmReason = () => halt.reason || "non-loopback request refused";
+  if (nm()) return finish({ verdict: "NOT_MEASURED", reason: nmReason(), design: designRecord, prompts, generations: strip(generations), network: network() });
   if (designs.length < BUDGETS.minDesigns) return finish({ verdict: "FAIL", reason: `S3: the local model proposed ${designs.length} parseable design(s) (< ${BUDGETS.minDesigns})`, design: designRecord, prompts, generations: strip(generations), network: network() });
 
   // S4 SELECT — implement each design once, measure, select (SEL-1)
   const scores: any[] = []; const candidates: any = {};
   for (const d of designs) {
+    if (halt.reason) break;
     const gen = await implement(`S4 implement ${d.id}`, d, null);
     const oracle = gen ? PIPE.oracleRun({ [item.sandboxFile]: gen.content, [PIPE.HARNESS_FILE]: harness }, problem, opts.sandboxRunner) : null;
     if (oracle && !oracle.executed) return finish({ verdict: "NOT_MEASURED", reason: "sandbox did not execute (NOT_RUN): " + oracle.reason, design: designRecord, prompts, generations: strip(generations), network: network() });
@@ -152,7 +176,7 @@ async function runNativeDesign(opts: any): Promise<any> {
   }
   const sel = PIPE.selectDesign(scores);
   const selection = { rule: sel.rule, ranking: sel.ranking, chosen: sel.chosen, scores };
-  if (nm()) return finish({ verdict: "NOT_MEASURED", reason: "non-loopback request refused", design: designRecord, selection, prompts, generations: strip(generations), network: network() });
+  if (nm()) return finish({ verdict: "NOT_MEASURED", reason: nmReason(), design: designRecord, selection, prompts, generations: strip(generations), network: network() });
   if (!sel.chosen) return finish({ verdict: "FAIL", reason: "S4: no design produced a write-set-conforming, sandbox-measured implementation", design: designRecord, selection, prompts, generations: strip(generations), network: network() });
   const chosenDesign = designs.find((d: any) => d.id === sel.chosen);
 
@@ -171,7 +195,7 @@ async function runNativeDesign(opts: any): Promise<any> {
   };
   const rounds: any[] = []; let accepted: any = null; let typeHint: any = null; let firstUse = true;
   const current: any = { gen: null };   // the last generation fed to the sandbox (its source is shown on repair)
-  for (let round = 1; round <= BUDGETS.maxRounds && !accepted; round++) {
+  for (let round = 1; round <= BUDGETS.maxRounds && !accepted && !halt.reason; round++) {
     const generateFile = async (fileSpec: any): Promise<any> => {
       if (fileSpec.path === PIPE.HARNESS_FILE) return { ok: true, content: harness };
       if (firstUse && !fileSpec.buildError && !fileSpec.verifyError) { firstUse = false; current.gen = candidates[sel.chosen]; return { ok: true, content: current.gen.content }; }   // S4's implementation of the chosen design (no new call)
@@ -197,10 +221,11 @@ async function runNativeDesign(opts: any): Promise<any> {
   const allHits = prompts.reduce((a: number, p: any) => a + p.denylistHits.length, 0);
   const ledger = PIPE.authorshipLedger({ denylistHits: Array.from({ length: allHits }), designsBy: "LOCAL_MODEL", model: BUDGETS.model, designCount: designs.length, chosen: sel.chosen, implementedBy: "LOCAL_MODEL", generation: accepted ? accepted.i : null, repairs, integratedBy: null });
   const provenance = { actor: "ODG", executionClass: NE.EXEC.LOCAL, providerEditedGeneratedCode: false, providerCalls: 0 };
+  base.host.aboveThresholdDuringRun = hostReadings.filter((h: any) => h.aboveThreshold).length;   // context only (HOST_RULE); never re-grades the verdict
   const common: any = { design: designRecord, selection, rounds, repairTrace, prompts, generations: strip(generations), network: network(), provenance, authorship: ledger };
   const notMeasured = nm() || rounds.some((r: any) => r.executionStatus !== "EXECUTED" || r.executionMode !== "SANDBOX");
   const withLessons = (rec: any) => ({ ...rec, lessons: PIPE.deriveLessons(rec, opts.lessonProvenance || OUT) });
-  if (notMeasured) return withLessons(finish({ verdict: "NOT_MEASURED", reason: nm() ? "non-loopback request refused" : "sandbox did not execute (NOT_RUN) — no verdict", ...common }));
+  if (notMeasured) return withLessons(finish({ verdict: "NOT_MEASURED", reason: nm() ? nmReason() : "sandbox did not execute (NOT_RUN) — no verdict", ...common }));
   if (!accepted) return withLessons(finish({ verdict: "FAIL", reason: `S5: the chosen design did not pass the held-out oracle + strict typecheck within ${BUDGETS.maxRounds} rounds × (1 + ${BUDGETS.maxRepairPerRound} repairs)${guard.st.capHit ? " (cap " + guard.st.capHit + ")" : ""}`, ...common }));
   const testSrc = oracleTestSource(item, problem);
   const diff = PIPE.replaceFileDiff(item.targetPath, item.currentSource, accepted.tsSource) + PIPE.newFileDiff(item.testPath, testSrc);
@@ -242,7 +267,9 @@ function contractFor(root: string): any {
         "AC5 authorship ledger + provenance: per-stage authorship, every prompt sha256 + its segment kinds + denylist hits (0), every generation sha256, providerCalls 0",
         "AC6 learning: lessons read before the run (memory-taxonomy CONSOLIDATED) and lessons derived from this run are both in the record",
       ],
-      stop_conditions: ["model call cap", "wall cap", "sandbox unavailable (NOT_RUN ⇒ NOT_MEASURED)", "any non-loopback request (refused ⇒ NOT_MEASURED)", "problem drift (AC1)", "a TEMPLATE denylist hit (prompt not sent)"],
+      stop_conditions: ["model call cap", "wall cap", "sandbox unavailable (NOT_RUN ⇒ NOT_MEASURED)", "any non-loopback request (refused ⇒ NOT_MEASURED)", "problem drift (AC1)", "a TEMPLATE denylist hit (prompt not sent)",
+        `HOST-1 busy host at start: loadavg-1m > nproc × ${BUDGETS.hostIdleFactor} before the first model call ⇒ NOT_MEASURED (no model call)`,
+        "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent ⇒ NOT_MEASURED"],
       rollback: "nothing is written into any checkout; discard the record",
       evidence_required: [OUT],
       budgets: BUDGETS,
@@ -251,8 +278,8 @@ function contractFor(root: string): any {
         baseline: `the integrated helper (NB1 PASS) fails ${p.failing.length}/${p.cases.length} PROB-1 cases; a provider-run PROBE of this runner (scratch, live Ollama) is context only, never the native result`,
         dataset: { corpusRule: "ORC-2", corpusSha256: item.corpusSha256, cases: p.cases.length, failing: p.failing.length, shown: p.shown.length, heldOut: p.heldOut.length, excluded: p.excluded.length, referenceSha256: item.reference.sourceSha256 },
         decisionRule: "outcome = runner verdict recorded verbatim (PASS / FAIL / NOT_MEASURED); one dispatch; no re-run to obtain a PASS",
-        thresholds: { PASS: "≥2 designs measured AND all PROB-1 cases pass in the sandbox AND 0 strict typecheck diagnostics AND git apply --check OK", FAIL: "<2 designs, or budgets exhausted without PASS", NOT_MEASURED: "no sandbox verdict / network refusal / problem drift" },
-        caps: { maxRunWallMs: BUDGETS.wallMs + BUDGETS.perCallTimeoutMs, maxModelCalls: BUDGETS.maxModelCalls, basis: "no new model call after wallMs; one in-flight call may last perCallTimeoutMs" },
+        thresholds: { PASS: "≥2 designs measured AND all PROB-1 cases pass in the sandbox AND 0 strict typecheck diagnostics AND git apply --check OK", FAIL: "<2 designs, or budgets exhausted without PASS", NOT_MEASURED: "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured or predicted call over cap" },
+        caps: { maxRunWallMs: BUDGETS.wallMs + BUDGETS.perCallTimeout.maxMs, maxModelCalls: BUDGETS.maxModelCalls, maxWarmupCalls: BUDGETS.maxWarmupCalls, perCallTimeoutMs: { min: BUDGETS.perCallTimeout.minMs, max: BUDGETS.perCallTimeout.maxMs }, basis: "no new model call after wallMs; one in-flight call may last at most perCallTimeout.maxMs; per-call timeout = ADAPT-1 from one warm-up call (own cap, not counted in maxModelCalls); lessons enter prompts via DIGEST-1 (≤ lessonDigestChars)" },
         honestLimits: "ORC-2 input literals, prompt templates and the runner are provider-written; the reference semantics are the in-repo canon() (REF-1), not an independent specification; a PASS means ODG's local model designed+implemented a repair of a defect ODG derived — not that ODG chose the corpus",
       },
     },
@@ -292,34 +319,42 @@ function loopbackTransport(): any { return require("./odg-v161-scenario-f-run.js
 const FIX_WRONG = "function canonicalJson(value: any): string {\n  if (Array.isArray(value)) return '[' + value.map((v: any) => v === undefined ? 'null' : canonicalJson(v)).join(',') + ']';\n  if (value !== null && typeof value === 'object') return '{' + Object.keys(value).sort().map((k: string) => JSON.stringify(k) + ':' + canonicalJson(value[k])).join(',') + '}';\n  return JSON.stringify(value);\n}\nmodule.exports = { canonicalJson };\nexport {};\n";
 const FIX_RIGHT = "function canonicalJson(value: any): string {\n  if (value === undefined) return 'null';\n  if (Array.isArray(value)) return '[' + value.map(canonicalJson).join(',') + ']';\n  if (value !== null && typeof value === 'object') return '{' + Object.keys(value).sort().filter((k: string) => value[k] !== undefined).map((k: string) => JSON.stringify(k) + ':' + canonicalJson(value[k])).join(',') + '}';\n  return JSON.stringify(value);\n}\nmodule.exports = { canonicalJson };\nexport {};\n";
 const FIX_DESIGNS = JSON.stringify([{ summary: "Design alpha: handle arrays only", steps: ["a"], changesExportedApi: false, files: ["runtime/core/odg-canonical-json.ts"] }, { summary: "Design beta: handle every position", steps: ["b"], changesExportedApi: false, files: ["runtime/core/odg-canonical-json.ts"] }]);
-/* makeFake(plan) — plan: { designs?: string, impl: { [summarySubstring]: [answers in order] }, repair?: string } */
+/* makeFake(plan) — plan: { designs?: string, impl: { [summarySubstring]: [answers in order] }, repair?: string,
+ *   timings?: Ollama counters returned on EVERY answer (default: 32 tok/s generation, 200 tok/s prompt eval), noTimings?: true }.
+ * The warm-up prompt is answered "ready" and recorded in `warmups` (not in `prompts`). */
+const FAKE_TIMINGS = Object.freeze({ eval_count: 16, eval_duration: 5e8, prompt_eval_count: 10, prompt_eval_duration: 5e7, load_duration: 1e6, total_duration: 6e8 });
+const IDLE = () => ({ loadavg: [0.1, 0.1, 0.1], nproc: 8 });   // test fixture: an idle 8-core host
 function makeFake(plan: any): any {
-  const seen: string[] = []; const prompts: string[] = []; const used: any = {};
+  const seen: string[] = []; const prompts: string[] = []; const warmups: any[] = []; const used: any = {};
+  const timings = plan.noTimings ? {} : (plan.timings || FAKE_TIMINGS);
   const fake = async (url: string, init: any) => {
-    seen.push(url); const b = JSON.parse(init.body); prompts.push(b.prompt);
+    seen.push(url); const b = JSON.parse(init.body);
+    if (b.prompt === PIPE.WARMUP_PROMPT) { warmups.push(b); return { ok: true, json: async () => ({ model: b.model, response: "ready", ...timings }) }; }
+    prompts.push(b.prompt);
     let resp = "";
     if (/Task: propose/.test(b.prompt)) resp = plan.designs !== undefined ? plan.designs : FIX_DESIGNS;
     else if (/previous attempt/.test(b.prompt)) resp = plan.repair || FIX_RIGHT;
     else { const k = Object.keys(plan.impl).find((s) => b.prompt.includes(s)); const n = used[k as string] = (used[k as string] || 0) + 1; const list = k ? plan.impl[k] : [FIX_WRONG]; resp = "```ts\n" + list[Math.min(n, list.length) - 1] + "```"; }
-    return { ok: true, json: async () => ({ model: b.model, eval_count: 1, response: resp }) };
+    return { ok: true, json: async () => ({ model: b.model, eval_count: 1, ...timings, response: resp }) };
   };
-  return { fake, seen, prompts };
+  return { fake, seen, prompts, warmups };
 }
 
 async function selftest(): Promise<number> {
   let f = 0; const check = (n: string, c: boolean) => { process.stdout.write((c ? "ok" : "NOT OK") + " - " + n + "\n"); if (!c) f++; };
   const probe = NBS.probeSandbox();
   const F = makeFake({ impl: { "Design alpha": [FIX_WRONG], "Design beta": [FIX_RIGHT] } });
-  const r = await runNativeDesign({ root: ROOT, label: "SELFTEST", transport: F.fake });
+  const r = await runNativeDesign({ root: ROOT, label: "SELFTEST", transport: F.fake, loadProbe: IDLE });
   if (!r.problem || !r.problem.defect) { process.stdout.write("note - the real tree no longer has the defect (NB2 integrated): selftest checks NOT_MEASURED\n"); check("integrated ⇒ NOT_MEASURED (nothing to design)", r.verdict === "NOT_MEASURED"); return f; }
   if (probe && probe.ok === true) {
     check("S3: 2 designs parsed; S4: SEL-1 chooses the design whose implementation passes the oracle (D2)", r.design.count === 2 && r.selection.chosen === "D2" && r.selection.scores.find((s: any) => s.design === "D1").oraclePassed < r.selection.scores.find((s: any) => s.design === "D2").oraclePassed);
     check("S5: PASS with the S4 implementation reused (3 model calls: 1 design + 2 implementations), 0 repairs", r.verdict === "PASS" && r.network.modelCalls === 3 && r.rounds[0].repairs === 0);
+    check("ADAPT-1/HOST-1: 1 warm-up call (own cap, not in modelCalls) measured a rate; every sent prompt has a host reading + a derived timeout within the caps", r.network.warmupCalls === 1 && !!r.warmup.rate && r.prompts.every((p: any) => p.hostLoad && p.timeout && p.timeout.timeoutMs >= BUDGETS.perCallTimeout.minMs && p.timeout.timeoutMs <= BUDGETS.perCallTimeout.maxMs));
     check("diff modifies the helper + adds the ODG-rules test, applies", r.patch && /a\/runtime\/core\/odg-canonical-json\.ts/.test(r.patch.diff) && /b\/runtime\/core\/odg-canonical-json-extended\.test\.ts/.test(r.patch.diff) && r.patch.gitApplyCheck.ok === true);
     check("authorship: problem ODG_RULES (0 denylist hits), design/implementation LOCAL_MODEL, selection ODG_RULES, corpus PROVIDER", r.authorship.problem.by === "ODG_RULES" && r.authorship.problem.providerAlgorithmTextInPrompts === false && r.authorship.design.by === "LOCAL_MODEL" && r.authorship.implementation.by === "LOCAL_MODEL" && r.authorship.selection.by === "ODG_RULES" && r.authorship.corpus.by === "PROVIDER");
     check("only the loopback URL was requested", F.seen.every((u: string) => u === "http://127.0.0.1:11434/api/generate"));
   } else { process.stdout.write("SKIP - sandbox unavailable (" + String(probe && probe.reason) + ")\n"); check("no sandbox ⇒ NOT_MEASURED", r.verdict === "NOT_MEASURED"); }
-  const one = await runNativeDesign({ root: ROOT, label: "SELFTEST", transport: makeFake({ designs: JSON.stringify([{ summary: "only one" }]), impl: {} }).fake });
+  const one = await runNativeDesign({ root: ROOT, label: "SELFTEST", transport: makeFake({ designs: JSON.stringify([{ summary: "only one" }]), impl: {} }).fake, loadProbe: IDLE });
   check("fewer than 2 designs ⇒ FAIL (no implementation call)", one.verdict === "FAIL" && /S3/.test(one.reason) && one.network.modelCalls === 1);
   return f;
 }
@@ -348,6 +383,6 @@ async function main(argv: string[]): Promise<number> {
   return r.verdict === "PASS" ? 0 : 1;
 }
 
-module.exports = { runNativeDesign, contractFor, gate, readContract, realOutside, oracleTestSource, lessonSourcesFor, makeFake, FIX_WRONG, FIX_RIGHT, BUDGETS, SELF, OUT, CONTRACTS, INSPECTION, SCENARIO, STEP, NATIVE_CLAIM, LESSON_SOURCES };
+module.exports = { runNativeDesign, contractFor, gate, readContract, realOutside, oracleTestSource, lessonSourcesFor, makeFake, IDLE, FAKE_TIMINGS, FIX_WRONG, FIX_RIGHT, BUDGETS, SELF, OUT, CONTRACTS, INSPECTION, SCENARIO, STEP, NATIVE_CLAIM, LESSON_SOURCES };
 if (require.main === module) main(process.argv.slice(2)).then((c) => process.exit(c), (e) => { process.stdout.write("ERROR " + String((e && e.stack) || e) + "\n"); process.exit(1); });
 export {};
