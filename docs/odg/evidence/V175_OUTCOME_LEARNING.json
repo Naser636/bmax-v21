@@ -1,0 +1,1338 @@
+{
+  "//": "V17.5 PRIORITY 4 — outcome learning: prediction at selection time vs realized grade for G, H, G2, J2. READ-ONLY report; NOT fed into scoring. Recompute: npx tsx runtime/bin/odg-v175-outcome-learning.ts --check",
+  "schema": "ODG_V175_OUTCOME_LEARNING/1",
+  "feedsScoring": false,
+  "feedsScoringNote": "NOT fed into the selector — weights, criteria, thresholds and register scoring are unchanged; consumption needs a separate, independently-inspected change",
+  "constants": {
+    "gradeUtility": {
+      "PASS": 1,
+      "PARTIAL": 0.5,
+      "FAIL": 0
+    },
+    "favourableHigh": 0.75,
+    "minSupport": 2,
+    "note": "provider-declared, report-only; not selector parameters"
+  },
+  "n": 4,
+  "items": [
+    {
+      "id": "G",
+      "predicted": {
+        "selectionBasis": "REGISTER_SELECTED",
+        "registerCommit": "b994ca69c7f8",
+        "registerDecision": "TIE_EXPLAINED",
+        "evidenceScore": 0.35,
+        "uncertainty": 0.5,
+        "upperBound": 0.85,
+        "rank": 1,
+        "rankN": 37,
+        "uncertaintyMax": 0.5,
+        "criteriaMeasured": 5,
+        "criteriaNotMeasured": 5,
+        "criteria": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "AUT-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0.5
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "CAP-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0.5
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.3,
+            "rule": "CRC-1",
+            "direction": "LOWER_IS_BETTER",
+            "favourability": 0.7
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 1,
+            "rule": "EVD-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 1
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "MEASURED",
+            "value": 0.8,
+            "rule": "STR-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0.8
+          }
+        ],
+        "atRunHead": {
+          "commit": "83427f936423",
+          "decision": "TIE_EXPLAINED",
+          "selected": "H",
+          "itemEvidenceScore": 0.33,
+          "itemUncertainty": 0.5,
+          "itemRank": 2
+        },
+        "source": [
+          "git show b994ca69c7f8:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decision.ranking[id=G]",
+          "git show b994ca69c7f8:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=G].criteria",
+          "git log 0a14976dc835 -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting G)"
+        ]
+      },
+      "preRegistered": {
+        "contractSha256": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd",
+        "contractBoundToExperiment": true,
+        "question": "the V160 scenario-G mission question, unchanged: \"should ODG bound the size of delegated changes?\" (a size-budget DESIGN_PROPOSAL, never an enforced rule)",
+        "passRule": "Δ0 ≥ 0.05 AND CI95 lower bound of Δ0 > 0 AND Δ1 ≥ −0.02 (non-inferior to what ODG learns from its own data alone)",
+        "hypothesis": null,
+        "refutedIf": null,
+        "parent": null,
+        "parentStatus": null,
+        "verdict": "NOT_PASS_RULE_MET",
+        "source": [
+          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].WORK_ITEM_CONTRACT.preRegistration"
+        ]
+      },
+      "realized": {
+        "grade": "PARTIAL",
+        "gradeBasis": "VALIDATED (VALIDATE_CRITERIA record bound to the experiment sha)",
+        "validated": true,
+        "experimentOutcome": "PARTIAL",
+        "validatedGrade": "PARTIAL",
+        "utility": 0.5,
+        "utilityMapping": "report-only PASS=1 / PARTIAL=0.5 / FAIL=0 (provider-declared; not a selector quantity)",
+        "lesson": null,
+        "source": [
+          "docs/odg/evidence/V166_G_EXPERIMENT.json#outcome",
+          "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#scenarioGrade",
+          "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
+        ]
+      },
+      "dispatch": {
+        "by": "PROVIDER",
+        "note": "docs/odg/evidence/V166_G_EXPERIMENT.json#run has no GO dispatch (command run by the provider session)",
+        "source": [
+          "docs/odg/evidence/V166_G_EXPERIMENT.json#run"
+        ]
+      }
+    },
+    {
+      "id": "G2",
+      "predicted": {
+        "selectionBasis": "NOT_REGISTER_SELECTED",
+        "registerCommit": "dbdd618f4b5b",
+        "registerDecision": "SELECTED",
+        "evidenceScore": 0.06,
+        "uncertainty": 0.7,
+        "upperBound": 0.76,
+        "rank": 23,
+        "rankN": 37,
+        "uncertaintyMax": 0.5,
+        "criteriaMeasured": 3,
+        "criteriaNotMeasured": 7,
+        "criteria": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "AUT-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0.5
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.9,
+            "rule": "CRC-1",
+            "direction": "LOWER_IS_BETTER",
+            "favourability": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0,
+            "rule": "EVD-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          }
+        ],
+        "atRunHead": {
+          "commit": "dbdd618f4b5b",
+          "decision": "SELECTED",
+          "selected": "J",
+          "itemEvidenceScore": 0.06,
+          "itemUncertainty": 0.7,
+          "itemRank": 23
+        },
+        "source": [
+          "git show dbdd618f4b5b:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decision.ranking[id=G2]",
+          "git show dbdd618f4b5b:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=G2].criteria",
+          "git log 43aa42a4c881 -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting G2: none)"
+        ]
+      },
+      "preRegistered": {
+        "contractSha256": "94ca64cab00782649944b6dd3825ca6f1ed9f868943c89e0e86f7827d1d704a1",
+        "contractBoundToExperiment": true,
+        "question": "does using the knowledge item as a PRIOR on a locally fitted size threshold (knowledge-guided calibration) generalize better to a different era than the same local calibration without the knowledge?",
+        "passRule": "Δ_B > 0 AND CI95 lower bound of Δ_B > 0 AND Δ_0 ≥ 0.05 AND CI95 lower bound of Δ_0 > 0 AND mean rolling-origin Δ_B ≥ 0",
+        "hypothesis": null,
+        "refutedIf": null,
+        "parent": "G",
+        "parentStatus": "CLOSED_PARTIAL",
+        "verdict": "NOT_PASS_RULE_MET",
+        "source": [
+          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.preRegistration",
+          "git show dbdd618f4b5b:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=G].status"
+        ]
+      },
+      "realized": {
+        "grade": "PARTIAL",
+        "gradeBasis": "VALIDATED (VALIDATE_CRITERIA record bound to the experiment sha)",
+        "validated": true,
+        "experimentOutcome": "PARTIAL",
+        "validatedGrade": "PARTIAL",
+        "utility": 0.5,
+        "utilityMapping": "report-only PASS=1 / PARTIAL=0.5 / FAIL=0 (provider-declared; not a selector quantity)",
+        "lesson": "hypothesis only: on this backward era (n=168, 24 HIGH), the knowledge prior (1000-line heuristic, α 0.05/decade) does not move a locally fitted threshold — local calibration alone carries the signal; consistent with G's earlier lesson (G CLOSED_PARTIAL)",
+        "source": [
+          "docs/odg/evidence/V172_G2_EXPERIMENT.json#outcome",
+          "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json#scenarioGrade",
+          "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
+        ]
+      },
+      "dispatch": {
+        "by": "ODG_GO",
+        "runId": "b4d59263fc5efe7f",
+        "goStrategicDecision": "SELECTED",
+        "goStrategic": "J",
+        "goActionable": "G2",
+        "actionableResolvedBy": "OWNER_ORDER_DECISION docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json",
+        "dispatched": "G2",
+        "ownerRecord": "docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json",
+        "source": [
+          "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl#STEP[SELECT].decision.{decision,selected,actionableSelection}",
+          "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl#DISPATCHED"
+        ]
+      }
+    },
+    {
+      "id": "H",
+      "predicted": {
+        "selectionBasis": "REGISTER_SELECTED",
+        "registerCommit": "7c2fd7b2edbd",
+        "registerDecision": "TIE_EXPLAINED",
+        "evidenceScore": 0.32,
+        "uncertainty": 0.5,
+        "upperBound": 0.82,
+        "rank": 3,
+        "rankN": 37,
+        "uncertaintyMax": 0.5,
+        "criteriaMeasured": 5,
+        "criteriaNotMeasured": 5,
+        "criteria": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "AUT-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0.5
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "MEASURED",
+            "value": 0.75,
+            "rule": "CAP-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0.75
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.3,
+            "rule": "CRC-1",
+            "direction": "LOWER_IS_BETTER",
+            "favourability": 0.7
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.75,
+            "rule": "EVD-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0.75
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "STR-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0.5
+          }
+        ],
+        "atRunHead": {
+          "commit": "98eed7f23c20",
+          "decision": "DECISION_REQUIRED",
+          "selected": null,
+          "itemEvidenceScore": 0.26,
+          "itemUncertainty": 0.5,
+          "itemRank": 6
+        },
+        "source": [
+          "git show 7c2fd7b2edbd:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decision.ranking[id=H]",
+          "git show 7c2fd7b2edbd:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=H].criteria",
+          "git log 5d3cf7131936 -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting H)"
+        ]
+      },
+      "preRegistered": {
+        "contractSha256": "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2",
+        "contractBoundToExperiment": true,
+        "question": "does a DEV-calibrated risk score over odg-verification-level's own plan rank held-out PRs by rework (HIGH_ITERATION) better than the mechanism's current ordering?",
+        "passRule": "Δ0 ≥ 0.05 AND CI95 lower bound of Δ0 > 0 AND Δ1 > 0 AND CI95 lower bound of Δ1 > 0 AND AUC(H1) ≥ 0.55",
+        "hypothesis": null,
+        "refutedIf": null,
+        "parent": null,
+        "parentStatus": null,
+        "verdict": "NOT_PASS_RULE_MET",
+        "source": [
+          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.preRegistration"
+        ]
+      },
+      "realized": {
+        "grade": "FAIL",
+        "gradeBasis": "VALIDATED (VALIDATE_CRITERIA record bound to the experiment sha)",
+        "validated": true,
+        "experimentOutcome": "FAIL",
+        "validatedGrade": "FAIL",
+        "utility": 0,
+        "utilityMapping": "report-only PASS=1 / PARTIAL=0.5 / FAIL=0 (provider-declared; not a selector quantity)",
+        "lesson": "on this dataset, a DEV-fitted risk score (≈20 positives) does not transfer across the chronological split; the simple breadth signal (log1p changed files) is the strongest of the three; a future mechanism change should first address the DEV/HELDOUT shift (e.g. stratified or rolling-origin evaluation, pre-registered) — a hypothesis, not a finding",
+        "source": [
+          "docs/odg/evidence/V168_H_EXPERIMENT.json#outcome",
+          "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#scenarioGrade",
+          "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
+        ]
+      },
+      "dispatch": {
+        "by": "ODG_GO",
+        "runId": "86a7a424d358dce8",
+        "goStrategicDecision": "DECISION_REQUIRED",
+        "goStrategic": null,
+        "goActionable": "H",
+        "actionableResolvedBy": null,
+        "dispatched": "H",
+        "ownerRecord": null,
+        "source": [
+          "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl#STEP[SELECT].decision.{decision,selected,actionableSelection}",
+          "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl#DISPATCHED"
+        ]
+      }
+    },
+    {
+      "id": "J2",
+      "predicted": {
+        "selectionBasis": "NOT_REGISTER_SELECTED",
+        "registerCommit": "744fa48c7f9c",
+        "registerDecision": "SELECTED",
+        "evidenceScore": 0.06,
+        "uncertainty": 0.7,
+        "upperBound": 0.76,
+        "rank": 23,
+        "rankN": 36,
+        "uncertaintyMax": 0.5,
+        "criteriaMeasured": 3,
+        "criteriaNotMeasured": 7,
+        "criteria": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "AUT-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0.5
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.9,
+            "rule": "CRC-1",
+            "direction": "LOWER_IS_BETTER",
+            "favourability": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0,
+            "rule": "EVD-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "direction": "HIGHER_IS_BETTER",
+            "favourability": null
+          }
+        ],
+        "atRunHead": {
+          "commit": "744fa48c7f9c",
+          "decision": "SELECTED",
+          "selected": "J",
+          "itemEvidenceScore": 0.06,
+          "itemUncertainty": 0.7,
+          "itemRank": 23
+        },
+        "source": [
+          "git show 744fa48c7f9c:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decision.ranking[id=J2]",
+          "git show 744fa48c7f9c:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=J2].criteria",
+          "git log deaf0844ce56 -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting J2: none)"
+        ]
+      },
+      "preRegistered": {
+        "contractSha256": "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b",
+        "contractBoundToExperiment": true,
+        "question": "after ODG stops a failing default strategy on a real local task, does the decomposed + escalated-local-tier alternative (A2) turn held-out failures into whole-task passes?",
+        "passRule": "A2@42 passes on ≥ 2 tasks of E AND A2@42 passes on strictly more tasks of E than A0@7 AND C4 reproduced on all 4 replication tasks",
+        "hypothesis": "H1 (fixed now, decisive): with seed 42, A2 is accepted by the task's ORIGINAL whole-task test on at least 2 of the ELIGIBLE held-out tasks E (E = held-out tasks where A0@42 ended with an ODG stop and A2@42 is EXECUTED; |E| ≤ 7)",
+        "refutedIf": "A2@42 accepted on 0 or 1 task of E (with |E| ≥ 4)",
+        "parent": "J",
+        "parentStatus": "EXECUTED_PARTIAL",
+        "verdict": "NOT_PASS_RULE_MET",
+        "source": [
+          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration",
+          "git show 744fa48c7f9c:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=J].status"
+        ]
+      },
+      "realized": {
+        "grade": "FAIL",
+        "gradeBasis": "EXPERIMENT_OUTCOME_ONLY — VALIDATE_CRITERIA PENDING (pre-registered rule grade, not the independent validation)",
+        "validated": false,
+        "experimentOutcome": "FAIL",
+        "validatedGrade": null,
+        "utility": 0,
+        "utilityMapping": "report-only PASS=1 / PARTIAL=0.5 / FAIL=0 (provider-declared; not a selector quantity)",
+        "lesson": null,
+        "source": [
+          "docs/odg/evidence/V172_J2_EXPERIMENT.json#outcome",
+          "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json ABSENT ⇒ VALIDATE_CRITERIA PENDING"
+        ]
+      },
+      "dispatch": {
+        "by": "ODG_GO",
+        "runId": "3fb020e7be02f800",
+        "goStrategicDecision": "SELECTED",
+        "goStrategic": "J",
+        "goActionable": "J2",
+        "actionableResolvedBy": "OWNER_SELECTION_DECISION docs/odg/V174_OWNER_DECISION_SELECT_J2.json",
+        "dispatched": "J2",
+        "ownerRecord": "docs/odg/V174_OWNER_DECISION_SELECT_J2.json",
+        "source": [
+          "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl#STEP[SELECT].decision.{decision,selected,actionableSelection}",
+          "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl#DISPATCHED"
+        ]
+      }
+    }
+  ],
+  "perCriterion": [
+    {
+      "criterion": "autonomyBenefit",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "MEASURED",
+          "value": 0.5,
+          "favourability": 0.5,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "MEASURED",
+          "value": 0.5,
+          "favourability": 0.5,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "MEASURED",
+          "value": 0.5,
+          "favourability": 0.5,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "MEASURED",
+          "value": 0.5,
+          "favourability": 0.5,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 4,
+      "notMeasured": 0,
+      "predictedHigh": [],
+      "predictedHighThenNonPass": [],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 2,
+          "meanFavourability": 0.5
+        },
+        "FAIL": {
+          "n": 2,
+          "meanFavourability": 0.5
+        }
+      },
+      "reading": "measured on 4 item(s), never predicted-high (favourability < 0.75)"
+    },
+    {
+      "criterion": "blockerRepetitionReduction",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 0,
+      "notMeasured": 4,
+      "predictedHigh": [],
+      "predictedHighThenNonPass": [],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "FAIL": {
+          "n": 0,
+          "meanFavourability": null
+        }
+      },
+      "reading": "NOT_MEASURED on all 4 items — no calibration possible for this criterion"
+    },
+    {
+      "criterion": "capabilityGain",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "MEASURED",
+          "value": 0.5,
+          "favourability": 0.5,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "MEASURED",
+          "value": 0.75,
+          "favourability": 0.75,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 2,
+      "notMeasured": 2,
+      "predictedHigh": [
+        "H"
+      ],
+      "predictedHighThenNonPass": [
+        "H"
+      ],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 1,
+          "meanFavourability": 0.5
+        },
+        "FAIL": {
+          "n": 1,
+          "meanFavourability": 0.75
+        }
+      },
+      "reading": "predicted-high on 1 item(s) [H]; realized H=FAIL — below the 2-item support for a hypothesis"
+    },
+    {
+      "criterion": "costRiskComplexity",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "MEASURED",
+          "value": 0.3,
+          "favourability": 0.7,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "MEASURED",
+          "value": 0.9,
+          "favourability": 0.1,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "MEASURED",
+          "value": 0.3,
+          "favourability": 0.7,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "MEASURED",
+          "value": 0.9,
+          "favourability": 0.1,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 4,
+      "notMeasured": 0,
+      "predictedHigh": [],
+      "predictedHighThenNonPass": [],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 2,
+          "meanFavourability": 0.4
+        },
+        "FAIL": {
+          "n": 2,
+          "meanFavourability": 0.4
+        }
+      },
+      "reading": "measured on 4 item(s), never predicted-high (favourability < 0.75)"
+    },
+    {
+      "criterion": "dependencyAvailability",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 0,
+      "notMeasured": 4,
+      "predictedHigh": [],
+      "predictedHighThenNonPass": [],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "FAIL": {
+          "n": 0,
+          "meanFavourability": null
+        }
+      },
+      "reading": "NOT_MEASURED on all 4 items — no calibration possible for this criterion"
+    },
+    {
+      "criterion": "evidenceLevel",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "MEASURED",
+          "value": 1,
+          "favourability": 1,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "MEASURED",
+          "value": 0,
+          "favourability": 0,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "MEASURED",
+          "value": 0.75,
+          "favourability": 0.75,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "MEASURED",
+          "value": 0,
+          "favourability": 0,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 4,
+      "notMeasured": 0,
+      "predictedHigh": [
+        "G",
+        "H"
+      ],
+      "predictedHighThenNonPass": [
+        "G",
+        "H"
+      ],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 2,
+          "meanFavourability": 0.5
+        },
+        "FAIL": {
+          "n": 2,
+          "meanFavourability": 0.375
+        }
+      },
+      "reading": "HYPOTHESIS (n=2): predicted-high on 2 item(s) [G, H], all realized non-PASS ⇒ this criterion did not anticipate success on these items"
+    },
+    {
+      "criterion": "reliabilityQuality",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 0,
+      "notMeasured": 4,
+      "predictedHigh": [],
+      "predictedHighThenNonPass": [],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "FAIL": {
+          "n": 0,
+          "meanFavourability": null
+        }
+      },
+      "reading": "NOT_MEASURED on all 4 items — no calibration possible for this criterion"
+    },
+    {
+      "criterion": "reusability",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 0,
+      "notMeasured": 4,
+      "predictedHigh": [],
+      "predictedHighThenNonPass": [],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "FAIL": {
+          "n": 0,
+          "meanFavourability": null
+        }
+      },
+      "reading": "NOT_MEASURED on all 4 items — no calibration possible for this criterion"
+    },
+    {
+      "criterion": "speedEfficiency",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 0,
+      "notMeasured": 4,
+      "predictedHigh": [],
+      "predictedHighThenNonPass": [],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "FAIL": {
+          "n": 0,
+          "meanFavourability": null
+        }
+      },
+      "reading": "NOT_MEASURED on all 4 items — no calibration possible for this criterion"
+    },
+    {
+      "criterion": "strategicValue",
+      "observations": [
+        {
+          "mission": "G",
+          "status": "MEASURED",
+          "value": 0.8,
+          "favourability": 0.8,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "G2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "PARTIAL"
+        },
+        {
+          "mission": "H",
+          "status": "MEASURED",
+          "value": 0.5,
+          "favourability": 0.5,
+          "realized": "FAIL"
+        },
+        {
+          "mission": "J2",
+          "status": "NOT_MEASURED",
+          "value": null,
+          "favourability": null,
+          "realized": "FAIL"
+        }
+      ],
+      "measured": 2,
+      "notMeasured": 2,
+      "predictedHigh": [
+        "G"
+      ],
+      "predictedHighThenNonPass": [
+        "G"
+      ],
+      "predictedHighThenPass": [],
+      "meanFavourabilityByRealized": {
+        "PASS": {
+          "n": 0,
+          "meanFavourability": null
+        },
+        "PARTIAL": {
+          "n": 1,
+          "meanFavourability": 0.8
+        },
+        "FAIL": {
+          "n": 1,
+          "meanFavourability": 0.5
+        }
+      },
+      "reading": "predicted-high on 1 item(s) [G]; realized G=PARTIAL — below the 2-item support for a hypothesis"
+    }
+  ],
+  "scoreVsOutcome": {
+    "evidenceScoreSpearman": {
+      "ok": true,
+      "n": 4,
+      "rho": 0.235702,
+      "strength": "WEAK",
+      "note": "Spearman ρ = Pearson of average ranks (tie-correct); measures MONOTONIC order association — NOT causation/accuracy/linear agreement on raw values."
+    },
+    "uncertaintySpearman": {
+      "ok": true,
+      "n": 4,
+      "rho": 0,
+      "strength": "NEGLIGIBLE",
+      "note": "Spearman ρ = Pearson of average ranks (tie-correct); measures MONOTONIC order association — NOT causation/accuracy/linear agreement on raw values."
+    },
+    "groups": {
+      "REGISTER_SELECTED": {
+        "n": 2,
+        "items": [
+          "G",
+          "H"
+        ],
+        "meanUtility": 0.25,
+        "meanEvidenceScore": 0.335
+      },
+      "NOT_REGISTER_SELECTED": {
+        "n": 2,
+        "items": [
+          "G2",
+          "J2"
+        ],
+        "meanUtility": 0.25,
+        "meanEvidenceScore": 0.06
+      }
+    },
+    "note": "evidenceScore is a weighted sum, NOT a probability ⇒ no Brier/ECE; ORDER association only, n tiny ⇒ report-only"
+  },
+  "passRateCalibration": {
+    "reused": "odg-native-outcome-calibration.calibrateFromBuildOutcomes",
+    "quality": "DEGRADED",
+    "observations": 3,
+    "successes": 0,
+    "failures": 3,
+    "pForPlanner": null
+  },
+  "findings": [
+    {
+      "id": "OL-1",
+      "kind": "CALIBRATION",
+      "status": "HYPOTHESIS",
+      "n": 4,
+      "support": [
+        "G=PARTIAL",
+        "G2=PARTIAL",
+        "H=FAIL",
+        "J2=FAIL"
+      ],
+      "statement": "0/4 graded items reached PASS by their pre-registered rule (3 validated, 1 experiment-outcome only); the selector produced no probability of PASS for any of them, so this rate cannot be compared to a predicted rate — only to the ordering below"
+    },
+    {
+      "id": "OL-2",
+      "kind": "SELECTION_ERROR",
+      "status": "HYPOTHESIS",
+      "n": 2,
+      "support": [
+        "G: selected at b994ca69c7f8; at run head 83427f936423 the register decided TIE_EXPLAINED (H)",
+        "H: selected at 7c2fd7b2edbd; at run head 98eed7f23c20 the register decided DECISION_REQUIRED (no selection)"
+      ],
+      "statement": "selection drift: 2 register-selected item(s) were no longer the register's selection when executed — the run executed an earlier selection, not the current one"
+    },
+    {
+      "id": "OL-3",
+      "kind": "SELECTION_ERROR",
+      "status": "HYPOTHESIS",
+      "n": 4,
+      "support": [
+        "G2: evidenceScore 0.06, uncertainty 0.7 (max 0.5), rank 23/37; dispatched via docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json",
+        "J2: evidenceScore 0.06, uncertainty 0.7 (max 0.5), rank 23/36; dispatched via docs/odg/V174_OWNER_DECISION_SELECT_J2.json"
+      ],
+      "statement": "2/4 executed items were never the register's selection (owner order/selection over a register choice that was not actionable) — the register's own pick was not what ran"
+    },
+    {
+      "id": "OL-4",
+      "kind": "SELECTION_ERROR",
+      "status": "HYPOTHESIS",
+      "n": 3,
+      "support": [
+        "G2: GO strategic SELECT = SELECTED J; actionable = G2 (resolved by OWNER_ORDER_DECISION docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json); dispatched G2",
+        "H: GO strategic SELECT = DECISION_REQUIRED; actionable = H (GO actionable rule); dispatched H",
+        "J2: GO strategic SELECT = SELECTED J; actionable = J2 (resolved by OWNER_SELECTION_DECISION docs/odg/V174_OWNER_DECISION_SELECT_J2.json); dispatched J2"
+      ],
+      "statement": "in 3/3 GO-dispatched runs the strategic selection was not the dispatched mission; the dispatched mission was the ACTIONABLE selection, resolved by an owner decision in 2/3 — what ran was decided by actionability + owner order, not by the evidence score"
+    },
+    {
+      "id": "OL-5",
+      "kind": "BIAS",
+      "status": "HYPOTHESIS",
+      "n": 4,
+      "support": [
+        "G: score 0.35 → PARTIAL",
+        "G2: score 0.06 → PARTIAL",
+        "H: score 0.32 → FAIL",
+        "J2: score 0.06 → FAIL"
+      ],
+      "statement": "evidenceScore vs realized utility: Spearman ρ = 0.235702 (WEAK, n=4); register-selected mean utility 0.25 (mean score 0.335) vs not-register-selected 0.25 (mean score 0.06) — a 5.5833× mean score was followed by the SAME mean realized utility: on these items the score did not separate outcomes"
+    },
+    {
+      "id": "OL-6-evidenceLevel",
+      "kind": "BIAS",
+      "status": "HYPOTHESIS",
+      "n": 2,
+      "support": [
+        "G",
+        "H"
+      ],
+      "statement": "criterion evidenceLevel: HYPOTHESIS (n=2): predicted-high on 2 item(s) [G, H], all realized non-PASS ⇒ this criterion did not anticipate success on these items"
+    },
+    {
+      "id": "OL-7",
+      "kind": "BIAS",
+      "status": "HYPOTHESIS",
+      "n": 4,
+      "support": [
+        "G: uncertainty 0.5, 5/10 criteria NOT_MEASURED",
+        "G2: uncertainty 0.7, 7/10 criteria NOT_MEASURED",
+        "H: uncertainty 0.5, 5/10 criteria NOT_MEASURED",
+        "J2: uncertainty 0.7, 7/10 criteria NOT_MEASURED"
+      ],
+      "statement": "4/4 executed items had uncertainty at or above the selector's uncertaintyMax at selection time — most of the predicted benefit was unmeasured, so the prediction was weak by construction (the unmeasured share, not the measured values, dominates)"
+    },
+    {
+      "id": "OL-8",
+      "kind": "SELECTION_ERROR",
+      "status": "HYPOTHESIS",
+      "n": 2,
+      "support": [
+        "G2 (parent G, parent status CLOSED_PARTIAL) → PARTIAL",
+        "J2 (parent J, parent status EXECUTED_PARTIAL) → FAIL"
+      ],
+      "statement": "2/2 re-attempts of a non-PASS parent also ended non-PASS — a re-attempt did not carry a measured reason to expect a different outcome"
+    }
+  ],
+  "honesty": [
+    "n = 4: every finding is a HYPOTHESIS with its supporting items, never a proven effect",
+    "NOT_MEASURED criteria are counted, never imputed; a PENDING validation is never presented as the validated grade",
+    "evidenceScore is not a probability; no calibration metric that assumes one is computed",
+    "this record does not change selection; it only reports"
+  ],
+  "sources": [
+    "docs/odg/evidence/V164_STRATEGIC_REGISTER.json (git history)",
+    "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+    "docs/odg/evidence/V166_G_EXPERIMENT.json",
+    "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+    "docs/odg/evidence/V168_H_EXPERIMENT.json",
+    "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+    "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+    "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+    "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json",
+    "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl",
+    "docs/odg/evidence/V172_J2_EXPERIMENT.json",
+    "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json",
+    "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl"
+  ]
+}

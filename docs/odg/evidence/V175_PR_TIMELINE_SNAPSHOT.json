@@ -1,0 +1,651 @@
+{
+  "//": "V17.5 — frozen gh READ of the PRs used by V175_PRODUCTION_METRIC (PR open/merge, commits, latest check run, review/comment timestamps only). Refresh: npx tsx runtime/bin/odg-v175-production-metric.ts --snapshot-prs",
+  "schema": "ODG_V175_PR_TIMELINE_SNAPSHOT/1",
+  "snapshotAt": "2026-11-24T14:00:17.729Z",
+  "window": [
+    955,
+    970
+  ],
+  "missionPrs": [
+    935,
+    937,
+    946,
+    947
+  ],
+  "prs": [
+    {
+      "number": 935,
+      "title": "feat(v16.6): scenario G RUN_CONTROLLED_EXPERIMENTS — pre-registered experiment (outcome PARTIAL)",
+      "state": "MERGED",
+      "createdAt": "2026-11-23T21:31:38Z",
+      "mergedAt": "2026-11-23T21:39:45Z",
+      "closedAt": "2026-11-23T21:39:45Z",
+      "mergeCommit": "639c2e42b7a2f1704ce269bc91dcd8421329909c",
+      "headRefOid": "af84bb243a3bbc32cf0eb2e98d3d8a907b06197d",
+      "commits": [
+        {
+          "oid": "53a187aa3489a30352bc3478aef2b1ef76d64895",
+          "committedDate": "2026-11-23T21:31:21Z",
+          "messageHeadline": "feat(v16.6): scenario G RUN_CONTROLLED_EXPERIMENTS — pre-registered e…"
+        },
+        {
+          "oid": "af84bb243a3bbc32cf0eb2e98d3d8a907b06197d",
+          "committedDate": "2026-11-23T21:34:12Z",
+          "messageHeadline": "Merge origin/main (#934 merged)"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-23T21:34:39Z",
+          "completedAt": "2026-11-23T21:39:19Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 937,
+      "title": "feat(v16.6): G VALIDATE_CRITERIA (R5b, PARTIAL) + CP9",
+      "state": "MERGED",
+      "createdAt": "2026-11-23T21:50:53Z",
+      "mergedAt": "2026-11-23T21:58:54Z",
+      "closedAt": "2026-11-23T21:58:54Z",
+      "mergeCommit": "28718a3712602cfcbed11b1451497bdede13dc15",
+      "headRefOid": "dda303d9a9a56809384ffcae0f769b3158c878c6",
+      "commits": [
+        {
+          "oid": "4cf3379aa9f97cbb2aee2d48e95e85f1808cccc4",
+          "committedDate": "2026-11-23T21:50:48Z",
+          "messageHeadline": "feat(v16.6): R5b — VALIDATE_CRITERIA validated only by a criteria-val…"
+        },
+        {
+          "oid": "dda303d9a9a56809384ffcae0f769b3158c878c6",
+          "committedDate": "2026-11-23T21:54:12Z",
+          "messageHeadline": "docs(v16.6): #937 inspection LOWs — G lesson scoped to this dataset (…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-23T21:54:43Z",
+          "completedAt": "2026-11-23T21:58:41Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 946,
+      "title": "docs(v16.8): H experiment result — FAIL (NOT_ADOPTED), run by ODG GO",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T00:14:35Z",
+      "mergedAt": "2026-11-24T00:22:36Z",
+      "closedAt": "2026-11-24T00:22:36Z",
+      "mergeCommit": "b8de9a04ce03bd2b1b791f1fb34d34f91b63464b",
+      "headRefOid": "93ed91122d09fa02881e81626dd3284205fbcf9e",
+      "commits": [
+        {
+          "oid": "93ed91122d09fa02881e81626dd3284205fbcf9e",
+          "committedDate": "2026-11-24T00:14:30Z",
+          "messageHeadline": "docs(v16.8): mission H experiment result — dispatched natively by ODG…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T00:14:41Z",
+          "completedAt": "2026-11-24T00:18:56Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 947,
+      "title": "docs(v16.8): H criteria validation (FAIL, NOT_ADOPTED) + CP10",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T00:24:28Z",
+      "mergedAt": "2026-11-24T00:41:14Z",
+      "closedAt": "2026-11-24T00:41:14Z",
+      "mergeCommit": "2006fb70191a49a8f5f90d36f19cdd3dce039ebd",
+      "headRefOid": "0c675fc44ce58894506086818dea0717e1fa4642",
+      "commits": [
+        {
+          "oid": "94c029eb8b346d3b589ee1b19f2fe8fbce5b7ee0",
+          "committedDate": "2026-11-24T00:24:25Z",
+          "messageHeadline": "docs(v16.8): H VALIDATE_CRITERIA (R5b) — C1 MET, C2 measured FAIL ⇒ H…"
+        },
+        {
+          "oid": "f82f3b6f42d776794b34b7f45ff9ae8d9e20473d",
+          "committedDate": "2026-11-24T00:26:31Z",
+          "messageHeadline": "docs(v16.8): #947 inspection — commit the GO execute trace (redacted,…"
+        },
+        {
+          "oid": "0c675fc44ce58894506086818dea0717e1fa4642",
+          "committedDate": "2026-11-24T00:34:15Z",
+          "messageHeadline": "test(v16.8): odg-go-cycle — H-at-RUN behaviour on a labelled fixture;…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T00:34:25Z",
+          "completedAt": "2026-11-24T00:40:51Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 955,
+      "title": "fix(v17.2): G/H --check-at-run-head — reproduce closed experiment records at their own run head",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T02:38:38Z",
+      "mergedAt": "2026-11-24T02:45:38Z",
+      "closedAt": "2026-11-24T02:45:38Z",
+      "mergeCommit": "a0333c47938470ae416ba03674a56e5011c7e975",
+      "headRefOid": "1a0496f19277f87a38f1f4f0da4da78a4bc3080c",
+      "commits": [
+        {
+          "oid": "1a0496f19277f87a38f1f4f0da4da78a4bc3080c",
+          "committedDate": "2026-11-24T02:38:35Z",
+          "messageHeadline": "fix(v17.2): G/H --check-at-run-head — recompute each record with its …"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T02:38:45Z",
+          "completedAt": "2026-11-24T02:45:11Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 956,
+      "title": "feat(v17.2): G2 + J2 pre-registered contracts (REVISE_CONTRACT) + owner-source binding",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T02:42:30Z",
+      "mergedAt": "2026-11-24T02:52:15Z",
+      "closedAt": "2026-11-24T02:52:15Z",
+      "mergeCommit": "3703b37f557e8327af0328265d83526fba7e1341",
+      "headRefOid": "90215bbc93419b61ba9f10780406dbbbed03f332",
+      "commits": [
+        {
+          "oid": "28ed13b053d05f1f00a05176930b445373ddce0c",
+          "committedDate": "2026-11-24T02:42:09Z",
+          "messageHeadline": "feat(v17.2): G2 (owner V170) + J2 (owner V171) pre-registered contrac…"
+        },
+        {
+          "oid": "90215bbc93419b61ba9f10780406dbbbed03f332",
+          "committedDate": "2026-11-24T02:46:18Z",
+          "messageHeadline": "Merge origin/main (#955)"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T02:46:46Z",
+          "completedAt": "2026-11-24T02:52:04Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 957,
+      "title": "docs(v17.2): inspection records — contracts G2 and J2 ACCEPT",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T02:53:30Z",
+      "mergedAt": "2026-11-24T03:01:08Z",
+      "closedAt": "2026-11-24T03:01:08Z",
+      "mergeCommit": "ff2891e66dcf62719a22633c75c5a84b7238f204",
+      "headRefOid": "817f5db892a8bf068a597f8b49212cdd3b54ade6",
+      "commits": [
+        {
+          "oid": "04e80fcccad44f4ee11f7af2f5f3c00eaf59ccc4",
+          "committedDate": "2026-11-24T02:53:26Z",
+          "messageHeadline": "docs(v17.2): record the independent inspection ACCEPT of the new cont…"
+        },
+        {
+          "oid": "817f5db892a8bf068a597f8b49212cdd3b54ade6",
+          "committedDate": "2026-11-24T02:55:19Z",
+          "messageHeadline": "chore(v17.2): regenerate the strategic register with the G2/J2 inspec…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T02:55:45Z",
+          "completedAt": "2026-11-24T03:00:47Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 958,
+      "title": "feat(v17.2): G2 held-out builder + experiment runner (dispatch target, not run)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T03:06:01Z",
+      "mergedAt": "2026-11-24T03:15:20Z",
+      "closedAt": "2026-11-24T03:15:20Z",
+      "mergeCommit": "2e00b932354d84a8e180327dd0122ef070c40a25",
+      "headRefOid": "abe8b551c89023b56abfacb88ebbb45d4b797ee2",
+      "commits": [
+        {
+          "oid": "ab91ed93e8c5a599c088eb2ab5d3cd3dfc94e5a3",
+          "committedDate": "2026-11-24T03:05:57Z",
+          "messageHeadline": "feat(v17.2): G2 held-out builder + experiment runner (declared dispat…"
+        },
+        {
+          "oid": "abe8b551c89023b56abfacb88ebbb45d4b797ee2",
+          "committedDate": "2026-11-24T03:08:37Z",
+          "messageHeadline": "Merge origin/main (#957)"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T03:09:05Z",
+          "completedAt": "2026-11-24T03:15:11Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 959,
+      "title": "feat(v17.2): J2 experiment runner — declared RUN_CONTROLLED_EXPERIMENTS target (not run)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T03:09:00Z",
+      "mergedAt": "2026-11-24T11:32:29Z",
+      "closedAt": "2026-11-24T11:32:29Z",
+      "mergeCommit": "41d44a40d4da51baa70b640274a0f09e3cc9d990",
+      "headRefOid": "2a6a069adf7bf37b7562443d9d8b8aa74084789d",
+      "commits": [
+        {
+          "oid": "810ee32cd15892a3b501eee0aba4266bc335fb55",
+          "committedDate": "2026-11-24T03:08:41Z",
+          "messageHeadline": "feat(v17.2): J2 experiment runner (declared dispatch target) — gated,…"
+        },
+        {
+          "oid": "169fa2440fab30f5560ecbd2e5ccc1cbc6fa3e0b",
+          "committedDate": "2026-11-24T03:16:21Z",
+          "messageHeadline": "Merge remote-tracking branch 'origin/main' into feat/v172-j2-runner"
+        },
+        {
+          "oid": "814ef1c717bfa2ec5d2281ce1dee3b6eaa8d34d1",
+          "committedDate": "2026-11-24T11:22:22Z",
+          "messageHeadline": "Merge origin/main (#960)"
+        },
+        {
+          "oid": "c16864bb46b82b802afbe5f052d301b42bd90c73",
+          "committedDate": "2026-11-24T11:23:08Z",
+          "messageHeadline": "contract(v17.3): J2 anti-leakage prompt rule revised per owner author…"
+        },
+        {
+          "oid": "2a6a069adf7bf37b7562443d9d8b8aa74084789d",
+          "committedDate": "2026-11-24T11:26:43Z",
+          "messageHeadline": "feat(v17.3): J2 runner pinned to revised contract d5a8b0db… + revised…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T11:27:12Z",
+          "completedAt": "2026-11-24T11:31:50Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 960,
+      "title": "fix(v17.2): LOW corrections (GO tie rationale, odg-go flags, NOT_STARTED mapping, run-head-check signals, G2 builder diagnostics)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T11:05:33Z",
+      "mergedAt": "2026-11-24T11:12:18Z",
+      "closedAt": "2026-11-24T11:12:18Z",
+      "mergeCommit": "83f54ff68fc0364787aa11868d4fe5416028c8eb",
+      "headRefOid": "f2402c61f90c33391630f5ad7f65b5f126a5698b",
+      "commits": [
+        {
+          "oid": "f2402c61f90c33391630f5ad7f65b5f126a5698b",
+          "committedDate": "2026-11-24T11:05:19Z",
+          "messageHeadline": "fix(v17.2): LOW corrections — GO tie rationale/ownerRequest, odg-go -…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T11:05:40Z",
+          "completedAt": "2026-11-24T11:11:52Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 961,
+      "title": "docs(v17.3): J2 re-inspection record (revised contract d5a8b0db ACCEPT)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T11:34:05Z",
+      "mergedAt": "2026-11-24T11:38:54Z",
+      "closedAt": "2026-11-24T11:38:55Z",
+      "mergeCommit": "b32560532e41421cc1782a715c486596c7cdeeb6",
+      "headRefOid": "dbdd618f4b5bf491327b18858c7c1dd0cf0a87f8",
+      "commits": [
+        {
+          "oid": "dbdd618f4b5bf491327b18858c7c1dd0cf0a87f8",
+          "committedDate": "2026-11-24T11:34:01Z",
+          "messageHeadline": "docs(v17.3): record the independent REINFORCED inspection ACCEPT of t…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T11:34:13Z",
+          "completedAt": "2026-11-24T11:38:47Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 962,
+      "title": "feat(v17.4): GO consumes the owner ORDER decision G2 → J2 (GO-ORD-1)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T11:48:08Z",
+      "mergedAt": "2026-11-24T11:59:36Z",
+      "closedAt": "2026-11-24T11:59:36Z",
+      "mergeCommit": "43aa42a4c881cdd3dc1582d6fae3fac0db3c8e19",
+      "headRefOid": "ea710016fb90590aa4ff416becc70363aee13fac",
+      "commits": [
+        {
+          "oid": "560642d4feb088732d0fc55bbd3fca63dc79f822",
+          "committedDate": "2026-11-24T11:47:55Z",
+          "messageHeadline": "feat(v17.4): GO consumes the owner ORDER decision G2 → J2 for an acti…"
+        },
+        {
+          "oid": "ea710016fb90590aa4ff416becc70363aee13fac",
+          "committedDate": "2026-11-24T11:53:57Z",
+          "messageHeadline": "fix(v17.4): #962 inspection LOW — GO-ORD-1 validates schema, OWNER is…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T11:54:26Z",
+          "completedAt": "2026-11-24T11:59:14Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 963,
+      "title": "docs(v17.4): G2 experiment result — PARTIAL, run by ODG GO",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T12:03:41Z",
+      "mergedAt": "2026-11-24T12:10:19Z",
+      "closedAt": "2026-11-24T12:10:19Z",
+      "mergeCommit": "baf1101ce57f67c4b26de864b3d92619e1d7054c",
+      "headRefOid": "35927560d5cd00e8d0135aa9927455cc350febf9",
+      "commits": [
+        {
+          "oid": "35927560d5cd00e8d0135aa9927455cc350febf9",
+          "committedDate": "2026-11-24T12:03:37Z",
+          "messageHeadline": "docs(v17.4): G2 experiment result — dispatched natively by ODG GO (ow…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T12:03:49Z",
+          "completedAt": "2026-11-24T12:09:54Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 964,
+      "title": "docs(v17.4): G2 criteria validation — CLOSED_PARTIAL (NOT_ADOPTED)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T12:13:54Z",
+      "mergedAt": "2026-11-24T12:19:19Z",
+      "closedAt": "2026-11-24T12:19:19Z",
+      "mergeCommit": "9dafc0a565c620f63b302ddb917489a765b88c6b",
+      "headRefOid": "744fa48c7f9cedd231b858a8e4fb97df70379200",
+      "commits": [
+        {
+          "oid": "744fa48c7f9cedd231b858a8e4fb97df70379200",
+          "committedDate": "2026-11-24T12:13:49Z",
+          "messageHeadline": "docs(v17.4): G2 VALIDATE_CRITERIA (R5b) — C1–C4 MET, result PARTIAL (…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T12:14:01Z",
+          "completedAt": "2026-11-24T12:18:53Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 965,
+      "title": "fix(v17.4): GO-DTO-1 — contract-cap-derived dispatch timeout for declared targets (J2)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T12:20:12Z",
+      "mergedAt": "2026-11-24T12:35:27Z",
+      "closedAt": "2026-11-24T12:35:27Z",
+      "mergeCommit": "68f64eeb71bb071f8e48e7b475c2221f3c12d3f9",
+      "headRefOid": "c90641e480d79948bd4e17e88d3dfd1742f90a45",
+      "commits": [
+        {
+          "oid": "517495f9b56bf6fe449ab42b72e3d9c111b9425d",
+          "committedDate": "2026-11-24T12:20:07Z",
+          "messageHeadline": "fix(v17.4): GO-DTO-1 — derive a declared dispatch target's timeout fr…"
+        },
+        {
+          "oid": "c90641e480d79948bd4e17e88d3dfd1742f90a45",
+          "committedDate": "2026-11-24T12:28:27Z",
+          "messageHeadline": "fix(v17.4): #965 inspection MED-1/MED-2/LOW-1/LOW-2 — GO-DTO-1 cycle …"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T12:28:37Z",
+          "completedAt": "2026-11-24T12:34:45Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 966,
+      "title": "feat(v17.4): GO-ORD-2 — owner selection decision for J2 (actionable DECISION_REQUIRED for uncertainty)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T12:43:12Z",
+      "mergedAt": "2026-11-24T12:55:28Z",
+      "closedAt": "2026-11-24T12:55:28Z",
+      "mergeCommit": "deaf0844ce562049291ccee9f48933a412d141bf",
+      "headRefOid": "a6dd68416930d73a359a4bcb456aa5f090ee5a70",
+      "commits": [
+        {
+          "oid": "5d62424320b892c68beaf7d8e9ed10deba64b9fb",
+          "committedDate": "2026-11-24T12:43:07Z",
+          "messageHeadline": "feat(v17.4): GO-ORD-2 — GO consumes the owner SELECTION decision for …"
+        },
+        {
+          "oid": "a6dd68416930d73a359a4bcb456aa5f090ee5a70",
+          "committedDate": "2026-11-24T12:49:58Z",
+          "messageHeadline": "fix(v17.4): #966 inspection MED — GO-ORD-2 persistent one-shot claim …"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T12:50:08Z",
+          "completedAt": "2026-11-24T12:55:14Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 967,
+      "title": "docs(v17.4): transition checkpoint CP11",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T13:05:50Z",
+      "mergedAt": "2026-11-24T13:14:34Z",
+      "closedAt": "2026-11-24T13:14:35Z",
+      "mergeCommit": "e9ec57ba1cd914ed968989c5fe894c148297aadc",
+      "headRefOid": "0f304f578d538da09cb44cb7288d9a5b72954799",
+      "commits": [
+        {
+          "oid": "2fbdd4e53f2692e44747451bd1dc7ee28262f65a",
+          "committedDate": "2026-11-24T13:05:45Z",
+          "messageHeadline": "docs(v17.4): transition checkpoint CP11 — G2 CLOSED_PARTIAL/NOT_ADOPT…"
+        },
+        {
+          "oid": "0f304f578d538da09cb44cb7288d9a5b72954799",
+          "committedDate": "2026-11-24T13:07:10Z",
+          "messageHeadline": "docs(v17.4): CP11 inspection LOWs — J open step is PROPOSED→AUTHORIZE…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T13:07:38Z",
+          "completedAt": "2026-11-24T13:14:07Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 968,
+      "title": "feat(v17.5): measure register criteria BLK-3 / REU-1 from committed evidence",
+      "state": "CLOSED",
+      "createdAt": "2026-11-24T13:19:48Z",
+      "mergedAt": null,
+      "closedAt": "2026-11-24T13:23:01Z",
+      "mergeCommit": null,
+      "headRefOid": "0e1a2b9e0ea6c9ea3cc5ac1a785be183bde7ccb1",
+      "commits": [
+        {
+          "oid": "3fe477b9717bc3240eb2a34f757cc522f84185a2",
+          "committedDate": "2026-11-24T13:18:16Z",
+          "messageHeadline": "feat(v17.5): measure register criteria BLK-3 / REU-1 from committed e…"
+        },
+        {
+          "oid": "0e1a2b9e0ea6c9ea3cc5ac1a785be183bde7ccb1",
+          "committedDate": "2026-11-24T13:19:26Z",
+          "messageHeadline": "merge origin/main (CP11) — V164 register regenerated with BLK-3/REU-1…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T13:19:57Z",
+          "completedAt": "2026-11-24T13:25:09Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": [
+        {
+          "createdAt": "2026-11-24T13:23:00Z"
+        }
+      ]
+    },
+    {
+      "number": 969,
+      "title": "feat(v17.5): register dependency graph — item→item edges from explicit committed evidence (DEPG-1) + contention (CONT-1)",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T13:34:51Z",
+      "mergedAt": "2026-11-24T13:58:25Z",
+      "closedAt": "2026-11-24T13:58:25Z",
+      "mergeCommit": "e5370cefb4022d99d629b446adc0c8dff3714dbf",
+      "headRefOid": "847b3c18dbbf719d3476b1f1e692134faaff0d4a",
+      "commits": [
+        {
+          "oid": "4770059d04c153f81dfcfa749cf8bbff2d67a9c1",
+          "committedDate": "2026-11-24T13:34:30Z",
+          "messageHeadline": "feat(v17.5): register dependency graph — item→item edges from explici…"
+        },
+        {
+          "oid": "eb1c10a3a10994c12098d1caa0635a2888b42995",
+          "committedDate": "2026-11-24T13:51:33Z",
+          "messageHeadline": "wip: #969 inspection fix (pre-merge)"
+        },
+        {
+          "oid": "847b3c18dbbf719d3476b1f1e692134faaff0d4a",
+          "committedDate": "2026-11-24T13:52:57Z",
+          "messageHeadline": "fix(v17.5): #969 inspection — only failable prerequisites feed DEP-1;…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T13:53:09Z",
+          "completedAt": "2026-11-24T13:58:16Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    },
+    {
+      "number": 970,
+      "title": "docs(v17.5): J2 experiment result — FAIL, run by ODG GO",
+      "state": "MERGED",
+      "createdAt": "2026-11-24T13:40:51Z",
+      "mergedAt": "2026-11-24T13:50:11Z",
+      "closedAt": "2026-11-24T13:50:11Z",
+      "mergeCommit": "0987106ae488b163ab50723395e4075e73aa2199",
+      "headRefOid": "13d55d0efc64bbfc6ecbca3b1d81d60aadc30129",
+      "commits": [
+        {
+          "oid": "13d55d0efc64bbfc6ecbca3b1d81d60aadc30129",
+          "committedDate": "2026-11-24T13:40:46Z",
+          "messageHeadline": "docs(v17.5): J2 experiment result — dispatched natively by ODG GO (GO…"
+        }
+      ],
+      "checks": [
+        {
+          "name": "build + typecheck + parity + tests",
+          "startedAt": "2026-11-24T13:40:58Z",
+          "completedAt": "2026-11-24T13:47:22Z",
+          "conclusion": "SUCCESS"
+        }
+      ],
+      "reviews": [],
+      "comments": []
+    }
+  ]
+}
