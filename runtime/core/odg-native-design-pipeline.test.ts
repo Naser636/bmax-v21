@@ -86,7 +86,52 @@ check("collectLessons: memory-taxonomy retrieve keeps only CONSOLIDATED lessons 
 const nb1 = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json"), "utf8"));
 check("collectLessons over the REAL NB1 record: 0 repairs ⇒ no lesson (nothing invented)", P.collectLessons([{ record: nb1, provenance: "nb1" }]).lessons.length === 0);
 const dl = P.renderPrompt(P.designPromptSegments(prob, item.currentSource, i1, col.lessons, 3));
-check("lesson reuse: the design prompt carries the lesson hints as EVIDENCE", col.lessons.every((l: any) => dl.includes(l.hint)));
+check("lesson reuse: the design prompt carries the DIGEST-1 text of the lessons as EVIDENCE", !!col.digest.text && dl.includes(col.digest.text) && col.digest.included.length >= 1);
+
+// ---- V17.6 DIGEST-1: bounded lesson digest ----
+const mkL = (id: string, at: string, kind: string, ck: string[], hint: string) => ({ id, at, kind, caseKinds: ck, hint, provenance: "fixture" });
+const p3Like = [mkL("a", "2026-11-24T16:16:37Z", "CORPUS_GAP", ["k1", "k2"], "C".repeat(300)), mkL("b", "2026-11-24T16:16:37Z", "DESIGNS_REJECTED", [], "D".repeat(160)), mkL("c", "2026-11-24T16:40:00Z", "REPAIR_NEEDED", ["undefined@top"], "R5 newer"), mkL("d", "2026-11-24T16:16:37Z", "REPAIR_NEEDED", ["undefined@top"], "R4 older")];
+const dgst = P.lessonDigest(p3Like);
+check("DIGEST-1: newest first, dedup by (kind, caseKinds) keeps the newest, lines ≤ 200 chars, whole text ≤ 600 chars", dgst.included[0] === "c" && dgst.deduped.join() === "d" && dgst.chars <= 600 && dgst.text.split("\n").every((l: string) => l.length <= 200) && dgst.text.includes("R5 newer") && !dgst.text.includes("R4 older"));
+check("DIGEST-1: every considered lesson is accounted for (included / omitted / deduped) — nothing silently dropped", [...dgst.included, ...dgst.omitted, ...dgst.deduped].sort().join() === "a,b,c,d");
+const many = Array.from({ length: 40 }, (_, k) => mkL("l" + String(k).padStart(2, "0"), "2026-11-" + String(1 + (k % 28)).padStart(2, "0"), "K" + k, [], "hint number " + k + " " + "x".repeat(80)));
+const dm = P.lessonDigest(many);
+check("DIGEST-1: bounded regardless of the lesson count (40 lessons ⇒ ≤ 600 chars, the rest omitted), deterministic and order-independent", dm.chars <= 600 && dm.omitted.length > 0 && dm.included.length + dm.omitted.length === 40 && JSON.stringify(P.lessonDigest([...many].reverse())) === JSON.stringify(dm));
+check("DIGEST-1: no lessons ⇒ no lesson segment in the prompt", P.lessonDigest([]).text === "" && !P.renderPrompt(P.designPromptSegments(prob, item.currentSource, i1, [], 3)).includes("Lessons from ODG"));
+const p3 = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V175_NB2_PROBE_3.json"), "utf8"));
+const p3d = P.lessonDigest(p3.lessonsRead.lessons.map((l: any) => ({ ...l, at: p3.run.startedAt })));
+check("DIGEST-1 on the REAL PROBE 3 lessons (4 hints injected verbatim there): digest ≤ 600 chars and shorter than the verbatim lesson block", p3d.chars <= 600 && p3d.chars < p3.lessonsRead.lessons.map((l: any) => "  - " + l.hint).join("\n").length && p3d.deduped.length === 1);
+
+// ---- V17.6 ADAPT-1: adaptive per-call timeout ----
+const policy = { minMs: 60000, maxMs: 300000, safetyFactor: 3, overheadMs: 15000, charsPerToken: 3 };
+const rt = P.measureRate({ ok: true, ms: 900, timings: { evalCount: 16, evalDurationNs: 2e9, promptEvalCount: 20, promptEvalDurationNs: 1e9, loadDurationNs: 5e9 } });
+check("measureRate: tokens/s from Ollama counters (eval 8 tok/s, prompt 20 tok/s); model load time excluded", rt.genTokPerS === 8 && rt.promptTokPerS === 20);
+check("measureRate: absent / zero counters ⇒ null (not measured); absent prompt counters ⇒ gen rate used for prompt (stated)", P.measureRate({ ok: true, timings: { evalCount: 16, evalDurationNs: 0 } }) === null && P.measureRate({ ok: false }) === null && P.measureRate({ ok: true, timings: { evalCount: 8, evalDurationNs: 1e9 } }).promptTokPerS === 8);
+const at1 = P.adaptiveTimeout({ promptChars: 3271, numPredict: 900, rate: rt, policy });
+check("adaptiveTimeout: estimate = prompt tokens / prompt rate + numPredict / gen rate; timeout = clamp(3·est + 15 s)", at1.estimateMs === Math.ceil(1000 * (Math.ceil(3271 / 3) / 20 + 900 / 8)) && at1.timeoutMs === 300000 && at1.clamped === true && at1.predictedOverCap === false);
+const fast = P.adaptiveTimeout({ promptChars: 300, numPredict: 900, rate: { genTokPerS: 100, promptTokPerS: 1000 }, policy });
+check("adaptiveTimeout: a fast model gets a shorter timeout, floored at minMs", fast.timeoutMs === 60000 && fast.estimateMs === 9100);
+check("adaptiveTimeout: estimate above maxMs ⇒ predictedOverCap (caller does not send); no rate ⇒ nothing derived", P.adaptiveTimeout({ promptChars: 3000, numPredict: 900, rate: { genTokPerS: 1, promptTokPerS: 5 }, policy }).predictedOverCap === true && P.adaptiveTimeout({ promptChars: 1, numPredict: 1, rate: null, policy }).timeoutMs === null);
+check("warm-up prompt is TEMPLATE-clean (0 denylist hits)", P.denylistHits([{ kind: "TEMPLATE", text: P.WARMUP_PROMPT }]).length === 0);
+
+// ---- V17.6 HOST-1 ----
+const hb = P.hostLoad(0.75, () => ({ loadavg: [6.01, 1, 1], nproc: 8 })), hi = P.hostLoad(0.75, () => ({ loadavg: [6, 1, 1], nproc: 8 }));
+check("hostLoad: threshold = nproc × 0.75; above ⇔ loadavg-1m strictly greater; non-numeric load ⇒ above (fail-closed)", hb.threshold === 6 && hb.aboveThreshold === true && hi.aboveThreshold === false && P.hostLoad(0.75, () => ({ loadavg: [], nproc: 8 })).aboveThreshold === true);
+const real = P.hostLoad(0.75);
+check("hostLoad: default probe reads os.loadavg + nproc", typeof real.load1 === "number" && real.nproc >= 1);
+
+// ---- V17.6 guard: warm-up has its own cap and num_predict, never consumes maxModelCalls ----
+(async () => {
+  const bodies: any[] = []; const tr = async (_u: string, init: any) => { bodies.push(JSON.parse(init.body)); return { ok: true, json: async () => ({}) }; };
+  const g = P.makeGuard(tr, { maxModelCalls: 1, maxWarmupCalls: 1, warmupNumPredict: 16, numPredict: 900, seed: 1, temperature: 0, wallMs: 60000 });
+  await g.fetchImpl(P.OLLAMA_URL, { body: JSON.stringify({ prompt: "w" }), odgWarmup: true });
+  let second = false; try { await g.fetchImpl(P.OLLAMA_URL, { body: JSON.stringify({ prompt: "w" }), odgWarmup: true }); } catch { second = true; }
+  await g.fetchImpl(P.OLLAMA_URL, { body: JSON.stringify({ prompt: "x" }) });
+  check("guard: warm-up uses warmupNumPredict, own cap (2nd refused), does not consume maxModelCalls; the work call still allowed", bodies[0].options.num_predict === 16 && second && g.st.warmupCalls === 1 && g.st.modelCalls === 1 && bodies[1].options.num_predict === 900 && g.st.capHit === "maxWarmupCalls");
+  let nonLoop = false; try { await g.fetchImpl("http://10.0.0.2:11434/api/generate", { body: "{}", odgWarmup: true }); } catch { nonLoop = true; }
+  check("guard: a warm-up to a non-loopback URL is refused too", nonLoop && g.st.refused.length === 1);
+  if (failures) { process.stdout.write(`${failures} failure(s)\n`); process.exit(1); }
+})();
 
 // ---- diff helpers ----
 const rd = P.replaceFileDiff(item.targetPath, item.currentSource, item.currentSource.replace("canonicalJson(value: any)", "canonicalJson(value: any /* x */)"));
