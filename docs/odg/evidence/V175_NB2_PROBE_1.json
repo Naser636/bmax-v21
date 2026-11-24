@@ -1,0 +1,1420 @@
+{
+  "schema": "odg-native-design-result/1",
+  "label": "PROBE (provider-run feasibility probe — NOT the ODG-native GO result)",
+  "scenario": "V175-NB2",
+  "contractSha256": null,
+  "nativeClaim": "a PASS means: from a problem DERIVED BY ODG RULES (executed failing cases vs the in-repo reference — no provider-written algorithm in any prompt), ODG's LOCAL MODEL proposed ≥2 designs, ODG selected one mechanically on sandbox-measured scores, the local model implemented it, and ODG tested/repaired/typechecked it. The INPUT corpus (ORC-2 literals), the prompt templates and the runner are provider-written",
+  "run": {
+    "head": "d2714a869ce78374f84432bfb635b8823a8246a5",
+    "startedAt": "2026-11-24T16:16:37.109Z",
+    "runner": "runtime/bin/odg-v175-native-design-run.ts"
+  },
+  "budgets": {
+    "model": "qwen2.5-coder:7b",
+    "temperature": 0,
+    "seed": 42,
+    "numPredict": 900,
+    "designs": 3,
+    "minDesigns": 2,
+    "maxRepairPerRound": 3,
+    "maxRounds": 2,
+    "maxModelCalls": 12,
+    "wallMs": 1800000,
+    "perCallTimeoutMs": 300000
+  },
+  "problem": {
+    "rule": "PROB-1: execute the CURRENT module and the in-repo REFERENCE on the corpus; failing = output ≠ reference; reference output not valid JSON ⇒ excluded; SHOWN = first failing case per kind (+ lesson kinds), rest HELD OUT",
+    "targetPath": "runtime/core/odg-canonical-json.ts",
+    "exportName": "canonicalJson",
+    "currentSourceSha256": "c4a6e2e979548aa90a8b9c6f7de3c0ed4e5e421cd5ac46e3af66a98ad797a604",
+    "defect": true,
+    "cases": [
+      {
+        "i": 0,
+        "src": "{\"b\":1,\"a\":2}",
+        "kind": "json",
+        "expect": "{\"a\":2,\"b\":1}",
+        "actual": "{\"a\":2,\"b\":1}",
+        "failing": false
+      },
+      {
+        "i": 1,
+        "src": "{\"a\":{\"y\":1,\"x\":2}}",
+        "kind": "json",
+        "expect": "{\"a\":{\"x\":2,\"y\":1}}",
+        "actual": "{\"a\":{\"x\":2,\"y\":1}}",
+        "failing": false
+      },
+      {
+        "i": 2,
+        "src": "[3,\"x\",null]",
+        "kind": "json",
+        "expect": "[3,\"x\",null]",
+        "actual": "[3,\"x\",null]",
+        "failing": false
+      },
+      {
+        "i": 3,
+        "src": "\"plain\"",
+        "kind": "json",
+        "expect": "\"plain\"",
+        "actual": "\"plain\"",
+        "failing": false
+      },
+      {
+        "i": 4,
+        "src": "null",
+        "kind": "json",
+        "expect": "null",
+        "actual": "null",
+        "failing": false
+      },
+      {
+        "i": 5,
+        "src": "42",
+        "kind": "json",
+        "expect": "42",
+        "actual": "42",
+        "failing": false
+      },
+      {
+        "i": 6,
+        "src": "1.5",
+        "kind": "json",
+        "expect": "1.5",
+        "actual": "1.5",
+        "failing": false
+      },
+      {
+        "i": 7,
+        "src": "true",
+        "kind": "json",
+        "expect": "true",
+        "actual": "true",
+        "failing": false
+      },
+      {
+        "i": 8,
+        "src": "\"q\\\"uote\\n\"",
+        "kind": "json",
+        "expect": "\"q\\\"uote\\n\"",
+        "actual": "\"q\\\"uote\\n\"",
+        "failing": false
+      },
+      {
+        "i": 9,
+        "src": "[]",
+        "kind": "json",
+        "expect": "[]",
+        "actual": "[]",
+        "failing": false
+      },
+      {
+        "i": 10,
+        "src": "{}",
+        "kind": "json",
+        "expect": "{}",
+        "actual": "{}",
+        "failing": false
+      },
+      {
+        "i": 11,
+        "src": "[[],[{}]]",
+        "kind": "nested",
+        "expect": "[[],[{}]]",
+        "actual": "[[],[{}]]",
+        "failing": false
+      },
+      {
+        "i": 12,
+        "src": "{\"z\":null,\"a\":[1,\"x\",false]}",
+        "kind": "json",
+        "expect": "{\"a\":[1,\"x\",false],\"z\":null}",
+        "actual": "{\"a\":[1,\"x\",false],\"z\":null}",
+        "failing": false
+      },
+      {
+        "i": 13,
+        "src": "[{\"b\":1,\"a\":[3,{\"d\":1,\"c\":2}]}]",
+        "kind": "nested",
+        "expect": "[{\"a\":[3,{\"c\":2,\"d\":1}],\"b\":1}]",
+        "actual": "[{\"a\":[3,{\"c\":2,\"d\":1}],\"b\":1}]",
+        "failing": false
+      },
+      {
+        "i": 14,
+        "src": "{\"a\":{\"b\":{\"c\":{\"e\":2,\"d\":1}}}}",
+        "kind": "nested",
+        "expect": "{\"a\":{\"b\":{\"c\":{\"d\":1,\"e\":2}}}}",
+        "actual": "{\"a\":{\"b\":{\"c\":{\"d\":1,\"e\":2}}}}",
+        "failing": false
+      },
+      {
+        "i": 15,
+        "src": "{\"k\\\"q\":\"v\",\"\":0,\"B\":1,\"a\":2}",
+        "kind": "json",
+        "expect": "{\"\":0,\"B\":1,\"a\":2,\"k\\\"q\":\"v\"}",
+        "actual": "{\"\":0,\"B\":1,\"a\":2,\"k\\\"q\":\"v\"}",
+        "failing": false
+      },
+      {
+        "i": 16,
+        "src": "{\"x\":[{\"b\":2,\"a\":1},{\"a\":1}]}",
+        "kind": "nested",
+        "expect": "{\"x\":[{\"a\":1,\"b\":2},{\"a\":1}]}",
+        "actual": "{\"x\":[{\"a\":1,\"b\":2},{\"a\":1}]}",
+        "failing": false
+      },
+      {
+        "i": 17,
+        "src": "{\"n\":-7,\"f\":0.25,\"s\":\"\",\"t\":false}",
+        "kind": "json",
+        "expect": "{\"f\":0.25,\"n\":-7,\"s\":\"\",\"t\":false}",
+        "actual": "{\"f\":0.25,\"n\":-7,\"s\":\"\",\"t\":false}",
+        "failing": false
+      },
+      {
+        "i": 18,
+        "src": "undefined",
+        "kind": "undefined@top",
+        "expect": "null",
+        "actual": "<undefined>",
+        "failing": true
+      },
+      {
+        "i": 19,
+        "src": "[undefined]",
+        "kind": "undefined@array",
+        "expect": "[null]",
+        "actual": "[]",
+        "failing": true
+      },
+      {
+        "i": 20,
+        "src": "[1, undefined, 2]",
+        "kind": "undefined@array",
+        "expect": "[1,null,2]",
+        "actual": "[1,,2]",
+        "failing": true
+      },
+      {
+        "i": 21,
+        "src": "{ a: undefined }",
+        "kind": "undefined@object",
+        "expect": "{}",
+        "actual": "{\"a\":undefined}",
+        "failing": true
+      },
+      {
+        "i": 22,
+        "src": "{ a: undefined, b: 1 }",
+        "kind": "undefined@object",
+        "expect": "{\"b\":1}",
+        "actual": "{\"a\":undefined,\"b\":1}",
+        "failing": true
+      },
+      {
+        "i": 23,
+        "src": "{ a: { b: undefined, c: 1 } }",
+        "kind": "undefined@object",
+        "expect": "{\"a\":{\"c\":1}}",
+        "actual": "{\"a\":{\"b\":undefined,\"c\":1}}",
+        "failing": true
+      },
+      {
+        "i": 24,
+        "src": "[{ a: undefined }, [undefined]]",
+        "kind": "undefined@array+undefined@object",
+        "expect": "[{},[null]]",
+        "actual": "[{\"a\":undefined},[]]",
+        "failing": true
+      },
+      {
+        "i": 25,
+        "src": "{ x: [undefined, { y: undefined, z: [1, undefined] }] }",
+        "kind": "nested+undefined@array+undefined@object",
+        "expect": "{\"x\":[null,{\"z\":[1,null]}]}",
+        "actual": "{\"x\":[,{\"y\":undefined,\"z\":[1,]}]}",
+        "failing": true
+      },
+      {
+        "i": 26,
+        "src": "{ k: [undefined, undefined], j: undefined }",
+        "kind": "undefined@array+undefined@object",
+        "expect": "{\"k\":[null,null]}",
+        "actual": "{\"j\":undefined,\"k\":[,]}",
+        "failing": true
+      },
+      {
+        "i": 27,
+        "src": "new Date(0)",
+        "kind": "toJSON",
+        "expect": "{}",
+        "actual": "{}",
+        "failing": false
+      },
+      {
+        "i": 28,
+        "src": "{ when: new Date(0), v: 1 }",
+        "kind": "toJSON",
+        "expect": "{\"v\":1,\"when\":{}}",
+        "actual": "{\"v\":1,\"when\":{}}",
+        "failing": false
+      },
+      {
+        "i": 29,
+        "src": "-0",
+        "kind": "negative-zero",
+        "expect": "0",
+        "actual": "0",
+        "failing": false
+      },
+      {
+        "i": 30,
+        "src": "[-0, 0]",
+        "kind": "negative-zero",
+        "expect": "[0,0]",
+        "actual": "[0,0]",
+        "failing": false
+      },
+      {
+        "i": 31,
+        "src": "{ z: -0 }",
+        "kind": "negative-zero",
+        "expect": "{\"z\":0}",
+        "actual": "{\"z\":0}",
+        "failing": false
+      },
+      {
+        "i": 32,
+        "src": "[NaN, Infinity, -Infinity]",
+        "kind": "non-finite",
+        "expect": "[null,null,null]",
+        "actual": "[null,null,null]",
+        "failing": false
+      }
+    ],
+    "failing": [
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+    ],
+    "shown": [
+      18,
+      19,
+      21,
+      24,
+      25
+    ],
+    "heldOut": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      20,
+      22,
+      23,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "excluded": [
+      {
+        "src": "{ toJSON: function () { return 1; } }",
+        "reason": "reference output is not valid JSON text (reference behaviour undefined here)"
+      }
+    ],
+    "kinds": [
+      "nested+undefined@array+undefined@object",
+      "undefined@array",
+      "undefined@array+undefined@object",
+      "undefined@object",
+      "undefined@top"
+    ],
+    "evidenceDigest": "b00c44dcf95fb9a3f36e0c05bed9fa2d0c106db13fd7f91478c63a10dbae28bb",
+    "corpusRule": "ORC-2: ORC-1 inputs as JSON literals + 16 non-JSON-transportable input literals (provider-written inputs; expected = executed REF-1)",
+    "corpusSha256": "d373cec92ff3f794f3418ad25bebaf4f1155a64d8c1085bf1dbd39c74574a69c",
+    "reference": {
+      "sourceSha256": "4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734",
+      "copies": [
+        "runtime/core/odg-authorization-scope.ts:97",
+        "runtime/core/odg-go-cycle.ts:72",
+        "runtime/core/odg-verification-risk-calibration.ts:118"
+      ],
+      "rule": "REF-1: largest group of byte-identical CANONICAL definitions (tie ⇒ smallest sha256)"
+    },
+    "priorAcceptance": {
+      "record": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
+      "verdict": "PASS",
+      "sha256": "c4a6e2e979548aa90a8b9c6f7de3c0ed4e5e421cd5ac46e3af66a98ad797a604"
+    }
+  },
+  "lessonsRead": {
+    "rule": "LESSON-1: memory-taxonomy.retrieve(family engineering, CONSOLIDATED) over prior run records' lessons",
+    "considered": 0,
+    "lessons": [],
+    "reusedIds": [],
+    "kinds": []
+  },
+  "impact": {
+    "rule": "IMP-1 change-impact-graph.impactOf (consumers / closure / hazards) + IMP-2 *.test.ts in runtime/core|bin that require the module (impactOf.impactedTests scans *.test.js only)",
+    "module": "odg-canonical-json",
+    "exists": true,
+    "consumers": [],
+    "directDeps": [],
+    "closureHazards": {
+      "dynamicRequire": false,
+      "externalRequire": false,
+      "pathHazard": false,
+      "modules": []
+    },
+    "impactedTestsImpactOf": [],
+    "impactedTestsTs": [
+      "runtime/core/odg-canonical-json.test.ts"
+    ]
+  },
+  "verdict": "FAIL",
+  "reason": "S5: the chosen design did not pass the held-out oracle + strict typecheck within 2 rounds × (1 + 3 repairs)",
+  "design": {
+    "by": "LOCAL_MODEL",
+    "model": "qwen2.5-coder:7b",
+    "count": 3,
+    "designs": [
+      {
+        "id": "D1",
+        "summary": "Handle undefined values by converting them to null.",
+        "steps": [
+          "Modify the function to check for undefined values.",
+          "Convert undefined values to null before serialization."
+        ],
+        "changesExportedApi": false,
+        "files": [
+          "runtime/core/odg-canonical-json.ts"
+        ]
+      },
+      {
+        "id": "D2",
+        "summary": "Use a custom replacer function for JSON.stringify.",
+        "steps": [
+          "Define a replacer function that handles undefined values.",
+          "Pass this replacer function to JSON.stringify."
+        ],
+        "changesExportedApi": false,
+        "files": [
+          "runtime/core/odg-canonical-json.ts"
+        ]
+      },
+      {
+        "id": "D3",
+        "summary": "Create a helper function to recursively process values.",
+        "steps": [
+          "Define a helper function that processes each value.",
+          "Use this helper function in the main canonicalJson function."
+        ],
+        "changesExportedApi": false,
+        "files": [
+          "runtime/core/odg-canonical-json.ts"
+        ]
+      }
+    ],
+    "rawSha256": "95b5a59f1440a37d2c433b3c858233cdb7ae9c6a574d560ba0e54e48490030b6",
+    "raw": "[\n    {\n        \"summary\": \"Handle undefined values by converting them to null.\",\n        \"steps\": [\n            \"Modify the function to check for undefined values.\",\n            \"Convert undefined values to null before serialization.\"\n        ],\n        \"changesExportedApi\": false,\n        \"files\": [\"runtime/core/odg-canonical-json.ts\"]\n    },\n    {\n        \"summary\": \"Use a custom replacer function for JSON.stringify.\",\n        \"steps\": [\n            \"Define a replacer function that handles undefined values.\",\n            \"Pass this replacer function to JSON.stringify.\"\n        ],\n        \"changesExportedApi\": false,\n        \"files\": [\"runtime/core/odg-canonical-json.ts\"]\n    },\n    {\n        \"summary\": \"Create a helper function to recursively process values.\",\n        \"steps\": [\n            \"Define a helper function that processes each value.\",\n            \"Use this helper function in the main canonicalJson function.\"\n        ],\n        \"changesExportedApi\": false,\n        \"files\": [\"runtime/core/odg-canonical-json.ts\"]\n    }\n]"
+  },
+  "selection": {
+    "rule": "SEL-1 lexicographic: writeSetOk desc → oraclePassed desc → typecheckOk desc → callersAffected asc → diffLines asc → design id asc (mechanical; no model judgement)",
+    "ranking": [
+      "D3",
+      "D1"
+    ],
+    "chosen": "D3",
+    "scores": [
+      {
+        "design": "D1",
+        "generated": true,
+        "writeSetOk": true,
+        "writeSetOutside": [],
+        "filesDefaulted": false,
+        "oraclePassed": 27,
+        "oracleTotal": 33,
+        "oracleExecuted": true,
+        "typecheckOk": true,
+        "apiChanged": false,
+        "callersAffected": 0,
+        "diffLines": 4
+      },
+      {
+        "design": "D2",
+        "generated": false,
+        "writeSetOk": false,
+        "writeSetOutside": [],
+        "filesDefaulted": false,
+        "oraclePassed": 0,
+        "oracleTotal": 0,
+        "oracleExecuted": false,
+        "typecheckOk": false,
+        "apiChanged": true,
+        "callersAffected": 1,
+        "diffLines": null
+      },
+      {
+        "design": "D3",
+        "generated": true,
+        "writeSetOk": true,
+        "writeSetOutside": [],
+        "filesDefaulted": false,
+        "oraclePassed": 32,
+        "oracleTotal": 33,
+        "oracleExecuted": true,
+        "typecheckOk": true,
+        "apiChanged": false,
+        "callersAffected": 0,
+        "diffLines": 23
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "buildOk": true,
+      "verified": false,
+      "accepted": false,
+      "repairs": 1,
+      "repairStopReason": "NO_PROGRESS_IDENTICAL_REGENERATION",
+      "verifyError": "case 18: ([18]) returned undefined, expected \"null\"",
+      "buildError": null,
+      "executionMode": "SANDBOX",
+      "executionStatus": "EXECUTED",
+      "isolation": {
+        "mechanism": "provider-sandbox bwrap (--unshare-all, --clearenv, no /home|/etc|/var) + prlimit RLIMIT_AS + null-prototype vm context",
+        "network": false,
+        "memoryLimitBytes": 1073741824,
+        "hostExecutesModelCode": false
+      },
+      "firstPass": {
+        "buildOk": true,
+        "verified": false,
+        "error": "case 18: ([18]) returned undefined, expected \"null\""
+      },
+      "finalTsSha256": "7abf397bb08c674f41ed1259064de3074789687ce832fa69300481226a33a337",
+      "finalGeneration": 4
+    },
+    {
+      "round": 2,
+      "buildOk": true,
+      "verified": false,
+      "accepted": false,
+      "repairs": 3,
+      "repairStopReason": "NO_PROGRESS_IDENTICAL_REGENERATION",
+      "verifyError": "case 18: ([18]) returned undefined, expected \"null\"",
+      "buildError": null,
+      "executionMode": "SANDBOX",
+      "executionStatus": "EXECUTED",
+      "isolation": {
+        "mechanism": "provider-sandbox bwrap (--unshare-all, --clearenv, no /home|/etc|/var) + prlimit RLIMIT_AS + null-prototype vm context",
+        "network": false,
+        "memoryLimitBytes": 1073741824,
+        "hostExecutesModelCode": false
+      },
+      "firstPass": {
+        "buildOk": true,
+        "verified": false,
+        "error": "case 18: ([18]) returned undefined, expected \"null\""
+      },
+      "finalTsSha256": "9ede7d6741c18b9544d583fd92a8e3ed8fbd6c6a2357b2a15a7075fd1803ad9e",
+      "finalGeneration": 8
+    }
+  ],
+  "repairTrace": [
+    {
+      "round": 1,
+      "kind": "undefined@top",
+      "case": 18
+    },
+    {
+      "round": 2,
+      "kind": "undefined@top",
+      "case": 18
+    },
+    {
+      "round": 2,
+      "kind": "undefined@top",
+      "case": 18
+    },
+    {
+      "round": 2,
+      "kind": "undefined@top",
+      "case": 18
+    }
+  ],
+  "prompts": [
+    {
+      "i": 1,
+      "stage": "S3 design",
+      "promptSha256": "0b66ae1ac8dcedf54ef9fe399cc800bda48cd922ac7aebb94520482a7d902a0b",
+      "promptChars": 2060,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "79eb1e04910d189d50a8c42bccce389e5da1dedd0410dc179d81d9c65f905198"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "3fad1cd1b1cdda2fcae9b5356bbbfd087fa000824827466f0d137f8a4e9ea2de"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "77c4c1301434411235a072d34fea340e8549873ac2cd12592528502550291f25"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "39911d3796301cf73f2c083ad6cfc142935ea060638a2e082e1e3f2fe25bf2ab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "bc6dd4ad1c301bd66439929802ddf8462f215031cb01d9f677b33e97122acf39"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "eb3011e29ad62d1ed17a040166eb1f7f3ad7a4bb32ae42cf9428d38367957028"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are a software engineer working in a strict TypeScript repository that uses CommonJS modules.\nA module below gives wrong outputs for some inputs. The evidence is its current source and executed input/output observations.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (4 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current output:  <undefined>\n    expected output: null\n  input: [undefined]\n    current output:  []\n    expected output: [null]\n  input: { a: undefined }\n    current output:  {\"a\":undefined}\n    expected output: {}\n  input: [{ a: undefined }, [undefined]]\n    current output:  [{\"a\":undefined},[]]\n    expected output: [{},[null]]\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current output:  {\"x\":[,{\"y\":undefined,\"z\":[1,]}]}\n    expected output: {\"x\":[null,{\"z\":[1,null]}]}\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nTask: propose 3 DIFFERENT designs that would correct the module while keeping every currently-correct output unchanged. Do not write the code.\nAnswer with ONLY a JSON array, no prose, no markdown. Each element: {\"summary\": \"one sentence\", \"steps\": [\"short step\", ...at most 5], \"changesExportedApi\": true|false, \"files\": [\"paths you would change\"]}.",
+      "ok": true,
+      "ms": 262580,
+      "evalCount": 219,
+      "reason": null,
+      "responseSha256": "95b5a59f1440a37d2c433b3c858233cdb7ae9c6a574d560ba0e54e48490030b6"
+    },
+    {
+      "i": 2,
+      "stage": "S4 implement D1",
+      "promptSha256": "3536bd542921a63cd7794974e152f2b37b7e6551d74693d249e2455b2e177389",
+      "promptChars": 2122,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "560b6ef08037bd2f9101c502dc15d51e06f72b6df63731694775374d88185ae2"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "47eed9366ba2a4cd35ecfd8e070d3b4526e729bf1aa6ea2553053710d18e75c9"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "26be46a8996d07c2ea977a2200dbeb5b6583b28900b16ac9fa14bf82f7365005"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "77c4c1301434411235a072d34fea340e8549873ac2cd12592528502550291f25"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "39911d3796301cf73f2c083ad6cfc142935ea060638a2e082e1e3f2fe25bf2ab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "S3 design D1 (LOCAL MODEL)",
+          "sha256": "82af73954595d7fb555c91b3dec27fa980067c8100ab7426bd12f369a13c6ee8"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "58661b491a1ec21b267b170437079b36ee7b6950bd5e1c4871a64c9103a3031b"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are writing exactly ONE TypeScript source file for a strict TypeScript repository that uses CommonJS.\nOutput ONLY the complete TypeScript source of the file. No explanation, no markdown fences, no prose.\nRequirements: no import statements; annotate every parameter and return type (use `any` for the value); keep the same exported names; put `export {};` as the LAST line of the file.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (4 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current output:  <undefined>\n    expected output: null\n  input: [undefined]\n    current output:  []\n    expected output: [null]\n  input: { a: undefined }\n    current output:  {\"a\":undefined}\n    expected output: {}\n  input: [{ a: undefined }, [undefined]]\n    current output:  [{\"a\":undefined},[]]\n    expected output: [{},[null]]\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current output:  {\"x\":[,{\"y\":undefined,\"z\":[1,]}]}\n    expected output: {\"x\":[null,{\"z\":[1,null]}]}\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nDesign to implement:\n{\n \"summary\": \"Handle undefined values by converting them to null.\",\n \"steps\": [\n  \"Modify the function to check for undefined values.\",\n  \"Convert undefined values to null before serialization.\"\n ]\n}\nNow output only the code:",
+      "ok": true,
+      "ms": 252849,
+      "evalCount": 158,
+      "reason": null,
+      "responseSha256": "629f529065a5b9bc573d67c3060969a6086c882e6fcbe7b8640eb4b6a1955a31"
+    },
+    {
+      "i": 3,
+      "stage": "S4 implement D2",
+      "promptSha256": "a42328601bf39f0b2cdfbfe805f3cb088f0a52a8ae1c42ea88ec88a25be7c9ed",
+      "promptChars": 2120,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "560b6ef08037bd2f9101c502dc15d51e06f72b6df63731694775374d88185ae2"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "47eed9366ba2a4cd35ecfd8e070d3b4526e729bf1aa6ea2553053710d18e75c9"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "26be46a8996d07c2ea977a2200dbeb5b6583b28900b16ac9fa14bf82f7365005"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "77c4c1301434411235a072d34fea340e8549873ac2cd12592528502550291f25"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "39911d3796301cf73f2c083ad6cfc142935ea060638a2e082e1e3f2fe25bf2ab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "S3 design D2 (LOCAL MODEL)",
+          "sha256": "9a017a4dc6865fce916a4aa6ee45788d26e44b79225217e06867eb6e6829b5fe"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "58661b491a1ec21b267b170437079b36ee7b6950bd5e1c4871a64c9103a3031b"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are writing exactly ONE TypeScript source file for a strict TypeScript repository that uses CommonJS.\nOutput ONLY the complete TypeScript source of the file. No explanation, no markdown fences, no prose.\nRequirements: no import statements; annotate every parameter and return type (use `any` for the value); keep the same exported names; put `export {};` as the LAST line of the file.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (4 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current output:  <undefined>\n    expected output: null\n  input: [undefined]\n    current output:  []\n    expected output: [null]\n  input: { a: undefined }\n    current output:  {\"a\":undefined}\n    expected output: {}\n  input: [{ a: undefined }, [undefined]]\n    current output:  [{\"a\":undefined},[]]\n    expected output: [{},[null]]\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current output:  {\"x\":[,{\"y\":undefined,\"z\":[1,]}]}\n    expected output: {\"x\":[null,{\"z\":[1,null]}]}\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nDesign to implement:\n{\n \"summary\": \"Use a custom replacer function for JSON.stringify.\",\n \"steps\": [\n  \"Define a replacer function that handles undefined values.\",\n  \"Pass this replacer function to JSON.stringify.\"\n ]\n}\nNow output only the code:",
+      "ok": true,
+      "ms": 70928,
+      "evalCount": 63,
+      "reason": null,
+      "responseSha256": "9ad73b6bf874382884a23bc734b572813157698245c7e43482fa7c45a84b9241"
+    },
+    {
+      "i": 4,
+      "stage": "S4 implement D3",
+      "promptSha256": "17652e9e240adc6435cdac0bec9a0a4b61491b5fccb7adef794bf6facb421110",
+      "promptChars": 2133,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "560b6ef08037bd2f9101c502dc15d51e06f72b6df63731694775374d88185ae2"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "47eed9366ba2a4cd35ecfd8e070d3b4526e729bf1aa6ea2553053710d18e75c9"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "26be46a8996d07c2ea977a2200dbeb5b6583b28900b16ac9fa14bf82f7365005"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "77c4c1301434411235a072d34fea340e8549873ac2cd12592528502550291f25"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "39911d3796301cf73f2c083ad6cfc142935ea060638a2e082e1e3f2fe25bf2ab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "S3 design D3 (LOCAL MODEL)",
+          "sha256": "53aad9eec764cf0b70a3edbdd8ecf928ba966e34ec4ac33fc34c932ee1bda7bf"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "58661b491a1ec21b267b170437079b36ee7b6950bd5e1c4871a64c9103a3031b"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are writing exactly ONE TypeScript source file for a strict TypeScript repository that uses CommonJS.\nOutput ONLY the complete TypeScript source of the file. No explanation, no markdown fences, no prose.\nRequirements: no import statements; annotate every parameter and return type (use `any` for the value); keep the same exported names; put `export {};` as the LAST line of the file.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (4 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current output:  <undefined>\n    expected output: null\n  input: [undefined]\n    current output:  []\n    expected output: [null]\n  input: { a: undefined }\n    current output:  {\"a\":undefined}\n    expected output: {}\n  input: [{ a: undefined }, [undefined]]\n    current output:  [{\"a\":undefined},[]]\n    expected output: [{},[null]]\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current output:  {\"x\":[,{\"y\":undefined,\"z\":[1,]}]}\n    expected output: {\"x\":[null,{\"z\":[1,null]}]}\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nDesign to implement:\n{\n \"summary\": \"Create a helper function to recursively process values.\",\n \"steps\": [\n  \"Define a helper function that processes each value.\",\n  \"Use this helper function in the main canonicalJson function.\"\n ]\n}\nNow output only the code:",
+      "ok": true,
+      "ms": 155016,
+      "evalCount": 171,
+      "reason": null,
+      "responseSha256": "5adecefba81a4f0d8c495799c978734126a371a410cb9fb17a2c9031e9e0ccf8"
+    },
+    {
+      "i": 5,
+      "stage": "S5 repair D3 r1",
+      "promptSha256": "db7ef7b842aae7304efee361bf80a7ffec4c4b81f8073c0d3e0fc74bf801fcd3",
+      "promptChars": 2278,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "560b6ef08037bd2f9101c502dc15d51e06f72b6df63731694775374d88185ae2"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "47eed9366ba2a4cd35ecfd8e070d3b4526e729bf1aa6ea2553053710d18e75c9"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "26be46a8996d07c2ea977a2200dbeb5b6583b28900b16ac9fa14bf82f7365005"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "77c4c1301434411235a072d34fea340e8549873ac2cd12592528502550291f25"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "39911d3796301cf73f2c083ad6cfc142935ea060638a2e082e1e3f2fe25bf2ab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "S3 design D3 (LOCAL MODEL)",
+          "sha256": "53aad9eec764cf0b70a3edbdd8ecf928ba966e34ec4ac33fc34c932ee1bda7bf"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "3c76059c55ccb8b01b61d6768499116fdc2445d9de01cecbe853ea71a4324cdc"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "sandbox observation (shown case)",
+          "sha256": "1cb53433bb2ce92df1940364b3207b0bc3f0f4f0bd874f234214880d9bf40c3b"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "58661b491a1ec21b267b170437079b36ee7b6950bd5e1c4871a64c9103a3031b"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are writing exactly ONE TypeScript source file for a strict TypeScript repository that uses CommonJS.\nOutput ONLY the complete TypeScript source of the file. No explanation, no markdown fences, no prose.\nRequirements: no import statements; annotate every parameter and return type (use `any` for the value); keep the same exported names; put `export {};` as the LAST line of the file.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (4 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current output:  <undefined>\n    expected output: null\n  input: [undefined]\n    current output:  []\n    expected output: [null]\n  input: { a: undefined }\n    current output:  {\"a\":undefined}\n    expected output: {}\n  input: [{ a: undefined }, [undefined]]\n    current output:  [{\"a\":undefined},[]]\n    expected output: [{},[null]]\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current output:  {\"x\":[,{\"y\":undefined,\"z\":[1,]}]}\n    expected output: {\"x\":[null,{\"z\":[1,null]}]}\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nDesign to implement:\n{\n \"summary\": \"Create a helper function to recursively process values.\",\n \"steps\": [\n  \"Define a helper function that processes each value.\",\n  \"Use this helper function in the main canonicalJson function.\"\n ]\n}\nA previous attempt BUILT but still gives a wrong output:\n  for input undefined the output is still wrong (expected null). It returned undefined.\nNow output only the code:",
+      "ok": true,
+      "ms": 152760,
+      "evalCount": 171,
+      "reason": null,
+      "responseSha256": "5adecefba81a4f0d8c495799c978734126a371a410cb9fb17a2c9031e9e0ccf8"
+    },
+    {
+      "i": 6,
+      "stage": "S5 implement D3 r2",
+      "promptSha256": "17652e9e240adc6435cdac0bec9a0a4b61491b5fccb7adef794bf6facb421110",
+      "promptChars": 2133,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "560b6ef08037bd2f9101c502dc15d51e06f72b6df63731694775374d88185ae2"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "47eed9366ba2a4cd35ecfd8e070d3b4526e729bf1aa6ea2553053710d18e75c9"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "26be46a8996d07c2ea977a2200dbeb5b6583b28900b16ac9fa14bf82f7365005"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "77c4c1301434411235a072d34fea340e8549873ac2cd12592528502550291f25"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "39911d3796301cf73f2c083ad6cfc142935ea060638a2e082e1e3f2fe25bf2ab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "S3 design D3 (LOCAL MODEL)",
+          "sha256": "53aad9eec764cf0b70a3edbdd8ecf928ba966e34ec4ac33fc34c932ee1bda7bf"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "58661b491a1ec21b267b170437079b36ee7b6950bd5e1c4871a64c9103a3031b"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are writing exactly ONE TypeScript source file for a strict TypeScript repository that uses CommonJS.\nOutput ONLY the complete TypeScript source of the file. No explanation, no markdown fences, no prose.\nRequirements: no import statements; annotate every parameter and return type (use `any` for the value); keep the same exported names; put `export {};` as the LAST line of the file.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (4 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current output:  <undefined>\n    expected output: null\n  input: [undefined]\n    current output:  []\n    expected output: [null]\n  input: { a: undefined }\n    current output:  {\"a\":undefined}\n    expected output: {}\n  input: [{ a: undefined }, [undefined]]\n    current output:  [{\"a\":undefined},[]]\n    expected output: [{},[null]]\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current output:  {\"x\":[,{\"y\":undefined,\"z\":[1,]}]}\n    expected output: {\"x\":[null,{\"z\":[1,null]}]}\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nDesign to implement:\n{\n \"summary\": \"Create a helper function to recursively process values.\",\n \"steps\": [\n  \"Define a helper function that processes each value.\",\n  \"Use this helper function in the main canonicalJson function.\"\n ]\n}\nNow output only the code:",
+      "ok": true,
+      "ms": 114136,
+      "evalCount": 170,
+      "reason": null,
+      "responseSha256": "995d057d466c52ebb690bfde4df9be6ae1060bf05585693e4e05b6b0afc077ae"
+    },
+    {
+      "i": 7,
+      "stage": "S5 repair D3 r2",
+      "promptSha256": "db7ef7b842aae7304efee361bf80a7ffec4c4b81f8073c0d3e0fc74bf801fcd3",
+      "promptChars": 2278,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "560b6ef08037bd2f9101c502dc15d51e06f72b6df63731694775374d88185ae2"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "47eed9366ba2a4cd35ecfd8e070d3b4526e729bf1aa6ea2553053710d18e75c9"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "26be46a8996d07c2ea977a2200dbeb5b6583b28900b16ac9fa14bf82f7365005"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "77c4c1301434411235a072d34fea340e8549873ac2cd12592528502550291f25"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "39911d3796301cf73f2c083ad6cfc142935ea060638a2e082e1e3f2fe25bf2ab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "S3 design D3 (LOCAL MODEL)",
+          "sha256": "53aad9eec764cf0b70a3edbdd8ecf928ba966e34ec4ac33fc34c932ee1bda7bf"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "3c76059c55ccb8b01b61d6768499116fdc2445d9de01cecbe853ea71a4324cdc"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "sandbox observation (shown case)",
+          "sha256": "1cb53433bb2ce92df1940364b3207b0bc3f0f4f0bd874f234214880d9bf40c3b"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "58661b491a1ec21b267b170437079b36ee7b6950bd5e1c4871a64c9103a3031b"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are writing exactly ONE TypeScript source file for a strict TypeScript repository that uses CommonJS.\nOutput ONLY the complete TypeScript source of the file. No explanation, no markdown fences, no prose.\nRequirements: no import statements; annotate every parameter and return type (use `any` for the value); keep the same exported names; put `export {};` as the LAST line of the file.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (4 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current output:  <undefined>\n    expected output: null\n  input: [undefined]\n    current output:  []\n    expected output: [null]\n  input: { a: undefined }\n    current output:  {\"a\":undefined}\n    expected output: {}\n  input: [{ a: undefined }, [undefined]]\n    current output:  [{\"a\":undefined},[]]\n    expected output: [{},[null]]\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current output:  {\"x\":[,{\"y\":undefined,\"z\":[1,]}]}\n    expected output: {\"x\":[null,{\"z\":[1,null]}]}\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nDesign to implement:\n{\n \"summary\": \"Create a helper function to recursively process values.\",\n \"steps\": [\n  \"Define a helper function that processes each value.\",\n  \"Use this helper function in the main canonicalJson function.\"\n ]\n}\nA previous attempt BUILT but still gives a wrong output:\n  for input undefined the output is still wrong (expected null). It returned undefined.\nNow output only the code:",
+      "ok": true,
+      "ms": 135146,
+      "evalCount": 171,
+      "reason": null,
+      "responseSha256": "5adecefba81a4f0d8c495799c978734126a371a410cb9fb17a2c9031e9e0ccf8"
+    },
+    {
+      "i": 8,
+      "stage": "S5 repair D3 r2",
+      "promptSha256": "db7ef7b842aae7304efee361bf80a7ffec4c4b81f8073c0d3e0fc74bf801fcd3",
+      "promptChars": 2278,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "560b6ef08037bd2f9101c502dc15d51e06f72b6df63731694775374d88185ae2"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "47eed9366ba2a4cd35ecfd8e070d3b4526e729bf1aa6ea2553053710d18e75c9"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "26be46a8996d07c2ea977a2200dbeb5b6583b28900b16ac9fa14bf82f7365005"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "77c4c1301434411235a072d34fea340e8549873ac2cd12592528502550291f25"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "39911d3796301cf73f2c083ad6cfc142935ea060638a2e082e1e3f2fe25bf2ab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "S3 design D3 (LOCAL MODEL)",
+          "sha256": "53aad9eec764cf0b70a3edbdd8ecf928ba966e34ec4ac33fc34c932ee1bda7bf"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "3c76059c55ccb8b01b61d6768499116fdc2445d9de01cecbe853ea71a4324cdc"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "sandbox observation (shown case)",
+          "sha256": "1cb53433bb2ce92df1940364b3207b0bc3f0f4f0bd874f234214880d9bf40c3b"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "58661b491a1ec21b267b170437079b36ee7b6950bd5e1c4871a64c9103a3031b"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are writing exactly ONE TypeScript source file for a strict TypeScript repository that uses CommonJS.\nOutput ONLY the complete TypeScript source of the file. No explanation, no markdown fences, no prose.\nRequirements: no import statements; annotate every parameter and return type (use `any` for the value); keep the same exported names; put `export {};` as the LAST line of the file.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (4 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current output:  <undefined>\n    expected output: null\n  input: [undefined]\n    current output:  []\n    expected output: [null]\n  input: { a: undefined }\n    current output:  {\"a\":undefined}\n    expected output: {}\n  input: [{ a: undefined }, [undefined]]\n    current output:  [{\"a\":undefined},[]]\n    expected output: [{},[null]]\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current output:  {\"x\":[,{\"y\":undefined,\"z\":[1,]}]}\n    expected output: {\"x\":[null,{\"z\":[1,null]}]}\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nDesign to implement:\n{\n \"summary\": \"Create a helper function to recursively process values.\",\n \"steps\": [\n  \"Define a helper function that processes each value.\",\n  \"Use this helper function in the main canonicalJson function.\"\n ]\n}\nA previous attempt BUILT but still gives a wrong output:\n  for input undefined the output is still wrong (expected null). It returned undefined.\nNow output only the code:",
+      "ok": true,
+      "ms": 85606,
+      "evalCount": 180,
+      "reason": null,
+      "responseSha256": "661dde08f9b79c8e7f48ddfe306b94f79d3a9335910c41b5c089b61ee88cc9a0"
+    },
+    {
+      "i": 9,
+      "stage": "S5 repair D3 r2",
+      "promptSha256": "db7ef7b842aae7304efee361bf80a7ffec4c4b81f8073c0d3e0fc74bf801fcd3",
+      "promptChars": 2278,
+      "segments": [
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "560b6ef08037bd2f9101c502dc15d51e06f72b6df63731694775374d88185ae2"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "47eed9366ba2a4cd35ecfd8e070d3b4526e729bf1aa6ea2553053710d18e75c9"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "26be46a8996d07c2ea977a2200dbeb5b6583b28900b16ac9fa14bf82f7365005"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 target",
+          "sha256": "0950b6f4aed414e520536d804a328c42b150d42743ea672ebb610258677c2aa9"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "repository file (current integrated module)",
+          "sha256": "bb31417b93f50517d1a44a6ce07a81e0d4f9abf4edb60b68d33a37d5e83dc624"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 counts",
+          "sha256": "77c4c1301434411235a072d34fea340e8549873ac2cd12592528502550291f25"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "PROB-1 shown failing cases (expected = in-repo reference, executed)",
+          "sha256": "39911d3796301cf73f2c083ad6cfc142935ea060638a2e082e1e3f2fe25bf2ab"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "IMP-1/IMP-2",
+          "sha256": "ae1b48b5401b60cefda89972b080c7c80c6ecc9b5e249168f3801bf450d279b8"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "S3 design D3 (LOCAL MODEL)",
+          "sha256": "53aad9eec764cf0b70a3edbdd8ecf928ba966e34ec4ac33fc34c932ee1bda7bf"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "3c76059c55ccb8b01b61d6768499116fdc2445d9de01cecbe853ea71a4324cdc"
+        },
+        {
+          "kind": "EVIDENCE",
+          "source": "sandbox observation (shown case)",
+          "sha256": "1cb53433bb2ce92df1940364b3207b0bc3f0f4f0bd874f234214880d9bf40c3b"
+        },
+        {
+          "kind": "TEMPLATE",
+          "source": null,
+          "sha256": "58661b491a1ec21b267b170437079b36ee7b6950bd5e1c4871a64c9103a3031b"
+        }
+      ],
+      "denylistHits": [],
+      "prompt": "You are writing exactly ONE TypeScript source file for a strict TypeScript repository that uses CommonJS.\nOutput ONLY the complete TypeScript source of the file. No explanation, no markdown fences, no prose.\nRequirements: no import statements; annotate every parameter and return type (use `any` for the value); keep the same exported names; put `export {};` as the LAST line of the file.\nFile: runtime/core/odg-canonical-json.ts (exports canonicalJson)\nCurrent source:\n<<<SOURCE\nfunction canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};\nSOURCE>>>\nObserved on 33 inputs: 9 produce a wrong output (4 of them are not shown); 24 are correct today and must stay correct.\nWrong outputs (executed):\n  input: undefined\n    current output:  <undefined>\n    expected output: null\n  input: [undefined]\n    current output:  []\n    expected output: [null]\n  input: { a: undefined }\n    current output:  {\"a\":undefined}\n    expected output: {}\n  input: [{ a: undefined }, [undefined]]\n    current output:  [{\"a\":undefined},[]]\n    expected output: [{},[null]]\n  input: { x: [undefined, { y: undefined, z: [1, undefined] }] }\n    current output:  {\"x\":[,{\"y\":undefined,\"z\":[1,]}]}\n    expected output: {\"x\":[null,{\"z\":[1,null]}]}\nDependents of this module: none; tests that load it: runtime/core/odg-canonical-json.test.ts.\nDesign to implement:\n{\n \"summary\": \"Create a helper function to recursively process values.\",\n \"steps\": [\n  \"Define a helper function that processes each value.\",\n  \"Use this helper function in the main canonicalJson function.\"\n ]\n}\nA previous attempt BUILT but still gives a wrong output:\n  for input undefined the output is still wrong (expected null). It returned undefined.\nNow output only the code:",
+      "ok": true,
+      "ms": 116102,
+      "evalCount": 180,
+      "reason": null,
+      "responseSha256": "661dde08f9b79c8e7f48ddfe306b94f79d3a9335910c41b5c089b61ee88cc9a0"
+    }
+  ],
+  "generations": [
+    {
+      "i": 1,
+      "stage": "S4 implement D1",
+      "design": "D1",
+      "promptI": 2,
+      "ok": true,
+      "tsSource": "function canonicalJson(value: any): string {\n    if (value === undefined) {\n        return 'null';\n    } else if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};",
+      "tsSha256": "88f6d0cfea73422e3e9f9a16322758de9ae12ba4ba3cf0b33f851bd4e59d6a95",
+      "syntaxErrors": [],
+      "sandboxContentSha256": "7aec788b1e4d263bf1201323b3e327ec86b73aa5820ccede6919fb80fa3ba49f",
+      "oracle": {
+        "passed": 27,
+        "total": 33,
+        "failing": [
+          21,
+          22,
+          23,
+          24,
+          25,
+          26
+        ]
+      },
+      "typecheck": {
+        "ok": true,
+        "diagnostics": []
+      }
+    },
+    {
+      "i": 2,
+      "stage": "S4 implement D2",
+      "design": "D2",
+      "promptI": 3,
+      "ok": false,
+      "reason": "no CommonJS module extracted",
+      "raw": "```typescript\nfunction canonicalJson(value: any): string {\n    const replacer = (key: string, val: any): any => {\n        if (val === undefined) {\n            return null;\n        }\n        return val;\n    };\n    return JSON.stringify(value, replacer);\n}\n\nexport {};\n```"
+    },
+    {
+      "i": 3,
+      "stage": "S4 implement D3",
+      "design": "D3",
+      "promptI": 4,
+      "ok": true,
+      "tsSource": "function canonicalJson(value: any): string {\n    function processValue(val: any): any {\n        if (val === null || typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string') {\n            return val;\n        } else if (Array.isArray(val)) {\n            return val.map(processValue);\n        } else if (typeof val === 'object') {\n            const keys = Object.keys(val).sort();\n            const entries = keys.map(key => ({ key, value: processValue(val[key]) }));\n            return entries.reduce((acc, entry) => ({ ...acc, [entry.key]: entry.value }), {});\n        }\n        return val;\n    }\n\n    const processedValue = processValue(value);\n    return JSON.stringify(processedValue);\n}\n\nmodule.exports = { canonicalJson };\nexport {};",
+      "tsSha256": "7abf397bb08c674f41ed1259064de3074789687ce832fa69300481226a33a337",
+      "syntaxErrors": [],
+      "sandboxContentSha256": "6c0d13d158bad16f2b91aa953577825bf6e0a00758c91cb1fc393b7650fa48da",
+      "oracle": {
+        "passed": 32,
+        "total": 33,
+        "failing": [
+          18
+        ]
+      },
+      "typecheck": {
+        "ok": true,
+        "diagnostics": []
+      }
+    },
+    {
+      "i": 4,
+      "stage": "S5 repair D3 r1",
+      "design": "D3",
+      "promptI": 5,
+      "ok": true,
+      "tsSource": "function canonicalJson(value: any): string {\n    function processValue(val: any): any {\n        if (val === null || typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string') {\n            return val;\n        } else if (Array.isArray(val)) {\n            return val.map(processValue);\n        } else if (typeof val === 'object') {\n            const keys = Object.keys(val).sort();\n            const entries = keys.map(key => ({ key, value: processValue(val[key]) }));\n            return entries.reduce((acc, entry) => ({ ...acc, [entry.key]: entry.value }), {});\n        }\n        return val;\n    }\n\n    const processedValue = processValue(value);\n    return JSON.stringify(processedValue);\n}\n\nmodule.exports = { canonicalJson };\nexport {};",
+      "tsSha256": "7abf397bb08c674f41ed1259064de3074789687ce832fa69300481226a33a337",
+      "syntaxErrors": [],
+      "sandboxContentSha256": "6c0d13d158bad16f2b91aa953577825bf6e0a00758c91cb1fc393b7650fa48da"
+    },
+    {
+      "i": 5,
+      "stage": "S5 implement D3 r2",
+      "design": "D3",
+      "promptI": 6,
+      "ok": true,
+      "tsSource": "function processValue(value: any): any {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return value;\n    } else if (Array.isArray(value)) {\n        return value.map(processValue);\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => ({ key, value: processValue(value[key]) }));\n        return entries.reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {});\n    }\n    return value;\n}\n\nfunction canonicalJson(value: any): string {\n    const processedValue = processValue(value);\n    return JSON.stringify(processedValue);\n}\n\nmodule.exports = { canonicalJson };\nexport {};",
+      "tsSha256": "eb96372c8386341733ce86781dd0734d99c54507f251e82ce488c8fc6e2e06c6",
+      "syntaxErrors": [],
+      "sandboxContentSha256": "d1ce5ea233b8e9a13911a523f11bb509b39e20c3f53e7c42176f6e51ea3c1774"
+    },
+    {
+      "i": 6,
+      "stage": "S5 repair D3 r2",
+      "design": "D3",
+      "promptI": 7,
+      "ok": true,
+      "tsSource": "function canonicalJson(value: any): string {\n    function processValue(val: any): any {\n        if (val === null || typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string') {\n            return val;\n        } else if (Array.isArray(val)) {\n            return val.map(processValue);\n        } else if (typeof val === 'object') {\n            const keys = Object.keys(val).sort();\n            const entries = keys.map(key => ({ key, value: processValue(val[key]) }));\n            return entries.reduce((acc, entry) => ({ ...acc, [entry.key]: entry.value }), {});\n        }\n        return val;\n    }\n\n    const processedValue = processValue(value);\n    return JSON.stringify(processedValue);\n}\n\nmodule.exports = { canonicalJson };\nexport {};",
+      "tsSha256": "7abf397bb08c674f41ed1259064de3074789687ce832fa69300481226a33a337",
+      "syntaxErrors": [],
+      "sandboxContentSha256": "6c0d13d158bad16f2b91aa953577825bf6e0a00758c91cb1fc393b7650fa48da"
+    },
+    {
+      "i": 7,
+      "stage": "S5 repair D3 r2",
+      "design": "D3",
+      "promptI": 8,
+      "ok": true,
+      "tsSource": "function canonicalJson(value: any): string {\n    function processValue(val: any): any {\n        if (val === null || typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string') {\n            return val;\n        } else if (Array.isArray(val)) {\n            return val.map(processValue);\n        } else if (typeof val === 'object') {\n            const keys = Object.keys(val).sort();\n            const entries = keys.map(key => ({ key, value: processValue(val[key]) }));\n            return entries.reduce((acc, entry) => {\n                acc[entry.key] = entry.value;\n                return acc;\n            }, {} as any);\n        }\n        return val;\n    }\n\n    const processedValue = processValue(value);\n    return JSON.stringify(processedValue);\n}\n\nmodule.exports = { canonicalJson };\nexport {};",
+      "tsSha256": "9ede7d6741c18b9544d583fd92a8e3ed8fbd6c6a2357b2a15a7075fd1803ad9e",
+      "syntaxErrors": [],
+      "sandboxContentSha256": "72b467bb36802ecaa53a21cb94e5082772bfa264b64e2a7bd617b967667811da"
+    },
+    {
+      "i": 8,
+      "stage": "S5 repair D3 r2",
+      "design": "D3",
+      "promptI": 9,
+      "ok": true,
+      "tsSource": "function canonicalJson(value: any): string {\n    function processValue(val: any): any {\n        if (val === null || typeof val === 'boolean' || typeof val === 'number' || typeof val === 'string') {\n            return val;\n        } else if (Array.isArray(val)) {\n            return val.map(processValue);\n        } else if (typeof val === 'object') {\n            const keys = Object.keys(val).sort();\n            const entries = keys.map(key => ({ key, value: processValue(val[key]) }));\n            return entries.reduce((acc, entry) => {\n                acc[entry.key] = entry.value;\n                return acc;\n            }, {} as any);\n        }\n        return val;\n    }\n\n    const processedValue = processValue(value);\n    return JSON.stringify(processedValue);\n}\n\nmodule.exports = { canonicalJson };\nexport {};",
+      "tsSha256": "9ede7d6741c18b9544d583fd92a8e3ed8fbd6c6a2357b2a15a7075fd1803ad9e",
+      "syntaxErrors": [],
+      "sandboxContentSha256": "72b467bb36802ecaa53a21cb94e5082772bfa264b64e2a7bd617b967667811da"
+    }
+  ],
+  "network": {
+    "modelCalls": 9,
+    "refused": [],
+    "capHit": null,
+    "providerCalls": 0
+  },
+  "provenance": {
+    "actor": "ODG",
+    "executionClass": "ODG_LOCAL_MODEL_EXECUTION",
+    "providerEditedGeneratedCode": false,
+    "providerCalls": 0
+  },
+  "authorship": {
+    "problem": {
+      "by": "ODG_RULES",
+      "rule": "PROB-1 (executed current module vs in-repo reference REF-1)",
+      "providerAlgorithmTextInPrompts": false,
+      "denylistHits": 0
+    },
+    "corpus": {
+      "by": "PROVIDER",
+      "note": "the ORC-2 input literals (inputs only; expected values are computed by executing the reference)"
+    },
+    "impact": {
+      "by": "ODG_RULES",
+      "rule": "IMP-1 change-impact-graph + IMP-2"
+    },
+    "design": {
+      "by": "LOCAL_MODEL",
+      "model": "qwen2.5-coder:7b",
+      "designs": 3
+    },
+    "selection": {
+      "by": "ODG_RULES",
+      "rule": "SEL-1 lexicographic: writeSetOk desc → oraclePassed desc → typecheckOk desc → callersAffected asc → diffLines asc → design id asc (mechanical; no model judgement)",
+      "chosen": "D3"
+    },
+    "implementation": {
+      "by": "LOCAL_MODEL",
+      "model": "qwen2.5-coder:7b",
+      "generation": null
+    },
+    "testsOracle": {
+      "by": "ODG_RULES",
+      "rule": "oracle = reference outputs (REF-1) on ORC-2; harness + test file generated by rules"
+    },
+    "repair": {
+      "by": "LOCAL_MODEL (hint = ODG-observed shown failing case)",
+      "repairs": 4
+    },
+    "plumbing": {
+      "by": "PROVIDER",
+      "note": "runner, pipeline, prompt TEMPLATE text (format only; scanned against ALGORITHM_HINT_DENYLIST)"
+    },
+    "integration": {
+      "by": "NOT_INTEGRATED",
+      "note": "a PASS produces a branch-ready diff; integration is a PR under normal controls"
+    }
+  },
+  "outcome": "FAIL",
+  "wallMs": 1348755,
+  "lessons": [
+    {
+      "id": "lesson:V175-NB2:REPAIR_NEEDED:6074f7618193",
+      "family": "engineering",
+      "provenance": "PROBE probe1.json",
+      "consolidated": true,
+      "value": {
+        "kind": "REPAIR_NEEDED",
+        "target": "runtime/core/odg-canonical-json.ts",
+        "repairs": 4,
+        "caseKinds": [
+          "undefined@top"
+        ],
+        "hint": "A previous build of runtime/core/odg-canonical-json.ts needed 4 repair(s); its first attempts were wrong on inputs of kind undefined@top — check those inputs."
+      }
+    },
+    {
+      "id": "lesson:V175-NB2:DESIGNS_REJECTED:d79619f04a14",
+      "family": "engineering",
+      "provenance": "PROBE probe1.json",
+      "consolidated": true,
+      "value": {
+        "kind": "DESIGNS_REJECTED",
+        "target": "runtime/core/odg-canonical-json.ts",
+        "rejected": 1,
+        "total": 3,
+        "hint": "In a previous build of runtime/core/odg-canonical-json.ts, 1 of 3 proposed designs did not reach every expected output; make each design cover every shown wrong output."
+      }
+    },
+    {
+      "id": "lesson:V175-NB2:CORPUS_GAP:c24355e51404",
+      "family": "engineering",
+      "provenance": "PROBE probe1.json",
+      "consolidated": true,
+      "value": {
+        "kind": "CORPUS_GAP",
+        "target": "runtime/core/odg-canonical-json.ts",
+        "caseKinds": [
+          "nested+undefined@array+undefined@object",
+          "undefined@array",
+          "undefined@array+undefined@object",
+          "undefined@object",
+          "undefined@top"
+        ],
+        "priorRun": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
+        "hint": "A module of runtime/core/odg-canonical-json.ts accepted earlier (docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json) was later wrong on inputs of kind nested+undefined@array+undefined@object, undefined@array, undefined@array+undefined@object, undefined@object, undefined@top: an oracle without those input kinds was incomplete."
+      }
+    }
+  ]
+}

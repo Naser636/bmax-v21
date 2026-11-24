@@ -88,7 +88,8 @@ const kinds = Array.from(new Set(reg.items.map((it: any) => it.kind))).sort();
 check("uniform: every register item kind is enumerated and every item carries a dependencyGraph (DERIVED for contracts, NOT_MEASURED + reason otherwise)", kinds.join() === "CP8_CAPABILITY_GAP,CP8_METHOD_CARD,V150_ALSO_INTERNAL,V150_OWNER_GATED,V150_TOP10_ITEM,WORK_ITEM_CONTRACT"
   && reg.items.every((it: any) => it.dependencyGraph && (it.kind === "WORK_ITEM_CONTRACT" ? it.dependencyGraph.status === "DERIVED" : it.dependencyGraph.status === "NOT_MEASURED" && typeof it.dependencyGraph.reason === "string")));
 const E = reg.dependencyGraph.edges;
-check("real: 3 edges — J2→J DATASET_INPUT (controlReference V161_SCENARIO_J.json, sha256 = pin), G2→G and G2→H CODE_IMPORT — all satisfied", E.length === 3
+check("real: 4 edges — J2→J DATASET_INPUT (controlReference V161_SCENARIO_J.json, sha256 = pin), G2→G and G2→H CODE_IMPORT, V175-NB1→V175-NB2 CODE_IMPORT (NB1's rules-authored test requires the helper NB2 repairs) — all satisfied", E.length === 4
+  && E.some((e: any) => e.from === "V175-NB1" && e.to === "V175-NB2" && e.kind === "CODE_IMPORT" && e.via === "runtime/core/odg-canonical-json.ts" && e.satisfied)
   && E.some((e: any) => e.from === "J2" && e.to === "J" && e.kind === "DATASET_INPUT" && /controlReference\.file$/.test(e.source) && e.satisfied)
   && E.some((e: any) => e.from === "G2" && e.to === "G" && e.kind === "CODE_IMPORT" && e.satisfied) && E.some((e: any) => e.from === "G2" && e.to === "H" && e.kind === "CODE_IMPORT" && e.satisfied));
 check("real: fan-out J=1 (J2), G=1 (G2), H=1 (G2); blockingFanOut 0 everywhere ⇒ deps [] everywhere (R1 has nothing to count yet)", reg.dependencyGraph.fanOut.J.fanOut === 1 && reg.dependencyGraph.fanOut.G.fanOut === 1 && reg.dependencyGraph.fanOut.H.fanOut === 1 && reg.items.every((it: any) => it.deps.length === 0));
