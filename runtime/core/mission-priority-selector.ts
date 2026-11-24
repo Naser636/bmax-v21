@@ -118,11 +118,16 @@ const SECONDARY_RULE_TEXT: any = Object.freeze({
 
 function r4(n: number): number { return Number(n.toFixed(4)); }
 
-/* scoreExplained(m, weights, directions) -> { evidenceScore, upperBound, uncertainty, breakdown, measuredWeightShare }. */
-function scoreExplained(m: any, weights: any, directions: any): any {
+/* scoreExplained(m, weights, directions, multipliers?) -> { evidenceScore, upperBound, uncertainty, breakdown, measuredWeightShare }.
+ * V17.6 OFB-APPLY-1 (odg-outcome-feedback, owner « V176 : DÉBLOCAGE FINAL » item 3): optional per-criterion `multipliers`
+ * (name → finite number > 0; absent/invalid ⇒ 1) scale MEASURED contributions only; NOT_MEASURED still adds 0 + its weight to
+ * uncertainty. When multipliers are given each row also carries baseContribution + multiplier and the result carries
+ * baseEvidenceScore + scoreDelta (base kept); the adjusted evidenceScore and upperBound are clamped to [0, 1] (scoreClamped flags it). Without multipliers the output is byte-identical to the pre-V17.6 output. */
+function scoreExplained(m: any, weights: any, directions: any, multipliers?: any): any {
+  const mult = isObj(multipliers) ? multipliers : null;
   const names = Object.keys(weights).sort();
   const total = names.reduce((s, k) => s + num(weights[k], 0), 0) || 1;
-  let lower = 0, unc = 0;
+  let lower = 0, unc = 0, base = 0;
   const breakdown: any[] = [];
   for (const k of names) {
     const w = num(weights[k], 0) / total;
@@ -131,9 +136,12 @@ function scoreExplained(m: any, weights: any, directions: any): any {
     if (!measured) { unc += w; breakdown.push({ criterion: k, status: "NOT_MEASURED", weight: r4(w), contribution: 0, uncertaintyContribution: r4(w) }); continue; }
     const v = clamp01(c.value);
     const eff = directions && directions[k] === "LOWER_IS_BETTER" ? 1 - v : v;
-    lower += w * eff;
-    breakdown.push({ criterion: k, status: "MEASURED", value: v, direction: directions && directions[k] === "LOWER_IS_BETTER" ? "LOWER_IS_BETTER" : "HIGHER_IS_BETTER", weight: r4(w), contribution: r4(w * eff), uncertaintyContribution: 0 });
+    const mk = mult && typeof mult[k] === "number" && isFinite(mult[k]) && mult[k] > 0 ? mult[k] : 1;
+    base += w * eff;
+    lower += mult ? w * eff * mk : w * eff;
+    breakdown.push({ criterion: k, status: "MEASURED", value: v, direction: directions && directions[k] === "LOWER_IS_BETTER" ? "LOWER_IS_BETTER" : "HIGHER_IS_BETTER", weight: r4(w), contribution: r4(mult ? w * eff * mk : w * eff), uncertaintyContribution: 0, ...(mult ? { baseContribution: r4(w * eff), multiplier: mk } : {}) });
   }
+  if (mult) { const adj = clamp01(lower); return Object.freeze({ evidenceScore: r4(adj), baseEvidenceScore: r4(base), scoreDelta: r4(r4(adj) - r4(base)), upperBound: r4(clamp01(adj + unc)), scoreClamped: adj !== lower || adj + unc > 1, uncertainty: r4(unc), measuredWeightShare: r4(1 - unc), breakdown: Object.freeze(breakdown) }); }
   return Object.freeze({ evidenceScore: r4(lower), upperBound: r4(lower + unc), uncertainty: r4(unc), measuredWeightShare: r4(1 - unc), breakdown: Object.freeze(breakdown) });
 }
 
@@ -146,6 +154,7 @@ function measuredValue(m: any, k: string): number | null {
  * selectNextExplained(candidates, options) -> frozen decision record. candidates: { id, status, deps:[ids],
  * requiresOwnerAuthorization:bool, ownerReason, criteria:{ name:{ status:"MEASURED"|"NOT_MEASURED", value } } }.
  * options: { weights (required, name→w), directions (name→"LOWER_IS_BETTER"), acceptedIds, epsilon, uncertaintyMax,
+ * scoreMultipliers (V17.6 OFB-APPLY-1, optional: name→multiplier, passed only by odg-outcome-feedback.selectorOptions when ACTIVE),
  * nonSelectableStatuses, secondaryRules, riskCriterion, evidenceCriterion }.
  */
 function selectNextExplained(candidates: any, options: any): any {
@@ -153,6 +162,7 @@ function selectNextExplained(candidates: any, options: any): any {
   const weights = isObj(o.weights) ? o.weights : {};
   const list = (Array.isArray(candidates) ? candidates : []).filter((m: any) => isObj(m) && typeof m.id === "string");
   const accepted = (Array.isArray(o.acceptedIds) ? o.acceptedIds : []).map(String).concat(list.filter((m: any) => m.status === "ACCEPTED").map((m: any) => m.id));
+  const adjusting = isObj(o.scoreMultipliers);   // V17.6 OFB-APPLY-1 — only when the caller passes multipliers (odg-outcome-feedback active)
   const unblockCount = (id: string) => list.filter((x: any) => Array.isArray(x.deps) && x.deps.map(String).includes(id)).length;
   const excluded: any[] = [];
   const ranked: any[] = [];
@@ -160,15 +170,15 @@ function selectNextExplained(candidates: any, options: any): any {
     const gate = scoreMission({ id: m.id, deps: m.deps, status: m.status }, accepted); // REUSED eligibility gates
     if (!gate.eligible) { excluded.push({ id: m.id, status: m.status, reason: gate.reason }); continue; }
     if (Object.prototype.hasOwnProperty.call(o.nonSelectableStatuses, m.status)) { excluded.push({ id: m.id, status: m.status, reason: o.nonSelectableStatuses[m.status] }); continue; }
-    const s = scoreExplained(m, weights, o.directions);
-    ranked.push({ id: m.id, status: m.status, evidenceScore: s.evidenceScore, upperBound: s.upperBound, uncertainty: s.uncertainty, measuredWeightShare: s.measuredWeightShare, breakdown: s.breakdown, unblocks: unblockCount(m.id), requiresOwnerAuthorization: m.requiresOwnerAuthorization === true, ownerReason: m.requiresOwnerAuthorization === true ? (m.ownerReason || "owner authorization required") : null, autoSelectable: m.requiresOwnerAuthorization !== true, _m: m });
+    const s = scoreExplained(m, weights, o.directions, adjusting ? o.scoreMultipliers : undefined);
+    ranked.push({ id: m.id, status: m.status, evidenceScore: s.evidenceScore, ...(adjusting ? { baseEvidenceScore: s.baseEvidenceScore, scoreDelta: s.scoreDelta } : {}), upperBound: s.upperBound, uncertainty: s.uncertainty, measuredWeightShare: s.measuredWeightShare, breakdown: s.breakdown, unblocks: unblockCount(m.id), requiresOwnerAuthorization: m.requiresOwnerAuthorization === true, ownerReason: m.requiresOwnerAuthorization === true ? (m.ownerReason || "owner authorization required") : null, autoSelectable: m.requiresOwnerAuthorization !== true, _m: m });
   }
   // display order: evidence score desc; equal scores are listed by id for READABILITY ONLY — the decision below never uses id.
   ranked.sort((a, b) => (b.evidenceScore - a.evidenceScore) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   const pool = ranked.filter((r) => r.autoSelectable);
   const ownerGatedRanked = ranked.filter((r) => !r.autoSelectable).map((r) => ({ id: r.id, evidenceScore: r.evidenceScore, ownerReason: r.ownerReason }));
   const clean = (r: any) => { if (!r) return null; const { _m, ...rest } = r; return rest; };
-  const base = { thresholds: { epsilon: o.epsilon, uncertaintyMax: o.uncertaintyMax }, secondaryRulesDeclared: o.secondaryRules.map((k: string) => ({ rule: k, text: SECONDARY_RULE_TEXT[k] || "unknown rule (ignored)" })), ranking: ranked.map(clean), excluded, ownerAuthorizationRequired: ownerGatedRanked, isProposalOnly: true, selectionIsNotAuthorization: "the selected item is a PROPOSAL: it still needs PROPOSED → AUTHORIZED before EXECUTING" };
+  const base = { thresholds: { epsilon: o.epsilon, uncertaintyMax: o.uncertaintyMax }, secondaryRulesDeclared: o.secondaryRules.map((k: string) => ({ rule: k, text: SECONDARY_RULE_TEXT[k] || "unknown rule (ignored)" })), ranking: ranked.map(clean), excluded, ownerAuthorizationRequired: ownerGatedRanked, isProposalOnly: true, selectionIsNotAuthorization: "the selected item is a PROPOSAL: it still needs PROPOSED → AUTHORIZED before EXECUTING", ...(adjusting ? { scoreAdjustment: { multipliers: o.scoreMultipliers, provenance: isObj(o.scoreAdjustmentProvenance) ? o.scoreAdjustmentProvenance : null, note: "OFB-APPLY-1: evidenceScore = adjusted score (MEASURED contributions × multiplier); baseEvidenceScore kept on every ranked row; thresholds / eligibility / secondary rules unchanged" } } : {}) };
   if (pool.length === 0) return deepFreeze({ decision: "NO_ELIGIBLE", selected: null, proposed: null, tiedSet: [], justification: "no auto-selectable candidate (all excluded, deferred or owner-gated)", ...base });
   const top = pool[0].evidenceScore;
   let tied = pool.filter((r) => top - r.evidenceScore < o.epsilon);
@@ -205,7 +215,7 @@ function selectNextExplained(candidates: any, options: any): any {
   }
   return deepFreeze({
     decision: tiedIds.length > 1 ? "TIE_EXPLAINED" : "SELECTED",
-    selected: { id: winner.id, evidenceScore: winner.evidenceScore, upperBound: winner.upperBound, uncertainty: winner.uncertainty, breakdown: winner.breakdown },
+    selected: { id: winner.id, evidenceScore: winner.evidenceScore, ...(adjusting ? { baseEvidenceScore: winner.baseEvidenceScore } : {}), upperBound: winner.upperBound, uncertainty: winner.uncertainty, breakdown: winner.breakdown },
     proposed: null, ...tieInfo,
     couldOvertakeIfUnmeasuredWereFavourable: overtake,
     justification: `ODG proposes '${winner.id}': evidence score ${winner.evidenceScore} (uncertainty ${winner.uncertainty} ≤ ${o.uncertaintyMax})` + (tiedIds.length > 1 ? `; tie of ${tiedIds.length} resolved by ${resolvedBy}: ${SECONDARY_RULE_TEXT[resolvedBy as string]}` : `; next best is ≥ epsilon ${o.epsilon} lower`) + (overtake.length ? `; ${overtake.length} candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: ${overtake.join(", ")}` : ""),

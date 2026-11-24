@@ -36,6 +36,7 @@
 
 const crypto = require("crypto");
 const REG = require("./odg-strategic-register.js");
+const OFB = require("./odg-outcome-feedback.js");   // V17.6 — outcome feedback (multipliers only when ACTIVE)
 const SEL = require("./mission-priority-selector.js");
 const DP = require("./decomposition-planner.js");
 const SM = require("./odg-strategy-mode-selector.js");
@@ -185,7 +186,9 @@ function deriveDispatchTimeout(contract: any, target: any): any {
 }
 const SPEC_RULE = "GO-DEC-1 (provider rule): spec.architecture = one entry per WORK_ITEM_CONTRACT.write_set path (role = objective, contract = acceptance_criteria joined); no contract ⇒ NOT_MEASURED";
 
-function selectorOptions(): any { return { weights: REG.WEIGHTS, directions: REG.DIRECTIONS }; }
+/* V17.6 OFB-APPLY-1: base options + odg-outcome-feedback multipliers ONLY when the committed activation is ACTIVE (the loader's
+ * sources.outcomeFeedback — the same object odg-strategic-select uses ⇒ GO SELECT stays consistent with the register record). */
+function selectorOptions(state?: any): any { return OFB.selectorOptions({ weights: REG.WEIGHTS, directions: REG.DIRECTIONS }, state && state.sources ? state.sources.outcomeFeedback : null); }
 
 /* V166 GO-ACT-1 (PROVIDER-AUTHORED rule, Claude Code; owner V165 §2 "sélection et priorisation des missions", V166 §5). */
 const ACTIONABLE_RULE = "authorization is a feasibility constraint, priority is the ranking: ODG works on the best item it is allowed to do, and asks the owner for the best item overall";
@@ -221,9 +224,9 @@ function actionableCandidates(state: any, register: any): any[] {
   const byId = new Map(register.items.map((it: any) => [it.id, it]));
   return REG.toSelectorCandidates(register).map((c: any) => actionabilityOf(state, byId.get(c.id)).actionable ? c : { ...c, status: NOT_AUTHORIZED_NOW });
 }
-function actionableOptions(): any {
+function actionableOptions(state?: any): any {
   const SELX = SEL.EXPLAINED_DEFAULTS || {};
-  return { ...selectorOptions(), nonSelectableStatuses: { ...(SELX.nonSelectableStatuses || {}), [NOT_AUTHORIZED_NOW]: "no AUTHORIZED next step now (GO-ACT-1 feasibility constraint; ranking unchanged)" } };
+  return { ...selectorOptions(state), nonSelectableStatuses: { ...(SELX.nonSelectableStatuses || {}), [NOT_AUTHORIZED_NOW]: "no AUTHORIZED next step now (GO-ACT-1 feasibility constraint; ranking unchanged)" } };
 }
 /* V17.4 GO-ORD-1 (provider rule; owner directive "CTO — ARBITRAGE PROPRIÉTAIRE ET EXÉCUTION G2 → J2", 2026-11-24): consume a
  * COMMITTED owner order-decision record ONLY to resolve an actionable DECISION_REQUIRED tie. Never strategic, never a
@@ -489,7 +492,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
 
   // 4 SELECT
   r = await run("SELECT", () => {
-    const d = SEL.selectNextExplained(REG.toSelectorCandidates(ctx.register), selectorOptions());
+    const d = SEL.selectNextExplained(REG.toSelectorCandidates(ctx.register), selectorOptions(ctx.state));
     ctx.selection = d;
     const id = chosenId(d);
     const strategicItem = id ? ctx.register.items.find((it: any) => it.id === id) : null;
@@ -500,7 +503,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     else {
       // GO-ACT-1 also applies when the strategic selection is UNDECIDED (DECISION_REQUIRED / NO_ELIGIBLE): ODG still
       // works on the best item it is allowed to do, and the undecided strategic choice becomes an owner/ODG request.
-      act = SEL.selectNextExplained(actionableCandidates(ctx.state, ctx.register), actionableOptions());
+      act = SEL.selectNextExplained(actionableCandidates(ctx.state, ctx.register), actionableOptions(ctx.state));
       const aid = chosenId(act);
       actItem = aid ? ctx.register.items.find((it: any) => it.id === aid) : null;
       if (actItem && !actionabilityOf(ctx.state, actItem).actionable) actItem = null;   // defensive: never a non-actionable pick
@@ -698,7 +701,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
   // 10 NEXT_SELECTION
   r = await run("NEXT_SELECTION", () => {
     const rest = REG.toSelectorCandidates(ctx.register).filter((c: any) => !item || c.id !== item.id);
-    const nd = SEL.selectNextExplained(rest, selectorOptions());
+    const nd = SEL.selectNextExplained(rest, selectorOptions(ctx.state));
     const w = ctx.contract && isObj(ctx.contract.WORK_ITEM_CONTRACT) ? ctx.contract.WORK_ITEM_CONTRACT : null;
     const prepared = item ? { id: item.id, title: item.title, status: item.status, nextStep: item.nextStep, contract: w ? { objective: w.objective, write_set: w.write_set, acceptance_criteria: w.acceptance_criteria, stop_conditions: w.stop_conditions, evidence_required: w.evidence_required } : null,
       decomposition: ctx.decomposition ? { strategy: ctx.decomposition.strategy, complexity: ctx.decomposition.complexity, parts: arr(ctx.decomposition.architecture).map((a: any) => a.path) } : null,
@@ -746,5 +749,5 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { boussoleView, BOUSSOLE_TRACE_RULE, dependencyView, deriveDispatchTimeout, DISPATCH_TIMEOUT_RULE, DISPATCH_TIMEOUT_DEFAULT_MS, DISPATCH_TIMEOUT_CEILING_MS, DISPATCH_TIMEOUT_MARGIN_MS, DISPATCH_DEADLINE_MARGIN_MS, OWNER_SELECTION_RULE, resolveOwnerSelection, ownerSelectionClaimKey, OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
+module.exports = { selectorOptions, actionableOptions, NOT_AUTHORIZED_NOW, boussoleView, BOUSSOLE_TRACE_RULE, dependencyView, deriveDispatchTimeout, DISPATCH_TIMEOUT_RULE, DISPATCH_TIMEOUT_DEFAULT_MS, DISPATCH_TIMEOUT_CEILING_MS, DISPATCH_TIMEOUT_MARGIN_MS, DISPATCH_DEADLINE_MARGIN_MS, OWNER_SELECTION_RULE, resolveOwnerSelection, ownerSelectionClaimKey, OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};
