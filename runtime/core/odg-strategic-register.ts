@@ -32,7 +32,7 @@ const STATUS = Object.freeze({
   CLOSED_PARTIAL: "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades PARTIAL — closed as PARTIAL (further work = a new mission, not a re-grade)",
   CLOSED_FAIL: "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades FAIL — negative result preserved",
   CLOSED_NOT_MEASURED: "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades NOT_MEASURED",
-  RESOLVED_BY_EVIDENCE: "RES-1: a committed resolution record (resolvesRegisterItem = this id, resolution.status FIXED, fixedBy.pr + 40-hex fixedBy.mergeCommit, ≥1 reproTests entry) states the item's subject fixed",
+  RESOLVED_BY_EVIDENCE: "RES-1: a committed resolution record (resolvesRegisterItem = this id, resolution.status FIXED, fixedBy.pr + 40-hex fixedBy.mergeCommit, ≥1 reproTests entry, an independent inspection reference ACCEPT, proof currency usable) states the item's subject fixed",
 });
 
 const CRITERIA = Object.freeze([
@@ -58,12 +58,13 @@ const OWNER_RULE = "OWN-1: requiresOwnerAuthorization iff /owner-gated|owner-aut
 const SCN_RULE = "SCN-1: a scenario evidence file (contractRef/contract '#X' or scenario field naming X) counts as executed against contract X only if its basename version V<n>_ ≥ the contracts file's version; earlier files are pre-contract evidence already cited in initialState.evidence";
 
 const AS = require("./odg-authorization-scope.js");
+const OCUR = require("./odg-observation-currency.js");   // V16.9 Phase 1b — RES-1 proof currency (composed)
 
 /*
  * V16.9 addendum Phase 1 — "Continuité vérifiable". Declared rules (provider-authored; ODG applies them mechanically):
  */
 const CLOSE_RULE = "CLOSE-1: a WORK_ITEM_CONTRACT item whose contract carries an owner authorization block is CLOSED iff odg-authorization-scope.deriveAuthorizationScope(contract, committed {inspection, experiment, validation} records) is applicable, validates EVERY step of its declared sequence and has no current step; status = CLOSED_<grade> with <grade> = the VALIDATE_CRITERIA evidence scenarioGrade (the committed V*_<X>_CRITERIA_VALIDATION.json, R5b — bounded by the experiment outcome, never upgraded); any missing/invalid step ⇒ not closed (status from the earlier rules, closure.closed=false with the scope's reason). The pre-closure status is kept in statusHistory; criteria are kept (record preserved); CLOSED_* are non-selectable";
-const RES_RULE = "RES-1: an item is RESOLVED_BY_EVIDENCE iff a committed evidence file carries top-level resolvesRegisterItem = the item id, resolution.status = 'FIXED', fixedBy.pr (integer), fixedBy.mergeCommit (40 hex) and ≥1 reproTests entry; the file is cited; the earlier status is kept in statusHistory; the merge commit's existence is NOT checked here (pure; no git)";
+const RES_RULE = "RES-1: an item is RESOLVED_BY_EVIDENCE iff a committed evidence file carries top-level resolvesRegisterItem = the item id, resolution.status = 'FIXED', fixedBy.pr (integer), fixedBy.mergeCommit (40 hex) and ≥1 reproTests entry, AND (V16.9 Phase 1b, #949 LOW) an independent inspection reference (inspection.verdict ACCEPT, 40-hex inspection.inspectedHeadSha, distinct opaque inspectorSessionId/authorSessionId) AND odg-observation-currency.assessEvidenceCurrency usableAsProof over the injected sources.proofProbes (merge commit + inspected head exist in local git and are ancestors of main; no probe ⇒ refused); the file is cited; the earlier status is kept in statusHistory; a refused record is reported on the item (resolutionRefused) with its reason";
 const CONTRADICTION_RULES = Object.freeze({
   "CTR-1": "GAP_STATED_FIXED: a CP8_CAPABILITY_GAP item whose status (before RES-1) is open while a PR record of a checkpoint LATER than CP8 (prs[*].what) contains one of the gap's usable blockerAnchors (anchor present in the gap's own CP8 text, normalized as BLK-2) AND the word 'fixed' ⇒ reported; resolved only by a RES-1 record (then state RESOLVED_BY_EVIDENCE + citation), never by the detector",
   "CTR-2": "CONTRACT_STATE_VS_CLOSURE: a CLOSE-1-closed item whose contract `state` does not contain 'CLOSED' (the contract state is never rewritten), OR a checkpoint mission<X>.status that does not start with the derived CLOSED_<grade> (or names a CLOSED_ state while CLOSE-1 does not close X) ⇒ reported, not resolved",
@@ -180,7 +181,7 @@ function buildRegister(sources: any): any {
     let closure: any = null, statusHistory: any = null;
     if (isObj(x.authorization)) {
       const aev = isObj(sources.authorizationEvidence) && isObj(sources.authorizationEvidence[L]) ? sources.authorizationEvidence[L] : {};
-      const sc = AS.deriveAuthorizationScope(x, aev);
+      const sc = AS.deriveAuthorizationScope(x, { ...aev, probes: sources.proofProbes });   // R7 probes injected by the loader
       const vstep = sc.validatedSteps.find((v: any) => v.step === "VALIDATE_CRITERIA");
       const allDone = sc.applicable === true && sc.currentStep === null && sc.sequence.every((st: string) => sc.validatedSteps.some((v: any) => v.step === st));
       const vp = aev.validation && aev.validation.recordPath ? String(aev.validation.recordPath) : "criteria-validation record";
@@ -320,14 +321,18 @@ function buildRegister(sources: any): any {
   const contradictions: any[] = [];
   const addC = (it: any, c: any) => { contradictions.push({ item: it ? it.id : null, ...c }); if (it) { it.contradictions = (it.contradictions || []).concat([c]); } };
   for (const it of items) {
-    const res = resolutions.find((r: any) => resolutionValid(r.data) && r.data.resolvesRegisterItem === it.id);
+    const targeting = resolutions.filter((r: any) => isObj(r.data) && r.data.resolvesRegisterItem === it.id);
+    const checks = targeting.map((r: any) => ({ r, c: resolutionCheck(r.data, sources.proofProbes) }));
+    const resHit = checks.find((x: any) => x.c.ok);
+    const res = resHit ? resHit.r : null;
+    if (!res && checks.length) it.resolutionRefused = checks.map((x: any) => ({ rule: "RES-1", record: x.r.path, reason: x.c.reason, proofCurrency: x.c.proofCurrency }));
     const priorStatus = it.status, priorSource = it.statusSource.slice();
     if (res) {
       const since = typeof res.data.date === "string" ? { value: res.data.date, source: `${res.path}#date` } : { value: null, source: `${res.path} (no date field)` };
       it.statusHistory = (it.statusHistory || [{ status: priorStatus, source: priorSource, since: priorSince(priorSource, P8), rule: "status rules before RES-1" }]).concat([{ status: "RESOLVED_BY_EVIDENCE", source: [`${res.path}#resolvesRegisterItem`, `${res.path}#fixedBy.mergeCommit`], since, rule: "RES-1" }]);
       it.status = "RESOLVED_BY_EVIDENCE";
       it.statusSource = [`${res.path}#resolvesRegisterItem`, `${res.path}#resolution.status`, `${res.path}#fixedBy.mergeCommit`, `${res.path}#reproTests`];
-      it.resolution = { rule: "RES-1", record: res.path, pr: res.data.fixedBy.pr, mergeCommit: res.data.fixedBy.mergeCommit, reproTests: res.data.reproTests.map((t: any) => (isObj(t) ? t.file : String(t))) };
+      it.resolution = { rule: "RES-1", record: res.path, pr: res.data.fixedBy.pr, mergeCommit: res.data.fixedBy.mergeCommit, reproTests: res.data.reproTests.map((t: any) => (isObj(t) ? t.file : String(t))), inspectedHeadSha: res.data.inspection.inspectedHeadSha, proofCurrency: resHit.c.proofCurrency };
       it.nextStep = null;
     }
     // CTR-1
@@ -605,10 +610,27 @@ function priorSince(src: string[], P8: any): any {
   if (P8 && src.some((s) => String(s).startsWith(P8.path + "#")) && typeof P8.data.date === "string") return { value: P8.data.date, source: `${P8.path}#date` };
   return { value: null, source: `${String(src[0] || "").split("#")[0]} (no date field)` };
 }
-/* resolutionValid(doc) — RES-1 shape check of a committed resolution record. */
-function resolutionValid(d: any): boolean {
-  return isObj(d) && typeof d.resolvesRegisterItem === "string" && isObj(d.resolution) && d.resolution.status === "FIXED" && isObj(d.fixedBy) && Number.isInteger(d.fixedBy.pr) && /^[0-9a-f]{40}$/.test(String(d.fixedBy.mergeCommit || "")) && Array.isArray(d.reproTests) && d.reproTests.length > 0;
+/* resolutionCheck(doc, probes) — RES-1 check of a committed resolution record → { ok, reason, proofCurrency }.
+ * V16.9 Phase 1b (#949 inspection LOW): besides the shape, the record must carry an INDEPENDENT INSPECTION reference
+ * (inspection.verdict ACCEPT, 40-hex inspection.inspectedHeadSha, distinct opaque inspectorSessionId / authorSessionId)
+ * and pass odg-observation-currency.assessEvidenceCurrency (fixedBy.mergeCommit + inspection.inspectedHeadSha exist in
+ * local git and are ancestors of main; cited file hashes current) over the injected probes — no probe ⇒ refused. */
+const SID = /^[A-Za-z0-9._:-]{8,128}$/;
+function resolutionCheck(d: any, probes?: any): any {
+  const no = (reason: string, cur: any = null) => ({ ok: false, reason, proofCurrency: cur });
+  if (!(isObj(d) && typeof d.resolvesRegisterItem === "string" && isObj(d.resolution) && d.resolution.status === "FIXED" && isObj(d.fixedBy) && Number.isInteger(d.fixedBy.pr) && /^[0-9a-f]{40}$/.test(String(d.fixedBy.mergeCommit || "")) && Array.isArray(d.reproTests) && d.reproTests.length > 0)) return no("RES-1 shape: resolvesRegisterItem, resolution.status FIXED, fixedBy.pr, 40-hex fixedBy.mergeCommit and ≥1 reproTests required");
+  const ins = d.inspection;
+  if (!isObj(ins)) return no("RES-1: no independent inspection reference (inspection.{verdict, inspectedHeadSha, inspectorSessionId, authorSessionId}) — a resolution is never self-certified");
+  if (ins.verdict !== "ACCEPT") return no(`RES-1: inspection verdict ${ins.verdict === undefined ? "absent" : ins.verdict} ≠ ACCEPT`);
+  if (!/^[0-9a-f]{40}$/.test(String(ins.inspectedHeadSha || ""))) return no("RES-1: inspection.inspectedHeadSha (40 hex) missing");
+  if (!SID.test(String(ins.inspectorSessionId || "")) || !SID.test(String(ins.authorSessionId || "")) || String(ins.inspectorSessionId) === String(ins.authorSessionId)) return no("RES-1: inspection lacks distinct opaque inspectorSessionId / authorSessionId (not independent)");
+  const c = OCUR.assessEvidenceCurrency(d, probes, { requireCommitBinding: true });
+  const cur = { status: c.status, usableAsProof: c.usableAsProof, counts: c.counts, blocking: c.blocking, rule: "odg-observation-currency.assessEvidenceCurrency" };
+  if (!c.usableAsProof) return no(`RES-1 proof currency ${c.status}: ${c.reason}`, cur);
+  return { ok: true, reason: "RES-1 satisfied (shape + inspection reference + proof currency)", proofCurrency: cur };
 }
+/* resolutionValid(doc, probes?) — boolean form of resolutionCheck (kept for callers). */
+function resolutionValid(d: any, probes?: any): boolean { return resolutionCheck(d, probes).ok === true; }
 function deepFreeze(o: any): any { if (o && typeof o === "object" && !Object.isFrozen(o)) { Object.freeze(o); for (const k of Object.keys(o)) deepFreeze(o[k]); } return o; }
 
 const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
@@ -623,6 +645,6 @@ const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
+module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(STRATEGIC_REGISTER_CONTRACT, null, 2) + "\n"); }
 export {};

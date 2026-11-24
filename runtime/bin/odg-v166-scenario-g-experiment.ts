@@ -30,6 +30,7 @@ const crypto = require("crypto");
 const cp = require("child_process");
 const K = require("../core/odg-knowledge-intelligence.js");
 const AS = require("../core/odg-authorization-scope.js");
+const OCUR = require("../core/odg-observation-currency.js");   // V16.9 Phase 1b — R7 proof-currency probes
 const BCM = require("../core/odg-binary-classification-metrics.js");
 const KR = require("./odg-v160-practices-knowledge-run.ts");
 
@@ -75,7 +76,7 @@ function gate(): any {
   const sha = AS.contractSha256(contract);
   if (sha !== PINNED_CONTRACT_SHA) return { ok: false, reason: `live contract sha256 ${sha} ≠ pinned ${PINNED_CONTRACT_SHA} (contract edited — inspection invalid)`, contractSha256: sha };
   let inspection: any = null; try { inspection = readJson(INSPECTION); } catch { inspection = null; }
-  const scope = AS.deriveAuthorizationScope(contract, { inspection });
+  const scope = AS.deriveAuthorizationScope(contract, { inspection, probes: OCUR.localGitProbes(ROOT) });   // V16.9 R7: inspected head verified in local git
   const authorized = AS.isStepAuthorized(scope, STEP);
   if (!authorized) return { ok: false, reason: `deriveAuthorizationScope does not authorize ${STEP}: ${scope.reason}`, contractSha256: sha };
   // the run's constants must equal the frozen pre-registration text (guards against a silent constant change in this file)

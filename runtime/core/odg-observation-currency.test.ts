@@ -58,6 +58,44 @@ function main() {
   check("deterministic + frozen (assess + demonstrate)", JSON.stringify(C.demonstrate()) === JSON.stringify(d) && Object.isFrozen(cur) && Object.isFrozen(d) && Object.isFrozen(d.scenarios));
   check("contract: deny-by-default, composes memory-taxonomy, no 2nd store/primitive", C.OBSERVATION_CURRENCY_CONTRACT.invariants.some((i: string) => /DENY-BY-DEFAULT/.test(i)) && C.OBSERVATION_CURRENCY_CONTRACT.invariants.some((i: string) => /COMPOSES memory-taxonomy\.isStale/.test(i) && /NO 10th primitive/.test(i)));
 
+  // V16.9 Phase 1b — evidence currency + commit binding (assessEvidenceCurrency / localGitProbes)
+  {
+    const fs = require("fs"), path = require("path"), os = require("os"), cp = require("child_process"), crypto = require("crypto");
+    const ROOT = path.resolve(__dirname, "..", "..");
+    const P = C.localGitProbes(ROOT);
+    const head = String(cp.execFileSync("git", ["-C", ROOT, "rev-parse", `${P.mainRef}^{commit}`], { encoding: "utf8" })).trim();
+    const fx = (o: any) => Object.freeze({ mainRef: "fixture-main", commitExists: () => true, isAncestorOfMain: () => true, fileSha256: () => null, ...o });
+    check("evidence: a record with no binding field ⇒ NOT_CHECKABLE (never CURRENT), usable (nothing to refute)", (() => { const r = C.assessEvidenceCurrency({ note: "x" }, P); return r.status === "NOT_CHECKABLE" && r.bindings.length === 0; })());
+    check("evidence: session ids / run ids are NOT commit bindings (explicit field names only)", C.extractBindings({ inspectorSessionId: "ab6a445c9679c2387", runId: "67be602e6ec7047a", history: [{ head: "587650b0" }] }).commits.length === 0);
+    const real = C.assessEvidenceCurrency({ inspectedHeadSha: head }, P);
+    check("evidence REAL git: inspectedHeadSha = the main ref's commit ⇒ CURRENT, usableAsProof", real.status === "CURRENT" && real.usableAsProof === true && real.counts.CURRENT === 1);
+    const ghost = C.assessEvidenceCurrency({ inspectedHeadSha: "deadbeef".repeat(5) }, P);
+    check("evidence REAL git: well-formed but NON-EXISTENT inspectedHeadSha ⇒ WRONG_COMMIT, NOT usable", ghost.status === "WRONG_COMMIT" && ghost.usableAsProof === false && ghost.blocking.join() === "inspectedHeadSha");
+    check("evidence: commit exists but not an ancestor of main ⇒ WRONG_COMMIT", C.assessEvidenceCurrency({ headAtCheckpoint: "a".repeat(40) }, fx({ isAncestorOfMain: () => false })).status === "WRONG_COMMIT");
+    check("evidence: no probe injected ⇒ NOT_CHECKABLE/NO_PROBE and NOT usable (fail-closed)", (() => { const r = C.assessEvidenceCurrency({ inspectedHeadSha: head }); return r.status === "NOT_CHECKABLE" && r.usableAsProof === false && r.bindings[0].why === "NO_PROBE"; })());
+    check("evidence: requireCommitBinding with no commit field ⇒ NOT usable", C.assessEvidenceCurrency({ x: 1 }, P, { requireCommitBinding: true }).usableAsProof === false);
+    // cited file hashes: a temp git-less dir is enough for file probes (labelled fixture files, removed after)
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ocur-ev-"));
+    try {
+      fs.writeFileSync(path.join(dir, "data.json"), "v1\n"); fs.writeFileSync(path.join(dir, "ctx.json"), "c1\n");
+      const h = (t: string) => crypto.createHash("sha256").update(t).digest("hex");
+      const FP = C.localGitProbes(dir, { mainRef: "main" });
+      const rec = { inputs: { dataset: { path: "data.json", sha256: h("v1\n") }, contracts: { path: "ctx.json", sha256File: h("c1\n") } } };
+      check("evidence: cited dataset + context hashes match the files today ⇒ CURRENT", C.assessEvidenceCurrency(rec, FP).status === "CURRENT");
+      fs.writeFileSync(path.join(dir, "data.json"), "v2\n");
+      const st = C.assessEvidenceCurrency(rec, C.localGitProbes(dir, { mainRef: "main" }));
+      check("evidence: CITED DATASET CHANGED since ⇒ STALE (decisive) ⇒ NOT usable", st.status === "STALE" && st.usableAsProof === false && st.blocking.join() === "inputs.dataset");
+      fs.writeFileSync(path.join(dir, "data.json"), "v1\n"); fs.writeFileSync(path.join(dir, "ctx.json"), "c2\n");
+      const ctx = C.assessEvidenceCurrency(rec, C.localGitProbes(dir, { mainRef: "main" }));
+      check("evidence: a CONTEXT citation (multi-record file) changed ⇒ STALE reported but still usable (decisive bindings checked by the caller)", ctx.status === "STALE" && ctx.usableAsProof === true && ctx.blocking.length === 0);
+      fs.unlinkSync(path.join(dir, "data.json"));
+      check("evidence: cited dataset DELETED ⇒ STALE, NOT usable", C.assessEvidenceCurrency(rec, C.localGitProbes(dir, { mainRef: "main" })).usableAsProof === false);
+      check("evidence: a path escaping the repo ('..') ⇒ NOT_CHECKABLE (never read)", C.assessEvidenceCurrency({ ev: { path: "../etc/passwd", sha256: h("x") } }, FP).bindings[0].status === "NOT_CHECKABLE");
+    } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+    check("evidence: contractSha256 ≠ the current contract entry ⇒ STALE (decisive)", C.assessEvidenceCurrency({ contractSha256: "1".repeat(64) }, P, { currentContractSha256: "2".repeat(64) }).usableAsProof === false);
+    check("evidence: limits state what is NOT established (real-but-wrong ancestor, remote, claim truth)", C.EVIDENCE_CURRENCY_LIMITS.doesNotEstablish.length >= 3 && /remote/.test(C.EVIDENCE_CURRENCY_LIMITS.doesNotEstablish.join(" ")));
+  }
+
   process.stdout.write("\n" + (failures === 0 ? "ALL PASS — observation-currency (V12.4-EXT §18/§19/§20: memoire != etat actuel — CURRENT only while world provably unchanged; commit/scope/time boundary ⇒ HISTORICAL_OBSERVED reverify; hypothesis/superseded/expired/malformed never assert; deny-by-default; composes memory-taxonomy.isStale; V234 demotion proven)" : failures + " FAIL") + "\n");
   process.exit(failures === 0 ? 0 : 1);
 }

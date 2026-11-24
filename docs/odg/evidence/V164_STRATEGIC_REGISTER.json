@@ -119,7 +119,7 @@
       "CLOSED_PARTIAL": "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades PARTIAL — closed as PARTIAL (further work = a new mission, not a re-grade)",
       "CLOSED_FAIL": "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades FAIL — negative result preserved",
       "CLOSED_NOT_MEASURED": "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades NOT_MEASURED",
-      "RESOLVED_BY_EVIDENCE": "RES-1: a committed resolution record (resolvesRegisterItem = this id, resolution.status FIXED, fixedBy.pr + 40-hex fixedBy.mergeCommit, ≥1 reproTests entry) states the item's subject fixed"
+      "RESOLVED_BY_EVIDENCE": "RES-1: a committed resolution record (resolvesRegisterItem = this id, resolution.status FIXED, fixedBy.pr + 40-hex fixedBy.mergeCommit, ≥1 reproTests entry, an independent inspection reference ACCEPT, proof currency usable) states the item's subject fixed"
     },
     "criteria": [
       {
@@ -363,7 +363,7 @@
     },
     "continuityRules": {
       "closure": "CLOSE-1: a WORK_ITEM_CONTRACT item whose contract carries an owner authorization block is CLOSED iff odg-authorization-scope.deriveAuthorizationScope(contract, committed {inspection, experiment, validation} records) is applicable, validates EVERY step of its declared sequence and has no current step; status = CLOSED_<grade> with <grade> = the VALIDATE_CRITERIA evidence scenarioGrade (the committed V*_<X>_CRITERIA_VALIDATION.json, R5b — bounded by the experiment outcome, never upgraded); any missing/invalid step ⇒ not closed (status from the earlier rules, closure.closed=false with the scope's reason). The pre-closure status is kept in statusHistory; criteria are kept (record preserved); CLOSED_* are non-selectable",
-      "resolution": "RES-1: an item is RESOLVED_BY_EVIDENCE iff a committed evidence file carries top-level resolvesRegisterItem = the item id, resolution.status = 'FIXED', fixedBy.pr (integer), fixedBy.mergeCommit (40 hex) and ≥1 reproTests entry; the file is cited; the earlier status is kept in statusHistory; the merge commit's existence is NOT checked here (pure; no git)",
+      "resolution": "RES-1: an item is RESOLVED_BY_EVIDENCE iff a committed evidence file carries top-level resolvesRegisterItem = the item id, resolution.status = 'FIXED', fixedBy.pr (integer), fixedBy.mergeCommit (40 hex) and ≥1 reproTests entry, AND (V16.9 Phase 1b, #949 LOW) an independent inspection reference (inspection.verdict ACCEPT, 40-hex inspection.inspectedHeadSha, distinct opaque inspectorSessionId/authorSessionId) AND odg-observation-currency.assessEvidenceCurrency usableAsProof over the injected sources.proofProbes (merge commit + inspected head exist in local git and are ancestors of main; no probe ⇒ refused); the file is cited; the earlier status is kept in statusHistory; a refused record is reported on the item (resolutionRefused) with its reason",
       "latestCheckpoint": "LCP-1: the latest checkpoint is the committed docs/odg/evidence/*_CHECKPOINT_<n>.json with the highest <n> (discovered, not hard-coded); buildRegister uses sources.latestCheckpoint, else the highest-numbered checkpoint among the documents it was given",
       "contradictions": {
         "CTR-1": "GAP_STATED_FIXED: a CP8_CAPABILITY_GAP item whose status (before RES-1) is open while a PR record of a checkpoint LATER than CP8 (prs[*].what) contains one of the gap's usable blockerAnchors (anchor present in the gap's own CP8 text, normalized as BLK-2) AND the word 'fixed' ⇒ reported; resolved only by a RES-1 record (then state RESOLVED_BY_EVIDENCE + citation), never by the detector",
@@ -437,8 +437,8 @@
             "decomposed-execution",
             "repair-feedback"
           ],
-          "state": "RESOLVED_BY_EVIDENCE",
-          "resolvedBy": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+          "state": "OPEN",
+          "resolvedBy": null,
           "autoResolved": false
         },
         {
@@ -538,13 +538,13 @@
       "BLOCKED": 14,
       "FAILED": 0,
       "NOT_MEASURED": 1,
-      "PROPOSED": 13,
+      "PROPOSED": 14,
       "NOT_IMPLEMENTED": 1,
       "CLOSED_PASS": 0,
       "CLOSED_PARTIAL": 1,
       "CLOSED_FAIL": 1,
       "CLOSED_NOT_MEASURED": 0,
-      "RESOLVED_BY_EVIDENCE": 1
+      "RESOLVED_BY_EVIDENCE": 0
     },
     "items": [
       {
@@ -5693,12 +5693,9 @@
         "id": "CP8-GAP-canonicalDefectsJ",
         "kind": "CP8_CAPABILITY_GAP",
         "title": "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results",
-        "status": "RESOLVED_BY_EVIDENCE",
+        "status": "PROPOSED",
         "statusSource": [
-          "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#resolvesRegisterItem",
-          "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#resolution.status",
-          "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#fixedBy.mergeCommit",
-          "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#reproTests"
+          "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
         ],
         "cp8Status": null,
         "cp8Gaps": [
@@ -5706,7 +5703,10 @@
         ],
         "landedEvidence": [],
         "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
-        "nextStep": null,
+        "nextStep": {
+          "text": "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results",
+          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
+        },
         "deps": [],
         "depsNote": "no dependency stated in the evidence ⇒ []",
         "depsStated": [],
@@ -5796,41 +5796,14 @@
             "basis": "k=1 ( + 1 gaps entry)"
           }
         },
-        "statusHistory": [
+        "resolutionRefused": [
           {
-            "status": "PROPOSED",
-            "source": [
-              "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
-            ],
-            "since": {
-              "value": "2026-11-23",
-              "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#date"
-            },
-            "rule": "status rules before RES-1"
-          },
-          {
-            "status": "RESOLVED_BY_EVIDENCE",
-            "source": [
-              "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#resolvesRegisterItem",
-              "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#fixedBy.mergeCommit"
-            ],
-            "since": {
-              "value": "2026-11-24",
-              "source": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#date"
-            },
-            "rule": "RES-1"
+            "rule": "RES-1",
+            "record": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+            "reason": "RES-1: no independent inspection reference (inspection.{verdict, inspectedHeadSha, inspectorSessionId, authorSessionId}) — a resolution is never self-certified",
+            "proofCurrency": null
           }
         ],
-        "resolution": {
-          "rule": "RES-1",
-          "record": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
-          "pr": 940,
-          "mergeCommit": "613bf2cdbe2e9ae769a5793eff065e25843e0f8f",
-          "reproTests": [
-            "runtime/core/odg-decomposed-execution.test.ts",
-            "runtime/core/odg-repair-feedback.test.ts"
-          ]
-        },
         "contradictions": [
           {
             "rule": "CTR-1",
@@ -5845,8 +5818,8 @@
               "decomposed-execution",
               "repair-feedback"
             ],
-            "state": "RESOLVED_BY_EVIDENCE",
-            "resolvedBy": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+            "state": "OPEN",
+            "resolvedBy": null,
             "autoResolved": false
           }
         ]
@@ -9075,6 +9048,92 @@
         "autoSelectable": false
       },
       {
+        "id": "CP8-GAP-canonicalDefectsJ",
+        "status": "PROPOSED",
+        "evidenceScore": 0.025,
+        "upperBound": 0.925,
+        "uncertainty": 0.9,
+        "measuredWeightShare": 0.1,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.025,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": true,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[2]",
+        "autoSelectable": false
+      },
+      {
         "id": "CP8-GAP-executedPartialMapping",
         "status": "PROPOSED",
         "evidenceScore": 0.025,
@@ -9953,11 +10012,6 @@
         "reason": "blocked on an owner-gated / external condition"
       },
       {
-        "id": "CP8-GAP-canonicalDefectsJ",
-        "status": "RESOLVED_BY_EVIDENCE",
-        "reason": "resolved by a committed resolution record (fix merged + repro tests cited)"
-      },
-      {
         "id": "MC-SMALL-CHANGES",
         "status": "NOT_ADOPTED",
         "reason": "tested under a stated rule and not adopted; re-test only with new data"
@@ -10005,6 +10059,11 @@
         "ownerReason": "OWN-2 matched [cryptograph] in the cited CP8 text"
       },
       {
+        "id": "CP8-GAP-canonicalDefectsJ",
+        "evidenceScore": 0.025,
+        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[2]"
+      },
+      {
         "id": "CP8-GAP-executedPartialMapping",
         "evidenceScore": 0.025,
         "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[0]"
@@ -10039,6 +10098,7 @@
       "CP8-GAP-6-recoverResults",
       "CP8-GAP-8-integrateResult",
       "CP8-GAP-7-validateIndependently",
+      "CP8-GAP-canonicalDefectsJ",
       "CP8-GAP-executedPartialMapping"
     ],
     "authorizationState": "PROPOSAL — not authorized, not executed"
@@ -10110,5 +10170,5 @@
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "7caf6699658c0ff773a80a8a883c318d3110f004"
+  "generatedAtHead": "54f335f654b32380e357e5c5469c1fdaa761c599"
 }

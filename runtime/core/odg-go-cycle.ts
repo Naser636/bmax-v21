@@ -45,7 +45,13 @@ const SD = require("./odg-sovereign-delegation.js");
 const AS = require("./odg-authorization-scope.js");
 
 const STEPS = Object.freeze(["TRUTH_LOCK", "STATE_READ", "PROBLEMS_OPPORTUNITIES", "SELECT", "DECOMPOSE", "STRATEGY", "AUTHORIZE", "EXECUTE", "EVIDENCE", "NEXT_SELECTION"]);
-const DEFAULTS = Object.freeze({ mode: "DRY", maxSteps: STEPS.length, deadlineMs: 120000 });
+/* deadlineMs: V16.9 Phase 1b raised 120000 → 900000. Measured cause: the real H experiment (V168_H_GO_EXECUTE_TRACE.jsonl)
+ * spent 180.1 s inside EXECUTE and the 120 s default stopped the cycle (DEADLINE) before EVIDENCE/NEXT_SELECTION;
+ * CP10 asked for ≥ 600000. 900000 = the CLI's own dispatch kill bound (DISPATCH_TIMEOUT_MS 600000 in odg-go.ts) + 300 s
+ * for the other nine steps, so a dispatch that runs to its own bound still leaves the cycle time to record its evidence.
+ * Still one bounded cycle (no loop); --deadline-ms overrides it. */
+const DEADLINE_HISTORY = Object.freeze({ oldMs: 120000, newMs: 900000, cause: "H EXECUTE 180.1 s > 120 s default ⇒ STOPPED before EVIDENCE (docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl; CP10 limit)", rule: "deadline ≥ dispatch kill bound (600 s) + 300 s for the other steps" });
+const DEFAULTS = Object.freeze({ mode: "DRY", maxSteps: STEPS.length, deadlineMs: DEADLINE_HISTORY.newMs });
 const DRY_MARK = "DRY_RUN_NOT_DISPATCHED";
 
 const DECIDED_BY: any = Object.freeze({
@@ -176,6 +182,45 @@ function selectionSummary(d: any): any {
 function chosenId(d: any): string | null { return d && (d.decision === "SELECTED" || d.decision === "TIE_EXPLAINED") && d.selected ? d.selected.id : null; }
 
 /*
+ * V16.9 Phase 1b — GO RESUME (addendum §24 "À la reprise : … reprendre exactement au premier travail réellement incomplet").
+ * resumeFromTrace(priorEntries) → frozen { resumable, reason, fromCycleSeq, runId, mode, priorStatus, stop, completedSteps,
+ *   firstIncompleteStep, stepEntries, dispatched } — reads the LAST cycle of a GO trace (append-only go-trace.jsonl). It is
+ * resumable only when that cycle ended STOPPED (deadline / STOP file / signal / max steps / emergency stop) or has no
+ * CYCLE_END at all (process killed), with at least one step not completed. PURE (the trace is passed in).
+ * runGoCycle with opts.resume = true (CLI --resume): TRUTH_LOCK and STATE_READ always run (the gate and the state digest
+ * are re-established on the present world); then, ONLY if the state digest (runId) equals the stopped cycle's runId,
+ * every step the stopped cycle completed is re-derived (pure, no side effect) and must reproduce its recorded decision
+ * byte-for-byte (else the resume is abandoned and the rest runs fresh, recorded), and a completed EXECUTE is NEVER re-run:
+ * its recorded status/decision is carried over (CARRIED_OVER_NOT_REDISPATCHED). The first incomplete step and the ones
+ * after it run normally. Digest changed / not resumable ⇒ fresh cycle, RESUME entry says why. An EXECUTE interrupted
+ * after DISPATCHED is never re-dispatched: the (runId, mission) dispatch guard below refuses it.
+ */
+const RESUMABLE_END = "STOPPED";
+function resumeFromTrace(priorEntries: any): any {
+  const all = arr(priorEntries).filter((e: any) => isObj(e));
+  let start = -1; all.forEach((e: any, i: number) => { if (e.kind === "CYCLE_START") start = i; });
+  const no = (reason: string, extra: any = {}) => Object.freeze({ resumable: false, reason, fromCycleSeq: null, runId: null, mode: null, priorStatus: null, stop: null, completedSteps: Object.freeze([]), firstIncompleteStep: null, stepEntries: Object.freeze({}), dispatched: Object.freeze([]), ...extra });
+  if (start < 0) return no("no prior GO cycle in this trace");
+  const cyc = all.slice(start);
+  const head = cyc[0];
+  const ends = cyc.filter((e: any) => e.kind === "CYCLE_END");
+  const end = ends.length ? ends[ends.length - 1] : null;
+  const stepEntries: any = {};
+  for (const e of cyc) if (e.kind === "STEP" && STEPS.includes(e.step)) stepEntries[e.step] = e;
+  const completed = STEPS.filter((st: string) => !!stepEntries[st]);
+  const first = STEPS.find((st: string) => !stepEntries[st]) || null;
+  const runIdOf = completed.length ? String(stepEntries[completed[completed.length - 1]].runId || "") : String((end && end.runId) || "");
+  const stop = (cyc.filter((e: any) => e.kind === "STOP").pop()) || (end && end.stop) || null;
+  const dispatched = cyc.filter((e: any) => e.kind === "DISPATCHED").map((e: any) => String(e.mission));
+  const base = { fromCycleSeq: head.cycleSeq ?? null, runId: runIdOf || null, mode: head.mode || null, priorStatus: end ? end.status : null, stop: stop ? { reason: stop.reason || null, source: stop.source || null, beforeStep: stop.beforeStep || null } : null, completedSteps: Object.freeze(completed), firstIncompleteStep: first, stepEntries: Object.freeze(stepEntries), dispatched: Object.freeze(dispatched) };
+  if (end && end.status !== RESUMABLE_END) return no(`last cycle ${head.cycleSeq} ended ${end.status} (not ${RESUMABLE_END}) — nothing to resume`, base);
+  if (!first) return no(`last cycle ${head.cycleSeq} completed all ${STEPS.length} steps — nothing to resume`, base);
+  if (!completed.includes("STATE_READ") || !runIdOf || runIdOf === "pending") return no(`last cycle ${head.cycleSeq} stopped before its state digest was recorded — nothing reusable`, base);
+  return Object.freeze({ resumable: true, reason: `last cycle ${head.cycleSeq} ${end ? "ended STOPPED" : "has no CYCLE_END (killed)"}${stop ? ` (${stop.reason} before ${stop.beforeStep || "?"})` : ""}; first incomplete step ${first}`, ...base });
+}
+function decisionSha(entry: any): string { const d = entry && entry.decision; return sha(isObj(d) ? Object.fromEntries(Object.entries(d).filter(([k]) => k !== "volatile")) : d === undefined ? null : d); }
+
+/*
  * runGoCycle(opts, ports) -> Promise<result>. ports:
  *   now() → ms; truthLock() → truthLockGate result; readState() → { inputs:[{source,sha256}], sources:{contracts,v150,cp8,
  *   scenarioEvidence}, strategyEvidence, registerEvidence, radar:{grant,admission}, ledger:{proven:[],integrity},
@@ -198,6 +243,9 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
   const counters = { dispatchCalls: 0, providerLaunched: 0, dispatchedMissions: [] as string[] };
   const append = (e: any) => { ports.trace.append({ ...e, runId, cycleSeq }); };
   const ctx: any = {};
+  // V16.9 Phase 1b resume state (see resumeFromTrace). Active only after STATE_READ proves the state digest unchanged.
+  const resumePlan = o.resume === true ? resumeFromTrace(prior) : null;
+  const rs: any = { active: false, plan: resumePlan, rederived: [] as string[], carriedOver: [] as string[], abandoned: null as any };
 
   const stopCheck = (nextStep: string): any => {
     if (process.env.ODG_SCHEDULER_STOP === "1") return { reason: "EMERGENCY_STOP", source: "ODG_SCHEDULER_STOP=1 (canonical mission-scheduler emergency stop)" };
@@ -212,12 +260,13 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const priorSame = prior.filter((e: any) => e && e.kind === "CYCLE_END" && e.runId === runId && e.decisionsDigest === decisionsDigest);
     const end = { kind: "CYCLE_END", status, mode, stepsRun: steps.map((s) => `${s.step}:${s.status}`), decisionsDigest, durationMs: now() - t0, endedAt: iso(now()),
       dispatchCalls: counters.dispatchCalls, dispatchedMissions: counters.dispatchedMissions, providerLaunched: counters.providerLaunched,
-      idempotent: priorSame.length > 0, duplicateOf: priorSame.length ? { cycleSeq: priorSame[0].cycleSeq, endedAt: priorSame[0].endedAt } : null, ...extra };
+      idempotent: priorSame.length > 0, duplicateOf: priorSame.length ? { cycleSeq: priorSame[0].cycleSeq, endedAt: priorSame[0].endedAt } : null,
+      ...(rs.plan ? { resume: { resumed: !!(ctx.resume && ctx.resume.resumed), fromCycleSeq: rs.plan.fromCycleSeq, rederivedIdentical: rs.rederived.slice(), carriedOver: rs.carriedOver.slice(), abandoned: rs.abandoned, reason: ctx.resume ? ctx.resume.reason : `not evaluated (cycle ended before STATE_READ)` } } : {}), ...extra };
     append(end);
     return Object.freeze({ ...end, runId, cycleSeq, steps, context: ctx });
   };
 
-  append({ kind: "CYCLE_START", mode, maxSteps, deadlineMs, startedAt: iso(t0) });
+  append({ kind: "CYCLE_START", mode, maxSteps, deadlineMs, startedAt: iso(t0), ...(o.resume === true ? { resumeRequested: true } : {}) });
 
   // the step runner: stop-check BEFORE every step, uniform trace entry AFTER it.
   const run = async (step: string, fn: () => any, counted = true): Promise<any> => {
@@ -225,8 +274,24 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     if (st) { append({ kind: "STOP", beforeStep: step, ...st, at: iso(now()) }); return { stopped: st }; }
     const startedAt = now();
     let r: any;
-    try { r = fn(); } catch (e: any) { r = { status: "ERROR", inputs: null, decision: { error: String((e && e.message) || e) }, rationale: "step threw — fail-closed (cycle halts)" }; }
-    const entry = { kind: "STEP", index: STEPS.indexOf(step) + 1, step, status: r.status, startedAt: iso(startedAt), endedAt: iso(now()), inputsSha256: sha(r.inputs), decision: plain(r.decision), rationale: r.rationale, decidedBy: DECIDED_BY[step] };
+    const priorEntry = rs.active && rs.plan && rs.plan.stepEntries[step] ? rs.plan.stepEntries[step] : null;
+    let resumed: any = null;
+    if (priorEntry && step === "EXECUTE") {
+      // a completed EXECUTE is NEVER re-run on resume: its recorded outcome is carried over (no re-dispatch)
+      r = { status: priorEntry.status, inputs: null, decision: priorEntry.decision, rationale: `carried over from stopped cycle ${rs.plan.fromCycleSeq} (state digest unchanged) — EXECUTE not re-run, nothing re-dispatched; original rationale: ${priorEntry.rationale}` };
+      resumed = { fromCycleSeq: rs.plan.fromCycleSeq, mode: "CARRIED_OVER_NOT_REDISPATCHED" };
+      rs.carriedOver.push(step);
+    } else {
+      try { r = fn(); } catch (e: any) { r = { status: "ERROR", inputs: null, decision: { error: String((e && e.message) || e) }, rationale: "step threw — fail-closed (cycle halts)" }; }
+      if (priorEntry) {
+        const same = decisionSha({ decision: plain(r.decision) }) === decisionSha(priorEntry) && r.status === priorEntry.status;
+        resumed = { fromCycleSeq: rs.plan.fromCycleSeq, mode: same ? "REDERIVED_IDENTICAL" : "REDERIVED_DIVERGED" };
+        if (same) rs.rederived.push(step);
+        else { rs.active = false; rs.abandoned = { atStep: step, reason: `re-derived ${step} differs from the stopped cycle's recorded decision ⇒ resume abandoned; this and every later step run fresh` }; append({ kind: "RESUME_ABANDONED", ...rs.abandoned, at: iso(now()) }); }
+      }
+    }
+    const entry: any = { kind: "STEP", index: STEPS.indexOf(step) + 1, step, status: r.status, startedAt: iso(startedAt), endedAt: iso(now()), inputsSha256: priorEntry && step === "EXECUTE" ? priorEntry.inputsSha256 : sha(r.inputs), decision: plain(r.decision), rationale: r.rationale, decidedBy: DECIDED_BY[step] };
+    if (resumed) entry.resumed = resumed;
     steps.push({ ...entry, counted });
     append(entry);
     try { if (typeof ports.pause === "function") await ports.pause(step); } catch { /* best-effort */ }
@@ -251,6 +316,18 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     return { status: "DONE", inputs: s.inputs, decision: { inputs: s.inputs, ledger: { provenCount: arr(s.ledger && s.ledger.proven).length, integrityOk: !!(s.ledger && s.ledger.integrity && s.ledger.integrity.ok) }, allowlist: s.allowlist, codeTreeParity: s.codeTreeParity || null, runId, volatile: { attempts: s.attempts, ledgerIntegrity: s.ledger && s.ledger.integrity } }, rationale: "canonical evidence + registers hashed; mission-ledger and attempt-log read-only (never written by GO)" };
   });
   if (stopped(r)) return stopped(r);
+
+  // V16.9 Phase 1b — resume decision (state digest now known)
+  if (resumePlan) {
+    const same = resumePlan.resumable && resumePlan.runId === runId && resumePlan.mode === mode;
+    rs.active = same;
+    const why = !resumePlan.resumable ? `not resumable: ${resumePlan.reason} ⇒ fresh cycle`
+      : resumePlan.mode !== mode ? `stopped cycle ${resumePlan.fromCycleSeq} ran in mode ${resumePlan.mode}, this run is ${mode} ⇒ fresh cycle`
+      : resumePlan.runId !== runId ? `state digest changed since stopped cycle ${resumePlan.fromCycleSeq} (runId ${resumePlan.runId} → ${runId}) ⇒ fresh cycle (its decisions describe another state)`
+      : `state digest unchanged (runId ${runId}) ⇒ resume at ${resumePlan.firstIncompleteStep}: completed steps re-derived and checked identical, EXECUTE ${resumePlan.completedSteps.includes("EXECUTE") ? "carried over (never re-dispatched)" : "not yet run"}`;
+    ctx.resume = { requested: true, resumed: same, fromCycleSeq: resumePlan.fromCycleSeq, priorStatus: resumePlan.priorStatus, priorStop: resumePlan.stop, priorRunId: resumePlan.runId, runId, completedInPrior: resumePlan.completedSteps, firstIncompleteStep: resumePlan.firstIncompleteStep, dispatchedInPrior: resumePlan.dispatched, reason: why };
+    append({ kind: "RESUME", ...ctx.resume, at: iso(now()) });
+  }
 
   // 3 PROBLEMS_OPPORTUNITIES
   r = await run("PROBLEMS_OPPORTUNITIES", () => {
@@ -420,6 +497,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
   if (stopped(r)) return stopped(r);
   if (r.status === "STOPPED") return finish("STOPPED", { stop: { reason: "EMERGENCY_STOP", source: "schedulerStep stopSignal" } });
   const execStatus = r.status;
+  if (rs.carriedOver.includes("EXECUTE") && r.decision && isObj(r.decision.dispatchTarget)) ctx.dispatchTarget = r.decision.dispatchTarget;
 
   // 9 EVIDENCE
   r = await run("EVIDENCE", () => {
@@ -477,8 +555,9 @@ const GO_CYCLE_CONTRACT = Object.freeze({
     "no commit, no merge, no write outside the out dir (writer guard); ledger/attempt-log read-only",
     "stop between every step: ODG_SCHEDULER_STOP=1, STOP file / signal port, deadline, max steps — each recorded in the trace",
     "idempotent re-run: same state ⇒ same decisions digest (duplicateOf); a (runId, mission) is never dispatched twice",
+    "V16.9 resume (opts.resume / --resume): only a STOPPED (or killed) last cycle with the SAME state digest is resumed — completed steps re-derived and checked identical, a completed EXECUTE carried over and never re-run; otherwise a fresh cycle, with the reason in the trace",
   ]),
 });
 
-module.exports = { resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
+module.exports = { resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};

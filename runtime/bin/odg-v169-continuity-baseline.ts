@@ -4,6 +4,7 @@
  * Runs the 15 §29 scenarios against the CURRENT canonical components (no new engine, no fix) on the REAL committed
  * records, and grades each with the rule PRE-REGISTERED below. Writes docs/odg/evidence/V169_CONTINUITY_BASELINE.json.
  * `--check` recomputes from the committed sources and exits 1 on drift (generatedAtHead excluded).
+ * V16.9 Phase 1b: `--write-after <file> --before <record>` / `--check-after <file>` — the same for AFTER (before/after) records.
  * HOST/HISTORY-DEPENDENT: S6/S7 read full git history (git log -1 per file, git diff <recorded sha>..HEAD, git cat-file -e),
  * so --check drifts in a shallow or single-commit clone and whenever HEAD moves; it is valid on a full clone at the PR head.
  *
@@ -75,7 +76,9 @@ const clone = (o: any) => JSON.parse(JSON.stringify(o));
 function loadState(root: string): any {
   const src = SS.loadSources(root);
   const authorizationEvidence: any = {};
-  for (const [sc, f] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(root, f.inspection), experiment: optional(root, f.experiment), validation: optional(root, f.validation) };
+  // V16.9 Phase 1b (input plumbing, not a rule): the loader's read-only local-git probes are fed with the records, exactly
+  // as odg-go readState does — odg-authorization-scope R7 refuses any record it cannot verify.
+  for (const [sc, f] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(root, f.inspection), experiment: optional(root, f.experiment), validation: optional(root, f.validation), probes: src.proofProbes };
   const { inputs, ...sources } = src;
   return { inputs, sources, authorizationEvidence };
 }
@@ -97,14 +100,17 @@ function s1(root: string, state: any, register: any, cp10: any): any {
   const missingInTrace = GO.STEPS.filter((s: string) => !stepsRun.includes(s));
   // (b) does a canonical component name the missing step on resume? The GO core re-derives state from records each cycle;
   // no exported component reads a prior cycle's trace to resume its missing step (odg-go lastCycle is used for --check/digest only).
+  // Phase 1b measurement (stricter than a typeof probe): the component must be exported AND name exactly the first missing step.
   const resumeComponent = typeof GO.resumeFromTrace === "function" || typeof GO.resumeCycle === "function";
-  const b = resumeComponent;
+  const named = typeof GO.resumeFromTrace === "function" ? GO.resumeFromTrace(trace) : null;
+  const b = resumeComponent && !!named && named.firstIncompleteStep === missingInTrace[0];
   const companion = rj(root, "docs/odg/v124-consolidated-roadmap.json");
   const dossier = PC.buildDossier(V124.toContinuityProgram(companion), { asOfEpochMs: FIXED_AS_OF, currentCommit: fullSha(root, "HEAD") });
   const c = dossier.nextEligible === "CM-RADAR-GATE-CHAIN";
   const grade = !(a && c) ? "FAIL" : b ? "PASS" : "PARTIAL";
   return { grade, measured: { a_strategic: { decision: strategic.decision, tiedSet: strategic.tiedSet || [] }, a_actionable: actionable, a_expectedFromCP10: cp10.nextAction, a_matches: a,
     b_interruptedTrace: { stop: (trace.find((e: any) => e.kind === "STOP") || {}).reason || null, stepsCompleted: stepsRun, stepsNotCompleted: missingInTrace }, b_componentNamesMissingStep: b,
+    ...(named ? { b_resumeFromTrace: { component: "odg-go-cycle.resumeFromTrace", resumable: named.resumable, firstIncompleteStep: named.firstIncompleteStep, reason: named.reason } } : {}),
     c_v124Dossier: { boussoleRef: dossier.boussoleRef, missionsTotal: dossier.missionsTotal, done: dossier.done.length, mustRevalidate: dossier.mustRevalidate.length, blocked: dossier.blocked.map((x: any) => x.id), nextEligible: dossier.nextEligible }, c_matches: c,
     twoNextAnswers: { goAP: actionable.length ? actionable : "halt (owner decision J/G)", v124: dossier.nextEligible, reconciledByAComponent: false } },
     metrics: { correctResume: a && c ? 1 : 0, resumeAttempts: 1, interruptedStepsRecoveredByComponent: b ? missingInTrace.length : 0, interruptedStepsTotal: missingInTrace.length } };
@@ -183,7 +189,7 @@ function s5(register: any): any {
     metrics: { statusErrors: (gOk ? 0 : 1) + (hOk ? 0 : 1) } };
 }
 
-function s6(root: string, cp10: any): any {
+function s6(root: string, cp10: any, state: any): any {
   const head = fullSha(root, "HEAD");
   const obs = (rel: string, observedCommit: string | null, scope: string[], label: string, labelSource: string) => {
     const changed = observedCommit ? changedPaths(root, observedCommit) : null;
@@ -204,9 +210,14 @@ function s6(root: string, cp10: any): any {
   const shaBound = { record: `${EV}/V168_H_CRITERIA_VALIDATION.json#experimentEvidence.sha256`, recorded: val.experimentEvidence.sha256, current: curSha, matches: val.experimentEvidence.sha256 === curSha, checkedByComponent: "odg-authorization-scope validationValid (experimentSha256 over canon(record)) — see scenario 7" };
   const staleDetected = recs.filter((r) => r.label === "STALE" && r.flaggedStale).length, staleTotal = recs.filter((r) => r.label === "STALE").length;
   const falseStale = recs.filter((r) => r.label === "FRESH" && r.flaggedStale).length;
-  const liveCaller = false; // no non-test caller applies odg-observation-currency to evidence records (program-continuity applies it only to missions carrying an `observation`; the V12.4 companion carries none)
+  // Phase 1b measurement (was a hard-coded false): a live caller applies currency to evidence records iff the canonical
+  // scope derivation used by GO and by the register (CLOSE-1) returns a proof-currency verdict for every validated record step.
+  const hScope = scopeOf(state, "H");
+  const liveSteps = hScope.validatedSteps.filter((v: any) => v.step !== "REVISE_CONTRACT");
+  const liveCaller = typeof OCUR.assessEvidenceCurrency === "function" && liveSteps.length > 0 && liveSteps.every((v: any) => v.evidence && v.evidence.proofCurrency && typeof v.evidence.proofCurrency.status === "string");
+  const evidenceCurrency = ["G", "H"].flatMap((sc: string) => ["inspection", "experiment", "validation"].map((k: string) => { const r = state.authorizationEvidence[sc][k]; if (!r) return null; const { recordPath, ...rec } = r; const a = OCUR.assessEvidenceCurrency(rec, state.authorizationEvidence[sc].probes, { currentContractSha256: AS.contractSha256(contractOf(state, sc)) }); return { record: recordPath, status: a.status, usableAsProof: a.usableAsProof, counts: a.counts, nonCurrent: a.bindings.filter((x: any) => x.status !== "CURRENT").map((x: any) => `${x.field}:${x.status}${x.decisive ? "(decisive)" : "(context)"}`) }; }).filter(Boolean));
   const grade = staleDetected < staleTotal ? "FAIL" : (falseStale === 0 && liveCaller) ? "PASS" : "PARTIAL";
-  return { grade, measured: { headAtRun: "HEAD (excluded from --check; see generatedAtHead)", records: recs, shaBound, liveCallerAppliesCurrencyToEvidence: liveCaller, cp10Head: cp10.headAtCheckpoint },
+  return { grade, measured: { headAtRun: "HEAD (excluded from --check; see generatedAtHead)", records: recs, shaBound, liveCallerAppliesCurrencyToEvidence: liveCaller, ...(liveCaller ? { liveCallerBasis: "odg-authorization-scope R7 → odg-observation-currency.assessEvidenceCurrency on every validated record step (used by odg-go-cycle and odg-strategic-register CLOSE-1)", evidenceCurrency } : {}), cp10Head: cp10.headAtCheckpoint },
     metrics: { staleProofsDetected: staleDetected, staleProofsLabelled: staleTotal, falseStaleOnFreshRecords: falseStale } };
 }
 
@@ -229,7 +240,7 @@ function s7(root: string, state: any): any {
   const grade = !(realOk && r1 && r2) ? "FAIL" : r3 ? "PASS" : "PARTIAL";
   return { grade, measured: { real: { inspectionValid: realOk, inspectedHeadSha: realHead, inspectedHeadExistsInGit: commitExists(root, realHead) },
     m1_foreignContractSha: { rejected: r1, reason: m1.reason }, m2_contractEdited: { rejected: r2, reason: m2.reason }, m3_nonexistentInspectedHead: { sha: ghost, existsInGit: ghostExists, rejected: r3, reason: m3.reason },
-    cp10MergeShasExist: merges, note: "commit existence of cited shas is verified here by the runner (git cat-file); no canonical component performs it" },
+    cp10MergeShasExist: merges, note: r3 && /WRONG_COMMIT/.test(String(m3.reason)) ? "commit existence of the inspected head is verified by the canonical component (odg-authorization-scope R7 → odg-observation-currency); the CP10 merge shas are additionally checked here by the runner (git cat-file)" : "commit existence of cited shas is verified here by the runner (git cat-file); no canonical component performs it" },
     metrics: { wrongBindingsRejected: [r1, r2, r3].filter(Boolean).length, wrongBindingsTried: 3 } };
 }
 
@@ -366,7 +377,7 @@ function compute(root: string): any {
   const register = REG.buildRegister({ ...state.sources, inputs: state.inputs });
   const cp10 = rj(root, `${EV}/V168_CHECKPOINT_10.json`);
   const results: any = {
-    1: s1(root, state, register, cp10), 2: s2(root, state), 3: s3(root, state), 4: s4(root, state), 5: s5(register), 6: s6(root, cp10), 7: s7(root, state),
+    1: s1(root, state, register, cp10), 2: s2(root, state), 3: s3(root, state), 4: s4(root, state), 5: s5(register), 6: s6(root, cp10, state), 7: s7(root, state),
     8: s8(state, register), 9: s9(state, register), 10: s10(root), 11: s11(root, state, register), 12: s12(root, register, cp10), 13: s13(root), 14: s14(root, register), 15: s15(root, state),
   };
   const scenarios = PRE_REGISTRATION.scenarios.map((s: any) => ({ n: s.n, name: s.name, grade: results[s.n].grade, ...(results[s.n].gradeCause ? { gradeCause: results[s.n].gradeCause, untightenedReading: results[s.n].untightenedReading } : {}), ...(s.addedAfterFirstRun ? { preRegisteredAfterFirstRunOfOthers: true } : {}), measured: results[s.n].measured, metrics: results[s.n].metrics }));
@@ -410,12 +421,77 @@ function compute(root: string): any {
   };
 }
 
+/*
+ * V16.9 Phase 1b (#949 inspection LOW) — a --check target for AFTER records (before/after re-runs of this same runner).
+ *   --write-after <file> --before <baseline-shaped record>  writes { schema AFTER, runner{path,sha256,preRegistrationSha256},
+ *       before{record,sha256,generatedAtHead,summary,scenarios}, after{generatedAtHead,summary,scenarios}, perScenario[before/after],
+ *       counts, movedScenarios, regressions, metrics29{before,after}, honestLimits[] } — honestLimits/notes kept from an existing file.
+ *   --check-after <file>  recomputes and compares with <file>.after.{summary,scenarios} (generatedAtHead / host fields excluded);
+ *       also asserts the PRE_REGISTRATION hash recorded in <file>.runner equals this runner's (rules unchanged). Exit 1 on drift.
+ * Same history-dependence as --check (S6/S7 read git history): valid on a full clone at the commit that carries the record.
+ */
+const AFTER_SCHEMA = "ODG_V169_CONTINUITY_AFTER/1";
+function preRegistrationSha256(): string { return sha256(JSON.stringify(PRE_REGISTRATION)); }
+function argOf(argv: string[], k: string): string | null { const i = argv.indexOf(k); return i >= 0 && i + 1 < argv.length ? argv[i + 1] : null; }
+function scenarioCore(s: any): any { return JSON.parse(JSON.stringify({ n: s.n, grade: s.grade, measured: s.measured, metrics: s.metrics })); }
+function metricValues(m: any): any { const o: any = {}; for (const [k, v] of Object.entries(m || {}) as any) if (k !== "ownerMetricNames") o[k] = v && typeof v === "object" && "value" in v ? v.value : v; return o; }
+function buildAfter(root: string, rec: any, beforeRel: string, beforeRec: any, prev: any): any {
+  const bs = beforeRec.scenarios || (beforeRec.after && beforeRec.after.scenarios) || [];
+  const bsum = beforeRec.summary || (beforeRec.after && beforeRec.after.summary) || null;
+  const per = rec.scenarios.map((s: any) => { const b = bs.find((x: any) => x.n === s.n) || null; const p = prev && Array.isArray(prev.perScenario) ? prev.perScenario.find((x: any) => x.n === s.n) : null;
+    return { n: s.n, name: s.name, before: b ? b.grade : null, after: s.grade, gradeChanged: !!b && b.grade !== s.grade, measuredChanged: !!b && JSON.stringify(scenarioCore(b)) !== JSON.stringify(scenarioCore(s)), ...(p && p.note ? { note: p.note } : {}) }; });
+  const RANK: any = { FAIL: 0, NOT_MEASURED: 0, PARTIAL: 1, PASS: 2 };
+  return {
+    "//": prev && prev["//"] ? prev["//"] : "V16.9 continuity baseline re-run (same runner, PRE_REGISTRATION unchanged) — before/after per scenario.",
+    schema: AFTER_SCHEMA,
+    runner: { path: "runtime/bin/odg-v169-continuity-baseline.ts", sha256: sha256(fs.readFileSync(path.join(root, "runtime/bin/odg-v169-continuity-baseline.ts"), "utf8")), preRegistrationSha256: preRegistrationSha256(), command: `npx tsx runtime/bin/odg-v169-continuity-baseline.ts --write-after <this file> --before ${beforeRel}`, check: "npx tsx runtime/bin/odg-v169-continuity-baseline.ts --check-after <this file>" },
+    before: { record: beforeRel, generatedAtHead: beforeRec.generatedAtHead || (beforeRec.after && beforeRec.after.runnerGeneratedAtHead) || null, summary: bsum, scenarios: bs.map(scenarioCore) },
+    after: { generatedAtHead: git(root, ["rev-parse", "HEAD"]), summary: rec.summary, scenarios: rec.scenarios },
+    perScenario: per,
+    counts: { before: bsum ? bsum.counts : null, after: rec.summary.counts },
+    movedScenarios: per.filter((x: any) => x.gradeChanged).map((x: any) => `S${x.n}: ${x.before} → ${x.after}`),
+    regressions: per.filter((x: any) => x.gradeChanged && RANK[x.after] < RANK[x.before]).map((x: any) => `S${x.n}: ${x.before} → ${x.after}`),
+    metrics29: { before: metricValues(beforeRec.metrics29 && (beforeRec.metrics29.after || beforeRec.metrics29)), after: metricValues(rec.metrics29) },
+    honestLimits: prev && Array.isArray(prev.honestLimits) ? prev.honestLimits : [],
+    ...(prev && prev.phaseNotes ? { phaseNotes: prev.phaseNotes } : {}),
+  };
+}
+function checkAfter(file: string, rec: any): number {
+  let committed: any;
+  try { committed = JSON.parse(fs.readFileSync(file, "utf8")); } catch (e: any) { process.stderr.write(`--check-after: cannot read ${file}: ${e.message}\n`); return 1; }
+  if (!committed.after || !Array.isArray(committed.after.scenarios)) { process.stderr.write(`--check-after: ${file} has no after.scenarios (not an AFTER record)\n`); return 1; }
+  const pr = committed.runner && committed.runner.preRegistrationSha256;
+  if (pr && pr !== preRegistrationSha256()) { process.stderr.write(`--check-after: PRE_REGISTRATION hash ${preRegistrationSha256()} ≠ recorded ${pr} (rules changed)\n`); return 1; }
+  const want = JSON.stringify({ summary: committed.after.summary, scenarios: committed.after.scenarios });
+  const got = JSON.stringify(JSON.parse(JSON.stringify({ summary: rec.summary, scenarios: rec.scenarios })));
+  if (want !== got) {
+    const diff = rec.scenarios.filter((s: any) => { const c = committed.after.scenarios.find((x: any) => x.n === s.n); return !c || JSON.stringify(c) !== JSON.stringify(JSON.parse(JSON.stringify(s))); }).map((s: any) => s.n);
+    process.stderr.write(`--check-after: DRIFT in scenario(s) ${diff.join(",") || "(summary)"} — recomputed ≠ ${path.basename(file)}.after\n`); return 1;
+  }
+  process.stdout.write(`--check-after: OK (no drift) ${rec.summary.perScenario.join(" ")}${pr ? "; PRE_REGISTRATION unchanged" : "; (record carries no PRE_REGISTRATION hash)"}\n`);
+  return 0;
+}
+
 function main(argv: string[]): number {
   const root = (() => { const i = argv.indexOf("--root"); return i >= 0 ? path.resolve(argv[i + 1]) : ROOT; })();
   const out = (() => { const i = argv.indexOf("--out"); return i >= 0 ? path.resolve(argv[i + 1]) : path.join(root, OUT_REL); })();
   const t0 = Date.now();
   const rec = compute(root);
   const ms = Date.now() - t0;
+  const ca = argOf(argv, "--check-after");
+  if (ca) return checkAfter(path.resolve(ca), rec);
+  const wa = argOf(argv, "--write-after");
+  if (wa) {
+    const bf = argOf(argv, "--before");
+    if (!bf) { process.stderr.write("--write-after needs --before <record>\n"); return 2; }
+    const beforeRec = JSON.parse(fs.readFileSync(path.resolve(bf), "utf8"));
+    let prev: any = null; try { prev = JSON.parse(fs.readFileSync(path.resolve(wa), "utf8")); } catch { prev = null; }
+    const rel = path.relative(root, path.resolve(bf));
+    const doc = buildAfter(root, rec, rel.startsWith("..") ? path.basename(bf) : rel, beforeRec, prev);
+    fs.writeFileSync(path.resolve(wa), JSON.stringify(doc, null, 2) + "\n");
+    process.stdout.write(`wrote ${path.basename(wa)}: ${doc.movedScenarios.join("; ") || "no grade change"}${doc.regressions.length ? ` — REGRESSIONS: ${doc.regressions.join("; ")}` : ""}\n`);
+    return 0;
+  }
   if (argv.includes("--check")) {
     let committed: any;
     try { committed = JSON.parse(fs.readFileSync(out, "utf8")); } catch (e: any) { process.stderr.write(`--check: cannot read ${out}: ${e.message}\n`); return 1; }
@@ -433,5 +509,5 @@ function main(argv: string[]): number {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { compute, main, PRE_REGISTRATION, OUT_REL, chainHead, fanOut, dependsOnBlocked };
+module.exports = { compute, main, PRE_REGISTRATION, OUT_REL, chainHead, fanOut, dependsOnBlocked, buildAfter, checkAfter, preRegistrationSha256, AFTER_SCHEMA };
 export {};
