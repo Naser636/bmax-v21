@@ -22,45 +22,54 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795544267000,
-    "rule": "now = newest last-commit epoch among the source files (no wall clock); a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
+    "nowEpochMs": 1795545008000,
+    "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "92822aa7cfdf8f72a7209a51af74ba5dd8b6df59f72022278da7de2b3fedeafb"
+      "sha256": "92822aa7cfdf8f72a7209a51af74ba5dd8b6df59f72022278da7de2b3fedeafb",
+      "epochMs": 1795545008000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "935347e4d671bc17436a49524e8fe6dcc3060f297c842e94bbfecd79071afad2"
+      "sha256": "935347e4d671bc17436a49524e8fe6dcc3060f297c842e94bbfecd79071afad2",
+      "epochMs": 1795545008000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
-      "sha256": "a1831998a9b285bf44a0d81d5981ce59a7f8066d8566746e0e6fcc931b3ac641"
+      "sha256": "a1831998a9b285bf44a0d81d5981ce59a7f8066d8566746e0e6fcc931b3ac641",
+      "epochMs": 1795529421000
     },
     {
       "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json",
-      "sha256": "2843995a1c13afc6f05d56dbbbeb35bab580ff2fe6a62bfbf80637d3286602db"
+      "sha256": "2843995a1c13afc6f05d56dbbbeb35bab580ff2fe6a62bfbf80637d3286602db",
+      "epochMs": 1795532572000
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
-      "sha256": "617bfca543c23af5031174ebbb19cefe2906744ea4ed7fe455a4f8babf981b7f"
+      "sha256": "617bfca543c23af5031174ebbb19cefe2906744ea4ed7fe455a4f8babf981b7f",
+      "epochMs": 1795531828000
     },
     {
       "source": "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json",
-      "sha256": "19bc215556a89ae951e837fa068e15552ae8bbc31f0402c9f7a56fda3b5232c6"
+      "sha256": "19bc215556a89ae951e837fa068e15552ae8bbc31f0402c9f7a56fda3b5232c6",
+      "epochMs": 1795540047000
     },
     {
       "source": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
-      "sha256": "a5537e9d2a8708e8e99d9b726b45a51c5850b39445444798b79a6426cd1b1c37"
+      "sha256": "a5537e9d2a8708e8e99d9b726b45a51c5850b39445444798b79a6426cd1b1c37",
+      "epochMs": 1795532572000
     },
     {
       "source": "docs/odg/evidence/V176_CHECKPOINT_12.json",
-      "sha256": "5b2a93ef1fb53314ae4f1c524f4e9531e673609102f830169c7f101820105e51"
+      "sha256": "5b2a93ef1fb53314ae4f1c524f4e9531e673609102f830169c7f101820105e51",
+      "epochMs": 1795543239000
     },
     {
       "source": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_EVIDENCE.json",
-      "sha256": "7a0f66dee03f8cca3efcabb28340ef4c25b50cca05700b533e5147a5d44effdf"
+      "sha256": "7a0f66dee03f8cca3efcabb28340ef4c25b50cca05700b533e5147a5d44effdf",
+      "epochMs": 1795319935000
     }
   ],
   "counts": {
