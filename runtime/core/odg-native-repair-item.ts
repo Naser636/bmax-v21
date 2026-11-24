@@ -211,11 +211,33 @@ function buildContract(detection: any, oracle: any, runner: any): any {
   };
 }
 
+/* ---------------- V17.5 NB2 — DESIGN work item: the integrated helper vs the reference on an EXTENDED corpus ----------------
+ * ORC-2 (provider-written INPUT literals; expected values are COMPUTED by executing the REF-1 reference): the ORC-1 inputs
+ * (as JSON literals) + inputs that are NOT JSON-transportable — undefined at top level / in arrays / in objects / nested,
+ * toJSON-bearing objects (Date, and a plain object with a toJSON method), negative zero, non-finite numbers. NB1's oracle
+ * (ORC-1) had none of these (independent inspection finding). The inputs travel as SOURCE literals (sandbox harness). */
+const ORC2_EXTRA = Object.freeze([
+  "undefined", "[undefined]", "[1, undefined, 2]", "{ a: undefined }", "{ a: undefined, b: 1 }", "{ a: { b: undefined, c: 1 } }",
+  "[{ a: undefined }, [undefined]]", "{ x: [undefined, { y: undefined, z: [1, undefined] }] }", "{ k: [undefined, undefined], j: undefined }",
+  "new Date(0)", "{ when: new Date(0), v: 1 }", "{ toJSON: function () { return 1; } }",
+  "-0", "[-0, 0]", "{ z: -0 }", "[NaN, Infinity, -Infinity]",
+]);
+const ORACLE_INPUTS_ORC2 = Object.freeze(ORACLE_INPUTS.map((v: any) => JSON.stringify(v)).concat(ORC2_EXTRA));
+const NB2_TEST = "runtime/core/odg-canonical-json-extended.test.ts";
+/* designItem(root) — the NB2 work item for ODG's design pipeline: target = the INTEGRATED helper, reference = REF-1 (executed),
+ * corpus = ORC-2. null when the helper or the reference is absent. Reads files only. */
+function designItem(root: string): any {
+  const d = detectCanonDefects(root);
+  const p = path.join(root, TARGET_MODULE);
+  if (!fs.existsSync(p) || typeof d._referenceFn !== "function") return null;
+  return Object.freeze({ targetPath: TARGET_MODULE, testPath: NB2_TEST, exportName: EXPORT_NAME, sandboxFile: SANDBOX_FILE, currentSource: fs.readFileSync(p, "utf8"), referenceFn: d._referenceFn, reference: d.reference, corpus: ORACLE_INPUTS_ORC2, corpusRule: "ORC-2: ORC-1 inputs as JSON literals + 16 non-JSON-transportable input literals (provider-written inputs; expected = executed REF-1)", corpusSha256: sha256(JSON.stringify(ORACLE_INPUTS_ORC2)) });
+}
+
 const NATIVE_REPAIR_ITEM_CONTRACT = Object.freeze({
   id: "V175-NATIVE-REPAIR-ITEM",
   notAuthority: "detects + specifies; never generates the fix, never authorizes, never writes",
   defectClass: DEFECT_CLASS, target: Object.freeze([TARGET_MODULE, TARGET_TEST]),
 });
 
-module.exports = { detectCanonDefects, extractDefinitions, classify, buildOracle, buildContract, MODULE_SPEC, ORACLE_INPUTS, REPAIR_N, TARGET_MODULE, TARGET_TEST, SANDBOX_FILE, EXPORT_NAME, DEFECT_CLASS, canonKey, sha256, NATIVE_REPAIR_ITEM_CONTRACT };
+module.exports = { designItem, ORACLE_INPUTS_ORC2, ORC2_EXTRA, NB2_TEST, detectCanonDefects, extractDefinitions, classify, buildOracle, buildContract, MODULE_SPEC, ORACLE_INPUTS, REPAIR_N, TARGET_MODULE, TARGET_TEST, SANDBOX_FILE, EXPORT_NAME, DEFECT_CLASS, canonKey, sha256, NATIVE_REPAIR_ITEM_CONTRACT };
 export {};

@@ -27,7 +27,7 @@ check("no provider / model call", ev.providerCalls === 0 && ev.modelCalls === 0)
 const ids = ev.missions.map((m: any) => m.id);
 for (const want of ["V159/v159-bugfix-median", "V159/v159-repair-total-length", "V159/v159-refactor-even-squares", "V159/v159-implement-parse-range", "J/v159-implement-parse-range", "J/rle-codec", "J/csv-typed-validator", "J/range-clamp-pipeline", "v161-scenario-f-invoice-pipeline"])
   check(`mission present: ${want}`, ids.includes(want));
-check("16 A–P contracts + V17.2 G2/J2 + V17.5 V175-NB1 present (AP family = 19)", ev.missions.filter((m: any) => m.family === "AP").length === 19 && ["AP-G2", "AP-J2", "AP-V175-NB1"].every((id) => ev.missions.some((m: any) => m.id === id)));
+check("16 A–P contracts + V17.2 G2/J2 + V17.5 V175-NB1 + V175-NB2 present (AP family = 20)", ev.missions.filter((m: any) => m.family === "AP").length === 20 && ["AP-G2", "AP-J2", "AP-V175-NB1", "AP-V175-NB2"].every((id) => ev.missions.some((m: any) => m.id === id)));
 {
   const apC = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8")).contracts;
   const stateOf = (id: string) => (apC.find((c: any) => "AP-" + c.scenario === id) || {}).state;

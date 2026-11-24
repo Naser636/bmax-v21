@@ -1,11 +1,11 @@
 {
-  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged.",
+  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 19,
+  "count": 20,
   "initialStatusCounts": {
     "PASS": 2,
     "PARTIAL": 14,
-    "NOT_STARTED": 3
+    "NOT_STARTED": 4
   },
   "contracts": [
     {
@@ -1575,6 +1575,181 @@
           ],
           "justification": "owner V175 authorizes modifying the internal contracts concerned so GO itself runs ODG's native build; criteria and budgets are fixed before any native run",
           "revisionAuthorSessionId": "nb1-go-path-v175"
+        }
+      ]
+    },
+    {
+      "scenario": "V175-NB2",
+      "title": "ODG designs the change: repair odg-canonical-json's undefined handling from executed failing cases (local model proposes ≥2 designs, ODG selects/tests/repairs)",
+      "ownerText": "C'est maintenant le chantier stratégique numéro un. NB1 est une première preuve. Il faut aller beaucoup plus loin. Faire progresser ODG pour qu'il puisse : 1. comprendre un problème technique sans solution entièrement écrite par un fournisseur ; 2. analyser les composants et leurs dépendances ; 3. proposer lui-même plusieurs solutions ; 4. choisir la meilleure selon les contraintes ; 5. concevoir une modification ; 6. produire son code avec son modèle local ; 7. générer et exécuter ses tests ; 8. corriger ses erreurs ; 9. vérifier et intégrer le résultat autorisé ; 10. réutiliser ce qu'il a appris dans les constructions suivantes.",
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — directive V175 (2026-11-24), docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json: « développer et tester la boucle d'ingénierie native d'ODG ; » « modifier les composants et contrats internes concernés ; » « Aucun déploiement ni changement de production. » — extended to the next rung by the CTO directive 2026-11-24 « REPRISE DE SESSION ET ACCÉLÉRATION ODG » §E (ownerText, verbatim as relayed); V175-NB2 only, local model, €0, 0 provider calls; native write set = the helper module + an ODG-rules test, integrated via normal PR controls",
+      "parent": {
+        "scenario": "V175-NB1",
+        "relation": "NEXT RUNG of the native-engineering loop: NB1 = local model implemented a provider-specified function; NB2 = ODG derives the problem, the local model designs (≥2) and implements, ODG selects/tests/repairs. Target = the undefined gap of NB1's integrated helper found by the #978 inspection"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "new contract: the runner exists (this PR) and a provider-run PROBE was executed in a scratch (context, not this contract's status); no GO-dispatched native run exists",
+        "evidence": [],
+        "missingForPass": "an independent inspection ACCEPT of this contract, then the GO-dispatched native design run",
+        "asOf": "feat/v175-nb2-native-design (2026-11-24)"
+      },
+      "origin": {
+        "detectedBy": "runtime/core/odg-native-design-pipeline.ts deriveProblem (PROB-1) over runtime/core/odg-native-repair-item.ts designItem (ORC-2, REF-1)",
+        "target": "runtime/core/odg-canonical-json.ts",
+        "evidenceDigest": "b00c44dcf95fb9a3f36e0c05bed9fa2d0c106db13fd7f91478c63a10dbae28bb",
+        "failingCases": 9,
+        "totalCases": 33,
+        "failingKinds": [
+          "nested+undefined@array+undefined@object",
+          "undefined@array",
+          "undefined@array+undefined@object",
+          "undefined@object",
+          "undefined@top"
+        ],
+        "excluded": 1,
+        "reference": {
+          "sourceSha256": "4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734",
+          "copies": [
+            "runtime/core/odg-authorization-scope.ts:103",
+            "runtime/core/odg-go-cycle.ts:72",
+            "runtime/core/odg-verification-risk-calibration.ts:118"
+          ],
+          "rule": "REF-1: largest group of byte-identical CANONICAL definitions (tie ⇒ smallest sha256)"
+        },
+        "corpusSha256": "d373cec92ff3f794f3418ad25bebaf4f1155a64d8c1085bf1dbd39c74574a69c"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Repair runtime/core/odg-canonical-json.ts so canonicalJson matches the in-repo reference on every ORC-2 input (9/33 cases fail today: nested+undefined@array+undefined@object; undefined@array; undefined@array+undefined@object; undefined@object; undefined@top) — the problem DERIVED by ODG rules, the designs PROPOSED by ODG's local model, the choice made by SEL-1, the code written by the local model",
+        "scope": "internal repo only; loopback Ollama 127.0.0.1:11434 only; model code executes only in the bwrap native-build sandbox; €0; 0 provider calls; the patch is a branch-ready diff in the result record — never written into any checkout by the runner; no other module is changed",
+        "write_set": [
+          "runtime/core/odg-canonical-json.ts",
+          "runtime/core/odg-canonical-json-extended.test.ts",
+          "runtime/bin/odg-v175-native-design-run.ts",
+          "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json"
+        ],
+        "nativePatchWriteSet": [
+          "runtime/core/odg-canonical-json.ts",
+          "runtime/core/odg-canonical-json-extended.test.ts"
+        ],
+        "authorized_symbols": [
+          "canonicalJson"
+        ],
+        "invariants": [
+          "no provider-written algorithm text in any prompt: TEMPLATE segments match no ALGORITHM_HINT_DENYLIST pattern (a matching prompt is not sent)",
+          "the problem statement = executed failing cases (input → expected / current) + the current source; held-out expected values never enter a prompt or the sandbox",
+          "≥2 designs from the local model; the selection is SEL-1 over ODG-measured scores (sandbox oracle, typecheck, callers affected, diff size, write set)",
+          "the module content is authored by the local model only (sha256 of every generation recorded); the test file by ODG rules",
+          "a FAIL is recorded as FAIL; criteria and budgets are not changed after observation"
+        ],
+        "acceptance_criteria": [
+          "AC1 problem reproduced at run time: fresh PROB-1 evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)",
+          "AC2 designs: ≥2 parseable designs from the local model, each implemented and measured in the sandbox; SEL-1 choice recorded with all scores",
+          "AC3 held-out oracle: all 33 PROB-1 cases PASS inside odg-native-build-sandbox (EXECUTED, SANDBOX) + strict typecheck 0 diagnostics",
+          "AC4 branch-ready: the diff modifies runtime/core/odg-canonical-json.ts, adds runtime/core/odg-canonical-json-extended.test.ts, passes git apply --check at the run HEAD",
+          "AC5 authorship ledger + provenance: per-stage authorship, every prompt sha256 + its segment kinds + denylist hits (0), every generation sha256, providerCalls 0",
+          "AC6 learning: lessons read before the run (memory-taxonomy CONSOLIDATED) and lessons derived from this run are both in the record"
+        ],
+        "stop_conditions": [
+          "model call cap",
+          "wall cap",
+          "sandbox unavailable (NOT_RUN ⇒ NOT_MEASURED)",
+          "any non-loopback request (refused ⇒ NOT_MEASURED)",
+          "problem drift (AC1)",
+          "a TEMPLATE denylist hit (prompt not sent)"
+        ],
+        "rollback": "nothing is written into any checkout; discard the record",
+        "evidence_required": [
+          "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json"
+        ],
+        "budgets": {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42,
+          "numPredict": 900,
+          "designs": 3,
+          "minDesigns": 2,
+          "maxRepairPerRound": 3,
+          "maxRounds": 2,
+          "maxModelCalls": 12,
+          "wallMs": 1800000,
+          "perCallTimeoutMs": 300000
+        },
+        "preRegistration": {
+          "metric": "verdict of runNativeDesign (PASS ⇔ AC2 ∧ AC3 ∧ AC4 within budgets)",
+          "baseline": "the integrated helper (NB1 PASS) fails 9/33 PROB-1 cases; a provider-run PROBE of this runner (scratch, live Ollama) is context only, never the native result",
+          "dataset": {
+            "corpusRule": "ORC-2",
+            "corpusSha256": "d373cec92ff3f794f3418ad25bebaf4f1155a64d8c1085bf1dbd39c74574a69c",
+            "cases": 33,
+            "failing": 9,
+            "shown": 5,
+            "heldOut": 28,
+            "excluded": 1,
+            "referenceSha256": "4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734"
+          },
+          "decisionRule": "outcome = runner verdict recorded verbatim (PASS / FAIL / NOT_MEASURED); one dispatch; no re-run to obtain a PASS",
+          "thresholds": {
+            "PASS": "≥2 designs measured AND all PROB-1 cases pass in the sandbox AND 0 strict typecheck diagnostics AND git apply --check OK",
+            "FAIL": "<2 designs, or budgets exhausted without PASS",
+            "NOT_MEASURED": "no sandbox verdict / network refusal / problem drift"
+          },
+          "caps": {
+            "maxRunWallMs": 2100000,
+            "maxModelCalls": 12,
+            "basis": "no new model call after wallMs; one in-flight call may last perCallTimeoutMs"
+          },
+          "honestLimits": "ORC-2 input literals, prompt templates and the runner are provider-written; the reference semantics are the in-repo canon() (REF-1), not an independent specification; a PASS means ODG's local model designed+implemented a repair of a defect ODG derived — not that ODG chose the corpus"
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json (V175)",
+        "date": "2026-11-24",
+        "transcribedBy": "PROVIDER (Claude Code, V17.5 NB2 native-design session) — the V175 owner record is bound through the declared family V175-NATIVE-LOOP (odg-authorization-scope OWNER_SOURCES)",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "isolated, reproducible, loopback-only local-model run at €0 with 0 provider calls; model code only in the bwrap sandbox; only after an independent inspection ACCEPT of this contract is recorded",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v175-native-design-run.ts",
+            "args": [
+              "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json"
+            ]
+          }
+        },
+        "inspectionRecord": "docs/odg/evidence/V175_NB2_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.5 NB2 native-design session; branch feat/v175-nb2-native-design)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json: « modifier les composants et contrats internes concernés ; »",
+          "originalCriteria": [
+            "AC1 problem reproduced at run time: fresh PROB-1 evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)",
+            "AC2 designs: ≥2 parseable designs from the local model, each implemented and measured in the sandbox; SEL-1 choice recorded with all scores",
+            "AC3 held-out oracle: all 33 PROB-1 cases PASS inside odg-native-build-sandbox (EXECUTED, SANDBOX) + strict typecheck 0 diagnostics",
+            "AC4 branch-ready: the diff modifies runtime/core/odg-canonical-json.ts, adds runtime/core/odg-canonical-json-extended.test.ts, passes git apply --check at the run HEAD",
+            "AC5 authorship ledger + provenance: per-stage authorship, every prompt sha256 + its segment kinds + denylist hits (0), every generation sha256, providerCalls 0",
+            "AC6 learning: lessons read before the run (memory-taxonomy CONSOLIDATED) and lessons derived from this run are both in the record"
+          ],
+          "originalCriteriaNote": "the acceptance criteria derived by runtime/bin/odg-v175-native-design-run.ts contractFor (ODG rules over the tree) at authoring time, verbatim",
+          "change": [
+            "entered into the canonical contracts file so GO can select / authorize / dispatch it after an independent inspection",
+            "owner source bound through the explicit V175-NATIVE-LOOP family (shares NB1's owner record; never another scenario's)",
+            "preRegistration fixed before any native run"
+          ],
+          "justification": "owner V175 authorizes developing and testing ODG's native-engineering loop and modifying the internal contracts concerned; criteria and budgets fixed before any native run",
+          "revisionAuthorSessionId": "nb2-native-design-v175"
         }
       ]
     }
