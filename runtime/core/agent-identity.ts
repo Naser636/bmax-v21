@@ -8,7 +8,7 @@
  *
  * Guarantees (deny-by-default, fail-closed):
  *   - agentId ↔ APPROVED public key (agent-supplied keys are NEVER trusted — an unauthorised key change ⇒ DENY);
- *   - signature verified over canon(challenge) with the REGISTERED key only;
+ *   - signature verified over canon(challenge) (version-tagged DEEP canon — every nested field signed) with the REGISTERED key only;
  *   - challenge binds tenant+identity+session+contract (contractSha) + a single-use nonce (anti-replay = freshness);
  *   - revoked identity / inactive-or-foreign session / contract mismatch / consumed-or-unknown nonce ⇒ DENY;
  *   - token PRESENCE alone is NEVER accepted as identity.
@@ -16,8 +16,17 @@
  * key management (TTL, rotation, HSM/KMS, a real identity store) is an EXTERNAL dependency — NOT implemented here.
  */
 import crypto from "node:crypto";
+const { canonDeep } = require("./canon-deep.js");
 
-function canon(o: any): string { return JSON.stringify(o, Object.keys(o).sort()); }
+// V17.5 SECURITY FIX — signed material = a VERSION TAG + canonDeep(o). The historical `JSON.stringify(o, Object.keys(o)
+// .sort())` used an ARRAY replacer, which filters keys at EVERY depth ⇒ nested challenge/payload fields absent at top
+// level were NOT covered by the Ed25519 signature. canonDeep sorts keys at every depth and drops nothing; the tag
+// domain-separates v2 bytes from any legacy-signed bytes (a legacy signature can never verify as v2). NO legacy
+// verification path is kept: the registry is TEST_ONLY and in-memory, every challenge nonce is single-use and lives
+// only in that registry, so no persisted signature over the legacy bytes can exist to be re-verified (a challenge
+// signed before this change is unverifiable anyway once its process ends). Signers MUST use this exported canon().
+const CANON_TAG = "odg-agent-identity/canon-v2\n";
+function canon(o: any): string { return CANON_TAG + canonDeep(o); }
 const nsKey = (t: any, a: any) => `${t || "_"}::${a}`;
 
 export interface AgentRegistry { kind: "TEST_ONLY"; keys: Map<string, any>; sessions: Map<string, any>; nonces: Map<string, Set<string>> }
@@ -83,5 +92,5 @@ function verifyAuth(reg: AgentRegistry, req: any): any {
   return { ok: true, reason: "identity authenticated + session/contract bound + fresh", identity: { tenantId: ch.tenantId || null, agentId: ch.agentId, sessionId: ch.sessionId } };
 }
 
-export { createRegistry, register, revoke, rotateKey, openSession, closeSession, issueChallenge, verifyAuth, canon };
-module.exports = { createRegistry, register, revoke, rotateKey, openSession, closeSession, issueChallenge, verifyAuth, canon };
+export { createRegistry, register, revoke, rotateKey, openSession, closeSession, issueChallenge, verifyAuth, canon, CANON_TAG };
+module.exports = { createRegistry, register, revoke, rotateKey, openSession, closeSession, issueChallenge, verifyAuth, canon, CANON_TAG };

@@ -15,16 +15,28 @@
  * a self-consistent chain after a FULL REWRITE; an out-of-band tip ANCHOR detects TAIL TRUNCATION. The key is a
  * PARAMETER only — this module stays pure, never reads env, never holds a secret. Provisioning the key + wiring it
  * into the callers is the OWNER-GATED portion (register p0e-audit-log-keyed-integrity), deliberately NOT done here.
+ *
+ * CANON VERSION (V17.5 security fix). The historical canon `JSON.stringify(o, Object.keys(o).sort())` uses an ARRAY
+ * replacer, which JSON.stringify applies as a key allow-list at EVERY depth ⇒ nested payload keys absent at top level
+ * were DROPPED from the hashed material ⇒ a nested payload field could be altered without verifyChain noticing.
+ * New entries carry `cv: 2` and are hashed over canonDeep(payload) (keys sorted at every depth, nothing dropped) with a
+ * version-tagged preimage `seq\0prevHash\0cv2\0canonDeep(payload)` — the tag binds cv into the hash, so stripping or
+ * changing cv breaks the link. Entries WITHOUT cv are LEGACY (pre-fix) and still verify with the legacy shallow canon,
+ * but are COUNTED and SURFACED as LEGACY_SHALLOW_CANON (nested fields NOT covered) — never silently reported as fully
+ * covered; opts.requireDeepCanon:true rejects them outright. NO DOWNGRADE: a legacy entry after any cv-2 entry ⇒ FAIL.
+ * An unknown cv ⇒ FAIL (fail-closed). HMAC key + tip anchor apply identically to both versions.
  */
 "use strict";
 
 const crypto = require("crypto");
+const { canonDeep, canonLegacyShallow } = require("./canon-deep.js");
 
 const GENESIS = "GENESIS";
+const CANON_VERSION = 2;                                   // the version every NEW entry is sealed with
+const LEGACY_SHALLOW_CANON = "LEGACY_SHALLOW_CANON";       // status label for pre-fix entries (nested fields uncovered)
 function sha256(s: string): string { return crypto.createHash("sha256").update(s).digest("hex"); }
-function canon(o: any): string { return JSON.stringify(o, o && typeof o === "object" && !Array.isArray(o) ? Object.keys(o).sort() : undefined); }
 
-export interface AuditEntry { seq: number; prevHash: string; payload: any; hash: string; }
+export interface AuditEntry { seq: number; prevHash: string; payload: any; cv?: number; hash: string; }
 
 // Keyed link hash: HMAC-SHA256(key, material) when a non-empty key is given, else plain sha256(material) —
 // BYTE-IDENTICAL to the historical keyless behaviour, so every existing (keyless) caller and every persisted chain
@@ -32,8 +44,13 @@ export interface AuditEntry { seq: number; prevHash: string; payload: any; hash:
 // escape (plain-text source, git-diffable) rather than a raw 0x00 byte, but producing the identical runtime preimage.
 // A previous draft used spaces, which silently changed every sealed hash and would false-BLOCK NUL-sealed chains
 // (e.g. scheduler-audit-chain.json) under the verify-on-read gate — regression caught in independent validation.
-function entryHash(seq: number, prevHash: string, payload: any, key?: string): string {
-  const material = `${seq}\0${prevHash}\0${canon(payload)}`;
+// cv (5th arg): undefined ⇒ the LEGACY preimage (byte-identical to history — mission-ledger seals and every pre-fix
+// chain depend on it); 2 ⇒ the deep-canon, version-tagged preimage. Any other cv THROWS (no silent fallback).
+function entryHash(seq: number, prevHash: string, payload: any, key?: string, cv?: number): string {
+  let material: string;
+  if (cv === undefined) material = `${seq}\0${prevHash}\0${canonLegacyShallow(payload)}`;
+  else if (cv === 2) material = `${seq}\0${prevHash}\0cv2\0${canonDeep(payload)}`;
+  else throw new Error(`audit-log: unsupported canon version ${JSON.stringify(cv)}`);
   return (typeof key === "string" && key.length > 0)
     ? crypto.createHmac("sha256", key).update(material).digest("hex")
     : sha256(material);
@@ -49,7 +66,7 @@ function appendEntry(chain: any[], payload: any, opts?: any): AuditEntry[] {
   const prev = c.length ? c[c.length - 1] : null;
   const seq = c.length;
   const prevHash = prev ? prev.hash : GENESIS;
-  const entry: AuditEntry = { seq, prevHash, payload, hash: entryHash(seq, prevHash, payload, key) };
+  const entry: AuditEntry = { seq, prevHash, payload, cv: CANON_VERSION, hash: entryHash(seq, prevHash, payload, key, CANON_VERSION) };
   c.push(entry);
   return c;
 }
@@ -65,36 +82,51 @@ function chainTip(chain: any[]): { length: number; tipHash: string } {
  * verifyChain(chain, opts?) — recompute every link; detect tamper/reorder/insert/delete. FAIL-CLOSED on malformation.
  * opts.key verifies HMAC links (required to verify a keyed chain). opts.expectedTip = { length?, tipHash? } compares the
  * current tip against an out-of-band anchor to detect TAIL TRUNCATION / extension (which a prefix chain alone passes).
- * Returns { ok, length, brokenAt, reason, keyed, tipAnchored }; keyed/tipAnchored report which protections were in
- * force (honest: an unkeyed, un-anchored verify is tamper-EVIDENT only, NOT full-rewrite/truncation proof).
+ * opts.requireDeepCanon:true rejects any LEGACY (pre-cv-2) entry. Returns { ok, length, brokenAt, reason, keyed,
+ * tipAnchored, deepCanon, legacyShallowCanon, canonStatus }: keyed/tipAnchored report which protections were in force
+ * (honest: an unkeyed, un-anchored verify is tamper-EVIDENT only, NOT full-rewrite/truncation proof); legacyShallowCanon
+ * counts entries whose NESTED payload fields are NOT covered by their hash (canonStatus LEGACY_SHALLOW_CANON when > 0).
  */
-function verifyChain(chain: any[], opts?: any): { ok: boolean; length: number; brokenAt: number; reason: string; keyed: boolean; tipAnchored: boolean } {
+function verifyChain(chain: any[], opts?: any): { ok: boolean; length: number; brokenAt: number; reason: string; keyed: boolean; tipAnchored: boolean; deepCanon: number; legacyShallowCanon: number; canonStatus: string } {
   const key = opts && typeof opts === "object" ? opts.key : undefined;
   const expectedTip = opts && typeof opts === "object" ? opts.expectedTip : undefined;
+  const requireDeep = !!(opts && typeof opts === "object" && opts.requireDeepCanon === true);
   const keyed = typeof key === "string" && key.length > 0;
   const tipAnchored = !!(expectedTip && typeof expectedTip === "object");
-  if (!Array.isArray(chain)) return { ok: false, length: 0, brokenAt: 0, reason: "not an array", keyed, tipAnchored };
+  let deepCanon = 0; let legacyShallowCanon = 0;
+  const status = () => (legacyShallowCanon > 0 ? LEGACY_SHALLOW_CANON : "DEEP_CANON_V2");
+  const res = (ok: boolean, brokenAt: number, reason: string, length: number) => ({ ok, length, brokenAt, reason, keyed, tipAnchored, deepCanon, legacyShallowCanon, canonStatus: status() });
+  if (!Array.isArray(chain)) return res(false, 0, "not an array", 0);
   let prevHash = GENESIS;
   for (let i = 0; i < chain.length; i++) {
     const e = chain[i];
-    if (!e || typeof e !== "object") return { ok: false, length: chain.length, brokenAt: i, reason: "malformed entry", keyed, tipAnchored };
-    if (e.seq !== i) return { ok: false, length: chain.length, brokenAt: i, reason: `seq mismatch (expected ${i}, got ${e.seq}) - reorder/insert/delete`, keyed, tipAnchored };
-    if (e.prevHash !== prevHash) return { ok: false, length: chain.length, brokenAt: i, reason: "prevHash does not link to the previous entry", keyed, tipAnchored };
-    if (e.hash !== entryHash(e.seq, e.prevHash, e.payload, key)) return { ok: false, length: chain.length, brokenAt: i, reason: "hash mismatch - payload tampered after sealing", keyed, tipAnchored };
+    if (!e || typeof e !== "object") return res(false, i, "malformed entry", chain.length);
+    if (e.seq !== i) return res(false, i, `seq mismatch (expected ${i}, got ${e.seq}) - reorder/insert/delete`, chain.length);
+    if (e.prevHash !== prevHash) return res(false, i, "prevHash does not link to the previous entry", chain.length);
+    const hasCv = Object.prototype.hasOwnProperty.call(e, "cv");
+    if (hasCv && e.cv !== CANON_VERSION) return res(false, i, `unsupported canon version ${JSON.stringify(e.cv)} (fail-closed)`, chain.length);
+    if (!hasCv) {
+      if (deepCanon > 0) return res(false, i, "canon DOWNGRADE - legacy shallow-canon entry after a cv-2 entry (refused)", chain.length);
+      if (requireDeep) return res(false, i, `${LEGACY_SHALLOW_CANON} entry refused (requireDeepCanon)`, chain.length);
+    }
+    let expected: string;
+    try { expected = entryHash(e.seq, e.prevHash, e.payload, key, hasCv ? CANON_VERSION : undefined); } catch { return res(false, i, "payload not canonicalizable (fail-closed)", chain.length); }
+    if (e.hash !== expected) return res(false, i, "hash mismatch - payload tampered after sealing", chain.length);
+    if (hasCv) deepCanon++; else legacyShallowCanon++;
     prevHash = e.hash;
   }
   // TIP ANCHOR: compare the current tip against the supplied out-of-band anchor (tail truncation/extension/forgery).
   if (tipAnchored) {
     const tip = chainTip(chain);
     if (expectedTip.length !== undefined && tip.length !== expectedTip.length) {
-      return { ok: false, length: chain.length, brokenAt: chain.length, reason: `tip length mismatch (anchor ${expectedTip.length}, got ${tip.length}) - tail truncation/extension`, keyed, tipAnchored };
+      return res(false, chain.length, `tip length mismatch (anchor ${expectedTip.length}, got ${tip.length}) - tail truncation/extension`, chain.length);
     }
     if (expectedTip.tipHash !== undefined && tip.tipHash !== expectedTip.tipHash) {
-      return { ok: false, length: chain.length, brokenAt: chain.length, reason: "tip hash mismatch - tail truncation/extension/forgery", keyed, tipAnchored };
+      return res(false, chain.length, "tip hash mismatch - tail truncation/extension/forgery", chain.length);
     }
   }
-  return { ok: true, length: chain.length, brokenAt: -1, reason: "intact", keyed, tipAnchored };
+  return res(true, -1, legacyShallowCanon > 0 ? `intact (${legacyShallowCanon} ${LEGACY_SHALLOW_CANON} entr${legacyShallowCanon === 1 ? "y" : "ies"} - nested payload fields NOT covered by their hash)` : "intact", chain.length);
 }
 
-export { appendEntry, verifyChain, entryHash, chainTip, GENESIS };
-module.exports = { appendEntry, verifyChain, entryHash, chainTip, GENESIS };
+export { appendEntry, verifyChain, entryHash, chainTip, GENESIS, CANON_VERSION, LEGACY_SHALLOW_CANON };
+module.exports = { appendEntry, verifyChain, entryHash, chainTip, GENESIS, CANON_VERSION, LEGACY_SHALLOW_CANON };

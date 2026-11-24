@@ -11,7 +11,17 @@
 const crypto = require("crypto");
 
 function sha256(buf: any): string { return crypto.createHash("sha256").update(buf).digest("hex"); }
-function canon(o: any): string { return JSON.stringify(o); }
+const { canonDeep } = require("./canon-deep.js");
+// V17.5 SECURITY FIX — canon() is now ORDER-INDEPENDENT: canonDeep sorts keys at every depth (nothing dropped). The
+// historical `JSON.stringify(o)` covered every field but depended on key INSERTION ORDER, so a semantically identical
+// statement/SBOM re-serialized in another order no longer matched its signature/digest (reproducibility + false
+// "tampered"). New envelopes carry canonVersion:2 (deep only). Envelopes WITHOUT canonVersion (persisted pre-fix
+// attestations, or signers that used canon() directly) verify over the deep bytes first, then the legacy insertion-order
+// bytes, and report which (canon: DEEP_V2 | LEGACY_INSERTION_ORDER). Accepting the legacy bytes opens no tamper gap:
+// both serializations cover EVERY field, and a signature/digest over either byte string authenticates the same data.
+const CANON_VERSION = 2;
+function canon(o: any): string { return canonDeep(o); }
+function canonLegacy(o: any): string { return JSON.stringify(o); }
 
 function buildSbom(lockPackages: any, meta?: any): any {
   const comps: any[] = [];
@@ -123,16 +133,22 @@ function buildAttestation(artifact: any, sbom: any, source?: any): any {
 function signStatement(statement: any, privateKeyPem: any): any {
   const payload = Buffer.from(canon(statement));
   const signature = crypto.sign(null, payload, privateKeyPem).toString("base64");
-  return { payloadType: "application/vnd.in-toto+json", payloadSha256: sha256(payload), signature };
+  return { payloadType: "application/vnd.in-toto+json", payloadSha256: sha256(payload), signature, canonVersion: CANON_VERSION };
 }
 
 function verifyStatement(statement: any, envelope: any, publicKeyPem: any, opts?: any): any {
   if (!statement || !envelope || !publicKeyPem) return { ok: false, reason: "missing attestation, signature or key", checks: {} };
   const o = opts || {};
   const reasons: string[] = [];
-  const payload = Buffer.from(canon(statement));
-  let sigOk = false;
-  try { sigOk = crypto.verify(null, payload, publicKeyPem, Buffer.from(envelope.signature || "", "base64")); } catch { sigOk = false; }
+  const hasCv = Object.prototype.hasOwnProperty.call(envelope, "canonVersion");
+  if (hasCv && envelope.canonVersion !== CANON_VERSION) return { ok: false, reason: `unsupported canonVersion ${JSON.stringify(envelope.canonVersion)} (fail-closed)`, checks: {}, canon: null };
+  const sigOver = (bytes: string): boolean => { try { return crypto.verify(null, Buffer.from(bytes), publicKeyPem, Buffer.from(envelope.signature || "", "base64")); } catch { return false; } };
+  let canonUsed: string | null = null;
+  let deepBytes: string | undefined;
+  try { deepBytes = canon(statement); } catch { deepBytes = undefined; }
+  if (typeof deepBytes === "string" && sigOver(deepBytes)) canonUsed = "DEEP_V2";
+  else if (!hasCv && sigOver(canonLegacy(statement))) canonUsed = "LEGACY_INSERTION_ORDER";
+  const sigOk = typeof canonUsed === "string";
   if (!sigOk) reasons.push("invalid signature");
   if (o.artifactBytes !== undefined) {
     const recomputed = sha256(o.artifactBytes);
@@ -144,11 +160,14 @@ function verifyStatement(statement: any, envelope: any, publicKeyPem: any, opts?
     if (n !== o.expectName) reasons.push("wrong subject name");
   }
   if (o.sbom !== undefined) {
-    const d = sha256(canon(o.sbom));
-    if (d !== (statement.predicate && statement.predicate.sbomDigest)) reasons.push("SBOM digest inconsistent with attestation");
+    const claimedSbom = statement.predicate && statement.predicate.sbomDigest;
+    let deepD: string | null = null; try { deepD = sha256(canon(o.sbom)); } catch { deepD = null; }
+    // a canonVersion:2 envelope binds the DEEP digest only; a legacy envelope may carry the legacy insertion-order digest.
+    const sbomOk = claimedSbom === deepD || (!hasCv && claimedSbom === sha256(canonLegacy(o.sbom)));
+    if (!sbomOk) reasons.push("SBOM digest inconsistent with attestation");
   }
-  return { ok: reasons.length === 0, reason: reasons.length ? reasons.join("; ") : "verified (signature + subject digest + SBOM rebind)", checks: { sigOk, reasons } };
+  return { ok: reasons.length === 0, reason: reasons.length ? reasons.join("; ") : "verified (signature + subject digest + SBOM rebind)", checks: { sigOk, reasons }, canon: canonUsed };
 }
 
-module.exports = { sha256, canon, buildSbom, componentsFromManifest, buildSbomMulti, buildAttestation, signStatement, verifyStatement };
+module.exports = { sha256, canon, canonLegacy, CANON_VERSION, buildSbom, componentsFromManifest, buildSbomMulti, buildAttestation, signStatement, verifyStatement };
 export {};

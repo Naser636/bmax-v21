@@ -94,7 +94,7 @@ function accumulate(mission: any, deps?: any): any {
       : EXC.reviewForExcellence({ domain: ex.domain || "post-release-learning", now: ex.now || "", registry: ex.registry || [], currentPractices: ["applied-edit-capture"], thresholds: {}, measured: {}, claims: ex.claims || [] });
     const gate = EXC.requireExcellence(review, {});
     const chain = AUDIT.appendEntry(Array.isArray(ex.chain) ? ex.chain : [], { at: ex.now || "", kind: "post-release-capture", mission, admit: gate.admit, verdict: review.verdict });
-    const excellence = { verdict: review.verdict, admit: gate.admit, advisory: gate.advisory, reason: gate.reason, reviewerErrored, auditVerified: AUDIT.verifyChain(chain).ok };
+    const excellence = { verdict: review.verdict, admit: gate.admit, advisory: gate.advisory, reason: gate.reason, reviewerErrored, ...(() => { const av = AUDIT.verifyChain(chain); return { auditVerified: av.ok, auditCanonStatus: av.canonStatus || null, auditLegacyShallowCanon: av.legacyShallowCanon || 0 }; })() }; // V17.5: canon status surfaced, ok unchanged
     if (!gate.admit) return { learned: 0, reason: "EXCELLENCE_REFUSED", excellence, chain };
     const res = learning.learn(learnReport);
     return { learned: res.learnedPatches.length, signatures: res.learnedPatches, excellence, chain };
