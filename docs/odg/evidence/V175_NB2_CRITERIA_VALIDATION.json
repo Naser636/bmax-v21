@@ -1,0 +1,75 @@
+{
+  "//": "VALIDATE_CRITERIA for V175-NB2 (owner 2026-11-24 « Ne jamais transformer un résultat PARTIAL, FAIL ou NOT_MEASURED en PASS »; owner V176 « Conserver le résultat FAIL de NB2 si les mesures le confirment »). Graded only from committed evidence after the independent inspection of the result PR #992. Nothing upgraded.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V175-NB2",
+  "date": "2026-11-24",
+  "contractSha256": "bab2106a63ce26a35b546ff92df08b214c2f5a047fc8128d1d19e580cb2664e9",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json",
+    "sha256": "fd39a188b42695645f751682625b72292c1833c3f9e3a047701458ec81ee6328",
+    "experimentSha256": "8d4cdcb5737f059ce38949de92ae08f55ff36f7ff42585caf9e7c0a47a269dd4",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 992,
+    "mergedAs": "b9c89c07",
+    "producedBy": "ODG GO --execute native dispatch (run 12ef22f3e78ba5b8; owner selection V176 verbatim via GO-ORD-2; one-shot claim); trace docs/odg/evidence/V176_NB2_GO_EXECUTE_TRACE.jsonl (original sha cceff475…)"
+  },
+  "experimentInspection": {
+    "pr": 992,
+    "inspectedHead": "85424d4b",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "ab245bf3019f79340",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-12ef22f3e78ba5b8",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "findings": "result byte-identical to the GO scratch output; bound to bab2106a + run head 6cd8e5d0; 3 designs measured in the sandbox; both rounds stopped NO_PROGRESS_IDENTICAL_REGENERATION without PASS; no NOT_MEASURED condition (idle host at start, 0 refusals, 0 over-cap, 0 denylist hits); authorship ledger honest; 0 provider calls; no patch"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET",
+      "evidence": "PROB-1 evidenceDigest reproduced at run time (no drift NOT_MEASURED)"
+    },
+    {
+      "id": "AC2",
+      "status": "MET",
+      "evidence": "3 parseable local-model designs implemented and measured in the sandbox; SEL-1 chose D1 (27/33) with all scores recorded"
+    },
+    {
+      "id": "AC3",
+      "status": "NOT_MET",
+      "evidence": "the chosen design never passed all 33 cases within 2 rounds × (1+3) repairs (best 27/33)"
+    },
+    {
+      "id": "AC4",
+      "status": "NOT_MET",
+      "evidence": "no branch-ready diff (no PASS ⇒ no patch)"
+    },
+    {
+      "id": "AC5",
+      "status": "MET",
+      "evidence": "per-stage authorship ledger, prompt + generation sha256, segment kinds, 0 denylist hits, providerCalls 0"
+    },
+    {
+      "id": "AC6",
+      "status": "MET",
+      "evidence": "lessons read before the run (DIGEST-1) and lessons derived from this run recorded"
+    }
+  ],
+  "result": {
+    "outcome": "FAIL",
+    "basis": "budgets exhausted without PASS (contract FAIL rule)"
+  },
+  "scenarioGrade": "FAIL",
+  "adoption": "NOT_ADOPTED / NOT_INTEGRATED — odg-canonical-json undefined gap remains (inspector MED on #978)",
+  "lesson": "hypothesis only (n = 1 run): with qwen2.5-coder:7b at temperature 0, ODG's own design loop gets close (27/33) but repairs regenerate near-identical code (NO_PROGRESS_IDENTICAL_REGENERATION) even with the failed attempt shown — next lever is diversity in repair (temperature/seed schedule or alternative design on stall), declared before any next run",
+  "limits": [
+    "single run (owner: one execution)",
+    "independence declared by session ids",
+    "an unintended second NATIVE start at 19:24Z (test-triggered) stopped NOT_MEASURED with 0 work calls — recorded as an incident (V176_NB2_UNINTENDED_TEST_RUN_INCIDENT.json), not a result"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded FAIL)",
+    "missionNB2": "CLOSED_FAIL — NOT_ADOPTED"
+  }
+}

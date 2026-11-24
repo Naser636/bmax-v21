@@ -28,8 +28,8 @@ check("J (V17.6): owner V176 authorization + inspection ACCEPT (#995) ⇒ no lon
 check("owner question Q-CTR2 answered V176 (STAGE) ⇒ no longer listed open; every open question carries its source", !a.ownerQuestionsOpen.some((q: any) => q.id === "Q-CTR2") && a.ownerQuestionsOpen.every((q: any) => /ownerQuestions\[\d+\]$/.test(q.source)));
 check("checkpoint = latest committed (LCP-1)", a.checkpoint && a.checkpoint.path === "docs/odg/evidence/V176_CHECKPOINT_12.json");
 check("checkpoint CP12 (V17.6) carries no stale RUNNING status vs the register (the CP11 J2 RUNNING case is superseded by CP12)", !a.checkpointVsRegister.some((c: any) => c.superseded === true && c.checkpointStatus === "RUNNING"));
-check("next GO action (V17.6): J is dispatchable (authorized, inspected, not yet dispatched) — derived, not asserted", a.nextGoAction.dispatchable.length === 1 && a.nextGoAction.dispatchable[0].item === "J" && /could dispatch: J/.test(a.nextGoAction.verdict));
-check("last GO run = the latest committed cycle (NB2, workingOn V175-NB2, strategic J)", a.nextGoAction.lastGoRun.workingOn === "V175-NB2" && a.nextGoAction.lastGoRun.strategic === "J");
+check("next GO action (V17.6): nothing dispatchable after J's single initial execution (committed V176_J_EXPERIMENT.json) — derived, not asserted", a.nextGoAction.dispatchable.length === 0);
+check("last GO run = the latest committed cycle (J single execution, workingOn J, strategic J)", a.nextGoAction.lastGoRun.workingOn === "J" && a.nextGoAction.lastGoRun.strategic === "J");
 check("tracked items carry their boussoleRef (compact) from the register", a.trackedItems.every((t: any) => t.boussoleRef && (t.boussoleRef.status === "MEASURED" || typeof t.boussoleRef.reason === "string")));
 check("every tracked item cites its register record", a.trackedItems.every((t: any) => t.source[0].startsWith("docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=")));
 check("open PRs read from the snapshot file passed in (no network)", a.openPrs.snapshot === DEF && Array.isArray(a.openPrs.open));

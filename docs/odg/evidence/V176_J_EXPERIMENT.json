@@ -1,0 +1,1305 @@
+{
+  "schema": "odg-v176-scenario-j-result/1",
+  "scenario": "J",
+  "label": "NATIVE (ODG GO dispatch) — J single initial execution (replication)",
+  "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822",
+  "ownerText": "ODG détecte une stratégie inefficace, arrête les tentatives répétitives, construit une alternative et mesure le résultat.",
+  "run": {
+    "head": "22dbdac1093b6ee2f6e528c47bad8e7052cfa26f",
+    "startedAt": "2026-11-24T20:51:25.505Z",
+    "runner": "runtime/bin/odg-v176-scenario-j-run.ts",
+    "protocol": "runtime/bin/odg-v161-scenario-j-run.ts runTrial (J's protocol, unchanged)"
+  },
+  "plan": {
+    "tasks": [
+      "v159-implement-parse-range",
+      "rle-codec",
+      "csv-typed-validator",
+      "range-clamp-pipeline"
+    ],
+    "trialsPerTask": 2,
+    "decoding": {
+      "temperature": 0,
+      "seed": 42,
+      "num_predict": 600
+    },
+    "caps": {
+      "maxRunWallMs": 10800000,
+      "perTrialWallMs": 2400000,
+      "maxModelCallsTotal": 200,
+      "perCallTimeoutMs": 300000,
+      "hostIdleFactor": 0.75,
+      "basis": "V161 measured: 106 model calls, ~65 min total, max trial ~1.58 M ms (parse-range); perCallTimeoutMs = V161's generator timeout; hostIdleFactor = NB2's HOST-1",
+      "note": "hard caps; a hit stops further calls (guard), the run is NOT_MEASURED; no unbounded loop. GO-DTO-1 dispatch timeout = maxRunWallMs + 120000"
+    }
+  },
+  "priorResult": {
+    "path": "docs/odg/evidence/V161_SCENARIO_J.json",
+    "note": "J's prior execution (V161) — read only, never written or re-graded"
+  },
+  "stage": "RUN",
+  "graderSelfTest": [
+    {
+      "id": "v159-implement-parse-range",
+      "referencePasses": true,
+      "brokenFails": true
+    },
+    {
+      "id": "rle-codec",
+      "referencePasses": true,
+      "brokenFails": true
+    },
+    {
+      "id": "csv-typed-validator",
+      "referencePasses": true,
+      "brokenFails": true
+    },
+    {
+      "id": "range-clamp-pipeline",
+      "referencePasses": true,
+      "brokenFails": true
+    }
+  ],
+  "installed": [
+    "qwen2.5-coder:7b",
+    "qwen2.5-coder:3b",
+    "qwen2.5:0.5b"
+  ],
+  "sandbox": {
+    "ok": true
+  },
+  "pins": [
+    {
+      "file": "runtime/bin/odg-v161-scenario-j-run.ts",
+      "expected": "edbc0df55f133902015d2a0f4506756b9ad4697a8948d2cd0ca9d6bb93904ab9",
+      "actual": "edbc0df55f133902015d2a0f4506756b9ad4697a8948d2cd0ca9d6bb93904ab9"
+    },
+    {
+      "file": "runtime/bin/native-hard-corpus.ts",
+      "expected": "2ad9fca555d1678c3031f097c0e3929d846e80670209c4b2dadb37b34e18e250",
+      "actual": "2ad9fca555d1678c3031f097c0e3929d846e80670209c4b2dadb37b34e18e250"
+    },
+    {
+      "file": "docs/odg/evidence/V161_SCENARIO_J.json",
+      "expected": "11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff",
+      "actual": "11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff"
+    },
+    {
+      "file": "runtime/bin/odg-v176-scenario-j-run.ts",
+      "expected": "064c45c51438dc04b05314a6a35f767cdd2f12d03bd9f3cd82f68f636c693de1",
+      "actual": "064c45c51438dc04b05314a6a35f767cdd2f12d03bd9f3cd82f68f636c693de1"
+    }
+  ],
+  "hostAtStart": {
+    "at": "2026-11-24T20:51:25.517Z",
+    "load1": 0.37,
+    "load5": 0.46,
+    "load15": 0.84,
+    "nproc": 8,
+    "idleFactor": 0.75,
+    "threshold": 6,
+    "aboveThreshold": false
+  },
+  "rows": [
+    {
+      "task": "v159-implement-parse-range",
+      "trial": 1,
+      "policy": {
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "escalateIfStillFails": true,
+        "measuredDecision": "NO_QUALIFIED_LOCAL_MODEL"
+      },
+      "default": {
+        "strategy": "DEFAULT_CALIBRATED_POLICY",
+        "caller": "odg-intelligent-native-cycle.runIntelligentCycle (measured overlay)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "plannerStrategy": "DECOMPOSED",
+        "architectureUsed": [
+          "extract-a.js",
+          "extract-b.js",
+          "f.js"
+        ],
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "executionMode": "SANDBOX",
+        "firstPassVerified": false,
+        "repairs": 1,
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "stopDecidedBy": "ODG (native-project-builder anti-loop / repair budget)",
+        "verifyError": null,
+        "cycleEscalationWithoutAlternative": {
+          "escalate": true,
+          "delegationState": "CREATED",
+          "note": "what the canonical cycle decides after the default ALONE (V159 behaviour); scenario J supersedes it with the post-alternative decision"
+        },
+        "modelCalls": 6,
+        "wallMs": 53688,
+        "loadavgStart": [
+          0.43,
+          0.47,
+          0.84
+        ],
+        "loadavgEnd": [
+          4.53,
+          1.56,
+          1.2
+        ],
+        "error": null
+      },
+      "selection": {
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "strategy": "LARGER_MODEL_REPAIR_DEPTH",
+        "rule": "R4",
+        "model": "qwen2.5-coder:7b",
+        "maxRepair": 3,
+        "reason": "ODG stop REPAIR_BUDGET_EXHAUSTED; no intermediate oracle; default qwen2.5-coder:3b/maxRepair 1 is below the policy's max-local tier ⇒ qwen2.5-coder:7b/maxRepair 3 on the same architecture"
+      },
+      "alternative": {
+        "strategy": "LARGER_MODEL_REPAIR_DEPTH",
+        "executor": "native-project-builder.buildProject (sandboxed), policy max-local tier",
+        "model": "qwen2.5-coder:7b",
+        "maxRepair": 3,
+        "architectureUsed": [
+          "extract-a.js",
+          "extract-b.js",
+          "f.js"
+        ],
+        "accepted": true,
+        "executionStatus": "EXECUTED",
+        "firstPassVerified": false,
+        "repairs": 2,
+        "stopReason": null,
+        "verifyError": null,
+        "modelCalls": 9,
+        "wallMs": 144915,
+        "loadavgStart": [
+          4.53,
+          1.56,
+          1.2
+        ],
+        "loadavgEnd": [
+          7.78,
+          3.93,
+          2.13
+        ],
+        "error": null
+      },
+      "escalation": {
+        "decided": true,
+        "escalate": false,
+        "attribution": "ODG_LOCAL_MODEL_EXECUTION",
+        "delegationState": null,
+        "delegationMissionId": null,
+        "providerCalled": false,
+        "reason": "local attempt was ACCEPTED by the independent verifier — no provider escalation needed"
+      },
+      "capHit": null,
+      "transportErrors": 0
+    },
+    {
+      "task": "v159-implement-parse-range",
+      "trial": 2,
+      "policy": {
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "escalateIfStillFails": true,
+        "measuredDecision": "NO_QUALIFIED_LOCAL_MODEL"
+      },
+      "default": {
+        "strategy": "DEFAULT_CALIBRATED_POLICY",
+        "caller": "odg-intelligent-native-cycle.runIntelligentCycle (measured overlay)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "plannerStrategy": "DECOMPOSED",
+        "architectureUsed": [
+          "extract-a.js",
+          "extract-b.js",
+          "f.js"
+        ],
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "executionMode": "SANDBOX",
+        "firstPassVerified": false,
+        "repairs": 1,
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "stopDecidedBy": "ODG (native-project-builder anti-loop / repair budget)",
+        "verifyError": null,
+        "cycleEscalationWithoutAlternative": {
+          "escalate": true,
+          "delegationState": "CREATED",
+          "note": "what the canonical cycle decides after the default ALONE (V159 behaviour); scenario J supersedes it with the post-alternative decision"
+        },
+        "modelCalls": 6,
+        "wallMs": 42758,
+        "loadavgStart": [
+          7.78,
+          3.93,
+          2.13
+        ],
+        "loadavgEnd": [
+          7.9,
+          4.5,
+          2.41
+        ],
+        "error": null
+      },
+      "selection": {
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "strategy": "LARGER_MODEL_REPAIR_DEPTH",
+        "rule": "R4",
+        "model": "qwen2.5-coder:7b",
+        "maxRepair": 3,
+        "reason": "ODG stop REPAIR_BUDGET_EXHAUSTED; no intermediate oracle; default qwen2.5-coder:3b/maxRepair 1 is below the policy's max-local tier ⇒ qwen2.5-coder:7b/maxRepair 3 on the same architecture"
+      },
+      "alternative": {
+        "strategy": "LARGER_MODEL_REPAIR_DEPTH",
+        "executor": "native-project-builder.buildProject (sandboxed), policy max-local tier",
+        "model": "qwen2.5-coder:7b",
+        "maxRepair": 3,
+        "architectureUsed": [
+          "extract-a.js",
+          "extract-b.js",
+          "f.js"
+        ],
+        "accepted": true,
+        "executionStatus": "EXECUTED",
+        "firstPassVerified": true,
+        "repairs": 0,
+        "stopReason": null,
+        "verifyError": null,
+        "modelCalls": 3,
+        "wallMs": 37417,
+        "loadavgStart": [
+          7.9,
+          4.5,
+          2.41
+        ],
+        "loadavgEnd": [
+          7.94,
+          4.89,
+          2.62
+        ],
+        "error": null
+      },
+      "escalation": {
+        "decided": true,
+        "escalate": false,
+        "attribution": "ODG_LOCAL_MODEL_EXECUTION",
+        "delegationState": null,
+        "delegationMissionId": null,
+        "providerCalled": false,
+        "reason": "local attempt was ACCEPTED by the independent verifier — no provider escalation needed"
+      },
+      "capHit": null,
+      "transportErrors": 0
+    },
+    {
+      "task": "rle-codec",
+      "trial": 1,
+      "policy": {
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "escalateIfStillFails": true,
+        "measuredDecision": "NO_QUALIFIED_LOCAL_MODEL"
+      },
+      "default": {
+        "strategy": "DEFAULT_CALIBRATED_POLICY",
+        "caller": "odg-intelligent-native-cycle.runIntelligentCycle (measured overlay)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "plannerStrategy": "DECOMPOSED",
+        "architectureUsed": [
+          "parse.js",
+          "encode.js",
+          "decode.js",
+          "report.js"
+        ],
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "executionMode": "SANDBOX",
+        "firstPassVerified": false,
+        "repairs": 1,
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "stopDecidedBy": "ODG (native-project-builder anti-loop / repair budget)",
+        "verifyError": null,
+        "cycleEscalationWithoutAlternative": {
+          "escalate": true,
+          "delegationState": "CREATED",
+          "note": "what the canonical cycle decides after the default ALONE (V159 behaviour); scenario J supersedes it with the post-alternative decision"
+        },
+        "modelCalls": 8,
+        "wallMs": 45783,
+        "loadavgStart": [
+          7.94,
+          4.89,
+          2.62
+        ],
+        "loadavgEnd": [
+          7.93,
+          5.36,
+          2.89
+        ],
+        "error": null
+      },
+      "selection": {
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "reason": "ODG stop REPAIR_BUDGET_EXHAUSTED on a whole-task verdict; the task offers 4 independently verifiable sub-problems ⇒ localise the failure (same model qwen2.5-coder:3b, maxRepair 1)"
+      },
+      "alternative": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "executor": "odg-decomposed-execution.runDecomposed → native-project-builder.buildProject (per sub-problem, sandboxed)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "subproblems": [
+          {
+            "id": "parse.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": true,
+            "verifyError": null
+          },
+          {
+            "id": "encode.js",
+            "verified": true,
+            "repairs": 1,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": true,
+            "verifyError": null
+          },
+          {
+            "id": "decode.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": true,
+            "verifyError": null
+          },
+          {
+            "id": "report.js",
+            "verified": false,
+            "repairs": 1,
+            "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": "case 0: entry report.js is not a function"
+          }
+        ],
+        "verifiedCount": 3,
+        "total": 4,
+        "firstFailure": "report.js",
+        "wholeTaskTest": {
+          "status": "NOT_EVALUATED",
+          "reason": "a required sub-problem failed — the chain stopped (localised failure)"
+        },
+        "repairs": 2,
+        "modelCalls": 6,
+        "wallMs": 29668,
+        "loadavgStart": [
+          7.93,
+          5.36,
+          2.89
+        ],
+        "loadavgEnd": [
+          7.96,
+          5.57,
+          3.03
+        ],
+        "error": null
+      },
+      "escalation": {
+        "decided": true,
+        "escalate": true,
+        "attribution": "CLAUDE_CODE_PROVIDER",
+        "delegationState": "CREATED",
+        "delegationMissionId": "rle-codec",
+        "providerCalled": false,
+        "reason": "calibrated-low (P=null) AND local attempt failed ⇒ delegate to the provider (honest fallback, NOT a native success)"
+      },
+      "capHit": null,
+      "transportErrors": 0
+    },
+    {
+      "task": "rle-codec",
+      "trial": 2,
+      "policy": {
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "escalateIfStillFails": true,
+        "measuredDecision": "NO_QUALIFIED_LOCAL_MODEL"
+      },
+      "default": {
+        "strategy": "DEFAULT_CALIBRATED_POLICY",
+        "caller": "odg-intelligent-native-cycle.runIntelligentCycle (measured overlay)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "plannerStrategy": "DECOMPOSED",
+        "architectureUsed": [
+          "parse.js",
+          "encode.js",
+          "decode.js",
+          "report.js"
+        ],
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "executionMode": "SANDBOX",
+        "firstPassVerified": false,
+        "repairs": 1,
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "stopDecidedBy": "ODG (native-project-builder anti-loop / repair budget)",
+        "verifyError": null,
+        "cycleEscalationWithoutAlternative": {
+          "escalate": true,
+          "delegationState": "CREATED",
+          "note": "what the canonical cycle decides after the default ALONE (V159 behaviour); scenario J supersedes it with the post-alternative decision"
+        },
+        "modelCalls": 8,
+        "wallMs": 38412,
+        "loadavgStart": [
+          7.96,
+          5.57,
+          3.03
+        ],
+        "loadavgEnd": [
+          8.11,
+          5.92,
+          3.26
+        ],
+        "error": null
+      },
+      "selection": {
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "reason": "ODG stop REPAIR_BUDGET_EXHAUSTED on a whole-task verdict; the task offers 4 independently verifiable sub-problems ⇒ localise the failure (same model qwen2.5-coder:3b, maxRepair 1)"
+      },
+      "alternative": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "executor": "odg-decomposed-execution.runDecomposed → native-project-builder.buildProject (per sub-problem, sandboxed)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "subproblems": [
+          {
+            "id": "parse.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": true,
+            "verifyError": null
+          },
+          {
+            "id": "encode.js",
+            "verified": true,
+            "repairs": 1,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": true,
+            "verifyError": null
+          },
+          {
+            "id": "decode.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": true,
+            "verifyError": null
+          },
+          {
+            "id": "report.js",
+            "verified": false,
+            "repairs": 1,
+            "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": "case 0: entry report.js is not a function"
+          }
+        ],
+        "verifiedCount": 3,
+        "total": 4,
+        "firstFailure": "report.js",
+        "wholeTaskTest": {
+          "status": "NOT_EVALUATED",
+          "reason": "a required sub-problem failed — the chain stopped (localised failure)"
+        },
+        "repairs": 2,
+        "modelCalls": 6,
+        "wallMs": 31194,
+        "loadavgStart": [
+          8.11,
+          5.92,
+          3.26
+        ],
+        "loadavgEnd": [
+          7.93,
+          6.06,
+          3.39
+        ],
+        "error": null
+      },
+      "escalation": {
+        "decided": true,
+        "escalate": true,
+        "attribution": "CLAUDE_CODE_PROVIDER",
+        "delegationState": "CREATED",
+        "delegationMissionId": "rle-codec",
+        "providerCalled": false,
+        "reason": "calibrated-low (P=null) AND local attempt failed ⇒ delegate to the provider (honest fallback, NOT a native success)"
+      },
+      "capHit": null,
+      "transportErrors": 0
+    },
+    {
+      "task": "csv-typed-validator",
+      "trial": 1,
+      "policy": {
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "escalateIfStillFails": true,
+        "measuredDecision": "NO_QUALIFIED_LOCAL_MODEL"
+      },
+      "default": {
+        "strategy": "DEFAULT_CALIBRATED_POLICY",
+        "caller": "odg-intelligent-native-cycle.runIntelligentCycle (measured overlay)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "plannerStrategy": "DECOMPOSED",
+        "architectureUsed": [
+          "parse.js",
+          "validate.js",
+          "collect.js",
+          "report.js"
+        ],
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "executionMode": "SANDBOX",
+        "firstPassVerified": false,
+        "repairs": 1,
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "stopDecidedBy": "ODG (native-project-builder anti-loop / repair budget)",
+        "verifyError": null,
+        "cycleEscalationWithoutAlternative": {
+          "escalate": true,
+          "delegationState": "CREATED",
+          "note": "what the canonical cycle decides after the default ALONE (V159 behaviour); scenario J supersedes it with the post-alternative decision"
+        },
+        "modelCalls": 8,
+        "wallMs": 34558,
+        "loadavgStart": [
+          7.93,
+          6.06,
+          3.39
+        ],
+        "loadavgEnd": [
+          8.06,
+          6.31,
+          3.57
+        ],
+        "error": null
+      },
+      "selection": {
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "reason": "ODG stop REPAIR_BUDGET_EXHAUSTED on a whole-task verdict; the task offers 4 independently verifiable sub-problems ⇒ localise the failure (same model qwen2.5-coder:3b, maxRepair 1)"
+      },
+      "alternative": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "executor": "odg-decomposed-execution.runDecomposed → native-project-builder.buildProject (per sub-problem, sandboxed)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "subproblems": [
+          {
+            "id": "parse.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": null
+          },
+          {
+            "id": "validate.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": null
+          },
+          {
+            "id": "collect.js",
+            "verified": false,
+            "repairs": 1,
+            "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": "case 0: threw: input.split is not a function"
+          }
+        ],
+        "verifiedCount": 2,
+        "total": 4,
+        "firstFailure": "collect.js",
+        "wholeTaskTest": {
+          "status": "NOT_EVALUATED",
+          "reason": "a required sub-problem failed — the chain stopped (localised failure)"
+        },
+        "repairs": 1,
+        "modelCalls": 4,
+        "wallMs": 15852,
+        "loadavgStart": [
+          8.06,
+          6.31,
+          3.57
+        ],
+        "loadavgEnd": [
+          8.05,
+          6.39,
+          3.64
+        ],
+        "error": null
+      },
+      "escalation": {
+        "decided": true,
+        "escalate": true,
+        "attribution": "CLAUDE_CODE_PROVIDER",
+        "delegationState": "CREATED",
+        "delegationMissionId": "csv-typed-validator",
+        "providerCalled": false,
+        "reason": "calibrated-low (P=null) AND local attempt failed ⇒ delegate to the provider (honest fallback, NOT a native success)"
+      },
+      "capHit": null,
+      "transportErrors": 0
+    },
+    {
+      "task": "csv-typed-validator",
+      "trial": 2,
+      "policy": {
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "escalateIfStillFails": true,
+        "measuredDecision": "NO_QUALIFIED_LOCAL_MODEL"
+      },
+      "default": {
+        "strategy": "DEFAULT_CALIBRATED_POLICY",
+        "caller": "odg-intelligent-native-cycle.runIntelligentCycle (measured overlay)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "plannerStrategy": "DECOMPOSED",
+        "architectureUsed": [
+          "parse.js",
+          "validate.js",
+          "collect.js",
+          "report.js"
+        ],
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "executionMode": "SANDBOX",
+        "firstPassVerified": false,
+        "repairs": 1,
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "stopDecidedBy": "ODG (native-project-builder anti-loop / repair budget)",
+        "verifyError": null,
+        "cycleEscalationWithoutAlternative": {
+          "escalate": true,
+          "delegationState": "CREATED",
+          "note": "what the canonical cycle decides after the default ALONE (V159 behaviour); scenario J supersedes it with the post-alternative decision"
+        },
+        "modelCalls": 8,
+        "wallMs": 26704,
+        "loadavgStart": [
+          8.05,
+          6.39,
+          3.64
+        ],
+        "loadavgEnd": [
+          8.03,
+          6.55,
+          3.78
+        ],
+        "error": null
+      },
+      "selection": {
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "reason": "ODG stop REPAIR_BUDGET_EXHAUSTED on a whole-task verdict; the task offers 4 independently verifiable sub-problems ⇒ localise the failure (same model qwen2.5-coder:3b, maxRepair 1)"
+      },
+      "alternative": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "executor": "odg-decomposed-execution.runDecomposed → native-project-builder.buildProject (per sub-problem, sandboxed)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "subproblems": [
+          {
+            "id": "parse.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": null
+          },
+          {
+            "id": "validate.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": null
+          },
+          {
+            "id": "collect.js",
+            "verified": false,
+            "repairs": 1,
+            "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": "case 0: threw: input.split is not a function"
+          }
+        ],
+        "verifiedCount": 2,
+        "total": 4,
+        "firstFailure": "collect.js",
+        "wholeTaskTest": {
+          "status": "NOT_EVALUATED",
+          "reason": "a required sub-problem failed — the chain stopped (localised failure)"
+        },
+        "repairs": 1,
+        "modelCalls": 4,
+        "wallMs": 15899,
+        "loadavgStart": [
+          8.03,
+          6.55,
+          3.78
+        ],
+        "loadavgEnd": [
+          8.1,
+          6.63,
+          3.86
+        ],
+        "error": null
+      },
+      "escalation": {
+        "decided": true,
+        "escalate": true,
+        "attribution": "CLAUDE_CODE_PROVIDER",
+        "delegationState": "CREATED",
+        "delegationMissionId": "csv-typed-validator",
+        "providerCalled": false,
+        "reason": "calibrated-low (P=null) AND local attempt failed ⇒ delegate to the provider (honest fallback, NOT a native success)"
+      },
+      "capHit": null,
+      "transportErrors": 0
+    },
+    {
+      "task": "range-clamp-pipeline",
+      "trial": 1,
+      "policy": {
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "escalateIfStillFails": true,
+        "measuredDecision": "NO_QUALIFIED_LOCAL_MODEL"
+      },
+      "default": {
+        "strategy": "DEFAULT_CALIBRATED_POLICY",
+        "caller": "odg-intelligent-native-cycle.runIntelligentCycle (measured overlay)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "plannerStrategy": "DECOMPOSED",
+        "architectureUsed": [
+          "parse.js",
+          "clamp.js",
+          "flagged.js",
+          "report.js"
+        ],
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "executionMode": "SANDBOX",
+        "firstPassVerified": false,
+        "repairs": 1,
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "stopDecidedBy": "ODG (native-project-builder anti-loop / repair budget)",
+        "verifyError": null,
+        "cycleEscalationWithoutAlternative": {
+          "escalate": true,
+          "delegationState": "CREATED",
+          "note": "what the canonical cycle decides after the default ALONE (V159 behaviour); scenario J supersedes it with the post-alternative decision"
+        },
+        "modelCalls": 8,
+        "wallMs": 32918,
+        "loadavgStart": [
+          8.1,
+          6.63,
+          3.86
+        ],
+        "loadavgEnd": [
+          8.24,
+          6.83,
+          4.03
+        ],
+        "error": null
+      },
+      "selection": {
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "reason": "ODG stop REPAIR_BUDGET_EXHAUSTED on a whole-task verdict; the task offers 4 independently verifiable sub-problems ⇒ localise the failure (same model qwen2.5-coder:3b, maxRepair 1)"
+      },
+      "alternative": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "executor": "odg-decomposed-execution.runDecomposed → native-project-builder.buildProject (per sub-problem, sandboxed)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "subproblems": [
+          {
+            "id": "parse.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": null
+          },
+          {
+            "id": "clamp.js",
+            "verified": true,
+            "repairs": 1,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": null
+          },
+          {
+            "id": "flagged.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": true,
+            "verifyError": null
+          },
+          {
+            "id": "report.js",
+            "verified": false,
+            "repairs": 1,
+            "stopReason": "NO_PROGRESS_IDENTICAL_REGENERATION",
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": "case 0: entry report.js is not a function"
+          }
+        ],
+        "verifiedCount": 3,
+        "total": 4,
+        "firstFailure": "report.js",
+        "wholeTaskTest": {
+          "status": "NOT_EVALUATED",
+          "reason": "a required sub-problem failed — the chain stopped (localised failure)"
+        },
+        "repairs": 2,
+        "modelCalls": 6,
+        "wallMs": 19684,
+        "loadavgStart": [
+          8.24,
+          6.83,
+          4.03
+        ],
+        "loadavgEnd": [
+          8.23,
+          6.93,
+          4.12
+        ],
+        "error": null
+      },
+      "escalation": {
+        "decided": true,
+        "escalate": true,
+        "attribution": "CLAUDE_CODE_PROVIDER",
+        "delegationState": "CREATED",
+        "delegationMissionId": "range-clamp-pipeline",
+        "providerCalled": false,
+        "reason": "calibrated-low (P=null) AND local attempt failed ⇒ delegate to the provider (honest fallback, NOT a native success)"
+      },
+      "capHit": null,
+      "transportErrors": 0
+    },
+    {
+      "task": "range-clamp-pipeline",
+      "trial": 2,
+      "policy": {
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "escalateIfStillFails": true,
+        "measuredDecision": "NO_QUALIFIED_LOCAL_MODEL"
+      },
+      "default": {
+        "strategy": "DEFAULT_CALIBRATED_POLICY",
+        "caller": "odg-intelligent-native-cycle.runIntelligentCycle (measured overlay)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "tier": "PROBE",
+        "plannerStrategy": "DECOMPOSED",
+        "architectureUsed": [
+          "parse.js",
+          "clamp.js",
+          "flagged.js",
+          "report.js"
+        ],
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "executionMode": "SANDBOX",
+        "firstPassVerified": false,
+        "repairs": 1,
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "stopDecidedBy": "ODG (native-project-builder anti-loop / repair budget)",
+        "verifyError": null,
+        "cycleEscalationWithoutAlternative": {
+          "escalate": true,
+          "delegationState": "CREATED",
+          "note": "what the canonical cycle decides after the default ALONE (V159 behaviour); scenario J supersedes it with the post-alternative decision"
+        },
+        "modelCalls": 8,
+        "wallMs": 26295,
+        "loadavgStart": [
+          8.23,
+          6.93,
+          4.12
+        ],
+        "loadavgEnd": [
+          8.15,
+          7.01,
+          4.22
+        ],
+        "error": null
+      },
+      "selection": {
+        "stopReason": "REPAIR_BUDGET_EXHAUSTED",
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "rule": "R3",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "reason": "ODG stop REPAIR_BUDGET_EXHAUSTED on a whole-task verdict; the task offers 4 independently verifiable sub-problems ⇒ localise the failure (same model qwen2.5-coder:3b, maxRepair 1)"
+      },
+      "alternative": {
+        "strategy": "DECOMPOSED_INTERMEDIATE_VERIFICATION",
+        "executor": "odg-decomposed-execution.runDecomposed → native-project-builder.buildProject (per sub-problem, sandboxed)",
+        "model": "qwen2.5-coder:3b",
+        "maxRepair": 1,
+        "accepted": false,
+        "executionStatus": "EXECUTED",
+        "subproblems": [
+          {
+            "id": "parse.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": null
+          },
+          {
+            "id": "clamp.js",
+            "verified": true,
+            "repairs": 1,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": null
+          },
+          {
+            "id": "flagged.js",
+            "verified": true,
+            "repairs": 0,
+            "stopReason": null,
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": true,
+            "verifyError": null
+          },
+          {
+            "id": "report.js",
+            "verified": false,
+            "repairs": 1,
+            "stopReason": "NO_PROGRESS_IDENTICAL_REGENERATION",
+            "executionStatus": "EXECUTED",
+            "structuredRepairExamples": false,
+            "verifyError": "case 0: entry report.js is not a function"
+          }
+        ],
+        "verifiedCount": 3,
+        "total": 4,
+        "firstFailure": "report.js",
+        "wholeTaskTest": {
+          "status": "NOT_EVALUATED",
+          "reason": "a required sub-problem failed — the chain stopped (localised failure)"
+        },
+        "repairs": 2,
+        "modelCalls": 6,
+        "wallMs": 19155,
+        "loadavgStart": [
+          8.15,
+          7.01,
+          4.22
+        ],
+        "loadavgEnd": [
+          8.11,
+          7.08,
+          4.31
+        ],
+        "error": null
+      },
+      "escalation": {
+        "decided": true,
+        "escalate": true,
+        "attribution": "CLAUDE_CODE_PROVIDER",
+        "delegationState": "CREATED",
+        "delegationMissionId": "range-clamp-pipeline",
+        "providerCalled": false,
+        "reason": "calibrated-low (P=null) AND local attempt failed ⇒ delegate to the provider (honest fallback, NOT a native success)"
+      },
+      "capHit": null,
+      "transportErrors": 0
+    }
+  ],
+  "summary": {
+    "perTask": {
+      "v159-implement-parse-range": {
+        "n": 2,
+        "stops": [
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED"
+        ],
+        "selected": [
+          "LARGER_MODEL_REPAIR_DEPTH"
+        ],
+        "default": {
+          "passes": 0,
+          "measured": 2,
+          "modelCallsMean": 6,
+          "repairsMean": 1,
+          "wallMsMean": 48223
+        },
+        "alternative": {
+          "passes": 2,
+          "measured": 2,
+          "modelCallsMean": 6,
+          "repairsMean": 1,
+          "wallMsMean": 91166
+        },
+        "escalationRecordsCreated": 0,
+        "bothFailed": 0
+      },
+      "rle-codec": {
+        "n": 2,
+        "stops": [
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED"
+        ],
+        "selected": [
+          "DECOMPOSED_INTERMEDIATE_VERIFICATION"
+        ],
+        "default": {
+          "passes": 0,
+          "measured": 2,
+          "modelCallsMean": 8,
+          "repairsMean": 1,
+          "wallMsMean": 42098
+        },
+        "alternative": {
+          "passes": 0,
+          "measured": 2,
+          "modelCallsMean": 6,
+          "repairsMean": 2,
+          "wallMsMean": 30431
+        },
+        "escalationRecordsCreated": 2,
+        "bothFailed": 2
+      },
+      "csv-typed-validator": {
+        "n": 2,
+        "stops": [
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED"
+        ],
+        "selected": [
+          "DECOMPOSED_INTERMEDIATE_VERIFICATION"
+        ],
+        "default": {
+          "passes": 0,
+          "measured": 2,
+          "modelCallsMean": 8,
+          "repairsMean": 1,
+          "wallMsMean": 30631
+        },
+        "alternative": {
+          "passes": 0,
+          "measured": 2,
+          "modelCallsMean": 4,
+          "repairsMean": 1,
+          "wallMsMean": 15876
+        },
+        "escalationRecordsCreated": 2,
+        "bothFailed": 2
+      },
+      "range-clamp-pipeline": {
+        "n": 2,
+        "stops": [
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED"
+        ],
+        "selected": [
+          "DECOMPOSED_INTERMEDIATE_VERIFICATION"
+        ],
+        "default": {
+          "passes": 0,
+          "measured": 2,
+          "modelCallsMean": 8,
+          "repairsMean": 1,
+          "wallMsMean": 29607
+        },
+        "alternative": {
+          "passes": 0,
+          "measured": 2,
+          "modelCallsMean": 6,
+          "repairsMean": 2,
+          "wallMsMean": 19420
+        },
+        "escalationRecordsCreated": 2,
+        "bothFailed": 2
+      }
+    },
+    "overall": {
+      "trials": 8,
+      "defaultPasses": 0,
+      "defaultMeasured": 8,
+      "alternativePasses": 2,
+      "alternativeMeasured": 8,
+      "odgStops": 8,
+      "escalationRecordsCreated": 6,
+      "providerCalls": 0
+    }
+  },
+  "criteria": {
+    "C1": {
+      "text": "stop triggered by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
+      "met": false,
+      "rows": [],
+      "reportOnly": {
+        "defaultStops": [
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED",
+          "REPAIR_BUDGET_EXHAUSTED"
+        ],
+        "policyNoQualified": 8,
+        "alternativeNoProgress": 0
+      }
+    },
+    "C2": {
+      "text": "alternative (decomposition / different model / repair depth) actually executed",
+      "met": true,
+      "stoppedRows": 8,
+      "alternativesExecuted": 8
+    },
+    "C3": {
+      "text": "outcome compared on the same task and recorded with n",
+      "met": true,
+      "n": 8,
+      "defaultPasses": 0,
+      "alternativePasses": 2,
+      "alternativeN": 8
+    }
+  },
+  "outcome": "PARTIAL",
+  "outcomeReason": "C2 ∧ C3 met; C1 NOT met as worded (no alternative triggered by NO_PROGRESS_IDENTICAL_REGENERATION / NO_QUALIFIED — the V161 / CP8 reading)",
+  "replication": {
+    "hypothesis": "H-REP (pre-registered prediction, report-only): the V161 pattern is reproduced — outcome PARTIAL, 0 default passes, 0 alternative passes",
+    "prediction": {
+      "outcome": "PARTIAL",
+      "defaultPasses": 0,
+      "alternativePasses": 0,
+      "source": "docs/odg/evidence/V161_SCENARIO_J.json (0/8 default, 0/8 alternative; CP8 grade PARTIAL: C1 not met as worded)"
+    },
+    "priorOverall": {
+      "trials": 8,
+      "defaultPasses": 0,
+      "defaultMeasured": 8,
+      "alternativePasses": 0,
+      "alternativeMeasured": 8,
+      "odgStops": 8,
+      "escalationRecordsCreated": 8,
+      "providerCalls": 0
+    },
+    "observed": {
+      "outcome": "PARTIAL",
+      "defaultPasses": 0,
+      "alternativePasses": 2
+    },
+    "verdict": "NOT_REPRODUCED"
+  },
+  "network": {
+    "modelCalls": 104,
+    "tagsCalls": 1,
+    "refused": [],
+    "transportErrors": [],
+    "capHit": null,
+    "providerCalls": 0,
+    "allowlist": [
+      "POST http://127.0.0.1:11434/api/generate",
+      "GET http://127.0.0.1:11434/api/tags"
+    ]
+  },
+  "wallMs": 617120,
+  "generatedAt": "2026-11-24T21:01:42.625Z",
+  "oneShotClaim": {
+    "key": "2ddb8734dacf57ac-J-runner",
+    "path": "/home/ubuntu/bmax-v21/.git/odg-go-claims/2ddb8734dacf57ac-J-runner.claim"
+  }
+}
