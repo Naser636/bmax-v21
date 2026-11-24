@@ -22,14 +22,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795551155000,
+    "nowEpochMs": 1795552048000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "e6a52eb720f8343c360851d5616ad59e34eb6253e9579ffbb9301eb137f87b16",
-      "epochMs": 1795551155000
+      "sha256": "39f8e5b79125942cb776c1b0e7ba06fc3bf95bef5edf7695135896c2efe9c08d",
+      "epochMs": 1795552048000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",

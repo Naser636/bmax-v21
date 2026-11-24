@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "e6a52eb720f8343c360851d5616ad59e34eb6253e9579ffbb9301eb137f87b16"
+      "sha256": "39f8e5b79125942cb776c1b0e7ba06fc3bf95bef5edf7695135896c2efe9c08d"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -72,6 +72,10 @@
     {
       "source": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
       "sha256": "40786b40259b7a307cf7ab1dfef995e0f4623e065c43324667f91be9aaf457cb"
+    },
+    {
+      "source": "docs/odg/evidence/V176_J_CONTRACT_INSPECTION.json",
+      "sha256": "8965a2fcad1f0dc8c4b8326f132a484a109697f4fea898e569f8a2489da403f9"
     },
     {
       "source": "docs/odg/evidence/V172_G2_CONTRACT_INSPECTION.json",
@@ -334,22 +338,23 @@
       },
       "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_J.json",
-      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
       "scope": {
-        "currentStep": "INSPECT_REVISED_CONTRACT",
-        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "currentStepKind": "EXECUTION",
         "currentStepAuthorized": true,
-        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "nextStep": "VALIDATE_CRITERIA",
         "validatedSteps": [
-          "REVISE_CONTRACT"
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT"
         ],
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "reason": "inspection ACCEPT bound to contract 2ddb8734dacf ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
         "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822"
       },
       "records": {
         "inspection": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V176_J_CONTRACT_INSPECTION.json",
+          "basis": "REGISTER_LOADER"
         },
         "experiment": {
           "path": null,
@@ -361,16 +366,10 @@
         }
       },
       "lastGoRun": null,
-      "pending": [
-        {
-          "kind": "INSPECTION",
-          "of": "contract 2ddb8734dacf",
-          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha 2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822) and commit the inspection record"
+        "actor": "GO",
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-scenario-j-run.ts"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=J]",
@@ -785,14 +784,14 @@
       "ownerAuthorizationNeeded": null,
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
-    "dispatchable": [],
-    "verdict": "no tracked item has an authorized, not-yet-dispatched EXECUTION step ⇒ a GO --execute run has nothing to dispatch; the pending steps are provider / inspector / owner steps (see trackedItems[].next)",
-    "pendingNonGo": [
+    "dispatchable": [
       {
         "item": "J",
-        "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha 2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822) and commit the inspection record"
-      },
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-scenario-j-run.ts"
+      }
+    ],
+    "verdict": "GO --execute could dispatch: J",
+    "pendingNonGo": [
       {
         "item": "V175-NB2",
         "actor": "PROVIDER + INDEPENDENT_INSPECTOR",

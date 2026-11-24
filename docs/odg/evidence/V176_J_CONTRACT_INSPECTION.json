@@ -1,0 +1,24 @@
+{
+  "//": "Independent inspection record of the REVISED contract J (owner V176 « DÉBLOCAGE FINAL » item 2; owner record docs/odg/V176_OWNER_AUTHORIZATION_J.json). Transcribed verbatim from the inspector's verdicts by the coordinating session. Independence DECLARED by distinct session ids (not cryptographic).",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "J",
+  "verdict": "ACCEPT",
+  "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822",
+  "inspectedHeadSha": "2583e0c6ff79e9b5b103ad94faaf8f65144c5299",
+  "inspectedPr": 995,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab245bf3019f79340",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "j-revision-v176",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-24",
+  "findings": [
+    "J acceptance criteria byte-unchanged; objective never required the alternative to win; CP8 reading kept (C1 NOT MET on REPAIR_BUDGET_EXHAUSTED) ⇒ PASS not trivially reachable (requires a real NO_PROGRESS_IDENTICAL_REGENERATION stop, not tunable after registration); a PASS means 'the loop works, no gain' — the result record must carry that label",
+    "write_set [runner, result] = GO-DT-1 minimum (same shape as NB1); the run writes only the result; NOTE: the provider's stated motive (not changing CRC-1) is score-aware — outcome stands on its merits",
+    "runner: only write = result file; refusal order path(3) → ALREADY_RECORDED(4) → test-process guard(2) → gate(2) → claim check(4) → HOST-1(5) → O_EXCL claim right before the run; pins match (runner 064c45c5…, V161 runner edbc0df5…)",
+    "MED (latent, condition): the runner refuses if any <hash>-J.claim exists ⇒ do NOT add a GO-ORD-2 record for J; on the current path J is strategically SELECTED and actionable after inspection, so GO-ORD-2 is not used — confirm with a dry GO run",
+    "LOW: a cap hit / transport error mid-run ⇒ NOT_MEASURED (J2 precedent), never PASS"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of the revised J only; RUN via ODG GO --execute only (single initial execution); grades nothing."
+}
