@@ -263,6 +263,10 @@ async function main(argv: string[]): Promise<number> {
   const out = argv[0];
   if (out !== OUT) { process.stdout.write(`REFUSED: output path must be the declared writeSet entry ${OUT}\n`); return 3; }
   const c = readContract(ROOT);
+  // V17.6 ONE-SHOT (incident 2026-11-24 19:24Z: a test invoked this runner directly with the declared output after the inspection
+  // landed ⇒ an unintended second NATIVE start; it stopped NOT_MEASURED after 1 warm-up call). A NATIVE run never overwrites an
+  // existing result record: the single execution is GO's (one-shot claim); a re-run needs a new owner decision.
+  if (fs.existsSync(path.join(ROOT, OUT))) { process.stdout.write(`ALREADY_RECORDED: ${OUT} exists — a NATIVE run never overwrites a result (one execution only)\n`); return 4; }
   const g = gate(c, readInspection(ROOT), OCUR.localGitProbes(ROOT));
   if (!g.ok) { process.stdout.write(`NOT_AUTHORIZED: ${g.reason}\n`); return 2; }
   const r = await runNativeBuild({ root: ROOT, label: "NATIVE (ODG GO dispatch)", transport: loopbackTransport(), expectedDigest: c.origin && c.origin.evidenceDigest, expectedOracleSha: c.origin && c.origin.oracleSha256, contractSha256: g.contractSha256 });
