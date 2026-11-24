@@ -1,0 +1,133 @@
+{
+  "checkpoint": "CP10",
+  "date": "2026-11-24",
+  "headAtCheckpoint": "b8de9a04",
+  "previous": "docs/odg/evidence/V166_CHECKPOINT_9.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5
+  },
+  "boussole": "V12.4 canonical (unchanged). V15.0 NOT adopted; gate 10/12 re-measured 10/12 (V167 dossier) and NOT signed.",
+  "prs": [
+    {
+      "pr": 938,
+      "merge": "cbc59e67",
+      "what": "V166 closure dossier (A–E)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)"
+    },
+    {
+      "pr": 939,
+      "merge": "4ae6b7ac",
+      "what": "capability-gap benefit measures (7/11 measured; per-file dedupe) + GO uses the canonical register loader",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)"
+    },
+    {
+      "pr": 940,
+      "merge": "613bf2cd",
+      "what": "J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)"
+    },
+    {
+      "pr": 941,
+      "merge": "ba9b77e8",
+      "what": "GO clean REFUSED (exit 4) on mid-run write refusal + V158 IETF termsVerified label corrected",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)"
+    },
+    {
+      "pr": 942,
+      "merge": "a0370aae",
+      "what": "owner V168 H authorization transcription + per-scenario owner-source binding + revised contract H (tightened after REJECT)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)"
+    },
+    {
+      "pr": 943,
+      "merge": "7bee0173",
+      "what": "H contract inspection record (ACCEPT, sha-bound)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)"
+    },
+    {
+      "pr": 944,
+      "merge": "5d3cf713",
+      "what": "H experiment runner + advisory calibration module (label vault, gate, write confinement)",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)"
+    },
+    {
+      "pr": 945,
+      "merge": "bd6f5c62",
+      "what": "GO-ACT-1 also when the strategic selection is undecided",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)"
+    },
+    {
+      "pr": 946,
+      "merge": "b8de9a04",
+      "what": "H experiment result — dispatched natively by ODG GO ⇒ FAIL",
+      "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)"
+    }
+  ],
+  "missionH": {
+    "status": "CLOSED_FAIL (NOT_ADOPTED)",
+    "authorization": "owner V168 (docs/odg/V168_OWNER_AUTHORIZATION_H.json), full path, H only",
+    "steps": {
+      "REVISE_CONTRACT": "validated (#942; REJECT on 587650b0 — breadth safeguard false — fixed by tightening Δ1 to superiority before any metric)",
+      "INSPECT_REVISED_CONTRACT": "validated (#943, sha 8436885a…)",
+      "RUN_CONTROLLED_EXPERIMENTS": "authorized automatically (R4) and EXECUTED BY ODG GO (native dispatch, #946)",
+      "VALIDATE_CRITERIA": "validated (docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json, R5b, this PR)"
+    },
+    "result": {
+      "C1": "MET",
+      "C2": "MEASURED — FAIL (AUC H1 0.578 < B0 0.686 < B1 0.817; Δ0 −0.107 CI95 [−0.213,−0.004])",
+      "grade": "FAIL"
+    },
+    "lesson": "hypothesis only: DEV-fitted score does not transfer across the chronological shift; breadth is the strongest signal on this dataset"
+  },
+  "firstNativeDispatch": {
+    "what": "ODG GO --execute dispatched the contract-declared experiment target itself",
+    "how": "fresh detached scratch worktree; bwrap --unshare-net (no DNS/TCP proven); npm_config_offline=true; --allow-unsandboxed-target opt-in recorded; write confinement incl. ignored paths",
+    "outcome": "EXECUTE:EXECUTED_PASS, 1 dispatch, only the declared file written, main + ledger unchanged",
+    "limit": "GO stopped on its default 120 s deadline before its EVIDENCE step — next runs must pass --deadline-ms ≥ 600000; the runner code itself was provider-written",
+    "evidence": {
+      "trace": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+      "note": "the GO run's own append-only go-trace.jsonl (13 entries: CYCLE_START … STEP EXECUTE EXECUTED_PASS, DISPATCHED, STOP DEADLINE, CYCLE_END STOPPED); paths redacted (<scratch>, <goOut>, <mainCheckout>, <tmp>, <home>)",
+      "originalSha256": "e6bca3def1559021166026505d09497c1b678f97d1881bd92906123da8ca3f53",
+      "partial": "stopped on the 120 s deadline before EVIDENCE/NEXT_SELECTION; no go-cycle.json summary was written"
+    },
+    "codeAndTree": "GO code at main bd6f5c62 (incl. #945); scratch tree (where the target ran) at 5d3cf713 (#944 merge, ancestor of bd6f5c62) = experiment record run.head"
+  },
+  "scenarioJ_V164": {
+    "J8": "MEASURED by a committed GO trace (docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl: DISPATCHED + EXECUTE EXECUTED_PASS of an authorized scoped native step in an isolated scratch) — PARTIAL run (deadline stop before EVIDENCE); V164_GO_CYCLE.json NOT regenerated (host-dependent), so the V164 J grade itself is not re-graded here"
+  },
+  "nativeVsProvider": {
+    "odgNative": [
+      "selection (register + selector; DECISION_REQUIRED kept)",
+      "authorization derivation per step (odg-authorization-scope)",
+      "strategy mode",
+      "GO execution dispatch of the experiment (first real native dispatch)",
+      "grading by the pre-registered rule"
+    ],
+    "provider": [
+      "all code, contracts, pre-registrations, transcriptions",
+      "independent inspections",
+      "commits/merges (coordinating session)"
+    ],
+    "nativeBuiltCodeMerged": 0,
+    "nativeExecutedSteps": 1,
+    "note": "~80% native target NOT met, not claimed"
+  },
+  "openGaps": [
+    "provider launch (no verifiable spend ceiling)",
+    "cryptographic inspector identity",
+    "sandboxed dispatch under /home (bwrap net-isolation used at the GO level instead)",
+    "integration (merge) still by the coordinating session",
+    "GO default deadline too short for real experiments",
+    "4 register criteria NOT_MEASURED for every item"
+  ],
+  "ownerDecisions": [
+    "strategic DECISION_REQUIRED J vs G (GO owner request; G is CLOSED_PARTIAL, J PARTIAL/PROPOSED)",
+    "GitHub AUP §6/§7",
+    "8 deferred Radar sources + per-host pacing",
+    "provider spend ceiling",
+    "gate 10/12 signature"
+  ],
+  "nextAction": "rerun GO; expected: strategic DECISION_REQUIRED (J/G) + no authorized actionable item ⇒ halt with owner request",
+  "nativeMeaning": "'native' = launched by ODG GO itself (--execute, --allow-unsandboxed-target opt-in recorded), network isolation by wrapping the whole GO run in bwrap --unshare-net; the dispatched runner code is provider-written"
+}

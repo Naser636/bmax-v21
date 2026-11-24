@@ -140,18 +140,28 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     H: { inspection: optJ("docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json"), experiment: optJ("docs/odg/evidence/V168_H_EXPERIMENT.json"), validation: optJ("docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json") },
   };
   const BASE_LIVE_EV = (() => { const s = clone(BASE_LIVE); s.measured = BASE_LIVE.measured; s.authorizationEvidence = COMMITTED_AUTH_EV; return s; })();
+  // fixture: H at its RUN_CONTROLLED_EXPERIMENTS step (inspection recorded; experiment + validation not yet) — the state GO
+  // actually acted on in the V168 native dispatch (#946). Labelled fixture, derived from the committed records.
+  const BASE_H_AT_RUN = (() => { const s = clone(BASE_LIVE_EV); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { ...COMMITTED_AUTH_EV, H: { ...COMMITTED_AUTH_EV.H, experiment: null, validation: null } }; return s; })();
   // 1d. V16.8 COMMITTED state (no fixture): H AUTHORIZED_FOR_REVISION (V168) with its revised contract ⇒ the register
   //     decision is DECISION_REQUIRED (J/G tie), kept verbatim (no id pick) ⇒ HALTED_DECISION_REQUIRED, nothing dispatched
   {
     const h = BASE_LIVE.sources.contracts.data.contracts.find((x: any) => x.scenario === "H");
     check("committed contract H is AUTHORIZED_FOR_REVISION by the owner (V168), executionAuthorized false", h.state === "AUTHORIZED_FOR_REVISION" && /V168/.test(String(h.authorizedBy)) && h.authorization && h.authorization.executionAuthorized === false && /V168_OWNER_AUTHORIZATION_H\.json/.test(h.authorization.source));
-    const { ports, trace, calls } = mkPorts({ state: BASE_LIVE_EV });
+    const { ports, trace, calls } = mkPorts({ state: BASE_H_AT_RUN });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
     const sel = stepIn(trace, "SELECT").decision;
     check("committed V168 state: SELECT = DECISION_REQUIRED (tie J/G), consistent with the committed register, no id pick", sel.decision === "DECISION_REQUIRED" && sel.selected === null && sel.tiedSet.join(",") === "J,G" && sel.consistentWithCommittedRegisterEvidence === true);
     // V16.8 fix (GO-ACT-1 applies when the strategic selection is UNDECIDED): ODG proceeds with the best AUTHORIZED item (H)
     // and records the undecided strategic choice as an owner/ODG request; no dispatch without --allow-unsandboxed-target.
-    check("committed V168 state ⇒ strategic DECISION_REQUIRED kept, GO proceeds with the authorized item H (committed authorization evidence loaded as odg-go does), owner request for the J/G decision, no dispatch without --allow-unsandboxed-target, no provider", r.status !== "HALTED_DECISION_REQUIRED" && sel.workingOn === "H" && sel.ownerRequest && sel.ownerRequest.item === null && /J\/G/.test(String(sel.ownerRequest.decisionNeeded)) && calls.dispatch === 0 && calls.provider === 0);
+    check("H-at-RUN fixture ⇒ strategic DECISION_REQUIRED kept, GO proceeds with the authorized item H (authorization evidence as odg-go loads it, experiment/validation removed), owner request for the J/G decision, no dispatch without --allow-unsandboxed-target, no provider", r.status !== "HALTED_DECISION_REQUIRED" && sel.workingOn === "H" && sel.ownerRequest && sel.ownerRequest.item === null && /J\/G/.test(String(sel.ownerRequest.decisionNeeded)) && calls.dispatch === 0 && calls.provider === 0);
+  }
+  // 1d'. COMMITTED state after H's criteria validation (#947): H CLOSED (all 4 steps validated) ⇒ nothing actionable ⇒ halt
+  {
+    const { ports, trace, calls } = mkPorts({ state: BASE_LIVE_EV });
+    const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
+    const sel = stepIn(trace, "SELECT").decision;
+    check("committed state (H closed) ⇒ HALTED_DECISION_REQUIRED, workingOn null, owner request for the J/G decision, no dispatch", r.status === "HALTED_DECISION_REQUIRED" && sel.workingOn === null && !!sel.ownerRequest && /J\/G/.test(String(sel.ownerRequest.decisionNeeded)) && calls.dispatch === 0);
   }
   // 1e. strategic UNDECIDED and NO authorized item ⇒ still HALTED_DECISION_REQUIRED (no arbitrary pick)
   {

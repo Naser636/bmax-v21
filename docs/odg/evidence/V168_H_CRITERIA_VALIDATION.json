@@ -1,0 +1,50 @@
+{
+  "//": "VALIDATE_CRITERIA for mission H (owner V168 step 5: 'Validation des critères sur preuves'). Criteria graded ONLY from committed evidence after an independent inspection of the experiment result (PR #946, ACCEPT, metrics recomputed independently). Nothing upgraded.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "H",
+  "date": "2026-11-24",
+  "contractSha256": "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V168_H_EXPERIMENT.json",
+    "sha256": "30e1565fd5b701a70e04810d6e0b51238ddcd34f15f6ef9cbfcb68f4d40ecabd",
+    "experimentSha256": "47d8e591d6cd13fc4c89287508a1281050fb3f1a061be0ba9fd6f7843259662d",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 946,
+    "mergedAs": "b8de9a04",
+    "producedBy": "ODG GO --execute native dispatch of the contract-declared target (GO run 86a7a424d358dce8; GO code at main bd6f5c62; scratch tree at 5d3cf713 = record run.head; isolated detached scratch, bwrap --unshare-net, offline); GO trace: docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 946,
+    "inspectedHead": "93ed9112",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "ab245bf3019f79340",
+    "authorSessionId": "odg-go-run-86a7a424d358dce8",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "sessionIdNote": "inspectorSessionId = the harness-assigned id of the inspector session (the inspector itself cannot see it); authorSessionId = the ODG GO run that produced the record",
+    "findings": "AUC H1 0.578283 / B0 0.685657 / B1 0.817121 and Δ0, Δ1, bootstrap CIs recomputed independently from the frozen dataset + sealed weights — exact match; vault order FEATURES → DEV labels → WEIGHTS_SEALED c84e6804… → HELDOUT labels; FAIL is the first matching rule; no deviation from the pre-registration"
+  },
+  "criteria": [
+    {
+      "id": "C1",
+      "text": "held-out test set fixed BEFORE the change (operationalized: dataset sha pinned by the revision; DEV-only fit; HELDOUT labels read only after weights sealed)",
+      "status": "MET",
+      "evidence": "V168_H_HELDOUT.json sha d8bf4a3f… pinned in #942 before the runner existed (#944); record vaultLog order verified by #946 inspection; dataset sha matches"
+    },
+    {
+      "id": "C2",
+      "text": "before/after on that set with n; superiority or honest null result (operationalized, graded by the pre-registered rule)",
+      "status": "MET_AS_MEASUREMENT — outcome FAIL",
+      "evidence": "HELDOUT n=199 (99 HIGH / 100 LOW): AUC H1 0.578 vs B0 0.686 vs B1 0.817; Δ0 −0.107 CI95 [−0.213, −0.004] ⇒ H1 is WORSE than the current mechanism ⇒ FAIL by the rule (no superiority); honest negative result recorded",
+      "reportOnly": "seeded random split (seed 20261129, NOT part of the grade): H1 0.705 vs B0 0.552 vs B1 0.629 (Δ0 +0.153, Δ1 +0.076) — opposite direction; consistent with the chronological distribution shift (DEV 20/200 HIGH vs HELDOUT 99/199)"
+    }
+  ],
+  "scenarioGrade": "FAIL",
+  "adoption": "NOT_ADOPTED — the calibration add-on is not wired into any decision path (it was advisory-only by contract)",
+  "gradeRule": "owner V168 §3: 'Critère non satisfait : FAIL ou NOT_ADOPTED selon le contrat'; contract: only PASS ⇒ adoption candidate; scenarioGrade may not exceed the experiment outcome (R5b)",
+  "lesson": "on this dataset, a DEV-fitted risk score (≈20 positives) does not transfer across the chronological split; the simple breadth signal (log1p changed files) is the strongest of the three; a future mechanism change should first address the DEV/HELDOUT shift (e.g. stratified or rolling-origin evaluation, pre-registered) — a hypothesis, not a finding",
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded FAIL)",
+    "missionH": "CLOSED_FAIL (NOT_ADOPTED)"
+  }
+}
