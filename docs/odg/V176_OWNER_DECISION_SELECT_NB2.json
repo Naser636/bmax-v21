@@ -1,0 +1,31 @@
+{
+  "//": "OWNER selection-decision record — verbatim transcription (2026-11-24) by the PROVIDER (Claude Code coordinating session) of an EXPLICIT owner decision naming the item and the contract sha. Grants nothing beyond one GO selection + dispatch of V175-NB2; changes no score, criterion, threshold, selection or allocation rule.",
+  "schema": "odg-owner-selection-decision/1",
+  "kind": "OWNER_SELECTION_DECISION",
+  "directive": "CONTINUATION V176 — AUTORISATION PROPRIÉTAIRE ET EXÉCUTION",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "source": "owner message \"CONTINUATION V176 — AUTORISATION PROPRIÉTAIRE ET EXÉCUTION\", 2026-11-24 (relayed by the coordinating session)",
+  "quote": [
+    "Je confirme explicitement :",
+    "« J'autorise GO à sélectionner et exécuter une fois V175-NB2, sur la base du contrat inspecté, empreinte bab2106a. »",
+    "Cette décision doit être transcrite mot pour mot dans le registre de décision et reliée à l'exécution GO.",
+    "Ne lance aucune opération de production, aucun déploiement, aucune dépense, aucun appel payant non autorisé ni aucune action externe engageante."
+  ],
+  "item": "V175-NB2",
+  "contractSha256": "bab2106a63ce26a35b546ff92df08b214c2f5a047fc8128d1d19e580cb2664e9",
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED for UNCERTAINTY (no tie: tiedSet empty or singleton) with proposed = V175-NB2",
+    "neverAppliesTo": [
+      "strategicSelection",
+      "ties (GO-ORD-1)",
+      "authorization (RUN still needs the committed independent inspection ACCEPT — docs/odg/evidence/V175_NB2_CONTRACT_INSPECTION.json, PR #989)",
+      "scores / ranking / register / thresholds",
+      "any other item",
+      "any other contract sha"
+    ],
+    "maxDispatches": 1,
+    "consumedBy": "runtime/core/odg-go-cycle.ts (GO-ORD-2), loaded by runtime/bin/odg-go.ts readState from OWNER_SELECTION_DECISIONS"
+  },
+  "appliedBy": "GO-ORD-2 (runtime/core/odg-go-cycle.ts) — provider-written GO rule consuming this owner decision once (persistent O_EXCL claim under the git common dir)"
+}
