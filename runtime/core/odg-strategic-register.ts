@@ -60,6 +60,7 @@ const SCN_RULE = "SCN-1: a scenario evidence file (contractRef/contract '#X' or 
 
 const AS = require("./odg-authorization-scope.js");
 const OCUR = require("./odg-observation-currency.js");   // V16.9 Phase 1b — RES-1 proof currency (composed)
+const DEPG = require("./odg-register-dependency-graph.js");   // V17.5 — item→item dependency edges (DEPG-1) + contention (CONT-1)
 
 /*
  * V16.9 addendum Phase 1 — "Continuité vérifiable". Declared rules (provider-authored; ODG applies them mechanically):
@@ -158,6 +159,7 @@ function buildRegister(sources: any): any {
     return measured(open.length / 4, "CAP-1", ptr.concat(open.map((s) => `${vf}#sectionsStatus[${sections[s].idx}].status`)), `non-§45 sections advanced, not VALIDATED: [${open.join(", ")}]`);
   };
   const items: any[] = [];
+  const statedText: any[] = [];   // V17.5 — the 'scenario X' statements, fed to DEPG-1 as STATED_TEXT edges
 
   // ── 1. A–P WORK_ITEM_CONTRACTs ──────────────────────────────────────────────────────────────────────────────────────
   C.data.contracts.forEach((x: any, ci: number) => {
@@ -208,7 +210,7 @@ function buildRegister(sources: any): any {
     const mfp = String(init.missingForPass || "");
     if (/owner-gated|owner-authori[sz]ed/i.test(mfp)) depsStated.push({ kind: "OWNER_AUTHORIZATION", text: (/[^;.]*owner-(?:gated|authori[sz]ed)[^;.]*/i.exec(mfp) || [""])[0].trim(), satisfied: x.authorizedBy ? true : false, source: `${base}.initialState.missingForPass`, satisfiedSource: `${base}.authorizedBy` });
     { const m = /([^;.]*)\(IN_PROGRESS elsewhere\)/.exec(mfp); if (m) depsStated.push({ kind: "OTHER_WORK", text: m[1].trim(), satisfied: false, satisfiedBasis: "no field of the contract states it landed (CP8 lists PRs but no field links them to this dependency)", source: `${base}.initialState.missingForPass` }); }
-    for (const m of mfp.matchAll(/\bscenario ([A-P])\b/g)) if (m[1] !== L) deps.push(m[1]);
+    for (const m of mfp.matchAll(/\bscenario ([A-P])\b/g)) if (m[1] !== L) { deps.push(m[1]); statedText.push({ from: L, to: m[1], source: `${base}.initialState.missingForPass` }); }
     // criteria
     const refs = refsTop10(L);
     const alsoIdx = also.findIndex((a) => new RegExp("^Scenario " + L + "\\b").test(String(a)));
@@ -371,6 +373,26 @@ function buildRegister(sources: any): any {
   const latestDoc = latestCp ? (cps.find((c: any) => String(c.path).endsWith(latestCp)) || (Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).find((e: any) => String(e.path).endsWith(latestCp))) : null;
   const latestCheckpoint = { file: latestCp, rule: LATEST_CP_RULE, source: latestCp ? `docs/odg/evidence/${latestCp}` : null, declaredFieldsPresent: latestDoc ? { ownerQuestions: Array.isArray(latestDoc.data.ownerQuestions) } : null, dep2Note: latestDoc && !Array.isArray(latestDoc.data.ownerQuestions) ? `${latestCp} has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)` : null };
 
+  // ── 8. V17.5 DEPG-1: item→item dependency edges from explicit committed evidence (after every status rule, so a
+  // STATED_TEXT edge reads the final status). deps[] = targets of UNSATISFIED edges (the selector's eligibility gate and
+  // R1_MORE_UNBLOCKING read it); every edge is a stated dependency for DEP-1 (rule text unchanged, applied as declared).
+  const DG = DEPG.deriveDependencyGraph({ contracts: C, executedEvidence: Object.fromEntries(Object.keys(scen).sort().map((k) => [k, { path: scen[k].path, field: scen[k].data.contractRef ? "contractRef" : scen[k].data.contract ? "contract" : "scenario" }])), evidence: sources.dependencyEvidence, statedText, itemStatus: Object.fromEntries(items.map((it: any) => [it.id, it.status])), items: items.map((it: any) => ({ id: it.id, kind: it.kind })) });
+  for (const it of items) {
+    it.dependencyGraph = DG.byItem[it.id];
+    if (it.kind !== "WORK_ITEM_CONTRACT") continue;
+    const all = DG.edges.filter((e: any) => e.from === it.id);
+    const out = all.filter((e: any) => DG.dep1Kinds.includes(e.kind));   // prerequisites whose satisfaction can fail
+    it.dependencyEdges = all;
+    it.deps = Array.from(new Set(out.filter((e: any) => !e.satisfied).map((e: any) => e.to))).sort();
+    const structural = all.length - out.length;
+    it.depsNote = (!out.length ? "no item-to-item dependency stated in the evidence ⇒ []" : it.deps.length ? `DEPG-1: ${out.length} prerequisite edge(s); deps = the ${it.deps.length} unsatisfied target(s)` : `DEPG-1: ${out.length} prerequisite edge(s), all satisfied ⇒ deps [] (nothing to unblock)`) + (structural ? `; ${structural} structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)` : "");
+    if (!out.length) continue;
+    it.depsStated = it.depsStated.concat(out.map((e: any) => ({ kind: "ITEM_" + e.kind, item: e.to, text: `${e.kind} on ${e.to}${e.via ? ` via ${e.via}` : ""}`, satisfied: e.satisfied, satisfiedBasis: e.satisfiedBasis, source: e.source, targetSource: e.targetSource })));
+    const sat = it.depsStated.filter((d: any) => d.satisfied).length;
+    it.criteria.dependencyAvailability = measured(sat / it.depsStated.length, "DEP-1", Array.from(new Set(it.depsStated.map((d: any) => d.source))), `${sat}/${it.depsStated.length} stated dependencies satisfied (${it.depsStated.map((d: any) => `${d.kind}${d.item ? " " + d.item : ""}=${d.satisfied ? "satisfied" : "unsatisfied"}`).join(", ")})`);
+  }
+  const dependencyGraph = { rule: DG.rule, edgeKinds: DG.edgeKinds, completedStatuses: DG.completedStatuses, counts: DG.counts, fanOut: Object.fromEntries(Object.keys(DG.byItem).filter((k) => DG.byItem[k].status === "DERIVED").sort().map((k) => [k, { fanOut: DG.byItem[k].fanOut, dependents: DG.byItem[k].dependents, blockingFanOut: DG.byItem[k].blockingFanOut, blockingDependents: DG.byItem[k].blockingDependents }])), edges: DG.edges, contention: DG.contention, dep1Kinds: DG.dep1Kinds, structuralKinds: DG.structuralKinds, staleWriteSets: DG.staleWriteSets, independenceStated: DG.independenceStated, independenceNote: DG.independenceNote, notMeasuredKinds: Array.from(new Set(items.filter((it: any) => DG.byItem[it.id].status === "NOT_MEASURED").map((it: any) => it.kind))).sort() };
+
   const statusCounts: any = Object.fromEntries(Object.keys(STATUS).map((s) => [s, 0]));
   for (const it of items) statusCounts[it.status] = (statusCounts[it.status] || 0) + 1;
   return deepFreeze({
@@ -380,6 +402,7 @@ function buildRegister(sources: any): any {
     capabilityGapRules: { dedupe: GAP_DEDUP_RULE, owner: OWNER_RULE_GAP, landed: LAND_RULE, links: GAP_LINKS.map((l: any) => ({ id: l.id, audit: l.audit, gapRe: l.gapRe ? String(l.gapRe) : null, ownerQuestionRe: l.oqRe ? String(l.oqRe) : null, blockerAnchors: l.anchors || [] })), benefit: { blocker: BLK2_RULE, reliability: REL2_RULE, dependency: DEP2_RULE, blockerFields: BLOCKER_FIELDS, prRecordFields: PR_RECORD_FIELDS, latestCheckpoint: latestCp, notDerived: BENEFIT_NOT_DERIVED } },
     continuityRules: { closure: CLOSE_RULE, resolution: RES_RULE, latestCheckpoint: LATEST_CP_RULE, contradictions: CONTRADICTION_RULES, history: "append-only statusHistory [{status, source, since, rule}] on every item whose status CLOSE-1 or RES-1 changed; earlier statuses are never deleted" },
     latestCheckpoint,
+    dependencyGraph,
     contradictions: { rules: CONTRADICTION_RULES, count: contradictions.length, detected: contradictions, note: "reported, never auto-resolved by the detector" },
     sourcesUsed: { contracts: cf, v150: vf, cp8: pf, laterEvidence: (Array.isArray(sources.laterEvidence) ? sources.laterEvidence : []).map((e: any) => e.path).sort(), benefitEvidence: (Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).map((e: any) => e.path).sort(), scenarioEvidence: Object.keys(scen).sort().map((k) => ({ scenario: k, path: scen[k].path })), preContractEvidenceIgnored: ignoredEvidence, scenarioEvidenceRule: SCN_RULE, authorizationEvidence: Object.keys(isObj(sources.authorizationEvidence) ? sources.authorizationEvidence : {}).sort().map((k) => ({ scenario: k, ...Object.fromEntries(["inspection", "experiment", "validation"].map((t) => [t, sources.authorizationEvidence[k][t] && sources.authorizationEvidence[k][t].recordPath ? sources.authorizationEvidence[k][t].recordPath : null])) })), resolutionEvidence: resolutions.map((r: any) => r.path), checkpoints: cps.map((c: any) => c.path), checkpointNames: (Array.isArray(sources.checkpointNames) ? sources.checkpointNames.map(String) : []).slice().sort() },
     itemCount: items.length, statusCounts, items,
