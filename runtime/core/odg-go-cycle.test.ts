@@ -109,7 +109,7 @@ function mkPorts(o: any = {}): any {
     trace: { append: (e: any) => trace.push(JSON.parse(JSON.stringify(e))), readPrior: () => trace.slice() },
     writeSummary: (x: any) => { GO.assertConfinedWrite("/virtual/out/go-cycle.json", "/virtual/out", ["/virtual/main/runtime/generated"], path); calls.writes.push("/virtual/out/go-cycle.json"); },
     isolation: o.isolation || ((_n: any) => { calls.isolation++; return { ok: true, workspace: "/virtual/scratch" }; }),
-    dispatchNative: (n: any, c: any) => { calls.dispatch++; (calls as any).dispatched = ((calls as any).dispatched || []).concat([{ mission: n.mission, target: c && c.dispatchTarget ? c.dispatchTarget : null }]); return o.dispatchResult || { verified: true, detail: "fixture PASS" }; },
+    dispatchNative: (n: any, c: any) => { calls.dispatch++; (calls as any).dispatched = ((calls as any).dispatched || []).concat([{ mission: n.mission, target: c && c.dispatchTarget ? c.dispatchTarget : null, timeoutMs: c && c.dispatchTimeoutMs !== undefined ? c.dispatchTimeoutMs : null }]); return o.dispatchResult || { verified: true, detail: "fixture PASS" }; },
     launchProvider: () => { calls.provider++; throw new Error("provider must never be launched"); },
   };
   return { ports, trace, calls };
@@ -227,6 +227,41 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       const rr = await GO.runGoCycle({ mode, allowUnsandboxedTarget: true }, p.ports);
       const d = (p.calls as any).dispatched || [];
       check(`GO-DT-1 ${mode}: declared target ⇒ exactly that command dispatched (NATIVE + isolated)`, mode === "DRY" ? (p.calls.dispatch === 0 && rr.status === "DRY_COMPLETE" && /declared target runtime\/bin\/odg-v166-scenario-g-experiment\.ts/.test(stepIn(p.trace, "EXECUTE").decision.scheduler.reason)) : (p.calls.dispatch === 1 && d.length === 1 && d[0].mission === "G" && d[0].target.command === good.command && d[0].target.args.join(" ") === good.args.join(" ") && rr.status === "EXECUTED_PASS" && p.trace.some((e: any) => e.kind === "DISPATCHED" && e.dispatchTarget && e.dispatchTarget.command === good.command)));
+    }
+    // V17.4 GO-DTO-1: the declared target's timeout derives from the contract's OWN caps; recorded in the EXECUTE trace
+    {
+      const p = mkPorts({ state: withTarget(good) });
+      await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true }, p.ports);
+      const dto = stepIn(p.trace, "EXECUTE").decision.dispatchTarget.dispatchTimeout;
+      check("GO-DTO-1: declared target, contract WITHOUT caps ⇒ 600000 passed to dispatch + recorded (NO_DECLARED_WALL_CAP, GO-DTO-1, ceiling)", (p.calls as any).dispatched[0].timeoutMs === 600000 && dto.timeoutMs === 600000 && dto.basis === "NO_DECLARED_WALL_CAP" && dto.ruleId === "GO-DTO-1" && dto.ceilingMs === GO.DISPATCH_TIMEOUT_CEILING_MS && /provider/i.test(dto.authoredBy));
+      const withCaps = (caps: any) => { const s = focusG(BASE_LIVE); const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "G"); c.authorization.dispatchTargets = { RUN_CONTROLLED_EXPERIMENTS: good }; c.WORK_ITEM_CONTRACT.preRegistration = { ...(c.WORK_ITEM_CONTRACT.preRegistration || {}), caps }; s.authorizationEvidence = { G: { inspection: rec({ contractSha256: AS.contractSha256(c) }), experiment: null } }; return s; };
+      const q = mkPorts({ state: withCaps({ maxRunWallMs: 3600000 }) });
+      await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true }, q.ports);
+      const qd = stepIn(q.trace, "EXECUTE").decision.dispatchTarget.dispatchTimeout;
+      check("GO-DTO-1: fixture caps.maxRunWallMs 3600000 ⇒ 3720000 dispatched + derivation recorded", (q.calls as any).dispatched[0].timeoutMs === 3720000 && qd.basis === "MAX_RUN_WALL_MS" && qd.derivation.maxRunWallMs === 3600000);
+    }
+    {
+      const d = rj("docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json").contracts;
+      const j2 = d.find((x: any) => x.scenario === "J2"), g2 = d.find((x: any) => x.scenario === "G2");
+      const tj = GO.deriveDispatchTimeout(j2, j2.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS);
+      check("GO-DTO-1: committed J2 contract ⇒ timeout > 600000 and ≤ ceiling; derivation from perTrialWallMs 1800000 × 11 tasks × 5 arms × 2 seeds (110 trials) recorded, clamped to the 12 h ceiling", tj.timeoutMs > 600000 && tj.timeoutMs <= GO.DISPATCH_TIMEOUT_CEILING_MS && tj.timeoutMs === 43200000 && tj.derivation.trials === 110 && tj.derivation.fields.perTrialWallMs === 1800000 && tj.derivation.clampedFrom === "PER_TRIAL_WALL_MS_X_TRIALS");
+      const tg = GO.deriveDispatchTimeout(g2, g2.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS);
+      check("GO-DTO-1: committed G2 contract (no caps) ⇒ 600000", tg.timeoutMs === 600000 && tg.basis === "NO_DECLARED_WALL_CAP");
+      const mkC = (pr: any) => ({ scenario: "X", WORK_ITEM_CONTRACT: { preRegistration: pr } });
+      const T = { command: "runtime/bin/x.ts", writeSet: ["x"] };
+      check("GO-DTO-1: no target (plain odg-run) ⇒ 600000", GO.deriveDispatchTimeout(j2, null).timeoutMs === 600000 && GO.deriveDispatchTimeout(j2, null).basis === "PLAIN_DISPATCH");
+      check("GO-DTO-1: contract without preRegistration / caps ⇒ 600000", GO.deriveDispatchTimeout({ scenario: "X" }, T).timeoutMs === 600000 && GO.deriveDispatchTimeout(mkC({}), T).timeoutMs === 600000 && GO.deriveDispatchTimeout(mkC({ caps: { maxModelCallsTotal: 5 } }), T).timeoutMs === 600000);
+      const small = GO.deriveDispatchTimeout(mkC({ caps: { perTrialWallMs: 60000 }, dataset: { replication: ["a"], heldOut: ["b"] }, arms: { A0: 1, A1: 1 }, decoding: { seeds: [1, 2] } }), T);
+      check("GO-DTO-1: perTrialWallMs 60000 × (2 tasks × 2 arms × 2 seeds) + margin = 600000 (floored at the plain default)", small.timeoutMs === 600000 && small.derivation.trials === 8 && small.derivation.rawMs === 600000);
+      const mid = GO.deriveDispatchTimeout(mkC({ caps: { perTrialWallMs: 600000 }, dataset: { heldOut: ["a", "b"] }, arms: { A0: 1 }, decoding: { seeds: [1] } }), T);
+      check("GO-DTO-1: perTrialWallMs 600000 × 2 trials + 120000 = 1320000", mid.timeoutMs === 1320000 && mid.basis === "PER_TRIAL_WALL_MS_X_TRIALS");
+      for (const [name, caps] of [["perTrialWallMs string", { perTrialWallMs: "1800000" }], ["perTrialWallMs negative", { perTrialWallMs: -1 }], ["perTrialWallMs Infinity", { perTrialWallMs: Infinity }], ["maxRunWallMs NaN", { maxRunWallMs: NaN }], ["maxRunWallMs huge", { maxRunWallMs: 1e15 }], ["perTrialWallMs huge", { perTrialWallMs: 1e12 }]] as any[]) {
+        const r = GO.deriveDispatchTimeout(mkC({ caps, dataset: { heldOut: ["a"] }, arms: { A0: 1 }, decoding: { seeds: [1] } }), T);
+        check(`GO-DTO-1: malformed/huge caps (${name}) ⇒ ceiling`, r.timeoutMs === GO.DISPATCH_TIMEOUT_CEILING_MS && r.basis === "CEILING");
+      }
+      const nd = GO.deriveDispatchTimeout(mkC({ caps: { perTrialWallMs: 1000 }, arms: { A0: 1 } }), T);
+      check("GO-DTO-1: perTrialWallMs declared but trials not derivable ⇒ conservative ceiling (TRIALS_NOT_DERIVABLE recorded)", nd.timeoutMs === GO.DISPATCH_TIMEOUT_CEILING_MS && /TRIALS_NOT_DERIVABLE/.test(nd.derivation.reason));
+      check("GO-DTO-1: ceiling constant = 12 h", GO.DISPATCH_TIMEOUT_CEILING_MS === 43200000);
     }
     for (const [name, tgt] of [["command outside write_set", { ...good, command: "runtime/bin/odg-run.ts" }], ["target writeSet outside write_set", { ...good, writeSet: ["runtime/generated/x.json"] }], ["'..' escape", { ...good, command: "runtime/bin/../bin/odg-run.ts" }], ["absolute command", { ...good, command: "/usr/bin/env" }], ["arg starting with '-'", { ...good, args: ["--eval"] }], ["command starting with '-'", { ...good, command: "-e" }]] as any[]) {
       const p = mkPorts({ state: withTarget(tgt) });

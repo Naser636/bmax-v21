@@ -64,7 +64,10 @@ const OWNER_ORDER_DECISIONS = Object.freeze(["docs/odg/V174_OWNER_DECISION_ORDER
 const UNIT_SYSTEM = "/etc/systemd/system/odg-mission-runner.service";
 const UNIT_REPO = "deploy/odg-mission-runner.service";
 const MAX_STEP_DELAY_MS = 5000;
-const DISPATCH_TIMEOUT_MS = 600000;
+const DISPATCH_TIMEOUT_MS = GO.DISPATCH_TIMEOUT_DEFAULT_MS;   // plain odg-run dispatch (600000)
+/* GO-DTO-1: a declared target's timeout comes from the core's contract-cap derivation (ctx.dispatchTimeoutMs, recorded in
+ * the EXECUTE trace); re-validated here — anything not a positive integer ≤ the hard ceiling ⇒ the plain default. */
+function targetTimeoutMs(c: any): number { const t = c && c.dispatchTimeoutMs; return Number.isInteger(t) && t > 0 && t <= GO.DISPATCH_TIMEOUT_CEILING_MS ? t : DISPATCH_TIMEOUT_MS; }
 
 // ---- PRE-REGISTERED pass criteria (V16.4 §10 I and J) — fixed in this file BEFORE the first real run; do not edit after.
 const PRE_REGISTERED = Object.freeze({
@@ -318,9 +321,9 @@ function buildPorts(o: any): any {
       if (c && c.dispatchTarget) {
         if (c.allowUnsandboxedTarget !== true) return { verified: false, detail: "UNSANDBOXED_TARGET_NOT_OPTED_IN: refused (out-of-scratch writes not confined)" };
         // GO-DT-1: exactly the contract-declared runner, no shell, bounded; writes confined to the target writeSet
-        const r = cp.spawnSync("npx", dispatchArgv(next, c), { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
+        const r = cp.spawnSync("npx", dispatchArgv(next, c), { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: targetTimeoutMs(c), killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
         const conf = targetWriteConfinement(c.workspace, c.dispatchTarget);
-        return { verified: r.status === 0 && conf.ok, detail: `declared target ${c.dispatchTarget.command} exit ${r.status} in ${c.workspace}; ${conf.ok ? "writes ⊆ target writeSet" : conf.reason}` };
+        return { verified: r.status === 0 && conf.ok, detail: `declared target ${c.dispatchTarget.command} exit ${r.status}${r.signal ? ` signal ${r.signal}` : ""} (timeout ${targetTimeoutMs(c)} ms, GO-DTO-1) in ${c.workspace}; ${conf.ok ? "writes ⊆ target writeSet" : conf.reason}` };
       }
       // governed pipeline in the ISOLATED worktree only (never the main checkout); bounded; nothing committed/merged.
       const r = cp.spawnSync("npx", dispatchArgv(next, c), { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
@@ -524,7 +527,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { OWNER_ORDER_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 /* CLI flag validation: --help/-h ⇒ usage on stdout, exit 0, no cycle; any unknown flag (or a value flag missing its
  * value) ⇒ usage on stderr, exit 2, no cycle. Never starts a cycle on a mistyped flag. */

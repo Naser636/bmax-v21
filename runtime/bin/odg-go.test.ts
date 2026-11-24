@@ -160,6 +160,7 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     const T1 = { command: "runtime/bin/exp.ts", args: ["out/e.json"], writeSet: ["out/e.json"] };
     check("GO-DT-1: declared target absent in scratch ⇒ NOT_RUNNABLE even though runtime/missions/MX.json exists", /NOT_RUNNABLE: declared dispatch target/.test(B.isolationCheck(wt, "MX", ROOT, T1).reason));
     check("GO-DT-1: dispatchArgv with target ⇒ exactly the declared command; without ⇒ odg-run <id> (plain AUTHORIZED path)", B.dispatchArgv({ mission: "G" }, { dispatchTarget: T1 }).join(" ") === "tsx runtime/bin/exp.ts out/e.json" && B.dispatchArgv({ mission: "MX" }, {}).join(" ") === "tsx runtime/bin/odg-run.ts MX");
+    check("GO-DTO-1: plain dispatch timeout unchanged 600000; a declared target's derived timeout is used only if a positive integer ≤ the 12 h ceiling", B.DISPATCH_TIMEOUT_MS === 600000 && B.targetTimeoutMs({}) === 600000 && B.targetTimeoutMs({ dispatchTimeoutMs: 43200000 }) === 43200000 && B.targetTimeoutMs({ dispatchTimeoutMs: 43200001 }) === 600000 && B.targetTimeoutMs({ dispatchTimeoutMs: "9" }) === 600000 && B.targetTimeoutMs({ dispatchTimeoutMs: -5 }) === 600000 && B.targetTimeoutMs({ dispatchTimeoutMs: 1.5 }) === 600000);
     fs.mkdirSync(path.join(wt, "out")); fs.writeFileSync(path.join(wt, "out", "e.json"), "{}");
     check("GO-DT-1: writes ⊆ target writeSet ⇒ confined", B.targetWriteConfinement(wt, T1).ok === true);
     fs.writeFileSync(path.join(wt, "out", "other.json"), "{}");
