@@ -45,6 +45,7 @@ function allQuotes(rec: any): any[] {
   for (const q of (rec.precedence || {}).derivedFrom || []) out.push(q);
   for (const q of (rec.radarScope || {}).derivedFrom || []) out.push(q);
   for (const s of rec.sources || []) if (s.statusEvidence) out.push(s.statusEvidence);
+  for (const q of (rec.authority || {}).quotes || []) out.push(q);
   for (const r of rec.resolutions || []) for (const q of r.conflictingTexts || []) out.push(q);
   return out;
 }
@@ -120,6 +121,10 @@ function checkRadarScope(rec: any, root: string = ROOT, contracts?: any[]): stri
   for (const c of contracts || campaignContracts(rec, root)) {
     const radar = c.writeSet.filter((p: string) => classifyPath(rec, p) === "RADAR_STAGE");
     if (c.v150Campaign) {
+      // Q-CTR2-BLOCK: while the owner has not answered Q-CTR2, a V15.0-campaign write to the knowledge stage is BLOCKED
+      const q2 = (rec.ownerQuestions || []).find((q: any) => q.id === "Q-CTR2");
+      const know = c.writeSet.filter((p: string) => classifyPath(rec, p) === "KNOWLEDGE_STAGE");
+      if (q2 && q2.blocking && (q2.answer === null || q2.answer === undefined) && know.length) v.push(`${c.id}: BLOCKED by Q-CTR2 — V15.0-campaign contract writes knowledge-stage paths ${know.join(", ")}`);
       if (radar.length) v.push(`${c.id}: V15.0-campaign contract writes Radar-stage paths ${radar.join(", ")} (§38/§47)`);
       const excl = ((rec.campaignScope || {}).radarExclusionPatterns || []).some((re: string) => new RegExp(re, "i").test(c.scope));
       if (!excl) v.push(`${c.id}: V15.0-campaign contract scope does not exclude Radar change`);
@@ -168,14 +173,24 @@ function checkMatrix(rec: any, ctrId: string, root: string = ROOT): string[] {
   const mx = readJson(root, MATRIX_PATH);
   const r = (rec.resolutions || []).find((x: any) => x.id === ctrId);
   if (!r) return [`${ctrId}: no resolution in the precedence record`];
+  // an INTERIM resolution (owner choice pending) must never read as plainly resolved in the matrix
+  const interim = r.ownerChoiceNeeded === true;
+  if (interim && !/INTERIM pending/.test(String(r.status || ""))) v.push(`${ctrId}: owner choice pending but record status '${r.status}' does not say INTERIM`);
   const top = (mx.topContradictions || []).find((x: any) => x.id === ctrId);
-  if (!top || top.state !== "RESOLVED_AT_SOURCE" || top.resolvedBy !== RECORD_PATH) v.push(`${ctrId}: matrix topContradictions entry does not cite ${RECORD_PATH}`);
+  const wantState = interim ? r.status : "RESOLVED_AT_SOURCE";
+  if (!top || top.state !== wantState || top.resolvedBy !== RECORD_PATH) v.push(`${ctrId}: matrix topContradictions entry must be state '${wantState}' citing ${RECORD_PATH}`);
   for (const rowId of r.matrixRows || []) {
     const row = (mx.requirements || []).find((x: any) => x.id === rowId);
     if (!row) { v.push(`${rowId}: row missing`); continue; }
-    if (row.relation === "CONTRADICTION") v.push(`${rowId}: relation is still CONTRADICTION`);
-    if ((row.alsoRelations || []).some((s: string) => /^CONTRADICTION/.test(s))) v.push(`${rowId}: alsoRelations still carries a CONTRADICTION`);
-    if (((row.precedence || {}).record) !== RECORD_PATH) v.push(`${rowId}: row does not cite the precedence record`);
+    const pr = row.precedence || {};
+    if (pr.record !== RECORD_PATH) v.push(`${rowId}: row does not cite the precedence record`);
+    if (interim) {
+      if (pr.status !== r.status) v.push(`${rowId}: interim row must carry precedence.status '${r.status}'`);
+      if (row.relation !== pr.relationBeforeV175) v.push(`${rowId}: interim row relation changed to ${row.relation} (must stay ${pr.relationBeforeV175} until the owner answers)`);
+    } else {
+      if (row.relation === "CONTRADICTION") v.push(`${rowId}: relation is still CONTRADICTION`);
+      if ((row.alsoRelations || []).some((s: string) => /^CONTRADICTION/.test(s))) v.push(`${rowId}: alsoRelations still carries a CONTRADICTION`);
+    }
   }
   for (const pm of (mx.consolidatedProposal || {}).phaseMapping || []) if (pm.blockedBy === ctrId) v.push(`phaseMapping '${pm.v14_4Phase}' still blockedBy ${ctrId}`);
   const byRel: Record<string, number> = {};

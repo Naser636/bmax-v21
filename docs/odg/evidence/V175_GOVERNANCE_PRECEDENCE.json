@@ -3,54 +3,170 @@
   "schema": "odg-governance-precedence/1",
   "date": "2026-11-24",
   "authority": {
-    "issuer": "OWNER (CTO) — directive 2026-11-24 'reprise immédiate', relayed to the provider by the coordinating session (not stored verbatim elsewhere in the repository)",
-    "quote": [
-      "RÉGLER CTR-1, CTR-2 ET CTR-4 À LA SOURCE.",
-      "Ne pas inventer leur signification et ne pas contourner une contradiction par une exception locale.",
-      "Le propriétaire autorise leur résolution technique dans le cadre de la gouvernance existante.",
-      "Si un choix modifie substantiellement une règle canonique, préserver cette règle et appliquer la solution compatible la moins disruptive.",
-      "V12.4 reste canonique jusqu'à adoption formelle d'une succession."
+    "issuer": "OWNER (CTO) — « DIRECTIVE DE REPRISE IMMÉDIATE » 2026-11-24, §3 excerpt recorded verbatim in docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json",
+    "record": "docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json",
+    "quotes": [
+      {
+        "path": "docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json",
+        "text": "RÉGLER CTR-1, CTR-2 ET CTR-4 À LA SOURCE."
+      },
+      {
+        "path": "docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json",
+        "text": "Ne pas inventer leur signification et ne pas contourner une contradiction par une exception locale."
+      },
+      {
+        "path": "docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json",
+        "text": "Le propriétaire autorise leur résolution technique dans le cadre de la gouvernance existante."
+      },
+      {
+        "path": "docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json",
+        "text": "Si un choix modifie substantiellement une règle canonique, préserver cette règle et appliquer la solution compatible la moins disruptive."
+      }
     ],
     "provider": "Claude Code = TECHNICAL_PROVIDER_ONLY; this record interprets precedence that is DERIVABLE from the quoted texts; where it is not derivable it states an interim and an owner question (ownerQuestions)."
   },
   "idNamespace": "The ids CTR-1..4 here are those of the V171 reconciliation matrix (qualified V171-CTR-n). runtime/core/odg-strategic-register.ts uses unrelated detector ids CTR-1..3 (GAP_STATED_FIXED / CONTRACT_STATE_VS_CLOSURE / STALE_CHECKPOINT_POINTER); they are NOT these contradictions.",
   "sources": [
-    { "id": "V12_4", "path": "docs/odg/v124-consolidated-roadmap.json", "sha256": "198de7f60f5eadb485f54196eec978a3cc6b7378c4551ea5580027149ad3c105", "status": "CANONICAL", "statusEvidence": { "path": "docs/odg/V14_4_ROADMAP.md", "text": "Boussole V12.4 is fully preserved" } },
-    { "id": "V14_4", "path": "docs/odg/V14_4_ROADMAP.md", "sha256": "9bae181c0c67e1410c67169badb6adb6c4f25ceaca6c960c2968dbce7b1132bc", "status": "ADOPTED", "statusEvidence": { "path": "docs/odg/V14_4_ROADMAP.md", "text": "**Status: ADOPTED**" } },
-    { "id": "ADDENDUM", "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md", "sha256": "3c5950660f19125f9c6cd4718a33ac817ac8b9a2df717acf68ea9db40d3e1138", "status": "RECORDED", "statusEvidence": { "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md", "text": "**Statut : RECORDED**" } },
-    { "id": "V15_0", "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md", "sha256": "d98740550cd50d38a4ac9a8790a2ae8919ca021401b711b491b85e65291ea4b8", "status": "PROPOSED", "statusEvidence": { "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md", "text": "**Status: PROPOSED.**" }, "text": "docs/odg/evidence/V150_CANONICAL_SOURCES.json (owner paste recovered from a session transcript, UNVERIFIED against a signed source)" },
-    { "id": "V165", "path": "docs/odg/V165_OWNER_AUTHORIZATION.json", "sha256": "1cd261c066b49b498776083aaa7d086db37ec2e67b5d6cd9d2c1d35586511417", "status": "OWNER_AUTHORIZATION_RECORD" }
+    {
+      "id": "V12_4",
+      "path": "docs/odg/v124-consolidated-roadmap.json",
+      "sha256": "198de7f60f5eadb485f54196eec978a3cc6b7378c4551ea5580027149ad3c105",
+      "status": "CANONICAL",
+      "statusEvidence": {
+        "path": "docs/odg/V14_4_ROADMAP.md",
+        "text": "Boussole V12.4 is fully preserved"
+      }
+    },
+    {
+      "id": "V14_4",
+      "path": "docs/odg/V14_4_ROADMAP.md",
+      "sha256": "9bae181c0c67e1410c67169badb6adb6c4f25ceaca6c960c2968dbce7b1132bc",
+      "status": "ADOPTED",
+      "statusEvidence": {
+        "path": "docs/odg/V14_4_ROADMAP.md",
+        "text": "**Status: ADOPTED**"
+      }
+    },
+    {
+      "id": "ADDENDUM",
+      "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+      "sha256": "3c5950660f19125f9c6cd4718a33ac817ac8b9a2df717acf68ea9db40d3e1138",
+      "status": "RECORDED",
+      "statusEvidence": {
+        "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+        "text": "**Statut : RECORDED**"
+      }
+    },
+    {
+      "id": "V15_0",
+      "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+      "sha256": "d98740550cd50d38a4ac9a8790a2ae8919ca021401b711b491b85e65291ea4b8",
+      "status": "PROPOSED",
+      "statusEvidence": {
+        "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+        "text": "**Status: PROPOSED.**"
+      },
+      "text": "docs/odg/evidence/V150_CANONICAL_SOURCES.json (owner paste recovered from a session transcript, UNVERIFIED against a signed source)"
+    },
+    {
+      "id": "V165",
+      "path": "docs/odg/V165_OWNER_AUTHORIZATION.json",
+      "sha256": "1cd261c066b49b498776083aaa7d086db37ec2e67b5d6cd9d2c1d35586511417",
+      "status": "OWNER_AUTHORIZATION_RECORD"
+    }
   ],
   "precedence": {
     "rule": "PREC-1: (1) owner decisions/authorization records, within their own quoted scope; (2) Boussole V12.4 = canonical reference; (3) Boussole V14.4 = ADOPTED organisation of the execution of V12.4 (additive; numbering of record); (4) addendum 'Boussole vivante' = RECORDED extension of V14.4 (may refine V14.4, never removes a V14.4 requirement); (5) V15.0 = PROPOSED campaign directive: its requirements attach to V14.4 phases as exit criteria, and its campaign-scoped clauses ('dans/de cette campagne') bind ONLY work items whose contract cites V15.0 as its source. A lower layer never overrides a higher one; while V15.0 is not ADOPTED it never outranks (2)–(4). Re-evaluate this record if any status in 'sources' changes (the test fails when it does).",
-    "order": ["OWNER_RECORDS_IN_SCOPE", "V12_4", "V14_4", "ADDENDUM", "V15_0"],
+    "order": [
+      "OWNER_RECORDS_IN_SCOPE",
+      "V12_4",
+      "V14_4",
+      "ADDENDUM",
+      "V15_0"
+    ],
     "derivedFrom": [
-      { "source": "V15_0", "v150Section": "§51", "field": "quote", "text": "2. V12.4 reste la Boussole canonique jusqu'à succession formelle." },
-      { "source": "V165", "path": "docs/odg/V165_OWNER_AUTHORIZATION.json", "text": "Boussole V12.4 demeure la référence canonique jusqu'à validation formelle de la succession." },
-      { "source": "V14_4", "path": "docs/odg/V14_4_ROADMAP.md", "text": "V14.4 organises the execution; it does not rewrite V12.4." },
-      { "source": "ADDENDUM", "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md", "text": "**Principe :** aucune suppression des objectifs, capacités, architectures ou exigences déjà définis dans V14.4." },
-      { "source": "V15_0", "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md", "text": "remain in force until the owner formally adopts a succession" }
+      {
+        "source": "V15_0",
+        "v150Section": "§51",
+        "field": "quote",
+        "text": "2. V12.4 reste la Boussole canonique jusqu'à succession formelle."
+      },
+      {
+        "source": "V165",
+        "path": "docs/odg/V165_OWNER_AUTHORIZATION.json",
+        "text": "Boussole V12.4 demeure la référence canonique jusqu'à validation formelle de la succession."
+      },
+      {
+        "source": "V14_4",
+        "path": "docs/odg/V14_4_ROADMAP.md",
+        "text": "V14.4 organises the execution; it does not rewrite V12.4."
+      },
+      {
+        "source": "ADDENDUM",
+        "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+        "text": "**Principe :** aucune suppression des objectifs, capacités, architectures ou exigences déjà définis dans V14.4."
+      },
+      {
+        "source": "V15_0",
+        "path": "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+        "text": "remain in force until the owner formally adopts a succession"
+      }
     ]
   },
   "campaignScope": {
     "rule": "SCOPE-1: a work item belongs to the V15.0 campaign iff its WORK_ITEM_CONTRACT cites the V15.0 directive as its source/authorization (text 'V15.0' in source|authorization|objective|ownerText), or it is a scenario contract of the V15.0 §45 A–P battery (docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json, including its versioned revisions G2/J2). 'V15' alone (session V15 of 2026-11-22) is NOT the V15.0 campaign.",
-    "campaignContractFiles": ["docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"],
+    "campaignContractFiles": [
+      "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"
+    ],
     "wicGlob": "docs/odg/WIC_*.json",
     "v150Marker": "V15\\.0",
-    "radarExclusionPatterns": ["no Radar code/grant change", "no change to canonical modules", "^read-only "],
+    "radarExclusionPatterns": [
+      "no Radar code/grant change",
+      "no change to canonical modules",
+      "^read-only "
+    ],
     "radarExclusionRule": "a V15.0-campaign contract's scope must exclude Radar change explicitly or be read-only; its write_set must hold no RADAR_STAGE path"
   },
   "radarScope": {
-    "rule": "RADAR-1 (INTERIM, see ownerQuestions Q-CTR2): 'le Radar existant' = the Radar STAGE of the canonical chain, i.e. discovery/collection and its governor, transport, allowlists and grants. The knowledge, memory and decision stages are distinct stages of the same canonical chain and are NOT 'le Radar'. A module shared with the Radar whose change alters Radar behaviour (e.g. idempotency-guard, as V150_CHECKPOINT_1 recorded) is REVIEW_REQUIRED inside a V15.0 campaign item.",
+    "rule": "RADAR-1 (INTERIM provider derivation, pending BLOCKING owner question Q-CTR2): 'le Radar existant' = the Radar STAGE of the canonical chain, i.e. discovery/collection and its governor, transport, allowlists and grants. The knowledge, memory and decision stages are distinct stages of the same canonical chain and are NOT 'le Radar'. A module shared with the Radar whose change alters Radar behaviour (e.g. idempotency-guard, as V150_CHECKPOINT_1 recorded) is REVIEW_REQUIRED inside a V15.0 campaign item.",
     "derivedFrom": [
-      { "source": "V14_4", "path": "docs/odg/V14_4_ROADMAP.md", "text": "traced chain Radar→knowledge→memory→decision with reuse proof" },
-      { "source": "V12_4", "path": "docs/odg/v124-consolidated-roadmap.json", "text": "Radar→memory→opportunity→experiment→gate chain, really wired" },
-      { "source": "V15_0_CAMPAIGN_RECORD", "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json", "text": "Radar used without modifying governor/transport/ALLOWLIST (CP6)" },
-      { "source": "V15_0_CAMPAIGN_RECORD", "path": "docs/odg/evidence/V150_CHECKPOINT_1.json", "text": "changing it changes Radar behaviour, forbidden this campaign" }
+      {
+        "source": "V14_4",
+        "path": "docs/odg/V14_4_ROADMAP.md",
+        "text": "traced chain Radar→knowledge→memory→decision with reuse proof"
+      },
+      {
+        "source": "V12_4",
+        "path": "docs/odg/v124-consolidated-roadmap.json",
+        "text": "Radar→memory→opportunity→experiment→gate chain, really wired"
+      },
+      {
+        "source": "V15_0_CAMPAIGN_RECORD",
+        "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+        "text": "Radar used without modifying governor/transport/ALLOWLIST (CP6)"
+      },
+      {
+        "source": "V15_0_CAMPAIGN_RECORD",
+        "path": "docs/odg/evidence/V150_CHECKPOINT_1.json",
+        "text": "changing it changes Radar behaviour, forbidden this campaign"
+      }
     ],
-    "radarStagePatterns": ["^runtime/(core|bin)/[^/]*radar[^/]*\\.ts$", "^runtime/core/research-governor\\.ts$", "^runtime/core/bounded-http-client\\.ts$", "^runtime/core/frontier-collection\\.ts$", "^docs/odg/V[0-9]+_RESEARCH_GRANT[^/]*\\.json$", "^docs/odg/evidence/V[0-9]+_RADAR_SOURCE_ADMISSION\\.json$"],
-    "sharedWithRadarPatterns": ["^runtime/core/idempotency-guard\\.ts$"],
-    "knowledgeStagePatterns": ["^runtime/core/odg-knowledge-[a-z-]+\\.ts$", "^runtime/core/odg-claim-[a-z-]+\\.ts$", "^runtime/core/memory-trust-gate\\.ts$"],
+    "radarStagePatterns": [
+      "^runtime/(core|bin)/[^/]*radar[^/]*\\.ts$",
+      "^runtime/core/research-governor\\.ts$",
+      "^runtime/core/bounded-http-client\\.ts$",
+      "^runtime/core/frontier-collection\\.ts$",
+      "^docs/odg/V[0-9]+_RESEARCH_GRANT[^/]*\\.json$",
+      "^docs/odg/evidence/V[0-9]+_RADAR_SOURCE_ADMISSION\\.json$"
+    ],
+    "sharedWithRadarPatterns": [
+      "^runtime/core/idempotency-guard\\.ts$"
+    ],
+    "knowledgeStagePatterns": [
+      "^runtime/core/odg-knowledge-[a-z-]+\\.ts$",
+      "^runtime/core/odg-claim-[a-z-]+\\.ts$",
+      "^runtime/core/memory-trust-gate\\.ts$"
+    ],
     "v14_4RadarContracts": "A Radar-stage change is made under a contract anchored on V12.4 I CM-RADAR-GATE-CHAIN / V14.4 phase 1 (fields v124Anchor|v124Link and/or v144Phase), never under a V15.0 campaign contract."
   },
   "numbering": {
@@ -58,78 +174,221 @@
     "addendumMapping": "docs/odg/evidence/V169_V14_4_ADDENDUM_RECONCILIATION.json#comparisonWithRepoV14_4[0].mapping",
     "v150Mapping": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json#consolidatedProposal.phaseMapping",
     "orderingConstraints": [
-      { "id": "ORD-1", "constraint": "mission continuity is established before the number of simultaneous missions is increased", "commonTo": ["V12_4 D CM-V234-CONTINUATION (ACCEPTED)", "V14_4 phase 0 anchor 'D continuity (ACCEPTED)'", "ADDENDUM phase 1", "V15_0 §16 / phase 2"] },
-      { "id": "ORD-2", "constraint": "continuity is placed no later than the Radar phase in every numbering (V14.4 0 ≤ 1; addendum 1 < 5; V15.0 2 < 10)", "checkedBy": "odg-governance-precedence.phaseOrder" }
+      {
+        "id": "ORD-1",
+        "constraint": "mission continuity is established before the number of simultaneous missions is increased",
+        "commonTo": [
+          "V12_4 D CM-V234-CONTINUATION (ACCEPTED)",
+          "V14_4 phase 0 anchor 'D continuity (ACCEPTED)'",
+          "ADDENDUM phase 1",
+          "V15_0 §16 / phase 2"
+        ]
+      },
+      {
+        "id": "ORD-2",
+        "constraint": "continuity is placed no later than the Radar phase in every numbering (V14.4 0 ≤ 1; addendum 1 < 5; V15.0 2 < 10)",
+        "checkedBy": "odg-governance-precedence.phaseOrder"
+      }
     ]
   },
   "resolutions": [
     {
       "id": "CTR-1",
-      "matrixRows": ["V150-S51"],
+      "matrixRows": [
+        "V150-S51"
+      ],
       "conflictingTexts": [
-        { "source": "V15_0", "v150Section": "§51", "field": "quote", "text": "1. V15.0 reste la directive unique de cette campagne." },
-        { "source": "V14_4", "path": "docs/odg/V14_4_ROADMAP.md", "text": "**Status: ADOPTED** as the strategic roadmap by the owner (CTO V372 §2, 2026-11-22), after correction and reconciliation." },
-        { "source": "ADDENDUM", "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md", "text": "**Extension versionnée de V14.4**" }
+        {
+          "source": "V15_0",
+          "v150Section": "§51",
+          "field": "quote",
+          "text": "1. V15.0 reste la directive unique de cette campagne."
+        },
+        {
+          "source": "V14_4",
+          "path": "docs/odg/V14_4_ROADMAP.md",
+          "text": "**Status: ADOPTED** as the strategic roadmap by the owner (CTO V372 §2, 2026-11-22), after correction and reconciliation."
+        },
+        {
+          "source": "ADDENDUM",
+          "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+          "text": "**Extension versionnée de V14.4**"
+        }
       ],
       "responsible": [
-        { "path": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json", "pointer": "requirements[id=V150-S51].relation", "wrongReading": "classified rule 1 as a CONTRADICTION with V14.4 by reading 'directive unique' as precedence over the adopted roadmap, dropping the qualifier 'de cette campagne' and ignoring rule 2 of the same §51" },
-        { "path": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json", "pointer": "topContradictions[id=CTR-1] + consolidatedProposal.ownerDecisionsNeeded[OD-1]" },
-        { "path": "docs/odg/evidence/V174_CHECKPOINT_11.json", "pointer": "v14_4_v15_0.openContradictions[0]", "note": "historical checkpoint snapshot (headAtCheckpoint); left unchanged, superseded by this record" }
+        {
+          "path": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json",
+          "pointer": "requirements[id=V150-S51].relation",
+          "wrongReading": "classified rule 1 as a CONTRADICTION with V14.4 by reading 'directive unique' as precedence over the adopted roadmap, dropping the qualifier 'de cette campagne' and ignoring rule 2 of the same §51"
+        },
+        {
+          "path": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json",
+          "pointer": "topContradictions[id=CTR-1] + consolidatedProposal.ownerDecisionsNeeded[OD-1]"
+        },
+        {
+          "path": "docs/odg/evidence/V174_CHECKPOINT_11.json",
+          "pointer": "v14_4_v15_0.openContradictions[0]",
+          "note": "historical checkpoint snapshot (headAtCheckpoint); left unchanged, superseded by this record"
+        }
       ],
       "rootCause": "Layer confusion. §51 rule 1 ranks V15.0 among CAMPAIGN directives ('de cette campagne'); §51 rule 2 of the same list keeps V12.4 as the canonical Boussole until formal succession; V14.4 is the ADOPTED roadmap that organises the execution of V12.4. A campaign directive and a roadmap are different layers, so the texts do not compete — the matrix compared them as if they did.",
       "resolution": "RESOLVED_BY_PRECEDENCE (PREC-1 + SCOPE-1): V15.0 is the single directive OF the V15.0 campaign — binding only V15.0-campaign contracts — and, being PROPOSED, never outranks V12.4, V14.4 or the addendum. No owner text is edited. Formal adoption of V15.0 (OD-1) remains an owner decision but is not a contradiction.",
       "ownerChoiceNeeded": false,
       "matrixRelationAfter": "COMMON",
-      "regressionTest": "runtime/core/odg-governance-precedence.test.ts#CTR-1"
+      "regressionTest": "runtime/core/odg-governance-precedence.test.ts#CTR-1",
+      "status": "RESOLVED_BY_PRECEDENCE"
     },
     {
       "id": "CTR-2",
-      "matrixRows": ["V150-S38", "V150-S13"],
+      "matrixRows": [
+        "V150-S38",
+        "V150-S13"
+      ],
       "conflictingTexts": [
-        { "source": "V15_0", "v150Section": "§38", "field": "quote", "text": "**Rappel impératif : le Radar existant ne doit subir aucune modification dans cette campagne.**" },
-        { "source": "V15_0", "v150Section": "§47", "field": "quote", "text": "Le Radar reste inchangé." },
-        { "source": "V14_4", "path": "docs/odg/V14_4_ROADMAP.md", "text": "Step 1 (branch `feat/cm-radar-gate-chain-step1`) **extends** that same module with the *executed* data path (acquire → admit → reuse → gate). It is not a duplicate." },
-        { "source": "V14_4", "path": "docs/odg/V14_4_LOT_PLAN_AND_RADAR_AUDIT.md", "text": "G4 corroborate the 5 statements via verified independent public domains (grant additions, per-collection overlap check)" },
-        { "source": "V165", "path": "docs/odg/V165_OWNER_AUTHORIZATION.json", "text": "J'autorise ODG à développer et utiliser largement le Radar pour rechercher les meilleures technologies, architectures, méthodes et pratiques mondiales." },
-        { "source": "ADDENDUM", "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md", "text": "Le Radar existant doit alimenter cette boucle d'amélioration." }
+        {
+          "source": "V15_0",
+          "v150Section": "§38",
+          "field": "quote",
+          "text": "**Rappel impératif : le Radar existant ne doit subir aucune modification dans cette campagne.**"
+        },
+        {
+          "source": "V15_0",
+          "v150Section": "§47",
+          "field": "quote",
+          "text": "Le Radar reste inchangé."
+        },
+        {
+          "source": "V14_4",
+          "path": "docs/odg/V14_4_ROADMAP.md",
+          "text": "Step 1 (branch `feat/cm-radar-gate-chain-step1`) **extends** that same module with the *executed* data path (acquire → admit → reuse → gate). It is not a duplicate."
+        },
+        {
+          "source": "V14_4",
+          "path": "docs/odg/V14_4_LOT_PLAN_AND_RADAR_AUDIT.md",
+          "text": "G4 corroborate the 5 statements via verified independent public domains (grant additions, per-collection overlap check)"
+        },
+        {
+          "source": "V165",
+          "path": "docs/odg/V165_OWNER_AUTHORIZATION.json",
+          "text": "J'autorise ODG à développer et utiliser largement le Radar pour rechercher les meilleures technologies, architectures, méthodes et pratiques mondiales."
+        },
+        {
+          "source": "ADDENDUM",
+          "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+          "text": "Le Radar existant doit alimenter cette boucle d'amélioration."
+        }
       ],
       "responsible": [
-        { "path": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json", "pointer": "requirements[id=V150-S38].relation + topContradictions[id=CTR-2] + consolidatedProposal.phaseMapping[1].blockedBy + ownerDecisionsNeeded[OD-3]", "wrongReading": "read §38/§47 as a repository-wide freeze competing with V14.4 phase 1 and V165, instead of a clause scoped to 'cette campagne'; left 'Radar' undefined although V14.4 §2 names the stages" },
-        { "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json", "pointer": "sectionsStatus[§13/§38/§47] REVIEW flag on #911", "note": "historical assessment at 4f4fceb2; left unchanged, answered by RADAR-1 + Q-CTR2" },
-        { "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json", "pointer": "contracts[*].WORK_ITEM_CONTRACT.scope", "note": "CORRECT reading already encoded for V15.0-campaign items ('no Radar code/grant change' / 'no change to canonical modules'); now enforced by the regression test" }
+        {
+          "path": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json",
+          "pointer": "requirements[id=V150-S38].relation + topContradictions[id=CTR-2] + consolidatedProposal.phaseMapping[1].blockedBy + ownerDecisionsNeeded[OD-3]",
+          "wrongReading": "read §38/§47 as a repository-wide freeze competing with V14.4 phase 1 and V165, instead of a clause scoped to 'cette campagne'; left 'Radar' undefined although V14.4 §2 names the stages"
+        },
+        {
+          "path": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+          "pointer": "sectionsStatus[§13/§38/§47] REVIEW flag on #911",
+          "note": "historical assessment at 4f4fceb2; left unchanged, answered by RADAR-1 + Q-CTR2"
+        },
+        {
+          "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+          "pointer": "contracts[*].WORK_ITEM_CONTRACT.scope",
+          "note": "CORRECT reading already encoded for V15.0-campaign items ('no Radar code/grant change' / 'no change to canonical modules'); now enforced by the regression test"
+        }
       ],
       "rootCause": "Missing scope binding. 'dans cette campagne' limits §38 to V15.0-campaign work items, while the Radar extension (WIC-CM-RADAR-GATE-CHAIN-STEP1, V372) and Radar development (V165) are authorized under V12.4 I / V14.4 phase 1 contracts, outside that campaign. Nothing checked which contract a Radar change belonged to, so every Radar change looked like a breach of §38.",
-      "resolution": "RESOLVED_BY_SCOPE (SCOPE-1 + RADAR-1): §38/§47 are preserved in full for every V15.0-campaign contract (no Radar-stage path in its write_set; scope must exclude Radar change). Radar-stage changes are legitimate only under contracts anchored on V12.4 I / V14.4 phase 1. #911 (runtime/core/odg-knowledge-intelligence.ts, FRAGMENT citations capped at CANDIDATE — a stricter, fail-closed qualification rule) is KNOWLEDGE_STAGE under RADAR-1, hence not a §38 modification under the interim; it is not reverted.",
+      "resolution": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2 (SCOPE-1 resolved by precedence; RADAR-1 is a PROVIDER derivation of what V150_TRACEABILITY_MATRIX recorded as an owner interpretation question): §38/§47 are preserved in full for every V15.0-campaign contract (no Radar-stage path in its write_set; scope must exclude Radar change). Radar-stage changes are legitimate only under contracts anchored on V12.4 I / V14.4 phase 1. #911 (runtime/core/odg-knowledge-intelligence.ts, FRAGMENT citations capped at CANDIDATE — a stricter, fail-closed qualification rule) is KNOWLEDGE_STAGE under RADAR-1, hence not a §38 modification under the interim; it is not reverted.",
       "ownerChoiceNeeded": true,
       "interim": "RADAR-1 stage boundary (least disruptive: preserves §38 for campaign items, keeps the V372/V165-authorized Radar work, does not revert a fail-closed fix). Past additions of new versioned grant files and new Radar modules during the campaign are NOT re-adjudicated here.",
-      "matrixRelationAfter": "IMPROVEMENT",
-      "regressionTest": "runtime/core/odg-governance-precedence.test.ts#CTR-2"
+      "matrixRelationAfter": "CONTRADICTION (kept until Q-CTR2 is answered; row carries precedence.status = RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2)",
+      "regressionTest": "runtime/core/odg-governance-precedence.test.ts#CTR-2",
+      "status": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2"
     },
     {
       "id": "CTR-4",
-      "matrixRows": ["V150-S16", "V150-S30"],
+      "matrixRows": [
+        "V150-S16",
+        "V150-S30"
+      ],
       "conflictingTexts": [
-        { "source": "V15_0", "v150Section": "§16", "field": "quote", "text": "La continuité est une fondation préalable à l'augmentation du nombre de missions simultanées." },
-        { "source": "V15_0", "v150Section": "§30", "field": "title", "text": "30. PHASE 2 — CONTINUITÉ ET RECOVERY" },
-        { "source": "V15_0", "v150Section": "§38", "field": "title", "text": "6. PHASE 10 — §38 — RADAR ET FRONTIER LAB" },
-        { "source": "V14_4", "path": "docs/odg/V14_4_ROADMAP.md", "text": "| 0 Truth & foundations | checkpoint + classification + correspondence merged | C `CM-V237-REPO-VPS-MAP` (READY), D continuity (ACCEPTED) |" },
-        { "source": "V14_4", "path": "docs/odg/V14_4_ROADMAP.md", "text": "| 1 Radar & knowledge |" },
-        { "source": "ADDENDUM", "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md", "text": "### Phase 1 — Continuité vérifiable" },
-        { "source": "ADDENDUM", "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md", "text": "### Phase 5 — Radar et recherche mondiale" },
-        { "source": "ADDENDUM", "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md", "text": "Les phases ne doivent pas devenir une séquence artificiellement rigide : les travaux indépendants peuvent progresser en parallèle lorsque cela accélère réellement et ne crée pas de conflit." }
+        {
+          "source": "V15_0",
+          "v150Section": "§16",
+          "field": "quote",
+          "text": "La continuité est une fondation préalable à l'augmentation du nombre de missions simultanées."
+        },
+        {
+          "source": "V15_0",
+          "v150Section": "§30",
+          "field": "title",
+          "text": "30. PHASE 2 — CONTINUITÉ ET RECOVERY"
+        },
+        {
+          "source": "V15_0",
+          "v150Section": "§38",
+          "field": "title",
+          "text": "6. PHASE 10 — §38 — RADAR ET FRONTIER LAB"
+        },
+        {
+          "source": "V14_4",
+          "path": "docs/odg/V14_4_ROADMAP.md",
+          "text": "| 0 Truth & foundations | checkpoint + classification + correspondence merged | C `CM-V237-REPO-VPS-MAP` (READY), D continuity (ACCEPTED) |"
+        },
+        {
+          "source": "V14_4",
+          "path": "docs/odg/V14_4_ROADMAP.md",
+          "text": "| 1 Radar & knowledge |"
+        },
+        {
+          "source": "ADDENDUM",
+          "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+          "text": "### Phase 1 — Continuité vérifiable"
+        },
+        {
+          "source": "ADDENDUM",
+          "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+          "text": "### Phase 5 — Radar et recherche mondiale"
+        },
+        {
+          "source": "ADDENDUM",
+          "path": "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+          "text": "Les phases ne doivent pas devenir une séquence artificiellement rigide : les travaux indépendants peuvent progresser en parallèle lorsque cela accélère réellement et ne crée pas de conflit."
+        }
       ],
       "responsible": [
-        { "path": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json", "pointer": "requirements[id=V150-S16|V150-S30].alsoRelations + topContradictions[id=CTR-4] + consolidatedProposal.phaseMapping[3].blockedBy + ownerDecisionsNeeded[OD-2]", "wrongReading": "read V14.4 as 'Radar first' although its own phase 0 anchors D continuity (ACCEPTED), and read the three phase lists as rival strict sequences although V14.4 states no sequencing and the addendum forbids a rigid one" }
+        {
+          "path": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json",
+          "pointer": "requirements[id=V150-S16|V150-S30].alsoRelations + topContradictions[id=CTR-4] + consolidatedProposal.phaseMapping[3].blockedBy + ownerDecisionsNeeded[OD-2]",
+          "wrongReading": "read V14.4 as 'Radar first' although its own phase 0 anchors D continuity (ACCEPTED), and read the three phase lists as rival strict sequences although V14.4 states no sequencing and the addendum forbids a rigid one"
+        }
       ],
       "rootCause": "Numbering read as sequence. The three texts number different axes (V14.4 program track, addendum continuity sub-track, V15.0 campaign phases). Each of them places continuity before the Radar (V14.4 phase 0 ∋ D continuity, addendum 1 < 5, V15.0 2 < 10), and V15.0 §16 orders continuity before the increase of simultaneous missions — which V14.4 places in phase 3, after phase 0.",
       "resolution": "RESOLVED_BY_PRECEDENCE (NUM-1 + ORD-1/ORD-2): one numbering of record (V14.4), two mapped sub-numberings, and one common ordering constraint (continuity before concurrency increase; continuity no later than Radar). Order among independent phases = ODG selection under owner arbitration. No owner text is edited.",
       "ownerChoiceNeeded": false,
       "matrixRelationAfter": "COMMON",
-      "regressionTest": "runtime/core/odg-governance-precedence.test.ts#CTR-4"
+      "regressionTest": "runtime/core/odg-governance-precedence.test.ts#CTR-4",
+      "status": "RESOLVED_BY_PRECEDENCE"
     }
   ],
   "ownerQuestions": [
-    { "id": "Q-CTR2", "question": "For V15.0 §38 « le Radar existant ne doit subir aucune modification dans cette campagne » and §47 « Le Radar reste inchangé » : does 'le Radar existant' cover only the Radar stage (discovery/collection, governor, transport, allowlists, grants — interim RADAR-1), or also the knowledge-qualification stage (runtime/core/odg-knowledge-*, e.g. #911)? And inside a V15.0-campaign item, does adding a NEW versioned grant file or a NEW Radar module count as a modification?", "interimApplied": "RADAR-1", "blocking": false }
+    {
+      "id": "Q-CTR2",
+      "question": "For V15.0 §38 « le Radar existant ne doit subir aucune modification dans cette campagne » and §47 « Le Radar reste inchangé » : does 'le Radar existant' cover only the Radar stage (discovery/collection, governor, transport, allowlists, grants — interim RADAR-1), or also the knowledge-qualification stage (runtime/core/odg-knowledge-*, e.g. #911)? And inside a V15.0-campaign item, does adding a NEW versioned grant file or a NEW Radar module count as a modification?",
+      "interimApplied": "RADAR-1",
+      "blocking": true,
+      "answer": null,
+      "blockingRule": "Q-CTR2-BLOCK: while answer is null, any V15.0-campaign contract whose write_set holds a KNOWLEDGE_STAGE path (radarScope.knowledgeStagePatterns, e.g. runtime/core/odg-knowledge-*) is BLOCKED (validator: checkRadarScope). Not retroactive: #911 stays, not reverted, under the interim."
+    }
   ],
-  "notTouched": ["docs/odg/V15_0_MASTER_DIRECTIVE.md", "docs/odg/V14_4_ROADMAP.md", "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md", "docs/odg/V14_4_LOT_PLAN_AND_RADAR_AUDIT.md", "docs/odg/v124-consolidated-roadmap.json", "runtime/governance/ROADMAP.json", "docs/odg/closure-register.json", "docs/odg/V165_OWNER_AUTHORIZATION.json", "docs/odg/evidence/V174_CHECKPOINT_11.json", "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json"]
+  "notTouched": [
+    "docs/odg/V15_0_MASTER_DIRECTIVE.md",
+    "docs/odg/V14_4_ROADMAP.md",
+    "docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md",
+    "docs/odg/V14_4_LOT_PLAN_AND_RADAR_AUDIT.md",
+    "docs/odg/v124-consolidated-roadmap.json",
+    "runtime/governance/ROADMAP.json",
+    "docs/odg/closure-register.json",
+    "docs/odg/V165_OWNER_AUTHORIZATION.json",
+    "docs/odg/evidence/V174_CHECKPOINT_11.json",
+    "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json"
+  ]
 }

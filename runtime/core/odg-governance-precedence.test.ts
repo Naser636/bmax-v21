@@ -27,6 +27,14 @@ function main() {
     { id: "synthetic-unanchored", v150Campaign: false, scope: "", writeSet: ["runtime/core/research-governor.ts"], anchored: false },
   ]);
   check("CTR-2 guard is not vacuous (re-introduced contradiction ⇒ 3 violations)", reintro.length === 3, reintro);
+  // Q-CTR2 is BLOCKING: a future V15.0-campaign contract writing the knowledge stage is refused while unanswered; not otherwise
+  const kw = { id: "synthetic-v150-knowledge", v150Campaign: true, scope: "internal only; no Radar code/grant change", writeSet: ["runtime/core/odg-knowledge-intelligence.ts"], anchored: false };
+  const blocked = G.checkRadarScope(rec, undefined, [kw]);
+  const answered = { ...rec, ownerQuestions: rec.ownerQuestions.map((q: any) => (q.id === "Q-CTR2" ? { ...q, answer: "owner answer (synthetic)" } : q)) };
+  const nonCampaign = G.checkRadarScope(rec, undefined, [{ ...kw, id: "synthetic-v124", v150Campaign: false }]);
+  check("CTR-2 Q-CTR2-BLOCK: V15.0-campaign knowledge-stage write BLOCKED while unanswered; lifted once answered; non-campaign unaffected", blocked.length === 1 && /BLOCKED by Q-CTR2/.test(blocked[0]) && G.checkRadarScope(answered, undefined, [kw]).length === 0 && nonCampaign.length === 0, { blocked, nonCampaign });
+  const r2 = rec.resolutions.find((x: any) => x.id === "CTR-2");
+  check("CTR-2 interim is never presented as plainly RESOLVED (status INTERIM pending Q-CTR2, Q-CTR2 blocking, owner record quoted)", r2.ownerChoiceNeeded === true && r2.status === "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2" && rec.ownerQuestions[0].blocking === true && rec.authority.record === "docs/odg/V175_OWNER_DIRECTIVE_REPRISE_IMMEDIATE.json" && rec.authority.quotes.length === 4);
 
   // CTR-4 — ordering continuity-first vs Radar-first; three numberings
   const po = G.phaseOrder();

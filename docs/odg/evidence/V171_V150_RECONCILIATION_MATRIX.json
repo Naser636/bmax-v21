@@ -946,7 +946,8 @@
     "record": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
     "resolution": "CTR-2",
     "rule": "SCOPE-1 + RADAR-1",
-    "relationBeforeV175": "IMPROVEMENT"
+    "relationBeforeV175": "IMPROVEMENT",
+    "status": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2"
    }
   },
   {
@@ -2180,7 +2181,7 @@
     "addendum": "§27 'Le Radar existant doit alimenter cette boucle'",
     "v12_4": "I CM-RADAR-GATE-CHAIN (READY)"
    },
-   "relation": "IMPROVEMENT",
+   "relation": "CONTRADICTION",
    "implementationState": "USED",
    "statePointers": [
     {
@@ -2200,19 +2201,20 @@
     "status": "PARTIALLY_VALIDATED",
     "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§38] (assessment at 4f4fceb2, 2026-11-23)"
    },
-   "note": "V15.0 §38: 'le Radar existant ne doit subir aucune modification dans cette campagne'. V14.4 phase 1 / V12.4 I extends the Radar gate chain and lot B proposes grant additions; #911 changed odg-knowledge-intelligence.ts (REVIEW flag in V150_TRACEABILITY_MATRIX §13). Scope of 'Radar' is undefined. V175: RESOLVED at source — §38/§47 bind V15.0-campaign contracts only (no Radar-stage write, scope excludes Radar change: enforced by odg-governance-precedence); Radar-stage work runs under V12.4 I / V14.4 phase-1 contracts (V372 step 1, V165 Radar authorization). 'Radar' = Radar stage of the canonical chain Radar→knowledge→memory→decision (RADAR-1 interim); #911 = knowledge stage, not reverted. Owner question Q-CTR2 (scope confirmation) is non-blocking.",
+   "note": "V15.0 §38: 'le Radar existant ne doit subir aucune modification dans cette campagne'. V14.4 phase 1 / V12.4 I extends the Radar gate chain and lot B proposes grant additions; #911 changed odg-knowledge-intelligence.ts (REVIEW flag in V150_TRACEABILITY_MATRIX §13). Scope of 'Radar' is undefined. V175: RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2 (precedence part resolved at source) — §38/§47 bind V15.0-campaign contracts only (no Radar-stage write, scope excludes Radar change: enforced by odg-governance-precedence); Radar-stage work runs under V12.4 I / V14.4 phase-1 contracts (V372 step 1, V165 Radar authorization). 'Radar' = Radar stage of the canonical chain Radar→knowledge→memory→decision (RADAR-1 interim); #911 = knowledge stage, not reverted. Owner question Q-CTR2 is BLOCKING for any future V15.0-campaign contract writing odg-knowledge-* (validator-enforced); #911 not reverted under the interim.",
    "openGaps": [
     "knowledge transformed into a used internal improvement with before/after gain: not shown"
    ],
    "dependencies": [
-    "owner (non-blocking): confirm RADAR-1 scope — Q-CTR2 in docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json"
+    "owner (BLOCKING for V15.0-campaign knowledge-stage writes): confirm RADAR-1 scope — Q-CTR2 in docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json"
    ],
    "uniqueToV150": false,
    "precedence": {
     "record": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
     "resolution": "CTR-2",
     "rule": "SCOPE-1 + RADAR-1 (interim; owner question Q-CTR2)",
-    "relationBeforeV175": "CONTRADICTION"
+    "relationBeforeV175": "CONTRADICTION",
+    "status": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2"
    }
   },
   {
@@ -3744,9 +3746,9 @@
   "requirements": 72,
   "byRelation": {
    "COMMON": 37,
-   "IMPROVEMENT": 24,
+   "IMPROVEMENT": 23,
    "GAP": 7,
-   "CONTRADICTION": 1,
+   "CONTRADICTION": 2,
    "DUPLICATE": 3
   },
   "rowsWithDependencies": 24,
@@ -3867,9 +3869,9 @@
     "V150-S13"
    ],
    "what": "§38 'le Radar existant ne doit subir aucune modification dans cette campagne' vs V14.4 phase 1 / V12.4 I extending odg-radar-gate-chain, lot B grant additions, #911 change to odg-knowledge-intelligence.ts",
-   "currentResolution": "RESOLVED_BY_SCOPE — §38/§47 bind V15.0-campaign contracts only; Radar-stage work under V12.4 I / V14.4 phase-1 contracts; RADAR-1 stage boundary is an INTERIM pending owner question Q-CTR2 (non-blocking)",
+   "currentResolution": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2 — §38/§47 bind V15.0-campaign contracts only (SCOPE-1, resolved); the Radar-stage boundary RADAR-1 is a provider interim; Q-CTR2 BLOCKS V15.0-campaign writes to odg-knowledge-* until answered",
    "currentResolutionBeforeV175": "none — scope of 'Radar' undefined",
-   "state": "RESOLVED_AT_SOURCE",
+   "state": "RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2",
    "resolvedBy": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json"
   },
   {
@@ -4080,7 +4082,7 @@
   "ownerDecisionsNeeded": [
    "OD-1: V15.0 status — successor of V14.4, or a requirements set integrated into V14.4 phases as proposed here (resolves CTR-1); V12.4 stays canonical either way — V175: the CTR-1 contradiction is resolved by precedence (V175_GOVERNANCE_PRECEDENCE.json); adoption itself remains this owner decision",
    "OD-2: phase ordering — continuity first (V15.0 §16 + addendum) vs V14.4 order (CTR-4) — V175: RESOLVED by precedence (NUM-1/ORD-1/ORD-2); owner arbitration of order between independent missions stays available",
-   "OD-3: scope of 'Radar unchanged' (§38) vs V14.4 phase 1 Radar extension and lot B grant additions; status of #911 (CTR-2) — V175: precedence part RESOLVED (SCOPE-1); remaining owner question = Q-CTR2 (Radar scope confirmation), interim RADAR-1",
+   "OD-3: scope of 'Radar unchanged' (§38) vs V14.4 phase 1 Radar extension and lot B grant additions; status of #911 (CTR-2) — V175: precedence part RESOLVED (SCOPE-1); remaining BLOCKING owner question = Q-CTR2 (Radar scope), interim RADAR-1",
    "OD-4: (mostly settled by the owner V171 portfolio authorization for internal work, with a WORK_ITEM_CONTRACT per mission) remaining: confirm whether V15.0 §47 is to be read as that V171 mandate; provider spend ceiling stays open (OD-7)",
    "OD-5: provide the V14.4 master text §1–§19, a signed V15.0 text and the V17.0 programme text (all comparisons with them stay NOT_MEASURED)",
    "OD-6: (internal work on ODG-selected missions, J included, now authorized by owner V171; each still needs its WORK_ITEM_CONTRACT) remaining: external / provider-spend steps of A–P contracts stay unauthorized",
@@ -4099,7 +4101,7 @@
   "v175PrecedenceAmendment": {
    "record": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
    "date": "2026-11-24",
-   "what": "rows V150-S13/S16/S30/S38/S51, topContradictions CTR-1/2/4, phaseMapping blockedBy, OD-1/2/3 and counts updated to the V175 precedence resolution; prior values kept in *BeforeV175 fields",
+   "what": "rows V150-S13/S16/S30/S38/S51, topContradictions CTR-1/2/4, phaseMapping blockedBy, OD-1/2/3 and counts updated to the V175 precedence resolution; prior values kept in *BeforeV175 fields; CTR-2 rows S13/S38 keep their relation with precedence.status = RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2 (inspection #974 MED)",
    "codeTouched": "runtime/core/odg-governance-precedence.ts (validator, new) + its test",
    "ownerTextsModified": false
   }
