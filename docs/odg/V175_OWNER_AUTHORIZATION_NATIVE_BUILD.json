@@ -1,0 +1,26 @@
+{
+  "//": "OWNER authorization record — verbatim transcription of the owner directive 'CTO — DIRECTIVE DE REPRISE IMMÉDIATE — V14.4 / V15.0 — BRAIN, NATIVE AUTONOMY & EXECUTION SPEED' (2026-11-24) by the PROVIDER (Claude Code, V17.5 NB1 GO-path session), relayed by the coordinating session. Grants NOTHING beyond the quoted text. Bound to scenario V175-NB1 only (odg-authorization-scope OWNER_SOURCES).",
+  "schema": "odg-owner-authorization/1",
+  "directive": "CTO — DIRECTIVE DE REPRISE IMMÉDIATE — V14.4 / V15.0 — BRAIN, NATIVE AUTONOMY & EXECUTION SPEED",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "transcribedBy": "PROVIDER (Claude Code) — verbatim quotes; the scope/machineNote fields below are provider reading, not owner text",
+  "quote": [
+    "Le propriétaire autorise ODG à poursuivre sans nouvelle demande pour chaque décision technique ordinaire :",
+    "développer et tester la boucle d'ingénierie native d'ODG ;",
+    "modifier les composants et contrats internes concernés ;",
+    "Faire évoluer GO pour qu'ODG puisse réellement : identifier un défaut dans son propre système ; définir une modification ciblée ; produire ou modifier du code avec ses capacités locales ; lancer les tests ; analyser les échecs ; corriger ; vérifier le résultat ; proposer et réaliser l'intégration autorisée.",
+    "Objectif : obtenir une première construction logicielle réellement produite par ODG lui-même, et non simplement par Claude Code.",
+    "Ne pas confondre pilotage d'un agent et construction native.",
+    "Aucun déploiement ni changement de production."
+  ],
+  "scope": {
+    "item": "V175-NB1 only",
+    "capability": "ODG local model only (Ollama 127.0.0.1:11434); 0 provider calls",
+    "spend": "€0",
+    "nativeWriteSet": ["runtime/core/odg-canonical-json.ts", "runtime/core/odg-canonical-json.test.ts"],
+    "integration": "via normal PR controls (the run produces a branch-ready diff; it writes into no checkout)",
+    "notGranted": "deployment, production, VPS/SSH/systemd/sudo, secrets, external network, provider spend, métiers, ROADMAP.json / V12.4 / selector weights or thresholds"
+  },
+  "machineNote": "provider reading (not owner text): contract V160_AP_WORK_ITEM_CONTRACTS.json#V175-NB1 carries an authorization block citing this record and follows the scoped sequence REVISE_CONTRACT → INSPECT_REVISED_CONTRACT → RUN_CONTROLLED_EXPERIMENTS → VALIDATE_CRITERIA; RUN is derived only after an independent inspection ACCEPT (docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json)"
+}
