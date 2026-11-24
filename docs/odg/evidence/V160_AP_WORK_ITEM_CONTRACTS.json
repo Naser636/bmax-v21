@@ -669,8 +669,8 @@
         "objective": "After a repetitive-failure stop, execute an alternative strategy and measure it against the original",
         "scope": "internal ODG repo only; no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change",
         "write_set": [
-          "docs/odg/evidence/V160_SCENARIO_J.json",
-          "runtime/bin/odg-v160-scenario-j-run.ts"
+          "runtime/bin/odg-v176-scenario-j-run.ts",
+          "docs/odg/evidence/V176_J_EXPERIMENT.json"
         ],
         "authorized_symbols": [],
         "invariants": [
@@ -696,7 +696,105 @@
           "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/NOT_MEASURED",
           "independent inspection verdict on the exact head",
           "CI green on the exact head"
-        ]
+        ],
+        "preRegistration": {
+          "registeredAt": "2026-11-24 (branch feat/v176-j-revision; no V176 J run exists at registration; V161_SCENARIO_J.json and J2's results are known — see contamination)",
+          "kind": "REPLICATION of J's own protocol (V161 runner runTrial, unchanged) at the current head — NOT a new hypothesis",
+          "question": "J's original question, unchanged (ownerText + objective): « ODG détecte une stratégie inefficace, arrête les tentatives répétitives, construit une alternative et mesure le résultat. » — after a repetitive-failure stop, execute an alternative strategy and measure it against the original",
+          "criteria": {
+            "rule": "J's ORIGINAL acceptance_criteria, VERBATIM and unchanged; operationalized below exactly as the CP8 grading read them (docs/odg/evidence/V163_CHECKPOINT_8.json scenarios.J.criteria)",
+            "C1": {
+              "text": "stop triggered by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
+              "operationalization": "MET iff ≥1 row where the default's ODG stop (native-project-builder repairStopReason) is NO_PROGRESS_IDENTICAL_REGENERATION or starts with NO_QUALIFIED AND the rule-selected alternative was EXECUTED on that row. REPAIR_BUDGET_EXHAUSTED is an ODG stop that triggers the alternative (V161 rule R2) but does NOT meet C1 as worded (CP8: « NOT MET as worded for the trigger »). The policy decision NO_QUALIFIED_LOCAL_MODEL and NO_PROGRESS inside an alternative are REPORTED only (CP8 did not count them)."
+            },
+            "C2": {
+              "text": "alternative (decomposition / different model / repair depth) actually executed",
+              "operationalization": "MET iff ≥1 row has an ODG stop and EVERY row whose default was stopped by an ODG stop (NO_PROGRESS_IDENTICAL_REGENERATION / REPAIR_BUDGET_EXHAUSTED) has its rule-selected alternative (DECOMPOSED_INTERMEDIATE_VERIFICATION or LARGER_MODEL_REPAIR_DEPTH) with executionStatus EXECUTED in the sandbox"
+            },
+            "C3": {
+              "text": "outcome compared on the same task and recorded with n",
+              "operationalization": "MET iff ≥1 row has an executed alternative and every such row records a boolean whole-task verdict for BOTH default and alternative (same task, same seed, same ORIGINAL whole-task test); counts reported with n per task and overall"
+            }
+          },
+          "dataset": {
+            "tasks": [
+              "v159-implement-parse-range",
+              "rle-codec",
+              "csv-typed-validator",
+              "range-clamp-pipeline"
+            ],
+            "trialsPerTask": 2,
+            "source": "exactly the V161 task set and trials (runtime/bin/odg-v161-scenario-j-run.ts buildTasks; HARD_TASKS from runtime/bin/native-hard-corpus.ts)",
+            "pins": [
+              {
+                "file": "runtime/bin/odg-v161-scenario-j-run.ts",
+                "sha256": "edbc0df55f133902015d2a0f4506756b9ad4697a8948d2cd0ca9d6bb93904ab9",
+                "use": "J's protocol (runTrial, buildTasks, summarize, ALTERNATIVE_RULE) — imported, not modified"
+              },
+              {
+                "file": "runtime/bin/native-hard-corpus.ts",
+                "sha256": "2ad9fca555d1678c3031f097c0e3929d846e80670209c4b2dadb37b34e18e250",
+                "use": "task definitions + original whole-task tests (oracles)"
+              },
+              {
+                "file": "docs/odg/evidence/V161_SCENARIO_J.json",
+                "sha256": "11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff",
+                "use": "prior result (baseline + replication prediction) — never written"
+              },
+              {
+                "file": "runtime/bin/odg-v176-scenario-j-run.ts",
+                "sha256": "064c45c51438dc04b05314a6a35f767cdd2f12d03bd9f3cd82f68f636c693de1",
+                "use": "this runner (any edit after inspection ⇒ pin mismatch ⇒ NOT_MEASURED)"
+              }
+            ],
+            "refusal": "the runner records NOT_MEASURED (no trial) if any pinned sha256 differs at run time"
+          },
+          "decoding": {
+            "temperature": 0,
+            "seed": 42,
+            "num_predict": 600,
+            "note": "= V161 OPTIONS; seed/temperature forced on every request by the guard, as V161's loopbackFetch did"
+          },
+          "metric": "per row: default and alternative whole-task independent-test verdicts (same task, same seed), ODG stop name, selected strategy, executionStatus, model calls; aggregate: pass counts default vs alternative with n (V161 summarize, unchanged); grade = C1 ∧ C2 ∧ C3 per the decision rule",
+          "baseline": "docs/odg/evidence/V161_SCENARIO_J.json (pinned): default 0/8, alternative 0/8, all 8 default stops REPAIR_BUDGET_EXHAUSTED, CP8 grade PARTIAL (C1 not met as worded); J2 (post-#940 decomposed + escalated tier, 7 held-out tasks) CLOSED_FAIL",
+          "hypothesis": {
+            "main": "H-REP (fixed now, REPORT-ONLY prediction — never changes the grade): the V161 pattern is reproduced at the current head — outcome PARTIAL, 0 default passes, 0 alternative passes",
+            "refutedIf": "a measured run (outcome ≠ NOT_MEASURED) differs in outcome or in either pass count",
+            "note": "J's criteria grade the failure LOOP (stop → alternative executed → compared), not a win of the alternative; no gain is claimed whatever the counts"
+          },
+          "decisionRule": "outcome = first matching of NOT_MEASURED, PASS, PARTIAL, FAIL per thresholds, evaluated mechanically by gradeRows on the recorded rows; no change of tasks, trials, seeds, caps, oracle, rule or criteria after any run; one execution; no re-run to obtain a different outcome",
+          "thresholds": {
+            "NOT_MEASURED": "any pinned sha256 differs; OR HOST-1 busy at start; OR sandbox probe fails; OR grader self-test fails; OR either local model (qwen2.5-coder:3b, :7b) absent / Ollama unreachable; OR a non-allowlisted request was attempted; OR any cap hit; OR fewer rows than tasks × trialsPerTask (8); OR any row without a clean sandbox verdict (default or alternative NOT_RUN, selection NOT_RUN, a transport error or cap during the row)",
+            "PASS": "C1 ∧ C2 ∧ C3 met",
+            "PARTIAL": "C2 ∧ C3 met, C1 not met as worded",
+            "FAIL": "measured, but C2 or C3 not met"
+          },
+          "caps": {
+            "maxRunWallMs": 10800000,
+            "perTrialWallMs": 2400000,
+            "maxModelCallsTotal": 200,
+            "perCallTimeoutMs": 300000,
+            "hostIdleFactor": 0.75,
+            "basis": "V161 measured: 106 model calls, ~65 min total, max trial ~1.58 M ms (parse-range); perCallTimeoutMs = V161's generator timeout; hostIdleFactor = NB2's HOST-1",
+            "note": "hard caps; a hit stops further calls (guard), the run is NOT_MEASURED; no unbounded loop. GO-DTO-1 dispatch timeout = maxRunWallMs + 120000"
+          },
+          "hostRule": "HOST-1 (odg-native-design-pipeline.hostLoad): loadavg-1m > nproc × hostIdleFactor at start ⇒ the runner does NOT start (exit 5, no claim, nothing written); the reading is recorded in the result",
+          "oneShot": "single initial execution: (a) ALREADY_RECORDED if docs/odg/evidence/V176_J_EXPERIMENT.json exists (exit 4); (b) ALREADY_CLAIMED if any <16hex>-J.claim / <16hex>-J-runner.claim exists in <git common dir>/odg-go-claims (exit 4); (c) O_EXCL claim <contractSha256[0..16]>-J-runner.claim created right before the first trial (odg-go.makeClaimStore; never deleted) ⇒ a failed or killed run stays claimed; a re-run needs a NEW owner decision",
+          "network": "exact allowlist: POST http://127.0.0.1:11434/api/generate, GET http://127.0.0.1:11434/api/tags (model presence) — node:http loopbackFetch (scenario F); 0 provider calls; escalation = in-memory sovereign-delegation records in CREATED state only (V161 behaviour)",
+          "isolation": "model-generated code runs only in the bwrap native-build sandbox (native-project-builder default; probe required before any trial)",
+          "contamination": {
+            "known": "V161 rows and summary (0/8 vs 0/8), the CP8 J grading, J2's protocol and CLOSED_FAIL result are known to the reviser; no V176 J output exists",
+            "notLookedAt": "no model was run for this revision; the runner tests use a FAKE model only"
+          },
+          "honestLimits": [
+            "replication, not a new hypothesis: same tasks, trials, decoding and rule as V161; canonical modules changed since V161 (#940 decomposed-execution / repair fixes) ⇒ a difference vs V161 is attributable to the head, not isolated",
+            "n small (4 tasks × 2 trials), temperature 0 ⇒ near-repeats; no statistical claim",
+            "C1 as worded is unlikely to be met by the V161 protocol (its defaults stop on REPAIR_BUDGET_EXHAUSTED at maxRepair 1) — predicted PARTIAL; criteria are NOT changed to make it reachable",
+            "not equal-information (decomposed alternative uses per-module task-author oracles; disclosed in V161 honestLimits)",
+            "task oracles authored by the provider; shared host ⇒ wall time confounded",
+            "VERIFIED in-repo ≠ DEPLOYED"
+          ]
+        }
       },
       "authorization": {
         "by": "OWNER",
@@ -711,7 +809,17 @@
         ],
         "executionAuthorized": false,
         "executionCondition": "ONE single initial execution (« Une seule exécution initiale »), only « dès que les conditions requises sont conformes »: the contract revised with a preRegistration (R2), an independent inspection ACCEPT bound to the revised contract sha recorded (R3), a declared authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS ⊆ write_set (GO-DT-1) with caps (GO-DTO-1); internal repo, €0, loopback Ollama only, 0 provider / paid calls, no production deployment, no external commitment (« Aucun déploiement en production, dépense, engagement externe ou appel payant non autorisé. »); result recorded honestly (PASS/PARTIAL/FAIL/NOT_MEASURED, never upgraded; « avec résultat enregistré honnêtement »)",
-        "dispatchTargetsNote": "NO dispatchTargets declared: J's contract as written has no runnable target (see proposedRevision.missing) — the revision must declare one; none is invented here (GO-DT-1 ⇒ NO_DISPATCH_TARGET, fail-closed)"
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v176-scenario-j-run.ts",
+            "args": [
+              "docs/odg/evidence/V176_J_EXPERIMENT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V176_J_EXPERIMENT.json"
+            ]
+          }
+        }
       },
       "revisionHistory": [
         {
@@ -732,28 +840,54 @@
           "justification": "owner V176 item 2 authorizes J PROPOSED → AUTHORIZED and its execution « selon son contrat, dès que les conditions requises sont conformes ». A plain state AUTHORIZED would route GO to the plain odg-run AP-J path (no runtime/missions/J.json ⇒ NOT_RUNNABLE) and bypass the R2/R3 conditions; J's contract as written is not executable (stale runner path, no preRegistration, no dispatch target). The scoped encoding makes the owner's « conditions requises » explicit and evidence-bound.",
           "priorResultUnchanged": "docs/odg/evidence/V161_SCENARIO_J.json (sha256 11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff; default 0/8, alternative 0/8) and J2 (CLOSED_FAIL) — untouched, not re-graded",
           "revisionAuthorSessionId": "j-authorize-v176"
+        },
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.6 J-revision session; branch feat/v176-j-revision)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V176_OWNER_AUTHORIZATION_J.json (V176 « DÉBLOCAGE FINAL » item 2: « dès que les conditions requises sont conformes ») — REVISE_CONTRACT step (scoped, R1)",
+          "originalCriteria": [
+            "stop triggered by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
+            "alternative (decomposition / different model / repair depth) actually executed",
+            "outcome compared on the same task and recorded with n"
+          ],
+          "originalCriteriaNote": "acceptance_criteria UNCHANGED (verbatim); objective, scope, invariants, stop_conditions, rollback, evidence_required unchanged",
+          "previousWriteSet": [
+            "docs/odg/evidence/V160_SCENARIO_J.json",
+            "runtime/bin/odg-v160-scenario-j-run.ts"
+          ],
+          "change": [
+            "write_set: stale runtime/bin/odg-v160-scenario-j-run.ts, docs/odg/evidence/V160_SCENARIO_J.json (never committed) ⇒ 1:1 replacement [runtime/bin/odg-v176-scenario-j-run.ts, docs/odg/evidence/V176_J_EXPERIMENT.json] (M1). The runner's test file (runtime/bin/odg-v176-scenario-j-run.test.ts) is a revision artifact of this PR, not written by the execution, and — like odg-v161-scenario-j-run.test.ts for the original J — is not listed. DISCLOSED side effect considered: listing it (|write_set| 3) raises CRC-1 0.5 → 0.6 and turns the strategic selection into a J/F tie; the 1:1 list keeps |write_set| = 2 as in the original contract",
+            "new runner composing odg-v161-scenario-j-run.ts runTrial unchanged: positional output = declared writeSet entry, never writes V161_SCENARIO_J.json (M2); record carries contractSha256 + mechanically graded outcome (M3)",
+            "preRegistration added: REPLICATION of J's protocol, J's criteria verbatim with CP8's reading, metric/baseline/dataset (pins)/decisionRule/thresholds/caps/HOST-1 fixed before any run (M4)",
+            "authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS declared (runner, args [OUT], writeSet [OUT]) + caps.maxRunWallMs for GO-DTO-1 (M5)",
+            "one-shot: ALREADY_RECORDED + J claim refusal + O_EXCL J-runner claim before the first trial (M7)",
+            "proposedRevision section removed — applied by this entry (its M1–M7 list is preserved below)"
+          ],
+          "appliedProposal": {
+            "status": "PROPOSAL ONLY — NOT APPLIED to WORK_ITEM_CONTRACT, NOT INSPECTED, NOT EXECUTED (provider analysis; the REVISE_CONTRACT step must apply it, or a different revision, in its own PR)",
+            "missing": [
+              "M1 stale write_set: runtime/bin/odg-v160-scenario-j-run.ts and docs/odg/evidence/V160_SCENARIO_J.json were never committed (disclosed by #969, register.dependencyGraph.staleWriteSets); the committed J runner is runtime/bin/odg-v161-scenario-j-run.ts (sha256 edbc0df55f133902015d2a0f4506756b9ad4697a8948d2cd0ca9d6bb93904ab9), outside J's write_set",
+              "M2 that runner cannot be a GO-DT-1 target as is: it writes only with the flag --write, and GO-DT-1 args must be plain positional tokens (none may start with '-') ⇒ a dispatched run would write NOTHING; and its output path is hard-wired (OUT_REL = docs/odg/evidence/V161_SCENARIO_J.json) ⇒ a write would OVERWRITE J's committed prior result (forbidden: history preserved, never re-graded)",
+              "M3 its record carries no contractSha256 and no outcome (PASS/PARTIAL/FAIL/NOT_MEASURED) ⇒ R4 experimentValid can never validate RUN_CONTROLLED_EXPERIMENTS from it",
+              "M4 no WORK_ITEM_CONTRACT.preRegistration (metric, baseline, dataset, decisionRule, thresholds) ⇒ R2 REVISE_CONTRACT not validated ⇒ no inspection can validate (R3)",
+              "M5 no authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS ⇒ NO_DISPATCH_TARGET (GO-DT-1); no preRegistration.caps ⇒ GO-DTO-1 default 600000 ms (V161 trials ran ~0.5–1.1 M ms each ⇒ would be SIGKILLed)",
+              "M6 no committed independent inspection record (path now declared: docs/odg/evidence/V176_J_CONTRACT_INSPECTION.json in odg-authorization-evidence-paths)",
+              "M7 one-shot: GO-ORD-2's persistent claim applies ONLY to an actionable DECISION_REQUIRED resolved by an owner selection record; J is the strategic SELECTED item, so once actionable GO works on it directly and « Une seule exécution initiale » is then held only by the committed experiment record advancing the step (R4) — no persistent claim between dispatch and commit"
+            ],
+            "minimalRevision": [
+              "R-a write_set ⇒ [runtime/bin/odg-v161-scenario-j-run.ts, runtime/bin/odg-v161-scenario-j-run.test.ts, docs/odg/evidence/V176_J_EXPERIMENT.json] (or a NEW runner file) — the runner gains a POSITIONAL output path (default behaviour and the V161 --check unchanged) and writes contractSha256 + a mechanically graded outcome into the new record; V161_SCENARIO_J.json is never written",
+              "R-b preRegistration fixed BEFORE any run: dataset = the runner's 4 tasks (rle-codec, csv-typed-validator, range-clamp-pipeline, v159-implement-parse-range) pinned by sha256 (native-hard-corpus.ts 2ad9fca5…, runner); metric = whole-task independent-test passes, default vs rule-selected alternative, same task/seed, with n; baseline = V161_SCENARIO_J.json (pinned 11245ce0…: 0/8 vs 0/8); decisionRule + thresholds (NOT_MEASURED / PASS / PARTIAL / FAIL) stated mechanically; caps.maxRunWallMs; contamination: J2 (same alternative family, post-#940) is CLOSED_FAIL and known to the designer",
+              "R-c authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS = { command: <the runner>, args: [\"docs/odg/evidence/V176_J_EXPERIMENT.json\"], writeSet: [\"docs/odg/evidence/V176_J_EXPERIMENT.json\"] }",
+              "R-d a new revisionHistory entry (originalCriteria verbatim, change, justification, new revisionAuthorSessionId), then an independent inspection ACCEPT bound to the revised sha (V176_J_CONTRACT_INSPECTION.json)",
+              "R-e for M7: an owner selection record is NOT needed for J to be selected (it is the strategic choice); the single-execution bound is the scratch/experiment-record check — state it in the revision, or have GO claim also for strategic scoped dispatches (a GO code change, separate)"
+            ],
+            "honestNote": "J's alternative family was already measured twice: J (V161, 0/8 vs 0/8, PARTIAL) and J2 (post-#940 decomposed + escalated tier, CLOSED_FAIL). A re-run of J's protocol is a replication, not a new hypothesis, unless the revision pre-registers one."
+          },
+          "justification": "#993 recorded that J was not executable as written (M1–M7). The owner authorizes execution « dès que les conditions requises sont conformes »; this revision makes them conform WITHOUT changing J's criteria or question: same protocol, same tasks, pre-registered grading consistent with the CP8 reading of the same criteria. M6 (independent inspection) remains: J is not executable until an inspection ACCEPT bound to this contract sha is committed.",
+          "priorResultUnchanged": "docs/odg/evidence/V161_SCENARIO_J.json untouched (pinned); J2 CLOSED_FAIL untouched",
+          "revisionAuthorSessionId": "j-revision-v176"
         }
-      ],
-      "proposedRevision": {
-        "status": "PROPOSAL ONLY — NOT APPLIED to WORK_ITEM_CONTRACT, NOT INSPECTED, NOT EXECUTED (provider analysis; the REVISE_CONTRACT step must apply it, or a different revision, in its own PR)",
-        "missing": [
-          "M1 stale write_set: runtime/bin/odg-v160-scenario-j-run.ts and docs/odg/evidence/V160_SCENARIO_J.json were never committed (disclosed by #969, register.dependencyGraph.staleWriteSets); the committed J runner is runtime/bin/odg-v161-scenario-j-run.ts (sha256 edbc0df55f133902015d2a0f4506756b9ad4697a8948d2cd0ca9d6bb93904ab9), outside J's write_set",
-          "M2 that runner cannot be a GO-DT-1 target as is: it writes only with the flag --write, and GO-DT-1 args must be plain positional tokens (none may start with '-') ⇒ a dispatched run would write NOTHING; and its output path is hard-wired (OUT_REL = docs/odg/evidence/V161_SCENARIO_J.json) ⇒ a write would OVERWRITE J's committed prior result (forbidden: history preserved, never re-graded)",
-          "M3 its record carries no contractSha256 and no outcome (PASS/PARTIAL/FAIL/NOT_MEASURED) ⇒ R4 experimentValid can never validate RUN_CONTROLLED_EXPERIMENTS from it",
-          "M4 no WORK_ITEM_CONTRACT.preRegistration (metric, baseline, dataset, decisionRule, thresholds) ⇒ R2 REVISE_CONTRACT not validated ⇒ no inspection can validate (R3)",
-          "M5 no authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS ⇒ NO_DISPATCH_TARGET (GO-DT-1); no preRegistration.caps ⇒ GO-DTO-1 default 600000 ms (V161 trials ran ~0.5–1.1 M ms each ⇒ would be SIGKILLed)",
-          "M6 no committed independent inspection record (path now declared: docs/odg/evidence/V176_J_CONTRACT_INSPECTION.json in odg-authorization-evidence-paths)",
-          "M7 one-shot: GO-ORD-2's persistent claim applies ONLY to an actionable DECISION_REQUIRED resolved by an owner selection record; J is the strategic SELECTED item, so once actionable GO works on it directly and « Une seule exécution initiale » is then held only by the committed experiment record advancing the step (R4) — no persistent claim between dispatch and commit"
-        ],
-        "minimalRevision": [
-          "R-a write_set ⇒ [runtime/bin/odg-v161-scenario-j-run.ts, runtime/bin/odg-v161-scenario-j-run.test.ts, docs/odg/evidence/V176_J_EXPERIMENT.json] (or a NEW runner file) — the runner gains a POSITIONAL output path (default behaviour and the V161 --check unchanged) and writes contractSha256 + a mechanically graded outcome into the new record; V161_SCENARIO_J.json is never written",
-          "R-b preRegistration fixed BEFORE any run: dataset = the runner's 4 tasks (rle-codec, csv-typed-validator, range-clamp-pipeline, v159-implement-parse-range) pinned by sha256 (native-hard-corpus.ts 2ad9fca5…, runner); metric = whole-task independent-test passes, default vs rule-selected alternative, same task/seed, with n; baseline = V161_SCENARIO_J.json (pinned 11245ce0…: 0/8 vs 0/8); decisionRule + thresholds (NOT_MEASURED / PASS / PARTIAL / FAIL) stated mechanically; caps.maxRunWallMs; contamination: J2 (same alternative family, post-#940) is CLOSED_FAIL and known to the designer",
-          "R-c authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS = { command: <the runner>, args: [\"docs/odg/evidence/V176_J_EXPERIMENT.json\"], writeSet: [\"docs/odg/evidence/V176_J_EXPERIMENT.json\"] }",
-          "R-d a new revisionHistory entry (originalCriteria verbatim, change, justification, new revisionAuthorSessionId), then an independent inspection ACCEPT bound to the revised sha (V176_J_CONTRACT_INSPECTION.json)",
-          "R-e for M7: an owner selection record is NOT needed for J to be selected (it is the strategic choice); the single-execution bound is the scratch/experiment-record check — state it in the revision, or have GO claim also for strategic scoped dispatches (a GO code change, separate)"
-        ],
-        "honestNote": "J's alternative family was already measured twice: J (V161, 0/8 vs 0/8, PARTIAL) and J2 (post-#940 decomposed + escalated tier, CLOSED_FAIL). A re-run of J's protocol is a replication, not a new hypothesis, unless the revision pre-registers one."
-      }
+      ]
     },
     {
       "scenario": "K",

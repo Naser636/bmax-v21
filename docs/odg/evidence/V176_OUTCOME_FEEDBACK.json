@@ -127,7 +127,7 @@
       {
         "id": "J",
         "status": "EXECUTED_PARTIAL",
-        "reason": "REVISE_CONTRACT not validated: WORK_ITEM_CONTRACT.preRegistration missing"
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
       },
       {
         "id": "V175-NB2",

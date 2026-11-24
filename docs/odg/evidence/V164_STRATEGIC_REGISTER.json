@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "3a0a4c7e67b84853255e3310454a2e5d315a14588694c44370033ae7a3a9a6ab"
+      "sha256": "6d57728a30dfd577696cb46d8d21da36669f9d247b9cd37f230e2dfbe4eebbb3"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "f40a3af97a54e545b6a0129ecf0e2b38d3d99550d356c458f11c8a889cb53eb9"
+      "sha256": "dc26b204b65b53a448bfd1b4054d598fa09ebc4195bfce0ecf6bd9ddb1b9e5b2"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -192,6 +192,10 @@
     {
       "source": "runtime/bin/odg-v175-native-design-run.ts",
       "sha256": "fd95b6c6ebe684435b72c10d73c50a21ccc4751c44e1862f9147c8d445cc1573"
+    },
+    {
+      "source": "runtime/bin/odg-v176-scenario-j-run.ts",
+      "sha256": "064c45c51438dc04b05314a6a35f767cdd2f12d03bd9f3cd82f68f636c693de1"
     },
     {
       "source": "runtime/core/odg-canonical-json.test.ts",
@@ -744,11 +748,6 @@
           "item": "F",
           "file": "runtime/bin/odg-v160-scenario-f-run.ts",
           "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[1]"
-        },
-        {
-          "item": "J",
-          "file": "runtime/bin/odg-v160-scenario-j-run.ts",
-          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.write_set[1]"
         },
         {
           "item": "V175-NB2",
@@ -2871,8 +2870,8 @@
         "closure": {
           "closed": false,
           "rule": "CLOSE-1",
-          "currentStep": "REVISE_CONTRACT",
-          "reason": "REVISE_CONTRACT not validated: WORK_ITEM_CONTRACT.preRegistration missing",
+          "currentStep": "INSPECT_REVISED_CONTRACT",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         },
         "dependencyGraph": {
@@ -2916,7 +2915,7 @@
           "basis": "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json is PROPOSED (documentary reconciliation): anchors are its statements; V12.4 ids validated against docs/odg/v124-consolidated-roadmap.json; phase from docs/odg/V14_4_ROADMAP.md (ADOPTED)"
         },
         "contractRef": {
-          "contractSha256": "2914ffcace51b2f7c047316db16a8bec310b740ba51656c15b18b5275be181f1",
+          "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822",
           "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9]",
           "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_J.json",
           "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].authorization.source",
@@ -14082,5 +14081,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "e81aa7ceb8b5b8565445f388ac4dd2b06166b274"
+  "generatedAtHead": "c73d24e1171b024b3ba08dc470f313375b716735"
 }
