@@ -391,6 +391,50 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       check("GO-ACT tie among actionable ⇒ rationale names the authorized tie (2 items J/G, DECISION_REQUIRED, no id tie-break) and never claims 'no other item has an AUTHORIZED next step'", /2 authorized items tie \(J\/G\) — DECISION_REQUIRED, no id tie-break; owner\/ODG decision requested/.test(st.rationale) && !/no other item has an AUTHORIZED next step/.test(st.rationale));
       check("GO-ACT tie among actionable ⇒ ownerRequest records decisionNeeded among the tied actionable set (J/G), authorization request for H kept", st.decision.ownerRequest.item === "H" && /among J\/G/.test(String(st.decision.ownerRequest.decisionNeeded)) && st.decision.ownerRequest.actionableTiedSet.join(",") === "J,G" && /H PROPOSED → AUTHORIZED/.test(st.decision.ownerRequest.authorizationNeeded));
     }
+    // V17.4 GO-ORD-1: a committed owner ORDER-decision record resolves ONLY an actionable DECISION_REQUIRED tie with the same set
+    {
+      const REC = { kind: "OWNER_ORDER_DECISION", tiedSet: ["J", "G"], order: ["G", "J"], date: "2026-11-24", source: "test fixture", quote: ["G d'abord, puis J (test fixture)"], recordPath: "docs/odg/TEST_ORDER.json" };
+      const withRec = (s0: any, recs: any[]) => { const s = clone(s0); s.measured = s0.measured; s.ownerOrderDecisions = recs; return s; };
+      const runSel = async (S: any) => { const p = mkPorts({ state: S }); const r = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports); return { r, p, st: stepIn(p.trace, "SELECT") }; };
+      const S0 = plainAuth(BASE_UNAUTH, ["J", "G"]);
+      const base = await runSel(S0);
+      // exact tie (set equality, order of tiedSet irrelevant) ⇒ first of order chosen
+      const a = await runSel(withRec(S0, [{ ...REC, tiedSet: ["G", "J"] }]));
+      const aa = a.st.decision.actionableSelection;
+      check("GO-ORD exact tie {J,G} + record order G→J ⇒ actionable item G, resolvedBy OWNER_ORDER_DECISION <path>, quote recorded, working on G", aa.item === "G" && aa.resolvedBy === "OWNER_ORDER_DECISION docs/odg/TEST_ORDER.json" && aa.ownerOrderDecision.applied === true && aa.ownerOrderDecision.quote[0] === REC.quote[0] && a.st.decision.workingOn === "G" && /resolved by OWNER_ORDER_DECISION docs\/odg\/TEST_ORDER\.json/.test(a.st.rationale));
+      check("GO-ORD selector decision itself unchanged (actionable selection still DECISION_REQUIRED J,G; strategicSelection identical to no-record run)", aa.selection.decision === "DECISION_REQUIRED" && aa.selection.tiedSet.join(",") === "J,G" && JSON.stringify(a.st.decision.strategicSelection) === JSON.stringify(base.st.decision.strategicSelection) && a.st.decision.decision === base.st.decision.decision);
+      check("GO-ORD never creates authorization: strategic H still requires owner authorization, G's basis is its own contract authorization", a.st.decision.ownerRequest.item === "H" && /H PROPOSED → AUTHORIZED/.test(a.st.decision.ownerRequest.authorizationNeeded) && !a.st.decision.ownerRequest.actionableTiedSet && aa.basis.basis === "CONTRACT_AUTHORIZED");
+      // different tiedSet ⇒ ignored (reason), behaviour as today
+      const b = await runSel(withRec(S0, [{ ...REC, tiedSet: ["G2", "J2"], order: ["G2", "J2"] }]));
+      const ba = b.st.decision.actionableSelection;
+      check("GO-ORD different tiedSet ⇒ ignored with reason, no pick, ownerRequest/rationale as without record", ba.item === null && ba.ownerOrderDecision.applied === false && /set equality required/.test(ba.ownerOrderDecision.considered[0].reason) && JSON.stringify(b.st.decision.ownerRequest) === JSON.stringify(base.st.decision.ownerRequest) && b.st.rationale === base.st.rationale && b.r.status === base.r.status);
+      // superset tiedSet / wrong kind ⇒ ignored
+      const c = await runSel(withRec(S0, [{ ...REC, tiedSet: ["J", "G", "H"] }, { ...REC, kind: "OWNER_AUTHORIZATION" }]));
+      check("GO-ORD superset tiedSet and wrong kind ⇒ both ignored, no pick", c.st.decision.actionableSelection.item === null && c.st.decision.actionableSelection.ownerOrderDecision.considered.length === 2 && /kind/.test(c.st.decision.actionableSelection.ownerOrderDecision.considered[1].reason));
+      // no record ⇒ DECISION_REQUIRED exactly as today (byte-identical trace decisions)
+      const d = await runSel(withRec(S0, []));
+      check("GO-ORD no record ⇒ SELECT decision + rationale byte-identical to today, no ownerOrderDecision field", JSON.stringify(d.st.decision) === JSON.stringify(base.st.decision) && d.st.rationale === base.st.rationale && !("ownerOrderDecision" in d.st.decision.actionableSelection));
+      // chosen-not-actionable ⇒ next in order; none actionable ⇒ ignored (unit, via the exported resolver)
+      const reg = require("./odg-strategic-register.js").buildRegister(mirrorAuthEvidence(S0).sources);
+      const onlyJ = plainAuth(BASE_UNAUTH, ["J"]);
+      const n1 = GO.resolveOwnerOrder(mirrorAuthEvidence(withRec(onlyJ, [REC])), reg, ["J", "G"]);
+      check("GO-ORD first of order (G) no longer actionable ⇒ next (J) chosen, G skipped with reason", n1.applied === true && n1.chosen === "J" && n1.skipped[0].id === "G" && /not actionable/.test(n1.skipped[0].reason));
+      const n2 = GO.resolveOwnerOrder(mirrorAuthEvidence(withRec(BASE_UNAUTH, [REC])), reg, ["J", "G"]);
+      check("GO-ORD no element of order actionable ⇒ ignored (applied=false, reason), never a non-actionable pick", n2.applied === false && n2.chosen === null && /still actionable/.test(n2.considered[0].reason));
+      check("GO-ORD no tie ⇒ resolver inert (null)", GO.resolveOwnerOrder(withRec(S0, [REC]), reg, []) === null);
+      // plain (non-tied) case with a record present ⇒ byte-identical SELECT
+      const P0 = plainAuth(BASE_UNAUTH, ["G"]);
+      const p0 = await runSel(P0); const p1 = await runSel(withRec(P0, [REC]));
+      check("GO-ORD non-tied case with a record present ⇒ SELECT byte-identical (record never consulted)", JSON.stringify(p0.st.decision) === JSON.stringify(p1.st.decision) && p0.st.rationale === p1.st.rationale && p0.r.status === p1.r.status);
+      // strategic DECISION_REQUIRED (1e fixture: committed G2/J2 evidence ⇒ actionable G2/J2 tie) + the G2→J2 record ⇒ actionable
+      // G2 chosen, while strategicSelection (and the top-level selector decision) stays byte-identical, still undecided
+      const s1e = clone(BASE_LIVE_EV); s1e.measured = BASE_LIVE.measured;
+      for (const id of ["H", "G"]) { const cc = s1e.sources.contracts.data.contracts.find((x: any) => x.scenario === id); cc.state = "PROPOSED"; cc.authorizedBy = null; delete cc.authorization; }
+      const G2REC = { ...rj("docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json"), recordPath: "docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json" };
+      const e0 = await runSel(s1e); const e1 = await runSel(withRec(s1e, [G2REC]));
+      const e0s = e0.st.decision, e1s = e1.st.decision;
+      check("GO-ORD never applies to strategicSelection: strategic undecided kept byte-identical; only the actionable G2/J2 tie is resolved (G2, committed V174 record)", JSON.stringify(e0s.strategicSelection) === JSON.stringify(e1s.strategicSelection) && e0s.decision === e1s.decision && e1s.selected === null && e0s.actionableSelection.selection.tiedSet.join(",") === "G2,J2" && e0s.actionableSelection.item === null && e1s.actionableSelection.item === "G2" && e1s.actionableSelection.resolvedBy === "OWNER_ORDER_DECISION docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json" && e1s.workingOn === "G2");
+    }
   }
   // 7. writer confinement + provider never launched (source scan)
   {

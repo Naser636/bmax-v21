@@ -28,6 +28,7 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     const SS = require("./odg-strategic-select.ts");
     const st = B.readState(ROOT);
     const canon = SS.loadSources(ROOT);
+    check("V17.4 readState loads the declared owner order-decision records (committed, recordPath, kind OWNER_ORDER_DECISION, G2→J2) and lists them as inputs", B.OWNER_ORDER_DECISIONS.length === 1 && st.ownerOrderDecisions.length === 1 && st.ownerOrderDecisions[0].recordPath === B.OWNER_ORDER_DECISIONS[0] && st.ownerOrderDecisions[0].kind === "OWNER_ORDER_DECISION" && st.ownerOrderDecisions[0].order.join(",") === "G2,J2" && st.inputs.some((i: any) => i.source === B.OWNER_ORDER_DECISIONS[0] && /^[0-9a-f]{64}$/.test(String(i.sha256))));
     check("GO register sources = canonical loadSources keys minus inputs (no hand-picked subset)", JSON.stringify(Object.keys(st.sources).sort()) === JSON.stringify(Object.keys(canon).filter((k) => k !== "inputs").sort()));
     const inCycle = JSON.parse(JSON.stringify(REG.buildRegister(st.sources)));
     const committedPath = path.join(ROOT, SS.OUT_REL);
