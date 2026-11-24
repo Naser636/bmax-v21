@@ -67,6 +67,9 @@ const STEP_SEQUENCES: any = Object.freeze({
   // V17.6 — J itself (owner V176 « DÉBLOCAGE FINAL » item 2, docs/odg/V176_OWNER_AUTHORIZATION_J.json): same evidence-bound
   // sequence; J's prior result (V161_SCENARIO_J.json) and J2 (CLOSED_FAIL) are untouched.
   J: Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  // V17.6 NB3 — V176-NB3 (NB2's target + oracle with the DIV-1 repair-diversity lever) ⇐ owner record
+  // docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json (« y compris NB3 »): same evidence-bound sequence.
+  "V176-NB3": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
 });
 const EXECUTION_STEPS = Object.freeze(["RUN_CONTROLLED_EXPERIMENTS"]);
 const STEP_KIND: any = Object.freeze({
@@ -91,6 +94,11 @@ const OWNER_SOURCES: any = Object.freeze({
   "V175-NB2": Object.freeze({ re: /V175_OWNER_AUTHORIZATION_NATIVE_BUILD\.json/, label: "V175 (docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json)", family: "V175-NATIVE-LOOP" }),
   // V17.6 — J bound to its OWN dedicated record (disjoint from J2's V171 record: J2's authorization never covers J, nor J's J2).
   J: Object.freeze({ re: /V176_OWNER_AUTHORIZATION_J\.json/, label: "V176 (docs/odg/V176_OWNER_AUTHORIZATION_J.json)" }),
+  // V17.6 NB3 — bound EXCLUSIVELY to the V176 build-missions record (never NB1/NB2's V175 record: citing it is a foreign
+  // citation of the V175-NATIVE-LOOP family, refused — that family stays exactly {V175-NB1, V175-NB2}). The record covers
+  // several internal missions (F / parallel GO waves, V176-NB3, Radar-proposal contracts), so it is declared as the family
+  // V176-BUILD-MISSIONS: another mission may share it ONLY by declaring the same family here (explicit, reviewed).
+  "V176-NB3": Object.freeze({ re: /V176_OWNER_AUTHORIZATION_BUILD_MISSIONS\.json/, label: "V176 build missions (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json)", family: "V176-BUILD-MISSIONS" }),
 });
 function ownerSourceCheck(scenario: string, source: string): any {
   const own = OWNER_SOURCES[scenario];
@@ -266,12 +274,12 @@ function isStepAuthorized(scope: any, step: string): boolean {
 
 const AUTHORIZATION_SCOPE_CONTRACT = Object.freeze({
   id: "V166-ODG-AUTHORIZATION-SCOPE",
-  source: "owner directive V166 §3–§4 over V165 §1 (docs/odg/V165_OWNER_AUTHORIZATION.json#missionG); H: owner directive V168 (docs/odg/V168_OWNER_AUTHORIZATION_H.json); G2: owner directive V170 (docs/odg/V170_OWNER_AUTHORIZATION_HG.json); J2: owner directive V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json); V175-NB1 + V175-NB2 (family V175-NATIVE-LOOP): owner directive V175 (docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json); J: owner directive V176 (docs/odg/V176_OWNER_AUTHORIZATION_J.json)",
-  ownerSources: Object.freeze({ G: OWNER_SOURCES.G.label, H: OWNER_SOURCES.H.label, G2: OWNER_SOURCES.G2.label, J2: OWNER_SOURCES.J2.label, "V175-NB1": OWNER_SOURCES["V175-NB1"].label, "V175-NB2": OWNER_SOURCES["V175-NB2"].label, J: OWNER_SOURCES.J.label }),
+  source: "owner directive V166 §3–§4 over V165 §1 (docs/odg/V165_OWNER_AUTHORIZATION.json#missionG); H: owner directive V168 (docs/odg/V168_OWNER_AUTHORIZATION_H.json); G2: owner directive V170 (docs/odg/V170_OWNER_AUTHORIZATION_HG.json); J2: owner directive V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json); V175-NB1 + V175-NB2 (family V175-NATIVE-LOOP): owner directive V175 (docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json); J: owner directive V176 (docs/odg/V176_OWNER_AUTHORIZATION_J.json); V176-NB3 (family V176-BUILD-MISSIONS): owner directive V176 build missions (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json)",
+  ownerSources: Object.freeze({ G: OWNER_SOURCES.G.label, H: OWNER_SOURCES.H.label, G2: OWNER_SOURCES.G2.label, J2: OWNER_SOURCES.J2.label, "V175-NB1": OWNER_SOURCES["V175-NB1"].label, "V175-NB2": OWNER_SOURCES["V175-NB2"].label, J: OWNER_SOURCES.J.label, "V176-NB3": OWNER_SOURCES["V176-NB3"].label }),
   steps: STEP_SEQUENCES, executionSteps: EXECUTION_STEPS, stepKind: STEP_KIND,
   invariants: Object.freeze([
     "PURE derivation: no write, no contract-state rewrite, no authorization minted",
-    "owner authorization (by OWNER…, source = the directive bound to the scenario: G ⇒ V165, H ⇒ V168, G2 ⇒ V170, J2 ⇒ V171, V175-NB1 / V175-NB2 ⇒ V175 (declared shared family), J ⇒ V176; citing another scenario's directive ⇒ refused) must exist first — otherwise nothing is derived",
+    "owner authorization (by OWNER…, source = the directive bound to the scenario: G ⇒ V165, H ⇒ V168, G2 ⇒ V170, J2 ⇒ V171, V175-NB1 / V175-NB2 ⇒ V175 (declared shared family), J ⇒ V176, V176-NB3 ⇒ V176 build missions (family V176-BUILD-MISSIONS); citing another scenario's directive ⇒ refused) must exist first — otherwise nothing is derived",
     "steps outside the declared sequence (provider spend, governance, …) are never derived",
     "inspection validates only with verdict ACCEPT, contractSha256 = sha256(canon(current contract entry)), distinct opaque inspector/author session ids bound to the revision's revisionAuthorSessionId (DECLARED_SESSION_INDEPENDENCE, not cryptographic), inspected head SHA",
     "a validated step is DONE, never PASS: no outcome is graded or upgraded here",

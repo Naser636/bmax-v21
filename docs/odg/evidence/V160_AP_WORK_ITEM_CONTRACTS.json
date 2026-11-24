@@ -1,11 +1,11 @@
 {
-  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged.",
+  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 NB3: V176-NB3 (owner V176 build missions, docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS; NB2's target + oracle with the pre-registered DIV-1 repair-diversity lever) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 20,
+  "count": 21,
   "initialStatusCounts": {
     "PASS": 2,
     "PARTIAL": 14,
-    "NOT_STARTED": 4
+    "NOT_STARTED": 5
   },
   "contracts": [
     {
@@ -2091,6 +2091,330 @@
           ],
           "justification": "narrows NOT_MEASURED (fewer runs can escape a FAIL); made before any native GO run, without any new PROBE",
           "revisionAuthorSessionId": "nb2-pipeline-fixes-v176"
+        }
+      ]
+    },
+    {
+      "scenario": "V176-NB3",
+      "title": "NB3: ODG repairs odg-canonical-json's undefined gap again (NB2's target + oracle) with the pre-registered DIV-1 repair-diversity lever",
+      "ownerText": "Préparer NB3 avec le nouveau levier de diversité des réparations. Faire inspecter son contrat, puis laisser GO décider et exécuter une fois si les conditions sont conformes.",
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — directive « CTO — CONTINUATION APRÈS CP13 — AUTONOMIE NATIVE » (2026-11-24), docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3 […] dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. » « Préparer NB3 avec le nouveau levier de diversité des réparations. Faire inspecter son contrat, puis laisser GO décider et exécuter une fois si les conditions sont conformes. » « Ne pas forcer NB3 si GO sélectionne une autre mission prioritaire. » — V176-NB3 only, internal, local model, €0, 0 provider calls; no production / spend / external engagement; native write set = the helper module + an ODG-rules test, integrated via normal PR controls",
+      "parent": {
+        "scenario": "V175-NB2",
+        "relation": "SAME target (odg-canonical-json undefined gap), SAME oracle (all PROB-1 cases) and criteria shape (AC1–AC6 verbatim + AC7 diversity recorded), SAME caps; ONE new lever — the pre-registered DIV-1 repair-diversity ladder — tested against NB2's observed failure mode (CLOSED_FAIL: both repair rounds NO_PROGRESS_IDENTICAL_REGENERATION at temperature 0). NB2's contract and records are untouched (new id, history preserved)"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "new contract: the runner (parametrised NB2 runner) and the DIV-1 pipeline stage exist (this PR, offline fake-model tests only); no model call has been made for NB3; no GO-dispatched native run exists",
+        "evidence": [],
+        "missingForPass": "an independent inspection ACCEPT of this contract, then GO's own strategic selection of V176-NB3 and the single GO-dispatched native run",
+        "asOf": "feat/v176-nb3-repair-diversity (2026-11-24)"
+      },
+      "origin": {
+        "detectedBy": "runtime/core/odg-native-design-pipeline.ts deriveProblem (PROB-1) over runtime/core/odg-native-repair-item.ts designItem (ORC-2, REF-1)",
+        "target": "runtime/core/odg-canonical-json.ts",
+        "evidenceDigest": "b00c44dcf95fb9a3f36e0c05bed9fa2d0c106db13fd7f91478c63a10dbae28bb",
+        "failingCases": 9,
+        "totalCases": 33,
+        "failingKinds": [
+          "nested+undefined@array+undefined@object",
+          "undefined@array",
+          "undefined@array+undefined@object",
+          "undefined@object",
+          "undefined@top"
+        ],
+        "excluded": 1,
+        "reference": {
+          "sourceSha256": "4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734",
+          "copies": [
+            "runtime/core/odg-authorization-scope.ts:117",
+            "runtime/core/odg-go-cycle.ts:73",
+            "runtime/core/odg-verification-risk-calibration.ts:118"
+          ],
+          "rule": "REF-1: largest group of byte-identical CANONICAL definitions (tie ⇒ smallest sha256)"
+        },
+        "corpusSha256": "d373cec92ff3f794f3418ad25bebaf4f1155a64d8c1085bf1dbd39c74574a69c"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Repair runtime/core/odg-canonical-json.ts so canonicalJson matches the in-repo reference on every ORC-2 input (9/33 cases fail today: nested+undefined@array+undefined@object; undefined@array; undefined@array+undefined@object; undefined@object; undefined@top) — the problem DERIVED by ODG rules, the designs PROPOSED by ODG's local model, the choice made by SEL-1, the code written by the local model — NB3: same problem and criteria as NB2 (CLOSED_FAIL, 27/33, both repair rounds NO_PROGRESS_IDENTICAL_REGENERATION); the ONLY new lever is DIV-1 repair diversity (pre-registered ladder, same total call cap)",
+        "scope": "internal repo only; loopback Ollama 127.0.0.1:11434 only; model code executes only in the bwrap native-build sandbox; €0; 0 provider calls; the patch is a branch-ready diff in the result record — never written into any checkout by the runner; no other module is changed",
+        "write_set": [
+          "runtime/core/odg-canonical-json.ts",
+          "runtime/core/odg-canonical-json-extended.test.ts",
+          "runtime/bin/odg-v176-nb3-native-design-run.ts",
+          "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json"
+        ],
+        "nativePatchWriteSet": [
+          "runtime/core/odg-canonical-json.ts",
+          "runtime/core/odg-canonical-json-extended.test.ts"
+        ],
+        "authorized_symbols": [
+          "canonicalJson"
+        ],
+        "invariants": [
+          "no provider-written algorithm text in any prompt: TEMPLATE segments match no ALGORITHM_HINT_DENYLIST pattern (a matching prompt is not sent)",
+          "the problem statement = executed failing cases (input → expected / current) + the current source; held-out expected values never enter a prompt or the sandbox",
+          "≥2 designs from the local model; the selection is SEL-1 over ODG-measured scores (sandbox oracle, typecheck, callers affected, diff size, write set)",
+          "the module content is authored by the local model only (sha256 of every generation recorded); the test file by ODG rules",
+          "a FAIL is recorded as FAIL; criteria and budgets are not changed after observation",
+          "DIV-1: diversity points (model, temperature, seed) are exactly the pre-registered budgets.diversity ladder; the guard refuses any other; the ladder advances only on a STALL (content already seen), ≤ maxVariations, all calls within the same maxModelCalls; every call records its (model, temperature, seed)",
+          "NB2's records (V175_NB2_*) are untouched; NB3 is a new contract with a new id — NB2 is never re-opened"
+        ],
+        "acceptance_criteria": [
+          "AC1 problem reproduced at run time: fresh PROB-1 evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)",
+          "AC2 designs: ≥2 parseable designs from the local model, each implemented and measured in the sandbox; SEL-1 choice recorded with all scores",
+          "AC3 held-out oracle: all 33 PROB-1 cases PASS inside odg-native-build-sandbox (EXECUTED, SANDBOX) + strict typecheck 0 diagnostics",
+          "AC4 branch-ready: the diff modifies runtime/core/odg-canonical-json.ts, adds runtime/core/odg-canonical-json-extended.test.ts, passes git apply --check at the run HEAD",
+          "AC5 authorship ledger + provenance: per-stage authorship, every prompt sha256 + its segment kinds + denylist hits (0), every generation sha256, providerCalls 0",
+          "AC6 learning: lessons read before the run (memory-taxonomy CONSOLIDATED) and lessons derived from this run are both in the record",
+          "AC7 diversity recorded: the result carries diversity.ladder, every transition (reason, point, params) and per-call (model, temperature, seed); every sent call is a pre-registered point; network.modelCalls ≤ maxModelCalls"
+        ],
+        "stop_conditions": [
+          "model call cap",
+          "wall cap",
+          "sandbox unavailable (NOT_RUN ⇒ NOT_MEASURED)",
+          "any non-loopback request (refused ⇒ NOT_MEASURED)",
+          "problem drift (AC1)",
+          "a TEMPLATE denylist hit (prompt not sent)",
+          "HOST-1 busy host at start: loadavg-1m > nproc × 0.75 before the first model call ⇒ NOT_MEASURED (no model call)",
+          "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent: BEFORE the first work call ⇒ NOT_MEASURED, AFTER it ⇒ a FAILED generation (counts towards FAIL, prediction recorded)",
+          "DIV-1 ladder exhausted (maxVariations or last point) ⇒ the identical generation stands and buildProject stops NO_PROGRESS (FAIL if no PASS) — never an extra call",
+          "a call with non-pre-registered options ⇒ refused by the guard ⇒ NOT_MEASURED"
+        ],
+        "rollback": "nothing is written into any checkout; discard the record",
+        "evidence_required": [
+          "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json"
+        ],
+        "budgets": {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42,
+          "numPredict": 900,
+          "designs": 3,
+          "minDesigns": 2,
+          "maxRepairPerRound": 3,
+          "maxRounds": 2,
+          "maxModelCalls": 12,
+          "wallMs": 1800000,
+          "perCallTimeout": {
+            "rule": "ADAPT-1",
+            "minMs": 60000,
+            "maxMs": 300000,
+            "safetyFactor": 3,
+            "overheadMs": 15000,
+            "charsPerToken": 3
+          },
+          "maxWarmupCalls": 1,
+          "warmupNumPredict": 16,
+          "warmupTimeoutMs": 180000,
+          "hostIdleFactor": 0.75,
+          "lessonDigestChars": 600,
+          "diversity": {
+            "rule": "DIV-1: a generation whose sandbox content equals one already seen in the run is a STALL; on a stall the ladder advances one pre-declared point — sampling steps (temperature, seed) on the current design, then the next design in SEL-1 order (its S4 implementation reused first, no call), then larger registered local models — at most maxVariations advances; every call within the same maxModelCalls; an identical (prompt, model, temperature 0, seed) call already sent is NOT re-sent (deterministic ⇒ counted as a stall, no budget spent); ladder exhausted ⇒ the identical generation stands (buildProject NO_PROGRESS)",
+            "base": {
+              "temperature": 0,
+              "seed": 42
+            },
+            "sampling": [
+              {
+                "temperature": 0.5,
+                "seed": 1042
+              },
+              {
+                "temperature": 0.9,
+                "seed": 2042
+              }
+            ],
+            "designSwitch": true,
+            "escalationModels": [],
+            "escalationBasis": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json: no AVAILABLE model larger than qwen2.5-coder:7b (7.6B; others 3.1B, 494.03M) ⇒ no MODEL_ESCALATION point",
+            "maxVariations": 8
+          }
+        },
+        "preRegistration": {
+          "metric": "verdict of runNativeDesign under the V176-NB3 profile (PASS ⇔ AC2 ∧ AC3 ∧ AC4 within budgets); secondary (descriptive, not graded): stalls broken = DIV-1 transitions followed by a novel generation",
+          "baseline": "NB2 (V175_NB2_NATIVE_DESIGN_RESULT.json, CLOSED_FAIL): best design 27/33, 7 model calls, both repair rounds NO_PROGRESS_IDENTICAL_REGENERATION at temperature 0 / seed 42; the integrated helper fails 9/33 PROB-1 cases",
+          "dataset": {
+            "corpusRule": "ORC-2",
+            "corpusSha256": "d373cec92ff3f794f3418ad25bebaf4f1155a64d8c1085bf1dbd39c74574a69c",
+            "cases": 33,
+            "failing": 9,
+            "shown": 5,
+            "heldOut": 28,
+            "excluded": 1,
+            "referenceSha256": "4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734"
+          },
+          "decisionRule": "outcome = runner verdict recorded verbatim (PASS / FAIL / NOT_MEASURED); one dispatch; no re-run to obtain a PASS; criteria/budgets/schedule not changed after observation",
+          "thresholds": {
+            "PASS": "≥2 designs measured AND all PROB-1 cases pass in the sandbox AND 0 strict typecheck diagnostics AND git apply --check OK",
+            "FAIL": "<2 designs, or budgets exhausted without PASS",
+            "NOT_MEASURED": "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured, or predicted call over cap BEFORE the first work call"
+          },
+          "caps": {
+            "maxRunWallMs": 2100000,
+            "maxModelCalls": 12,
+            "maxWarmupCalls": 1,
+            "perCallTimeoutMs": {
+              "min": 60000,
+              "max": 300000
+            },
+            "basis": "no new model call after wallMs; one in-flight call may last at most perCallTimeout.maxMs; per-call timeout = ADAPT-1 from one warm-up call (own cap, not counted in maxModelCalls); lessons enter prompts via DIGEST-1 (≤ lessonDigestChars)",
+            "diversity": {
+              "maxVariations": 8,
+              "points": 3,
+              "sameTotalCallCap": true
+            }
+          },
+          "honestLimits": "ORC-2 input literals, prompt templates and the runner are provider-written; the reference semantics are the in-repo canon() (REF-1), not an independent specification; a PASS means ODG's local model designed+implemented a repair of a defect ODG derived — not that ODG chose the corpus; sampling at temperature > 0 with a fixed seed is reproducible only on the same Ollama/model build; no larger local model is registered, so model escalation is not part of this test",
+          "hypothesis": "H-NB3: repair diversity (DIV-1) breaks NB2's identical-regeneration stall and lets the local model reach all PROB-1 cases within the same 12-call cap. Refuted if the verdict is FAIL with ≥1 diversity transition; untested if no stall occurs",
+          "diversitySchedule": {
+            "rule": "DIV-1: a generation whose sandbox content equals one already seen in the run is a STALL; on a stall the ladder advances one pre-declared point — sampling steps (temperature, seed) on the current design, then the next design in SEL-1 order (its S4 implementation reused first, no call), then larger registered local models — at most maxVariations advances; every call within the same maxModelCalls; an identical (prompt, model, temperature 0, seed) call already sent is NOT re-sent (deterministic ⇒ counted as a stall, no budget spent); ladder exhausted ⇒ the identical generation stands (buildProject NO_PROGRESS)",
+            "base": {
+              "temperature": 0,
+              "seed": 42
+            },
+            "sampling": [
+              {
+                "temperature": 0.5,
+                "seed": 1042
+              },
+              {
+                "temperature": 0.9,
+                "seed": 2042
+              }
+            ],
+            "designSwitch": true,
+            "escalationModels": [],
+            "escalationBasis": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json: no AVAILABLE model larger than qwen2.5-coder:7b (7.6B; others 3.1B, 494.03M) ⇒ no MODEL_ESCALATION point",
+            "maxVariations": 8,
+            "ladderForThreeDesigns": [
+              {
+                "i": 0,
+                "kind": "BASE",
+                "design": "rank1",
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0,
+                "seed": 42
+              },
+              {
+                "i": 1,
+                "kind": "SAMPLING",
+                "design": "rank1",
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.5,
+                "seed": 1042
+              },
+              {
+                "i": 2,
+                "kind": "SAMPLING",
+                "design": "rank1",
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.9,
+                "seed": 2042
+              },
+              {
+                "i": 3,
+                "kind": "DESIGN_SWITCH",
+                "design": "rank2",
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0,
+                "seed": 42
+              },
+              {
+                "i": 4,
+                "kind": "SAMPLING",
+                "design": "rank2",
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.5,
+                "seed": 1042
+              },
+              {
+                "i": 5,
+                "kind": "SAMPLING",
+                "design": "rank2",
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.9,
+                "seed": 2042
+              },
+              {
+                "i": 6,
+                "kind": "DESIGN_SWITCH",
+                "design": "rank3",
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0,
+                "seed": 42
+              },
+              {
+                "i": 7,
+                "kind": "SAMPLING",
+                "design": "rank3",
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.5,
+                "seed": 1042
+              },
+              {
+                "i": 8,
+                "kind": "SAMPLING",
+                "design": "rank3",
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.9,
+                "seed": 2042
+              }
+            ],
+            "note": "the ladder is instantiated over the run's SEL-1 ranking (rank1 = chosen design); design ids are the run's"
+          }
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json (V176 build missions)",
+        "date": "2026-11-24",
+        "transcribedBy": "PROVIDER (Claude Code, V17.6 NB3 repair-diversity session) — bound EXCLUSIVELY to the V176 build-missions record through the declared family V176-BUILD-MISSIONS (odg-authorization-scope OWNER_SOURCES); never through NB1/NB2's V175 record (family V175-NATIVE-LOOP unchanged)",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "isolated, reproducible, loopback-only local-model run at €0 with 0 provider calls; model code only in the bwrap sandbox; only after an independent inspection ACCEPT of this contract is recorded; selected by GO's OWN strategic order (never forced); one single initial execution",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v176-nb3-native-design-run.ts",
+            "args": [
+              "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json"
+            ]
+          }
+        },
+        "inspectionRecord": "docs/odg/evidence/V176_NB3_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.6 NB3 repair-diversity session; branch feat/v176-nb3-repair-diversity)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « Préparer NB3 avec le nouveau levier de diversité des réparations. »",
+          "originalCriteria": [
+            "AC1 problem reproduced at run time: fresh PROB-1 evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)",
+            "AC2 designs: ≥2 parseable designs from the local model, each implemented and measured in the sandbox; SEL-1 choice recorded with all scores",
+            "AC3 held-out oracle: all 33 PROB-1 cases PASS inside odg-native-build-sandbox (EXECUTED, SANDBOX) + strict typecheck 0 diagnostics",
+            "AC4 branch-ready: the diff modifies runtime/core/odg-canonical-json.ts, adds runtime/core/odg-canonical-json-extended.test.ts, passes git apply --check at the run HEAD",
+            "AC5 authorship ledger + provenance: per-stage authorship, every prompt sha256 + its segment kinds + denylist hits (0), every generation sha256, providerCalls 0",
+            "AC6 learning: lessons read before the run (memory-taxonomy CONSOLIDATED) and lessons derived from this run are both in the record"
+          ],
+          "originalCriteriaNote": "AC1–AC6 = NB2's acceptance criteria derived by the SAME rules (odg-v175-native-design-run contractFor) over this tree, verbatim (all PROB-1 cases must pass in the sandbox + strict typecheck 0 diagnostics + git apply --check — NOT weakened); AC7 added (diversity recorded)",
+          "change": [
+            "new contract V176-NB3 (new id; V175-NB2 untouched) entered into the canonical contracts file so GO can select / authorize / dispatch it after an independent inspection",
+            "budgets = NB2's budgets unchanged + budgets.diversity (DIV-1 ladder: base t0/s42, sampling t0.5/s1042 then t0.9/s2042 per design, design switch in SEL-1 order, no model escalation — no larger registered model, maxVariations 8) — pre-registered; the runner's gate refuses if the contract budgets differ from its own",
+            "owner source bound to docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json via the explicit family V176-BUILD-MISSIONS",
+            "dispatch target runtime/bin/odg-v176-nb3-native-design-run.ts → docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json"
+          ],
+          "reason": "NB2 (CLOSED_FAIL, V175_NB2_NATIVE_DESIGN_RESULT.json + V175_NB2_CRITERIA_VALIDATION.json): best design 27/33; both repair rounds stopped NO_PROGRESS_IDENTICAL_REGENERATION (generations 1, 4, 5, 6 byte-identical) even with the failed attempt shown ⇒ hypothesis: the next lever is repair diversity",
+          "justification": "owner V176 build missions explicitly asks to prepare NB3 with the repair-diversity lever and have its contract inspected; criteria, oracle and caps are NB2's (not weakened), fixed with the schedule before any NB3 model call",
+          "revisionAuthorSessionId": "nb3-v176"
         }
       ]
     }

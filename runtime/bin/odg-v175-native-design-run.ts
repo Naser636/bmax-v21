@@ -55,6 +55,9 @@ const BUDGETS = Object.freeze({ model: "qwen2.5-coder:7b", temperature: 0, seed:
   perCallTimeout: Object.freeze({ rule: "ADAPT-1", minMs: 60000, maxMs: 300000, safetyFactor: 3, overheadMs: 15000, charsPerToken: 3 }),
   maxWarmupCalls: 1, warmupNumPredict: 16, warmupTimeoutMs: 180000, hostIdleFactor: 0.75, lessonDigestChars: PIPE.LESSON_DIGEST.budgetChars });
 const sha256 = PIPE.sha256;
+/* V17.6 NB3: the contract PROFILE a run executes under (scenario, output, budgets, lesson sources). NB2's profile reproduces
+ * the V175-NB2 runner exactly (no diversity ⇒ every code path of the NB2 run unchanged). */
+const NB2_PROFILE = Object.freeze({ scenario: SCENARIO, out: OUT, runner: SELF, budgets: BUDGETS, lessonSources: LESSON_SOURCES });
 
 function readJson(p: string): any { try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return null; } }
 
@@ -79,9 +82,9 @@ function oracleTestSource(item: any, problem: any): string {
 }
 
 /* lessonSourcesFor(root, extra) — committed run records (+ probe records passed explicitly) */
-function lessonSourcesFor(root: string, extra: any[] = []): any[] {
+function lessonSourcesFor(root: string, extra: any[] = [], sources: ReadonlyArray<string> = LESSON_SOURCES): any[] {
   const out: any[] = [];
-  for (const rel of LESSON_SOURCES) { const r = readJson(path.join(root, rel)); if (r) out.push({ record: r, provenance: rel }); }
+  for (const rel of sources) { const r = readJson(path.join(root, rel)); if (r) out.push({ record: r, provenance: rel }); }
   for (const e of extra) if (e && e.record) out.push(e);
   return out;
 }
@@ -94,12 +97,13 @@ function priorAcceptance(root: string, item: any): any {
 
 async function runNativeDesign(opts: any): Promise<any> {
   const root = opts.root || ROOT;
+  const P = opts.profile || NB2_PROFILE; const B = P.budgets;   // V17.6 NB3: the runner is parametrised by its contract profile
   const t0 = Date.now();
   const item = NRI.designItem(root);
-  const base: any = { schema: "odg-native-design-result/1", label: opts.label, scenario: SCENARIO, contractSha256: opts.contractSha256 || null, nativeClaim: NATIVE_CLAIM, run: { head: PIPE.headOf(root), startedAt: new Date(t0).toISOString(), runner: SELF }, budgets: BUDGETS };
+  const base: any = { schema: "odg-native-design-result/1", label: opts.label, scenario: P.scenario, contractSha256: opts.contractSha256 || null, nativeClaim: NATIVE_CLAIM, run: { head: PIPE.headOf(root), startedAt: new Date(t0).toISOString(), runner: P.runner }, budgets: B };
   const finish = (x: any) => ({ ...base, ...x, outcome: x.verdict, wallMs: Date.now() - t0 });
   if (!item) return finish({ verdict: "NOT_MEASURED", reason: "no integrated target module or no in-repo reference" });
-  const lessonsIn = PIPE.collectLessons(lessonSourcesFor(root, opts.extraLessons || []));
+  const lessonsIn = PIPE.collectLessons(lessonSourcesFor(root, opts.extraLessons || [], P.lessonSources));
   const problem0 = PIPE.deriveProblem({ ...item, lessonKinds: lessonsIn.kinds });
   const problem = { ...problem0, corpusRule: item.corpusRule, corpusSha256: item.corpusSha256, reference: item.reference, priorAcceptance: priorAcceptance(root, item) };
   base.problem = problem; base.lessonsRead = lessonsIn;
@@ -108,23 +112,23 @@ async function runNativeDesign(opts: any): Promise<any> {
   const impact = PIPE.analyseImpact(root, item.targetPath);
   base.impact = impact;
 
-  const guard = PIPE.makeGuard(opts.transport, BUDGETS);
+  const guard = PIPE.makeGuard(opts.transport, B.diversity ? { ...B, allowedCallOptions: PIPE.allowedCallOptions(B.diversity, B.model) } : B);
   const network = () => ({ modelCalls: guard.st.modelCalls, warmupCalls: guard.st.warmupCalls, refused: guard.st.refused, capHit: guard.st.capHit, providerCalls: 0 });
   // HOST-1: a reading before EVERY model call; the run refuses to START on a busy host (NOT_MEASURED, not FAIL)
   const hostReadings: any[] = [];
-  const readHost = (before: string) => { const h = { before, ...PIPE.hostLoad(BUDGETS.hostIdleFactor, opts.loadProbe) }; hostReadings.push(h); return h; };
+  const readHost = (before: string) => { const h = { before, ...PIPE.hostLoad(B.hostIdleFactor, opts.loadProbe) }; hostReadings.push(h); return h; };
   base.host = { rule: PIPE.HOST_RULE, readings: hostReadings };
   const h0 = readHost("W0 warm-up");
-  if (h0.aboveThreshold) return finish({ verdict: "NOT_MEASURED", reason: `HOST-1: host busy at start — loadavg-1m ${h0.load1} > nproc ${h0.nproc} × ${BUDGETS.hostIdleFactor} = ${h0.threshold}; no model call made`, network: network() });
+  if (h0.aboveThreshold) return finish({ verdict: "NOT_MEASURED", reason: `HOST-1: host busy at start — loadavg-1m ${h0.load1} > nproc ${h0.nproc} × ${B.hostIdleFactor} = ${h0.threshold}; no model call made`, network: network() });
   // ADAPT-1: one warm-up call on the same model measures tokens/s; every later timeout is derived from it
-  const wg = await PIPE.ollamaGenerate(guard.fetchImpl, { model: BUDGETS.model, prompt: PIPE.WARMUP_PROMPT, timeoutMs: BUDGETS.warmupTimeoutMs, warmup: true });
+  const wg = await PIPE.ollamaGenerate(guard.fetchImpl, { model: B.model, prompt: PIPE.WARMUP_PROMPT, timeoutMs: B.warmupTimeoutMs, warmup: true });
   const rate = PIPE.measureRate(wg);
-  base.warmup = { prompt: PIPE.WARMUP_PROMPT, promptSha256: sha256(PIPE.WARMUP_PROMPT), denylistHits: PIPE.denylistHits([{ kind: "TEMPLATE", text: PIPE.WARMUP_PROMPT }]).length, ok: wg.ok, ms: wg.ms, reason: wg.reason || null, timings: wg.timings || null, rate, timeoutMs: BUDGETS.warmupTimeoutMs };
+  base.warmup = { prompt: PIPE.WARMUP_PROMPT, promptSha256: sha256(PIPE.WARMUP_PROMPT), denylistHits: PIPE.denylistHits([{ kind: "TEMPLATE", text: PIPE.WARMUP_PROMPT }]).length, ok: wg.ok, ms: wg.ms, reason: wg.reason || null, timings: wg.timings || null, rate, timeoutMs: B.warmupTimeoutMs };
   if (guard.st.refused.length) return finish({ verdict: "NOT_MEASURED", reason: "non-loopback request refused", network: network() });
   if (!rate) return finish({ verdict: "NOT_MEASURED", reason: "ADAPT-1: the warm-up call did not yield a measurable rate (" + (wg.ok ? "Ollama eval counters absent" : wg.reason) + ") — no per-call timeout can be derived", network: network() });
   const halt: any = { reason: null }; const overCapFailures: any[] = [];
   const prompts: any[] = []; const generations: any[] = [];
-  const ask = async (stage: string, segments: any[]): Promise<any> => {
+  const ask = async (stage: string, segments: any[], callOpts: any = null): Promise<any> => {
     const prompt = PIPE.renderPrompt(segments);
     const hits = PIPE.denylistHits(segments);
     const rec: any = { i: prompts.length + 1, stage, promptSha256: sha256(prompt), promptChars: prompt.length, segments: segments.map((s: any) => ({ kind: s.kind, source: s.source || null, sha256: sha256(s.text) })), denylistHits: hits, prompt };
@@ -132,23 +136,37 @@ async function runNativeDesign(opts: any): Promise<any> {
     if (hits.length) { rec.refused = "TEMPLATE text matches ALGORITHM_HINT_DENYLIST — prompt not sent (fail-closed)"; return { ok: false, reason: rec.refused }; }
     if (halt.reason) { rec.refused = "run halted: " + halt.reason; return { ok: false, reason: rec.refused }; }
     rec.hostLoad = readHost(stage);
-    rec.timeout = PIPE.adaptiveTimeout({ promptChars: prompt.length, numPredict: BUDGETS.numPredict, rate, policy: BUDGETS.perCallTimeout });
+    rec.timeout = PIPE.adaptiveTimeout({ promptChars: prompt.length, numPredict: B.numPredict, rate, policy: B.perCallTimeout });
     if (rec.timeout.predictedOverCap) {
-      const why = `ADAPT-1: predicted duration ${rec.timeout.estimateMs} ms of "${stage}" exceeds the cap ${BUDGETS.perCallTimeout.maxMs} ms — call not sent`;
+      const why = `ADAPT-1: predicted duration ${rec.timeout.estimateMs} ms of "${stage}" exceeds the cap ${B.perCallTimeout.maxMs} ms — call not sent`;
       // #986 inspection (MED): NOT_MEASURED only BEFORE the first work call (nothing observed yet). After it, the refused
       // call is a FAILED generation (counts towards FAIL, prediction recorded) — never a halt that would discard failures.
       if (guard.st.modelCalls === 0) { halt.reason = why; rec.refused = why; return { ok: false, reason: why }; }
-      rec.refused = why + " — counted as a FAILED generation (after the first work call)"; rec.overCapFailure = true; overCapFailures.push({ stage, estimateMs: rec.timeout.estimateMs, capMs: BUDGETS.perCallTimeout.maxMs });
+      rec.refused = why + " — counted as a FAILED generation (after the first work call)"; rec.overCapFailure = true; overCapFailures.push({ stage, estimateMs: rec.timeout.estimateMs, capMs: B.perCallTimeout.maxMs });
       return { ok: false, reason: rec.refused };
     }
-    const g = await PIPE.ollamaGenerate(guard.fetchImpl, { model: BUDGETS.model, prompt, timeoutMs: rec.timeout.timeoutMs });
+    if (callOpts) { rec.model = callOpts.model; rec.temperature = callOpts.temperature; rec.seed = callOpts.seed; }
+    const g = await PIPE.ollamaGenerate(guard.fetchImpl, { model: callOpts ? callOpts.model : B.model, prompt, timeoutMs: rec.timeout.timeoutMs, ...(callOpts ? { callOptions: { temperature: callOpts.temperature, seed: callOpts.seed } } : {}) });
     rec.ok = g.ok; rec.ms = g.ms; rec.evalCount = g.evalCount || null; rec.timings = g.timings || null; rec.reason = g.reason || null; rec.responseSha256 = g.ok ? sha256(g.response) : null;
     return g;
   };
   const harness = PIPE.harnessSource(item.sandboxFile, item.exportName, problem.cases.map((c: any) => c.src));
-  const implement = async (stage: string, design: any, hint: any): Promise<any> => {
-    const g = await ask(stage, PIPE.implementPromptSegments(problem, item.currentSource, impact, lessonsIn.lessons, design, hint));
-    const rec: any = { i: generations.length + 1, stage, design: design.id, promptI: prompts.length, ok: false };
+  // V17.6 NB3 DIV-1: `point` = a pre-declared (model, temperature, seed) ladder point (null ⇒ the base budgets, NB2 behaviour).
+  // An implement call whose (prompt, model, temperature 0, seed) was already SENT is not re-sent (deterministic ⇒ the earlier
+  // generation is returned flagged notSent; diverseGenerate counts it as a stall and advances — no budget spent).
+  const sentKeys = new Map<string, any>();
+  const implement = async (stage: string, design: any, hint: any, point: any = null): Promise<any> => {
+    const segs = PIPE.implementPromptSegments(problem, item.currentSource, impact, lessonsIn.lessons, design, hint);
+    const model = point ? point.model : B.model, temperature = point ? point.temperature : B.temperature, seed = point ? point.seed : B.seed;
+    const key = sha256(JSON.stringify([PIPE.renderPrompt(segs), model, temperature, seed]));
+    if (B.diversity && temperature === 0 && sentKeys.has(key)) {
+      const prev = sentKeys.get(key);
+      const rec: any = { i: generations.length + 1, stage, design: design.id, promptI: null, ok: prev.ok, notSent: true, sameAsGeneration: prev.i, reason: "DIV-1: identical (prompt, model, temperature 0, seed) already sent ⇒ not re-sent", model, temperature, seed, point: point ? point.i : null, tsSource: prev.tsSource, tsSha256: prev.tsSha256, content: prev.content, sandboxContentSha256: prev.sandboxContentSha256 };
+      generations.push(rec);
+      return prev.ok ? rec : null;
+    }
+    const g = await ask(stage, segs, point ? { model, temperature, seed } : null);
+    const rec: any = { i: generations.length + 1, stage, design: design.id, promptI: prompts.length, ok: false, model, temperature, seed, point: point ? point.i : null };
     generations.push(rec);
     if (!g.ok) { rec.reason = g.reason; return null; }
     const tsSrc = PIPE.extractCode(g.response);
@@ -156,18 +174,19 @@ async function runNativeDesign(opts: any): Promise<any> {
     const t = PIPE.transpile(tsSrc);
     rec.ok = true; rec.tsSource = tsSrc; rec.tsSha256 = sha256(tsSrc); rec.syntaxErrors = t.syntaxErrors;
     rec.content = t.syntaxErrors.length ? tsSrc : t.js; rec.sandboxContentSha256 = sha256(rec.content);
+    if (B.diversity) sentKeys.set(key, rec);
     return rec;
   };
   const strip = (gs: any[]) => gs.map(({ content, ...rest }: any) => rest);
 
   // S3 DESIGN
-  const dg = await ask("S3 design", PIPE.designPromptSegments(problem, item.currentSource, impact, lessonsIn.lessons, BUDGETS.designs));
-  const designs = dg.ok ? PIPE.parseDesigns(dg.response, BUDGETS.designs) : [];
-  const designRecord = { by: "LOCAL_MODEL", model: BUDGETS.model, count: designs.length, designs, rawSha256: dg.ok ? sha256(dg.response) : null, raw: dg.ok ? String(dg.response).slice(0, 4000) : null };
+  const dg = await ask("S3 design", PIPE.designPromptSegments(problem, item.currentSource, impact, lessonsIn.lessons, B.designs));
+  const designs = dg.ok ? PIPE.parseDesigns(dg.response, B.designs) : [];
+  const designRecord = { by: "LOCAL_MODEL", model: B.model, count: designs.length, designs, rawSha256: dg.ok ? sha256(dg.response) : null, raw: dg.ok ? String(dg.response).slice(0, 4000) : null };
   const nm = () => guard.st.refused.length > 0 || !!halt.reason;
   const nmReason = () => halt.reason || "non-loopback request refused";
   if (nm()) return finish({ verdict: "NOT_MEASURED", reason: nmReason(), design: designRecord, prompts, generations: strip(generations), network: network() });
-  if (designs.length < BUDGETS.minDesigns) return finish({ verdict: "FAIL", reason: `S3: the local model proposed ${designs.length} parseable design(s) (< ${BUDGETS.minDesigns})`, design: designRecord, prompts, generations: strip(generations), network: network() });
+  if (designs.length < B.minDesigns) return finish({ verdict: "FAIL", reason: `S3: the local model proposed ${designs.length} parseable design(s) (< ${B.minDesigns})`, design: designRecord, prompts, generations: strip(generations), network: network() });
 
   // S4 SELECT — implement each design once, measure, select (SEL-1)
   const scores: any[] = []; const candidates: any = {};
@@ -191,7 +210,7 @@ async function runNativeDesign(opts: any): Promise<any> {
   const repairTrace: any[] = [];
   const caseOfArgs = (msg: string): any => { const m = /with \((\d+)\)/.exec(String(msg || "")); return m ? problem.cases[Number(m[1])] : null; };
   const spec: any = {
-    name: "V175-NB2 odg-canonical-json (design " + sel.chosen + ")",
+    name: P.scenario + " odg-canonical-json (design " + sel.chosen + ")",
     architecture: [
       { path: item.sandboxFile, role: "module under repair (local model, design " + sel.chosen + ")", contract: chosenDesign.summary, dependsOn: [] },
       { path: PIPE.HARNESS_FILE, role: "oracle harness (ODG rules)", contract: "harness", dependsOn: [item.sandboxFile] },
@@ -200,9 +219,13 @@ async function runNativeDesign(opts: any): Promise<any> {
     independentTestCases: problem.cases.map((c: any) => ({ entry: PIPE.HARNESS_FILE, member: null, args: [c.i], expect: c.expect })),
     repairExamples: problem.cases.filter((c: any) => problem.shown.includes(c.i)).map((c: any) => ({ args: [c.i], expect: c.expect })),
   };
+  // V17.6 NB3 DIV-1 (only when the profile's budgets declare `diversity`): a STALL (content already seen) walks the ladder.
+  const div = B.diversity ? PIPE.makeDiversityController(B.diversity, sel.ranking, B.model) : null;
+  const seenContent = new Set<string>(Object.values(candidates).filter(Boolean).map((g: any) => g.sandboxContentSha256));
+  const diversityEvents: any[] = [];
   const rounds: any[] = []; let accepted: any = null; let typeHint: any = null; let firstUse = true;
   const current: any = { gen: null };   // the last generation fed to the sandbox (its source is shown on repair)
-  for (let round = 1; round <= BUDGETS.maxRounds && !accepted && !halt.reason; round++) {
+  for (let round = 1; round <= B.maxRounds && !accepted && !halt.reason; round++) {
     const generateFile = async (fileSpec: any): Promise<any> => {
       if (fileSpec.path === PIPE.HARNESS_FILE) return { ok: true, content: harness };
       if (firstUse && !fileSpec.buildError && !fileSpec.verifyError) { firstUse = false; current.gen = candidates[sel.chosen]; return { ok: true, content: current.gen.content }; }   // S4's implementation of the chosen design (no new call)
@@ -211,33 +234,42 @@ async function runNativeDesign(opts: any): Promise<any> {
       else if (fileSpec.verifyError) { const c = caseOfArgs(fileSpec.verifyError); hint = { verifyError: c ? `for input ${c.src} the return value is still wrong (expected return value ${PIPE.renderOut(c.expect)}).` + (/returned (.*) but the expected/.exec(fileSpec.verifyError) ? " It returned " + /returned (.*) but the expected/.exec(fileSpec.verifyError)![1] + "." : " It threw.") : String(fileSpec.verifyError).replace(/with \((\d+)\)/, "on a shown input") }; repairTrace.push({ round, kind: c ? c.kind : null, case: c ? c.i : null }); }
       else if (typeHint) hint = typeHint;
       if (hint && current.gen && typeof current.gen.tsSource === "string") hint = { ...hint, attemptSource: current.gen.tsSource };   // show the failed attempt
-      const g = await implement(`S5 ${hint && hint.typeError ? "typefix" : hint ? "repair" : "implement"} ${sel.chosen} r${round}`, chosenDesign, hint);
+      const label = hint && hint.typeError ? "typefix" : hint ? "repair" : "implement";
+      if (div) {
+        const r = await PIPE.diverseGenerate({ controller: div, seen: seenContent, events: diversityEvents, candidateFor: (id: string) => candidates[id] || null,
+          generate: (pt: any) => implement(`S5 ${label} ${pt.design} r${round} p${pt.i}`, designs.find((d: any) => d.id === pt.design), hint, pt) });
+        if (!r.gen) return { ok: false };
+        current.gen = r.gen; return { ok: true, content: r.gen.content };
+      }
+      const g = await implement(`S5 ${label} ${sel.chosen} r${round}`, chosenDesign, hint);
       if (!g) return { ok: false };
       current.gen = g; return { ok: true, content: g.content };
     };
-    const out = await BUILDER.buildProject(spec, { generateFile, maxRepair: BUDGETS.maxRepairPerRound, sandboxRunner: opts.sandboxRunner });
+    const out = await BUILDER.buildProject(spec, { generateFile, maxRepair: B.maxRepairPerRound, sandboxRunner: opts.sandboxRunner });
     const finalJs = out.files ? out.files[item.sandboxFile] : null;
-    const gen = [candidates[sel.chosen], ...generations].reverse().find((g: any) => g && g.ok && g.sandboxContentSha256 === (finalJs ? sha256(finalJs) : null));
+    const gen = [candidates[sel.chosen], ...generations].reverse().find((g: any) => g && g.ok && !g.notSent && g.sandboxContentSha256 === (finalJs ? sha256(finalJs) : null));
     const r: any = { round, buildOk: out.buildOk, verified: out.verified, accepted: out.accepted, repairs: out.repairs, repairStopReason: out.repairStopReason, verifyError: out.verifyError, buildError: out.buildError, executionMode: out.executionMode, executionStatus: out.executionStatus, isolation: out.isolation, firstPass: out.firstPass, finalTsSha256: gen ? gen.tsSha256 : null, finalGeneration: gen ? gen.i : null };
     rounds.push(r);
     if (out.executionStatus !== "EXECUTED" || out.executionMode !== "SANDBOX") break;
     if (out.accepted && gen) { r.typecheck = PIPE.typecheck(gen.tsSource, item.targetPath); if (r.typecheck.ok) accepted = gen; else { typeHint = { typeError: r.typecheck.diagnostics.join(" | ") }; firstUse = false; } }
     if (guard.st.capHit) break;
+    if (div && div.st.exhausted) break;   // DIV-1: ladder exhausted ⇒ no further round (never an extra call past the schedule)
   }
   const repairs = rounds.reduce((a: number, r: any) => a + (Number(r.repairs) || 0), 0);
   const allHits = prompts.reduce((a: number, p: any) => a + p.denylistHits.length, 0);
-  const ledger = PIPE.authorshipLedger({ denylistHits: Array.from({ length: allHits }), designsBy: "LOCAL_MODEL", model: BUDGETS.model, designCount: designs.length, chosen: sel.chosen, implementedBy: "LOCAL_MODEL", generation: accepted ? accepted.i : null, repairs, integratedBy: null });
+  const ledger = PIPE.authorshipLedger({ denylistHits: Array.from({ length: allHits }), designsBy: "LOCAL_MODEL", model: B.model, designCount: designs.length, chosen: sel.chosen, implementedBy: "LOCAL_MODEL", generation: accepted ? accepted.i : null, repairs, integratedBy: null });
   const provenance = { actor: "ODG", executionClass: NE.EXEC.LOCAL, providerEditedGeneratedCode: false, providerCalls: 0 };
   base.host.aboveThresholdDuringRun = hostReadings.filter((h: any) => h.aboveThreshold).length;   // context only (HOST_RULE); never re-grades the verdict
-  const common: any = { overCapFailures, design: designRecord, selection, rounds, repairTrace, prompts, generations: strip(generations), network: network(), provenance, authorship: ledger };
+  const diversity = div ? { ...div.record(), events: diversityEvents, callsByPoint: generations.filter((g: any) => !g.notSent && g.point !== null && g.promptI !== null).map((g: any) => ({ generation: g.i, point: g.point, model: g.model, temperature: g.temperature, seed: g.seed })) } : undefined;
+  const common: any = { overCapFailures, ...(diversity ? { diversity } : {}), design: designRecord, selection, rounds, repairTrace, prompts, generations: strip(generations), network: network(), provenance, authorship: ledger };
   const notMeasured = nm() || rounds.some((r: any) => r.executionStatus !== "EXECUTED" || r.executionMode !== "SANDBOX");
-  const withLessons = (rec: any) => ({ ...rec, lessons: PIPE.deriveLessons(rec, opts.lessonProvenance || OUT) });
+  const withLessons = (rec: any) => ({ ...rec, lessons: PIPE.deriveLessons(rec, opts.lessonProvenance || P.out) });
   if (notMeasured) return withLessons(finish({ verdict: "NOT_MEASURED", reason: nm() ? nmReason() : "sandbox did not execute (NOT_RUN) — no verdict", ...common }));
-  if (!accepted) return withLessons(finish({ verdict: "FAIL", reason: `S5: the chosen design did not pass the held-out oracle + strict typecheck within ${BUDGETS.maxRounds} rounds × (1 + ${BUDGETS.maxRepairPerRound} repairs)${guard.st.capHit ? " (cap " + guard.st.capHit + ")" : ""}`, ...common }));
+  if (!accepted) return withLessons(finish({ verdict: "FAIL", reason: `S5: the chosen design did not pass the held-out oracle + strict typecheck within ${B.maxRounds} rounds × (1 + ${B.maxRepairPerRound} repairs)${guard.st.capHit ? " (cap " + guard.st.capHit + ")" : ""}${div && div.st.exhausted ? " (DIV-1 ladder exhausted)" : ""}`, ...common }));
   const testSrc = oracleTestSource(item, problem);
   const diff = PIPE.replaceFileDiff(item.targetPath, item.currentSource, accepted.tsSource) + PIPE.newFileDiff(item.testPath, testSrc);
   const applyCheck = PIPE.gitApplyCheck(root, diff);
-  const patch = { files: [{ path: item.targetPath, sha256: sha256(accepted.tsSource), authoredBy: "LOCAL_MODEL", design: sel.chosen, generation: accepted.i, change: "MODIFIED" }, { path: item.testPath, sha256: sha256(testSrc), authoredBy: "ODG_RULES", change: "ADDED" }], diff, diffSha256: sha256(diff), gitApplyCheck: applyCheck };
+  const patch = { files: [{ path: item.targetPath, sha256: sha256(accepted.tsSource), authoredBy: "LOCAL_MODEL", design: accepted.design || sel.chosen, generation: accepted.i, change: "MODIFIED" }, { path: item.testPath, sha256: sha256(testSrc), authoredBy: "ODG_RULES", change: "ADDED" }], diff, diffSha256: sha256(diff), gitApplyCheck: applyCheck };
   return withLessons(finish({ verdict: applyCheck.ok ? "PASS" : "FAIL", reason: applyCheck.ok ? "S4 ≥2 designs measured + SEL-1 choice; S5 held-out oracle PASS in sandbox + strict typecheck PASS; git apply --check OK" : "diff does not apply", ...common, patch,
     integration: "OWNER_GATED via normal PR controls: apply patch.diff on a branch (this runner writes no checkout)" }));
 }
@@ -303,7 +335,8 @@ function contractFor(root: string): any {
 /* ---------------- CLI ---------------- */
 function readContract(root: string): any { const d = readJson(path.join(root, CONTRACTS)); return d ? (d.contracts || []).find((c: any) => c && c.scenario === SCENARIO) || null : null; }
 function readInspection(root: string): any { const r = readJson(path.join(root, INSPECTION)); return r ? { ...r, recordPath: INSPECTION } : null; }
-function gate(contract: any, inspection: any, probes: any): any {
+function gate(contract: any, inspection: any, probes: any, profile: any = NB2_PROFILE): any {
+  const SCENARIO = profile.scenario, SELF = profile.runner, OUT = profile.out;   // V17.6 NB3: same gate, per contract profile
   if (!contract) return { ok: false, reason: `contract ${SCENARIO} not found in ${CONTRACTS}` };
   const sc = AS.deriveAuthorizationScope(contract, { inspection, probes });
   if (!sc.applicable) return { ok: false, reason: `authorization scope not applicable: ${sc.reason}` };
@@ -394,6 +427,6 @@ async function main(argv: string[]): Promise<number> {
   return r.verdict === "PASS" ? 0 : 1;
 }
 
-module.exports = { runNativeDesign, contractFor, gate, readContract, realOutside, oracleTestSource, lessonSourcesFor, makeFake, IDLE, FAKE_TIMINGS, FIX_WRONG, FIX_RIGHT, BUDGETS, SELF, OUT, CONTRACTS, INSPECTION, SCENARIO, STEP, NATIVE_CLAIM, LESSON_SOURCES };
+module.exports = { runNativeDesign, NB2_PROFILE, FIX_DESIGNS, loopbackTransport, contractFor, gate, readContract, realOutside, oracleTestSource, lessonSourcesFor, makeFake, IDLE, FAKE_TIMINGS, FIX_WRONG, FIX_RIGHT, BUDGETS, SELF, OUT, CONTRACTS, INSPECTION, SCENARIO, STEP, NATIVE_CLAIM, LESSON_SOURCES };
 if (require.main === module) main(process.argv.slice(2)).then((c) => process.exit(c), (e) => { process.stdout.write("ERROR " + String((e && e.stack) || e) + "\n"); process.exit(1); });
 export {};
