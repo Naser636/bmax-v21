@@ -314,25 +314,33 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     // record (GO-ORD-2), AUTHORIZE stops at INSPECT without an inspection record; with a LABELLED simulated inspection ACCEPT
     // (fixture — the real record is written by an independent inspector) RUN_CONTROLLED_EXPERIMENTS is derived and the
     // declared dispatch target (the V175 runner, writeSet = the result record) is resolved; dry ⇒ nothing dispatched.
+    // V17.5: NB1 has now RUN natively (committed V175_NATIVE_BUILD_RESULT.json) ⇒ on the REAL state GO-ORD-2's one-shot rule refuses (asserted);
+    // the NB1 GO-path behaviour tests below run on a LABELLED fixture = real state with only NB1's result record removed (the pre-run state GO saw).
+    const nbStrip = (c: any) => { c.authorizationEvidence["V175-NB1"] = { ...c.authorizationEvidence["V175-NB1"], experiment: null, validation: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence["V175-NB1"]) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, "V175-NB1": { ...c.sources.authorizationEvidence["V175-NB1"], experiment: null, validation: null } } }; return c; };
+    const nbPre = nbStrip(cloneS(real));
+    {
+      const after = await runDry(real); const aa = after.sel.decision.actionableSelection; const ad = aa.ownerSelectionDecision;
+      check("V175-NB1 REAL state after the native run (result committed) ⇒ one-shot: GO-ORD-2 NOT applied, NB1 not worked on via the record", !(ad && ad.applied && ad.chosen === "V175-NB1") && after.sel.decision.workingOn !== "V175-NB1");
+    }
     {
       const nb1c = real.sources.contracts.data.contracts.find((x: any) => x.scenario === "V175-NB1");
       const nbRec = real.ownerSelectionDecisions.find((x: any) => x.item === "V175-NB1");
       check("V175-NB1: owner selection record declared in OWNER_SELECTION_DECISIONS, loaded, bound to the CURRENT NB1 contract sha", B.OWNER_SELECTION_DECISIONS.includes("docs/odg/V175_OWNER_DECISION_SELECT_NB1.json") && !!nbRec && nbRec.contractSha256 === ASc.contractSha256(nb1c));
-      const noRec = await runDry((() => { const c = cloneS(real); c.ownerSelectionDecisions = c.ownerSelectionDecisions.filter((x: any) => x.item !== "V175-NB1"); return c; })());
+      const noRec = await runDry((() => { const c = cloneS(nbPre); c.ownerSelectionDecisions = c.ownerSelectionDecisions.filter((x: any) => x.item !== "V175-NB1"); return c; })());
       const na = noRec.sel.decision.actionableSelection;
       check("V175-NB1 baseline (no NB1 selection record): actionable DECISION_REQUIRED, no tie, proposed V175-NB1 ⇒ nothing worked on", na.selection.decision === "DECISION_REQUIRED" && na.selection.tiedSet.length <= 1 && na.selection.proposed === "V175-NB1" && na.item === null);
-      const d0 = await runDry(real);
+      const d0 = await runDry(nbPre);
       const a0 = d0.sel.decision.actionableSelection;
       check("V175-NB1 real state ⇒ GO dry selects V175-NB1 via GO-ORD-2 (record applied); strategic selection unchanged", a0.item === "V175-NB1" && d0.sel.decision.workingOn === "V175-NB1" && a0.ownerSelectionDecision.applied === true && a0.resolvedBy === "OWNER_SELECTION_DECISION docs/odg/V175_OWNER_DECISION_SELECT_NB1.json" && JSON.stringify(d0.sel.decision.strategicSelection) === JSON.stringify(noRec.sel.decision.strategicSelection));
       // V17.5: the NB1 contract inspection (ACCEPT, #975) is now committed ⇒ on the REAL state AUTHORIZE grants RUN (asserted);
       // the "no inspection" refusal is kept on a LABELLED fixture = real state with only NB1's inspection record removed.
       check("V175-NB1 REAL state (inspection ACCEPT committed) ⇒ AUTHORIZE: RUN_CONTROLLED_EXPERIMENTS authorized under owner V175", d0.auth.decision.scopedAuthorization.scenario === "V175-NB1" && d0.auth.decision.scopedAuthorization.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && d0.auth.decision.scopedAuthorization.executionAuthorized === true);
-      const d0x = await runDry((() => { const c = cloneS(real); c.authorizationEvidence["V175-NB1"] = { ...c.authorizationEvidence["V175-NB1"], inspection: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence["V175-NB1"]) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, "V175-NB1": { ...c.sources.authorizationEvidence["V175-NB1"], inspection: null } } }; return c; })());
+      const d0x = await runDry((() => { const c = cloneS(nbPre); c.authorizationEvidence["V175-NB1"] = { ...c.authorizationEvidence["V175-NB1"], inspection: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence["V175-NB1"]) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, "V175-NB1": { ...c.sources.authorizationEvidence["V175-NB1"], inspection: null } } }; return c; })());
       check("V175-NB1 without inspection record (labelled fixture) ⇒ AUTHORIZE: current step INSPECT_REVISED_CONTRACT, execution NOT authorized (refused)", d0x.auth.decision.scopedAuthorization.scenario === "V175-NB1" && d0x.auth.decision.scopedAuthorization.currentStep === "INSPECT_REVISED_CONTRACT" && d0x.auth.decision.scopedAuthorization.executionAuthorized === false && d0.r.dispatchCalls === 0);
       const H40 = "a".repeat(40);
       const fixtureProbes = { label: "TEST FIXTURE — commit 'a'×40 declared present + ancestor of main", mainRef: "fixture-main", commitExists: (x: string) => x === H40, isAncestorOfMain: (x: string) => x === H40, fileSha256: (rel: string) => { try { return require("crypto").createHash("sha256").update(fs.readFileSync(path.join(ROOT, rel))).digest("hex"); } catch { return null; } } };
       const simInsp = { scenario: "V175-NB1", verdict: "ACCEPT", contractSha256: ASc.contractSha256(nb1c), inspector: "SIMULATED (test fixture)", inspectorSessionId: "sim-inspector-nb1-01", authorSessionId: nb1c.revisionHistory[nb1c.revisionHistory.length - 1].revisionAuthorSessionId, inspectedHeadSha: H40, inspectedPr: 997, recordPath: "docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json" };
-      const withInsp = (() => { const c = cloneS(real); c.authorizationEvidence["V175-NB1"] = { ...c.authorizationEvidence["V175-NB1"], inspection: simInsp, probes: fixtureProbes }; return c; })();
+      const withInsp = (() => { const c = cloneS(nbPre); c.authorizationEvidence["V175-NB1"] = { ...c.authorizationEvidence["V175-NB1"], inspection: simInsp, probes: fixtureProbes }; return c; })();
       const d1 = await runDry(withInsp);
       const sa = d1.auth.decision.scopedAuthorization;
       check("V175-NB1 with SIMULATED inspection ACCEPT ⇒ selected, AUTHORIZE derives RUN_CONTROLLED_EXPERIMENTS (execution authorized by owner V175), dry ⇒ 0 dispatch", d1.sel.decision.workingOn === "V175-NB1" && sa.scenario === "V175-NB1" && sa.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && sa.executionAuthorized === true && d1.r.dispatchCalls === 0);

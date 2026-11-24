@@ -9,9 +9,13 @@ const T = require("./odg-transform-catalog.js");
 let f = 0; function check(n: string, c: boolean) { process.stdout.write((c ? "ok" : "NOT OK") + " - " + n + "\n"); if (!c) f++; }
 
 // LIVE scan of the current core (the real grounding) — reuse the catalog, no second engine.
+const POST_V251_FILES = ["odg-canonical-json.ts"];
+function postBaselineFindings(): any { const out: any = {}; for (const file of POST_V251_FILES) { const src = fs.readFileSync("runtime/core/" + file, "utf8"); out[file] = T.TRANSFORM_IDS.filter((c: string) => T.runTransform({ classId: c, source: src }).outcome === "NATIVE_REPAIRED_GREEN"); } return out; }
 function liveScan(): any {
   const dir = "runtime/core";
-  const files = fs.readdirSync(dir).filter((x: string) => x.endsWith(".ts") && !x.endsWith(".test.ts"));
+  // V17.5: files ADDED AFTER the V251 baseline are excluded from the baseline-stability scan (declared, not silent) and checked
+  // separately below — ODG-native code (odg-canonical-json.ts, #978) must not be hand-edited by the provider to fit a frozen count.
+  const files = fs.readdirSync(dir).filter((x: string) => x.endsWith(".ts") && !x.endsWith(".test.ts") && !POST_V251_FILES.includes(x));
   const perClass: any = {}; for (const c of T.TRANSFORM_IDS) perClass[c] = 0;
   for (const file of files) { let s: string; try { s = fs.readFileSync(dir + "/" + file, "utf8"); } catch (e) { continue; } for (const c of T.TRANSFORM_IDS) if (T.runTransform({ classId: c, source: s }).outcome === "NATIVE_REPAIRED_GREEN") perClass[c]++; }
   return { perClass };
@@ -22,6 +26,7 @@ function main() {
   const r = R.reconcile(live);
 
   // GROUNDED: the reconciliation reflects the REAL current scan, and it is STABLE vs the V251 baseline of 230.
+  { const pb = postBaselineFindings(); check("post-V251 files (declared): odg-canonical-json.ts (ODG-native, #978) has only the ensure-use-strict scan finding (a scan count, not a defect) — excluded from the baseline-stability scan", JSON.stringify(pb["odg-canonical-json.ts"]) === JSON.stringify(["ensure-use-strict@1"])); }
   check("live scan reconciles to the V251 baseline total (230) — stable, grounded in the real catalog scan", r.baselineTotal === 230 && r.liveTotal === 230 && r.scanStable === true);
   check("per-class live counts are grounded (fed from the real catalog scan), with drift reported per class", r.classes.every((c: any) => typeof c.liveCount === "number" && typeof c.drift === "string") && r.classes.find((c: any) => c.classId === "ensure-dual-export@1").liveCount === 177);
 
