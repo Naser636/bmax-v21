@@ -388,9 +388,27 @@ async function runAndWrite(files: any): Promise<number> {
  * dispatcher). `--run [<suite>...]` → classify the given suites (or the default set) and persist.
  * An explicit suite list with no mode flag also runs (back-compat with `npm run test:report`).
  */
+/*
+ * DIST PREREQUISITE (V17.5 test:report root cause). ~41 curated suites exercise the COMPILED runtime (spawn
+ * runtime/dist/core/patch-executor.js, assert dist dashboards/bins, …). `npm test` and CI build it first (pretest /
+ * the CI "Build runtime guard" step) but `npm run test:report` did not ⇒ on a fresh checkout those suites FAILed one
+ * by one with scattered ENOENT/assertion noise, and the count drifted with whatever dist happened to be on disk.
+ * `npm run test:report` now builds via `pretest:report` (same guarded, fingerprinted build as `npm test`). Any OTHER
+ * entry (direct tsx, odg-targeted-verify, `odg test-report --run`) that runs suites without a built dist is refused
+ * HERE with ONE clear message (fail-closed, exit 2) — never silently turned into 41 unrelated-looking FAILs.
+ */
+function distPrerequisite(root: string = ROOT): { ok: boolean; message: string } {
+  const dist = path.join(root, "runtime", "dist");
+  const missing = [path.join(dist, "core"), path.join(dist, "dist-closure-manifest.json")].filter((p) => !safeExists(p));
+  if (missing.length === 0) return { ok: true, message: "" };
+  return { ok: false, message: `[odg-test-report] PREREQUISITE MISSING: compiled runtime dist not built (${missing.map((p) => path.relative(root, p)).join(", ")} absent). Run \`npm run build:runtime\` first (\`npm run test:report\` does this automatically via pretest:report). No suite was run.` };
+}
+
 async function main(argv: any): Promise<number> {
   const mode = argv[0];
   if (argv.length === 0 || mode === "--show") { const o = renderShow(loadReport(), Date.now()); console.log(o.text); return o.exit; }
+  const pre = distPrerequisite();
+  if (!pre.ok) { console.error(pre.message); return 2; }
   if (mode === "--run") { const f = argv.slice(1); return await runAndWrite(f.length > 0 ? f : defaultFiles()); }
   return await runAndWrite(argv);
 }
@@ -399,6 +417,6 @@ if (require.main === module) {
   main(process.argv.slice(2)).then((code) => process.exit(code));
 }
 
-module.exports = { classify, runSuites, suiteIsHazard, parseWorkers, computeWorkers, runSuitesParallel, summarize, overallExit, renderReport, defaultFiles, loadReport, stalenessOf, renderShow, runAndWrite, main, CLASSES };
+module.exports = { distPrerequisite, classify, runSuites, suiteIsHazard, parseWorkers, computeWorkers, runSuitesParallel, summarize, overallExit, renderReport, defaultFiles, loadReport, stalenessOf, renderShow, runAndWrite, main, CLASSES };
 
 export {};

@@ -22,6 +22,22 @@ const R = require("./odg-test-report.js");
 let passed = 0;
 const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); passed += 1; };
 
+// --- dist prerequisite (V17.5 test:report root cause) --------------------------------------------
+{
+  const droot = fs.mkdtempSync(path.join(os.tmpdir(), "odg-trep-dist-"));
+  const p0 = R.distPrerequisite(droot);
+  ok("no runtime/dist ⇒ prerequisite NOT ok, ONE clear message naming build:runtime (never 41 scattered FAILs)",
+     p0.ok === false && /PREREQUISITE MISSING/.test(p0.message) && /npm run build:runtime/.test(p0.message) && /No suite was run/.test(p0.message));
+  fs.mkdirSync(path.join(droot, "runtime", "dist", "core"), { recursive: true });
+  ok("dist/core without closure manifest ⇒ still NOT ok (half-built dist refused)", R.distPrerequisite(droot).ok === false);
+  fs.writeFileSync(path.join(droot, "runtime", "dist", "dist-closure-manifest.json"), "{}");
+  ok("dist/core + closure manifest ⇒ prerequisite ok", R.distPrerequisite(droot).ok === true);
+  try { fs.rmSync(droot, { recursive: true, force: true }); } catch { /* best-effort */ }
+  const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "package.json"), "utf8"));
+  ok("package.json: `npm run test:report` builds the dist first (pretest:report === pretest === build:runtime)",
+     pkg.scripts["pretest:report"] === "npm run build:runtime" && pkg.scripts.pretest === "npm run build:runtime");
+}
+
 // --- classify (pure) ------------------------------------------------------------------------------
 ok("PASS: exit 0, no declaration", R.classify({ exists: true, exitCode: 0, stdout: "all good" }).cls === "PASS");
 ok("FAIL: non-zero, no declaration", R.classify({ exists: true, exitCode: 1, stdout: "AssertionError" }).cls === "FAIL");
