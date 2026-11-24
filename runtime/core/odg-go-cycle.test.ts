@@ -393,7 +393,7 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     }
     // V17.4 GO-ORD-1: a committed owner ORDER-decision record resolves ONLY an actionable DECISION_REQUIRED tie with the same set
     {
-      const REC = { kind: "OWNER_ORDER_DECISION", tiedSet: ["J", "G"], order: ["G", "J"], date: "2026-11-24", source: "test fixture", quote: ["G d'abord, puis J (test fixture)"], recordPath: "docs/odg/TEST_ORDER.json" };
+      const REC = { schema: "odg-owner-order-decision/1", issuer: "OWNER (test fixture)", kind: "OWNER_ORDER_DECISION", tiedSet: ["J", "G"], order: ["G", "J"], date: "2026-11-24", source: "test fixture", quote: ["G d'abord, puis J (test fixture)"], recordPath: "docs/odg/TEST_ORDER.json" };
       const withRec = (s0: any, recs: any[]) => { const s = clone(s0); s.measured = s0.measured; s.ownerOrderDecisions = recs; return s; };
       const runSel = async (S: any) => { const p = mkPorts({ state: S }); const r = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports); return { r, p, st: stepIn(p.trace, "SELECT") }; };
       const S0 = plainAuth(BASE_UNAUTH, ["J", "G"]);
@@ -402,6 +402,11 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       const a = await runSel(withRec(S0, [{ ...REC, tiedSet: ["G", "J"] }]));
       const aa = a.st.decision.actionableSelection;
       check("GO-ORD exact tie {J,G} + record order G→J ⇒ actionable item G, resolvedBy OWNER_ORDER_DECISION <path>, quote recorded, working on G", aa.item === "G" && aa.resolvedBy === "OWNER_ORDER_DECISION docs/odg/TEST_ORDER.json" && aa.ownerOrderDecision.applied === true && aa.ownerOrderDecision.quote[0] === REC.quote[0] && a.st.decision.workingOn === "G" && /resolved by OWNER_ORDER_DECISION docs\/odg\/TEST_ORDER\.json/.test(a.st.rationale));
+      for (const [label, o] of [["non-OWNER issuer", { issuer: "PROVIDER" }], ["missing schema", { schema: undefined }], ["no source/quote", { source: "", quote: [] }]] as any) {
+        const b = await runSel(withRec(S0, [{ ...REC, tiedSet: ["G", "J"], ...o }]));
+        const ba = b.st.decision.actionableSelection;
+        check(`GO-ORD record with ${label} ⇒ ignored (nothing chosen by the record)`, !(ba && ba.ownerOrderDecision && ba.ownerOrderDecision.applied) && ba.item !== "G");
+      }
       check("GO-ORD selector decision itself unchanged (actionable selection still DECISION_REQUIRED J,G; strategicSelection identical to no-record run)", aa.selection.decision === "DECISION_REQUIRED" && aa.selection.tiedSet.join(",") === "J,G" && JSON.stringify(a.st.decision.strategicSelection) === JSON.stringify(base.st.decision.strategicSelection) && a.st.decision.decision === base.st.decision.decision);
       check("GO-ORD never creates authorization: strategic H still requires owner authorization, G's basis is its own contract authorization", a.st.decision.ownerRequest.item === "H" && /H PROPOSED → AUTHORIZED/.test(a.st.decision.ownerRequest.authorizationNeeded) && !a.st.decision.ownerRequest.actionableTiedSet && aa.basis.basis === "CONTRACT_AUTHORIZED");
       // different tiedSet ⇒ ignored (reason), behaviour as today

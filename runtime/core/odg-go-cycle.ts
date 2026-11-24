@@ -188,6 +188,9 @@ function resolveOwnerOrder(state: any, register: any, tied: string[]): any {
   for (const rec of records) {
     const at = rec.recordPath || null;
     if (rec.kind !== "OWNER_ORDER_DECISION") { considered.push({ record: at, applied: false, reason: `kind ${rec.kind} ≠ OWNER_ORDER_DECISION` }); continue; }
+    if (rec.schema !== "odg-owner-order-decision/1") { considered.push({ record: at, applied: false, reason: `schema ${rec.schema} ≠ odg-owner-order-decision/1` }); continue; }
+    if (typeof rec.issuer !== "string" || !rec.issuer.trim().toUpperCase().startsWith("OWNER")) { considered.push({ record: at, applied: false, reason: "issuer is not the OWNER" }); continue; }
+    if (typeof rec.source !== "string" || !rec.source.trim() || !Array.isArray(rec.quote) || !rec.quote.length) { considered.push({ record: at, applied: false, reason: "record lacks an owner source citation and verbatim quotes" }); continue; }
     const R = [...new Set(arr(rec.tiedSet).map(String))].sort();
     if (!Array.isArray(rec.tiedSet) || canon(R) !== canon(T)) { considered.push({ record: at, applied: false, reason: `record tiedSet ${R.join("/")} ≠ actionable tiedSet ${T.join("/")} (set equality required)` }); continue; }
     const skipped: any[] = [];

@@ -12,11 +12,23 @@
     "Elle ne modifie aucun score, contrat, critère, seuil, règle de sélection ou règle d'allocation canonique.",
     "Enregistrer cette décision dans le journal de décisions et le suivi opérationnel, avec sa provenance et sa date."
   ],
-  "tiedSet": ["G2", "J2"],
-  "order": ["G2", "J2"],
+  "tiedSet": [
+    "G2",
+    "J2"
+  ],
+  "order": [
+    "G2",
+    "J2"
+  ],
   "scope": {
     "appliesTo": "ODG GO actionableSelection ONLY, and ONLY when it is DECISION_REQUIRED with a tiedSet equal (as a set) to this record's tiedSet",
-    "neverAppliesTo": ["strategicSelection", "non-tied selections", "authorization (the chosen item must already be actionable)", "scores / ranking / register"],
+    "neverAppliesTo": [
+      "strategicSelection",
+      "non-tied selections",
+      "authorization (the chosen item must already be actionable)",
+      "scores / ranking / register"
+    ],
     "consumedBy": "runtime/core/odg-go-cycle.ts (GO-ORD-1), loaded by runtime/bin/odg-go.ts readState from OWNER_ORDER_DECISIONS"
-  }
+  },
+  "appliedBy": "GO-ORD-1 (runtime/core/odg-go-cycle.ts) — a provider-written GO rule that consumes this owner decision ONLY to resolve the exact actionable tie G2/J2 that GO itself requested; it changes no score, criterion, threshold, selection or allocation rule"
 }
