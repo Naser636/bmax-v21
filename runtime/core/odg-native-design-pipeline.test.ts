@@ -49,7 +49,7 @@ const allTemplate = [...dseg, ...iseg, ...tseg].filter((s: any) => s.kind === "T
 check("denylist: no algorithm words anywhere in the template text (undefined / null / filter / sort / JSON.stringify / Object.keys)", !/undefined|null|filter|sort|JSON\.stringify|Object\.keys|omit|skip|drop/i.test(allTemplate));
 check("prompt evidence carries the executed shown cases with expected values, never a held-out expected value", (() => {
   const txt = P.renderPrompt(dseg);
-  const shownOk = prob.shown.every((i: number) => txt.includes("input: " + prob.cases[i].src) && txt.includes("expected output: " + prob.cases[i].expect));
+  const shownOk = prob.shown.every((i: number) => txt.includes("input: " + prob.cases[i].src) && txt.includes("expected return value: " + JSON.stringify(prob.cases[i].expect)));
   const heldNoExpect = prob.cases.filter((c: any) => !prob.shown.includes(c.i)).every((c: any) => !txt.includes("input: " + c.src + "\n"));
   return shownOk && heldNoExpect;
 })());

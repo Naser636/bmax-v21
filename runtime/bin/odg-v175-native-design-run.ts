@@ -177,7 +177,7 @@ async function runNativeDesign(opts: any): Promise<any> {
       if (firstUse && !fileSpec.buildError && !fileSpec.verifyError) { firstUse = false; current.gen = candidates[sel.chosen]; return { ok: true, content: current.gen.content }; }   // S4's implementation of the chosen design (no new call)
       let hint: any = null;
       if (fileSpec.buildError) hint = { buildError: fileSpec.buildError };
-      else if (fileSpec.verifyError) { const c = caseOfArgs(fileSpec.verifyError); hint = { verifyError: c ? `for input ${c.src} the output is still wrong (expected ${c.expect}).` + (/returned (.*) but the expected/.exec(fileSpec.verifyError) ? " It returned " + /returned (.*) but the expected/.exec(fileSpec.verifyError)![1] + "." : " It threw.") : String(fileSpec.verifyError).replace(/with \((\d+)\)/, "on a shown input") }; repairTrace.push({ round, kind: c ? c.kind : null, case: c ? c.i : null }); }
+      else if (fileSpec.verifyError) { const c = caseOfArgs(fileSpec.verifyError); hint = { verifyError: c ? `for input ${c.src} the return value is still wrong (expected return value ${PIPE.renderOut(c.expect)}).` + (/returned (.*) but the expected/.exec(fileSpec.verifyError) ? " It returned " + /returned (.*) but the expected/.exec(fileSpec.verifyError)![1] + "." : " It threw.") : String(fileSpec.verifyError).replace(/with \((\d+)\)/, "on a shown input") }; repairTrace.push({ round, kind: c ? c.kind : null, case: c ? c.i : null }); }
       else if (typeHint) hint = typeHint;
       const g = await implement(`S5 ${hint && hint.typeError ? "typefix" : hint ? "repair" : "implement"} ${sel.chosen} r${round}`, chosenDesign, hint);
       if (!g) return { ok: false };

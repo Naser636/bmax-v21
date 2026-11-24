@@ -41,6 +41,8 @@ const NBS = require("./odg-native-build-sandbox.js");
 const GEN = require("./local-model-generator.js");
 const CIG = require("./change-impact-graph.js");
 const MEM = require("./memory-taxonomy.js");
+let TS_LIB: any = null;
+function tsLib(): any { if (!TS_LIB) TS_LIB = require("typescript"); return TS_LIB; }   // loaded once, on first use
 
 const sha256 = (s: any): string => crypto.createHash("sha256").update(String(s)).digest("hex");
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -72,14 +74,14 @@ function makeGuard(transport: any, caps: any): any {
 
 /* transpile(tsSrc) — TypeScript → CommonJS JavaScript (a build step; no semantic change). */
 function transpile(tsSrc: string): any {
-  const ts = require("typescript");
+  const ts = tsLib();
   const r = ts.transpileModule(tsSrc, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, reportDiagnostics: true });
   const diags = (r.diagnostics || []).map((d: any) => ts.flattenDiagnosticMessageText(d.messageText, "\n"));
   return { js: r.outputText, syntaxErrors: diags };
 }
 /* typecheck(tsSrc, fileName?) — strict + isolatedModules in-memory program; CommonJS globals declared `any`. */
 function typecheck(tsSrc: string, fileName: string = "odg-canonical-json.ts"): any {
-  const ts = require("typescript");
+  const ts = tsLib();
   const F = "/odg-v175/" + path.basename(fileName), A = "/odg-v175/ambient.d.ts";
   const mem: any = { [F]: tsSrc, [A]: "declare var module: any;\ndeclare var require: any;\ndeclare var exports: any;\n" };
   const options = { strict: true, noEmit: true, isolatedModules: true, target: ts.ScriptTarget.ES2020, lib: ["lib.es2020.d.ts"], types: [], skipLibCheck: true };
@@ -118,7 +120,7 @@ function changedLines(a: string, b: string): number {
 }
 /* exportedNames(tsSrc) — names in `module.exports = { a, b: c }` (TypeScript PARSE only — model code is never executed on the host). */
 function exportedNames(tsSrc: string): string[] | null {
-  const ts = require("typescript");
+  const ts = tsLib();
   let sf: any; try { sf = ts.createSourceFile("x.ts", String(tsSrc), ts.ScriptTarget.ES2020, true); } catch { return null; }
   let names: string[] | null = null;
   const visit = (n: any) => {
@@ -246,8 +248,11 @@ function denylistHits(segments: any[]): any[] {
   segments.forEach((s: any, i: number) => { if (s.kind !== "TEMPLATE") return; for (const re of ALGORITHM_HINT_DENYLIST) if (re.test(s.text)) hits.push({ segment: i, pattern: String(re), text: s.text.slice(0, 120) }); });
   return hits;
 }
+/* outputs are rendered as JavaScript string LITERALS (the function returns a string): the text null and the string "null"
+ * must not look alike (live PROBE 1 finding: an unquoted `expected null` was read as the value null). */
+function renderOut(v: any): string { return v === "<undefined>" ? "undefined (no string returned)" : /^<threw: /.test(String(v)) ? String(v).slice(1, -1) : JSON.stringify(v); }
 function renderCase(c: any, withExpected: boolean): string {
-  return `  input: ${c.src}\n    current output:  ${c.actual}` + (withExpected ? `\n    expected output: ${c.expect}` : "");
+  return `  input: ${c.src}\n    current return value:  ${renderOut(c.actual)}` + (withExpected ? `\n    expected return value: ${renderOut(c.expect)}` : "");
 }
 function evidenceBlocks(problem: any, currentSource: string, impact: any, lessons: any[]): any[] {
   const shown = problem.cases.filter((c: any) => problem.shown.includes(c.i));
@@ -416,7 +421,7 @@ const NATIVE_DESIGN_PIPELINE_CONTRACT = Object.freeze({
 });
 
 module.exports = {
-  OLLAMA, OLLAMA_URL, makeGuard, transpile, typecheck, newFileDiff, replaceFileDiff, gitApplyCheck, headOf, changedLines, exportedNames, ollamaGenerate, sha256,
+  renderOut, OLLAMA, OLLAMA_URL, makeGuard, transpile, typecheck, newFileDiff, replaceFileDiff, gitApplyCheck, headOf, changedLines, exportedNames, ollamaGenerate, sha256,
   loadModuleExport, callOn, kindOf, deriveProblem, analyseImpact,
   ALGORITHM_HINT_DENYLIST, renderPrompt, denylistHits, designPromptSegments, implementPromptSegments, parseDesigns,
   HARNESS_FILE, harnessSource, oracleRun, writeSetOk, scoreCandidate, selectDesign, SELECTION_RULE,

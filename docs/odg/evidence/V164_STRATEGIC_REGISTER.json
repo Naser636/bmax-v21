@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "db62c59f0990b70770677bfc34295b76564b306705b6d2f06ddce6a98447181d"
+      "sha256": "96dadca582a8c8f6fe5bbecfdf2e148fedcc9f8fec6b98ef782a7496598dab40"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -167,7 +167,7 @@
     },
     {
       "source": "runtime/bin/odg-v175-native-design-run.ts",
-      "sha256": "47e45736587e85b48caa075298ab1a6f38c0649c8d35a7c9c847e2400a2ff27b"
+      "sha256": "e1dfe86ffc5d7c1b6d6d11276fffb4f3220c5af77365c093ceda5862b20d3d78"
     },
     {
       "source": "runtime/core/odg-canonical-json.test.ts",
@@ -12059,5 +12059,5 @@
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "d2714a869ce78374f84432bfb635b8823a8246a5"
+  "generatedAtHead": "5e40a0cfe0dc777dceb5a2d4f4224f6ed5f2de06"
 }
