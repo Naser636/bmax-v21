@@ -29,7 +29,7 @@ check("owner question Q-CTR2 answered V176 (STAGE) ⇒ no longer listed open; ev
 check("checkpoint = latest committed (LCP-1)", a.checkpoint && a.checkpoint.path === "docs/odg/evidence/V176_CHECKPOINT_12.json");
 check("checkpoint CP12 (V17.6) carries no stale RUNNING status vs the register (the CP11 J2 RUNNING case is superseded by CP12)", !a.checkpointVsRegister.some((c: any) => c.superseded === true && c.checkpointStatus === "RUNNING"));
 check("next GO action: nothing dispatchable (no authorized undispatched EXECUTION step) — derived, not asserted", a.nextGoAction.dispatchable.length === 0 && /nothing to dispatch/.test(a.nextGoAction.verdict));
-check("last GO run = the latest committed cycle (NB1, workingOn V175-NB1, strategic J)", a.nextGoAction.lastGoRun.workingOn === "V175-NB1" && a.nextGoAction.lastGoRun.strategic === "J");
+check("last GO run = the latest committed cycle (NB2, workingOn V175-NB2, strategic J)", a.nextGoAction.lastGoRun.workingOn === "V175-NB2" && a.nextGoAction.lastGoRun.strategic === "J");
 check("tracked items carry their boussoleRef (compact) from the register", a.trackedItems.every((t: any) => t.boussoleRef && (t.boussoleRef.status === "MEASURED" || typeof t.boussoleRef.reason === "string")));
 check("every tracked item cites its register record", a.trackedItems.every((t: any) => t.source[0].startsWith("docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=")));
 check("open PRs read from the snapshot file passed in (no network)", a.openPrs.snapshot === DEF && Array.isArray(a.openPrs.open));
