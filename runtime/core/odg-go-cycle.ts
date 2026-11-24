@@ -176,6 +176,37 @@ function actionableOptions(): any {
   const SELX = SEL.EXPLAINED_DEFAULTS || {};
   return { ...selectorOptions(), nonSelectableStatuses: { ...(SELX.nonSelectableStatuses || {}), [NOT_AUTHORIZED_NOW]: "no AUTHORIZED next step now (GO-ACT-1 feasibility constraint; ranking unchanged)" } };
 }
+/* V17.4 GO-ORD-1 (provider rule; owner directive "CTO — ARBITRAGE PROPRIÉTAIRE ET EXÉCUTION G2 → J2", 2026-11-24): consume a
+ * COMMITTED owner order-decision record ONLY to resolve an actionable DECISION_REQUIRED tie. Never strategic, never a
+ * non-tied case, never an authorization (the chosen item must already be actionable), never a score/ranking change. */
+const OWNER_ORDER_RULE = "GO-ORD-1: when actionableSelection is DECISION_REQUIRED with tiedSet T, a committed record applies iff kind = OWNER_ORDER_DECISION and set(record.tiedSet) = set(T); the chosen item is the first element of record.order that is in T and still actionable; otherwise the record is ignored (reason recorded). Strategic selection, authorization and scores are untouched.";
+function resolveOwnerOrder(state: any, register: any, tied: string[]): any {
+  const records = arr(state && state.ownerOrderDecisions).filter((x: any) => x && typeof x === "object");
+  if (!tied.length || !records.length) return null;
+  const T = [...new Set(tied.map(String))].sort();
+  const considered: any[] = [];
+  for (const rec of records) {
+    const at = rec.recordPath || null;
+    if (rec.kind !== "OWNER_ORDER_DECISION") { considered.push({ record: at, applied: false, reason: `kind ${rec.kind} ≠ OWNER_ORDER_DECISION` }); continue; }
+    if (rec.schema !== "odg-owner-order-decision/1") { considered.push({ record: at, applied: false, reason: `schema ${rec.schema} ≠ odg-owner-order-decision/1` }); continue; }
+    if (typeof rec.issuer !== "string" || !rec.issuer.trim().toUpperCase().startsWith("OWNER")) { considered.push({ record: at, applied: false, reason: "issuer is not the OWNER" }); continue; }
+    if (typeof rec.source !== "string" || !rec.source.trim() || !Array.isArray(rec.quote) || !rec.quote.length) { considered.push({ record: at, applied: false, reason: "record lacks an owner source citation and verbatim quotes" }); continue; }
+    const R = [...new Set(arr(rec.tiedSet).map(String))].sort();
+    if (!Array.isArray(rec.tiedSet) || canon(R) !== canon(T)) { considered.push({ record: at, applied: false, reason: `record tiedSet ${R.join("/")} ≠ actionable tiedSet ${T.join("/")} (set equality required)` }); continue; }
+    const skipped: any[] = [];
+    let chosen: any = null;
+    for (const id of arr(rec.order).map(String)) {
+      if (!T.includes(id)) { skipped.push({ id, reason: "not in the actionable tiedSet" }); continue; }
+      const it = register.items.find((x: any) => x.id === id);
+      const a = actionabilityOf(state, it);
+      if (!a.actionable) { skipped.push({ id, reason: `not actionable: ${a.reason}` }); continue; }
+      chosen = it; break;
+    }
+    if (!chosen) { considered.push({ record: at, applied: false, reason: "no element of record.order is both in the tiedSet and still actionable", skipped }); continue; }
+    return { rule: OWNER_ORDER_RULE, applied: true, chosen: chosen.id, resolvedBy: `OWNER_ORDER_DECISION ${at}`, record: at, date: rec.date || null, source: rec.source || null, quote: arr(rec.quote), order: arr(rec.order), tiedSet: T, skipped, considered, item: chosen };
+  }
+  return { rule: OWNER_ORDER_RULE, applied: false, chosen: null, considered };
+}
 function selectionSummary(d: any): any {
   return { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, justification: d.justification };
 }
@@ -361,7 +392,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const strategicItem = id ? ctx.register.items.find((it: any) => it.id === id) : null;
     // V166 GO-ACT-1: feasibility (authorization) filters, priority (the same selector) ranks.
     const strategicAct = actionabilityOf(ctx.state, strategicItem);
-    let act: any = null, actItem: any = null;
+    let act: any = null, actItem: any = null, ownerOrder: any = null;
     if (strategicItem && strategicAct.actionable) { act = d; actItem = strategicItem; }
     else {
       // GO-ACT-1 also applies when the strategic selection is UNDECIDED (DECISION_REQUIRED / NO_ELIGIBLE): ODG still
@@ -370,6 +401,11 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       const aid = chosenId(act);
       actItem = aid ? ctx.register.items.find((it: any) => it.id === aid) : null;
       if (actItem && !actionabilityOf(ctx.state, actItem).actionable) actItem = null;   // defensive: never a non-actionable pick
+      // V17.4 GO-ORD-1: an actionable DECISION_REQUIRED tie may be resolved by a committed owner order-decision record
+      if (!actItem && act && act.decision === "DECISION_REQUIRED") {
+        ownerOrder = resolveOwnerOrder(ctx.state, ctx.register, arr(act.tiedSet).map((x: any) => (x && typeof x === "object" ? x.id : x)));
+        if (ownerOrder && ownerOrder.applied) { actItem = ownerOrder.item; delete ownerOrder.item; }
+      }
     }
     const proceedWithActionable = !!actItem && (!strategicItem || !strategicAct.actionable);
     // the actionable (authorized-only) selection itself may be undecided: N authorized items tie ⇒ DECISION_REQUIRED (no id tie-break)
@@ -382,13 +418,15 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     ctx.actionable = { rule: ACTIONABLE_RULE, ruleDetail: ACTIONABLE_RULE_DETAIL, authoredBy: "technical provider (Claude Code) — provider-authored rule; every decision is the selector's",
       strategicActionable: strategicItem ? strategicAct : null,
       selection: act ? (act === d ? { sameAsStrategic: true, ...selectionSummary(d) } : { sameAsStrategic: false, ...selectionSummary(act), excludedNotAuthorizedNow: arr(act.excluded).filter((x: any) => x.status === NOT_AUTHORIZED_NOW).map((x: any) => x.id) }) : null,
-      item: actItem ? actItem.id : null, basis: actItem ? actionabilityOf(ctx.state, actItem) : null, proceedingWith: ctx.item ? ctx.item.id : null, proceedingWithActionable: proceedWithActionable };
+      item: actItem ? actItem.id : null, basis: actItem ? actionabilityOf(ctx.state, actItem) : null, proceedingWith: ctx.item ? ctx.item.id : null, proceedingWithActionable: proceedWithActionable,
+      ...(ownerOrder ? { ownerOrderDecision: ownerOrder, ...(ownerOrder.applied ? { resolvedBy: ownerOrder.resolvedBy } : {}) } : {}) };
     const committed = ctx.state.registerEvidence && ctx.state.registerEvidence.decisionRecord ? ctx.state.registerEvidence.decisionRecord : null;
     const consistent = committed ? committed.decision === d.decision && committed.selected === (d.selected ? d.selected.id : null) && canon(arr(committed.tiedSet)) === canon(arr(d.tiedSet)) : null;
     return { status: id || proceedWithActionable ? "DONE" : "HALTED", inputs: REG.toSelectorCandidates(ctx.register),
       decision: { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, resolutionSteps: d.resolutionSteps || null, justification: d.justification, uncertainty: d.selected ? d.selected.uncertainty : d.proposed ? d.proposed.uncertainty : null, ownerAuthorizationRequired: arr(d.ownerAuthorizationRequired).map((x: any) => x.id), consistentWithCommittedRegisterEvidence: consistent,
         strategicSelection: selectionSummary(d), actionableSelection: ctx.actionable, ownerRequest: ctx.ownerRequest, workingOn: ctx.item ? ctx.item.id : null },
-      rationale: (!id && proceedWithActionable ? `strategic selector decision ${d.decision} (tie ${arr(d.tiedSet).join("/")}; owner/ODG decision requested) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : id ? `selector decision ${d.decision}${d.decision === "TIE_EXPLAINED" ? ` (tie ${arr(d.tiedSet).join("/")} resolved by ${d.resolvedBy})` : ""} — a PROPOSAL, not an authorization` : `selector decision ${d.decision}: ODG does not pick (no id tie-break) — owner/ODG decision required`)
+      rationale: (ownerOrder && ownerOrder.applied ? `actionable tie ${ownerOrder.tiedSet.join("/")} resolved by ${ownerOrder.resolvedBy} (owner order ${ownerOrder.order.join(" → ")}, ${ownerOrder.date}: « ${ownerOrder.quote[0] || ""} ») — order arbitration only, no score/authorization change (GO-ORD-1); ` : "")
+        + (!id && proceedWithActionable ? `strategic selector decision ${d.decision} (tie ${arr(d.tiedSet).join("/")}; owner/ODG decision requested) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : id ? `selector decision ${d.decision}${d.decision === "TIE_EXPLAINED" ? ` (tie ${arr(d.tiedSet).join("/")} resolved by ${d.resolvedBy})` : ""} — a PROPOSAL, not an authorization` : `selector decision ${d.decision}: ODG does not pick (no id tie-break) — owner/ODG decision required`)
         + (proceedWithActionable && id ? `; strategic ${id} lacks authorization (owner request recorded) ⇒ GO proceeds with the best AUTHORIZED item ${ctx.item.id} (GO-ACT-1: ${ACTIONABLE_RULE})` : strategicItem && !strategicAct.actionable ? (actTieText ? `; strategic ${id} lacks authorization and ${actTieText} ⇒ the gate will hold (owner request recorded)` : `; strategic ${id} lacks authorization and no other item has an AUTHORIZED next step ⇒ the gate will hold (owner request recorded)`) : !strategicItem && actTieText ? `; ${actTieText}` : "") };
   });
   if (stopped(r)) return stopped(r);
@@ -562,5 +600,5 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
+module.exports = { OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};

@@ -58,6 +58,9 @@ const F = Object.freeze({
 });
 /* V166 scoped-authorization evidence (odg-authorization-scope): committed records ONLY; absent ⇒ null (nothing derived). */
 const AUTH_EVIDENCE = Object.freeze({ G: Object.freeze({ inspection: "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V166_G_EXPERIMENT.json", validation: "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json" }), H: Object.freeze({ inspection: "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V168_H_EXPERIMENT.json", validation: "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json" }), G2: Object.freeze({ inspection: "docs/odg/evidence/V172_G2_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V172_G2_EXPERIMENT.json", validation: "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json" }), J2: Object.freeze({ inspection: "docs/odg/evidence/V172_J2_CONTRACT_INSPECTION.json", experiment: "docs/odg/evidence/V172_J2_EXPERIMENT.json", validation: "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json" }) });
+/* V17.4 GO-ORD-1 owner ORDER-decision records (fixed declared list; committed records ONLY; absent ⇒ skipped). They only
+ * resolve an actionable DECISION_REQUIRED tie whose tiedSet equals theirs — never authorization, never scores. */
+const OWNER_ORDER_DECISIONS = Object.freeze(["docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json"]);
 const UNIT_SYSTEM = "/etc/systemd/system/odg-mission-runner.service";
 const UNIT_REPO = "deploy/odg-mission-runner.service";
 const MAX_STEP_DELAY_MS = 5000;
@@ -241,6 +244,7 @@ function readState(repo: string): any {
   const authorizationEvidence: any = {};
   // V16.9 Phase 1b — R7 proof-currency probes: the SAME read-only local-git probe object the canonical loader built for this repo.
   for (const [sc, files] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(files.inspection), experiment: optional(files.experiment), validation: optional(files.validation), probes: src.proofProbes };
+  const ownerOrderDecisions = OWNER_ORDER_DECISIONS.map((rel: string) => optional(rel)).filter(Boolean);
   inputs.push({ source: F.MEASURED, sha256: sha256File(path.join(repo, F.MEASURED)) });
   let ledgerPayload: any = null;
   try { ledgerPayload = readJson(path.join(repo, "runtime", "generated", "mission-ledger.json")); } catch { ledgerPayload = null; }
@@ -256,7 +260,7 @@ function readState(repo: string): any {
     // EXACTLY the canonical loader's sources (odg-strategic-select.loadSources minus its inputs list, which is merged above):
     // no hand-picked subset, so LAND-1 laterEvidence and the BLK-2/REL-2/DEP-2 benefitEvidence reach the in-cycle register.
     repo, inputs, sources: registerSources(src),
-    registerEvidence, strategyEvidence, radar: { grant, admission }, authorizationEvidence,
+    registerEvidence, strategyEvidence, radar: { grant, admission }, authorizationEvidence, ownerOrderDecisions,
     ledger: { proven, integrity }, attempts: { count: att.length, last: last ? { mission: last.mission, status: last.status, recordedAt: last.recordedAt } : null },
     allowlist: readAllowlist(), measured: POL.loadMeasuredRegistry(F.MEASURED, { root: repo }), strategyNow: smr.now, codeTreeParity: parity,
   };
@@ -520,7 +524,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { OWNER_ORDER_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 /* CLI flag validation: --help/-h ⇒ usage on stdout, exit 0, no cycle; any unknown flag (or a value flag missing its
  * value) ⇒ usage on stderr, exit 2, no cycle. Never starts a cycle on a mistyped flag. */
