@@ -29,7 +29,8 @@
  *                  claim <16hex>-F.claim (created right before GO dispatches this runner) never does (J-runner lesson: a
  *                  runner must not refuse its own dispatch's claim).
  *   --selftest     the same fixture on temp dirs; nothing written in the repo; no claim.
- * Exit 0 = record written with outcome PASS; 1 = record written with another outcome (or error).
+ * Exit 0 = record written with outcome PARTIAL and mechanicalGrade PASS (the best a fixture can give — FIXTURE-CAP-1);
+ * 1 = record written with another outcome (or error). PASS is never written (pre-registered cap).
  */
 const fs = require("fs");
 const os = require("os");
@@ -196,10 +197,15 @@ function gradeF(r: any, incidents: string[]): any {
     inspection: "PENDING — not part of the run: the independent inspection of this result is the VALIDATE_CRITERIA step (odg-authorization-scope R5b: criteria-validation record citing an independent inspection ACCEPT of the experiment; scenarioGrade never above this outcome)",
     detail: { finalRound: last ? last.round : null, integrationStatus: integ ? integ.status : null, checks: integ ? integ.checks.map((c: any) => `${c.id}:${c.exitCode}`) : [], unionOk: integ ? integ.unionOk : null } };
   const criteria = { C1, C2, C3, C4 };
-  if (incidents.length) return { outcome: "NOT_MEASURED", reason: "incident(s): " + incidents.join("; "), criteria };
-  if (C1.met && C2.met && C3.met && C4.testsMet) return { outcome: "PASS", reason: "C1 ∧ C2 ∧ C3 ∧ C4(tests) met; C4's independent-inspection part is assessed at VALIDATE_CRITERIA (R5b)", criteria };
-  if (C1.met && C2.met && C3.met) return { outcome: "PARTIAL", reason: "C1 ∧ C2 ∧ C3 met; C4 (integration validated by tests) NOT met", criteria };
-  return { outcome: "FAIL", reason: `measured, but ${["C1", "C2", "C3"].filter((k) => !(criteria as any)[k].met).join(", ")} not met`, criteria };
+  if (incidents.length) return { outcome: "NOT_MEASURED", mechanicalGrade: "NOT_MEASURED", reason: "incident(s): " + incidents.join("; "), criteria };
+  // mechanicalGrade = the fixture mechanics per the criteria; outcome = min(mechanicalGrade, PARTIAL) — FIXTURE-CAP-1
+  // (pre-registered): a deterministic fixture with PLANTED incompatibilities passes by design, so it can show the
+  // mechanics work but can never PASS F (as J: « the loop works, no gain »); V161's live-provider natural-detection point stays OPEN.
+  const mech = C1.met && C2.met && C3.met && C4.testsMet ? "PASS" : C1.met && C2.met && C3.met ? "PARTIAL" : "FAIL";
+  const why = mech === "PASS" ? "C1 ∧ C2 ∧ C3 ∧ C4(tests) met on the fixture (mechanics) — capped at PARTIAL by FIXTURE-CAP-1 (fixture mechanics only; natural detection between live providers NOT measured — V161's point stays OPEN; C4's independent-inspection part is assessed at VALIDATE_CRITERIA, R5b)"
+    : mech === "PARTIAL" ? "C1 ∧ C2 ∧ C3 met; C4 (integration validated by tests) NOT met"
+    : `measured, but ${["C1", "C2", "C3"].filter((k) => !(criteria as any)[k].met).join(", ")} not met`;
+  return { outcome: mech === "FAIL" ? "FAIL" : "PARTIAL", mechanicalGrade: mech, cap: "FIXTURE-CAP-1: outcome = min(mechanicalGrade, PARTIAL)", reason: why, criteria };
 }
 
 /* runScenarioF(o) — o: { root, plan, loadProbe?, label, contractSha256?, tmpRoot? } → the result record. */
@@ -220,7 +226,7 @@ async function runScenarioF(o: any): Promise<any> {
   const finish = (extra: any) => {
     const grade = gradeF(extra, incidents);
     try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { /* best effort */ }
-    return { ...base, ...extra, pins, hostAtStart: host, criteria: grade.criteria, outcome: grade.outcome, outcomeReason: grade.reason, network: { modelCalls: 0, providerCalls: 0, requests: 0 }, tempDirRemoved: !fs.existsSync(tmp), wallMs: Date.now() - t0, generatedAt: new Date().toISOString() };
+    return { ...base, ...extra, pins, hostAtStart: host, criteria: grade.criteria, mechanicalGrade: grade.mechanicalGrade, outcome: grade.outcome, outcomeCap: grade.cap || null, outcomeReason: grade.reason, network: { modelCalls: 0, providerCalls: 0, requests: 0 }, tempDirRemoved: !fs.existsSync(tmp), wallMs: Date.now() - t0, generatedAt: new Date().toISOString() };
   };
   if (incidents.length) return finish({ stage: "PRECONDITION" });
   const fx: any = buildFixture(tmp); fx.tmp = tmp;
@@ -329,7 +335,7 @@ async function main(argv: string[], o: any = {}): Promise<number> {
   const r = await runScenarioF({ root, plan, loadProbe: o.loadProbe, tmpRoot: o.tmpRoot, label: "ODG GO dispatch — F single initial execution (GO parallel wave, deterministic internal fixture)", contractSha256: gt.contractSha256 });
   fs.writeFileSync(path.join(root, OUT), JSON.stringify({ ...r, oneShotClaim: { key, path: path.basename(cl.path) } }, null, 2) + "\n");
   say(`outcome ${r.outcome} (${r.outcomeReason}) → ${OUT}`);
-  return r.outcome === "PASS" ? 0 : 1;
+  return r.mechanicalGrade === "PASS" && r.outcome === "PARTIAL" ? 0 : 1;
 }
 
 const IDLE = () => ({ loadavg: [0.1, 0.1, 0.1], nproc: 8, meminfo: "MemTotal: 16000000 kB\nMemAvailable: 12000000 kB\n" });

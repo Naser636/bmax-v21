@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "5506ae10111a8c891f9f0a93077870b13e226b429c5fa19304a2399e6d9fb8a8"
+      "sha256": "6aad06ef76dcaf264135cb22edc2e4ca53b8241d331c986b5aa5414da2b52fcc"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "3965dac5ff8725ec6d3c00a79ffdc3f4a00bfe4aebc9125cc58857d3815a6488"
+      "sha256": "888d128ef52212e358e6d5e02c50fd7f1a2707b3a42eb1773624808a20acdcff"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -165,17 +165,17 @@
     },
     "coverage": {
       "rule": "BREF-1",
-      "items": 63,
+      "items": 64,
       "measured": 37,
-      "notMeasured": 26,
+      "notMeasured": 27,
       "withV124MissionId": 22,
       "withV124Section": 23,
       "withV144Phase": 21,
       "byKind": {
         "WORK_ITEM_CONTRACT": {
-          "items": 23,
+          "items": 24,
           "measured": 18,
-          "notMeasured": 5
+          "notMeasured": 6
         },
         "V150_TOP10_ITEM": {
           "items": 5,
@@ -208,6 +208,36 @@
   },
   "trackedItems": [
     {
+      "id": "D",
+      "title": "D — Recherche et construction",
+      "registerStatus": "PARTIAL",
+      "contractState": "PROPOSED",
+      "boussoleRef": {
+        "status": "MEASURED",
+        "v124MissionId": "CM-RADAR-GATE-CHAIN",
+        "v124Section": "I",
+        "v144Phase": 1,
+        "v150RequirementIds": [
+          "V150-AP-D"
+        ]
+      },
+      "contractSha256": "e6aaa9c977f2f7f8f29bd5f9043aa77b4fdbf3fbae7f72ed1c3c6c62895dc338",
+      "ownerRecord": null,
+      "currentStep": null,
+      "scope": null,
+      "records": null,
+      "lastGoRun": null,
+      "pending": [],
+      "next": {
+        "actor": "OWNER",
+        "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=D]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[3]"
+      ]
+    },
+    {
       "id": "F",
       "title": "F — Multi-agents",
       "registerStatus": "EXECUTED_PARTIAL",
@@ -221,7 +251,7 @@
           "V150-AP-F"
         ]
       },
-      "contractSha256": "52c68037f56166a28d0747099618d3169458f10b16d358c50895eeef40475174",
+      "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
       "currentStep": "INSPECT_REVISED_CONTRACT",
       "scope": {
@@ -233,7 +263,7 @@
           "REVISE_CONTRACT"
         ],
         "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
-        "contractSha256": "52c68037f56166a28d0747099618d3169458f10b16d358c50895eeef40475174"
+        "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1"
       },
       "records": {
         "inspection": {
@@ -253,13 +283,13 @@
       "pending": [
         {
           "kind": "INSPECTION",
-          "of": "contract 52c68037f561",
+          "of": "contract 323da9a12215",
           "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
         }
       ],
       "next": {
         "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha 52c68037f56166a28d0747099618d3169458f10b16d358c50895eeef40475174) and commit the inspection record"
+        "action": "inspect the revised contract (sha 323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1) and commit the inspection record"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=F]",
@@ -712,10 +742,68 @@
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB2]",
         "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19]"
       ]
+    },
+    {
+      "id": "V176-NB3",
+      "title": "NB3: ODG repairs odg-canonical-json's undefined gap again (NB2's target + oracle) with the pre-registered DIV-1 repair-diversity lever",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'V176-NB3' is not an A–P §45 scenario and contract.parent.scenario is \"V175-NB2\" ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68",
+      "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 5c551b0d3053",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V176-NB3]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23]"
+      ]
     }
   ],
   "otherRegisterItems": {
-    "count": 55,
+    "count": 54,
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
@@ -723,7 +811,7 @@
       "CLOSED_PARTIAL": 3,
       "CLOSED_FAIL": 3,
       "CLOSED_PASS": 1,
-      "NOT_STARTED": 3,
+      "NOT_STARTED": 4,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -850,28 +938,38 @@
   "nextGoAction": {
     "rule": "RSP-5",
     "strategic": {
-      "decision": "SELECTED",
-      "item": "F",
-      "contractState": "AUTHORIZED_FOR_REVISION",
+      "decision": "TIE_EXPLAINED",
+      "item": "D",
+      "contractState": "PROPOSED",
       "boussoleRef": {
         "status": "MEASURED",
-        "v124MissionId": "CM-V237-ORCHESTRATION",
-        "v124Section": "F",
-        "v144Phase": 3,
+        "v124MissionId": "CM-RADAR-GATE-CHAIN",
+        "v124Section": "I",
+        "v144Phase": 1,
         "v150RequirementIds": [
-          "V150-AP-F"
+          "V150-AP-D"
         ]
       },
-      "ownerAuthorizationNeeded": null,
+      "ownerAuthorizationNeeded": "owner — D PROPOSED → AUTHORIZED (authorizedBy)",
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
     "dispatchable": [],
     "verdict": "no tracked item has an authorized, not-yet-dispatched EXECUTION step ⇒ a GO --execute run has nothing to dispatch; the pending steps are provider / inspector / owner steps (see trackedItems[].next)",
     "pendingNonGo": [
       {
+        "item": "D",
+        "actor": "OWNER",
+        "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
         "item": "F",
         "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha 52c68037f56166a28d0747099618d3169458f10b16d358c50895eeef40475174) and commit the inspection record"
+        "action": "inspect the revised contract (sha 323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1) and commit the inspection record"
+      },
+      {
+        "item": "V176-NB3",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68) and commit the inspection record"
       }
     ],
     "lastGoRun": {
