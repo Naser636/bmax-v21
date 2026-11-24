@@ -31,8 +31,13 @@ const EDGE_KINDS = Object.freeze({
   STATED_TEXT: "item X's initialState.missingForPass names 'scenario Y' (the register's existing statement rule); satisfied iff Y's register status states completion (ACCEPTED, CLOSED_PASS or RESOLVED_BY_EVIDENCE) — no other field states it landed",
 });
 const COMPLETED = Object.freeze(["ACCEPTED", "CLOSED_PASS", "RESOLVED_BY_EVIDENCE"]);
+/* V17.5 (#969 inspection REJECT): only edge kinds whose satisfaction CAN FAIL are prerequisites for DEP-1 / deps[].
+ * CODE_IMPORT is satisfied by construction (an unresolved relative require yields no edge) and its extraction depends on
+ * write_sets happening to name the imported file ⇒ it is STRUCTURAL ONLY (fanOut / reporting), never a DEP-1 input. */
+const DEP1_KINDS = Object.freeze(["DATASET_INPUT", "STATED_TEXT"]);
+const STRUCTURAL_KINDS = Object.freeze(["CODE_IMPORT"]);
 
-const DEPG_RULE = "DEPG-1 (provider-authored, V17.5): item→item dependency edges are derived ONLY from explicit committed evidence — DATASET_INPUT, CODE_IMPORT, STATED_TEXT (definitions in edgeKinds); every edge cites its source (path#field) and the producer-side pointer; self-edges are dropped; a path containing '<' (a placeholder such as runtime/core/<defect-module>.ts) is not a concrete file and never matches. Applied UNIFORMLY to every register item kind: only WORK_ITEM_CONTRACT items declare inputs (preRegistration.dataset), a write_set or missingForPass, so every other kind gets dependencyGraph NOT_MEASURED with the reason (no edge is invented for them). Lineage (contract.parent) and shared inputs that no item produces are NOT dependencies. deps[] = the targets of UNSATISFIED edges (what the selector's eligibility gate and R1_MORE_UNBLOCKING read: an item is 'unblocked' by Y only while its dependency on Y is unsatisfied); every edge, satisfied or not, is a stated dependency for DEP-1 (depsStated) and is counted in fanOut";
+const DEPG_RULE = "DEPG-1 (provider-authored, V17.5): item→item dependency edges are derived ONLY from explicit committed evidence — DATASET_INPUT, CODE_IMPORT, STATED_TEXT (definitions in edgeKinds); every edge cites its source (path#field) and the producer-side pointer; self-edges are dropped; a path containing '<' (a placeholder such as runtime/core/<defect-module>.ts) is not a concrete file and never matches. Applied UNIFORMLY to every register item kind: only WORK_ITEM_CONTRACT items declare inputs (preRegistration.dataset), a write_set or missingForPass, so every other kind gets dependencyGraph NOT_MEASURED with the reason (no edge is invented for them). Lineage (contract.parent) and shared inputs that no item produces are NOT dependencies. deps[] = the targets of UNSATISFIED edges (what the selector's eligibility gate and R1_MORE_UNBLOCKING read: an item is 'unblocked' by Y only while its dependency on Y is unsatisfied); DATASET_INPUT and STATED_TEXT edges (satisfaction can fail: pin/commit check, completion status) are stated dependencies for DEP-1 (depsStated) together with the register's existing owner-authorization prerequisites; CODE_IMPORT edges are STRUCTURAL ONLY (satisfied by construction ⇒ counted in fanOut, never in DEP-1 or deps[]); a write_set entry naming a file that is not committed is recorded in staleWriteSets (a limit, contracts are not edited). NO DEPENDENCY STATED ≠ NO DEPENDENCY: an item without a prerequisite edge keeps dependencyAvailability NOT_MEASURED with the reason 'no dependency stated'; 'measured: no dependency' would require a committed field STATING independence for that item, and no such field exists (independenceStated = [] — never inferred from absence)";
 const CONT_RULE = "CONT-1 (provider-authored, V17.5): write-set CONTENTION between WORK_ITEM_CONTRACT items = odg-writeset-contention.computeLayerContention over one layer of all contract items (path equal or directory-ancestor); a write_set containing a placeholder entry ('<…>') cannot be proven isolated ⇒ UNKNOWN (fail-closed, conflicts with every item). Contention is NOT a dependency: it never enters deps[], depsStated or any criterion";
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
@@ -158,8 +163,15 @@ function deriveDependencyGraph(input: any): any {
   const pairs = lc.ok ? lc.layers[0].contentions.map((c: any) => ({ a: c.a, b: c.b, reason: c.reason, shared: c.shared.slice() })) : [];
   const contention = { rule: CONT_RULE, component: "odg-writeset-contention.computeLayerContention", unknownWriteSets: missions.filter((m: any) => !m.authorizedPaths).map((m: any) => m.id), pairs: pairs.filter((p: any) => p.reason === "WRITESET_OVERLAP"), pairsNote: "pairs lists WRITESET_OVERLAP pairs; UNKNOWN_WRITESET pairs (every pair involving an unknownWriteSets item) are counted in unknownPairs, not listed", overlapPairs: pairs.filter((p: any) => p.reason === "WRITESET_OVERLAP").length, unknownPairs: pairs.filter((p: any) => p.reason === "UNKNOWN_WRITESET").length, note: "contention is NOT a dependency: never in deps[], depsStated or any criterion" };
 
+  // stale write_sets: concrete write_set entries not committed (e.g. a contract naming a runner the work never produced) —
+  // recorded as a LIMIT of CODE_IMPORT/DATASET_INPUT extraction (an import of the real file cannot be attributed), never fixed here.
+  const staleWriteSets: any[] = [];
+  contracts.forEach((x: any, ci: number) => {
+    const ws = isObj(x.WORK_ITEM_CONTRACT) && Array.isArray(x.WORK_ITEM_CONTRACT.write_set) ? x.WORK_ITEM_CONTRACT.write_set : [];
+    ws.forEach((w: any, k: number) => { const p = concretePath(w); if (p && /\.(ts|js)$/.test(p) && isObj(files[p]) && files[p].exists === false) staleWriteSets.push({ item: String(x.scenario), file: p, source: `${cf}#contracts[${ci}].WORK_ITEM_CONTRACT.write_set[${k}]` }); });
+  });
   const byKind: any = Object.fromEntries(Object.keys(EDGE_KINDS).map((k) => [k, uniq.filter((e) => e.kind === k).length]));
-  return deepFreeze({ rule: DEPG_RULE, edgeKinds: EDGE_KINDS, completedStatuses: COMPLETED, edges: uniq, byItem, contention,
+  return deepFreeze({ rule: DEPG_RULE, edgeKinds: EDGE_KINDS, dep1Kinds: DEP1_KINDS, structuralKinds: STRUCTURAL_KINDS, completedStatuses: COMPLETED, edges: uniq, byItem, contention, staleWriteSets, independenceStated: [], independenceNote: "no committed field states that an item has no dependency ⇒ every edge-less item is NOT_MEASURED (not stated), never MEASURED-none",
     counts: { edges: uniq.length, byKind, satisfied: uniq.filter((e) => e.satisfied).length, unsatisfied: uniq.filter((e) => !e.satisfied).length, itemsWithDeps: Object.values(byItem).filter((b: any) => b.edgesOut > 0).length, itemsNotMeasured: Object.values(byItem).filter((b: any) => b.status === "NOT_MEASURED").length } });
 }
 
@@ -189,6 +201,6 @@ const REGISTER_DEPENDENCY_GRAPH_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { deriveDependencyGraph, dependencyEvidenceRequest, datasetFiles, concretePath, EDGE_KINDS, DEPG_RULE, CONT_RULE, COMPLETED, REGISTER_DEPENDENCY_GRAPH_CONTRACT };
+module.exports = { DEP1_KINDS, STRUCTURAL_KINDS, deriveDependencyGraph, dependencyEvidenceRequest, datasetFiles, concretePath, EDGE_KINDS, DEPG_RULE, CONT_RULE, COMPLETED, REGISTER_DEPENDENCY_GRAPH_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(REGISTER_DEPENDENCY_GRAPH_CONTRACT, null, 2) + "\n"); }
 export {};

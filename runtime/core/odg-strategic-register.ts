@@ -380,16 +380,18 @@ function buildRegister(sources: any): any {
   for (const it of items) {
     it.dependencyGraph = DG.byItem[it.id];
     if (it.kind !== "WORK_ITEM_CONTRACT") continue;
-    const out = DG.edges.filter((e: any) => e.from === it.id);
-    it.dependencyEdges = out;
+    const all = DG.edges.filter((e: any) => e.from === it.id);
+    const out = all.filter((e: any) => DG.dep1Kinds.includes(e.kind));   // prerequisites whose satisfaction can fail
+    it.dependencyEdges = all;
     it.deps = Array.from(new Set(out.filter((e: any) => !e.satisfied).map((e: any) => e.to))).sort();
-    it.depsNote = !out.length ? "no item-to-item dependency stated in the evidence ⇒ []" : it.deps.length ? `DEPG-1: ${out.length} stated item dependency edge(s); deps = the ${it.deps.length} unsatisfied target(s)` : `DEPG-1: ${out.length} stated item dependency edge(s), all satisfied ⇒ deps [] (nothing to unblock)`;
+    const structural = all.length - out.length;
+    it.depsNote = (!out.length ? "no item-to-item dependency stated in the evidence ⇒ []" : it.deps.length ? `DEPG-1: ${out.length} prerequisite edge(s); deps = the ${it.deps.length} unsatisfied target(s)` : `DEPG-1: ${out.length} prerequisite edge(s), all satisfied ⇒ deps [] (nothing to unblock)`) + (structural ? `; ${structural} structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)` : "");
     if (!out.length) continue;
     it.depsStated = it.depsStated.concat(out.map((e: any) => ({ kind: "ITEM_" + e.kind, item: e.to, text: `${e.kind} on ${e.to}${e.via ? ` via ${e.via}` : ""}`, satisfied: e.satisfied, satisfiedBasis: e.satisfiedBasis, source: e.source, targetSource: e.targetSource })));
     const sat = it.depsStated.filter((d: any) => d.satisfied).length;
     it.criteria.dependencyAvailability = measured(sat / it.depsStated.length, "DEP-1", Array.from(new Set(it.depsStated.map((d: any) => d.source))), `${sat}/${it.depsStated.length} stated dependencies satisfied (${it.depsStated.map((d: any) => `${d.kind}${d.item ? " " + d.item : ""}=${d.satisfied ? "satisfied" : "unsatisfied"}`).join(", ")})`);
   }
-  const dependencyGraph = { rule: DG.rule, edgeKinds: DG.edgeKinds, completedStatuses: DG.completedStatuses, counts: DG.counts, fanOut: Object.fromEntries(Object.keys(DG.byItem).filter((k) => DG.byItem[k].status === "DERIVED").sort().map((k) => [k, { fanOut: DG.byItem[k].fanOut, dependents: DG.byItem[k].dependents, blockingFanOut: DG.byItem[k].blockingFanOut, blockingDependents: DG.byItem[k].blockingDependents }])), edges: DG.edges, contention: DG.contention, notMeasuredKinds: Array.from(new Set(items.filter((it: any) => DG.byItem[it.id].status === "NOT_MEASURED").map((it: any) => it.kind))).sort() };
+  const dependencyGraph = { rule: DG.rule, edgeKinds: DG.edgeKinds, completedStatuses: DG.completedStatuses, counts: DG.counts, fanOut: Object.fromEntries(Object.keys(DG.byItem).filter((k) => DG.byItem[k].status === "DERIVED").sort().map((k) => [k, { fanOut: DG.byItem[k].fanOut, dependents: DG.byItem[k].dependents, blockingFanOut: DG.byItem[k].blockingFanOut, blockingDependents: DG.byItem[k].blockingDependents }])), edges: DG.edges, contention: DG.contention, dep1Kinds: DG.dep1Kinds, structuralKinds: DG.structuralKinds, staleWriteSets: DG.staleWriteSets, independenceStated: DG.independenceStated, independenceNote: DG.independenceNote, notMeasuredKinds: Array.from(new Set(items.filter((it: any) => DG.byItem[it.id].status === "NOT_MEASURED").map((it: any) => it.kind))).sort() };
 
   const statusCounts: any = Object.fromEntries(Object.keys(STATUS).map((s) => [s, 0]));
   for (const it of items) statusCounts[it.status] = (statusCounts[it.status] || 0) + 1;

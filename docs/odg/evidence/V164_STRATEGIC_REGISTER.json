@@ -443,7 +443,7 @@
       "dep2Note": "V174_CHECKPOINT_11.json has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)"
     },
     "dependencyGraph": {
-      "rule": "DEPG-1 (provider-authored, V17.5): item→item dependency edges are derived ONLY from explicit committed evidence — DATASET_INPUT, CODE_IMPORT, STATED_TEXT (definitions in edgeKinds); every edge cites its source (path#field) and the producer-side pointer; self-edges are dropped; a path containing '<' (a placeholder such as runtime/core/<defect-module>.ts) is not a concrete file and never matches. Applied UNIFORMLY to every register item kind: only WORK_ITEM_CONTRACT items declare inputs (preRegistration.dataset), a write_set or missingForPass, so every other kind gets dependencyGraph NOT_MEASURED with the reason (no edge is invented for them). Lineage (contract.parent) and shared inputs that no item produces are NOT dependencies. deps[] = the targets of UNSATISFIED edges (what the selector's eligibility gate and R1_MORE_UNBLOCKING read: an item is 'unblocked' by Y only while its dependency on Y is unsatisfied); every edge, satisfied or not, is a stated dependency for DEP-1 (depsStated) and is counted in fanOut",
+      "rule": "DEPG-1 (provider-authored, V17.5): item→item dependency edges are derived ONLY from explicit committed evidence — DATASET_INPUT, CODE_IMPORT, STATED_TEXT (definitions in edgeKinds); every edge cites its source (path#field) and the producer-side pointer; self-edges are dropped; a path containing '<' (a placeholder such as runtime/core/<defect-module>.ts) is not a concrete file and never matches. Applied UNIFORMLY to every register item kind: only WORK_ITEM_CONTRACT items declare inputs (preRegistration.dataset), a write_set or missingForPass, so every other kind gets dependencyGraph NOT_MEASURED with the reason (no edge is invented for them). Lineage (contract.parent) and shared inputs that no item produces are NOT dependencies. deps[] = the targets of UNSATISFIED edges (what the selector's eligibility gate and R1_MORE_UNBLOCKING read: an item is 'unblocked' by Y only while its dependency on Y is unsatisfied); DATASET_INPUT and STATED_TEXT edges (satisfaction can fail: pin/commit check, completion status) are stated dependencies for DEP-1 (depsStated) together with the register's existing owner-authorization prerequisites; CODE_IMPORT edges are STRUCTURAL ONLY (satisfied by construction ⇒ counted in fanOut, never in DEP-1 or deps[]); a write_set entry naming a file that is not committed is recorded in staleWriteSets (a limit, contracts are not edited). NO DEPENDENCY STATED ≠ NO DEPENDENCY: an item without a prerequisite edge keeps dependencyAvailability NOT_MEASURED with the reason 'no dependency stated'; 'measured: no dependency' would require a committed field STATING independence for that item, and no such field exists (independenceStated = [] — never inferred from absence)",
       "edgeKinds": {
         "DATASET_INPUT": "item X's contract declares, in WORK_ITEM_CONTRACT.preRegistration.dataset (any depth), a `file` that is a declared OUTPUT of item Y (a path in Y's WORK_ITEM_CONTRACT.write_set, or Y's executed scenario evidence file); satisfied iff that file is committed AND, when the dataset entry pins a sha256, its sha256 equals the pin (the runner refuses otherwise)",
         "CODE_IMPORT": "a committed file in item X's WORK_ITEM_CONTRACT.write_set requires (relative require, canonical parser) a file that is in item Y's WORK_ITEM_CONTRACT.write_set; satisfied iff the required file is committed",
@@ -630,6 +630,27 @@
         "unknownPairs": 48,
         "note": "contention is NOT a dependency: never in deps[], depsStated or any criterion"
       },
+      "dep1Kinds": [
+        "DATASET_INPUT",
+        "STATED_TEXT"
+      ],
+      "structuralKinds": [
+        "CODE_IMPORT"
+      ],
+      "staleWriteSets": [
+        {
+          "item": "F",
+          "file": "runtime/bin/odg-v160-scenario-f-run.ts",
+          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[1]"
+        },
+        {
+          "item": "J",
+          "file": "runtime/bin/odg-v160-scenario-j-run.ts",
+          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.write_set[1]"
+        }
+      ],
+      "independenceStated": [],
+      "independenceNote": "no committed field states that an item has no dependency ⇒ every edge-less item is NOT_MEASURED (not stated), never MEASURED-none",
       "notMeasuredKinds": [
         "CP8_CAPABILITY_GAP",
         "CP8_METHOD_CARD",
@@ -3026,27 +3047,8 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "DEPG-1: 2 stated item dependency edge(s), all satisfied ⇒ deps [] (nothing to unblock)",
-        "depsStated": [
-          {
-            "kind": "ITEM_CODE_IMPORT",
-            "item": "G",
-            "text": "CODE_IMPORT on G via runtime/bin/odg-v166-scenario-g-experiment.ts",
-            "satisfied": true,
-            "satisfiedBasis": "runtime/bin/odg-v166-scenario-g-experiment.ts committed",
-            "source": "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"./odg-v166-scenario-g-experiment.ts\")",
-            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].WORK_ITEM_CONTRACT.write_set[1]"
-          },
-          {
-            "kind": "ITEM_CODE_IMPORT",
-            "item": "H",
-            "text": "CODE_IMPORT on H via runtime/core/odg-verification-risk-calibration.ts",
-            "satisfied": true,
-            "satisfiedBasis": "runtime/core/odg-verification-risk-calibration.ts committed",
-            "source": "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"../core/odg-verification-risk-calibration.js\")",
-            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[3]"
-          }
-        ],
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 2 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsStated": [],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
         "sectionsAdvanced": [
@@ -3120,14 +3122,13 @@
             "basis": "|AC|=4, |write_set|=5, ownerGatedStep=false"
           },
           "dependencyAvailability": {
-            "status": "MEASURED",
-            "value": 1,
+            "status": "NOT_MEASURED",
+            "value": null,
             "rule": "DEP-1",
             "source": [
-              "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"./odg-v166-scenario-g-experiment.ts\")",
-              "runtime/bin/odg-v172-scenario-g2-experiment.ts#require(\"../core/odg-verification-risk-calibration.js\")"
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].initialState.missingForPass"
             ],
-            "basis": "2/2 stated dependencies satisfied (ITEM_CODE_IMPORT G=satisfied, ITEM_CODE_IMPORT H=satisfied)"
+            "reason": "no dependency stated in the evidence ⇒ deps [] (absence of a statement is not availability)"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -3257,7 +3258,7 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "DEPG-1: 1 stated item dependency edge(s), all satisfied ⇒ deps [] (nothing to unblock)",
+        "depsNote": "DEPG-1: 1 prerequisite edge(s), all satisfied ⇒ deps [] (nothing to unblock)",
         "depsStated": [
           {
             "kind": "ITEM_DATASET_INPUT",
@@ -11533,12 +11534,12 @@
     "strategicValue and capabilityGain come from V150 summary.top10NextInternal, itself a provider research ranking (V150 meta.generator) made before F/G/J were executed",
     "CP8 is read from main (merged #926); the fallback to origin/docs/v163-checkpoint-8 applies only when it is absent; its sha256 is in inputs, so a CP8 change is detected as drift",
     "owner-authorization flags of CP8_CAPABILITY_GAP items encode the CP8 (pre-V165) state; the owner authorizations of directive V165 (docs/odg/V165_OWNER_AUTHORIZATION.json) are NOT reflected in those flags; contract states ARE read live (e.g. G AUTHORIZED per V165 §1)",
-    "V17.5 DEPG-1: item→item dependency edges are now derived from explicit committed evidence (contract preRegistration.dataset files that are another item's declared output, relative requires of committed write_set files into another item's write_set, the existing 'scenario X' statements); see register.dependencyGraph (edges, fanOut, contention). Only WORK_ITEM_CONTRACT items declare inputs, so every other kind is NOT_MEASURED for edges; deps[] holds only UNSATISFIED edges (the selector gate defers on them), so R1 discriminates only when some item is still blocked on another — with every derived edge satisfied, R1 still has nothing to count; contract.parent lineage and shared inputs no item produces are not dependencies",
+    "V17.5 DEPG-1: item→item edges are derived from explicit committed evidence (see register.dependencyGraph: edges, fanOut, contention, staleWriteSets). Only edges whose satisfaction CAN FAIL feed DEP-1 / deps[] — DATASET_INPUT (committed + sha256 = pin) and STATED_TEXT ('scenario X', completion status), with the existing owner-authorization prerequisites; CODE_IMPORT edges are satisfied by construction and are STRUCTURAL ONLY (fanOut), never DEP-1 (#969 inspection). Only WORK_ITEM_CONTRACT items declare inputs, so every other kind is NOT_MEASURED for edges; deps[] holds only UNSATISFIED prerequisites (the selector gate defers on them), so R1 discriminates only when an item is still blocked — with every derived prerequisite satisfied, R1 still has nothing to count. Stale write_sets (contracts naming runners that were never committed, e.g. J/F list odg-v160-scenario-{j,f}-run.ts while J2 imports the committed odg-v161-* runners) are recorded, not fixed, so CODE_IMPORT extraction is incomplete; contract.parent lineage and shared inputs no item produces are not dependencies",
     "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "e9ec57ba1cd914ed968989c5fe894c148297aadc"
+  "generatedAtHead": "4770059d04c153f81dfcfa749cf8bbff2d67a9c1"
 }

@@ -6,6 +6,7 @@
 const fs = require("fs");
 const path = require("path");
 const GO = require("./odg-go-cycle.js");
+const REG = require("./odg-strategic-register.js");
 const SS = require("../bin/odg-strategic-select.ts");
 const SMR = require("../bin/odg-strategy-mode-run.ts");
 const POL = require("./odg-local-model-execution-policy.js");
@@ -508,7 +509,14 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       const G2REC = { ...rj("docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json"), recordPath: "docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json" };
       const e0 = await runSel(s1e); const e1 = await runSel(withRec(s1e, [G2REC]));
       const e0s = e0.st.decision, e1s = e1.st.decision;
-      check("GO-ORD never applies to strategicSelection: strategic undecided kept byte-identical; only the actionable G2/J2 tie is resolved (G2, committed V174 record)", JSON.stringify(e0s.strategicSelection) === JSON.stringify(e1s.strategicSelection) && e0s.decision === e1s.decision && e1s.selected === null && e0s.actionableSelection.selection.tiedSet.join(",") === "G2,J2" && e0s.actionableSelection.item === null && e1s.actionableSelection.item === "G2" && e1s.actionableSelection.resolvedBy === "OWNER_ORDER_DECISION docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json" && e1s.workingOn === "G2");
+      // V17.5 VISIBLE OUTCOME CHANGE (cause: DEPG-1 DATASET_INPUT J2→J — J2's pinned controlReference V161_SCENARIO_J.json is
+      // committed with sha256 = pin ⇒ J2 dependencyAvailability MEASURED 1; G2 has no prerequisite edge (its CODE_IMPORT edges
+      // are structural only) ⇒ NOT_MEASURED): in this 1e fixture the actionable G2/J2 TIE is gone — J2 leads by 0.1, is PROPOSED
+      // (uncertainty > uncertaintyMax ⇒ DECISION_REQUIRED, no tiedSet), so the GO-ORD record has no tie to resolve and is inert.
+      const regE = REG.buildRegister(s1e.sources);
+      const depOf = (id: string) => regE.items.find((x: any) => x.id === id).criteria.dependencyAvailability;
+      check("V17.5 cause: J2 dependencyAvailability 1 from DATASET_INPUT J2→J; G2 NOT_MEASURED", depOf("J2").status === "MEASURED" && depOf("J2").value === 1 && regE.items.find((x: any) => x.id === "J2").depsStated.some((d: any) => d.kind === "ITEM_DATASET_INPUT" && d.item === "J" && d.satisfied) && depOf("G2").status === "NOT_MEASURED");
+      check("GO-ORD never applies to strategicSelection: strategic undecided kept byte-identical; V17.5: actionable G2/J2 no longer tied (J2 proposed) ⇒ the committed V174 record is not applied", JSON.stringify(e0s.strategicSelection) === JSON.stringify(e1s.strategicSelection) && e0s.decision === e1s.decision && e1s.selected === null && e0s.actionableSelection.selection.tiedSet.length === 0 && e0s.actionableSelection.selection.proposed === "J2" && e1s.actionableSelection.selection.proposed === "J2" && e1s.actionableSelection.item === null && !e1s.actionableSelection.resolvedBy && JSON.stringify(e0s.actionableSelection) === JSON.stringify(e1s.actionableSelection));
     }
   }
   // 7. writer confinement + provider never launched (source scan)
