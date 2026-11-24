@@ -19,6 +19,7 @@ const crypto = require("crypto");
 const { execFileSync } = require("child_process");
 const REG = require("../core/odg-strategic-register.js");
 const SEL = require("../core/mission-priority-selector.js");
+const CM = require("../core/odg-register-criteria-measurement.js");   // V17.5 — BLK-3 cited-evidence list
 const OCUR = require("../core/odg-observation-currency.js");   // V16.9 Phase 1b — proof-currency probes (read-only local git)
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -134,10 +135,23 @@ function loadSources(root: string): any {
     inputs.push({ source: rel, sha256: sha256(txt) });
     benefitEvidence.push({ path: rel, data: JSON.parse(txt) });
   }
+  // V17.5 BLK-3 inputs: the sha256-pinned evidence files a contract's OWN preRegistration.dataset cites (task-list
+  // contracts only; odg-register-criteria-measurement.citedMeasurementFiles). Never this register's output (no circularity).
+  const measurementEvidence: any[] = [];
+  for (const rel of CM.citedMeasurementFiles(contracts.data)) {
+    if (rel === OUT_REL) continue;
+    let txt: string;
+    try { txt = fs.readFileSync(path.join(root, rel), "utf8"); } catch { inputs.push({ source: rel, sha256: null, note: "UNAVAILABLE — BLK-3 stop records from it absent" }); continue; }
+    let data: any;
+    try { data = JSON.parse(txt); } catch { inputs.push({ source: rel, sha256: sha256(txt), note: "UNPARSEABLE — BLK-3 stop records from it absent" }); continue; }
+    inputs.push({ source: rel, sha256: sha256(txt) });
+    measurementEvidence.push({ path: rel, sha256: sha256(txt), data });
+  }
   const seen = new Set<string>();
   const uniqInputs = inputs.filter((i: any) => (seen.has(i.source) ? false : (seen.add(i.source), true)));
   inputs.length = 0; inputs.push(...uniqInputs);
-  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, proofProbes, inputs };
+  const contractsSha256 = (inputs.find((i: any) => i.source === CONTRACTS_REL) || {}).sha256 || null;
+  return { contracts, contractsSha256, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, measurementEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, proofProbes, inputs };
 }
 
 const SELECTOR_OPTIONS = Object.freeze({ weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
@@ -222,12 +236,12 @@ function compute(sources: any): any {
     grading: grade(register, decision, again, inv),
     honestLimits: [
       "criterion rules, equal weights, epsilon 0.02 and uncertaintyMax 0.5 were written by the provider, not derived from a canonical owner source — ODG applies them; the owner may replace them",
-      "4 of 10 criteria (blocker/repetition reduction, reliability/quality, speed/efficiency, reusability) are NOT_MEASURED for every non-capability-gap item: no evidence field supports them; they enter only as uncertainty",
+      "V17.5 (odg-register-criteria-measurement): of the 4 criteria CP10 listed NOT_MEASURED for every item, two now have provider-authored evidence rules for WORK_ITEM_CONTRACT items — BLK-3 (share of the item's own pre-registered tasks with a committed ODG repetitive-failure stop record in the sha256-pinned files its dataset cites ⇒ J2 11/11 = 1; J2's held-out tasks were SELECTED because they failed (failure-conditional, declared in its contract), so 1 is by construction: it measures the repetition J2 targets, not that J2 removes it) and REU-1 (other contracts declaring an item's output as a preRegistration.dataset input file ⇒ J 0.25 via J2's controlReference; free-text mentions such as antiLeakage.notLookedAt or invariants are NOT reuse and are not counted). Every other contract keeps BLK/REU NOT_MEASURED; reliability/quality (REL-0) and speed/efficiency (SPD-0) stay NOT_MEASURED for every non-gap item with the searched reason recorded (no committed per-item field; J's wall times compare two failing arms). They enter only as uncertainty",
       "strategicValue and capabilityGain come from V150 summary.top10NextInternal, itself a provider research ranking (V150 meta.generator) made before F/G/J were executed",
       "CP8 is read from main (merged #926); the fallback to origin/docs/v163-checkpoint-8 applies only when it is absent; its sha256 is in inputs, so a CP8 change is detected as drift",
       "owner-authorization flags of CP8_CAPABILITY_GAP items encode the CP8 (pre-V165) state; the owner authorizations of directive V165 (docs/odg/V165_OWNER_AUTHORIZATION.json) are NOT reflected in those flags; contract states ARE read live (e.g. G AUTHORIZED per V165 §1)",
       "dependency edges between items: none are stated in the evidence, so R1 (unblocking) never discriminates",
-      "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
+      "V17.5: the leader J's uncertainty is 0.4 (REU-1 measured) — below uncertaintyMax 0.5 and no longer DECISION_REQUIRED at uncertaintyMax 0.4 (see sensitivity); with epsilon 0.05 J and F still tie (TIE_EXPLAINED). GO's ACTIONABLE selection (authorized items only) still proposes J2 with uncertainty 0.6 > 0.5 ⇒ DECISION_REQUIRED (capabilityGain, strategicValue, dependencyAvailability, reliabilityQuality, speedEfficiency, reusability have no J2 evidence) — only the owner selection record (GO-ORD-2) resolves it",
       "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
       "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
       "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",

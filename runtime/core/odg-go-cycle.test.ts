@@ -44,6 +44,10 @@ const BASE_PRE_V168 = (() => {
   const h = contracts.data.contracts.find((x: any) => x.scenario === "H");
   h.state = "PROPOSED"; h.authorizedBy = null; delete h.authorization; delete h.revisionHistory; delete h.WORK_ITEM_CONTRACT.preRegistration;
   h.WORK_ITEM_CONTRACT.write_set = ["docs/odg/evidence/V160_SCENARIO_H.json"];
+  // V17.5 (value legitimately changed): REU-1 now measures J's reusability from J2's dataset.controlReference (J +0.025),
+  // which would make J — not H — the pre-V168 strategic choice. The V17.2 G2/J2 contracts did not exist before V168, so
+  // a faithful pre-V168 fixture omits them (restoring the pre-V168 register: TIE_EXPLAINED J/G/H ⇒ H).
+  contracts.data.contracts = contracts.data.contracts.filter((x: any) => !["G2", "J2"].includes(String(x.scenario)));
   const s = clone(BASE); s.measured = BASE.measured;
   s.sources.contracts = contracts;
   // V16.9: authorizationEvidence {} — this fixture's GO state carries no authorization evidence (mirrored below)
@@ -162,6 +166,11 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     G: { inspection: optJ("docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json"), experiment: optJ("docs/odg/evidence/V166_G_EXPERIMENT.json"), validation: optJ("docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json") },
     H: { inspection: optJ("docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json"), experiment: optJ("docs/odg/evidence/V168_H_EXPERIMENT.json"), validation: optJ("docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json") },
   };
+  /* V17.5 (values legitimately changed): BLK-3 now measures J2 (11/11 ⇒ +0.1) and REU-1 measures J's reuse through J2's
+   * dataset.controlReference (+0.025, J now leads G by 0.03 > epsilon). The two "strategic undecided" tests below need the
+   * pre-V17.5 J/G strategic tie and the G2/J2 actionable tie, so they run on a LABELLED pre-V17.5 fixture: no
+   * measurementEvidence and no controlReference in J2's dataset ⇒ BLK-3/REU-1 NOT_MEASURED exactly as before V17.5. */
+  const preV175 = (s: any) => { s.sources.measurementEvidence = []; const j2 = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "J2"); if (j2) delete j2.WORK_ITEM_CONTRACT.preRegistration.dataset.controlReference; return s; };
   const BASE_LIVE_EV = (() => { const s = clone(BASE_LIVE); s.measured = BASE_LIVE.measured; s.authorizationEvidence = COMMITTED_AUTH_EV; return s; })();
   // fixture: H at its RUN_CONTROLLED_EXPERIMENTS step (inspection recorded; experiment + validation not yet) — the state GO
   // actually acted on in the V168 native dispatch (#946). Labelled fixture, derived from the committed records.
@@ -196,6 +205,7 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     // labelled fixture: G AND H de-authorized (no authorization block ⇒ no CLOSE-1 closure, nothing actionable) so the
     // strategic selection is the undecided J/G tie this test needs (V16.9: with the committed closures it is decided).
     for (const id of ["H", "G"]) { const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === id); c.state = "PROPOSED"; c.authorizedBy = null; delete c.authorization; }
+    preV175(s);
     const { ports, trace, calls } = mkPorts({ state: s });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
     check("strategic undecided + no authorized item ⇒ HALTED_DECISION_REQUIRED, nothing selected, no dispatch", r.status === "HALTED_DECISION_REQUIRED" && stepIn(trace, "SELECT").decision.workingOn === null && calls.dispatch === 0);
@@ -505,6 +515,7 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       // G2 chosen, while strategicSelection (and the top-level selector decision) stays byte-identical, still undecided
       const s1e = clone(BASE_LIVE_EV); s1e.measured = BASE_LIVE.measured;
       for (const id of ["H", "G"]) { const cc = s1e.sources.contracts.data.contracts.find((x: any) => x.scenario === id); cc.state = "PROPOSED"; cc.authorizedBy = null; delete cc.authorization; }
+      preV175(s1e);
       const G2REC = { ...rj("docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json"), recordPath: "docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json" };
       const e0 = await runSel(s1e); const e1 = await runSel(withRec(s1e, [G2REC]));
       const e0s = e0.st.decision, e1s = e1.st.decision;

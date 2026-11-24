@@ -39,10 +39,10 @@ const STATUS = Object.freeze({
 const CRITERIA = Object.freeze([
   { name: "autonomyBenefit", direction: "HIGHER_IS_BETTER", rule: "AUT-1: value = min(1, n/2) where n = number of V150 sections the item advances whose sectionsStatus.title matches /AUTONOM/i; a §45 scenario contract always advances §45 ('BATTERIE DE DÉMONSTRATION DE L'AUTONOMIE'); items with no section mapping ⇒ NOT_MEASURED" },
   { name: "capabilityGain", direction: "HIGHER_IS_BETTER", rule: "CAP-1: value = min(1, n/4) where n = number of NON-§45 V150 sections in the advances of the top10NextInternal item(s) that reference the work item (a §45 contract X via '§45-X'), counting only sections whose sectionsStatus.status ≠ VALIDATED; not referenced by any top10 item ⇒ NOT_MEASURED" },
-  { name: "blockerRepetitionReduction", direction: "HIGHER_IS_BETTER", rule: "BLK-0: NOT_MEASURED for every non-capability-gap item — no canonical field links a work item to the blockers/repetitions its completion would remove (CP8.gaps and V150 blockers are not keyed to work items); topic keywords are not evidence of benefit. CP8 capability-gap items use BLK-2 (capabilityGapRules.benefit)" },
+  { name: "blockerRepetitionReduction", direction: "HIGHER_IS_BETTER", rule: "BLK-0: NOT_MEASURED for every non-capability-gap item — no canonical field links a work item to the blockers/repetitions its completion would remove (CP8.gaps and V150 blockers are not keyed to work items); topic keywords are not evidence of benefit. CP8 capability-gap items use BLK-2 (capabilityGapRules.benefit) — V17.5: WORK_ITEM_CONTRACT items use BLK-3 (odg-register-criteria-measurement) where committed evidence measures them; otherwise this rule applies" },
   { name: "reliabilityQuality", direction: "HIGHER_IS_BETTER", rule: "REL-0: NOT_MEASURED for every non-capability-gap item — no evidence field records an expected reliability/quality gain per work item. CP8 capability-gap items use REL-2 (capabilityGapRules.benefit)" },
   { name: "speedEfficiency", direction: "HIGHER_IS_BETTER", rule: "SPD-0: NOT_MEASURED for every item — no evidence field records an expected speed/efficiency gain per work item" },
-  { name: "reusability", direction: "HIGHER_IS_BETTER", rule: "REU-0: NOT_MEASURED for every item — no evidence field records reuse of a work item's output by other items" },
+  { name: "reusability", direction: "HIGHER_IS_BETTER", rule: "REU-0: NOT_MEASURED for every item — no evidence field records reuse of a work item's output by other items — V17.5: WORK_ITEM_CONTRACT items use REU-1 (odg-register-criteria-measurement) where committed evidence measures them; otherwise this rule applies" },
   { name: "strategicValue", direction: "HIGHER_IS_BETTER", rule: "STR-1: value = (11 - rank)/10 for the best V150 summary.top10NextInternal rank that references the item; listed only in summary.alsoInternal (unranked, after the top 10) ⇒ 0.05; absent from both ⇒ NOT_MEASURED (absence is not evidence of low value)" },
   { name: "costRiskComplexity", direction: "LOWER_IS_BETTER", rule: "CRC-1: contracts only: value = min(1, (|acceptance_criteria| + |write_set|)/10 + (0.3 if an owner-gated step is stated)); items without a WORK_ITEM_CONTRACT ⇒ NOT_MEASURED (no declared scope to size)" },
   { name: "dependencyAvailability", direction: "HIGHER_IS_BETTER", rule: "DEP-1: only when the evidence STATES a dependency: value = satisfied/stated (an owner-authorization dependency is unsatisfied while contract.authorizedBy is null; an 'IN_PROGRESS elsewhere' dependency is satisfied only if a field states it landed); no stated dependency ⇒ deps [] and NOT_MEASURED. CP8 capability-gap items use DEP-2 (capabilityGapRules.benefit)" },
@@ -60,6 +60,7 @@ const SCN_RULE = "SCN-1: a scenario evidence file (contractRef/contract '#X' or 
 
 const AS = require("./odg-authorization-scope.js");
 const OCUR = require("./odg-observation-currency.js");   // V16.9 Phase 1b — RES-1 proof currency (composed)
+const CM = require("./odg-register-criteria-measurement.js");   // V17.5 — BLK-3 / REU-1 measurers for WORK_ITEM_CONTRACT items (composed)
 
 /*
  * V16.9 addendum Phase 1 — "Continuité vérifiable". Declared rules (provider-authored; ODG applies them mechanically):
@@ -147,6 +148,8 @@ function buildRegister(sources: any): any {
     scen[L] = e;
   }
 
+  const scenPaths: any = Object.fromEntries(Object.keys(scen).sort().map((k) => [k, scen[k].path]));
+  const sourcesCM = { contracts: { ...C, sha256: typeof sources.contractsSha256 === "string" ? sources.contractsSha256 : null }, measurementEvidence: sources.measurementEvidence };
   const sectionsOf = (advances: any[]) => Array.from(new Set((advances || []).filter((a) => !/^§45-/.test(String(a))).map(sectionId).filter(Boolean))) as string[];
   const refsTop10 = (letter: string) => top10.map((t, i) => ({ t, i })).filter(({ t }) => Array.isArray(t.advances) && t.advances.includes("§45-" + letter));
   const autonomyOf = (secs: string[], ptr: string[]) => {
@@ -217,10 +220,8 @@ function buildRegister(sources: any): any {
     const crit: any = {};
     crit.autonomyBenefit = autonomyOf(secs, [`${base}.scenario`].concat(refPtr));
     crit.capabilityGain = refs.length ? capabilityOf(secs, refPtr) : notMeasured("CAP-1", "not referenced by any V150 top10NextInternal item ('§45-" + L + "')", [`${vf}#summary.top10NextInternal`]);
-    crit.blockerRepetitionReduction = notMeasured("BLK-0", "no canonical field links this item to blockers/repetitions removed");
-    crit.reliabilityQuality = notMeasured("REL-0", "no evidence field records it");
-    crit.speedEfficiency = notMeasured("SPD-0", "no evidence field records it");
-    crit.reusability = notMeasured("REU-0", "no evidence field records it");
+    // V17.5 — BLK-3 / REU-1 from committed evidence (odg-register-criteria-measurement); REL-0 / SPD-0 kept with the searched reason.
+    Object.assign(crit, CM.measureContractCriteria(sourcesCM, ci, scenPaths));
     if (refs.length) { const best = Math.min(...refs.map(({ t }) => Number(t.rank))); crit.strategicValue = measured((11 - best) / 10, "STR-1", refPtr.map((p) => p.replace(/\.advances$/, ".rank")), `best top10 rank ${best}`); }
     else if (alsoIdx >= 0) crit.strategicValue = measured(0.05, "STR-1", [`${vf}#summary.alsoInternal[${alsoIdx}]`], "listed in alsoInternal (unranked, after the top 10)");
     else crit.strategicValue = notMeasured("STR-1", "absent from top10NextInternal and alsoInternal", [`${vf}#summary`]);
@@ -378,10 +379,11 @@ function buildRegister(sources: any): any {
     statusTaxonomy: STATUS,
     criteria: CRITERIA, weights: WEIGHTS, weightsNote: WEIGHTS_NOTE, ownerRule: OWNER_RULE,
     capabilityGapRules: { dedupe: GAP_DEDUP_RULE, owner: OWNER_RULE_GAP, landed: LAND_RULE, links: GAP_LINKS.map((l: any) => ({ id: l.id, audit: l.audit, gapRe: l.gapRe ? String(l.gapRe) : null, ownerQuestionRe: l.oqRe ? String(l.oqRe) : null, blockerAnchors: l.anchors || [] })), benefit: { blocker: BLK2_RULE, reliability: REL2_RULE, dependency: DEP2_RULE, blockerFields: BLOCKER_FIELDS, prRecordFields: PR_RECORD_FIELDS, latestCheckpoint: latestCp, notDerived: BENEFIT_NOT_DERIVED } },
+    contractMeasurementRules: CM.MEASUREMENT_RULES,
     continuityRules: { closure: CLOSE_RULE, resolution: RES_RULE, latestCheckpoint: LATEST_CP_RULE, contradictions: CONTRADICTION_RULES, history: "append-only statusHistory [{status, source, since, rule}] on every item whose status CLOSE-1 or RES-1 changed; earlier statuses are never deleted" },
     latestCheckpoint,
     contradictions: { rules: CONTRADICTION_RULES, count: contradictions.length, detected: contradictions, note: "reported, never auto-resolved by the detector" },
-    sourcesUsed: { contracts: cf, v150: vf, cp8: pf, laterEvidence: (Array.isArray(sources.laterEvidence) ? sources.laterEvidence : []).map((e: any) => e.path).sort(), benefitEvidence: (Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).map((e: any) => e.path).sort(), scenarioEvidence: Object.keys(scen).sort().map((k) => ({ scenario: k, path: scen[k].path })), preContractEvidenceIgnored: ignoredEvidence, scenarioEvidenceRule: SCN_RULE, authorizationEvidence: Object.keys(isObj(sources.authorizationEvidence) ? sources.authorizationEvidence : {}).sort().map((k) => ({ scenario: k, ...Object.fromEntries(["inspection", "experiment", "validation"].map((t) => [t, sources.authorizationEvidence[k][t] && sources.authorizationEvidence[k][t].recordPath ? sources.authorizationEvidence[k][t].recordPath : null])) })), resolutionEvidence: resolutions.map((r: any) => r.path), checkpoints: cps.map((c: any) => c.path), checkpointNames: (Array.isArray(sources.checkpointNames) ? sources.checkpointNames.map(String) : []).slice().sort() },
+    sourcesUsed: { contracts: cf, v150: vf, cp8: pf, laterEvidence: (Array.isArray(sources.laterEvidence) ? sources.laterEvidence : []).map((e: any) => e.path).sort(), benefitEvidence: (Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).map((e: any) => e.path).sort(), scenarioEvidence: Object.keys(scen).sort().map((k) => ({ scenario: k, path: scen[k].path })), preContractEvidenceIgnored: ignoredEvidence, scenarioEvidenceRule: SCN_RULE, authorizationEvidence: Object.keys(isObj(sources.authorizationEvidence) ? sources.authorizationEvidence : {}).sort().map((k) => ({ scenario: k, ...Object.fromEntries(["inspection", "experiment", "validation"].map((t) => [t, sources.authorizationEvidence[k][t] && sources.authorizationEvidence[k][t].recordPath ? sources.authorizationEvidence[k][t].recordPath : null])) })), resolutionEvidence: resolutions.map((r: any) => r.path), measurementEvidence: (Array.isArray(sources.measurementEvidence) ? sources.measurementEvidence : []).map((e: any) => e.path).sort(), checkpoints: cps.map((c: any) => c.path), checkpointNames: (Array.isArray(sources.checkpointNames) ? sources.checkpointNames.map(String) : []).slice().sort() },
     itemCount: items.length, statusCounts, items,
   });
 }

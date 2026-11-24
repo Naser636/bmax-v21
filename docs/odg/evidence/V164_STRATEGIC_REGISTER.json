@@ -116,6 +116,10 @@
     {
       "source": "docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json",
       "sha256": "503bf71a21de598809717d5e33ecaf4388a53f01086c1bdc529498ab24106538"
+    },
+    {
+      "source": "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json",
+      "sha256": "94c7eb999cea757443db398aef3721f95ae089b3c525468f34c08dbd3d650e8b"
     }
   ],
   "register": {
@@ -152,7 +156,7 @@
       {
         "name": "blockerRepetitionReduction",
         "direction": "HIGHER_IS_BETTER",
-        "rule": "BLK-0: NOT_MEASURED for every non-capability-gap item — no canonical field links a work item to the blockers/repetitions its completion would remove (CP8.gaps and V150 blockers are not keyed to work items); topic keywords are not evidence of benefit. CP8 capability-gap items use BLK-2 (capabilityGapRules.benefit)"
+        "rule": "BLK-0: NOT_MEASURED for every non-capability-gap item — no canonical field links a work item to the blockers/repetitions its completion would remove (CP8.gaps and V150 blockers are not keyed to work items); topic keywords are not evidence of benefit. CP8 capability-gap items use BLK-2 (capabilityGapRules.benefit) — V17.5: WORK_ITEM_CONTRACT items use BLK-3 (odg-register-criteria-measurement) where committed evidence measures them; otherwise this rule applies"
       },
       {
         "name": "reliabilityQuality",
@@ -167,7 +171,7 @@
       {
         "name": "reusability",
         "direction": "HIGHER_IS_BETTER",
-        "rule": "REU-0: NOT_MEASURED for every item — no evidence field records reuse of a work item's output by other items"
+        "rule": "REU-0: NOT_MEASURED for every item — no evidence field records reuse of a work item's output by other items — V17.5: WORK_ITEM_CONTRACT items use REU-1 (odg-register-criteria-measurement) where committed evidence measures them; otherwise this rule applies"
       },
       {
         "name": "strategicValue",
@@ -378,6 +382,12 @@
         ]
       }
     },
+    "contractMeasurementRules": {
+      "blockerRepetitionReduction": "BLK-3 (WORK_ITEM_CONTRACT items, V17.5): T = the task ids the contract PRE-REGISTERS (WORK_ITEM_CONTRACT.preRegistration.dataset.replication ∪ .heldOut, strings); F = the committed docs/odg/evidence/*.json files that SAME dataset block cites as `<k>.file` with a pinned 64-hex `<k>.sha256` — a file whose loaded sha256 differs from the pin, or that was not loaded, is refused (cited in the reason, never read); a STOP RECORD is a field stopReason / repairStopReason (or an element of a `stops` array) whose value is an ODG repetitive-failure stop of native-project-builder (NO_PROGRESS_IDENTICAL_REGENERATION | REPAIR_BUDGET_EXHAUSTED) inside an object whose `task`/`id` field — or whose own key — names a task of T; n = number of DISTINCT tasks of T with ≥1 stop record in F; value = n/|T| (the share of the item's own pre-registered tasks that committed evidence shows blocked by a repeated-failure stop: the repetition the item targets — a POTENTIAL reduction, not a realized one; the n/|T| scale is provider-authored); no pre-registered task list, no usable cited file, or n = 0 ⇒ NOT_MEASURED (absence is not evidence of no benefit)",
+      "reusability": "REU-1 (WORK_ITEM_CONTRACT items, V17.5): the item's OUTPUTS are its concrete write_set paths (no '<placeholder>') and its SCN-1 executed scenario evidence path; r = number of OTHER WORK_ITEM_CONTRACTs whose preRegistration.dataset DECLARES one of those outputs as an input — a `file` field (any depth under dataset) whose value starts with the output path (token-bounded); free-text mentions elsewhere do NOT count (a contract text also names files it must NOT look at — e.g. antiLeakage/contamination.notLookedAt — or must not edit — invariants), and a `parent` field alone does NOT count (lineage ≠ reuse); value = min(1, r/4) (divisor 4 provider-authored, keeping the n/4 scale of CAP-1/EVD-1/BLK-2); r = 0 ⇒ NOT_MEASURED (absence of a declared reuse is not evidence of no reuse)",
+      "reliabilityQuality": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill",
+      "speedEfficiency": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
+    },
     "continuityRules": {
       "closure": "CLOSE-1: a WORK_ITEM_CONTRACT item whose contract carries an owner authorization block is CLOSED iff odg-authorization-scope.deriveAuthorizationScope(contract, committed {inspection, experiment, validation} records) is applicable, validates EVERY step of its declared sequence and has no current step; status = CLOSED_<grade> with <grade> = the VALIDATE_CRITERIA evidence scenarioGrade (the committed V*_<X>_CRITERIA_VALIDATION.json, R5b — bounded by the experiment outcome, never upgraded); any missing/invalid step ⇒ not closed (status from the earlier rules, closure.closed=false with the scope's reason). The pre-closure status is kept in statusHistory; criteria are kept (record preserved); CLOSED_* are non-selectable",
       "resolution": "RES-1: an item is RESOLVED_BY_EVIDENCE iff a committed evidence file carries top-level resolvesRegisterItem = the item id, resolution.status = 'FIXED', fixedBy.pr (integer), fixedBy.mergeCommit (40 hex) and ≥1 reproTests entry, AND (V16.9 Phase 1b, #949 LOW) an independent inspection reference (inspection.verdict ACCEPT, 40-hex inspection.inspectedHeadSha, distinct opaque inspectorSessionId/authorSessionId) AND odg-observation-currency.assessEvidenceCurrency usableAsProof over the injected sources.proofProbes (merge commit + inspected head exist in local git and are ancestors of main; no probe ⇒ refused); the file is cited; the earlier status is kept in statusHistory; a refused record is reported on the item (resolutionRefused) with its reason",
@@ -557,6 +567,10 @@
       "resolutionEvidence": [
         "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json"
       ],
+      "measurementEvidence": [
+        "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json",
+        "docs/odg/evidence/V161_SCENARIO_J.json"
+      ],
       "checkpoints": [
         "docs/odg/evidence/V166_CHECKPOINT_9.json",
         "docs/odg/evidence/V168_CHECKPOINT_10.json"
@@ -657,28 +671,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[0].WORK_ITEM_CONTRACT.write_set[2]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of A ([docs/odg/evidence/V160_SCENARIO_A.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "NOT_MEASURED",
@@ -769,28 +785,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[1].WORK_ITEM_CONTRACT.write_set[0]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of B ([docs/odg/evidence/V160_SCENARIO_B.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "NOT_MEASURED",
@@ -884,28 +902,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[2].WORK_ITEM_CONTRACT.write_set[1]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of C ([docs/odg/evidence/V160_SCENARIO_C.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -999,28 +1019,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[3].WORK_ITEM_CONTRACT.write_set[1]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of D ([docs/odg/evidence/V160_SCENARIO_D.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -1109,28 +1131,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[4].WORK_ITEM_CONTRACT.write_set[0]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of E ([docs/odg/evidence/V160_SCENARIO_E.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "NOT_MEASURED",
@@ -1230,28 +1254,32 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[0]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[1]",
+              "docs/odg/evidence/V161_SCENARIO_F.json (SCN-1 executed evidence of F)"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of F ([docs/odg/evidence/V160_SCENARIO_F.json, runtime/bin/odg-v160-scenario-f-run.ts, docs/odg/evidence/V161_SCENARIO_F.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -1349,28 +1377,32 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].WORK_ITEM_CONTRACT.write_set[0]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].WORK_ITEM_CONTRACT.write_set[1]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].WORK_ITEM_CONTRACT.write_set[2]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of G ([docs/odg/evidence/V160_SCENARIO_G.json, runtime/bin/odg-v166-scenario-g-experiment.ts, docs/odg/evidence/V166_G_EXPERIMENT.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -1534,28 +1566,36 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[0]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[1]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[2]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[3]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[4]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[5]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].WORK_ITEM_CONTRACT.write_set[6]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of H ([docs/odg/evidence/V160_SCENARIO_H.json, runtime/bin/odg-v168-scenario-h-heldout-build.ts, docs/odg/evidence/V168_H_HELDOUT.json, runtime/core/odg-verification-risk-calibration.ts, runtime/core/odg-verification-risk-calibration.test.ts, runtime/bin/odg-v168-scenario-h-experiment.ts, docs/odg/evidence/V168_H_EXPERIMENT.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -1707,28 +1747,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[8].WORK_ITEM_CONTRACT.write_set[0]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of I ([docs/odg/evidence/V160_SCENARIO_I.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "NOT_MEASURED",
@@ -1830,28 +1872,37 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "MEASURED",
+            "value": 0.25,
+            "rule": "REU-1",
+            "method": "count other committed WORK_ITEM_CONTRACTs whose preRegistration.dataset declares one of this item's outputs (concrete write_set paths + SCN-1 executed evidence) as an input file",
+            "source": [
+              "docs/odg/evidence/V161_SCENARIO_J.json (SCN-1 executed evidence of J)",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.controlReference.file"
+            ],
+            "basis": "r=1 other contract(s) declare an output as a dataset input: J2 ← [docs/odg/evidence/V161_SCENARIO_J.json]",
+            "measuredAt": {
+              "contentSha256": {
+                "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json": "8283ad374a1f640894aeca9cc1d0bdcaff700df851ff9428b6a3636737845320"
+              }
+            }
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -1955,28 +2006,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[10].WORK_ITEM_CONTRACT.write_set[0]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of K ([docs/odg/evidence/V160_SCENARIO_K.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -2065,28 +2118,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[11].WORK_ITEM_CONTRACT.write_set[0]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of L ([docs/odg/evidence/V160_SCENARIO_L.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -2176,28 +2231,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[12].WORK_ITEM_CONTRACT.write_set[0]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of M ([docs/odg/evidence/V160_SCENARIO_M.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "NOT_MEASURED",
@@ -2286,28 +2343,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[13].WORK_ITEM_CONTRACT.write_set[0]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of N ([docs/odg/evidence/V160_SCENARIO_N.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -2396,28 +2455,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[14].WORK_ITEM_CONTRACT.write_set[0]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of O ([docs/odg/evidence/V160_SCENARIO_O.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "MEASURED",
@@ -2506,28 +2567,30 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[15].WORK_ITEM_CONTRACT.write_set[0]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of P ([docs/odg/evidence/V160_SCENARIO_P.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "NOT_MEASURED",
@@ -2618,28 +2681,34 @@
             "value": null,
             "rule": "BLK-0",
             "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "reason": "no pre-registered task list (preRegistration.dataset.replication/heldOut) and no other canonical field links this item to blockers/repetitions removed (BLK-3 not applicable)"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set[0]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set[1]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set[2]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set[3]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set[4]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of G2 ([runtime/bin/odg-v172-scenario-g2-heldout-build.ts, docs/odg/evidence/V172_G2_HELDOUT.json, runtime/bin/odg-v172-scenario-g2-experiment.ts, runtime/bin/odg-v172-scenario-g2-experiment.test.ts, docs/odg/evidence/V172_G2_EXPERIMENT.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "NOT_MEASURED",
@@ -2787,32 +2856,101 @@
             "reason": "not referenced by any V150 top10NextInternal item ('§45-J2')"
           },
           "blockerRepetitionReduction": {
+            "status": "MEASURED",
+            "value": 1,
+            "rule": "BLK-3",
+            "method": "count distinct pre-registered tasks with ≥1 committed ODG repetitive-failure stop record in the sha256-pinned evidence files the contract's own dataset cites",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.controlReference.file",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.heldOutBasis.file",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.controlReference.sha256",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.heldOutBasis.sha256",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.replication[0]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.replication[1]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.replication[2]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.replication[3]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.heldOut[0]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.heldOut[1]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.heldOut[2]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.heldOut[3]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.heldOut[4]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.heldOut[5]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.preRegistration.dataset.heldOut[6]",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[0].default.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[0].selection.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[0].alternative.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[1].default.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[1].selection.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[1].alternative.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[2].default.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[2].selection.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[2].alternative.subproblems[3].stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[3].default.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[3].selection.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[3].alternative.subproblems[3].stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[4].default.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[4].selection.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[4].alternative.subproblems[2].stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[5].default.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[5].selection.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[5].alternative.subproblems[2].stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[6].default.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[6].selection.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[6].alternative.subproblems[3].stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[7].default.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[7].selection.stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#rows[7].alternative.subproblems[3].stopReason",
+              "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.v159-implement-parse-range.stops[0]",
+              "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.v159-implement-parse-range.stops[1]",
+              "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.rle-codec.stops[0]",
+              "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.rle-codec.stops[1]",
+              "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.csv-typed-validator.stops[0]",
+              "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.csv-typed-validator.stops[1]",
+              "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.range-clamp-pipeline.stops[0]",
+              "docs/odg/evidence/V161_SCENARIO_J.json#summary.perTask.range-clamp-pipeline.stops[1]",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[0].repairStopReason",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[1].repairStopReason",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[2].repairStopReason",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[3].repairStopReason",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[4].repairStopReason",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[6].repairStopReason",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[8].repairStopReason",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[9].repairStopReason",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[10].repairStopReason",
+              "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json#modelGenerated.builds[11].repairStopReason"
+            ],
+            "basis": "n=11/11 pre-registered tasks blocked by a recorded stop (docs/odg/evidence/V161_SCENARIO_J.json: 4 task(s), 32 record(s); docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json: 10 task(s), 10 record(s)) — POTENTIAL reduction (the repetition the item targets), not a realized one",
+            "measuredAt": {
+              "contentSha256": {
+                "docs/odg/evidence/V161_SCENARIO_J.json": "11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff",
+                "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json": "94c7eb999cea757443db398aef3721f95ae089b3c525468f34c08dbd3d650e8b"
+              }
+            }
+          },
+          "reusability": {
             "status": "NOT_MEASURED",
             "value": null,
-            "rule": "BLK-0",
-            "source": [],
-            "reason": "no canonical field links this item to blockers/repetitions removed"
+            "rule": "REU-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.write_set[0]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.write_set[1]",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.write_set[2]"
+            ],
+            "reason": "no other WORK_ITEM_CONTRACT declares an output of J2 ([runtime/bin/odg-v172-scenario-j2-run.ts, runtime/bin/odg-v172-scenario-j2-run.test.ts, docs/odg/evidence/V172_J2_EXPERIMENT.json]) as a preRegistration.dataset input — absence of a declared reuse is not evidence of no reuse"
           },
           "reliabilityQuality": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "REL-0",
             "source": [],
-            "reason": "no evidence field records it"
+            "reason": "REL-0 kept (V17.5 search): no committed field records an expected reliability/quality gain of COMPLETING a work item — contract-inspection findings/REJECTs are defects of the contract text, and canonical-defect resolution records are keyed to CP8 gap items (REL-2/RES-1), not to work items; using either would be a default fill"
           },
           "speedEfficiency": {
             "status": "NOT_MEASURED",
             "value": null,
             "rule": "SPD-0",
             "source": [],
-            "reason": "no evidence field records it"
-          },
-          "reusability": {
-            "status": "NOT_MEASURED",
-            "value": null,
-            "rule": "REU-0",
-            "source": [],
-            "reason": "no evidence field records it"
+            "reason": "SPD-0 kept (V17.5 search): no committed field records a speed/efficiency gain per work item — the only per-item wall-time data (V161_SCENARIO_J.json summary.perTask.*.wallMsMean) compares two arms that BOTH failed (0/8), and the speed scenarios N/P are not executed; a time difference between failures is not an efficiency gain"
           },
           "strategicValue": {
             "status": "NOT_MEASURED",
@@ -6982,9 +7120,9 @@
     "decision": "SELECTED",
     "selected": {
       "id": "J",
-      "evidenceScore": 0.335,
-      "upperBound": 0.835,
-      "uncertainty": 0.5,
+      "evidenceScore": 0.36,
+      "upperBound": 0.76,
+      "uncertainty": 0.4,
       "breakdown": [
         {
           "criterion": "autonomyBenefit",
@@ -7045,10 +7183,12 @@
         },
         {
           "criterion": "reusability",
-          "status": "NOT_MEASURED",
+          "status": "MEASURED",
+          "value": 0.25,
+          "direction": "HIGHER_IS_BETTER",
           "weight": 0.1,
-          "contribution": 0,
-          "uncertaintyContribution": 0.1
+          "contribution": 0.025,
+          "uncertaintyContribution": 0
         },
         {
           "criterion": "speedEfficiency",
@@ -7077,6 +7217,7 @@
       "L",
       "P",
       "O",
+      "J2",
       "N",
       "V150-T07",
       "E",
@@ -7085,7 +7226,6 @@
       "CP8-GAP-1-selectNextMission",
       "CP8-GAP-9-chooseFollowing",
       "V150-T09",
-      "J2",
       "CP8-GAP-3-chooseMode",
       "CP8-GAP-5-superviseExecution",
       "V150-AI4",
@@ -7097,7 +7237,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, J2, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'J': evidence score 0.36 (uncertainty 0.4 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, J2, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -7124,10 +7264,10 @@
       {
         "id": "J",
         "status": "EXECUTED_PARTIAL",
-        "evidenceScore": 0.335,
-        "upperBound": 0.835,
-        "uncertainty": 0.5,
-        "measuredWeightShare": 0.5,
+        "evidenceScore": 0.36,
+        "upperBound": 0.76,
+        "uncertainty": 0.4,
+        "measuredWeightShare": 0.6,
         "breakdown": [
           {
             "criterion": "autonomyBenefit",
@@ -7188,10 +7328,12 @@
           },
           {
             "criterion": "reusability",
-            "status": "NOT_MEASURED",
+            "status": "MEASURED",
+            "value": 0.25,
+            "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
+            "contribution": 0.025,
+            "uncertaintyContribution": 0
           },
           {
             "criterion": "speedEfficiency",
@@ -7952,6 +8094,98 @@
             "weight": 0.1,
             "contribution": 0.005,
             "uncertaintyContribution": 0
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "J2",
+        "status": "NOT_STARTED",
+        "evidenceScore": 0.16,
+        "upperBound": 0.76,
+        "uncertainty": 0.6,
+        "measuredWeightShare": 0.4,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "MEASURED",
+            "value": 1,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.1,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.9,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.01,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
           }
         ],
         "unblocks": 0,
@@ -9120,96 +9354,6 @@
             "weight": 0.1,
             "contribution": 0.02,
             "uncertaintyContribution": 0
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": false,
-        "ownerReason": null,
-        "autoSelectable": true
-      },
-      {
-        "id": "J2",
-        "status": "NOT_STARTED",
-        "evidenceScore": 0.06,
-        "upperBound": 0.76,
-        "uncertainty": 0.7,
-        "measuredWeightShare": 0.3,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 0.9,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.01,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
           }
         ],
         "unblocks": 0,
@@ -10513,8 +10657,8 @@
     "proposed": null,
     "tiedSet": [],
     "resolvedBy": null,
-    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, J2, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
-    "uncertainty": 0.5,
+    "justification": "ODG proposes 'J': evidence score 0.36 (uncertainty 0.4 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 25 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, J2, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "uncertainty": 0.4,
     "choiceNextStep": {
       "remainingCriteria": [
         {
@@ -10542,7 +10686,7 @@
     {
       "epsilon": 0.02,
       "uncertaintyMax": 0.4,
-      "decision": "DECISION_REQUIRED",
+      "decision": "SELECTED",
       "choice": "J",
       "tiedSet": []
     },
@@ -10573,7 +10717,7 @@
         "b3": true,
         "b4": false
       },
-      "meanMeasuredWeightShareOverSelectable": 0.2692
+      "meanMeasuredWeightShareOverSelectable": 0.2769
     },
     "C": {
       "grade": "PASS",
@@ -10594,16 +10738,16 @@
   },
   "honestLimits": [
     "criterion rules, equal weights, epsilon 0.02 and uncertaintyMax 0.5 were written by the provider, not derived from a canonical owner source — ODG applies them; the owner may replace them",
-    "4 of 10 criteria (blocker/repetition reduction, reliability/quality, speed/efficiency, reusability) are NOT_MEASURED for every non-capability-gap item: no evidence field supports them; they enter only as uncertainty",
+    "V17.5 (odg-register-criteria-measurement): of the 4 criteria CP10 listed NOT_MEASURED for every item, two now have provider-authored evidence rules for WORK_ITEM_CONTRACT items — BLK-3 (share of the item's own pre-registered tasks with a committed ODG repetitive-failure stop record in the sha256-pinned files its dataset cites ⇒ J2 11/11 = 1; J2's held-out tasks were SELECTED because they failed (failure-conditional, declared in its contract), so 1 is by construction: it measures the repetition J2 targets, not that J2 removes it) and REU-1 (other contracts declaring an item's output as a preRegistration.dataset input file ⇒ J 0.25 via J2's controlReference; free-text mentions such as antiLeakage.notLookedAt or invariants are NOT reuse and are not counted). Every other contract keeps BLK/REU NOT_MEASURED; reliability/quality (REL-0) and speed/efficiency (SPD-0) stay NOT_MEASURED for every non-gap item with the searched reason recorded (no committed per-item field; J's wall times compare two failing arms). They enter only as uncertainty",
     "strategicValue and capabilityGain come from V150 summary.top10NextInternal, itself a provider research ranking (V150 meta.generator) made before F/G/J were executed",
     "CP8 is read from main (merged #926); the fallback to origin/docs/v163-checkpoint-8 applies only when it is absent; its sha256 is in inputs, so a CP8 change is detected as drift",
     "owner-authorization flags of CP8_CAPABILITY_GAP items encode the CP8 (pre-V165) state; the owner authorizations of directive V165 (docs/odg/V165_OWNER_AUTHORIZATION.json) are NOT reflected in those flags; contract states ARE read live (e.g. G AUTHORIZED per V165 §1)",
     "dependency edges between items: none are stated in the evidence, so R1 (unblocking) never discriminates",
-    "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
+    "V17.5: the leader J's uncertainty is 0.4 (REU-1 measured) — below uncertaintyMax 0.5 and no longer DECISION_REQUIRED at uncertaintyMax 0.4 (see sensitivity); with epsilon 0.05 J and F still tie (TIE_EXPLAINED). GO's ACTIONABLE selection (authorized items only) still proposes J2 with uncertainty 0.6 > 0.5 ⇒ DECISION_REQUIRED (capabilityGain, strategicValue, dependencyAvailability, reliabilityQuality, speedEfficiency, reusability have no J2 evidence) — only the owner selection record (GO-ORD-2) resolves it",
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
     "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "baf1101ce57f67c4b26de864b3d92619e1d7054c"
+  "generatedAtHead": "deaf0844ce562049291ccee9f48933a412d141bf"
 }
