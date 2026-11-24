@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "4f5952ba08cd693dcb4315f732545bff4a9a9b22948b8a40302ed658ea3b5f4d"
+      "sha256": "e6a52eb720f8343c360851d5616ad59e34eb6253e9579ffbb9301eb137f87b16"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "3a0a4c7e67b84853255e3310454a2e5d315a14588694c44370033ae7a3a9a6ab"
+      "sha256": "6d57728a30dfd577696cb46d8d21da36669f9d247b9cd37f230e2dfbe4eebbb3"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -332,17 +332,19 @@
           "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
         }
       },
-      "contractSha256": "2914ffcace51b2f7c047316db16a8bec310b740ba51656c15b18b5275be181f1",
+      "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_J.json",
-      "currentStep": "REVISE_CONTRACT",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
       "scope": {
-        "currentStep": "REVISE_CONTRACT",
-        "currentStepKind": "PROVIDER_DOCS_WORK",
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
         "currentStepAuthorized": true,
-        "nextStep": "INSPECT_REVISED_CONTRACT",
-        "validatedSteps": [],
-        "reason": "REVISE_CONTRACT not validated: WORK_ITEM_CONTRACT.preRegistration missing",
-        "contractSha256": "2914ffcace51b2f7c047316db16a8bec310b740ba51656c15b18b5275be181f1"
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822"
       },
       "records": {
         "inspection": {
@@ -359,10 +361,16 @@
         }
       },
       "lastGoRun": null,
-      "pending": [],
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 2ddb8734dacf",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
       "next": {
-        "actor": "UNKNOWN",
-        "action": "current step REVISE_CONTRACT"
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822) and commit the inspection record"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=J]",
@@ -782,8 +790,8 @@
     "pendingNonGo": [
       {
         "item": "J",
-        "actor": "UNKNOWN",
-        "action": "current step REVISE_CONTRACT"
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 2ddb8734dacf57ac40630399de0c40dcfa84ad5a812247f99fd0ccd765b8b822) and commit the inspection record"
       },
       {
         "item": "V175-NB2",

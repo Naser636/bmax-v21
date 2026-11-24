@@ -204,10 +204,10 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     const sel = stepIn(trace, "SELECT").decision;
     // V16.9 Phase 1: G and H are CLOSED (CLOSE-1) ⇒ the selector SELECTS J; J is PROPOSED ⇒ halt at the authorization gate
     // with an owner request for J (previously: HALTED_DECISION_REQUIRED on a J/G tie that kept closed G selectable).
-    // V17.6: J is now owner-authorized (V176) ⇒ the committed state SELECTS J and GO works on it at its scoped step
-    // REVISE_CONTRACT (provider/docs work: no preRegistration yet) — still halted at the authorization gate, no dispatch.
+    // V17.6: J is owner-authorized (V176) and revised ⇒ the committed state SELECTS J and GO works on it at its scoped step
+    // INSPECT_REVISED_CONTRACT (independent inspection pending) — still halted at the authorization gate, no dispatch.
     const au = stepIn(trace, "AUTHORIZE").decision.scopedAuthorization;
-    check("committed state (G, H closed; J owner-authorized V176) ⇒ SELECTED J, worked on at REVISE_CONTRACT (not execution), HALTED_AT_AUTHORIZATION_GATE, no dispatch", r.status === "HALTED_AT_AUTHORIZATION_GATE" && sel.decision === "SELECTED" && sel.selected === "J" && sel.workingOn === "J" && !!au && au.scenario === "J" && au.currentStep === "REVISE_CONTRACT" && au.executionAuthorized === false && calls.dispatch === 0);
+    check("committed state (G, H closed; J owner-authorized V176, revised) ⇒ SELECTED J, worked on at INSPECT_REVISED_CONTRACT (not execution), HALTED_AT_AUTHORIZATION_GATE, no dispatch", r.status === "HALTED_AT_AUTHORIZATION_GATE" && sel.decision === "SELECTED" && sel.selected === "J" && sel.workingOn === "J" && !!au && au.scenario === "J" && au.currentStep === "INSPECT_REVISED_CONTRACT" && au.executionAuthorized === false && calls.dispatch === 0);
     const pre = preV176J(clone(BASE_LIVE_EV)); pre.measured = BASE_LIVE.measured;
     const { ports: p2, trace: t2, calls: c2 } = mkPorts({ state: pre });
     const r2 = await GO.runGoCycle({ mode: "EXECUTE" }, p2);
