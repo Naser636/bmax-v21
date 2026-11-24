@@ -114,7 +114,7 @@
     ]
   },
   "campaignScope": {
-    "rule": "SCOPE-1: a work item belongs to the V15.0 campaign iff its WORK_ITEM_CONTRACT cites the V15.0 directive as its source/authorization (text 'V15.0' in source|authorization|objective|ownerText), or it is a scenario contract of the V15.0 §45 A–P battery (docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json, including its versioned revisions G2/J2). 'V15' alone (session V15 of 2026-11-22) is NOT the V15.0 campaign.",
+    "rule": "SCOPE-1: a work item belongs to the V15.0 campaign iff its WORK_ITEM_CONTRACT cites the V15.0 directive as its source/authorization (text 'V15.0' in source|authorization|objective|ownerText), or it is a scenario contract of the V15.0 §45 A–P battery (docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json entries whose scenario matches campaignScenarioPattern, i.e. A–P and their versioned revisions G2/J2; other entries of that file, e.g. V175-NB1 authorized by owner V175, are classified by the V15.0 marker like any WIC). 'V15' alone (session V15 of 2026-11-22) is NOT the V15.0 campaign.",
     "campaignContractFiles": [
       "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"
     ],
@@ -125,7 +125,8 @@
       "no change to canonical modules",
       "^read-only "
     ],
-    "radarExclusionRule": "a V15.0-campaign contract's scope must exclude Radar change explicitly or be read-only; its write_set must hold no RADAR_STAGE path"
+    "radarExclusionRule": "a V15.0-campaign contract's scope must exclude Radar change explicitly or be read-only; its write_set must hold no RADAR_STAGE path",
+    "campaignScenarioPattern": "^[A-P][0-9]*$"
   },
   "radarScope": {
     "rule": "RADAR-1 (INTERIM provider derivation, pending BLOCKING owner question Q-CTR2): 'le Radar existant' = the Radar STAGE of the canonical chain, i.e. discovery/collection and its governor, transport, allowlists and grants. The knowledge, memory and decision stages are distinct stages of the same canonical chain and are NOT 'le Radar'. A module shared with the Radar whose change alters Radar behaviour (e.g. idempotency-guard, as V150_CHECKPOINT_1 recorded) is REVIEW_REQUIRED inside a V15.0 campaign item.",

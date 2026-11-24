@@ -103,7 +103,9 @@ function campaignContracts(rec: any, root: string = ROOT): any[] {
   for (const f of cs.campaignContractFiles || []) {
     for (const c of readJson(root, f).contracts || []) {
       const w = c.WORK_ITEM_CONTRACT || {};
-      out.push({ id: `${f}#${c.scenario}`, v150Campaign: true, scope: String(w.scope || ""), writeSet: (w.write_set || []).map(wsPath), anchored: false });
+      const battery = new RegExp(cs.campaignScenarioPattern || "^[A-P][0-9]*$").test(String(c.scenario || ""));
+      const src = [c.ownerText, c.authorizedBy, w.objective].map((x: any) => (typeof x === "string" ? x : JSON.stringify(x || ""))).join(" ");
+      out.push({ id: `${f}#${c.scenario}`, v150Campaign: battery || marker.test(src), scope: String(w.scope || ""), writeSet: (w.write_set || []).map(wsPath), anchored: false });
     }
   }
   const dir = path.join(root, "docs/odg");
