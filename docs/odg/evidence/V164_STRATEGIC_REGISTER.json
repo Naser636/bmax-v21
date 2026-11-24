@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "726abb4c39e05bdc6f2d2251e8b71ec169cbeb34b749f1b37a494cd3f7ae0055"
+      "sha256": "69fbf9396f69ffbfb52853849a7ad3e3c1e3cbaa799a5ff51f1f2ff159f737d7"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "7e21b16bece202f76c0c0ca79a12c3567e0c4d85f45959af9c3b342242893c18"
+      "sha256": "45c291089452da59ceefafbcb4346b2c492e6eaf0511319487f54422b8aeb4e4"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -502,10 +502,22 @@
           "validation": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json"
         },
         {
+          "scenario": "G2",
+          "inspection": null,
+          "experiment": null,
+          "validation": null
+        },
+        {
           "scenario": "H",
           "inspection": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
           "experiment": "docs/odg/evidence/V168_H_EXPERIMENT.json",
           "validation": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json"
+        },
+        {
+          "scenario": "J2",
+          "inspection": null,
+          "experiment": null,
+          "validation": null
         }
       ],
       "resolutionEvidence": [
@@ -528,12 +540,12 @@
         "V168_CHECKPOINT_10.json"
       ]
     },
-    "itemCount": 56,
+    "itemCount": 58,
     "statusCounts": {
       "ACCEPTED": 1,
       "PASS_IN_SCOPE": 2,
       "EXECUTED_PARTIAL": 2,
-      "PARTIAL": 18,
+      "PARTIAL": 20,
       "NOT_ADOPTED": 1,
       "BLOCKED": 14,
       "FAILED": 0,
@@ -2519,6 +2531,240 @@
             ],
             "basis": "k=2 (initialState.evidence 2)"
           }
+        }
+      },
+      {
+        "id": "G2",
+        "kind": "WORK_ITEM_CONTRACT",
+        "title": "G2 — Mémoire : calibration guidée par la connaissance (nouvelle expérience distincte de G)",
+        "contractState": "AUTHORIZED_FOR_REVISION",
+        "authorizedBy": "OWNER (CTO) — directive V170 (2026-11-24), docs/odg/V170_OWNER_AUTHORIZATION_HG.json, G clause: « Préparer une nouvelle expérience distincte, avec critères, métriques, référence de comparaison, jeu de données et méthode d'évaluation fixés avant les mesures. Contrôler l'absence de fuite de données, de contamination des étiquettes et de sélection opportuniste des métriques. » — G2 only (a NEW, distinct, versioned G contract per the record's appliesTo); G stays CLOSED_PARTIAL and its records are untouched.",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].initialState.status"
+        ],
+        "nextStep": {
+          "text": "the pre-registered G2 experiment (knowledge-guided calibration vs local-only calibration on a held-out era block) has not been run",
+          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].initialState.missingForPass"
+        },
+        "executedEvidence": null,
+        "deps": [],
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "sectionsAdvanced": [
+          "§45"
+        ],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "AUT-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].scenario",
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[45].title"
+            ],
+            "basis": "sections advanced matching /AUTONOM/: [§45]"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal"
+            ],
+            "reason": "not referenced by any V150 top10NextInternal item ('§45-G2')"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary"
+            ],
+            "reason": "absent from top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "MEASURED",
+            "value": 0.9,
+            "rule": "CRC-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.acceptance_criteria",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].WORK_ITEM_CONTRACT.write_set"
+            ],
+            "basis": "|AC|=4, |write_set|=5, ownerGatedStep=false"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].initialState.missingForPass"
+            ],
+            "reason": "no dependency stated in the evidence ⇒ deps [] (absence of a statement is not availability)"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16].initialState.evidence"
+            ],
+            "basis": "k=0 (initialState.evidence 0)"
+          }
+        },
+        "closure": {
+          "closed": false,
+          "rule": "CLOSE-1",
+          "currentStep": "INSPECT_REVISED_CONTRACT",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+          "component": "odg-authorization-scope.deriveAuthorizationScope"
+        }
+      },
+      {
+        "id": "J2",
+        "kind": "WORK_ITEM_CONTRACT",
+        "title": "J2 — Gestion d'échec : boucle de stratégie alternative après les correctifs #940 (local, hors ligne, 0 €)",
+        "contractState": "AUTHORIZED_FOR_REVISION",
+        "authorizedBy": "OWNER (CTO) — directive V171 (2026-11-24), docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json: « Cette autorisation couvre les travaux internes nécessaires sur J et les autres missions sélectionnées par ODG. » « Préparation de nouvelles expériences. » « Expériences isolées et reproductibles. » « Ne jamais rouvrir artificiellement une mission déjà clôturée. Une nouvelle expérience doit avoir un nouvel identifiant et préserver l'historique précédent. » « Ne pas modifier les critères après observation des résultats pour obtenir un PASS. » — J2 only, internal, €0; provider spend / delegation launches NOT granted (« Dépenses fournisseurs non déjà autorisées »); J's contract and records untouched.",
+        "status": "PARTIAL",
+        "statusSource": [
+          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].initialState.status"
+        ],
+        "nextStep": {
+          "text": "the pre-registered J2 runs (A0 stop ⇒ A1/A2 alternatives on 4 replication + 7 held-out tasks) have not been executed",
+          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].initialState.missingForPass"
+        },
+        "executedEvidence": null,
+        "deps": [],
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []",
+        "depsStated": [],
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "sectionsAdvanced": [
+          "§45"
+        ],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "AUT-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].scenario",
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[45].title"
+            ],
+            "basis": "sections advanced matching /AUTONOM/: [§45]"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal"
+            ],
+            "reason": "not referenced by any V150 top10NextInternal item ('§45-J2')"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary"
+            ],
+            "reason": "absent from top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "MEASURED",
+            "value": 0.9,
+            "rule": "CRC-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.acceptance_criteria",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].WORK_ITEM_CONTRACT.write_set"
+            ],
+            "basis": "|AC|=6, |write_set|=3, ownerGatedStep=false"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].initialState.missingForPass"
+            ],
+            "reason": "no dependency stated in the evidence ⇒ deps [] (absence of a statement is not availability)"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17].initialState.evidence"
+            ],
+            "basis": "k=0 (initialState.evidence 0)"
+          }
+        },
+        "closure": {
+          "closed": false,
+          "rule": "CLOSE-1",
+          "currentStep": "INSPECT_REVISED_CONTRACT",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+          "component": "odg-authorization-scope.deriveAuthorizationScope"
         }
       },
       {
@@ -6746,6 +6992,8 @@
       "CP8-GAP-1-selectNextMission",
       "CP8-GAP-9-chooseFollowing",
       "V150-T09",
+      "G2",
+      "J2",
       "CP8-GAP-3-chooseMode",
       "CP8-GAP-5-superviseExecution",
       "V150-AI4",
@@ -6757,7 +7005,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 24 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, G2, J2, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -8788,6 +9036,186 @@
         "autoSelectable": true
       },
       {
+        "id": "G2",
+        "status": "PARTIAL",
+        "evidenceScore": 0.06,
+        "upperBound": 0.76,
+        "uncertainty": 0.7,
+        "measuredWeightShare": 0.3,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.9,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.01,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
+        "id": "J2",
+        "status": "PARTIAL",
+        "evidenceScore": 0.06,
+        "upperBound": 0.76,
+        "uncertainty": 0.7,
+        "measuredWeightShare": 0.3,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 0.9,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.01,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
         "id": "CP8-GAP-3-chooseMode",
         "status": "PARTIAL",
         "evidenceScore": 0.05,
@@ -10078,7 +10506,7 @@
     "proposed": null,
     "tiedSet": [],
     "resolvedBy": null,
-    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 24 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 26 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, G2, J2, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
       "remainingCriteria": [
@@ -10138,7 +10566,7 @@
         "b3": true,
         "b4": false
       },
-      "meanMeasuredWeightShareOverSelectable": 0.268
+      "meanMeasuredWeightShareOverSelectable": 0.2704
     },
     "C": {
       "grade": "PASS",
@@ -10170,5 +10598,5 @@
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "54f335f654b32380e357e5c5469c1fdaa761c599"
+  "generatedAtHead": "e97bcc43bf1ca59db5b779329ce1b0409211cf3e"
 }

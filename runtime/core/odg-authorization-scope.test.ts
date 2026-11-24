@@ -147,6 +147,50 @@ const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contrac
   check("H frozen dataset: committed file sha256 = preRegistration.dataset.sha256", require("crypto").createHash("sha256").update(fs.readFileSync(path.join(ROOT, H.WORK_ITEM_CONTRACT.preRegistration.dataset.file))).digest("hex") === H.WORK_ITEM_CONTRACT.preRegistration.dataset.sha256);
   check("H declares dispatchTargets.RUN_CONTROLLED_EXPERIMENTS with command + writeSet ⊆ write_set", (() => { const t = H.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS; const ws = H.WORK_ITEM_CONTRACT.write_set; return ws.includes(t.command) && t.writeSet.length > 0 && t.writeSet.every((x: string) => ws.includes(x)); })());
 }
+// V17.2 — NEW contracts G2 (owner V170) and J2 (owner V171): same 4-step sequence, derived exactly like H; per-scenario
+// owner-source binding never cross-usable; G and H bindings unchanged.
+{
+  const CF = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8"));
+  const by = (id: string) => CF.contracts.find((c: any) => c.scenario === id);
+  const H = by("H");
+  for (const [id, own, other] of [["G2", /V170_OWNER_AUTHORIZATION_HG\.json/, "J2"], ["J2", /V171_OWNER_AUTHORIZATION_PORTFOLIO\.json/, "G2"]] as any) {
+    const X = by(id);
+    const XSHA = AS.contractSha256(X);
+    const XSID = X.revisionHistory[X.revisionHistory.length - 1].revisionAuthorSessionId;
+    const xInsp = (o: any = {}) => ({ scenario: id, verdict: "ACCEPT", contractSha256: XSHA, inspector: "independent inspector (fixture)", inspectorSessionId: `inspector-sid-${id}-0001`, authorSessionId: XSID, inspectedHeadSha: HEAD, inspectedPr: 997, ...o });
+    check(`STEP_SEQUENCES.${id} = the same 4 steps as G and H`, AS.STEP_SEQUENCES[id].join(",") === AS.STEP_SEQUENCES.H.join(",") && AS.STEP_SEQUENCES[id].join(",") === AS.STEP_SEQUENCES.G.join(","));
+    const s0 = derive(X, {});
+    check(`committed ${id}: owner authorization recognized (by OWNER…, its own bound source)`, s0.applicable === true && /^OWNER/.test(s0.owner.by) && own.test(s0.owner.source));
+    check(`committed ${id}: REVISE_CONTRACT validated, INSPECT current, experiments NOT authorized, state not rewritten`, s0.validatedSteps.map((v: any) => v.step).join(",") === "REVISE_CONTRACT" && s0.currentStep === "INSPECT_REVISED_CONTRACT" && s0.executionAuthorized === false && X.state === "AUTHORIZED_FOR_REVISION" && s0.contractStateRewritten === false && X.authorization.executionAuthorized === false);
+    check(`committed ${id}: revision records the PARENT criteria verbatim + session id g2j2-reviser-v172`, XSID === "g2j2-reviser-v172" && X.revisionHistory[0].originalCriteria.length > 0 && JSON.stringify(X.revisionHistory[0].originalCriteria) === JSON.stringify(by(id[0]).WORK_ITEM_CONTRACT.acceptance_criteria));
+    const s1 = derive(X, { inspection: xInsp() });
+    check(`${id}: inspection ACCEPT sha-bound ⇒ RUN_CONTROLLED_EXPERIMENTS derived (R4), execution authorized`, s1.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && s1.executionAuthorized === true && s1.derivedSteps.some((d: any) => d.step === "RUN_CONTROLLED_EXPERIMENTS" && d.rule === "R4" && own.test(d.coveredBy)));
+    const edited = clone(X); edited.WORK_ITEM_CONTRACT.preRegistration.thresholds.PASS += " (edited)";
+    check(`${id}: contract edited after inspection ⇒ experiments NOT authorized`, derive(edited, { inspection: xInsp() }).executionAuthorized === false);
+    check(`${id}: inspection record of another scenario (H, ${other}) ⇒ NOT authorized`, derive(X, { inspection: xInsp({ scenario: "H" }) }).executionAuthorized === false && derive(X, { inspection: xInsp({ scenario: other }) }).executionAuthorized === false);
+    const exp = { contractSha256: XSHA, outcome: "PARTIAL" }; const xs = AS.experimentSha256(exp);
+    const val = (o: any = {}) => ({ contractSha256: XSHA, experimentEvidence: { experimentSha256: xs }, experimentInspection: { verdict: "ACCEPT", inspectorSessionId: `insp-session-${id}-02`, authorSessionId: `exp-author-${id}-03` }, scenarioGrade: "PARTIAL", ...o });
+    check(`${id} R5b: bound validation ⇒ all validated; upgrade (PASS on PARTIAL) refused`, derive(X, { inspection: xInsp(), experiment: exp, validation: val() }).currentStep === null && derive(X, { inspection: xInsp(), experiment: exp, validation: val({ scenarioGrade: "PASS" }) }).currentStep === "VALIDATE_CRITERIA");
+    check(`${id} declares dispatchTargets.RUN_CONTROLLED_EXPERIMENTS with command + writeSet ⊆ write_set`, (() => { const t = X.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS; const ws = X.WORK_ITEM_CONTRACT.write_set; return ws.includes(t.command) && t.args.length === 1 && t.writeSet.includes(t.args[0]) && t.writeSet.length > 0 && t.writeSet.every((x: string) => ws.includes(x)); })());
+  }
+  // cross-binding refused (never cross-usable), in every direction
+  const G2 = by("G2"), J2 = by("J2");
+  const SRC: any = { G: "docs/odg/V165_OWNER_AUTHORIZATION.json#missionG", H: "docs/odg/V168_OWNER_AUTHORIZATION_H.json (V168)", G2: "docs/odg/V170_OWNER_AUTHORIZATION_HG.json#G (V170)", J2: "docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json (V171)" };
+  const CON: any = { G, H, G2, J2 };
+  for (const a of Object.keys(CON)) for (const b of Object.keys(SRC)) if (a !== b) {
+    const c = clone(CON[a]); c.authorization.source = SRC[b];
+    const r = derive(c, {});
+    check(`cross-binding: ${a} with ${b}'s owner source ⇒ refused (R0, nothing derived)`, r.applicable === false && r.executionAuthorized === false && /R0/.test(r.reason));
+  }
+  const g2both = clone(G2); g2both.authorization.source = SRC.G2 + " + " + SRC.J2;
+  check("G2 source citing BOTH V170 and V171 ⇒ refused (foreign directive)", derive(g2both, {}).applicable === false);
+  const j2both = clone(J2); j2both.authorization.source = SRC.J2 + "; V165";
+  check("J2 source also citing V165 ⇒ refused (foreign directive)", derive(j2both, {}).applicable === false);
+  check("ownerSourceCheck: G2 ⇔ V170 only, J2 ⇔ V171 only", AS.ownerSourceCheck("G2", SRC.G2).ok === true && AS.ownerSourceCheck("J2", SRC.J2).ok === true && AS.ownerSourceCheck("G2", SRC.J2).ok === false && AS.ownerSourceCheck("J2", SRC.G2).ok === false);
+  check("G and H bindings unchanged (sources still own-bound; committed G/H entries derive as before)", AS.ownerSourceCheck("G", SRC.G).ok === true && AS.ownerSourceCheck("H", SRC.H).ok === true && derive(G, { inspection: inspection() }).executionAuthorized === true && derive(H, {}).currentStep === derive(clone(H), {}).currentStep && /V165/.test(AS.OWNER_SOURCES.G.re.source) && /V168/.test(AS.OWNER_SOURCES.H.re.source));
+  check("G and J contract entries untouched by V17.2 (G sha pinned in its records; J has no authorization block)", AS.contractSha256(G) === "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd" && AS.contractSha256(H) === "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2" && !by("J").authorization);
+  check("J (plain) still has no scoped sequence derivation; unknown 'J3' refused", derive(by("J"), {}).applicable === false && AS.ownerSourceCheck("J3", SRC.J2).ok === false);
+}
 // V16.9 Phase 1b — R7 proof currency on the REAL committed H records with the REAL local-git probes + labelled mutations
 {
   const CF = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8"));
