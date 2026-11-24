@@ -1,0 +1,72 @@
+{
+  "schema": "odg-reproducibility-check/1",
+  "title": "V17.2 — G and H experiment records re-checked at their own run heads (owner V170: independent recomputation / reproducibility controls)",
+  "date": "2026-11-24",
+  "mainAtCheck": "e97bcc43bf1ca59db5b779329ce1b0409211cf3e",
+  "environment": "bwrap --dev-bind / / --unshare-net -- env npm_config_offline=true … (no network); temporary detached git worktree from local objects only, removed afterwards; node_modules symlinked from the caller tree",
+  "problem": {
+    "G": "npx tsx runtime/bin/odg-v166-scenario-g-experiment.ts --check ⇒ CHECK FAILED on main e97bcc43 (exit 1): the only drifting leaf is inputs.contracts.sha256File (the contracts file changed since; context citation)",
+    "H": "npx tsx runtime/bin/odg-v168-scenario-h-experiment.ts --check docs/odg/evidence/V168_H_EXPERIMENT.json ⇒ CHECK FAILED on main e97bcc43 (exit 1): H features are computed from the tree it runs in (change graph etc.), so it only reproduces at its run head"
+  },
+  "fix": {
+    "module": "runtime/core/odg-run-head-check.ts",
+    "mode": "--check-at-run-head (new flag; plain --check unchanged)",
+    "commitResolution": {
+      "RUN_HEAD": "record.run.head itself when the runner file exists in that commit",
+      "RECORD_COMMIT_CHILD": "otherwise the commit that first added the record, ONLY if its first parent is record.run.head (the G record's own note: 'the commit carrying this record is its child')",
+      "UNRESOLVED": "anything else ⇒ ERROR, fail-closed (no fetch, no nearest-commit guess)"
+    },
+    "procedure": "materialize the resolved commit in a temporary detached worktree, place the record under test (byte-identical) at its path there, run THAT commit's own runner --check, compare its verdict; remove the worktree",
+    "unchanged": ["docs/odg/evidence/V166_G_EXPERIMENT.json", "docs/odg/evidence/V168_H_EXPERIMENT.json", "the pre-registered computations (run()/experiment()) of both runners", "plain --check semantics"]
+  },
+  "results": [
+    {
+      "runner": "G",
+      "command": "bwrap --dev-bind / / --unshare-net -- env npm_config_offline=true npx tsx runtime/bin/odg-v166-scenario-g-experiment.ts --check-at-run-head",
+      "recordRunHead": "0a14976dc8359af53720903922a449f37f88b8eb",
+      "commitUsed": "53a187aa3489a30352bc3478aef2b1ef76d64895",
+      "rule": "RECORD_COMMIT_CHILD (runner absent at 0a14976d; 53a187aa adds runner + record, first parent 0a14976d)",
+      "runnerOutputAtCommit": "CHECK OK (outcome PARTIAL; live HEAD 53a187aa3489a30352bc3478aef2b1ef76d64895)",
+      "verdict": "CHECK OK",
+      "currentTree": {
+        "head": "e97bcc43bf1ca59db5b779329ce1b0409211cf3e",
+        "classification": "CONTEXT_ONLY_INFORMATIONAL",
+        "driftPaths": ["inputs.contracts.sha256File"],
+        "contractsFileSha256": { "recorded": "d8b57d497749a9e699658b9015601b9551b669d05a916fecee3dcac0fead0897", "live": "726abb4c39e05bdc6f2d2251e8b71ec169cbeb34b749f1b37a494cd3f7ae0055" },
+        "contractBinding": { "recorded": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd", "live": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd", "matches": true },
+        "note": "INFORMATIONAL, not a failure: the whole-file sha of the contracts file is a context citation; contract G itself (contractSha256) is unchanged"
+      },
+      "exitCode": 0,
+      "seconds": 5.8
+    },
+    {
+      "runner": "H",
+      "command": "bwrap --dev-bind / / --unshare-net -- env npm_config_offline=true npx tsx runtime/bin/odg-v168-scenario-h-experiment.ts --check-at-run-head docs/odg/evidence/V168_H_EXPERIMENT.json",
+      "recordRunHead": "5d3cf713193682154aae7e224b473a2566d81205",
+      "commitUsed": "5d3cf713193682154aae7e224b473a2566d81205",
+      "rule": "RUN_HEAD",
+      "runnerOutputAtCommit": "CHECK OK (outcome FAIL)",
+      "verdict": "CHECK OK",
+      "exitCode": 0,
+      "seconds": "≈180"
+    }
+  ],
+  "tests": [
+    "runtime/core/odg-run-head-check.test.ts — fixture git repos: both resolution rules, tampered record ⇒ DRIFT, unknown/malformed head ⇒ ERROR, worktree always removed, record untouched (13/13)",
+    "runtime/bin/odg-v166-scenario-g-experiment.test.ts — G resolves via RECORD_COMMIT_CHILD; only inputs.contracts.sha256File is context; forged outcome ⇒ DRIFT_BEYOND_CONTEXT (8/8)",
+    "runtime/bin/odg-v168-scenario-h-experiment.test.ts — H resolves via RUN_HEAD; wrong path ⇒ REFUSED exit 3 (3/3)",
+    "existing --selftest of both runners: ALL PASS; npx tsc --noEmit -p tsconfig.json: clean"
+  ],
+  "establishes": [
+    "the committed G and H records are byte-reproduced by their own runner code at the commit they were produced from, on local objects, without network",
+    "G's failure of plain --check on current main is solely the context citation inputs.contracts.sha256File; contract G's binding is unchanged",
+    "H's failure of plain --check on current main is a property of tree-dependent features, not of the record"
+  ],
+  "doesNotEstablish": [
+    "that the G or H results (PARTIAL / FAIL) are correct beyond reproducibility — no re-grading, no new inspection of the method",
+    "that plain --check passes on current main (it still does not, by design: H features are tree-dependent, G cites the contracts file sha)",
+    "independence: the provider (Claude Code) wrote the tooling and ran the checks; an independent re-run is still the owner's/inspector's call",
+    "anything about future commits: a later main is checked again only by re-running these commands"
+  ],
+  "provider": "Claude Code — technical provider only; no record, contract or result changed"
+}
