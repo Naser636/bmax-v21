@@ -5,7 +5,7 @@
  *
  * Usage:
  *   npx tsx runtime/bin/odg-go.ts [--dry] [--execute] [--repo <dir>] [--out <dir>] [--max-steps N] [--deadline-ms MS]
- *                                 [--scratch <isolated git worktree>] [--step-delay-ms MS]
+ *                                 [--scratch <isolated git worktree>] [--step-delay-ms MS] [--resume]
  *   npx tsx runtime/bin/odg-go.ts --scenario-evidence --repo <dir> --out <dir> [--evidence-out <file>]   (real I/J harness)
  *   npx tsx runtime/bin/odg-go.ts --check --repo <dir>          (re-run a dry cycle; compare its decisions digest with
  *                                                               docs/odg/evidence/V164_GO_CYCLE.json — host-dependent)
@@ -19,6 +19,10 @@
  *  --repo          the repository whose STATE is read (READ-ONLY) and Truth-Locked; default = this code tree.
  *  --out           trace/summary directory (default <os.tmpdir()>/odg-go). REFUSED inside the main checkout (its
  *                  runtime/generated + runtime/dist feed the live root timer) and inside any runtime/governance.
+ *  --resume        V16.9: if the last cycle in <out>/go-trace.jsonl ended STOPPED (deadline/signal/STOP file) before all
+ *                  steps, resume at its first incomplete step ONLY if the state digest (runId) is unchanged — completed
+ *                  steps re-derived and checked identical, a completed EXECUTE carried over (never re-dispatched); else a
+ *                  fresh cycle, the RESUME trace entry says why. Default deadline 900000 ms (was 120000; see DEADLINE_HISTORY).
  *  STOP            touch <out>/STOP, send SIGINT/SIGTERM, or set ODG_SCHEDULER_STOP=1 — checked between every step.
  * Exit codes: 0 cycle ran · 2 refused at startup (out dir / Truth-Lock) · 3 STOPPED · 4 REFUSED mid-run (a confined
  *              write was refused, e.g. --out swapped for a symlink after validation — see GO-WR-1) · 1 unexpected error.
@@ -235,7 +239,8 @@ function readState(repo: string): any {
   const grant = add(F.GRANT);
   const optional = (rel: string) => { const p = path.join(repo, rel); const h = sha256File(p); inputs.push({ source: rel, sha256: h }); if (!h) return null; try { return { ...readJson(p), recordPath: rel }; } catch { return null; } };
   const authorizationEvidence: any = {};
-  for (const [sc, files] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(files.inspection), experiment: optional(files.experiment), validation: optional(files.validation) };
+  // V16.9 Phase 1b — R7 proof-currency probes: the SAME read-only local-git probe object the canonical loader built for this repo.
+  for (const [sc, files] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(files.inspection), experiment: optional(files.experiment), validation: optional(files.validation), probes: src.proofProbes };
   inputs.push({ source: F.MEASURED, sha256: sha256File(path.join(repo, F.MEASURED)) });
   let ledgerPayload: any = null;
   try { ledgerPayload = readJson(path.join(repo, "runtime", "generated", "mission-ledger.json")); } catch { ledgerPayload = null; }
@@ -336,7 +341,7 @@ async function runOnce(argv: string[]): Promise<{ code: number; result: any; wri
   process.on("SIGINT", hInt); process.on("SIGTERM", hTerm);
   const ports = buildPorts({ repo, outDir, scratch: arg(argv, "--scratch"), stepDelayMs: numArg(argv, "--step-delay-ms", 0), signalState });
   try {
-    const result = await GO.runGoCycle({ mode: argv.includes("--execute") ? "EXECUTE" : "DRY", allowUnsandboxedTarget: argv.includes("--allow-unsandboxed-target"), maxSteps: numArg(argv, "--max-steps", GO.DEFAULTS.maxSteps), deadlineMs: numArg(argv, "--deadline-ms", GO.DEFAULTS.deadlineMs) }, ports);
+    const result = await GO.runGoCycle({ mode: argv.includes("--execute") ? "EXECUTE" : "DRY", allowUnsandboxedTarget: argv.includes("--allow-unsandboxed-target"), maxSteps: numArg(argv, "--max-steps", GO.DEFAULTS.maxSteps), deadlineMs: numArg(argv, "--deadline-ms", GO.DEFAULTS.deadlineMs), resume: argv.includes("--resume") }, ports);
     const code = result.status === "STARTUP_REFUSED" ? 2 : result.status === "STOPPED" ? 3 : 0;
     return { code, result, writes: ports.writes };
   } catch (e: any) {

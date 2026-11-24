@@ -142,7 +142,8 @@ check("fieldRecords / auditRefs helpers", REG.fieldRecords({ a: { b: ["x", "y"] 
   const AS = require("./odg-authorization-scope.js");
   const path = require("path");
   const ROOT = path.resolve(__dirname, "..", "..");
-  const clone = (o: any) => JSON.parse(JSON.stringify(o));
+  // V16.9 R7: the loader's proofProbes are functions (not JSON-cloneable) — the clone keeps the SAME probe object.
+  const clone = (o: any) => { const c = JSON.parse(JSON.stringify(o)); if (o && o.proofProbes) c.proofProbes = o.proofProbes; return c; };
   const real = SS.loadSources(ROOT);
   const { inputs: _in, ...rs } = real;
   const RR = REG.buildRegister(rs);
@@ -167,14 +168,26 @@ check("fieldRecords / auditRefs helpers", REG.fieldRecords({ a: { b: ["x", "y"] 
   // not selectable
   const dR = SEL.selectNextExplained(REG.toSelectorCandidates(RR), { weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
   check("CLOSED_* / RESOLVED_BY_EVIDENCE are non-selectable selector defaults", ["CLOSED_PASS", "CLOSED_PARTIAL", "CLOSED_FAIL", "CLOSED_NOT_MEASURED", "RESOLVED_BY_EVIDENCE"].every((k) => k in SEL.EXPLAINED_DEFAULTS.nonSelectableStatuses));
-  check("not selectable: G, H and the resolved gap are EXCLUDED by status, never selected nor tied", ["G", "H", "CP8-GAP-canonicalDefectsJ"].every((id) => dR.excluded.some((e: any) => e.id === id && /^(CLOSED_|RESOLVED_)/.test(e.status))) && !["G", "H"].includes(dR.selected ? dR.selected.id : "") && !(dR.tiedSet || []).some((id: string) => id === "G" || id === "H"));
+  // V16.9 Phase 1b: the gap's only resolution record carries no inspection reference ⇒ RES-1 refuses it ⇒ it is not resolved (was: listed here)
+  check("not selectable: G and H are EXCLUDED by status, never selected nor tied", ["G", "H"].every((id) => dR.excluded.some((e: any) => e.id === id && /^(CLOSED_|RESOLVED_)/.test(e.status))) && !["G", "H"].includes(dR.selected ? dR.selected.id : "") && !(dR.tiedSet || []).some((id: string) => id === "G" || id === "H"));
   // RES-1
-  check("RES-1 real: CP8-GAP-canonicalDefectsJ ⇒ RESOLVED_BY_EVIDENCE citing V169_J_CANONICAL_DEFECTS_FIX.json (#940, 613bf2cd), PROPOSED kept in statusHistory", ri(RR, "CP8-GAP-canonicalDefectsJ").status === "RESOLVED_BY_EVIDENCE" && ri(RR, "CP8-GAP-canonicalDefectsJ").resolution.pr === 940 && /^613bf2cd/.test(ri(RR, "CP8-GAP-canonicalDefectsJ").resolution.mergeCommit) && ri(RR, "CP8-GAP-canonicalDefectsJ").statusHistory[0].status === "PROPOSED" && /V169_J_CANONICAL_DEFECTS_FIX\.json#resolvesRegisterItem/.test(ri(RR, "CP8-GAP-canonicalDefectsJ").statusSource[0]));
-  const badRes = (mut: (d: any) => void) => { const x = clone(rs); mut(x.resolutionEvidence[0].data); return ri(REG.buildRegister(x), "CP8-GAP-canonicalDefectsJ").status; };
+  // V16.9 Phase 1b (#949 LOW) — RES-1 now requires an independent inspection reference + proof currency. The committed
+  // V169_J_CANONICAL_DEFECTS_FIX.json has no inspection (stated in V169_CONTINUITY_PHASE1_AFTER.json honestLimits) ⇒ refused.
+  // (Phase-1 assertion "real ⇒ RESOLVED_BY_EVIDENCE" encoded the old, uninspected acceptance — replaced.)
+  check("RES-1 real (1b): the uninspected resolution record is REFUSED ⇒ CP8-GAP-canonicalDefectsJ stays PROPOSED, refusal reported on the item", ri(RR, "CP8-GAP-canonicalDefectsJ").status === "PROPOSED" && !ri(RR, "CP8-GAP-canonicalDefectsJ").statusHistory && ri(RR, "CP8-GAP-canonicalDefectsJ").resolutionRefused.length === 1 && /no independent inspection reference/.test(ri(RR, "CP8-GAP-canonicalDefectsJ").resolutionRefused[0].reason));
+  // labelled fixture: the same record + an inspection reference whose inspectedHeadSha is the REAL #940 merge commit (exists, ancestor of main)
+  const withInsp = (head: string, extra: any = {}) => { const x = clone(rs); x.resolutionEvidence[0].data.inspection = { verdict: "ACCEPT", inspectedHeadSha: head, inspectorSessionId: "fixture-inspector-01", authorSessionId: "fixture-author-0002", ...extra }; return x; };
+  const MERGE = rs.resolutionEvidence[0].data.fixedBy.mergeCommit;
+  const RI = REG.buildRegister(withInsp(MERGE));
+  check("RES-1 fixture (labelled inspection, real commit): ⇒ RESOLVED_BY_EVIDENCE citing the record (#940, 613bf2cd), PROPOSED kept in statusHistory, proofCurrency CURRENT", ri(RI, "CP8-GAP-canonicalDefectsJ").status === "RESOLVED_BY_EVIDENCE" && ri(RI, "CP8-GAP-canonicalDefectsJ").resolution.pr === 940 && /^613bf2cd/.test(ri(RI, "CP8-GAP-canonicalDefectsJ").resolution.mergeCommit) && ri(RI, "CP8-GAP-canonicalDefectsJ").statusHistory[0].status === "PROPOSED" && ri(RI, "CP8-GAP-canonicalDefectsJ").resolution.proofCurrency.status === "CURRENT");
+  check("RES-1 fixture: inspectedHeadSha that does NOT exist in git ⇒ WRONG_COMMIT ⇒ refused (PROPOSED)", ri(REG.buildRegister(withInsp("deadbeef".repeat(5))), "CP8-GAP-canonicalDefectsJ").status === "PROPOSED" && /WRONG_COMMIT/.test(ri(REG.buildRegister(withInsp("deadbeef".repeat(5))), "CP8-GAP-canonicalDefectsJ").resolutionRefused[0].reason));
+  check("RES-1 fixture: fixedBy.mergeCommit that does NOT exist ⇒ refused; same inspector/author session ⇒ refused; no probes ⇒ refused", (() => { const a = withInsp(MERGE); a.resolutionEvidence[0].data.fixedBy.mergeCommit = "0".repeat(40); const b = withInsp(MERGE, { inspectorSessionId: "same-session-01", authorSessionId: "same-session-01" }); const c = withInsp(MERGE); delete c.proofProbes; return [a, b, c].every((x) => ri(REG.buildRegister(x), "CP8-GAP-canonicalDefectsJ").status === "PROPOSED"); })());
+  const badRes = (mut: (d: any) => void) => { const x = withInsp(MERGE); mut(x.resolutionEvidence[0].data); return ri(REG.buildRegister(x), "CP8-GAP-canonicalDefectsJ").status; };
   check("RES-1 refuses malformed records: short merge sha / no reproTests / status not FIXED ⇒ stays PROPOSED", badRes((d) => { d.fixedBy.mergeCommit = "613bf2cd"; }) === "PROPOSED" && badRes((d) => { d.reproTests = []; }) === "PROPOSED" && badRes((d) => { d.resolution.status = "PLANNED"; }) === "PROPOSED");
   // contradiction detectors
   const ctr = (reg: any, rule: string) => reg.contradictions.detected.filter((c: any) => c.rule === rule);
-  check("CTR-1 real: canonicalDefectsJ PROPOSED vs CP10.prs #940 'fixed' ⇒ reported on the item, state RESOLVED_BY_EVIDENCE (resolved by the record, not by the detector)", (() => { const c = ctr(RR, "CTR-1"); return c.length === 1 && c[0].item === "CP8-GAP-canonicalDefectsJ" && /V168_CHECKPOINT_10\.json#prs\[\d+\]\.what/.test(c[0].bSource) && c[0].state === "RESOLVED_BY_EVIDENCE" && c[0].autoResolved === false && ri(RR, "CP8-GAP-canonicalDefectsJ").contradictions.length === 1; })());
+  check("CTR-1 real: canonicalDefectsJ PROPOSED vs CP10.prs #940 'fixed' ⇒ reported on the item, state OPEN since 1b (the resolution record is refused by RES-1 — no inspection)", (() => { const c = ctr(RR, "CTR-1"); return c.length === 1 && c[0].item === "CP8-GAP-canonicalDefectsJ" && /V168_CHECKPOINT_10\.json#prs\[\d+\]\.what/.test(c[0].bSource) && c[0].state === "OPEN" && c[0].autoResolved === false && ri(RR, "CP8-GAP-canonicalDefectsJ").contradictions.length === 1; })());
+  check("CTR-1 fixture (labelled inspection): with an accepted resolution the contradiction is reported as RESOLVED_BY_EVIDENCE (resolved by the record, not by the detector)", ctr(RI, "CTR-1").length === 1 && ctr(RI, "CTR-1")[0].state === "RESOLVED_BY_EVIDENCE" && ctr(RI, "CTR-1")[0].autoResolved === false);
   const noRes = REG.buildRegister({ ...rs, resolutionEvidence: [] });
   check("CTR-1 fixture: without the resolution record the gap stays PROPOSED and the contradiction is OPEN (reported, not auto-resolved)", ri(noRes, "CP8-GAP-canonicalDefectsJ").status === "PROPOSED" && ctr(noRes, "CTR-1")[0].state === "OPEN");
   const noFix = clone(rs); for (const c of noFix.checkpoints) c.data.prs = c.data.prs.map((p: any) => ({ ...p, what: String(p.what).replace(/fixed/g, "touched") }));

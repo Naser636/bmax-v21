@@ -81,9 +81,20 @@ function authorizeG(state0: any): any {
  * fixture's register reads the SAME authorization evidence as that fixture's GO state (state.authorizationEvidence;
  * absent ⇒ {}), as odg-go does in a real run (both from the same committed records) — so a fixture simulating an earlier
  * step (e.g. "H at RUN_CONTROLLED_EXPERIMENTS") is not contradicted by the committed closure records. */
+/* V16.9 Phase 1b (R7 proof currency): odg-go readState injects the loader's read-only local-git probes (sources.proofProbes
+ * and authorizationEvidence[X].probes). Fixtures are JSON-cloned (functions dropped), so the harness re-injects them here:
+ * REAL local git for the committed records + the LABELLED fixture head 'b'×40 (used by the synthetic inspection records
+ * below) declared present + ancestor of main. A fixture may set `probes: null` explicitly to test the no-probe refusal. */
+const OCUR = require("./odg-observation-currency.js");
+const REAL_PROBES = OCUR.localGitProbes(ROOT);
+const FIXTURE_HEAD = "b".repeat(40);
+const TEST_PROBES = Object.freeze({ label: "TEST FIXTURE — real local git + fixture head 'b'×40 declared present/ancestor", mainRef: REAL_PROBES.mainRef,
+  commitExists: (x: string) => x === FIXTURE_HEAD || REAL_PROBES.commitExists(x), isAncestorOfMain: (x: string) => x === FIXTURE_HEAD || REAL_PROBES.isAncestorOfMain(x), fileSha256: (r: string) => REAL_PROBES.fileSha256(r) });
 function mirrorAuthEvidence(st: any): any {
   if (!st || !st.sources) return st;
-  return { ...st, sources: { ...st.sources, authorizationEvidence: st.authorizationEvidence || {} } };
+  const ae: any = {};
+  for (const [k, v] of Object.entries(st.authorizationEvidence || {}) as any) ae[k] = v && typeof v === "object" && !("probes" in v) ? { ...v, probes: TEST_PROBES } : v;
+  return { ...st, authorizationEvidence: ae, sources: { ...st.sources, proofProbes: TEST_PROBES, authorizationEvidence: st.authorizationEvidence || {} } };
 }
 function mkPorts(o: any = {}): any {
   const trace: any[] = o.trace || [];
@@ -307,8 +318,22 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     const contractIn = (s: any, id: string) => s.sources.contracts.data.contracts.find((x: any) => x.scenario === id);
     const plainAuth = (s0: any, ids: string[]) => { const s = clone(s0); s.measured = s0.measured; for (const id of ids) { const c = contractIn(s, id); c.state = "AUTHORIZED"; c.authorizedBy = "owner (test fixture)"; delete c.authorization; } return s; };
     const g = contractIn(BASE_LIVE, "G");
-    const accept = { scenario: "G", verdict: "ACCEPT", contractSha256: AS.contractSha256(g), inspector: "independent inspector (test fixture)", inspectorSessionId: "inspector-sid-test", authorSessionId: g.revisionHistory[g.revisionHistory.length - 1].revisionAuthorSessionId, inspectedHeadSha: "c".repeat(40) };
+    const accept = { scenario: "G", verdict: "ACCEPT", contractSha256: AS.contractSha256(g), inspector: "independent inspector (test fixture)", inspectorSessionId: "inspector-sid-test", authorSessionId: g.revisionHistory[g.revisionHistory.length - 1].revisionAuthorSessionId, inspectedHeadSha: FIXTURE_HEAD };   // V16.9 R7: was 'c'×40 (never checked); now the harness-declared fixture head
     const liveWithAccept = (() => { const s = clone(BASE_PRE_V168); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { G: { inspection: accept, experiment: null } }; return s; })();
+    // V16.9 R7: the SAME record with an undeclared, non-existent head ('c'×40) ⇒ WRONG_COMMIT ⇒ G NOT actionable, nothing dispatched
+    {
+      const ghost = (() => { const s = clone(BASE_PRE_V168); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { G: { inspection: { ...accept, inspectedHeadSha: "c".repeat(40) }, experiment: null } }; return s; })();
+      const p = mkPorts({ state: ghost });
+      const r = await GO.runGoCycle({ mode: "EXECUTE" }, p.ports);
+      const sel = stepIn(p.trace, "SELECT").decision;
+      const au = stepIn(p.trace, "AUTHORIZE").decision.scopedAuthorization;
+      check("R7 in GO: inspection citing a NON-EXISTENT inspectedHeadSha ⇒ G stays at INSPECT_REVISED_CONTRACT (WRONG_COMMIT), experiments NOT authorized, no dispatch, no provider", sel.workingOn === "G" && au.currentStep === "INSPECT_REVISED_CONTRACT" && au.executionAuthorized === false && /R7 proof currency WRONG_COMMIT/.test(au.reason) && p.calls.dispatch === 0 && p.calls.provider === 0 && r.status === "HALTED_AT_AUTHORIZATION_GATE" && !p.trace.some((e: any) => e.kind === "DISPATCHED"));
+      const np = (() => { const s = clone(BASE_PRE_V168); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { G: { inspection: accept, experiment: null, probes: null } }; return s; })();
+      const q = mkPorts({ state: np });
+      await GO.runGoCycle({ mode: "EXECUTE" }, q.ports);
+      const aq = stepIn(q.trace, "AUTHORIZE").decision.scopedAuthorization;
+      check("R7 in GO: same valid record but NO probe injected ⇒ not verifiable ⇒ INSPECT not validated, experiments NOT authorized (fail-closed)", aq.currentStep === "INSPECT_REVISED_CONTRACT" && aq.executionAuthorized === false && /NO_PROBE/.test(aq.reason) && q.calls.dispatch === 0);
+    }
     // 8a strategic H unauthorized + G scoped-authorized (RUN_CONTROLLED_EXPERIMENTS derived) ⇒ actionable G, owner request for H
     for (const mode of ["DRY", "EXECUTE"]) {
       const p = mkPorts({ state: liveWithAccept });
@@ -374,6 +399,63 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     check("write inside the out dir is allowed", t(() => GO.assertConfinedWrite("/out/go-trace.jsonl", "/out", ["/main/runtime/generated"], path)) === null);
     const src = fs.readFileSync(path.join(__dirname, "odg-go-cycle.ts"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
     check("core has no child_process / fs / network / provider launch", !/require\(["'](child_process|fs|https?|net)["']\)/.test(src) && !/claude\s+-p|launchProvider|spawn\(/.test(src));
+  }
+  // 9. V16.9 Phase 1b — GO RESUME after a deadline stop (+ default deadline). Labelled fixture: G focus + a declared
+  //    dispatch target (as in GO-DT-1) so EXECUTE really dispatches (fixture dispatch port, nothing runs).
+  {
+    const AS = require("./odg-authorization-scope.js");
+    check("default deadline raised 120000 → 900000 ms (DEADLINE_HISTORY records old/new/cause)", GO.DEFAULTS.deadlineMs === 900000 && GO.DEADLINE_HISTORY.oldMs === 120000 && GO.DEADLINE_HISTORY.newMs === 900000 && /180\.1 s/.test(GO.DEADLINE_HISTORY.cause));
+    const hTrace = fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl"), "utf8").split("\n").filter(Boolean).map((l: string) => JSON.parse(l));
+    const hr = GO.resumeFromTrace(hTrace);
+    check("resumeFromTrace(committed H trace): STOPPED on DEADLINE before EVIDENCE ⇒ resumable, first incomplete step EVIDENCE, 8 completed, H dispatched", hr.resumable === true && hr.firstIncompleteStep === "EVIDENCE" && hr.completedSteps.length === 8 && hr.stop.reason === "DEADLINE" && hr.dispatched.join() === "H");
+    const g = BASE_LIVE.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
+    const good = { command: "runtime/bin/odg-v166-scenario-g-experiment.ts", args: ["docs/odg/evidence/V166_G_EXPERIMENT.json"], writeSet: ["docs/odg/evidence/V166_G_EXPERIMENT.json"] };
+    const mk = (extraProven: string[] = []) => { const s = focusG(BASE_LIVE); const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "G"); c.authorization.dispatchTargets = { RUN_CONTROLLED_EXPERIMENTS: good };
+      s.authorizationEvidence = { G: { inspection: { scenario: "G", verdict: "ACCEPT", contractSha256: AS.contractSha256(c), inspector: "fixture", inspectorSessionId: "inspector-sid-test", authorSessionId: g.revisionHistory[g.revisionHistory.length - 1].revisionAuthorSessionId, inspectedHeadSha: FIXTURE_HEAD }, experiment: null } };
+      s.ledger = { ...s.ledger, proven: s.ledger.proven.concat(extraProven) }; return s; };
+    // reference: one uninterrupted EXECUTE cycle on a fresh trace
+    const ref = mkPorts({ state: mk() });
+    const rref = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true }, ref.ports);
+    // run 1: the clock jumps past the deadline while EXECUTE runs (like H: 180 s > 120 s) ⇒ STOPPED before EVIDENCE
+    const trace: any[] = [];
+    let t = 1_000_000; let jumped = false;
+    const p1 = mkPorts({ state: mk(), trace, now: () => { if (!jumped && p1.calls.dispatch > 0) { jumped = true; t += 200_000; } return (t += 5); } });
+    const r1 = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true, deadlineMs: 120000 }, p1.ports);
+    check("resume fixture run 1: EXECUTE dispatched once, then DEADLINE before EVIDENCE ⇒ STOPPED (8 steps)", r1.status === "STOPPED" && r1.stop.reason === "DEADLINE" && p1.calls.dispatch === 1 && stepsOf(trace).length === 8 && /before EVIDENCE/.test(r1.stop.source));
+    // run 2: --resume on the SAME state ⇒ resumes at EVIDENCE, EXECUTE carried over, NEVER re-dispatched
+    const n1 = trace.length;
+    const p2 = mkPorts({ state: mk(), trace });
+    const r2 = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true, resume: true }, p2.ports);
+    const t2 = trace.slice(n1);
+    const rsm = t2.find((e: any) => e.kind === "RESUME");
+    const st2 = stepsOf(t2);
+    check("resume run 2: RESUME entry resumed=true (state digest unchanged), first incomplete step EVIDENCE, reason recorded", !!rsm && rsm.resumed === true && rsm.firstIncompleteStep === "EVIDENCE" && rsm.priorRunId === rsm.runId && /state digest unchanged/.test(rsm.reason));
+    check("resume run 2: EXECUTE NOT re-run — carried over (CARRIED_OVER_NOT_REDISPATCHED, EXECUTED_PASS), 0 dispatch call in this run, no DISPATCHED entry", p2.calls.dispatch === 0 && !t2.some((e: any) => e.kind === "DISPATCHED") && st2.find((e: any) => e.step === "EXECUTE").resumed.mode === "CARRIED_OVER_NOT_REDISPATCHED" && st2.find((e: any) => e.step === "EXECUTE").status === "EXECUTED_PASS");
+    check("resume run 2: completed pure steps re-derived IDENTICAL, EVIDENCE + NEXT_SELECTION run fresh, cycle completes (10 steps, EXECUTED_PASS)", ["PROBLEMS_OPPORTUNITIES", "SELECT", "DECOMPOSE", "STRATEGY", "AUTHORIZE"].every((x) => st2.find((e: any) => e.step === x).resumed.mode === "REDERIVED_IDENTICAL") && !st2.find((e: any) => e.step === "EVIDENCE").resumed && st2.length === 10 && r2.status === "EXECUTED_PASS" && r2.resume.resumed === true && r2.resume.carriedOver.join() === "EXECUTE");
+    check("resume run 2: decisions digest = the uninterrupted reference cycle's digest (idempotence preserved)", r2.decisionsDigest === rref.decisionsDigest && rref.status === "EXECUTED_PASS" && ref.calls.dispatch === 1);
+    // run 3: --resume after a COMPLETE cycle ⇒ nothing to resume ⇒ fresh; same runId ⇒ dispatch guard ⇒ still 0 dispatch
+    const n2 = trace.length;
+    const p3 = mkPorts({ state: mk(), trace });
+    await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true, resume: true }, p3.ports);
+    const rs3 = trace.slice(n2).find((e: any) => e.kind === "RESUME");
+    check("resume after a complete cycle ⇒ not resumable (reason recorded) ⇒ fresh cycle; the (runId, G) dispatch guard still refuses a 2nd dispatch", rs3.resumed === false && /completed all 10 steps|not STOPPED/.test(rs3.reason) && p3.calls.dispatch === 0);
+    // run 4: interrupted cycle, state CHANGED (ledger proven set differs ⇒ new runId) ⇒ fresh, says why (DRY: nothing dispatched)
+    const tr4 = trace.slice(0, n1);
+    const p4 = mkPorts({ state: mk(["M0099"]), trace: tr4 });
+    await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: false, resume: true }, p4.ports);
+    const rs4 = tr4.find((e: any) => e.kind === "RESUME");
+    check("resume with a CHANGED state digest ⇒ fresh cycle, RESUME says 'state digest changed', no step marked resumed", rs4.resumed === false && /state digest changed/.test(rs4.reason) && !stepsOf(tr4.slice(n1)).some((e: any) => e.resumed));
+    // run 5: killed DURING EXECUTE after DISPATCHED (no EXECUTE step, no CYCLE_END) ⇒ resumed at EXECUTE, mission NOT re-dispatched
+    const cut = trace.findIndex((e: any) => e.kind === "DISPATCHED");
+    const tr5 = trace.slice(0, cut + 1);
+    const plan5 = GO.resumeFromTrace(tr5);
+    const p5 = mkPorts({ state: mk(), trace: tr5 });
+    await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true, resume: true }, p5.ports);
+    check("killed after DISPATCHED (no CYCLE_END) ⇒ resumable at EXECUTE; EXECUTE re-runs but the (runId, G) guard refuses re-dispatch (0 dispatch)", plan5.resumable === true && plan5.firstIncompleteStep === "EXECUTE" && plan5.dispatched.join() === "G" && p5.calls.dispatch === 0 && tr5.find((e: any) => e.kind === "RESUME").resumed === true);
+    // run 6: resume requested on an empty trace ⇒ fresh
+    const p6 = mkPorts({ state: mk() });
+    await GO.runGoCycle({ mode: "DRY", resume: true }, p6.ports);
+    check("resume on an empty trace ⇒ not resumable ⇒ fresh cycle (reason recorded)", p6.trace.find((e: any) => e.kind === "RESUME").resumed === false && /no prior GO cycle/.test(p6.trace.find((e: any) => e.kind === "RESUME").reason));
   }
   if (failures) { process.stdout.write(`\n${failures} FAILED\n`); process.exit(1); }
   process.stdout.write("\nall odg-go-cycle tests passed\n");

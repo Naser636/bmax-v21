@@ -34,6 +34,7 @@ const path = require("path");
 const crypto = require("crypto");
 const cp = require("child_process");
 const AS = require("../core/odg-authorization-scope.js");
+const OCUR = require("../core/odg-observation-currency.js");   // V16.9 Phase 1b — R7 proof-currency probes
 const VL = require("../core/odg-verification-level.js");
 const RC = require("../core/odg-verification-risk-calibration.js");
 
@@ -75,7 +76,7 @@ function gate(contract: any, inspection: any): any {
   if (!contract) return { ok: false, reason: "contract H not found" };
   const sha = AS.contractSha256(contract);
   if (sha !== PINNED_CONTRACT_SHA) return { ok: false, reason: `live contract sha256 ${sha} ≠ pinned ${PINNED_CONTRACT_SHA} (contract edited — inspection invalid)`, contractSha256: sha };
-  const scope = AS.deriveAuthorizationScope(contract, { inspection });
+  const scope = AS.deriveAuthorizationScope(contract, { inspection, probes: OCUR.localGitProbes(ROOT) });   // V16.9 R7: inspected head verified in local git
   if (!AS.isStepAuthorized(scope, STEP) || scope.currentStep !== STEP || scope.executionAuthorized !== true) return { ok: false, reason: `deriveAuthorizationScope does not authorize ${STEP} now: ${scope.reason}`, contractSha256: sha };
   const pr = contract.WORK_ITEM_CONTRACT.preRegistration;
   const mm: string[] = [];

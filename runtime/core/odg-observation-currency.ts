@@ -168,6 +168,132 @@ function demonstrate(): any {
     demotionProven: scenarios.v234_sameCommitFresh.currency === "CURRENT_OBSERVED" && scenarios.v234_commitAdvancedScopeTouched.currency === "HISTORICAL_OBSERVED" });
 }
 
+/*
+ * ── V16.9 Phase 1b — EVIDENCE CURRENCY + COMMIT BINDING (addendum §22 proof attributes "sa fraîcheur", "son lien avec le
+ * commit et le contrat"; Phase 0 gap #3 "old or wrong proofs go unflagged"). The same currency lens, applied to a
+ * COMMITTED EVIDENCE RECORD instead of a memorized observation: does each commit the record binds to really exist in
+ * local git and belong to main's history, and does each file hash it cites still match the file today?
+ *
+ * assessEvidenceCurrency(record, probes, opts?) is PURE over the injected probes (no fs/git here):
+ *   probes = { commitExists(sha) → bool, isAncestorOfMain(sha) → bool, fileSha256(repoRel) → hex | null, mainRef? }
+ *   opts   = { currentContractSha256?: hex }   (when given, record.contractSha256 is compared with it — decisive)
+ * Bindings extracted (explicit field names only — never "any hex string": session ids are hex too):
+ *   COMMIT  every key in COMMIT_BINDING_KEYS with a 7–40 hex value, at any depth
+ *   FILE    every object carrying a repo-relative `path` and a 64-hex `sha256`/`sha256File`; plus `dataset` + `datasetSha256`
+ *   CONTRACT record.contractSha256 vs opts.currentContractSha256
+ * Per binding: CURRENT · STALE (cited file changed or gone since / contract entry changed) · WRONG_COMMIT (commit absent
+ * from local git, ambiguous, or not an ancestor of main) · NOT_CHECKABLE (field absent, path not repo-relative, or no
+ * probe injected ⇒ never silently CURRENT). Record status = WRONG_COMMIT > STALE > NOT_CHECKABLE(no probe) > CURRENT >
+ * NOT_CHECKABLE(no binding field at all).
+ * usableAsProof (deny-by-default) is false on: any WRONG_COMMIT; a STALE DECISIVE binding (the contract entry, a dataset,
+ * or the graded experiment record); a binding left unverified for want of a probe; and, when opts.requireCommitBinding,
+ * no verified commit binding at all. A STALE CONTEXT citation (a file-level hash of a multi-record file such as the
+ * contracts file, or of an input record that the caller re-validates itself) is REPORTED, not blocking — the decisive
+ * entry-level bindings (contractSha256, experimentSha256) are checked by the caller.
+ * ESTABLISHES / DOES NOT ESTABLISH: see EVIDENCE_CURRENCY_LIMITS.
+ */
+const COMMIT_BINDING_KEYS = Object.freeze(["inspectedHeadSha", "inspectedHead", "headAtCheckpoint", "mergeCommit", "merge", "generatedAtHead"]);
+const EVIDENCE_STATUS = Object.freeze(["CURRENT", "STALE", "WRONG_COMMIT", "NOT_CHECKABLE"]);
+const COMMIT_HEX = /^[0-9a-f]{7,40}$/;
+const SHA256_HEX = /^[0-9a-f]{64}$/;
+const DECISIVE_FILE_FIELD = /(^|\.)(dataset|datasetSha256|experimentEvidence)(\.|$)/i;
+const EVIDENCE_CURRENCY_LIMITS = Object.freeze({
+  establishes: Object.freeze([
+    "each cited commit exists in the LOCAL git object store and is an ancestor of the main ref (offline: git cat-file -e / merge-base --is-ancestor)",
+    "each cited file hash equals the sha256 of that file's bytes TODAY (or the file is gone ⇒ STALE)",
+    "record.contractSha256 equals the CURRENT contract entry's sha256 when the caller supplies it",
+  ]),
+  doesNotEstablish: Object.freeze([
+    "that the cited commit is the one the author actually ran on (a real-but-wrong ancestor commit passes)",
+    "that the record's claims are true, or that an inspection was independent (other rules decide that)",
+    "anything about the remote: a commit absent locally but present on GitHub is WRONG_COMMIT here (offline, fail-closed)",
+    "freshness of a claim that cites no commit/file hash (NOT_CHECKABLE, never CURRENT)",
+  ]),
+});
+
+function relPathSafe(p: any): boolean { return isStr(p) && !p.startsWith("/") && !/\\|\0/.test(p) && !p.split("/").some((x: string) => x === ".." || x === ""); }
+/* extractBindings(record) → { commits:[{field, sha}], files:[{field, path, sha256, decisive}] } — explicit field names only. */
+function extractBindings(record: any): any {
+  const commits: any[] = [], files: any[] = [];
+  const walk = (o: any, at: string, depth: number): void => {
+    if (depth > 12 || o === null || typeof o !== "object") return;
+    if (Array.isArray(o)) { o.forEach((v, i) => walk(v, `${at}[${i}]`, depth + 1)); return; }
+    const fsha = isStr(o.sha256) && SHA256_HEX.test(o.sha256) ? o.sha256 : isStr(o.sha256File) && SHA256_HEX.test(o.sha256File) ? o.sha256File : null;
+    if (isStr(o.path) && fsha) files.push({ field: at || "(root)", path: o.path, sha256: fsha, decisive: DECISIVE_FILE_FIELD.test(at) });
+    if (isStr(o.dataset) && isStr(o.datasetSha256) && SHA256_HEX.test(o.datasetSha256)) files.push({ field: `${at ? at + "." : ""}datasetSha256`, path: o.dataset, sha256: o.datasetSha256, decisive: true });
+    for (const k of Object.keys(o)) {
+      const v = o[k];
+      const here = at ? `${at}.${k}` : k;
+      if (COMMIT_BINDING_KEYS.includes(k) && isStr(v) && COMMIT_HEX.test(v)) commits.push({ field: here, sha: v });
+      else if (v && typeof v === "object") walk(v, here, depth + 1);
+    }
+  };
+  walk(isObj(record) ? record : {}, "", 0);
+  return { commits, files };
+}
+
+function assessEvidenceCurrency(record: any, probes?: any, opts?: any): any {
+  const o = isObj(opts) ? opts : {};
+  const pr = isObj(probes) ? probes : null;
+  const has = (f: string) => !!pr && typeof pr[f] === "function";
+  const call = (f: string, x: string): any => { try { return pr[f](x); } catch { return null; } };
+  const { commits, files } = extractBindings(record);
+  const bindings: any[] = [];
+  for (const c of commits) {
+    if (!has("commitExists") || !has("isAncestorOfMain")) { bindings.push({ kind: "COMMIT", field: c.field, value: c.sha, status: "NOT_CHECKABLE", why: "NO_PROBE", decisive: true, reason: "no git probe injected — commit existence not verified (never assumed)" }); continue; }
+    const exists = call("commitExists", c.sha) === true;
+    const anc = exists && call("isAncestorOfMain", c.sha) === true;
+    bindings.push({ kind: "COMMIT", field: c.field, value: c.sha, status: anc ? "CURRENT" : "WRONG_COMMIT", decisive: true,
+      reason: !exists ? "commit absent from local git (or ambiguous short sha)" : !anc ? `commit exists but is not an ancestor of ${pr.mainRef || "main"}` : `exists and is an ancestor of ${pr.mainRef || "main"}` });
+  }
+  for (const f of files) {
+    if (!relPathSafe(f.path)) { bindings.push({ kind: "FILE", field: f.field, path: f.path, status: "NOT_CHECKABLE", why: "PATH_NOT_REPO_RELATIVE", decisive: f.decisive, reason: "cited path is not repo-relative" }); continue; }
+    if (!has("fileSha256")) { bindings.push({ kind: "FILE", field: f.field, path: f.path, status: "NOT_CHECKABLE", why: "NO_PROBE", decisive: f.decisive, reason: "no file probe injected — hash not verified" }); continue; }
+    const now = call("fileSha256", f.path);
+    bindings.push({ kind: "FILE", field: f.field, path: f.path, recorded: f.sha256, current: now || null, status: now === f.sha256 ? "CURRENT" : "STALE", decisive: f.decisive,
+      reason: now === f.sha256 ? "cited hash matches the file today" : now ? "cited file changed since the record was written" : "cited file no longer exists" });
+  }
+  if (isObj(record) && isStr(record.contractSha256) && isStr(o.currentContractSha256)) {
+    const ok = record.contractSha256 === o.currentContractSha256;
+    bindings.push({ kind: "CONTRACT", field: "contractSha256", value: record.contractSha256, current: o.currentContractSha256, status: ok ? "CURRENT" : "STALE", decisive: true, reason: ok ? "bound to the current contract entry" : "contract entry changed since the record was written" });
+  }
+  const any = (st: string, pred: (b: any) => boolean = () => true) => bindings.some((b) => b.status === st && pred(b));
+  const noProbe = bindings.some((b) => b.why === "NO_PROBE");
+  const status = any("WRONG_COMMIT") ? "WRONG_COMMIT" : any("STALE") ? "STALE" : noProbe ? "NOT_CHECKABLE" : any("CURRENT") ? "CURRENT" : "NOT_CHECKABLE";
+  const blocking = bindings.filter((b) => b.status === "WRONG_COMMIT" || (b.status === "STALE" && b.decisive) || (b.why === "NO_PROBE" && b.decisive));
+  const verifiedCommit = bindings.some((b) => b.kind === "COMMIT" && b.status === "CURRENT");
+  if (o.requireCommitBinding === true && !verifiedCommit && !blocking.length) blocking.push({ kind: "COMMIT", field: "(none)", status: "NOT_CHECKABLE", why: "FIELD_ABSENT", decisive: true, reason: "no verified commit binding (required)" });
+  const counts: any = {}; for (const s of EVIDENCE_STATUS) counts[s] = bindings.filter((b) => b.status === s).length;
+  const reason = blocking.length ? blocking.map((b) => `${b.field}: ${b.status}${b.why ? "/" + b.why : ""} — ${b.reason}`).join("; ")
+    : status === "NOT_CHECKABLE" ? "no commit/file/contract binding present — freshness not checkable (not asserted)"
+    : bindings.filter((b) => b.status === "STALE").length ? `usable: only non-decisive context citations are STALE (${bindings.filter((b) => b.status === "STALE").map((b) => b.field).join(", ")})` : "all bindings CURRENT";
+  return Object.freeze({ status, usableAsProof: blocking.length === 0, reason, counts: Object.freeze(counts), bindings: Object.freeze(bindings.map((b) => Object.freeze(b))),
+    blocking: Object.freeze(blocking.map((b) => b.field)), mainRef: pr && pr.mainRef ? String(pr.mainRef) : null, limits: EVIDENCE_CURRENCY_LIMITS });
+}
+
+/*
+ * localGitProbes(repoRoot, opts?) — the ONLY I/O entry of this module (read-only, offline): `git cat-file -e <sha>^{commit}`,
+ * `git merge-base --is-ancestor <sha> <mainRef>` (mainRef = opts.mainRef, else origin/main if it resolves, else main) and
+ * sha256 of a repo-relative file's bytes. Memoized per probe object. Never writes, never fetches. Callers that load
+ * committed records (odg-strategic-select.loadSources, odg-go readState, the V16.9 continuity runner) inject it.
+ */
+function localGitProbes(repoRoot: string, opts?: any): any {
+  const cp = require("child_process"), fs = require("fs"), path = require("path"), crypto = require("crypto");
+  const root = path.resolve(String(repoRoot));
+  const git = (args: string[]): boolean => { try { cp.execFileSync("git", ["-C", root, ...args], { stdio: ["ignore", "ignore", "ignore"] }); return true; } catch { return false; } };
+  const o = isObj(opts) ? opts : {};
+  const mainRef = isStr(o.mainRef) ? o.mainRef : (git(["rev-parse", "--verify", "--quiet", "origin/main^{commit}"]) ? "origin/main" : "main");
+  const memo = new Map<string, any>();
+  const m = (k: string, f: () => any) => { if (!memo.has(k)) memo.set(k, f()); return memo.get(k); };
+  const hex = (s: any) => isStr(s) && COMMIT_HEX.test(s);
+  return Object.freeze({
+    label: `local git (offline) at repo root; main ref ${mainRef}`, mainRef,
+    commitExists: (sha: string) => hex(sha) && m("e:" + sha, () => git(["cat-file", "-e", `${sha}^{commit}`])),
+    isAncestorOfMain: (sha: string) => hex(sha) && m("a:" + sha, () => git(["merge-base", "--is-ancestor", sha, mainRef])),
+    fileSha256: (rel: string) => relPathSafe(rel) ? m("f:" + rel, () => { try { return crypto.createHash("sha256").update(fs.readFileSync(path.join(root, rel))).digest("hex"); } catch { return null; } }) : null,
+  });
+}
+
 const OBSERVATION_CURRENCY_CONTRACT = Object.freeze({
   id: "V124EXT-OBSERVATION-CURRENCY",
   purpose: "§18/§19/§20 — decide whether a memorized observation may be asserted as CURRENT state or is only HISTORICAL and must be re-verified; the memoire != etat actuel rule",
@@ -176,8 +302,9 @@ const OBSERVATION_CURRENCY_CONTRACT = Object.freeze({
     "commit advanced + scope-untouched NOT provable (unknown changed-set or intersection) ⇒ HISTORICAL_OBSERVED (reverify), never current",
     "a hypothesis/proposal/superseded/expired/malformed observation NEVER asserts present state",
     "COMPOSES memory-taxonomy.isStale for expiry; adds NO second store, NO 10th primitive, NO parallel truth base; deterministic (asOf injected)",
+    "V16.9 evidence currency: a committed record is usableAsProof only if no cited commit is WRONG_COMMIT (absent / not an ancestor of main), no DECISIVE citation is STALE and no binding was left unverified for want of a probe; a record without bindings is NOT_CHECKABLE, never CURRENT",
   ]),
 });
 
-module.exports = { CURRENCY, ASSERTABLE, assess, reconcile, demonstrate, OBSERVATION_CURRENCY_CONTRACT };
+module.exports = { CURRENCY, ASSERTABLE, assess, reconcile, demonstrate, OBSERVATION_CURRENCY_CONTRACT, EVIDENCE_STATUS, COMMIT_BINDING_KEYS, EVIDENCE_CURRENCY_LIMITS, extractBindings, assessEvidenceCurrency, localGitProbes };
 export {};

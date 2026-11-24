@@ -19,6 +19,7 @@ const crypto = require("crypto");
 const { execFileSync } = require("child_process");
 const REG = require("../core/odg-strategic-register.js");
 const SEL = require("../core/mission-priority-selector.js");
+const OCUR = require("../core/odg-observation-currency.js");   // V16.9 Phase 1b — proof-currency probes (read-only local git)
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const OUT_REL = "docs/odg/evidence/V164_STRATEGIC_REGISTER.json";
@@ -95,6 +96,8 @@ function loadSources(root: string): any {
   }
   // CLOSE-1 inputs: per scenario X, the committed V<n>_X_CONTRACT_INSPECTION / _EXPERIMENT / _CRITERIA_VALIDATION records
   // (highest V<n> when several) — the records odg-authorization-scope R3/R4/R5b bind to the contract.
+  // V16.9 Phase 1b — R7 / RES-1 proof-currency probes (read-only local git + file hashes of THIS root), injected here.
+  const proofProbes = OCUR.localGitProbes(root);
   const authorizationEvidence: any = {};
   const KINDS: any = { inspection: "CONTRACT_INSPECTION", experiment: "EXPERIMENT", validation: "CRITERIA_VALIDATION" };
   for (const x of contracts.data.contracts) {
@@ -119,7 +122,7 @@ function loadSources(root: string): any {
     try { txt = fs.readFileSync(path.join(root, rel), "utf8"); if (!txt.includes('"resolvesRegisterItem"')) continue; data = JSON.parse(txt); } catch { continue; }
     if (!data || typeof data.resolvesRegisterItem !== "string") continue;
     inputs.push({ source: rel, sha256: sha256(txt) });
-    resolutionEvidence.push({ path: rel, data: { resolvesRegisterItem: data.resolvesRegisterItem, date: data.date, resolution: data.resolution, fixedBy: data.fixedBy, reproTests: data.reproTests } });
+    resolutionEvidence.push({ path: rel, data: { resolvesRegisterItem: data.resolvesRegisterItem, date: data.date, resolution: data.resolution, fixedBy: data.fixedBy, reproTests: data.reproTests, inspection: data.inspection } });
   }
   // BLK-2 / REL-2 / DEP-2 inputs: the declared CP8-or-later benefit evidence files (CP8 itself is already loaded above).
   const benefitEvidence: any[] = [];
@@ -134,7 +137,7 @@ function loadSources(root: string): any {
   const seen = new Set<string>();
   const uniqInputs = inputs.filter((i: any) => (seen.has(i.source) ? false : (seen.add(i.source), true)));
   inputs.length = 0; inputs.push(...uniqInputs);
-  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, inputs };
+  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, proofProbes, inputs };
 }
 
 const SELECTOR_OPTIONS = Object.freeze({ weights: REG.WEIGHTS, directions: REG.DIRECTIONS });

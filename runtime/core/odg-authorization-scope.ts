@@ -37,9 +37,16 @@
  *   R5 VALIDATE_CRITERIA is authorized once the experiments are validated; it is NEVER auto-graded here (grading needs
  *      an independent inspection of the experiment result — not defined by V166).
  *   R6 executionAuthorized ⇔ the CURRENT step is an execution step AND authorized. Everything else is provider/docs work.
+ *   R7 (V16.9 Phase 1b, proof currency — addendum §22 "fraîcheur" / "lien avec le commit et le contrat"): an inspection,
+ *      experiment or criteria-validation record validates its step only if odg-observation-currency.assessEvidenceCurrency
+ *      over the injected probes (evidence.probes — local git + file hashes, injected by the loaders) says usableAsProof:
+ *      every cited commit exists in local git and is an ancestor of main (a well-formed but non-existent inspectedHeadSha
+ *      ⇒ WRONG_COMMIT ⇒ refused), no decisive citation (contract entry, dataset, graded experiment file) is STALE, and the
+ *      inspection's head was actually VERIFIED. No probe injected ⇒ not verifiable ⇒ refused (fail-closed, never assumed).
  */
 
 const crypto = require("crypto");
+const OCUR = require("./odg-observation-currency.js");   // V16.9 Phase 1b — evidence currency + commit binding (composed)
 
 const STEP_SEQUENCES: any = Object.freeze({
   G: Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
@@ -112,7 +119,16 @@ function revisionValid(contract: any): any {
 }
 
 const SESSION_ID = /^[A-Za-z0-9._:-]{8,128}$/;
-function inspectionValid(contract: any, rec: any, revisionAuthorSessionId: string | null, sha: string): any {
+/* R7 — proof currency of a committed record (composed: odg-observation-currency). */
+function currencyOf(rec: any, probes: any, sha: string, requireCommitBinding: boolean): any {
+  const r: any = { ...(isObj(rec) ? rec : {}) }; delete r.recordPath;
+  return OCUR.assessEvidenceCurrency(r, probes, { currentContractSha256: sha, requireCommitBinding });
+}
+/* the verdict is attached NON-ENUMERABLY: readable by callers (evidence.proofCurrency) but never serialized, so records
+ * that embed a derived scope (the G/H experiment runners' committed records) stay byte-identical (their --check). */
+function withCurrency(evidence: any, c: any): any { Object.defineProperty(evidence, "proofCurrency", { value: Object.freeze(currencySummary(c)), enumerable: false }); return evidence; }
+function currencySummary(c: any): any { return { status: c.status, usableAsProof: c.usableAsProof, counts: c.counts, blocking: c.blocking, rule: "R7 (odg-observation-currency.assessEvidenceCurrency)" }; }
+function inspectionValid(contract: any, rec: any, revisionAuthorSessionId: string | null, sha: string, probes?: any): any {
   if (!isObj(rec)) return { ok: false, reason: "no committed inspection record" };
   if (str(rec.scenario) && String(rec.scenario) !== String(contract.scenario)) return { ok: false, reason: `inspection record is for scenario ${rec.scenario}, not ${contract.scenario}` };
   if (rec.verdict !== "ACCEPT") return { ok: false, reason: `inspection verdict ${rec.verdict === undefined ? "absent" : rec.verdict} ≠ ACCEPT` };
@@ -124,14 +140,18 @@ function inspectionValid(contract: any, rec: any, revisionAuthorSessionId: strin
   if (String(ins) === String(aut)) return { ok: false, reason: "inspectorSessionId equals authorSessionId (not independent)" };
   const head = String(rec.inspectedHeadSha || "");
   if (!SHA40.test(head)) return { ok: false, reason: "inspection record lacks the inspected PR head SHA (40 hex)" };
-  return { ok: true, evidence: { inspector: str(rec.inspector) ? String(rec.inspector) : null, inspectorSessionId: String(ins), authorSessionId: String(aut), independenceLevel: INDEPENDENCE_LEVEL, verdict: "ACCEPT", contractSha256: sha, inspectedHeadSha: head, inspectedPr: rec.inspectedPr || null, recordPath: rec.recordPath || null } };
+  const cur = currencyOf(rec, probes, sha, true);
+  if (!cur.usableAsProof) return { ok: false, currency: currencySummary(cur), reason: `R7 proof currency ${cur.status}: ${cur.reason}` };
+  return { ok: true, evidence: withCurrency({ inspector: str(rec.inspector) ? String(rec.inspector) : null, inspectorSessionId: String(ins), authorSessionId: String(aut), independenceLevel: INDEPENDENCE_LEVEL, verdict: "ACCEPT", contractSha256: sha, inspectedHeadSha: head, inspectedPr: rec.inspectedPr || null, recordPath: rec.recordPath || null }, cur) };
 }
 
-function experimentValid(rec: any, sha: string): any {
+function experimentValid(rec: any, sha: string, probes?: any): any {
   if (!isObj(rec)) return { ok: false, reason: "no committed experiment record" };
   if (rec.contractSha256 !== sha) return { ok: false, reason: "experiment record not bound to the current contract sha256" };
   if (!["PASS", "PARTIAL", "FAIL", "NOT_MEASURED"].includes(rec.outcome)) return { ok: false, reason: "experiment record has no recorded outcome" };
-  return { ok: true, evidence: { outcome: rec.outcome, contractSha256: sha, note: "step DONE with its recorded outcome — the outcome is not graded or upgraded here" } };
+  const cur = currencyOf(rec, probes, sha, false);
+  if (!cur.usableAsProof) return { ok: false, currency: currencySummary(cur), reason: `R7 proof currency ${cur.status}: ${cur.reason}` };
+  return { ok: true, evidence: withCurrency({ outcome: rec.outcome, contractSha256: sha, note: "step DONE with its recorded outcome — the outcome is not graded or upgraded here" }, cur) };
 }
 
 /* experimentSha256(rec) = sha256 of canon(the experiment record without the reader-added `recordPath`). */
@@ -141,7 +161,7 @@ const GRADE_RANK: any = Object.freeze({ NOT_MEASURED: 0, FAIL: 1, PARTIAL: 2, PA
  * the exact experiment record (experimentSha256), citing an independent inspection of the experiment result with
  * verdict ACCEPT and distinct declared session ids, whose scenarioGrade never exceeds the experiment outcome
  * (no upgrade; NOT_MEASURED only if the experiment is NOT_MEASURED). Grading is NOT done here — the record is. */
-function validationValid(rec: any, sha: string, experiment: any): any {
+function validationValid(rec: any, sha: string, experiment: any, probes?: any): any {
   if (!isObj(rec)) return { ok: false, reason: "no committed criteria-validation record" };
   if (rec.contractSha256 !== sha) return { ok: false, reason: "criteria-validation record not bound to the current contract sha256" };
   const xs = experimentSha256(experiment);
@@ -153,14 +173,17 @@ function validationValid(rec: any, sha: string, experiment: any): any {
   if (!(g in GRADE_RANK) || !(o in GRADE_RANK)) return { ok: false, reason: "scenarioGrade or experiment outcome not a recognised grade" };
   if (GRADE_RANK[g] > GRADE_RANK[o]) return { ok: false, reason: `scenarioGrade ${g} exceeds the experiment outcome ${o} (upgrade refused)` };
   if (g === "NOT_MEASURED" && o !== "NOT_MEASURED") return { ok: false, reason: "NOT_MEASURED grade on a measured experiment" };
-  return { ok: true, evidence: { scenarioGrade: g, experimentOutcome: o, experimentSha256: xs, inspectorSessionId: String(ei.inspectorSessionId), independenceLevel: INDEPENDENCE_LEVEL, note: "VALIDATE_CRITERIA DONE with the recorded grade — never upgraded here" } };
+  const cur = currencyOf(rec, probes, sha, false);
+  if (!cur.usableAsProof) return { ok: false, currency: currencySummary(cur), reason: `R7 proof currency ${cur.status}: ${cur.reason}` };
+  return { ok: true, evidence: withCurrency({ scenarioGrade: g, experimentOutcome: o, experimentSha256: xs, inspectorSessionId: String(ei.inspectorSessionId), independenceLevel: INDEPENDENCE_LEVEL, note: "VALIDATE_CRITERIA DONE with the recorded grade — never upgraded here" }, cur) };
 }
 
 /*
  * deriveAuthorizationScope(contract, evidence) → frozen
  *   { applicable, scenario, contractSha256, experimentSha256, owner, sequence, authorizedSteps, derivedSteps, validatedSteps:[{step,evidence}],
  *     currentStep, currentStepKind, currentStepAuthorized, nextStep, nextStepAuthorized, executionAuthorized, reason, selfAuthorized:false }
- * evidence = { inspection?: record|null, experiment?: record|null, validation?: record|null }.
+ * evidence = { inspection?: record|null, experiment?: record|null, validation?: record|null, probes?: R7 probes
+ *   (odg-observation-currency.localGitProbes — injected by the loader; absent ⇒ no record can validate a step) }.
  */
 function deriveAuthorizationScope(contract: any, evidence?: any): any {
   const ev = isObj(evidence) ? evidence : {};
@@ -180,16 +203,16 @@ function deriveAuthorizationScope(contract: any, evidence?: any): any {
 
   const rev = revisionValid(contract);
   if (rev.ok) validated.push({ step: "REVISE_CONTRACT", evidence: rev.evidence });
-  const insp = rev.ok ? inspectionValid(contract, ev.inspection, rev.authorSessionId, sha) : { ok: false, reason: "revision not complete (R2) — inspection cannot validate" };
+  const insp = rev.ok ? inspectionValid(contract, ev.inspection, rev.authorSessionId, sha, ev.probes) : { ok: false, reason: "revision not complete (R2) — inspection cannot validate" };
   if (insp.ok) validated.push({ step: "INSPECT_REVISED_CONTRACT", evidence: insp.evidence });
   if (rev.ok && insp.ok && owner.executionCondition && !authorized.has("RUN_CONTROLLED_EXPERIMENTS")) {
     authorized.add("RUN_CONTROLLED_EXPERIMENTS");
     derived.push({ step: "RUN_CONTROLLED_EXPERIMENTS", rule: "R4", coveredBy: `${owner.by} — ${owner.source} (executionCondition: ${owner.executionCondition})`, basedOn: insp.evidence });
   }
-  const exp = authorized.has("RUN_CONTROLLED_EXPERIMENTS") ? experimentValid(ev.experiment, sha) : { ok: false, reason: "experiments not authorized" };
+  const exp = authorized.has("RUN_CONTROLLED_EXPERIMENTS") ? experimentValid(ev.experiment, sha, ev.probes) : { ok: false, reason: "experiments not authorized" };
   if (insp.ok && exp.ok) validated.push({ step: "RUN_CONTROLLED_EXPERIMENTS", evidence: exp.evidence });
   if (insp.ok && exp.ok && !authorized.has("VALIDATE_CRITERIA")) { authorized.add("VALIDATE_CRITERIA"); derived.push({ step: "VALIDATE_CRITERIA", rule: "R5", coveredBy: `${owner.by} — ${owner.source}` }); }
-  const val = insp.ok && exp.ok ? validationValid(ev.validation, sha, ev.experiment) : { ok: false, reason: "experiments not validated" };
+  const val = insp.ok && exp.ok ? validationValid(ev.validation, sha, ev.experiment, ev.probes) : { ok: false, reason: "experiments not validated" };
   if (val.ok) validated.push({ step: "VALIDATE_CRITERIA", evidence: val.evidence });
 
   const vset = new Set(validated.map((v) => v.step));
@@ -227,6 +250,7 @@ const AUTHORIZATION_SCOPE_CONTRACT = Object.freeze({
     "steps outside the declared sequence (provider spend, governance, …) are never derived",
     "inspection validates only with verdict ACCEPT, contractSha256 = sha256(canon(current contract entry)), distinct opaque inspector/author session ids bound to the revision's revisionAuthorSessionId (DECLARED_SESSION_INDEPENDENCE, not cryptographic), inspected head SHA",
     "a validated step is DONE, never PASS: no outcome is graded or upgraded here",
+    "R7 proof currency (odg-observation-currency.assessEvidenceCurrency over injected local-git probes): a record citing a commit absent from git / not an ancestor of main, or a STALE decisive hash, or unverified for want of a probe, validates nothing",
   ]),
 });
 
