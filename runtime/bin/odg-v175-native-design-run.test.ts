@@ -86,6 +86,14 @@ const run = (args: string[], timeout = 300000) => cp.spawnSync(tsx, [R.SELF, ...
     const slow = R.makeFake({ impl: {}, timings: { eval_count: 16, eval_duration: 32e9, prompt_eval_count: 10, prompt_eval_duration: 1e9 } });   // 0.5 tok/s ⇒ 900 tokens ≈ 1800 s
     const rs = await R.runNativeDesign({ root: ROOT, label: "TEST", transport: slow.fake, loadProbe: R.IDLE });
     check("ADAPT-1: predicted duration over perCallTimeout.maxMs ⇒ the design call is NOT sent ⇒ NOT_MEASURED (not FAIL)", rs.verdict === "NOT_MEASURED" && /ADAPT-1: predicted/.test(rs.reason) && rs.network.modelCalls === 0 && slow.prompts.length === 0 && rs.prompts[0].timeout.predictedOverCap === true);
+    // mid-run over-cap (#986 inspection MED): prompt-eval rate chosen so S3/S4 prompts fit the cap and the larger S5 repair
+    // prompts (they carry the failed attempt) do not ⇒ each refused repair call is a FAILED generation ⇒ final grade FAIL
+    const impl = Math.max(...r1.prompts.filter((p: any) => /^S[34]/.test(p.stage)).map((p: any) => p.promptChars)), rep = Math.min(...r1.prompts.filter((p: any) => /^S5 repair/.test(p.stage)).map((p: any) => p.promptChars));
+    const tok = (c: number) => Math.ceil(c / 3), mid = (tok(impl) + tok(rep)) / 2, pr = mid * 1000 / (300000 - 1000);
+    const midF = R.makeFake({ impl: { "Design alpha": [R.FIX_WRONG], "Design beta": [OBJ_ONLY] }, repair: R.FIX_RIGHT, timings: { eval_count: 900, eval_duration: 1e9, prompt_eval_count: 1000, prompt_eval_duration: 1e9 * 1000 / pr } });
+    const rm = await R.runNativeDesign({ root: ROOT, label: "TEST", transport: midF.fake, loadProbe: R.IDLE });
+    const oc = rm.prompts.filter((p: any) => p.overCapFailure === true);
+    check("ADAPT-1 mid-run: repair-stage calls predicted over the cap are NOT sent and are COUNTED as failed generations (prediction recorded) ⇒ final grade FAIL (budgets exhausted), never NOT_MEASURED", tok(impl) < tok(rep) && rm.verdict === "FAIL" && /S5/.test(rm.reason) && oc.length >= 1 && oc.every((p: any) => /^S5 repair/.test(p.stage) && p.timeout.predictedOverCap === true && p.timeout.estimateMs > 300000) && rm.overCapFailures.length === oc.length && rm.prompts.filter((p: any) => /^S[34]/.test(p.stage)).every((p: any) => !p.refused) && rm.rounds.some((x: any) => x.repairStopReason === "REPAIR_BUDGET_EXHAUSTED") && midF.prompts.every((t: string) => !t.includes("<<<ATTEMPT")));
     const t0 = r1.prompts[0].timeout, rate = r1.warmup.rate;
     check("ADAPT-1: timeout derived from the measured warm-up rate (32 tok/s gen, 200 tok/s prompt) and recorded per call", rate.genTokPerS === 32 && rate.promptTokPerS === 200 && t0.estimateMs === Math.ceil(1000 * (Math.ceil(r1.prompts[0].promptChars / 3) / 200 + 900 / 32)) && t0.timeoutMs === Math.min(300000, Math.max(60000, Math.ceil(3 * t0.estimateMs) + 15000)));
     // a refused (non-loopback) transport path ⇒ NOT_MEASURED

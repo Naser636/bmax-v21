@@ -122,7 +122,7 @@ async function runNativeDesign(opts: any): Promise<any> {
   base.warmup = { prompt: PIPE.WARMUP_PROMPT, promptSha256: sha256(PIPE.WARMUP_PROMPT), denylistHits: PIPE.denylistHits([{ kind: "TEMPLATE", text: PIPE.WARMUP_PROMPT }]).length, ok: wg.ok, ms: wg.ms, reason: wg.reason || null, timings: wg.timings || null, rate, timeoutMs: BUDGETS.warmupTimeoutMs };
   if (guard.st.refused.length) return finish({ verdict: "NOT_MEASURED", reason: "non-loopback request refused", network: network() });
   if (!rate) return finish({ verdict: "NOT_MEASURED", reason: "ADAPT-1: the warm-up call did not yield a measurable rate (" + (wg.ok ? "Ollama eval counters absent" : wg.reason) + ") — no per-call timeout can be derived", network: network() });
-  const halt: any = { reason: null };
+  const halt: any = { reason: null }; const overCapFailures: any[] = [];
   const prompts: any[] = []; const generations: any[] = [];
   const ask = async (stage: string, segments: any[]): Promise<any> => {
     const prompt = PIPE.renderPrompt(segments);
@@ -133,7 +133,14 @@ async function runNativeDesign(opts: any): Promise<any> {
     if (halt.reason) { rec.refused = "run halted: " + halt.reason; return { ok: false, reason: rec.refused }; }
     rec.hostLoad = readHost(stage);
     rec.timeout = PIPE.adaptiveTimeout({ promptChars: prompt.length, numPredict: BUDGETS.numPredict, rate, policy: BUDGETS.perCallTimeout });
-    if (rec.timeout.predictedOverCap) { halt.reason = `ADAPT-1: predicted duration ${rec.timeout.estimateMs} ms of "${stage}" exceeds the cap ${BUDGETS.perCallTimeout.maxMs} ms — call not sent`; rec.refused = halt.reason; return { ok: false, reason: rec.refused }; }
+    if (rec.timeout.predictedOverCap) {
+      const why = `ADAPT-1: predicted duration ${rec.timeout.estimateMs} ms of "${stage}" exceeds the cap ${BUDGETS.perCallTimeout.maxMs} ms — call not sent`;
+      // #986 inspection (MED): NOT_MEASURED only BEFORE the first work call (nothing observed yet). After it, the refused
+      // call is a FAILED generation (counts towards FAIL, prediction recorded) — never a halt that would discard failures.
+      if (guard.st.modelCalls === 0) { halt.reason = why; rec.refused = why; return { ok: false, reason: why }; }
+      rec.refused = why + " — counted as a FAILED generation (after the first work call)"; rec.overCapFailure = true; overCapFailures.push({ stage, estimateMs: rec.timeout.estimateMs, capMs: BUDGETS.perCallTimeout.maxMs });
+      return { ok: false, reason: rec.refused };
+    }
     const g = await PIPE.ollamaGenerate(guard.fetchImpl, { model: BUDGETS.model, prompt, timeoutMs: rec.timeout.timeoutMs });
     rec.ok = g.ok; rec.ms = g.ms; rec.evalCount = g.evalCount || null; rec.timings = g.timings || null; rec.reason = g.reason || null; rec.responseSha256 = g.ok ? sha256(g.response) : null;
     return g;
@@ -222,7 +229,7 @@ async function runNativeDesign(opts: any): Promise<any> {
   const ledger = PIPE.authorshipLedger({ denylistHits: Array.from({ length: allHits }), designsBy: "LOCAL_MODEL", model: BUDGETS.model, designCount: designs.length, chosen: sel.chosen, implementedBy: "LOCAL_MODEL", generation: accepted ? accepted.i : null, repairs, integratedBy: null });
   const provenance = { actor: "ODG", executionClass: NE.EXEC.LOCAL, providerEditedGeneratedCode: false, providerCalls: 0 };
   base.host.aboveThresholdDuringRun = hostReadings.filter((h: any) => h.aboveThreshold).length;   // context only (HOST_RULE); never re-grades the verdict
-  const common: any = { design: designRecord, selection, rounds, repairTrace, prompts, generations: strip(generations), network: network(), provenance, authorship: ledger };
+  const common: any = { overCapFailures, design: designRecord, selection, rounds, repairTrace, prompts, generations: strip(generations), network: network(), provenance, authorship: ledger };
   const notMeasured = nm() || rounds.some((r: any) => r.executionStatus !== "EXECUTED" || r.executionMode !== "SANDBOX");
   const withLessons = (rec: any) => ({ ...rec, lessons: PIPE.deriveLessons(rec, opts.lessonProvenance || OUT) });
   if (notMeasured) return withLessons(finish({ verdict: "NOT_MEASURED", reason: nm() ? nmReason() : "sandbox did not execute (NOT_RUN) — no verdict", ...common }));
@@ -269,7 +276,7 @@ function contractFor(root: string): any {
       ],
       stop_conditions: ["model call cap", "wall cap", "sandbox unavailable (NOT_RUN ⇒ NOT_MEASURED)", "any non-loopback request (refused ⇒ NOT_MEASURED)", "problem drift (AC1)", "a TEMPLATE denylist hit (prompt not sent)",
         `HOST-1 busy host at start: loadavg-1m > nproc × ${BUDGETS.hostIdleFactor} before the first model call ⇒ NOT_MEASURED (no model call)`,
-        "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent ⇒ NOT_MEASURED"],
+        "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent: BEFORE the first work call ⇒ NOT_MEASURED, AFTER it ⇒ a FAILED generation (counts towards FAIL, prediction recorded)"],
       rollback: "nothing is written into any checkout; discard the record",
       evidence_required: [OUT],
       budgets: BUDGETS,
@@ -278,7 +285,7 @@ function contractFor(root: string): any {
         baseline: `the integrated helper (NB1 PASS) fails ${p.failing.length}/${p.cases.length} PROB-1 cases; a provider-run PROBE of this runner (scratch, live Ollama) is context only, never the native result`,
         dataset: { corpusRule: "ORC-2", corpusSha256: item.corpusSha256, cases: p.cases.length, failing: p.failing.length, shown: p.shown.length, heldOut: p.heldOut.length, excluded: p.excluded.length, referenceSha256: item.reference.sourceSha256 },
         decisionRule: "outcome = runner verdict recorded verbatim (PASS / FAIL / NOT_MEASURED); one dispatch; no re-run to obtain a PASS",
-        thresholds: { PASS: "≥2 designs measured AND all PROB-1 cases pass in the sandbox AND 0 strict typecheck diagnostics AND git apply --check OK", FAIL: "<2 designs, or budgets exhausted without PASS", NOT_MEASURED: "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured or predicted call over cap" },
+        thresholds: { PASS: "≥2 designs measured AND all PROB-1 cases pass in the sandbox AND 0 strict typecheck diagnostics AND git apply --check OK", FAIL: "<2 designs, or budgets exhausted without PASS", NOT_MEASURED: "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured, or predicted call over cap BEFORE the first work call" },
         caps: { maxRunWallMs: BUDGETS.wallMs + BUDGETS.perCallTimeout.maxMs, maxModelCalls: BUDGETS.maxModelCalls, maxWarmupCalls: BUDGETS.maxWarmupCalls, perCallTimeoutMs: { min: BUDGETS.perCallTimeout.minMs, max: BUDGETS.perCallTimeout.maxMs }, basis: "no new model call after wallMs; one in-flight call may last at most perCallTimeout.maxMs; per-call timeout = ADAPT-1 from one warm-up call (own cap, not counted in maxModelCalls); lessons enter prompts via DIGEST-1 (≤ lessonDigestChars)" },
         honestLimits: "ORC-2 input literals, prompt templates and the runner are provider-written; the reference semantics are the in-repo canon() (REF-1), not an independent specification; a PASS means ODG's local model designed+implemented a repair of a defect ODG derived — not that ODG chose the corpus",
       },

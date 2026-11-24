@@ -1659,7 +1659,7 @@
           "problem drift (AC1)",
           "a TEMPLATE denylist hit (prompt not sent)",
           "HOST-1 busy host at start: loadavg-1m > nproc × 0.75 before the first model call ⇒ NOT_MEASURED (no model call)",
-          "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent ⇒ NOT_MEASURED"
+          "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent: BEFORE the first work call ⇒ NOT_MEASURED, AFTER it ⇒ a FAILED generation (counts towards FAIL, prediction recorded)"
         ],
         "rollback": "nothing is written into any checkout; discard the record",
         "evidence_required": [
@@ -1707,7 +1707,7 @@
           "thresholds": {
             "PASS": "≥2 designs measured AND all PROB-1 cases pass in the sandbox AND 0 strict typecheck diagnostics AND git apply --check OK",
             "FAIL": "<2 designs, or budgets exhausted without PASS",
-            "NOT_MEASURED": "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured or predicted call over cap"
+            "NOT_MEASURED": "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured, or predicted call over cap BEFORE the first work call"
           },
           "caps": {
             "maxRunWallMs": 2100000,
@@ -1870,6 +1870,36 @@
             "the previous contract sha256 58e54c7c42d633b80e00046964c32e8190db341a564641969dedf2e2380685bc is superseded; no inspection existed for it; this revision needs an independent inspection before any GO run"
           ],
           "justification": "run conditions changed BEFORE any native (GO) run and without any new PROBE; no acceptance criterion, PASS/FAIL threshold or work budget (maxModelCalls, wallMs, numPredict, repairs, rounds) is changed; the changes can only turn a would-be confounded run into NOT_MEASURED",
+          "revisionAuthorSessionId": "nb2-pipeline-fixes-v176"
+        },
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.6 NB2 pipeline-fixes session; branch feat/v176-nb2-pipeline-fixes)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json: « modifier les composants et contrats internes concernés ; »",
+          "originalCriteria": [
+            "AC1 problem reproduced at run time: fresh PROB-1 evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)",
+            "AC2 designs: ≥2 parseable designs from the local model, each implemented and measured in the sandbox; SEL-1 choice recorded with all scores",
+            "AC3 held-out oracle: all 33 PROB-1 cases PASS inside odg-native-build-sandbox (EXECUTED, SANDBOX) + strict typecheck 0 diagnostics",
+            "AC4 branch-ready: the diff modifies runtime/core/odg-canonical-json.ts, adds runtime/core/odg-canonical-json-extended.test.ts, passes git apply --check at the run HEAD",
+            "AC5 authorship ledger + provenance: per-stage authorship, every prompt sha256 + its segment kinds + denylist hits (0), every generation sha256, providerCalls 0",
+            "AC6 learning: lessons read before the run (memory-taxonomy CONSOLIDATED) and lessons derived from this run are both in the record"
+          ],
+          "originalCriteriaNote": "acceptance criteria AC1–AC6, PASS/FAIL thresholds, budgets and caps UNCHANGED by this revision",
+          "reason": "independent inspection of #986 REJECT (MED): ADAPT-1 predictedOverCap halted the run at ANY stage, so a run going badly (growing repair prompts) could end NOT_MEASURED and discard recorded failures, and the conservative warm-up estimate could refuse calls that would have finished. Fix: over-cap ⇒ NOT_MEASURED ONLY before the first work call; after it, the refused call is a FAILED generation (towards FAIL, prediction recorded in prompts[].timeout + overCapFailures).",
+          "before": {
+            "stop_conditions[-1]": "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent ⇒ NOT_MEASURED",
+            "preRegistration.thresholds.NOT_MEASURED": "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured or predicted call over cap"
+          },
+          "after": {
+            "stop_conditions[-1]": "ADAPT-1 warm-up yields no measurable tokens/s ⇒ NOT_MEASURED; a call whose predicted duration exceeds perCallTimeout.maxMs is not sent: BEFORE the first work call ⇒ NOT_MEASURED, AFTER it ⇒ a FAILED generation (counts towards FAIL, prediction recorded)",
+            "preRegistration.thresholds.NOT_MEASURED": "no sandbox verdict / network refusal / problem drift / HOST-1 busy host at start / ADAPT-1 rate not measured, or predicted call over cap BEFORE the first work call"
+          },
+          "change": [
+            "stop_conditions ADAPT-1 entry restricted: NOT_MEASURED only before the first work call; after it ⇒ counted failed generation",
+            "preRegistration.thresholds.NOT_MEASURED: 'predicted call over cap' → 'predicted call over cap BEFORE the first work call'",
+            "previous sha d6709407eb4fcb4b6cf67d16099add931a8a2de119f92b2951c2ad97456e82c9 (inspected, REJECTED) superseded"
+          ],
+          "justification": "narrows NOT_MEASURED (fewer runs can escape a FAIL); made before any native GO run, without any new PROBE",
           "revisionAuthorSessionId": "nb2-pipeline-fixes-v176"
         }
       ]
