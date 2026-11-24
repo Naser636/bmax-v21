@@ -1,0 +1,1660 @@
+{
+ "//": "V17.2 scenario G2 — held-out era blocks, built ONCE by the pre-registered deterministic rule (runtime/bin/odg-v172-scenario-g2-heldout-build.ts) inside the contract-declared RUN_CONTROLLED_EXPERIMENTS dispatch, AFTER the fitted thresholds were sealed; never edited after its first build (any edit ⇒ the experiment is NOT_MEASURED). Recompute: npx tsx runtime/bin/odg-v172-scenario-g2-heldout-build.ts --check",
+ "schema": "odg-v172-g2-heldout/1",
+ "contract": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#G2",
+ "builder": "runtime/bin/odg-v172-scenario-g2-heldout-build.ts",
+ "baseCommit": "e97bcc43bf1ca59db5b779329ce1b0409211cf3e",
+ "rule": {
+  "row": "one row per PR number N in the block range whose merge commit M is a first-parent commit of the base with subject '^Merge pull request #N ' and exactly 2 parents",
+  "commits": "git rev-list --count M^1..M^2",
+  "size": "Σ(added + deleted) of git diff --numstat M^1 M (binary '-' ⇒ 0); git run with -c diff.renames=true (git's default) --no-ext-diff --no-textconv",
+  "label": "HIGH_ITERATION iff commits ≥ 2, else LOW_ITERATION",
+  "exclusions": "only a squash commit (subject ending '(#N)') ⇒ LABEL_NOT_RECOVERABLE_LOCALLY; > 1 first-parent subject for N ⇒ AMBIGUOUS; no first-parent subject ⇒ NO_FIRST_PARENT_COMMIT; merge subject without exactly 2 parents ⇒ MERGE_SUBJECT_NOT_TWO_PARENTS",
+  "egress": "NONE — local git objects only"
+ },
+ "blocks": {
+  "HB": {
+   "role": "PRIMARY",
+   "range": [
+    319,
+    518
+   ],
+   "counts": {
+    "rows": 168,
+    "excluded": 32,
+    "excludedByReason": {
+     "LABEL_NOT_RECOVERABLE_LOCALLY": 32
+    },
+    "expectedMergeStyleAtRegistration": 168,
+    "expectedSquashStyleAtRegistration": 32
+   },
+   "excluded": [
+    {
+     "number": 360,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "fda9c2baef9787a4d10dbfd1b85ef8c16cf370f8",
+     "parents": 1
+    },
+    {
+     "number": 361,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "687fe5be8cf76da5839834846d2392ee385d77c4",
+     "parents": 1
+    },
+    {
+     "number": 362,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "3e5b2742e53a0c10989892ba2d0fa4636617ecf6",
+     "parents": 1
+    },
+    {
+     "number": 363,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "3a8254d8516d2913ecfd7c0fc0daf1361a5778b5",
+     "parents": 1
+    },
+    {
+     "number": 364,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "8e9f71b581699852fc53f68328a267eec15fdad3",
+     "parents": 1
+    },
+    {
+     "number": 365,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "741e41059d24b6f58110073a095f1d2f9c9b3cbb",
+     "parents": 1
+    },
+    {
+     "number": 493,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "51123f7518e6752bbeb387ffbef563491b52a59b",
+     "parents": 1
+    },
+    {
+     "number": 494,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "67a29008f554f4c107c313f6d07b2104eb29c17a",
+     "parents": 1
+    },
+    {
+     "number": 495,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "b4eb2081d7609bef0624e2bb2c5a1eee592a5bd0",
+     "parents": 1
+    },
+    {
+     "number": 496,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "f3fdf04d56e1e02ff1fd59676de5c7b7f0013efc",
+     "parents": 1
+    },
+    {
+     "number": 497,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "fd397be101ecc86bb749d5eac9091989ea78ceb1",
+     "parents": 1
+    },
+    {
+     "number": 498,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "5efdd0ba544aebb13dd171c7b76af6dfd45ff764",
+     "parents": 1
+    },
+    {
+     "number": 499,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "b8ebaade7e726367c200ead5e67eb6fe966b1c21",
+     "parents": 1
+    },
+    {
+     "number": 500,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "80781dc9e6950f8bde736a4eb13873d006388703",
+     "parents": 1
+    },
+    {
+     "number": 501,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "133f5fbc0222bc59aaa806f86228ad88f12a12a7",
+     "parents": 1
+    },
+    {
+     "number": 502,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "ec1ee507a24ca9bf322c1f83770be33f88fd759d",
+     "parents": 1
+    },
+    {
+     "number": 503,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "e1c8b51315bf12473cd33ba06dcddb97adfc8fca",
+     "parents": 1
+    },
+    {
+     "number": 504,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "b72e7e269091ebfe7ea907cb27c82b237025cbd6",
+     "parents": 1
+    },
+    {
+     "number": 505,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "6e28ff1c7bdfb1115f1ea06596d987f2d113daf4",
+     "parents": 1
+    },
+    {
+     "number": 506,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "aabfed6cfbacad224c42cd1809125d51bd0f0bc8",
+     "parents": 1
+    },
+    {
+     "number": 507,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "1867eb256b6b733c496de7b9f08e567be92401d8",
+     "parents": 1
+    },
+    {
+     "number": 508,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "dd50a429eca8734798125bd8400b741fdf859e62",
+     "parents": 1
+    },
+    {
+     "number": 509,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "128ff6af94d149e32f0c0d5a57b4ed4078bc3484",
+     "parents": 1
+    },
+    {
+     "number": 510,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "c2504b38aa886c317937e685a3d81d3d4cb5b806",
+     "parents": 1
+    },
+    {
+     "number": 511,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "5ace703e7bcd8965ba0e7383450a4d47b01c64f0",
+     "parents": 1
+    },
+    {
+     "number": 512,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "cba44fba990af4084ae5eecb961d358ca0fd6bee",
+     "parents": 1
+    },
+    {
+     "number": 513,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "9a313afeae31859086cc5d1281007391192e43f7",
+     "parents": 1
+    },
+    {
+     "number": 514,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "21909346e916182d2b2502df2e0bb74b3aa5d91f",
+     "parents": 1
+    },
+    {
+     "number": 515,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "89054b45ba7f053fd03bcfc85d65078a76738939",
+     "parents": 1
+    },
+    {
+     "number": 516,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "6aab85ed2f4acf036d123a5ae714fd17f42ccbc1",
+     "parents": 1
+    },
+    {
+     "number": 517,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "e3c210f49d4583e5d471c06a8ed4671e51d1c393",
+     "parents": 1
+    },
+    {
+     "number": 518,
+     "reason": "LABEL_NOT_RECOVERABLE_LOCALLY",
+     "commit": "fb5d0ed3171b2e661f948c3d2856dbb7708dea7b",
+     "parents": 1
+    }
+   ],
+   "rows": [
+    {
+     "number": 319,
+     "mergeCommit": "1aa6e40ae5e58f8126c9460d620443c89262fea6",
+     "commits": 1,
+     "size": 169,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 320,
+     "mergeCommit": "f896fd981163b6443273127cf147bcd3297631c9",
+     "commits": 1,
+     "size": 61,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 321,
+     "mergeCommit": "7365f1d38819ac53c3091bc959270878b683de85",
+     "commits": 1,
+     "size": 91,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 322,
+     "mergeCommit": "45de02e7f49f0cb519e644c6fc1da8b936d9e377",
+     "commits": 1,
+     "size": 66,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 323,
+     "mergeCommit": "b0d3343de41062a6478948482571f8fc27fdd7c9",
+     "commits": 1,
+     "size": 47,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 324,
+     "mergeCommit": "da7bb8a156c9ff4d3d6310e7dbc0990b284bf747",
+     "commits": 1,
+     "size": 85,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 325,
+     "mergeCommit": "42e0ab32496fe6f4aa2e4fe2a2450427b3a6e9cc",
+     "commits": 1,
+     "size": 76,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 326,
+     "mergeCommit": "cd90e1017df8afbc5259cea8f59e0ea91df3a552",
+     "commits": 2,
+     "size": 68,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 327,
+     "mergeCommit": "fc4e11f97fbc8f7cff1eff2e68c9411e60a3d0d4",
+     "commits": 1,
+     "size": 104,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 328,
+     "mergeCommit": "33b4e7b242d018d6aaac0d355c2efc762595d351",
+     "commits": 1,
+     "size": 77,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 329,
+     "mergeCommit": "65b7221aeed2d27a248da1c27e6815ab71e3b6d4",
+     "commits": 1,
+     "size": 12,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 330,
+     "mergeCommit": "d055d7de69447f60b8183a0d636f72d94c012850",
+     "commits": 1,
+     "size": 37,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 331,
+     "mergeCommit": "9f0f3313116f5b0a5c5b1bcdc7c67487b73a85b4",
+     "commits": 1,
+     "size": 22,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 332,
+     "mergeCommit": "0701a2db9d8b1fa83612d60fe20570776759a367",
+     "commits": 2,
+     "size": 155,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 333,
+     "mergeCommit": "60869deee0bf33e945df88805e594c113e490720",
+     "commits": 1,
+     "size": 65,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 334,
+     "mergeCommit": "fa925b01bdb7dde10a29e8ab00d1d77654f1a221",
+     "commits": 1,
+     "size": 72,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 335,
+     "mergeCommit": "725c1ce1a5f4f344fdaba531a2403262da90ada3",
+     "commits": 1,
+     "size": 77,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 336,
+     "mergeCommit": "57e1c823316ca5cf608a3b51ee663fc0d1d5b33b",
+     "commits": 2,
+     "size": 90,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 337,
+     "mergeCommit": "4b049ce9291fb23991e3dec711a21d53c3bf6edf",
+     "commits": 1,
+     "size": 78,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 338,
+     "mergeCommit": "b0baed68baf55060e515d2d0382c261ffcde67c7",
+     "commits": 1,
+     "size": 81,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 339,
+     "mergeCommit": "24245a5b578ecbd5e80e01abe841374adfbf9a4c",
+     "commits": 1,
+     "size": 54,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 340,
+     "mergeCommit": "9f1be201e885af2f26d7a70f36b13f843c582aa4",
+     "commits": 1,
+     "size": 20,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 341,
+     "mergeCommit": "e7e08674f16d4f68e7153cd33037eadbb1b94b0a",
+     "commits": 1,
+     "size": 105,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 342,
+     "mergeCommit": "fd014b2656a2aa36092395dc8aac8a051ebda878",
+     "commits": 1,
+     "size": 7,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 343,
+     "mergeCommit": "b7ac5a27d84a1e7575a69c88fae48223a2fc68eb",
+     "commits": 1,
+     "size": 429,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 344,
+     "mergeCommit": "57aa5af7fc1150b2678d153c57f6f59a22812bbf",
+     "commits": 1,
+     "size": 558,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 345,
+     "mergeCommit": "d0d0ff3920cf55da0623f47adfd39f88f52596ac",
+     "commits": 1,
+     "size": 71,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 346,
+     "mergeCommit": "271e834fa9608d5fb6506d7c0072f5fadea1ff63",
+     "commits": 2,
+     "size": 278,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 347,
+     "mergeCommit": "420175966a86c9bf0ea8796d87ba5b11bb3c7f64",
+     "commits": 1,
+     "size": 16,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 348,
+     "mergeCommit": "febb151a42decc4358244d5e49b6bf9153ec96df",
+     "commits": 1,
+     "size": 203,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 349,
+     "mergeCommit": "63f76d44c2b0afebb0973fdb5acab263b941cd90",
+     "commits": 1,
+     "size": 209,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 350,
+     "mergeCommit": "93073113ea09601a4e5c3aa61196c2ba04e9ffae",
+     "commits": 1,
+     "size": 22,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 351,
+     "mergeCommit": "b64e4157f23f7243314a26e7460a36c0388a3b0f",
+     "commits": 1,
+     "size": 147,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 352,
+     "mergeCommit": "f506fe99a0f98bb1098fee4bc95f326fd83630a0",
+     "commits": 2,
+     "size": 191,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 353,
+     "mergeCommit": "c3398b06d5a75c28a75aedf30c416cf9055ca5d1",
+     "commits": 2,
+     "size": 180,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 354,
+     "mergeCommit": "e877ab8f12779ae68a95222bf4ba39372b0d80b9",
+     "commits": 2,
+     "size": 178,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 355,
+     "mergeCommit": "3a50807043f9c1defc2c064f59bb86b04229f45f",
+     "commits": 1,
+     "size": 161,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 356,
+     "mergeCommit": "fe80ce13ae1fa8885b494366f0b91b60ed2151b7",
+     "commits": 1,
+     "size": 45,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 357,
+     "mergeCommit": "32f6a9996758b4d95036967b58d468edb5cb7889",
+     "commits": 1,
+     "size": 65,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 358,
+     "mergeCommit": "f09facc9d98772e16f66f3fc65e15ba8a5832b5f",
+     "commits": 1,
+     "size": 605,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 359,
+     "mergeCommit": "130ff62afd50448dff2c332e939e8c050aacce6c",
+     "commits": 1,
+     "size": 60,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 366,
+     "mergeCommit": "25dcc1e74a2dedcfe6accd65a2b9cc5a69f2bf6c",
+     "commits": 58,
+     "size": 6387,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 367,
+     "mergeCommit": "6b32c4051f212dc385c304bce1f7ef232cbee14d",
+     "commits": 33,
+     "size": 8160,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 368,
+     "mergeCommit": "8ae56433596fa5d5de94072512b137f24a4f2b94",
+     "commits": 3,
+     "size": 323,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 369,
+     "mergeCommit": "621d241b6a2c1ac75bdf5912a4d8b015afd11de8",
+     "commits": 2,
+     "size": 280,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 370,
+     "mergeCommit": "0bcbfef110fb62cd1ec211d0bfe3a5a57d504e51",
+     "commits": 2,
+     "size": 419,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 371,
+     "mergeCommit": "c6ae54734d34435bba4f1ae230b721081ff78d0e",
+     "commits": 2,
+     "size": 68,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 372,
+     "mergeCommit": "7dbba3cfe19d7b2075779f1dfacf971052598caf",
+     "commits": 3,
+     "size": 608,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 373,
+     "mergeCommit": "f0863d1dacbf6a85baa5363dce6763f47c2878a8",
+     "commits": 5,
+     "size": 1179,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 374,
+     "mergeCommit": "45a53078d21a3f65f10ddfbbc5fbad269ea7e4f7",
+     "commits": 1,
+     "size": 181,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 375,
+     "mergeCommit": "6d8825b47bc3a3ebf66b8a726ab53078ac3ee530",
+     "commits": 4,
+     "size": 293,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 376,
+     "mergeCommit": "0f888a38477b0dc18d64b521214d52f60a16d138",
+     "commits": 1,
+     "size": 151,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 377,
+     "mergeCommit": "2103cb117db08198edcbc6ac4d40b886a620db71",
+     "commits": 2,
+     "size": 174,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 378,
+     "mergeCommit": "263af55674b15ccd6bab4ff18a1b1af7229b418e",
+     "commits": 1,
+     "size": 130,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 379,
+     "mergeCommit": "1904b986c1ff0469a7282e30448c7e97018d1aa5",
+     "commits": 1,
+     "size": 254,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 380,
+     "mergeCommit": "f498ee99c529b9fd7820065ba5773c691467d028",
+     "commits": 1,
+     "size": 281,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 381,
+     "mergeCommit": "ec2b9d34a34b8c505fbfb3a08db6393919cabff8",
+     "commits": 1,
+     "size": 498,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 382,
+     "mergeCommit": "e9f7065d68aaaf824c3ffbada78cdb517a9df607",
+     "commits": 1,
+     "size": 391,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 383,
+     "mergeCommit": "4b7048ffb2011d35285c19541a7f7ff8a8059912",
+     "commits": 1,
+     "size": 301,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 384,
+     "mergeCommit": "4ed848b2f6700d0c77896552e7ea3da953684101",
+     "commits": 1,
+     "size": 814,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 385,
+     "mergeCommit": "ee3058ad33c86ab4b007c340460e84f1b7925e63",
+     "commits": 1,
+     "size": 569,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 386,
+     "mergeCommit": "405498fa6a4296ab9b925c12c9a319b0a3c2cf6a",
+     "commits": 1,
+     "size": 411,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 387,
+     "mergeCommit": "2576b3a85078088bdd96d5b558f63b1195ef14f4",
+     "commits": 1,
+     "size": 414,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 388,
+     "mergeCommit": "dacfa768d70cb786072730cab2e513d411f1deb1",
+     "commits": 1,
+     "size": 422,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 389,
+     "mergeCommit": "1dd353515b0475f41b37322123f919864798c9da",
+     "commits": 1,
+     "size": 391,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 390,
+     "mergeCommit": "0a67bd4cdc5aac41a376dfad1d76577a3ea35e76",
+     "commits": 1,
+     "size": 225,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 391,
+     "mergeCommit": "5e36cdadb6e4c53a048ec70e5d3e1dd2c72f88a7",
+     "commits": 1,
+     "size": 885,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 392,
+     "mergeCommit": "dab5efb0ee04e0df76583ba60f2fe3b6bcd10c29",
+     "commits": 1,
+     "size": 175,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 393,
+     "mergeCommit": "80c8b0efcd66392c876f1a078d02079f312c176d",
+     "commits": 1,
+     "size": 165,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 394,
+     "mergeCommit": "ae101da5a9fe07a7683455eacb32c4d1c9a89073",
+     "commits": 1,
+     "size": 150,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 395,
+     "mergeCommit": "ae616ea70e1982ff0e026825bcee0da55042326e",
+     "commits": 1,
+     "size": 163,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 396,
+     "mergeCommit": "68b9ede6c9373c68fe2bfb8fa5681b0d6b3b2d1e",
+     "commits": 1,
+     "size": 156,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 397,
+     "mergeCommit": "053bad4582530f8d3af18853d6ba9056377cdc24",
+     "commits": 1,
+     "size": 156,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 398,
+     "mergeCommit": "965ea32b939812f154913d5d1e19271d512731db",
+     "commits": 1,
+     "size": 149,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 399,
+     "mergeCommit": "ef288f27f03df1a467e18cf8133eec40b0fefa95",
+     "commits": 1,
+     "size": 268,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 400,
+     "mergeCommit": "4dcfdb00a25c6c224bbacc0474e843873782aae6",
+     "commits": 1,
+     "size": 149,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 401,
+     "mergeCommit": "d865b3de4327ffc69947ab3e687f02f67c67e543",
+     "commits": 1,
+     "size": 160,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 402,
+     "mergeCommit": "e2321ecf924f267313aeeeda592fd784b993523c",
+     "commits": 1,
+     "size": 159,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 403,
+     "mergeCommit": "68c6b6bd4b9a4ac4f736d557fd824bdd3fd453ac",
+     "commits": 1,
+     "size": 144,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 404,
+     "mergeCommit": "eac3625ca61adaa3561449ea3f9ed2c25322096f",
+     "commits": 1,
+     "size": 150,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 405,
+     "mergeCommit": "8b5e8c46361475e02af76d75e80ddf3bb0be4a8a",
+     "commits": 1,
+     "size": 148,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 406,
+     "mergeCommit": "25b762856cef0aa7734a5847f99f5618222bd659",
+     "commits": 1,
+     "size": 218,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 407,
+     "mergeCommit": "6cca02071287ee273e86a034bbca689168566e31",
+     "commits": 1,
+     "size": 187,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 408,
+     "mergeCommit": "582e935888f18603c941179b02e402d35497bf67",
+     "commits": 1,
+     "size": 154,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 409,
+     "mergeCommit": "dec41ff7f366b57d7661f2637df1249026ff7ffc",
+     "commits": 1,
+     "size": 156,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 410,
+     "mergeCommit": "f8798bee44916769002438bdd160c15b14a97204",
+     "commits": 1,
+     "size": 157,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 411,
+     "mergeCommit": "693a2d93b485246278a2e82589aa47e732c3447f",
+     "commits": 1,
+     "size": 252,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 412,
+     "mergeCommit": "3d80292da4c4cc31f0ef5a4716dd0597e13afc33",
+     "commits": 1,
+     "size": 208,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 413,
+     "mergeCommit": "164ac34f7f8f14b0ddace86905b2ba0e411bb6ac",
+     "commits": 1,
+     "size": 129,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 414,
+     "mergeCommit": "bfc5a0714bea0f527d208efe01f81e3889b36b81",
+     "commits": 1,
+     "size": 245,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 415,
+     "mergeCommit": "2f1ab7749245e5499a864f10996f382956e75ee3",
+     "commits": 1,
+     "size": 281,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 416,
+     "mergeCommit": "86240a95bf9df254187d8794dfd5b7ef7017edf3",
+     "commits": 1,
+     "size": 152,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 417,
+     "mergeCommit": "26edfc2f9219c461db6a410d114c4748b8f2206c",
+     "commits": 1,
+     "size": 168,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 418,
+     "mergeCommit": "8251bb1465a003839f6973fce03caf369b78d173",
+     "commits": 1,
+     "size": 177,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 419,
+     "mergeCommit": "d34d29235278ae9ae5988966fca370667fa0eb27",
+     "commits": 1,
+     "size": 170,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 420,
+     "mergeCommit": "8ec5eff26fb0437f68f9f9e4ff9763e4bf71dea4",
+     "commits": 1,
+     "size": 101,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 421,
+     "mergeCommit": "670759fed23c6d2934a6fd011f303d7316a7f90f",
+     "commits": 1,
+     "size": 336,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 422,
+     "mergeCommit": "12542487057d63304b9bc0f7e2b5ee15c685b727",
+     "commits": 1,
+     "size": 48,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 423,
+     "mergeCommit": "53a18eae1dc65a427ab95447663dc470a4952ed2",
+     "commits": 1,
+     "size": 84,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 424,
+     "mergeCommit": "606e90533e10a21c2d34833a2254666cf71ae3cf",
+     "commits": 1,
+     "size": 64,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 425,
+     "mergeCommit": "712d6a92ba0ddcdc458b7b7c7b2e85f489fa260b",
+     "commits": 1,
+     "size": 131,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 426,
+     "mergeCommit": "cac629782e3f97649524ec0462eb7500fa0f5e93",
+     "commits": 1,
+     "size": 53,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 427,
+     "mergeCommit": "37713332e0e726f883dac3906cec1a5dfd0b4a3b",
+     "commits": 1,
+     "size": 167,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 428,
+     "mergeCommit": "f1dbf6c23795a0bb10b50ac73db3e699b5486bde",
+     "commits": 1,
+     "size": 88,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 429,
+     "mergeCommit": "9ae9867d65ec761ac18ba6668d6681f2b6630f62",
+     "commits": 1,
+     "size": 176,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 430,
+     "mergeCommit": "b3b490db909c5742beaf3ccd3b20a1d18ae96694",
+     "commits": 1,
+     "size": 174,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 431,
+     "mergeCommit": "cfd9da9bfd50a14aa14b4871beb6b02050e1f1b8",
+     "commits": 1,
+     "size": 152,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 432,
+     "mergeCommit": "fec47ec464ea6f5a119b3855b8eeb68f4339527b",
+     "commits": 1,
+     "size": 96,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 433,
+     "mergeCommit": "5f3d9dafa97511b30d5e8c18c5d1c39e29bf0c13",
+     "commits": 1,
+     "size": 93,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 434,
+     "mergeCommit": "a5586025e15012f83d5edae457f1c26c0eb9a986",
+     "commits": 1,
+     "size": 60,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 435,
+     "mergeCommit": "811eb9f064d19a63a3d4751dbd2bbbdea0b2c106",
+     "commits": 1,
+     "size": 210,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 436,
+     "mergeCommit": "70da4b077a83f841409b1c6be5f3fe3f2b2f65ba",
+     "commits": 1,
+     "size": 48,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 437,
+     "mergeCommit": "17ccc883fae730ce9ab9f3e45747536bbcccd896",
+     "commits": 1,
+     "size": 104,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 438,
+     "mergeCommit": "b57c71167a7958a621e4dd071994325c4ef92f86",
+     "commits": 1,
+     "size": 14,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 439,
+     "mergeCommit": "a7caebc76091ecd8aca4178ae71ae1cdf29e8eba",
+     "commits": 1,
+     "size": 222,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 440,
+     "mergeCommit": "d2bbc9b4a08126f45af4324e910519782b55e195",
+     "commits": 1,
+     "size": 96,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 441,
+     "mergeCommit": "2f5aaffd1800563132cba87c9f65fe9bd636c4d6",
+     "commits": 1,
+     "size": 243,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 442,
+     "mergeCommit": "aabe3a9396a36c8e56afec2e9d7f634ab84f8767",
+     "commits": 1,
+     "size": 65,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 443,
+     "mergeCommit": "37c01ad960c62db4b9d9fa39b0aea4953a94e7a1",
+     "commits": 1,
+     "size": 192,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 444,
+     "mergeCommit": "59e9656f111711e913055ca77472e2ea6f29aa46",
+     "commits": 1,
+     "size": 61,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 445,
+     "mergeCommit": "596ef3849c5949e22e50f0f2b14eef5044e5796c",
+     "commits": 2,
+     "size": 204,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 446,
+     "mergeCommit": "35c84949af968cc32319512e9f7f56e49844b3a7",
+     "commits": 2,
+     "size": 314,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 447,
+     "mergeCommit": "e5f3390ef096cce6f60868667d27d3de73425a24",
+     "commits": 1,
+     "size": 50,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 448,
+     "mergeCommit": "0541ca27e949176c2c5bb6ea95aaf24f41567056",
+     "commits": 1,
+     "size": 119,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 449,
+     "mergeCommit": "2da98cae6ef52f4ecacf91e1bbd43b3a17fb87be",
+     "commits": 1,
+     "size": 84,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 450,
+     "mergeCommit": "d7fdad41a61dff4088e71f771b1b8427967af8aa",
+     "commits": 1,
+     "size": 14,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 451,
+     "mergeCommit": "ec6bdb1d249bb8c58998f95afd187fafd5ab0601",
+     "commits": 1,
+     "size": 74,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 452,
+     "mergeCommit": "72b06e82b95f3c80c9caf4017e005aa3eae40010",
+     "commits": 1,
+     "size": 170,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 453,
+     "mergeCommit": "b70557b1925f81d920516f02ed30cdf0b515bdfa",
+     "commits": 1,
+     "size": 68,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 454,
+     "mergeCommit": "8e8d14a47e9cd47cf61d0fde13064c776dc04804",
+     "commits": 1,
+     "size": 70,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 455,
+     "mergeCommit": "effafc11f901788040a05eb6cd0a33e92feb946c",
+     "commits": 1,
+     "size": 59,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 456,
+     "mergeCommit": "50511319b1669db53143fe7b524199c386731d59",
+     "commits": 1,
+     "size": 69,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 457,
+     "mergeCommit": "466b85985bb3cfb34f3beb69219559bfc0a70661",
+     "commits": 1,
+     "size": 356,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 458,
+     "mergeCommit": "7d9dcd8825be651cfc7c274efcfb4d51b4f3782c",
+     "commits": 1,
+     "size": 58,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 459,
+     "mergeCommit": "97896a33177319a81dea907698a3ae5f16eb7326",
+     "commits": 1,
+     "size": 322,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 460,
+     "mergeCommit": "99ecef53ad33cc9fb81f79b2a82300cb297c38b1",
+     "commits": 1,
+     "size": 306,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 461,
+     "mergeCommit": "438f1f57b72739427ad8c6d5bdd0221cb4a3a674",
+     "commits": 1,
+     "size": 229,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 462,
+     "mergeCommit": "9f2db2660d2316c527a818849b1542b8a03e05c2",
+     "commits": 1,
+     "size": 163,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 463,
+     "mergeCommit": "3852bf0c069f0ba2a33fe349b68a789c38f72c12",
+     "commits": 1,
+     "size": 85,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 464,
+     "mergeCommit": "19bb6484be4c0de377bda6ba926e23fd59fa5ca8",
+     "commits": 1,
+     "size": 254,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 465,
+     "mergeCommit": "cea07b57d1fcb5676b99a8484f7b75337e2b3a0e",
+     "commits": 1,
+     "size": 159,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 466,
+     "mergeCommit": "9374c6c578dacd07b8c7d039b8fa2394873f3429",
+     "commits": 1,
+     "size": 124,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 467,
+     "mergeCommit": "0333073262a8a7179a6cb3d90db718b1c0dc3f05",
+     "commits": 1,
+     "size": 147,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 468,
+     "mergeCommit": "4cf521ccfdc7ea25723fd454ef1265a55ebd8d95",
+     "commits": 1,
+     "size": 154,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 469,
+     "mergeCommit": "95c3fd7cd3c06a081ee9c74de631f0298eda4e5d",
+     "commits": 1,
+     "size": 148,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 470,
+     "mergeCommit": "d75bfb49207b0351aa8db59343a6277da7d5ffc7",
+     "commits": 1,
+     "size": 200,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 471,
+     "mergeCommit": "60f14bdecd5aab5ffee6e8c43f59e10d2adbeb49",
+     "commits": 1,
+     "size": 228,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 472,
+     "mergeCommit": "584678c1a635f10722f1e3218425ac2380a9c459",
+     "commits": 1,
+     "size": 444,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 473,
+     "mergeCommit": "059dcd7ce5b70112c8cffff08d49fd076421350e",
+     "commits": 1,
+     "size": 200,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 474,
+     "mergeCommit": "520ee2c7b55a748ce3db7a42d4ccb858a82df1bc",
+     "commits": 1,
+     "size": 346,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 475,
+     "mergeCommit": "aef163c31a6b7fb5e1bfb590721662e79117630e",
+     "commits": 1,
+     "size": 238,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 476,
+     "mergeCommit": "d69718cb9b920db37866fbc063e555d7948de56b",
+     "commits": 1,
+     "size": 89,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 477,
+     "mergeCommit": "4a736908af8670095c1afad91321d6fdec7ef837",
+     "commits": 1,
+     "size": 92,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 478,
+     "mergeCommit": "65f290f0f65249e7e113ca560a4a8d86de5dce55",
+     "commits": 1,
+     "size": 232,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 479,
+     "mergeCommit": "3480ad07b05edab025761b22a549f6cc0b92c9e5",
+     "commits": 1,
+     "size": 209,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 480,
+     "mergeCommit": "81719a69a9e67aa2fea29dacbcb41c10e7588d78",
+     "commits": 1,
+     "size": 267,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 481,
+     "mergeCommit": "a0807149f2e6e9a0678e02c3c752248eade03048",
+     "commits": 1,
+     "size": 212,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 482,
+     "mergeCommit": "46ba79c90292387777a4b5b2715c1aef5278dc63",
+     "commits": 1,
+     "size": 230,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 483,
+     "mergeCommit": "44042adaba57bc14130415ed603989a902131a8f",
+     "commits": 1,
+     "size": 207,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 484,
+     "mergeCommit": "cb0baa6aa40842025355d8abc2285b297617e9be",
+     "commits": 1,
+     "size": 214,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 485,
+     "mergeCommit": "923417009f7e0ecd4d918243f6f785c4c3dcbc61",
+     "commits": 1,
+     "size": 186,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 486,
+     "mergeCommit": "0a792c794e499c5ebc792350045edefe9235b57b",
+     "commits": 1,
+     "size": 200,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 487,
+     "mergeCommit": "8ffaedea0b2f5d8396818afd04ed84540f759f86",
+     "commits": 14,
+     "size": 4915,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 488,
+     "mergeCommit": "41e377b97ab197c5274bfe05b6dc81ea2084bc71",
+     "commits": 11,
+     "size": 607,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 489,
+     "mergeCommit": "22900dd501f831fbb763d05ed131d1b528df0edf",
+     "commits": 76,
+     "size": 37045,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 490,
+     "mergeCommit": "95661e1cb92e07cf526c940180443b786fd13b39",
+     "commits": 55,
+     "size": 9138,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 491,
+     "mergeCommit": "798ce189835352b2f6412dba5c9da61d44e3a113",
+     "commits": 2,
+     "size": 57,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 492,
+     "mergeCommit": "f74f3cff675252037dc4653f97306e76da32b97c",
+     "commits": 1,
+     "size": 61,
+     "label": "LOW_ITERATION"
+    }
+   ]
+  },
+  "HF": {
+   "role": "REPORT-ONLY",
+   "range": [
+    921,
+    954
+   ],
+   "counts": {
+    "rows": 34,
+    "excluded": 0,
+    "excludedByReason": {},
+    "expectedMergeStyleAtRegistration": 34,
+    "expectedSquashStyleAtRegistration": 0
+   },
+   "excluded": [],
+   "rows": [
+    {
+     "number": 921,
+     "mergeCommit": "bc64cb1edc7cfeffeed61b9fa6de38573eff63ac",
+     "commits": 3,
+     "size": 3879,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 922,
+     "mergeCommit": "1ec2f2c42598cfda39ac8c1551bb8d619583dda7",
+     "commits": 3,
+     "size": 223,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 923,
+     "mergeCommit": "2edcb674a9807ac9870de4311b90493cc09b915f",
+     "commits": 4,
+     "size": 715,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 924,
+     "mergeCommit": "66c41c10467d3deaaeed31451b132e8be12f4c6c",
+     "commits": 4,
+     "size": 1785,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 925,
+     "mergeCommit": "55a83728141efaffd02f2aaf9ce88898fea0840c",
+     "commits": 4,
+     "size": 1924,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 926,
+     "mergeCommit": "1f34145b8348222886a038953b97bdb9b806cf36",
+     "commits": 2,
+     "size": 525,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 927,
+     "mergeCommit": "f6753e8db8216129088fccf6980a5c3a659c6aad",
+     "commits": 3,
+     "size": 8511,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 928,
+     "mergeCommit": "2b446acac17b36e6896bbf4a1e476dc32cb681b2",
+     "commits": 5,
+     "size": 4840,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 929,
+     "mergeCommit": "9eabf4a4effe245f1f470362350b4928a7624a1f",
+     "commits": 4,
+     "size": 3713,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 930,
+     "mergeCommit": "a1eee034344c8f36ffd78c8b4f45450b326dfd4f",
+     "commits": 2,
+     "size": 2311,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 931,
+     "mergeCommit": "8eed6b105a1284cabacfbedf3778f2560173020d",
+     "commits": 1,
+     "size": 3902,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 932,
+     "mergeCommit": "adb6b0172ce07f70cdb4ec1e3c88faa709c209b4",
+     "commits": 6,
+     "size": 173,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 933,
+     "mergeCommit": "4731dd4444d91f56369a868e4828e68f875a9cf5",
+     "commits": 2,
+     "size": 581,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 934,
+     "mergeCommit": "548be51c6ee506da67bcdd7b1476c5975caa91ed",
+     "commits": 1,
+     "size": 20,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 935,
+     "mergeCommit": "639c2e42b7a2f1704ce269bc91dcd8421329909c",
+     "commits": 2,
+     "size": 725,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 936,
+     "mergeCommit": "8063418a7345e77744d7b6a1926c1bd5ff603be6",
+     "commits": 5,
+     "size": 278,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 937,
+     "mergeCommit": "28718a3712602cfcbed11b1451497bdede13dc15",
+     "commits": 2,
+     "size": 252,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 938,
+     "mergeCommit": "cbc59e6778cefb58e2332145dbc937eb423ae675",
+     "commits": 2,
+     "size": 203,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 939,
+     "mergeCommit": "4ae6b7ac53cab2de3706903a498d2990114f25ff",
+     "commits": 3,
+     "size": 1033,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 940,
+     "mergeCommit": "613bf2cdbe2e9ae769a5793eff065e25843e0f8f",
+     "commits": 2,
+     "size": 122,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 941,
+     "mergeCommit": "ba9b77e8455b1793ffbaff8e30fa8635777f0b18",
+     "commits": 2,
+     "size": 80,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 942,
+     "mergeCommit": "a0370aaedacdb45fb33441aa7d25d9d1ee967128",
+     "commits": 3,
+     "size": 5917,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 943,
+     "mergeCommit": "7bee0173acacdf1e2706dc7a790d3b2522661c65",
+     "commits": 1,
+     "size": 20,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 944,
+     "mergeCommit": "5d3cf713193682154aae7e224b473a2566d81205",
+     "commits": 2,
+     "size": 647,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 945,
+     "mergeCommit": "bd6f5c62361aa3ac1c596021dc9969b943047cd2",
+     "commits": 1,
+     "size": 36,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 946,
+     "mergeCommit": "b8de9a04ce03bd2b1b791f1fb34d34f91b63464b",
+     "commits": 1,
+     "size": 355,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 947,
+     "mergeCommit": "2006fb70191a49a8f5f90d36f19cdd3dce039ebd",
+     "commits": 3,
+     "size": 210,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 948,
+     "mergeCommit": "7caf6699658c0ff773a80a8a883c318d3110f004",
+     "commits": 3,
+     "size": 4904,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 949,
+     "mergeCommit": "54f335f654b32380e357e5c5469c1fdaa761c599",
+     "commits": 1,
+     "size": 2390,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 950,
+     "mergeCommit": "c6a3df9968562f3d0509f0330dc737e3dc72441b",
+     "commits": 1,
+     "size": 556,
+     "label": "LOW_ITERATION"
+    },
+    {
+     "number": 951,
+     "mergeCommit": "7f93953573840807cdf1864fc2d170e25be4d680",
+     "commits": 2,
+     "size": 101,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 952,
+     "mergeCommit": "bd81d856f34db0e6f930259a8197980e433e6e8a",
+     "commits": 3,
+     "size": 489,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 953,
+     "mergeCommit": "f2866b2880301a8a026e6a9fe2dffd986faa3a90",
+     "commits": 3,
+     "size": 4052,
+     "label": "HIGH_ITERATION"
+    },
+    {
+     "number": 954,
+     "mergeCommit": "e97bcc43bf1ca59db5b779329ce1b0409211cf3e",
+     "commits": 4,
+     "size": 2608,
+     "label": "HIGH_ITERATION"
+    }
+   ]
+  }
+ }
+}
