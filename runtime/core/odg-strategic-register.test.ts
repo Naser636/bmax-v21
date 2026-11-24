@@ -51,6 +51,14 @@ check("criteria rules are recorded for all 10 criteria", REG.CRITERIA.length ===
 check("OWN-1: 'owner-authorized' in acceptance_criteria ⇒ requiresOwnerAuthorization", it("A").requiresOwnerAuthorization === true);
 check("OWN-1: contract scope ('no VPS/systemd/deploy, no external spend') + stop_conditions are NOT scanned", it("D").requiresOwnerAuthorization === false);
 check("OWN-1: 'without deployment' is a negation, not a flag", it("V150-T09").requiresOwnerAuthorization === false && REG.ownerMatches("needs a deployment").length === 1);
+// OWN-1 clarification (V17.6, #1001 defect): path/identifier substrings are not owner-gated intent
+check("OWN-1 clarif: 'production' inside a kebab identifier (odg-production-metric) ⇒ no match", REG.ownerMatches("extend odg-production-metric with a recordRunMs field").length === 0);
+check("OWN-1 clarif: keyword inside a file path / dotted field ⇒ no match", REG.ownerMatches("edit runtime/core/odg-deploy-check.ts and productionMetric.cost_eur; see odg-production-metric.test.ts").length === 0);
+check("OWN-1 clarif: real prose 'mise en production' / 'deploy to production' / 'production deployment' ⇒ gated", REG.ownerMatches("mise en production du module").length === 1 && REG.ownerMatches("deploy to production").length === 2 && REG.ownerMatches("a production deployment").length === 2);
+check("OWN-1 clarif: protected locations still match inside paths (ROADMAP.json, governance, systemd)", REG.ownerMatches("write runtime/governance/ROADMAP.json").length === 2 && REG.ownerMatches("~/.config/systemd/user/x.service").length === 1);
+check("OWN-1 clarif: 'owner-gated' / 'owner-authorized' prose still matches (2-segment kebab is prose)", REG.ownerMatches("an owner-gated step; owner-authorized write-set").length === 2);
+{ const RP = REG.buildRegister(sources({ contracts: contracts.concat([contract("P1", "PARTIAL", { wic: { acceptance_criteria: ["AC1 extend odg-production-metric (runtime/core/odg-production-metric.ts)"] } }), contract("P2", "PARTIAL", { wic: { acceptance_criteria: ["AC1 mise en production"] } })]) }));
+  check("OWN-1 clarif: register item with path-only 'production' ⇒ not gated; prose 'mise en production' ⇒ gated; clarification recorded, rule text unchanged", RP.items.find((x: any) => x.id === "P1").requiresOwnerAuthorization === false && RP.items.find((x: any) => x.id === "P2").requiresOwnerAuthorization === true && RP.ownerRuleClarification === REG.OWN1_PATH_CLARIFICATION && RP.ownerRule === REG.OWNER_RULE && /^OWN-1: requiresOwnerAuthorization iff/.test(RP.ownerRule)); }
 check("deps only when stated: 'needs scenario D first' ⇒ deps [D]; otherwise []", JSON.stringify(it("I").deps) === '["D"]' && it("D").deps.length === 0 && /no item-to-item dependency/.test(it("D").depsNote));
 check("DEP-1 with no stated dependency ⇒ NOT_MEASURED (not availability 1)", it("D").criteria.dependencyAvailability.status === "NOT_MEASURED");
 

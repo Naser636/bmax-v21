@@ -92,6 +92,24 @@ function discoverLatestCheckpoint(): string | null {
 }
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
+/* OWN-1 clarification (V17.6, classification defect found in #1001 — rule meaning unchanged): OWN-1 matches owner-gated
+ * INTENT in prose. A keyword that is only a SUBSTRING of a file path or code identifier (e.g. `odg-production-metric`,
+ * `runtime/core/odg-deploy-x.ts`, `productionMetric.cost_eur`) states no intent ⇒ not a match. A token is path/identifier-like
+ * when it contains '/', a source-file extension, '_' or '.' between word chars, or is a lowercase kebab identifier of ≥3
+ * segments / prefixed odg-. Location keywords that NAME protected paths (ROADMAP.json, governance, systemd) still match
+ * inside paths (touching them is owner-gated). */
+const OWN1_PATH_CLARIFICATION = "OWN-1 clarification (not a criteria change): a keyword occurring only inside a file-path / code-identifier token (contains '/', a source-file extension, '_' or '.' between word chars, or a lowercase kebab identifier of ≥3 segments or prefixed odg-) is not owner-gated intent and is ignored — except ROADMAP.json / governance / systemd, which name protected locations and still match inside paths";
+const OWN1_PATH_KEEP = /^(?:ROADMAP\.json|governance|systemd)$/i;
+function isPathLikeToken(tok: string): boolean {
+  const t = tok.replace(/^[^\w~./-]+|[^\w/]+$/g, "");
+  if (!t) return false;
+  if (t.includes("/")) return true;
+  if (/\.(?:[cm]?[jt]sx?|json|md|sh|ya?ml|py|html?|css)$/i.test(t)) return true;
+  if (/\w[._]\w/.test(t)) return true;
+  if (/^odg-[\w-]+$/i.test(t)) return true;
+  if (/^[a-z0-9]+(?:-[a-z0-9]+){2,}$/.test(t)) return true;
+  return false;
+}
 function ownerMatches(text: string): string[] {
   const out: string[] = [];
   const re = new RegExp(OWNER_RE.source, "gi");
@@ -99,6 +117,12 @@ function ownerMatches(text: string): string[] {
   while ((m = re.exec(text)) !== null) {
     const before = text.slice(Math.max(0, m.index - 12), m.index);
     if (/\b(no|without|not|never)\s+$/i.test(before)) continue;
+    if (!OWN1_PATH_KEEP.test(m[0])) {
+      let s = m.index, e = m.index + m[0].length;
+      while (s > 0 && !/[\s`'"(),;\[\]{}<>‖]/.test(text[s - 1])) s--;
+      while (e < text.length && !/[\s`'"(),;\[\]{}<>‖]/.test(text[e])) e++;
+      if (isPathLikeToken(text.slice(s, e))) continue;
+    }
     out.push(m[0]);
   }
   return out;
@@ -413,7 +437,7 @@ function buildRegister(sources: any): any {
   return deepFreeze({
     schema: "ODG_STRATEGIC_REGISTER/1",
     statusTaxonomy: STATUS,
-    criteria: CRITERIA, weights: WEIGHTS, weightsNote: WEIGHTS_NOTE, ownerRule: OWNER_RULE,
+    criteria: CRITERIA, weights: WEIGHTS, weightsNote: WEIGHTS_NOTE, ownerRule: OWNER_RULE, ownerRuleClarification: OWN1_PATH_CLARIFICATION,
     capabilityGapRules: { dedupe: GAP_DEDUP_RULE, owner: OWNER_RULE_GAP, landed: LAND_RULE, links: GAP_LINKS.map((l: any) => ({ id: l.id, audit: l.audit, gapRe: l.gapRe ? String(l.gapRe) : null, ownerQuestionRe: l.oqRe ? String(l.oqRe) : null, blockerAnchors: l.anchors || [] })), benefit: { blocker: BLK2_RULE, reliability: REL2_RULE, dependency: DEP2_RULE, blockerFields: BLOCKER_FIELDS, prRecordFields: PR_RECORD_FIELDS, latestCheckpoint: latestCp, notDerived: BENEFIT_NOT_DERIVED } },
     continuityRules: { closure: CLOSE_RULE, resolution: RES_RULE, latestCheckpoint: LATEST_CP_RULE, contradictions: CONTRADICTION_RULES, history: "append-only statusHistory [{status, source, since, rule}] on every item whose status CLOSE-1 or RES-1 changed; earlier statuses are never deleted" },
     latestCheckpoint,
@@ -686,6 +710,6 @@ const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
+module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, isPathLikeToken, OWN1_PATH_CLARIFICATION, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(STRATEGIC_REGISTER_CONTRACT, null, 2) + "\n"); }
 export {};
