@@ -26,8 +26,8 @@ check("V175-NB1 last GO run = its committed trace, dispatched", !!nb.lastGoRun &
 check("register/declared-record divergence on V175-NB1 is REPORTED, not resolved", /^CLOSED_/.test(nb.registerStatus) || (nb.divergence && /REPORTED/.test(nb.divergence.note) && nb.registerStatus === "NOT_STARTED"));
 check("J: strategic selection, contract PROPOSED ⇒ next actor OWNER (PROPOSED → AUTHORIZED)", T("J").contractState === "PROPOSED" && T("J").next.actor === "OWNER" && a.nextGoAction.strategic.item === "J" && /PROPOSED → AUTHORIZED/.test(a.nextGoAction.strategic.ownerAuthorizationNeeded));
 check("owner question Q-CTR2 open (answer null, blocking) with its source", a.ownerQuestionsOpen.some((q: any) => q.id === "Q-CTR2" && q.blocking === true && /ownerQuestions\[\d+\]$/.test(q.source)));
-check("checkpoint = latest committed (LCP-1)", a.checkpoint && a.checkpoint.path === "docs/odg/evidence/V174_CHECKPOINT_11.json");
-check("checkpoint J2 RUNNING is flagged superseded by the register (CLOSED_FAIL)", a.checkpointVsRegister.some((c: any) => c.item === "J2" && c.checkpointStatus === "RUNNING" && c.registerStatus === "CLOSED_FAIL" && c.superseded === true));
+check("checkpoint = latest committed (LCP-1)", a.checkpoint && a.checkpoint.path === "docs/odg/evidence/V176_CHECKPOINT_12.json");
+check("checkpoint CP12 (V17.6) carries no stale RUNNING status vs the register (the CP11 J2 RUNNING case is superseded by CP12)", !a.checkpointVsRegister.some((c: any) => c.superseded === true && c.checkpointStatus === "RUNNING"));
 check("next GO action: nothing dispatchable (no authorized undispatched EXECUTION step) — derived, not asserted", a.nextGoAction.dispatchable.length === 0 && /nothing to dispatch/.test(a.nextGoAction.verdict));
 check("last GO run = the latest committed cycle (NB1, workingOn V175-NB1, strategic J)", a.nextGoAction.lastGoRun.workingOn === "V175-NB1" && a.nextGoAction.lastGoRun.strategic === "J");
 check("tracked items carry their boussoleRef (compact) from the register", a.trackedItems.every((t: any) => t.boussoleRef && (t.boussoleRef.status === "MEASURED" || typeof t.boussoleRef.reason === "string")));
