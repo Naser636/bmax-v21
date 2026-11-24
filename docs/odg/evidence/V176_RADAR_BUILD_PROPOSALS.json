@@ -22,17 +22,17 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795540914000,
+    "nowEpochMs": 1795541819000,
     "rule": "now = newest last-commit epoch among the source files (no wall clock); a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "5d73a1d4a1ef5fedd367d79a552dc1816e2ae9401db9f57b80e622e5e3974567"
+      "sha256": "0cc298b7adbe630f2d98a0d2d880482689fd44abcbaa63a4c80a5bbf96b88dec"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "a460ef1e80866563ef4f6e60439fe8d65de301cc7061ec20e512e919be5e7194"
+      "sha256": "323080d9dd47e06f45f11c2a11fd86993acfcdcff57fef2857ee1ecfccbb944a"
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -81,12 +81,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.autonomyBenefit"
       ],
-      "statement": "criterion autonomyBenefit NOT_MEASURED on 35/59 register items",
+      "statement": "criterion autonomyBenefit NOT_MEASURED on 35/60 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.autonomyBenefit.notMeasuredItems",
         "value": 35,
-        "of": 59,
+        "of": 60,
         "items": [
           "V150-AI4",
           "V150-AI5",
@@ -172,12 +172,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.capabilityGain"
       ],
-      "statement": "criterion capabilityGain NOT_MEASURED on 47/59 register items",
+      "statement": "criterion capabilityGain NOT_MEASURED on 48/60 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.capabilityGain.notMeasuredItems",
-        "value": 47,
-        "of": 59,
+        "value": 48,
+        "of": 60,
         "items": [
           "A",
           "B",
@@ -191,6 +191,7 @@
           "G2",
           "J2",
           "V175-NB1",
+          "V175-NB2",
           "V150-AI4",
           "V150-AI5",
           "V150-OG01",
@@ -275,12 +276,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.blockerRepetitionReduction"
       ],
-      "statement": "criterion blockerRepetitionReduction NOT_MEASURED on 53/59 register items",
+      "statement": "criterion blockerRepetitionReduction NOT_MEASURED on 54/60 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.blockerRepetitionReduction.notMeasuredItems",
-        "value": 53,
-        "of": 59,
+        "value": 54,
+        "of": 60,
         "items": [
           "A",
           "B",
@@ -301,6 +302,7 @@
           "G2",
           "J2",
           "V175-NB1",
+          "V175-NB2",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -384,12 +386,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reliabilityQuality"
       ],
-      "statement": "criterion reliabilityQuality NOT_MEASURED on 58/59 register items",
+      "statement": "criterion reliabilityQuality NOT_MEASURED on 59/60 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.reliabilityQuality.notMeasuredItems",
-        "value": 58,
-        "of": 59,
+        "value": 59,
+        "of": 60,
         "items": [
           "A",
           "B",
@@ -410,6 +412,7 @@
           "G2",
           "J2",
           "V175-NB1",
+          "V175-NB2",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -498,12 +501,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.speedEfficiency"
       ],
-      "statement": "criterion speedEfficiency NOT_MEASURED on 59/59 register items",
+      "statement": "criterion speedEfficiency NOT_MEASURED on 60/60 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.speedEfficiency.notMeasuredItems",
-        "value": 59,
-        "of": 59,
+        "value": 60,
+        "of": 60,
         "items": [
           "A",
           "B",
@@ -524,6 +527,7 @@
           "G2",
           "J2",
           "V175-NB1",
+          "V175-NB2",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -613,12 +617,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reusability"
       ],
-      "statement": "criterion reusability NOT_MEASURED on 59/59 register items",
+      "statement": "criterion reusability NOT_MEASURED on 60/60 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.reusability.notMeasuredItems",
-        "value": 59,
-        "of": 59,
+        "value": 60,
+        "of": 60,
         "items": [
           "A",
           "B",
@@ -639,6 +643,7 @@
           "G2",
           "J2",
           "V175-NB1",
+          "V175-NB2",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -728,12 +733,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.strategicValue"
       ],
-      "statement": "criterion strategicValue NOT_MEASURED on 42/59 register items",
+      "statement": "criterion strategicValue NOT_MEASURED on 43/60 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.strategicValue.notMeasuredItems",
-        "value": 42,
-        "of": 59,
+        "value": 43,
+        "of": 60,
         "items": [
           "A",
           "B",
@@ -744,6 +749,7 @@
           "G2",
           "J2",
           "V175-NB1",
+          "V175-NB2",
           "V150-OG01",
           "V150-OG02",
           "V150-OG03",
@@ -826,12 +832,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.costRiskComplexity"
       ],
-      "statement": "criterion costRiskComplexity NOT_MEASURED on 40/59 register items",
+      "statement": "criterion costRiskComplexity NOT_MEASURED on 40/60 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.costRiskComplexity.notMeasuredItems",
         "value": 40,
-        "of": 59,
+        "of": 60,
         "items": [
           "V150-T01",
           "V150-T02",
@@ -922,12 +928,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability"
       ],
-      "statement": "criterion dependencyAvailability NOT_MEASURED on 55/59 register items",
+      "statement": "criterion dependencyAvailability NOT_MEASURED on 56/60 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.dependencyAvailability.notMeasuredItems",
-        "value": 55,
-        "of": 59,
+        "value": 56,
+        "of": 60,
         "items": [
           "B",
           "C",
@@ -945,6 +951,7 @@
           "P",
           "G2",
           "V175-NB1",
+          "V175-NB2",
           "V150-T01",
           "V150-T02",
           "V150-T07",
