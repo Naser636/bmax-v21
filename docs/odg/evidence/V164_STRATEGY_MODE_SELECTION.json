@@ -2,7 +2,7 @@
   "schema": "V164_STRATEGY_MODE_SELECTION_EVIDENCE",
   "directive": "owner V16.4 §4 sélecteur de stratégie (MODE NATIF / HYBRIDE / FOURNISSEUR) + §7 gap 'absence de mode hybride dans le sélecteur' + §10 scenario D",
   "gapRef": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (\"'hybrid' is not an option of the component\")",
-  "head": "539840e18f57e1ba98140f059e037b8effd1bea0",
+  "head": "f721ccc04809d60425980d7b6692d1af837e8ea6",
   "evaluationInstant": "2026-11-23T18:56:03.582Z",
   "evaluationInstantNote": "pinned = latest timestamp among the source evidence files (deterministic; registry freshness checked against it)",
   "sources": {
@@ -28,7 +28,7 @@
     },
     "AP": {
       "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "73a7df1270476a56ac9c3427edc904fd3f5ed1f005a060afaa39b637b69c1563"
+      "sha256": "3965dac5ff8725ec6d3c00a79ffdc3f4a00bfe4aebc9125cc58857d3815a6488"
     },
     "CP8": {
       "path": "docs/odg/evidence/V163_CHECKPOINT_8.json",
@@ -2893,6 +2893,213 @@
         },
         "delegationRecords": []
       }
+    },
+    {
+      "id": "AP-RB-REATTEMPT-CHANGED-INPUT",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-RB-REATTEMPT-CHANGED-INPUT:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-RB-REATTEMPT-CHANGED-INPUT",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-RB-REATTEMPT-CHANGED-INPUT",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-RB-REATTEMPT-CHANGED-INPUT"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-RB-RECORD-INSPECTION-VERDICT-TIME",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-RB-RECORD-INSPECTION-VERDICT-TIME:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-RB-RECORD-INSPECTION-VERDICT-TIME",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-RB-RECORD-INSPECTION-VERDICT-TIME",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-RB-RECORD-INSPECTION-VERDICT-TIME"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
+    },
+    {
+      "id": "AP-RB-SELECTION-AT-RUN-HEAD",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-RB-SELECTION-AT-RUN-HEAD:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-RB-SELECTION-AT-RUN-HEAD",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-RB-SELECTION-AT-RUN-HEAD",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-RB-SELECTION-AT-RUN-HEAD"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
     }
   ],
   "modeCounts": {
@@ -2904,7 +3111,7 @@
       "NATIVE": 4,
       "PROVIDER": 2,
       "HYBRID": 3,
-      "DECISION_REQUIRED": 20
+      "DECISION_REQUIRED": 23
     }
   },
   "jStrategyReplay": [

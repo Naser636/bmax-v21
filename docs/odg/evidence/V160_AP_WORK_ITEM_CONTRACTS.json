@@ -1,11 +1,11 @@
 {
-  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 F: F moved PROPOSED → AUTHORIZED_FOR_REVISION under the owner build-missions record (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json) and revised (REVISE_CONTRACT): authorization block, write_set 1:1 replacement, preRegistration (GO parallel-wave capability on a deterministic fixture), dispatch target; F's criteria verbatim; every other entry unchanged.",
+  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 R2C (batch V176-R2C-1, owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json): RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.6 F: F moved PROPOSED → AUTHORIZED_FOR_REVISION under the owner build-missions record (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json) and revised (REVISE_CONTRACT): authorization block, write_set 1:1 replacement, preRegistration (GO parallel-wave capability on a deterministic fixture), dispatch target; F's criteria verbatim; every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 20,
+  "count": 23,
   "initialStatusCounts": {
     "PASS": 2,
     "PARTIAL": 14,
-    "NOT_STARTED": 4
+    "NOT_STARTED": 7
   },
   "contracts": [
     {
@@ -2257,6 +2257,368 @@
           "revisionAuthorSessionId": "nb2-pipeline-fixes-v176"
         }
       ]
+    },
+    {
+      "scenario": "RB-REATTEMPT-CHANGED-INPUT",
+      "title": "a re-attempt of a non-PASS parent must cite a measured changed input (new data/strategy) before it is selectable",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "RB-REATTEMPT-CHANGED-INPUT",
+        "sourceRecord": "docs/odg/evidence/V176_RADAR_BUILD_PROPOSALS.json",
+        "sourceRecordSha256AtConversion": "6a85d368b24276b0849c9243fb121decb69b122a4dec4e05466f74d4546943da",
+        "conversionBatch": "V176-R2C-1",
+        "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
+        "signals": [
+          "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[7]"
+        ],
+        "selection": {
+          "rank": 2,
+          "evidenceScore": 0.19,
+          "uncertainty": 0.6,
+          "upperBound": 0.79,
+          "tiedWith": [
+            "RB-RECORD-INSPECTION-VERDICT-TIME",
+            "RB-SELECTION-AT-RUN-HEAD"
+          ],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 5,
+          "maxTransitiveDependents": 6,
+          "perComponent": [
+            {
+              "component": "mission-priority-selector",
+              "inCoreGraph": true,
+              "directConsumers": 5,
+              "transitiveDependents": 6
+            },
+            {
+              "component": "odg-strategic-register",
+              "inCoreGraph": true,
+              "directConsumers": 2,
+              "transitiveDependents": 2
+            }
+          ],
+          "rationale": "a change to mission-priority-selector/odg-strategic-register reaches ≤ 6 transitive dependents (5 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+        "asOf": "base 539840e1 (V17.6 R2C)"
+      },
+      "beforeMetric": [
+        {
+          "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[7]",
+          "name": "outcomeLearning.OL-8.n",
+          "value": 2,
+          "support": [
+            "G2 (parent G, parent status CLOSED_PARTIAL) → PARTIAL",
+            "J2 (parent J, parent status EXECUTED_PARTIAL) → FAIL"
+          ]
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source at the same pointer; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED (never assumed)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "a re-attempt of a non-PASS parent must cite a measured changed input (new data/strategy) before it is selectable",
+        "scope": "improve mission-priority-selector, odg-strategic-register only; no Radar egress, no spend, no canonical-authority change",
+        "write_set": [
+          "runtime/core/odg-strategic-register.ts",
+          "runtime/core/odg-strategic-register.test.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared LINK-1 guess — an ESTIMATE to be confirmed when the contract is authored; NOT an authorized write_set",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network / no spend / no protected path"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'RB-REATTEMPT-CHANGED-INPUT/AC1' (file: acceptance_tests[0]): a re-attempt with no stated changed input is NOT selectable",
+          "AC2 test 'RB-REATTEMPT-CHANGED-INPUT/AC2' (file: acceptance_tests[1]): one with a cited changed input is",
+          "AC3 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC4 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "RB-REATTEMPT-CHANGED-INPUT/AC1",
+            "file": "runtime/core/odg-strategic-register.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "RB-REATTEMPT-CHANGED-INPUT/AC2",
+            "file": "runtime/core/odg-strategic-register.test.ts",
+            "criterion": "AC2"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an owner question blocks"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
+    },
+    {
+      "scenario": "RB-RECORD-INSPECTION-VERDICT-TIME",
+      "title": "record the inspection verdict timestamp in the committed inspection record so verdict latency is measured, not bounded",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "RB-RECORD-INSPECTION-VERDICT-TIME",
+        "sourceRecord": "docs/odg/evidence/V176_RADAR_BUILD_PROPOSALS.json",
+        "sourceRecordSha256AtConversion": "6a85d368b24276b0849c9243fb121decb69b122a4dec4e05466f74d4546943da",
+        "conversionBatch": "V176-R2C-1",
+        "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
+        "signals": [
+          "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.prs[*].inspectionVerdictAt"
+        ],
+        "selection": {
+          "rank": 3,
+          "evidenceScore": 0.19,
+          "uncertainty": 0.6,
+          "upperBound": 0.79,
+          "tiedWith": [
+            "RB-REATTEMPT-CHANGED-INPUT",
+            "RB-SELECTION-AT-RUN-HEAD"
+          ],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 4,
+          "maxTransitiveDependents": 12,
+          "perComponent": [
+            {
+              "component": "odg-production-metric",
+              "inCoreGraph": true,
+              "directConsumers": 0,
+              "transitiveDependents": 0
+            },
+            {
+              "component": "evaluator-independence",
+              "inCoreGraph": true,
+              "directConsumers": 4,
+              "transitiveDependents": 12
+            }
+          ],
+          "rationale": "a change to odg-production-metric/evaluator-independence reaches ≤ 12 transitive dependents (4 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+        "asOf": "base 539840e1 (V17.6 R2C)"
+      },
+      "beforeMetric": [
+        {
+          "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.prs[*].inspectionVerdictAt",
+          "name": "productionMetric.inspectionVerdictAt.notMeasured",
+          "value": 17
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source at the same pointer; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED (never assumed)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "record the inspection verdict timestamp in the committed inspection record so verdict latency is measured, not bounded",
+        "scope": "improve odg-production-metric, evaluator-independence only; no Radar egress, no spend, no canonical-authority change",
+        "write_set": [
+          "runtime/core/odg-production-metric.ts",
+          "runtime/core/odg-production-metric.test.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared LINK-1 guess — an ESTIMATE to be confirmed when the contract is authored; NOT an authorized write_set",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network / no spend / no protected path"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'RB-RECORD-INSPECTION-VERDICT-TIME/AC1' (file: acceptance_tests[0]): inspectionVerdictAt MEASURED for PRs inspected after the change",
+          "AC2 test 'RB-RECORD-INSPECTION-VERDICT-TIME/AC2' (file: acceptance_tests[1]): older PRs stay NOT_MEASURED (no backfill guess)",
+          "AC3 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC4 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "RB-RECORD-INSPECTION-VERDICT-TIME/AC1",
+            "file": "runtime/core/odg-production-metric.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "RB-RECORD-INSPECTION-VERDICT-TIME/AC2",
+            "file": "runtime/core/odg-production-metric.test.ts",
+            "criterion": "AC2"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an owner question blocks"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
+    },
+    {
+      "scenario": "RB-SELECTION-AT-RUN-HEAD",
+      "title": "GO re-derives the register selection at run head and refuses (or records the owner override) when it differs from the selection being executed",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "RB-SELECTION-AT-RUN-HEAD",
+        "sourceRecord": "docs/odg/evidence/V176_RADAR_BUILD_PROPOSALS.json",
+        "sourceRecordSha256AtConversion": "6a85d368b24276b0849c9243fb121decb69b122a4dec4e05466f74d4546943da",
+        "conversionBatch": "V176-R2C-1",
+        "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
+        "signals": [
+          "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[1]"
+        ],
+        "selection": {
+          "rank": 4,
+          "evidenceScore": 0.19,
+          "uncertainty": 0.6,
+          "upperBound": 0.79,
+          "tiedWith": [
+            "RB-REATTEMPT-CHANGED-INPUT",
+            "RB-RECORD-INSPECTION-VERDICT-TIME"
+          ],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 5,
+          "maxTransitiveDependents": 6,
+          "perComponent": [
+            {
+              "component": "odg-go-cycle",
+              "inCoreGraph": true,
+              "directConsumers": 0,
+              "transitiveDependents": 0
+            },
+            {
+              "component": "mission-priority-selector",
+              "inCoreGraph": true,
+              "directConsumers": 5,
+              "transitiveDependents": 6
+            }
+          ],
+          "rationale": "a change to odg-go-cycle/mission-priority-selector reaches ≤ 6 transitive dependents (5 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+        "asOf": "base 539840e1 (V17.6 R2C)"
+      },
+      "beforeMetric": [
+        {
+          "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[1]",
+          "name": "outcomeLearning.OL-2.n",
+          "value": 2,
+          "support": [
+            "G: selected at b994ca69c7f8; at run head 83427f936423 the register decided TIE_EXPLAINED (H)",
+            "H: selected at 7c2fd7b2edbd; at run head 98eed7f23c20 the register decided DECISION_REQUIRED (no selection)"
+          ]
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source at the same pointer; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED (never assumed)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "GO re-derives the register selection at run head and refuses (or records the owner override) when it differs from the selection being executed",
+        "scope": "improve odg-go-cycle, mission-priority-selector only; no Radar egress, no spend, no canonical-authority change",
+        "write_set": [
+          "runtime/core/odg-go-cycle.ts",
+          "runtime/core/odg-go-cycle.test.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared LINK-1 guess — an ESTIMATE to be confirmed when the contract is authored; NOT an authorized write_set",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network / no spend / no protected path"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'RB-SELECTION-AT-RUN-HEAD/AC1' (file: acceptance_tests[0]): a stale selection is detected before EXECUTE",
+          "AC2 test 'RB-SELECTION-AT-RUN-HEAD/AC2' (file: acceptance_tests[1]): the trace records selectedAt vs runHead",
+          "AC3 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC4 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "RB-SELECTION-AT-RUN-HEAD/AC1",
+            "file": "runtime/core/odg-go-cycle.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "RB-SELECTION-AT-RUN-HEAD/AC2",
+            "file": "runtime/core/odg-go-cycle.test.ts",
+            "criterion": "AC2"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an owner question blocks"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
     }
   ]
 }
