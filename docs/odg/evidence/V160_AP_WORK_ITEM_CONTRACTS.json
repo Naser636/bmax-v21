@@ -1,10 +1,11 @@
 {
-  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical.",
+  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 16,
+  "count": 18,
   "initialStatusCounts": {
     "PASS": 2,
-    "PARTIAL": 14
+    "PARTIAL": 14,
+    "NOT_STARTED": 2
   },
   "contracts": [
     {
@@ -984,6 +985,412 @@
           "CI green on the exact head"
         ]
       }
+    },
+    {
+      "scenario": "G2",
+      "title": "G2 — Mémoire : calibration guidée par la connaissance (nouvelle expérience distincte de G)",
+      "ownerText": "ODG retrouve une connaissance, vérifie sa fraîcheur, sa provenance et ses conditions, puis démontre son utilité.",
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — directive V170 (2026-11-24), docs/odg/V170_OWNER_AUTHORIZATION_HG.json, G clause: « Préparer une nouvelle expérience distincte, avec critères, métriques, référence de comparaison, jeu de données et méthode d'évaluation fixés avant les mesures. Contrôler l'absence de fuite de données, de contamination des étiquettes et de sélection opportuniste des métriques. » — G2 only (a NEW, distinct, versioned G contract per the record's appliesTo); G stays CLOSED_PARTIAL and its records are untouched.",
+      "parent": {
+        "scenario": "G",
+        "relation": "NEW distinct experiment motivated by G's and H's lessons; G's contract, closure (CLOSED_PARTIAL) and records are not modified, re-graded or re-run"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "new contract: no G2 code, dataset build or result exists at registration. Parent G is CLOSED_PARTIAL (docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json); that grade is context, not G2's status",
+        "evidence": [],
+        "missingForPass": "the pre-registered G2 experiment (knowledge-guided calibration vs local-only calibration on a held-out era block) has not been run",
+        "asOf": "main e97bcc43 (2026-11-24)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "Show whether a retrieved, provenance- and freshness-checked knowledge item used as a PRIOR for a locally calibrated decision improves that decision on held-out data from a different era, versus the same calibration without the knowledge",
+        "scope": "internal ODG repo only; committed snapshot + local git only (no network); no métier, no VPS/systemd/deploy, no external spend, no Radar code/grant change; G's contract and records untouched",
+        "write_set": [
+          "runtime/bin/odg-v172-scenario-g2-heldout-build.ts",
+          "docs/odg/evidence/V172_G2_HELDOUT.json",
+          "runtime/bin/odg-v172-scenario-g2-experiment.ts",
+          "runtime/bin/odg-v172-scenario-g2-experiment.test.ts",
+          "docs/odg/evidence/V172_G2_EXPERIMENT.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)",
+          "owner V170 « Ne jamais modifier les critères après observation des résultats pour obtenir un PASS »: the outcome is graded only by preRegistration.thresholds on the recorded numbers; FAIL / PARTIAL / NOT_MEASURED are recorded as such",
+          "G (CLOSED_PARTIAL) and H (CLOSED_FAIL) contracts, closures and records are never edited, re-graded or re-run by G2",
+          "the DEV snapshot docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json is never edited (sha256 pinned in preRegistration.dataset.dev.sha256); the held-out block is built only by the pre-registered deterministic rule and never edited after its first build",
+          "a PASS yields at most a DESIGN_PROPOSAL (size-budget advice); no rule, gate or control is changed by G2"
+        ],
+        "acceptance_criteria": [
+          "C1 (knowledge use, as in G): the knowledge item G_SMALL_SIZE is retrieved from the pinned collection docs/odg/evidence/V160_PRACTICES_COLLECTION.json, attested by odg-knowledge-intelligence.attestCollection against docs/odg/evidence/COLLECTION_REGISTRY.json (attested === true), re-assessed in-process (assessClaim → toMemory) with epistemic level SUPPORTED or CORROBORATED, and usableFor(record, \"DESIGN_PROPOSAL\", useAt, { assessment }).authorization === \"DESIGN_PROPOSAL\" at use time (useAt ≤ validUntil); admissible() verdict recorded; any refusal ⇒ outcome NOT_MEASURED",
+          "C2 (pre-registration): metric, baselines, datasets and splits, evaluation method, uncertainty, minimum n, decision rule and thresholds are those fixed in WORK_ITEM_CONTRACT.preRegistration by this revision, BEFORE the held-out block is built and before any G2 metric is computed; the outcome is graded only by preRegistration.thresholds",
+          "C3 (anti-leakage, owner V170 « fuite de données, contamination des étiquettes, sélection opportuniste des métriques »): fitting uses DEV rows only; held-out labels are read only after the fitted thresholds (T_B, T_KG) are frozen and their values recorded; exactly one primary metric and one primary comparison; every other number is labelled report-only; the contamination disclosure in preRegistration.contamination is part of the record",
+          "C4 (independent recomputation, owner V170 « Faire recalculer les résultats par un inspecteur indépendant »): the experiment record is reproducible offline (runner --check) and the grade is validated only after an independent inspector recomputes it"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect"
+        ],
+        "rollback": "git revert of the G2 PRs; evidence files are additive; G/H untouched",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/FAIL/NOT_MEASURED",
+          "independent inspection verdict on the exact head (contract before any run; results recomputed independently after the run)",
+          "CI green on the exact head"
+        ],
+        "preRegistration": {
+          "registeredAt": "2026-11-24 (this revision, branch feat/v172-g2-j2-contracts at base e97bcc43; no G2 builder, runner, held-out file or G2 metric exists at registration)",
+          "lessonsMotivatingG2": {
+            "G": "G (V166, CLOSED_PARTIAL): the published heuristic (1000-line threshold from G_SMALL_SIZE) beat no-knowledge but lost to a TRAIN-fitted threshold — known qualitatively from the coordinator brief and from the G contract text; G's numbers were not opened for this design (see contamination)",
+            "H": "H (V168, CLOSED_FAIL): chronological shift between early and late PRs (G's label counts TRAIN 20/200 vs TEST 100/200 HIGH_ITERATION) — a single chronological split confounds method quality with era"
+          },
+          "question": "does using the knowledge item as a PRIOR on a locally fitted size threshold (knowledge-guided calibration) generalize better to a different era than the same local calibration without the knowledge?",
+          "knowledgeItem": "G_SMALL_SIZE (V160_PRACTICES_COLLECTION.json, Google eng-practices small-cls): « 100 lines is usually a reasonable size for a CL, and 1000 lines is usually too large » — SUPPORTED single official source; prior threshold T_prior = 1000 (log10 = 3)",
+          "decisionProcedure": "flag a change SPLIT_RECOMMENDED iff size > T, size = additions + deletions",
+          "arms": {
+            "B0": "no knowledge, no calibration: no row flagged ⇒ balanced accuracy 0.5 by construction",
+            "B1": "local-only calibration (G's B1): T_B = the size over the distinct training sizes maximizing training balanced accuracy for HIGH_ITERATION; ties ⇒ smallest T",
+            "KG": "knowledge-guided calibration (G2's method): T_KG = argmax over T ∈ (distinct training sizes ∪ {1000}) of [ BA_train(T) − α·| log10(max(T, 1)) − 3 | ], α = 0.05 (a 10× departure from the knowledge prior costs 0.05 balanced accuracy); ties ⇒ T closest to 1000 in |log10 T − 3|, then smallest T",
+            "K_reportOnly": "knowledge only, no calibration: T = 1000 (G's arm) and T = 100 — report-only continuity with G, never decisive"
+          },
+          "outcomeLabel": "HIGH_ITERATION iff commits ≥ 2 (the V160/G/H proxy for fix cycles)",
+          "dataset": {
+            "dev": {
+              "file": "docs/odg/evidence/V160_SCENARIO_G_PR_HISTORY.json",
+              "sha256": "09a1112dd42c6821e030d3ebf2058f2c93f440a28b4ed34aef4f631ac646d9ea",
+              "rows": "the 400 merged PRs #519–#920 with finite additions/deletions/commits, sorted by PR number ascending (same row rule as G)",
+              "role": "DEV ONLY — CONTAMINATED (already analysed by G and H); used for fitting and for the rolling-origin development evaluation, never for the primary grade"
+            },
+            "heldOutPrimary": {
+              "file": "docs/odg/evidence/V172_G2_HELDOUT.json (built at the RUN step by runtime/bin/odg-v172-scenario-g2-heldout-build.ts; deterministic; its sha256 is recorded in the experiment record and recomputed by the inspector with --check — no sha256 can be pinned here because the file must not exist before inspection)",
+              "id": "HB (backward era block)",
+              "rule": "one row per PR number N with 319 ≤ N ≤ 518 whose merge commit M is a first-parent commit of main at e97bcc43 with subject '^Merge pull request #N ' and exactly 2 parents; commits = git rev-list --count M^1..M^2; size = Σ(added + deleted) of git diff --numstat M^1 M (binary '-' ⇒ 0); PR numbers with only a squash commit (subject ending '(#N)', 1 parent) are EXCLUDED as LABEL_NOT_RECOVERABLE_LOCALLY and listed; duplicate subjects for one N ⇒ EXCLUDED AMBIGUOUS and listed",
+              "expectedRows": "168 merge-style + 32 squash-style subjects counted in this range during this revision (subject/parent count only — no label, size or metric computed)",
+              "whyBackward": "it is the only block of the PR history that no committed G/H analysis used and that has n > 100 with locally recoverable labels; the forward block #921–#954 has only 34 rows, so it is report-only (fixed here, before any label is known)"
+            },
+            "heldOutReportOnly": {
+              "id": "HF (forward era block)",
+              "rule": "same rule for 921 ≤ N ≤ 954 (34 merge-style subjects counted, no label read); report-only, never decisive"
+            },
+            "concordanceCheck": "DEV rows whose PR also has a 2-parent 'Merge pull request #N' first-parent commit (70 counted by subject in #519–#920): compare the local-git label and size with the snapshot's. Required: ≥ 30 such rows, HIGH_ITERATION label agreement ≥ 90%, size agreement (|local − snapshot| ≤ max(10 lines, 10%)) ≥ 80% — otherwise local-git measurements are not comparable with the snapshot used for fitting ⇒ NOT_MEASURED",
+            "egress": "NONE — committed snapshot + local git only"
+          },
+          "evaluationMethod": {
+            "development": "pre-registered rolling-origin (expanding window) over DEV only: rows sorted by PR number; origins o ∈ {100, 200, 300}; fit B1 and KG on rows [0, o), evaluate on rows [o, o + 100); a fold is VALID iff its training part has ≥ 5 HIGH and ≥ 5 LOW and its test part ≥ 5 HIGH and ≥ 5 LOW; record per-fold BA(B1), BA(KG), BA(T=1000) and the mean over valid folds of Δ_B,fold = BA(KG) − BA(B1). CONTAMINATED data ⇒ this can only BLOCK a PASS (necessary condition), never grant one",
+            "final": "fit B1 and KG once on all 400 DEV rows; record T_B, T_KG and their sha256 (canonical JSON) BEFORE reading HB labels; evaluate on HB"
+          },
+          "metric": "balanced accuracy (odg-binary-classification-metrics.classificationMetrics, SPLIT_RECOMMENDED vs HIGH_ITERATION) on HB. PRIMARY comparison Δ_B = BA(KG) − BA(B1); gate Δ_0 = BA(KG) − BA(B0) = BA(KG) − 0.5; n, n_HIGH, n_LOW reported",
+          "baseline": "B0 (no knowledge, no calibration) and B1 (local-only calibration, no knowledge) — see arms; the PRIMARY reference is B1",
+          "uncertainty": "paired bootstrap over HB rows (same resample for all arms; fitted thresholds fixed — no refit), 2000 resamples, fixed-seed LCG st = (Math.imul(st, 1664525) + 1013904223) >>> 0 (as in odg-v160-scenario-g-run); index = st % n, seed 20261202; a resample with 0 HIGH or 0 LOW is skipped and counted; CI95 = 2.5/97.5 percentiles of Δ_B and Δ_0",
+          "minimumN": "HB ≥ 20 HIGH_ITERATION and ≥ 20 LOW_ITERATION rows; DEV fit ≥ 10 of each; ≥ 2 VALID rolling-origin folds",
+          "decisionRule": "grade = first matching of NOT_MEASURED, PASS, PARTIAL, FAIL per thresholds, evaluated mechanically on the recorded numbers; no re-tuning of α, prior, candidates, tie rules, label, blocks, folds or seed after the run",
+          "thresholds": {
+            "NOT_MEASURED": "C1 refused at use time; OR DEV sha256 ≠ pinned; OR the held-out builder is not reproducible (--check differs) or violates its rule; OR minimumN not met; OR the concordance check fails; OR > 5% of bootstrap resamples skipped; OR any non-finite number",
+            "PASS": "Δ_B > 0 AND CI95 lower bound of Δ_B > 0 AND Δ_0 ≥ 0.05 AND CI95 lower bound of Δ_0 > 0 AND mean rolling-origin Δ_B ≥ 0",
+            "PARTIAL": "Δ_0 > 0 AND Δ_B ≥ −0.02 AND the PASS conditions are not all met — including T_KG = T_B (Δ_B = 0 exactly, recorded KG_EQUALS_B1: no evidence that the knowledge helps)",
+            "FAIL": "Δ_0 ≤ 0 OR Δ_B < −0.02"
+          },
+          "adoptionDecision": "PASS ⇒ ADOPTION_CANDIDATE (DESIGN_PROPOSAL only, independent inspection must accept — owner V170 « N'adopter une amélioration que si les critères préétablis sont satisfaits et si l'inspection indépendante l'accepte »); PARTIAL / FAIL / NOT_MEASURED ⇒ NOT_ADOPTED",
+          "antiLeakage": {
+            "rule": "the arms, α, prior, candidate set, tie rules, blocks, folds, label, metric and seed are fixed by THIS text before any G2 number exists; the runner passes only DEV rows to the fits, freezes and records T_B / T_KG, and only then reads HB labels; HB is never used for any choice; no feature other than size is used (no PR number, date or author)",
+            "labelContamination": "HB labels come from local git only (commit counts), independent of the knowledge item (an external page) and of any earlier G/H output"
+          },
+          "contamination": {
+            "devKnown": "DEV (#519–#920) is fully contaminated: analysed by the V160 G run (Spearman, size buckets), by G's V166 chronological experiment (outcome known qualitatively: knowledge beat B0, lost to the TRAIN-fitted B1) and by H's V168 experiment on 399 of the same rows; G's split label counts (TRAIN 20/200, TEST 100/200 HIGH_ITERATION) are known from the G contract text",
+            "lookedAtBeforeRegistration": [
+              "the G and H contract entries in V160_AP_WORK_ITEM_CONTRACTS.json (objective, criteria, preRegistration, honestLimits) and the J entry",
+              "the owner records docs/odg/V170_OWNER_AUTHORIZATION_HG.json and docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json",
+              "the coordinator brief's one-line lessons of G and H (qualitative, no numbers)",
+              "first-parent commit subjects and parent counts of origin/main, counted per PR-number range: #319–#518 168 merge / 32 squash; #519–#920 70 merge / 330 squash; #921–#954 34 merge / 0 squash — no commit count, size or label computed",
+              "git log --oneline -12 of main (subjects of #951–#954 show inspection-fix and merge-origin commits ⇒ qualitative knowledge that recent PRs often have ≥ 2 commits; relevant to HF, report-only)",
+              "sha256 of the DEV snapshot (equals G's pinned value)"
+            ],
+            "notLookedAt": "no number of V166_G_EXPERIMENT.json, V160_SCENARIO_G.json or V168_H_EXPERIMENT.json (in particular G's fitted T_B, BAs, CIs, H's AUCs) was opened for this design; no label, size or commit count of any HB or HF row; α = 0.05 and T_prior = 1000 were fixed without computing anything on any data",
+            "residualRisk": "the designer knows the direction of G's result on DEV, so the DEV rolling-origin evaluation is not confirmatory (it can only block); HB is believed unseen by any committed analysis (evidence grep for PR-history files found only the #519–#920 snapshot and its H derivative) — not proven exhaustively"
+          },
+          "honestLimits": [
+            "HB is an EARLIER era (backward), not a forecast: it tests robustness of the calibration to an era shift, not future performance",
+            "HB keeps only merge-style PRs (32 squash-style excluded) — the merge style may correlate with iteration; recorded",
+            "fitting uses GitHub-snapshot sizes while HB uses local-git sizes — guarded by the concordance check, residual measurement shift remains",
+            "the early era may contain few HIGH_ITERATION PRs ⇒ NOT_MEASURED for minimum n is a real possibility, recorded as such (no fallback block)",
+            "≈ 168 HB rows ⇒ wide CI95 on a BA difference; an honest null (PARTIAL/FAIL) is likely",
+            "commit count is a confounded proxy for rework (task size, inspection loop); a PASS is a design proposal, never causation"
+          ],
+          "secondaryRobustness": {
+            "role": "REPORT-ONLY — never part of PASS/PARTIAL/FAIL",
+            "computed": "HF forward block (if ≥ 5 HIGH and ≥ 5 LOW, else NOT_MEASURED there); α ∈ {0.02, 0.10}; K arms T = 1000 and T = 100 on HB; ROC AUC of raw size on HB; per-fold rolling-origin numbers; same bootstrap seed"
+          }
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V170_OWNER_AUTHORIZATION_HG.json#G (V170)",
+        "transcribedBy": "PROVIDER (Claude Code, V17.2 G2/J2 revision session) — verbatim owner quote in authorizedBy",
+        "date": "2026-11-24",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "offline controlled experiments in an isolated scratch, with declared data and outputs, only after an independent inspection ACCEPT of this contract is recorded (owner V170: « Les expériences dans des espaces isolés et contrôlés, avec données et sorties déclarées »; criteria fixed « avant les mesures »)",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v172-scenario-g2-experiment.ts",
+            "args": [
+              "docs/odg/evidence/V172_G2_EXPERIMENT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V172_G2_HELDOUT.json",
+              "docs/odg/evidence/V172_G2_EXPERIMENT.json"
+            ]
+          }
+        }
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.2 G2/J2 contract session; branch feat/v172-g2-j2-contracts)",
+          "authorizedBy": "OWNER (CTO) — directive V170 (docs/odg/V170_OWNER_AUTHORIZATION_HG.json), G clause « Préparer une nouvelle expérience distincte … fixés avant les mesures »",
+          "originalCriteria": [
+            "C1 (revised — replaces the incoherent original C1): every knowledge item used is retrieved from the pinned collection docs/odg/evidence/V160_PRACTICES_COLLECTION.json, which odg-knowledge-intelligence.attestCollection authenticates against docs/odg/evidence/COLLECTION_REGISTRY.json (attested === true), and is re-assessed in-process by assessClaim → toMemory; its epistemic level is SUPPORTED or CORROBORATED; at USE time usableFor(record, \"DESIGN_PROPOSAL\", useAt, { assessment }).authorization === \"DESIGN_PROPOSAL\" (provenance: the record is reproduced from its branded assessment; freshness: useAt ≤ record.validUntil). admissible(record, useAt, { assessment }) is evaluated and its verdict recorded for every item, but admissible().trusted === true is REQUIRED only for an item presented as a FACT (epistemic CORROBORATED and isFact true); a SUPPORTED item is never presented as a fact (its expected verdict is NOT_A_FACT) and the decision it informs is at most a DESIGN_PROPOSAL. Any refusal at use time ⇒ the experiment outcome is NOT_MEASURED (never a default fill).",
+            "C2 (kept, operationalized): used by a real mission decision; utility measured vs the same mission without it — operationally: the decision procedure, metric, baseline (same procedure without the knowledge item), dataset/split, decision rule and PASS/PARTIAL/FAIL thresholds are those fixed in WORK_ITEM_CONTRACT.preRegistration BEFORE any experiment, and the outcome is graded only by preRegistration.thresholds"
+          ],
+          "originalCriteriaNote": "new contract, no original of its own: originalCriteria records the PARENT contract G's acceptance_criteria verbatim (V160_AP_WORK_ITEM_CONTRACTS.json#G, as revised in V166); G's entry itself is not modified",
+          "change": [
+            "new scenario id G2 (owner V171 « Une nouvelle expérience doit avoir un nouvel identifiant et préserver l'historique précédent »; V170 appliesTo a NEW distinct versioned G contract)",
+            "C1 kept from G (same knowledge item and use-time checks); C2 re-targeted: new method KG (knowledge as prior on a local calibration) vs B1 (local-only) as PRIMARY reference, B0 as gate",
+            "evaluation method changed to address H's shift lesson: rolling-origin over DEV (blocking-only) + an unseen era block HB built from local git by a fixed rule",
+            "C3 (anti-leakage / contamination disclosure) and C4 (independent recomputation) added from the owner V170 G clause"
+          ],
+          "justification": "G showed the published heuristic beats no-knowledge but loses to a TRAIN-fitted threshold; H showed a strong chronological shift. The open question owner V170 asks for is a distinct experiment with criteria, metrics, reference, dataset and method fixed before measuring: G2 tests whether the knowledge is useful as a prior (not as a fixed rule) on data that neither G nor H used, with the contamination of DEV disclosed and confined to a blocking-only role.",
+          "priorResultUnchanged": "G CLOSED_PARTIAL and H CLOSED_FAIL — untouched",
+          "revisionAuthorSessionId": "g2j2-reviser-v172"
+        }
+      ]
+    },
+    {
+      "scenario": "J2",
+      "title": "J2 — Gestion d'échec : boucle de stratégie alternative après les correctifs #940 (local, hors ligne, 0 €)",
+      "ownerText": "ODG détecte une stratégie inefficace, arrête les tentatives répétitives, construit une alternative et mesure le résultat.",
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — directive V171 (2026-11-24), docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json: « Cette autorisation couvre les travaux internes nécessaires sur J et les autres missions sélectionnées par ODG. » « Préparation de nouvelles expériences. » « Expériences isolées et reproductibles. » « Ne jamais rouvrir artificiellement une mission déjà clôturée. Une nouvelle expérience doit avoir un nouvel identifiant et préserver l'historique précédent. » « Ne pas modifier les critères après observation des résultats pour obtenir un PASS. » — J2 only, internal, €0; provider spend / delegation launches NOT granted (« Dépenses fournisseurs non déjà autorisées »); J's contract and records untouched.",
+      "parent": {
+        "scenario": "J",
+        "relation": "NEW distinct experiment from docs/odg/evidence/V171_J_DIAGNOSIS.json#j2_protocol (with the #952 inspection LOWs applied); J's contract, evidence (V161_SCENARIO_J.json) and grade are not modified, re-graded or re-run"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "new contract: no J2 runner or result exists at registration. Parent J is PROPOSED/PARTIAL (V161_SCENARIO_J.json: 0/8 default, 0/8 alternative passes); that is context, not J2's status",
+        "evidence": [],
+        "missingForPass": "the pre-registered J2 runs (A0 stop ⇒ A1/A2 alternatives on 4 replication + 7 held-out tasks) have not been executed",
+        "asOf": "main e97bcc43 (2026-11-24)"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "After an ODG repetitive-failure stop on a real local task, execute a pre-registered alternative strategy (decomposition + escalated local tier on the localized failure) and measure it against the default on the same tasks, including held-out tasks",
+        "scope": "internal repo only; loopback Ollama 127.0.0.1:11434 only; model-generated code only inside the bwrap native-build sandbox; €0; 0 provider calls; no delegation beyond CREATED; no network egress; no change to canonical modules; no métier, no VPS/systemd/deploy; J's contract and records untouched",
+        "write_set": [
+          "runtime/bin/odg-v172-scenario-j2-run.ts",
+          "runtime/bin/odg-v172-scenario-j2-run.test.ts",
+          "docs/odg/evidence/V172_J2_EXPERIMENT.json"
+        ],
+        "authorized_symbols": [],
+        "invariants": [
+          "Boussole V12.4 unchanged",
+          "Truth Lock 928 verified",
+          "no second orchestrator/scheduler/radar/memory/decision engine",
+          "provider work never counted as ODG-native",
+          "simulation ≠ test ≠ demonstration ≠ real operation (labelled)",
+          "owner V171 « Ne pas modifier les critères après observation des résultats pour obtenir un PASS »: graded only by preRegistration.thresholds; FAIL / PARTIAL / NOT_MEASURED recorded as such",
+          "owner V171 « Ne pas confondre un budget de réparation interne avec une autorisation de dépense externe »: maxRepair / local tier are internal repair budget; 0 provider calls, the 8 J delegation records stay CREATED",
+          "J's contract, V161_SCENARIO_J.json and its grade are never edited or re-graded by J2",
+          "canonical modules (odg-intelligent-native-cycle, odg-decomposed-execution, native-project-builder, odg-native-build-sandbox) are composed, never modified; the runner adds no freezing or verification seam of its own"
+        ],
+        "acceptance_criteria": [
+          "C1 stop trigger: every row records A0's stop name verbatim from the native-project-builder outcome; an alternative runs only after an ODG stop (NO_PROGRESS_IDENTICAL_REGENERATION or REPAIR_BUDGET_EXHAUSTED); rows without one run no alternative (fail-closed); NO_QUALIFIED_LOCAL_MODEL is recorded as a policy decision, never counted as a stop",
+          "C2 executed: each alternative's executionStatus is EXECUTED in the sandbox; NOT_RUN rows are NOT_MEASURED and excluded from pass counts",
+          "C3 same oracle: primary outcome = the task's ORIGINAL whole-task independent test (same oracle for every arm), pass counts per arm with n",
+          "C4 control: A0 on the 4 replication tasks at seed 42 reproduces J's default stop and verdict (V161_SCENARIO_J.json); a mismatch is reported as environment drift and caps the grade at PARTIAL",
+          "C5 €0: 0 provider calls; no delegation record transitions past CREATED; only 127.0.0.1:11434 contacted — asserted in the evidence",
+          "C6 retention: every generated file is retained as sha256 + source in the evidence; every prompt is retained by sha256"
+        ],
+        "stop_conditions": [
+          "requires an owner-gated action (systemd, egress widening, spend, gate signature)",
+          "evidence cannot be produced without fabrication",
+          "independent inspection REJECTs twice on the same defect",
+          "Ollama not reachable on loopback ⇒ NOT_RUN (no fallback)",
+          "sandbox probe fails ⇒ NOT_RUN",
+          "a hard cap is hit ⇒ stop, remainder NOT_MEASURED"
+        ],
+        "rollback": "git revert of the J2 PRs; evidence files are additive; J untouched",
+        "evidence_required": [
+          "initial + final Truth Lock",
+          "scenario evidence JSON with HEAD, commands, measurements, honest PASS/PARTIAL/FAIL/NOT_MEASURED",
+          "independent inspection verdict on the exact head (contract before any run; results recomputed independently after the run)",
+          "CI green on the exact head"
+        ],
+        "preRegistration": {
+          "registeredAt": "2026-11-24 (this revision, branch feat/v172-g2-j2-contracts at base e97bcc43; no J2 runner or J2 result exists at registration)",
+          "protocolSource": "docs/odg/evidence/V171_J_DIAGNOSIS.json#j2_protocol (sha256 c553a2ca0cdfe2b73c2b664c6656fcfc79824811b1a0d30488ac95cefa680be0) — adopted with these changes: file names V171_* ⇒ V172_* (match the GO evidence paths), main hypothesis + grading rule + rerun-alone control fixed here, #952 inspection LOWs applied (A1/A2 = no expected outputs in prompts, NOT equal-information; failure-conditional held-out selection stated as a limit)",
+          "question": "after ODG stops a failing default strategy on a real local task, does the decomposed + escalated-local-tier alternative (A2) turn held-out failures into whole-task passes?",
+          "dataset": {
+            "taskCorpus": {
+              "file": "runtime/bin/native-hard-corpus.ts",
+              "sha256": "2ad9fca555d1678c3031f097c0e3929d846e80670209c4b2dadb37b34e18e250",
+              "use": "HARD_TASKS definitions + original whole-task tests (oracles)"
+            },
+            "parseRangeTask": {
+              "file": "runtime/bin/odg-v161-scenario-j-run.ts",
+              "use": "v159-implement-parse-range task definition as used by J (read, not modified)"
+            },
+            "replication": [
+              "rle-codec",
+              "csv-typed-validator",
+              "range-clamp-pipeline",
+              "v159-implement-parse-range"
+            ],
+            "heldOut": [
+              "number-stats-suite",
+              "word-metrics",
+              "grade-report",
+              "roman-codec",
+              "bank-ledger",
+              "voting-tally",
+              "temperature-pipeline"
+            ],
+            "heldOutBasis": {
+              "file": "docs/odg/evidence/V159_NATIVE_BUILD_ISOLATION.json",
+              "sha256": "94c7eb999cea757443db398aef3721f95ae089b3c525468f34c08dbd3d650e8b",
+              "fact": "each held-out task REJECTED with REPAIR_BUDGET_EXHAUSTED at 3b/maxRepair 1 there and NOT used in J (failure-conditional selection — see honestLimits)"
+            },
+            "controlReference": {
+              "file": "docs/odg/evidence/V161_SCENARIO_J.json",
+              "sha256": "11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff"
+            },
+            "refusal": "the runner refuses (NOT_MEASURED) if any pinned sha256 differs at run time"
+          },
+          "decoding": {
+            "temperature": 0,
+            "seeds": [
+              42,
+              7
+            ],
+            "num_predict": 600,
+            "primarySeed": 42,
+            "note": "two seeds give non-identical repeats; still NOT a statistical sample"
+          },
+          "arms": {
+            "A0": "default (control): odg-intelligent-native-cycle.runIntelligentCycle exactly as J (policy as chosen; expected PROBE 3b / maxRepair 1)",
+            "A1": "canonical decomposed, NO EXPECTED OUTPUTS IN PROMPTS: odg-decomposed-execution.runDecomposed (post-#940, its own verified-file freezing), same model / maxRepair as A0, generic repair hints only (no repairExamples). NOT equal-information: decomposed arms still gate on per-module task-author oracles — an extra verification signal vs A0",
+            "A2": "A1, then ONLY the first failing sub-problem re-run at the policy max-local tier (qwen2.5-coder:7b, maxRepair 3) on top of the frozen verified parts; generic hints only; NOT equal-information (same reason as A1)",
+            "A3_reportOnly": "A2 + structured repairExamples for all sub-problems (labelled NOT equal-information) — reported separately, never pooled with A0–A2, never decisive",
+            "A4_reportOnly": "single-file 7b / maxRepair 3 on v159-implement-parse-range only (RC-7) — never decisive"
+          },
+          "trigger": "an alternative runs only if A0 (same task, same seed) ends with NO_PROGRESS_IDENTICAL_REGENERATION or REPAIR_BUDGET_EXHAUSTED recorded by native-project-builder",
+          "hypothesis": {
+            "main": "H1 (fixed now, decisive): with seed 42, A2 is accepted by the task's ORIGINAL whole-task test on at least 2 of the ELIGIBLE held-out tasks E (E = held-out tasks where A0@42 ended with an ODG stop and A2@42 is EXECUTED; |E| ≤ 7)",
+            "refutedIf": "A2@42 accepted on 0 or 1 task of E (with |E| ≥ 4)",
+            "secondaryReportOnly": [
+              "H2 (RC-4): on the replication tasks, A1's failing report.js exports a non-function (object) in ≥ 1 run; refuted if every retained failing report.js exports a function",
+              "H3: A1 reproduces J's decomposed verdict pattern on the replication tasks at seed 42; refuted if any replication sub-problem verdict differs"
+            ]
+          },
+          "metric": "per arm and seed: whole-task independent-test pass count over E (primary: A2@42) with n = |E|; per-task rows with stop name, executionStatus, model calls",
+          "baseline": "A0@42 (fails on every task of E by construction of the trigger) and the RERUN-ALONE control A0@7 on E (does a second default attempt with another seed pass as often? — guards against regression to the mean from failure-conditional selection); A1@42 reported to attribute the gain to escalation vs decomposition",
+          "uncertainty": "no statistical claim (n ≤ 7, temperature 0); exact counts; the one-sided exact sign test of A2@42 vs A0@7 discordant pairs on E is reported only",
+          "minimumN": "|E| ≥ 4",
+          "decisionRule": "grade = first matching of NOT_MEASURED, PASS, PARTIAL, FAIL per thresholds, evaluated mechanically on the recorded rows; no change of tasks, arms, seeds, caps, oracle or hints after any run",
+          "thresholds": {
+            "NOT_MEASURED": "Ollama unreachable or sandbox probe fails (NOT_RUN); OR any pinned sha256 differs; OR |E| < 4; OR a hard cap is hit before every A0@42, A2@42 and A0@7 held-out row is measured; OR any C5 violation (provider call, delegation past CREATED, non-loopback contact) — run invalid, recorded as an incident; OR a generated file is not retained (C6)",
+            "PASS": "A2@42 passes on ≥ 2 tasks of E AND A2@42 passes on strictly more tasks of E than A0@7 AND C4 reproduced on all 4 replication tasks",
+            "PARTIAL": "A2@42 passes on exactly 1 task of E; OR ≥ 2 but the rerun-alone control or C4 is not satisfied",
+            "FAIL": "A2@42 passes on 0 tasks of E"
+          },
+          "adoptionDecision": "PASS ⇒ the A2 alternative becomes an ADOPTION CANDIDATE for the failure loop (wiring it into the default cycle is OUT of J2's scope); otherwise NOT_ADOPTED",
+          "caps": {
+            "perTrialWallMs": 1800000,
+            "maxModelCallsTotal": 600,
+            "maxRepairCeiling": 3,
+            "note": "hard caps; exceeding one stops the run with NOT_MEASURED for the remainder — no unbounded loop"
+          },
+          "antiLeakage": {
+            "prompts": "A0–A2 prompts carry no expected output of the acceptance inputs (generic hints only); the runner records every prompt's sha256 and asserts that no oracle expected-output literal of length ≥ 4 appears in an A0–A2 prompt (violation ⇒ that row NOT_MEASURED)",
+            "oracle": "the whole-task test is the task's ORIGINAL test, identical for all arms, read only after generation"
+          },
+          "contamination": {
+            "known": "J's results (V161_SCENARIO_J.json summary: default 0/8, alternatives 0/8, 8 CREATED delegation records) and the V171 diagnosis are known to the designer; the held-out tasks' A0-type failures at 3b/maxRepair 1 (V159) are known — that is their selection basis",
+            "lookedAtBeforeRegistration": [
+              "docs/odg/evidence/V171_J_DIAGNOSIS.json (j2_protocol, honestLimits, nextAction)",
+              "the J contract entry",
+              "task ids grep in runtime/bin/native-hard-corpus.ts and odg-v161-scenario-j-run.ts (ids only)",
+              "sha256 of the pinned files"
+            ],
+            "notLookedAt": "no A1/A2/A3 output on any held-out task exists; no model was run for this design"
+          },
+          "honestLimits": [
+            "failure-conditional selection: the held-out tasks were chosen BECAUSE they failed at 3b/maxRepair 1 in V159 — any J2 gain is subject to regression to the mean; the A0@7 rerun-alone control mitigates, does not remove, this",
+            "A1/A2 are NOT equal-information vs A0 (per-module task-author oracles); a PASS shows the decomposed-escalated loop works under that extra signal",
+            "n small; temperature 0 ⇒ near-deterministic repeats; no statistical claim",
+            "task oracles authored by the provider (task-author oracle)",
+            "shared host ⇒ wall time confounded; comparisons on pass counts only",
+            "VERIFIED in-repo ≠ DEPLOYED"
+          ]
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json (V171)",
+        "transcribedBy": "PROVIDER (Claude Code, V17.2 G2/J2 revision session) — verbatim owner quote in authorizedBy",
+        "date": "2026-11-24",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "isolated, reproducible, loopback-only (127.0.0.1:11434) experiments at €0 with 0 provider calls, only after an independent inspection ACCEPT of this contract is recorded (owner V171: « Expériences isolées et reproductibles »; provider spend not granted: « Dépenses fournisseurs non déjà autorisées »)",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v172-scenario-j2-run.ts",
+            "args": [
+              "docs/odg/evidence/V172_J2_EXPERIMENT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V172_J2_EXPERIMENT.json"
+            ]
+          }
+        }
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.2 G2/J2 contract session; branch feat/v172-g2-j2-contracts)",
+          "authorizedBy": "OWNER (CTO) — directive V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json): internal work on J, « Préparation de nouvelles expériences », new id required",
+          "originalCriteria": [
+            "stop triggered by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
+            "alternative (decomposition / different model / repair depth) actually executed",
+            "outcome compared on the same task and recorded with n"
+          ],
+          "originalCriteriaNote": "new contract, no original of its own: originalCriteria records the PARENT contract J's acceptance_criteria verbatim (V160_AP_WORK_ITEM_CONTRACTS.json#J); J's entry itself is not modified",
+          "change": [
+            "new scenario id J2 (owner V171: new experiment ⇒ new id, history preserved)",
+            "J's three criteria kept in meaning and operationalized as C1 (stop trigger, now including REPAIR_BUDGET_EXHAUSTED as J's actual stop), C2 (alternative executed) and C3 (same oracle, with n); C4 control, C5 €0 and C6 retention added from the j2_protocol",
+            "main hypothesis H1 (A2 ≥ 2 eligible held-out passes at seed 42), grading thresholds, minimum n and the A0@7 rerun-alone control fixed before any run",
+            "#952 inspection LOWs applied: A1/A2 'no expected outputs in prompts', NOT equal-information; failure-conditional held-out selection stated as a limit",
+            "file names V171_* ⇒ V172_* to match the GO authorization-evidence paths; write_set lists every file the run writes"
+          ],
+          "justification": "J's alternatives were executed but all failed (0/8) and two canonical defects were fixed afterwards (#940); the V171 diagnosis proposes J2 to measure the alternative loop after those fixes on replication and held-out tasks. Owner V171 covers this internal €0 work but requires a new id, unchanged history and criteria fixed before results; this contract fixes them before any run.",
+          "priorResultUnchanged": "J PROPOSED / initialState PARTIAL; V161_SCENARIO_J.json — untouched",
+          "revisionAuthorSessionId": "g2j2-reviser-v172"
+        }
+      ]
     }
   ]
 }
