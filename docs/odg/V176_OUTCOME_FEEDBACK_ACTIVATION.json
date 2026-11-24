@@ -12,14 +12,19 @@
     "issuer": "OWNER (CTO)",
     "quote": "Rétroaction des résultats sur les scores : j'autorise désormais son développement et son activation contrôlée. Utiliser uniquement des résultats mesurés et attribuables, conserver l'historique des scores, rendre les changements traçables et réversibles. Ne jamais transformer une hypothèse ou une simulation en preuve réelle.",
     "liftsRule": "« Ne pas modifier les scores » — lifted ONLY for this controlled, measured, attributable, traceable and reversible feedback",
-    "recordNote": "the owner record is created by another provider session (branch fix/v176-qctr2-resolution); while it is absent on a tree OFB-ACT-1 rests on this verbatim quote, and once present it MUST contain the quote or the feedback is OFF"
+    "recordNote": "owner record merged on main (#991); OFB-ACT-1 verifies it contains the quote verbatim (PRESENT_QUOTE_MATCH)"
   },
-  "adjustmentsSha256": "7248ad5784c8f3396b2fc41300e17c48ba5fe80886f5aebdce7777cdd9952ebc",
+  "adjustmentsSha256": "0b964894a5a90de1d46bc7655210c88f6e4aed3beb048839037263e7325afb44",
   "layerRecord": "docs/odg/evidence/V176_OUTCOME_FEEDBACK.json",
   "history": "docs/odg/evidence/V176_OUTCOME_FEEDBACK_HISTORY.jsonl",
   "consumers": [
     "runtime/bin/odg-strategic-select.ts (loadSources → sources.outcomeFeedback)",
     "runtime/core/odg-go-cycle.ts selectorOptions(state) (GO SELECT / actionable / NEXT_SELECTION)"
   ],
-  "recordedBy": "technical provider (Claude Code) — PROVIDER_CONTRACT: transcription + mechanical binding only"
+  "recordedBy": "technical provider (Claude Code) — PROVIDER_CONTRACT: transcription + mechanical binding only",
+  "rebinding": {
+    "from": "7248ad5784c8f3396b2fc41300e17c48ba5fe80886f5aebdce7777cdd9952ebc",
+    "to": "0b964894a5a90de1d46bc7655210c88f6e4aed3beb048839037263e7325afb44",
+    "reason": "#994 inspection REJECT of the base-rate rule OFB-CAL-1 (not attribution) ⇒ OFB-CAL-2 (varying values AND |Spearman ρ| ≥ 0.5, n ≥ 5); under OFB-CAL-2 NO criterion is attributable at this tree ⇒ every multiplier 1 ⇒ register byte-identical to the base register; history entry #1 (OFB-CAL-1) kept, #2 records this rebinding"
+  }
 }

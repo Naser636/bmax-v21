@@ -53,22 +53,30 @@ function main(): void {
   check("no attributable selection-time prediction ⇒ REFUSED", OFB.admitOutcome(outcome("Y", "PASS", { a: 1 }, { prediction: { basis: "NOT_MEASURED", criteria: {}, source: ["x"] } })).admitted === false);
   check("a well-formed inspected, bound closure grade is ADMITTED", OFB.admitOutcome(outcome("OK", "PARTIAL", { a: 1 })).admitted === true);
 
-  // --- calibration (OFB-CAL-1): min-n, cap, determinism ---
+  // --- attribution (OFB-CAL-2): constant ⇒ ×1, measured signed association ⇒ bounded multiplier, min-n, determinism ---
   const withProbe = five().concat([probe]);
   const r = OFB.computeAdjustments(withProbe, CRIT);
   check("PROBE offered alongside real outcomes: listed in refused, absent from admitted", r.refused.some((x: any) => x.id === "P") && !r.admitted.some((x: any) => x.id === "P") && r.admitted.length === 5);
   const pa = r.perCriterion.find((p: any) => p.criterion === "a");
-  check("n = 5 ≥ MIN_N ⇒ ADJUSTED: bias = mean fav 0.5 − mean utility 0.3 = 0.2 ⇒ ×0.8", pa.status === "ADJUSTED" && pa.n === 5 && pa.bias === 0.2 && pa.multiplier === 0.8);
+  check("CONSTANT selection-time values (0.5 on all 5) ⇒ NOT_ATTRIBUTABLE ×1 even though mean fav ≠ mean utility (the rejected base-rate shift)", pa.status === "NOT_ATTRIBUTABLE" && pa.why === "CONSTANT_VALUES" && pa.multiplier === 1 && !("a" in r.multipliers));
+  const pc = r.perCriterion.find((p: any) => p.criterion === "cost");
+  check("varying values + measured positive ρ (0.790569 ≥ RHO_MIN) ⇒ ADJUSTED ×(1 + CAP·ρ) = 1.1581", pc.status === "ADJUSTED" && pc.spearman.rho === 0.790569 && pc.multiplier === 1.1581);
   const pr = r.perCriterion.find((p: any) => p.criterion === "rare");
-  check("n = 2 < MIN_N ⇒ BELOW_MIN_N, multiplier 1, reported, not in multipliers", pr.status === "BELOW_MIN_N" && pr.multiplier === 1 && !("rare" in r.multipliers) && pr.n === 2);
+  check("n = 2 < MIN_N ⇒ NOT_ATTRIBUTABLE BELOW_MIN_N, multiplier 1, not in multipliers", pr.status === "NOT_ATTRIBUTABLE" && pr.why === "BELOW_MIN_N" && pr.multiplier === 1 && !("rare" in r.multipliers) && pr.n === 2);
   const four = OFB.computeAdjustments(five().slice(0, 4), CRIT);
   check("min-n gate: 4 admitted items ⇒ NO criterion adjusted (empty multipliers)", Object.keys(four.multipliers).length === 0 && four.perCriterion.every((p: any) => p.multiplier === 1));
-  const hi = OFB.computeAdjustments([1, 2, 3, 4, 5].map((i) => outcome("Z" + i, "FAIL", { a: 1, cost: 0, rare: null })), CRIT);
-  const ha = hi.perCriterion.find((p: any) => p.criterion === "a");
-  check("cap: bias 1 ⇒ multiplier clamped to 1 − CAP (0.8), capped flagged", ha.multiplier === 1 - OFB.CAP && ha.capped === true);
-  const lo = OFB.computeAdjustments([1, 2, 3, 4, 5].map((i) => outcome("W" + i, "PASS", { a: 0, cost: 1, rare: null })), CRIT);
-  check("cap: bias −1 ⇒ multiplier clamped to 1 + CAP (1.2)", lo.perCriterion.find((p: any) => p.criterion === "a").multiplier === 1 + OFB.CAP);
-  check("every multiplier within [1 − CAP, 1 + CAP]", [r, hi, lo].every((x: any) => Object.values(x.multipliers).every((m: any) => m >= 1 - OFB.CAP && m <= 1 + OFB.CAP)));
+  const G5 = ["FAIL", "FAIL", "PARTIAL", "PARTIAL", "PASS"];
+  const pos = OFB.computeAdjustments(G5.map((g, i) => outcome("Q" + i, g, { a: i / 4, cost: 0.5, rare: null })), CRIT);
+  const neg = OFB.computeAdjustments(G5.map((g, i) => outcome("Q" + i, g, { a: 1 - i / 4, cost: 0.5, rare: null })), CRIT);
+  const pp = pos.perCriterion.find((p: any) => p.criterion === "a"), pn = neg.perCriterion.find((p: any) => p.criterion === "a");
+  check("sign determines direction: ρ > 0 ⇒ ×>1, ρ < 0 ⇒ ×<1, symmetric", pp.multiplier > 1 && pn.multiplier < 1 && Number((pp.multiplier + pn.multiplier).toFixed(4)) === 2);
+  check("magnitude bounded: every multiplier within [1 − CAP, 1 + CAP]", [r, pos, neg].every((x: any) => Object.values(x.multipliers).every((m: any) => m >= 1 - OFB.CAP && m <= 1 + OFB.CAP)));
+  const weak = OFB.computeAdjustments(["FAIL", "PASS", "FAIL", "PASS", "PARTIAL"].map((g, i) => outcome("V" + i, g, { a: i / 4, cost: 0.5, rare: null })), CRIT);
+  const pw = weak.perCriterion.find((p: any) => p.criterion === "a");
+  check("varying values but |ρ| < RHO_MIN ⇒ NOT_ATTRIBUTABLE NO_MEASURED_ASSOCIATION ×1", pw.status === "NOT_ATTRIBUTABLE" && pw.why === "NO_MEASURED_ASSOCIATION" && Math.abs(pw.spearman.rho) < OFB.RHO_MIN && pw.multiplier === 1);
+  const flat = OFB.computeAdjustments([0, 1, 2, 3, 4].map((i) => outcome("K" + i, "FAIL", { a: i / 4, cost: 0.5, rare: null })), CRIT);
+  check("constant realized grades ⇒ ρ undefined ⇒ NOT_ATTRIBUTABLE ×1", flat.perCriterion.find((p: any) => p.criterion === "a").why === "NO_MEASURED_ASSOCIATION" && Object.keys(flat.multipliers).length === 0);
+  check("no attributable criterion ⇒ selectorOptions returns base even when ACTIVE (byte-identical register)", OFB.selectorOptions({ weights: {} }, { state: { active: true }, multipliers: { a: 1 } }).scoreMultipliers === undefined);
   const r2 = OFB.computeAdjustments(withProbe.slice().reverse(), CRIT);
   check("deterministic: reversed input ⇒ byte-identical result + same adjustments sha", JSON.stringify(r) === JSON.stringify(r2) && r.adjustmentsSha256 === r2.adjustmentsSha256);
   check("NOT_MEASURED predictions are counted as notMeasuredOn, never imputed", pr.notMeasuredOn.join() === "B,C,E" && pr.observations.every((o: any) => typeof o.predictedValue === "number"));
@@ -97,7 +105,7 @@ function main(): void {
   ];
   const dBase = SEL.selectNextExplained(cands, base);
   check("selector without multipliers ⇒ byte-identical to the pre-V17.6 call (no new fields)", JSON.stringify(dBase) === JSON.stringify(SEL.selectNextExplained(cands, { ...base })) && !/baseEvidenceScore|scoreAdjustment|multiplier/.test(JSON.stringify(dBase)));
-  const mult = { a: 1.2, cost: 0.8 };
+  const mult = { a: 1.2, cost: 0.8 };   // direct selector test (multiplier mechanics), independent of OFB-CAL-2
   const dAdj = SEL.selectNextExplained(cands, { ...base, scoreMultipliers: mult });
   const x1 = dAdj.ranking.find((x: any) => x.id === "X1"), x1b = dBase.ranking.find((x: any) => x.id === "X1");
   check("active ⇒ ranked row keeps baseEvidenceScore = the base score, scoreDelta = adjusted − base", x1.baseEvidenceScore === x1b.evidenceScore && x1.scoreDelta === Number((x1.evidenceScore - x1.baseEvidenceScore).toFixed(4)) && x1.evidenceScore !== x1b.evidenceScore);
@@ -141,7 +149,7 @@ function main(): void {
   check("V176_OUTCOME_FEEDBACK.json is byte-identical to a fresh computation (--check)", committedTxt === BIN.text(rec));
   check("real: no PROBE among admitted; every committed *_PROBE_*.json listed as refused", rec.admission.admitted.every((a: any) => !/PROBE/.test(a.validation)) && fs.readdirSync(path.join(root, "docs/odg/evidence")).filter((f: string) => /_PROBE_\d+\.json$/.test(f)).every((f: string) => rec.admission.refused.some((x: any) => x.validation === `docs/odg/evidence/${f}`)));
   check("real: admitted = CLOSE-1 graded items only (G, G2, H, J2, V175-NB1 at this tree)", rec.admission.admitted.map((a: any) => `${a.id}=${a.grade}`).join() === "G=PARTIAL,G2=PARTIAL,H=FAIL,J2=FAIL,V175-NB1=PASS");
-  check("real: criteria below MIN_N are not adjusted (7 of 10 at n ≤ 2)", rec.perCriterion.filter((p: any) => p.status !== "ADJUSTED").length === 7 && rec.perCriterion.filter((p: any) => p.status !== "ADJUSTED").every((p: any) => p.multiplier === 1));
+  check("real (OFB-CAL-2): every criterion NOT_ATTRIBUTABLE at this tree — autonomyBenefit constant, costRiskComplexity / evidenceLevel |ρ| < RHO_MIN, the rest below MIN_N ⇒ empty multipliers", rec.perCriterion.every((p: any) => p.status === "NOT_ATTRIBUTABLE" && p.multiplier === 1) && Object.keys(rec.adjustmentsCanonical.multipliers).length === 0 && rec.perCriterion.find((p: any) => p.criterion === "autonomyBenefit").why === "CONSTANT_VALUES");
   check("real: history chain valid and its last entry matches the activation state", BIN.checkHistory(root, rec) === null);
   const sources = SS.loadSources(root);
   const fbFiles = new Set([OFB.ACTIVATION_REL, OFB.LAYER_REL, OFB.OWNER_RECORD]);
@@ -151,10 +159,10 @@ function main(): void {
   const baseRec = JSON.stringify(SS.compute(baseSources)), offRec = JSON.stringify(SS.compute(offSources));
   check("ROLLBACK: feedback OFF ⇒ register record byte-identical to the base register (no feedback code path)", baseRec === offRec && !/baseEvidenceScore|outcomeFeedback/.test(offRec));
   const committedReg = JSON.parse(fs.readFileSync(path.join(root, SS.OUT_REL), "utf8"));
-  if (rec.activation.active === true) {
+  if (rec.activation.active === true && Object.values(rec.adjustmentsCanonical.multipliers).some((m: any) => m !== 1)) {
     check("active: committed register decision = layer's ADJUSTED strategic decision", committedReg.decisionRecord.selected === rec.decisions.strategic.adjusted.selected && committedReg.decisionRecord.decision === rec.decisions.strategic.adjusted.decision);
     check("active: committed register ranking carries baseEvidenceScore equal to the layer's base scores", rec.scores.every((s: any) => { const row = committedReg.decision.ranking.find((x: any) => x.id === s.id); return !row || (row.baseEvidenceScore === s.baseScore && row.evidenceScore === s.adjustedScore); }));
-  } else check("inactive: committed register equals the base computation", JSON.stringify((({ generatedAtHead, ...x }: any) => x)(committedReg)) === baseRec);
+  } else check("inactive OR active-with-all-multipliers-1: committed register equals the base computation (byte-identical)", JSON.stringify((({ generatedAtHead, ...x }: any) => x)(committedReg)) === baseRec);
 
   process.stdout.write(failures ? `\n${failures} FAILED\n` : "\nall passed\n");
   if (failures) process.exit(1);

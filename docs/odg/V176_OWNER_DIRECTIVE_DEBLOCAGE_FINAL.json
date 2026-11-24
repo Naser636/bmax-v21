@@ -1,0 +1,24 @@
+{
+  "//": "OWNER directive record — verbatim transcription by the PROVIDER (Claude Code) of EXCERPTS of the owner CTO directive « V176 : DÉBLOCAGE FINAL ET ACHÈVEMENT DE LA ROADMAP » (2026-11-24) as relayed to the provider by the coordinating session. Only the relayed quotes below are recorded; the rest of the directive is NOT in this record (NOT_MEASURED). Grants nothing beyond the quoted text.",
+  "schema": "odg-owner-authorization/1",
+  "directive": "CTO — V176 : DÉBLOCAGE FINAL ET ACHÈVEMENT DE LA ROADMAP",
+  "date": "2026-11-24",
+  "issuer": "OWNER (CTO)",
+  "source": "owner directive relayed by the coordinating session (excerpts of items 1–4 and one limit clause); full text not stored in the repository",
+  "item1": {
+    "quote": "Q-CTR2 : résoudre la question à partir de la Boussole canonique V12.4, des contrats et des preuves existantes. Enregistrer la résolution et lever le blocage si les éléments sont cohérents."
+  },
+  "item2": {
+    "quote": "2. J : autoriser son passage de PROPOSED à AUTHORIZED. GO peut le sélectionner et l'exécuter selon son contrat, dès que les conditions requises sont conformes. Une seule exécution initiale, avec résultat enregistré honnêtement."
+  },
+  "item3": {
+    "quote": "3. Rétroaction des résultats sur les scores : j'autorise désormais son développement et son activation contrôlée. Utiliser uniquement des résultats mesurés et attribuables, conserver l'historique des scores, rendre les changements traçables et réversibles. Ne jamais transformer une hypothèse ou une simulation en preuve réelle."
+  },
+  "item4": {
+    "quote": "4. PR #976 : retrouver la cause et la trace de sa fermeture. Résoudre ce point à partir de l'état réel du dépôt. Ne rouvrir que si cela est techniquement nécessaire."
+  },
+  "limits": {
+    "quote": "Aucun déploiement en production, dépense, engagement externe ou appel payant non autorisé."
+  },
+  "consumedBy": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json#ownerQuestions[id=Q-CTR2].v176Derivation (item 1); items 2–4 are cited by other work items"
+}
