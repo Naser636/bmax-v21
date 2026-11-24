@@ -28,7 +28,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "0cc298b7adbe630f2d98a0d2d880482689fd44abcbaa63a4c80a5bbf96b88dec"
+      "sha256": "1edd9e03e90b3f1730ed902722961cca1d9d8991caa566ca3265d0d01e0189f5"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -55,8 +55,8 @@
       "sha256": "a5537e9d2a8708e8e99d9b726b45a51c5850b39445444798b79a6426cd1b1c37"
     },
     {
-      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json",
-      "sha256": "8e28176b0052a790fa66cd1e47883dad4646869e13dc3b65635576342bb9935b"
+      "source": "docs/odg/evidence/V176_CHECKPOINT_12.json",
+      "sha256": "5b2a93ef1fb53314ae4f1c524f4e9531e673609102f830169c7f101820105e51"
     },
     {
       "source": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_EVIDENCE.json",
@@ -64,15 +64,15 @@
     }
   ],
   "counts": {
-    "signals": 52,
+    "signals": 46,
     "byVerdict": {
-      "REFUSED": 32,
-      "OWNER_GATED": 5,
-      "PROPOSED": 15
+      "REFUSED": 30,
+      "OWNER_GATED": 3,
+      "PROPOSED": 13
     },
-    "proposals": 20,
-    "ownerGated": 5,
-    "reinforcingExisting": 7,
+    "proposals": 16,
+    "ownerGated": 3,
+    "reinforcingExisting": 3,
     "ignored": 6
   },
   "signals": [
@@ -153,9 +153,9 @@
         "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
       },
       "gate": {
-        "verdict": "REFUSED",
+        "verdict": "PROPOSED",
         "reasons": [
-          "DUPLICATE"
+          "admissible (INSUFFICIENTLY_VALIDATED, INTERNAL_IMPROVEMENT) — NOT YET authorized to execute; a score is not an authorization"
         ],
         "authorized": false,
         "executed": false
@@ -1274,7 +1274,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[6]"
       ],
-      "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V174_CHECKPOINT_11.json (LCP-1)",
+      "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V176_CHECKPOINT_12.json (LCP-1)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-3",
@@ -2245,9 +2245,169 @@
     {
       "origin": "OPEN_GAP",
       "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[0]"
+        "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[0]"
       ],
-      "statement": "4 register criteria NOT_MEASURED for every item ⇒ selector DECISION_REQUIRED by uncertainty (build in progress: native criteria measurement)",
+      "statement": "NB2: ODG-designed repair not yet achieved (local-model capability vs pipeline; lesson/prompt budget; per-call timeout)",
+      "claimStatus": "OBSERVED",
+      "before": {
+        "name": "checkpoint.openGap",
+        "value": "OPEN"
+      },
+      "id": "RB-UNMAPPED-OPEN_GAP-94b75d4f",
+      "link": {
+        "rule": "LINK-1",
+        "matched": false
+      },
+      "ownerGatedKind": null,
+      "targetComponents": [],
+      "multiplier": {
+        "perComponent": [],
+        "maxDirectConsumers": null,
+        "maxTransitiveDependents": null,
+        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
+      },
+      "gate": {
+        "verdict": "REFUSED",
+        "reasons": [
+          "EXPIRED_OR_UNDATED_SIGNAL",
+          "NO_COMPONENT_ATTACHED"
+        ],
+        "authorized": false,
+        "executed": false
+      },
+      "assess": {
+        "ageDays": null,
+        "fresh": false,
+        "corroboration": "UNCORROBORATED"
+      },
+      "qualification": "INTERNAL_IMPROVEMENT"
+    },
+    {
+      "origin": "OPEN_GAP",
+      "sources": [
+        "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[1]"
+      ],
+      "statement": "odg-canonical-json undefined gap (inspector MED) — callers not migrated",
+      "claimStatus": "OBSERVED",
+      "before": {
+        "name": "checkpoint.openGap",
+        "value": "OPEN"
+      },
+      "id": "RB-UNMAPPED-OPEN_GAP-78b1e249",
+      "link": {
+        "rule": "LINK-1",
+        "matched": false
+      },
+      "ownerGatedKind": null,
+      "targetComponents": [],
+      "multiplier": {
+        "perComponent": [],
+        "maxDirectConsumers": null,
+        "maxTransitiveDependents": null,
+        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
+      },
+      "gate": {
+        "verdict": "REFUSED",
+        "reasons": [
+          "EXPIRED_OR_UNDATED_SIGNAL",
+          "NO_COMPONENT_ATTACHED"
+        ],
+        "authorized": false,
+        "executed": false
+      },
+      "assess": {
+        "ageDays": null,
+        "fresh": false,
+        "corroboration": "UNCORROBORATED"
+      },
+      "qualification": "INTERNAL_IMPROVEMENT"
+    },
+    {
+      "origin": "OPEN_GAP",
+      "sources": [
+        "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[2]"
+      ],
+      "statement": "radar-source-admission stable() shallow (pinned evidence chain; LOW follow-up)",
+      "claimStatus": "OBSERVED",
+      "before": {
+        "name": "checkpoint.openGap",
+        "value": "OPEN"
+      },
+      "id": "RB-UNMAPPED-OPEN_GAP-f79e462c",
+      "link": {
+        "rule": "LINK-1",
+        "matched": false
+      },
+      "ownerGatedKind": null,
+      "targetComponents": [],
+      "multiplier": {
+        "perComponent": [],
+        "maxDirectConsumers": null,
+        "maxTransitiveDependents": null,
+        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
+      },
+      "gate": {
+        "verdict": "REFUSED",
+        "reasons": [
+          "EXPIRED_OR_UNDATED_SIGNAL",
+          "NO_COMPONENT_ATTACHED"
+        ],
+        "authorized": false,
+        "executed": false
+      },
+      "assess": {
+        "ageDays": null,
+        "fresh": false,
+        "corroboration": "UNCORROBORATED"
+      },
+      "qualification": "INTERNAL_IMPROVEMENT"
+    },
+    {
+      "origin": "OPEN_GAP",
+      "sources": [
+        "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[3]"
+      ],
+      "statement": "keyless ledger full-rewrite inherent",
+      "claimStatus": "OBSERVED",
+      "before": {
+        "name": "checkpoint.openGap",
+        "value": "OPEN"
+      },
+      "id": "RB-UNMAPPED-OPEN_GAP-4a75a49f",
+      "link": {
+        "rule": "LINK-1",
+        "matched": false
+      },
+      "ownerGatedKind": null,
+      "targetComponents": [],
+      "multiplier": {
+        "perComponent": [],
+        "maxDirectConsumers": null,
+        "maxTransitiveDependents": null,
+        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
+      },
+      "gate": {
+        "verdict": "REFUSED",
+        "reasons": [
+          "EXPIRED_OR_UNDATED_SIGNAL",
+          "NO_COMPONENT_ATTACHED"
+        ],
+        "authorized": false,
+        "executed": false
+      },
+      "assess": {
+        "ageDays": null,
+        "fresh": false,
+        "corroboration": "UNCORROBORATED"
+      },
+      "qualification": "INTERNAL_IMPROVEMENT"
+    },
+    {
+      "origin": "OPEN_GAP",
+      "sources": [
+        "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[4]"
+      ],
+      "statement": "4 register criteria NOT_MEASURED (honest; #968 lesson)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "checkpoint.openGap",
@@ -2283,14 +2443,15 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
+          "EXPIRED_OR_UNDATED_SIGNAL",
           "DUPLICATE"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
-        "fresh": true,
+        "ageDays": null,
+        "fresh": false,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -2298,654 +2459,20 @@
     {
       "origin": "OPEN_GAP",
       "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[1]"
+        "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[5]"
       ],
-      "statement": "native code construction by ODG merged = 0",
+      "statement": "22/59 items without a provable boussoleRef",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "checkpoint.openGap",
         "value": "OPEN"
       },
-      "id": "RB-NATIVE-CODE-CONSTRUCTION",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "key": "RB-NATIVE-CODE-CONSTRUCTION"
-      },
-      "ownerGatedKind": null,
-      "targetComponents": [
-        "odg-native-repair-item",
-        "odg-go-cycle"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-native-repair-item",
-            "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
-          },
-          {
-            "component": "odg-go-cycle",
-            "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
-          }
-        ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "REFUSED",
-        "reasons": [
-          "DUPLICATE"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OPEN_GAP",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[2]"
-      ],
-      "statement": "integration (merge) still by the coordinating session",
-      "claimStatus": "OBSERVED",
-      "before": {
-        "name": "checkpoint.openGap",
-        "value": "OPEN"
-      },
-      "id": "CP8-GAP-8-integrateResult",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "duplicateOf": {
-          "kind": "REGISTER_ITEM",
-          "id": "CP8-GAP-8-integrateResult"
-        }
-      },
-      "ownerGatedKind": null,
-      "targetComponents": [
-        "odg-strategic-register"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-strategic-register",
-            "inCoreGraph": true,
-            "directConsumers": 2,
-            "transitiveDependents": 2
-          }
-        ],
-        "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "REFUSED",
-        "reasons": [
-          "DUPLICATE"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OPEN_GAP",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[3]"
-      ],
-      "statement": "cryptographic inspector identity (declared session ids only)",
-      "claimStatus": "OBSERVED",
-      "before": {
-        "name": "checkpoint.openGap",
-        "value": "OPEN"
-      },
-      "id": "CP8-GAP-7-validateIndependently",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "duplicateOf": {
-          "kind": "REGISTER_ITEM",
-          "id": "CP8-GAP-7-validateIndependently"
-        }
-      },
-      "ownerGatedKind": null,
-      "targetComponents": [
-        "odg-strategic-register"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-strategic-register",
-            "inCoreGraph": true,
-            "directConsumers": 2,
-            "transitiveDependents": 2
-          }
-        ],
-        "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "REFUSED",
-        "reasons": [
-          "DUPLICATE"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OPEN_GAP",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[4]"
-      ],
-      "statement": "dispatched child stdout/stderr discarded (no diagnostics on failure, LOW #965)",
-      "claimStatus": "OBSERVED",
-      "before": {
-        "name": "checkpoint.openGap",
-        "value": "OPEN"
-      },
-      "id": "RB-DISPATCH-DIAGNOSTICS",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "key": "RB-DISPATCH-DIAGNOSTICS"
-      },
-      "ownerGatedKind": null,
-      "targetComponents": [
-        "odg-go-cycle",
-        "runtime/bin/odg-go.ts"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-go-cycle",
-            "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
-          },
-          {
-            "component": "runtime/bin/odg-go.ts",
-            "inCoreGraph": false,
-            "directConsumers": null,
-            "transitiveDependents": null,
-            "note": "outside the runtime/core import graph ⇒ NOT_MEASURED"
-          }
-        ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "PROPOSED",
-        "reasons": [
-          "admissible (INSUFFICIENTLY_VALIDATED, INTERNAL_IMPROVEMENT) — NOT YET authorized to execute; a score is not an authorization"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OPEN_GAP",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[5]"
-      ],
-      "statement": "claim store keyed to --repo common dir (LOW #966)",
-      "claimStatus": "OBSERVED",
-      "before": {
-        "name": "checkpoint.openGap",
-        "value": "OPEN"
-      },
-      "id": "RB-GO-CLAIM-STORE-KEY",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "key": "RB-GO-CLAIM-STORE-KEY"
-      },
-      "ownerGatedKind": null,
-      "targetComponents": [
-        "odg-go-cycle",
-        "runtime/bin/odg-go.ts"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-go-cycle",
-            "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
-          },
-          {
-            "component": "runtime/bin/odg-go.ts",
-            "inCoreGraph": false,
-            "directConsumers": null,
-            "transitiveDependents": null,
-            "note": "outside the runtime/core import graph ⇒ NOT_MEASURED"
-          }
-        ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "PROPOSED",
-        "reasons": [
-          "admissible (INSUFFICIENTLY_VALIDATED, INTERNAL_IMPROVEMENT) — NOT YET authorized to execute; a score is not an authorization"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OPEN_GAP",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[6]"
-      ],
-      "statement": "setsid grandchild escapes the dispatch process group (disclosed)",
-      "claimStatus": "OBSERVED",
-      "before": {
-        "name": "checkpoint.openGap",
-        "value": "OPEN"
-      },
-      "id": "RB-DISPATCH-PROCESS-GROUP",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "key": "RB-DISPATCH-PROCESS-GROUP"
-      },
-      "ownerGatedKind": null,
-      "targetComponents": [
-        "odg-go-cycle",
-        "runtime/bin/odg-go.ts"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-go-cycle",
-            "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
-          },
-          {
-            "component": "runtime/bin/odg-go.ts",
-            "inCoreGraph": false,
-            "directConsumers": null,
-            "transitiveDependents": null,
-            "note": "outside the runtime/core import graph ⇒ NOT_MEASURED"
-          }
-        ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "PROPOSED",
-        "reasons": [
-          "admissible (INSUFFICIENTLY_VALIDATED, INTERNAL_IMPROVEMENT) — NOT YET authorized to execute; a score is not an authorization"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OPEN_GAP",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[7]"
-      ],
-      "statement": "provider launch without verifiable spend ceiling",
-      "claimStatus": "OBSERVED",
-      "before": {
-        "name": "checkpoint.openGap",
-        "value": "OPEN"
-      },
-      "id": "CP8-GAP-4-authorizeProvider",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "duplicateOf": {
-          "kind": "REGISTER_ITEM",
-          "id": "CP8-GAP-4-authorizeProvider"
-        }
-      },
-      "ownerGatedKind": null,
-      "targetComponents": [
-        "odg-strategic-register"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-strategic-register",
-            "inCoreGraph": true,
-            "directConsumers": 2,
-            "transitiveDependents": 2
-          }
-        ],
-        "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "REFUSED",
-        "reasons": [
-          "DUPLICATE"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OWNER_DECISION",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[0]"
-      ],
-      "statement": "J: strategic selection is SELECTED (J) but its contract is PROPOSED — the open owner step is PROPOSED → AUTHORIZED",
-      "claimStatus": "OBSERVED",
-      "ownerGatedKind": "owner_decision",
-      "before": {
-        "name": "checkpoint.ownerDecisionOpen",
-        "value": "OPEN"
-      },
-      "id": "J",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "duplicateOf": {
-          "kind": "REGISTER_ITEM",
-          "id": "J"
-        }
-      },
-      "targetComponents": [
-        "odg-strategic-register"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-strategic-register",
-            "inCoreGraph": true,
-            "directConsumers": 2,
-            "transitiveDependents": 2
-          }
-        ],
-        "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "REFUSED",
-        "reasons": [
-          "DUPLICATE"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OWNER_DECISION",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[1]"
-      ],
-      "statement": "V15.0 adoption / contradictions CTR-1..4",
-      "claimStatus": "OBSERVED",
-      "ownerGatedKind": "owner_decision",
-      "before": {
-        "name": "checkpoint.ownerDecisionOpen",
-        "value": "OPEN"
-      },
-      "id": "RB-OWNER-V150-ADOPTION",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "key": "RB-OWNER-V150-ADOPTION"
-      },
-      "targetComponents": [
-        "odg-governance-precedence"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-governance-precedence",
-            "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
-          }
-        ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "OWNER_GATED",
-        "reasons": [
-          "requires owner authorization: owner_decision"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OWNER_DECISION",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[2]"
-      ],
-      "statement": "GitHub AUP §6/§7",
-      "claimStatus": "OBSERVED",
-      "ownerGatedKind": "owner_decision",
-      "before": {
-        "name": "checkpoint.ownerDecisionOpen",
-        "value": "OPEN"
-      },
-      "id": "RB-OWNER-RADAR-SOURCES",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "key": "RB-OWNER-RADAR-SOURCES"
-      },
-      "targetComponents": [
-        "odg-radar-source-admission"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-radar-source-admission",
-            "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
-          }
-        ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "OWNER_GATED",
-        "reasons": [
-          "requires owner authorization: owner_decision"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OWNER_DECISION",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[3]"
-      ],
-      "statement": "8 deferred Radar sources + per-host pacing",
-      "claimStatus": "OBSERVED",
-      "ownerGatedKind": "owner_decision",
-      "before": {
-        "name": "checkpoint.ownerDecisionOpen",
-        "value": "OPEN"
-      },
-      "id": "RB-OWNER-RADAR-SOURCES",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "key": "RB-OWNER-RADAR-SOURCES"
-      },
-      "targetComponents": [
-        "odg-radar-source-admission"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-radar-source-admission",
-            "inCoreGraph": true,
-            "directConsumers": 0,
-            "transitiveDependents": 0
-          }
-        ],
-        "maxDirectConsumers": 0,
-        "maxTransitiveDependents": 0,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "REFUSED",
-        "reasons": [
-          "DUPLICATE"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OWNER_DECISION",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[4]"
-      ],
-      "statement": "provider spend ceiling",
-      "claimStatus": "OBSERVED",
-      "ownerGatedKind": "owner_decision",
-      "before": {
-        "name": "checkpoint.ownerDecisionOpen",
-        "value": "OPEN"
-      },
-      "id": "CP8-GAP-4-authorizeProvider",
-      "link": {
-        "rule": "LINK-1",
-        "matched": true,
-        "duplicateOf": {
-          "kind": "REGISTER_ITEM",
-          "id": "CP8-GAP-4-authorizeProvider"
-        }
-      },
-      "targetComponents": [
-        "odg-strategic-register"
-      ],
-      "multiplier": {
-        "perComponent": [
-          {
-            "component": "odg-strategic-register",
-            "inCoreGraph": true,
-            "directConsumers": 2,
-            "transitiveDependents": 2
-          }
-        ],
-        "maxDirectConsumers": 2,
-        "maxTransitiveDependents": 2,
-        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
-      },
-      "gate": {
-        "verdict": "REFUSED",
-        "reasons": [
-          "DUPLICATE"
-        ],
-        "authorized": false,
-        "executed": false
-      },
-      "assess": {
-        "ageDays": 0,
-        "fresh": true,
-        "corroboration": "UNCORROBORATED"
-      },
-      "qualification": "INTERNAL_IMPROVEMENT"
-    },
-    {
-      "origin": "OWNER_DECISION",
-      "sources": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[5]"
-      ],
-      "statement": "gate 10/12 signature",
-      "claimStatus": "OBSERVED",
-      "ownerGatedKind": "owner_decision",
-      "before": {
-        "name": "checkpoint.ownerDecisionOpen",
-        "value": "OPEN"
-      },
-      "id": "RB-UNMAPPED-OWNER_DECISION-6c3f8383",
+      "id": "RB-UNMAPPED-OPEN_GAP-4533aab9",
       "link": {
         "rule": "LINK-1",
         "matched": false
       },
+      "ownerGatedKind": null,
       "targetComponents": [],
       "multiplier": {
         "perComponent": [],
@@ -2956,14 +2483,95 @@
       "gate": {
         "verdict": "REFUSED",
         "reasons": [
+          "EXPIRED_OR_UNDATED_SIGNAL",
           "NO_COMPONENT_ATTACHED"
         ],
         "authorized": false,
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
-        "fresh": true,
+        "ageDays": null,
+        "fresh": false,
+        "corroboration": "UNCORROBORATED"
+      },
+      "qualification": "INTERNAL_IMPROVEMENT"
+    },
+    {
+      "origin": "OPEN_GAP",
+      "sources": [
+        "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[6]"
+      ],
+      "statement": "merge integration still by the coordinating session",
+      "claimStatus": "OBSERVED",
+      "before": {
+        "name": "checkpoint.openGap",
+        "value": "OPEN"
+      },
+      "id": "RB-UNMAPPED-OPEN_GAP-477194f2",
+      "link": {
+        "rule": "LINK-1",
+        "matched": false
+      },
+      "ownerGatedKind": null,
+      "targetComponents": [],
+      "multiplier": {
+        "perComponent": [],
+        "maxDirectConsumers": null,
+        "maxTransitiveDependents": null,
+        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
+      },
+      "gate": {
+        "verdict": "REFUSED",
+        "reasons": [
+          "EXPIRED_OR_UNDATED_SIGNAL",
+          "NO_COMPONENT_ATTACHED"
+        ],
+        "authorized": false,
+        "executed": false
+      },
+      "assess": {
+        "ageDays": null,
+        "fresh": false,
+        "corroboration": "UNCORROBORATED"
+      },
+      "qualification": "INTERNAL_IMPROVEMENT"
+    },
+    {
+      "origin": "OPEN_GAP",
+      "sources": [
+        "docs/odg/evidence/V176_CHECKPOINT_12.json#openGaps[7]"
+      ],
+      "statement": "PR time: 84% rework after opening (Radar finding RB-PRE-OPEN-SELF-INSPECTION)",
+      "claimStatus": "OBSERVED",
+      "before": {
+        "name": "checkpoint.openGap",
+        "value": "OPEN"
+      },
+      "id": "RB-UNMAPPED-OPEN_GAP-4092609d",
+      "link": {
+        "rule": "LINK-1",
+        "matched": false
+      },
+      "ownerGatedKind": null,
+      "targetComponents": [],
+      "multiplier": {
+        "perComponent": [],
+        "maxDirectConsumers": null,
+        "maxTransitiveDependents": null,
+        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
+      },
+      "gate": {
+        "verdict": "REFUSED",
+        "reasons": [
+          "EXPIRED_OR_UNDATED_SIGNAL",
+          "NO_COMPONENT_ATTACHED"
+        ],
+        "authorized": false,
+        "executed": false
+      },
+      "assess": {
+        "ageDays": null,
+        "fresh": false,
         "corroboration": "UNCORROBORATED"
       },
       "qualification": "INTERNAL_IMPROVEMENT"
@@ -3312,11 +2920,83 @@
     "testReport (no committed failing/stale test report: NOT_MEASURED, not assumed green)"
   ],
   "inFlightBuilds": [
-    "IN_FLIGHT:native-criteria-measurement",
     "V175-NB2"
   ],
-  "knownKeysCount": 61,
+  "knownKeysCount": 60,
   "proposals": [
+    {
+      "id": "IN_FLIGHT:native-criteria-measurement",
+      "verdict": "PROPOSED",
+      "status": "PROPOSED",
+      "requiresOwnerAuthorization": false,
+      "ownerReason": null,
+      "components": [
+        "odg-strategic-register"
+      ],
+      "signalCount": 10,
+      "criteria": {
+        "autonomyBenefit": {
+          "status": "NOT_MEASURED",
+          "value": null,
+          "rule": "RB-0",
+          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
+        },
+        "capabilityGain": {
+          "status": "NOT_MEASURED",
+          "value": null,
+          "rule": "RB-0",
+          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
+        },
+        "blockerRepetitionReduction": {
+          "status": "MEASURED",
+          "value": 1,
+          "rule": "RB-BLK",
+          "basis": "n=10 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
+        },
+        "reliabilityQuality": {
+          "status": "NOT_MEASURED",
+          "value": null,
+          "rule": "RB-0",
+          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
+        },
+        "speedEfficiency": {
+          "status": "NOT_MEASURED",
+          "value": null,
+          "rule": "RB-0",
+          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
+        },
+        "reusability": {
+          "status": "MEASURED",
+          "value": 0.5,
+          "rule": "RB-REU",
+          "basis": "max direct consumers of the target components = 2 (n/4 scale)"
+        },
+        "strategicValue": {
+          "status": "NOT_MEASURED",
+          "value": null,
+          "rule": "RB-0",
+          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
+        },
+        "costRiskComplexity": {
+          "status": "MEASURED",
+          "value": 0.2,
+          "rule": "CRC-1",
+          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
+        },
+        "dependencyAvailability": {
+          "status": "NOT_MEASURED",
+          "value": null,
+          "rule": "RB-0",
+          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
+        },
+        "evidenceLevel": {
+          "status": "MEASURED",
+          "value": 0.5,
+          "rule": "RB-EVD",
+          "basis": "k=2 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
+        }
+      }
+    },
     {
       "id": "RB-CANON-CALLER-MIGRATION",
       "verdict": "OWNER_GATED",
@@ -3375,154 +3055,6 @@
         "costRiskComplexity": {
           "status": "MEASURED",
           "value": 0.8,
-          "rule": "CRC-1",
-          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
-        },
-        "dependencyAvailability": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "evidenceLevel": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-EVD",
-          "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
-        }
-      }
-    },
-    {
-      "id": "RB-DISPATCH-DIAGNOSTICS",
-      "verdict": "PROPOSED",
-      "status": "PROPOSED",
-      "requiresOwnerAuthorization": false,
-      "ownerReason": null,
-      "components": [
-        "odg-go-cycle",
-        "runtime/bin/odg-go.ts"
-      ],
-      "signalCount": 1,
-      "criteria": {
-        "autonomyBenefit": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "capabilityGain": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "blockerRepetitionReduction": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-BLK",
-          "basis": "n=1 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
-        },
-        "reliabilityQuality": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "speedEfficiency": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "reusability": {
-          "status": "MEASURED",
-          "value": 0,
-          "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 0 (n/4 scale)"
-        },
-        "strategicValue": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "costRiskComplexity": {
-          "status": "MEASURED",
-          "value": 0.8,
-          "rule": "CRC-1",
-          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
-        },
-        "dependencyAvailability": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "evidenceLevel": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-EVD",
-          "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
-        }
-      }
-    },
-    {
-      "id": "RB-DISPATCH-PROCESS-GROUP",
-      "verdict": "PROPOSED",
-      "status": "PROPOSED",
-      "requiresOwnerAuthorization": false,
-      "ownerReason": null,
-      "components": [
-        "odg-go-cycle",
-        "runtime/bin/odg-go.ts"
-      ],
-      "signalCount": 1,
-      "criteria": {
-        "autonomyBenefit": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "capabilityGain": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "blockerRepetitionReduction": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-BLK",
-          "basis": "n=1 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
-        },
-        "reliabilityQuality": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "speedEfficiency": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "reusability": {
-          "status": "MEASURED",
-          "value": 0,
-          "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 0 (n/4 scale)"
-        },
-        "strategicValue": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "costRiskComplexity": {
-          "status": "MEASURED",
-          "value": 0.5,
           "rule": "CRC-1",
           "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
         },
@@ -3688,14 +3220,14 @@
       }
     },
     {
-      "id": "RB-GO-CLAIM-STORE-KEY",
+      "id": "RB-NATIVE-CODE-CONSTRUCTION",
       "verdict": "PROPOSED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": false,
       "ownerReason": null,
       "components": [
-        "odg-go-cycle",
-        "runtime/bin/odg-go.ts"
+        "odg-native-repair-item",
+        "odg-go-cycle"
       ],
       "signalCount": 1,
       "criteria": {
@@ -3743,7 +3275,7 @@
         },
         "costRiskComplexity": {
           "status": "MEASURED",
-          "value": 0.6,
+          "value": 0.8,
           "rule": "CRC-1",
           "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
         },
@@ -3758,80 +3290,6 @@
           "value": 0.25,
           "rule": "RB-EVD",
           "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
-        }
-      }
-    },
-    {
-      "id": "RB-NATIVE-CODE-CONSTRUCTION",
-      "verdict": "PROPOSED",
-      "status": "PROPOSED",
-      "requiresOwnerAuthorization": false,
-      "ownerReason": null,
-      "components": [
-        "odg-native-repair-item",
-        "odg-go-cycle"
-      ],
-      "signalCount": 2,
-      "criteria": {
-        "autonomyBenefit": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "capabilityGain": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "blockerRepetitionReduction": {
-          "status": "MEASURED",
-          "value": 0.5,
-          "rule": "RB-BLK",
-          "basis": "n=2 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
-        },
-        "reliabilityQuality": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "speedEfficiency": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "reusability": {
-          "status": "MEASURED",
-          "value": 0,
-          "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 0 (n/4 scale)"
-        },
-        "strategicValue": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "costRiskComplexity": {
-          "status": "MEASURED",
-          "value": 0.8,
-          "rule": "CRC-1",
-          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
-        },
-        "dependencyAvailability": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "evidenceLevel": {
-          "status": "MEASURED",
-          "value": 0.5,
-          "rule": "RB-EVD",
-          "basis": "k=2 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
         }
       }
     },
@@ -3984,152 +3442,6 @@
     },
     {
       "id": "RB-OWNER-Q-CTR2",
-      "verdict": "OWNER_GATED",
-      "status": "PROPOSED",
-      "requiresOwnerAuthorization": true,
-      "ownerReason": "requires owner authorization: owner_decision",
-      "components": [
-        "odg-governance-precedence"
-      ],
-      "signalCount": 1,
-      "criteria": {
-        "autonomyBenefit": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "capabilityGain": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "blockerRepetitionReduction": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-BLK",
-          "basis": "n=1 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
-        },
-        "reliabilityQuality": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "speedEfficiency": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "reusability": {
-          "status": "MEASURED",
-          "value": 0,
-          "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 0 (n/4 scale)"
-        },
-        "strategicValue": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "costRiskComplexity": {
-          "status": "MEASURED",
-          "value": 0.7,
-          "rule": "CRC-1",
-          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
-        },
-        "dependencyAvailability": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "evidenceLevel": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-EVD",
-          "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
-        }
-      }
-    },
-    {
-      "id": "RB-OWNER-RADAR-SOURCES",
-      "verdict": "OWNER_GATED",
-      "status": "PROPOSED",
-      "requiresOwnerAuthorization": true,
-      "ownerReason": "requires owner authorization: owner_decision",
-      "components": [
-        "odg-radar-source-admission"
-      ],
-      "signalCount": 2,
-      "criteria": {
-        "autonomyBenefit": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "capabilityGain": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "blockerRepetitionReduction": {
-          "status": "MEASURED",
-          "value": 0.5,
-          "rule": "RB-BLK",
-          "basis": "n=2 independent signal(s) map to this improvement (repetition; BLK-2 n/4 scale)"
-        },
-        "reliabilityQuality": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "speedEfficiency": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "reusability": {
-          "status": "MEASURED",
-          "value": 0,
-          "rule": "RB-REU",
-          "basis": "max direct consumers of the target components = 0 (n/4 scale)"
-        },
-        "strategicValue": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "costRiskComplexity": {
-          "status": "MEASURED",
-          "value": 0.7,
-          "rule": "CRC-1",
-          "basis": "CRC-1 applied verbatim to the PROPOSED draft (write_set is an ESTIMATE ⇒ the size term is an estimate)"
-        },
-        "dependencyAvailability": {
-          "status": "NOT_MEASURED",
-          "value": null,
-          "rule": "RB-0",
-          "reason": "no committed evidence measures this criterion for an internal-improvement proposal (cost/benefit unknown ⇒ NOT_MEASURED, never a default)"
-        },
-        "evidenceLevel": {
-          "status": "MEASURED",
-          "value": 0.25,
-          "rule": "RB-EVD",
-          "basis": "k=1 distinct committed source files cite this improvement (EVD-1 n/4 scale)"
-        }
-      }
-    },
-    {
-      "id": "RB-OWNER-V150-ADOPTION",
       "verdict": "OWNER_GATED",
       "status": "PROPOSED",
       "requiresOwnerAuthorization": true,
@@ -4795,50 +4107,10 @@
   ],
   "reinforcesExisting": [
     {
-      "existing": "CP8-GAP-4-authorizeProvider",
-      "kind": "REGISTER_ITEM_OR_CONTRACT",
-      "signals": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[7]",
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[4]"
-      ]
-    },
-    {
       "existing": "CP8-GAP-7-validateIndependently",
       "kind": "REGISTER_ITEM_OR_CONTRACT",
       "signals": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[3]",
         "docs/odg/evidence/V175_NB1_CRITERIA_VALIDATION.json#limits[2]"
-      ]
-    },
-    {
-      "existing": "CP8-GAP-8-integrateResult",
-      "kind": "REGISTER_ITEM_OR_CONTRACT",
-      "signals": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[2]"
-      ]
-    },
-    {
-      "existing": "IN_FLIGHT:native-criteria-measurement",
-      "kind": "IN_FLIGHT_BUILD",
-      "signals": [
-        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.autonomyBenefit",
-        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.capabilityGain",
-        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.blockerRepetitionReduction",
-        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reliabilityQuality",
-        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.speedEfficiency",
-        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reusability",
-        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.strategicValue",
-        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.costRiskComplexity",
-        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability",
-        "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[6]",
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#openGaps[0]"
-      ]
-    },
-    {
-      "existing": "J",
-      "kind": "REGISTER_ITEM_OR_CONTRACT",
-      "signals": [
-        "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[0]"
       ]
     },
     {
@@ -4859,10 +4131,17 @@
   "selection": {
     "decision": "DECISION_REQUIRED",
     "selected": null,
-    "proposed": "RB-OUTCOME-FEEDBACK-TO-SCORING",
+    "proposed": "IN_FLIGHT:native-criteria-measurement",
     "tiedSet": [],
-    "justification": "'RB-OUTCOME-FEEDBACK-TO-SCORING' leads on measured evidence but the decision is not robust; OWNER/ODG decision required",
+    "justification": "'IN_FLIGHT:native-criteria-measurement' leads on measured evidence but the decision is not robust; OWNER/ODG decision required",
     "ranking": [
+      {
+        "id": "IN_FLIGHT:native-criteria-measurement",
+        "evidenceScore": 0.28,
+        "uncertainty": 0.6,
+        "upperBound": 0.88,
+        "autoSelectable": true
+      },
       {
         "id": "RB-OUTCOME-FEEDBACK-TO-SCORING",
         "evidenceScore": 0.215,
@@ -4934,38 +4213,10 @@
         "autoSelectable": true
       },
       {
-        "id": "RB-NATIVE-CODE-CONSTRUCTION",
-        "evidenceScore": 0.12,
-        "uncertainty": 0.6,
-        "upperBound": 0.72,
-        "autoSelectable": true
-      },
-      {
         "id": "RB-EXT-JIDOKA-STOP-ON-DEFECT",
         "evidenceScore": 0.115,
         "uncertainty": 0.6,
         "upperBound": 0.715,
-        "autoSelectable": true
-      },
-      {
-        "id": "RB-OWNER-RADAR-SOURCES",
-        "evidenceScore": 0.105,
-        "uncertainty": 0.6,
-        "upperBound": 0.705,
-        "autoSelectable": false
-      },
-      {
-        "id": "RB-DISPATCH-PROCESS-GROUP",
-        "evidenceScore": 0.1,
-        "uncertainty": 0.6,
-        "upperBound": 0.7,
-        "autoSelectable": true
-      },
-      {
-        "id": "RB-GO-CLAIM-STORE-KEY",
-        "evidenceScore": 0.09,
-        "uncertainty": 0.6,
-        "upperBound": 0.69,
         "autoSelectable": true
       },
       {
@@ -4990,14 +4241,7 @@
         "autoSelectable": false
       },
       {
-        "id": "RB-OWNER-V150-ADOPTION",
-        "evidenceScore": 0.08,
-        "uncertainty": 0.6,
-        "upperBound": 0.68,
-        "autoSelectable": false
-      },
-      {
-        "id": "RB-DISPATCH-DIAGNOSTICS",
+        "id": "RB-NATIVE-CODE-CONSTRUCTION",
         "evidenceScore": 0.07,
         "uncertainty": 0.6,
         "upperBound": 0.67,
@@ -5009,6 +4253,635 @@
   "top": [
     {
       "rank": 1,
+      "id": "IN_FLIGHT:native-criteria-measurement",
+      "evidenceScore": 0.28,
+      "uncertainty": 0.6,
+      "upperBound": 0.88,
+      "tiedWith": [],
+      "rankNote": null,
+      "contract": {
+        "id": "IN_FLIGHT:native-criteria-measurement",
+        "kind": "WORK_ITEM_CONTRACT_DRAFT",
+        "state": "PROPOSED",
+        "authorizedBy": null,
+        "objective": "NOT_DERIVED: no declared objective for IN_FLIGHT:native-criteria-measurement",
+        "source": {
+          "directive": "owner CTO directive V176 2026-11-24 §4 (Radar → construction)",
+          "signals": [
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.autonomyBenefit",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.capabilityGain",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.blockerRepetitionReduction",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reliabilityQuality",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.speedEfficiency",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reusability",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.strategicValue",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.costRiskComplexity",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability",
+            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[6]"
+          ]
+        },
+        "scope": "improve odg-strategic-register only; no Radar egress, no spend, no canonical-authority change",
+        "write_set": {
+          "estimate": true,
+          "paths": [],
+          "basis": "provider-declared LINK-1 guess — an ESTIMATE to be confirmed when the contract is authored; NOT an authorized write_set"
+        },
+        "acceptance_criteria": [
+          "tsc clean; each touched test file passes run one at a time",
+          "the before-metric is recomputed from committed evidence and compared (MEASURE/LEARN)"
+        ],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network / no spend / no protected path"
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an owner question blocks"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ],
+        "multiplier": {
+          "perComponent": [
+            {
+              "component": "odg-strategic-register",
+              "inCoreGraph": true,
+              "directConsumers": 2,
+              "transitiveDependents": 2
+            }
+          ],
+          "maxDirectConsumers": 2,
+          "maxTransitiveDependents": 2,
+          "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)",
+          "rationale": "a change to odg-strategic-register reaches ≤ 2 transitive dependents (2 direct) — reach, not benefit"
+        },
+        "ownerGate": {
+          "required": false,
+          "status": "PROPOSED_AWAITING_AUTHORIZATION",
+          "reason": [
+            "admissible (INSUFFICIENTLY_VALIDATED, INTERNAL_IMPROVEMENT) — NOT YET authorized to execute; a score is not an authorization"
+          ]
+        },
+        "governance": {
+          "classes": [],
+          "radarStagePaths": [],
+          "anchorIfRadarStage": null,
+          "v150Campaign": false
+        },
+        "measure": {
+          "before": [
+            {
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.autonomyBenefit",
+              "name": "register.autonomyBenefit.notMeasuredItems",
+              "value": 35,
+              "of": 60,
+              "items": [
+                "V150-AI4",
+                "V150-AI5",
+                "V150-OG01",
+                "V150-OG02",
+                "V150-OG03",
+                "V150-OG04",
+                "V150-OG05",
+                "V150-OG06",
+                "V150-OG07",
+                "V150-OG08",
+                "V150-OG09",
+                "V150-OG10",
+                "V150-OG11",
+                "V150-OG12",
+                "V150-OG13",
+                "V150-OG14",
+                "CP8-GAP-1-selectNextMission",
+                "CP8-GAP-2-setPriorities",
+                "CP8-GAP-3-chooseMode",
+                "CP8-GAP-4-authorizeProvider",
+                "CP8-GAP-5-superviseExecution",
+                "CP8-GAP-6-recoverResults",
+                "CP8-GAP-7-validateIndependently",
+                "CP8-GAP-8-integrateResult",
+                "CP8-GAP-9-chooseFollowing",
+                "CP8-GAP-executedPartialMapping",
+                "CP8-GAP-canonicalDefectsJ",
+                "MC-CR-APPROVAL-STANDARD",
+                "MC-CR-LATENCY",
+                "MC-SMALL-CHANGES",
+                "MC-REVIEW-FOCUS",
+                "MC-PEER-REVIEW-EVERY-PR",
+                "MC-CI-BEFORE-REVIEW",
+                "MC-MERGE-QUEUE",
+                "MC-LESSONS-LEARNED"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.capabilityGain",
+              "name": "register.capabilityGain.notMeasuredItems",
+              "value": 48,
+              "of": 60,
+              "items": [
+                "A",
+                "B",
+                "E",
+                "I",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "G2",
+                "J2",
+                "V175-NB1",
+                "V175-NB2",
+                "V150-AI4",
+                "V150-AI5",
+                "V150-OG01",
+                "V150-OG02",
+                "V150-OG03",
+                "V150-OG04",
+                "V150-OG05",
+                "V150-OG06",
+                "V150-OG07",
+                "V150-OG08",
+                "V150-OG09",
+                "V150-OG10",
+                "V150-OG11",
+                "V150-OG12",
+                "V150-OG13",
+                "V150-OG14",
+                "CP8-GAP-1-selectNextMission",
+                "CP8-GAP-2-setPriorities",
+                "CP8-GAP-3-chooseMode",
+                "CP8-GAP-4-authorizeProvider",
+                "CP8-GAP-5-superviseExecution",
+                "CP8-GAP-6-recoverResults",
+                "CP8-GAP-7-validateIndependently",
+                "CP8-GAP-8-integrateResult",
+                "CP8-GAP-9-chooseFollowing",
+                "CP8-GAP-executedPartialMapping",
+                "CP8-GAP-canonicalDefectsJ",
+                "MC-CR-APPROVAL-STANDARD",
+                "MC-CR-LATENCY",
+                "MC-SMALL-CHANGES",
+                "MC-REVIEW-FOCUS",
+                "MC-PEER-REVIEW-EVERY-PR",
+                "MC-CI-BEFORE-REVIEW",
+                "MC-MERGE-QUEUE",
+                "MC-LESSONS-LEARNED"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.blockerRepetitionReduction",
+              "name": "register.blockerRepetitionReduction.notMeasuredItems",
+              "value": 54,
+              "of": 60,
+              "items": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "G",
+                "H",
+                "I",
+                "J",
+                "K",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "G2",
+                "J2",
+                "V175-NB1",
+                "V175-NB2",
+                "V150-T01",
+                "V150-T02",
+                "V150-T07",
+                "V150-T09",
+                "V150-T10",
+                "V150-AI4",
+                "V150-AI5",
+                "V150-OG01",
+                "V150-OG02",
+                "V150-OG03",
+                "V150-OG04",
+                "V150-OG05",
+                "V150-OG06",
+                "V150-OG07",
+                "V150-OG08",
+                "V150-OG09",
+                "V150-OG10",
+                "V150-OG11",
+                "V150-OG12",
+                "V150-OG13",
+                "V150-OG14",
+                "CP8-GAP-3-chooseMode",
+                "CP8-GAP-5-superviseExecution",
+                "CP8-GAP-6-recoverResults",
+                "CP8-GAP-executedPartialMapping",
+                "CP8-GAP-canonicalDefectsJ",
+                "MC-CR-APPROVAL-STANDARD",
+                "MC-CR-LATENCY",
+                "MC-SMALL-CHANGES",
+                "MC-REVIEW-FOCUS",
+                "MC-PEER-REVIEW-EVERY-PR",
+                "MC-CI-BEFORE-REVIEW",
+                "MC-MERGE-QUEUE",
+                "MC-LESSONS-LEARNED"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reliabilityQuality",
+              "name": "register.reliabilityQuality.notMeasuredItems",
+              "value": 59,
+              "of": 60,
+              "items": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "G",
+                "H",
+                "I",
+                "J",
+                "K",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "G2",
+                "J2",
+                "V175-NB1",
+                "V175-NB2",
+                "V150-T01",
+                "V150-T02",
+                "V150-T07",
+                "V150-T09",
+                "V150-T10",
+                "V150-AI4",
+                "V150-AI5",
+                "V150-OG01",
+                "V150-OG02",
+                "V150-OG03",
+                "V150-OG04",
+                "V150-OG05",
+                "V150-OG06",
+                "V150-OG07",
+                "V150-OG08",
+                "V150-OG09",
+                "V150-OG10",
+                "V150-OG11",
+                "V150-OG12",
+                "V150-OG13",
+                "V150-OG14",
+                "CP8-GAP-1-selectNextMission",
+                "CP8-GAP-2-setPriorities",
+                "CP8-GAP-3-chooseMode",
+                "CP8-GAP-4-authorizeProvider",
+                "CP8-GAP-5-superviseExecution",
+                "CP8-GAP-7-validateIndependently",
+                "CP8-GAP-8-integrateResult",
+                "CP8-GAP-9-chooseFollowing",
+                "CP8-GAP-executedPartialMapping",
+                "CP8-GAP-canonicalDefectsJ",
+                "MC-CR-APPROVAL-STANDARD",
+                "MC-CR-LATENCY",
+                "MC-SMALL-CHANGES",
+                "MC-REVIEW-FOCUS",
+                "MC-PEER-REVIEW-EVERY-PR",
+                "MC-CI-BEFORE-REVIEW",
+                "MC-MERGE-QUEUE",
+                "MC-LESSONS-LEARNED"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.speedEfficiency",
+              "name": "register.speedEfficiency.notMeasuredItems",
+              "value": 60,
+              "of": 60,
+              "items": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "G",
+                "H",
+                "I",
+                "J",
+                "K",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "G2",
+                "J2",
+                "V175-NB1",
+                "V175-NB2",
+                "V150-T01",
+                "V150-T02",
+                "V150-T07",
+                "V150-T09",
+                "V150-T10",
+                "V150-AI4",
+                "V150-AI5",
+                "V150-OG01",
+                "V150-OG02",
+                "V150-OG03",
+                "V150-OG04",
+                "V150-OG05",
+                "V150-OG06",
+                "V150-OG07",
+                "V150-OG08",
+                "V150-OG09",
+                "V150-OG10",
+                "V150-OG11",
+                "V150-OG12",
+                "V150-OG13",
+                "V150-OG14",
+                "CP8-GAP-1-selectNextMission",
+                "CP8-GAP-2-setPriorities",
+                "CP8-GAP-3-chooseMode",
+                "CP8-GAP-4-authorizeProvider",
+                "CP8-GAP-5-superviseExecution",
+                "CP8-GAP-6-recoverResults",
+                "CP8-GAP-7-validateIndependently",
+                "CP8-GAP-8-integrateResult",
+                "CP8-GAP-9-chooseFollowing",
+                "CP8-GAP-executedPartialMapping",
+                "CP8-GAP-canonicalDefectsJ",
+                "MC-CR-APPROVAL-STANDARD",
+                "MC-CR-LATENCY",
+                "MC-SMALL-CHANGES",
+                "MC-REVIEW-FOCUS",
+                "MC-PEER-REVIEW-EVERY-PR",
+                "MC-CI-BEFORE-REVIEW",
+                "MC-MERGE-QUEUE",
+                "MC-LESSONS-LEARNED"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reusability",
+              "name": "register.reusability.notMeasuredItems",
+              "value": 60,
+              "of": 60,
+              "items": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "G",
+                "H",
+                "I",
+                "J",
+                "K",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "G2",
+                "J2",
+                "V175-NB1",
+                "V175-NB2",
+                "V150-T01",
+                "V150-T02",
+                "V150-T07",
+                "V150-T09",
+                "V150-T10",
+                "V150-AI4",
+                "V150-AI5",
+                "V150-OG01",
+                "V150-OG02",
+                "V150-OG03",
+                "V150-OG04",
+                "V150-OG05",
+                "V150-OG06",
+                "V150-OG07",
+                "V150-OG08",
+                "V150-OG09",
+                "V150-OG10",
+                "V150-OG11",
+                "V150-OG12",
+                "V150-OG13",
+                "V150-OG14",
+                "CP8-GAP-1-selectNextMission",
+                "CP8-GAP-2-setPriorities",
+                "CP8-GAP-3-chooseMode",
+                "CP8-GAP-4-authorizeProvider",
+                "CP8-GAP-5-superviseExecution",
+                "CP8-GAP-6-recoverResults",
+                "CP8-GAP-7-validateIndependently",
+                "CP8-GAP-8-integrateResult",
+                "CP8-GAP-9-chooseFollowing",
+                "CP8-GAP-executedPartialMapping",
+                "CP8-GAP-canonicalDefectsJ",
+                "MC-CR-APPROVAL-STANDARD",
+                "MC-CR-LATENCY",
+                "MC-SMALL-CHANGES",
+                "MC-REVIEW-FOCUS",
+                "MC-PEER-REVIEW-EVERY-PR",
+                "MC-CI-BEFORE-REVIEW",
+                "MC-MERGE-QUEUE",
+                "MC-LESSONS-LEARNED"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.strategicValue",
+              "name": "register.strategicValue.notMeasuredItems",
+              "value": 43,
+              "of": 60,
+              "items": [
+                "A",
+                "B",
+                "E",
+                "I",
+                "M",
+                "P",
+                "G2",
+                "J2",
+                "V175-NB1",
+                "V175-NB2",
+                "V150-OG01",
+                "V150-OG02",
+                "V150-OG03",
+                "V150-OG04",
+                "V150-OG05",
+                "V150-OG06",
+                "V150-OG07",
+                "V150-OG08",
+                "V150-OG09",
+                "V150-OG10",
+                "V150-OG11",
+                "V150-OG12",
+                "V150-OG13",
+                "V150-OG14",
+                "CP8-GAP-1-selectNextMission",
+                "CP8-GAP-2-setPriorities",
+                "CP8-GAP-3-chooseMode",
+                "CP8-GAP-4-authorizeProvider",
+                "CP8-GAP-5-superviseExecution",
+                "CP8-GAP-6-recoverResults",
+                "CP8-GAP-7-validateIndependently",
+                "CP8-GAP-8-integrateResult",
+                "CP8-GAP-9-chooseFollowing",
+                "CP8-GAP-executedPartialMapping",
+                "CP8-GAP-canonicalDefectsJ",
+                "MC-CR-APPROVAL-STANDARD",
+                "MC-CR-LATENCY",
+                "MC-SMALL-CHANGES",
+                "MC-REVIEW-FOCUS",
+                "MC-PEER-REVIEW-EVERY-PR",
+                "MC-CI-BEFORE-REVIEW",
+                "MC-MERGE-QUEUE",
+                "MC-LESSONS-LEARNED"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.costRiskComplexity",
+              "name": "register.costRiskComplexity.notMeasuredItems",
+              "value": 40,
+              "of": 60,
+              "items": [
+                "V150-T01",
+                "V150-T02",
+                "V150-T07",
+                "V150-T09",
+                "V150-T10",
+                "V150-AI4",
+                "V150-AI5",
+                "V150-OG01",
+                "V150-OG02",
+                "V150-OG03",
+                "V150-OG04",
+                "V150-OG05",
+                "V150-OG06",
+                "V150-OG07",
+                "V150-OG08",
+                "V150-OG09",
+                "V150-OG10",
+                "V150-OG11",
+                "V150-OG12",
+                "V150-OG13",
+                "V150-OG14",
+                "CP8-GAP-1-selectNextMission",
+                "CP8-GAP-2-setPriorities",
+                "CP8-GAP-3-chooseMode",
+                "CP8-GAP-4-authorizeProvider",
+                "CP8-GAP-5-superviseExecution",
+                "CP8-GAP-6-recoverResults",
+                "CP8-GAP-7-validateIndependently",
+                "CP8-GAP-8-integrateResult",
+                "CP8-GAP-9-chooseFollowing",
+                "CP8-GAP-executedPartialMapping",
+                "CP8-GAP-canonicalDefectsJ",
+                "MC-CR-APPROVAL-STANDARD",
+                "MC-CR-LATENCY",
+                "MC-SMALL-CHANGES",
+                "MC-REVIEW-FOCUS",
+                "MC-PEER-REVIEW-EVERY-PR",
+                "MC-CI-BEFORE-REVIEW",
+                "MC-MERGE-QUEUE",
+                "MC-LESSONS-LEARNED"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability",
+              "name": "register.dependencyAvailability.notMeasuredItems",
+              "value": 56,
+              "of": 60,
+              "items": [
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "G",
+                "H",
+                "I",
+                "J",
+                "L",
+                "M",
+                "N",
+                "O",
+                "P",
+                "G2",
+                "V175-NB1",
+                "V175-NB2",
+                "V150-T01",
+                "V150-T02",
+                "V150-T07",
+                "V150-T09",
+                "V150-T10",
+                "V150-AI4",
+                "V150-OG01",
+                "V150-OG02",
+                "V150-OG03",
+                "V150-OG04",
+                "V150-OG05",
+                "V150-OG06",
+                "V150-OG07",
+                "V150-OG08",
+                "V150-OG09",
+                "V150-OG10",
+                "V150-OG11",
+                "V150-OG12",
+                "V150-OG13",
+                "V150-OG14",
+                "CP8-GAP-1-selectNextMission",
+                "CP8-GAP-2-setPriorities",
+                "CP8-GAP-3-chooseMode",
+                "CP8-GAP-4-authorizeProvider",
+                "CP8-GAP-5-superviseExecution",
+                "CP8-GAP-6-recoverResults",
+                "CP8-GAP-7-validateIndependently",
+                "CP8-GAP-8-integrateResult",
+                "CP8-GAP-9-chooseFollowing",
+                "CP8-GAP-executedPartialMapping",
+                "CP8-GAP-canonicalDefectsJ",
+                "MC-CR-APPROVAL-STANDARD",
+                "MC-CR-LATENCY",
+                "MC-SMALL-CHANGES",
+                "MC-REVIEW-FOCUS",
+                "MC-PEER-REVIEW-EVERY-PR",
+                "MC-CI-BEFORE-REVIEW",
+                "MC-MERGE-QUEUE",
+                "MC-LESSONS-LEARNED"
+              ]
+            },
+            {
+              "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[6]",
+              "name": "outcomeLearning.OL-7.n",
+              "value": 4,
+              "support": [
+                "G: uncertainty 0.5, 5/10 criteria NOT_MEASURED",
+                "G2: uncertainty 0.7, 7/10 criteria NOT_MEASURED",
+                "H: uncertainty 0.5, 5/10 criteria NOT_MEASURED",
+                "J2: uncertainty 0.7, 7/10 criteria NOT_MEASURED"
+              ]
+            }
+          ],
+          "after": null,
+          "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source at the same pointer; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED (never assumed)"
+        }
+      }
+    },
+    {
+      "rank": 2,
       "id": "RB-OUTCOME-FEEDBACK-TO-SCORING",
       "evidenceScore": 0.215,
       "uncertainty": 0.6,
@@ -5131,7 +5004,7 @@
       }
     },
     {
-      "rank": 2,
+      "rank": 3,
       "id": "RB-PRE-OPEN-SELF-INSPECTION",
       "evidenceScore": 0.19,
       "uncertainty": 0.6,
@@ -5244,7 +5117,7 @@
       }
     },
     {
-      "rank": 3,
+      "rank": 4,
       "id": "RB-REATTEMPT-CHANGED-INPUT",
       "evidenceScore": 0.19,
       "uncertainty": 0.6,
@@ -5359,7 +5232,7 @@
       }
     },
     {
-      "rank": 4,
+      "rank": 5,
       "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
       "evidenceScore": 0.19,
       "uncertainty": 0.6,
@@ -5462,121 +5335,6 @@
               "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.prs[*].inspectionVerdictAt",
               "name": "productionMetric.inspectionVerdictAt.notMeasured",
               "value": 17
-            }
-          ],
-          "after": null,
-          "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source at the same pointer; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED (never assumed)"
-        }
-      }
-    },
-    {
-      "rank": 5,
-      "id": "RB-SELECTION-AT-RUN-HEAD",
-      "evidenceScore": 0.19,
-      "uncertainty": 0.6,
-      "upperBound": 0.79,
-      "tiedWith": [
-        "RB-PRE-OPEN-SELF-INSPECTION",
-        "RB-REATTEMPT-CHANGED-INPUT",
-        "RB-RECORD-INSPECTION-VERDICT-TIME"
-      ],
-      "rankNote": "equal evidenceScore: order among tied proposals is the selector's display order (by id) — NOT a decision",
-      "contract": {
-        "id": "RB-SELECTION-AT-RUN-HEAD",
-        "kind": "WORK_ITEM_CONTRACT_DRAFT",
-        "state": "PROPOSED",
-        "authorizedBy": null,
-        "objective": "GO re-derives the register selection at run head and refuses (or records the owner override) when it differs from the selection being executed",
-        "source": {
-          "directive": "owner CTO directive V176 2026-11-24 §4 (Radar → construction)",
-          "signals": [
-            "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[1]"
-          ]
-        },
-        "scope": "improve odg-go-cycle, mission-priority-selector only; no Radar egress, no spend, no canonical-authority change",
-        "write_set": {
-          "estimate": true,
-          "paths": [
-            "runtime/core/odg-go-cycle.ts",
-            "runtime/core/odg-go-cycle.test.ts"
-          ],
-          "basis": "provider-declared LINK-1 guess — an ESTIMATE to be confirmed when the contract is authored; NOT an authorized write_set"
-        },
-        "acceptance_criteria": [
-          "a stale selection is detected before EXECUTE",
-          "the trace records selectedAt vs runHead",
-          "tsc clean; each touched test file passes run one at a time",
-          "the before-metric is recomputed from committed evidence and compared (MEASURE/LEARN)"
-        ],
-        "invariants": [
-          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
-          "score ≠ authorization",
-          "hypothesis ≠ fact",
-          "no network / no spend / no protected path"
-        ],
-        "stop_conditions": [
-          "write_set must grow beyond the authorized one",
-          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
-          "an owner question blocks"
-        ],
-        "rollback": "revert the single PR (additive change)",
-        "evidence_required": [
-          "test output per file",
-          "recomputed before/after metric record",
-          "independent inspection verdict"
-        ],
-        "multiplier": {
-          "perComponent": [
-            {
-              "component": "odg-go-cycle",
-              "inCoreGraph": true,
-              "directConsumers": 0,
-              "transitiveDependents": 0
-            },
-            {
-              "component": "mission-priority-selector",
-              "inCoreGraph": true,
-              "directConsumers": 5,
-              "transitiveDependents": 6
-            }
-          ],
-          "maxDirectConsumers": 5,
-          "maxTransitiveDependents": 6,
-          "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)",
-          "rationale": "a change to odg-go-cycle/mission-priority-selector reaches ≤ 6 transitive dependents (5 direct) — reach, not benefit"
-        },
-        "ownerGate": {
-          "required": false,
-          "status": "PROPOSED_AWAITING_AUTHORIZATION",
-          "reason": [
-            "admissible (INSUFFICIENTLY_VALIDATED, INTERNAL_IMPROVEMENT) — NOT YET authorized to execute; a score is not an authorization"
-          ]
-        },
-        "governance": {
-          "classes": [
-            {
-              "path": "runtime/core/odg-go-cycle.ts",
-              "class": "OTHER"
-            },
-            {
-              "path": "runtime/core/odg-go-cycle.test.ts",
-              "class": "OTHER"
-            }
-          ],
-          "radarStagePaths": [],
-          "anchorIfRadarStage": null,
-          "v150Campaign": false
-        },
-        "measure": {
-          "before": [
-            {
-              "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[1]",
-              "name": "outcomeLearning.OL-2.n",
-              "value": 2,
-              "support": [
-                "G: selected at b994ca69c7f8; at run head 83427f936423 the register decided TIE_EXPLAINED (H)",
-                "H: selected at 7c2fd7b2edbd; at run head 98eed7f23c20 the register decided DECISION_REQUIRED (no selection)"
-              ]
             }
           ],
           "after": null,

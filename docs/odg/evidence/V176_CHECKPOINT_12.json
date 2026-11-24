@@ -1,0 +1,175 @@
+{
+  "//": "Checkpoint CP12 (owner directives 2026-11-24 « REPRISE IMMÉDIATE », « REPRISE DE SESSION ET ACCÉLÉRATION », « V176 »). Canonical checkpoint series (LCP-1). Written by the provider from committed evidence. Machine resume view: docs/odg/evidence/V175_RESUME_POINT.json (runtime/bin/odg-resume-point.ts --check).",
+  "checkpoint": "CP12",
+  "date": "2026-11-24",
+  "headAtCheckpoint": "bc2caffd",
+  "previous": "docs/odg/evidence/V174_CHECKPOINT_11.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5,
+    "mainCheckout": "main, clean"
+  },
+  "boussole": "V12.4 canonical (unchanged). V14.4 adopted; V15.0 PROPOSED. Precedence record docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json (#974).",
+  "prsMerged": [
+    {
+      "pr": 969,
+      "merge": "e5370cef",
+      "what": "register dependency graph — only failable edges feed DEP-1, uniform over all items"
+    },
+    {
+      "pr": 970,
+      "merge": "0987106a",
+      "what": "J2 result (FAIL) run by GO"
+    },
+    {
+      "pr": 971,
+      "merge": "492db6c0",
+      "what": "J2 CLOSED_FAIL"
+    },
+    {
+      "pr": 972,
+      "merge": "b16c4f33",
+      "what": "native-build work item + GO-dispatchable runner (NB1)"
+    },
+    {
+      "pr": 973,
+      "merge": "c6b595cd",
+      "what": "outcome learning (0/4 PASS; score did not separate outcomes, ρ 0.236, n=4 HYPOTHESIS) + production metric"
+    },
+    {
+      "pr": 974,
+      "merge": "ae500058",
+      "what": "CTR-1/2/4 resolved at source (precedence record + validator); CTR-2 RESOLVED_BY_SCOPE + INTERIM pending Q-CTR2"
+    },
+    {
+      "pr": 975,
+      "merge": "6d11124e",
+      "what": "V175-NB1 wired into GO (contract, owner record, GO-ORD-2 selection)"
+    },
+    {
+      "pr": 977,
+      "merge": "fe4b65d6",
+      "what": "NB1 contract inspection ACCEPT"
+    },
+    {
+      "pr": 978,
+      "merge": "2f4c94a0",
+      "what": "FIRST ODG-native code: runtime/core/odg-canonical-json.ts (+test), byte-identical from the native result"
+    },
+    {
+      "pr": 976,
+      "merge": "2e4bda63",
+      "what": "SECURITY: deep versioned canon for audit-log / agent-identity / supply-chain-attest (nested-field tamper now detected)"
+    },
+    {
+      "pr": 981,
+      "merge": "298d2763",
+      "what": "NB1 CLOSED_PASS + single authorization-evidence map (GO = register)"
+    },
+    {
+      "pr": 979,
+      "merge": "195ca821",
+      "what": "SECURITY: mission-ledger deep versioned seal"
+    },
+    {
+      "pr": 982,
+      "merge": "cae6d54f",
+      "what": "boussoleRef on register items (37/59 MEASURED) + GO trace refs + resume view"
+    },
+    {
+      "pr": 980,
+      "merge": "47ba09ab",
+      "what": "NB2 native-design pipeline (infrastructure); 3 PROBEs FAIL; contract V175-NB2 not inspected"
+    },
+    {
+      "pr": 983,
+      "merge": "f82fe06f",
+      "what": "Radar build engine: internal signals → PROPOSED contract drafts (52 signals ⇒ 15 PROPOSED, 5 OWNER_GATED, 32 REFUSED)"
+    },
+    {
+      "pr": 984,
+      "merge": "bc2caffd",
+      "what": "test:report root cause: build:runtime pre-step + dist guard + 2 hermetic suites ⇒ 874/874 on a fresh checkout (was 41 FAIL)"
+    }
+  ],
+  "prsClosedUnmerged": [
+    {
+      "pr": 968,
+      "why": "register criteria measurer REJECTED (prevalence ≠ reduction; J/J2-only rules = artificial tie-break); branch kept"
+    }
+  ],
+  "missions": {
+    "G": "CLOSED_PARTIAL",
+    "H": "CLOSED_FAIL",
+    "G2": "CLOSED_PARTIAL",
+    "J2": "CLOSED_FAIL",
+    "V175-NB1": "CLOSED_PASS (INTEGRATED, scope: local model implemented a provider-specified function)",
+    "V175-NB2": "PROPOSED/INSPECT pending; 3 provider-run PROBEs FAIL (7b stuck on top-level undefined; PROBE 3 design call timed out at 300 s, likely host-load confounded — coordination error)",
+    "J": "strategic SELECTED; contract PROPOSED ⇒ owner PROPOSED→AUTHORIZED"
+  },
+  "nativeVsProvider": {
+    "odgDecisions": [
+      "selection by the canonical selector (GO-ORD-2 owner records for J2 and NB1)",
+      "authorization derivation"
+    ],
+    "goExecutedSteps": [
+      "H",
+      "G2",
+      "J2",
+      "V175-NB1"
+    ],
+    "nativeCodeIntegrated": {
+      "files": [
+        "runtime/core/odg-canonical-json.ts",
+        "runtime/core/odg-canonical-json.test.ts"
+      ],
+      "designedBy": "provider spec (MODULE_SPEC)",
+      "implementedBy": "local model qwen2.5-coder:7b",
+      "testsBy": "ODG rules from in-repo reference oracle",
+      "integratedBy": "PR #978"
+    },
+    "odgDesignedCodeIntegrated": 0
+  },
+  "openGaps": [
+    "NB2: ODG-designed repair not yet achieved (local-model capability vs pipeline; lesson/prompt budget; per-call timeout)",
+    "odg-canonical-json undefined gap (inspector MED) — callers not migrated",
+    "radar-source-admission stable() shallow (pinned evidence chain; LOW follow-up)",
+    "keyless ledger full-rewrite inherent",
+    "4 register criteria NOT_MEASURED (honest; #968 lesson)",
+    "22/59 items without a provable boussoleRef",
+    "merge integration still by the coordinating session",
+    "PR time: 84% rework after opening (Radar finding RB-PRE-OPEN-SELF-INSPECTION)"
+  ],
+  "ownerQuestionsOpen": [
+    "Q-CTR2: does « le Radar existant » cover the knowledge stage (odg-knowledge-*) and do new grant files/modules count as modification?",
+    "J: PROPOSED → AUTHORIZED?",
+    "#976 was closed at 16:21:46Z by the repo account (not by any provider agent) — reopened and merged per the directive; confirm or revert (git revert 2e4bda63)",
+    "V15.0 adoption",
+    "GitHub AUP §6/§7",
+    "provider spend ceiling",
+    "gate 10/12 signature"
+  ],
+  "authorizationsValid": [
+    "V165/V168/V170/V171 portfolio",
+    "V173 J2 revision",
+    "V174 order + selection (consumed)",
+    "V175 native build (NB1/NB2 family V175-NATIVE-LOOP)",
+    "2026-11-24 REPRISE IMMÉDIATE / ACCÉLÉRATION / V176 internal build authorizations (no prod/VPS/secrets/spend)"
+  ],
+  "lessons": [
+    "#968: a register measurer must measure the DECLARED definition, uniformly, never edit rule texts, outcome changes visible in tests",
+    "two sources of truth for evidence paths caused NB1 register/GO divergence — single map now",
+    "heavy concurrent test runs confound timing-sensitive local-model probes — schedule probes on an idle host"
+  ],
+  "nextPriority": [
+    "P0 native engineering: NB2 pipeline fixes ODG-side (bounded lesson digest, adaptive per-call timeout, idle-host scheduling) then NB2 inspection + ONE GO run",
+    "P0 brain: pre-open self-inspection gate (Radar RB-PRE-OPEN-SELF-INSPECTION) to cut rework time",
+    "P1: outcome-feedback-to-scoring is a SCORE change ⇒ owner-gated (owner rule: do not modify scores)",
+    "P1 parallel GO waves (write-set disjoint)"
+  ],
+  "resumeActions": [
+    "read docs/odg/evidence/V175_RESUME_POINT.json (--check)",
+    "GO has no authorized not-yet-dispatched execution step",
+    "continue nextPriority"
+  ]
+}
