@@ -65,6 +65,26 @@ try {
   /* a run head that is NOT the parent of the record-introducing commit ⇒ refused */
   check("child rule only when first parent == run head", RHC.resolveRunCommit(B, git(B, ["rev-parse", "HEAD"]), "missing.js", "rec.json").ok === false);
 
+  /* SIGINT / SIGTERM during a check (real child process): temp worktree removed + pruned, exit = 128 + signal number */
+  for (const [sig, code] of [["SIGTERM", 143], ["SIGINT", 130]] as Array<[string, number]>) {
+    const S = path.join(tmp, "sig-" + sig); fs.mkdirSync(S);
+    const marker = path.join(S, "started"); const base = path.join(S, "base"); fs.mkdirSync(base);
+    const child = path.join(S, "child.ts"); const sleeper = path.join(S, "sleeper.js");
+    fs.writeFileSync(sleeper, `require("fs").writeFileSync(${JSON.stringify(marker)}, "x"); setTimeout(() => {}, 1500);\n`);
+    fs.writeFileSync(child, [
+      `const RHC = require(${JSON.stringify(path.join(__dirname, "odg-run-head-check.ts"))});`,
+      `const r = RHC.checkAtRunHead({ repoRoot: ${JSON.stringify(A)}, recordRel: "rec.json", runnerRel: "runner.js", tmpBase: ${JSON.stringify(base)}, command: () => [process.execPath, [${JSON.stringify(sleeper)}]] });`,
+      `process.stdout.write("RETURNED " + r.verdict + "\\n");`,
+      `setTimeout(() => { process.stdout.write("NOT_EXITED\\n"); }, 3000);`,
+      `export {};`, ""].join("\n"));
+    const wtB = worktrees(A);
+    const cmd = [process.execPath, ...process.execArgv, child].map((x: string) => "'" + x.replace(/'/g, "'\\''") + "'").join(" ");
+    const sh = `${cmd} & pid=$!; for i in $(seq 1 150); do [ -f '${marker}' ] && break; sleep 0.1; done; sleep 0.2; kill -${sig.slice(3)} $pid; wait $pid; echo "EXIT=$?"`;
+    const out = cp.spawnSync("bash", ["-c", sh], { encoding: "utf8", timeout: 60000 });
+    const exit = Number((/EXIT=(\d+)/.exec(String(out.stdout)) || [])[1]);
+    check(`${sig} during a check (child process) ⇒ exit ${code}, temp worktree removed + pruned, temp dir removed, no lingering run`, fs.existsSync(marker) && exit === code && worktrees(A) === wtB && fs.readdirSync(base).length === 0 && !/NOT_EXITED/.test(String(out.stdout)));
+  }
+
   /* diffLeafPaths */
   check("diffLeafPaths: exact leaf paths", JSON.stringify(RHC.diffLeafPaths({ a: { b: 1, c: [1, 2] }, d: 1 }, { a: { b: 2, c: [1, 3] }, d: 1 })) === JSON.stringify(["a.b", "a.c.1"]));
   check("diffLeafPaths: equal ⇒ []", RHC.diffLeafPaths({ x: [1, { y: 2 }] }, { x: [1, { y: 2 }] }).length === 0);
