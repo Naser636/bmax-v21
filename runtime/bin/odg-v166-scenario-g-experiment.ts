@@ -22,6 +22,7 @@
  * (docs/odg/evidence/V160_SCENARIO_G.json, NOT_ADOPTED) is never read for grading nor rewritten.
  *
  * Usage: --write (writes docs/odg/evidence/V166_G_EXPERIMENT.json) | --check (re-derives; exit 1 on drift) |
+ *        --check-at-run-head (V17.2: the record's own --check at its run head in a temp worktree + current-tree drift classified) |
  *        --selftest (offline unit checks of the grade rule / fitting / split — no evidence written).
  */
 const fs = require("fs");
@@ -33,6 +34,7 @@ const AS = require("../core/odg-authorization-scope.js");
 const OCUR = require("../core/odg-observation-currency.js");   // V16.9 Phase 1b — R7 proof-currency probes
 const BCM = require("../core/odg-binary-classification-metrics.js");
 const KR = require("./odg-v160-practices-knowledge-run.ts");
+const RHC = require("../core/odg-run-head-check.js");      // V17.2 — reproducibility at the record's own run head
 
 const ROOT = path.resolve(__dirname, "..", "..");
 const CONTRACTS = "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json";
@@ -294,8 +296,39 @@ function selftest(): number {
   return f === 0 ? 0 : 1;
 }
 
+/* V17.2 — --check-at-run-head: re-run this record's OWN --check at the commit it was produced from (temporary detached
+ * worktree, local objects only), then separately classify the CURRENT-tree drift: if the only differing leaf is
+ * inputs.contracts.sha256File (a context citation of the whole contracts file) while the contract binding contractSha256
+ * still matches the record, that drift is INFORMATIONAL. Exit 0 iff the run-head check is OK and no current-tree drift
+ * beyond that context path exists. The pre-registered computation (run()) and the committed record are not changed. */
+const CONTEXT_ONLY_PATHS = Object.freeze(["inputs.contracts.sha256File"]);
+function currentTreeDrift(cur: any): any {
+  const res = run();
+  if (res.notAuthorized) return { classification: "CONTRACT_BINDING_BROKEN", reason: res.reason, contractSha256: res.contractSha256 || null };
+  const recomputed = JSON.parse(JSON.stringify({ ...res, run: cur && cur.run }));
+  const paths = RHC.diffLeafPaths(cur, recomputed);
+  const bindingOk = !!cur && res.contractSha256 === cur.contractSha256 && res.contractSha256 === PINNED_CONTRACT_SHA;
+  const contextOnly = paths.length > 0 && paths.every((p: string) => CONTEXT_ONLY_PATHS.includes(p));
+  const classification = paths.length === 0 ? "NO_DRIFT" : (contextOnly && bindingOk ? "CONTEXT_ONLY_INFORMATIONAL" : "DRIFT_BEYOND_CONTEXT");
+  return { classification, driftPaths: paths, contractBinding: { recorded: cur && cur.contractSha256, live: res.contractSha256, pinned: PINNED_CONTRACT_SHA, matches: bindingOk },
+    contractsFileSha256: { recorded: cur && cur.inputs && cur.inputs.contracts && cur.inputs.contracts.sha256File, live: res.inputs.contracts.sha256File } };
+}
+function checkAtRunHead(): number {
+  let cur: any = null; try { cur = readJson(OUT); } catch { cur = null; }
+  const r = RHC.checkAtRunHead({ repoRoot: ROOT, recordRel: OUT, runnerRel: "runtime/bin/odg-v166-scenario-g-experiment.ts", checkArgs: ["--check"] });
+  process.stdout.write(RHC.format("V166 G", r));
+  const d = currentTreeDrift(cur);
+  process.stdout.write(`  current tree (HEAD ${gitHead()}): ${d.classification}${d.driftPaths ? " — drift paths " + JSON.stringify(d.driftPaths) : ""}\n`);
+  if (d.contractBinding) process.stdout.write(`  contract binding contractSha256: recorded ${d.contractBinding.recorded} / live ${d.contractBinding.live} ⇒ ${d.contractBinding.matches ? "MATCHES" : "MISMATCH"}\n`);
+  if (d.classification === "CONTEXT_ONLY_INFORMATIONAL") process.stdout.write(`  INFORMATIONAL (not a failure): contracts file sha256 ${d.contractsFileSha256.recorded} → ${d.contractsFileSha256.live} (context citation only; contract G unchanged)\n`);
+  const ok = r.verdict === "CHECK_OK" && (d.classification === "NO_DRIFT" || d.classification === "CONTEXT_ONLY_INFORMATIONAL");
+  process.stdout.write(ok ? "RESULT: CHECK OK at run head\n" : "RESULT: FAILED\n");
+  return ok ? 0 : 1;
+}
+
 if (require.main === module) {
   if (process.argv.includes("--selftest")) { process.exitCode = selftest(); }
+  else if (process.argv.includes("--check-at-run-head")) { process.exitCode = checkAtRunHead(); }
   else {
     const res = run();
     if (res.notAuthorized) { process.stdout.write(`NOT_AUTHORIZED — ${res.reason}\n`); process.exitCode = 2; }
@@ -316,5 +349,5 @@ if (require.main === module) {
     }
   }
 }
-module.exports = { gate, retrieveC1, loadRows, fitB1, ba, confusion, pairedBootstrap, analyse, grade, shuffled, run, PRE, PINNED_CONTRACT_SHA };
+module.exports = { gate, retrieveC1, loadRows, fitB1, ba, confusion, pairedBootstrap, analyse, grade, shuffled, run, PRE, PINNED_CONTRACT_SHA, currentTreeDrift, CONTEXT_ONLY_PATHS, OUT };
 export {};
