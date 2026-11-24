@@ -109,7 +109,7 @@ function mkPorts(o: any = {}): any {
     trace: { append: (e: any) => trace.push(JSON.parse(JSON.stringify(e))), readPrior: () => trace.slice() },
     writeSummary: (x: any) => { GO.assertConfinedWrite("/virtual/out/go-cycle.json", "/virtual/out", ["/virtual/main/runtime/generated"], path); calls.writes.push("/virtual/out/go-cycle.json"); },
     isolation: o.isolation || ((_n: any) => { calls.isolation++; return { ok: true, workspace: "/virtual/scratch" }; }),
-    dispatchNative: (n: any, c: any) => { calls.dispatch++; (calls as any).dispatched = ((calls as any).dispatched || []).concat([{ mission: n.mission, target: c && c.dispatchTarget ? c.dispatchTarget : null, timeoutMs: c && c.dispatchTimeoutMs !== undefined ? c.dispatchTimeoutMs : null }]); return o.dispatchResult || { verified: true, detail: "fixture PASS" }; },
+    dispatchNative: (n: any, c: any) => { calls.dispatch++; (calls as any).dispatched = ((calls as any).dispatched || []).concat([{ mission: n.mission, target: c && c.dispatchTarget ? c.dispatchTarget : null, timeoutMs: c && c.dispatchTimeoutMs !== undefined ? c.dispatchTimeoutMs : null }]); if (o.onDispatch) o.onDispatch(n, c); const res = o.dispatchResult || { verified: true, detail: "fixture PASS" }; return o.asyncDispatch ? Promise.resolve(res) : res; },
     launchProvider: () => { calls.provider++; throw new Error("provider must never be launched"); },
   };
   return { ports, trace, calls };
@@ -239,6 +239,29 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true }, q.ports);
       const qd = stepIn(q.trace, "EXECUTE").decision.dispatchTarget.dispatchTimeout;
       check("GO-DTO-1: fixture caps.maxRunWallMs 3600000 ⇒ 3720000 dispatched + derivation recorded", (q.calls as any).dispatched[0].timeoutMs === 3720000 && qd.basis === "MAX_RUN_WALL_MS" && qd.derivation.maxRunWallMs === 3600000);
+      // MED-1: J2-shaped caps; an (async) dispatch that takes 1 000 000 ms (> the 900 s default deadline) on an injected clock
+      const j2caps = rj("docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json").contracts.find((x: any) => x.scenario === "J2").WORK_ITEM_CONTRACT.preRegistration;
+      const withPr = (pr: any) => { const s = focusG(BASE_LIVE); const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "G"); c.authorization.dispatchTargets = { RUN_CONTROLLED_EXPERIMENTS: good }; c.WORK_ITEM_CONTRACT.preRegistration = { ...(c.WORK_ITEM_CONTRACT.preRegistration || {}), caps: pr.caps, dataset: pr.dataset, arms: pr.arms, decoding: pr.decoding }; s.authorizationEvidence = { G: { inspection: rec({ contractSha256: AS.contractSha256(c) }), experiment: null } }; return s; };
+      for (const [label, extra] of [["default deadline", {}], ["explicit --deadline-ms 120000", { deadlineMs: 120000 }]] as any[]) {
+        let clk = 1_000_000;
+        const lp = mkPorts({ state: withPr(j2caps), now: () => (clk += 5), asyncDispatch: true, onDispatch: () => { clk += 1_000_000; } });
+        const lr = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true, ...extra }, lp.ports);
+        const ex = stepIn(lp.trace, "EXECUTE"); const cd = ex.decision.volatile.cycleDeadline; const ext = lp.trace.find((e: any) => e.kind === "DEADLINE_EXTENDED");
+        check(`GO-DTO-1 MED-1 (${label}): J2 caps ⇒ dispatch timeout 43200000, effective deadline ≥ timeout + 300000 recorded (value, basis, explicit flag)`, (lp.calls as any).dispatched[0].timeoutMs === 43200000 && cd.effectiveMs === 43500000 && cd.basis === "EXTENDED_FOR_DISPATCH" && cd.requestedExplicit === (extra.deadlineMs !== undefined) && !!ext && ext.effectiveMs === cd.effectiveMs && lr.effectiveDeadlineMs === cd.effectiveMs);
+        check(`GO-DTO-1 MED-1 (${label}): a 1 000 000 ms async dispatch ⇒ EXECUTED_PASS and EVIDENCE + NEXT_SELECTION reached (no DEADLINE stop)`, ex.status === "EXECUTED_PASS" && !!stepIn(lp.trace, "EVIDENCE") && !!stepIn(lp.trace, "NEXT_SELECTION") && !lp.trace.some((e: any) => e.kind === "STOP"));
+      }
+      {
+        const fp = mkPorts({ state: withPr(j2caps), asyncDispatch: true, dispatchResult: { verified: false, detail: "killed (TIMEOUT)", process: { killedBy: "TIMEOUT", signal: "SIGTERM", reason: "dispatch timeout" } } });
+        const fr = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true }, fp.ports);
+        const fd = stepIn(fp.trace, "EXECUTE").decision;
+        check("GO-DTO-1 MED-2: async dispatch killed on timeout ⇒ EXECUTED_FAIL (unchanged semantics) with killedBy/signal recorded in the trace", fr.status === "EXECUTED_FAIL" && fd.volatile.dispatchProcess.killedBy === "TIMEOUT" && fd.volatile.dispatchProcess.signal === "SIGTERM" && /killed/.test(fd.scheduler.reason));
+      }
+      for (const bad of [-1, "1800000", null, NaN, 1e300]) {
+        const mp = mkPorts({ state: withPr({ ...j2caps, caps: { ...j2caps.caps, perTrialWallMs: bad } }) });
+        const mr = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true }, mp.ports);
+        const md = stepIn(mp.trace, "EXECUTE").decision.dispatchTarget;
+        check(`GO-DTO-1 LOW-1: committed-shape contract with perTrialWallMs ${String(bad)} ⇒ dispatch REFUSED (GO-DTO-1_MALFORMED_CAPS), 0 dispatch`, mp.calls.dispatch === 0 && md.ok === false && md.code === "GO-DTO-1_MALFORMED_CAPS" && mr.status === "HALTED_AT_AUTHORIZATION_GATE");
+      }
     }
     {
       const d = rj("docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json").contracts;
@@ -247,6 +270,12 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       check("GO-DTO-1: committed J2 contract ⇒ timeout > 600000 and ≤ ceiling; derivation from perTrialWallMs 1800000 × 11 tasks × 5 arms × 2 seeds (110 trials) recorded, clamped to the 12 h ceiling", tj.timeoutMs > 600000 && tj.timeoutMs <= GO.DISPATCH_TIMEOUT_CEILING_MS && tj.timeoutMs === 43200000 && tj.derivation.trials === 110 && tj.derivation.fields.perTrialWallMs === 1800000 && tj.derivation.clampedFrom === "PER_TRIAL_WALL_MS_X_TRIALS");
       const tg = GO.deriveDispatchTimeout(g2, g2.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS);
       check("GO-DTO-1: committed G2 contract (no caps) ⇒ 600000", tg.timeoutMs === 600000 && tg.basis === "NO_DECLARED_WALL_CAP");
+      {
+        const gs = (() => { const s = focusG(BASE_LIVE); const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "G"); c.authorization.dispatchTargets = { RUN_CONTROLLED_EXPERIMENTS: good }; s.authorizationEvidence = { G: { inspection: rec({ contractSha256: AS.contractSha256(c) }), experiment: null } }; return s; })();
+        const gp = mkPorts({ state: gs }); const gr = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true }, gp.ports);
+        const gc = stepIn(gp.trace, "EXECUTE").decision.volatile.cycleDeadline;
+        check("GO-DTO-1: no-caps declared target (G2-shaped) ⇒ timeout 600000, deadline stays 900000 (600000 + 300000 = 900000 ⇒ REQUESTED_SUFFICIENT, no extension)", (gp.calls as any).dispatched[0].timeoutMs === 600000 && gc.requestedMs === 900000 && gc.effectiveMs === 900000 && gc.basis === "REQUESTED_SUFFICIENT" && !gp.trace.some((e: any) => e.kind === "DEADLINE_EXTENDED") && gr.status === "EXECUTED_PASS");
+      }
       const mkC = (pr: any) => ({ scenario: "X", WORK_ITEM_CONTRACT: { preRegistration: pr } });
       const T = { command: "runtime/bin/x.ts", writeSet: ["x"] };
       check("GO-DTO-1: no target (plain odg-run) ⇒ 600000", GO.deriveDispatchTimeout(j2, null).timeoutMs === 600000 && GO.deriveDispatchTimeout(j2, null).basis === "PLAIN_DISPATCH");
@@ -255,10 +284,16 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       check("GO-DTO-1: perTrialWallMs 60000 × (2 tasks × 2 arms × 2 seeds) + margin = 600000 (floored at the plain default)", small.timeoutMs === 600000 && small.derivation.trials === 8 && small.derivation.rawMs === 600000);
       const mid = GO.deriveDispatchTimeout(mkC({ caps: { perTrialWallMs: 600000 }, dataset: { heldOut: ["a", "b"] }, arms: { A0: 1 }, decoding: { seeds: [1] } }), T);
       check("GO-DTO-1: perTrialWallMs 600000 × 2 trials + 120000 = 1320000", mid.timeoutMs === 1320000 && mid.basis === "PER_TRIAL_WALL_MS_X_TRIALS");
-      for (const [name, caps] of [["perTrialWallMs string", { perTrialWallMs: "1800000" }], ["perTrialWallMs negative", { perTrialWallMs: -1 }], ["perTrialWallMs Infinity", { perTrialWallMs: Infinity }], ["maxRunWallMs NaN", { maxRunWallMs: NaN }], ["maxRunWallMs huge", { maxRunWallMs: 1e15 }], ["perTrialWallMs huge", { perTrialWallMs: 1e12 }]] as any[]) {
+      for (const [name, caps] of [["perTrialWallMs string", { perTrialWallMs: "1800000" }], ["perTrialWallMs negative", { perTrialWallMs: -1 }], ["perTrialWallMs Infinity", { perTrialWallMs: Infinity }], ["perTrialWallMs null", { perTrialWallMs: null }], ["perTrialWallMs 1e300", { perTrialWallMs: 1e300 }], ["maxRunWallMs NaN", { maxRunWallMs: NaN }], ["maxRunWallMs -1", { maxRunWallMs: -1 }], ["maxRunWallMs string", { maxRunWallMs: "x" }], ["maxRunWallMs null", { maxRunWallMs: null }], ["maxRunWallMs 1e300", { maxRunWallMs: 1e300 }]] as any[]) {
         const r = GO.deriveDispatchTimeout(mkC({ caps, dataset: { heldOut: ["a"] }, arms: { A0: 1 }, decoding: { seeds: [1] } }), T);
-        check(`GO-DTO-1: malformed/huge caps (${name}) ⇒ ceiling`, r.timeoutMs === GO.DISPATCH_TIMEOUT_CEILING_MS && r.basis === "CEILING");
+        check(`GO-DTO-1 LOW-1: malformed wall cap (${name}) ⇒ REFUSED GO-DTO-1_MALFORMED_CAPS (no timeout)`, r.ok === false && r.code === "GO-DTO-1_MALFORMED_CAPS" && r.timeoutMs === null && /GO-DTO-1_MALFORMED_CAPS/.test(r.reason));
       }
+      for (const [name, caps] of [["maxRunWallMs huge-but-valid", { maxRunWallMs: 1e15 }], ["perTrialWallMs huge-but-valid", { perTrialWallMs: 1e12 }]] as any[]) {
+        const r = GO.deriveDispatchTimeout(mkC({ caps, dataset: { heldOut: ["a"] }, arms: { A0: 1 }, decoding: { seeds: [1] } }), T);
+        check(`GO-DTO-1: ${name} ⇒ clamped to the ceiling`, r.ok === true && r.timeoutMs === GO.DISPATCH_TIMEOUT_CEILING_MS && r.basis === "CEILING");
+      }
+      const frac = GO.deriveDispatchTimeout(mkC({ caps: { maxRunWallMs: 1000000.25 } }), T);
+      check("GO-DTO-1 LOW-2: non-integer cap ⇒ Math.ceil in the core (integer recorded = integer used)", frac.ok === true && frac.timeoutMs === 1120001 && Number.isInteger(frac.timeoutMs));
       const nd = GO.deriveDispatchTimeout(mkC({ caps: { perTrialWallMs: 1000 }, arms: { A0: 1 } }), T);
       check("GO-DTO-1: perTrialWallMs declared but trials not derivable ⇒ conservative ceiling (TRIALS_NOT_DERIVABLE recorded)", nd.timeoutMs === GO.DISPATCH_TIMEOUT_CEILING_MS && /TRIALS_NOT_DERIVABLE/.test(nd.derivation.reason));
       check("GO-DTO-1: ceiling constant = 12 h", GO.DISPATCH_TIMEOUT_CEILING_MS === 43200000);
@@ -503,10 +538,11 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     // reference: one uninterrupted EXECUTE cycle on a fresh trace
     const ref = mkPorts({ state: mk() });
     const rref = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true }, ref.ports);
-    // run 1: the clock jumps past the deadline while EXECUTE runs (like H: 180 s > 120 s) ⇒ STOPPED before EVIDENCE
+    // run 1: the clock jumps past the deadline while EXECUTE runs (like H) ⇒ STOPPED before EVIDENCE. Since GO-DTO-1 the
+    // deadline is extended to elapsed + dispatch timeout (600000) + 300000, so the jump must exceed THAT (1 000 000 ms)
     const trace: any[] = [];
     let t = 1_000_000; let jumped = false;
-    const p1 = mkPorts({ state: mk(), trace, now: () => { if (!jumped && p1.calls.dispatch > 0) { jumped = true; t += 200_000; } return (t += 5); } });
+    const p1 = mkPorts({ state: mk(), trace, now: () => { if (!jumped && p1.calls.dispatch > 0) { jumped = true; t += 1_000_000; } return (t += 5); } });
     const r1 = await GO.runGoCycle({ mode: "EXECUTE", allowUnsandboxedTarget: true, deadlineMs: 120000 }, p1.ports);
     check("resume fixture run 1: EXECUTE dispatched once, then DEADLINE before EVIDENCE ⇒ STOPPED (8 steps)", r1.status === "STOPPED" && r1.stop.reason === "DEADLINE" && p1.calls.dispatch === 1 && stepsOf(trace).length === 8 && /before EVIDENCE/.test(r1.stop.source));
     // run 2: --resume on the SAME state ⇒ resumes at EVIDENCE, EXECUTE carried over, NEVER re-dispatched
