@@ -100,6 +100,9 @@ function declaredOutputs(src: string): string[] {
   for (const m of src.matchAll(/\bconst\s+\w*OUT\w*\s*(?::\s*\w+)?\s*=\s*`([^`]+\.jsonl?)`/g)) { const r = resolveTemplate(src, m[1]); if (r) outs.add(r); }
   for (const m of src.matchAll(/\bconst\s+\w*OUT\w*\s*=\s*path\.join\(\s*ROOT\s*,\s*((?:"[^"]+"\s*,?\s*)+)\)/g)) outs.add([...m[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]).join("/"));
   for (const m of src.matchAll(/outPath\(\s*"--[\w-]+"\s*,\s*"([^"]+)"/g)) outs.add(m[1]);
+  // header self-declaration "… write docs/…/X.json" (a record whose path constant lives in a runtime/core module, e.g. the
+  // outcome-feedback layer: `npx tsx … write docs/odg/evidence/V176_OUTCOME_FEEDBACK.json`)
+  for (const m of headerOf(src).matchAll(/\bwrites?\s+(docs\/[A-Za-z0-9_.\/\-]+\.jsonl?)\b/g)) outs.add(m[1]);
   return [...outs].filter((p) => p.startsWith("docs/")).sort();
 }
 
@@ -127,6 +130,26 @@ function discoverChecks(root: string, graph?: any): any[] {
   let files: string[] = [];
   try { files = fs.readdirSync(binDir).filter((f: string) => f.endsWith(".ts") && !f.endsWith(".test.ts")).sort(); } catch { return []; }
   const g = graph || CIG.buildGraph(root);
+  // the OWN inputs of a runtime/bin source: itself + its runtime/core closure + path literals + the paths its record(s) cite
+  const own = new Map<string, any>();
+  const ownInputs = (f: string): { inputs: string[]; outputs: string[]; binRequires: string[] } => {
+    if (own.has(f)) return own.get(f);
+    let src = ""; try { src = fs.readFileSync(path.join(binDir, f), "utf8"); } catch { /* absent */ }
+    const outputs = declaredOutputs(src);
+    const direct = [...src.matchAll(/require\(\s*["']\.\.\/core\/([\w.\-]+?)(?:\.js|\.ts)?["']\s*\)/g)].map((m) => m[1]);
+    const closure = new Set<string>(); const stack = direct.filter((d) => g.modules.includes(d));
+    while (stack.length) { const n = stack.pop() as string; if (closure.has(n)) continue; closure.add(n); for (const d of g.deps[n] || []) stack.push(d); }
+    const inputs = new Set<string>([`runtime/bin/${f}`]);
+    for (const m of closure) inputs.add(`runtime/core/${m}.ts`);
+    for (const m of src.matchAll(/["'`]((?:docs|runtime|scripts)\/[A-Za-z0-9_.\/\-]+\.[a-z]+)["'`]/g)) inputs.add(m[1]);
+    for (const m of src.matchAll(/`([^`\n]*\$\{\w+\}[^`\n]*\.(?:json|jsonl|ts|md))`/g)) { const r = resolveTemplate(src, m[1]); if (r && /^(docs|runtime|scripts)\//.test(r)) inputs.add(r); }
+    for (const o of outputs) {
+      try { for (const p of citedPaths(root, JSON.parse(fs.readFileSync(path.join(root, o), "utf8")))) inputs.add(p); } catch { /* jsonl / absent ⇒ literals only */ }
+    }
+    const binRequires = [...src.matchAll(/require\(\s*["']\.\/([\w.\-]+?)(?:\.js|\.ts)?["']\s*\)/g)].map((m) => `${m[1]}.ts`).filter((b) => b !== f && !b.endsWith(".test.ts") && files.includes(b));
+    const r = { inputs: [...inputs], outputs, binRequires };
+    own.set(f, r); return r;
+  };
   const checks: any[] = [];
   for (const f of files) {
     const rel = `runtime/bin/${f}`;
@@ -137,18 +160,15 @@ function discoverChecks(root: string, graph?: any): any[] {
     if (!declares) continue;
     const outputs = declaredOutputs(src);
     const kind = classifyCli(src);
-    // runtime/core closure of the CLI (direct requires + transitive deps over the impact graph)
-    const direct = [...src.matchAll(/require\(\s*["']\.\.\/core\/([\w.\-]+?)(?:\.js|\.ts)?["']\s*\)/g)].map((m) => m[1]);
-    const closure = new Set<string>(); const stack = direct.filter((d) => g.modules.includes(d));
-    while (stack.length) { const n = stack.pop() as string; if (closure.has(n)) continue; closure.add(n); for (const d of g.deps[n] || []) stack.push(d); }
-    const inputs = new Set<string>([rel]);
-    for (const m of closure) inputs.add(`runtime/core/${m}.ts`);
-    for (const m of src.matchAll(/["'`]((?:docs|runtime|scripts)\/[A-Za-z0-9_.\/\-]+\.[a-z]+)["'`]/g)) inputs.add(m[1]);
-    for (const m of src.matchAll(/`([^`\n]*\$\{\w+\}[^`\n]*\.(?:json|jsonl|ts|md))`/g)) { const r = resolveTemplate(src, m[1]); if (r && /^(docs|runtime|scripts)\//.test(r)) inputs.add(r); }
-    for (const o of outputs) {
-      inputs.add(o);
-      try { for (const p of citedPaths(root, JSON.parse(fs.readFileSync(path.join(root, o), "utf8")))) inputs.add(p); } catch { /* jsonl / absent ⇒ literals only */ }
+    const inputs = new Set<string>(ownInputs(f).inputs);
+    // a CLI that REQUIRES another runtime/bin CLI (e.g. outcome-feedback → strategic-select.loadSources) reads that CLI's
+    // inputs too — but NOT its outputs (requiring a generator's code does not read the generator's record).
+    const seenBin = new Set<string>([f]); const binStack = [...ownInputs(f).binRequires];
+    while (binStack.length) {
+      const b = binStack.pop() as string; if (seenBin.has(b)) continue; seenBin.add(b);
+      const oi = ownInputs(b); for (const i of oi.inputs) if (!oi.outputs.includes(i)) inputs.add(i); binStack.push(...oi.binRequires);
     }
+    for (const o of outputs) inputs.add(o);
     const scansEvidence = /readdirSync/.test(src) && /docs\/odg\/evidence|"evidence"/.test(src);
     const takesOutArg = /--check\s+<[^>]+>/.test(headerOf(src));
     const checkArgs = kind === "FROZEN_AT_RUN_HEAD"
@@ -177,9 +197,52 @@ function selectChecks(checks: any[], changes: Change[]): any[] {
     if (c.kind !== "DETERMINISTIC" && !outTouched.length) { res.push({ ...c, trigger, run: false, skipReason: `${c.kind}: only checked when its own record changes (a current-tree drift is expected by the CLI's own declaration)` }); continue; }
     res.push({ ...c, trigger, run: true });
   }
-  // dependency order: a check whose output feeds another runs (and regenerates) first
-  const order = (x: any) => res.filter((y) => y !== x && y.outputs.some((o: string) => x.inputs.includes(o))).length;
-  return res.sort((a, b) => order(a) - order(b) || a.cli.localeCompare(b.cli));
+  // propagation: a record that will be checked (and may be regenerated) is an INPUT of its downstream records ⇒ they are
+  // checked too (a regenerated register makes the resume point / radar proposals drift — #989/#994 shape)
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const c of checks) {
+      if (res.some((r) => r.cli === c.cli)) continue;
+      const up = res.filter((r) => r.run && r.outputs.some((o: string) => c.inputs.includes(o) && !c.outputs.includes(o)));
+      if (!up.length) continue;
+      const trigger = `upstream record may change: ${up.map((u) => u.outputs.filter((o: string) => c.inputs.includes(o)).join(", ")).join("; ")}`;
+      if (c.kind !== "DETERMINISTIC") res.push({ ...c, trigger, run: false, skipReason: `${c.kind}: only checked when its own record changes (a current-tree drift is expected by the CLI's own declaration)` });
+      else res.push({ ...c, trigger, run: true });
+      grew = true;
+    }
+  }
+  return topoOrder(res);
+}
+
+/**
+ * producer → consumer edges among checks: an output of P is a declared input of C (C ≠ P). Only a DETERMINISTIC producer
+ * orders anything: a frozen / HEAD- / host-dependent record is never regenerated by this gate, so it cannot make a
+ * consumer drift here (this also removes the go-cycle ⇄ register loop).
+ */
+function checkEdges(checks: any[]): Array<[string, string]> {
+  const e: Array<[string, string]> = [];
+  for (const p of checks) for (const c of checks) if (p !== c && (!p.kind || p.kind === "DETERMINISTIC") && p.outputs.some((o: string) => c.inputs.includes(o) && !c.outputs.includes(o))) e.push([p.cli, c.cli]);
+  return e;
+}
+
+/**
+ * topological order of checks over their DECLARED inputs (Kahn; ties broken by CLI path ⇒ deterministic). A cycle is never
+ * silently dropped: the remaining node with the fewest unresolved producers is emitted next and flagged `cycle: true`.
+ */
+function topoOrder(checks: any[]): any[] {
+  const edges = checkEdges(checks);
+  const indeg = new Map<string, number>(checks.map((c) => [c.cli, 0]));
+  for (const [, c] of edges) indeg.set(c, (indeg.get(c) || 0) + 1);
+  const byCli = new Map<string, any>(checks.map((c) => [c.cli, c]));
+  const out: any[] = []; const done = new Set<string>();
+  while (out.length < checks.length) {
+    const rest = checks.filter((c) => !done.has(c.cli)).sort((a, b) => a.cli.localeCompare(b.cli));
+    let next = rest.find((c) => (indeg.get(c.cli) || 0) === 0); let cycle = false;
+    if (!next) { next = rest.slice().sort((a, b) => (indeg.get(a.cli) || 0) - (indeg.get(b.cli) || 0) || a.cli.localeCompare(b.cli))[0]; cycle = true; }
+    done.add(next.cli); out.push(cycle ? { ...byCli.get(next.cli), cycle: true } : byCli.get(next.cli));
+    for (const [p, c] of edges) if (p === next.cli && !done.has(c)) indeg.set(c, (indeg.get(c) || 0) - 1);
+  }
+  return out;
 }
 
 /* ---------- (3) impacted tests ---------- */
@@ -206,7 +269,7 @@ function escapeRe(s: string): string { return s.replace(/[.*+?^${}()|[\]\\]/g, "
  * (basename, or stem for code); and, when a file is ADDED/DELETED in a directory, the scanner tests that readdirSync it
  * (hard-coded file-set counts — e.g. the V251 reconciliation scan in #978).
  */
-function selectTests(root: string, changes: Change[], graph: any, testSources?: Record<string, string>): any[] {
+function selectTests(root: string, changes: Change[], graph: any, testSources?: Record<string, string>, evidenceChecks: any[] = []): any[] {
   const tests = testSources ? Object.keys(testSources).sort() : listTests(root);
   const srcOf = (t: string) => (testSources ? testSources[t] : (() => { try { return fs.readFileSync(path.join(root, t), "utf8"); } catch { return ""; } })());
   const exists = (t: string) => tests.includes(t);
@@ -233,6 +296,17 @@ function selectTests(root: string, changes: Change[], graph: any, testSources?: 
       const dirRe = new RegExp(`${escapeRe(dir)}|${segs.map((s: string) => `"${escapeRe(s)}"`).join("\\s*,\\s*")}`);
       for (const t of tests) if (!picked.has(t) && /readdirSync/.test(sources[t]) && dirRe.test(sources[t])) add(t, `scans ${dir}/ (file ${c.status === "A" ? "added" : "deleted"})`);
     }
+  }
+  // committed-evidence inputs (#989): a changed file that is an INPUT of a generated record (or the record itself, or a
+  // record downstream of one) ⇒ the tests that read that record's REAL committed state — the generator's sibling test and
+  // every test naming the generator CLI or the record file (e.g. odg-strategic-register.test.ts requires
+  // ../bin/odg-strategic-select.ts and asserts on V164_STRATEGIC_REGISTER.json). The code import graph alone misses them.
+  for (const c of evidenceChecks) {
+    const why = `reads committed evidence of ${c.cli} (${c.trigger})`;
+    add(c.cli.replace(/\.ts$/, ".test.ts"), why);
+    const names = [path.basename(c.cli).replace(/\.ts$/, ""), ...c.outputs.map((o: string) => path.basename(o))];
+    const re = new RegExp(`(^|[^A-Za-z0-9_-])(${names.map(escapeRe).join("|")})([^A-Za-z0-9_-]|$)`);
+    for (const t of tests) if (!picked.has(t) && re.test(sources[t])) add(t, why);
   }
   return [...picked.entries()].map(([test, reason]) => ({ test, reason })).sort((a, b) => a.test.localeCompare(b.test));
 }
@@ -365,8 +439,10 @@ function gate(root: string, o: any, log: (s: string) => void = () => {}): any {
 
   // (2) generated evidence
   report.checks = [];
+  const triggered = selectChecks(discoverChecks(root, graph), cs.changes);
+  report.checkOrder = triggered.map((c: any) => c.cli + (c.cycle ? " (cycle broken here)" : ""));
   if (o.checks) {
-    const sel = selectChecks(discoverChecks(root, graph), cs.changes);
+    const sel = triggered;
     for (const c of sel) {
       const regenerate = c.regenArgs ? `npx tsx ${c.cli}${c.regenArgs.length ? " " + c.regenArgs.join(" ") : ""}` : null;
       const entry: any = { cli: c.cli, kind: c.kind, outputs: c.outputs, trigger: c.trigger, command: `npx tsx ${c.cli} ${c.checkArgs.join(" ")}`, regenerate };
@@ -381,12 +457,23 @@ function gate(root: string, o: any, log: (s: string) => void = () => {}): any {
       }
       report.checks.push(entry);
     }
+    // after any regeneration, EVERY run check is re-run (in the same dependency order): a record that was OK before an
+    // upstream regeneration may drift now; what still drifts is reported as remaining DRIFT (never hidden)
+    if (report.checks.some((e: any) => e.regenerated)) {
+      for (const e of report.checks) {
+        if (e.status === "SKIPPED") continue;
+        const c = sel.find((x: any) => x.cli === e.cli);
+        const fin = runCheck(root, c);
+        e.finalRecheck = fin.status;
+        if (fin.status !== "OK") { e.status = fin.status; e.detail = `remaining ${fin.status} after regeneration: ${fin.detail}`; }
+      }
+    }
   }
 
   // (3) tests — only suites of the CI classified gate (package.json test:report) run: a suite outside it is not what CI
   // judges, so it is LISTED (outsideGate) but never run nor counted PASS.
   const gateSuites = ciSuites(root);
-  const all = selectTests(root, cs.changes, graph);
+  const all = selectTests(root, cs.changes, graph, undefined, triggered);
   const selected = gateSuites ? all.filter((s) => gateSuites.has(s.test)) : all;
   report.testSelection = selected;
   report.testsOutsideGate = gateSuites ? all.filter((s) => !gateSuites.has(s.test)).map((s) => s.test) : [];
@@ -431,7 +518,7 @@ function main(argv: string[]): number {
   return r.verdict === "READY" ? 0 : 1;
 }
 
-module.exports = { notOkLines, ciSuites, resolveTemplate, parseNameStatus, mergeChanges, citedPaths, declaredOutputs, classifyCli, discoverChecks, selectChecks, selectTests, conflictMarkers, nodeModulesFindings, verdict, parseArgs, gate, renderText };
+module.exports = { notOkLines, ciSuites, resolveTemplate, parseNameStatus, mergeChanges, citedPaths, declaredOutputs, classifyCli, discoverChecks, selectChecks, checkEdges, topoOrder, selectTests, conflictMarkers, nodeModulesFindings, verdict, parseArgs, gate, renderText };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
 

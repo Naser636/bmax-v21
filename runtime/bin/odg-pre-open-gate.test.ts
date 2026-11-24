@@ -8,6 +8,7 @@ const os = require("os");
 const path = require("path");
 const { execFileSync } = require("child_process");
 const G = require("./odg-pre-open-gate.js");
+const CIG = require("../core/change-impact-graph");
 
 let passed = 0;
 const ok = (n: string, c: any) => { assert.ok(c, n); console.log("  ok -", n); passed += 1; };
@@ -104,6 +105,97 @@ fs.rmSync(tmp, { recursive: true, force: true });
 const disc = G.discoverChecks(process.cwd());
 ok("discovery: the strategic register CLI is discovered with its record + cited inputs", disc.some((c: any) => c.cli === "runtime/bin/odg-strategic-select.ts" && c.outputs.includes("docs/odg/evidence/V164_STRATEGIC_REGISTER.json") && c.inputs.length > 3));
 ok("discovery: the gate never lists itself", !disc.some((c: any) => c.cli === "runtime/bin/odg-pre-open-gate.ts"));
+
+
+// --- (#989) committed-evidence inputs ⇒ the tests that read that record's real state; propagation downstream
+{
+  const evChecks = [
+    { cli: "runtime/bin/odg-strategic-select.ts", kind: "DETERMINISTIC", outputs: ["docs/odg/evidence/V164_STRATEGIC_REGISTER.json"], inputs: ["docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json", "runtime/core/odg-authorization-evidence-paths.ts"], scansEvidence: true, undeterminedOutputs: false },
+    { cli: "runtime/bin/odg-resume-point.ts", kind: "DETERMINISTIC", outputs: ["docs/odg/evidence/V175_RESUME_POINT.json"], inputs: ["docs/odg/evidence/V164_STRATEGIC_REGISTER.json"], scansEvidence: false, undeterminedOutputs: false },
+  ];
+  const ch = [{ status: "M", path: "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json" }];
+  const sel = G.selectChecks(evChecks, ch);
+  ok("propagation: a register input changed ⇒ the downstream resume point is checked too (upstream record may change)", sel.map((c: any) => c.cli).join(",") === "runtime/bin/odg-strategic-select.ts,runtime/bin/odg-resume-point.ts" && /upstream record may change/.test(sel[1].trigger));
+  const tsrc: Record<string, string> = {
+    "runtime/core/odg-strategic-register.test.ts": 'const SS = require("../bin/odg-strategic-select.ts");',
+    "runtime/bin/odg-resume-point.test.ts": "require('./odg-resume-point.ts')",
+    "runtime/core/odg-x.test.ts": "read('docs/odg/evidence/V175_RESUME_POINT.json')",
+    "runtime/core/unrelated.test.ts": "odg-strategic-selection",
+  };
+  const g0 = { modules: [], deps: {}, consumers: {} };
+  const before = G.selectTests("/nonexistent", ch, g0, tsrc).map((x: any) => x.test);
+  const after = G.selectTests("/nonexistent", ch, g0, tsrc, sel).map((x: any) => x.test);
+  ok("#989 shape: import graph alone misses the register test for a changed contract file", !before.includes("runtime/core/odg-strategic-register.test.ts"));
+  ok("#989 fix: generator-naming + sibling + record-naming tests selected; word-bounded (odg-strategic-selection ≠ odg-strategic-select)", ["runtime/core/odg-strategic-register.test.ts", "runtime/bin/odg-resume-point.test.ts", "runtime/core/odg-x.test.ts"].every((t) => after.includes(t)) && !after.includes("runtime/core/unrelated.test.ts"));
+}
+
+// --- regeneration order: topological over DECLARED inputs (never the file-name order)
+{
+  const mk = (cli: string, out: string, ins: string[], kind = "DETERMINISTIC") => ({ cli: `runtime/bin/${cli}.ts`, kind, outputs: [`E/${out}.json`], inputs: ins.map((i) => `E/${i}.json`), scansEvidence: false, undeterminedOutputs: false });
+  const chain = [
+    mk("odg-v176-radar-build-proposals", "RADAR", ["REG", "OL", "PM"]),
+    mk("odg-resume-point", "RES", ["REG"]),
+    mk("odg-v176-outcome-feedback", "OFB", ["REG", "MODE"]),
+    mk("odg-v175-outcome-learning", "OL", ["REG", "OFB"]),
+    mk("odg-v175-production-metric", "PM", ["OL"]),
+    mk("odg-strategic-select", "REG", ["MODE"]),
+    mk("odg-strategy-mode-run", "MODE", []),
+  ];
+  const ord = G.topoOrder(chain).map((c: any) => c.cli.replace(/^runtime\/bin\/|\.ts$/g, ""));
+  ok("topo: strategy-mode → register → {resume, outcome-feedback → outcome-learning → production-metric} → radar (derived; alphabetical only breaks ties)", ord.join(",") === "odg-strategy-mode-run,odg-strategic-select,odg-resume-point,odg-v176-outcome-feedback,odg-v175-outcome-learning,odg-v175-production-metric,odg-v176-radar-build-proposals"
+    && ord.indexOf("odg-v176-outcome-feedback") < ord.indexOf("odg-v175-outcome-learning"));
+  const cyc = G.topoOrder([mk("a", "A", ["B"]), mk("b", "B", ["A"])]);
+  ok("topo: a cycle is emitted (never dropped) and flagged", cyc.length === 2 && cyc.some((c: any) => c.cycle));
+  ok("topo: a non-deterministic producer (never regenerated) orders nothing", G.checkEdges([mk("a", "A", ["B"]), mk("b", "B", ["A"], "HOST_DEPENDENT")]).length === 1);
+}
+
+{ // discovery: header-declared output + inputs inherited (not outputs) from a required runtime/bin CLI
+  const tmpb = fs.mkdtempSync(path.join(os.tmpdir(), "odg-pre-open-disc2-"));
+  fs.mkdirSync(path.join(tmpb, "runtime", "bin"), { recursive: true }); fs.mkdirSync(path.join(tmpb, "runtime", "core"), { recursive: true });
+  fs.writeFileSync(path.join(tmpb, "runtime", "bin", "up.ts"), '/* up */\nconst OUT = "docs/odg/evidence/UP.json";\nconst IN = "docs/odg/IN.json";\nif (process.argv.includes("--check")) {}\n');
+  fs.writeFileSync(path.join(tmpb, "runtime", "bin", "down.ts"), '/*\n *   npx tsx runtime/bin/down.ts     write docs/odg/evidence/DOWN.json\n */\nconst U = require("./up.ts");\nif (process.argv.includes("--check")) {}\n');
+  const d = G.discoverChecks(tmpb); const down = d.find((c: any) => c.cli === "runtime/bin/down.ts");
+  ok("discovery: header 'write docs/…json' is a declared output", down && down.outputs.join(",") === "docs/odg/evidence/DOWN.json");
+  ok("discovery: a required bin CLI's inputs are inherited, its record is NOT (no false producer edge)", down.inputs.includes("docs/odg/IN.json") && down.inputs.includes("runtime/bin/up.ts") && !down.inputs.includes("docs/odg/evidence/UP.json"));
+  fs.rmSync(tmpb, { recursive: true, force: true });
+}
+
+// --- THIS repo (read-only): derived order + the #989 test selection on the real committed evidence graph
+{
+  const disc2 = G.discoverChecks(process.cwd());
+  const ord = G.topoOrder(disc2).map((c: any) => c.cli.replace(/^runtime\/bin\/|\.ts$/g, ""));
+  const i = (n: string) => ord.indexOf(n);
+  ok("real repo: derived order strategy-mode → register → {outcome-feedback, outcome-learning, resume} → radar; production-metric before radar", i("odg-strategy-mode-run") >= 0 && i("odg-strategy-mode-run") < i("odg-strategic-select") && ["odg-v176-outcome-feedback", "odg-v175-outcome-learning", "odg-resume-point", "odg-v176-radar-build-proposals"].every((n) => i("odg-strategic-select") < i(n)) && i("odg-v175-outcome-learning") < i("odg-v176-radar-build-proposals") && i("odg-v175-production-metric") < i("odg-v176-radar-build-proposals") && !G.topoOrder(disc2).some((c: any) => c.cycle));
+  const ch = [{ status: "A", path: "docs/odg/evidence/V999_Z_CONTRACT_INSPECTION.json" }];
+  const tsel = G.selectTests(process.cwd(), ch, CIG.buildGraph(process.cwd()), undefined, G.selectChecks(disc2, ch)).map((x: any) => x.test);
+  ok("real repo: a new *_CONTRACT_INSPECTION.json selects the register / resume / outcome-feedback / dependency-graph tests", ["runtime/core/odg-strategic-register.test.ts", "runtime/bin/odg-resume-point.test.ts", "runtime/core/odg-outcome-feedback.test.ts", "runtime/core/odg-register-dependency-graph.test.ts"].every((t) => tsel.includes(t)));
+}
+
+// --- e2e --fix-regenerate on a throw-away repo: downstream sorts FIRST by name, upstream must still regenerate first;
+// every check is re-run after regeneration and a record that cannot be fixed stays DRIFT (reported)
+{
+  const tmp2 = fs.mkdtempSync(path.join(os.tmpdir(), "odg-pre-open-regen-"));
+  const sh2 = (args: string[]) => execFileSync("git", args, { cwd: tmp2, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+  sh2(["init", "-q", "-b", "main"]); sh2(["config", "user.email", "t@t"]); sh2(["config", "user.name", "t"]);
+  for (const d of ["runtime/bin", "runtime/core", "docs/odg/evidence"]) fs.mkdirSync(path.join(tmp2, d), { recursive: true });
+  fs.symlinkSync(path.join(process.cwd(), "node_modules"), path.join(tmp2, "node_modules"));
+  fs.writeFileSync(path.join(tmp2, ".gitignore"), "node_modules\n");
+  const gen = (out: string, inp: string, broken = false) => `const fs = require("fs");\nconst OUT = "${out}";\nconst IN = "${inp}";\nconst t = JSON.stringify({ v: fs.readFileSync(IN, "utf8") }) + "\\n";\nif (process.argv.includes("--check")) process.exit(${broken ? "1" : 'fs.existsSync(OUT) && fs.readFileSync(OUT, "utf8") === t ? 0 : 1'});\nfs.writeFileSync(OUT, t);\nexport {};\n`;
+  fs.writeFileSync(path.join(tmp2, "runtime/bin/a-down.ts"), gen("docs/odg/evidence/DOWN.json", "docs/odg/evidence/UP.json"));
+  fs.writeFileSync(path.join(tmp2, "runtime/bin/z-up.ts"), gen("docs/odg/evidence/UP.json", "docs/odg/IN.txt"));
+  fs.writeFileSync(path.join(tmp2, "runtime/bin/m-broken.ts"), gen("docs/odg/evidence/BROKEN.json", "docs/odg/IN.txt", true));
+  fs.writeFileSync(path.join(tmp2, "docs/odg/IN.txt"), "1");
+  const run = (f: string) => execFileSync("npx", ["tsx", f], { cwd: tmp2, stdio: "ignore" });
+  run("runtime/bin/z-up.ts"); run("runtime/bin/a-down.ts"); run("runtime/bin/m-broken.ts");
+  sh2(["add", "-A"]); sh2(["commit", "-qm", "base"]); sh2(["checkout", "-qb", "feat"]);
+  fs.writeFileSync(path.join(tmp2, "docs/odg/IN.txt"), "2"); sh2(["commit", "-qam", "input changes, records stale"]);
+  const rr = G.gate(tmp2, G.parseArgs(["--base", "main", "--no-tests", "--no-tsc", "--fix-regenerate"]));
+  const st = (cli: string) => rr.checks.find((c: any) => c.cli === cli) || {};
+  ok("e2e regen: order derived from inputs (z-up before a-down, despite names)", rr.checkOrder.indexOf("runtime/bin/z-up.ts") < rr.checkOrder.indexOf("runtime/bin/a-down.ts"));
+  ok("e2e regen: upstream + downstream regenerated and re-checked OK (no residual DRIFT)", st("runtime/bin/z-up.ts").status === "REGENERATED" && st("runtime/bin/a-down.ts").status === "REGENERATED" && st("runtime/bin/a-down.ts").finalRecheck === "OK" && JSON.parse(fs.readFileSync(path.join(tmp2, "docs/odg/evidence/DOWN.json"), "utf8")).v.includes("2"));
+  ok("e2e regen: a record still drifting after regeneration is reported as remaining DRIFT ⇒ NOT_READY", st("runtime/bin/m-broken.ts").status === "DRIFT" && /remaining DRIFT/.test(st("runtime/bin/m-broken.ts").detail) && rr.verdict === "NOT_READY" && rr.reasons.length === 1);
+  fs.rmSync(tmp2, { recursive: true, force: true });
+}
 
 console.log(`\nodg-pre-open-gate: ${passed} passed`);
 
