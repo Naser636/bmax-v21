@@ -18,7 +18,10 @@ const clone = (o: any) => JSON.parse(JSON.stringify(o));
 const BASE = (() => {
   const src = SS.loadSources(ROOT);
   return {
-    inputs: src.inputs, sources: { contracts: src.contracts, v150: src.v150, cp8: src.cp8, scenarioEvidence: src.scenarioEvidence },
+    // V16.9 Phase 1: the register input is EXACTLY the canonical loader's sources (every key of SS.loadSources except
+    // `inputs`), as odg-go.registerSources does — the hand-picked 4-key subset omitted the closure/resolution/checkpoint
+    // records, so this core suite's register could disagree with the committed register (the defect Phase 1 fixes).
+    inputs: src.inputs, sources: (({ inputs: _i, ...rest }: any) => rest)(src),
     registerEvidence: rj("docs/odg/evidence/V164_STRATEGIC_REGISTER.json"), strategyEvidence: rj("docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json"),
     radar: { grant: rj("docs/odg/V164_RESEARCH_GRANT_BROAD_ADMISSION.json"), admission: rj("docs/odg/evidence/V164_RADAR_SOURCE_ADMISSION.json") },
     ledger: { proven: ["M0001"], integrity: { ok: true } }, attempts: { count: 7, last: null }, allowlist: { ids: ["M0001"], source: "test" },
@@ -43,7 +46,8 @@ const BASE_PRE_V168 = (() => {
   h.WORK_ITEM_CONTRACT.write_set = ["docs/odg/evidence/V160_SCENARIO_H.json"];
   const s = clone(BASE); s.measured = BASE.measured;
   s.sources.contracts = contracts;
-  s.registerEvidence = JSON.parse(JSON.stringify(SS.compute({ ...src, contracts })));
+  // V16.9: authorizationEvidence {} — this fixture's GO state carries no authorization evidence (mirrored below)
+  s.registerEvidence = JSON.parse(JSON.stringify(SS.compute({ ...src, contracts, authorizationEvidence: {} })));
   return s;
 })();
 const BASE_UNAUTH = (() => {
@@ -73,6 +77,14 @@ function authorizeG(state0: any): any {
   c.state = "AUTHORIZED"; c.authorizedBy = "owner (test fixture)";
   return s;
 }
+/* V16.9 Phase 1 (test harness): the register now derives CLOSE-1 closures from sources.authorizationEvidence. Every
+ * fixture's register reads the SAME authorization evidence as that fixture's GO state (state.authorizationEvidence;
+ * absent ⇒ {}), as odg-go does in a real run (both from the same committed records) — so a fixture simulating an earlier
+ * step (e.g. "H at RUN_CONTROLLED_EXPERIMENTS") is not contradicted by the committed closure records. */
+function mirrorAuthEvidence(st: any): any {
+  if (!st || !st.sources) return st;
+  return { ...st, sources: { ...st.sources, authorizationEvidence: st.authorizationEvidence || {} } };
+}
 function mkPorts(o: any = {}): any {
   const trace: any[] = o.trace || [];
   let t = 1_000_000;
@@ -80,7 +92,7 @@ function mkPorts(o: any = {}): any {
   const ports: any = {
     now: o.now || (() => (t += 5)),
     truthLock: () => o.tl || TL_PASS,
-    readState: () => { calls.readState++; return o.state || BASE_UNAUTH; },
+    readState: () => { calls.readState++; return mirrorAuthEvidence(o.state || BASE_UNAUTH); },
     knowledge: () => KNOW,
     stopRequested: o.stopRequested || (() => ({ stop: false })),
     trace: { append: (e: any) => trace.push(JSON.parse(JSON.stringify(e))), readPrior: () => trace.slice() },
@@ -151,22 +163,28 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     const { ports, trace, calls } = mkPorts({ state: BASE_H_AT_RUN });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
     const sel = stepIn(trace, "SELECT").decision;
-    check("committed V168 state: SELECT = DECISION_REQUIRED (tie J/G), consistent with the committed register, no id pick", sel.decision === "DECISION_REQUIRED" && sel.selected === null && sel.tiedSet.join(",") === "J,G" && sel.consistentWithCommittedRegisterEvidence === true);
+    // V16.9 Phase 1: G's committed criteria-validation record closes G (CLOSE-1 ⇒ CLOSED_PARTIAL, non-selectable), so the
+    // pre-Phase-1 J/G tie (which kept a CLOSED mission selectable) no longer occurs — the selector SELECTS J.
+    check("H-at-RUN fixture (G CLOSED_PARTIAL by its committed closure record): SELECT = SELECTED J (no J/G tie), consistent with the committed register, no id pick", sel.decision === "SELECTED" && sel.selected === "J" && sel.tiedSet.length === 0 && sel.consistentWithCommittedRegisterEvidence === true);
     // V16.8 fix (GO-ACT-1 applies when the strategic selection is UNDECIDED): ODG proceeds with the best AUTHORIZED item (H)
     // and records the undecided strategic choice as an owner/ODG request; no dispatch without --allow-unsandboxed-target.
-    check("H-at-RUN fixture ⇒ strategic DECISION_REQUIRED kept, GO proceeds with the authorized item H (authorization evidence as odg-go loads it, experiment/validation removed), owner request for the J/G decision, no dispatch without --allow-unsandboxed-target, no provider", r.status !== "HALTED_DECISION_REQUIRED" && sel.workingOn === "H" && sel.ownerRequest && sel.ownerRequest.item === null && /J\/G/.test(String(sel.ownerRequest.decisionNeeded)) && calls.dispatch === 0 && calls.provider === 0);
+    check("H-at-RUN fixture ⇒ strategic J (not actionable: PROPOSED) kept, GO proceeds with the authorized item H (GO-ACT-1; authorization evidence as odg-go loads it, experiment/validation removed), owner request for J's authorization, no dispatch without --allow-unsandboxed-target, no provider", r.status !== "HALTED_DECISION_REQUIRED" && sel.workingOn === "H" && sel.ownerRequest && sel.ownerRequest.item === "J" && /J PROPOSED → AUTHORIZED/.test(String(sel.ownerRequest.authorizationNeeded)) && calls.dispatch === 0 && calls.provider === 0);
   }
   // 1d'. COMMITTED state after H's criteria validation (#947): H CLOSED (all 4 steps validated) ⇒ nothing actionable ⇒ halt
   {
     const { ports, trace, calls } = mkPorts({ state: BASE_LIVE_EV });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
     const sel = stepIn(trace, "SELECT").decision;
-    check("committed state (H closed) ⇒ HALTED_DECISION_REQUIRED, workingOn null, owner request for the J/G decision, no dispatch", r.status === "HALTED_DECISION_REQUIRED" && sel.workingOn === null && !!sel.ownerRequest && /J\/G/.test(String(sel.ownerRequest.decisionNeeded)) && calls.dispatch === 0);
+    // V16.9 Phase 1: G and H are CLOSED (CLOSE-1) ⇒ the selector SELECTS J; J is PROPOSED ⇒ halt at the authorization gate
+    // with an owner request for J (previously: HALTED_DECISION_REQUIRED on a J/G tie that kept closed G selectable).
+    check("committed state (G, H closed) ⇒ SELECTED J, HALTED_AT_AUTHORIZATION_GATE, owner request for J's authorization, nothing actionable, no dispatch", r.status === "HALTED_AT_AUTHORIZATION_GATE" && sel.decision === "SELECTED" && sel.selected === "J" && !!sel.ownerRequest && sel.ownerRequest.item === "J" && /J PROPOSED → AUTHORIZED/.test(String(sel.ownerRequest.authorizationNeeded)) && calls.dispatch === 0);
   }
   // 1e. strategic UNDECIDED and NO authorized item ⇒ still HALTED_DECISION_REQUIRED (no arbitrary pick)
   {
     const s = clone(BASE_LIVE_EV); s.measured = BASE_LIVE.measured;
-    const h = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "H"); h.state = "PROPOSED"; h.authorizedBy = null; delete h.authorization;
+    // labelled fixture: G AND H de-authorized (no authorization block ⇒ no CLOSE-1 closure, nothing actionable) so the
+    // strategic selection is the undecided J/G tie this test needs (V16.9: with the committed closures it is decided).
+    for (const id of ["H", "G"]) { const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === id); c.state = "PROPOSED"; c.authorizedBy = null; delete c.authorization; }
     const { ports, trace, calls } = mkPorts({ state: s });
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
     check("strategic undecided + no authorized item ⇒ HALTED_DECISION_REQUIRED, nothing selected, no dispatch", r.status === "HALTED_DECISION_REQUIRED" && stepIn(trace, "SELECT").decision.workingOn === null && calls.dispatch === 0);

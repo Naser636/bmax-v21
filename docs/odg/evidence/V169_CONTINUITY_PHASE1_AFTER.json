@@ -1,0 +1,980 @@
+{
+  "//": "V16.9 addendum Phase 1 ('Continuité vérifiable') — §29 continuity baseline RE-RUN AFTER the Phase-1 fix (closures into the canonical register, contradiction detection, latest-checkpoint discovery). Same runner, rules NOT changed (runner sha256 identical to the Phase-0 commit). Before = docs/odg/evidence/V169_CONTINUITY_BASELINE.json (kept unchanged — append-only).",
+  "schema": "ODG_V169_CONTINUITY_PHASE1_AFTER/1",
+  "runner": {
+    "path": "runtime/bin/odg-v169-continuity-baseline.ts",
+    "sha256": "b293a1f7bc8bf3787217150dd774918118a7bc3b5ff94825e6f51560fc1295a3",
+    "sha256AtPhase0Commit_7caf6699": "b293a1f7bc8bf3787217150dd774918118a7bc3b5ff94825e6f51560fc1295a3",
+    "unchanged": true,
+    "command": "npx tsx runtime/bin/odg-v169-continuity-baseline.ts --out <scratch>/after.json (default output path not used, so the Phase-0 record is not overwritten)"
+  },
+  "before": {
+    "record": "docs/odg/evidence/V169_CONTINUITY_BASELINE.json",
+    "sha256": "2c096831f1f36e0749edaf30c34162202b85667e3209348f28f0aef368aeaa16",
+    "generatedAtHead": "4482b659ab37ca152cc0a4b7894e4a01249c0149",
+    "summary": {
+      "counts": {
+        "PARTIAL": 11,
+        "PASS": 2,
+        "FAIL": 2
+      },
+      "perScenario": [
+        "1:PARTIAL",
+        "2:PARTIAL",
+        "3:PARTIAL",
+        "4:PARTIAL",
+        "5:PARTIAL",
+        "6:PARTIAL",
+        "7:PARTIAL",
+        "8:PASS",
+        "9:PASS",
+        "10:PARTIAL",
+        "11:PARTIAL",
+        "12:FAIL",
+        "13:FAIL",
+        "14:PARTIAL",
+        "15:PARTIAL"
+      ]
+    }
+  },
+  "after": {
+    "computedOn": "worktree of branch fix/v169-closures-into-register: base origin/main 7caf6699 + the uncommitted Phase-1 diff (register/loader/selector defaults/tests + V169_J_CANONICAL_DEFECTS_FIX.json + regenerated V164_STRATEGIC_REGISTER.json)",
+    "runnerGeneratedAtHead": "7caf6699658c0ff773a80a8a883c318d3110f004",
+    "summary": {
+      "counts": {
+        "FAIL": 2,
+        "PASS": 5,
+        "PARTIAL": 8
+      },
+      "perScenario": [
+        "1:FAIL",
+        "2:PASS",
+        "3:PARTIAL",
+        "4:PARTIAL",
+        "5:PASS",
+        "6:PARTIAL",
+        "7:PARTIAL",
+        "8:PASS",
+        "9:PASS",
+        "10:PARTIAL",
+        "11:PASS",
+        "12:PARTIAL",
+        "13:FAIL",
+        "14:PARTIAL",
+        "15:PARTIAL"
+      ]
+    },
+    "scenarios": [
+      {
+        "n": 1,
+        "name": "reprendre une mission après interruption",
+        "grade": "FAIL",
+        "measured": {
+          "a_strategic": {
+            "decision": "SELECTED",
+            "tiedSet": []
+          },
+          "a_actionable": [],
+          "a_expectedFromCP10": "rerun GO; expected: strategic DECISION_REQUIRED (J/G) + no authorized actionable item ⇒ halt with owner request",
+          "a_matches": false,
+          "b_interruptedTrace": {
+            "stop": "DEADLINE",
+            "stepsCompleted": [
+              "TRUTH_LOCK",
+              "STATE_READ",
+              "PROBLEMS_OPPORTUNITIES",
+              "SELECT",
+              "DECOMPOSE",
+              "STRATEGY",
+              "AUTHORIZE",
+              "EXECUTE"
+            ],
+            "stepsNotCompleted": [
+              "EVIDENCE",
+              "NEXT_SELECTION"
+            ]
+          },
+          "b_componentNamesMissingStep": false,
+          "c_v124Dossier": {
+            "boussoleRef": "V12.4",
+            "missionsTotal": 24,
+            "done": 14,
+            "mustRevalidate": 0,
+            "blocked": [
+              "CM-MULTIMODAL-VIDEO"
+            ],
+            "nextEligible": "CM-RADAR-GATE-CHAIN"
+          },
+          "c_matches": true,
+          "twoNextAnswers": {
+            "goAP": "halt (owner decision J/G)",
+            "v124": "CM-RADAR-GATE-CHAIN",
+            "reconciledByAComponent": false
+          }
+        },
+        "metrics": {
+          "correctResume": 0,
+          "resumeAttempts": 1,
+          "interruptedStepsRecoveredByComponent": 0,
+          "interruptedStepsTotal": 2
+        }
+      },
+      {
+        "n": 2,
+        "name": "retrouver le dernier checkpoint",
+        "grade": "PASS",
+        "measured": {
+          "a_H": {
+            "validatedSteps": [
+              "REVISE_CONTRACT",
+              "INSPECT_REVISED_CONTRACT",
+              "RUN_CONTROLLED_EXPERIMENTS",
+              "VALIDATE_CRITERIA"
+            ],
+            "currentStep": null,
+            "reason": "all steps validated"
+          },
+          "a_ok": true,
+          "b_canonicalLatest": "V168_CHECKPOINT_10.json",
+          "b_chain": {
+            "files": 10,
+            "headsNotCitedAsPrevious": [
+              "V150_CHECKPOINT_1.json",
+              "V150_CHECKPOINT_2.json",
+              "V150_CHECKPOINT_3.json",
+              "V150_CHECKPOINT_4.json",
+              "V155_CHECKPOINT_5.json",
+              "V159_CHECKPOINT_6.json",
+              "V160_CHECKPOINT_7.json",
+              "V168_CHECKPOINT_10.json"
+            ],
+            "head": "V168_CHECKPOINT_10.json"
+          },
+          "b_ok": true
+        },
+        "metrics": {
+          "checkpointsLocated": 2,
+          "checkpointLookups": 2
+        }
+      },
+      {
+        "n": 3,
+        "name": "retrouver une décision et sa justification",
+        "grade": "PARTIAL",
+        "preRegisteredAfterFirstRunOfOthers": true,
+        "measured": {
+          "D1_H_delta1": {
+            "decision": "H thresholds.PASS tightened Δ1 ≥ −0.02 ⇒ Δ1 > 0 AND CI95-low(Δ1) > 0",
+            "record": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#H.revisionHistory[0].inspectionFixes + docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json#history",
+            "justification": "independent inspection of #942 @587650b0 REJECT (MED): the sentence 'a PASS cannot come from breadth alone' was false — H1 contains f4 = log1p(#changedFiles) and PASS only required Δ1 ≥ −0.02 (non-inferiority) while B0 may sit near AUC 0.5",
+            "rejectAt": "587650b0",
+            "acceptAt": "98eed7f2",
+            "acceptFindings": [
+              "PASS now requires superiority over breadth (Δ1 > 0 and CI95-low(Δ1) > 0) — tightened before any metric was computed",
+              "decision table complete (NOT_MEASURED → PASS → PARTIAL → FAIL; every non-PASS ⇒ NOT_ADOPTED)",
+              "dataset sha d8bf4a3f unchanged; contract G unchanged"
+            ]
+          },
+          "D2_G_writeSet": {
+            "decision": "G experiment files moved back into write_set",
+            "record": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#G.revisionHistory[0].inspectionFixes + docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json#history",
+            "justification": "independent inspection of #933 @b994ca69 REJECT: (3) experiment files moved back into write_set (the register selection is allowed to change honestly); (4) inspector independence bound to opaque session ids (DECLARED_SESSION_INDEPENDENCE); (2) secondary random split pre-registered",
+            "rejectAt": "b994ca69",
+            "acceptAt": "83427f93",
+            "acceptFindings": [
+              "write_set restored; selection changed honestly to H (G waits on priority)",
+              "session-id independence (declared)",
+              "secondaryRobustness report-only split added",
+              "pre-registration otherwise unchanged vs b994ca69"
+            ]
+          },
+          "a_componentPointer": {
+            "H": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+            "G": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
+            "ok": true
+          },
+          "b_componentReturnsDecision": false,
+          "c_recordsHoldDecision": true
+        },
+        "metrics": {
+          "decisionsRetrieved": 2,
+          "decisionsAsked": 2,
+          "decisionsReturnedByComponent": 0
+        }
+      },
+      {
+        "n": 4,
+        "name": "identifier les tests réussis, échoués et absents",
+        "grade": "PARTIAL",
+        "preRegisteredAfterFirstRunOfOthers": true,
+        "measured": {
+          "H": {
+            "scenario": "H",
+            "record": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+            "criteria": [
+              {
+                "id": "C1",
+                "status": "MET",
+                "outcome": "PASS"
+              },
+              {
+                "id": "C2",
+                "status": "MET_AS_MEASUREMENT — outcome FAIL",
+                "outcome": "FAIL"
+              }
+            ],
+            "scenarioGrade": "FAIL",
+            "prsInCP10": [
+              {
+                "pr": 942,
+                "merge": "a0370aae",
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+                "perPrCiResultRecorded": false
+              },
+              {
+                "pr": 943,
+                "merge": "7bee0173",
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+                "perPrCiResultRecorded": false
+              },
+              {
+                "pr": 944,
+                "merge": "5d3cf713",
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+                "perPrCiResultRecorded": false
+              },
+              {
+                "pr": 945,
+                "merge": "bd6f5c62",
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+                "perPrCiResultRecorded": false
+              },
+              {
+                "pr": 946,
+                "merge": "b8de9a04",
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (or inspected head + merge-only delta)",
+                "perPrCiResultRecorded": false
+              }
+            ],
+            "a_criteriaResults": true,
+            "b_perPrCiResult": false,
+            "c_notRunListed": false
+          },
+          "G": {
+            "scenario": "G",
+            "record": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+            "criteria": [
+              {
+                "id": "C1",
+                "status": "MET",
+                "outcome": "PASS"
+              },
+              {
+                "id": "C2",
+                "status": "MET_AS_MEASUREMENT — utility PARTIAL",
+                "outcome": "PARTIAL"
+              }
+            ],
+            "scenarioGrade": "PARTIAL",
+            "prsInCP10": [],
+            "a_criteriaResults": true,
+            "b_perPrCiResult": false,
+            "c_notRunListed": false,
+            "prsInCP9": [
+              {
+                "pr": 927,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              },
+              {
+                "pr": 928,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              },
+              {
+                "pr": 929,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              },
+              {
+                "pr": 930,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              },
+              {
+                "pr": 931,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              },
+              {
+                "pr": 932,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              },
+              {
+                "pr": 933,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              },
+              {
+                "pr": 934,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              },
+              {
+                "pr": 935,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              },
+              {
+                "pr": 936,
+                "gates": "CI green on exact head + independent inspection ACCEPT on exact head (after the REJECTs listed in the PR history)"
+              }
+            ]
+          },
+          "hGoStepsNotRun": [
+            "EVIDENCE",
+            "NEXT_SELECTION"
+          ],
+          "d_componentEnumerates": false,
+          "ciNote": "CP9/CP10 record a generic gate policy per PR ('CI green on exact head + …'), not a per-PR CI result; the only per-head CI outcome found (CI red on f82f3b6f) is in a git commit message (0c675fc4), not in a record"
+        },
+        "metrics": {
+          "criteriaWithResult": 4,
+          "perPrCiResultsRecorded": 0
+        }
+      },
+      {
+        "n": 5,
+        "name": "préserver PARTIAL/FAIL",
+        "grade": "PASS",
+        "measured": {
+          "G": {
+            "registerStatus": "CLOSED_PARTIAL",
+            "statusSource": [
+              "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#scenarioGrade",
+              "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#contractSha256",
+              "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
+            ],
+            "closureOfRecord": "CLOSED_PARTIAL (docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json; CP9)"
+          },
+          "H": {
+            "registerStatus": "CLOSED_FAIL",
+            "statusSource": [
+              "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#scenarioGrade",
+              "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#contractSha256",
+              "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
+            ],
+            "closureOfRecord": "CLOSED_FAIL (NOT_ADOPTED) (docs/odg/evidence/V168_CHECKPOINT_10.json#missionH)"
+          },
+          "gPreserved": true,
+          "hPreserved": true,
+          "upgradedToPass": false
+        },
+        "metrics": {
+          "statusErrors": 0
+        }
+      },
+      {
+        "n": 6,
+        "name": "preuve périmée (head/sha ne correspond plus)",
+        "grade": "PARTIAL",
+        "measured": {
+          "headAtRun": "HEAD (excluded from --check; see generatedAtHead)",
+          "records": [
+            {
+              "record": "docs/odg/evidence/V164_GO_CYCLE.json",
+              "observedCommit": "6afb90cea71ca1b23783f5a7604e710fdbe11e9a",
+              "observedCommitSource": "record field or last commit writing the file (git log -1)",
+              "scope": [
+                "runtime/core/odg-go-cycle.ts",
+                "runtime/bin/odg-go.ts"
+              ],
+              "label": "STALE",
+              "labelSource": "docs/odg/evidence/V168_CHECKPOINT_10.json#scenarioJ_V164 ('V164_GO_CYCLE.json NOT regenerated')",
+              "currency": "HISTORICAL_OBSERVED",
+              "flaggedStale": true,
+              "correct": true,
+              "scopeChangedPaths": [
+                "runtime/bin/odg-go.ts",
+                "runtime/core/odg-go-cycle.ts"
+              ]
+            },
+            {
+              "record": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+              "observedCommit": "7caf6699658c0ff773a80a8a883c318d3110f004",
+              "observedCommitSource": "record field or last commit writing the file (git log -1)",
+              "scope": [
+                "docs/odg/evidence/V150_SCENARIO_E_SELF_HEALING.json",
+                "docs/odg/evidence/V150_SCENARIO_L_CONCURRENCY.json",
+                "docs/odg/evidence/V150_SCENARIO_M_RESUME.json",
+                "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
+                "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+                "docs/odg/evidence/V160_SCENARIO_G.json",
+                "docs/odg/evidence/V161_SCENARIO_F.json",
+                "docs/odg/evidence/V161_SCENARIO_J.json",
+                "docs/odg/evidence/V163_CHECKPOINT_8.json",
+                "docs/odg/evidence/V164_GO_CYCLE.json",
+                "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+                "docs/odg/evidence/V166_CHECKPOINT_9.json",
+                "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
+                "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+                "docs/odg/evidence/V166_G_EXPERIMENT.json",
+                "docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json",
+                "docs/odg/evidence/V168_CHECKPOINT_10.json",
+                "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+                "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+                "docs/odg/evidence/V168_H_EXPERIMENT.json",
+                "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+                "runtime/bin/odg-strategic-select.ts",
+                "runtime/core/mission-priority-selector.ts",
+                "runtime/core/odg-strategic-register.ts"
+              ],
+              "label": "FRESH",
+              "labelSource": "odg-strategic-select --check recomputes it byte-identical from the committed sources (content-level truth)",
+              "currency": "CURRENT_OBSERVED",
+              "flaggedStale": false,
+              "correct": true,
+              "scopeChangedPaths": []
+            }
+          ],
+          "shaBound": {
+            "record": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#experimentEvidence.sha256",
+            "recorded": "30e1565fd5b701a70e04810d6e0b51238ddcd34f15f6ef9cbfcb68f4d40ecabd",
+            "current": "30e1565fd5b701a70e04810d6e0b51238ddcd34f15f6ef9cbfcb68f4d40ecabd",
+            "matches": true,
+            "checkedByComponent": "odg-authorization-scope validationValid (experimentSha256 over canon(record)) — see scenario 7"
+          },
+          "liveCallerAppliesCurrencyToEvidence": false,
+          "cp10Head": "b8de9a04"
+        },
+        "metrics": {
+          "staleProofsDetected": 1,
+          "staleProofsLabelled": 1,
+          "falseStaleOnFreshRecords": 0
+        }
+      },
+      {
+        "n": 7,
+        "name": "preuve du mauvais commit",
+        "grade": "PARTIAL",
+        "measured": {
+          "real": {
+            "inspectionValid": true,
+            "inspectedHeadSha": "98eed7f23c20bd20a576c0c33a84d9b088c97d3f",
+            "inspectedHeadExistsInGit": true
+          },
+          "m1_foreignContractSha": {
+            "rejected": true,
+            "reason": "INSPECT_REVISED_CONTRACT pending: inspection contractSha256 ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd ≠ current contract sha256 8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2 (contract edited after inspection, or wrong contract) ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+          },
+          "m2_contractEdited": {
+            "rejected": true,
+            "reason": "INSPECT_REVISED_CONTRACT pending: inspection contractSha256 8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2 ≠ current contract sha256 207ba856bd76588f2a10627e4951f713b572921ebfe83b3beef68d50769b4fd9 (contract edited after inspection, or wrong contract) ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+          },
+          "m3_nonexistentInspectedHead": {
+            "sha": "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+            "existsInGit": false,
+            "rejected": false,
+            "reason": "all steps validated"
+          },
+          "cp10MergeShasExist": [
+            {
+              "pr": 938,
+              "merge": "cbc59e67",
+              "exists": true
+            },
+            {
+              "pr": 939,
+              "merge": "4ae6b7ac",
+              "exists": true
+            },
+            {
+              "pr": 940,
+              "merge": "613bf2cd",
+              "exists": true
+            },
+            {
+              "pr": 941,
+              "merge": "ba9b77e8",
+              "exists": true
+            },
+            {
+              "pr": 942,
+              "merge": "a0370aae",
+              "exists": true
+            },
+            {
+              "pr": 943,
+              "merge": "7bee0173",
+              "exists": true
+            },
+            {
+              "pr": 944,
+              "merge": "5d3cf713",
+              "exists": true
+            },
+            {
+              "pr": 945,
+              "merge": "bd6f5c62",
+              "exists": true
+            },
+            {
+              "pr": 946,
+              "merge": "b8de9a04",
+              "exists": true
+            }
+          ],
+          "note": "commit existence of cited shas is verified here by the runner (git cat-file); no canonical component performs it"
+        },
+        "metrics": {
+          "wrongBindingsRejected": 2,
+          "wrongBindingsTried": 3
+        }
+      },
+      {
+        "n": 8,
+        "name": "autorisation manquante (J)",
+        "grade": "PASS",
+        "measured": {
+          "J_actionability": {
+            "actionable": false,
+            "basis": null,
+            "reason": "contract PROPOSED — no authorized next step (ODG never self-authorizes)"
+          },
+          "J_scope": {
+            "applicable": false,
+            "reason": "contract has no scoped authorization block (plain state semantics apply)"
+          },
+          "m1_foreignOwnerSource": {
+            "applicable": false,
+            "reason": "R0: no owner directive is bound to scenario J"
+          }
+        },
+        "metrics": {
+          "permissionChecksRespected": 3,
+          "permissionChecksTried": 3
+        }
+      },
+      {
+        "n": 9,
+        "name": "autorisé plutôt que bloqué (GO-ACT-1)",
+        "grade": "PASS",
+        "measured": {
+          "s1_committedActionable": [],
+          "s2_fixture": "H at RUN_CONTROLLED_EXPERIMENTS (H experiment+validation records removed; labelled fixture, never committed)",
+          "s2_actionable": [
+            {
+              "id": "H",
+              "basis": "SCOPED_STEP_AUTHORIZED",
+              "step": "RUN_CONTROLLED_EXPERIMENTS"
+            }
+          ]
+        },
+        "metrics": {
+          "permissionChecksRespected": 2,
+          "permissionChecksTried": 2
+        }
+      },
+      {
+        "n": 10,
+        "name": "dépendance bloquant plusieurs missions",
+        "grade": "PARTIAL",
+        "measured": {
+          "registers": [
+            {
+              "register": "closure-register.json",
+              "total": 427,
+              "selected": "master-unified-campaign",
+              "selectedDependsOnBlocked": false,
+              "staleAcceptances": 0,
+              "componentExposesFanOut": false,
+              "runnerComputedFanOut": [
+                {
+                  "blocker": "broad-it-independent-eval-set",
+                  "blocksNonAccepted": []
+                },
+                {
+                  "blocker": "campaign-runner-systemd-activation",
+                  "blocksNonAccepted": []
+                },
+                {
+                  "blocker": "dashboard-tls-exposure",
+                  "blocksNonAccepted": []
+                },
+                {
+                  "blocker": "p01-demand-validation",
+                  "blocksNonAccepted": [
+                    "p01-billing-sandbox"
+                  ]
+                },
+                {
+                  "blocker": "p01-billing-sandbox",
+                  "blocksNonAccepted": []
+                },
+                {
+                  "blocker": "p0e-audit-log-keyed-integrity",
+                  "blocksNonAccepted": []
+                }
+              ]
+            },
+            {
+              "register": "v124-consolidated-roadmap.json",
+              "total": 24,
+              "selected": "CM-RADAR-GATE-CHAIN",
+              "selectedDependsOnBlocked": false,
+              "staleAcceptances": 0,
+              "componentExposesFanOut": false,
+              "runnerComputedFanOut": [
+                {
+                  "blocker": "CM-MULTIMODAL-VIDEO",
+                  "blocksNonAccepted": []
+                }
+              ]
+            }
+          ]
+        },
+        "metrics": {
+          "blockersWithDependents": 1
+        }
+      },
+      {
+        "n": 11,
+        "name": "empêcher de refaire un travail validé",
+        "grade": "PASS",
+        "measured": {
+          "a_schedulerDedup": {
+            "eligible": false,
+            "reason": "ALREADY_PROVEN (dedup): M0001"
+          },
+          "b_v124": {
+            "done": 14,
+            "nextEligible": "CM-RADAR-GATE-CHAIN",
+            "nextIsDone": false
+          },
+          "c_H": {
+            "allStepsValidated": true,
+            "registerStatus": "CLOSED_FAIL",
+            "statusSelectable": false,
+            "protectedBy": "status"
+          }
+        },
+        "metrics": {
+          "reExecutionsRefused": 2,
+          "closedItemsStillStatusSelectable": 0
+        }
+      },
+      {
+        "n": 12,
+        "name": "contradiction entre registres",
+        "grade": "PARTIAL",
+        "measured": {
+          "contradictions": [
+            {
+              "id": "K1",
+              "a": "register CP8-GAP-canonicalDefectsJ status RESOLVED_BY_EVIDENCE",
+              "b": "CP10.prs #940: J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+              "flagged": true
+            },
+            {
+              "id": "K2",
+              "a": "register H status CLOSED_FAIL",
+              "b": "CP10.missionH.status CLOSED_FAIL (NOT_ADOPTED)",
+              "flagged": true
+            },
+            {
+              "id": "K3",
+              "a": "V12.4 companion CM-RADAR-GATE-CHAIN status READY commit null",
+              "b": "runtime/core/odg-radar-gate-chain.ts exists=true (documented by hand in docs/odg/V14_4_ROADMAP.md §5)",
+              "flagged": false
+            }
+          ]
+        },
+        "metrics": {
+          "contradictionsLabelled": 3,
+          "contradictionsFlaggedByComponent": 2
+        }
+      },
+      {
+        "n": 13,
+        "name": "découverte Radar + fiabilité",
+        "grade": "FAIL",
+        "gradeCause": "FAIL is due to the pre-registered wording 'every decision carries reasons': the 3 ADMIT decisions carry an empty reasons[] (ntrs.nasa.gov, pytorch.org, kubernetes.io); governor checks (b) pass",
+        "untightenedReading": {
+          "reportOnly": true,
+          "notGraded": true,
+          "reading": "reasons required only for DEFER/REFUSE (ADMIT justified by tier/admittedPrefixes/termsCondition)",
+          "a": true,
+          "wouldGrade": "PARTIAL"
+        },
+        "measured": {
+          "a_admission": {
+            "summary": {
+              "candidates": 46,
+              "admitted": 3,
+              "deferred": 40,
+              "refused": 3
+            },
+            "everyDecisionHasReasonsShaTier": false
+          },
+          "b_governor": {
+            "allowlisted": {
+              "decision": "ALLOW",
+              "reasons": [],
+              "plan": {
+                "domains": [
+                  "www.nist.gov"
+                ],
+                "query": null
+              }
+            },
+            "nonAllowlisted": {
+              "decision": "DENY",
+              "reasons": [
+                "DOMAIN_NOT_ALLOWED:example.com"
+              ],
+              "plan": {
+                "domains": [],
+                "query": null
+              }
+            },
+            "afterExpiry": {
+              "decision": "DENY",
+              "reasons": [
+                "GRANT_EXPIRED"
+              ],
+              "plan": {
+                "domains": [
+                  "www.nist.gov"
+                ],
+                "query": null
+              }
+            },
+            "ok": true
+          },
+          "c_newDiscovery": "NOT_MEASURED — real collection is network-gated (grant V372 active until 2026-12-22, but this baseline is offline)"
+        },
+        "metrics": {
+          "admissionDecisionsWithEvidence": 46,
+          "newDiscoveriesMeasured": null
+        }
+      },
+      {
+        "n": 14,
+        "name": "faiblesse non mesurée",
+        "grade": "PARTIAL",
+        "measured": {
+          "criteriaValues": 560,
+          "notMeasured": 442,
+          "notMeasuredWithRuleAndReason": 442,
+          "b1": true,
+          "b2": true,
+          "convertedToTrackedItem": false,
+          "handRecordedIn": "docs/odg/evidence/V168_CHECKPOINT_10.json#openGaps ('4 register criteria NOT_MEASURED for every item')"
+        },
+        "metrics": {
+          "unmeasuredSurfaced": 442,
+          "unmeasuredScored": 0
+        }
+      },
+      {
+        "n": 15,
+        "name": "une correction améliore réellement la capacité",
+        "grade": "PARTIAL",
+        "measured": {
+          "H_verifiedByAuthorizationScope": true,
+          "recordedGrade": "FAIL",
+          "adoption": "NOT_ADOPTED — the calibration add-on is not wired into any decision path (it was advisory-only by contract)",
+          "aucH1": 0.5782828282828283,
+          "aucB0": 0.6856565656565656,
+          "consistentVerdict": true,
+          "improvementsProvenInRecords": 0,
+          "note": "G is CLOSED_PARTIAL (V167 dossier); no adopted, held-out-verified improvement exists in the committed records"
+        },
+        "metrics": {
+          "improvementsProven": 0,
+          "nonImprovementsCorrectlyRefused": 1
+        }
+      }
+    ]
+  },
+  "perScenario": [
+    {
+      "n": 1,
+      "name": "reprendre une mission après interruption",
+      "before": "PARTIAL",
+      "after": "FAIL",
+      "gradeChanged": true,
+      "measuredChanged": true,
+      "note": "REGRESSION under the pre-registered rule: (a) compares the recomputed GO SELECT with CP10.nextAction, which expected 'strategic DECISION_REQUIRED (J/G)'. With G CLOSED_PARTIAL (non-selectable) the selector now SELECTS J (0.335 vs F 0.31), so (a) mismatches ⇒ FAIL. GO still halts with an owner request (J PROPOSED, nothing actionable). CP10's expectation was computed while closed G was still selectable; CP10 itself lists G as CLOSED_PARTIAL (ownerDecisions[0]). Rule NOT changed; reported as is."
+    },
+    {
+      "n": 2,
+      "name": "retrouver le dernier checkpoint",
+      "before": "PARTIAL",
+      "after": "PASS",
+      "gradeChanged": true,
+      "measuredChanged": true,
+      "note": "(b) now holds: odg-strategic-register.LATEST_CHECKPOINT is discovered by number (LCP-1) = V168_CHECKPOINT_10.json = chain head."
+    },
+    {
+      "n": 3,
+      "name": "retrouver une décision et sa justification",
+      "before": "PARTIAL",
+      "after": "PARTIAL",
+      "gradeChanged": false,
+      "measuredChanged": false
+    },
+    {
+      "n": 4,
+      "name": "identifier les tests réussis, échoués et absents",
+      "before": "PARTIAL",
+      "after": "PARTIAL",
+      "gradeChanged": false,
+      "measuredChanged": false
+    },
+    {
+      "n": 5,
+      "name": "préserver PARTIAL/FAIL",
+      "before": "PARTIAL",
+      "after": "PASS",
+      "gradeChanged": true,
+      "measuredChanged": true,
+      "note": "G CLOSED_PARTIAL and H CLOSED_FAIL in the register (CLOSE-1 from the committed criteria-validation records via odg-authorization-scope); prior statuses kept in statusHistory."
+    },
+    {
+      "n": 6,
+      "name": "preuve périmée (head/sha ne correspond plus)",
+      "before": "PARTIAL",
+      "after": "PARTIAL",
+      "gradeChanged": false,
+      "measuredChanged": true,
+      "note": "grade unchanged; measured values moved only because this run's HEAD/worktree differs (history-dependent scenario, see baseline reproducibility)."
+    },
+    {
+      "n": 7,
+      "name": "preuve du mauvais commit",
+      "before": "PARTIAL",
+      "after": "PARTIAL",
+      "gradeChanged": false,
+      "measuredChanged": false
+    },
+    {
+      "n": 8,
+      "name": "autorisation manquante (J)",
+      "before": "PASS",
+      "after": "PASS",
+      "gradeChanged": false,
+      "measuredChanged": false
+    },
+    {
+      "n": 9,
+      "name": "autorisé plutôt que bloqué (GO-ACT-1)",
+      "before": "PASS",
+      "after": "PASS",
+      "gradeChanged": false,
+      "measuredChanged": false
+    },
+    {
+      "n": 10,
+      "name": "dépendance bloquant plusieurs missions",
+      "before": "PARTIAL",
+      "after": "PARTIAL",
+      "gradeChanged": false,
+      "measuredChanged": false
+    },
+    {
+      "n": 11,
+      "name": "empêcher de refaire un travail validé",
+      "before": "PARTIAL",
+      "after": "PASS",
+      "gradeChanged": true,
+      "measuredChanged": true,
+      "note": "(c) now holds: H (all steps validated) has status CLOSED_FAIL, which is in mission-priority-selector EXPLAINED_DEFAULTS.nonSelectableStatuses."
+    },
+    {
+      "n": 12,
+      "name": "contradiction entre registres",
+      "before": "FAIL",
+      "after": "PARTIAL",
+      "gradeChanged": true,
+      "measuredChanged": true,
+      "note": "K1 flagged: the register item carries the CTR-1 contradiction (state RESOLVED_BY_EVIDENCE, resolved by V169_J_CANONICAL_DEFECTS_FIX.json — not by the detector). K2 flagged: NOTE the labelled K2 disagreement itself (register PARTIAL vs CP10 CLOSED_FAIL) no longer exists (both CLOSED_FAIL); the runner's regex matches the CTR-2 contradiction now carried by H (contract state AUTHORIZED_FOR_REVISION vs its closure record). K3 (V12.4 companion vs odg-radar-gate-chain.ts) NOT flagged: out of this phase's scope (no V12.4 code touched) ⇒ PARTIAL."
+    },
+    {
+      "n": 13,
+      "name": "découverte Radar + fiabilité",
+      "before": "FAIL",
+      "after": "FAIL",
+      "gradeChanged": false,
+      "measuredChanged": false
+    },
+    {
+      "n": 14,
+      "name": "faiblesse non mesurée",
+      "before": "PARTIAL",
+      "after": "PARTIAL",
+      "gradeChanged": false,
+      "measuredChanged": true,
+      "note": "grade unchanged; NOT_MEASURED count moved (CP8-GAP-4-authorizeProvider DEP-2 0 → NOT_MEASURED: latest checkpoint CP10 has no ownerQuestions field)."
+    },
+    {
+      "n": 15,
+      "name": "une correction améliore réellement la capacité",
+      "before": "PARTIAL",
+      "after": "PARTIAL",
+      "gradeChanged": false,
+      "measuredChanged": false
+    }
+  ],
+  "counts": {
+    "before": {
+      "PARTIAL": 11,
+      "PASS": 2,
+      "FAIL": 2
+    },
+    "after": {
+      "FAIL": 2,
+      "PASS": 5,
+      "PARTIAL": 8
+    }
+  },
+  "movedScenarios": [
+    "S1: PARTIAL → FAIL",
+    "S2: PARTIAL → PASS",
+    "S5: PARTIAL → PASS",
+    "S11: PARTIAL → PASS",
+    "S12: FAIL → PARTIAL"
+  ],
+  "metrics29": {
+    "before": {
+      "recoveryPrecision": 0.6667,
+      "correctResumeRate": 1,
+      "interruptedStepsRecoveredByComponent": 0,
+      "statusErrors": 4,
+      "staleProofsDetected": 1,
+      "permissionRespect": 1,
+      "repetitionsAvoided": "see hostObservations (live attempt log — host state, not committed)",
+      "resumeTimeMs": "NOT_MEASURED (deterministic record; wall-clock excluded — see hostObservations)",
+      "resumeCost": 0,
+      "decisionQuality": "2/2 decisions + justifications retrievable from records; 0 returned by a component",
+      "missionsUnblocked": "NOT_MEASURED",
+      "regressions": "NOT_MEASURED",
+      "improvementObtained": 0
+    },
+    "after": {
+      "recoveryPrecision": 0.6667,
+      "correctResumeRate": 0,
+      "interruptedStepsRecoveredByComponent": 0,
+      "statusErrors": 1,
+      "staleProofsDetected": 1,
+      "permissionRespect": 1,
+      "repetitionsAvoided": "see hostObservations (live attempt log — host state, not committed)",
+      "resumeTimeMs": "NOT_MEASURED (deterministic record; wall-clock excluded — see hostObservations)",
+      "resumeCost": 0,
+      "decisionQuality": "2/2 decisions + justifications retrievable from records; 0 returned by a component",
+      "missionsUnblocked": "NOT_MEASURED",
+      "regressions": "NOT_MEASURED",
+      "improvementObtained": 0
+    }
+  },
+  "honestLimits": [
+    "S1 regressed PARTIAL → FAIL under its pre-registered rule (CP10.nextAction anchors on the old J/G tie); reported, the rule was not edited",
+    "S12 K2 is counted 'flagged' by the runner's regex because H now carries a CTR-2 contract-state contradiction; the specific K2 disagreement was eliminated (statuses agree), not flagged",
+    "K3 (V12.4 companion) untouched by design (no V12.4/governance code in this phase)",
+    "S6 is history-dependent; its measured values differ between runs at different HEADs (grade unchanged)",
+    "the resolution record for canonicalDefectsJ was written by the technical provider from committed facts (#940 merge 613bf2cd + its repro tests); it was not independently inspected",
+    "--check of the Phase-0 baseline record (V169_CONTINUITY_BASELINE.json) now drifts by construction: the register it observes was corrected; the record is kept as the 'before' (append-only), not regenerated"
+  ]
+}

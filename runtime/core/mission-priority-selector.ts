@@ -97,6 +97,12 @@ const EXPLAINED_DEFAULTS = Object.freeze({
     NOT_ADOPTED: "tested under a stated rule and not adopted; re-test only with new data",
     FAILED: "failed; a re-attempt needs a new strategy decision, not an automatic re-selection",
     NOT_MEASURED: "current state not measured; it must be measured before it can be selected",
+    // V16.9 Phase 1 — statuses derived by odg-strategic-register CLOSE-1 / RES-1 from committed closure/resolution records
+    CLOSED_PASS: "closed (all scoped steps validated, graded PASS) — further work is a new mission",
+    CLOSED_PARTIAL: "closed as PARTIAL — further work is a new mission, not a re-grade",
+    CLOSED_FAIL: "closed as FAIL — negative result preserved; a re-attempt needs a new mission",
+    CLOSED_NOT_MEASURED: "closed as NOT_MEASURED — a new measurement needs a new mission",
+    RESOLVED_BY_EVIDENCE: "resolved by a committed resolution record (fix merged + repro tests cited)",
   }),
   secondaryRules: Object.freeze(["R1_MORE_UNBLOCKING", "R2_LOWER_UNCERTAINTY", "R3_LOWER_RISK", "R4_HIGHER_EVIDENCE"]),
   riskCriterion: "costRiskComplexity",

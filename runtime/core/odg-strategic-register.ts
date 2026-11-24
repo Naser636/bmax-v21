@@ -26,6 +26,13 @@ const STATUS = Object.freeze({
   NOT_MEASURED: "current state cannot be derived from the evidence (overlap or completion not stated by any field)",
   PROPOSED: "listed as next work by a canonical source; no contract; not executed per the evidence",
   NOT_IMPLEMENTED: "CP8 odgCapabilityAudit status NOT_IMPLEMENTED (capability absent, possibly by design)",
+  // V16.9 Phase 1 (CLOSE-1 / RES-1) — derived from committed closure / resolution records; never selectable; the prior status
+  // is kept in the item's statusHistory (append-only); a negative grade is carried as recorded, never upgraded.
+  CLOSED_PASS: "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades PASS",
+  CLOSED_PARTIAL: "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades PARTIAL — closed as PARTIAL (further work = a new mission, not a re-grade)",
+  CLOSED_FAIL: "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades FAIL — negative result preserved",
+  CLOSED_NOT_MEASURED: "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades NOT_MEASURED",
+  RESOLVED_BY_EVIDENCE: "RES-1: a committed resolution record (resolvesRegisterItem = this id, resolution.status FIXED, fixedBy.pr + 40-hex fixedBy.mergeCommit, ≥1 reproTests entry) states the item's subject fixed",
 });
 
 const CRITERIA = Object.freeze([
@@ -49,6 +56,36 @@ const OWNER_RE = /\bowner[- ](?:gated|authori[sz]ed|decision)|\bspend\b|\bbudget
 const OWNER_RULE = "OWN-1: requiresOwnerAuthorization iff /owner-gated|owner-authorized|owner decision|spend|budget|billing|paid|egress|systemd|deploy|production|ROADMAP.json|governance|Boussole/i matches the item's objective, acceptance_criteria or initialState.missingForPass (contracts) or its own text (other items), ignoring matches directly preceded by no/without/not/never; contract `scope` and `stop_conditions` are NOT scanned (they are negative lists / identical boilerplate on all 16 contracts)";
 
 const SCN_RULE = "SCN-1: a scenario evidence file (contractRef/contract '#X' or scenario field naming X) counts as executed against contract X only if its basename version V<n>_ ≥ the contracts file's version; earlier files are pre-contract evidence already cited in initialState.evidence";
+
+const AS = require("./odg-authorization-scope.js");
+
+/*
+ * V16.9 addendum Phase 1 — "Continuité vérifiable". Declared rules (provider-authored; ODG applies them mechanically):
+ */
+const CLOSE_RULE = "CLOSE-1: a WORK_ITEM_CONTRACT item whose contract carries an owner authorization block is CLOSED iff odg-authorization-scope.deriveAuthorizationScope(contract, committed {inspection, experiment, validation} records) is applicable, validates EVERY step of its declared sequence and has no current step; status = CLOSED_<grade> with <grade> = the VALIDATE_CRITERIA evidence scenarioGrade (the committed V*_<X>_CRITERIA_VALIDATION.json, R5b — bounded by the experiment outcome, never upgraded); any missing/invalid step ⇒ not closed (status from the earlier rules, closure.closed=false with the scope's reason). The pre-closure status is kept in statusHistory; criteria are kept (record preserved); CLOSED_* are non-selectable";
+const RES_RULE = "RES-1: an item is RESOLVED_BY_EVIDENCE iff a committed evidence file carries top-level resolvesRegisterItem = the item id, resolution.status = 'FIXED', fixedBy.pr (integer), fixedBy.mergeCommit (40 hex) and ≥1 reproTests entry; the file is cited; the earlier status is kept in statusHistory; the merge commit's existence is NOT checked here (pure; no git)";
+const CONTRADICTION_RULES = Object.freeze({
+  "CTR-1": "GAP_STATED_FIXED: a CP8_CAPABILITY_GAP item whose status (before RES-1) is open while a PR record of a checkpoint LATER than CP8 (prs[*].what) contains one of the gap's usable blockerAnchors (anchor present in the gap's own CP8 text, normalized as BLK-2) AND the word 'fixed' ⇒ reported; resolved only by a RES-1 record (then state RESOLVED_BY_EVIDENCE + citation), never by the detector",
+  "CTR-2": "CONTRACT_STATE_VS_CLOSURE: a CLOSE-1-closed item whose contract `state` does not contain 'CLOSED' (the contract state is never rewritten), OR a checkpoint mission<X>.status that does not start with the derived CLOSED_<grade> (or names a CLOSED_ state while CLOSE-1 does not close X) ⇒ reported, not resolved",
+  "CTR-3": "STALE_CHECKPOINT_POINTER: a checkpoint pointer the register reads (declared BLOCKER_FIELDS / PR_RECORD_FIELDS record files) whose newest checkpoint number is below the newest committed checkpoint (docs/odg/evidence/*_CHECKPOINT_<n>.json, by number) ⇒ reported (the declared record sets are NOT extended automatically: that would change BLK-2/REL-2 inputs)",
+});
+const LATEST_CP_RULE = "LCP-1: the latest checkpoint is the committed docs/odg/evidence/*_CHECKPOINT_<n>.json with the highest <n> (discovered, not hard-coded); buildRegister uses sources.latestCheckpoint, else the highest-numbered checkpoint among the documents it was given";
+function cpNumber(name: string): number { const m = /_CHECKPOINT_(\d+)\.json$/.exec(String(name)); return m ? Number(m[1]) : -1; }
+/* latestCheckpointOf(names) — LCP-1 over a list of file names/paths; null when none is a checkpoint. */
+function latestCheckpointOf(names: string[]): string | null {
+  let best: string | null = null, bn = -1;
+  for (const n of Array.isArray(names) ? names : []) { const k = cpNumber(n); if (k > bn) { bn = k; best = String(n).split(/[/:]/).pop() as string; } }
+  return best;
+}
+/* discoverLatestCheckpoint() — load-time LCP-1 over the repository evidence directory (fs readdir only; null if absent). */
+function discoverLatestCheckpoint(): string | null {
+  try {
+    const fs = require("fs"), path = require("path");
+    let d = __dirname;
+    for (let i = 0; i < 6; i++) { const ev = path.join(d, "docs", "odg", "evidence"); if (fs.existsSync(ev)) return latestCheckpointOf(fs.readdirSync(ev)); d = path.dirname(d); }
+  } catch { /* no filesystem view ⇒ null */ }
+  return null;
+}
 
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function ownerMatches(text: string): string[] {
@@ -139,6 +176,25 @@ function buildRegister(sources: any): any {
       nextStep = cp8Graded ? { remainingCriteria: remaining, source: `${pf}#scenarios.${L}.criteria` } : { text: init.missingForPass, source: `${base}.initialState.missingForPass` };
     } else if (ev && g && /FAIL/.test(String(g.status))) { status = "FAILED"; statusSource = [`${pf}#scenarios.${L}.status`]; nextStep = null; }
     else { status = "PARTIAL"; statusSource = [`${base}.initialState.status`]; nextStep = { text: init.missingForPass, source: `${base}.initialState.missingForPass` }; }
+    // CLOSE-1 (V16.9 Phase 1): closure from the committed scoped-step records, via the canonical odg-authorization-scope.
+    let closure: any = null, statusHistory: any = null;
+    if (isObj(x.authorization)) {
+      const aev = isObj(sources.authorizationEvidence) && isObj(sources.authorizationEvidence[L]) ? sources.authorizationEvidence[L] : {};
+      const sc = AS.deriveAuthorizationScope(x, aev);
+      const vstep = sc.validatedSteps.find((v: any) => v.step === "VALIDATE_CRITERIA");
+      const allDone = sc.applicable === true && sc.currentStep === null && sc.sequence.every((st: string) => sc.validatedSteps.some((v: any) => v.step === st));
+      const vp = aev.validation && aev.validation.recordPath ? String(aev.validation.recordPath) : "criteria-validation record";
+      if (allDone && vstep && /^(PASS|PARTIAL|FAIL|NOT_MEASURED)$/.test(String(vstep.evidence.scenarioGrade))) {
+        const g = String(vstep.evidence.scenarioGrade);
+        const prior = { status, source: statusSource.slice(), since: priorSince(statusSource, P8), rule: "status rules before CLOSE-1" };
+        status = "CLOSED_" + g;
+        statusSource = [`${vp}#scenarioGrade`, `${vp}#contractSha256`, `${vp}#experimentEvidence.experimentSha256`];
+        const vdate = aev.validation && typeof aev.validation.date === "string" ? aev.validation.date : null;
+        statusHistory = [prior, { status, source: statusSource.slice(), since: vdate ? { value: vdate, source: `${vp}#date` } : { value: null, source: `${vp} (no date field)` }, rule: "CLOSE-1" }];
+        closure = { closed: true, rule: "CLOSE-1", grade: g, record: vp, contractSha256: sc.contractSha256, experimentSha256: vstep.evidence.experimentSha256, validatedSteps: sc.validatedSteps.map((v: any) => v.step), stepState: aev.validation && isObj(aev.validation.stepState) ? aev.validation.stepState : null, component: "odg-authorization-scope.deriveAuthorizationScope" };
+        nextStep = { text: "closed — further work needs a NEW mission (not a re-grade, not a re-run)", source: `${vp}#stepState` };
+      } else closure = { closed: false, rule: "CLOSE-1", currentStep: sc.currentStep || null, reason: sc.reason, component: "odg-authorization-scope.deriveAuthorizationScope" };
+    }
     // owner authorization
     const scanned = [String(w.objective || ""), ...(Array.isArray(w.acceptance_criteria) ? w.acceptance_criteria : []).map(String), String(init.missingForPass || "")].join(" ‖ ");
     const om = ownerMatches(scanned);
@@ -177,6 +233,7 @@ function buildRegister(sources: any): any {
       deps, depsNote: deps.length ? "item dependencies stated in initialState.missingForPass" : "no item-to-item dependency stated in the evidence ⇒ []",
       depsStated, requiresOwnerAuthorization, ownerReason: requiresOwnerAuthorization ? `OWN-1 matched [${om.join(", ")}] in objective/acceptance_criteria/missingForPass` : null,
       sectionsAdvanced: secs, criteria: crit,
+      ...(closure ? { closure } : {}), ...(statusHistory ? { statusHistory } : {}),
     });
   });
 
@@ -241,7 +298,8 @@ function buildRegister(sources: any): any {
   });
 
   // ── 6. CP8 capability gaps (odgCapabilityAudit entries ≠ OPERATIONAL + CP8.gaps, deduplicated by GAP_LINKS) ─────────
-  if (P8) for (const g of capabilityGapItems(P8, Array.isArray(sources.laterEvidence) ? sources.laterEvidence : [], Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : [])) items.push(g);
+  const latestForDep2 = typeof sources.latestCheckpoint === "string" ? sources.latestCheckpoint : latestCheckpointOf((Array.isArray(sources.checkpointNames) ? sources.checkpointNames.map(String) : []).concat((Array.isArray(sources.checkpoints) ? sources.checkpoints : []).map((c: any) => c.path)).concat(pf ? [pf] : []).concat((Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).map((e: any) => e.path)));
+  if (P8) for (const g of capabilityGapItems(P8, Array.isArray(sources.laterEvidence) ? sources.laterEvidence : [], Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : [], latestForDep2)) items.push(g);
 
   // ── 5. CP8 method-card matrix ⇒ PROPOSED (EXPERIMENT) / NOT_ADOPTED (DEFER) ─────────────────────────────────────────
   const mc: any[] = P8 && P8.data.globalResearch && Array.isArray(P8.data.globalResearch.matrix) ? P8.data.globalResearch.matrix : [];
@@ -253,14 +311,70 @@ function buildRegister(sources: any): any {
     items.push({ id: String(m.card), kind: "CP8_METHOD_CARD", title: `${m.card} (${m.org})`, status, statusSource: [ptr, `${pf}#globalResearch.matrix[${i}].basis`], nextStep: status === "PROPOSED" ? { text: "run the card's demonstrationTest", source: `${pf}#globalResearch.matrix[${i}].basis` } : null, deps: [], depsNote: "no dependency stated ⇒ []", depsStated: [], requiresOwnerAuthorization: false, ownerReason: null, sectionsAdvanced: [], criteria: crit });
   });
 
+  // ── 7. V16.9 Phase 1: RES-1 resolutions + contradiction detectors (CTR-1..3) + LCP-1 ──────────────────────────────
+  const cps: any[] = (Array.isArray(sources.checkpoints) ? sources.checkpoints : []).filter((c: any) => c && isObj(c.data)).slice().sort((a: any, b: any) => cpNumber(a.path) - cpNumber(b.path));
+  const cpNames: string[] = (Array.isArray(sources.checkpointNames) ? sources.checkpointNames.map(String) : []).concat(cps.map((c: any) => c.path)).concat(pf ? [pf] : []).concat((Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).map((e: any) => e.path));
+  const latestCp = typeof sources.latestCheckpoint === "string" ? sources.latestCheckpoint : latestCheckpointOf(cpNames);
+  const p8n = pf ? cpNumber(pf) : 8;
+  const resolutions = (Array.isArray(sources.resolutionEvidence) ? sources.resolutionEvidence : []).slice().sort((a: any, b: any) => (a.path < b.path ? -1 : 1));
+  const contradictions: any[] = [];
+  const addC = (it: any, c: any) => { contradictions.push({ item: it ? it.id : null, ...c }); if (it) { it.contradictions = (it.contradictions || []).concat([c]); } };
+  for (const it of items) {
+    const res = resolutions.find((r: any) => resolutionValid(r.data) && r.data.resolvesRegisterItem === it.id);
+    const priorStatus = it.status, priorSource = it.statusSource.slice();
+    if (res) {
+      const since = typeof res.data.date === "string" ? { value: res.data.date, source: `${res.path}#date` } : { value: null, source: `${res.path} (no date field)` };
+      it.statusHistory = (it.statusHistory || [{ status: priorStatus, source: priorSource, since: priorSince(priorSource, P8), rule: "status rules before RES-1" }]).concat([{ status: "RESOLVED_BY_EVIDENCE", source: [`${res.path}#resolvesRegisterItem`, `${res.path}#fixedBy.mergeCommit`], since, rule: "RES-1" }]);
+      it.status = "RESOLVED_BY_EVIDENCE";
+      it.statusSource = [`${res.path}#resolvesRegisterItem`, `${res.path}#resolution.status`, `${res.path}#fixedBy.mergeCommit`, `${res.path}#reproTests`];
+      it.resolution = { rule: "RES-1", record: res.path, pr: res.data.fixedBy.pr, mergeCommit: res.data.fixedBy.mergeCommit, reproTests: res.data.reproTests.map((t: any) => (isObj(t) ? t.file : String(t))) };
+      it.nextStep = null;
+    }
+    // CTR-1
+    if (it.kind === "CP8_CAPABILITY_GAP" && /^(PROPOSED|PARTIAL|NOT_IMPLEMENTED|NOT_MEASURED)$/.test(priorStatus)) {
+      const link = GAP_LINKS.find((l: any) => l.id === it.id) || {};
+      const own = normTxt([it.title].concat(it.cp8Gaps || []).join(" "));
+      const anchors = (link.anchors || []).filter((a: string) => own.includes(normTxt(a)));
+      for (const c of cps) {
+        if (cpNumber(c.path) <= p8n || !Array.isArray(c.data.prs)) continue;
+        c.data.prs.forEach((p: any, i: number) => {
+          const w = String(p && p.what || "");
+          const hit = anchors.filter((a: string) => normTxt(w).includes(normTxt(a)));
+          if (hit.length && /\bfixed\b/i.test(w)) addC(it, { rule: "CTR-1", kind: "GAP_STATED_FIXED", a: `register status ${priorStatus}`, aSource: priorSource, b: w, bSource: `${c.path}#prs[${i}].what`, anchors: hit, state: res ? "RESOLVED_BY_EVIDENCE" : "OPEN", resolvedBy: res ? res.path : null, autoResolved: false });
+        });
+      }
+    }
+    // CTR-2
+    if (it.kind === "WORK_ITEM_CONTRACT") {
+      const ci = C.data.contracts.findIndex((x: any) => String(x.scenario) === it.id);
+      const closed = !!(it.closure && it.closure.closed);
+      if (closed && !/CLOSED/.test(String(it.contractState || ""))) addC(it, { rule: "CTR-2", kind: "CONTRACT_STATE_VS_CLOSURE", a: `contract state ${it.contractState}`, aSource: [`${cf}#contracts[${ci}].state`], b: `closure record grade ${it.closure.grade} (${it.status})`, bSource: [`${it.closure.record}#scenarioGrade`, `${it.closure.record}#stepState`], state: "OPEN", autoResolved: false, note: "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization" });
+      for (const c of cps) {
+        const m = c.data["mission" + it.id];
+        if (!isObj(m) || typeof m.status !== "string") continue;
+        const agrees = closed ? m.status.startsWith(it.status) : !/^CLOSED_/.test(m.status);
+        if (!agrees) addC(it, { rule: "CTR-2", kind: "CHECKPOINT_MISSION_STATUS_VS_CLOSURE", a: `register status ${it.status}`, aSource: it.statusSource, b: `checkpoint mission${it.id}.status ${m.status}`, bSource: [`${c.path}#mission${it.id}.status`], state: "OPEN", autoResolved: false });
+      }
+    }
+  }
+  // CTR-3
+  const declaredCps = Array.from(new Set(BLOCKER_FIELDS.concat(PR_RECORD_FIELDS).map((b: any) => b.file).filter((f: string) => cpNumber(f) >= 0))) as string[];
+  const declaredNewest = latestCheckpointOf(declaredCps);
+  if (latestCp && declaredNewest && cpNumber(declaredNewest) < cpNumber(latestCp)) addC(null, { rule: "CTR-3", kind: "STALE_CHECKPOINT_POINTER", a: `declared benefit record sets (blockerFields/prRecordFields) stop at ${declaredNewest}`, aSource: ["odg-strategic-register.BLOCKER_FIELDS", "odg-strategic-register.PR_RECORD_FIELDS"], b: `newest committed checkpoint ${latestCp} (LCP-1)`, bSource: [`docs/odg/evidence/${latestCp}`], state: "OPEN", autoResolved: false, note: "not extended automatically (would change BLK-2/REL-2 inputs); an owner/provider rule change is needed" });
+  const latestDoc = latestCp ? (cps.find((c: any) => String(c.path).endsWith(latestCp)) || (Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).find((e: any) => String(e.path).endsWith(latestCp))) : null;
+  const latestCheckpoint = { file: latestCp, rule: LATEST_CP_RULE, source: latestCp ? `docs/odg/evidence/${latestCp}` : null, declaredFieldsPresent: latestDoc ? { ownerQuestions: Array.isArray(latestDoc.data.ownerQuestions) } : null, dep2Note: latestDoc && !Array.isArray(latestDoc.data.ownerQuestions) ? `${latestCp} has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)` : null };
+
   const statusCounts: any = Object.fromEntries(Object.keys(STATUS).map((s) => [s, 0]));
   for (const it of items) statusCounts[it.status] = (statusCounts[it.status] || 0) + 1;
   return deepFreeze({
     schema: "ODG_STRATEGIC_REGISTER/1",
     statusTaxonomy: STATUS,
     criteria: CRITERIA, weights: WEIGHTS, weightsNote: WEIGHTS_NOTE, ownerRule: OWNER_RULE,
-    capabilityGapRules: { dedupe: GAP_DEDUP_RULE, owner: OWNER_RULE_GAP, landed: LAND_RULE, links: GAP_LINKS.map((l: any) => ({ id: l.id, audit: l.audit, gapRe: l.gapRe ? String(l.gapRe) : null, ownerQuestionRe: l.oqRe ? String(l.oqRe) : null, blockerAnchors: l.anchors || [] })), benefit: { blocker: BLK2_RULE, reliability: REL2_RULE, dependency: DEP2_RULE, blockerFields: BLOCKER_FIELDS, prRecordFields: PR_RECORD_FIELDS, latestCheckpoint: LATEST_CHECKPOINT, notDerived: BENEFIT_NOT_DERIVED } },
-    sourcesUsed: { contracts: cf, v150: vf, cp8: pf, laterEvidence: (Array.isArray(sources.laterEvidence) ? sources.laterEvidence : []).map((e: any) => e.path).sort(), benefitEvidence: (Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).map((e: any) => e.path).sort(), scenarioEvidence: Object.keys(scen).sort().map((k) => ({ scenario: k, path: scen[k].path })), preContractEvidenceIgnored: ignoredEvidence, scenarioEvidenceRule: SCN_RULE },
+    capabilityGapRules: { dedupe: GAP_DEDUP_RULE, owner: OWNER_RULE_GAP, landed: LAND_RULE, links: GAP_LINKS.map((l: any) => ({ id: l.id, audit: l.audit, gapRe: l.gapRe ? String(l.gapRe) : null, ownerQuestionRe: l.oqRe ? String(l.oqRe) : null, blockerAnchors: l.anchors || [] })), benefit: { blocker: BLK2_RULE, reliability: REL2_RULE, dependency: DEP2_RULE, blockerFields: BLOCKER_FIELDS, prRecordFields: PR_RECORD_FIELDS, latestCheckpoint: latestCp, notDerived: BENEFIT_NOT_DERIVED } },
+    continuityRules: { closure: CLOSE_RULE, resolution: RES_RULE, latestCheckpoint: LATEST_CP_RULE, contradictions: CONTRADICTION_RULES, history: "append-only statusHistory [{status, source, since, rule}] on every item whose status CLOSE-1 or RES-1 changed; earlier statuses are never deleted" },
+    latestCheckpoint,
+    contradictions: { rules: CONTRADICTION_RULES, count: contradictions.length, detected: contradictions, note: "reported, never auto-resolved by the detector" },
+    sourcesUsed: { contracts: cf, v150: vf, cp8: pf, laterEvidence: (Array.isArray(sources.laterEvidence) ? sources.laterEvidence : []).map((e: any) => e.path).sort(), benefitEvidence: (Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).map((e: any) => e.path).sort(), scenarioEvidence: Object.keys(scen).sort().map((k) => ({ scenario: k, path: scen[k].path })), preContractEvidenceIgnored: ignoredEvidence, scenarioEvidenceRule: SCN_RULE, authorizationEvidence: Object.keys(isObj(sources.authorizationEvidence) ? sources.authorizationEvidence : {}).sort().map((k) => ({ scenario: k, ...Object.fromEntries(["inspection", "experiment", "validation"].map((t) => [t, sources.authorizationEvidence[k][t] && sources.authorizationEvidence[k][t].recordPath ? sources.authorizationEvidence[k][t].recordPath : null])) })), resolutionEvidence: resolutions.map((r: any) => r.path), checkpoints: cps.map((c: any) => c.path), checkpointNames: (Array.isArray(sources.checkpointNames) ? sources.checkpointNames.map(String) : []).slice().sort() },
     itemCount: items.length, statusCounts, items,
   });
 }
@@ -308,7 +422,9 @@ const PR_RECORD_FIELDS: any[] = Object.freeze([
   { file: "V163_CHECKPOINT_8.json", field: "prs[*]", text: ["what", "gates"] },
   { file: "V166_CHECKPOINT_9.json", field: "prs[*]", text: ["what", "gates"] },
 ].map((x) => Object.freeze(x))) as any;
-const LATEST_CHECKPOINT = "V166_CHECKPOINT_9.json";
+/* LCP-1: discovered at module load from docs/odg/evidence/*_CHECKPOINT_<n>.json (highest n) — no longer hard-coded (was
+ * "V166_CHECKPOINT_9.json" until V16.9 Phase 1). buildRegister itself stays pure and uses sources.latestCheckpoint. */
+const LATEST_CHECKPOINT: string | null = discoverLatestCheckpoint();
 const BLK2_RULE = "BLK-2 (CP8 capability-gap items only): n = number of distinct committed BLOCKER RECORDS (the declared blockerFields — CP8-or-later evidence only, so blockers removed by the PRs CP8 lists are not counted; a record repeated in a later checkpoint counts again: repetition) attributed to the gap, counting AT MOST ONE per source file (several fields of one file restate one observation; every matched record is still cited); a record is attributed iff it names the gap's audit number in an 'audit #a/#b' reference, OR its normalized text (lower-case; runs of '_', '-', whitespace ⇒ one space) contains one of the gap's declared blockerAnchors, an anchor being USABLE only if it occurs (normalized) in the gap's own cited CP8 text; value = min(1, n/4) — the divisor 4 is PROVIDER-AUTHORED (no canonical source scales it): it is the number of distinct files in blockerFields, so a gap blocking in every declared file reaches 1, and it matches the n/4 scale of CAP-1/EVD-1; n = 0 ⇒ NOT_MEASURED (absence from the declared record set is not evidence of no benefit)";
 const REL2_RULE = "REL-2 (CP8 capability-gap items only): r = number of independent-inspection REJECTs recorded in a CP8-or-later PR record (the declared prRecordFields) whose PR number the gap's own cited CP8 text cites as '#<n>' (the gap names that PR as its area's work); a record contributes the integer written immediately before 'REJECT' (optionally with one severity word, e.g. '2 HIGH REJECTs'); a REJECT mention without a count is UNCOUNTED (not guessed); value = min(1, r/4) — the divisor 4 is PROVIDER-AUTHORED (no canonical source scales it), chosen only to keep the n/4 scale of CAP-1/EVD-1/BLK-2; gap text cites no PR, or no counted REJECT ⇒ NOT_MEASURED";
 const DEP2_RULE = "DEP-2 (CP8 capability-gap items only): a gap linked to a CP8.ownerQuestions entry (GAP_LINKS.oqRe) has that owner decision as its STATED dependency; it is UNSATISFIED (value 0/1) iff the latest checkpoint's ownerQuestions (latestCheckpoint) still lists a question matching the same oqRe; not re-listed ⇒ NOT_MEASURED (no field states it was resolved); no linked owner question ⇒ NOT_MEASURED (DEP-1)";
@@ -354,7 +470,7 @@ function countRejects(text: string): { counted: number; uncounted: number } {
   return { counted, uncounted };
 }
 
-function benefitCriteria(id: string, auditKey: string | null, ownText: string, oqRe: RegExp | null, docs: Map<string, any>): any {
+function benefitCriteria(id: string, auditKey: string | null, ownText: string, oqRe: RegExp | null, docs: Map<string, any>, latestCheckpoint: string | null = LATEST_CHECKPOINT): any {
   const link = GAP_LINKS.find((L: any) => L.id === id) || {};
   const own = normTxt(ownText);
   const anchors = (link.anchors || []).filter((a: string) => own.includes(normTxt(a)));
@@ -396,7 +512,8 @@ function benefitCriteria(id: string, auditKey: string | null, ownText: string, o
     : notMeasured("REL-2", `cited PR(s) [${cited.map((n) => "#" + n).join(", ")}] carry no counted REJECT in the declared PR records${uncounted ? ` (${uncounted} uncounted mention(s))` : ""}`);
   // DEP-2
   let dep: any, depStated: any = null;
-  const latest = docs.get(LATEST_CHECKPOINT);
+  const latestName = latestCheckpoint || "(no checkpoint)";
+  const latest = docs.get(latestName);
   if (!oqRe) dep = notMeasured("DEP-2", "no CP8 owner question linked ⇒ no dependency stated in the cited CP8 text ⇒ deps []");
   else {
     const oq = latest && Array.isArray(latest.data.ownerQuestions) ? latest.data.ownerQuestions.map(String) : [];
@@ -405,7 +522,7 @@ function benefitCriteria(id: string, auditKey: string | null, ownText: string, o
       const ptr = `${latest.path}#ownerQuestions[${j}]`;
       depStated = { kind: "OWNER_AUTHORIZATION", text: oq[j], satisfied: false, source: ptr, satisfiedBasis: "still listed open in the latest checkpoint (DEP-2)" };
       dep = measured(0, "DEP-2", [ptr], "0/1 stated dependencies satisfied (linked owner question still open in the latest checkpoint)");
-    } else dep = notMeasured("DEP-2", `linked owner question not re-listed in ${latest ? latest.path : LATEST_CHECKPOINT + " (absent)"} ⇒ resolution not stated by any field`);
+    } else dep = notMeasured("DEP-2", `linked owner question not re-listed in ${latest ? latest.path : latestName + " (absent)"} ⇒ resolution not stated by any field`);
   }
   return { blk, rel, dep, depStated };
 }
@@ -421,7 +538,7 @@ function own2Matches(text: string): string[] {
   return out.concat(ownerMatches(text));
 }
 
-function capabilityGapItems(P8: any, later: any[], benefit: any[] = []): any[] {
+function capabilityGapItems(P8: any, later: any[], benefit: any[] = [], latestCheckpoint: string | null = null): any[] {
   const pf = P8.path, d = P8.data;
   const audit: any = isObj(d.odgCapabilityAudit) ? d.odgCapabilityAudit : {};
   const gaps: string[] = Array.isArray(d.gaps) ? d.gaps.map(String) : [];
@@ -442,7 +559,7 @@ function capabilityGapItems(P8: any, later: any[], benefit: any[] = []): any[] {
     const ownerReason = owner ? [om.length ? `OWN-2 matched [${om.join(", ")}] in the cited CP8 text` : null, oi.length ? `open owner question: ${oi.map((i) => `${pf}#ownerQuestions[${i}]`).join(", ")}` : null].filter(Boolean).join("; ") : null;
     const k = (a ? 1 : 0) + gi.length + landed.length;
     const nm = (rule: string, reason: string) => notMeasured(rule, reason);
-    const bc = benefitCriteria(id, auditKey, text, oi.length ? oqRe : null, docs);
+    const bc = benefitCriteria(id, auditKey, text, oi.length ? oqRe : null, docs, latestCheckpoint || LATEST_CHECKPOINT);
     const crit: any = {
       autonomyBenefit: nm("AUT-1", "no V150 section mapping for a CP8 capability gap"),
       capabilityGain: nm("CAP-1", "not referenced by any V150 top10NextInternal item"),
@@ -483,6 +600,15 @@ function toSelectorCandidates(register: any): any[] {
   return register.items.map((it: any) => ({ id: it.id, status: it.status, deps: it.deps, requiresOwnerAuthorization: it.requiresOwnerAuthorization, ownerReason: it.ownerReason, criteria: Object.fromEntries(Object.entries(it.criteria).map(([k, v]: any) => [k, { status: v.status, value: v.value }])) }));
 }
 
+/* priorSince(statusSource, P8) — the dated source of a pre-closure status: CP8 date when CP8 is cited, else null (cited). */
+function priorSince(src: string[], P8: any): any {
+  if (P8 && src.some((s) => String(s).startsWith(P8.path + "#")) && typeof P8.data.date === "string") return { value: P8.data.date, source: `${P8.path}#date` };
+  return { value: null, source: `${String(src[0] || "").split("#")[0]} (no date field)` };
+}
+/* resolutionValid(doc) — RES-1 shape check of a committed resolution record. */
+function resolutionValid(d: any): boolean {
+  return isObj(d) && typeof d.resolvesRegisterItem === "string" && isObj(d.resolution) && d.resolution.status === "FIXED" && isObj(d.fixedBy) && Number.isInteger(d.fixedBy.pr) && /^[0-9a-f]{40}$/.test(String(d.fixedBy.mergeCommit || "")) && Array.isArray(d.reproTests) && d.reproTests.length > 0;
+}
 function deepFreeze(o: any): any { if (o && typeof o === "object" && !Object.isFrozen(o)) { Object.freeze(o); for (const k of Object.keys(o)) deepFreeze(o[k]); } return o; }
 
 const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
@@ -497,6 +623,6 @@ const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
+module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(STRATEGIC_REGISTER_CONTRACT, null, 2) + "\n"); }
 export {};

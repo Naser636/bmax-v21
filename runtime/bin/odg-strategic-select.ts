@@ -81,9 +81,49 @@ function loadSources(root: string): any {
     inputs.push({ source: rel, sha256: sha256(txt) });
     laterEvidence.push({ path: rel, data: { gapRef: data.gapRef } });
   }
+  // V16.9 Phase 1 — LCP-1: every committed checkpoint, the latest discovered by number (not hard-coded).
+  const evFiles: string[] = fs.readdirSync(path.join(root, EVIDENCE_DIR_REL)).sort();
+  const checkpointNames = evFiles.filter((f: string) => /_CHECKPOINT_\d+\.json$/.test(f));
+  const latestCheckpoint = REG.latestCheckpointOf(checkpointNames);
+  const checkpoints: any[] = [];
+  for (const f of checkpointNames.filter((f: string) => REG.cpNumber(f) > REG.cpNumber(CP8_REL)).sort((a: string, b: string) => REG.cpNumber(a) - REG.cpNumber(b))) {
+    const rel = `${EVIDENCE_DIR_REL}/${f}`;
+    let txt: string, data: any;
+    try { txt = fs.readFileSync(path.join(root, rel), "utf8"); data = JSON.parse(txt); } catch { continue; }
+    inputs.push({ source: rel, sha256: sha256(txt) });
+    checkpoints.push({ path: rel, data: { prs: Array.isArray(data.prs) ? data.prs : [], ...Object.fromEntries(Object.keys(data).filter((k) => /^mission[A-P]$/.test(k)).map((k) => [k, data[k]])) } });
+  }
+  // CLOSE-1 inputs: per scenario X, the committed V<n>_X_CONTRACT_INSPECTION / _EXPERIMENT / _CRITERIA_VALIDATION records
+  // (highest V<n> when several) — the records odg-authorization-scope R3/R4/R5b bind to the contract.
+  const authorizationEvidence: any = {};
+  const KINDS: any = { inspection: "CONTRACT_INSPECTION", experiment: "EXPERIMENT", validation: "CRITERIA_VALIDATION" };
+  for (const x of contracts.data.contracts) {
+    if (!x || typeof x.authorization !== "object" || x.authorization === null) continue;
+    const L = String(x.scenario);
+    const ev: any = {};
+    for (const [k, suffix] of Object.entries(KINDS) as any) {
+      const re = new RegExp(`^V(\\d+)_${L}_${suffix}\\.json$`);
+      const cand = evFiles.filter((f: string) => re.test(f)).sort((a: string, b: string) => Number(re.exec(a)![1]) - Number(re.exec(b)![1]));
+      if (!cand.length) { ev[k] = null; continue; }
+      const rel = `${EVIDENCE_DIR_REL}/${cand[cand.length - 1]}`;
+      try { const txt = fs.readFileSync(path.join(root, rel), "utf8"); inputs.push({ source: rel, sha256: sha256(txt) }); ev[k] = { ...JSON.parse(txt), recordPath: rel }; } catch { ev[k] = null; }
+    }
+    authorizationEvidence[L] = ev;
+  }
+  // RES-1 inputs: committed evidence files carrying a top-level resolvesRegisterItem.
+  const resolutionEvidence: any[] = [];
+  for (const f of evFiles.filter((f: string) => f.endsWith(".json"))) {
+    const rel = `${EVIDENCE_DIR_REL}/${f}`;
+    if (rel === OUT_REL) continue;
+    let txt: string, data: any;
+    try { txt = fs.readFileSync(path.join(root, rel), "utf8"); if (!txt.includes('"resolvesRegisterItem"')) continue; data = JSON.parse(txt); } catch { continue; }
+    if (!data || typeof data.resolvesRegisterItem !== "string") continue;
+    inputs.push({ source: rel, sha256: sha256(txt) });
+    resolutionEvidence.push({ path: rel, data: { resolvesRegisterItem: data.resolvesRegisterItem, date: data.date, resolution: data.resolution, fixedBy: data.fixedBy, reproTests: data.reproTests } });
+  }
   // BLK-2 / REL-2 / DEP-2 inputs: the declared CP8-or-later benefit evidence files (CP8 itself is already loaded above).
   const benefitEvidence: any[] = [];
-  const benefitFiles = Array.from(new Set(REG.BLOCKER_FIELDS.concat(REG.PR_RECORD_FIELDS).map((b: any) => b.file).concat([REG.LATEST_CHECKPOINT]))).filter((f: any) => f !== path.basename(CP8_REL)).sort() as string[];
+  const benefitFiles = Array.from(new Set(REG.BLOCKER_FIELDS.concat(REG.PR_RECORD_FIELDS).map((b: any) => b.file).concat(latestCheckpoint ? [latestCheckpoint] : []))).filter((f: any) => f !== path.basename(CP8_REL)).sort() as string[];
   for (const f of benefitFiles) {
     const rel = `${EVIDENCE_DIR_REL}/${f}`;
     let txt: string;
@@ -91,7 +131,10 @@ function loadSources(root: string): any {
     inputs.push({ source: rel, sha256: sha256(txt) });
     benefitEvidence.push({ path: rel, data: JSON.parse(txt) });
   }
-  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, inputs };
+  const seen = new Set<string>();
+  const uniqInputs = inputs.filter((i: any) => (seen.has(i.source) ? false : (seen.add(i.source), true)));
+  inputs.length = 0; inputs.push(...uniqInputs);
+  return { contracts, v150, cp8, scenarioEvidence, laterEvidence, benefitEvidence, checkpointNames, checkpoints, authorizationEvidence, resolutionEvidence, inputs };
 }
 
 const SELECTOR_OPTIONS = Object.freeze({ weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
@@ -184,6 +227,8 @@ function compute(sources: any): any {
       "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
       "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
       "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
+      "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
+      "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)",
     ],
   };
 }

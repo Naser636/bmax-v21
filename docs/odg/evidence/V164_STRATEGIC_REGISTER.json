@@ -58,12 +58,44 @@
       "sha256": "7e21b16bece202f76c0c0ca79a12c3567e0c4d85f45959af9c3b342242893c18"
     },
     {
-      "source": "docs/odg/evidence/V164_GO_CYCLE.json",
-      "sha256": "687df2204617e68d7e7187b980588dbae72db888043f655d0514a597ac1a57a0"
-    },
-    {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
       "sha256": "20aec10eca778eaa7f2e2bc8bf2de51af707fe07c1f17155f63a10b7a4bfde9e"
+    },
+    {
+      "source": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+      "sha256": "52913c51fdd79aaedc52e96d66639b38154033d45c9a7ce5f1519ea5fc051f81"
+    },
+    {
+      "source": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
+      "sha256": "d606c6e296a759fd291028faf76833ff1828d23b3ec87570455f6af1da664534"
+    },
+    {
+      "source": "docs/odg/evidence/V166_G_EXPERIMENT.json",
+      "sha256": "b595489c4abbbd088794928d2cd638e23e52017857f65c0e92c294e466324c95"
+    },
+    {
+      "source": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+      "sha256": "78cc3467f06d4191489aa69eb4650c35bb6dbf89e5d5396f5943e2c7d77ec32d"
+    },
+    {
+      "source": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+      "sha256": "dc5b12081618f5fbd1d123af260a82a8aa8b6f318d45fe7b79704d93ee1d2cbf"
+    },
+    {
+      "source": "docs/odg/evidence/V168_H_EXPERIMENT.json",
+      "sha256": "30e1565fd5b701a70e04810d6e0b51238ddcd34f15f6ef9cbfcb68f4d40ecabd"
+    },
+    {
+      "source": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+      "sha256": "40786b40259b7a307cf7ab1dfef995e0f4623e065c43324667f91be9aaf457cb"
+    },
+    {
+      "source": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+      "sha256": "d0a45dfef1865ec90a51114d4fc60e6a1982715ac63d8c1b21886624893c3e1c"
+    },
+    {
+      "source": "docs/odg/evidence/V164_GO_CYCLE.json",
+      "sha256": "687df2204617e68d7e7187b980588dbae72db888043f655d0514a597ac1a57a0"
     },
     {
       "source": "docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json",
@@ -82,7 +114,12 @@
       "FAILED": "executed and graded FAIL",
       "NOT_MEASURED": "current state cannot be derived from the evidence (overlap or completion not stated by any field)",
       "PROPOSED": "listed as next work by a canonical source; no contract; not executed per the evidence",
-      "NOT_IMPLEMENTED": "CP8 odgCapabilityAudit status NOT_IMPLEMENTED (capability absent, possibly by design)"
+      "NOT_IMPLEMENTED": "CP8 odgCapabilityAudit status NOT_IMPLEMENTED (capability absent, possibly by design)",
+      "CLOSED_PASS": "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades PASS",
+      "CLOSED_PARTIAL": "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades PARTIAL — closed as PARTIAL (further work = a new mission, not a re-grade)",
+      "CLOSED_FAIL": "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades FAIL — negative result preserved",
+      "CLOSED_NOT_MEASURED": "CLOSE-1: all scoped steps validated (odg-authorization-scope) and the committed criteria-validation record grades NOT_MEASURED",
+      "RESOLVED_BY_EVIDENCE": "RES-1: a committed resolution record (resolvesRegisterItem = this id, resolution.status FIXED, fixedBy.pr + 40-hex fixedBy.mergeCommit, ≥1 reproTests entry) states the item's subject fixed"
     },
     "criteria": [
       {
@@ -316,13 +353,113 @@
             ]
           }
         ],
-        "latestCheckpoint": "V166_CHECKPOINT_9.json",
+        "latestCheckpoint": "V168_CHECKPOINT_10.json",
         "notDerived": [
           "autonomyBenefit (AUT-1), capabilityGain (CAP-1), strategicValue (STR-1): no V150 section / top10 / alsoInternal entry references a CP8 capability gap",
           "speedEfficiency (SPD-0), reusability (REU-0): no committed field records a speed or reuse effect per gap",
           "costRiskComplexity (CRC-1): no WORK_ITEM_CONTRACT sizes a gap; the owner flag alone would give a size term of 0 by default, which is a default fill ⇒ NOT_MEASURED"
         ]
       }
+    },
+    "continuityRules": {
+      "closure": "CLOSE-1: a WORK_ITEM_CONTRACT item whose contract carries an owner authorization block is CLOSED iff odg-authorization-scope.deriveAuthorizationScope(contract, committed {inspection, experiment, validation} records) is applicable, validates EVERY step of its declared sequence and has no current step; status = CLOSED_<grade> with <grade> = the VALIDATE_CRITERIA evidence scenarioGrade (the committed V*_<X>_CRITERIA_VALIDATION.json, R5b — bounded by the experiment outcome, never upgraded); any missing/invalid step ⇒ not closed (status from the earlier rules, closure.closed=false with the scope's reason). The pre-closure status is kept in statusHistory; criteria are kept (record preserved); CLOSED_* are non-selectable",
+      "resolution": "RES-1: an item is RESOLVED_BY_EVIDENCE iff a committed evidence file carries top-level resolvesRegisterItem = the item id, resolution.status = 'FIXED', fixedBy.pr (integer), fixedBy.mergeCommit (40 hex) and ≥1 reproTests entry; the file is cited; the earlier status is kept in statusHistory; the merge commit's existence is NOT checked here (pure; no git)",
+      "latestCheckpoint": "LCP-1: the latest checkpoint is the committed docs/odg/evidence/*_CHECKPOINT_<n>.json with the highest <n> (discovered, not hard-coded); buildRegister uses sources.latestCheckpoint, else the highest-numbered checkpoint among the documents it was given",
+      "contradictions": {
+        "CTR-1": "GAP_STATED_FIXED: a CP8_CAPABILITY_GAP item whose status (before RES-1) is open while a PR record of a checkpoint LATER than CP8 (prs[*].what) contains one of the gap's usable blockerAnchors (anchor present in the gap's own CP8 text, normalized as BLK-2) AND the word 'fixed' ⇒ reported; resolved only by a RES-1 record (then state RESOLVED_BY_EVIDENCE + citation), never by the detector",
+        "CTR-2": "CONTRACT_STATE_VS_CLOSURE: a CLOSE-1-closed item whose contract `state` does not contain 'CLOSED' (the contract state is never rewritten), OR a checkpoint mission<X>.status that does not start with the derived CLOSED_<grade> (or names a CLOSED_ state while CLOSE-1 does not close X) ⇒ reported, not resolved",
+        "CTR-3": "STALE_CHECKPOINT_POINTER: a checkpoint pointer the register reads (declared BLOCKER_FIELDS / PR_RECORD_FIELDS record files) whose newest checkpoint number is below the newest committed checkpoint (docs/odg/evidence/*_CHECKPOINT_<n>.json, by number) ⇒ reported (the declared record sets are NOT extended automatically: that would change BLK-2/REL-2 inputs)"
+      },
+      "history": "append-only statusHistory [{status, source, since, rule}] on every item whose status CLOSE-1 or RES-1 changed; earlier statuses are never deleted"
+    },
+    "latestCheckpoint": {
+      "file": "V168_CHECKPOINT_10.json",
+      "rule": "LCP-1: the latest checkpoint is the committed docs/odg/evidence/*_CHECKPOINT_<n>.json with the highest <n> (discovered, not hard-coded); buildRegister uses sources.latestCheckpoint, else the highest-numbered checkpoint among the documents it was given",
+      "source": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+      "declaredFieldsPresent": {
+        "ownerQuestions": false
+      },
+      "dep2Note": "V168_CHECKPOINT_10.json has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)"
+    },
+    "contradictions": {
+      "rules": {
+        "CTR-1": "GAP_STATED_FIXED: a CP8_CAPABILITY_GAP item whose status (before RES-1) is open while a PR record of a checkpoint LATER than CP8 (prs[*].what) contains one of the gap's usable blockerAnchors (anchor present in the gap's own CP8 text, normalized as BLK-2) AND the word 'fixed' ⇒ reported; resolved only by a RES-1 record (then state RESOLVED_BY_EVIDENCE + citation), never by the detector",
+        "CTR-2": "CONTRACT_STATE_VS_CLOSURE: a CLOSE-1-closed item whose contract `state` does not contain 'CLOSED' (the contract state is never rewritten), OR a checkpoint mission<X>.status that does not start with the derived CLOSED_<grade> (or names a CLOSED_ state while CLOSE-1 does not close X) ⇒ reported, not resolved",
+        "CTR-3": "STALE_CHECKPOINT_POINTER: a checkpoint pointer the register reads (declared BLOCKER_FIELDS / PR_RECORD_FIELDS record files) whose newest checkpoint number is below the newest committed checkpoint (docs/odg/evidence/*_CHECKPOINT_<n>.json, by number) ⇒ reported (the declared record sets are NOT extended automatically: that would change BLK-2/REL-2 inputs)"
+      },
+      "count": 4,
+      "detected": [
+        {
+          "item": "G",
+          "rule": "CTR-2",
+          "kind": "CONTRACT_STATE_VS_CLOSURE",
+          "a": "contract state AUTHORIZED_FOR_REVISION",
+          "aSource": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].state"
+          ],
+          "b": "closure record grade PARTIAL (CLOSED_PARTIAL)",
+          "bSource": [
+            "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#scenarioGrade",
+            "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#stepState"
+          ],
+          "state": "OPEN",
+          "autoResolved": false,
+          "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
+        },
+        {
+          "item": "H",
+          "rule": "CTR-2",
+          "kind": "CONTRACT_STATE_VS_CLOSURE",
+          "a": "contract state AUTHORIZED_FOR_REVISION",
+          "aSource": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].state"
+          ],
+          "b": "closure record grade FAIL (CLOSED_FAIL)",
+          "bSource": [
+            "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#scenarioGrade",
+            "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#stepState"
+          ],
+          "state": "OPEN",
+          "autoResolved": false,
+          "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
+        },
+        {
+          "item": "CP8-GAP-canonicalDefectsJ",
+          "rule": "CTR-1",
+          "kind": "GAP_STATED_FIXED",
+          "a": "register status PROPOSED",
+          "aSource": [
+            "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
+          ],
+          "b": "J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+          "bSource": "docs/odg/evidence/V168_CHECKPOINT_10.json#prs[2].what",
+          "anchors": [
+            "decomposed-execution",
+            "repair-feedback"
+          ],
+          "state": "RESOLVED_BY_EVIDENCE",
+          "resolvedBy": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+          "autoResolved": false
+        },
+        {
+          "item": null,
+          "rule": "CTR-3",
+          "kind": "STALE_CHECKPOINT_POINTER",
+          "a": "declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json",
+          "aSource": [
+            "odg-strategic-register.BLOCKER_FIELDS",
+            "odg-strategic-register.PR_RECORD_FIELDS"
+          ],
+          "b": "newest committed checkpoint V168_CHECKPOINT_10.json (LCP-1)",
+          "bSource": [
+            "docs/odg/evidence/V168_CHECKPOINT_10.json"
+          ],
+          "state": "OPEN",
+          "autoResolved": false,
+          "note": "not extended automatically (would change BLK-2/REL-2 inputs); an owner/provider rule change is needed"
+        }
+      ],
+      "note": "reported, never auto-resolved by the detector"
     },
     "sourcesUsed": {
       "contracts": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -334,7 +471,8 @@
       "benefitEvidence": [
         "docs/odg/evidence/V164_GO_CYCLE.json",
         "docs/odg/evidence/V166_CHECKPOINT_9.json",
-        "docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json"
+        "docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json",
+        "docs/odg/evidence/V168_CHECKPOINT_10.json"
       ],
       "scenarioEvidence": [
         {
@@ -355,20 +493,58 @@
         "docs/odg/evidence/V150_SCENARIO_L_CONCURRENCY.json",
         "docs/odg/evidence/V150_SCENARIO_M_RESUME.json"
       ],
-      "scenarioEvidenceRule": "SCN-1: a scenario evidence file (contractRef/contract '#X' or scenario field naming X) counts as executed against contract X only if its basename version V<n>_ ≥ the contracts file's version; earlier files are pre-contract evidence already cited in initialState.evidence"
+      "scenarioEvidenceRule": "SCN-1: a scenario evidence file (contractRef/contract '#X' or scenario field naming X) counts as executed against contract X only if its basename version V<n>_ ≥ the contracts file's version; earlier files are pre-contract evidence already cited in initialState.evidence",
+      "authorizationEvidence": [
+        {
+          "scenario": "G",
+          "inspection": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
+          "experiment": "docs/odg/evidence/V166_G_EXPERIMENT.json",
+          "validation": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json"
+        },
+        {
+          "scenario": "H",
+          "inspection": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+          "experiment": "docs/odg/evidence/V168_H_EXPERIMENT.json",
+          "validation": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json"
+        }
+      ],
+      "resolutionEvidence": [
+        "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json"
+      ],
+      "checkpoints": [
+        "docs/odg/evidence/V166_CHECKPOINT_9.json",
+        "docs/odg/evidence/V168_CHECKPOINT_10.json"
+      ],
+      "checkpointNames": [
+        "V150_CHECKPOINT_1.json",
+        "V150_CHECKPOINT_2.json",
+        "V150_CHECKPOINT_3.json",
+        "V150_CHECKPOINT_4.json",
+        "V155_CHECKPOINT_5.json",
+        "V159_CHECKPOINT_6.json",
+        "V160_CHECKPOINT_7.json",
+        "V163_CHECKPOINT_8.json",
+        "V166_CHECKPOINT_9.json",
+        "V168_CHECKPOINT_10.json"
+      ]
     },
     "itemCount": 56,
     "statusCounts": {
       "ACCEPTED": 1,
       "PASS_IN_SCOPE": 2,
-      "EXECUTED_PARTIAL": 3,
-      "PARTIAL": 19,
+      "EXECUTED_PARTIAL": 2,
+      "PARTIAL": 18,
       "NOT_ADOPTED": 1,
       "BLOCKED": 14,
       "FAILED": 0,
       "NOT_MEASURED": 1,
-      "PROPOSED": 14,
-      "NOT_IMPLEMENTED": 1
+      "PROPOSED": 13,
+      "NOT_IMPLEMENTED": 1,
+      "CLOSED_PASS": 0,
+      "CLOSED_PARTIAL": 1,
+      "CLOSED_FAIL": 1,
+      "CLOSED_NOT_MEASURED": 0,
+      "RESOLVED_BY_EVIDENCE": 1
     },
     "items": [
       {
@@ -1077,23 +1253,15 @@
         "title": "G — Mémoire",
         "contractState": "AUTHORIZED_FOR_REVISION",
         "authorizedBy": "OWNER (CTO) — directive V165 §1, 2026-11-23: \"J'autorise la reprise de la mission G.\" Scope: revise the contract (make the admissible() criterion coherent, measurable, testable; keep still-valid criteria; document changes + justification), independent inspection of the revised contract, then controlled experiments after that contract is validated. \"Ne jamais transformer rétroactivement un résultat négatif en réussite.\"",
-        "status": "EXECUTED_PARTIAL",
+        "status": "CLOSED_PARTIAL",
         "statusSource": [
-          "docs/odg/evidence/V160_SCENARIO_G.json#contract",
-          "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.status"
+          "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#scenarioGrade",
+          "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#contractSha256",
+          "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
         ],
         "nextStep": {
-          "remainingCriteria": [
-            {
-              "criterion": "used by a real mission decision; utility measured vs without it",
-              "grade": "PARTIAL — used in a real decision on 400 real PRs ⇒ NOT_ADOPTED (borderline); utility vs the same decision without the item NOT_MEASURED"
-            },
-            {
-              "criterion": "SUPPORTED/CORROBORATED item with admissible() true",
-              "grade": "PARTIAL — the item is SUPPORTED and usableFor(DESIGN_PROPOSAL) is met; admissible() (facts only ⇒ NOT_A_FACT for a SUPPORTED item) is false and scenario G never calls it ⇒ the criterion as worded cannot be met by a SUPPORTED item"
-            }
-          ],
-          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.criteria"
+          "text": "closed — further work needs a NEW mission (not a re-grade, not a re-run)",
+          "source": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#stepState"
         },
         "executedEvidence": "docs/odg/evidence/V160_SCENARIO_G.json",
         "deps": [],
@@ -1196,7 +1364,71 @@
             ],
             "basis": "k=4 (initialState.evidence 2 + executed file + CP8 grading)"
           }
-        }
+        },
+        "closure": {
+          "closed": true,
+          "rule": "CLOSE-1",
+          "grade": "PARTIAL",
+          "record": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+          "contractSha256": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd",
+          "experimentSha256": "25a8db57f6812db84a40db3f92b0323e4aa85612cefa4bb0ecfdb1ad6b07a705",
+          "validatedSteps": [
+            "REVISE_CONTRACT",
+            "INSPECT_REVISED_CONTRACT",
+            "RUN_CONTROLLED_EXPERIMENTS",
+            "VALIDATE_CRITERIA"
+          ],
+          "stepState": {
+            "VALIDATE_CRITERIA": "DONE (graded PARTIAL)",
+            "missionG": "CLOSED_PARTIAL — further work would need a new mission (e.g. adopt measured calibration), not a re-grade"
+          },
+          "component": "odg-authorization-scope.deriveAuthorizationScope"
+        },
+        "statusHistory": [
+          {
+            "status": "EXECUTED_PARTIAL",
+            "source": [
+              "docs/odg/evidence/V160_SCENARIO_G.json#contract",
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.G.status"
+            ],
+            "since": {
+              "value": "2026-11-23",
+              "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#date"
+            },
+            "rule": "status rules before CLOSE-1"
+          },
+          {
+            "status": "CLOSED_PARTIAL",
+            "source": [
+              "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#scenarioGrade",
+              "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#contractSha256",
+              "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
+            ],
+            "since": {
+              "value": "2026-11-23",
+              "source": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#date"
+            },
+            "rule": "CLOSE-1"
+          }
+        ],
+        "contradictions": [
+          {
+            "rule": "CTR-2",
+            "kind": "CONTRACT_STATE_VS_CLOSURE",
+            "a": "contract state AUTHORIZED_FOR_REVISION",
+            "aSource": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6].state"
+            ],
+            "b": "closure record grade PARTIAL (CLOSED_PARTIAL)",
+            "bSource": [
+              "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#scenarioGrade",
+              "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#stepState"
+            ],
+            "state": "OPEN",
+            "autoResolved": false,
+            "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
+          }
+        ]
       },
       {
         "id": "H",
@@ -1204,13 +1436,15 @@
         "title": "H — Amélioration récursive",
         "contractState": "AUTHORIZED_FOR_REVISION",
         "authorizedBy": "OWNER (CTO) — directive V168 (2026-11-23): \"J'autorise explicitement la mission H dans son périmètre exact, tel qu'il est défini dans le dossier : docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json\" — full path (revise → inspect → offline experiments → inspect results → validate on evidence → close) without re-approval between steps; H only.",
-        "status": "PARTIAL",
+        "status": "CLOSED_FAIL",
         "statusSource": [
-          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].initialState.status"
+          "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#scenarioGrade",
+          "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#contractSha256",
+          "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
         ],
         "nextStep": {
-          "text": "demonstrated superiority on independent held-out tests (V159 shows no quality gain; #902 gain not measured)",
-          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].initialState.missingForPass"
+          "text": "closed — further work needs a NEW mission (not a re-grade, not a re-run)",
+          "source": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#stepState"
         },
         "executedEvidence": null,
         "deps": [],
@@ -1313,7 +1547,70 @@
             ],
             "basis": "k=3 (initialState.evidence 3)"
           }
-        }
+        },
+        "closure": {
+          "closed": true,
+          "rule": "CLOSE-1",
+          "grade": "FAIL",
+          "record": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+          "contractSha256": "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2",
+          "experimentSha256": "47d8e591d6cd13fc4c89287508a1281050fb3f1a061be0ba9fd6f7843259662d",
+          "validatedSteps": [
+            "REVISE_CONTRACT",
+            "INSPECT_REVISED_CONTRACT",
+            "RUN_CONTROLLED_EXPERIMENTS",
+            "VALIDATE_CRITERIA"
+          ],
+          "stepState": {
+            "VALIDATE_CRITERIA": "DONE (graded FAIL)",
+            "missionH": "CLOSED_FAIL (NOT_ADOPTED)"
+          },
+          "component": "odg-authorization-scope.deriveAuthorizationScope"
+        },
+        "statusHistory": [
+          {
+            "status": "PARTIAL",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].initialState.status"
+            ],
+            "since": {
+              "value": null,
+              "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json (no date field)"
+            },
+            "rule": "status rules before CLOSE-1"
+          },
+          {
+            "status": "CLOSED_FAIL",
+            "source": [
+              "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#scenarioGrade",
+              "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#contractSha256",
+              "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
+            ],
+            "since": {
+              "value": "2026-11-24",
+              "source": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#date"
+            },
+            "rule": "CLOSE-1"
+          }
+        ],
+        "contradictions": [
+          {
+            "rule": "CTR-2",
+            "kind": "CONTRACT_STATE_VS_CLOSURE",
+            "a": "contract state AUTHORIZED_FOR_REVISION",
+            "aSource": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7].state"
+            ],
+            "b": "closure record grade FAIL (CLOSED_FAIL)",
+            "bSource": [
+              "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#scenarioGrade",
+              "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#stepState"
+            ],
+            "state": "OPEN",
+            "autoResolved": false,
+            "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
+          }
+        ]
       },
       {
         "id": "I",
@@ -4533,7 +4830,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V166_CHECKPOINT_9.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V168_CHECKPOINT_10.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -4680,16 +4977,8 @@
           "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.4_authorizeProvider.status"
         },
         "deps": [],
-        "depsNote": "no item-to-item dependency stated ⇒ []; owner-decision dependency recorded in depsStated (DEP-2)",
-        "depsStated": [
-          {
-            "kind": "OWNER_AUTHORIZATION",
-            "text": "provider spend ceiling",
-            "satisfied": false,
-            "source": "docs/odg/evidence/V166_CHECKPOINT_9.json#ownerQuestions[4]",
-            "satisfiedBasis": "still listed open in the latest checkpoint (DEP-2)"
-          }
-        ],
+        "depsNote": "no dependency stated in the evidence ⇒ []",
+        "depsStated": [],
         "requiresOwnerAuthorization": true,
         "ownerReason": "OWN-2 matched [provider launch, billed, spend, launch a provider, spend] in the cited CP8 text; open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[1]",
         "sectionsAdvanced": [],
@@ -4754,13 +5043,11 @@
             "reason": "no WORK_ITEM_CONTRACT ⇒ no declared scope to size (the owner flag alone would be a default-filled size term)"
           },
           "dependencyAvailability": {
-            "status": "MEASURED",
-            "value": 0,
+            "status": "NOT_MEASURED",
+            "value": null,
             "rule": "DEP-2",
-            "source": [
-              "docs/odg/evidence/V166_CHECKPOINT_9.json#ownerQuestions[4]"
-            ],
-            "basis": "0/1 stated dependencies satisfied (linked owner question still open in the latest checkpoint)"
+            "source": [],
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V168_CHECKPOINT_10.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -5389,7 +5676,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V166_CHECKPOINT_9.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V168_CHECKPOINT_10.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -5406,9 +5693,12 @@
         "id": "CP8-GAP-canonicalDefectsJ",
         "kind": "CP8_CAPABILITY_GAP",
         "title": "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results",
-        "status": "PROPOSED",
+        "status": "RESOLVED_BY_EVIDENCE",
         "statusSource": [
-          "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
+          "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#resolvesRegisterItem",
+          "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#resolution.status",
+          "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#fixedBy.mergeCommit",
+          "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#reproTests"
         ],
         "cp8Status": null,
         "cp8Gaps": [
@@ -5416,10 +5706,7 @@
         ],
         "landedEvidence": [],
         "landedNote": "no merged later evidence file cites this gap via gapRef ⇒ CP8 status kept",
-        "nextStep": {
-          "text": "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results",
-          "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
-        },
+        "nextStep": null,
         "deps": [],
         "depsNote": "no dependency stated in the evidence ⇒ []",
         "depsStated": [],
@@ -5497,7 +5784,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V166_CHECKPOINT_9.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V168_CHECKPOINT_10.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -5508,7 +5795,61 @@
             ],
             "basis": "k=1 ( + 1 gaps entry)"
           }
-        }
+        },
+        "statusHistory": [
+          {
+            "status": "PROPOSED",
+            "source": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
+            ],
+            "since": {
+              "value": "2026-11-23",
+              "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#date"
+            },
+            "rule": "status rules before RES-1"
+          },
+          {
+            "status": "RESOLVED_BY_EVIDENCE",
+            "source": [
+              "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#resolvesRegisterItem",
+              "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#fixedBy.mergeCommit"
+            ],
+            "since": {
+              "value": "2026-11-24",
+              "source": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json#date"
+            },
+            "rule": "RES-1"
+          }
+        ],
+        "resolution": {
+          "rule": "RES-1",
+          "record": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+          "pr": 940,
+          "mergeCommit": "613bf2cdbe2e9ae769a5793eff065e25843e0f8f",
+          "reproTests": [
+            "runtime/core/odg-decomposed-execution.test.ts",
+            "runtime/core/odg-repair-feedback.test.ts"
+          ]
+        },
+        "contradictions": [
+          {
+            "rule": "CTR-1",
+            "kind": "GAP_STATED_FIXED",
+            "a": "register status PROPOSED",
+            "aSource": [
+              "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]"
+            ],
+            "b": "J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+            "bSource": "docs/odg/evidence/V168_CHECKPOINT_10.json#prs[2].what",
+            "anchors": [
+              "decomposed-execution",
+              "repair-feedback"
+            ],
+            "state": "RESOLVED_BY_EVIDENCE",
+            "resolvedBy": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
+            "autoResolved": false
+          }
+        ]
       },
       {
         "id": "MC-CR-APPROVAL-STANDARD",
@@ -6296,7 +6637,12 @@
         "BLOCKED": "blocked on an owner-gated / external condition",
         "NOT_ADOPTED": "tested under a stated rule and not adopted; re-test only with new data",
         "FAILED": "failed; a re-attempt needs a new strategy decision, not an automatic re-selection",
-        "NOT_MEASURED": "current state not measured; it must be measured before it can be selected"
+        "NOT_MEASURED": "current state not measured; it must be measured before it can be selected",
+        "CLOSED_PASS": "closed (all scoped steps validated, graded PASS) — further work is a new mission",
+        "CLOSED_PARTIAL": "closed as PARTIAL — further work is a new mission, not a re-grade",
+        "CLOSED_FAIL": "closed as FAIL — negative result preserved; a re-attempt needs a new mission",
+        "CLOSED_NOT_MEASURED": "closed as NOT_MEASURED — a new measurement needs a new mission",
+        "RESOLVED_BY_EVIDENCE": "resolved by a committed resolution record (fix merged + repro tests cited)"
       },
       "secondaryRules": [
         "R1_MORE_UNBLOCKING",
@@ -6321,94 +6667,124 @@
     }
   },
   "decision": {
-    "decision": "DECISION_REQUIRED",
-    "selected": null,
+    "decision": "SELECTED",
+    "selected": {
+      "id": "J",
+      "evidenceScore": 0.335,
+      "upperBound": 0.835,
+      "uncertainty": 0.5,
+      "breakdown": [
+        {
+          "criterion": "autonomyBenefit",
+          "status": "MEASURED",
+          "value": 0.5,
+          "direction": "HIGHER_IS_BETTER",
+          "weight": 0.1,
+          "contribution": 0.05,
+          "uncertaintyContribution": 0
+        },
+        {
+          "criterion": "blockerRepetitionReduction",
+          "status": "NOT_MEASURED",
+          "weight": 0.1,
+          "contribution": 0,
+          "uncertaintyContribution": 0.1
+        },
+        {
+          "criterion": "capabilityGain",
+          "status": "MEASURED",
+          "value": 0.75,
+          "direction": "HIGHER_IS_BETTER",
+          "weight": 0.1,
+          "contribution": 0.075,
+          "uncertaintyContribution": 0
+        },
+        {
+          "criterion": "costRiskComplexity",
+          "status": "MEASURED",
+          "value": 0.5,
+          "direction": "LOWER_IS_BETTER",
+          "weight": 0.1,
+          "contribution": 0.05,
+          "uncertaintyContribution": 0
+        },
+        {
+          "criterion": "dependencyAvailability",
+          "status": "NOT_MEASURED",
+          "weight": 0.1,
+          "contribution": 0,
+          "uncertaintyContribution": 0.1
+        },
+        {
+          "criterion": "evidenceLevel",
+          "status": "MEASURED",
+          "value": 1,
+          "direction": "HIGHER_IS_BETTER",
+          "weight": 0.1,
+          "contribution": 0.1,
+          "uncertaintyContribution": 0
+        },
+        {
+          "criterion": "reliabilityQuality",
+          "status": "NOT_MEASURED",
+          "weight": 0.1,
+          "contribution": 0,
+          "uncertaintyContribution": 0.1
+        },
+        {
+          "criterion": "reusability",
+          "status": "NOT_MEASURED",
+          "weight": 0.1,
+          "contribution": 0,
+          "uncertaintyContribution": 0.1
+        },
+        {
+          "criterion": "speedEfficiency",
+          "status": "NOT_MEASURED",
+          "weight": 0.1,
+          "contribution": 0,
+          "uncertaintyContribution": 0.1
+        },
+        {
+          "criterion": "strategicValue",
+          "status": "MEASURED",
+          "value": 0.6,
+          "direction": "HIGHER_IS_BETTER",
+          "weight": 0.1,
+          "contribution": 0.06,
+          "uncertaintyContribution": 0
+        }
+      ]
+    },
     "proposed": null,
-    "tiedSet": [
-      "J",
-      "G"
+    "tiedSet": [],
+    "couldOvertakeIfUnmeasuredWereFavourable": [
+      "F",
+      "D",
+      "V150-T02",
+      "L",
+      "P",
+      "O",
+      "N",
+      "V150-T07",
+      "E",
+      "I",
+      "V150-T10",
+      "CP8-GAP-1-selectNextMission",
+      "CP8-GAP-9-chooseFollowing",
+      "V150-T09",
+      "CP8-GAP-3-chooseMode",
+      "CP8-GAP-5-superviseExecution",
+      "V150-AI4",
+      "MC-CI-BEFORE-REVIEW",
+      "MC-CR-APPROVAL-STANDARD",
+      "MC-CR-LATENCY",
+      "MC-LESSONS-LEARNED",
+      "MC-MERGE-QUEUE",
+      "MC-PEER-REVIEW-EVERY-PR",
+      "MC-REVIEW-FOCUS"
     ],
-    "remainingAfterRules": [
-      "J",
-      "G"
-    ],
-    "tieExplanation": "2 candidates have evidence scores within epsilon 0.02 of the leader (0.335); declared secondary rules did not isolate one",
-    "resolutionSteps": [
-      {
-        "rule": "R1_MORE_UNBLOCKING",
-        "values": [
-          {
-            "id": "J",
-            "value": 0
-          },
-          {
-            "id": "G",
-            "value": 0
-          }
-        ],
-        "kept": [
-          "J",
-          "G"
-        ],
-        "outcome": "NO_DISCRIMINATION"
-      },
-      {
-        "rule": "R2_LOWER_UNCERTAINTY",
-        "values": [
-          {
-            "id": "J",
-            "value": 0.5
-          },
-          {
-            "id": "G",
-            "value": 0.5
-          }
-        ],
-        "kept": [
-          "J",
-          "G"
-        ],
-        "outcome": "NO_DISCRIMINATION"
-      },
-      {
-        "rule": "R3_LOWER_RISK",
-        "values": [
-          {
-            "id": "J",
-            "value": 0.5
-          },
-          {
-            "id": "G",
-            "value": 0.5
-          }
-        ],
-        "kept": [
-          "J",
-          "G"
-        ],
-        "outcome": "NO_DISCRIMINATION"
-      },
-      {
-        "rule": "R4_HIGHER_EVIDENCE",
-        "values": [
-          {
-            "id": "J",
-            "value": 1
-          },
-          {
-            "id": "G",
-            "value": 1
-          }
-        ],
-        "kept": [
-          "J",
-          "G"
-        ],
-        "outcome": "NO_DISCRIMINATION"
-      }
-    ],
-    "proposedResolutionRule": "PROPOSED resolution (needs OWNER/ODG decision): measure the NOT_MEASURED criteria of the tied candidates (it is their unmeasured weight that keeps them tied or uncertain), or have the owner set an explicit priority in an owner-controlled field; never break by id",
-    "justification": "ODG does not choose among the tied set by id; OWNER/ODG decision required",
+    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 24 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -6518,100 +6894,6 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.06,
-            "uncertaintyContribution": 0
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": false,
-        "ownerReason": null,
-        "autoSelectable": true
-      },
-      {
-        "id": "G",
-        "status": "EXECUTED_PARTIAL",
-        "evidenceScore": 0.33,
-        "upperBound": 0.83,
-        "uncertainty": 0.5,
-        "measuredWeightShare": 0.5,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 1,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.1,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "MEASURED",
-            "value": 0.8,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.08,
             "uncertaintyContribution": 0
           }
         ],
@@ -6896,100 +7178,6 @@
             "direction": "HIGHER_IS_BETTER",
             "weight": 0.1,
             "contribution": 0.08,
-            "uncertaintyContribution": 0
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": false,
-        "ownerReason": null,
-        "autoSelectable": true
-      },
-      {
-        "id": "H",
-        "status": "PARTIAL",
-        "evidenceScore": 0.26,
-        "upperBound": 0.76,
-        "uncertainty": 0.5,
-        "measuredWeightShare": 0.5,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "MEASURED",
-            "value": 0.75,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.075,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 0.9,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.01,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0.75,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.075,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
             "uncertaintyContribution": 0
           }
         ],
@@ -7918,9 +8106,9 @@
         "id": "CP8-GAP-4-authorizeProvider",
         "status": "PARTIAL",
         "evidenceScore": 0.1,
-        "upperBound": 0.8,
-        "uncertainty": 0.7,
-        "measuredWeightShare": 0.3,
+        "upperBound": 0.9,
+        "uncertainty": 0.8,
+        "measuredWeightShare": 0.2,
         "breakdown": [
           {
             "criterion": "autonomyBenefit",
@@ -7954,12 +8142,10 @@
           },
           {
             "criterion": "dependencyAvailability",
-            "status": "MEASURED",
-            "value": 0,
-            "direction": "HIGHER_IS_BETTER",
+            "status": "NOT_MEASURED",
             "weight": 0.1,
             "contribution": 0,
-            "uncertaintyContribution": 0
+            "uncertaintyContribution": 0.1
           },
           {
             "criterion": "evidenceLevel",
@@ -8889,92 +9075,6 @@
         "autoSelectable": false
       },
       {
-        "id": "CP8-GAP-canonicalDefectsJ",
-        "status": "PROPOSED",
-        "evidenceScore": 0.025,
-        "upperBound": 0.925,
-        "uncertainty": 0.9,
-        "measuredWeightShare": 0.1,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0.25,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.025,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": true,
-        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[2]",
-        "autoSelectable": false
-      },
-      {
         "id": "CP8-GAP-executedPartialMapping",
         "status": "PROPOSED",
         "evidenceScore": 0.025,
@@ -9758,6 +9858,16 @@
         "reason": "acceptance criteria met within the contract scope; remaining items are recorded extensions, not this contract"
       },
       {
+        "id": "G",
+        "status": "CLOSED_PARTIAL",
+        "reason": "closed as PARTIAL — further work is a new mission, not a re-grade"
+      },
+      {
+        "id": "H",
+        "status": "CLOSED_FAIL",
+        "reason": "closed as FAIL — negative result preserved; a re-attempt needs a new mission"
+      },
+      {
         "id": "M",
         "status": "PASS_IN_SCOPE",
         "reason": "acceptance criteria met within the contract scope; remaining items are recorded extensions, not this contract"
@@ -9843,6 +9953,11 @@
         "reason": "blocked on an owner-gated / external condition"
       },
       {
+        "id": "CP8-GAP-canonicalDefectsJ",
+        "status": "RESOLVED_BY_EVIDENCE",
+        "reason": "resolved by a committed resolution record (fix merged + repro tests cited)"
+      },
+      {
         "id": "MC-SMALL-CHANGES",
         "status": "NOT_ADOPTED",
         "reason": "tested under a stated rule and not adopted; re-test only with new data"
@@ -9890,11 +10005,6 @@
         "ownerReason": "OWN-2 matched [cryptograph] in the cited CP8 text"
       },
       {
-        "id": "CP8-GAP-canonicalDefectsJ",
-        "evidenceScore": 0.025,
-        "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[2]"
-      },
-      {
         "id": "CP8-GAP-executedPartialMapping",
         "evidenceScore": 0.025,
         "ownerReason": "open owner question: docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions[0]"
@@ -9904,17 +10014,22 @@
     "selectionIsNotAuthorization": "the selected item is a PROPOSAL: it still needs PROPOSED → AUTHORIZED before EXECUTING"
   },
   "decisionRecord": {
-    "decision": "DECISION_REQUIRED",
-    "selected": null,
+    "decision": "SELECTED",
+    "selected": "J",
     "proposed": null,
-    "tiedSet": [
-      "J",
-      "G"
-    ],
+    "tiedSet": [],
     "resolvedBy": null,
-    "justification": "ODG does not choose among the tied set by id; OWNER/ODG decision required",
-    "uncertainty": null,
-    "choiceNextStep": null,
+    "justification": "ODG proposes 'J': evidence score 0.335 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 24 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: F, D, V150-T02, L, P, O, N, V150-T07, E, I, V150-T10, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "uncertainty": 0.5,
+    "choiceNextStep": {
+      "remainingCriteria": [
+        {
+          "criterion": "stop by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
+          "grade": "NOT MET as worded for the trigger — the alternatives were triggered by the 8 default stops, all REPAIR_BUDGET_EXHAUSTED (maxRepair 1 = one repair attempted). Both named signals WERE observed: NO_PROGRESS_IDENTICAL_REGENERATION in the 7b alternative on parse-range and in the decomposed alternative on range-clamp-pipeline (both trials); the parse-range policy rows record measuredDecision NO_QUALIFIED_LOCAL_MODEL"
+        }
+      ],
+      "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#scenarios.J.criteria"
+    },
     "ownerAuthorizationRequired": [
       "K",
       "C",
@@ -9924,7 +10039,6 @@
       "CP8-GAP-6-recoverResults",
       "CP8-GAP-8-integrateResult",
       "CP8-GAP-7-validateIndependently",
-      "CP8-GAP-canonicalDefectsJ",
       "CP8-GAP-executedPartialMapping"
     ],
     "authorizationState": "PROPOSAL — not authorized, not executed"
@@ -9934,20 +10048,16 @@
       "epsilon": 0.02,
       "uncertaintyMax": 0.4,
       "decision": "DECISION_REQUIRED",
-      "choice": null,
-      "tiedSet": [
-        "J",
-        "G"
-      ]
+      "choice": "J",
+      "tiedSet": []
     },
     {
       "epsilon": 0.05,
       "uncertaintyMax": 0.5,
-      "decision": "DECISION_REQUIRED",
-      "choice": null,
+      "decision": "TIE_EXPLAINED",
+      "choice": "J",
       "tiedSet": [
         "J",
-        "G",
         "F"
       ]
     },
@@ -9968,20 +10078,20 @@
         "b3": true,
         "b4": false
       },
-      "meanMeasuredWeightShareOverSelectable": 0.2852
+      "meanMeasuredWeightShareOverSelectable": 0.268
     },
     "C": {
-      "grade": "PARTIAL",
+      "grade": "PASS",
       "checks": {
         "c1": true,
         "c2": true,
         "c3": true,
         "c4": true,
-        "c5": false
+        "c5": true
       },
       "idInvariance": {
-        "decisionUnderRelabel": "DECISION_REQUIRED",
-        "choiceUnderRelabel": null,
+        "decisionUnderRelabel": "SELECTED",
+        "choiceUnderRelabel": "J",
         "sameDecision": true,
         "sameTiedSet": true
       }
@@ -9996,7 +10106,9 @@
     "dependency edges between items: none are stated in the evidence, so R1 (unblocking) never discriminates",
     "the leaders' uncertainty (0.5) sits exactly AT uncertaintyMax (0.5, strict '>'): with uncertaintyMax 0.4 the same record is DECISION_REQUIRED (see sensitivity) — the selection is not robust to that provider-chosen threshold",
     "CP8_CAPABILITY_GAP items (ODG's own capability gaps): V16.7 adds BLK-2 (attributed blocker records in CP8-or-later evidence), REL-2 (counted inspection REJECTs in PR records the gap cites) and DEP-2 (linked owner question still open in the latest checkpoint); a gap with no attributed record keeps NOT_MEASURED. AUT/CAP/STR/SPD/REU/CRC stay NOT_MEASURED for every gap, so the best-measured gap still carries uncertainty ≥ 0.7 > uncertaintyMax 0.5 and none can be the choice; the GAP_LINKS dedupe table, the blocker anchors (constrained to the gap's own CP8 text), the declared record fields and OWN-2 were written by the provider; no authorization was created or inferred",
-    "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change"
+    "if G is the choice: CP8 records that one of G's acceptance criteria (admissible() true for a SUPPORTED item) cannot be met as worded — its next step needs a contract-criterion revision, which requires authorization like any contract change",
+    "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
+    "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "587650b000cb31c0dfc49cf0791b96769c7ccac6"
+  "generatedAtHead": "7caf6699658c0ff773a80a8a883c318d3110f004"
 }

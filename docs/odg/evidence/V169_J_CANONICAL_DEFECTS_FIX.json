@@ -1,0 +1,34 @@
+{
+  "//": "V16.9 addendum Phase 1 — committed RESOLUTION record for register item CP8-GAP-canonicalDefectsJ. It transcribes facts already in the repository (merge commit of #940, its repro tests, CP10.prs entry); it adds no new judgement. Read by odg-strategic-register rule RES-1 (status RESOLVED_BY_EVIDENCE with this file cited). The CP8 gap text and its original PROPOSED status stay in the register's statusHistory (append-only; nothing deleted).",
+  "schema": "ODG_REGISTER_ITEM_RESOLUTION/1",
+  "date": "2026-11-24",
+  "resolvesRegisterItem": "CP8-GAP-canonicalDefectsJ",
+  "gapOfRecord": {
+    "source": "docs/odg/evidence/V163_CHECKPOINT_8.json#gaps[5]",
+    "text": "odg-decomposed-execution bo.modules under sandbox; odg-repair-feedback === on structured results",
+    "ownerQuestion": "docs/odg/evidence/V163_CHECKPOINT_8.json#ownerQuestions — 'fix the two canonical defects found by J (decomposed-execution modules; repair-feedback ===)?'"
+  },
+  "resolution": {
+    "status": "FIXED",
+    "scope": "the two canonical defects named by the gap (DEFECT-J1 decomposed-execution under sandbox; DEFECT-J2 repair-feedback === on structured results). It does NOT re-grade scenario J (J stays PARTIAL per its own contract/evidence)."
+  },
+  "fixedBy": {
+    "pr": 940,
+    "mergeCommit": "613bf2cdbe2e9ae769a5793eff065e25843e0f8f",
+    "fixCommit": "793d041b3e37ae78e5005bed3d7e2202e3d9500d",
+    "files": ["runtime/core/odg-decomposed-execution.ts", "runtime/core/odg-repair-feedback.ts"],
+    "checkpointRecord": "docs/odg/evidence/V168_CHECKPOINT_10.json#prs[pr=940].what ('J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)')"
+  },
+  "reproTests": [
+    { "file": "runtime/core/odg-decomposed-execution.test.ts", "defect": "DEFECT-J1", "checks": ["DEFECT-J1 (shape): sandboxed build (files, no modules) ⇒ later sub-problem receives the earlier VERIFIED sources", "DEFECT-J1 (shape): an earlier verified file is FROZEN — the model is NOT called again for a.js in sub-problem B", "DEFECT-J1 (real sandbox): the sandboxed build returns NO `modules` (root cause: model code never loaded on host)", "DEFECT-J1 (real sandbox): B composes on A's VERIFIED a.js (not a re-generated drift) ⇒ allVerified"], "addedBy": "613bf2cd" },
+    { "file": "runtime/core/odg-repair-feedback.test.ts", "defect": "DEFECT-J2", "checks": ["DEFECT-J2: a structurally-equal ARRAY result is a PASS; the first REAL failure (c) is reported", "DEFECT-J2: structurally-equal OBJECT results (key order ignored) ⇒ all pass", "DEFECT-J2: a structurally-DIFFERENT object still fails (nested value differs)"], "addedBy": "613bf2cd" }
+  ],
+  "reproducedAt": {
+    "note": "both suites re-run on this PR's base (origin/main 7caf6699) by the technical provider: 'ALL PASS' for each. Host run, not CI.",
+    "base": "7caf6699"
+  },
+  "honestLimits": [
+    "written by the technical provider (Claude Code) from committed records; the fix itself was independently inspected under #940 (CP10.prs gates), this record was not",
+    "the merge commit's existence is not verified by the register rule (pure, no git); it is verifiable with `git cat-file -e 613bf2cd^{commit}`"
+  ]
+}
