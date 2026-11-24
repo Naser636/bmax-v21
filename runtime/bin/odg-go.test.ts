@@ -160,6 +160,7 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     const T1 = { command: "runtime/bin/exp.ts", args: ["out/e.json"], writeSet: ["out/e.json"] };
     check("GO-DT-1: declared target absent in scratch ⇒ NOT_RUNNABLE even though runtime/missions/MX.json exists", /NOT_RUNNABLE: declared dispatch target/.test(B.isolationCheck(wt, "MX", ROOT, T1).reason));
     check("GO-DT-1: dispatchArgv with target ⇒ exactly the declared command; without ⇒ odg-run <id> (plain AUTHORIZED path)", B.dispatchArgv({ mission: "G" }, { dispatchTarget: T1 }).join(" ") === "tsx runtime/bin/exp.ts out/e.json" && B.dispatchArgv({ mission: "MX" }, {}).join(" ") === "tsx runtime/bin/odg-run.ts MX");
+    check("GO-DTO-1 LOW-2: plain dispatch timeout unchanged 600000; a declared target's timeout is accepted only as a positive integer ≤ the 12 h ceiling, otherwise null (⇒ refused, never a silent 600000)", B.DISPATCH_TIMEOUT_MS === 600000 && B.targetTimeoutMs({ dispatchTimeoutMs: 43200000 }) === 43200000 && B.targetTimeoutMs({}) === null && B.targetTimeoutMs({ dispatchTimeoutMs: 43200001 }) === null && B.targetTimeoutMs({ dispatchTimeoutMs: "9" }) === null && B.targetTimeoutMs({ dispatchTimeoutMs: -5 }) === null && B.targetTimeoutMs({ dispatchTimeoutMs: 1.5 }) === null);
     fs.mkdirSync(path.join(wt, "out")); fs.writeFileSync(path.join(wt, "out", "e.json"), "{}");
     check("GO-DT-1: writes ⊆ target writeSet ⇒ confined", B.targetWriteConfinement(wt, T1).ok === true);
     fs.writeFileSync(path.join(wt, "out", "other.json"), "{}");
@@ -210,6 +211,56 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     check("re-derived I grade from the committed trace equals the recorded one", B.gradeI(ev.realDryCycleTrace, null).grade === ev.scenarioI.grade);
   } else process.stdout.write("# evidence not yet written — evidence checks skipped\n");
 
+  // ---- V17.4 GO-DTO-1 MED-2: process-group dispatch (real tiny processes; bounded; no network) ----
+  {
+    const cpm = require("child_process");
+    const alive = (pid: number) => { try { process.kill(pid, 0); return true; } catch (e: any) { return !!e && e.code === "EPERM"; } };
+    const D = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "odg-go-pg-")));
+    for (const [label, ignoreTerm] of [["SIGTERM honoured", false], ["SIGTERM ignored ⇒ SIGKILL after grace", true]] as any[]) {
+      const pidf = path.join(D, `pids-${ignoreTerm ? 1 : 0}.json`); const sc = path.join(D, `child-${ignoreTerm ? 1 : 0}.js`);
+      fs.writeFileSync(sc, `const cp=require("child_process"),fs=require("fs");${ignoreTerm ? "process.on('SIGTERM',()=>{});" : ""}const g=cp.spawn(process.execPath,["-e",${JSON.stringify(ignoreTerm ? "process.on('SIGTERM',()=>{});setInterval(()=>{},1000)" : "setInterval(()=>{},1000)")}],{stdio:"ignore"});fs.writeFileSync(${JSON.stringify(pidf)},JSON.stringify({child:process.pid,grand:g.pid}));setInterval(()=>{},1000);`);
+      const r = await B.runGroup(process.execPath, [sc], { cwd: D, timeoutMs: 800, graceMs: 400, pollMs: 50 });
+      const pids = JSON.parse(fs.readFileSync(pidf, "utf8"));
+      check(`GO-DTO-1 MED-2 (${label}): timeout ⇒ the whole process group is gone when runGroup resolves (child AND grandchild dead), killedBy TIMEOUT recorded`, r.killedBy === "TIMEOUT" && r.groupGone === true && !alive(pids.child) && !alive(pids.grand) && r.termSignal === "SIGTERM" && r.killSignalSent === ignoreTerm);
+    }
+    {
+      const pidf = path.join(D, "pids-stop.json"); const sc = path.join(D, "child-stop.js");
+      fs.writeFileSync(sc, `const cp=require("child_process"),fs=require("fs");const g=cp.spawn(process.execPath,["-e","setInterval(()=>{},1000)"],{stdio:"ignore"});fs.writeFileSync(${JSON.stringify(pidf)},JSON.stringify({child:process.pid,grand:g.pid}));setInterval(()=>{},1000);`);
+      let stop = false; setTimeout(() => { stop = true; }, 600);
+      const r = await B.runGroup(process.execPath, [sc], { cwd: D, timeoutMs: 60000, graceMs: 400, pollMs: 50, stopRequested: () => (stop ? { reason: "SIGNAL", source: "SIGTERM" } : null) });
+      const pids = JSON.parse(fs.readFileSync(pidf, "utf8"));
+      check("GO-DTO-1 MED-2: STOP/SIGTERM to GO mid-dispatch ⇒ group SIGTERMed and gone (killedBy STOP, reason recorded)", r.killedBy === "STOP" && /SIGNAL/.test(r.reason) && r.groupGone === true && !alive(pids.child) && !alive(pids.grand));
+    }
+    {
+      const pidf = path.join(D, "pids-orphan.json"); const sc = path.join(D, "child-orphan.js");
+      fs.writeFileSync(sc, `const cp=require("child_process"),fs=require("fs");const g=cp.spawn(process.execPath,["-e","setInterval(()=>{},1000)"],{stdio:"ignore"});g.unref();fs.writeFileSync(${JSON.stringify(pidf)},JSON.stringify({child:process.pid,grand:g.pid}));process.exit(0);`);
+      const r = await B.runGroup(process.execPath, [sc], { cwd: D, timeoutMs: 60000, graceMs: 400, pollMs: 50 });
+      const pids = JSON.parse(fs.readFileSync(pidf, "utf8"));
+      check("GO-DTO-1 MED-2: leader exits 0 leaving a grandchild ⇒ group terminated before resolve (ORPHANED_GROUP), grandchild dead", r.killedBy === "ORPHANED_GROUP" && r.status === 0 && r.groupGone === true && !alive(pids.grand));
+    }
+    // dispatchNative end-to-end on a real scratch worktree: the confinement check runs AFTER the group is gone — proven by a
+    // write the grandchild makes only when it receives SIGTERM (outside the target writeSet ⇒ must be seen)
+    {
+      const T = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), "odg-go-dn-")));
+      const g = (cwd: string, ...a: string[]) => cpm.execFileSync("git", a, { cwd, stdio: ["ignore", "pipe", "ignore"], env: { ...process.env, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@t", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@t" } }).toString();
+      const repo = path.join(T, "repo"); fs.mkdirSync(path.join(repo, "runtime", "bin"), { recursive: true });
+      fs.writeFileSync(path.join(repo, "runtime", "bin", "exp.js"), `const cp=require("child_process"),fs=require("fs"),path=require("path");fs.mkdirSync("out",{recursive:true});const g=cp.spawn(process.execPath,["-e","process.on('SIGTERM',()=>{require('fs').writeFileSync(require('path').join(process.cwd(),'late.txt'),'x');process.exit(0)});setInterval(()=>{},1000)"],{stdio:"ignore",cwd:process.cwd()});fs.writeFileSync(path.join("out","pids.json"),JSON.stringify({child:process.pid,grand:g.pid}));setInterval(()=>{},1000);`);
+      g(repo, "init", "-q", "-b", "main"); g(repo, "add", "."); g(repo, "commit", "-q", "-m", "c");
+      const wt = path.join(T, "scratch"); g(repo, "worktree", "add", "-q", "--detach", wt);
+      const out = path.join(T, "out"); fs.mkdirSync(out);
+      const ports = B.buildPorts({ repo, outDir: out, scratch: wt, stepDelayMs: 0, signalState: { signal: null } });
+      const tgt = { command: "runtime/bin/exp.js", args: [], writeSet: ["out/"] };
+      const savedPath = process.env.PATH, savedOff = process.env.npm_config_offline;
+      process.env.PATH = `${path.join(ROOT, "node_modules", ".bin")}${path.delimiter}${savedPath}`; process.env.npm_config_offline = "true";   // tsx resolved locally; no network
+      let res: any;
+      try { res = await ports.dispatchNative({ mission: "G" }, { workspace: wt, dispatchTarget: tgt, allowUnsandboxedTarget: true, dispatchTimeoutMs: 5000 }); } finally { process.env.PATH = savedPath; if (savedOff === undefined) delete process.env.npm_config_offline; else process.env.npm_config_offline = savedOff; }
+      let pids: any = null; try { pids = JSON.parse(fs.readFileSync(path.join(wt, "out", "pids.json"), "utf8")); } catch { pids = null; }
+      check("GO-DTO-1 MED-2: dispatchNative (declared target, real npx → tsx → node → grandchild) timeout ⇒ EXECUTED_FAIL-classifiable (verified false), killedBy TIMEOUT, child + grandchild dead", !!pids && res.verified === false && res.process.killedBy === "TIMEOUT" && res.process.groupGone === true && !alive(pids.child) && !alive(pids.grand));
+      check("GO-DTO-1 MED-2: the writes-confinement check ran AFTER the group exited (sees late.txt written by the grandchild on SIGTERM)", /WRITE_OUTSIDE_TARGET_WRITE_SET: late\.txt/.test(res.detail));
+      const bad = await ports.dispatchNative({ mission: "G" }, { workspace: wt, dispatchTarget: tgt, allowUnsandboxedTarget: true, dispatchTimeoutMs: 1234.5 });
+      check("GO-DTO-1 LOW-2: non-integer dispatchTimeoutMs at the port ⇒ REFUSED (GO-DTO-1_TIMEOUT_MISMATCH), nothing spawned", bad.verified === false && /GO-DTO-1_TIMEOUT_MISMATCH/.test(bad.detail));
+    }
+  }
   if (failures) { process.stdout.write(`\n${failures} FAILED\n`); process.exit(1); }
   process.stdout.write("\nall odg-go CLI tests passed\n");
 })().catch((e) => { process.stdout.write(`NOT OK - threw ${e && e.stack}\n`); process.exit(1); });

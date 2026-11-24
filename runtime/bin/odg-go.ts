@@ -64,7 +64,46 @@ const OWNER_ORDER_DECISIONS = Object.freeze(["docs/odg/V174_OWNER_DECISION_ORDER
 const UNIT_SYSTEM = "/etc/systemd/system/odg-mission-runner.service";
 const UNIT_REPO = "deploy/odg-mission-runner.service";
 const MAX_STEP_DELAY_MS = 5000;
-const DISPATCH_TIMEOUT_MS = 600000;
+const DISPATCH_TIMEOUT_MS = GO.DISPATCH_TIMEOUT_DEFAULT_MS;   // plain odg-run dispatch (600000)
+/* GO-DTO-1: a declared target's timeout comes from the core's contract-cap derivation (ctx.dispatchTimeoutMs, recorded in
+ * the EXECUTE trace, already Math.ceil'ed); re-validated here — not a positive integer ≤ the hard ceiling ⇒ null ⇒ the
+ * dispatch is REFUSED (never a silent fallback to 600000). */
+function targetTimeoutMs(c: any): number | null { const t = c && c.dispatchTimeoutMs; return Number.isInteger(t) && t > 0 && t <= GO.DISPATCH_TIMEOUT_CEILING_MS ? t : null; }
+const KILL_GRACE_MS = 10000;
+const GROUP_EXIT_WAIT_MS = 30000;
+function groupAlive(pgid: number): boolean { try { process.kill(-pgid, 0); return true; } catch (e: any) { return !!e && e.code === "EPERM"; } }
+/* runGroup(cmd, args, o) — GO-DTO-1 process-group dispatch: the child is its OWN process group (detached), so npx → tsx →
+ * node and every grandchild are signalled together. Timeout or o.stopRequested() (polled) ⇒ SIGTERM to the group, grace,
+ * SIGKILL to the group. A group that outlives its leader is terminated the same way. Resolves only after the group is gone
+ * (or after a bounded wait, recorded groupGone=false). Bounded: no unbounded loop. */
+function runGroup(cmd: string, args: string[], o: { cwd: string; timeoutMs: number; graceMs?: number; pollMs?: number; stopRequested?: () => any }): Promise<any> {
+  const graceMs = o.graceMs === undefined ? KILL_GRACE_MS : o.graceMs; const pollMs = o.pollMs || 500;
+  return new Promise((resolve) => {
+    const t0 = Date.now();
+    let ch: any;
+    try { ch = cp.spawn(cmd, args, { cwd: o.cwd, env: process.env, stdio: "ignore", detached: true }); } catch (e: any) { resolve({ status: null, signal: null, killedBy: null, reason: `spawn failed: ${(e && e.message) || e}`, groupGone: true, pid: null, durationMs: 0 }); return; }
+    const pgid = ch.pid;
+    let killedBy: string | null = null, reason: string | null = null, exit: any = null, termAt = 0, killSent = false, done = false;
+    const signalGroup = (sig: string) => { try { process.kill(-pgid, sig as any); } catch { /* already gone */ } };
+    const startKill = (by: string, why: string) => { if (termAt) return; killedBy = by; reason = why; termAt = Date.now(); signalGroup("SIGTERM"); };
+    const finish = (groupGone: boolean) => { if (done) return; done = true; clearInterval(tick); resolve({ status: exit ? exit.code : null, signal: exit ? exit.signal : null, killedBy, reason, termSignal: termAt ? "SIGTERM" : null, killSignalSent: killSent, graceMs, groupGone, pid: pgid, durationMs: Date.now() - t0 }); };
+    ch.on("error", (e: any) => { if (!exit) exit = { code: null, signal: null, error: String(e && e.message) }; });
+    ch.on("exit", (code: any, signal: any) => { exit = { code, signal }; });
+    const tick = setInterval(() => {
+      const now = Date.now();
+      if (!termAt) {
+        if (exit) { if (!groupAlive(pgid)) return finish(true); startKill("ORPHANED_GROUP", "leader exited, group members still alive ⇒ terminated"); return; }
+        if (now - t0 >= o.timeoutMs) return startKill("TIMEOUT", `dispatch timeout ${o.timeoutMs} ms (GO-DTO-1)`);
+        let s: any = null; try { s = o.stopRequested ? o.stopRequested() : null; } catch { s = null; }
+        if (s) return startKill("STOP", `${s.reason || "STOP"}: ${s.source || ""}`);
+        return;
+      }
+      if (!groupAlive(pgid) && exit) return finish(true);
+      if (!killSent && now - termAt >= graceMs) { killSent = true; signalGroup("SIGKILL"); }
+      if (now - termAt >= graceMs + GROUP_EXIT_WAIT_MS) finish(!groupAlive(pgid));
+    }, pollMs);
+  });
+}
 
 // ---- PRE-REGISTERED pass criteria (V16.4 §10 I and J) — fixed in this file BEFORE the first real run; do not edit after.
 const PRE_REGISTERED = Object.freeze({
@@ -318,15 +357,19 @@ function buildPorts(o: any): any {
       if (c && c.dispatchTarget) {
         if (c.allowUnsandboxedTarget !== true) return { verified: false, detail: "UNSANDBOXED_TARGET_NOT_OPTED_IN: refused (out-of-scratch writes not confined)" };
         // GO-DT-1: exactly the contract-declared runner, no shell, bounded; writes confined to the target writeSet
-        const r = cp.spawnSync("npx", dispatchArgv(next, c), { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
-        const conf = targetWriteConfinement(c.workspace, c.dispatchTarget);
-        return { verified: r.status === 0 && conf.ok, detail: `declared target ${c.dispatchTarget.command} exit ${r.status} in ${c.workspace}; ${conf.ok ? "writes ⊆ target writeSet" : conf.reason}` };
+        const tmo = targetTimeoutMs(c);
+        if (tmo === null) return { verified: false, detail: `GO-DTO-1_TIMEOUT_MISMATCH: dispatchTimeoutMs ${JSON.stringify(c.dispatchTimeoutMs)} is not a positive integer ≤ ${GO.DISPATCH_TIMEOUT_CEILING_MS} ⇒ dispatch refused (not run)`, process: { refused: "GO-DTO-1_TIMEOUT_MISMATCH" } };
+        return runGroup("npx", dispatchArgv(next, c), { cwd: c.workspace, timeoutMs: tmo, stopRequested: c.stopRequested }).then((r: any) => {
+          const conf = targetWriteConfinement(c.workspace, c.dispatchTarget);   // AFTER the whole process group is gone
+          return { verified: r.status === 0 && !r.killedBy && conf.ok, process: r, detail: `declared target ${c.dispatchTarget.command} exit ${r.status}${r.signal ? ` signal ${r.signal}` : ""}${r.killedBy ? ` killed (${r.killedBy}: ${r.reason})` : ""} (timeout ${tmo} ms, GO-DTO-1) in ${c.workspace}; ${conf.ok ? "writes ⊆ target writeSet" : conf.reason}` };
+        });
       }
       // governed pipeline in the ISOLATED worktree only (never the main checkout); bounded; nothing committed/merged.
-      const r = cp.spawnSync("npx", dispatchArgv(next, c), { cwd: c.workspace, encoding: "utf8", env: process.env, stdio: ["ignore", "pipe", "pipe"], timeout: DISPATCH_TIMEOUT_MS, killSignal: "SIGKILL", maxBuffer: 16 * 1024 * 1024 });
-      let report: any = null; try { report = readJson(path.join(c.workspace, "runtime", "generated", "mission-report.json")); } catch { report = null; }
-      const verified = r.status === 0 && !!report && report.mission === next.mission && report.validated === true && report.status === "SUCCESS";
-      return { verified, detail: report ? `odg-run status ${report.status} (exit ${r.status}) in ${c.workspace}` : `odg-run exit ${r.status} (no report) in ${c.workspace}` };
+      return runGroup("npx", dispatchArgv(next, c), { cwd: c.workspace, timeoutMs: DISPATCH_TIMEOUT_MS, stopRequested: c && c.stopRequested }).then((r: any) => {
+        let report: any = null; try { report = readJson(path.join(c.workspace, "runtime", "generated", "mission-report.json")); } catch { report = null; }
+        const verified = r.status === 0 && !r.killedBy && !!report && report.mission === next.mission && report.validated === true && report.status === "SUCCESS";
+        return { verified, process: r, detail: (report ? `odg-run status ${report.status} (exit ${r.status}) in ${c.workspace}` : `odg-run exit ${r.status} (no report) in ${c.workspace}`) + (r.killedBy ? `; killed (${r.killedBy}: ${r.reason})` : "") };
+      });
     },
     pause: () => new Promise((res) => setTimeout(res, Math.max(0, Math.min(MAX_STEP_DELAY_MS, stepDelayMs || 0)))),
   };
@@ -345,7 +388,7 @@ async function runOnce(argv: string[]): Promise<{ code: number; result: any; wri
   process.on("SIGINT", hInt); process.on("SIGTERM", hTerm);
   const ports = buildPorts({ repo, outDir, scratch: arg(argv, "--scratch"), stepDelayMs: numArg(argv, "--step-delay-ms", 0), signalState });
   try {
-    const result = await GO.runGoCycle({ mode: argv.includes("--execute") ? "EXECUTE" : "DRY", allowUnsandboxedTarget: argv.includes("--allow-unsandboxed-target"), maxSteps: numArg(argv, "--max-steps", GO.DEFAULTS.maxSteps), deadlineMs: numArg(argv, "--deadline-ms", GO.DEFAULTS.deadlineMs), resume: argv.includes("--resume") }, ports);
+    const result = await GO.runGoCycle({ mode: argv.includes("--execute") ? "EXECUTE" : "DRY", allowUnsandboxedTarget: argv.includes("--allow-unsandboxed-target"), maxSteps: numArg(argv, "--max-steps", GO.DEFAULTS.maxSteps), ...(arg(argv, "--deadline-ms") !== null ? { deadlineMs: numArg(argv, "--deadline-ms", GO.DEFAULTS.deadlineMs) } : {}), resume: argv.includes("--resume") }, ports);
     const code = result.status === "STARTUP_REFUSED" ? 2 : result.status === "STOPPED" ? 3 : 0;
     return { code, result, writes: ports.writes };
   } catch (e: any) {
@@ -501,7 +544,7 @@ async function scenarioEvidence(argv: string[]): Promise<number> {
       "the selected item and its preparation are a PROPOSAL; ODG did not (and cannot) authorize it; whether the prepared mission would succeed is not measured",
       "state is read from the main checkout READ-ONLY (Truth-Lock passes there); the code runs from the feature worktree, whose own Truth-Lock refuses (branch ≠ main) — recorded as run truthLockOnCodeTree; loaders that read the code tree (strategy-mode evaluation instant) are parity-checked against the state repo (STATE_READ codeTreeParity)",
       "the canonical allowlist was read from the installed systemd unit file (read-only); in CI/another host the source and therefore runId differ — --check is host-dependent",
-      "stop is cooperative (between steps); a step already running (e.g. a dispatched odg-run) is bounded by its own timeout, not interrupted",
+      "stop is cooperative between steps; a running dispatch is bounded by its timeout and (V17.4 GO-DTO-1) interrupted by STOP/SIGTERM/ODG_SCHEDULER_STOP via its process group (SIGTERM, 10 s grace, SIGKILL)",
       "the live root timer appends to the attempt-log independently; its size is recorded as volatile and excluded from the decisions digest",
       "pre-registration is in the same commit as the first evidence write; its precedence is asserted, not cryptographically provable",
     ],
@@ -524,7 +567,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { OWNER_ORDER_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { runGroup, groupAlive, targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 /* CLI flag validation: --help/-h ⇒ usage on stdout, exit 0, no cycle; any unknown flag (or a value flag missing its
  * value) ⇒ usage on stderr, exit 2, no cycle. Never starts a cycle on a mistyped flag. */

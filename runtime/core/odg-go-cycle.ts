@@ -149,6 +149,40 @@ function resolveDispatchTarget(contract: any, step: string | null): any {
   if (outside.length) return why("DISPATCH_TARGET_OUTSIDE_WRITE_SET", `${outside.join(", ")} ⊄ WORK_ITEM_CONTRACT.write_set`);
   return { ok: true, step, rule: DISPATCH_TARGET_RULE, target: { step, command: String(t.command), args: args.map(String), writeSet: tws.map(String) } };
 }
+/* V17.4 GO-DTO-1 (provider-authored rule, Claude Code; owner V171 "Corrections et améliorations du code"): the dispatch
+ * timeout of a contract-DECLARED scoped target is derived from the contract's OWN pre-registered caps (never edited here),
+ * so GO does not SIGKILL a capped long experiment (J2) at the plain 600 s. Pure; recorded in the EXECUTE trace. */
+const DISPATCH_TIMEOUT_DEFAULT_MS = 600000;
+const DISPATCH_TIMEOUT_CEILING_MS = 12 * 3600 * 1000;
+const DISPATCH_TIMEOUT_MARGIN_MS = 120000;
+const DISPATCH_TIMEOUT_RULE = "GO-DTO-1 (provider rule): plain odg-run dispatch ⇒ 600000 ms. A contract-declared scoped target ⇒ from WORK_ITEM_CONTRACT.preRegistration.caps: (a) caps absent, or neither maxRunWallMs nor perTrialWallMs declared ⇒ 600000; (b) maxRunWallMs declared ⇒ maxRunWallMs + margin; (c) else perTrialWallMs × trials + margin, trials = (|dataset.replication| + |dataset.heldOut|) × |keys(arms)| × |decoding.seeds| (an UPPER bound of the rows the runner may execute — every arm on every task at every seed); trials not derivable ⇒ the ceiling (conservative: a capped run is bounded by its own caps and is never killed early); (d) a declared wall cap (maxRunWallMs / perTrialWallMs) that is not a finite positive number ≤ Number.MAX_SAFE_INTEGER (negative, string, NaN, null, 1e300 …) ⇒ dispatch REFUSED, code GO-DTO-1_MALFORMED_CAPS (fail-closed like GO-DT-1); a valid but huge result ⇒ clamped to the ceiling. Value = Math.ceil(result) (the exact integer odg-go.ts must use; any mismatch there ⇒ refused). Cycle deadline: when a declared target will be dispatched, effectiveDeadline = max(requested deadline, timeout + 300000) (the 300000 margin covers the steps before and after EXECUTE; elapsed-at-EXECUTE recorded) — extended, never refused, even over an explicit --deadline-ms (recorded): the dispatch is already bounded by its own timeout ≤ the ceiling, and a DEADLINE stop after it would only discard the EVIDENCE/NEXT_SELECTION of a run that already happened. results floored at 600000 (never below the plain timeout); margin 120000 ms; HARD CEILING 43200000 ms (12 h) never exceeded. Timeout kill semantics unchanged (SIGKILL ⇒ EXECUTED_FAIL; writes-confinement check still applied). The dispatch runs as its own process group (detached); timeout, STOP file, SIGTERM/SIGINT to GO or ODG_SCHEDULER_STOP=1 ⇒ SIGTERM to the group, 10 s grace, SIGKILL to the group, group exit awaited before the writes-confinement check";
+const DISPATCH_DEADLINE_MARGIN_MS = 300000;
+function posNum(v: any): boolean { return typeof v === "number" && Number.isFinite(v) && v > 0 && v <= Number.MAX_SAFE_INTEGER; }
+function strList(v: any): string[] | null { return Array.isArray(v) && v.every((x: any) => typeof x === "string") ? v : null; }
+function deriveDispatchTimeout(contract: any, target: any): any {
+  const base = { rule: DISPATCH_TIMEOUT_RULE, ruleId: "GO-DTO-1", authoredBy: "PROVIDER (Claude Code)", ceilingMs: DISPATCH_TIMEOUT_CEILING_MS, marginMs: DISPATCH_TIMEOUT_MARGIN_MS, defaultMs: DISPATCH_TIMEOUT_DEFAULT_MS };
+  const out = (timeoutMs: number, basis: string, derivation: any) => ({ ...base, ok: true, timeoutMs: Math.ceil(timeoutMs), basis, derivation });
+  const refuse = (field: string, value: any) => ({ ...base, ok: false, code: "GO-DTO-1_MALFORMED_CAPS", timeoutMs: null, basis: "REFUSED", derivation: { field, value: typeof value === "number" && !Number.isFinite(value) ? String(value) : value, valueType: value === null ? "null" : typeof value }, reason: `GO-DTO-1_MALFORMED_CAPS: ${field} = ${String(value)} is not a finite positive number ≤ MAX_SAFE_INTEGER ⇒ dispatch refused (fail-closed; the contract must be corrected by an owner-authorized, inspected revision)` });
+  if (!target) return out(DISPATCH_TIMEOUT_DEFAULT_MS, "PLAIN_DISPATCH", { reason: "no declared target ⇒ plain odg-run timeout" });
+  const pr = contract && isObj(contract.WORK_ITEM_CONTRACT) && isObj(contract.WORK_ITEM_CONTRACT.preRegistration) ? contract.WORK_ITEM_CONTRACT.preRegistration : null;
+  const caps = pr && isObj(pr.caps) ? pr.caps : null;
+  if (!caps || (caps.maxRunWallMs === undefined && caps.perTrialWallMs === undefined)) return out(DISPATCH_TIMEOUT_DEFAULT_MS, "NO_DECLARED_WALL_CAP", { capsFields: caps ? Object.keys(caps) : null, reason: "contract declares no maxRunWallMs/perTrialWallMs ⇒ default" });
+  const clamp = (raw: number, basis: string, derivation: any) => raw > DISPATCH_TIMEOUT_CEILING_MS ? out(DISPATCH_TIMEOUT_CEILING_MS, "CEILING", { ...derivation, rawMs: raw, clampedFrom: basis }) : out(Math.max(DISPATCH_TIMEOUT_DEFAULT_MS, raw), basis, { ...derivation, rawMs: raw });
+  if (caps.maxRunWallMs !== undefined) {
+    if (!posNum(caps.maxRunWallMs)) return refuse("preRegistration.caps.maxRunWallMs", caps.maxRunWallMs);
+    return clamp(caps.maxRunWallMs + DISPATCH_TIMEOUT_MARGIN_MS, "MAX_RUN_WALL_MS", { field: "preRegistration.caps.maxRunWallMs", maxRunWallMs: caps.maxRunWallMs });
+  }
+  if (!posNum(caps.perTrialWallMs)) return refuse("preRegistration.caps.perTrialWallMs", caps.perTrialWallMs);
+  const ds = isObj(pr.dataset) ? pr.dataset : {};
+  const repl = strList(ds.replication), held = strList(ds.heldOut);
+  const arms = isObj(pr.arms) ? Object.keys(pr.arms) : null;
+  const seeds = isObj(pr.decoding) ? (Array.isArray(pr.decoding.seeds) && pr.decoding.seeds.every((x: any) => typeof x === "number" && Number.isFinite(x)) ? pr.decoding.seeds : null) : null;
+  const tasks = repl || held ? (repl ? repl.length : 0) + (held ? held.length : 0) : 0;
+  const fields = { perTrialWallMs: caps.perTrialWallMs, "dataset.replication": repl ? repl.length : null, "dataset.heldOut": held ? held.length : null, arms: arms ? arms.length : null, "decoding.seeds": seeds ? seeds.length : null };
+  if (!tasks || !arms || !arms.length || !seeds || !seeds.length) return out(DISPATCH_TIMEOUT_CEILING_MS, "CEILING", { fields, reason: "TRIALS_NOT_DERIVABLE ⇒ conservative ceiling" });
+  const trials = tasks * arms.length * seeds.length;
+  return clamp(caps.perTrialWallMs * trials + DISPATCH_TIMEOUT_MARGIN_MS, "PER_TRIAL_WALL_MS_X_TRIALS", { fields, tasks, armCount: arms.length, seedCount: seeds.length, trials, formula: "perTrialWallMs × (|replication|+|heldOut|) × |arms| × |seeds| + margin" });
+}
 const SPEC_RULE = "GO-DEC-1 (provider rule): spec.architecture = one entry per WORK_ITEM_CONTRACT.write_set path (role = objective, contract = acceptance_criteria joined); no contract ⇒ NOT_MEASURED";
 
 function selectorOptions(): any { return { weights: REG.WEIGHTS, directions: REG.DIRECTIONS }; }
@@ -264,7 +298,8 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
   const o = { ...DEFAULTS, ...(isObj(opts) ? opts : {}) };
   const mode = o.mode === "EXECUTE" ? "EXECUTE" : "DRY";
   const maxSteps = Math.max(0, Math.min(STEPS.length, Number.isFinite(o.maxSteps) ? Math.floor(o.maxSteps) : STEPS.length));
-  const deadlineMs = Number.isFinite(o.deadlineMs) && o.deadlineMs > 0 ? o.deadlineMs : DEFAULTS.deadlineMs;
+  let deadlineMs = Number.isFinite(o.deadlineMs) && o.deadlineMs > 0 ? o.deadlineMs : DEFAULTS.deadlineMs;
+  const deadlineExplicit = isObj(opts) && opts.deadlineMs !== undefined;
   const now = () => Number(ports.now());
   const t0 = now();
   const prior = (() => { try { return arr(ports.trace.readPrior()); } catch { return []; } })();
@@ -289,7 +324,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
   const finish = (status: string, extra: any = {}): any => {
     const decisionsDigest = digestOf(steps);
     const priorSame = prior.filter((e: any) => e && e.kind === "CYCLE_END" && e.runId === runId && e.decisionsDigest === decisionsDigest);
-    const end = { kind: "CYCLE_END", status, mode, stepsRun: steps.map((s) => `${s.step}:${s.status}`), decisionsDigest, durationMs: now() - t0, endedAt: iso(now()),
+    const end = { kind: "CYCLE_END", status, mode, stepsRun: steps.map((s) => `${s.step}:${s.status}`), decisionsDigest, durationMs: now() - t0, endedAt: iso(now()), effectiveDeadlineMs: deadlineMs,
       dispatchCalls: counters.dispatchCalls, dispatchedMissions: counters.dispatchedMissions, providerLaunched: counters.providerLaunched,
       idempotent: priorSame.length > 0, duplicateOf: priorSame.length ? { cycleSeq: priorSame[0].cycleSeq, endedAt: priorSame[0].endedAt } : null,
       ...(rs.plan ? { resume: { resumed: !!(ctx.resume && ctx.resume.resumed), fromCycleSeq: rs.plan.fromCycleSeq, rederivedIdentical: rs.rederived.slice(), carriedOver: rs.carriedOver.slice(), abandoned: rs.abandoned, reason: ctx.resume ? ctx.resume.reason : `not evaluated (cycle ended before STATE_READ)` } } : {}), ...extra };
@@ -313,7 +348,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       resumed = { fromCycleSeq: rs.plan.fromCycleSeq, mode: "CARRIED_OVER_NOT_REDISPATCHED" };
       rs.carriedOver.push(step);
     } else {
-      try { r = fn(); } catch (e: any) { r = { status: "ERROR", inputs: null, decision: { error: String((e && e.message) || e) }, rationale: "step threw — fail-closed (cycle halts)" }; }
+      try { r = await fn(); } catch (e: any) { r = { status: "ERROR", inputs: null, decision: { error: String((e && e.message) || e) }, rationale: "step threw — fail-closed (cycle halts)" }; }
       if (priorEntry) {
         const same = decisionSha({ decision: plain(r.decision) }) === decisionSha(priorEntry) && r.status === priorEntry.status;
         resumed = { fromCycleSeq: rs.plan.fromCycleSeq, mode: same ? "REDERIVED_IDENTICAL" : "REDERIVED_DIVERGED" };
@@ -490,7 +525,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
   const gateHeld = r.status === "HALTED_AT_GATE";
 
   // 8 EXECUTE (via the canonical schedulerStep; dispatch reachable only for authorized NATIVE isolated work)
-  r = await run("EXECUTE", () => {
+  r = await run("EXECUTE", async () => {
     const allow = arr(ctx.state.allowlist && ctx.state.allowlist.ids);
     const proven = new Set(arr(ctx.state.ledger && ctx.state.ledger.proven));
     const already = new Set(prior.filter((e: any) => e && e.kind === "DISPATCHED" && e.runId === runId).map((e: any) => e.mission));
@@ -505,8 +540,21 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const scopedExec = !!item && ctx.loopAuthorized && !declaredAuthorization(ctx.contract) && !!ctx.scope && ctx.scope.executionAuthorized === true;
     const dt0 = scopedExec ? resolveDispatchTarget(ctx.contract, ctx.scope.currentStep) : null;
     const optIn = o.allowUnsandboxedTarget === true;
-    const dt = dt0 && dt0.ok && !optIn ? { ...dt0, ok: false, code: "UNSANDBOXED_TARGET_NOT_OPTED_IN", reason: `UNSANDBOXED_TARGET_NOT_OPTED_IN: declared target ${dt0.target.command} would run on the host (out-of-scratch writes not confined); explicit opt-in allowUnsandboxedTarget / --allow-unsandboxed-target required` } : dt0;
+    let dt = dt0 && dt0.ok && !optIn ? { ...dt0, ok: false, code: "UNSANDBOXED_TARGET_NOT_OPTED_IN", reason: `UNSANDBOXED_TARGET_NOT_OPTED_IN: declared target ${dt0.target.command} would run on the host (out-of-scratch writes not confined); explicit opt-in allowUnsandboxedTarget / --allow-unsandboxed-target required` } : dt0;
+    const dto = dt && dt.ok ? deriveDispatchTimeout(ctx.contract, dt.target) : null;
+    if (dt && dt.ok && dto && dto.ok !== true) dt = { ...dt, ok: false, code: dto.code, reason: dto.reason };
     ctx.dispatchTarget = dt;
+    // GO-DTO-1 cycle deadline: a declared dispatch must not be followed by a DEADLINE stop before EVIDENCE/NEXT_SELECTION
+    let cycleDeadline: any = null;
+    if (dt && dt.ok && dto && dto.ok) {
+      const requestedMs = deadlineMs; const elapsedMs = now() - t0;
+      const neededMs = dto.timeoutMs + DISPATCH_DEADLINE_MARGIN_MS;
+      const extend = mode === "EXECUTE" && neededMs > requestedMs;
+      cycleDeadline = { ruleId: "GO-DTO-1", requestedMs, requestedExplicit: deadlineExplicit, elapsedAtExecuteMs: elapsedMs, dispatchTimeoutMs: dto.timeoutMs, marginMs: DISPATCH_DEADLINE_MARGIN_MS, neededMs, effectiveMs: extend ? neededMs : requestedMs,
+        basis: extend ? "EXTENDED_FOR_DISPATCH" : mode === "EXECUTE" ? "REQUESTED_SUFFICIENT" : "DRY_NOT_EXTENDED",
+        note: extend ? `deadline ${requestedMs} ms${deadlineExplicit ? " (explicit --deadline-ms)" : " (default)"} < dispatch timeout + margin ⇒ extended to ${neededMs} ms (the dispatch is bounded by its own timeout; never killed by the cycle deadline)` : null };
+      if (extend) { deadlineMs = neededMs; append({ kind: "DEADLINE_EXTENDED", ...cycleDeadline, at: iso(now()) }); }
+    }
     const authorize = (next: any) => {
       const isSelected = !!item && next.mission === item.id;
       if (isSelected && !ctx.loopAuthorized) return { ok: false, reason: "selected item NOT AUTHORIZED (PROPOSED; no external authorization)" };
@@ -524,15 +572,27 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       if (mode !== "EXECUTE") return { detail: `${DRY_MARK}: would dispatch ${next.mission} ${tgt ? `via its declared target ${tgt.command}` : "via the governed pipeline"} in ${isolationSeen && isolationSeen.workspace}` };
       counters.dispatchCalls++; counters.dispatchedMissions.push(next.mission);
       append({ kind: "DISPATCHED", mission: next.mission, workspace: isolationSeen && isolationSeen.workspace, dispatchTarget: tgt, at: iso(now()) });
-      return ports.dispatchNative(tgt ? { ...next, dispatchTarget: tgt } : next, { workspace: isolationSeen && isolationSeen.workspace, dispatchTarget: tgt, allowUnsandboxedTarget: !!tgt && optIn });
+      const res = ports.dispatchNative(tgt ? { ...next, dispatchTarget: tgt } : next, { workspace: isolationSeen && isolationSeen.workspace, dispatchTarget: tgt, allowUnsandboxedTarget: !!tgt && optIn, ...(tgt && dto ? { dispatchTimeoutMs: dto.timeoutMs } : {}),
+        stopRequested: () => { const s = stopCheck("EXECUTE/dispatch-running"); return s && s.reason !== "MAX_STEPS" && s.reason !== "DEADLINE" ? s : null; } });
+      // an ASYNC port (real process-group dispatch): the scheduler is synchronous ⇒ its outcome is classified below, after awaiting
+      if (res && typeof res.then === "function") { pending = { promise: res, mission: next.mission }; return { verified: false, detail: "PENDING_ASYNC_DISPATCH" }; }
+      return res;
     };
-    const d = SCHED.schedulerStep({ queue: ctx.queue, preAuthorized: [...allow, ...(item && ctx.loopAuthorized ? [item.id] : [])], isProven: (id: string) => proven.has(id) || already.has(id), stopSignal: () => { const s = stopCheck("EXECUTE/dispatch"); return !!s && s.reason !== "MAX_STEPS"; }, authorize, dispatch, policy: { maxAttemptsPerMission: 3 } });
+    let pending: any = null;
+    let d = SCHED.schedulerStep({ queue: ctx.queue, preAuthorized: [...allow, ...(item && ctx.loopAuthorized ? [item.id] : [])], isProven: (id: string) => proven.has(id) || already.has(id), stopSignal: () => { const s = stopCheck("EXECUTE/dispatch"); return !!s && s.reason !== "MAX_STEPS"; }, authorize, dispatch, policy: { maxAttemptsPerMission: 3 } });
+    let dispatchProcess: any = null;
+    if (pending) {
+      let res: any; try { res = await pending.promise; } catch (e: any) { res = { verified: false, detail: `dispatch threw: ${(e && e.message) || e}` }; }
+      const cl = SCHED.classifyDispatch(res);
+      d = { status: cl.status, mission: pending.mission, reason: cl.detail };
+      dispatchProcess = res && isObj(res.process) ? res.process : null;
+    }
     const dry = mode !== "EXECUTE" && d.status === "NOT_MEASURABLE" && String(d.reason).startsWith(DRY_MARK);
     let failureNext: any = null;
     if (d.status === "FAIL" && ctx.strategy) failureNext = SM.nextStrategyAfterFailure({ mode: ctx.strategy.mode, strategy: "DEFAULT" }, { accepted: false, stopReason: "VERIFICATION_FAILED" });
     const status = d.status === "PASS" || d.status === "FAIL" ? `EXECUTED_${d.status}` : dry ? "WOULD_DISPATCH" : d.status === "STOPPED" ? "STOPPED" : gateHeld || d.status === "IDLE" || d.status === "BLOCKED" ? "NOTHING_EXECUTED" : d.status;
     return { status, inputs: { queue: ctx.queue, mode },
-      decision: { scheduler: { status: d.status, mission: d.mission, reason: d.reason }, dispatchTarget: dt ? { ok: dt.ok, code: dt.code || null, step: dt.step, target: dt.target || null, reason: dt.reason || null, rule: DISPATCH_TARGET_RULE, sandbox: SANDBOX_LIMIT, unsandboxedOptIn: optIn } : null, mode, dispatchCalls: counters.dispatchCalls, providerLaunched: false, delegationRecords: delegation, nextStrategyAfterFailure: failureNext ? { next: failureNext.next, rule: failureNext.rule } : null, commitOrMerge: "NONE (GO never commits/merges)" },
+      decision: { scheduler: { status: d.status, mission: d.mission, reason: d.reason }, dispatchTarget: dt ? { ok: dt.ok, code: dt.code || null, step: dt.step, target: dt.target || null, reason: dt.reason || null, rule: DISPATCH_TARGET_RULE, sandbox: SANDBOX_LIMIT, unsandboxedOptIn: optIn, dispatchTimeout: dto } : null, ...(cycleDeadline || dispatchProcess ? { volatile: { cycleDeadline, dispatchProcess } } : {}), mode, dispatchCalls: counters.dispatchCalls, providerLaunched: false, delegationRecords: delegation, nextStrategyAfterFailure: failureNext ? { next: failureNext.next, rule: failureNext.rule } : null, commitOrMerge: "NONE (GO never commits/merges)" },
       rationale: status === "NOTHING_EXECUTED" ? (dt && !dt.ok ? `scoped execution step ${dt.step} authorized but ${dt.reason} — fail-closed, nothing dispatched` : `authorization gate held: ${d.reason}`) : status === "WOULD_DISPATCH" ? "dry run: an authorized native isolated mission would be dispatched (not executed)" : `scheduler ${d.status}: ${d.reason}` };
   });
   if (stopped(r)) return stopped(r);
@@ -600,5 +660,5 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
+module.exports = { deriveDispatchTimeout, DISPATCH_TIMEOUT_RULE, DISPATCH_TIMEOUT_DEFAULT_MS, DISPATCH_TIMEOUT_CEILING_MS, DISPATCH_TIMEOUT_MARGIN_MS, DISPATCH_DEADLINE_MARGIN_MS, OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};
