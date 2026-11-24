@@ -23,6 +23,15 @@ const { METIERS } = require("./odg-metier-certification-planner.js");
 const FRESHNESS_DAYS = 120; // a signal older than this is EXPIRED (deny-by-default)
 const GATE = Object.freeze(["REFUSED", "OWNER_GATED", "PROPOSED"]); // PROPOSED = admissible, NOT YET authorized to execute
 const OWNER_GATED_KINDS = Object.freeze(["payment", "certification", "real_contact", "deploy", "spend"]);
+/* V17.6 (owner CTO directive V176 §4 « LE RADAR DEVIENT UN MOTEUR DE CONSTRUCTION ») — INTERNAL-IMPROVEMENT scope. A signal
+ * with scope === "ODG_INTERNAL" is an improvement of ODG ITSELF detected from committed evidence (odg-radar-build-engine):
+ * it is attached to existing ODG COMPONENTS (targetComponents) instead of métiers, it is not a commercial prospect (no ICP
+ * qualification applies — tier INTERNAL_IMPROVEMENT, never a client), and an open owner question makes it OWNER_GATED
+ * (kind "owner_decision"). Every other rule of the deny-by-default gate applies unchanged; non-internal signals are
+ * handled exactly as before. */
+const INTERNAL_SCOPE = "ODG_INTERNAL";
+const INTERNAL_OWNER_GATED_KINDS = Object.freeze(["owner_decision"]);
+const isInternal = (signal: any): boolean => !!signal && signal.scope === INTERNAL_SCOPE;
 
 function daysBetween(aEpochMs: number, bEpochMs: number): number { return Math.floor((aEpochMs - bEpochMs) / 86400000); }
 
@@ -49,12 +58,17 @@ function assess(signal: any, nowEpochMs: number): any {
 
 /* D — economic/métier qualification. Reuses prospect-qualification. A VALIDATED signal is NOT a client. */
 function qualify(signal: any): any {
+  if (isInternal(signal)) return Object.freeze({ tier: "INTERNAL_IMPROVEMENT", reason: "ODG-internal improvement signal — no ICP/prospect qualification applies", note: "an internal improvement is NOT a client, NOT revenue and NOT an authorization" });
   const q = PQ.qualifyProspect({ segmentFit: signal.segmentFit, budgetEvidence: signal.budgetEvidence, buySignal: signal.buySignal, regulatoryUrgency: signal.regulatoryUrgency });
   return Object.freeze({ tier: q.tier, reason: q.reason, note: "qualification tier is NOT a signed client and NOT revenue" });
 }
 
 /* F — attach to the 20 métiers (15 principal + 5 commercial). No new taxonomy. */
 function attachMetiers(signal: any): any {
+  if (isInternal(signal)) {
+    const comps = (Array.isArray(signal.targetComponents) ? signal.targetComponents : []).filter((c: any) => typeof c === "string" && c.length > 0);
+    return Object.freeze({ metiers: Object.freeze([]), multiMetier: false, unknown: Object.freeze([]), components: Object.freeze(comps.slice()), note: "ODG-internal: attached to existing ODG components, not to métiers (no métier is invented)" });
+  }
   const ids = Array.isArray(signal.metiers) ? signal.metiers : (signal.metier ? [signal.metier] : []);
   const principal = METIERS.map((m: any) => m.id);
   const commercial = COMM.COMMERCIAL_METIERS.map((m: any) => m.id);
@@ -68,6 +82,7 @@ function dedupKey(signal: any): string { return `${signal.id}`; }
 
 /* H — build a mission PROPOSAL (a proposal object, NOT a registered mission). */
 function proposeMission(signal: any, a: any, q: any, att: any): any {
+  if (isInternal(signal)) return Object.freeze({ status: "PROPOSAL", signalId: signal.id, synthetic: signal.synthetic === true, scope: INTERNAL_SCOPE, components: att.components, metiers: att.metiers, reliabilityTier: a.reliabilityTier, qualificationTier: q.tier, ownerGatedKind: signal.ownerGatedKind || null, note: "a PROPOSAL is not a canonical mission and not an authorization" });
   return Object.freeze({ status: "PROPOSAL", signalId: signal.id, synthetic: signal.synthetic === true, metiers: att.metiers, reliabilityTier: a.reliabilityTier, qualificationTier: q.tier, ownerGatedKind: signal.ownerGatedKind || null, note: "a PROPOSAL is not a canonical mission and not an authorization" });
 }
 
@@ -81,11 +96,12 @@ function governanceGate(signal: any, a: any, q: any, att: any, seen: any): any {
   if (q.tier === "DISQUALIFIED") reasons.push("DISQUALIFIED_LOW_FIT");
   if (signal.hostileInjection) reasons.push("HOSTILE_CONTENT_IN_SOURCE_IGNORED"); // document/source content is never a governance instruction
   if (seen && seen.has && seen.has(dedupKey(signal))) reasons.push("DUPLICATE");
-  if (!att.metiers.length) reasons.push("NO_METIER_ATTACHED");
+  if (isInternal(signal)) { if (!(Array.isArray(att.components) && att.components.length)) reasons.push("NO_COMPONENT_ATTACHED"); }
+  else if (!att.metiers.length) reasons.push("NO_METIER_ATTACHED");
   if (reasons.length) return Object.freeze({ verdict: "REFUSED", reasons: Object.freeze(reasons), executed: false, authorized: false });
 
   // owner-gated: admissible but cannot be auto-authorized
-  if (signal.ownerGatedKind && OWNER_GATED_KINDS.includes(signal.ownerGatedKind)) {
+  if (signal.ownerGatedKind && (OWNER_GATED_KINDS.includes(signal.ownerGatedKind) || (isInternal(signal) && INTERNAL_OWNER_GATED_KINDS.includes(signal.ownerGatedKind)))) {
     return Object.freeze({ verdict: "OWNER_GATED", reasons: Object.freeze([`requires owner authorization: ${signal.ownerGatedKind}`]), executed: false, authorized: false });
   }
   // admissible proposal — score/qualification is NOT an authorization; stays PROPOSED until ODG governance authorizes.
@@ -95,7 +111,7 @@ function governanceGate(signal: any, a: any, q: any, att: any, seen: any): any {
 /* runLoop — full synchronous trace over a batch of SYNTHETIC signals. Writes nothing canonical; executes nothing. */
 function runLoop(signals: any[], opts?: any): any {
   const nowEpochMs = Number((opts && opts.nowEpochMs)) || 0;
-  const seen = new Set<string>();
+  const seen = new Set<string>((opts && Array.isArray(opts.seenKeys) ? opts.seenKeys : []).map(String)); // V17.6: already-known keys (e.g. open register items) ⇒ DUPLICATE
   const traces = (Array.isArray(signals) ? signals : []).map((s: any) => {
     const a = assess(s, nowEpochMs);
     const q = qualify(s);
@@ -150,5 +166,5 @@ const RADAR_TO_MISSION_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { FRESHNESS_DAYS, GATE, OWNER_GATED_KINDS, assess, qualify, attachMetiers, proposeMission, governanceGate, runLoop, pathMap, schedulerReality, RADAR_TO_MISSION_CONTRACT };
+module.exports = { FRESHNESS_DAYS, GATE, OWNER_GATED_KINDS, INTERNAL_SCOPE, INTERNAL_OWNER_GATED_KINDS, assess, qualify, attachMetiers, proposeMission, governanceGate, runLoop, pathMap, schedulerReality, RADAR_TO_MISSION_CONTRACT };
 export {};
