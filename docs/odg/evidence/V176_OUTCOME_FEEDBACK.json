@@ -127,7 +127,7 @@
       {
         "id": "J",
         "status": "EXECUTED_PARTIAL",
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        "reason": "inspection ACCEPT bound to contract 2ddb8734dacf ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
       },
       {
         "id": "V175-NB2",
