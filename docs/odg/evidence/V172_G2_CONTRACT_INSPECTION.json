@@ -1,0 +1,23 @@
+{
+  "schema": "odg-contract-inspection/1",
+  "verdict": "ACCEPT",
+  "inspectedHeadSha": "28ed13b053d05f1f00a05176930b445373ddce0c",
+  "inspectedPr": 956,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab245bf3019f79340",
+  "authorSessionId": "g2j2-reviser-v172",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "sessionIdNote": "inspectorSessionId = harness-assigned id of the inspector session (the inspector cannot see it itself)",
+  "date": "2026-11-24",
+  "//": "Independent inspection record of the NEW contract G2 (owner V170).",
+  "scenario": "G2",
+  "contractSha256": "94ca64cab00782649944b6dd3825ca6f1ed9f868943c89e0e86f7827d1d704a1",
+  "findings": [
+    "arms/metric/thresholds fixed in the contract; DEV labelled contaminated, rolling-origin can only block PASS",
+    "HB build rule (#319–#518, first-parent merges, labels via rev-list, size via numstat, exclusions listed) fully specified inside the sha'd contract ⇒ 'rule fixed, inspector recomputes' acceptable",
+    "α and prior from the knowledge text, not tuned; contamination disclosed (designer knew G's direction qualitatively); risk: HB may be NOT_MEASURED for min-n",
+    "LOW: register shows PARTIAL fallback for NOT_STARTED"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of G2 only; authorizes RUN_CONTROLLED_EXPERIMENTS through owner V170; grades nothing."
+}
