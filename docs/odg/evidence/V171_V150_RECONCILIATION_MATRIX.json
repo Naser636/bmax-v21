@@ -2,7 +2,7 @@
  "//": "V171 §8 / V170 §6 — documentary reconciliation of the V15.0 master directive (PROPOSED) with Boussole V14.4 (ADOPTED V372), its addendum 'Boussole vivante' (RECORDED) and Boussole V12.4 (canonical). Prepared by the technical PROVIDER (Claude Code). Adopts nothing; modifies no canonical register, no code. Métiers OUT of scope.",
  "schema": "odg-v150-reconciliation-matrix/1",
  "date": "2026-11-24",
- "headAtReconciliation": "c6a3df99",
+ "headAtReconciliation": "c6a3df99 (revised after inspection of 846e45de, on a merge of origin/main bd81d856)",
  "status": "PROPOSED (documentary reconciliation; V15.0 NOT adopted; V12.4 NOT modified)",
  "inputs": [
   {
@@ -62,6 +62,7 @@
   "The V15.0 text is NOT committed in the repository. Quotes come from docs/odg/evidence/V150_CANONICAL_SOURCES.json (owner paste recovered from a session transcript, sha256 recorded there, UNVERIFIED against a signed source); each quote is an EXCERPT of acceptance lines, never the whole section. Nothing is paraphrased as a quote.",
   "V14.4 master text §1–§19 is NOT in the repository (only V14_4_ROADMAP.md with 5 sections and the lot plan). Every comparison with V14.4 §1–§19 is NOT_MEASURED; 'v14_4' anchors cite V14_4_ROADMAP.md sections only.",
   "The 13 V17.0 programmes and the V18.0 continuity text are known only through the V15.0 directive (V15_0_MASTER_DIRECTIVE.md §1).",
+  "Inspection of 846e45de (ACCEPT, 3 LOWs): every USED row re-checked — USED requires a live caller run, a named test run or a committed run record of a real (non-synthetic) run; S00, S28, S43, S52 → DOCUMENTED; S27 → CONNECTED; S35, S39 → TESTED; S25, S45, S47, S48 kept USED with an added real-run pointer.",
   "Implementation states are provider assessments at c6a3df99 from committed evidence and tests run here; they are not an independent inspection."
  ],
  "vocabulary": {
@@ -150,7 +151,7 @@
     "v12_4": "transversal (no mission)"
    },
    "relation": "COMMON",
-   "implementationState": "USED",
+   "implementationState": "DOCUMENTED",
    "statePointers": [
     {
      "kind": "evidence",
@@ -1581,6 +1582,12 @@
      "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
      "commit": "8b155eb6 (PR #919)",
      "what": "16 A–P contracts: 14 PROPOSED, 2 AUTHORIZED_FOR_REVISION (G, H)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+     "commit": "f82f3b6f",
+     "what": "real GO run dispatched the contract-declared target of contract H"
     }
    ],
    "priorAssessmentV160": {
@@ -1658,7 +1665,7 @@
     "v12_4": "E CM-V234-RESIDENT-DRIVER (IN_PROGRESS)"
    },
    "relation": "COMMON",
-   "implementationState": "USED",
+   "implementationState": "CONNECTED",
    "statePointers": [
     {
      "kind": "liveCaller",
@@ -1717,7 +1724,7 @@
    "alsoRelations": [
     "DUPLICATE of addendum §31 Phase 0 (same intent)"
    ],
-   "implementationState": "USED",
+   "implementationState": "DOCUMENTED",
    "statePointers": [
     {
      "kind": "document",
@@ -2020,13 +2027,13 @@
    "alsoRelations": [
     "DUPLICATE of V150-S10 (phase deliverable)"
    ],
-   "implementationState": "USED",
+   "implementationState": "TESTED",
    "statePointers": [
     {
      "kind": "evidence",
      "path": "docs/odg/evidence/V159_MEASURED_MODEL_POLICY.json",
      "commit": "1cd169d8",
-     "what": "local-model native builds on 4 synthetic missions (6/8)"
+     "what": "local-model native builds on 4 SYNTHETIC missions (6/8) — a test run, not a real-mission use"
     },
     {
      "kind": "evidence",
@@ -2206,7 +2213,7 @@
    "alsoRelations": [
     "DUPLICATE of V150-S18 (phase)"
    ],
-   "implementationState": "USED",
+   "implementationState": "TESTED",
    "statePointers": [
     {
      "kind": "component",
@@ -2409,13 +2416,13 @@
     "v12_4": "transversal"
    },
    "relation": "GAP",
-   "implementationState": "USED",
+   "implementationState": "DOCUMENTED",
    "statePointers": [
     {
      "kind": "evidence",
      "path": "docs/odg/evidence/V150_199_RECONCILIATION.json",
      "commit": "e7e59ec8",
-     "what": "3 DUPLICATE / 3 OBSOLETE identified"
+     "what": "3 DUPLICATE / 3 OBSOLETE identified (diagnosis only; no retirement mechanism run)"
     },
     {
      "kind": "document",
@@ -2503,9 +2510,15 @@
     },
     {
      "kind": "evidence",
-     "path": "docs/odg/evidence/V168_CHECKPOINT_10.json",
-     "commit": "2006fb70",
-     "what": "G CLOSED_PARTIAL, H CLOSED_FAIL"
+     "path": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+     "commit": "4cf3379a",
+     "what": "real run record: G experiment graded PARTIAL"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+     "commit": "f82f3b6f",
+     "what": "real run record: H dispatched by GO"
     }
    ],
    "priorAssessmentV160": {
@@ -2613,13 +2626,24 @@
      "path": "runtime/core/odg-authorization-scope.ts",
      "commit": "587650b0",
      "what": "scoped authorization derivation"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+     "commit": "94c029eb",
+     "what": "real run record: scoped authorization applied to mission H"
+    },
+    {
+     "kind": "document",
+     "path": "docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json",
+     "what": "owner V171 (1911e7a1, merged 7f939535): internal work on missions selected by ODG, J included; provider spend / new permissions NOT granted"
     }
    ],
    "priorAssessmentV160": {
     "status": "PARTIALLY_VALIDATED",
     "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[id=§47] (assessment at 4f4fceb2, 2026-11-23)"
    },
-   "note": "V15.0 §47 refers to an owner authorization 'décrite au §2' covering internal legal, reversible, confined work (a blanket grant); V14.4 §4 and the work protocol require a human authorization per work item. Practice since V165 uses scoped per-mission authorizations. The §2 text granting it is not recovered in quotes.",
+   "note": "Update V171: the owner portfolio authorization now covers internal work on the open missions ODG selects (J included); a WORK_ITEM_CONTRACT per mission is still required and provider spend stays excluded. The residual tension is textual only. Original analysis: V15.0 §47 refers to an owner authorization 'décrite au §2' covering internal legal, reversible, confined work (a blanket grant); V14.4 §4 and the work protocol require a human authorization per work item. Practice since V165 uses scoped per-mission authorizations. The §2 text granting it is not recovered in quotes.",
    "dependencies": [
     "owner: confirm blanket vs scoped authorization model"
    ],
@@ -2659,6 +2683,12 @@
      "kind": "test",
      "path": "runtime/core/odg-go-cycle.test.ts",
      "result": "exit 0 when run by this reconciliation at c6a3df99 (npx tsx, offline, TMPDIR redirected)"
+    },
+    {
+     "kind": "evidence",
+     "path": "docs/odg/evidence/V169_CONTINUITY_PHASE1_AFTER.json",
+     "commit": "1f021c35",
+     "what": "runner record over committed state: S9 GO-ACT-1 PASS"
     }
    ],
    "priorAssessmentV160": {
@@ -2814,13 +2844,12 @@
     "v12_4": "K CM-BENCHMARK-AUDIT (REVIEW)"
    },
    "relation": "IMPROVEMENT",
-   "implementationState": "USED",
+   "implementationState": "DOCUMENTED",
    "statePointers": [
     {
-     "kind": "evidence",
+     "kind": "document",
      "path": "docs/odg/evidence/V158_RADAR_ADMISSION_REFERENCES.json",
-     "commit": "b056a4f7",
-     "what": "27 references title-verified"
+     "what": "provider-written references list (27 references, title-verified, added b056a4f7); not a run record"
     }
    ],
    "priorAssessmentV160": {
@@ -3413,14 +3442,14 @@
      "what": "2 canonical defects fixed by #940"
     }
    ],
-   "missionResult": "PARTIAL (contract PROPOSED; selected next by the register after Phase 1, not authorized)",
+   "missionResult": "PARTIAL (selected next by the register after Phase 1; internal work authorized by owner V171 portfolio, contract still required)",
    "priorAssessmentV160": {
     "status": "PARTIAL",
     "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#scenarios[id=J] (4f4fceb2)"
    },
    "note": "Trigger signal criterion not met as worded.",
    "dependencies": [
-    "owner: authorize J (or another A–P contract)"
+    "WORK_ITEM_CONTRACT for J under docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json; provider spend excluded"
    ],
    "uniqueToV150": true
   },
@@ -3689,11 +3718,11 @@
   },
   "rowsWithDependencies": 24,
   "byImplementationState": {
-   "DOCUMENTED": 7,
+   "DOCUMENTED": 11,
    "IMPLEMENTED": 0,
-   "TESTED": 15,
-   "CONNECTED": 3,
-   "USED": 39,
+   "TESTED": 17,
+   "CONNECTED": 4,
+   "USED": 32,
    "VALIDATED": 4,
    "NOT_MEASURED": 4
   },
@@ -3704,7 +3733,7 @@
    "CONTRADICTION": 2,
    "DUPLICATE": 13
   },
-  "dependencyRowsWithOwnerGate": 20,
+  "dependencyRowsWithOwnerGate": 19,
   "note": "primary relation per row; secondary relations in alsoRelations. Counts are on this matrix only."
  },
  "outOfScope": {
@@ -3807,7 +3836,7 @@
     "V150-S48"
    ],
    "what": "§47 blanket owner authorization ('décrite au §2') for internal reversible confined work vs per-work-item human authorization (V14.4 §4, work protocol)",
-   "currentResolution": "practice = scoped per-mission authorizations (V165, V168)"
+   "currentResolution": "LARGELY RESOLVED by owner V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json, merged 7f939535): internal work on the missions ODG selects, J included, is authorized; a WORK_ITEM_CONTRACT per mission is still required; provider spend and new permissions stay excluded. This does not adopt V15.0 §47."
   },
   {
    "id": "CTR-4",
@@ -3820,7 +3849,7 @@
   }
  ],
  "topGaps": [
-  "§45 A–P: 14/16 contracts PROPOSED, never authorized; only G and H executed (G PARTIAL, H FAIL); B and M PASS within scope",
+  "§45 A–P: 14/16 contracts PROPOSED (internal work now coverable by the owner V171 portfolio authorization, each with its own contract); only G and H executed (G PARTIAL, H FAIL); B and M PASS within scope",
   "§50/§18: central metric (accepted output / cost / time) and throughput NOT_MEASURED",
   "§10/§35: nativeBuiltCodeMerged = 0",
   "§13/§38: 0 CORROBORATED Radar claims; Radar V2 lots 3–5 NOT_STARTED; no measured gain from Radar knowledge",
@@ -4004,9 +4033,9 @@
    "OD-1: V15.0 status — successor of V14.4, or a requirements set integrated into V14.4 phases as proposed here (resolves CTR-1); V12.4 stays canonical either way",
    "OD-2: phase ordering — continuity first (V15.0 §16 + addendum) vs V14.4 order (CTR-4)",
    "OD-3: scope of 'Radar unchanged' (§38) vs V14.4 phase 1 Radar extension and lot B grant additions; status of #911 (CTR-2)",
-   "OD-4: authorization model — blanket internal authorization (§47) vs per-item scoped authorization (CTR-3)",
+   "OD-4: (mostly settled by the owner V171 portfolio authorization for internal work, with a WORK_ITEM_CONTRACT per mission) remaining: confirm whether V15.0 §47 is to be read as that V171 mandate; provider spend ceiling stays open (OD-7)",
    "OD-5: provide the V14.4 master text §1–§19, a signed V15.0 text and the V17.0 programme text (all comparisons with them stay NOT_MEASURED)",
-   "OD-6: authorize further A–P contracts (14 PROPOSED; register now selects J)",
+   "OD-6: (internal work on ODG-selected missions, J included, now authorized by owner V171; each still needs its WORK_ITEM_CONTRACT) remaining: external / provider-spend steps of A–P contracts stay unauthorized",
    "OD-7: CI SLO, provider spend ceiling (needed for the §18 central metric)",
    "OD-8: L1+ promotion of the resident driver; identity-bound inspection / gate 10/12 signature",
    "OD-9: companion update of CM-RADAR-GATE-CHAIN (READY, commit null, steps 1–2 merged) — hard register"
