@@ -233,7 +233,10 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     // V17.5: J2 has now RUN (committed V172_J2_EXPERIMENT.json) ⇒ on the REAL state GO-ORD-2's one-shot rule must refuse (asserted below).
     // The GO-ORD-2 behaviour tests that follow run on a LABELLED fixture = the real state with only J2's experiment record removed
     // (the pre-run state GO actually saw at deaf0844); V17.5: J2's validation record (CLOSED_FAIL) is removed too.
-    const preRun = (() => { const c = cloneS(real); c.authorizationEvidence.J2 = { ...c.authorizationEvidence.J2, experiment: null, validation: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence.J2) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, J2: { ...c.sources.authorizationEvidence.J2, experiment: null, validation: null } } }; return c; })();
+    // V17.6: J is now owner-authorized (V176) and actionable at REVISE_CONTRACT; the GO-ORD-2 fixture keeps J as committed
+    // BEFORE V176 (PROPOSED, no authorization) so the actionable selection is still the DECISION_REQUIRED these tests exercise.
+    const preV176J = (c: any) => { const cs = JSON.parse(JSON.stringify(c.sources.contracts)); const j = cs.data.contracts.find((x: any) => x.scenario === "J"); j.state = "PROPOSED"; j.authorizedBy = null; delete j.authorization; delete j.revisionHistory; delete j.proposedRevision; c.sources = { ...c.sources, contracts: cs }; return c; };
+    const preRun = (() => { const c = preV176J(cloneS(real)); c.authorizationEvidence.J2 = { ...c.authorizationEvidence.J2, experiment: null, validation: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence.J2) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, J2: { ...c.sources.authorizationEvidence.J2, experiment: null, validation: null } } }; return c; })();
     const j2c = real.sources.contracts.data.contracts.find((x: any) => x.scenario === "J2");
     check("GO-ORD-2: committed record loaded from the declared list (OWNER_SELECTION_DECISIONS) and bound to the CURRENT J2 contract sha", B.OWNER_SELECTION_DECISIONS[0] === "docs/odg/V174_OWNER_DECISION_SELECT_J2.json" && real.ownerSelectionDecisions[0].item === "J2" && real.ownerSelectionDecisions[0].contractSha256 === ASc.contractSha256(j2c) && real.ownerSelectionDecisions[0].contractSha256 === "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b");
     const base = await runDry((() => { const c = cloneS(preRun); c.ownerSelectionDecisions = []; return c; })());
@@ -317,7 +320,7 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     // V17.5: NB1 has now RUN natively (committed V175_NATIVE_BUILD_RESULT.json) ⇒ on the REAL state GO-ORD-2's one-shot rule refuses (asserted);
     // the NB1 GO-path behaviour tests below run on a LABELLED fixture = real state with only NB1's result record removed (the pre-run state GO saw).
     const nbStrip = (c: any) => { c.authorizationEvidence["V175-NB1"] = { ...c.authorizationEvidence["V175-NB1"], experiment: null, validation: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence["V175-NB1"]) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, "V175-NB1": { ...c.sources.authorizationEvidence["V175-NB1"], experiment: null, validation: null } } }; return c; };
-    const nbPre = nbStrip(cloneS(real));
+    const nbPre = nbStrip(preV176J(cloneS(real)));   // V17.6: J pre-V176 (see preV176J)
     {
       const after = await runDry(real); const aa = after.sel.decision.actionableSelection; const ad = aa.ownerSelectionDecision;
       check("V175-NB1 REAL state after the native run (result committed) ⇒ one-shot: GO-ORD-2 NOT applied, NB1 not worked on via the record", !(ad && ad.applied && ad.chosen === "V175-NB1") && after.sel.decision.workingOn !== "V175-NB1");
