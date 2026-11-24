@@ -69,7 +69,7 @@ const STEP = "RUN_CONTROLLED_EXPERIMENTS";
 const OLLAMA = "http://127.0.0.1:11434";
 
 /* ---- frozen pre-registration constants (verbatim from contract J2; asserted against the live text by gate()) ---- */
-const PINNED_CONTRACT_SHA = "893a809fe6d9d2caea9e72ef2de1804ea29e126f80305ba6cdbb4059f3ca2543";
+const PINNED_CONTRACT_SHA = "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b";   // V17.3 revision (owner V173): anti-leak rule
 const PRE = Object.freeze({
   pins: Object.freeze({
     taskCorpus: Object.freeze({ file: "runtime/bin/native-hard-corpus.ts", sha256: "2ad9fca555d1678c3031f097c0e3929d846e80670209c4b2dadb37b34e18e250" }),
@@ -87,6 +87,10 @@ const PRE = Object.freeze({
   maxLocal: Object.freeze({ model: "qwen2.5-coder:7b", maxRepair: 3 }),
   caps: Object.freeze({ perTrialWallMs: 1800000, maxModelCallsTotal: 600, maxRepairCeiling: 3 }),
   leakMinLiteralLength: 4,
+  /* V17.3 (owner V173, contract revision before any run): literals already in the frozen task-contract text given
+   * identically to every arm are EXCLUDED from the prompt-leak check — exactly this listed static overlap (verified at run
+   * time: computed overlap ≠ this list ⇒ NOT_MEASURED, never silently widened). */
+  taskContractLiteralExclusions: Object.freeze({ "roman-codec": Object.freeze(["1994", "MCMXCIV"]), "rle-codec": Object.freeze(["a3b1", "aaab"]), "range-clamp-pipeline": Object.freeze(["[0,100]"]), "v159-implement-parse-range": Object.freeze(["[1,2,3,5,7,8]"]) }) as Record<string, readonly string[]>,
   minimumE: 4,
   passMinE: 2,
   loopback: Object.freeze({ host: "127.0.0.1", port: "11434", protocol: "http:" }),
@@ -155,7 +159,8 @@ function gate(contract: any, inspection: any, probes: any = OCUR.localGitProbes(
   need("thresholds.FAIL", th.FAIL, [/A2@42 passes on 0 tasks of E/]);
   const caps = pr.caps || {};
   same("caps", [caps.perTrialWallMs, caps.maxModelCallsTotal, caps.maxRepairCeiling], [PRE.caps.perTrialWallMs, PRE.caps.maxModelCallsTotal, PRE.caps.maxRepairCeiling]);
-  need("antiLeakage.prompts", pr.antiLeakage && pr.antiLeakage.prompts, [/records every prompt's sha256/, /no oracle expected-output literal of length ≥ 4 appears in an A0–A2 prompt \(violation ⇒ that row NOT_MEASURED\)/]);
+  need("antiLeakage.prompts", pr.antiLeakage && pr.antiLeakage.prompts, [/HIDDEN grading cases \(held-out tests, per-module oracles, repair examples\)/, /records every prompt's sha256/, /no hidden-case expected-output literal of length ≥ 4 appears in an A0–A2 prompt, EXCLUDING literals already present in the frozen task-contract text given identically to every arm/,
+    /static overlap, listed: roman-codec 1994\/MCMXCIV, rle-codec aaab\/a3b1, range-clamp-pipeline \[0,100\], parse-range \[1,2,3,5,7,8\]/, /\(violation ⇒ that row NOT_MEASURED\)/]);
   need("antiLeakage.oracle", pr.antiLeakage && pr.antiLeakage.oracle, [/ORIGINAL test, identical for all arms, read only after generation/]);
   const ac = (contract.WORK_ITEM_CONTRACT.acceptance_criteria || []).join("\n");
   need("acceptance_criteria", ac, [/^C1 stop trigger/m, /^C2 executed/m, /^C3 same oracle/m, /^C4 control: A0 on the 4 replication tasks at seed 42 reproduces J's default stop and verdict/m, /^C5 €0: 0 provider calls; no delegation record transitions past CREATED; only 127\.0\.0\.1:11434 contacted/m, /^C6 retention: every generated file is retained as sha256 \+ source in the evidence; every prompt is retained by sha256/m]);
@@ -249,6 +254,16 @@ function leakLiterals(task: any): string[] {
   return [...out].sort();
 }
 const leakHits = (prompt: string, lits: string[]): string[] => lits.filter((l) => prompt.includes(l));
+/* static overlap: hidden-case literals that occur verbatim in the frozen per-file task-contract text (given to every arm). */
+const contractOverlap = (task: any, lits: string[] = leakLiterals(task)): string[] => lits.filter((l) => task.spec.architecture.some((a: any) => String(a.contract || "").includes(l)));
+/* the literals the A0–A2 prompt check asserts on = hidden-case literals minus the LISTED task-contract exclusions. */
+const checkedLiterals = (task: any): string[] => { const ex = PRE.taskContractLiteralExclusions[task.id] || []; return leakLiterals(task).filter((l) => !ex.includes(l)); };
+/* run-time verification: computed static overlap per task === the contract's listed exclusions (tasks absent ⇒ []). */
+function overlapMatchesList(tasks: any[]): { ok: boolean; mismatches: any[] } {
+  const mm: any[] = [];
+  for (const t of tasks) { const got = contractOverlap(t).slice().sort(); const want = (PRE.taskContractLiteralExclusions[t.id] || []).slice().sort(); if (JSON.stringify(got) !== JSON.stringify(want)) mm.push({ task: t.id, computed: got, listed: want }); }
+  return { ok: mm.length === 0, mismatches: mm };
+}
 
 /* ================================================ network guard ================================================ */
 /* makeGuard(transport, caps) — the ONLY network path. Exact allowlist http://127.0.0.1:11434; everything else refused +
@@ -562,8 +577,10 @@ async function experiment(opts: any): Promise<any> {
       return { id: t.id, referencePasses: ref.verified === true, brokenFails: broken.status === "EXECUTED" && broken.verified !== true, subproblems: subs };
     });
     if (graderSelfTest.some((g: any) => !(g.referencePasses && g.brokenFails && (!g.subproblems || g.subproblems.every((s: any) => s.referencePasses))))) reasons.push("grader self-test failed (oracle unusable)");
-    const literals: Record<string, string[]> = Object.fromEntries(tasks.map((t) => [t.id, leakLiterals(t)]));
-    const staticContractOverlap = tasks.map((t) => ({ task: t.id, literalsInTaskContractText: literals[t.id].filter((l) => t.spec.architecture.some((a: any) => String(a.contract || "").includes(l) || String(a.role || "").includes(l))) })).filter((x) => x.literalsInTaskContractText.length);
+    const literals: Record<string, string[]> = Object.fromEntries(tasks.map((t) => [t.id, checkedLiterals(t)]));
+    const staticContractOverlap = tasks.map((t) => ({ task: t.id, literalsInTaskContractText: contractOverlap(t), listedExclusions: PRE.taskContractLiteralExclusions[t.id] || [] })).filter((x) => x.literalsInTaskContractText.length || x.listedExclusions.length);
+    const overlapCheck = overlapMatchesList(tasks);
+    if (!overlapCheck.ok) reasons.push("static task-contract overlap ≠ the contract's listed exclusions (never silently widened): " + JSON.stringify(overlapCheck.mismatches));
     const jEvidenceBefore = fileSha(root, PRE.pins.controlReference.file);
     const jRef = jReference((() => { try { return JSON.parse(fs.readFileSync(path.join(root, PRE.pins.controlReference.file), "utf8")); } catch { return null; } })());
     const env = { guard, caps, literals, sandboxDeps, generatorTimeoutMs: opts.generatorTimeoutMs || 300000, measured: opts.measured !== undefined ? opts.measured : POL.loadMeasuredRegistry(), now: opts.now || Date.now(), progress: opts.progress || (() => {}) };
@@ -577,7 +594,7 @@ async function experiment(opts: any): Promise<any> {
       run: { pins, sandboxProbe: probe, ollama: { endpoint: OLLAMA + " (loopback only, exact host:port allowlist)", version, installed }, graderSelfTest,
         preconditions: run.preconditions, network: { modelCalls: guard.st.modelCalls, otherLoopbackRequests: guard.st.otherRequests, refused: guard.st.refused, globalFetchGuarded: true },
         capHit: guard.st.capHit, caps, providerCalls: 0, jControlReference: { before: jEvidenceBefore, after: jEvidenceAfter, unchanged: jEvidenceBefore === jEvidenceAfter, reference: jRef },
-        leakLiterals: literals, staticContractOverlap },
+        leakLiterals: literals, staticContractOverlap, staticOverlapMatchesList: overlapCheck },
     };
   } finally { (globalThis as any).fetch = realGlobalFetch; }
 }
@@ -598,7 +615,7 @@ function record(g: any, res: any, head: string | null, startedAt: string): any {
       "A2 when A1 failed: ONE canonical runDecomposed over all sub-problems where ONLY A1's first failing sub-problem runs at qwen2.5-coder:7b/maxRepair 3; earlier sub-problems are regenerated at A0's tier (temperature 0, same seed) and frozen by runDecomposed itself — the runner adds no freezing seam, so A1's sources are not injected",
       "A3 = its own decomposed base WITH structured repairExamples at A0's tier, then the same escalation of ITS first failing sub-problem",
       "parse-range has no intermediate oracle ⇒ A1/A2/A3 not applicable there (recorded notApplicable); A4 covers it",
-      "prompt-leak literals = string leaves (length ≥ 4), number leaves whose decimal text has length ≥ 4, and the JSON text of compound expected values (length ≥ 4), over the whole-task and every per-module expected OUTPUT; booleans/null are keywords, not literals. The match is literal substring over the full prompt INCLUDING the task's own contract text (measurement.staticContractOverlap lists literals that the frozen task contracts already contain — those rows are NOT_MEASURED by the rule)",
+      "prompt-leak literals = string leaves (length ≥ 4), number leaves whose decimal text has length ≥ 4, and the JSON text of compound expected values (length ≥ 4), over the whole-task and every per-module expected OUTPUT; booleans/null are keywords, not literals. The match is a literal substring over the full prompt; V17.3 (owner V173): the literals already present in the frozen task-contract text (the contract's listed static overlap) are excluded, and the computed overlap must equal that list at run time (else NOT_MEASURED) — measurement.staticContractOverlap records both",
       "E membership needs A0@42 MEASURED with an ODG stop and A2@42 MEASURED+EXECUTED (a leak/cap/NOT_RUN NOT_MEASURED row is not 'EXECUTED' for E)",
       "rerun-alone control: if any A0@7 row for a task of E is NOT_MEASURED the control is 'not satisfied' (conservative; PASS impossible)",
       "C4 compares A0@42's stop name and accepted flag with J's default (both J trials agree on each)",
@@ -643,7 +660,7 @@ function checkRecord(rec: any, liveContract: any = undefined): string[] {
   const s = summarize(rec.rows || [], run);
   if (JSON.stringify(s) !== JSON.stringify(rec.summary)) p.push("summary (E, counts, criteria, hypotheses, grade) does not re-derive from rows");
   if (rec.outcome !== s.grade.outcome) p.push("outcome ≠ re-derived grade");
-  if (m.leakLiterals) { const tasks = buildTasks(Object.keys(m.leakLiterals)); for (const t of tasks) if (JSON.stringify(leakLiterals(t)) !== JSON.stringify(m.leakLiterals[t.id])) p.push(`leak literals of ${t.id} do not re-derive`); }
+  if (m.leakLiterals) { const tasks = buildTasks(Object.keys(m.leakLiterals)); for (const t of tasks) if (JSON.stringify(checkedLiterals(t)) !== JSON.stringify(m.leakLiterals[t.id])) p.push(`leak literals of ${t.id} do not re-derive`); }
   return p;
 }
 
@@ -667,7 +684,8 @@ async function selftest(): Promise<number> {
   ok("gate: REJECT inspection ⇒ NOT authorized", gate(live, { scenario: "J2", verdict: "REJECT", contractSha256: PINNED_CONTRACT_SHA }).ok === false);
   ok("gate: edited contract ⇒ sha refusal", (() => { const c = JSON.parse(JSON.stringify(live)); c.WORK_ITEM_CONTRACT.preRegistration.thresholds.PASS += " "; const r = gate(c, null); return r.ok === false && /≠ pinned/.test(r.reason); })());
   const insp = readInspection(ROOT);
-  if (insp) ok("gate: committed inspection present ⇒ authorized", gate(live, insp).ok === true);
+  if (insp && insp.contractSha256 === PINNED_CONTRACT_SHA) ok("gate: committed inspection bound to the current contract ⇒ authorized", gate(live, insp).ok === true);
+  else if (insp) ok(`gate: committed inspection bound to ${String(insp.contractSha256).slice(0, 8)}… ≠ current ${PINNED_CONTRACT_SHA.slice(0, 8)}… ⇒ REFUSED (re-inspection needed)`, gate(live, insp).ok === false);
   else process.stdout.write("skip - committed inspection record absent in this tree (gate refuses ⇒ NOT_AUTHORIZED at run time)\n");
   ok("confinement: declared output path accepted", outputPathOk(OUT));
   ok("confinement: any other path refused", !outputPathOk("docs/odg/evidence/OTHER.json") && !outputPathOk("/tmp/x.json") && !outputPathOk("./" + OUT + "/../x") && !outputPathOk(undefined));
@@ -691,6 +709,9 @@ async function selftest(): Promise<number> {
     ok("guard: maxModelCallsTotal enforced (call 2 of cap 1 refused, capHit recorded)", capped && g2.st.capHit && g2.st.capHit.cap === "maxModelCallsTotal"); }
   // --- leak literals
   ok("leak: roman-codec literals include 'MCMXCIV' and '1994'; booleans excluded", (() => { const l = leakLiterals(hardTask("roman-codec")); return l.includes("MCMXCIV") && l.includes("1994") && !l.includes("true"); })());
+  ok("leak: computed static overlap = the contract's listed exclusions (all 11 tasks)", overlapMatchesList(buildTasks()).ok === true);
+  ok("leak: listed exclusions removed from the checked set; other hidden literals kept", (() => { const r = checkedLiterals(hardTask("roman-codec")); const all = leakLiterals(hardTask("roman-codec")); return !r.includes("MCMXCIV") && !r.includes("1994") && r.length === all.length - 2 && r.length > 0; })());
+  ok("leak: an unlisted overlap ⇒ mismatch detected (never silently widened)", (() => { const t = hardTask("word-metrics"); const lit = leakLiterals(t)[0]; const t2 = { ...t, spec: { ...t.spec, architecture: t.spec.architecture.map((a: any, i: number) => (i === 0 ? { ...a, contract: a.contract + " " + lit } : a)) } }; return !!lit && overlapMatchesList([t]).ok === true && overlapMatchesList([t2]).ok === false; })());
   ok("leak: hits detected verbatim", JSON.stringify(leakHits("expected the result is MCMXCIV", ["MCMXCIV", "XLII"])) === JSON.stringify(["MCMXCIV"]));
   // --- grading (synthetic rows)
   const mkRows = (spec: any) => { const rows: any[] = []; for (const id of PRE.heldOut) { const s = spec[id] || {}; rows.push({ task: id, split: "heldOut", arm: "A0", seed: 42, status: "MEASURED", executionStatus: "EXECUTED", stopReason: s.stop === undefined ? "REPAIR_BUDGET_EXHAUSTED" : s.stop, accepted: false, delegationState: "CREATED", prompts: [], generations: [] }); rows.push({ task: id, split: "heldOut", arm: "A2", seed: 42, status: s.a2nm ? "NOT_MEASURED" : "MEASURED", executionStatus: "EXECUTED", accepted: !!s.a2, prompts: [], generations: [] }); rows.push({ task: id, split: "heldOut", arm: "A0", seed: 7, status: "MEASURED", executionStatus: "EXECUTED", stopReason: "REPAIR_BUDGET_EXHAUSTED", accepted: !!s.a07, prompts: [], generations: [] }); }
