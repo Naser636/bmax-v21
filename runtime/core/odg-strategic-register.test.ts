@@ -136,6 +136,73 @@ check("owner flags unchanged by benefit evidence", RB.items.filter((x: any) => x
 check("benefit evidence is deterministic (order of benefitEvidence irrelevant)", JSON.stringify(RB) === JSON.stringify(REG.buildRegister(Object.assign(sources({ cp8: cp8b }), { laterEvidence: later, benefitEvidence: [goc, cp9] }))));
 check("fieldRecords / auditRefs helpers", REG.fieldRecords({ a: { b: ["x", "y"] } }, "a.b[*]").map((r: any) => r.ptr).join() === "a.b[0],a.b[1]" && JSON.stringify(REG.auditRefs("(audit #1/#2)")) === "[1,2]" && REG.auditRefs("PR #923").length === 0);
 
+// ── V16.9 Phase 1 — CLOSE-1 closures, RES-1 resolutions, CTR-1..3 contradictions, LCP-1 latest checkpoint ──────────────
+{
+  const SS = require("../bin/odg-strategic-select.ts");
+  const AS = require("./odg-authorization-scope.js");
+  const path = require("path");
+  const ROOT = path.resolve(__dirname, "..", "..");
+  const clone = (o: any) => JSON.parse(JSON.stringify(o));
+  const real = SS.loadSources(ROOT);
+  const { inputs: _in, ...rs } = real;
+  const RR = REG.buildRegister(rs);
+  const ri = (reg: any, id: string) => reg.items.find((x: any) => x.id === id);
+  // closure derivation on the REAL committed records
+  check("CLOSE-1 real: G (4/4 steps validated, graded PARTIAL) ⇒ CLOSED_PARTIAL citing V166_G_CRITERIA_VALIDATION.json#scenarioGrade", ri(RR, "G").status === "CLOSED_PARTIAL" && ri(RR, "G").statusSource[0] === "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#scenarioGrade" && ri(RR, "G").closure.closed === true && ri(RR, "G").closure.validatedSteps.length === 4);
+  check("CLOSE-1 real: H (4/4 validated, graded FAIL) ⇒ CLOSED_FAIL — negative result preserved, never upgraded", ri(RR, "H").status === "CLOSED_FAIL" && ri(RR, "H").closure.grade === "FAIL" && /V168_H_CRITERIA_VALIDATION\.json#scenarioGrade/.test(ri(RR, "H").statusSource[0]));
+  check("append-only history: G keeps EXECUTED_PARTIAL (CP8-dated) then CLOSED_PARTIAL (validation date); H keeps PARTIAL then CLOSED_FAIL", JSON.stringify(ri(RR, "G").statusHistory.map((h: any) => h.status)) === '["EXECUTED_PARTIAL","CLOSED_PARTIAL"]' && ri(RR, "G").statusHistory[0].since.value === "2026-11-23" && ri(RR, "G").statusHistory[1].since.source === "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#date" && JSON.stringify(ri(RR, "H").statusHistory.map((h: any) => h.status)) === '["PARTIAL","CLOSED_FAIL"]' && ri(RR, "H").statusHistory[0].since.value === null && ri(RR, "H").statusHistory.every((h: any) => h.source.length > 0 && typeof h.rule === "string"));
+  check("closed items keep their record (criteria kept, not deleted)", Object.keys(ri(RR, "H").criteria).length === REG.CRITERIA.length && RR.items.some((x: any) => x.id === "G"));
+  // partial steps ⇒ not closed
+  const noVal = clone(rs); noVal.authorizationEvidence.H.validation = null;
+  const RNV = REG.buildRegister(noVal);
+  check("CLOSE-1: H without its criteria-validation record (3/4 steps) ⇒ NOT closed (PARTIAL), closure.closed=false at VALIDATE_CRITERIA", ri(RNV, "H").status === "PARTIAL" && ri(RNV, "H").closure.closed === false && ri(RNV, "H").closure.currentStep === "VALIDATE_CRITERIA" && !ri(RNV, "H").statusHistory);
+  const noExp = clone(rs); noExp.authorizationEvidence.H.experiment = null; noExp.authorizationEvidence.H.validation = null;
+  check("CLOSE-1: H at RUN_CONTROLLED_EXPERIMENTS (2/4) ⇒ not closed", ri(REG.buildRegister(noExp), "H").closure.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && !/^CLOSED_/.test(ri(REG.buildRegister(noExp), "H").status));
+  check("CLOSE-1: no authorization evidence at all ⇒ G/H keep the earlier statuses (EXECUTED_PARTIAL / PARTIAL)", (() => { const r = REG.buildRegister({ ...rs, authorizationEvidence: {} }); return ri(r, "G").status === "EXECUTED_PARTIAL" && ri(r, "H").status === "PARTIAL"; })());
+  // upgrade refused / CLOSED_PASS on a labelled fixture
+  const upg = clone(rs); upg.authorizationEvidence.H.validation.scenarioGrade = "PASS";
+  check("negative grade preserved: a validation record claiming PASS over a FAIL experiment is refused (R5b) ⇒ NOT CLOSED_PASS", ri(REG.buildRegister(upg), "H").status === "PARTIAL" && ri(REG.buildRegister(upg), "H").closure.closed === false);
+  const pass = clone(rs); pass.authorizationEvidence.H.experiment.outcome = "PASS"; pass.authorizationEvidence.H.validation.scenarioGrade = "PASS"; pass.authorizationEvidence.H.validation.experimentEvidence.experimentSha256 = AS.experimentSha256(pass.authorizationEvidence.H.experiment);
+  check("labelled fixture: experiment PASS + validation PASS re-bound ⇒ CLOSED_PASS (grade carried as recorded)", ri(REG.buildRegister(pass), "H").status === "CLOSED_PASS");
+  // not selectable
+  const dR = SEL.selectNextExplained(REG.toSelectorCandidates(RR), { weights: REG.WEIGHTS, directions: REG.DIRECTIONS });
+  check("CLOSED_* / RESOLVED_BY_EVIDENCE are non-selectable selector defaults", ["CLOSED_PASS", "CLOSED_PARTIAL", "CLOSED_FAIL", "CLOSED_NOT_MEASURED", "RESOLVED_BY_EVIDENCE"].every((k) => k in SEL.EXPLAINED_DEFAULTS.nonSelectableStatuses));
+  check("not selectable: G, H and the resolved gap are EXCLUDED by status, never selected nor tied", ["G", "H", "CP8-GAP-canonicalDefectsJ"].every((id) => dR.excluded.some((e: any) => e.id === id && /^(CLOSED_|RESOLVED_)/.test(e.status))) && !["G", "H"].includes(dR.selected ? dR.selected.id : "") && !(dR.tiedSet || []).some((id: string) => id === "G" || id === "H"));
+  // RES-1
+  check("RES-1 real: CP8-GAP-canonicalDefectsJ ⇒ RESOLVED_BY_EVIDENCE citing V169_J_CANONICAL_DEFECTS_FIX.json (#940, 613bf2cd), PROPOSED kept in statusHistory", ri(RR, "CP8-GAP-canonicalDefectsJ").status === "RESOLVED_BY_EVIDENCE" && ri(RR, "CP8-GAP-canonicalDefectsJ").resolution.pr === 940 && /^613bf2cd/.test(ri(RR, "CP8-GAP-canonicalDefectsJ").resolution.mergeCommit) && ri(RR, "CP8-GAP-canonicalDefectsJ").statusHistory[0].status === "PROPOSED" && /V169_J_CANONICAL_DEFECTS_FIX\.json#resolvesRegisterItem/.test(ri(RR, "CP8-GAP-canonicalDefectsJ").statusSource[0]));
+  const badRes = (mut: (d: any) => void) => { const x = clone(rs); mut(x.resolutionEvidence[0].data); return ri(REG.buildRegister(x), "CP8-GAP-canonicalDefectsJ").status; };
+  check("RES-1 refuses malformed records: short merge sha / no reproTests / status not FIXED ⇒ stays PROPOSED", badRes((d) => { d.fixedBy.mergeCommit = "613bf2cd"; }) === "PROPOSED" && badRes((d) => { d.reproTests = []; }) === "PROPOSED" && badRes((d) => { d.resolution.status = "PLANNED"; }) === "PROPOSED");
+  // contradiction detectors
+  const ctr = (reg: any, rule: string) => reg.contradictions.detected.filter((c: any) => c.rule === rule);
+  check("CTR-1 real: canonicalDefectsJ PROPOSED vs CP10.prs #940 'fixed' ⇒ reported on the item, state RESOLVED_BY_EVIDENCE (resolved by the record, not by the detector)", (() => { const c = ctr(RR, "CTR-1"); return c.length === 1 && c[0].item === "CP8-GAP-canonicalDefectsJ" && /V168_CHECKPOINT_10\.json#prs\[\d+\]\.what/.test(c[0].bSource) && c[0].state === "RESOLVED_BY_EVIDENCE" && c[0].autoResolved === false && ri(RR, "CP8-GAP-canonicalDefectsJ").contradictions.length === 1; })());
+  const noRes = REG.buildRegister({ ...rs, resolutionEvidence: [] });
+  check("CTR-1 fixture: without the resolution record the gap stays PROPOSED and the contradiction is OPEN (reported, not auto-resolved)", ri(noRes, "CP8-GAP-canonicalDefectsJ").status === "PROPOSED" && ctr(noRes, "CTR-1")[0].state === "OPEN");
+  const noFix = clone(rs); for (const c of noFix.checkpoints) c.data.prs = c.data.prs.map((p: any) => ({ ...p, what: String(p.what).replace(/fixed/g, "touched") }));
+  check("CTR-1 fixture: same anchors without the word 'fixed' ⇒ not reported", ctr(REG.buildRegister({ ...noFix, resolutionEvidence: [] }), "CTR-1").length === 0);
+  check("CTR-2 real: G and H contract state AUTHORIZED_FOR_REVISION vs their closure records ⇒ reported OPEN (contract never rewritten)", (() => { const c = ctr(RR, "CTR-2"); return c.length === 2 && c.every((x: any) => x.kind === "CONTRACT_STATE_VS_CLOSURE" && x.state === "OPEN") && ri(RR, "H").contradictions.length === 1; })());
+  // labelled fixture: G/H contract state set to a CLOSED_ value, records re-bound to the edited contract sha (as a real
+  // authorized contract edit would require) — then CTR-2 has nothing to report
+  const stClosed = clone(rs);
+  for (const c of stClosed.contracts.data.contracts) if (c.scenario === "G" || c.scenario === "H") {
+    c.state = "CLOSED (fixture)"; const sha = AS.contractSha256(c); const ev = stClosed.authorizationEvidence[c.scenario];
+    ev.inspection.contractSha256 = sha; ev.experiment.contractSha256 = sha; ev.validation.contractSha256 = sha; ev.validation.experimentEvidence.experimentSha256 = AS.experimentSha256(ev.experiment);
+  }
+  check("CTR-2 fixture: contract state containing CLOSED (records re-bound) ⇒ still closed, no CONTRACT_STATE contradiction; checkpoint mission statuses agree (CP9 G, CP10 H) ⇒ none", (() => { const r = REG.buildRegister(stClosed); return ri(r, "H").status === "CLOSED_FAIL" && ri(r, "G").status === "CLOSED_PARTIAL" && ctr(r, "CTR-2").length === 0 && !ri(r, "H").contradictions; })());
+  const cpBad = clone(rs); const cp10 = cpBad.checkpoints.find((c: any) => /CHECKPOINT_10/.test(c.path)); cp10.data.missionH = { status: "CLOSED_PASS" };
+  check("CTR-2 fixture: checkpoint missionH.status CLOSED_PASS vs derived CLOSED_FAIL ⇒ CHECKPOINT_MISSION_STATUS_VS_CLOSURE reported", ctr(REG.buildRegister(cpBad), "CTR-2").some((c: any) => c.kind === "CHECKPOINT_MISSION_STATUS_VS_CLOSURE" && c.item === "H"));
+  check("CTR-3 real: declared record sets stop at CP9 < newest committed CP10 ⇒ reported (not auto-extended)", (() => { const c = ctr(RR, "CTR-3"); return c.length === 1 && /V166_CHECKPOINT_9/.test(c[0].a) && /V168_CHECKPOINT_10/.test(c[0].b) && c[0].autoResolved === false; })());
+  check("CTR-3 fixture: when the newest committed checkpoint is CP9 ⇒ not reported", ctr(REG.buildRegister({ ...rs, latestCheckpoint: "V166_CHECKPOINT_9.json" }), "CTR-3").length === 0);
+  check("no contradiction key on items without one (S12 regex cannot match a bare key)", RR.items.filter((x: any) => !["G", "H", "CP8-GAP-canonicalDefectsJ"].includes(x.id)).every((x: any) => !("contradictions" in x)));
+  // LCP-1
+  check("LCP-1: latest checkpoint by NUMBER, not lexicographic order", REG.latestCheckpointOf(["docs/odg/evidence/Z150_CHECKPOINT_9.json", "A1_CHECKPOINT_10.json", "V150_CHECKPOINT_4.json", "other.json"]) === "A1_CHECKPOINT_10.json" && REG.latestCheckpointOf([]) === null);
+  check("LCP-1 real: module LATEST_CHECKPOINT discovered = V168_CHECKPOINT_10.json (no longer hard-coded CP9); register output agrees", REG.LATEST_CHECKPOINT === "V168_CHECKPOINT_10.json" && RR.latestCheckpoint.file === "V168_CHECKPOINT_10.json" && RR.capabilityGapRules.benefit.latestCheckpoint === "V168_CHECKPOINT_10.json");
+  check("LCP-1 synthetic fixture (no checkpoint names) ⇒ latest = highest supplied doc (CP9 in the V16.7 benefit fixture) — DEP-2 tests above unchanged", RB.latestCheckpoint.file === "V166_CHECKPOINT_9.json");
+  // prior items otherwise unchanged
+  const RP = REG.buildRegister({ ...rs, authorizationEvidence: {}, resolutionEvidence: [], checkpoints: [] });
+  check("prior items otherwise unchanged: every item except G, H, canonicalDefectsJ is byte-identical with and without the Phase-1 records", RR.items.filter((x: any) => !["G", "H", "CP8-GAP-canonicalDefectsJ"].includes(x.id)).every((x: any) => JSON.stringify(x) === JSON.stringify(ri(RP, x.id))) && RR.itemCount === RP.itemCount);
+  check("synthetic V16.4 fixture has no closure/resolution fields (no authorization blocks, no records)", R.items.every((x: any) => !x.closure && !x.statusHistory && !x.resolution));
+}
+
 process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-strategic-register + selectNextExplained (taxonomy, EXECUTED_PARTIAL≠ACCEPTED, NOT_MEASURED⇒uncertainty, no id tie-break, owner-gated never auto-selected)" : f + " FAIL") + "\n");
 process.exit(f === 0 ? 0 : 1);
 export {};
