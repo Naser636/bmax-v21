@@ -1,0 +1,157 @@
+{
+  "//": "Transition checkpoint CP11 (owner CTO commands 2026-11-24 'FINALISATION G2 → J2 → CHECKPOINT DE TRANSITION' and 'BRAIN & AUTONOMY MASTER BUILD' §2). Canonical checkpoint series (*_CHECKPOINT_<n>.json, LCP-1). Written by the provider from committed evidence; J2 is RUNNING at checkpoint time — its result will be recorded by later records, not by rewriting this one.",
+  "checkpoint": "CP11",
+  "date": "2026-11-24",
+  "headAtCheckpoint": "deaf0844",
+  "previous": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5,
+    "mainCheckout": "main, clean"
+  },
+  "boussole": "V12.4 canonical (unchanged). V14.4 ADOPTED earlier (V372) with addendum RECORDED as extension; V15.0 PROPOSED, NOT adopted (no formal succession). This checkpoint changes no Boussole text.",
+  "prs": [
+    {
+      "pr": 962,
+      "merged": "43aa42a4",
+      "what": "owner order decision G2→J2 recorded (docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json) + GO-ORD-1 (exact actionable tie only; schema/OWNER/source validation)",
+      "inspection": "ACCEPT (2 rounds)",
+      "ci": "pass"
+    },
+    {
+      "pr": 963,
+      "merged": "baf1101c",
+      "what": "G2 experiment result, dispatched by ODG GO (bwrap --unshare-net), held-out sha 46e2f568",
+      "inspection": "ACCEPT with independent offline recomputation",
+      "ci": "pass"
+    },
+    {
+      "pr": 964,
+      "merged": "9dafc0a5",
+      "what": "G2 VALIDATE_CRITERIA ⇒ CLOSED_PARTIAL, NOT_ADOPTED",
+      "inspection": "ACCEPT (fidelity)",
+      "ci": "pass"
+    },
+    {
+      "pr": 965,
+      "merged": "68f64eeb",
+      "what": "GO-DTO-1 dispatch timeout from contract caps (J2 43.2 Ms ceiling), cycle deadline extension, process-group dispatch with STOP/SIGTERM, malformed-caps refusal",
+      "inspection": "ACCEPT after 2 MED + 2 LOW fixed",
+      "ci": "pass on c90641e4"
+    },
+    {
+      "pr": 966,
+      "merged": "deaf0844",
+      "what": "owner SELECTION decision for J2 (docs/odg/V174_OWNER_DECISION_SELECT_J2.json) + GO-ORD-2 (uncertainty DECISION_REQUIRED, no tie) with persistent one-shot O_EXCL claim",
+      "inspection": "REJECT (one-shot not persistent) ⇒ fixed ⇒ ACCEPT on a6dd6841",
+      "ci": "pass"
+    }
+  ],
+  "missionG2": {
+    "status": "CLOSED_PARTIAL",
+    "adoption": "NOT_ADOPTED",
+    "contractSha256": "94ca64cab00782649944b6dd3825ca6f1ed9f868943c89e0e86f7827d1d704a1",
+    "result": "KG = B1 (threshold 164, BA 0.684 both, ΔB 0); Δ0 +0.184 vs no-flag (CI95 low > 0)",
+    "evidence": [
+      "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+      "docs/odg/evidence/V172_G2_HELDOUT.json",
+      "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl",
+      "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json"
+    ],
+    "validationSha256": "7cae67a533920da47e7fed29613e3c30be9c3a323d1b470084d6e04cb99fa361"
+  },
+  "missionJ2": {
+    "status": "RUNNING",
+    "contractSha256": "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b",
+    "inspection": "docs/odg/evidence/V172_J2_CONTRACT_INSPECTION.json (#961)",
+    "launchedBy": "ODG GO --execute --allow-unsandboxed-target at deaf0844, selection via GO-ORD-2 (owner selection record), 2026-11-24T12:56:28Z",
+    "oneShotClaim": "<git common dir>/odg-go-claims/5cf461e7cab471e2-J2.claim (exists; never deleted by GO; re-run needs a new owner decision)",
+    "network": "runner guard: only http://127.0.0.1:11434 (Ollama 0.35.1); generated code in bwrap without network",
+    "bounds": "GO dispatch timeout 43200000 ms, cycle deadline 43500000 ms; runner caps perTrialWallMs 1800000, maxModelCallsTotal 600",
+    "scratch": "/home/ubuntu/odg-scratch-j2/j2-run (detached deaf0844)",
+    "resultPending": "V172_J2_EXPERIMENT.json written by the runner in the scratch ⇒ result PR ⇒ independent recomputation ⇒ VALIDATE_CRITERIA",
+    "riskNoted": "host CPU contention can lengthen trials (caps ⇒ NOT_MEASURED rows); concurrent work runs nice -n 19, one test file at a time"
+  },
+  "nativeVsProvider": {
+    "odgDecisions": [
+      "strategic + actionable selection by the canonical selector (DECISION_REQUIRED kept, never tie-broken by id)",
+      "authorization derivation per step (odg-authorization-scope)"
+    ],
+    "goExecutedSteps": [
+      "H (CP10)",
+      "G2 RUN_CONTROLLED_EXPERIMENTS",
+      "J2 RUN_CONTROLLED_EXPERIMENTS (running)"
+    ],
+    "ownerDecisions": [
+      "V174 order G2→J2",
+      "V174 selection J2"
+    ],
+    "provider": [
+      "all code (GO-ORD-1/2, GO-DTO-1, runners), records, transcriptions, inspections, merges"
+    ],
+    "nativeBuiltCodeMerged": 0,
+    "note": "~80% native target NOT met, not claimed"
+  },
+  "openGaps": [
+    "4 register criteria NOT_MEASURED for every item ⇒ selector DECISION_REQUIRED by uncertainty (build in progress: native criteria measurement)",
+    "native code construction by ODG merged = 0",
+    "integration (merge) still by the coordinating session",
+    "cryptographic inspector identity (declared session ids only)",
+    "dispatched child stdout/stderr discarded (no diagnostics on failure, LOW #965)",
+    "claim store keyed to --repo common dir (LOW #966)",
+    "setsid grandchild escapes the dispatch process group (disclosed)",
+    "provider launch without verifiable spend ceiling"
+  ],
+  "v14_4_v15_0": {
+    "reconciliation": [
+      "docs/odg/evidence/V169_V14_4_ADDENDUM_RECONCILIATION.json",
+      "docs/odg/evidence/V171_V150_RECONCILIATION_MATRIX.json"
+    ],
+    "status": "PROPOSED documentary reconciliation; V15.0 NOT adopted",
+    "openContradictions": [
+      "CTR-1 §51 'V15.0 directive unique' vs V14.4 ADOPTED",
+      "CTR-2 §38 Radar untouched vs V14.4/V12.4 Radar extensions",
+      "CTR-3 §47 blanket authorization vs per-work-item authorization",
+      "CTR-4 ordering continuity-first vs Radar-first"
+    ],
+    "addendum": "RECORDED as V14.4 extension (docs/odg/V14_4_ADDENDUM_BOUSSOLE_VIVANTE.md)"
+  },
+  "ownerDecisionsOpen": [
+    "strategic DECISION_REQUIRED on J (contract PROPOSED)",
+    "V15.0 adoption / contradictions CTR-1..4",
+    "GitHub AUP §6/§7",
+    "8 deferred Radar sources + per-host pacing",
+    "provider spend ceiling",
+    "gate 10/12 signature"
+  ],
+  "authorizationsValid": [
+    "V165/V168/V170/V171 portfolio (internal, €0)",
+    "V173 J2 contract revision",
+    "V174 order + selection (J2 one-shot, consumed)",
+    "2026-11-24 BRAIN & AUTONOMY MASTER BUILD: internal construction, métiers excluded"
+  ],
+  "workInProgress": [
+    {
+      "what": "J2 run",
+      "where": "/home/ubuntu/odg-scratch-j2/j2-run",
+      "owner": "ODG GO (dispatch), coordinating session collects"
+    },
+    {
+      "what": "native measurement of the NOT_MEASURED register criteria",
+      "where": "branch feat/v175-register-criteria-measurement",
+      "owner": "provider agent"
+    },
+    {
+      "what": "V14.4/V15.0 multiplier consolidation (read-only)",
+      "owner": "provider agent"
+    }
+  ],
+  "nextPriority": "brain & native autonomy build (owner 2026-11-24): 1 central brain decisions — first: measure NOT_MEASURED register criteria so ODG's selector decides robustly without owner arbitration; then the ranked multiplier list",
+  "resumeActions": [
+    "if J2 finished: copy V172_J2_EXPERIMENT.json from the scratch, result PR + redacted GO trace, independent recomputation, VALIDATE_CRITERIA, close J2; never re-run (claim)",
+    "if J2 still running: do not touch the scratch/claim; continue the brain build at nice -n 19",
+    "merge the criteria-measurement PR after inspection + CI on the same SHA",
+    "then next multiplier from the consolidation list"
+  ],
+  "nativeMeaning": "'native' = launched by ODG GO itself; dispatched runner code is provider-written"
+}

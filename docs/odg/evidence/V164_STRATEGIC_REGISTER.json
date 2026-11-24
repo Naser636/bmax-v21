@@ -66,6 +66,10 @@
       "sha256": "52913c51fdd79aaedc52e96d66639b38154033d45c9a7ce5f1519ea5fc051f81"
     },
     {
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json",
+      "sha256": "a274b8fa417d958685151a1a0e545a3bc7958651bbeab71977ee661ac1ac6e89"
+    },
+    {
       "source": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
       "sha256": "d606c6e296a759fd291028faf76833ff1828d23b3ec87570455f6af1da664534"
     },
@@ -370,7 +374,7 @@
             ]
           }
         ],
-        "latestCheckpoint": "V168_CHECKPOINT_10.json",
+        "latestCheckpoint": "V174_CHECKPOINT_11.json",
         "notDerived": [
           "autonomyBenefit (AUT-1), capabilityGain (CAP-1), strategicValue (STR-1): no V150 section / top10 / alsoInternal entry references a CP8 capability gap",
           "speedEfficiency (SPD-0), reusability (REU-0): no committed field records a speed or reuse effect per gap",
@@ -390,13 +394,13 @@
       "history": "append-only statusHistory [{status, source, since, rule}] on every item whose status CLOSE-1 or RES-1 changed; earlier statuses are never deleted"
     },
     "latestCheckpoint": {
-      "file": "V168_CHECKPOINT_10.json",
+      "file": "V174_CHECKPOINT_11.json",
       "rule": "LCP-1: the latest checkpoint is the committed docs/odg/evidence/*_CHECKPOINT_<n>.json with the highest <n> (discovered, not hard-coded); buildRegister uses sources.latestCheckpoint, else the highest-numbered checkpoint among the documents it was given",
-      "source": "docs/odg/evidence/V168_CHECKPOINT_10.json",
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json",
       "declaredFieldsPresent": {
         "ownerQuestions": false
       },
-      "dep2Note": "V168_CHECKPOINT_10.json has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)"
+      "dep2Note": "V174_CHECKPOINT_11.json has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)"
     },
     "contradictions": {
       "rules": {
@@ -484,9 +488,9 @@
             "odg-strategic-register.BLOCKER_FIELDS",
             "odg-strategic-register.PR_RECORD_FIELDS"
           ],
-          "b": "newest committed checkpoint V168_CHECKPOINT_10.json (LCP-1)",
+          "b": "newest committed checkpoint V174_CHECKPOINT_11.json (LCP-1)",
           "bSource": [
-            "docs/odg/evidence/V168_CHECKPOINT_10.json"
+            "docs/odg/evidence/V174_CHECKPOINT_11.json"
           ],
           "state": "OPEN",
           "autoResolved": false,
@@ -506,7 +510,7 @@
         "docs/odg/evidence/V164_GO_CYCLE.json",
         "docs/odg/evidence/V166_CHECKPOINT_9.json",
         "docs/odg/evidence/V167_V166_CLOSURE_DOSSIER.json",
-        "docs/odg/evidence/V168_CHECKPOINT_10.json"
+        "docs/odg/evidence/V174_CHECKPOINT_11.json"
       ],
       "scenarioEvidence": [
         {
@@ -559,7 +563,8 @@
       ],
       "checkpoints": [
         "docs/odg/evidence/V166_CHECKPOINT_9.json",
-        "docs/odg/evidence/V168_CHECKPOINT_10.json"
+        "docs/odg/evidence/V168_CHECKPOINT_10.json",
+        "docs/odg/evidence/V174_CHECKPOINT_11.json"
       ],
       "checkpointNames": [
         "V150_CHECKPOINT_1.json",
@@ -571,7 +576,8 @@
         "V160_CHECKPOINT_7.json",
         "V163_CHECKPOINT_8.json",
         "V166_CHECKPOINT_9.json",
-        "V168_CHECKPOINT_10.json"
+        "V168_CHECKPOINT_10.json",
+        "V174_CHECKPOINT_11.json"
       ]
     },
     "itemCount": 58,
@@ -5169,7 +5175,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V168_CHECKPOINT_10.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V174_CHECKPOINT_11.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -5386,7 +5392,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V168_CHECKPOINT_10.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V174_CHECKPOINT_11.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -6015,7 +6021,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V168_CHECKPOINT_10.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V174_CHECKPOINT_11.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -6123,7 +6129,7 @@
             "value": null,
             "rule": "DEP-2",
             "source": [],
-            "reason": "linked owner question not re-listed in docs/odg/evidence/V168_CHECKPOINT_10.json ⇒ resolution not stated by any field"
+            "reason": "linked owner question not re-listed in docs/odg/evidence/V174_CHECKPOINT_11.json ⇒ resolution not stated by any field"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -10605,5 +10611,5 @@
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "baf1101ce57f67c4b26de864b3d92619e1d7054c"
+  "generatedAtHead": "deaf0844ce562049291ccee9f48933a412d141bf"
 }
