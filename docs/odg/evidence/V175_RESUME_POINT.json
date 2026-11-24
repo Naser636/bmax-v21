@@ -1,0 +1,748 @@
+{
+  "//": "V17.5 PRIORITY 3 — resume point: a deterministic VIEW over committed records (no new registry). Read trackedItems[].next and nextGoAction first; every value cites its source. Recompute: npx tsx runtime/bin/odg-resume-point.ts [--prs <file>] ; verify: --check.",
+  "schema": "ODG_RESUME_POINT/1",
+  "rules": {
+    "RSP-1": "tracked items = every WORK_ITEM_CONTRACT item that has an owner authorization block, OR is the register decision's selected/proposed item, OR is named by a committed GO trace (DISPATCHED mission, CYCLE_END selection.workingOn / selection.strategic); every other register item is summarised by status count only (its record stays in the register)",
+    "RSP-2": "step state = odg-authorization-scope.deriveAuthorizationScope(contract, records, local-git R7 probes) where, per record kind, the record is (a) the register loader's V<n>_<scenario>_<KIND>.json (register.sourcesUsed.authorizationEvidence), else (b) the contract-declared path (authorization.inspectionRecord; authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS.writeSet[0] for the experiment), else (c) V<n>_<short>_<KIND>.json with short = scenario minus a leading 'V<n>-'; when this differs from the register's CLOSE-1 view (closure.currentStep / closed) the divergence is REPORTED (never resolved here)",
+    "RSP-3": "last GO run of an item = the committed GO trace cycle with the latest CYCLE_END.endedAt whose dispatchedMissions or selection.workingOn names the item",
+    "RSP-4": "next action by current step: CLOSED_* ⇒ none (new mission only); INSPECT_REVISED_CONTRACT ⇒ INDEPENDENT_INSPECTOR commits an inspection record; RUN_CONTROLLED_EXPERIMENTS authorized and never dispatched ⇒ GO --execute dispatches the declared target; RUN_CONTROLLED_EXPERIMENTS already dispatched by GO with no committed experiment record ⇒ PROVIDER collects the runner's record (never re-run: one-shot claim); VALIDATE_CRITERIA ⇒ PROVIDER commits the criteria-validation record (R5b) + INDEPENDENT_INSPECTOR inspects it; no authorized step and contract not AUTHORIZED ⇒ OWNER (PROPOSED → AUTHORIZED); ODG never self-authorizes",
+    "RSP-5": "next GO action = the register decision record (strategic choice) + the tracked items whose authorized current step is an EXECUTION step not yet dispatched (what a GO --execute run could dispatch); when there is none, GO has nothing to dispatch and the pending steps are provider / inspector / owner steps (listed)"
+  },
+  "inputs": [
+    {
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json",
+      "sha256": "8e28176b0052a790fa66cd1e47883dad4646869e13dc3b65635576342bb9935b"
+    },
+    {
+      "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+      "sha256": "d6cd0181a53258202c37ecc657bc3c41482ed4cf8a314e91bbdaa2c965a01ea9"
+    },
+    {
+      "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+      "sha256": "a460ef1e80866563ef4f6e60439fe8d65de301cc7061ec20e512e919be5e7194"
+    },
+    {
+      "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
+      "sha256": "617bfca543c23af5031174ebbb19cefe2906744ea4ed7fe455a4f8babf981b7f"
+    },
+    {
+      "source": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "b1946d1058718b562f7861c132a27920c447ba48e20d8cb01a58a6d354b4f7d3"
+    },
+    {
+      "source": "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "a959b39641f652868b91780c2ff4885aefa571edc3f05e3351a291e1f7ecc51a"
+    },
+    {
+      "source": "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "4aae7caa7f20907ea08531d1f68f098da4bd71c0f7533abb799d440628de3109"
+    },
+    {
+      "source": "docs/odg/evidence/V175_NB1_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "e8d8eb98d2c9d7b627906d4a542dd938b60775c4cf8a734ec9d8efa6c95772eb"
+    },
+    {
+      "source": "docs/odg/evidence/V175_PR_TIMELINE_SNAPSHOT.json",
+      "sha256": "498b5a48dc4635924fa47d3ebddd8a83dad82fca5bf70cefd9b9e7650eaa1f2f"
+    },
+    {
+      "source": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
+      "sha256": "d606c6e296a759fd291028faf76833ff1828d23b3ec87570455f6af1da664534"
+    },
+    {
+      "source": "docs/odg/evidence/V166_G_EXPERIMENT.json",
+      "sha256": "b595489c4abbbd088794928d2cd638e23e52017857f65c0e92c294e466324c95"
+    },
+    {
+      "source": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+      "sha256": "78cc3467f06d4191489aa69eb4650c35bb6dbf89e5d5396f5943e2c7d77ec32d"
+    },
+    {
+      "source": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+      "sha256": "dc5b12081618f5fbd1d123af260a82a8aa8b6f318d45fe7b79704d93ee1d2cbf"
+    },
+    {
+      "source": "docs/odg/evidence/V168_H_EXPERIMENT.json",
+      "sha256": "30e1565fd5b701a70e04810d6e0b51238ddcd34f15f6ef9cbfcb68f4d40ecabd"
+    },
+    {
+      "source": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+      "sha256": "40786b40259b7a307cf7ab1dfef995e0f4623e065c43324667f91be9aaf457cb"
+    },
+    {
+      "source": "docs/odg/evidence/V172_G2_CONTRACT_INSPECTION.json",
+      "sha256": "7ed12f31756c9f7b214d6b1fe0ea353cb88daab64a5f34270cf30adddfd4b993"
+    },
+    {
+      "source": "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+      "sha256": "37cdaae6e51cf237f6c66d7c69022adca8c870c6bd98369692ad65a009cd8056"
+    },
+    {
+      "source": "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json",
+      "sha256": "7cae67a533920da47e7fed29613e3c30be9c3a323d1b470084d6e04cb99fa361"
+    },
+    {
+      "source": "docs/odg/evidence/V172_J2_CONTRACT_INSPECTION.json",
+      "sha256": "8054086e356e2f4d8a23e708f2214559b27287c871c1233a49f8385bee435363"
+    },
+    {
+      "source": "docs/odg/evidence/V172_J2_EXPERIMENT.json",
+      "sha256": "bc5c76488689a84f63abef5f1959170ec7409c4141f74fa116538b7bbd315c14"
+    },
+    {
+      "source": "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json",
+      "sha256": "ec8fd6bbd185a402e35fc54faf025c99b03c33c8383eca5820b8ae6d09e8ad97"
+    },
+    {
+      "source": "docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json",
+      "sha256": "5eeead8619af8fb7f58963f4af64294fb1518e29e103ad952a416411718b5897"
+    },
+    {
+      "source": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
+      "sha256": "a5537e9d2a8708e8e99d9b726b45a51c5850b39445444798b79a6426cd1b1c37"
+    }
+  ],
+  "checkpoint": {
+    "path": "docs/odg/evidence/V174_CHECKPOINT_11.json",
+    "checkpoint": "CP11",
+    "date": "2026-11-24",
+    "headAtCheckpoint": "deaf0844",
+    "nextPriority": "brain & native autonomy build (owner 2026-11-24): 1 central brain decisions — first: measure NOT_MEASURED register criteria so ODG's selector decides robustly without owner arbitration; then the ranked multiplier list",
+    "rule": "LCP-1"
+  },
+  "boussole": {
+    "canonical": "V12.4",
+    "precedence": {
+      "order": [
+        "OWNER_RECORDS_IN_SCOPE",
+        "V12_4",
+        "V14_4",
+        "ADDENDUM",
+        "V15_0"
+      ],
+      "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json#precedence.order"
+    },
+    "coverage": {
+      "rule": "BREF-1",
+      "items": 59,
+      "measured": 37,
+      "notMeasured": 22,
+      "withV124MissionId": 22,
+      "withV124Section": 23,
+      "withV144Phase": 21,
+      "byKind": {
+        "WORK_ITEM_CONTRACT": {
+          "items": 19,
+          "measured": 18,
+          "notMeasured": 1
+        },
+        "V150_TOP10_ITEM": {
+          "items": 5,
+          "measured": 5,
+          "notMeasured": 0
+        },
+        "V150_ALSO_INTERNAL": {
+          "items": 2,
+          "measured": 0,
+          "notMeasured": 2
+        },
+        "V150_OWNER_GATED": {
+          "items": 14,
+          "measured": 14,
+          "notMeasured": 0
+        },
+        "CP8_CAPABILITY_GAP": {
+          "items": 11,
+          "measured": 0,
+          "notMeasured": 11
+        },
+        "CP8_METHOD_CARD": {
+          "items": 8,
+          "measured": 0,
+          "notMeasured": 8
+        }
+      }
+    },
+    "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.boussole"
+  },
+  "trackedItems": [
+    {
+      "id": "G",
+      "title": "G — Mémoire",
+      "registerStatus": "CLOSED_PARTIAL",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "MEASURED",
+        "v124MissionId": "CM-RADAR-GATE-CHAIN",
+        "v124Section": "I",
+        "v144Phase": null,
+        "v150RequirementIds": [
+          "V150-AP-G"
+        ],
+        "fieldReasons": {
+          "v144Phase": "AMBIGUOUS: V14.4 phases [1, 2]"
+        }
+      },
+      "contractSha256": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd",
+      "ownerRecord": "docs/odg/V165_OWNER_AUTHORIZATION.json",
+      "currentStep": null,
+      "scope": {
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
+        "nextStep": null,
+        "validatedSteps": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "reason": "all steps validated",
+        "contractSha256": "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd"
+      },
+      "records": {
+        "inspection": {
+          "path": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
+          "basis": "REGISTER_LOADER"
+        },
+        "experiment": {
+          "path": "docs/odg/evidence/V166_G_EXPERIMENT.json",
+          "basis": "REGISTER_LOADER"
+        },
+        "validation": {
+          "path": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [],
+      "next": {
+        "actor": "NONE",
+        "action": "closed (CLOSED_PARTIAL, CLOSE-1 docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=G]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[6]"
+      ]
+    },
+    {
+      "id": "H",
+      "title": "H — Amélioration récursive",
+      "registerStatus": "CLOSED_FAIL",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [
+          "V150-AP-H"
+        ],
+        "fieldReasons": {
+          "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+          "v124Section": "no V12.4 section stated",
+          "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+        }
+      },
+      "contractSha256": "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2",
+      "ownerRecord": "docs/odg/V168_OWNER_AUTHORIZATION_H.json",
+      "currentStep": null,
+      "scope": {
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
+        "nextStep": null,
+        "validatedSteps": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "reason": "all steps validated",
+        "contractSha256": "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2"
+      },
+      "records": {
+        "inspection": {
+          "path": "docs/odg/evidence/V168_H_CONTRACT_INSPECTION.json",
+          "basis": "REGISTER_LOADER"
+        },
+        "experiment": {
+          "path": "docs/odg/evidence/V168_H_EXPERIMENT.json",
+          "basis": "REGISTER_LOADER"
+        },
+        "validation": {
+          "path": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
+        }
+      },
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+        "runId": "86a7a424d358dce8",
+        "status": "STOPPED",
+        "endedAt": "2026-11-23T23:54:38.914Z",
+        "dispatched": true
+      },
+      "pending": [],
+      "next": {
+        "actor": "NONE",
+        "action": "closed (CLOSED_FAIL, CLOSE-1 docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=H]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[7]"
+      ]
+    },
+    {
+      "id": "J",
+      "title": "J — Gestion d'échec",
+      "registerStatus": "EXECUTED_PARTIAL",
+      "contractState": "PROPOSED",
+      "boussoleRef": {
+        "status": "MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [
+          "V150-AP-J"
+        ],
+        "fieldReasons": {
+          "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+          "v124Section": "no V12.4 section stated",
+          "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+        }
+      },
+      "contractSha256": "687d6b285cc8c0239fdf5e34f59df50203243a3602012099431b9f0855055941",
+      "ownerRecord": null,
+      "currentStep": null,
+      "scope": null,
+      "records": null,
+      "lastGoRun": null,
+      "pending": [],
+      "next": {
+        "actor": "OWNER",
+        "action": "J contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=J]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9]"
+      ]
+    },
+    {
+      "id": "G2",
+      "title": "G2 — Mémoire : calibration guidée par la connaissance (nouvelle expérience distincte de G)",
+      "registerStatus": "CLOSED_PARTIAL",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "MEASURED",
+        "v124MissionId": "CM-RADAR-GATE-CHAIN",
+        "v124Section": "I",
+        "v144Phase": null,
+        "v150RequirementIds": [
+          "V150-AP-G"
+        ],
+        "fieldReasons": {
+          "v144Phase": "AMBIGUOUS: V14.4 phases [1, 2]"
+        }
+      },
+      "contractSha256": "94ca64cab00782649944b6dd3825ca6f1ed9f868943c89e0e86f7827d1d704a1",
+      "ownerRecord": "docs/odg/V170_OWNER_AUTHORIZATION_HG.json",
+      "currentStep": null,
+      "scope": {
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
+        "nextStep": null,
+        "validatedSteps": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "reason": "all steps validated",
+        "contractSha256": "94ca64cab00782649944b6dd3825ca6f1ed9f868943c89e0e86f7827d1d704a1"
+      },
+      "records": {
+        "inspection": {
+          "path": "docs/odg/evidence/V172_G2_CONTRACT_INSPECTION.json",
+          "basis": "REGISTER_LOADER"
+        },
+        "experiment": {
+          "path": "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+          "basis": "REGISTER_LOADER"
+        },
+        "validation": {
+          "path": "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
+        }
+      },
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl",
+        "runId": "b4d59263fc5efe7f",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-24T12:01:10.399Z",
+        "dispatched": true
+      },
+      "pending": [],
+      "next": {
+        "actor": "NONE",
+        "action": "closed (CLOSED_PARTIAL, CLOSE-1 docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=G2]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[16]"
+      ]
+    },
+    {
+      "id": "J2",
+      "title": "J2 — Gestion d'échec : boucle de stratégie alternative après les correctifs #940 (local, hors ligne, 0 €)",
+      "registerStatus": "CLOSED_FAIL",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [
+          "V150-AP-J"
+        ],
+        "fieldReasons": {
+          "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+          "v124Section": "no V12.4 section stated",
+          "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+        }
+      },
+      "contractSha256": "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b",
+      "ownerRecord": "docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json",
+      "currentStep": null,
+      "scope": {
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
+        "nextStep": null,
+        "validatedSteps": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "reason": "all steps validated",
+        "contractSha256": "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b"
+      },
+      "records": {
+        "inspection": {
+          "path": "docs/odg/evidence/V172_J2_CONTRACT_INSPECTION.json",
+          "basis": "REGISTER_LOADER"
+        },
+        "experiment": {
+          "path": "docs/odg/evidence/V172_J2_EXPERIMENT.json",
+          "basis": "REGISTER_LOADER"
+        },
+        "validation": {
+          "path": "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
+        }
+      },
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl",
+        "runId": "3fb020e7be02f800",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-24T13:35:59.179Z",
+        "dispatched": true
+      },
+      "pending": [],
+      "next": {
+        "actor": "NONE",
+        "action": "closed (CLOSED_FAIL, CLOSE-1 docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=J2]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[17]"
+      ]
+    },
+    {
+      "id": "V175-NB1",
+      "title": "First ODG-native software construction: shared canonical-JSON helper (local model authors, ODG tests/repairs/verifies)",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'V175-NB1' is not an A–P §45 scenario and contract.parent.scenario is null ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "953d064ad2fffd3711a9f4efa50592e96b06182349d801e22f7813b17b31b777",
+      "ownerRecord": "docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json",
+      "currentStep": "VALIDATE_CRITERIA",
+      "scope": {
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
+        "currentStepAuthorized": true,
+        "nextStep": null,
+        "validatedSteps": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
+        ],
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "contractSha256": "953d064ad2fffd3711a9f4efa50592e96b06182349d801e22f7813b17b31b777"
+      },
+      "records": {
+        "inspection": {
+          "path": "docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json",
+          "basis": "CONTRACT_DECLARED"
+        },
+        "experiment": {
+          "path": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
+          "basis": "CONTRACT_DECLARED"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "divergence": {
+        "register": "current step INSPECT_REVISED_CONTRACT",
+        "registerSource": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB1].closure",
+        "view": "current step VALIDATE_CRITERIA",
+        "viewBasis": {
+          "inspection": "CONTRACT_DECLARED: docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json",
+          "experiment": "CONTRACT_DECLARED: docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
+          "validation": "NONE"
+        },
+        "note": "REPORTED, not resolved: the register's CLOSE-1 loader and the contract-declared records disagree (RSP-2); a loader/record-name fix needs its own reviewed change"
+      },
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V175_NB1_GO_EXECUTE_TRACE.jsonl",
+        "runId": "bd7cafe24ceec2e4",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-24T14:49:21.156Z",
+        "dispatched": true
+      },
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
+      "next": {
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 953d064ad2ff and experiment docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json, then an independent inspection — never auto-graded"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V175-NB1]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[18]"
+      ]
+    }
+  ],
+  "otherRegisterItems": {
+    "count": 53,
+    "statusCounts": {
+      "PARTIAL": 18,
+      "PASS_IN_SCOPE": 2,
+      "EXECUTED_PARTIAL": 2,
+      "CLOSED_PARTIAL": 2,
+      "CLOSED_FAIL": 2,
+      "NOT_STARTED": 1,
+      "ACCEPTED": 1,
+      "PROPOSED": 14,
+      "NOT_MEASURED": 1,
+      "BLOCKED": 14,
+      "NOT_IMPLEMENTED": 1,
+      "NOT_ADOPTED": 1
+    },
+    "note": "not tracked by RSP-1 — see the register for each record"
+  },
+  "ownerQuestionsOpen": [
+    {
+      "id": "Q-CTR2",
+      "blocking": true,
+      "interimApplied": "RADAR-1",
+      "question": "For V15.0 §38 « le Radar existant ne doit subir aucune modification dans cette campagne » and §47 « Le Radar reste inchangé » : does 'le Radar existant' cover only the Radar stage (discovery/collection, governor, transport, allowlists, grants — interim RADAR-1), or also the knowledge-qualification stage (runtime/core/odg-knowledge-*, e.g. #911)? And inside a V15.0-campaign item, does adding a NEW versioned grant file or a NEW Radar module count as a modification?",
+      "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json#ownerQuestions[0]"
+    }
+  ],
+  "ownerDecisionsOpenAtCheckpoint": [
+    {
+      "text": "J: strategic selection is SELECTED (J) but its contract is PROPOSED — the open owner step is PROPOSED → AUTHORIZED",
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[0]",
+      "asRecordedAt": "CP11"
+    },
+    {
+      "text": "V15.0 adoption / contradictions CTR-1..4",
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[1]",
+      "asRecordedAt": "CP11"
+    },
+    {
+      "text": "GitHub AUP §6/§7",
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[2]",
+      "asRecordedAt": "CP11"
+    },
+    {
+      "text": "8 deferred Radar sources + per-host pacing",
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[3]",
+      "asRecordedAt": "CP11"
+    },
+    {
+      "text": "provider spend ceiling",
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[4]",
+      "asRecordedAt": "CP11"
+    },
+    {
+      "text": "gate 10/12 signature",
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#ownerDecisionsOpen[5]",
+      "asRecordedAt": "CP11"
+    }
+  ],
+  "checkpointVsRegister": [
+    {
+      "item": "G2",
+      "checkpointStatus": "CLOSED_PARTIAL",
+      "registerStatus": "CLOSED_PARTIAL",
+      "superseded": false,
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#missionG2.status"
+    },
+    {
+      "item": "J2",
+      "checkpointStatus": "RUNNING",
+      "registerStatus": "CLOSED_FAIL",
+      "superseded": true,
+      "source": "docs/odg/evidence/V174_CHECKPOINT_11.json#missionJ2.status"
+    }
+  ],
+  "openPrs": {
+    "snapshot": "docs/odg/evidence/V175_PR_TIMELINE_SNAPSHOT.json",
+    "snapshotAt": "2026-11-24T14:08:42.506Z",
+    "window": [
+      955,
+      971
+    ],
+    "open": [],
+    "note": "frozen snapshot passed in (no network); refresh by passing --prs <file> written from `gh pr list --json number,title,headRefName,state`"
+  },
+  "goRuns": [
+    {
+      "trace": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "86a7a424d358dce8",
+      "status": "STOPPED",
+      "endedAt": "2026-11-23T23:54:38.909Z",
+      "dispatched": [
+        "H"
+      ],
+      "strategic": null,
+      "workingOn": null,
+      "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 2,
+      "runId": "86a7a424d358dce8",
+      "status": "STOPPED",
+      "endedAt": "2026-11-23T23:54:38.914Z",
+      "dispatched": [
+        "H"
+      ],
+      "strategic": null,
+      "workingOn": null,
+      "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "b4d59263fc5efe7f",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-24T12:01:10.399Z",
+      "dispatched": [
+        "G2"
+      ],
+      "strategic": "J",
+      "workingOn": "G2",
+      "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "3fb020e7be02f800",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-24T13:35:59.179Z",
+      "dispatched": [
+        "J2"
+      ],
+      "strategic": "J",
+      "workingOn": "J2",
+      "ownerSelectionRecord": "docs/odg/V174_OWNER_DECISION_SELECT_J2.json"
+    },
+    {
+      "trace": "docs/odg/evidence/V175_NB1_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "bd7cafe24ceec2e4",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-24T14:49:21.156Z",
+      "dispatched": [
+        "V175-NB1"
+      ],
+      "strategic": "J",
+      "workingOn": "V175-NB1",
+      "ownerSelectionRecord": "docs/odg/V175_OWNER_DECISION_SELECT_NB1.json"
+    }
+  ],
+  "nextGoAction": {
+    "rule": "RSP-5",
+    "strategic": {
+      "decision": "SELECTED",
+      "item": "J",
+      "contractState": "PROPOSED",
+      "boussoleRef": {
+        "status": "MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [
+          "V150-AP-J"
+        ],
+        "fieldReasons": {
+          "v124MissionId": "the matrix rows state no V12.4 mission (none/transversal)",
+          "v124Section": "no V12.4 section stated",
+          "v144Phase": "no V14.4 §2 table cell names the anchored mission/section"
+        }
+      },
+      "ownerAuthorizationNeeded": "owner — J PROPOSED → AUTHORIZED (authorizedBy)",
+      "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
+    },
+    "dispatchable": [],
+    "verdict": "no tracked item has an authorized, not-yet-dispatched EXECUTION step ⇒ a GO --execute run has nothing to dispatch; the pending steps are provider / inspector / owner steps (see trackedItems[].next)",
+    "pendingNonGo": [
+      {
+        "item": "J",
+        "actor": "OWNER",
+        "action": "J contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V175-NB1",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 953d064ad2ff and experiment docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json, then an independent inspection — never auto-graded"
+      }
+    ],
+    "lastGoRun": {
+      "trace": "docs/odg/evidence/V175_NB1_GO_EXECUTE_TRACE.jsonl",
+      "runId": "bd7cafe24ceec2e4",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-24T14:49:21.156Z",
+      "strategic": "J",
+      "workingOn": "V175-NB1",
+      "nextAfterCurrent": {
+        "decision": "SELECTED",
+        "selected": "J",
+        "proposed": null
+      }
+    }
+  }
+}
