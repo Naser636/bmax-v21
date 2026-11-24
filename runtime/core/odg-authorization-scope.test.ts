@@ -191,6 +191,35 @@ const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contrac
   check("G and J contract entries untouched by V17.2 (G sha pinned in its records; J has no authorization block)", AS.contractSha256(G) === "ac79b1744bf4978b768d7909a312d28eefb3e8e005a0ed60a8f7ac821c87a8cd" && AS.contractSha256(H) === "8436885a2d483c4f26db3753de6fdbc6dd42296602ede9be7d4b9860c8e672e2" && !by("J").authorization);
   check("J (plain) still has no scoped sequence derivation; unknown 'J3' refused", derive(by("J"), {}).applicable === false && AS.ownerSourceCheck("J3", SRC.J2).ok === false);
 }
+// V17.5 — V175-NB1 (owner V175, first ODG-native build): same 4-step sequence; bound ONLY to its own owner record.
+{
+  const CF = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8"));
+  const by = (id: string) => CF.contracts.find((c: any) => c.scenario === id);
+  const X = by("V175-NB1"); const J2 = by("J2"); const H = by("H");
+  const XSHA = AS.contractSha256(X);
+  const XSID = X.revisionHistory[X.revisionHistory.length - 1].revisionAuthorSessionId;
+  const xInsp = (o: any = {}) => ({ scenario: "V175-NB1", verdict: "ACCEPT", contractSha256: XSHA, inspector: "independent inspector (fixture)", inspectorSessionId: "inspector-sid-nb1-0001", authorSessionId: XSID, inspectedHeadSha: HEAD, inspectedPr: 997, ...o });
+  const SRC_NB1 = "docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json (V175)";
+  check("STEP_SEQUENCES.V175-NB1 = the same 4 steps as H", AS.STEP_SEQUENCES["V175-NB1"].join(",") === AS.STEP_SEQUENCES.H.join(","));
+  const s0 = derive(X, {});
+  check("committed V175-NB1: owner V175 recognized, REVISE validated, INSPECT current, nothing executable", s0.applicable === true && /V175_OWNER_AUTHORIZATION_NATIVE_BUILD\.json/.test(s0.owner.source) && s0.currentStep === "INSPECT_REVISED_CONTRACT" && s0.executionAuthorized === false && X.authorization.executionAuthorized === false && XSID === "nb1-go-path-v175");
+  const s1 = derive(X, { inspection: xInsp() });
+  check("V175-NB1: inspection ACCEPT sha-bound ⇒ RUN_CONTROLLED_EXPERIMENTS derived (R4, covered by V175)", s1.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && s1.executionAuthorized === true && s1.derivedSteps.some((d: any) => d.rule === "R4" && /V175_OWNER_AUTHORIZATION_NATIVE_BUILD/.test(d.coveredBy)));
+  const edited = clone(X); edited.WORK_ITEM_CONTRACT.preRegistration.thresholds.PASS += " (edited)";
+  check("V175-NB1: contract edited after inspection ⇒ NOT authorized; inspection of J2 ⇒ NOT authorized", derive(edited, { inspection: xInsp() }).executionAuthorized === false && derive(X, { inspection: xInsp({ scenario: "J2" }) }).executionAuthorized === false);
+  for (const [lbl, src] of [["V171 (J2)", "docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json (V171)"], ["V168 (H)", "docs/odg/V168_OWNER_AUTHORIZATION_H.json (V168)"], ["V165 (G)", "docs/odg/V165_OWNER_AUTHORIZATION.json#missionG"]] as any) {
+    const c = clone(X); c.authorization.source = src;
+    check(`cross-binding: V175-NB1 with ${lbl} source ⇒ refused (R0)`, derive(c, {}).applicable === false);
+  }
+  const both = clone(X); both.authorization.source = SRC_NB1 + " + docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json";
+  check("V175-NB1 source also citing V171 ⇒ refused (foreign directive)", derive(both, {}).applicable === false);
+  const j2nb = clone(J2); j2nb.authorization.source = SRC_NB1;
+  const hnb = clone(H); hnb.authorization.source = SRC_NB1;
+  check("V175 record cannot authorize J2 or H (R0)", derive(j2nb, {}).applicable === false && derive(hnb, {}).applicable === false && AS.ownerSourceCheck("V175-NB1", SRC_NB1).ok === true && AS.ownerSourceCheck("J2", SRC_NB1).ok === false);
+  const t = X.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS; const ws = X.WORK_ITEM_CONTRACT.write_set;
+  check("V175-NB1 dispatch target = the runner, writeSet = the result record only, ⊆ write_set; native patch write set = 2 files", t.command === "runtime/bin/odg-v175-native-build-run.ts" && JSON.stringify(t.writeSet) === JSON.stringify(["docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json"]) && ws.includes(t.command) && t.writeSet.every((x: string) => ws.includes(x)) && X.WORK_ITEM_CONTRACT.nativePatchWriteSet.length === 2);
+  check("V175-NB1 declares its inspection record path (GO AUTH_EVIDENCE)", X.authorization.inspectionRecord === "docs/odg/evidence/V175_NB1_CONTRACT_INSPECTION.json");
+}
 // V16.9 Phase 1b — R7 proof currency on the REAL committed H records with the REAL local-git probes + labelled mutations
 {
   const CF = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8"));

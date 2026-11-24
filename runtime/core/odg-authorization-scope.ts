@@ -16,10 +16,11 @@
  * Rules (each objective and evidence-bound):
  *   R0 owner first: `authorization.by` starts with "OWNER" AND `authorization.source` cites THE owner directive bound to
  *      that scenario (OWNER_SOURCES: G ⇒ V165, H ⇒ V168 / docs/odg/V168_OWNER_AUTHORIZATION_H.json, G2 ⇒ V170 /
- *      docs/odg/V170_OWNER_AUTHORIZATION_HG.json, J2 ⇒ V171 / docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json) and cites no other
+ *      docs/odg/V170_OWNER_AUTHORIZATION_HG.json, J2 ⇒ V171 / docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json, V175-NB1 ⇒ V175 /
+ *      docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json) and cites no other
  *      scenario's directive — else NOTHING is derived (ODG never self-authorizes; an authorization is never reused for
  *      another mission).
- *   R1 step sequence is fixed per scenario (G, H, G2 and J2: REVISE_CONTRACT → INSPECT_REVISED_CONTRACT → RUN_CONTROLLED_EXPERIMENTS →
+ *   R1 step sequence is fixed per scenario (G, H, G2, J2 and V175-NB1: REVISE_CONTRACT → INSPECT_REVISED_CONTRACT → RUN_CONTROLLED_EXPERIMENTS →
  *      VALIDATE_CRITERIA). A step outside the sequence (provider spend, governance change, …) is NEVER derived.
  *   R2 REVISE_CONTRACT validated ⇔ the contract carries a revisionHistory entry with author, originalCriteria (non-empty),
  *      change, justification, and the WORK_ITEM_CONTRACT carries a preRegistration (metric, baseline, dataset,
@@ -57,6 +58,8 @@ const STEP_SEQUENCES: any = Object.freeze({
   // G2 ⇐ owner V170 (docs/odg/V170_OWNER_AUTHORIZATION_HG.json, G clause); J2 ⇐ owner V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json).
   G2: Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
   J2: Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  // V17.5 — V175-NB1 (first ODG-native build) ⇐ owner V175 (docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json): same sequence.
+  "V175-NB1": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
 });
 const EXECUTION_STEPS = Object.freeze(["RUN_CONTROLLED_EXPERIMENTS"]);
 const STEP_KIND: any = Object.freeze({
@@ -75,6 +78,7 @@ const OWNER_SOURCES: any = Object.freeze({
   // V168 path, so neither record can ever cover another scenario (foreign-citation check below).
   G2: Object.freeze({ re: /V170_OWNER_AUTHORIZATION_HG\.json/, label: "V170 (docs/odg/V170_OWNER_AUTHORIZATION_HG.json)" }),
   J2: Object.freeze({ re: /V171_OWNER_AUTHORIZATION_PORTFOLIO\.json/, label: "V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json)" }),
+  "V175-NB1": Object.freeze({ re: /V175_OWNER_AUTHORIZATION_NATIVE_BUILD\.json/, label: "V175 (docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json)" }),
 });
 function ownerSourceCheck(scenario: string, source: string): any {
   const own = OWNER_SOURCES[scenario];
@@ -250,12 +254,12 @@ function isStepAuthorized(scope: any, step: string): boolean {
 
 const AUTHORIZATION_SCOPE_CONTRACT = Object.freeze({
   id: "V166-ODG-AUTHORIZATION-SCOPE",
-  source: "owner directive V166 §3–§4 over V165 §1 (docs/odg/V165_OWNER_AUTHORIZATION.json#missionG); H: owner directive V168 (docs/odg/V168_OWNER_AUTHORIZATION_H.json); G2: owner directive V170 (docs/odg/V170_OWNER_AUTHORIZATION_HG.json); J2: owner directive V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json)",
-  ownerSources: Object.freeze({ G: OWNER_SOURCES.G.label, H: OWNER_SOURCES.H.label, G2: OWNER_SOURCES.G2.label, J2: OWNER_SOURCES.J2.label }),
+  source: "owner directive V166 §3–§4 over V165 §1 (docs/odg/V165_OWNER_AUTHORIZATION.json#missionG); H: owner directive V168 (docs/odg/V168_OWNER_AUTHORIZATION_H.json); G2: owner directive V170 (docs/odg/V170_OWNER_AUTHORIZATION_HG.json); J2: owner directive V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json); V175-NB1: owner directive V175 (docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json)",
+  ownerSources: Object.freeze({ G: OWNER_SOURCES.G.label, H: OWNER_SOURCES.H.label, G2: OWNER_SOURCES.G2.label, J2: OWNER_SOURCES.J2.label, "V175-NB1": OWNER_SOURCES["V175-NB1"].label }),
   steps: STEP_SEQUENCES, executionSteps: EXECUTION_STEPS, stepKind: STEP_KIND,
   invariants: Object.freeze([
     "PURE derivation: no write, no contract-state rewrite, no authorization minted",
-    "owner authorization (by OWNER…, source = the directive bound to the scenario: G ⇒ V165, H ⇒ V168, G2 ⇒ V170, J2 ⇒ V171; citing another scenario's directive ⇒ refused) must exist first — otherwise nothing is derived",
+    "owner authorization (by OWNER…, source = the directive bound to the scenario: G ⇒ V165, H ⇒ V168, G2 ⇒ V170, J2 ⇒ V171, V175-NB1 ⇒ V175; citing another scenario's directive ⇒ refused) must exist first — otherwise nothing is derived",
     "steps outside the declared sequence (provider spend, governance, …) are never derived",
     "inspection validates only with verdict ACCEPT, contractSha256 = sha256(canon(current contract entry)), distinct opaque inspector/author session ids bound to the revision's revisionAuthorSessionId (DECLARED_SESSION_INDEPENDENCE, not cryptographic), inspected head SHA",
     "a validated step is DONE, never PASS: no outcome is graded or upgraded here",
