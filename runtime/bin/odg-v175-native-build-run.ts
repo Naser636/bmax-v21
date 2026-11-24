@@ -255,7 +255,21 @@ async function selftest(): Promise<number> {
   let n = 0; const seen: string[] = [];
   const fake = async (url: string, init: any) => { n++; seen.push(url); const b = JSON.parse(init.body); return { ok: true, json: async () => ({ model: b.model, eval_count: 1, response: "```ts\n" + (n === 1 ? WRONG : RIGHT) + "```" }) }; };
   const probe = NBS.probeSandbox();
-  const r = await runNativeBuild({ root: ROOT, label: "SELFTEST", transport: fake });
+  // V17.5: after the native module is INTEGRATED the real tree no longer has the defect (target exists ⇒ defect=false), so the
+  // selftest runs on a LABELLED fixture root = symlink view of this repo WITHOUT the 2 native files (pre-integration state).
+  const SROOT = (() => {
+    const T = ["odg-canonical-json.ts", "odg-canonical-json.test.ts"];
+    if (!T.some((t) => fs.existsSync(path.join(ROOT, "runtime", "core", t)))) return ROOT;
+    const os = require("os"); const d = fs.mkdtempSync(path.join(os.tmpdir(), "nb1-selftest-root-"));
+    for (const e of fs.readdirSync(ROOT)) if (e !== "runtime") fs.symlinkSync(path.join(ROOT, e), path.join(d, e));
+    fs.mkdirSync(path.join(d, "runtime"));
+    for (const e of fs.readdirSync(path.join(ROOT, "runtime"))) if (e !== "core") fs.symlinkSync(path.join(ROOT, "runtime", e), path.join(d, "runtime", e));
+    fs.mkdirSync(path.join(d, "runtime", "core"));
+    for (const e of fs.readdirSync(path.join(ROOT, "runtime", "core"))) if (!T.includes(e)) fs.symlinkSync(path.join(ROOT, "runtime", "core", e), path.join(d, "runtime", "core", e));
+    process.stdout.write("note - selftest on a LABELLED pre-integration fixture root (native module already integrated in the real tree)\n");
+    return d;
+  })();
+  const r = await runNativeBuild({ root: SROOT, label: "SELFTEST", transport: fake });
   check("detection: real defect found in this repo (NESTED_KEY_DROP in audit-log + agent-identity)", r.detection.defect === true && r.detection.defectiveSites.some((s: any) => s.file === "runtime/core/audit-log.ts" && s.verdict === "NESTED_KEY_DROP") && r.detection.defectiveSites.some((s: any) => s.file === "runtime/core/agent-identity.ts"));
   if (probe && probe.ok === true) {
     check("fake model: wrong first ⇒ repaired ⇒ PASS", r.verdict === "PASS" && r.rounds[0].repairs >= 1 && r.rounds[0].firstPass.verified === false);
@@ -269,7 +283,7 @@ async function selftest(): Promise<number> {
   check("guard refuses a non-loopback URL and records it", refused && g.st.refused.length === 1);
   const tc = typecheck("function f(x) { return x; }\nmodule.exports = { f };\nexport {};\n");
   check("typecheck rejects implicit any (strict)", tc.ok === false);
-  const drift = await runNativeBuild({ root: ROOT, label: "SELFTEST", transport: fake, expectedDigest: "0".repeat(64) });
+  const drift = await runNativeBuild({ root: SROOT, label: "SELFTEST", transport: fake, expectedDigest: "0".repeat(64) });
   check("detection drift ⇒ NOT_MEASURED before any model call", drift.verdict === "NOT_MEASURED" && /drift/.test(drift.reason));
   return f;
 }

@@ -166,6 +166,14 @@
       "sha256": "b28141913e450900f91e271fe7ddb5521481dd5286c1cafdfec85e4a782f5885"
     },
     {
+      "source": "runtime/core/odg-canonical-json.test.ts",
+      "sha256": "6a71a478262a88575660b7c7f238b8aa86a6420564dbd55df9c53b23ebea2df8"
+    },
+    {
+      "source": "runtime/core/odg-canonical-json.ts",
+      "sha256": "c4a6e2e979548aa90a8b9c6f7de3c0ed4e5e421cd5ac46e3af66a98ad797a604"
+    },
+    {
       "source": "runtime/core/odg-verification-risk-calibration.test.ts",
       "sha256": "a7c3b79806acc6b41fdfbda2b3666b9ed7756e081f42e67b5e4d7baa1d14819a"
     },
@@ -665,16 +673,6 @@
           "item": "J",
           "file": "runtime/bin/odg-v160-scenario-j-run.ts",
           "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.write_set[1]"
-        },
-        {
-          "item": "V175-NB1",
-          "file": "runtime/core/odg-canonical-json.ts",
-          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[18].WORK_ITEM_CONTRACT.write_set[0]"
-        },
-        {
-          "item": "V175-NB1",
-          "file": "runtime/core/odg-canonical-json.test.ts",
-          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[18].WORK_ITEM_CONTRACT.write_set[1]"
         }
       ],
       "independenceStated": [],
@@ -11782,5 +11780,5 @@
     "V16.9 Phase 1: CLOSE-1 derives CLOSED_<grade> from the committed criteria-validation records through odg-authorization-scope (G ⇒ CLOSED_PARTIAL, H ⇒ CLOSED_FAIL; earlier statuses kept in statusHistory); RES-1 marks CP8-GAP-canonicalDefectsJ RESOLVED_BY_EVIDENCE from a provider-written resolution record (V169_J_CANONICAL_DEFECTS_FIX.json) transcribing #940 — that record was not independently inspected; CLOSED_*/RESOLVED_BY_EVIDENCE are non-selectable (mission-priority-selector defaults). With G no longer selectable the earlier J/G DECISION_REQUIRED becomes SELECTED J by 0.025 over F (epsilon 0.02; J's uncertainty 0.5 sits AT uncertaintyMax): not robust — see sensitivity",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "6d11124e08a8951d6865cff3c8ad5eb3ebe93e40"
+  "generatedAtHead": "c6b595cd94d5ee748c47aaf081b141a6fc7f3599"
 }
