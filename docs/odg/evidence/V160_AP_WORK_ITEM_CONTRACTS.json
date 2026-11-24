@@ -1,5 +1,5 @@
 {
-  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged.",
+  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
   "count": 20,
   "initialStatusCounts": {
@@ -654,8 +654,8 @@
       "scenario": "J",
       "title": "J — Gestion d'échec",
       "ownerText": "ODG détecte une stratégie inefficace, arrête les tentatives répétitives, construit une alternative et mesure le résultat.",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — directive « V176 : DÉBLOCAGE FINAL » item 2 (2026-11-24), docs/odg/V176_OWNER_AUTHORIZATION_J.json: « J : autoriser son passage de PROPOSED à AUTHORIZED. GO peut le sélectionner et l'exécuter selon son contrat, dès que les conditions requises sont conformes. Une seule exécution initiale, avec résultat enregistré honnêtement. » « Aucun déploiement en production, dépense, engagement externe ou appel payant non autorisé. » — encoded through the canonical scoped mechanism (odg-authorization-scope, like G/H/G2/J2/V175-NB1/V175-NB2): the execution step RUN_CONTROLLED_EXPERIMENTS becomes AUTHORIZED (derived, R4) only once the required conditions hold (R2 revision + preRegistration, R3 independent inspection ACCEPT bound to the contract sha, GO-DT-1 declared dispatch target); one single initial execution; result recorded as measured. J's prior result (V161_SCENARIO_J.json) and J2 (CLOSED_FAIL) untouched.",
       "initialState": {
         "status": "PARTIAL",
         "evidence": [
@@ -697,6 +697,62 @@
           "independent inspection verdict on the exact head",
           "CI green on the exact head"
         ]
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V176_OWNER_AUTHORIZATION_J.json (V176)",
+        "transcribedBy": "PROVIDER (Claude Code, V17.6 J-authorization session; branch feat/v176-authorize-j) — verbatim owner quote in authorizedBy",
+        "date": "2026-11-24",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "ONE single initial execution (« Une seule exécution initiale »), only « dès que les conditions requises sont conformes »: the contract revised with a preRegistration (R2), an independent inspection ACCEPT bound to the revised contract sha recorded (R3), a declared authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS ⊆ write_set (GO-DT-1) with caps (GO-DTO-1); internal repo, €0, loopback Ollama only, 0 provider / paid calls, no production deployment, no external commitment (« Aucun déploiement en production, dépense, engagement externe ou appel payant non autorisé. »); result recorded honestly (PASS/PARTIAL/FAIL/NOT_MEASURED, never upgraded; « avec résultat enregistré honnêtement »)",
+        "dispatchTargetsNote": "NO dispatchTargets declared: J's contract as written has no runnable target (see proposedRevision.missing) — the revision must declare one; none is invented here (GO-DT-1 ⇒ NO_DISPATCH_TARGET, fail-closed)"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-24",
+          "author": "PROVIDER (Claude Code, V17.6 J-authorization session; branch feat/v176-authorize-j)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V176_OWNER_AUTHORIZATION_J.json (V176 « DÉBLOCAGE FINAL » item 2)",
+          "originalCriteria": [
+            "stop triggered by NO_PROGRESS_IDENTICAL_REGENERATION or NO_QUALIFIED on a real task",
+            "alternative (decomposition / different model / repair depth) actually executed",
+            "outcome compared on the same task and recorded with n"
+          ],
+          "originalCriteriaNote": "acceptance criteria, scope, write_set, invariants, stop_conditions, rollback and evidence_required UNCHANGED by this entry (kept verbatim); no preRegistration is added — REVISE_CONTRACT (R2) is therefore NOT validated and stays the current step",
+          "change": [
+            "state PROPOSED → AUTHORIZED_FOR_REVISION (canonical encoding of an owner authorization: scoped sequence REVISE_CONTRACT → INSPECT_REVISED_CONTRACT → RUN_CONTROLLED_EXPERIMENTS → VALIDATE_CRITERIA); authorizedBy = verbatim owner quote",
+            "authorization block bound to docs/odg/V176_OWNER_AUTHORIZATION_J.json (odg-authorization-scope OWNER_SOURCES.J, R0); executionAuthorized false; executionCondition = the owner's conditions",
+            "proposedRevision section added — a PROPOSAL (what is missing for J to be executable + the minimal revision), NOT applied to WORK_ITEM_CONTRACT, NOT inspected, NOT executed"
+          ],
+          "justification": "owner V176 item 2 authorizes J PROPOSED → AUTHORIZED and its execution « selon son contrat, dès que les conditions requises sont conformes ». A plain state AUTHORIZED would route GO to the plain odg-run AP-J path (no runtime/missions/J.json ⇒ NOT_RUNNABLE) and bypass the R2/R3 conditions; J's contract as written is not executable (stale runner path, no preRegistration, no dispatch target). The scoped encoding makes the owner's « conditions requises » explicit and evidence-bound.",
+          "priorResultUnchanged": "docs/odg/evidence/V161_SCENARIO_J.json (sha256 11245ce051234b4218b8859e159307eef3652ebc59ce00e32b8782371e461bff; default 0/8, alternative 0/8) and J2 (CLOSED_FAIL) — untouched, not re-graded",
+          "revisionAuthorSessionId": "j-authorize-v176"
+        }
+      ],
+      "proposedRevision": {
+        "status": "PROPOSAL ONLY — NOT APPLIED to WORK_ITEM_CONTRACT, NOT INSPECTED, NOT EXECUTED (provider analysis; the REVISE_CONTRACT step must apply it, or a different revision, in its own PR)",
+        "missing": [
+          "M1 stale write_set: runtime/bin/odg-v160-scenario-j-run.ts and docs/odg/evidence/V160_SCENARIO_J.json were never committed (disclosed by #969, register.dependencyGraph.staleWriteSets); the committed J runner is runtime/bin/odg-v161-scenario-j-run.ts (sha256 edbc0df55f133902015d2a0f4506756b9ad4697a8948d2cd0ca9d6bb93904ab9), outside J's write_set",
+          "M2 that runner cannot be a GO-DT-1 target as is: it writes only with the flag --write, and GO-DT-1 args must be plain positional tokens (none may start with '-') ⇒ a dispatched run would write NOTHING; and its output path is hard-wired (OUT_REL = docs/odg/evidence/V161_SCENARIO_J.json) ⇒ a write would OVERWRITE J's committed prior result (forbidden: history preserved, never re-graded)",
+          "M3 its record carries no contractSha256 and no outcome (PASS/PARTIAL/FAIL/NOT_MEASURED) ⇒ R4 experimentValid can never validate RUN_CONTROLLED_EXPERIMENTS from it",
+          "M4 no WORK_ITEM_CONTRACT.preRegistration (metric, baseline, dataset, decisionRule, thresholds) ⇒ R2 REVISE_CONTRACT not validated ⇒ no inspection can validate (R3)",
+          "M5 no authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS ⇒ NO_DISPATCH_TARGET (GO-DT-1); no preRegistration.caps ⇒ GO-DTO-1 default 600000 ms (V161 trials ran ~0.5–1.1 M ms each ⇒ would be SIGKILLed)",
+          "M6 no committed independent inspection record (path now declared: docs/odg/evidence/V176_J_CONTRACT_INSPECTION.json in odg-authorization-evidence-paths)",
+          "M7 one-shot: GO-ORD-2's persistent claim applies ONLY to an actionable DECISION_REQUIRED resolved by an owner selection record; J is the strategic SELECTED item, so once actionable GO works on it directly and « Une seule exécution initiale » is then held only by the committed experiment record advancing the step (R4) — no persistent claim between dispatch and commit"
+        ],
+        "minimalRevision": [
+          "R-a write_set ⇒ [runtime/bin/odg-v161-scenario-j-run.ts, runtime/bin/odg-v161-scenario-j-run.test.ts, docs/odg/evidence/V176_J_EXPERIMENT.json] (or a NEW runner file) — the runner gains a POSITIONAL output path (default behaviour and the V161 --check unchanged) and writes contractSha256 + a mechanically graded outcome into the new record; V161_SCENARIO_J.json is never written",
+          "R-b preRegistration fixed BEFORE any run: dataset = the runner's 4 tasks (rle-codec, csv-typed-validator, range-clamp-pipeline, v159-implement-parse-range) pinned by sha256 (native-hard-corpus.ts 2ad9fca5…, runner); metric = whole-task independent-test passes, default vs rule-selected alternative, same task/seed, with n; baseline = V161_SCENARIO_J.json (pinned 11245ce0…: 0/8 vs 0/8); decisionRule + thresholds (NOT_MEASURED / PASS / PARTIAL / FAIL) stated mechanically; caps.maxRunWallMs; contamination: J2 (same alternative family, post-#940) is CLOSED_FAIL and known to the designer",
+          "R-c authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS = { command: <the runner>, args: [\"docs/odg/evidence/V176_J_EXPERIMENT.json\"], writeSet: [\"docs/odg/evidence/V176_J_EXPERIMENT.json\"] }",
+          "R-d a new revisionHistory entry (originalCriteria verbatim, change, justification, new revisionAuthorSessionId), then an independent inspection ACCEPT bound to the revised sha (V176_J_CONTRACT_INSPECTION.json)",
+          "R-e for M7: an owner selection record is NOT needed for J to be selected (it is the strategic choice); the single-execution bound is the scratch/experiment-record check — state it in the revision, or have GO claim also for strategic scoped dispatches (a GO code change, separate)"
+        ],
+        "honestNote": "J's alternative family was already measured twice: J (V161, 0/8 vs 0/8, PARTIAL) and J2 (post-#940 decomposed + escalated tier, CLOSED_FAIL). A re-run of J's protocol is a replication, not a new hypothesis, unless the revision pre-registers one."
       }
     },
     {

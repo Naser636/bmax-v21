@@ -45,6 +45,10 @@ const BASE_PRE_V168 = (() => {
   const h = contracts.data.contracts.find((x: any) => x.scenario === "H");
   h.state = "PROPOSED"; h.authorizedBy = null; delete h.authorization; delete h.revisionHistory; delete h.WORK_ITEM_CONTRACT.preRegistration;
   h.WORK_ITEM_CONTRACT.write_set = ["docs/odg/evidence/V160_SCENARIO_H.json"];
+  // V17.6: J is now owner-authorized (V176, AUTHORIZED_FOR_REVISION at REVISE_CONTRACT ⇒ actionable). This fixture keeps J as
+  // committed BEFORE V176 (PROPOSED, no authorization) so the tests below still exercise a NON-actionable strategic leader.
+  const j = contracts.data.contracts.find((x: any) => x.scenario === "J");
+  j.state = "PROPOSED"; j.authorizedBy = null; delete j.authorization; delete j.revisionHistory; delete j.proposedRevision;
   const s = clone(BASE); s.measured = BASE.measured;
   s.sources.contracts = contracts;
   // V16.9: authorizationEvidence {} — this fixture's GO state carries no authorization evidence (mirrored below)
@@ -174,7 +178,10 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
   const BASE_LIVE_EV = (() => { const s = clone(BASE_LIVE); s.measured = BASE_LIVE.measured; s.authorizationEvidence = COMMITTED_AUTH_EV; return s; })();
   // fixture: H at its RUN_CONTROLLED_EXPERIMENTS step (inspection recorded; experiment + validation not yet) — the state GO
   // actually acted on in the V168 native dispatch (#946). Labelled fixture, derived from the committed records.
-  const BASE_H_AT_RUN = (() => { const s = clone(BASE_LIVE_EV); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { ...COMMITTED_AUTH_EV, H: { ...COMMITTED_AUTH_EV.H, experiment: null, validation: null } }; return s; })();
+  // V17.6: labelled helper — J as committed BEFORE the owner V176 authorization (PROPOSED, no authorization block), for the
+  // fixtures below whose purpose is a NON-actionable strategic leader J (committed J is now actionable at REVISE_CONTRACT).
+  const preV176J = (s: any) => { const j = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "J"); j.state = "PROPOSED"; j.authorizedBy = null; delete j.authorization; delete j.revisionHistory; delete j.proposedRevision; return s; };
+  const BASE_H_AT_RUN = (() => { const s = preV176J(clone(BASE_LIVE_EV)); s.measured = BASE_LIVE.measured; s.authorizationEvidence = { ...COMMITTED_AUTH_EV, H: { ...COMMITTED_AUTH_EV.H, experiment: null, validation: null } }; return s; })();
   // 1d. V16.8 COMMITTED state (no fixture): H AUTHORIZED_FOR_REVISION (V168) with its revised contract ⇒ the register
   //     decision is DECISION_REQUIRED (J/G tie), kept verbatim (no id pick) ⇒ HALTED_DECISION_REQUIRED, nothing dispatched
   {
@@ -197,12 +204,20 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     const sel = stepIn(trace, "SELECT").decision;
     // V16.9 Phase 1: G and H are CLOSED (CLOSE-1) ⇒ the selector SELECTS J; J is PROPOSED ⇒ halt at the authorization gate
     // with an owner request for J (previously: HALTED_DECISION_REQUIRED on a J/G tie that kept closed G selectable).
-    check("committed state (G, H closed) ⇒ SELECTED J, HALTED_AT_AUTHORIZATION_GATE, owner request for J's authorization, nothing actionable, no dispatch", r.status === "HALTED_AT_AUTHORIZATION_GATE" && sel.decision === "SELECTED" && sel.selected === "J" && !!sel.ownerRequest && sel.ownerRequest.item === "J" && /J PROPOSED → AUTHORIZED/.test(String(sel.ownerRequest.authorizationNeeded)) && calls.dispatch === 0);
+    // V17.6: J is now owner-authorized (V176) ⇒ the committed state SELECTS J and GO works on it at its scoped step
+    // REVISE_CONTRACT (provider/docs work: no preRegistration yet) — still halted at the authorization gate, no dispatch.
+    const au = stepIn(trace, "AUTHORIZE").decision.scopedAuthorization;
+    check("committed state (G, H closed; J owner-authorized V176) ⇒ SELECTED J, worked on at REVISE_CONTRACT (not execution), HALTED_AT_AUTHORIZATION_GATE, no dispatch", r.status === "HALTED_AT_AUTHORIZATION_GATE" && sel.decision === "SELECTED" && sel.selected === "J" && sel.workingOn === "J" && !!au && au.scenario === "J" && au.currentStep === "REVISE_CONTRACT" && au.executionAuthorized === false && calls.dispatch === 0);
+    const pre = preV176J(clone(BASE_LIVE_EV)); pre.measured = BASE_LIVE.measured;
+    const { ports: p2, trace: t2, calls: c2 } = mkPorts({ state: pre });
+    const r2 = await GO.runGoCycle({ mode: "EXECUTE" }, p2);
+    const s2 = stepIn(t2, "SELECT").decision;
+    check("pre-V176 fixture (J PROPOSED) ⇒ SELECTED J, HALTED_AT_AUTHORIZATION_GATE, owner request for J's authorization, nothing actionable, no dispatch", r2.status === "HALTED_AT_AUTHORIZATION_GATE" && s2.decision === "SELECTED" && s2.selected === "J" && !!s2.ownerRequest && s2.ownerRequest.item === "J" && /J PROPOSED → AUTHORIZED/.test(String(s2.ownerRequest.authorizationNeeded)) && c2.dispatch === 0);
   }
   // 1e. strategic UNDECIDED and NO authorized item ⇒ still HALTED_DECISION_REQUIRED (no arbitrary pick)
   {
-    const s = clone(BASE_LIVE_EV); s.measured = BASE_LIVE.measured;
-    // labelled fixture: G AND H de-authorized (no authorization block ⇒ no CLOSE-1 closure, nothing actionable) so the
+    const s = preV176J(clone(BASE_LIVE_EV)); s.measured = BASE_LIVE.measured;
+    // labelled fixture (V17.6: J pre-V176 too): G AND H de-authorized (no authorization block ⇒ no CLOSE-1 closure, nothing actionable) so the
     // strategic selection is the undecided J/G tie this test needs (V16.9: with the committed closures it is decided).
     for (const id of ["H", "G"]) { const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === id); c.state = "PROPOSED"; c.authorizedBy = null; delete c.authorization; }
     const { ports, trace, calls } = mkPorts({ state: s });
@@ -512,7 +527,7 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
       check("GO-ORD non-tied case with a record present ⇒ SELECT byte-identical (record never consulted)", JSON.stringify(p0.st.decision) === JSON.stringify(p1.st.decision) && p0.st.rationale === p1.st.rationale && p0.r.status === p1.r.status);
       // strategic DECISION_REQUIRED (1e fixture: committed G2/J2 evidence ⇒ actionable G2/J2 tie) + the G2→J2 record ⇒ actionable
       // G2 chosen, while strategicSelection (and the top-level selector decision) stays byte-identical, still undecided
-      const s1e = clone(BASE_LIVE_EV); s1e.measured = BASE_LIVE.measured;
+      const s1e = preV176J(clone(BASE_LIVE_EV)); s1e.measured = BASE_LIVE.measured;
       for (const id of ["H", "G"]) { const cc = s1e.sources.contracts.data.contracts.find((x: any) => x.scenario === id); cc.state = "PROPOSED"; cc.authorizedBy = null; delete cc.authorization; }
       const G2REC = { ...rj("docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json"), recordPath: "docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json" };
       const e0 = await runSel(s1e); const e1 = await runSel(withRec(s1e, [G2REC]));
