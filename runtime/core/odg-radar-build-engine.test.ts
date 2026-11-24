@@ -95,6 +95,35 @@ function main() {
   const cliSrc = fs.readFileSync(path.join(ROOT, "runtime/bin/odg-v176-radar-build-proposals.ts"), "utf8");
   check("CLI writes exactly one file (its declared OUT_REL)", (cliSrc.match(/writeFileSync\(/g) || []).length === 1 && /writeFileSync\(path\.join\(ROOT, OUT_REL\)/.test(cliSrc) && !/appendFileSync|mkdirSync/.test(cliSrc));
 
+  // freshness reproducibility: epochs are pinned by content hash — an unrelated commit (time source moves) cannot drift --check
+  {
+    const committed = JSON.parse(fs.readFileSync(path.join(ROOT, CLI.OUT_REL), "utf8"));
+    const pinned = CLI.pinnedInputsOf(committed);
+    let derived = 0;
+    const moved = CLI.loadSources(ROOT, pinned, () => { derived++; return 9e12; });
+    check("unchanged inputs keep their pinned epoch (time source never consulted)", derived === 0 && moved.inputs.every((i: any) => i.sha256 === null || pinned[i.source].epochMs === i.epochMs));
+    check("committed record reproduces with a moved time source (--check stays OK after an unrelated commit)", CLI.render(ROOT) === fs.readFileSync(path.join(ROOT, CLI.OUT_REL), "utf8"));
+    const ins = [{ source: "a.json", sha256: "h1" }, { source: "b.json", sha256: "h2-new" }, { source: "c.json", sha256: null }];
+    const pin = { "a.json": { sha256: "h1", epochMs: 100 }, "b.json": { sha256: "h2-old", epochMs: 200 } };
+    const seen: string[] = [];
+    const ep = CLI.resolveEpochs(ins, pin, (rel: string) => { seen.push(rel); return 300; });
+    check("changed input is re-dated, unchanged one keeps its pin, absent one is skipped", ep["a.json"] === 100 && ep["b.json"] === 300 && !("c.json" in ep) && seen.join() === "b.json" && (ins[1] as any).epochMs === 300);
+    check("record without pinned epochs pins nothing (first regeneration derives everything)", Object.keys(CLI.pinnedInputsOf({ inputs: [{ source: "x", sha256: "y" }] })).length === 0);
+    // git time source in a temp repo: last commit of the file; unrelated commit does not move it; dirty ⇒ current commit time
+    const os = require("os"); const { execFileSync } = require("child_process");
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "radar-fresh-"));
+    const g = (args: string[], date: string) => execFileSync("git", ["-C", dir, ...args], { stdio: "ignore", env: { ...process.env, GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date, GIT_AUTHOR_NAME: "t", GIT_AUTHOR_EMAIL: "t@t", GIT_COMMITTER_NAME: "t", GIT_COMMITTER_EMAIL: "t@t" } });
+    try {
+      g(["init", "-q"], "2026-01-01T00:00:00Z");
+      fs.writeFileSync(path.join(dir, "a.json"), "{}"); g(["add", "a.json"], "2026-01-01T00:00:00Z"); g(["commit", "-qm", "a"], "2026-01-01T00:00:00Z");
+      const e1 = CLI.gitEpochOf(dir, "a.json");
+      fs.writeFileSync(path.join(dir, "b.json"), "{}"); g(["add", "b.json"], "2026-02-01T00:00:00Z"); g(["commit", "-qm", "b"], "2026-02-01T00:00:00Z");
+      check("git epoch of an input is unchanged by an unrelated commit", e1 === Date.parse("2026-01-01T00:00:00Z") && CLI.gitEpochOf(dir, "a.json") === e1);
+      fs.writeFileSync(path.join(dir, "a.json"), "{\"x\":1}");
+      check("dirty input is dated at the current commit (its content postdates it)", CLI.gitEpochOf(dir, "a.json") === Date.parse("2026-02-01T00:00:00Z"));
+    } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+  }
+
   process.stdout.write(failures ? `\n${failures} FAILURE(S)\n` : "\nALL PASS — odg-radar-build-engine (detect→analyse→gate/dedup→rank→PROPOSED drafts; deny-by-default; no network; no store)\n");
   process.exit(failures ? 1 : 0);
 }
