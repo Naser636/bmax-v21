@@ -36,13 +36,17 @@ check("classify: recursive sorted ⇒ CANONICAL", NRI.classify(load(defs[2].sour
 const committed = JSON.parse(fs.readFileSync(path.join(ROOT, R.CONTRACT), "utf8"));
 const derived = R.contractFor(ROOT);
 check("derivation file is PROPOSED with no authorizedBy", committed.state === "PROPOSED" && committed.authorizedBy === null);
-check("derivation file origin + WORK_ITEM_CONTRACT equal the rules' derivation from this tree", JSON.stringify(committed.origin) === JSON.stringify(derived.origin) && JSON.stringify(committed.WORK_ITEM_CONTRACT) === JSON.stringify(derived.WORK_ITEM_CONTRACT));
+// V17.5: once the native module is INTEGRATED (target file exists), detection reports defect=false and no new contract is derived —
+// the item is satisfied; asserted explicitly. Before integration the derivation must equal the committed contract.
+const targetBuilt = fs.existsSync(path.join(ROOT, "runtime/core/odg-canonical-json.ts"));
+if (targetBuilt) check("after integration: target module exists ⇒ detection defect=false ⇒ no new contract derived (item satisfied)", derived === null && NRI.detectCanonDefects(ROOT).defect === false);
+else check("derivation file origin + WORK_ITEM_CONTRACT equal the rules' derivation from this tree", JSON.stringify(committed.origin) === JSON.stringify(derived.origin) && JSON.stringify(committed.WORK_ITEM_CONTRACT) === JSON.stringify(derived.WORK_ITEM_CONTRACT));
 check("native patch write set = 2 files; dispatch target RUN_CONTROLLED_EXPERIMENTS = this runner, writeSet = [OUT]", committed.WORK_ITEM_CONTRACT.nativePatchWriteSet.length === 2 && committed.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS.command === R.SELF && JSON.stringify(committed.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS.writeSet) === JSON.stringify([R.OUT]));
 check("derivation file '//' discloses the 4 hand-added header fields", /4 header fields/.test(committed["//"]) && /ADDED BY HAND/.test(committed["//"]));
 
 // canonical entry (V160 contracts file, read by GO) = the same rules output + owner authorization
 const canonical = R.readContract(ROOT);
-check("V160 entry V175-NB1 exists, its origin + WORK_ITEM_CONTRACT equal the rules' derivation, owner source = V175 record", !!canonical && JSON.stringify(canonical.origin) === JSON.stringify(derived.origin) && JSON.stringify(canonical.WORK_ITEM_CONTRACT) === JSON.stringify(derived.WORK_ITEM_CONTRACT) && /V175_OWNER_AUTHORIZATION_NATIVE_BUILD\.json/.test(canonical.authorization.source) && canonical.authorization.executionAuthorized === false);
+check("V160 entry V175-NB1 exists, its origin + WORK_ITEM_CONTRACT equal the rules' derivation, owner source = V175 record", !!canonical && JSON.stringify(canonical.origin) === JSON.stringify((derived || committed).origin) && JSON.stringify(canonical.WORK_ITEM_CONTRACT) === JSON.stringify((derived || committed).WORK_ITEM_CONTRACT) && /V175_OWNER_AUTHORIZATION_NATIVE_BUILD\.json/.test(canonical.authorization.source) && canonical.authorization.executionAuthorized === false);
 // gate = the canonical odg-authorization-scope derivation (LABELLED fixture probes: commit 'a'×40 declared present + ancestor of main)
 {
   const ASc = require("../core/odg-authorization-scope.js");

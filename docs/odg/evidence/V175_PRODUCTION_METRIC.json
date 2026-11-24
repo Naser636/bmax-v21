@@ -1,0 +1,1004 @@
+{
+  "//": "V17.5 PRIORITY 5 — verified production measure per mission (G, H, G2, J2) + PR #955–#971 wall-time split. READ-ONLY; NOT_MEASURED preserved. Recompute: npx tsx runtime/bin/odg-v175-production-metric.ts --check",
+  "schema": "ODG_V175_PRODUCTION_METRIC/1",
+  "missions": [
+    {
+      "id": "G",
+      "resultsProduced": {
+        "record": "docs/odg/evidence/V166_G_EXPERIMENT.json",
+        "recordSha256": "25a8db57f6812db84a40db3f92b0323e4aa85612cefa4bb0ecfdb1ad6b07a705",
+        "outcome": "PARTIAL",
+        "detail": {
+          "primary": [
+            "PASS condition not met: delta1_ge_minus_0_02"
+          ],
+          "heldoutN": 200,
+          "source": "docs/odg/evidence/V166_G_EXPERIMENT.json#primary.counts"
+        }
+      },
+      "outputsAccepted": {
+        "accepted": true,
+        "merged": true,
+        "experimentPr": 935,
+        "experimentMergedAt": "2026-11-23T21:39:45Z",
+        "inspection": {
+          "verdict": "ACCEPT",
+          "inspectedPr": 935,
+          "source": "docs/odg/evidence/V166_G_CRITERIA_VALIDATION.json#experimentInspection"
+        },
+        "validatedGrade": "PARTIAL",
+        "validationBoundToExperiment": true,
+        "validationPr": 937,
+        "validationMergedAt": "2026-11-23T21:58:54Z"
+      },
+      "time": {
+        "goCycleMs": {
+          "status": "NOT_MEASURED",
+          "reason": "not GO-dispatched (no GO trace) — the run was executed by the provider session"
+        },
+        "executeStepMs": {
+          "status": "NOT_MEASURED",
+          "reason": "no GO trace"
+        },
+        "recordRunMs": {
+          "status": "NOT_MEASURED",
+          "reason": "experiment record carries no run start/finish time"
+        },
+        "goStop": null,
+        "runEndToExperimentPrOpenMs": {
+          "status": "NOT_MEASURED",
+          "reason": "no GO trace end time"
+        },
+        "experimentPrOpenToMergeMs": 487000,
+        "experimentMergeToValidationMergeMs": 1149000,
+        "runEndToClosureMs": {
+          "status": "NOT_MEASURED",
+          "reason": "no GO trace end time"
+        }
+      },
+      "cost": {
+        "costAvailableEur": {
+          "status": "NOT_MEASURED",
+          "reason": "no € budget field in the contract"
+        },
+        "computeCaps": null,
+        "nativeEngagedEur": {
+          "status": "NOT_MEASURED",
+          "reason": "not GO-dispatched — no ODG strategy record"
+        },
+        "providerEngagedEur": {
+          "status": "NOT_MEASURED",
+          "reason": "provider (Claude Code) token / € consumption is not recorded in the repository"
+        },
+        "localModelCalls": {
+          "status": "NOT_MEASURED",
+          "reason": "no model calls recorded by the experiment record"
+        },
+        "providerCallsByGo": {
+          "status": "NOT_MEASURED",
+          "reason": "no GO trace"
+        }
+      },
+      "share": {
+        "builtByOdg": {
+          "goDispatched": false,
+          "goSteps": [],
+          "dispatchCalls": 0,
+          "note": "the experiment command was run by the provider session (record run has no GO dispatch)"
+        },
+        "lines": {
+          "commits": 3,
+          "providerAuthoredCommits": 3,
+          "nonProviderCommits": 0,
+          "nativeWrittenLinesMerged": 0,
+          "nativeWrittenFiles": [],
+          "nativeCodeLinesMerged": 0,
+          "providerLinesMerged": 973,
+          "nativeLineShare": 0,
+          "note": "native = additions to files in the GO DISPATCHED writeSet (ODG-written evidence data, committed by the provider); provider = every other added line; the git author of every commit is the shared 'ODG Runtime' identity, so a Claude Co-Authored-By trailer is the only authorship signal; nonProviderCommits = commits WITHOUT that trailer (authorship not attributable from git — not evidence of ODG authorship)"
+        },
+        "linesScope": "commits of the experiment PR #935 and the validation PR #937 (the runner, contract and inspection PRs are not attributed to one mission)"
+      }
+    },
+    {
+      "id": "H",
+      "resultsProduced": {
+        "record": "docs/odg/evidence/V168_H_EXPERIMENT.json",
+        "recordSha256": "47d8e591d6cd13fc4c89287508a1281050fb3f1a061be0ba9fd6f7843259662d",
+        "outcome": "FAIL",
+        "detail": {
+          "primary": [
+            "Δ0 = -0.10737373737373734 ≤ 0"
+          ],
+          "heldoutN": 199,
+          "source": "docs/odg/evidence/V168_H_EXPERIMENT.json#primary.counts"
+        }
+      },
+      "outputsAccepted": {
+        "accepted": true,
+        "merged": true,
+        "experimentPr": 946,
+        "experimentMergedAt": "2026-11-24T00:22:36Z",
+        "inspection": {
+          "verdict": "ACCEPT",
+          "inspectedPr": 946,
+          "source": "docs/odg/evidence/V168_H_CRITERIA_VALIDATION.json#experimentInspection"
+        },
+        "validatedGrade": "FAIL",
+        "validationBoundToExperiment": true,
+        "validationPr": 947,
+        "validationMergedAt": "2026-11-24T00:41:14Z"
+      },
+      "time": {
+        "goCycleMs": 180408,
+        "executeStepMs": 180110,
+        "recordRunMs": {
+          "status": "NOT_MEASURED",
+          "reason": "experiment record carries no run start/finish time"
+        },
+        "goStop": {
+          "beforeStep": "EVIDENCE",
+          "reason": "DEADLINE"
+        },
+        "runEndToExperimentPrOpenMs": 1196091,
+        "experimentPrOpenToMergeMs": 481000,
+        "experimentMergeToValidationMergeMs": 1118000,
+        "runEndToClosureMs": 2795091
+      },
+      "cost": {
+        "costAvailableEur": {
+          "status": "NOT_MEASURED",
+          "reason": "no € budget field in the contract"
+        },
+        "computeCaps": null,
+        "nativeEngagedEur": {
+          "value": 0,
+          "source": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl#STEP[STRATEGY].decision.rationale: every part LOCAL_OK (AP-H:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH"
+        },
+        "providerEngagedEur": {
+          "status": "NOT_MEASURED",
+          "reason": "provider (Claude Code) token / € consumption is not recorded in the repository"
+        },
+        "localModelCalls": {
+          "status": "NOT_MEASURED",
+          "reason": "no model calls recorded by the experiment record"
+        },
+        "providerCallsByGo": 0
+      },
+      "share": {
+        "builtByOdg": {
+          "goDispatched": true,
+          "runId": "86a7a424d358dce8",
+          "goSteps": [
+            "TRUTH_LOCK:PASS",
+            "STATE_READ:DONE",
+            "PROBLEMS_OPPORTUNITIES:DONE",
+            "SELECT:DONE",
+            "DECOMPOSE:DONE",
+            "STRATEGY:DONE",
+            "AUTHORIZE:DONE",
+            "EXECUTE:EXECUTED_PASS"
+          ],
+          "dispatchCalls": 1,
+          "odgWrittenFiles": [
+            "docs/odg/evidence/V168_H_EXPERIMENT.json"
+          ],
+          "source": "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl"
+        },
+        "lines": {
+          "commits": 4,
+          "providerAuthoredCommits": 4,
+          "nonProviderCommits": 0,
+          "nativeWrittenLinesMerged": 355,
+          "nativeWrittenFiles": [
+            "docs/odg/evidence/V168_H_EXPERIMENT.json"
+          ],
+          "nativeCodeLinesMerged": 0,
+          "providerLinesMerged": 212,
+          "nativeLineShare": 0.6261,
+          "note": "native = additions to files in the GO DISPATCHED writeSet (ODG-written evidence data, committed by the provider); provider = every other added line; the git author of every commit is the shared 'ODG Runtime' identity, so a Claude Co-Authored-By trailer is the only authorship signal; nonProviderCommits = commits WITHOUT that trailer (authorship not attributable from git — not evidence of ODG authorship)"
+        },
+        "linesScope": "commits of the experiment PR #946 and the validation PR #947 (the runner, contract and inspection PRs are not attributed to one mission)"
+      }
+    },
+    {
+      "id": "G2",
+      "resultsProduced": {
+        "record": "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+        "recordSha256": "b54206e6a4730a6728a3b1dbe393498073eb062fd464155b248d9f1cff5c5ce1",
+        "outcome": "PARTIAL",
+        "detail": {
+          "primary": [
+            "PASS condition not met: deltaB_gt_0",
+            "PASS condition not met: ci95Low_deltaB_gt_0"
+          ],
+          "heldoutN": 168,
+          "source": "docs/odg/evidence/V172_G2_EXPERIMENT.json#primary.counts"
+        }
+      },
+      "outputsAccepted": {
+        "accepted": true,
+        "merged": true,
+        "experimentPr": 963,
+        "experimentMergedAt": "2026-11-24T12:10:19Z",
+        "inspection": {
+          "verdict": "ACCEPT",
+          "inspectedPr": 963,
+          "source": "docs/odg/evidence/V172_G2_CRITERIA_VALIDATION.json#experimentInspection"
+        },
+        "validatedGrade": "PARTIAL",
+        "validationBoundToExperiment": true,
+        "validationPr": 964,
+        "validationMergedAt": "2026-11-24T12:19:19Z"
+      },
+      "time": {
+        "goCycleMs": 33665,
+        "executeStepMs": 32784,
+        "recordRunMs": {
+          "status": "NOT_MEASURED",
+          "reason": "experiment record carries no run start/finish time"
+        },
+        "goStop": null,
+        "runEndToExperimentPrOpenMs": 150601,
+        "experimentPrOpenToMergeMs": 398000,
+        "experimentMergeToValidationMergeMs": 540000,
+        "runEndToClosureMs": 1088601
+      },
+      "cost": {
+        "costAvailableEur": {
+          "status": "NOT_MEASURED",
+          "reason": "no € budget field in the contract"
+        },
+        "computeCaps": null,
+        "nativeEngagedEur": {
+          "value": 0,
+          "source": "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl#STEP[STRATEGY].decision.rationale: every part LOCAL_OK (AP-G2:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH"
+        },
+        "providerEngagedEur": {
+          "status": "NOT_MEASURED",
+          "reason": "provider (Claude Code) token / € consumption is not recorded in the repository"
+        },
+        "localModelCalls": {
+          "status": "NOT_MEASURED",
+          "reason": "no model calls recorded by the experiment record"
+        },
+        "providerCallsByGo": 0
+      },
+      "share": {
+        "builtByOdg": {
+          "goDispatched": true,
+          "runId": "b4d59263fc5efe7f",
+          "goSteps": [
+            "TRUTH_LOCK:PASS",
+            "STATE_READ:DONE",
+            "PROBLEMS_OPPORTUNITIES:DONE",
+            "SELECT:DONE",
+            "DECOMPOSE:DONE",
+            "STRATEGY:DONE",
+            "AUTHORIZE:DONE",
+            "EXECUTE:EXECUTED_PASS",
+            "EVIDENCE:DONE",
+            "NEXT_SELECTION:DONE"
+          ],
+          "dispatchCalls": 1,
+          "odgWrittenFiles": [
+            "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+            "docs/odg/evidence/V172_G2_HELDOUT.json"
+          ],
+          "source": "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl"
+        },
+        "lines": {
+          "commits": 2,
+          "providerAuthoredCommits": 2,
+          "nonProviderCommits": 0,
+          "nativeWrittenLinesMerged": 3130,
+          "nativeWrittenFiles": [
+            "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+            "docs/odg/evidence/V172_G2_HELDOUT.json"
+          ],
+          "nativeCodeLinesMerged": 0,
+          "providerLinesMerged": 191,
+          "nativeLineShare": 0.9425,
+          "note": "native = additions to files in the GO DISPATCHED writeSet (ODG-written evidence data, committed by the provider); provider = every other added line; the git author of every commit is the shared 'ODG Runtime' identity, so a Claude Co-Authored-By trailer is the only authorship signal; nonProviderCommits = commits WITHOUT that trailer (authorship not attributable from git — not evidence of ODG authorship)"
+        },
+        "linesScope": "commits of the experiment PR #963 and the validation PR #964 (the runner, contract and inspection PRs are not attributed to one mission)"
+      }
+    },
+    {
+      "id": "J2",
+      "resultsProduced": {
+        "record": "docs/odg/evidence/V172_J2_EXPERIMENT.json",
+        "recordSha256": "7fdedc219dc452c3c2d493e16ff32e2fc468543f688f01c971147d050ec2fe1a",
+        "outcome": "FAIL",
+        "detail": {
+          "primary": [
+            "A2@42 passes on 0 tasks of E"
+          ],
+          "rows": 58,
+          "rowsMeasured": 54,
+          "acceptedTaskRuns": 1,
+          "modelCallsTotal": 377,
+          "source": "docs/odg/evidence/V172_J2_EXPERIMENT.json#summary.perArmSeed"
+        }
+      },
+      "outputsAccepted": {
+        "accepted": true,
+        "merged": true,
+        "experimentPr": 970,
+        "experimentMergedAt": "2026-11-24T13:50:11Z",
+        "inspection": {
+          "verdict": "ACCEPT",
+          "inspectedPr": 970,
+          "source": "docs/odg/evidence/V172_J2_CRITERIA_VALIDATION.json#experimentInspection"
+        },
+        "validatedGrade": "FAIL",
+        "validationBoundToExperiment": true,
+        "validationPr": 971,
+        "validationMergedAt": "2026-11-24T14:07:08Z"
+      },
+      "time": {
+        "goCycleMs": 2368716,
+        "executeStepMs": 2367781,
+        "recordRunMs": 2363803,
+        "goStop": null,
+        "runEndToExperimentPrOpenMs": 291821,
+        "experimentPrOpenToMergeMs": 560000,
+        "experimentMergeToValidationMergeMs": 1017000,
+        "runEndToClosureMs": 1868821
+      },
+      "cost": {
+        "costAvailableEur": {
+          "status": "NOT_MEASURED",
+          "reason": "no € budget field in the contract"
+        },
+        "computeCaps": {
+          "perTrialWallMs": 1800000,
+          "maxModelCallsTotal": 600,
+          "maxRepairCeiling": 3,
+          "note": "hard caps; exceeding one stops the run with NOT_MEASURED for the remainder — no unbounded loop"
+        },
+        "nativeEngagedEur": {
+          "value": 0,
+          "source": "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl#STEP[STRATEGY].decision.rationale: every part LOCAL_OK (AP-J2:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH"
+        },
+        "providerEngagedEur": {
+          "status": "NOT_MEASURED",
+          "reason": "provider (Claude Code) token / € consumption is not recorded in the repository"
+        },
+        "localModelCalls": 377,
+        "providerCallsByGo": 0
+      },
+      "share": {
+        "builtByOdg": {
+          "goDispatched": true,
+          "runId": "3fb020e7be02f800",
+          "goSteps": [
+            "TRUTH_LOCK:PASS",
+            "STATE_READ:DONE",
+            "PROBLEMS_OPPORTUNITIES:DONE",
+            "SELECT:DONE",
+            "DECOMPOSE:DONE",
+            "STRATEGY:DONE",
+            "AUTHORIZE:DONE",
+            "EXECUTE:EXECUTED_PASS",
+            "EVIDENCE:DONE",
+            "NEXT_SELECTION:DONE"
+          ],
+          "dispatchCalls": 1,
+          "odgWrittenFiles": [
+            "docs/odg/evidence/V172_J2_EXPERIMENT.json"
+          ],
+          "source": "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl"
+        },
+        "lines": {
+          "commits": 3,
+          "providerAuthoredCommits": 3,
+          "nonProviderCommits": 0,
+          "nativeWrittenLinesMerged": 11906,
+          "nativeWrittenFiles": [
+            "docs/odg/evidence/V172_J2_EXPERIMENT.json"
+          ],
+          "nativeCodeLinesMerged": 0,
+          "providerLinesMerged": 235,
+          "nativeLineShare": 0.9806,
+          "note": "native = additions to files in the GO DISPATCHED writeSet (ODG-written evidence data, committed by the provider); provider = every other added line; the git author of every commit is the shared 'ODG Runtime' identity, so a Claude Co-Authored-By trailer is the only authorship signal; nonProviderCommits = commits WITHOUT that trailer (authorship not attributable from git — not evidence of ODG authorship)"
+        },
+        "linesScope": "commits of the experiment PR #970 and the validation PR #971 (the runner, contract and inspection PRs are not attributed to one mission)"
+      }
+    }
+  ],
+  "prTimeline": {
+    "window": [
+      955,
+      971
+    ],
+    "prs": [
+      {
+        "number": 955,
+        "state": "MERGED",
+        "title": "fix(v17.2): G/H --check-at-run-head — reproduce closed experiment records at their own run head",
+        "openedAt": "2026-11-24T02:38:38Z",
+        "mergedAt": "2026-11-24T02:45:38Z",
+        "commits": 1,
+        "firstCommitToOpenMs": 3000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 0,
+        "lastCommitToCiStartMs": 10000,
+        "ciMs": 386000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 27000,
+        "openToMergeMs": 420000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 956,
+        "state": "MERGED",
+        "title": "feat(v17.2): G2 + J2 pre-registered contracts (REVISE_CONTRACT) + owner-source binding",
+        "openedAt": "2026-11-24T02:42:30Z",
+        "mergedAt": "2026-11-24T02:52:15Z",
+        "commits": 2,
+        "firstCommitToOpenMs": 21000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 228000,
+        "lastCommitToCiStartMs": 28000,
+        "ciMs": 318000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 11000,
+        "openToMergeMs": 585000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 957,
+        "state": "MERGED",
+        "title": "docs(v17.2): inspection records — contracts G2 and J2 ACCEPT",
+        "openedAt": "2026-11-24T02:53:30Z",
+        "mergedAt": "2026-11-24T03:01:08Z",
+        "commits": 2,
+        "firstCommitToOpenMs": 4000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 109000,
+        "lastCommitToCiStartMs": 26000,
+        "ciMs": 302000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 21000,
+        "openToMergeMs": 458000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [
+          {
+            "sha": "04e80fcc",
+            "committedDate": "2026-11-24T02:53:26Z",
+            "headline": "docs(v17.2): record the independent inspection ACCEPT of the new cont…",
+            "verdictExistedBefore": "2026-11-24T02:53:26Z"
+          }
+        ],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 958,
+        "state": "MERGED",
+        "title": "feat(v17.2): G2 held-out builder + experiment runner (dispatch target, not run)",
+        "openedAt": "2026-11-24T03:06:01Z",
+        "mergedAt": "2026-11-24T03:15:20Z",
+        "commits": 2,
+        "firstCommitToOpenMs": 4000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 156000,
+        "lastCommitToCiStartMs": 28000,
+        "ciMs": 366000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 9000,
+        "openToMergeMs": 559000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 959,
+        "state": "MERGED",
+        "title": "feat(v17.2): J2 experiment runner — declared RUN_CONTROLLED_EXPERIMENTS target (not run)",
+        "openedAt": "2026-11-24T03:09:00Z",
+        "mergedAt": "2026-11-24T11:32:29Z",
+        "commits": 5,
+        "firstCommitToOpenMs": 19000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 29863000,
+        "lastCommitToCiStartMs": 29000,
+        "ciMs": 278000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 39000,
+        "openToMergeMs": 30209000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 960,
+        "state": "MERGED",
+        "title": "fix(v17.2): LOW corrections (GO tie rationale, odg-go flags, NOT_STARTED mapping, run-head-check signals, G2 builder diagnostics)",
+        "openedAt": "2026-11-24T11:05:33Z",
+        "mergedAt": "2026-11-24T11:12:18Z",
+        "commits": 1,
+        "firstCommitToOpenMs": 14000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 0,
+        "lastCommitToCiStartMs": 21000,
+        "ciMs": 372000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 26000,
+        "openToMergeMs": 405000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 961,
+        "state": "MERGED",
+        "title": "docs(v17.3): J2 re-inspection record (revised contract d5a8b0db ACCEPT)",
+        "openedAt": "2026-11-24T11:34:05Z",
+        "mergedAt": "2026-11-24T11:38:54Z",
+        "commits": 1,
+        "firstCommitToOpenMs": 4000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 0,
+        "lastCommitToCiStartMs": 12000,
+        "ciMs": 274000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 7000,
+        "openToMergeMs": 289000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [
+          {
+            "sha": "dbdd618f",
+            "committedDate": "2026-11-24T11:34:01Z",
+            "headline": "docs(v17.3): record the independent REINFORCED inspection ACCEPT of t…",
+            "verdictExistedBefore": "2026-11-24T11:34:01Z"
+          }
+        ],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 962,
+        "state": "MERGED",
+        "title": "feat(v17.4): GO consumes the owner ORDER decision G2 → J2 (GO-ORD-1)",
+        "openedAt": "2026-11-24T11:48:08Z",
+        "mergedAt": "2026-11-24T11:59:36Z",
+        "commits": 2,
+        "firstCommitToOpenMs": 13000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 349000,
+        "lastCommitToCiStartMs": 29000,
+        "ciMs": 288000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 22000,
+        "openToMergeMs": 688000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [
+          {
+            "sha": "ea710016",
+            "committedDate": "2026-11-24T11:53:57Z",
+            "headline": "fix(v17.4): #962 inspection LOW — GO-ORD-1 validates schema, OWNER is…",
+            "verdictExistedBefore": "2026-11-24T11:53:57Z"
+          }
+        ],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 963,
+        "state": "MERGED",
+        "title": "docs(v17.4): G2 experiment result — PARTIAL, run by ODG GO",
+        "openedAt": "2026-11-24T12:03:41Z",
+        "mergedAt": "2026-11-24T12:10:19Z",
+        "commits": 1,
+        "firstCommitToOpenMs": 4000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 0,
+        "lastCommitToCiStartMs": 12000,
+        "ciMs": 365000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 25000,
+        "openToMergeMs": 398000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 964,
+        "state": "MERGED",
+        "title": "docs(v17.4): G2 criteria validation — CLOSED_PARTIAL (NOT_ADOPTED)",
+        "openedAt": "2026-11-24T12:13:54Z",
+        "mergedAt": "2026-11-24T12:19:19Z",
+        "commits": 1,
+        "firstCommitToOpenMs": 5000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 0,
+        "lastCommitToCiStartMs": 12000,
+        "ciMs": 292000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 26000,
+        "openToMergeMs": 325000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 965,
+        "state": "MERGED",
+        "title": "fix(v17.4): GO-DTO-1 — contract-cap-derived dispatch timeout for declared targets (J2)",
+        "openedAt": "2026-11-24T12:20:12Z",
+        "mergedAt": "2026-11-24T12:35:27Z",
+        "commits": 2,
+        "firstCommitToOpenMs": 5000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 495000,
+        "lastCommitToCiStartMs": 10000,
+        "ciMs": 368000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 42000,
+        "openToMergeMs": 915000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [
+          {
+            "sha": "c90641e4",
+            "committedDate": "2026-11-24T12:28:27Z",
+            "headline": "fix(v17.4): #965 inspection MED-1/MED-2/LOW-1/LOW-2 — GO-DTO-1 cycle …",
+            "verdictExistedBefore": "2026-11-24T12:28:27Z"
+          }
+        ],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 966,
+        "state": "MERGED",
+        "title": "feat(v17.4): GO-ORD-2 — owner selection decision for J2 (actionable DECISION_REQUIRED for uncertainty)",
+        "openedAt": "2026-11-24T12:43:12Z",
+        "mergedAt": "2026-11-24T12:55:28Z",
+        "commits": 2,
+        "firstCommitToOpenMs": 5000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 406000,
+        "lastCommitToCiStartMs": 10000,
+        "ciMs": 306000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 14000,
+        "openToMergeMs": 736000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [
+          {
+            "sha": "a6dd6841",
+            "committedDate": "2026-11-24T12:49:58Z",
+            "headline": "fix(v17.4): #966 inspection MED — GO-ORD-2 persistent one-shot claim …",
+            "verdictExistedBefore": "2026-11-24T12:49:58Z"
+          }
+        ],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 967,
+        "state": "MERGED",
+        "title": "docs(v17.4): transition checkpoint CP11",
+        "openedAt": "2026-11-24T13:05:50Z",
+        "mergedAt": "2026-11-24T13:14:34Z",
+        "commits": 2,
+        "firstCommitToOpenMs": 5000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 80000,
+        "lastCommitToCiStartMs": 28000,
+        "ciMs": 389000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 27000,
+        "openToMergeMs": 524000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [
+          {
+            "sha": "0f304f57",
+            "committedDate": "2026-11-24T13:07:10Z",
+            "headline": "docs(v17.4): CP11 inspection LOWs — J open step is PROPOSED→AUTHORIZE…",
+            "verdictExistedBefore": "2026-11-24T13:07:10Z"
+          }
+        ],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 968,
+        "state": "CLOSED",
+        "title": "feat(v17.5): measure register criteria BLK-3 / REU-1 from committed evidence",
+        "openedAt": "2026-11-24T13:19:48Z",
+        "mergedAt": null,
+        "commits": 2,
+        "firstCommitToOpenMs": 92000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 0,
+        "lastCommitToCiStartMs": 31000,
+        "ciMs": 312000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": {
+          "status": "NOT_MEASURED",
+          "reason": "not merged (CLOSED)"
+        },
+        "openToMergeMs": {
+          "status": "NOT_MEASURED",
+          "reason": "not merged (CLOSED)"
+        },
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [],
+        "reviewCount": 0,
+        "commentCount": 1
+      },
+      {
+        "number": 969,
+        "state": "MERGED",
+        "title": "feat(v17.5): register dependency graph — item→item edges from explicit committed evidence (DEPG-1) + contention (CONT-1)",
+        "openedAt": "2026-11-24T13:34:51Z",
+        "mergedAt": "2026-11-24T13:58:25Z",
+        "commits": 3,
+        "firstCommitToOpenMs": 21000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 1086000,
+        "lastCommitToCiStartMs": 12000,
+        "ciMs": 307000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 9000,
+        "openToMergeMs": 1414000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [
+          {
+            "sha": "eb1c10a3",
+            "committedDate": "2026-11-24T13:51:33Z",
+            "headline": "wip: #969 inspection fix (pre-merge)",
+            "verdictExistedBefore": "2026-11-24T13:51:33Z"
+          },
+          {
+            "sha": "847b3c18",
+            "committedDate": "2026-11-24T13:52:57Z",
+            "headline": "fix(v17.5): #969 inspection — only failable prerequisites feed DEP-1;…",
+            "verdictExistedBefore": "2026-11-24T13:52:57Z"
+          }
+        ],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 970,
+        "state": "MERGED",
+        "title": "docs(v17.5): J2 experiment result — FAIL, run by ODG GO",
+        "openedAt": "2026-11-24T13:40:51Z",
+        "mergedAt": "2026-11-24T13:50:11Z",
+        "commits": 1,
+        "firstCommitToOpenMs": 5000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 0,
+        "lastCommitToCiStartMs": 12000,
+        "ciMs": 384000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 169000,
+        "openToMergeMs": 560000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [],
+        "reviewCount": 0,
+        "commentCount": 0
+      },
+      {
+        "number": 971,
+        "state": "MERGED",
+        "title": "docs(v17.5): J2 criteria validation — CLOSED_FAIL (NOT_ADOPTED)",
+        "openedAt": "2026-11-24T13:55:49Z",
+        "mergedAt": "2026-11-24T14:07:08Z",
+        "commits": 3,
+        "firstCommitToOpenMs": 5000,
+        "preOpenBuildMs": {
+          "status": "NOT_MEASURED",
+          "reason": "work start not recorded; first commit time is only an upper bound on when building ended for the first commit"
+        },
+        "openToLastCommitMs": 257000,
+        "lastCommitToCiStartMs": 30000,
+        "ciMs": 386000,
+        "ciConclusion": "SUCCESS",
+        "ciEndToMergeMs": 6000,
+        "openToMergeMs": 679000,
+        "inspectionVerdictAt": {
+          "status": "NOT_MEASURED",
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+        },
+        "inspectionFindingCommits": [
+          {
+            "sha": "e0f840c9",
+            "committedDate": "2026-11-24T13:57:36Z",
+            "headline": "docs(v17.5): #971 inspection — C5 limit no longer attributes the by-c…",
+            "verdictExistedBefore": "2026-11-24T13:57:36Z"
+          }
+        ],
+        "reviewCount": 0,
+        "commentCount": 0
+      }
+    ],
+    "aggregate": {
+      "prs": 17,
+      "merged": 16,
+      "notMerged": [
+        "#968 CLOSED"
+      ],
+      "totalOpenToMergeMs": 39164000,
+      "medianOpenToMergeMs": 559500,
+      "medianCiMs": 341500,
+      "medianOpenToLastCommitMs": 132500,
+      "medianCiEndToMergeMs": 23500,
+      "longestOpenToMerge": {
+        "number": 959,
+        "openToMergeMs": 30209000,
+        "shareOfTotal": 0.7713
+      },
+      "split": {
+        "afterOpenUntilLastCommitShare": 0.8434,
+        "ciQueueShare": 0.0079,
+        "ciVerifyShare": 0.1374,
+        "waitAfterCiShare": 0.0123,
+        "note": "phases are sequential per PR: open → last commit (building/rework incl. inspection fixes and main merges, OR idle waiting between commits — e.g. for an owner decision; git cannot separate the two) → CI start (queue) → CI end (verify) → merge (wait: merge decision); shares of the summed open→merge time over merged PRs. The phases can overlap with an earlier CI run that the snapshot does not keep (latest run only) — report-only"
+      },
+      "withInspectionFindingCommits": [
+        "#957",
+        "#961",
+        "#962",
+        "#965",
+        "#966",
+        "#967",
+        "#969",
+        "#971"
+      ],
+      "reviewsOrCommentsOnPr": 1
+    }
+  },
+  "honesty": [
+    "NOT_MEASURED is preserved wherever the repository holds no record (provider € / tokens, € budget, inspection verdict time, pre-PR build time)",
+    "native €0 is reported only from the GO STRATEGY rationale; it does not cover the provider session",
+    "native-written lines are evidence data produced by a GO-dispatched run; native-built code merged is reported separately",
+    "inspection timing is an upper bound from commit subjects naming an inspection finding, never a recorded verdict time"
+  ],
+  "windowShare": {
+    "prs": "#955–#971 merged",
+    "goTraces": [
+      "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
+      "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl",
+      "docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl",
+      "docs/odg/evidence/V175_NB1_GO_EXECUTE_TRACE.jsonl"
+    ],
+    "odgWrittenPaths": [
+      "docs/odg/evidence/V168_H_EXPERIMENT.json",
+      "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+      "docs/odg/evidence/V172_G2_HELDOUT.json",
+      "docs/odg/evidence/V172_J2_EXPERIMENT.json",
+      "docs/odg/evidence/V175_NATIVE_BUILD_RESULT.json"
+    ],
+    "commits": 25,
+    "providerAuthoredCommits": 24,
+    "nonProviderCommits": 1,
+    "nativeWrittenLinesMerged": 15036,
+    "nativeWrittenFiles": [
+      "docs/odg/evidence/V172_G2_EXPERIMENT.json",
+      "docs/odg/evidence/V172_G2_HELDOUT.json",
+      "docs/odg/evidence/V172_J2_EXPERIMENT.json"
+    ],
+    "nativeCodeLinesMerged": 0,
+    "providerLinesMerged": 6105,
+    "nativeLineShare": 0.7112,
+    "note": "native = additions to files in the GO DISPATCHED writeSet (ODG-written evidence data, committed by the provider); provider = every other added line; the git author of every commit is the shared 'ODG Runtime' identity, so a Claude Co-Authored-By trailer is the only authorship signal; nonProviderCommits = commits WITHOUT that trailer (authorship not attributable from git — not evidence of ODG authorship)"
+  },
+  "sources": {
+    "snapshot": "docs/odg/evidence/V175_PR_TIMELINE_SNAPSHOT.json",
+    "snapshotAt": "2026-11-24T14:08:42.506Z",
+    "contracts": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+    "git": "git log --numstat <merge>^1..<merge>^2 per merged PR; git log --diff-filter=A + first-parent merges for record → PR"
+  }
+}

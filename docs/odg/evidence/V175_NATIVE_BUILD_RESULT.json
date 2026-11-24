@@ -1,0 +1,155 @@
+{
+  "schema": "odg-native-build-result/1",
+  "label": "NATIVE (ODG GO dispatch)",
+  "scenario": "V175-NB1",
+  "contractSha256": "953d064ad2fffd3711a9f4efa50592e96b06182349d801e22f7813b17b31b777",
+  "nativeClaim": "a PASS means: ODG's LOCAL MODEL implemented a provider-specified function (MODULE_SPEC + ORC-1 corpus written by the provider; expected values computed from the in-repo reference), generated/tested/repaired/verified inside ODG's loop — NOT that ODG designed the change",
+  "run": {
+    "head": "fe4b65d6f769b2bea5a14c88a035f223f101b6a4",
+    "startedAt": "2026-11-24T14:47:57.184Z",
+    "runner": "runtime/bin/odg-v175-native-build-run.ts"
+  },
+  "budgets": {
+    "model": "qwen2.5-coder:7b",
+    "temperature": 0,
+    "seed": 42,
+    "numPredict": 900,
+    "maxRepairPerRound": 3,
+    "maxRounds": 2,
+    "maxModelCalls": 10,
+    "wallMs": 1500000,
+    "perCallTimeoutMs": 300000
+  },
+  "detection": {
+    "defect": true,
+    "defectClass": "NON_CANONICAL_CANON",
+    "evidenceDigest": "c4058c8976c01dde5f61d8a9285f48c75db83c404d704719d5e75c6671c97d8e",
+    "defectiveSites": [
+      {
+        "file": "runtime/core/agent-identity.ts",
+        "line": 20,
+        "sourceSha256": "4a3fc3015dc4106845b2da862a17d047fa2c7e535d83d46ecec057586a7fe2e1",
+        "verdict": "NESTED_KEY_DROP"
+      },
+      {
+        "file": "runtime/core/audit-log.ts",
+        "line": 25,
+        "sourceSha256": "e8a6d31d8cb53c8477eb9f5df8b21d489bb8ac44cb20ab2e86110cf6ee681980",
+        "verdict": "NESTED_KEY_DROP"
+      },
+      {
+        "file": "runtime/core/supply-chain-attest.ts",
+        "line": 14,
+        "sourceSha256": "ed27dabe129794c90db0f349082f301d4c35618d665714f8a3481c6db46bd688",
+        "verdict": "ORDER_SENSITIVE"
+      }
+    ],
+    "reference": {
+      "sourceSha256": "4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734",
+      "copies": [
+        "runtime/core/odg-authorization-scope.ts:97",
+        "runtime/core/odg-go-cycle.ts:72",
+        "runtime/core/odg-verification-risk-calibration.ts:118"
+      ],
+      "rule": "REF-1: largest group of byte-identical CANONICAL definitions (tie ⇒ smallest sha256)"
+    },
+    "scanned": 802,
+    "targetExists": false
+  },
+  "verdict": "PASS",
+  "reason": "AC1 held-out oracle PASS in sandbox + AC2 strict typecheck PASS + AC3 git apply --check OK",
+  "rounds": [
+    {
+      "round": 1,
+      "buildOk": true,
+      "verified": true,
+      "accepted": true,
+      "repairs": 0,
+      "repairStopReason": null,
+      "verifyError": null,
+      "buildError": null,
+      "executionMode": "SANDBOX",
+      "executionStatus": "EXECUTED",
+      "isolation": {
+        "mechanism": "provider-sandbox bwrap (--unshare-all, --clearenv, no /home|/etc|/var) + prlimit RLIMIT_AS + null-prototype vm context",
+        "network": false,
+        "memoryLimitBytes": 1073741824,
+        "hostExecutesModelCode": false
+      },
+      "firstPass": {
+        "buildOk": true,
+        "verified": true,
+        "error": null
+      },
+      "finalTsSha256": "c4a6e2e979548aa90a8b9c6f7de3c0ed4e5e421cd5ac46e3af66a98ad797a604",
+      "typecheck": {
+        "ok": true,
+        "diagnostics": []
+      }
+    }
+  ],
+  "generations": [
+    {
+      "round": 1,
+      "i": 1,
+      "model": "qwen2.5-coder:7b",
+      "promptSha256": "bb6a6bb4a51bca7eefd86ab08b59dcb4f3dfe16679c80bb112a8a3eb08215c74",
+      "hint": null,
+      "ms": 81826,
+      "evalCount": 143,
+      "respondedModel": "qwen2.5-coder:7b",
+      "ok": true,
+      "tsSource": "function canonicalJson(value: any): string {\n    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n        return JSON.stringify(value);\n    } else if (Array.isArray(value)) {\n        return '[' + value.map(canonicalJson).join(',') + ']';\n    } else if (typeof value === 'object') {\n        const keys = Object.keys(value).sort();\n        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n        return '{' + entries.join(',') + '}';\n    }\n    return JSON.stringify(value);\n}\n\nmodule.exports = { canonicalJson };\nexport {};",
+      "tsSha256": "c4a6e2e979548aa90a8b9c6f7de3c0ed4e5e421cd5ac46e3af66a98ad797a604",
+      "syntaxErrors": [],
+      "sandboxContentSha256": "b1872bcbb5cb674c792b1d5a3660b4410de812ba0e110fadcce8a6ea33c84123"
+    }
+  ],
+  "network": {
+    "modelCalls": 1,
+    "prompts": [
+      {
+        "i": 1,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "bb6a6bb4a51bca7eefd86ab08b59dcb4f3dfe16679c80bb112a8a3eb08215c74",
+        "promptChars": 1214
+      }
+    ],
+    "refused": [],
+    "capHit": null,
+    "providerCalls": 0
+  },
+  "provenance": {
+    "actor": "ODG",
+    "executionClass": "ODG_LOCAL_MODEL_EXECUTION",
+    "patchAuthoredBy": "local model qwen2.5-coder:7b via Ollama 127.0.0.1:11434",
+    "testAuthoredBy": "ODG_RULES (oracleTestSource from ORC-1/REF-1)",
+    "runnerAuthoredBy": "PROVIDER (Claude Code) — plumbing only",
+    "providerEditedGeneratedCode": false,
+    "providerCalls": 0
+  },
+  "patch": {
+    "files": [
+      {
+        "path": "runtime/core/odg-canonical-json.ts",
+        "sha256": "c4a6e2e979548aa90a8b9c6f7de3c0ed4e5e421cd5ac46e3af66a98ad797a604",
+        "authoredBy": "LOCAL_MODEL",
+        "generation": 1
+      },
+      {
+        "path": "runtime/core/odg-canonical-json.test.ts",
+        "sha256": "6a71a478262a88575660b7c7f238b8aa86a6420564dbd55df9c53b23ebea2df8",
+        "authoredBy": "ODG_RULES"
+      }
+    ],
+    "diff": "diff --git a/runtime/core/odg-canonical-json.ts b/runtime/core/odg-canonical-json.ts\nnew file mode 100644\n--- /dev/null\n+++ b/runtime/core/odg-canonical-json.ts\n@@ -0,0 +1,15 @@\n+function canonicalJson(value: any): string {\n+    if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {\n+        return JSON.stringify(value);\n+    } else if (Array.isArray(value)) {\n+        return '[' + value.map(canonicalJson).join(',') + ']';\n+    } else if (typeof value === 'object') {\n+        const keys = Object.keys(value).sort();\n+        const entries = keys.map(key => JSON.stringify(key) + ':' + canonicalJson(value[key]));\n+        return '{' + entries.join(',') + '}';\n+    }\n+    return JSON.stringify(value);\n+}\n+\n+module.exports = { canonicalJson };\n+export {};\n\\ No newline at end of file\ndiff --git a/runtime/core/odg-canonical-json.test.ts b/runtime/core/odg-canonical-json.test.ts\nnew file mode 100644\n--- /dev/null\n+++ b/runtime/core/odg-canonical-json.test.ts\n@@ -0,0 +1,10 @@\n+#!/usr/bin/env node\n+\"use strict\";\n+/* GENERATED by ODG rules (runtime/core/odg-native-repair-item.ts ORC-1/REF-1) — oracle sha256 e1cc85243b1364b3d704ae6c50590970562faf3056dea8d63f2d0d9200431156; expected values computed\n+ * by executing the in-repo reference canon() (sha256 4d375b7f990c6e05bd068326297487ac601b7c03122f50a51d565a849a190734). Not model-authored, not hand-written. */\n+const M = require(\"./odg-canonical-json.js\");\n+const CASES: any[] = [{\"args\":[{\"b\":1,\"a\":2}],\"expect\":\"{\\\"a\\\":2,\\\"b\\\":1}\"},{\"args\":[{\"a\":{\"y\":1,\"x\":2}}],\"expect\":\"{\\\"a\\\":{\\\"x\\\":2,\\\"y\\\":1}}\"},{\"args\":[[3,\"x\",null]],\"expect\":\"[3,\\\"x\\\",null]\"},{\"args\":[\"plain\"],\"expect\":\"\\\"plain\\\"\"},{\"args\":[null],\"expect\":\"null\"},{\"args\":[42],\"expect\":\"42\"},{\"args\":[1.5],\"expect\":\"1.5\"},{\"args\":[true],\"expect\":\"true\"},{\"args\":[\"q\\\"uote\\n\"],\"expect\":\"\\\"q\\\\\\\"uote\\\\n\\\"\"},{\"args\":[[]],\"expect\":\"[]\"},{\"args\":[{}],\"expect\":\"{}\"},{\"args\":[[[],[{}]]],\"expect\":\"[[],[{}]]\"},{\"args\":[{\"z\":null,\"a\":[1,\"x\",false]}],\"expect\":\"{\\\"a\\\":[1,\\\"x\\\",false],\\\"z\\\":null}\"},{\"args\":[[{\"b\":1,\"a\":[3,{\"d\":1,\"c\":2}]}]],\"expect\":\"[{\\\"a\\\":[3,{\\\"c\\\":2,\\\"d\\\":1}],\\\"b\\\":1}]\"},{\"args\":[{\"a\":{\"b\":{\"c\":{\"e\":2,\"d\":1}}}}],\"expect\":\"{\\\"a\\\":{\\\"b\\\":{\\\"c\\\":{\\\"d\\\":1,\\\"e\\\":2}}}}\"},{\"args\":[{\"k\\\"q\":\"v\",\"\":0,\"B\":1,\"a\":2}],\"expect\":\"{\\\"\\\":0,\\\"B\\\":1,\\\"a\\\":2,\\\"k\\\\\\\"q\\\":\\\"v\\\"}\"},{\"args\":[{\"x\":[{\"b\":2,\"a\":1},{\"a\":1}]}],\"expect\":\"{\\\"x\\\":[{\\\"a\\\":1,\\\"b\\\":2},{\\\"a\\\":1}]}\"},{\"args\":[{\"n\":-7,\"f\":0.25,\"s\":\"\",\"t\":false}],\"expect\":\"{\\\"f\\\":0.25,\\\"n\\\":-7,\\\"s\\\":\\\"\\\",\\\"t\\\":false}\"}];\n+let failures = 0;\n+CASES.forEach((c: any, i: number) => { const got = M.canonicalJson(c.args[0]); const ok = got === c.expect; process.stdout.write((ok ? \"ok\" : \"NOT OK\") + \" - case \" + i + \" \" + JSON.stringify(c.args[0]) + \"\\n\"); if (!ok) failures++; });\n+if (failures) { process.stdout.write(failures + \" failure(s)\\n\"); process.exit(1); }\n+export {};\n",
+    "diffSha256": "30bd9c305049ec13c6e075fcedd20043dc25f2706df9e7a1d2d60b68bea5b97a",
+    "gitApplyCheck": {
+      "ok": true,
+      "stderr": ""
+    }
+  },
+  "integration": "OWNER_GATED: apply patch.diff on a branch and open a PR (no checkout is written by this runner); migrating audit-log / agent-identity / supply-chain-attest to the helper changes persisted hash/signature preimages ⇒ separate owner decision",
+  "outcome": "PASS",
+  "wallMs": 83800
+}
