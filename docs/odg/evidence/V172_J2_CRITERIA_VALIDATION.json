@@ -1,0 +1,78 @@
+{
+  "//": "VALIDATE_CRITERIA for J2 (owner V171: « Ne pas modifier les critères après observation des résultats pour obtenir un PASS »; owner 2026-11-24: « Ne jamais transformer un résultat PARTIAL, FAIL ou NOT_MEASURED en PASS »). Graded ONLY from committed evidence after an independent inspection with recomputation (PR #970, ACCEPT). Nothing upgraded.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "J2",
+  "date": "2026-11-24",
+  "contractSha256": "d5a8b0db7f776da69b11a45f470a871cfcb4b2ab4b543fbeda6fdb2eeb5bcc6b",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V172_J2_EXPERIMENT.json",
+    "sha256": "bc5c76488689a84f63abef5f1959170ec7409c4141f74fa116538b7bbd315c14",
+    "experimentSha256": "7fdedc219dc452c3c2d493e16ff32e2fc468543f688f01c971147d050ec2fe1a",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 970,
+    "mergedAs": "0987106a",
+    "producedBy": "ODG GO --execute native dispatch (owner selection V174 via GO-ORD-2; one-shot claim; GO + scratch at deaf0844; network only via the runner's exact 127.0.0.1:11434 guard); trace docs/odg/evidence/V175_J2_GO_EXECUTE_TRACE.jsonl (original sha 1567e146…)"
+  },
+  "experimentInspection": {
+    "pr": 970,
+    "inspectedHead": "13d55d0e",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "ab245bf3019f79340",
+    "authorSessionId": "odg-go-run-3fb020e7be02f800",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "findings": "independent recomputation from the 58 committed rows: E = 6; A2@42 0/6, A0@7 0/6, A1@42 0/6, A0@42 0/6; sign test no discordant pairs; no NOT_MEASURED condition (|E| 6 ≥ 4, pins match, caps held 377/600 calls, max trial 97 s); FAIL by the first matching rule; --check OK; --check-at-run-head CHECK_OK at deaf0844 when run with node_modules supplied (the plain CLI reported ERROR in the PR worktree for lack of node_modules — environment, not drift)",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session; the inspector cannot verify its own session id"
+  },
+  "criteria": [
+    {
+      "id": "C1",
+      "status": "MET",
+      "evidence": "summary.criteria.C1_stopTriggerHonoured = true; roman-codec A1/A2 NOT_RUN because A0@42 passed (trigger not met, fail-closed)"
+    },
+    {
+      "id": "C2",
+      "status": "MET",
+      "evidence": "C2_notRunExcluded = true; 4 NOT_RUN rows NOT_MEASURED and excluded from pass counts (inspector verified justification)"
+    },
+    {
+      "id": "C3",
+      "status": "MET",
+      "evidence": "same whole-task ORIGINAL corpus oracle for every arm, evaluated in the sandbox"
+    },
+    {
+      "id": "C4",
+      "status": "MET",
+      "evidence": "C4.reproducedAll = true (A0@42 on the 4 replication tasks reproduces J's stops/verdicts) ⇒ no environment-drift cap"
+    },
+    {
+      "id": "C5",
+      "status": "MET",
+      "evidence": "0 provider calls; no delegation past CREATED; every request passes the exact-allowlist loopback guard (only path; globalThis.fetch guarded); nonLoopbackRefused empty",
+      "limit": "inspector (#970): an empty nonLoopbackRefused list cannot show whether any contact was attempted. Author's (provider's) design claim, NOT verified by the inspector: the runner routes every request through the guard and guards globalThis.fetch."
+    },
+    {
+      "id": "C6",
+      "status": "MET",
+      "evidence": "377/377 generations retained (sha256 + source); every prompt retained by sha256"
+    }
+  ],
+  "result": {
+    "outcome": "FAIL",
+    "basis": "A2@42 (alternative strategy after an ODG repetitive-failure stop) passes 0 of the 6 tasks of E; rerun-alone control A0@7 0/6; decomposition alone A1@42 0/6"
+  },
+  "scenarioGrade": "FAIL",
+  "adoption": "NOT_ADOPTED (only PASS ⇒ adoption candidate)",
+  "lesson": "hypothesis only (n = 6, failure-selected tasks): with the local 3b/7b models, neither decomposition nor escalation to the local max model recovered any task on which ODG's default loop stopped — consistent with local-model capability being a bottleneck on these tasks (not established; strategy effects cannot be excluded at n = 6); native construction should target tasks within local-model reach first",
+  "methodVsResult": "the experimental result is FAIL; the METHOD (pre-registration, revised anti-leak rule, native GO dispatch with a one-shot claim, loopback-only network, independent recomputation) worked as designed — a process observation, not a validation of the hypothesis",
+  "limits": [
+    "prompt texts not stored (sha only) ⇒ anti-leak check not independently recomputable from text; A0–A2 0 leak hits, 24 hits all in report-only A3",
+    "failure-conditional task selection (regression to the mean; roman-codec A0@42 passed)",
+    "independence declared by session ids (not cryptographic)",
+    "dispatch target ran on the host with the recorded opt-in; network bounded by the runner's guard, not by a network namespace (Ollama needs loopback)"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded FAIL)",
+    "missionJ2": "CLOSED_FAIL — NOT_ADOPTED"
+  }
+}
