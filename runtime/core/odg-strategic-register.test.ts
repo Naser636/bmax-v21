@@ -212,7 +212,8 @@ check("fieldRecords / auditRefs helpers", REG.fieldRecords({ a: { b: ["x", "y"] 
   check("LCP-1 synthetic fixture (no checkpoint names) ⇒ latest = highest supplied doc (CP9 in the V16.7 benefit fixture) — DEP-2 tests above unchanged", RB.latestCheckpoint.file === "V166_CHECKPOINT_9.json");
   // prior items otherwise unchanged
   const RP = REG.buildRegister({ ...rs, authorizationEvidence: {}, resolutionEvidence: [], checkpoints: [] });
-  check("prior items otherwise unchanged: every item except G, H, canonicalDefectsJ is byte-identical with and without the Phase-1 records", RR.items.filter((x: any) => !["G", "H", "CP8-GAP-canonicalDefectsJ"].includes(x.id)).every((x: any) => JSON.stringify(x) === JSON.stringify(ri(RP, x.id))) && RR.itemCount === RP.itemCount);
+  // V17.2: G2/J2 carry their OWN inspection records (#957) ⇒ their scoped state legitimately differs; excluded by name, nothing else
+  check("prior items otherwise unchanged: every item except G, H, canonicalDefectsJ (and G2/J2, which carry their own V172 inspection records) is byte-identical with and without the Phase-1 records", RR.items.filter((x: any) => !["G", "H", "CP8-GAP-canonicalDefectsJ", "G2", "J2"].includes(x.id)).every((x: any) => JSON.stringify(x) === JSON.stringify(ri(RP, x.id))) && RR.itemCount === RP.itemCount);
   check("synthetic V16.4 fixture has no closure/resolution fields (no authorization blocks, no records)", R.items.every((x: any) => !x.closure && !x.statusHistory && !x.resolution));
 }
 
