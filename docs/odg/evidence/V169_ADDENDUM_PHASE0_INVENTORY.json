@@ -1,0 +1,1225 @@
+{
+  "//": "V16.9 addendum 'Boussole vivante' — PHASE 0 read-only inventory (§31 Vérité et préservation). Nothing modified. States per §23 justified by a test that runs, a live caller or a committed record — never by file existence. Companion: docs/odg/evidence/V169_CONTINUITY_BASELINE.json.",
+  "schema": "ODG_V169_ADDENDUM_PHASE0_INVENTORY/1",
+  "date": "2026-11-24",
+  "truthLock": {
+    "head": "2006fb70191a49a8f5f90d36f19cdd3dce039ebd",
+    "originMain": "2006fb70191a49a8f5f90d36f19cdd3dce039ebd",
+    "mainCheckout": "branch main, clean, untouched (read-only)",
+    "worktree": "/home/ubuntu/wt-v169-p0 branch docs/v169-addendum-phase0-baseline from origin/main",
+    "precondition": "H CLOSED_FAIL (docs/odg/evidence/V168_CHECKPOINT_10.json#missionH) — verified"
+  },
+  "sourceLimits": [
+    "the addendum text (§21–§31) is NOT committed in the repository; §21.2 roles and §29 scenarios follow the caller's brief",
+    "§22 '15 fields' are not enumerated in the brief nor in the repo: the list below is a PROVIDER WORKING LIST (F01–F15) to be re-mapped against the owner's §22 text — coverage claims are relative to it",
+    "§23 vocabulary used as given in the brief (12 values)"
+  ],
+  "fields22WorkingList": {
+    "F01_id": "stable identifier",
+    "F02_boussoleRef": "link to V12.4 mission/section and V14.4 phase (§21.2 last line)",
+    "F03_objective": "objective / title",
+    "F04_status": "status (ideally §23 taxonomy)",
+    "F05_priority": "priority / importance",
+    "F06_dependencies": "dependencies",
+    "F07_authorization": "authorization (by, source, scope)",
+    "F08_actorOwner": "actor / responsible",
+    "F09_evidence": "evidence pointers (path, sha)",
+    "F10_commitHeadBinding": "commit / head the state is bound to",
+    "F11_lastCheckpoint": "last checkpoint / last validated step",
+    "F12_nextAction": "next action",
+    "F13_blockersRisks": "blockers / risks",
+    "F14_decisionRationale": "decision + rationale",
+    "F15_updatedAt": "last update instant"
+  },
+  "states23": [
+    "IMPLEMENTED_AND_VERIFIED",
+    "IMPLEMENTED_NOT_VERIFIED",
+    "DOCUMENTED_ONLY",
+    "CONNECTED_AND_USED",
+    "CONNECTED_NOT_USED",
+    "DORMANT",
+    "PARTIAL",
+    "PROPOSED",
+    "BLOCKED",
+    "DEFERRED",
+    "RETIRED",
+    "NOT_MEASURED"
+  ],
+  "stateRules": {
+    "CONNECTED_AND_USED": "test exits 0 AND a non-test caller AND a committed record or live run shows it used",
+    "IMPLEMENTED_AND_VERIFIED": "test exits 0, no live use observed in this offline baseline",
+    "CONNECTED_NOT_USED": "non-test wiring absent or present without observed use",
+    "PARTIAL": "some sub-components used, others not, or the record is stale",
+    "DORMANT": "no test and no caller, or no update for the current program",
+    "DOCUMENTED_ONLY": "prose read by no component"
+  },
+  "testsRun": {
+    "command": "npx tsx <test> (33 suites, offline, ODG_ATTEMPTS_LOG/TMPDIR redirected to scratch)",
+    "result": "33/33 exit 0",
+    "suites": [
+      "mission-ledger-integrity",
+      "mission-attempt-log",
+      "campaign-controller",
+      "odg-campaign-lifecycle",
+      "odg-strategic-register",
+      "odg-authorization-scope",
+      "odg-closure-register-ops",
+      "audit-log",
+      "decision-governance",
+      "decision-precedent",
+      "odg-program-continuity",
+      "odg-native-mission-continuation",
+      "odg-continuation-diagnostic",
+      "odg-cto-continuity-protocol",
+      "checkpoint-engine",
+      "memory-architecture",
+      "memory-trust-gate",
+      "odg-knowledge-intelligence",
+      "learning-reuse-proof",
+      "reuse-ledger",
+      "odg-radar-source-admission",
+      "research-governor",
+      "odg-radar-collection-adapter",
+      "odg-radar-gate-chain",
+      "odg-v360-compass",
+      "scripts/compass-update",
+      "odg-go-cycle",
+      "odg-v124-consolidation",
+      "odg-mission-crosswalk",
+      "control-evidence-freshness",
+      "odg-belief-refresh",
+      "campaign-journal",
+      "odg-executive-decision-engine"
+    ]
+  },
+  "roles": {
+    "boussole_direction": [
+      {
+        "id": "BOUSSOLE-V124-COMPANION",
+        "role": "boussole_direction",
+        "paths": [
+          "docs/odg/v124-consolidated-roadmap.json",
+          "runtime/core/odg-v124-consolidation.ts"
+        ],
+        "stores": "24 V12.4 missions (sections A–S): id, source, section, objective, components, deps, status, commit, evidence, owner, risk, authorizations, nextAction",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F12_nextAction",
+            "F13_blockersRisks"
+          ],
+          "missing": [
+            "F05_priority",
+            "F11_lastCheckpoint",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": true,
+          "how": "IS the Boussole V12.4 (section field; toContinuityProgram emits boussoleRef 'V12.4')"
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "odg-v124-consolidation.test.ts exit 0 (17 ok)",
+          "non-test consumers: odg-cto-dashboard, odg-resident-driver-tick, odg-resident-driver-l1-cycle",
+          "V169 baseline S1(c): buildDossier over it ⇒ nextEligible CM-RADAR-GATE-CHAIN (= V14.4 §2 Phase-1 anchor)"
+        ],
+        "gapsOnThisComponent": [
+          "status vocabulary (READY/REVIEW/…) ≠ §23 12-value taxonomy",
+          "CM-RADAR-GATE-CHAIN READY with commit null although the module exists (V14.4 §5, hand-noted; S12 K3 unflagged)",
+          "no lastCheckpoint / priority / updatedAt fields",
+          "no link to the A–P work items (V160 contracts) that GO actually executes"
+        ]
+      },
+      {
+        "id": "BOUSSOLE-V144-ROADMAP",
+        "role": "boussole_direction",
+        "paths": [
+          "docs/odg/V14_4_ROADMAP.md"
+        ],
+        "stores": "V14.4 phases 0–8 mapped onto V12.4 anchors, gates, reconciliation notes (prose)",
+        "fields22": {
+          "covered": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F13_blockersRisks",
+            "F12_nextAction"
+          ],
+          "missing": [
+            "F01_id",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": true,
+          "how": "phase → V12.4 mission anchors (table §2)"
+        },
+        "state23": "DOCUMENTED_ONLY",
+        "stateEvidence": [
+          "ADOPTED by owner V372 (file header); no code reads it (prose); §3 correspondence register explicitly 'not hand-written … to be generated in Phase 0 lot 2' — not generated yet"
+        ],
+        "gapsOnThisComponent": [
+          "the addendum §21–§31 text is not committed here",
+          "§3 correspondence register (V12.4 mission → components → census → tests → evidence → V14.4 phase) still NOT generated"
+        ]
+      },
+      {
+        "id": "BOUSSOLE-ROADMAP-JSON",
+        "role": "boussole_direction",
+        "paths": [
+          "runtime/governance/ROADMAP.json"
+        ],
+        "stores": "execution roadmap of record (PROTECTED; read only here)",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F03_objective",
+            "F04_status"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": "PARTIAL",
+          "how": "execution manifest; V12.4 companion validated against it by odg-v124-consolidation.validate"
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "read by odg-v124-consolidation.validate (baseline S12 ran it)",
+          "protected path — never modified"
+        ]
+      },
+      {
+        "id": "BOUSSOLE-COMPASS-VIEW",
+        "role": "boussole_direction",
+        "paths": [
+          "runtime/core/odg-v360-compass.ts",
+          "scripts/compass-update.ts",
+          "runtime/generated/compass-checkpoint.json (gitignored host state)",
+          "ODG_PROJECT_STATE.md"
+        ],
+        "stores": "V360 capability compass view + a machine-readable 'compass checkpoint' (verifiedCheckpoint commit/mission, lastMission, nextAction advisory)",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F04_status",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F13_blockersRisks",
+            "F14_decisionRationale"
+          ]
+        },
+        "linksToBoussole": {
+          "value": true,
+          "how": "'Boussole' view over V12.4 (header)"
+        },
+        "state23": "PARTIAL",
+        "stateEvidence": [
+          "odg-v360-compass.test.ts + scripts/compass-update.test.ts exit 0",
+          "odg-v360-compass: no non-test importer",
+          "compass-checkpoint.json verifiedCheckpoint at 5c0d7c95 (2026-11-21), 370 commits behind HEAD, records none of G/H/CP9/CP10 (V169 baseline hostObservations)"
+        ],
+        "overlaps": [
+          "checkpoint role overlaps the CP1–CP10 evidence checkpoints and odg-program-continuity dossier"
+        ],
+        "gapsOnThisComponent": [
+          "stale with no staleness flag",
+          "not fed by the V16.x GO / checkpoint chain"
+        ]
+      }
+    ],
+    "mission_operational_tracking": [
+      {
+        "id": "OPS-AP-CONTRACTS",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"
+        ],
+        "stores": "16 A–P WORK_ITEM_CONTRACTs: scenario, ownerText, state, authorizedBy, initialState, contract (objective/scope/write_set/criteria), authorization block, revisionHistory",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F03_objective",
+            "F04_status",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F09_evidence",
+            "F13_blockersRisks",
+            "F14_decisionRationale"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F05_priority",
+            "F06_dependencies",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false,
+          "how": "invariant text mentions 'Boussole V12.4 unchanged' only; no V12.4 mission/section id per contract (0 'CM-' ids)"
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "read by odg-strategic-select.loadSources → odg-go-cycle (GO dry run 2026-11-24 read its sha 726abb4c…)",
+          "odg-go-cycle.test.ts exit 0"
+        ],
+        "gapsOnThisComponent": [
+          "no boussoleRef",
+          "H state AUTHORIZED_FOR_REVISION + initialState PARTIAL although H is CLOSED_FAIL (closure only implicit via authorization-scope)"
+        ]
+      },
+      {
+        "id": "OPS-STRATEGIC-REGISTER",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "runtime/core/odg-strategic-register.ts",
+          "runtime/bin/odg-strategic-select.ts",
+          "docs/odg/evidence/V164_STRATEGIC_REGISTER.json"
+        ],
+        "stores": "derived register of A–P + V150 + CP8 gaps + method cards: status+statusSource, 10 criteria (MEASURED/NOT_MEASURED with rule+source), requiresOwnerAuthorization, nextStep, deps (only when stated)",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F03_objective",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F09_evidence",
+            "F12_nextAction",
+            "F13_blockersRisks",
+            "F14_decisionRationale"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F08_actorOwner",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false,
+          "how": "no V12.4 / V14.4 reference on items"
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "odg-strategic-register.test.ts exit 0 (64 ok)",
+          "odg-strategic-select --check: OK (no drift) at 2006fb70",
+          "live consumer odg-go-cycle SELECT (GO dry run: DECISION_REQUIRED J/G)"
+        ],
+        "gapsOnThisComponent": [
+          "LATEST_CHECKPOINT hard-coded to V166_CHECKPOINT_9.json while CP10 exists (S2)",
+          "H status PARTIAL vs closure CLOSED_FAIL (S5/S12 K2)",
+          "CP8-GAP-canonicalDefectsJ PROPOSED although #940 fixed it (S12 K1)",
+          "closed items stay status-selectable (S11)",
+          "441/560 criteria NOT_MEASURED (S14)"
+        ]
+      },
+      {
+        "id": "OPS-GO-CYCLE",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "runtime/core/odg-go-cycle.ts",
+          "runtime/bin/odg-go.ts",
+          "docs/odg/evidence/V164_GO_CYCLE.json",
+          "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl"
+        ],
+        "stores": "one bounded governed cycle; JSONL trace of every step/stop with inputsSha256, decision, decidedBy; runId idempotence",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F04_status",
+            "F07_authorization",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F12_nextAction",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F05_priority",
+            "F06_dependencies",
+            "F08_actorOwner",
+            "F11_lastCheckpoint",
+            "F13_blockersRisks"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false,
+          "how": "trace carries no Boussole reference"
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "odg-go-cycle.test.ts exit 0 (76 ok)",
+          "real dry run 2026-11-24 runId 8bad1c768f200f20 HALTED_DECISION_REQUIRED (hostObservations)",
+          "real EXECUTE dispatch committed (V168_H_GO_EXECUTE_TRACE.jsonl)"
+        ],
+        "gapsOnThisComponent": [
+          "no resume of an interrupted cycle's missing steps (EVIDENCE/NEXT_SELECTION after DEADLINE) — S1(b)",
+          "V164_GO_CYCLE.json not regenerated, no staleness flag (S6)"
+        ]
+      },
+      {
+        "id": "OPS-AUTHORIZATION-SCOPE",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "runtime/core/odg-authorization-scope.ts"
+        ],
+        "stores": "derived (never stored) per-step authorization + validation over contract + sha-bound inspection/experiment/validation records",
+        "fields22": {
+          "covered": [
+            "F04_status",
+            "F07_authorization",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction"
+          ],
+          "missing": [
+            "F01_id",
+            "F02_boussoleRef",
+            "F03_objective",
+            "F05_priority",
+            "F06_dependencies",
+            "F08_actorOwner",
+            "F13_blockersRisks",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "odg-authorization-scope.test.ts exit 0 (55 ok)",
+          "live consumer odg-go-cycle AUTHORIZE; drove the real H dispatch (#946)",
+          "baseline S2/S7/S8: H 4/4 steps validated; contract-sha mutations rejected"
+        ],
+        "gapsOnThisComponent": [
+          "inspectedHeadSha checked for format only — a non-existent commit is accepted (S7 m3)",
+          "STEP_SEQUENCES only for G/H"
+        ]
+      },
+      {
+        "id": "OPS-MISSION-LEDGER",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "runtime/core/mission-ledger.ts",
+          "runtime/generated/mission-ledger.json (host)"
+        ],
+        "stores": "immutable proven-only status-of-record, sealed entries (mission, state, authorized, lifecyclePath, objectives, proven, validated, seal)",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F04_status",
+            "F07_authorization",
+            "F09_evidence",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F05_priority",
+            "F06_dependencies",
+            "F08_actorOwner",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks",
+            "F14_decisionRationale"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false,
+          "how": "no V12.4/A–P id in entries"
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "mission-ledger-integrity.test.ts exit 0",
+          "host ledger 1798 entries / 188 missions; read by odg-go STATE_READ + mission-scheduler proven dedup"
+        ],
+        "gapsOnThisComponent": [
+          "cannot represent PARTIAL/FAIL (by design — attempt-log covers it)",
+          "A–P scenario work (G/H) never enters it"
+        ]
+      },
+      {
+        "id": "OPS-MISSION-ATTEMPT-LOG",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "runtime/core/mission-attempt-log.ts",
+          "runtime/generated/mission-attempt-log.jsonl (host)"
+        ],
+        "stores": "append-only attempt outcomes incl. SKIPPED/IDLE/REFUSED + reason",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F04_status",
+            "F13_blockersRisks",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F14_decisionRationale"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "mission-attempt-log.test.ts exit 0",
+          "host log 2708 attempts 2026-10-21→2026-11-24; last 2026-11-24T00:45 IDLE ALREADY_PROVEN dedup"
+        ]
+      },
+      {
+        "id": "OPS-CAMPAIGN-CONTROLLER",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "runtime/core/campaign-controller.ts",
+          "runtime/core/odg-campaign-lifecycle.ts",
+          "runtime/core/campaign-loop.ts",
+          "runtime/core/odg-continuation-diagnostic.ts",
+          "runtime/core/odg-native-mission-continuation.ts"
+        ],
+        "stores": "register load/save (crash-atomic), selectNextLot, staleAcceptances, layering, reconcile, promotion authorization; lifecycle/loop drivers",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F09_evidence",
+            "F12_nextAction",
+            "F13_blockersRisks"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F08_actorOwner",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": "PARTIAL",
+          "how": "only when fed the V12.4 companion (via program-continuity)"
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "campaign-controller.test.ts exit 0 (61 ok); 14 non-test importers (odg-resume, closure-register-ops, program-continuity, …)",
+          "odg-campaign-lifecycle / odg-native-mission-continuation: tests exit 0 but NO non-test importer ⇒ CONNECTED_NOT_USED for those two",
+          "baseline S10: selection on real 427 register never picks a blocked-dependent lot"
+        ],
+        "gapsOnThisComponent": [
+          "summary().blocked lists blockReason but not the missions each blocker blocks (S10)"
+        ]
+      },
+      {
+        "id": "OPS-PROGRAM-CONTINUITY",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "runtime/core/odg-program-continuity.ts",
+          "runtime/core/odg-observation-currency.ts",
+          "runtime/core/odg-cto-continuity-protocol.ts"
+        ],
+        "stores": "resumable dossier: done / mustRevalidate (dep-regressed, evidence-historical, component-changed) / blocked / nextEligible + boussoleRef",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F06_dependencies",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F12_nextAction",
+            "F13_blockersRisks"
+          ],
+          "missing": [
+            "F05_priority",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F11_lastCheckpoint",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": true,
+          "how": "dossier.boussoleRef = 'V12.4'"
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "odg-program-continuity.test.ts exit 0; non-test importers odg-resident-driver, odg-cto-dashboard, odg-v124-consolidation",
+          "baseline S1(c)/S11(b) on the real companion"
+        ],
+        "gapsOnThisComponent": [
+          "the V12.4 companion carries no `observation` and no snapshots ⇒ 2 of the 3 staleness sources are never exercised on real data (mustRevalidate 0 = not measured, not 'fresh')",
+          "odg-cto-continuity-protocol: no non-test importer (CONNECTED_NOT_USED)"
+        ]
+      },
+      {
+        "id": "OPS-CHECKPOINTS",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "docs/odg/evidence/V150_CHECKPOINT_1.json … V168_CHECKPOINT_10.json",
+          "runtime/core/checkpoint-engine.ts"
+        ],
+        "stores": "CP1–CP10 session checkpoints (headAtCheckpoint, truthLock, prs, mission status, openGaps, ownerDecisions, nextAction, previous); checkpoint-engine = pipeline-stage checkpoint for odg-run",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F04_status",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner"
+          ]
+        },
+        "linksToBoussole": {
+          "value": "PARTIAL",
+          "how": "CP10.boussole text 'V12.4 canonical (unchanged)' — prose, no mission ids"
+        },
+        "state23": "PARTIAL",
+        "stateEvidence": [
+          "CP files are committed records; only CP8 (and CP9 via LATEST_CHECKPOINT) are read by a component (odg-strategic-register); CP10 is read by no component",
+          "checkpoint-engine.test.ts exit 0, consumer odg-run (pipeline stages, not mission checkpoints)"
+        ],
+        "gapsOnThisComponent": [
+          "no component locates the latest checkpoint (chain head) — S2",
+          "`previous` links only from CP8 on"
+        ]
+      },
+      {
+        "id": "OPS-STRATEGY-MODE",
+        "role": "mission_operational_tracking",
+        "paths": [
+          "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+          "runtime/core/odg-strategy-mode-selector.ts"
+        ],
+        "stores": "per-item strategy mode (NATIVE/PROVIDER/HYBRID/DECISION_REQUIRED)",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F12_nextAction",
+            "F14_decisionRationale"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F13_blockersRisks",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "read by odg-go STATE_READ; exercised by odg-go-cycle.test.ts"
+        ]
+      }
+    ],
+    "closure_register": [
+      {
+        "id": "CLOSURE-REGISTER",
+        "role": "closure_register",
+        "paths": [
+          "docs/odg/closure-register.json",
+          "runtime/core/odg-closure-register-ops.ts",
+          "runtime/core/campaign-closure-ledger.ts"
+        ],
+        "stores": "427 items (program, title, status, deps, priority, evidence, acceptance, staleEvidence on 181)",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F03_objective",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F09_evidence",
+            "F13_blockersRisks"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": "PARTIAL",
+          "how": "210 'V12.4' mentions in free text; no structured boussoleRef"
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "odg-closure-register-ops.test.ts exit 0; consumer odg-cto-dashboard",
+          "baseline S10: 415 ACCEPTED / 6 BLOCKED / 3 IN_PROGRESS / 3 DEFERRED; staleAcceptances 0"
+        ],
+        "notes": [
+          "hard register — byte-identical, never modified"
+        ],
+        "gapsOnThisComponent": [
+          "V16.x A–P / G / H closures are absent from it (closure of record lives only in CP9/CP10 + V167 dossier)",
+          "staleEvidence is a hand-set boolean, not computed"
+        ]
+      }
+    ],
+    "decision_journal": [
+      {
+        "id": "DECISION-CHANGELOG",
+        "role": "decision_journal",
+        "paths": [
+          "docs/odg-operational/ODG_DECISION_CHANGELOG.md"
+        ],
+        "stores": "DEC-### CTO decisions / findings with status, source, checkpoint, affects (prose)",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F04_status",
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks"
+          ]
+        },
+        "linksToBoussole": {
+          "value": "PARTIAL",
+          "how": "cites roadmap/Master in prose"
+        },
+        "state23": "DORMANT",
+        "stateEvidence": [
+          "documentary only (header); last commit touching it 2026-11-11 — V165/V168 owner decisions and CP9/CP10 ownerDecisions are NOT in it"
+        ]
+      },
+      {
+        "id": "DECISION-OWNER-RECORDS",
+        "role": "decision_journal",
+        "paths": [
+          "docs/odg/V165_OWNER_AUTHORIZATION.json",
+          "docs/odg/V168_OWNER_AUTHORIZATION_H.json",
+          "docs/odg/V372_RESEARCH_GRANT.json",
+          "docs/odg/V94_OWNER_DECISIONS.json",
+          "docs/odg/V93_DOSSIER_DECISIONS.json",
+          "docs/odg/V96_GATE_DECISION.json",
+          "CP9/CP10 ownerDecisions[]"
+        ],
+        "stores": "per-directive owner authorizations/grants; pending owner questions",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F09_evidence",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "V165/V168 bound by odg-authorization-scope OWNER_SOURCES (per-scenario); V372 grant read by research-governor (baseline S13 ALLOW/DENY/expiry)"
+        ],
+        "gapsOnThisComponent": [
+          "no single index of decisions; pending owner decisions live only in checkpoint prose (CP10.ownerDecisions)"
+        ]
+      },
+      {
+        "id": "DECISION-PRECEDENT-GOVERNANCE",
+        "role": "decision_journal",
+        "paths": [
+          "runtime/core/decision-precedent.ts",
+          "runtime/core/decision-governance.ts",
+          "runtime/generated/precedent-consultation.json (host)"
+        ],
+        "stores": "reusable decision precedents keyed by goal signature; decision-vs-evidence integrity audit",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F09_evidence",
+            "F14_decisionRationale"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false
+        },
+        "state23": "PARTIAL",
+        "stateEvidence": [
+          "both tests exit 0",
+          "decision-precedent consumers memory-scenario-battery, capability-executors; decision-governance: NO non-test importer (CONNECTED_NOT_USED) — never run over the real decision records"
+        ]
+      },
+      {
+        "id": "DECISION-AUDIT-LOG",
+        "role": "decision_journal",
+        "paths": [
+          "runtime/core/audit-log.ts",
+          "runtime/generated/scheduler-audit-chain.json (host)"
+        ],
+        "stores": "hash-chained audit events (scheduler decisions etc.)",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F09_evidence",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "audit-log.test.ts exit 0; consumers mission-scheduler, excellence-gate, post-release-learning, commercial-pipeline"
+        ],
+        "gapsOnThisComponent": [
+          "keyed-HMAC integrity BLOCKED (closure-register p0e-audit-log-keyed-integrity)"
+        ]
+      }
+    ],
+    "memory": [
+      {
+        "id": "MEMORY-TRUST-TAXONOMY",
+        "role": "memory",
+        "paths": [
+          "runtime/core/memory-architecture.ts",
+          "runtime/core/memory-taxonomy.ts",
+          "runtime/core/memory-trust-gate.ts",
+          "runtime/core/odg-observation-currency.ts"
+        ],
+        "stores": "memory classes/quality at write, trust/staleness at retrieval, currency (memory ≠ current state)",
+        "fields22": {
+          "covered": [
+            "F09_evidence",
+            "F10_commitHeadBinding",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F01_id",
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks",
+            "F14_decisionRationale"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "tests exit 0; memory-trust-gate consumers odg-knowledge-intelligence, odg-radar-gate-chain, odg-radar-learning-bridge",
+          "observation-currency applied in baseline S6 (detects stale GO cycle; false-stale on a content-fresh register)"
+        ],
+        "gapsOnThisComponent": [
+          "no live caller applies currency to committed evidence records (S6)"
+        ]
+      },
+      {
+        "id": "MEMORY-KNOWLEDGE",
+        "role": "memory",
+        "paths": [
+          "runtime/core/odg-knowledge-intelligence.ts",
+          "runtime/core/odg-knowledge-attestation.ts",
+          "runtime/core/odg-knowledge-acquisition.ts",
+          "runtime/generated/knowledge.json (host)",
+          "runtime/core/knowledge-engine.ts"
+        ],
+        "stores": "attested knowledge items, claims, usableFor/admissible",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F09_evidence",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks",
+            "F14_decisionRationale"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "odg-knowledge-intelligence.test.ts exit 0 (48 ok); consumers odg-go (PROBLEMS_OPPORTUNITIES), scenario-G runs",
+          "knowledge-engine.ts: no test, no importer ⇒ DORMANT"
+        ]
+      },
+      {
+        "id": "MEMORY-REUSE",
+        "role": "memory",
+        "paths": [
+          "runtime/core/patch-memory.ts",
+          "runtime/core/reuse-ledger.ts",
+          "runtime/core/learning-reuse-proof.ts",
+          "runtime/core/decision-precedent.ts"
+        ],
+        "stores": "patch/decision reuse with measured reuse accounting",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F09_evidence"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F04_status",
+            "F05_priority",
+            "F06_dependencies",
+            "F07_authorization",
+            "F08_actorOwner",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction",
+            "F13_blockersRisks",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ]
+        },
+        "linksToBoussole": {
+          "value": false
+        },
+        "state23": "CONNECTED_AND_USED",
+        "stateEvidence": [
+          "patch-memory: 8 non-test importers (decision-engine, capability-router, …); reuse-ledger tests exit 0",
+          "learning-reuse-proof: no non-test importer (CONNECTED_NOT_USED)"
+        ],
+        "gapsOnThisComponent": [
+          "no reuse link to A–P mission outcomes (H lesson recorded only as CP10 prose)"
+        ]
+      }
+    ],
+    "radar": [
+      {
+        "id": "RADAR-ADMISSION-GOVERNOR",
+        "role": "radar",
+        "paths": [
+          "runtime/core/odg-radar-source-admission.ts",
+          "runtime/core/research-governor.ts",
+          "runtime/core/odg-radar-collection-adapter.ts",
+          "runtime/core/odg-radar-gate-chain.ts",
+          "docs/odg/evidence/V164_RADAR_SOURCE_ADMISSION.json",
+          "docs/odg/V372_RESEARCH_GRANT.json"
+        ],
+        "stores": "source admission decisions (ADMIT/DEFER/REFUSE + tier + evidenceSha256), grant governance (allowlist, expiry, https), radar-owned collection, gate-chain coverage",
+        "fields22": {
+          "covered": [
+            "F01_id",
+            "F04_status",
+            "F07_authorization",
+            "F09_evidence",
+            "F13_blockersRisks",
+            "F14_decisionRationale",
+            "F15_updatedAt"
+          ],
+          "missing": [
+            "F02_boussoleRef",
+            "F03_objective",
+            "F05_priority",
+            "F06_dependencies",
+            "F08_actorOwner",
+            "F10_commitHeadBinding",
+            "F11_lastCheckpoint",
+            "F12_nextAction"
+          ]
+        },
+        "linksToBoussole": {
+          "value": "PARTIAL",
+          "how": "V12.4 mission I CM-RADAR-GATE-CHAIN references the gate-chain module; admission records do not reference V12.4"
+        },
+        "state23": "IMPLEMENTED_AND_VERIFIED",
+        "stateEvidence": [
+          "tests exit 0 (admission 70 ok, governor 20, adapter 15, gate-chain 47)",
+          "baseline S13: governor ALLOW nist.gov / DENY example.com / DENY after expiry with the real V372 grant",
+          "real collection network-gated ⇒ not CONNECTED_AND_USED in this baseline"
+        ],
+        "gapsOnThisComponent": [
+          "ADMIT decisions carry empty reasons[] (S13)",
+          "40/46 candidates DEFER (owner decision on 8 sources pending, CP10)"
+        ]
+      }
+    ]
+  },
+  "roleSummary": {
+    "boussole_direction": "V12.4 companion = CONNECTED_AND_USED (the Boussole of record); V14.4 = DOCUMENTED_ONLY; compass view/checkpoint = PARTIAL (stale)",
+    "mission_operational_tracking": "A–P contracts + strategic register + GO + authorization-scope = CONNECTED_AND_USED but NOT linked to the Boussole; ledger/attempt-log CONNECTED_AND_USED (host); checkpoints PARTIAL",
+    "closure_register": "CONNECTED_AND_USED (427, hard) — A–P closures absent",
+    "decision_journal": "fragmented: changelog DORMANT (since 2026-11-11), owner records CONNECTED_AND_USED, decision-governance CONNECTED_NOT_USED",
+    "memory": "CONNECTED_AND_USED (trust/knowledge/reuse); knowledge-engine DORMANT; currency not applied to evidence",
+    "radar": "IMPLEMENTED_AND_VERIFIED offline (admission/governor/collection/gate-chain); real collection network/grant-gated"
+  },
+  "overlaps": [
+    {
+      "what": "two 'next mission' answers that no component reconciles",
+      "a": "V12.4 companion → program-continuity nextEligible = CM-RADAR-GATE-CHAIN",
+      "b": "A–P register → GO = halt DECISION_REQUIRED J/G",
+      "evidence": "V169 baseline S1 twoNextAnswers"
+    },
+    {
+      "what": "four checkpoint notions",
+      "items": [
+        "CP1–CP10 evidence checkpoints",
+        "compass-checkpoint.json (stale, 370 commits behind)",
+        "checkpoint-engine pipeline-checkpoint.json",
+        "authorization-scope validated steps (per mission)"
+      ],
+      "note": "not duplicates of each other's role (session / compass / pipeline-stage / mission-step) but none references the others"
+    },
+    {
+      "what": "mission closure recorded in three places",
+      "items": [
+        "closure-register.json (427, hard)",
+        "CP9/CP10 + V167 dossier (A–P closures)",
+        "mission-ledger (proven only)"
+      ],
+      "note": "A–P closures (G CLOSED_PARTIAL, H CLOSED_FAIL) exist only in checkpoint prose"
+    },
+    {
+      "what": "decision journal fragmented",
+      "items": [
+        "ODG_DECISION_CHANGELOG.md (stopped 2026-11-11)",
+        "owner authorization JSONs",
+        "checkpoint ownerDecisions[]",
+        "audit-log chain"
+      ]
+    }
+  ],
+  "gapsByBlockedValue": [
+    {
+      "rank": 1,
+      "gap": "no Boussole link on the operational A–P track: contracts / strategic register / GO trace carry no V12.4 mission id or V14.4 phase (§21.2 last line)",
+      "component": "V160_AP_WORK_ITEM_CONTRACTS.json + odg-strategic-register (missing field F02_boussoleRef)",
+      "blockedValue": "every A–P result (G, H, J…) is invisible to the Boussole; V12.4 and GO give different next actions (S1)"
+    },
+    {
+      "rank": 2,
+      "gap": "closure-of-record not propagated into the register status (H PARTIAL vs CLOSED_FAIL; CP8-GAP-canonicalDefectsJ PROPOSED after #940; LATEST_CHECKPOINT=CP9) and no contradiction detection",
+      "component": "odg-strategic-register status rules + LATEST_CHECKPOINT; no cross-register check in an existing component (decision-governance / closure-register-ops are candidates)",
+      "blockedValue": "status errors 4 (S5/S12), closed item still status-selectable (S11), latest checkpoint not found (S2)"
+    },
+    {
+      "rank": 3,
+      "gap": "evidence currency not applied to committed records by any live caller; interrupted GO cycle steps never resumed; commit existence of cited shas never checked",
+      "component": "odg-observation-currency (exists) not wired to evidence records; odg-go-cycle trace not read on resume; odg-authorization-scope inspectedHeadSha format-only",
+      "blockedValue": "stale V164_GO_CYCLE/compass checkpoint unflagged (S6), 0/2 interrupted steps recovered (S1), wrong-commit accepted (S7 m3)"
+    },
+    {
+      "rank": 4,
+      "gap": "§3 correspondence register of V14.4 not generated; addendum §21–§31 text not committed",
+      "component": "odg-mission-crosswalk / capability-traceability / odg-component-census (per V14.4 §3)",
+      "blockedValue": "no machine-checkable mapping V12.4 mission → components → tests → evidence → V14.4 phase"
+    },
+    {
+      "rank": 5,
+      "gap": "dependency fan-out not exposed; unmeasured criteria not converted into tracked items; no adopted held-out-verified improvement",
+      "component": "campaign-controller.summary; odg-strategic-register",
+      "blockedValue": "S10/S14/S15 PARTIAL"
+    }
+  ],
+  "noParallelSystem": "no new registry/scheduler/memory/decision engine proposed; every gap is a missing link/field on an EXISTING component",
+  "boussoleUpdateProposal": {
+    "status": "PROPOSED — never applied; V12.4, ROADMAP.json and runtime/governance/** untouched; each item needs its own WORK_ITEM_CONTRACT + owner authorization",
+    "items": [
+      {
+        "id": "BUP-1",
+        "what": "add a boussoleRef {v124MissionId, v124Section, v144Phase} to each A–P contract and propagate it through odg-strategic-register items and GO trace entries",
+        "gain": "every executed A–P step becomes visible on the Boussole; S1 two-answer divergence becomes reconcilable",
+        "touches": "V160_AP_WORK_ITEM_CONTRACTS.json, odg-strategic-register.ts (existing)"
+      },
+      {
+        "id": "BUP-2",
+        "what": "status rule: a contract whose authorization-scope says 'all steps validated' takes its closure verdict from the committed criteria-validation record (CLOSED_FAIL / CLOSED_PARTIAL / CLOSED_PASS) and becomes non-selectable",
+        "gain": "S5 PASS, S11 PASS, statusErrors −1",
+        "touches": "odg-strategic-register.ts"
+      },
+      {
+        "id": "BUP-3",
+        "what": "derive LATEST_CHECKPOINT from the committed checkpoint chain head instead of a constant",
+        "gain": "S2 PASS; DEP-2 reads current owner questions",
+        "touches": "odg-strategic-register.ts"
+      },
+      {
+        "id": "BUP-4",
+        "what": "run odg-observation-currency over committed evidence records (record head + scope) inside the GO PROBLEMS_OPPORTUNITIES step and the program-continuity dossier (observation per V12.4 mission)",
+        "gain": "S6 PASS candidate; mustRevalidate measured instead of vacuous",
+        "touches": "odg-go-cycle.ts, v124 companion observation fields (companion is non-protected but a hard register ⇒ owner decision)"
+      },
+      {
+        "id": "BUP-5",
+        "what": "cross-register contradiction check composed from existing decision-governance / closure-register-ops (no new engine): register status vs latest checkpoint statements vs V12.4 companion commit/evidence",
+        "gain": "S12 PASS candidate",
+        "touches": "decision-governance.ts or odg-closure-register-ops.ts"
+      },
+      {
+        "id": "BUP-6",
+        "what": "GO resume: on start, read the last cycle of the out-dir trace; if it ended STOPPED before EVIDENCE, record the missing steps and complete EVIDENCE for that runId",
+        "gain": "S1 PASS candidate; interruptedStepsRecovered 2/2",
+        "touches": "odg-go.ts / odg-go-cycle.ts"
+      },
+      {
+        "id": "BUP-7",
+        "what": "odg-authorization-scope: verify inspectedHeadSha / cited merge shas exist (git cat-file via an injected port)",
+        "gain": "S7 PASS",
+        "touches": "odg-authorization-scope.ts + odg-go port"
+      },
+      {
+        "id": "BUP-8",
+        "what": "generate the V14.4 §3 correspondence register (Phase 0 lot 2) and bring V12.4 statuses onto the §23 12-value taxonomy in a VIEW (not by rewriting the companion)",
+        "gain": "§23 states machine-checkable per mission",
+        "touches": "odg-mission-crosswalk / odg-component-census (existing)"
+      }
+    ]
+  }
+}
