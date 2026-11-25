@@ -1,0 +1,51 @@
+{
+  "//": "Independent inspection record of the revised V178-P4 contract (revision 2; owner record docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json). Revision 1 (head 6679cda7) was REJECTED by the same independent inspector (2 blocking defects: AC6 satisfiable by FTS5 alone; AC5 tsc unmeasured) — fixed in #1028.",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V178-P4",
+  "verdict": "ACCEPT",
+  "contractSha256": "87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca",
+  "inspectedHeadSha": "c356320bfac62323d02587de4181df92b49e94c2",
+  "inspectedPr": 1028,
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session)",
+  "inspectorSessionId": "a099f63877f7d54f3",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "v19-p4-revision2",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-25",
+  "priorVerdicts": [
+    {
+      "revision": 1,
+      "inspectedHeadSha": "6679cda74623713d8bd2880e6b6da7aa653e4aae",
+      "contractSha256": "63812b6b4b9c3da56871b2f5c2d789e5a7052a9e5bd4702666871f9e6f94123c",
+      "verdict": "REJECT",
+      "blockingDefects": [
+        "AC6 satisfiable by the FTS5 leg alone (constant embedding ⇒ hybrid 6/6)",
+        "AC5 'tsc clean' unmeasured yet marked met"
+      ]
+    }
+  ],
+  "findings": [
+    "AC1–AC5 verbatim in both revisions; AC6 only made stricter; write_set unchanged",
+    "preRegistration.dataset.runnerSha256 = committed runner sha; thresholds/maxEmbedCalls match the code",
+    "defect 1 FIXED: constant/zero/random/lexical embeddings never reach vecOnly≥4 nor hybrid≥5; FTS alone 1/6",
+    "defect 2 FIXED: AC5 requires tsc exit 0 + every touched test",
+    "non-blocking: AC4 git/source missing ⇒ FAIL (not NOT_MEASURED) — conservative",
+    "non-blocking: LEX-0 compares raw tokens while FTS5 unicode61 folds diacritics (facturé/facture) — vector floor remains the discriminating criterion",
+    "non-blocking: vector floor 4/6 near chance on 10 records (P(random passes AC6) ≈ 1–2 %) — qualification valid only at this sample size",
+    "non-blocking: 4 derived register/snapshot records changed in #1027/#1028 not listed in write_set/bindingFiles",
+    "runner gates unchanged and correct (REFUSED rc=3, ALREADY_RECORDED, inspection-gated, writes only OUT)"
+  ],
+  "testsRun": [
+    "memory-architecture.test.ts PASS",
+    "odg-memory-hybrid-index.test.ts PASS",
+    "v97-forensic-release-selection.test.ts PASS",
+    "odg-authorization-scope.test.ts PASS",
+    "odg-strategic-select.test.ts PASS",
+    "odg-v178-radar-campaign.test.ts PASS",
+    "odg-v178-p1-multi-candidate-run.test.ts PASS",
+    "odg-v178-p4-memory-run.ts --selftest PASS",
+    "tsc --noEmit -p tsconfig.json PASS"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V178-P4 only; RUN via ODG GO --execute only; grades nothing."
+}
