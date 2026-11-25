@@ -330,6 +330,12 @@ function nodeModulesFindings(committed: string[], staged: string[], untracked: s
   return f;
 }
 
+/* CI-1 — added *.test.ts files (outside runtime/__bench__) that the CI classified gate does not list. Pure. */
+function newTestsOutsideCi(changes: Change[], gateSuites: Set<string> | null): string[] {
+  if (!gateSuites) return [];
+  return changes.filter((c) => c.status === "A" && /\.test\.ts$/.test(c.path) && !/(^|\/)__bench__\//.test(c.path) && !gateSuites.has(c.path)).map((c) => c.path).sort();
+}
+
 /* ---------- (7) verdict ---------- */
 
 function verdict(report: any): { verdict: string; reasons: string[]; warnings: string[] } {
@@ -345,6 +351,7 @@ function verdict(report: any): { verdict: string; reasons: string[]; warnings: s
   for (const t of report.tsc || []) if (t.status === "FAIL") reasons.push(`TSC FAIL ${t.project}: ${t.errors} error(s)${t.first ? ` — ${t.first}` : ""}`);
   for (const m of report.conflictMarkers || []) reasons.push(`CONFLICT_MARKERS ${m.path} lines ${m.lines.join(",")}`);
   for (const u of report.unmerged || []) reasons.push(`UNMERGED ${u}`);
+  for (const t of report.newTestsOutsideCi || []) reasons.push(`NEW_TEST_OUTSIDE_CI ${t} — add it to package.json scripts.test:report (CI never runs it otherwise; CI-1)`);
   for (const n of report.nodeModules || []) (n.severity === "NOT_READY" ? reasons : warnings).push(`node_modules ${n.where}: ${n.path}`);
   if (report.tests && report.tests.selected === 0 && (report.changes || []).some((c: any) => /\.(ts|tsx|js)$/.test(c.path))) warnings.push("code changed but no impacted test was found — targeted coverage is NONE (the full CI gate remains the certification point)");
   return { verdict: reasons.length ? "NOT_READY" : "READY", reasons, warnings };
@@ -477,6 +484,9 @@ function gate(root: string, o: any, log: (s: string) => void = () => {}): any {
   const selected = gateSuites ? all.filter((s) => gateSuites.has(s.test)) : all;
   report.testSelection = selected;
   report.testsOutsideGate = gateSuites ? all.filter((s) => !gateSuites.has(s.test)).map((s) => s.test) : [];
+  // CI-1 (V17.8): a test file ADDED by this change but absent from the CI classified gate would never run in CI (188 such
+  // suites had silently accumulated, some asserting stale state) ⇒ NOT_READY until it is wired into scripts.test:report.
+  report.newTestsOutsideCi = newTestsOutsideCi(cs.changes, gateSuites);
   if (o.tests) {
     const files = selected.map((s) => s.test).slice(0, o.maxTests === Infinity ? undefined : o.maxTests);
     if (files.length < selected.length) report.testsTruncated = { ran: files.length, selected: selected.length, note: "--max-tests: the rest are NOT_RUN, never PASS" };
@@ -518,7 +528,7 @@ function main(argv: string[]): number {
   return r.verdict === "READY" ? 0 : 1;
 }
 
-module.exports = { notOkLines, ciSuites, resolveTemplate, parseNameStatus, mergeChanges, citedPaths, declaredOutputs, classifyCli, discoverChecks, selectChecks, checkEdges, topoOrder, selectTests, conflictMarkers, nodeModulesFindings, verdict, parseArgs, gate, renderText };
+module.exports = { newTestsOutsideCi, notOkLines, ciSuites, resolveTemplate, parseNameStatus, mergeChanges, citedPaths, declaredOutputs, classifyCli, discoverChecks, selectChecks, checkEdges, topoOrder, selectTests, conflictMarkers, nodeModulesFindings, verdict, parseArgs, gate, renderText };
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
 
