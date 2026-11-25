@@ -1,0 +1,43 @@
+{
+  "//": "Checkpoint CP17 — F closed; owner operating rule (no agent proliferation, local-native first, no GO --execute by the coordinator). Canonical series (LCP-1). V12.4 canonical; V14.4 strategic reference.",
+  "checkpoint": "CP17",
+  "date": "2026-11-25",
+  "headAtCheckpoint": "b2e8b9f6",
+  "previous": "docs/odg/evidence/V178_CHECKPOINT_16.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5
+  },
+  "missions": {
+    "F": "CLOSED_PARTIAL (single GO run 72f232fd; fixture mechanics, FIXTURE-CAP-1; validation docs/odg/evidence/V176_F_CRITERIA_VALIDATION.json)",
+    "V176-NB3": "inspected, RUN-authorized, NOT dispatched (owner rule: coordinator never runs GO --execute)",
+    "V178-P1": "contract revised + inspection ACCEPT on #1011 (pending merge + inspection record)",
+    "V178-P2": "contract revised + inspection ACCEPT on #1011 (pending merge + inspection record)",
+    "D": "strategic SELECTED (no tie since F closed); contract PROPOSED ⇒ not actionable"
+  },
+  "ownerOperatingRule": "docs/odg/V178_OWNER_OPERATING_RULE_LOCAL_NATIVE.json",
+  "nativeLedger": {
+    "goExecutedSteps": [
+      "H",
+      "G2",
+      "J2",
+      "V175-NB1",
+      "V175-NB2",
+      "J",
+      "F"
+    ],
+    "nativeCodeIntegrated": {
+      "files": 2,
+      "designedBy": "provider spec",
+      "implementedBy": "local qwen2.5-coder:7b",
+      "pr": 978
+    },
+    "odgDesignedCodeIntegrated": 0,
+    "implementBaseline": "3/6 (V155)"
+  },
+  "resumeActions": [
+    "merge #1011 (P1/P2 contracts) + record their inspections",
+    "GO selection per its order — dispatch only when the owner lifts the no-GO--execute rule",
+    "next native improvement for implement > 3/6 = V178-P1 (multi-candidate + execution selection)"
+  ]
+}

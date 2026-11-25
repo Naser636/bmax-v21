@@ -1,0 +1,26 @@
+{
+  "//": "OWNER operating rule — verbatim transcription (2026-11-25) of the owner directive « CTO — V14.4 / DIRECTIVE IMMÉDIATE — STOP AGENT PROLIFERATION — LOCAL-NATIVE WORK PRIORITY ». Governs how the coordinating provider session works; grants nothing.",
+  "schema": "odg-owner-operating-rule/1",
+  "kind": "OWNER_OPERATING_RULE",
+  "date": "2026-11-25",
+  "issuer": "OWNER (CTO)",
+  "source": "owner directive « CTO — V14.4 / DIRECTIVE IMMÉDIATE — STOP AGENT PROLIFERATION — LOCAL-NATIVE WORK PRIORITY », 2026-11-25 (relayed by the coordinating session)",
+  "quote": [
+    "aucun nouvel agent généraliste pour une tâche que le coordinateur peut réaliser directement ;",
+    "aucun agent lancé pour surveiller un autre agent ;",
+    "aucune boucle d'attente prolongée ;",
+    "aucune répétition d'un audit déjà réalisé ;",
+    "aucune duplication d'une mission en cours ;",
+    "aucun travail parallèle sans indépendance réelle et bénéfice démontré.",
+    "Toute exception doit être justifiée par une impossibilité technique précise et un gain supérieur à son coût.",
+    "Ne jamais lancer GO --execute.",
+    "Ne pas forcer une sélection stratégique.",
+    "Ne pas confondre code produit par Ollama avec conception entièrement autonome d'ODG. Enregistrer précisément les contributions.",
+    "Claude Code reste un provider de dernier recours."
+  ],
+  "effect": {
+    "coordinator": "works directly in the repo; agents only by documented exception",
+    "goExecute": "the coordinating session does NOT run `odg-go.ts --execute` (GO dispatches only when the owner lifts this rule)",
+    "attribution": "per-stage authorship ledger mandatory (problem / design / implementation / tests / integration)"
+  }
+}

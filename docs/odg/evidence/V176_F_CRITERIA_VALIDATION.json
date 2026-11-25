@@ -1,0 +1,64 @@
+{
+  "//": "VALIDATE_CRITERIA for F (« F — Multi-agents »; owner record V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json). Graded only from committed evidence + the independent inspection of the result (#1012 on main). Nothing upgraded: FIXTURE-CAP-1 caps the scenario at PARTIAL.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "F",
+  "date": "2026-11-25",
+  "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V176_F_EXPERIMENT.json",
+    "sha256": "1dfa8e61d9ef7afb5e53cae822c3999fcd3032e12bea43cf5e4a57e140e310ef",
+    "experimentSha256": "a656a3da565e30393a73efa82b90d204bca09c5caf5ecc55883a2cfa2bf71473",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1012,
+    "mergedAs": "b2e8b9f6",
+    "producedBy": "ODG GO --execute native dispatch (run 72f232fd36191bff; GO's own actionable choice; F-runner one-shot claim); trace docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl (original sha dced1c99…)"
+  },
+  "experimentInspection": {
+    "pr": 1012,
+    "inspectedHead": "b2e8b9f6",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "ab6a445c9679c2387",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-72f232fd36191bff",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "findings": "contract sha recomputed at run head 30de7089; pins match; 0 network calls; F-runner claim created; trace 10 steps, 1 dispatch, no GO-ORD-2, redaction only"
+  },
+  "criteria": [
+    {
+      "id": "C1",
+      "status": "MET",
+      "evidence": "PARALLEL wave {W-PARSE, W-TOTAL}, both ASSIGNED by the supervisor with declared write-sets"
+    },
+    {
+      "id": "C2",
+      "status": "MET (mechanically)",
+      "evidence": "two receipts from distinct producer pids/branches/commits, 454 ms concurrent overlap; producers fixture-scripted"
+    },
+    {
+      "id": "C3",
+      "status": "MET",
+      "evidence": "4 round-1 findings (WRITESET_VIOLATION, OVERLAPPING_WRITES, MERGE_CONFLICT, CHECK_FAILED) incl. both planted, found by git / check exit codes"
+    },
+    {
+      "id": "C4",
+      "status": "MET",
+      "evidence": "round 1 integration refused; round 2 INTEGRATED_VALIDATED (5/5 checks exit 0, unionOk); independent inspection ACCEPT (this record)"
+    }
+  ],
+  "result": {
+    "outcome": "PARTIAL",
+    "basis": "mechanical grade PASS ⇒ capped at PARTIAL by FIXTURE-CAP-1 (fixture mechanics only)"
+  },
+  "scenarioGrade": "PARTIAL",
+  "adoption": "NOT_ADOPTED as provider-capability evidence; odg-go-wave library integrated, GO wiring = next delivery step",
+  "limits": [
+    "producers are fixture-scripted — V161's live-provider natural-detection point stays OPEN",
+    "waves not yet wired into odg-go-cycle EXECUTE",
+    "independence declared by session ids"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PARTIAL)",
+    "missionF": "CLOSED_PARTIAL"
+  }
+}
