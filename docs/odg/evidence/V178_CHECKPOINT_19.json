@@ -1,0 +1,105 @@
+{
+  "//": "V17.8 CHECKPOINT 19 — owner directive « CTO — ODG GLOBAL CONTINUITY & DUAL-WORKSTREAM EXECUTION » (2026-11-25): two coordinated workstreams; VPS campaign resumed PROGRESSIVELY within existing authorizations. V12.4 stays the canonical Boussole (unchanged); governance V14.4; no deployment.",
+  "checkpoint": 19,
+  "date": "2026-11-25",
+  "headAtCheckpoint": "ee5c914b",
+  "previous": "docs/odg/evidence/V178_CHECKPOINT_18.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5
+  },
+  "ownerDecision": {
+    "quote": [
+      "Deux chantiers doivent progresser de manière coordonnée : A. ODG NATIVE INTELLIGENCE, ENGINEERING AND AUTONOMY. B. VPS LOCAL INTELLIGENCE, MODEL INSTALLATION AND REPOSITORY INTEGRATION.",
+      "Aucun chantier ne doit effacer, remplacer ou faire oublier l'autre.",
+      "Ce mandat ne constitue pas une autorisation de déploiement en production.",
+      "Ne pas inventer un ordre GO.",
+      "Pour P3 et P4, poursuivre selon les autorisations effectivement accordées. Si une autorisation spécifique demeure nécessaire, préparer une demande précise et continuer les autres travaux sans attendre."
+    ],
+    "boussole": "V12.4 canonical — no second Boussole",
+    "cp18": "kept as the preservation proof of the VPS campaign (vpsSuspension)"
+  },
+  "workstreams": {
+    "A_nativeAutonomy": {
+      "status": "ACTIVE",
+      "done": [
+        "#1016 P1 executed FAIL 3/6",
+        "#1017 execution-agreement repair (PROVIDER code after native FAIL 6/12×2)",
+        "#1018 native qualification 7/12 NOT_REPRODUCED + F-B study",
+        "#1019 MECH-1 + V178-P1 CLOSED_FAIL",
+        "#1021 CI-1: 162 never-run suites wired into CI (188 had never run; gate refuses unwired new tests)"
+      ],
+      "open": {
+        "V176-NB3": "AUTHORIZED, inspected — blocked only by GO's exact tie {V176-NB3, V178-P2} (DECISION_REQUIRED); the coordinator does not invent an order",
+        "V178-P2": "same tie",
+        "F": "CLOSED_PARTIAL kept; F-A needs real providers (V150-OG02); F-B needs a contract adding resource-exclusivity (study docs/odg/evidence/V176_F_WAVE_WIRING_STUDY.json)",
+        "P1-R": "re-attempt with execution-agreement selection — needs a NEW contract + distinct-session inspection",
+        "P3–P7": "PROPOSED; positive acceptance needs a distinct-session inspection (MECH-1 is negative-only)",
+        "ciFindings": [
+          "delegate-isolation.test.ts and primitive-validation.test.ts pass on this host but FAIL on a clean CI checkout (host-dependent state: 'got 8' of 9 primitive modules; provider effect not applied) — not in CI, to diagnose",
+          "3 snapshot suites (continuity-baseline, native-design-run, register-dependency-graph) assert moved state — need re-baselining",
+          "odg-probe stays out of offline gates by design"
+        ]
+      }
+    },
+    "B_vpsLocalIntelligence": {
+      "status": "RESUMED_PROGRESSIVELY (CP18 preserved)",
+      "differentialCheck2026_11_25": {
+        "ollama": "0.35.1 (unchanged)",
+        "models": [
+          "qwen2.5-coder:7b 4.7 GB",
+          "qwen2.5-coder:3b 1.9 GB",
+          "qwen2.5:0.5b 397 MB"
+        ],
+        "disk": "161G free / 193G",
+        "ram": "22 GiB total, 16 available",
+        "drift": "none vs docs/odg/evidence/V178_P0_VPS_INVENTORY.json"
+      },
+      "radarTrajectory": "BALANCED (unchanged)",
+      "pendingOwnerRequests": [
+        {
+          "id": "V178-P3",
+          "what": "ollama pull Qwen3.5-9B (Q4_K_M first, then Q5_K_M)",
+          "radar": [
+            "A-01 Apache-2.0, 9B hybrid Gated DeltaNet, 262k ctx",
+            "H-02 Q5_K_M ≈2.6× closer to FP16 than Q4_K_M",
+            "H-04"
+          ],
+          "size": "≈5–6 GB per quant (161 G free)",
+          "compatibility": "RISK: B-03 — hybrid/recurrent Qwen3.5 serving landed in Ollama 0.40.x; host has 0.35.1 (/usr/local/bin, root-owned) ⇒ P3 very likely needs an Ollama upgrade = ROOT decision",
+          "resources": "one large model resident at a time (no swap)",
+          "order": "after P2 measurement"
+        },
+        {
+          "id": "V178-P4",
+          "what": "ollama pull Qwen3-Embedding-0.6B + npm sqlite-vec (pinned)",
+          "radar": [
+            "A-09/E-03 Apache-2.0, 32k ctx, Q4_K_M ≈397 MB / Q8_0 ≈639 MB",
+            "E-06 sqlite-vec MIT/Apache-2.0, pre-v1 (breaking changes expected)",
+            "E-10 FTS5 BM25 + vector RRF"
+          ],
+          "note": "FTS5 leg needs no install (node:sqlite)",
+          "contract": "PROPOSED — needs inspection before build"
+        }
+      ],
+      "notStarted": "AMBITIOUS tier, root hardening, release activation (owner/root per item)"
+    }
+  },
+  "coordinationRules": [
+    "serialize host-exclusive work (local model calls, P2 measurement, downloads) — never a download concurrent with a benchmark",
+    "no subagents; bounded waits only (owner, duration, exit condition)",
+    "parallel only for light independent work (docs, tests, CI)",
+    "no install/download without the matching owner approval"
+  ],
+  "resumeAfterInterruption": [
+    "npx tsx runtime/bin/odg-resume-point.ts --check",
+    "read this checkpoint (workstreams) + V178_CHECKPOINT_18.json#vpsSuspension",
+    "bash ~/odg-preservation/verify-historical.sh"
+  ],
+  "resumeActions": [
+    "owner: explicit order NB3 vs P2 ⇒ coordinator runs GO --execute (durable permission) for each, serially",
+    "owner: P3 download + Ollama upgrade (root) decision; P4 download + npm decision",
+    "owner/inspector: distinct-session inspections for new contracts (P1-R, F-B, P4–P7)",
+    "internal: diagnose the 2 host-dependent suites; re-baseline the 3 snapshot suites"
+  ]
+}
