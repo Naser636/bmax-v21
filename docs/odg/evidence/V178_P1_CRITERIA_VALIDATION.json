@@ -1,0 +1,91 @@
+{
+  "//": "VALIDATE_CRITERIA for V178-P1 under MECH-1 (owner decision V178_OWNER_DECISION_MECHANICAL_NEGATIVE_VALIDATION.json): records the NEGATIVE result honestly. Mechanical validation of a FAIL — NOT an independent inspection, certifies no success.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V178-P1",
+  "date": "2026-11-25",
+  "contractSha256": "3d6ce0b00204e7dd7e3067cfbec35f6b19eb7cd6cb51320bc658d15357986194",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+    "sha256": "9819cb8cf6cc3547d7de9eaee6695387158b9630f6ba5bacb55bcbbd28440a4d",
+    "experimentSha256": "5eeb06d419c1339e357d801b278282be5b1d3eb014945e80164ea4356c8a3f7a",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1016,
+    "mergedAs": "5b1863fa",
+    "producedBy": "ODG GO --execute native dispatch (run 74284b0dc484299e; owner order GO-ORD-1 P1 first; coordinator-launched under docs/odg/V178_OWNER_AUTHORIZATION_GO_EXECUTE.json); trace docs/odg/evidence/V178_P1_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "kind": "MECHANICAL_VERIFIER",
+    "verdict": "CONSISTENT",
+    "ownerRecord": "docs/odg/V178_OWNER_DECISION_MECHANICAL_NEGATIVE_VALIDATION.json",
+    "experimentSha256": "5eeb06d419c1339e357d801b278282be5b1d3eb014945e80164ea4356c8a3f7a",
+    "verifier": "runtime/bin/odg-mechanical-result-verifier.ts",
+    "reproduce": "npx tsx runtime/bin/odg-mechanical-result-verifier.ts V178-P1 --check",
+    "verificationRecord": "docs/odg/evidence/V178_P1_MECHANICAL_VERIFICATION.json",
+    "checks": [
+      {
+        "id": "RAW_DATA",
+        "ok": true
+      },
+      {
+        "id": "RECOMPUTE",
+        "ok": true
+      },
+      {
+        "id": "IDS_TRACES",
+        "ok": true
+      },
+      {
+        "id": "CONTRACT_LIMITS",
+        "ok": true
+      },
+      {
+        "id": "PROVENANCE",
+        "ok": true
+      },
+      {
+        "id": "REGISTER_CONSISTENCY",
+        "ok": true
+      }
+    ],
+    "recomputed": {
+      "outcome": "FAIL",
+      "accepted": 3,
+      "n": 6,
+      "controlT0": 3
+    },
+    "independenceLevel": "MECHANICAL_NEGATIVE_ONLY"
+  },
+  "criteria": [
+    {
+      "id": "AC-PASS",
+      "status": "NOT_MET",
+      "evidence": "implement accepted on the full host-graded oracle 3/6 vs required ≥ 4/6 (baseline 3/6; control t0 3/6)"
+    },
+    {
+      "id": "AC-BUDGET",
+      "status": "MET",
+      "evidence": "20/20 model calls, 1/1 warm-up, 0 provider calls, wall 389 s ≤ 1 800 s"
+    },
+    {
+      "id": "AC-SANDBOX",
+      "status": "MET",
+      "evidence": "sandbox probe measured+passed before the first model call"
+    }
+  ],
+  "result": {
+    "outcome": "FAIL",
+    "basis": "recomputed 3/6 < 4/6"
+  },
+  "scenarioGrade": "FAIL",
+  "followUp": {
+    "rootCause": "visible cases non-discriminating on impl-ts-parse-range (23/24 candidates pass all visible)",
+    "correction": "runtime/core/odg-execution-agreement.ts — PROVIDER (Claude Code) code after native FAIL 6/12×2; #1017",
+    "nativeQualification": "7/12 NOT_REPRODUCED (#1018)",
+    "correctionEffectOnOracle": "NOT_MEASURED — needs a NEW contracted re-attempt (P1 is not re-run)"
+  },
+  "validatedBy": "deterministic mechanical verifier (MECH-1) — no new judgement",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded FAIL, MECH-1)",
+    "missionV178P1": "CLOSED_FAIL"
+  }
+}

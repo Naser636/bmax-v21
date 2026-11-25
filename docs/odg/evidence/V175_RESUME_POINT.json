@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "6a46983f7361a61610a9f940ef504ea27c8125bce7a925b147dd75e33a36a989"
+      "sha256": "3d4d5893f6ef6c84da92a51c69d60d1543f2d8e095660a80b1243a80f3b456c6"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -168,6 +168,10 @@
     {
       "source": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
       "sha256": "9819cb8cf6cc3547d7de9eaee6695387158b9630f6ba5bacb55bcbbd28440a4d"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P1_CRITERIA_VALIDATION.json",
+      "sha256": "8847ee26e2a6307ab6a5d53d969a066597c6674d5a6eb2541daef4cddbc982e8"
     },
     {
       "source": "docs/odg/evidence/V178_P2_CONTRACT_INSPECTION.json",
@@ -833,7 +837,7 @@
     {
       "id": "V178-P1",
       "title": "multi-candidate generation (n diverse samples per design) with execution-based selection whose criteria are independent of generation, in the native design pipeline",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_FAIL",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -845,18 +849,19 @@
       },
       "contractSha256": "3d6ce0b00204e7dd7e3067cfbec35f6b19eb7cd6cb51320bc658d15357986194",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "3d6ce0b00204e7dd7e3067cfbec35f6b19eb7cd6cb51320bc658d15357986194"
       },
       "records": {
@@ -869,8 +874,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V178_P1_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -880,21 +885,10 @@
         "endedAt": "2026-11-25T10:13:46.273Z",
         "dispatched": true
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 3d6ce0b00204 and experiment docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_FAIL, CLOSE-1 docs/odg/evidence/V178_P1_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P1]",
@@ -961,9 +955,9 @@
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
       "CLOSED_PARTIAL": 4,
-      "CLOSED_FAIL": 3,
+      "CLOSED_FAIL": 4,
       "CLOSED_PASS": 1,
-      "NOT_STARTED": 11,
+      "NOT_STARTED": 10,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1147,11 +1141,6 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V178-P1",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 3d6ce0b00204 and experiment docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {

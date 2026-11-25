@@ -108,6 +108,21 @@ const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contrac
   check("R5b: contract sha mismatch ⇒ not validated", run(val({ contractSha256: "0".repeat(64) })).currentStep === "VALIDATE_CRITERIA");
   check("R5b: inspection REJECT ⇒ not validated", run(val({ experimentInspection: { verdict: "REJECT", inspectorSessionId: "insp-session-0002", authorSessionId: "exp-author-0003" } })).currentStep === "VALIDATE_CRITERIA");
   check("R5b: same inspector/author session ⇒ not validated", run(val({ experimentInspection: { verdict: "ACCEPT", inspectorSessionId: "same-session-01", authorSessionId: "same-session-01" } })).currentStep === "VALIDATE_CRITERIA");
+  {
+    const ef = { contractSha256: SHA, outcome: "FAIL" }; const xf = AS.experimentSha256(ef);
+    const chk = AS.MECH_REQUIRED_CHECKS.map((id: string) => ({ id, ok: true }));
+    const mi = (o: any = {}) => ({ kind: AS.MECH_KIND, verdict: "CONSISTENT", ownerRecord: AS.MECH_OWNER_RECORD, experimentSha256: xf, verifier: "runtime/bin/odg-mechanical-result-verifier.ts", reproduce: "npx tsx runtime/bin/odg-mechanical-result-verifier.ts --check", verificationRecord: "docs/odg/evidence/X.json", checks: chk, recomputed: { outcome: "FAIL" }, ...o });
+    const mv = (o: any = {}, g = "FAIL", x = xf) => ({ contractSha256: SHA, experimentEvidence: { experimentSha256: x }, experimentInspection: mi(o), scenarioGrade: g });
+    const r = run(mv(), ef);
+    check("MECH-1: mechanical verifier validates a FAIL result recording (grade FAIL = outcome) with independence MECHANICAL_NEGATIVE_ONLY", r.currentStep === null && r.validatedSteps.some((x: any) => x.step === "VALIDATE_CRITERIA" && x.evidence.independenceLevel === "MECHANICAL_NEGATIVE_ONLY" && x.evidence.scenarioGrade === "FAIL"));
+    const ep = { contractSha256: SHA, outcome: "PARTIAL" }; const xp = AS.experimentSha256(ep);
+    check("MECH-1: never on a positive outcome (PARTIAL experiment, even graded FAIL)", run(mv({ experimentSha256: xp, recomputed: { outcome: "PARTIAL" } }, "FAIL", xp), ep).currentStep === "VALIDATE_CRITERIA");
+    const e3 = { contractSha256: SHA, outcome: "PASS" }; const x3 = AS.experimentSha256(e3);
+    check("MECH-1: never PASS", run(mv({ experimentSha256: x3, recomputed: { outcome: "PASS" } }, "PASS", x3), e3).currentStep === "VALIDATE_CRITERIA");
+    check("MECH-1: grade must equal the outcome (NOT_MEASURED on FAIL refused)", run(mv({}, "NOT_MEASURED"), ef).currentStep === "VALIDATE_CRITERIA");
+    check("MECH-1: a missing/failed required check ⇒ refused", run(mv({ checks: chk.map((c: any) => c.id === "PROVENANCE" ? { id: c.id, ok: false } : c) }), ef).currentStep === "VALIDATE_CRITERIA" && run(mv({ checks: chk.slice(1) }), ef).currentStep === "VALIDATE_CRITERIA");
+    check("MECH-1: recomputed outcome mismatch / wrong owner record / verdict ≠ CONSISTENT / unbound experiment ⇒ refused", [mv({ recomputed: { outcome: "PASS" } }), mv({ ownerRecord: "docs/odg/OTHER.json" }), mv({ verdict: "ACCEPT" }), mv({ experimentSha256: "0".repeat(64) })].every((v: any) => run(v, ef).currentStep === "VALIDATE_CRITERIA"));
+  }
   check("R5b: missing session ids ⇒ not validated", run(val({ experimentInspection: { verdict: "ACCEPT" } })).currentStep === "VALIDATE_CRITERIA");
 }
 // V16.8 — per-scenario owner source (G ⇒ V165, H ⇒ V168) + STEP_SEQUENCES.H derived exactly like G

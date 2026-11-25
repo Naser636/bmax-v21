@@ -1,0 +1,44 @@
+{
+  "//": "OWNER decision record — verbatim transcription (2026-11-25) by the coordinating provider session. A NARROW exception to R5b, implemented in the EXISTING mechanism (runtime/core/odg-authorization-scope.ts validationValid, rule MECH-1) — no parallel validation system.",
+  "schema": "odg-owner-decision/1",
+  "kind": "OWNER_DECISION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-25",
+  "directive": "CTO — OWNER DECISION V14.4 — UNBLOCK VALIDATION · CONTINUE NB3/P2 · COMPLETE OPEN DOSSIERS",
+  "quote": [
+    "Le propriétaire autorise une exception étroite à R5b :",
+    "Un vérificateur mécanique déterministe peut valider l'enregistrement des résultats FAIL et NOT_MEASURED, sans session d'inspection distincte.",
+    "Conditions obligatoires : vérifier les données brutes ; recalculer les résultats ; vérifier les identifiants et les traces ; vérifier les limites contractuelles ; vérifier la provenance ; vérifier la cohérence entre résultat, registre et preuves ; conserver une trace reproductible du contrôle.",
+    "Cette exception ne permet jamais : de déclarer PASS ; de certifier une réussite technique ; de remplacer une inspection indépendante lorsqu'elle est nécessaire pour accepter un résultat positif ; de modifier les autres exigences de R5b.",
+    "Documenter cette exception dans le mécanisme de gouvernance existant, sans créer un système de validation parallèle.",
+    "Ne pas attendre une inspection positive pour des résultats négatifs mécaniquement vérifiables."
+  ],
+  "implementation": {
+    "rule": "MECH-1",
+    "where": "runtime/core/odg-authorization-scope.ts (validationValid → mechanicalNegativeValid)",
+    "requiredChecks": [
+      "RAW_DATA",
+      "RECOMPUTE",
+      "IDS_TRACES",
+      "CONTRACT_LIMITS",
+      "PROVENANCE",
+      "REGISTER_CONSISTENCY"
+    ],
+    "conditions": [
+      "experiment outcome ∈ {FAIL, NOT_MEASURED}",
+      "scenarioGrade EQUAL to the outcome",
+      "verdict CONSISTENT, bound to the experiment sha",
+      "recomputed outcome = recorded outcome",
+      "verifier path + reproduction command + committed verification record"
+    ],
+    "independenceLevel": "MECHANICAL_NEGATIVE_ONLY (never DECLARED_SESSION_INDEPENDENCE)",
+    "verifier": "runtime/bin/odg-mechanical-result-verifier.ts (deterministic; --check reproduces byte-for-byte)"
+  },
+  "neverAppliesTo": [
+    "PASS",
+    "PARTIAL",
+    "any positive result",
+    "contract inspections (INSPECT_REVISED_CONTRACT)",
+    "other R5b conditions"
+  ]
+}

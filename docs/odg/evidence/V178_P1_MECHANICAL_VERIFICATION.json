@@ -1,0 +1,134 @@
+{
+  "schema": "odg-mechanical-verification/1",
+  "item": "V178-P1",
+  "rule": "MECH-1",
+  "ownerRecord": "docs/odg/V178_OWNER_DECISION_MECHANICAL_NEGATIVE_VALIDATION.json",
+  "verifier": "runtime/bin/odg-mechanical-result-verifier.ts",
+  "reproduce": "npx tsx runtime/bin/odg-mechanical-result-verifier.ts V178-P1 --check",
+  "contractSha256": "3d6ce0b00204e7dd7e3067cfbec35f6b19eb7cd6cb51320bc658d15357986194",
+  "experimentSha256": "5eeb06d419c1339e357d801b278282be5b1d3eb014945e80164ea4356c8a3f7a",
+  "verdict": "CONSISTENT",
+  "recomputed": {
+    "outcome": "FAIL",
+    "accepted": 3,
+    "n": 6,
+    "controlT0": 3
+  },
+  "checks": [
+    {
+      "id": "RAW_DATA",
+      "ok": true,
+      "detail": {
+        "trials": 6,
+        "distinctTasks": 2,
+        "taskSetEntries": 2,
+        "candidates": 24,
+        "budgetsTrials": 3,
+        "budgetsN": 4
+      }
+    },
+    {
+      "id": "RECOMPUTE",
+      "ok": true,
+      "detail": {
+        "accepted": 3,
+        "n": 6,
+        "controlT0": 3,
+        "recomputedOutcome": "FAIL",
+        "recordedVerdict": "FAIL",
+        "recordedOutcome": "FAIL",
+        "threshold": "PASS ⇔ ≥ 4/6",
+        "selectionVisibleMaxAndAcceptedIsChosen": true
+      }
+    },
+    {
+      "id": "IDS_TRACES",
+      "ok": true,
+      "detail": {
+        "runIds": [
+          "74284b0dc484299e"
+        ],
+        "executeSteps": 1,
+        "mission": "V178-P1",
+        "dispatchCommand": "runtime/bin/odg-v178-p1-multi-candidate-run.ts",
+        "writeConfinement": true,
+        "resultContractSha256": "3d6ce0b00204e7dd7e3067cfbec35f6b19eb7cd6cb51320bc658d15357986194",
+        "recomputedContractSha256": "3d6ce0b00204e7dd7e3067cfbec35f6b19eb7cd6cb51320bc658d15357986194"
+      }
+    },
+    {
+      "id": "CONTRACT_LIMITS",
+      "ok": true,
+      "detail": {
+        "budgetsMatchContract": true,
+        "modelCalls": 20,
+        "maxModelCalls": 20,
+        "warmupCalls": 1,
+        "providerCalls": 0,
+        "refused": [],
+        "capHit": null,
+        "callsInPreDeclaredSchedule": true,
+        "wallMs": 389173,
+        "wallBudgetMs": 1800000,
+        "sandboxProbe": {
+          "measured": true,
+          "passed": true,
+          "reason": "hidden test passed (all 1 hidden cases passed)"
+        }
+      }
+    },
+    {
+      "id": "PROVENANCE",
+      "ok": true,
+      "detail": {
+        "experimentActor": "ODG",
+        "providerEditedGeneratedCode": false,
+        "promptModels": [
+          "qwen2.5-coder:7b"
+        ],
+        "correctionModule": "runtime/core/odg-execution-agreement.ts",
+        "correctionAuthor": "PROVIDER (Claude Code) — fallback authorized by owner order 2026-11-25 §7",
+        "odgDesigned": false,
+        "nativeQualification": "7/12",
+        "correctionEffectOnOracle": "NOT_MEASURED"
+      }
+    },
+    {
+      "id": "REGISTER_CONSISTENCY",
+      "ok": true,
+      "detail": {
+        "registerItem": true,
+        "registerContractSha256": "3d6ce0b00204e7dd7e3067cfbec35f6b19eb7cd6cb51320bc658d15357986194",
+        "authEvidenceExperiment": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+        "runnerOut": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+        "registerStatusNotClosedPass": true
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "path": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+      "sha256": "9819cb8cf6cc3547d7de9eaee6695387158b9630f6ba5bacb55bcbbd28440a4d"
+    },
+    {
+      "path": "docs/odg/evidence/V178_P1_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "cac478eca0625fc3671203f1ea11d262c3495fd1bb186eb4787a11ccf1a7f955"
+    },
+    {
+      "path": "docs/odg/evidence/V178_P1_REPAIR_AGREEMENT_PROVENANCE.json",
+      "sha256": "ab6b7103f692d3b3cd7dbe3ef7dd4ca0d55d654a02ce90388fa354ef3c90e825"
+    },
+    {
+      "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+      "sha256": "fb9952b721ee80183d5a0bb50ac69d671faa549c072cbddb0a8114c04ebf58e5"
+    },
+    {
+      "path": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+      "sha256": "(not bound: regenerated view)"
+    }
+  ],
+  "limits": [
+    "validates the RECORDING of a negative result only; certifies no success; not an independent inspection",
+    "register status is a regenerated view (not hash-bound)"
+  ]
+}
