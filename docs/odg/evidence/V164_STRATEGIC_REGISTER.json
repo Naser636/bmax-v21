@@ -226,6 +226,10 @@
       "sha256": "758fcaf8ee8599fdacd2579f4b58591bba1418435c8205d2ce14b516fc4f4e9d"
     },
     {
+      "source": "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json",
+      "sha256": "b7c1200da8cce79c29eb539a0e2c1c606bf8d29f05cc3a663799c01fb3d3758a"
+    },
+    {
       "source": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
       "sha256": "d0a45dfef1865ec90a51114d4fc60e6a1982715ac63d8c1b21886624893c3e1c"
     },
@@ -383,7 +387,7 @@
     },
     {
       "source": "runtime/core/odg-strategic-register.test.ts",
-      "sha256": "73752e6ee8754cc7e63423bdab596582c923254b942aed5cf88b2a2233d1aae0"
+      "sha256": "b41f362fab07817b31d3d23f1091c155ed54a0b8080364132c0d38749eb8f15d"
     },
     {
       "source": "runtime/core/odg-strategic-register.ts",
@@ -1488,7 +1492,7 @@
         "CTR-2": "CONTRACT_STATE_VS_CLOSURE: a CLOSE-1-closed item whose contract `state` does not contain 'CLOSED' (the contract state is never rewritten), OR a checkpoint mission<X>.status that does not start with the derived CLOSED_<grade> (or names a CLOSED_ state while CLOSE-1 does not close X) ⇒ reported, not resolved",
         "CTR-3": "STALE_CHECKPOINT_POINTER: a checkpoint pointer the register reads (declared BLOCKER_FIELDS / PR_RECORD_FIELDS record files) whose newest checkpoint number is below the newest committed checkpoint (docs/odg/evidence/*_CHECKPOINT_<n>.json, by number) ⇒ reported (the declared record sets are NOT extended automatically: that would change BLK-2/REL-2 inputs)"
       },
-      "count": 11,
+      "count": 12,
       "detected": [
         {
           "item": "F",
@@ -1644,6 +1648,23 @@
           "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
         },
         {
+          "item": "V178-P4",
+          "rule": "CTR-2",
+          "kind": "CONTRACT_STATE_VS_CLOSURE",
+          "a": "contract state AUTHORIZED_FOR_REVISION",
+          "aSource": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].state"
+          ],
+          "b": "closure record grade PASS (CLOSED_PASS)",
+          "bSource": [
+            "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#scenarioGrade",
+            "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#stepState"
+          ],
+          "state": "OPEN",
+          "autoResolved": false,
+          "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
+        },
+        {
           "item": "CP8-GAP-canonicalDefectsJ",
           "rule": "CTR-1",
           "kind": "GAP_STATED_FIXED",
@@ -1785,7 +1806,7 @@
           "scenario": "V178-P4",
           "inspection": "docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json",
           "experiment": "docs/odg/evidence/V178_P4_MEMORY_RESULT.json",
-          "validation": null
+          "validation": "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json"
         }
       ],
       "resolutionEvidence": [
@@ -1832,14 +1853,14 @@
       "PASS_IN_SCOPE": 2,
       "EXECUTED_PARTIAL": 0,
       "PARTIAL": 18,
-      "NOT_STARTED": 10,
+      "NOT_STARTED": 9,
       "NOT_ADOPTED": 1,
       "BLOCKED": 14,
       "FAILED": 0,
       "NOT_MEASURED": 1,
       "PROPOSED": 14,
       "NOT_IMPLEMENTED": 1,
-      "CLOSED_PASS": 1,
+      "CLOSED_PASS": 2,
       "CLOSED_PARTIAL": 4,
       "CLOSED_FAIL": 4,
       "CLOSED_NOT_MEASURED": 0,
@@ -7161,13 +7182,15 @@
         "title": "local embeddings + SQLite FTS5/vector hybrid per-tenant memory inside the existing memory components",
         "contractState": "AUTHORIZED_FOR_REVISION",
         "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json: « autoriser les contrats P4 à P7 dans le périmètre défini » / « Intégrer `sqlite-vec` au dépôt avec les dépendances et tests nécessaires. » / « Ne créer aucun système mémoire parallèle. » — internal, loopback-only, €0, synthetic data; no production / client data / exposure",
-        "status": "NOT_STARTED",
+        "status": "CLOSED_PASS",
         "statusSource": [
-          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].initialState.status"
+          "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#scenarioGrade",
+          "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#contractSha256",
+          "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
         ],
         "nextStep": {
-          "text": "bound to the V19 owner record and independently inspected (ACCEPT, docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json); remaining: the single GO-dispatched run meeting AC1–AC6, then VALIDATE_CRITERIA. The former download/dependency gate is SATISFIED: qwen3-embedding:0.6b pulled and sqlite-vec 0.1.9 added under docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json (2026-11-25).",
-          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].initialState.missingForPass"
+          "text": "closed — further work needs a NEW mission (not a re-grade, not a re-run)",
+          "source": "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#stepState"
         },
         "executedEvidence": null,
         "deps": [],
@@ -7265,12 +7288,68 @@
           }
         },
         "closure": {
-          "closed": false,
+          "closed": true,
           "rule": "CLOSE-1",
-          "currentStep": "VALIDATE_CRITERIA",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+          "grade": "PASS",
+          "record": "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json",
+          "contractSha256": "99277ddd47ffecdf8f01c4e346a874579a8120aeb4cd4fd6657f8ad09f576f33",
+          "experimentSha256": "99fd920d68a9250437a6ce6f0c0bfaaadf0ddf1d6c47e9abf037da2d5d1c1c52",
+          "validatedSteps": [
+            "REVISE_CONTRACT",
+            "INSPECT_REVISED_CONTRACT",
+            "RUN_CONTROLLED_EXPERIMENTS",
+            "VALIDATE_CRITERIA"
+          ],
+          "stepState": {
+            "VALIDATE_CRITERIA": "DONE (graded PASS)",
+            "missionV178P4": "CLOSED_PASS"
+          },
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         },
+        "statusHistory": [
+          {
+            "status": "NOT_STARTED",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].initialState.status"
+            ],
+            "since": {
+              "value": null,
+              "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json (no date field)"
+            },
+            "rule": "status rules before CLOSE-1"
+          },
+          {
+            "status": "CLOSED_PASS",
+            "source": [
+              "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#scenarioGrade",
+              "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#contractSha256",
+              "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#experimentEvidence.experimentSha256"
+            ],
+            "since": {
+              "value": "2026-11-25",
+              "source": "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#date"
+            },
+            "rule": "CLOSE-1"
+          }
+        ],
+        "contradictions": [
+          {
+            "rule": "CTR-2",
+            "kind": "CONTRACT_STATE_VS_CLOSURE",
+            "a": "contract state AUTHORIZED_FOR_REVISION",
+            "aSource": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].state"
+            ],
+            "b": "closure record grade PASS (CLOSED_PASS)",
+            "bSource": [
+              "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#scenarioGrade",
+              "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json#stepState"
+            ],
+            "state": "OPEN",
+            "autoResolved": false,
+            "note": "the contract state is never rewritten by the register (odg-authorization-scope contractStateRewritten=false); a contract edit needs authorization"
+          }
+        ],
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
@@ -13533,7 +13612,6 @@
       "CP8-GAP-5-superviseExecution",
       "V176-NB3",
       "V178-P2",
-      "V178-P4",
       "V150-AI4",
       "MC-CI-BEFORE-REVIEW",
       "MC-CR-APPROVAL-STANDARD",
@@ -13543,7 +13621,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 31 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V178-P4, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 30 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -16458,96 +16536,6 @@
         "autoSelectable": true
       },
       {
-        "id": "V178-P4",
-        "status": "NOT_STARTED",
-        "evidenceScore": 0.05,
-        "upperBound": 0.75,
-        "uncertainty": 0.7,
-        "measuredWeightShare": 0.3,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 1,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": false,
-        "ownerReason": null,
-        "autoSelectable": true
-      },
-      {
         "id": "CP8-GAP-canonicalDefectsJ",
         "status": "PROPOSED",
         "evidenceScore": 0.025,
@@ -17467,6 +17455,11 @@
         "reason": "closed as FAIL — negative result preserved; a re-attempt needs a new mission"
       },
       {
+        "id": "V178-P4",
+        "status": "CLOSED_PASS",
+        "reason": "closed (all scoped steps validated, graded PASS) — further work is a new mission"
+      },
+      {
         "id": "V150-T01",
         "status": "ACCEPTED",
         "reason": "already ACCEPTED (no repeat)"
@@ -17618,7 +17611,7 @@
     "proposed": null,
     "tiedSet": [],
     "resolvedBy": null,
-    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 31 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V178-P4, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 30 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
       "text": "comparison of ≥2 researched methods on a real task and a measured gain vs baseline",
@@ -17674,7 +17667,7 @@
         "b3": true,
         "b4": false
       },
-      "meanMeasuredWeightShareOverSelectable": 0.2625
+      "meanMeasuredWeightShareOverSelectable": 0.2613
     },
     "C": {
       "grade": "PASS",
@@ -17707,5 +17700,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "83096bd82bfe4b50b48bd39a5614c53262a4a7d5"
+  "generatedAtHead": "fe23a52ba77f42a931647c3ddf27e34e7c44ef82"
 }
