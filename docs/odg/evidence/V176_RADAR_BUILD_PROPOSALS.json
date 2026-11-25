@@ -24,14 +24,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795566720000,
+    "nowEpochMs": 1795569000000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "a3a32aa0200ddde60061965dae9b360ac4f14af5a1ffc33b0dea1810c2839b17",
-      "epochMs": 1795566720000
+      "sha256": "b12aa350660c1fb0fb8770b7e3e4b0e4c612883a8cc26282c793497224ae3153",
+      "epochMs": 1795569000000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -45,8 +45,8 @@
     },
     {
       "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json",
-      "sha256": "34d6dd91fcba52ced0be73ae488b30eadbd763f08707788cad4971295bac8759",
-      "epochMs": 1795553408000
+      "sha256": "68bb121aa58aeb9ab56f1d829302afc69d35bfb0c955041c82965432934bd2bf",
+      "epochMs": 1795569000000
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -64,9 +64,9 @@
       "epochMs": 1795532572000
     },
     {
-      "source": "docs/odg/evidence/V178_CHECKPOINT_15.json",
-      "sha256": "c52bddff012f044d11b16dc11d6ab3eca950abf6a519e916795fccd74b503812",
-      "epochMs": 1795566720000
+      "source": "docs/odg/evidence/V178_CHECKPOINT_16.json",
+      "sha256": "b419fbbb3c8c227563b24aecd4e7cd9320704293ac811c1fa84aae1109edbded",
+      "epochMs": 1795569000000
     },
     {
       "source": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_EVIDENCE.json",
@@ -1347,7 +1347,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[8]"
       ],
-      "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V178_CHECKPOINT_15.json (LCP-1)",
+      "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V178_CHECKPOINT_16.json (LCP-1)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-3",

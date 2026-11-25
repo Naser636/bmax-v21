@@ -1,0 +1,307 @@
+{
+  "collectedBy": "PROVIDER (Claude Code research agent)",
+  "collectedAt": "2026-11-25T14:00:00Z",
+  "epistemicStatus": "UNVERIFIED",
+  "domain": "V178 hosting comparison - confidential VM candidates (owner directive: ANNULATION V178.2 / NOUVEAU VPS CONFIDENTIEL §7)",
+  "method": "WebSearch summaries + WebFetch of 2 OVHcloud OCCAM pages; generic queries; no account, no purchase, no instance creation, no spend. Prices: official where stated, otherwise third-party trackers (marked). Regional availability changes often - re-check live pages before any decision. Items marked UNVERIFIED or general-knowledge are not sourced in this run.",
+  "workloadAssumption": "8-16 vCPU / 32-64 GB RAM, CPU-only LLM (Ollama/llama.cpp 3-7B quantized) + embeddings; EU region; independently verifiable attestation + key release.",
+  "signals": [
+    {
+      "id": "H-GCP-TDX",
+      "domain": "hosting",
+      "title": "Google Cloud Confidential VM - Intel TDX on C3 (Sapphire Rapids), GA; europe-west4 and europe-west9 zones",
+      "kind": "candidate",
+      "claim": "TDX on c3-standard-* GA since Sept 2024; EU zones listed: europe-west4-a/b/c (Netherlands) and europe-west9-a (Paris) per most recent localized copy (older copies list only europe-west4-a/b). c3-standard-*-lssd TDX GA 2026-09-02 (EU zones not shown). TDX on c4-standard-* in Preview since 2026-07-31. Limits: no reservations; local SSD machine types not supported (except -lssd variant); maintenance notification 7 days on C3 TDX; up to 192 vCPUs. AMX enabled by default on all C3 incl. Confidential VMs. GPU-CVM: a3-highgpu-1g (H100) with NVIDIA CC in europe-west4-c; g4-standard-48 TDX in europe-west4-b/c.",
+      "evidence": [
+        {"url": "https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/supported-configurations", "publisher": "Google Cloud", "date": "current (localized copies differ)", "type": "official documentation"},
+        {"url": "https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/release-notes", "publisher": "Google Cloud", "date": "2024-09 .. 2026-09", "type": "official release notes"},
+        {"url": "https://cloud.google.com/blog/products/identity-security/from-clicks-to-clusters-confidential-computing-expands-with-intel-tdx", "publisher": "Google Cloud blog", "date": "n/a", "type": "vendor blog"}
+      ],
+      "attestation": {
+        "whatIsAttested": "TDX quote: MRTD (Google-built OVMF/TDVF firmware) + RTMRs (boot chain), report data = your nonce; plus vTPM-based measured boot for OS.",
+        "signedBy": "Intel (quote signed by TD Quoting Enclave key chaining to Intel root via PCS collateral); firmware measurement endorsed by Google (signed launch endorsement).",
+        "independentVerification": "YES for hardware genuineness: Google codelab verifies the raw TDX quote with go-tdx-guest 'check' against Intel PCS collateral + CRL, nonce check, then 'gcetcbendorsement tdx validate' for Google-endorsed firmware, 'gceprovenance verify' for host provenance. You still trust Google's firmware endorsement for what MRTD means (or reproduce firmware build - not verified as possible). Alternative: Google Cloud Attestation service returns token (provider-operated verifier).",
+        "sources": ["https://codelabs.developers.google.com/codelabs/tdx-cvm-attestation-and-provenance", "https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/attestation"]
+      },
+      "keyRelease": "Options: (a) self-hosted KMS off-Google that verifies the raw TDX quote then releases keys (fully provider-independent); (b) Google Cloud Attestation token + Cloud KMS via Workload Identity Pool (Confidential Space; STET uses Confidential Space token as attestation evidence for KEK in Cloud KMS); (c) Cloud EKM keeps keys with an external key manager - EKM + Confidential Space attestation integration NOT confirmed in this run.",
+      "diskBootIntegrity": "Measured boot via vTPM/RTMR; Confidential Hyperdisk billed separately (pricing page). Snapshot behaviour for CVM disks NOT found in this run.",
+      "indicativePrice": {
+        "value": "TDX surcharge on-demand: $0.0033982/vCPU-h + $0.0004555/GiB-h -> c3-standard-8 (8 vCPU/32 GB) adds ~$0.042/h (~$31/month at 730h). Base c3-standard-8 europe-west4 price NOT retrieved.",
+        "sources": ["https://cloud.google.com/confidential-computing/confidential-vm/pricing"],
+        "date": "2026-11-25 (snippet values)"
+      },
+      "sla": "Compute Engine single-instance SLA >=99.9% (most families, per SLA page snapshots) - confirm for C3/CVM. Source: https://cloud.google.com/compute/sla",
+      "llmFeasibility": "Best CPU fit among GCP CVMs: Sapphire Rapids AVX-512 + AMX; llama.cpp has AMX kernels for Q4_0/Q4_1/Q8_0 when built with GGML_NATIVE on AMX host (https://github.com/ggml-org/llama.cpp/pull/8998). AMX speedup in llama.cpp NOT measured; known detection issues reported.",
+      "measuredOrClaimed": "OFFICIAL_DOCS (zones from localized copy - verify)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "Intel Xeon 4th gen (Sapphire Rapids) C3",
+      "risks": "US-HQ provider (CLOUD Act context, H-LEGAL-1); TDX advisories (INTEL-SA-01419/01421/01520) require TCB policy; no reservations; trust in Google firmware endorsement."
+    },
+    {
+      "id": "H-GCP-SNP",
+      "domain": "hosting",
+      "title": "Google Cloud Confidential VM - AMD SEV-SNP on N2D (Milan), GA; europe-west3 (Frankfurt) a/b/c, europe-west4-a",
+      "kind": "candidate",
+      "claim": "SEV-SNP GA on N2D with AMD EPYC Milan; zones listed incl. europe-west3-a/b/c and europe-west4-a (excerpt may be truncated). Limits: no live migration for SNP (host maintenance: 1h notice, VM stops), no reservations, no instance templates; Google warns of longer boot/perf changes Aug-Nov 2026 due to guest kernel migration. C3D (Genoa) listed for Confidential Computing but some tables say SEV only - SNP on C3D NOT confirmed. One table lists N2D Milan as SEV-only (conflict with release notes).",
+      "evidence": [
+        {"url": "https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/supported-configurations", "publisher": "Google Cloud", "date": "current", "type": "official documentation"},
+        {"url": "https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/release-notes", "publisher": "Google Cloud", "date": "current", "type": "official release notes"}
+      ],
+      "attestation": {
+        "whatIsAttested": "SNP attestation report: launch measurement of Google's guest firmware + policy + report data (nonce); vTPM for OS measured boot.",
+        "signedBy": "AMD Secure Processor (VCEK/VLEK chaining to AMD ARK/ASK via AMD KDS).",
+        "independentVerification": "LIKELY YES via raw SNP report + AMD KDS certs (go-sev-guest tooling - NOT sourced in this run); firmware measurement meaning relies on Google endorsement as for TDX. Provider-operated alternative: Google Cloud Attestation.",
+        "sources": ["https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/attestation", "https://www.amd.com/content/dam/amd/en/documents/developer/58217-epyc-9004-ug-platform-attestation-using-virtee-snp.pdf"]
+      },
+      "keyRelease": "Same options as H-GCP-TDX (self-hosted verifier+KMS, or Google Cloud Attestation + Cloud KMS/Confidential Space).",
+      "diskBootIntegrity": "As GCP TDX; snapshot behaviour NOT found.",
+      "indicativePrice": {
+        "value": "n2d-standard-16 (16 vCPU/64 GB) europe-west4 base ~$0.7442/h (third-party: Holori, Spare Cores) + SNP surcharge 16x$0.0027502 + 64x$0.0003686 = ~$0.068/h -> ~$0.81/h (~$593/month at 730h, on-demand, before discounts/disk/egress).",
+        "sources": ["https://cloud.google.com/confidential-computing/confidential-vm/pricing", "https://calculator.holori.com/gcp/vm/n2d-standard-16/europe-west4", "https://sparecores.com/server/gcp/n2d-standard-16"],
+        "date": "pricing page 2026-11-25 snippet; Holori updated 2026-01"
+      },
+      "sla": "Compute Engine >=99.9% single instance (confirm); no live migration => planned downtime.",
+      "llmFeasibility": "Milan (Zen 3) = AVX2, no AVX-512/AMX (general knowledge - UNVERIFIED in this run) -> slowest per-core LLM option of the four; comparable in ISA to current VPS (Haswell AVX2) but more cores.",
+      "measuredOrClaimed": "OFFICIAL_DOCS + third-party base price",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "AMD EPYC 3rd gen (Milan) N2D",
+      "risks": "Older CPU generation; SNP published attacks (CacheWarp, Heracles; BadRAM/Battering RAM physical); US-HQ provider."
+    },
+    {
+      "id": "H-OVH-OCCAM",
+      "domain": "hosting",
+      "title": "OVHcloud Bare Metal + OCCAM attestation service - ALPHA (no SLA, free during Alpha), EU only",
+      "kind": "candidate",
+      "claim": "OCCAM (OVHcloud Labs) = Confidential Computing Attestation Service, status ALPHA / early access (Labs release date 2026-11-18; roadmap issue #556 opened 2026-11-24, 'In progress', 'Partially released'); Beta and GA announced without dates or pricing. Customer runs its own Confidential VM (SEV-SNP or TDX) on an OVHcloud dedicated server (Advance, Scale, High Grade). Verified hardware per Labs page: AMD SEV-SNP Turin (EPYC 9005) and Genoa (EPYC 9004), single-socket; Intel TDX Xeon 6 (Granite Rapids). Roadmap issue additionally lists TDX on 5th-gen Xeon (Emerald Rapids) single-socket, while Labs page says 5th gen 'not yet verified' (CONFLICT). Host OS: Ubuntu 26.04 or Proxmox VE 9. GPU: TDX VM with 8x NVIDIA B300 verified, but GPU servers not open in Alpha.",
+      "evidence": [
+        {"url": "https://labs.ovhcloud.com/en/confidential-computing-occam/", "publisher": "OVHcloud Labs", "date": "2026-11-18", "type": "official (Labs/Alpha) page"},
+        {"url": "https://github.com/ovh/infrastructure-roadmap/issues/556", "publisher": "OVHcloud public roadmap (GitHub)", "date": "2026-11-24", "type": "official roadmap issue"},
+        {"url": "https://blog.ovhcloud.com/en/posts/ai-summit-2026-announcements/", "publisher": "OVHcloud blog", "date": "2026-11 (AI Summit 2026)", "type": "vendor announcement"}
+      ],
+      "attestation": {
+        "whatIsAttested": "The Confidential VM (not the host OS): firmware, kernel, initrd, boot command line; TDX: MRTD + RTMR0-2.",
+        "signedBy": "Hardware report signed by AMD/Intel (chained to vendor roots); OCCAM result signed EAT/ES256 with a key bound to the OCCAM verifier's own SEV-SNP attestation report.",
+        "independentVerification": "YES (claimed): results verifiable offline with published signer evidence; transparency page lets users recompute the verifier's measurement from published sources. Because the customer controls the bare-metal host and VM image, raw SNP reports / TDX quotes can also be verified by a self-hosted verifier (inference). Strict third-party verification of AMD reports requires SEV firmware >= 1.58.6.",
+        "sources": ["https://labs.ovhcloud.com/en/confidential-computing-occam/"]
+      },
+      "keyRelease": "Built-in: root and data disk keys (LUKS2 + dm-verity) released only if measurement matches a customer-signed policy list; key can be split in two with one share held outside OCCAM; revocation of approved measurements refused while a running server uses it.",
+      "diskBootIntegrity": "LUKS2 + dm-verity tied to attested measurement (claimed).",
+      "indicativePrice": {
+        "value": "OCCAM: free during Alpha. Server: Advance-1 2026 (EPYC 4245P) EUR 104.99 ex-VAT/month; Advance-2 2024 (EPYC 4344P, 8c/16t) EUR 124.99; Advance-3 2024 (EPYC 4464P, 12c) EUR 199.99 - BUT OCCAM-verified CPUs are EPYC 9004/9005 / Xeon 6; whether these EPYC 4004/4005 Advance models support SEV-SNP or OCCAM is NOT verified. RISE-XL EPYC 9455 (Turin, 48c, 128 GB) $479.99/month 'soon available' (US page; RISE not in OCCAM range list).",
+        "sources": ["https://www.ovhcloud.com/en/bare-metal/advance/prices/", "https://us.ovhcloud.com/bare-metal/regions-availability/"],
+        "date": "2026-11-25 (cached pages)"
+      },
+      "sla": "OCCAM: NO SLA (Alpha). Dedicated server SLA not collected.",
+      "llmFeasibility": "Genoa/Turin (Zen 4/5) have AVX-512 (general knowledge - UNVERIFIED here); Xeon 6 has AMX (general knowledge). AMD claims llama.cpp + ZenDNN up to 4.5x prompt processing on EPYC (vendor claim): https://www.amd.com/en/developer/resources/technical-articles/2026/llama-cpp-on-amd-epyc.html. Full server = all cores/RAM dedicated -> best perf/EUR.",
+      "measuredOrClaimed": "OFFICIAL_ALPHA_CLAIMS (not tested)",
+      "license": "n/a",
+      "requiresRoot": true,
+      "requiresProviderSupport": true,
+      "hardware": "OVHcloud dedicated server with EPYC 9004/9005 single-socket or Xeon 6 (OCCAM-verified list)",
+      "risks": "ALPHA: features may change, no SLA, limited CPU/host coverage, dual-socket AMD not measured, 'end-to-end confidential inference not yet available'; customer operates the hypervisor (Ubuntu 26.04/Proxmox) = more ops work; OVHcloud keeps physical access + BMC/BIOS (BadRAM/Battering RAM and CVE-2026-0462-class BIOS+PCIe attacks are physical/firmware-level); OVHcloud is EU-HQ (French) but has US subsidiary (CLOUD Act reach depends on control - legal question)."
+    },
+    {
+      "id": "H-AZ-SNP-TDX",
+      "domain": "hosting",
+      "title": "Azure Confidential VMs - AMD SEV-SNP (DCasv5/DCasv6) and Intel TDX (DCesv6), EU availability partly conflicting",
+      "kind": "candidate",
+      "claim": "AMD v5 CVMs (2023) in Switzerland North, Italy North, North Europe, West Europe, Germany West Central, UAE North. DCasv6/ECasv6 (EPYC Genoa) GA first in UAE North + Korea Central, rolling out; Jan 2026 new regions (list not retrieved). TDX DCesv6/ECesv6: one Microsoft post lists GA incl. West Europe, a Feb 2026 post lists only West US/West US 3 (CONFLICT). Each CVM has a vTPM; attested at boot. Confidential GPU: NCCadsH100v5 listed in East US2 and West Europe (2024 info).",
+      "evidence": [
+        {"url": "https://learn.microsoft.com/en-us/azure/confidential-computing/confidential-vm-overview", "publisher": "Microsoft", "date": "current", "type": "official documentation"},
+        {"url": "https://azure.microsoft.com/updates/generally-available-amd-confidential-vms-in-new-regions-for-november-2023/", "publisher": "Microsoft Azure Updates", "date": "2023-11", "type": "official update"},
+        {"url": "https://techcommunity.microsoft.com/blog/azureconfidentialcomputingblog/-/4451460", "publisher": "Microsoft Tech Community", "date": "2025", "type": "official blog (DCasv6 GA)"},
+        {"url": "https://techcommunity.microsoft.com/t5/azure-confidential-computing/announcing-general-availability-of-azure-intel-tdx-confidential/ba-p/4495693", "publisher": "Microsoft Tech Community", "date": "2026-02", "type": "official blog (TDX GA)"},
+        {"url": "https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/gpu-accelerated/nccadsh100v5-series", "publisher": "Microsoft", "date": "current", "type": "official documentation"}
+      ],
+      "attestation": {
+        "whatIsAttested": "SNP report covers Microsoft's paravisor/HCL firmware; HCL report embeds vTPM AK public key (runtime data hash in SNP report_data); OS measured by vTPM.",
+        "signedBy": "AMD (VCEK via AMD KDS) for the SNP report; Microsoft Azure Attestation (MAA) issues tokens in the default flow.",
+        "independentVerification": "PARTIAL: Microsoft doc states customers can verify the raw AMD SEV-SNP report on their own instead of MAA; community crate az-snp-vtpm shows fetching VCEK from AMD KDS and checking HCL var-data hash. But the measured firmware is Microsoft's closed paravisor, so you trust Microsoft for what the measurement means. Official step-by-step non-MAA guide NOT found.",
+        "sources": ["https://docs.microsoft.com/en-us/azure/confidential-computing/how-to-leverage-virtual-tpms-in-azure-confidential-vms", "https://learn.microsoft.com/en-us/azure/confidential-computing/guest-attestation-confidential-virtual-machines-design", "https://docs.rs/az-snp-vtpm"]
+      },
+      "keyRelease": "Azure Secure Key Release (SKR): exportable HSM-backed keys in Key Vault Premium / Managed HSM released only against MAA claims (e.g. x-ms-isolation-tee type sevsnpvm + compliance status); MAA token valid 8h; FAQ: AKV only integrates with MAA today (policy-grammar page suggests other OIDC attestation servers possible, signing cert must be DigiCert). => Key release is provider-mediated unless you run your own KMS verifying raw reports.",
+      "diskBootIntegrity": "Confidential OS disk encryption with keys bound to vTPM (platform or customer-managed) - per CVM overview (details not re-read).",
+      "indicativePrice": {
+        "value": "DC16as_v6 (16 vCPU/64 GB) West Europe ~$1.614/h (~$1,178/month) per Cloud-Mercato; DC16as_v5 West Europe ~$0.832/h (~$486-607/month) per Cloud-Mercato/Devzero; a Devzero v6 figure ($0.176/h) looks erroneous. NOT official - verify with Azure Retail Prices API.",
+        "sources": ["https://pcr.cloud-mercato.com/providers/azure/flavors/standard_dc16as_v6", "https://pcr.cloud-mercato.com/providers/azure/flavors/standard_dc16as_v5", "https://www.devzero.io/instances/azure/Standard_DC16as_v6"],
+        "date": "2026-11-25 (third-party)"
+      },
+      "sla": "Not collected for CVM SKUs.",
+      "llmFeasibility": "DCasv6 = Genoa (AVX-512, general knowledge); DCasv5 = Milan (AVX2); DCesv6 = Intel 5th gen (AMX, general knowledge). UNVERIFIED in this run.",
+      "measuredOrClaimed": "OFFICIAL_DOCS (regions conflicting) + third-party prices",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "AMD EPYC Milan/Genoa, Intel Xeon 5th gen",
+      "risks": "Closed paravisor in TCB; SKR tied to MAA; US-HQ provider; EU Data Boundary is residency, not immunity (H-LEGAL-1/2)."
+    },
+    {
+      "id": "H-IONOS-SNP",
+      "domain": "hosting",
+      "title": "IONOS Cloud Confidential VM - AMD SEV-SNP, EU data centres only (e.g. Frankfurt-East), open-source SNPGuard",
+      "kind": "candidate (directly comparable EU option)",
+      "claim": "SNP CVMs only in EU DCs with SNP hardware; vCPU/RAM fixed at creation; no live migration, no in-guest warm restart (host maintenance = downtime); SNPGuard open-source attestation toolchain; pricing via account manager (not public).",
+      "evidence": [
+        {"url": "https://docs.ionos.com/cloud/compute-services/compute-engine/confidential-computing-vm/overview", "publisher": "IONOS Cloud", "date": "current", "type": "official documentation"},
+        {"url": "https://docs.ionos.com/cloud/compute-services/confidential-computing-vm/confidential-vm-faq.md", "publisher": "IONOS Cloud", "date": "current", "type": "official FAQ"},
+        {"url": "https://docs.ionos.com/cloud/tutorials/compute-services/confidential-computing-vm/deploy-confidential-vm-with-snpguard", "publisher": "IONOS Cloud", "date": "current", "type": "official tutorial"}
+      ],
+      "attestation": {
+        "whatIsAttested": "SNP report (launch measurement of customer-built image via SNPGuard, per tutorial - details not re-read).",
+        "signedBy": "AMD (VCEK).",
+        "independentVerification": "LIKELY YES (open-source tooling, customer-controlled measurement) - not verified in detail.",
+        "sources": ["https://docs.ionos.com/cloud/tutorials/compute-services/confidential-computing-vm/deploy-confidential-vm-with-snpguard"]
+      },
+      "keyRelease": "Not documented in retrieved excerpts; self-hosted KMS after SNPGuard verification (inference).",
+      "diskBootIntegrity": "NOT collected.",
+      "indicativePrice": {"value": "Not public (contact account manager).", "sources": ["https://docs.ionos.com/cloud/compute-services/confidential-computing-vm/confidential-vm-faq.md"], "date": "2026-11-25"},
+      "sla": "NOT collected.",
+      "llmFeasibility": "CPU generation NOT stated in retrieved excerpts.",
+      "measuredOrClaimed": "OFFICIAL_DOCS",
+      "license": "SNPGuard open source (license UNVERIFIED)",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "AMD EPYC with SNP (generation not stated)",
+      "risks": "Opaque pricing; feature detail thin; German EU-HQ provider."
+    },
+    {
+      "id": "H-S3NS",
+      "domain": "hosting",
+      "title": "S3NS PREMI3NS (Thales-controlled, Google Cloud technology) - SecNumCloud 3.2 qualified Dec 2025",
+      "kind": "sovereign-offer (CVM availability UNKNOWN)",
+      "claim": "PREMI3NS received ANSSI SecNumCloud qualification (Dec 2025); S3NS is a French-law company fully controlled by Thales; analyst note: Google personnel have no access to PREMI3NS environment; 'full operational maturity' announced Feb 2026. Whether Confidential VM (TDX/SNP) is in the qualified service catalogue NOT found.",
+      "evidence": [
+        {"url": "https://www.thalesgroup.com/en/news-centre/press-releases/s3ns-announces-secnumcloud-qualification-premi3ns-its-trusted-cloud", "publisher": "Thales", "date": "2025-12-18", "type": "vendor press release"},
+        {"url": "https://www.businesswire.com/news/home/20251218817208/en/S3NS-Announces-SecNumCloud-Qualification-for-PREMI3NS-its-Trusted-Cloud-Offering", "publisher": "Business Wire", "date": "2025-12-18", "type": "press release"},
+        {"url": "https://services.google.com/fh/files/misc/digital_sovereignty_on_public_cloud_jan_26.pdf", "publisher": "Google Cloud", "date": "2026-01", "type": "vendor white paper"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM (verify on ANSSI official list)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "n/a",
+      "risks": "Price/enterprise-oriented; CVM support unknown; qualification ≠ confidential computing."
+    },
+    {
+      "id": "H-ATTACKS",
+      "domain": "cross-cutting",
+      "title": "Relevance of published CVM attacks to each candidate",
+      "kind": "known-limits",
+      "claim": "Software/hypervisor-level attacks (CacheWarp CVE-2023-20592, Heracles, TDX advisories INTEL-SA-01419) are mitigated by firmware/microcode -> require attestation policy pinning minimum TCB (SNP firmware >=1.58.6 noted by OCCAM for strict verification). Physical attacks (BadRAM CVE-2024-21944, Battering RAM 2025) need datacentre access -> residual provider-insider risk on ALL candidates. CVE-2026-0462 / AMD-SB-3059 (hypervisor + BIOS + PCIe device -> forged measurements; secondary source) is most relevant where the provider controls BIOS: all candidates, incl. OVH bare metal (provider controls BMC/BIOS).",
+      "evidence": [
+        {"url": "https://www.usenix.org/conference/usenixsecurity24/presentation/zhang-ruiyi", "publisher": "USENIX Security 2024", "date": "2024", "type": "paper"},
+        {"url": "https://heracles-attack.github.io", "publisher": "Heracles authors", "date": "2025", "type": "research"},
+        {"url": "https://thehackernews.com/2025/10/50-battering-ram-attack-breaks-intel.html", "publisher": "The Hacker News", "date": "2025-10", "type": "press"},
+        {"url": "https://labs.cloudsecurityalliance.org/research/csa-research-note-mior-skyfall-sev-snp-confidential-ai-20261/", "publisher": "Cloud Security Alliance", "date": "2026", "type": "secondary"},
+        {"url": "https://intel.com/content/www/us/en/security-center/advisory/intel-sa-01419.html", "publisher": "Intel", "date": "2026", "type": "advisory"}
+      ],
+      "measuredOrClaimed": "MEASURED (academic) / ADVISORIES",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "n/a",
+      "risks": "No candidate yields 'provider cannot access data' in absolute terms; claim must be 'protected against hypervisor/software access under the vendor threat model, residual physical/firmware risk'."
+    },
+    {
+      "id": "H-LEGAL-1",
+      "domain": "legal",
+      "title": "US CLOUD Act: US-jurisdiction providers can be compelled to produce data they control regardless of storage location; Act is 'encryption neutral'",
+      "kind": "legal-context",
+      "claim": "DOJ white paper (Apr 2019): CLOUD Act makes explicit that a provider subject to US jurisdiction can be required to produce data it controls regardless of where stored; it did not alter jurisdiction or add authority to compel decryption ('encryption neutral'). => Applies as legal context to Google Cloud and Azure (US parents); for EU-HQ providers with US affiliates (OVHcloud, IONOS) exposure depends on jurisdiction/control - legal analysis required. Technical relevance: if keys are held only by the customer (attestation-gated, off-provider KMS) the provider cannot produce plaintext it does not control (inference, not legal advice).",
+      "evidence": [
+        {"url": "https://www.justice.gov/opa/pr/justice-department-announces-publication-white-paper-cloud-act", "publisher": "US Department of Justice", "date": "2019-04", "type": "official"},
+        {"url": "https://justice.gov/cloudact", "publisher": "US Department of Justice", "date": "current", "type": "official resource page"}
+      ],
+      "measuredOrClaimed": "OFFICIAL (DOJ framing)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "n/a",
+      "risks": "Not legal advice; executive agreements since 2019 not reviewed."
+    },
+    {
+      "id": "H-LEGAL-2",
+      "domain": "legal",
+      "title": "Residency/sovereignty offerings: Microsoft EU Data Boundary (completed Feb 2025), Google Cloud Data Boundary / Sovereign Controls by Partners / Google Cloud Dedicated (S3NS, T-Systems)",
+      "kind": "sovereignty",
+      "claim": "Microsoft EU Data Boundary completed phase 3 (Feb 2025): customer data and support data stored/processed in EU/EFTA. Google: Data Boundary = software controls (residency, access, encryption) on public cloud; Sovereign Controls by Partners; Google Cloud Dedicated operated by independent regional operators (S3NS France, T-Systems Germany). These are residency/operational controls, not immunity from US law for the US-operated tiers.",
+      "evidence": [
+        {"url": "https://blogs.microsoft.com/on-the-issues/2025/02/26/microsoft-completes-landmark-eu-data-boundary/", "publisher": "Microsoft", "date": "2025-02-26", "type": "official blog"},
+        {"url": "https://docs.cloud.google.com/assured-workloads/docs/control-packages/eu-regions", "publisher": "Google Cloud", "date": "current", "type": "official documentation"},
+        {"url": "https://services.google.com/fh/files/misc/digital_sovereignty_on_public_cloud_jan_26.pdf", "publisher": "Google Cloud", "date": "2026-01", "type": "vendor white paper"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "n/a",
+      "risks": "Interaction between Assured Workloads EU controls and Confidential VM availability per zone NOT checked."
+    },
+    {
+      "id": "H-LEGAL-3",
+      "domain": "legal",
+      "title": "GDPR processor terms + sub-processor lists; EU Data Act switching",
+      "kind": "contractual",
+      "claim": "Google publishes a dated GCP subprocessor list (snapshots through 2026-07; support subprocessors access customer data only if shared in a support case). Microsoft DPA and OVHcloud DPA not retrieved in this run (open). EU Data Act Chapter VI switching applies since 2025-09-12; switching charges (incl. switching-related egress) prohibited from 2027-01-12; notice <=2 months, transition generally <=30 days (law-firm summaries).",
+      "evidence": [
+        {"url": "https://cloud.google.com/terms/subprocessors", "publisher": "Google Cloud", "date": "current", "type": "official"},
+        {"url": "https://www.edpb.europa.eu/system/files/2021-07/eppb_guidelines_202007_controllerprocessor_final_en.pdf", "publisher": "EDPB", "date": "2021-07-07", "type": "official guidelines"},
+        {"url": "https://www.dlapiper.com/en/insights/publications/law-in-tech/2026/cloud-exit-under-the-eu-data-act", "publisher": "DLA Piper", "date": "2026-07", "type": "secondary"}
+      ],
+      "measuredOrClaimed": "OFFICIAL (Google list) / SECONDARY (Data Act)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "n/a",
+      "risks": "Microsoft/OVHcloud/IONOS DPA review pending."
+    },
+    {
+      "id": "H-LLM-CPU",
+      "domain": "cross-cutting",
+      "title": "CPU LLM inference feasibility by CPU generation (llama.cpp/Ollama)",
+      "kind": "performance-note",
+      "claim": "llama.cpp includes AMX kernels (Q4_0/Q4_1/Q8_0) used when built natively on AMX hardware (PR #8998); Google enables AMX on all C3 incl. Confidential VMs; Intel guidance: Q8_0-style quants align best with VNNI/AMX; AMD claims llama.cpp+ZenDNN up to 4.5x prompt processing on EPYC (vendor claim). No measured CVM-vs-non-CVM LLM overhead found in this run. Memory bandwidth (not ISA) usually bounds token generation - more channels on server CPUs help (general knowledge).",
+      "evidence": [
+        {"url": "https://app.semanticdiff.com/gh/ggerganov/llama.cpp/pull/8998/overview", "publisher": "llama.cpp PR #8998 (mirror view)", "date": "2024", "type": "upstream code change"},
+        {"url": "https://community.intel.com/t5/Blogs/Tech-Innovation/Artificial-Intelligence-AI/Optimizing-SLMs-on-Intel-Xeon-Processors-A-llama-cpp-Performance/post/1734305", "publisher": "Intel", "date": "n/a", "type": "vendor blog"},
+        {"url": "https://www.amd.com/en/developer/resources/technical-articles/2026/llama-cpp-on-amd-epyc.html", "publisher": "AMD", "date": "2026", "type": "vendor article (claim)"},
+        {"url": "https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/supported-configurations", "publisher": "Google Cloud", "date": "current", "type": "official documentation (AMX on C3)"}
+      ],
+      "measuredOrClaimed": "CLAIMED (vendor) - ODG must benchmark",
+      "license": "llama.cpp MIT",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "AMX: Intel 4th gen+; AVX-512: Zen4/Zen5, Intel; AVX2 only: Milan, current VPS Haswell",
+      "risks": "Ollama's bundled build may not enable AMX path; CVM memory-encryption overhead NOT measured."
+    }
+  ],
+  "comparisonTable": [
+    {"candidate": "GCP Confidential VM Intel TDX (C3)", "euRegions": "europe-west4 a/b/c, europe-west9-a (GA)", "status": "GA", "attestationIndependent": "YES - raw TDX quote + Intel PCS (go-tdx-guest); firmware via Google endorsement", "keyRelease": "self-hosted KMS, or Google Attestation + Cloud KMS/Confidential Space", "priceIndicative": "base c3-standard-8 not retrieved + ~$31/mo TDX surcharge", "llmCpu": "Sapphire Rapids AVX-512+AMX (best)", "jurisdiction": "US-HQ"},
+    {"candidate": "GCP Confidential VM AMD SEV-SNP (N2D)", "euRegions": "europe-west3 a/b/c, europe-west4-a (GA)", "status": "GA", "attestationIndependent": "LIKELY YES - raw SNP + AMD KDS (tooling not sourced)", "keyRelease": "same as GCP TDX", "priceIndicative": "n2d-standard-16 ~$0.81/h (~$593/mo)", "llmCpu": "Milan AVX2 (weakest)", "jurisdiction": "US-HQ"},
+    {"candidate": "OVHcloud Bare Metal + OCCAM", "euRegions": "EU only", "status": "ALPHA (no SLA, free, no GA date)", "attestationIndependent": "YES - offline-verifiable EAT, transparent verifier, customer-controlled host & image", "keyRelease": "built-in LUKS2/dm-verity release on customer-signed policy, split key", "priceIndicative": "server from ~EUR105-200/mo (Advance, OCCAM CPU compatibility of these models UNVERIFIED); OCCAM free", "llmCpu": "Genoa/Turin AVX-512 or Xeon 6 AMX, dedicated cores", "jurisdiction": "EU-HQ (FR)"},
+    {"candidate": "Azure CVM SEV-SNP/TDX", "euRegions": "v5 SNP: West/North Europe, Germany WC, Italy N, Switzerland N; v6/TDX EU status conflicting", "status": "GA", "attestationIndependent": "PARTIAL - raw SNP report possible but closed Microsoft paravisor measured; SKR requires MAA", "keyRelease": "Azure SKR (MAA-bound) or self-hosted KMS", "priceIndicative": "DC16as_v5 ~$0.83/h, DC16as_v6 ~$1.61/h (third-party)", "llmCpu": "Milan/Genoa/Intel 5th gen", "jurisdiction": "US-HQ"},
+    {"candidate": "IONOS Cloud CVM SEV-SNP", "euRegions": "EU DCs (e.g. Frankfurt-East)", "status": "available (GA status not stated)", "attestationIndependent": "LIKELY YES - open-source SNPGuard", "keyRelease": "not documented (self-hosted)", "priceIndicative": "not public", "llmCpu": "not stated", "jurisdiction": "EU-HQ (DE)"}
+  ],
+  "recommendations": {
+    "bestFitIndependentAttestationKeyReleaseEUCost": "Production-grade today: Google Cloud Intel TDX on C3 in europe-west9 (Paris) or europe-west4 - GA, independently verifiable raw quote against Intel PCS, AMX for CPU LLM, small public surcharge; pair with a self-hosted, off-provider KMS that verifies the quote before releasing tenant keys (avoids dependence on Google Attestation/Cloud KMS). Caveat: US-HQ provider (CLOUD Act legal context) - mitigated technically only by customer-held keys + attestation, not legally.",
+    "bestSovereigntyAndCostIfAlphaAcceptable": "OVHcloud bare metal + OCCAM: strongest design fit (EU-HQ, customer-controlled host and image, offline-verifiable signed results, built-in attested LUKS key release with split share, dedicated cores at bare-metal prices) but ALPHA with no SLA and limited CPU list - suitable for a pilot/PoC on non-production data, not for client production until Beta/GA.",
+    "azure": "Viable but weakest on 'independent' attestation (closed paravisor; SKR bound to MAA) and pricier at 16 vCPU per third-party trackers.",
+    "gcpSnp": "Works in Frankfurt, but Milan (AVX2) is the weakest CPU for LLM; prefer TDX/C3.",
+    "followUps": "Before any decision (no spend now): confirm live EU zone lists, base C3 price in europe-west9, which OVHcloud Advance/Scale SKUs carry EPYC 9004/9005 or Xeon 6 with SEV-SNP/TDX enabled, IONOS price, DPAs (Microsoft/OVHcloud/IONOS), and run an ODG llama.cpp benchmark inside a CVM."
+  },
+  "openQuestions": [
+    "Exact current EU zone list for GCP C3 TDX (localized docs disagree) and base c3-standard-8/16 price in europe-west9/europe-west4.",
+    "Which OVHcloud Advance/Scale/High Grade SKUs use EPYC 9004/9005 or Xeon 6 (OCCAM-verified) vs EPYC 4004/4005 (not listed); OCCAM Beta/GA dates.",
+    "Conflict: OCCAM Labs page says Intel 5th gen Xeon not yet verified; roadmap issue lists Emerald Rapids single-socket verified.",
+    "Azure DCasv6 and DCesv6 (TDX) current EU regions (conflicting posts) and official West Europe prices.",
+    "Snapshot/backup behaviour of CVM disks on GCP/Azure (not found).",
+    "Can Cloud EKM partners gate key release on Confidential VM/Space attestation?",
+    "go-sev-guest independent verification path for GCP SNP (not sourced).",
+    "S3NS PREMI3NS: are Confidential VMs in the SecNumCloud-qualified catalogue?",
+    "CVM memory-encryption overhead on llama.cpp token throughput (no measurement found)."
+  ]
+}

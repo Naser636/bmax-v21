@@ -1,0 +1,88 @@
+{
+  "//": "Checkpoint CP16 — owner directive « ANNULATION DU PLAN DE DÉPLOIEMENT V178.2 ET REPRISE V14.4 » (2026-11-25): the current VPS is NO LONGER the production target; deployment preparation for it is CANCELLED (not deleted); V14.4 resumes with native ODG work; a new confidential host is being selected (study only — no purchase, no instance). Canonical series (LCP-1). V12.4 canonical; V14.4 strategic reference.",
+  "checkpoint": "CP16",
+  "date": "2026-11-25",
+  "headAtCheckpoint": "30de7089",
+  "previous": "docs/odg/evidence/V178_CHECKPOINT_15.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5
+  },
+  "cancelled": {
+    "what": "V178.2 deployment preparation of the current VPS as future production (release activation R3, confidential hardening of this host, installs for that purpose)",
+    "status": "CANCELLED_BY_OWNER_2026-11-25",
+    "keptAsEvidence": [
+      "docs/odg/evidence/V178_2_OPERATIONAL_ROADMAP.json",
+      "docs/odg/evidence/V178_1_SOVEREIGNTY_DOSSIER.json",
+      "docs/odg/evidence/V178_P0_VPS_INVENTORY.json"
+    ],
+    "notCancelled": [
+      "V14.4 roadmap",
+      "merged work",
+      "contracts/registers",
+      "native ODG capabilities",
+      "internal development with public/synthetic data"
+    ],
+    "vps": "kept running, not resized/stopped/destroyed; no client data, no client secret, no client master key"
+  },
+  "prsMerged": [
+    {
+      "pr": 1009,
+      "merge": "4585b2e4",
+      "what": "V178.1 sovereignty dossier + CP15"
+    },
+    {
+      "pr": 1010,
+      "merge": "30de7089",
+      "what": "V178.2 operational roadmap (now partly cancelled — kept as evidence)"
+    }
+  ],
+  "nativeRuns": {
+    "F": {
+      "run": "GO 72f232fd36191bff (selected by GO's own actionable order; strategic D not actionable)",
+      "outcome": "PARTIAL (fixture mechanics; FIXTURE-CAP-1)",
+      "evidence": [
+        "docs/odg/evidence/V176_F_EXPERIMENT.json",
+        "docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl"
+      ],
+      "next": "independent check + VALIDATE_CRITERIA"
+    }
+  },
+  "v14_4_resumed": {
+    "goNext": "after F closes: V176-NB3 (inspected, actionable) per GO order; V178-P1/P2 being made executable (no run)",
+    "providerPolicy": "Claude Code = last-resort provider after a documented native incapacity; never selects priorities or holds governance"
+  },
+  "newHostSelection": {
+    "status": "STUDY DONE (provider-cited, UNVERIFIED) — owner decision pending",
+    "candidates": [
+      "Google Cloud Confidential VM Intel TDX",
+      "Google Cloud Confidential VM AMD SEV-SNP",
+      "OVHcloud Bare Metal with OCCAM (alpha)",
+      "Azure Confidential VM AMD SEV-SNP / Intel TDX"
+    ],
+    "constraint": "no purchase / instance / spend without explicit selection + owner authorization",
+    "signals": "docs/odg/evidence/V178_RADAR_SIGNALS_HOSTING.json",
+    "summary": {
+      "GCP_TDX_C3": "EU europe-west4 / europe-west9 (Paris) GA; raw TDX quote verifiable against Intel PCS (firmware endorsement signed by Google); AMX helps CPU inference; base C3 price NOT found, TDX surcharge ≈ $31/month at 8 vCPU",
+      "GCP_SNP_N2D": "EU europe-west3 / europe-west4 GA; ≈ $0.81/h (16 vCPU, third-party tracker); Milan AVX2 only — weakest for LLM",
+      "OVH_OCCAM": "EU, ALPHA (free, no SLA, no Beta/GA dates); offline-verifiable attestation, owner-controlled host/image, LUKS2+dm-verity key release on owner-signed policy — pilot on non-client data only",
+      "Azure_SNP_TDX": "EU regions (v5 SNP West/North Europe, Germany West Central); measured firmware = Microsoft closed paravisor; SKR accepts only Microsoft attestation ⇒ weakest independence; ≈ $0.83–1.61/h at 16 vCPU",
+      "IONOS_SNP": "EU (Frankfurt-East); SNPGuard open source; price not public"
+    },
+    "providerCitedRecommendation": "GCP Intel TDX (C3, europe-west9/west4) + an ODG-owned key server OUTSIDE Google that verifies the TDX quote before releasing per-client keys; OVHcloud+OCCAM as sovereignty pilot (alpha, non-client data). Residual: physical/firmware attacks; US CLOUD Act legal exposure (keys-held-by-us reduces technical, not legal, exposure)",
+    "openBeforeDecision": [
+      "live EU zone lists",
+      "base C3 price in Paris",
+      "OVH models with EPYC 9004/9005 or Xeon 6",
+      "DPAs (Microsoft, OVHcloud, IONOS)",
+      "ODG llama.cpp/Ollama benchmark inside a CVM (overhead unmeasured)"
+    ]
+  },
+  "orphanPollsStopped": 2,
+  "resumeActions": [
+    "odg-resume-point.ts --check",
+    "validate F (independent check)",
+    "GO next selection (NB3) on an idle host",
+    "hosting comparison dossier → owner decision"
+  ]
+}
