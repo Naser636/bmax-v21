@@ -70,6 +70,44 @@
   },
   "next": {
     "proposal": "P1-R re-attempt citing the MEASURED changed input XSEL-2 (= XSEL-1 + execution agreement as the tie-break before codeLines) — RB-REATTEMPT-CHANGED-INPUT; contract to be PROPOSED then independently inspected (distinct session), never self-authorized",
-    "qualification": "ODG reproduction of this module: re-run the native attempt with the integrated module as a reference contract — NOT_STARTED"
+    "qualification": "DONE 2026-11-25 — NOT_REPRODUCED 7/12 (see qualification); reuse of the module by ODG = the P1-R re-attempt (NOT_STARTED)"
+  },
+  "qualification": {
+    "question": "can ODG reproduce the correction natively when the work is DECOMPOSED one function per call (odg-native-design-pipeline method)?",
+    "date": "2026-11-25",
+    "bound": "3 calls (one per function), qwen2.5-coder:7b, temperature 0, no repair; same 12 provider-written spec tests in bwrap --unshare-net",
+    "calls": [
+      {
+        "fn": "deriveProbeInputs",
+        "ok": true,
+        "ms": 58645,
+        "evalCount": 280,
+        "sha": "e473f6e85b80fed76405778e9900ca8a536b2940db014b082b63d798d3445216"
+      },
+      {
+        "fn": "outputSignature",
+        "ok": true,
+        "ms": 9081,
+        "evalCount": 52,
+        "sha": "de91492134b46da78fc59b0c4939a7e69d0a68522dbdcea32493c95c3ee754f0"
+      },
+      {
+        "fn": "selectByAgreement",
+        "ok": true,
+        "ms": 42922,
+        "evalCount": 306,
+        "sha": "946eda56387b98846e90eff7ef001d60081f867308423af7157d9223015b44d9"
+      }
+    ],
+    "specTests": "7/12",
+    "failingTests": [
+      "probe string",
+      "probe number+array",
+      "probe dedup+exclude visible",
+      "probe other types untouched",
+      "select single cluster"
+    ],
+    "reading": "decomposition 7/12 vs monolithic 6/12: outputSignature reproduced; selectByAgreement reproduced except the smallest-id-in-cluster rule; deriveProbeInputs NOT reproduced (per-argument tuple mutation) ⇒ precise native capability gap = argument-position-wise input mutation",
+    "verdict": "NOT_REPRODUCED (partial: 2 of 3 functions largely correct)"
   }
 }
