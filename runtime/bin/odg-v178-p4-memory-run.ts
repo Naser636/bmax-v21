@@ -4,7 +4,7 @@
  * V17.8 P4 — the contract-declared RUN_CONTROLLED_EXPERIMENTS target of V178-P4 (hybrid per-tenant memory). One execution:
  *   AC1–AC3  runtime/core/memory-architecture.test.ts (V178-P4/AC1..AC3) run as a child, exit 0 required;
  *   AC4      LEARN-1 recompute of beforeMetric semanticRetrieval from the committed source (ABSENT → PRESENT ⇒ IMPROVED);
- *   AC5      tsc --noEmit -p tsconfig.json clean AND every touched test file passes, run one at a time;
+ *   AC5      tsc --noEmit --incremental false -p tsconfig.json clean (no tsbuildinfo write — GO write confinement) AND every touched test file passes, run one at a time;
  *   AC6      (pre-registered, revision 2 after the inspection REJECT) LIVE qualification with qwen3-embedding:0.6b on the fixed SET:
  *            queries share NO ≥2-letter token with their record (LEX-0); vector-only recall@3 ≥ 4/6 AND hybrid recall@3 ≥ 5/6;
  *            CONTROL: the same SET with a constant embedding must keep vector-only recall@3 ≤ 3/6, else NOT_MEASURED.
@@ -31,7 +31,7 @@ const SET = Object.freeze({
 });
 
 function readJson(p: string): any { try { return JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8")); } catch { return null; } }
-function runTsc(): any { const r = cp.spawnSync("npx", ["tsc", "--noEmit", "-p", "tsconfig.json"], { cwd: ROOT, encoding: "utf8", timeout: 600000 }); return { command: "tsc --noEmit -p tsconfig.json", exit: r.status, ok: r.status === 0 }; }
+function runTsc(): any { const r = cp.spawnSync("npx", ["tsc", "--noEmit", "--incremental", "false", "-p", "tsconfig.json"], { cwd: ROOT, encoding: "utf8", timeout: 600000 }); return { command: "tsc --noEmit --incremental false -p tsconfig.json", exit: r.status, ok: r.status === 0 }; }
 function runTest(f: string): any { const r = cp.spawnSync("npx", ["tsx", f], { cwd: ROOT, encoding: "utf8", timeout: 180000 }); return { file: f, exit: r.status, ok: r.status === 0 }; }
 
 /* LEX-0: no query shares a ≥2-letter token with its expected record (else the vector leg would be unnecessary). */
