@@ -10,12 +10,12 @@
   },
   "inputs": [
     {
-      "source": "docs/odg/evidence/V178_CHECKPOINT_15.json",
-      "sha256": "c52bddff012f044d11b16dc11d6ab3eca950abf6a519e916795fccd74b503812"
+      "source": "docs/odg/evidence/V178_CHECKPOINT_16.json",
+      "sha256": "b419fbbb3c8c227563b24aecd4e7cd9320704293ac811c1fa84aae1109edbded"
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "a3a32aa0200ddde60061965dae9b360ac4f14af5a1ffc33b0dea1810c2839b17"
+      "sha256": "b12aa350660c1fb0fb8770b7e3e4b0e4c612883a8cc26282c793497224ae3153"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -42,6 +42,10 @@
       "sha256": "e8d8eb98d2c9d7b627906d4a542dd938b60775c4cf8a734ec9d8efa6c95772eb"
     },
     {
+      "source": "docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "a503cf18ddd0187464dc782f44d7a44d14b8369306f9284f364799e5582d7935"
+    },
+    {
       "source": "docs/odg/evidence/V176_J_GO_EXECUTE_TRACE.jsonl",
       "sha256": "dd2b0cea75c90989981498786970653ff67418e038e3d46315173b76b71b2365"
     },
@@ -56,6 +60,10 @@
     {
       "source": "docs/odg/evidence/V176_F_CONTRACT_INSPECTION.json",
       "sha256": "6dfe1222d80a0e1ac148eb817a5e3ee29b8a84a94be06b8c1b60d2a816e597c0"
+    },
+    {
+      "source": "docs/odg/evidence/V176_F_EXPERIMENT.json",
+      "sha256": "1dfa8e61d9ef7afb5e53cae822c3999fcd3032e12bea43cf5e4a57e140e310ef"
     },
     {
       "source": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
@@ -147,10 +155,10 @@
     }
   ],
   "checkpoint": {
-    "path": "docs/odg/evidence/V178_CHECKPOINT_15.json",
-    "checkpoint": "CP15",
+    "path": "docs/odg/evidence/V178_CHECKPOINT_16.json",
+    "checkpoint": "CP16",
     "date": "2026-11-25",
-    "headAtCheckpoint": "d59ff4b3",
+    "headAtCheckpoint": "30de7089",
     "nextPriority": null,
     "rule": "LCP-1"
   },
@@ -256,17 +264,18 @@
       },
       "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": "VALIDATE_CRITERIA",
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
         "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
         ],
-        "reason": "inspection ACCEPT bound to contract 323da9a12215 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
         "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1"
       },
       "records": {
@@ -275,19 +284,36 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V176_F_EXPERIMENT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
-      "pending": [],
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl",
+        "runId": "72f232fd36191bff",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-25T01:11:32.207Z",
+        "dispatched": true
+      },
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/V176_F_EXPERIMENT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-scenario-f-run.ts"
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 323da9a12215 and experiment docs/odg/evidence/V176_F_EXPERIMENT.json, then an independent inspection — never auto-graded"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=F]",
@@ -926,6 +952,19 @@
       "strategic": "J",
       "workingOn": "J",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "72f232fd36191bff",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-25T01:11:32.207Z",
+      "dispatched": [
+        "F"
+      ],
+      "strategic": "D",
+      "workingOn": "F",
+      "ownerSelectionRecord": null
     }
   ],
   "nextGoAction": {
@@ -948,32 +987,33 @@
     },
     "dispatchable": [
       {
-        "item": "F",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-scenario-f-run.ts"
-      },
-      {
         "item": "V176-NB3",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-nb3-native-design-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: F, V176-NB3",
+    "verdict": "GO --execute could dispatch: V176-NB3",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "F",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 323da9a12215 and experiment docs/odg/evidence/V176_F_EXPERIMENT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/V176_J_GO_EXECUTE_TRACE.jsonl",
-      "runId": "e2aec9a403fb6263",
-      "status": "EXECUTED_FAIL",
-      "endedAt": "2026-11-24T21:01:42.944Z",
-      "strategic": "J",
-      "workingOn": "J",
+      "trace": "docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl",
+      "runId": "72f232fd36191bff",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-25T01:11:32.207Z",
+      "strategic": "D",
+      "workingOn": "F",
       "nextAfterCurrent": {
         "decision": "SELECTED",
-        "selected": "F",
+        "selected": "D",
         "proposed": null
       }
     }

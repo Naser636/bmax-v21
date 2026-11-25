@@ -155,7 +155,7 @@
       {
         "id": "F",
         "status": "EXECUTED_PARTIAL",
-        "reason": "inspection ACCEPT bound to contract 323da9a12215 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
       },
       {
         "id": "V176-NB3",
