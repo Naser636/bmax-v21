@@ -4118,7 +4118,7 @@
           "baseline": "beforeMetric semanticRetrieval = ABSENT in runtime/core/memory-architecture.ts (no semantic retrieval existed); FTS-only and vector-only recall@3 measured in the SAME run as descriptive controls",
           "dataset": {
             "source": "runtime/bin/odg-v178-p4-memory-run.ts SET (10 synthetic records, 6 paraphrase queries with zero lexical overlap; frozen in the runner)",
-            "runnerSha256": "be18aaa985d01623280c15dc1da437e62e16fd400272993b4f9e3caba85f2355",
+            "runnerSha256": "05bbe1322d3af493bd6d046953f2987e0aed7900dc9cd4519fb8339c69c31a2a",
             "embedModel": "qwen3-embedding:0.6b",
             "queryInstruction": "odg-memory-hybrid-index QUERY_INSTRUCTION"
           },
@@ -4242,6 +4242,26 @@
           "reason": "GO dry (2026-11-25) excluded V178-P4 as 'not authorized now' solely through OWN-1's text match on the stale missingForPass",
           "justification": "state-of-fact update of a descriptive field; criteria/preRegistration byte-unchanged; requires re-inspection because the contract sha changes",
           "revisionAuthorSessionId": "v19-p4-revision3"
+        },
+        {
+          "date": "2026-11-25",
+          "author": "PROVIDER (Claude Code, V19 P4 revision-4 session; branch fix/v178-p4-rev4-tsc-confinement)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P4/AC1' (file: acceptance_tests[0]): FTS5 leg returns exact-term matches ranked by bm25 (offline test)",
+            "AC2 test 'V178-P4/AC2' (file: acceptance_tests[1]): RRF fusion is deterministic for fixed inputs",
+            "AC3 test 'V178-P4/AC3' (file: acceptance_tests[2]): two tenants never read each other's file",
+            "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC5 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC6 unchanged",
+          "change": [
+            "runner AC5: tsc --noEmit --incremental false (tsconfig incremental:true made tsc write tsconfig.tsbuildinfo outside the target writeSet ⇒ GO EXECUTED_FAIL on run 2d22b59e207ec8a1)",
+            "preRegistration.dataset.runnerSha256 updated; nothing else"
+          ],
+          "reason": "GO write-confinement breach on RUN-1 (docs/odg/evidence/V178_P4_RUN1_INCIDENT.json)",
+          "justification": "fix the runner's side effect; criteria, thresholds, SET, budgets unchanged; RUN-1 kept as an incident, never the experiment record",
+          "revisionAuthorSessionId": "v19-p4-revision4"
         }
       ]
     },
