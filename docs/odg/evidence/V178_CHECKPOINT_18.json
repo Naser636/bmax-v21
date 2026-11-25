@@ -1,0 +1,396 @@
+{
+  "//": "V17.8 CHECKPOINT 18 — VPS ENGINEERING CAMPAIGN FORMALLY PARKED (owner order « CTO V14.4 — VPS ENGINEERING CAMPAIGN — FORMAL PARKING · PRESERVATION · EXACT RESUMPTION », 2026-11-25). A SUSPENSION, not an abandonment. Built ONLY from committed evidence (no new inventory, cartography, Radar search or benchmark). Main ODG development continues.",
+  "checkpoint": 18,
+  "date": "2026-11-25",
+  "headAtCheckpoint": "95d57ca4",
+  "previous": "docs/odg/evidence/V178_CHECKPOINT_17.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5,
+    "mainClean": true
+  },
+  "references": {
+    "governance": "CTO Master Directive V14.4 (adopted, docs/odg/V14_4_ROADMAP.md); Boussole V12.4 canonical (unchanged); V15.0 PROPOSED",
+    "v177": "docs/odg/evidence/V178_CHECKPOINT_14.json#v177 (CLOSED_FOR_SCOPE, PRs #998–#1005)",
+    "checkpoints": [
+      "docs/odg/evidence/V178_CHECKPOINT_14.json (V177→V178, Phase 0 next)",
+      "docs/odg/evidence/V178_CHECKPOINT_15.json (Radar campaign + sovereignty)",
+      "docs/odg/evidence/V178_CHECKPOINT_16.json (V178.2 prod-prep CANCELLED, V14.4 resumed, new-host study)",
+      "docs/odg/evidence/V178_CHECKPOINT_17.json (F CLOSED_PARTIAL, local-native rule)"
+    ]
+  },
+  "vpsSuspension": {
+    "status": "SUSPENDED / PRESERVED",
+    "scope": "VPS equipment, local-intelligence installs, VPS raccordements, this campaign's benchmarks and Radar searches. NOT suspended: ODG main development (GO missions NB3/P2, native work) which keeps using the already-present Ollama + models.",
+    "priorInventory": {
+      "record": "docs/odg/evidence/V178_P0_VPS_INVENTORY.json",
+      "date": "2026-11-24",
+      "head": "292f371e",
+      "facts": "OpenStack Nova KVM, 8 vCPU Haswell AVX2 (no AVX-512), 22 GiB RAM, no swap, no GPU, 161 G free, CPU-only inference; one large model resident at a time"
+    },
+    "priorRadar": {
+      "campaign": "docs/odg/evidence/V178_RADAR_CAMPAIGN.json",
+      "signals": [
+        "docs/odg/evidence/V178_RADAR_SIGNALS_EFG.json",
+        "docs/odg/evidence/V178_RADAR_SIGNALS_ABH.json",
+        "docs/odg/evidence/V178_RADAR_SIGNALS_CDI.json",
+        "docs/odg/evidence/V178_RADAR_SIGNALS_SEC.json",
+        "docs/odg/evidence/V178_RADAR_SIGNALS_HOSTING.json"
+      ],
+      "summary": "71 signals (A 16 / B 18 / C 20 / D 17); recommendation BALANCED: no-install MINIMAL first (P1, P2), then owner-approved pulls (P3 Qwen3.5-9B, P4 Qwen3-Embedding-0.6B + sqlite-vec), AMBITIOUS deferred (root + RAM-borderline); quality gains on this host come from METHOD, not bigger models",
+      "conclusionsKept": "unchanged — no recommendation re-evaluated",
+      "obsolescence": "none evidenced; one observed confirmation: V178-P1 (method lever) executed 2026-11-25 ⇒ FAIL 3/6, root cause = non-discriminating visible tests (C-02 risk note) ⇒ supports C-03 agreement selection (#1017), does not invalidate the plan"
+    },
+    "targetArchitectureStudied": {
+      "records": [
+        "docs/odg/evidence/V178_2_OPERATIONAL_ROADMAP.json#tiers",
+        "docs/odg/evidence/V178_1_SOVEREIGNTY_DOSSIER.json#architectures"
+      ],
+      "summary": "tier A git+governance source of truth; tier B THIS VPS = engineering/staging, synthetic/public data only; tier C confidential production on a SEPARATE attested host (study: GCP Intel TDX recommended; OVH OCCAM alpha; Azure weakest attestation) — owner decision pending"
+    },
+    "items": [
+      {
+        "name": "Ollama inference server",
+        "version": "0.35.1",
+        "location": "/usr/local/bin/ollama serve (user ollama), 127.0.0.1:11434",
+        "proof": [
+          "docs/odg/evidence/V178_P0_VPS_INVENTORY.json#runtimes",
+          "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json#network (20 calls 2026-11-25)"
+        ],
+        "dependencies": [],
+        "category": "A",
+        "remainingAction": "none (kept RUNNING: used by main ODG development — not stopped)",
+        "resumeCommand": "curl -s --noproxy '*' http://127.0.0.1:11434/api/tags",
+        "risksAndReversibility": "stopping it would break NB3/P2/native work; never removed"
+      },
+      {
+        "name": "qwen2.5-coder:7b",
+        "version": "Q4_K_M 7.6B 4.68 GB",
+        "location": "Ollama model store",
+        "proof": [
+          "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json (QUALIFIED bugfix/extract/judgment/refactor; implement PROBATION 3/6)",
+          "docs/odg/evidence/V178_P1_CRITERIA_VALIDATION.json (implement 3/6 confirmed, CLOSED_FAIL)"
+        ],
+        "dependencies": [
+          "Ollama"
+        ],
+        "category": "A",
+        "remainingAction": "implement capability still PROBATION — progress via method (P1-R, NB3), not via a new model",
+        "resumeCommand": "(none — present)",
+        "risksAndReversibility": "none (no change)"
+      },
+      {
+        "name": "qwen2.5-coder:3b / qwen2.5:0.5b",
+        "version": "Q4_K_M 3.1B 1.93 GB / 494M 0.4 GB",
+        "location": "Ollama model store",
+        "proof": [
+          "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json",
+          "docs/odg/evidence/V178_P0_VPS_INVENTORY.json#localModels"
+        ],
+        "dependencies": [
+          "Ollama"
+        ],
+        "category": "A",
+        "remainingAction": "routing/cheap-check roles not yet wired as a test-gated cascade (see V178-P5)",
+        "resumeCommand": "(none — present)",
+        "risksAndReversibility": "none"
+      },
+      {
+        "name": "canonical model router (odg-model-router) + local-model-generator + odg-native-design-pipeline",
+        "version": "in repo @HEAD",
+        "location": "runtime/core/odg-model-router.ts, runtime/core/local-model-generator.ts, runtime/core/odg-native-design-pipeline.ts",
+        "proof": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#existingArchitecture",
+          "docs/odg/evidence/V178_P1_REPAIR_AGREEMENT_PROVENANCE.json (local-model-generator used 2026-11-25)"
+        ],
+        "dependencies": [
+          "Ollama"
+        ],
+        "category": "A",
+        "remainingAction": "local models already reached through these canonical seams; cascade (P5) not built",
+        "resumeCommand": "(none)",
+        "risksAndReversibility": "none"
+      },
+      {
+        "name": "bwrap sandbox",
+        "version": "0.11.1",
+        "location": "/usr/bin/bwrap",
+        "proof": [
+          "docs/odg/evidence/V178_P0_VPS_INVENTORY.json#runtimes",
+          "bwrap --ro-bind / / --unshare-net true ⇒ OK (2026-11-25, P1 preflight)"
+        ],
+        "dependencies": [],
+        "category": "A",
+        "remainingAction": "client-job no-egress profile over unix socket = V178-P7 (not built)",
+        "resumeCommand": "bwrap --ro-bind / / --unshare-net true",
+        "risksAndReversibility": "none"
+      },
+      {
+        "name": "Node / npm / Python / git / gh / Docker CLI",
+        "version": "node v22.22.1, npm 9.2.0, python3 3.14.4, git 2.53.0, gh 2.46.0, docker 29.1.3",
+        "location": "system",
+        "proof": [
+          "docs/odg/evidence/V178_P0_VPS_INVENTORY.json#runtimes"
+        ],
+        "dependencies": [],
+        "category": "A",
+        "remainingAction": "none — V178_2 installationsMinimal.neededNow = NONE",
+        "resumeCommand": "(none)",
+        "risksAndReversibility": "none"
+      },
+      {
+        "name": "V178-P2 measurement (prompt tok/s, RAM peak, gen time on idle host)",
+        "version": "contract sha 3342d16e…",
+        "location": "runtime/bin/odg-local-model-benchmark.ts --v178-measure",
+        "proof": [
+          "docs/odg/evidence/V178_P2_CONTRACT_INSPECTION.json (ACCEPT)"
+        ],
+        "dependencies": [
+          "Ollama",
+          "idle host (HOST-1)",
+          "GO order NB3 vs P2 (owner)"
+        ],
+        "category": "F",
+        "remainingAction": "GO run once (main ODG queue, NOT this campaign)",
+        "resumeCommand": "npx tsx runtime/bin/odg-go.ts --execute --allow-unsandboxed-target --repo /home/ubuntu/bmax-v21 --scratch <fresh worktree> --out <dir>",
+        "risksAndReversibility": "measurement only; blocked only by the explicit NB3/P2 order decision"
+      },
+      {
+        "name": "Qwen3.5-9B coder (Q4 then Q5)",
+        "version": "tag to confirm in the Ollama library",
+        "location": "not installed",
+        "proof": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#proposals[V178-P3] (signals A-01, H-02, H-04, B-03)"
+        ],
+        "dependencies": [
+          "owner download approval",
+          "P2 measurement first",
+          "V155 harness"
+        ],
+        "category": "G",
+        "remainingAction": "download + qualify on the V155 harness; add LOCAL_POOL entry only from the measured registry",
+        "resumeCommand": "ollama pull <confirmed Qwen3.5-9B tag>  (ONLY after owner approval)",
+        "risksAndReversibility": "≈5–6 GB disk; reversible (ollama rm); one large model resident at a time (no swap)"
+      },
+      {
+        "name": "Qwen3-Embedding-0.6B + sqlite-vec + FTS5 hybrid per-tenant memory",
+        "version": "embedding 0.6B; sqlite-vec npm (version to pin)",
+        "location": "not installed",
+        "proof": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#proposals[V178-P4] (signals E-03, E-06, E-10, A-09)"
+        ],
+        "dependencies": [
+          "owner download + npm dependency approval"
+        ],
+        "category": "G",
+        "remainingAction": "pull embedding model, add sqlite-vec, build hybrid memory inside existing memory components",
+        "resumeCommand": "ollama pull <Qwen3-Embedding-0.6B tag>; npm install sqlite-vec@<pinned>  (ONLY after owner approval)",
+        "risksAndReversibility": "reversible (ollama rm / npm uninstall); FTS5 leg needs no install"
+      },
+      {
+        "name": "test-gated cascade 3B → 7B/9B (V178-P5)",
+        "version": "—",
+        "location": "runtime/core/odg-model-router.ts (estimate)",
+        "proof": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#proposals[V178-P5] (D-02, D-04, C-09)"
+        ],
+        "dependencies": [
+          "contract inspection (distinct session)"
+        ],
+        "category": "E",
+        "remainingAction": "contract PROPOSED → inspection → build",
+        "resumeCommand": "(contract work, no install)",
+        "risksAndReversibility": "internal, reversible"
+      },
+      {
+        "name": "client-job privacy sandbox (V178-P7: unix-socket forwarder, bwrap --unshare-net, per-tenant AES-256-GCM)",
+        "version": "—",
+        "location": "not built",
+        "proof": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#proposals[V178-P7]",
+          "docs/odg/evidence/V178_1_SOVEREIGNTY_DOSSIER.json"
+        ],
+        "dependencies": [
+          "contract inspection",
+          "NO client data on this VPS regardless (NOT_SOVEREIGN)"
+        ],
+        "category": "E",
+        "remainingAction": "build only for synthetic data on this host",
+        "resumeCommand": "(contract work, no install)",
+        "risksAndReversibility": "internal; this host never receives client data"
+      },
+      {
+        "name": "AMBITIOUS tier: MoE 26–30B, llama.cpp A/B, speculative decoding, gVisor, host egress blocking, fscrypt",
+        "version": "—",
+        "location": "not installed",
+        "proof": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#trajectories[AMBITIOUS]"
+        ],
+        "dependencies": [
+          "root",
+          "RAM-borderline (22 GiB, no swap)",
+          "separate owner authorization per item"
+        ],
+        "category": "G",
+        "remainingAction": "none until owner authorizes per item",
+        "resumeCommand": "(per-item owner decision)",
+        "risksAndReversibility": "root + OOM risk"
+      },
+      {
+        "name": "systemd/timers, docker containers, firewall, port map inventory",
+        "version": "—",
+        "location": "host",
+        "proof": [
+          "docs/odg/evidence/V178_P0_VPS_INVENTORY.json#notObserved"
+        ],
+        "dependencies": [
+          "session permission for read-only systemctl --user / docker ps (denied, not bypassed)"
+        ],
+        "category": "F",
+        "remainingAction": "complete the read-only inventory once permitted",
+        "resumeCommand": "systemctl --user list-units --type=service,timer; docker ps  (after permission)",
+        "risksAndReversibility": "read-only"
+      },
+      {
+        "name": "live dashboard release activation (next 16.2.9 → current main)",
+        "version": "current rel-20261111T190025Z-95661e1c…; newer rel-20261122T023859Z-b8b1aaf5… present",
+        "location": "~/odg-releases",
+        "proof": [
+          "docs/odg/evidence/V178_2_OPERATIONAL_ROADMAP.json#vpsState,#permissionsToPrepare"
+        ],
+        "dependencies": [
+          "owner decision",
+          "root if the root-owned current symlink blocks"
+        ],
+        "category": "G",
+        "remainingAction": "CANCELLED as production prep (CP16); staging-only",
+        "resumeCommand": "scripts/odg-release.sh activate <rel>  (ONLY on owner decision)",
+        "risksAndReversibility": "dashboard downtime; rollback = odg-release.sh rollback"
+      },
+      {
+        "name": "LUKS+Tang, firewall, journald retention hardening",
+        "version": "—",
+        "location": "host",
+        "proof": [
+          "docs/odg/evidence/V178_1_SOVEREIGNTY_DOSSIER.json",
+          "docs/odg/evidence/V178_2_OPERATIONAL_ROADMAP.json#permissionsToPrepare"
+        ],
+        "dependencies": [
+          "root",
+          "separate owner decision each"
+        ],
+        "category": "G",
+        "remainingAction": "CANCELLED for this host as production (CP16)",
+        "resumeCommand": "(per-item owner decision)",
+        "risksAndReversibility": "root, partly irreversible"
+      },
+      {
+        "name": "LLVM/Clang/CMake/Rust toolchains",
+        "version": "—",
+        "location": "not installed",
+        "proof": [
+          "docs/odg/evidence/V178_2_OPERATIONAL_ROADMAP.json#installationsMinimal.candidatesLater"
+        ],
+        "dependencies": [],
+        "category": "G",
+        "remainingAction": "NOT needed (no C/C++/Rust built by the repo); Radar revisits only if a mission needs it",
+        "resumeCommand": "(none)",
+        "risksAndReversibility": "none"
+      }
+    ],
+    "categoryCounts": {
+      "A": 6,
+      "B": 0,
+      "C": 0,
+      "D": 0,
+      "E": 2,
+      "F": 2,
+      "G": 6
+    },
+    "remainingInstallations": [
+      "Qwen3.5-9B (P3) — owner download approval",
+      "Qwen3-Embedding-0.6B + sqlite-vec (P4) — owner download + npm approval",
+      "AMBITIOUS tier items — root + per-item owner authorization"
+    ],
+    "remainingRaccordements": [
+      "test-gated 3B→7B/9B cascade in odg-model-router (P5)",
+      "hybrid per-tenant memory into existing memory components (P4)",
+      "client-job no-egress sandbox over unix socket (P7)",
+      "GO wave wiring with a resource-exclusivity class LOCAL_MODEL_HOST (F-B, docs/odg/evidence/V176_F_WAVE_WIRING_STUDY.json)"
+    ],
+    "dependenciesAndMissingPermissions": [
+      "owner: model downloads (P3/P4), npm dependency (P4)",
+      "owner: root decisions per item (LUKS/Tang, firewall, journald, egress blocking, release activation)",
+      "session permission: read-only systemctl --user / docker ps (denied 2026-11-24, not bypassed)",
+      "distinct-session inspection for PROPOSED contracts P5–P7 (positive acceptance; MECH-1 does not apply)",
+      "owner: VPS provider identity / GDPR Art. 28 contract; confidential-host choice"
+    ],
+    "securityRestrictions": [
+      "current VPS NOT_SOVEREIGN (V178.1): no client data, no client secret, no client master key",
+      "no production deployment, no public exposure",
+      "no purchase/subscription",
+      "Radar allowlist unchanged (api.github.com, export.arxiv.org)"
+    ],
+    "done": [
+      "P0 read-only inventory (#1007)",
+      "Radar campaign A–I + convergence (#1008, #1009)",
+      "sovereignty dossier + threat model (#1009)",
+      "operational roadmap (#1010)",
+      "new confidential-host study (#1012)",
+      "P1 executed + closed FAIL with repair module (#1016–#1019)"
+    ],
+    "notDone": [
+      "P2 measurement",
+      "P3/P4 model qualification",
+      "P5 cascade, P7 client-job sandbox",
+      "systemd/docker read-only inventory completion",
+      "release activation (cancelled as prod prep)"
+    ],
+    "suspended": [
+      "any install / download / VPS config change / new raccordement / campaign benchmark / campaign Radar search"
+    ],
+    "operationsInFlight": {
+      "observed": "none for this campaign (only ollama serve, needed by main ODG work — left running)",
+      "stopped": [],
+      "note": "nothing interrupted; no result lost"
+    },
+    "preservation": {
+      "worktrees": [
+        "/home/ubuntu/odg-scratch-p1/p1-run (P1 run scratch, result committed #1016)",
+        "/home/ubuntu/wt-v175-crit (unmerged feat/v175-register-criteria-measurement)",
+        "/home/ubuntu/wt-v178-radar (merged branch, kept)"
+      ],
+      "branchesUnmerged": [
+        "feat/v175-register-criteria-measurement",
+        "governance/f11-operating-contract"
+      ],
+      "stashes": 5,
+      "configs": "no VPS configuration modified by this campaign",
+      "nothingRemoved": "Ollama, models, tools, configs untouched"
+    },
+    "resume": {
+      "order": [
+        "read this checkpoint (vpsSuspension)",
+        "reuse the Radar conclusions above",
+        "differential check ONLY: ollama --version, ollama list, df -h /, free -g vs priorInventory",
+        "apply already-selected installs only after their owner approvals (P3 then P4)",
+        "raccord via odg-model-router / memory components (P5, P4)",
+        "verify real use by ODG (GO-dispatched runs)",
+        "qualify generation/compile/test/repair/integration on the V155 harness",
+        "measure perf + consumption (P2 harness)",
+        "record and continue"
+      ],
+      "nextOperation": "differential check of the host against docs/odg/evidence/V178_P0_VPS_INVENTORY.json (no full re-inventory), then — if P2 has been measured by the main ODG queue — request the owner's P3 download approval",
+      "command": "cd /home/ubuntu/bmax-v21 && npx tsx runtime/bin/odg-resume-point.ts --check && python3 -c \"import json;d=json.load(open('docs/odg/evidence/V178_CHECKPOINT_18.json'))['vpsSuspension'];print(d['status']);print(d['resume']['nextOperation'])\" && ollama --version && ollama list && df -h / && free -g"
+    }
+  },
+  "mainDevelopment": {
+    "continues": true,
+    "state": "V178-P1 CLOSED_FAIL (MECH-1, #1019); GO actionable tie {V176-NB3, V178-P2} ⇒ awaits an EXPLICIT owner order; D PROPOSED",
+    "resume": "runtime/bin/odg-resume-point.ts --check"
+  },
+  "resumeActions": [
+    "owner: explicit order NB3 vs P2 ⇒ GO --execute (durable permission)",
+    "VPS campaign: resume via vpsSuspension.resume.command when the owner lifts the parking"
+  ]
+}
