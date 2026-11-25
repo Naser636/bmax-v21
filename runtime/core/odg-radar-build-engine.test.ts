@@ -10,6 +10,7 @@ const net = require("net");
 const dns = require("dns");
 const E = require("./odg-radar-build-engine.js");
 const CLI = require("../bin/odg-v176-radar-build-proposals.js");
+const REGM = require("./odg-strategic-register.js");
 let failures = 0; function check(n: string, c: boolean) { process.stdout.write((c ? "ok" : "NOT OK") + " - " + n + "\n"); if (!c) failures++; }
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -124,6 +125,8 @@ function main() {
     check("RB-CONV-1 idempotent per batch: re-running on the converted file appends nothing (ALREADY_CONVERTED)", (() => { const again = E.convertToContracts(E.buildProposals(Object.assign(fixture(), { contracts: { path: P("contracts"), data: v1.data } }), ctx({ artifactExists: exists })), v1.data, { registerItemIds: regIds }); return again.status === "ALREADY_CONVERTED" && again.appended.length === 0 && again.data === v1.data; })());
     check("RB-CONV-1 converted ids dedup as existing contracts on the next engine run (reinforce, never re-proposed) and are listed in convertedContracts", (() => { const nx = E.buildProposals(Object.assign(fixture(), { contracts: { path: P("contracts"), data: v1.data } }), ctx({ artifactExists: exists })); return v1.appended.every((c: any) => !nx.top.some((t: any) => t.id === c.scenario) && !nx.proposals.some((p: any) => p.id === c.scenario)) && nx.convertedContracts.length === 3 && nx.convertedContracts.every((c: any) => c.conversionBatch === E.CONVERSION_BATCH && c.state === "PROPOSED" && c.authorizedBy === null); })());
     check("RB-CONV-1 the cut is reported (clean ⇔ no tie split)", v1.cut && typeof v1.cut.clean === "boolean");
+    check("RB-CONV-2 convertOwnerGated: a draft declaring ownerGate {required, step} is converted with the step VISIBLE to OWN-1", (() => { const x = JSON.parse(JSON.stringify(rs)); const t0 = x.top[0]; x.top = [t0]; t0.contract.ownerGate = { required: true, step: "model download (fixture)", reason: ["model download"] }; const off = E.convertToContracts(x, contracts(), { registerItemIds: regIds }); const on = E.convertToContracts(x, contracts(), { registerItemIds: regIds, convertOwnerGated: true }); const c = on.appended[0]; return off.skipped.some((k: any) => k.reason === "OWNER_GATED") && c && c.ownerGate.required === true && /owner-gated step: model download/.test(c.initialState.missingForPass) && REGM.ownerMatches(c.initialState.missingForPass).length > 0; })());
+    check("RB-CONV-2 an engine OWNER_GATED proposal without a declared step stays skipped even with convertOwnerGated", (() => { const all = E.convertToContracts(rs, contracts(), { n: 99, registerItemIds: regIds, convertOwnerGated: true }); const gated = rs.proposals.filter((p: any) => p.requiresOwnerAuthorization).map((p: any) => p.id); return !all.appended.some((c: any) => gated.includes(c.scenario)); })());
     check("RB-CONV-1 malformed contracts data ⇒ throws (fail-closed)", (() => { try { E.convertToContracts(rs, {}, {}); return false; } catch { return true; } })());
   }
   // committed repo: the R2C batch is present, append-only, and the converted contracts are PROPOSED (not actionable)

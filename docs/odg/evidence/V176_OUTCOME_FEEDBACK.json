@@ -974,6 +974,55 @@
       "adjustedScore": 0.05,
       "delta": 0,
       "uncertainty": 0.7
+    },
+    {
+      "id": "V178-P1",
+      "baseScore": 0.07,
+      "adjustedScore": 0.07,
+      "delta": 0,
+      "uncertainty": 0.7
+    },
+    {
+      "id": "V178-P2",
+      "baseScore": 0.06,
+      "adjustedScore": 0.06,
+      "delta": 0,
+      "uncertainty": 0.7
+    },
+    {
+      "id": "V178-P3",
+      "baseScore": 0.06,
+      "adjustedScore": 0.06,
+      "delta": 0,
+      "uncertainty": 0.6
+    },
+    {
+      "id": "V178-P4",
+      "baseScore": 0.05,
+      "adjustedScore": 0.05,
+      "delta": 0,
+      "uncertainty": 0.6
+    },
+    {
+      "id": "V178-P5",
+      "baseScore": 0.08,
+      "adjustedScore": 0.08,
+      "delta": 0,
+      "uncertainty": 0.7
+    },
+    {
+      "id": "V178-P6",
+      "baseScore": 0.08,
+      "adjustedScore": 0.08,
+      "delta": 0,
+      "uncertainty": 0.7
+    },
+    {
+      "id": "V178-P7",
+      "baseScore": 0.07,
+      "adjustedScore": 0.07,
+      "delta": 0,
+      "uncertainty": 0.7
     }
   ],
   "decisions": {
