@@ -1,0 +1,78 @@
+{
+  "//": "Checkpoint CP15 — V178 / V178.1 (owner directives V178-RADAR FIRST, CONVERGENCE, V178.1 PROVIDER SECURITY & CLIENT DATA SOVEREIGNTY). Canonical checkpoint series (LCP-1); machine resume view: odg-resume-point.ts --check. V12.4 canonical; nothing adopted.",
+  "checkpoint": "CP15",
+  "date": "2026-11-25",
+  "headAtCheckpoint": "d59ff4b3",
+  "previous": "docs/odg/evidence/V178_CHECKPOINT_14.json",
+  "truthLock": {
+    "verifyHistorical": "verified=928 missing=0 changed=0",
+    "stashes": 5,
+    "mainCheckout": "main, clean"
+  },
+  "prsMerged": [
+    {
+      "pr": 1006,
+      "merge": "292f371e",
+      "what": "CP14 + F inspection record"
+    },
+    {
+      "pr": 1007,
+      "merge": "9a2c5eeb",
+      "what": "V178-P0 read-only VPS inventory + capacity diagnosis"
+    },
+    {
+      "pr": 1008,
+      "merge": "d59ff4b3",
+      "what": "V178 Radar campaign dossier (71 signals A16/B18/C20/D17; frontier-radar DEFER 44 / REJECT 27 — 20 of the 27 REJECT are practically valuable; provenance-only rejection) + 7 PROPOSED contracts V178-P1..P7"
+    }
+  ],
+  "v178": {
+    "status": "STUDY / PREPARATION — no install, no download, no VPS change",
+    "recommendedTrajectory": "BALANCED (method-first P1/P2 now, no install; Qwen3.5-9B + local embeddings only after owner approval of downloads)",
+    "contracts": {
+      "V178-P1": "PROPOSED → being made executable (no run)",
+      "V178-P2": "PROPOSED → being made executable (no run)",
+      "V178-P3": "PROPOSED, owner-gated (model download)",
+      "V178-P4": "PROPOSED, owner-gated (model download + npm dependency)",
+      "V178-P5..P7": "PROPOSED"
+    },
+    "goState": "strategic TIE_EXPLAINED D (R3); actionable F, V176-NB3 (V177 items, suspended by V178 — not executed)"
+  },
+  "v178_1": {
+    "priority": "P0 client-data sovereignty",
+    "dossier": "docs/odg/evidence/V178_1_SOVEREIGNTY_DOSSIER.json",
+    "verdict": "NOT_SOVEREIGN — OpenStack/KVM guest, SeaBIOS, no SEV-SNP/TDX, no vTPM, plain ext4 ⇒ the provider can read disk, snapshots and RAM; NO real client data may be introduced",
+    "recommendation": "ARCH-3 hybrid now (provider sees ciphertext only; sensitive processing on owner/client-controlled node) + evaluate ARCH-2 attested EU confidential VM; keep this VPS for internal engineering, public Radar research, ciphertext storage",
+    "nextInternal": [
+      "V178.1-S1 per-tenant envelope encryption",
+      "V178.1-S2 no-egress client-job profile + log/cache hygiene",
+      "V178.1-S3 executable sovereignty test battery (criteria 1–9)"
+    ],
+    "ownerActions": [
+      "provider identity/contract (Art. 28, sub-processors, location, console/rescue/snapshot access)",
+      "CVM availability",
+      "accept an owner-controlled processing node?",
+      "root operations (LUKS+Tang, firewall, journald) — each with scope/risk/rollback"
+    ]
+  },
+  "preservedNotIntegrated": [
+    {
+      "branch": "feat/v175-register-criteria-measurement",
+      "worktree": "/home/ubuntu/wt-v175-crit"
+    },
+    {
+      "branch": "governance/f11-operating-contract",
+      "worktree": null
+    },
+    {
+      "branch": "feat/v178-p1-p2-contracts",
+      "worktree": "/home/ubuntu/wt-v178-p12",
+      "note": "in progress (P1/P2 contract preparation, no run)"
+    }
+  ],
+  "resumeActions": [
+    "read this checkpoint + odg-resume-point.ts --check",
+    "owner: answer the V178.1 open questions",
+    "internal: prepare S1–S3 contracts; finish P1/P2 preparation; GO selects (no forcing)"
+  ]
+}

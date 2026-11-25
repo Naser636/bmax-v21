@@ -26,7 +26,7 @@ check("V175-NB1 last GO run = its committed trace, dispatched", !!nb.lastGoRun &
 check("register/declared-record divergence on V175-NB1 is REPORTED, not resolved", /^CLOSED_/.test(nb.registerStatus) || (nb.divergence && /REPORTED/.test(nb.divergence.note) && nb.registerStatus === "NOT_STARTED"));
 check("J (V17.6): CLOSED_PARTIAL after its single GO execution ⇒ not an owner step; strategic selection moved on (V17.8: D/F tie explained by R3 ⇒ D)", T("J").next.actor !== "OWNER" && a.nextGoAction.strategic.item === "D");
 check("owner question Q-CTR2 answered V176 (STAGE) ⇒ no longer listed open; every open question carries its source", !a.ownerQuestionsOpen.some((q: any) => q.id === "Q-CTR2") && a.ownerQuestionsOpen.every((q: any) => /ownerQuestions\[\d+\]$/.test(q.source)));
-check("checkpoint = latest committed (LCP-1)", a.checkpoint && a.checkpoint.path === "docs/odg/evidence/V178_CHECKPOINT_14.json");
+check("checkpoint = latest committed (LCP-1)", a.checkpoint && a.checkpoint.path === "docs/odg/evidence/V178_CHECKPOINT_15.json");
 check("checkpoint CP12 (V17.6) carries no stale RUNNING status vs the register (the CP11 J2 RUNNING case is superseded by CP12)", !a.checkpointVsRegister.some((c: any) => c.superseded === true && c.checkpointStatus === "RUNNING"));
 check("next GO action (V17.8): F and V176-NB3 dispatchable (both revised + inspection ACCEPT committed, not yet dispatched) — derived, not asserted", a.nextGoAction.dispatchable.map((d: any) => d.item).sort().join() === "F,V176-NB3");
 check("last GO run = the latest committed cycle (J single execution, workingOn J, strategic J)", a.nextGoAction.lastGoRun.workingOn === "J" && a.nextGoAction.lastGoRun.strategic === "J");
