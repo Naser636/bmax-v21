@@ -28,7 +28,7 @@ check("J (V17.6): CLOSED_PARTIAL after its single GO execution ⇒ not an owner 
 check("owner question Q-CTR2 answered V176 (STAGE) ⇒ no longer listed open; every open question carries its source", !a.ownerQuestionsOpen.some((q: any) => q.id === "Q-CTR2") && a.ownerQuestionsOpen.every((q: any) => /ownerQuestions\[\d+\]$/.test(q.source)));
 check("checkpoint = latest committed (LCP-1)", a.checkpoint && a.checkpoint.path === "docs/odg/evidence/V178_CHECKPOINT_17.json");
 check("checkpoint CP12 (V17.6) carries no stale RUNNING status vs the register (the CP11 J2 RUNNING case is superseded by CP12)", !a.checkpointVsRegister.some((c: any) => c.superseded === true && c.checkpointStatus === "RUNNING"));
-check("next GO action (V17.8, after F's single GO execution): only V176-NB3 dispatchable — derived, not asserted", a.nextGoAction.dispatchable.map((d: any) => d.item).sort().join() === "V176-NB3");
+check("next GO action (V17.8): V176-NB3, V178-P1, V178-P2 dispatchable (revised + inspection ACCEPT committed, not yet dispatched) — derived, not asserted", a.nextGoAction.dispatchable.map((d: any) => d.item).sort().join() === "V176-NB3,V178-P1,V178-P2");
 check("last GO run = the latest committed cycle (F single execution, workingOn F)", a.nextGoAction.lastGoRun.workingOn === "F");
 check("tracked items carry their boussoleRef (compact) from the register", a.trackedItems.every((t: any) => t.boussoleRef && (t.boussoleRef.status === "MEASURED" || typeof t.boussoleRef.reason === "string")));
 check("every tracked item cites its register record", a.trackedItems.every((t: any) => t.source[0].startsWith("docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=")));

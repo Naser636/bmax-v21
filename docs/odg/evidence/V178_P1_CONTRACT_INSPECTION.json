@@ -1,0 +1,29 @@
+{
+  "//": "Independent inspection record of the revised V178-P1 contract (owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS). Transcribed verbatim from the inspector's verdicts by the coordinating session. Independence DECLARED by session ids. Inspection ≠ selection; under the owner operating rule (V178_OWNER_OPERATING_RULE_LOCAL_NATIVE.json) the coordinator does not run GO --execute.",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V178-P1",
+  "verdict": "ACCEPT",
+  "contractSha256": "3d6ce0b00204e7dd7e3067cfbec35f6b19eb7cd6cb51320bc658d15357986194",
+  "inspectedHeadSha": "9dfe298fd30c021b08b5a240b3bfb413e7af7641",
+  "inspectedPr": 1011,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab245bf3019f79340",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "p12-v178",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-25",
+  "findings": [
+    "AC1–AC6 byte-unchanged; AC7 (run with fixed thresholds) added; only P1/P2 changed, count 31",
+    "gate refuses budget/threshold mismatch (budgetsMatch); derives INSPECT_REVISED_CONTRACT with no execution before this record",
+    "selection only on VISIBLE sandbox cases (visibleResults/selectByExecution); hidden cases graded only after the choice by the V155 full oracle",
+    "tamperCheck excludes candidates referencing a test/grader/evaluator path before selection",
+    "sampling limited to the declared points (SAMPLE-1 + allowedCallOptions)",
+    "over-cap ⇒ NOT_MEASURED only when modelCalls = 0; call-cap hit ⇒ failed candidates (FAIL)",
+    "LOW: a schedule refusal in a later trial could give NOT_MEASURED after work calls — only from static misconfiguration pinned by gate + selftest",
+    "LOW: 20-call cap equals the exact need (extra call ⇒ FAIL, never NOT_MEASURED)",
+    "bindingFiles acceptable (disclosed; run writes ⊆ write_set)",
+    "binding exclusive to V176-BUILD-MISSIONS"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V178-P1 only; RUN via ODG GO --execute only, in GO's own order; grades nothing."
+}

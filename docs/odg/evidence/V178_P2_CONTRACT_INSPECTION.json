@@ -1,0 +1,24 @@
+{
+  "//": "Independent inspection record of the revised V178-P2 contract (owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS). Transcribed verbatim from the inspector's verdicts by the coordinating session. Independence DECLARED by session ids. Inspection ≠ selection; under the owner operating rule (V178_OWNER_OPERATING_RULE_LOCAL_NATIVE.json) the coordinator does not run GO --execute.",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V178-P2",
+  "verdict": "ACCEPT",
+  "contractSha256": "3342d16e2a6acfcb3755b5f5b8d5af4dc4b8dd178d64b31a149e3c004ed0e244",
+  "inspectedHeadSha": "9dfe298fd30c021b08b5a240b3bfb413e7af7641",
+  "inspectedPr": 1011,
+  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
+  "inspectorSessionId": "ab245bf3019f79340",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "p12-v178",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-25",
+  "findings": [
+    "AC1–AC6 byte-unchanged; AC7 added; thresholds fixed before any run",
+    "p2Gate refuses budget/threshold mismatch",
+    "measure mode requires --out to be exactly the P2 record; the V155 file is explicitly refused (p2CheckOut; no --out ⇒ exit 3)",
+    "ALREADY_RECORDED checked; busy host / unreachable daemon ⇒ NOT_MEASURED only before the first call",
+    "binding exclusive to V176-BUILD-MISSIONS"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V178-P2 only; RUN via ODG GO --execute only, in GO's own order; grades nothing."
+}
