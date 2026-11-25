@@ -299,7 +299,34 @@ async function inspectionRegressions(run: any): Promise<void> {
   check("LOW: TS type-check timeout ⇒ fail closed (reported, never a pass)", B.compileCheck("export function f(a: number): number { return a; }", "ts", { spawn: () => ({ error: Object.assign(new Error("spawnSync ETIMEDOUT"), { code: "ETIMEDOUT" }), status: null, signal: "SIGTERM" }) }).ok === false);
 }
 
+// ---- V17.8 P2 measurement profile (fake daemon / fake sandbox / fake /proc — ZERO network, ZERO model) ----
+async function v178P2Tests(): Promise<void> {
+  const fs = require("fs"); const path = require("path");
+  const M = require("../bin/odg-local-model-benchmark.js");
+  check("V178-P2/AC1: promptTokPerSec = prompt_eval_count / prompt_eval_duration (200 tokens / 0.5 s = 400); absent counters ⇒ null (NOT_MEASURED)", B.promptTokPerSec({ promptEvalCount: 200, promptEvalDurationNs: 5e8 }) === 400 && B.promptTokPerSec({ promptEvalCount: null, promptEvalDurationNs: 5e8 }) === null && B.promptTokPerSec({ promptEvalCount: 5, promptEvalDurationNs: 0 }) === null);
+  // AC2: alternating host load around the ceiling
+  const fp = M.fakeProvider(); let k = 0; const loads = [0.5, 9, 0.5, 9];
+  const ts = B.loadTaskSet(); const one = { ...ts, tasks: ts.tasks.filter((t: any) => t.id === "extract-invoice") };
+  const run = await B.runBenchmark({ models: ["qwen2.5-coder:7b"], taskSet: one, trials: 4, provider: fp, samplerFactory: () => ({ start() {}, stop() { return { cpuAvgPct: null, cpuPeakPct: null, rssPeakMb: 100 + k, samples: 1, pids: ["1"] }; } }), loadavg: () => loads[(k++) % 4], loadCeiling: 6, codeRunner: () => ({ ran: false }) });
+  const sum = B.summarizeMeasurement(run).models["qwen2.5-coder:7b"];
+  check("V178-P2/AC2: trials above the declared load ceiling are flagged CONTENDED, excluded from speed stats, kept in raw trials", run.trials.length === 4 && run.trials.filter((t: any) => t.contended).length === 2 && sum.contended === 2 && sum.speed.genTokPerSec.n === 2 && sum.speed.promptTokPerSec.n === 2 && sum.perClass.extract.n === 4 && run.meta.loadCeiling === 6);
+  // caps: maxCalls binds (warm-up + 2 trials)
+  const fc = M.fakeProvider();
+  const capped = await B.runBenchmark({ models: ["qwen2.5-coder:7b", "qwen2.5-coder:3b"], taskSet: one, trials: 4, provider: fc, samplerFactory: () => ({ start() {}, stop() { return { samples: 0 }; } }), loadavg: () => 0.1, maxCalls: 3, codeRunner: () => ({ ran: false }) });
+  check("V178-P2: maxCalls cap binds (no call past it; cap recorded); RSS from /proc samples, 0 samples ⇒ NOT_MEASURED", fc.calls.length === 3 && capped.meta.caps.capHit === "maxCalls" && capped.trials.length === 2 && sum.rssPeakMb !== null && B.summarizeMeasurement(capped).models["qwen2.5-coder:7b"].rssStatus.startsWith("NOT_MEASURED"));
+  const v155 = path.join(__dirname, "..", "..", "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json");
+  const before = fs.readFileSync(v155, "utf8");
+  const noOut = M.p2CheckOut(["--v178-measure"]), toV155 = M.p2CheckOut(["--v178-measure", "--out", "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json"]), other = M.p2CheckOut(["--v178-measure", "--out", "/tmp/x.json"]);
+  const code = await M.measureMain(["--v178-measure"]);
+  check("V178-P2/AC3: the measure mode never writes the V155 evidence file — --out is required and must be the declared P2 record (missing / V155 / other ⇒ REFUSED exit 3, nothing written)", !noOut.ok && !toV155.ok && !other.ok && noOut.code === 3 && code === 3 && M.p2CheckOut(["--v178-measure", "--out", M.P2_OUT]).ok === true && fs.readFileSync(v155, "utf8") === before && M.P2_OUT !== M.DEFAULT_OUT);
+  const down = await M.runMeasurement({ provider: M.fakeProvider({ down: true }), hostProbe: () => ({ loadavg: [0.1, 0.1, 0.1], nproc: 8 }) });
+  const busy = await M.runMeasurement({ provider: M.fakeProvider(), hostProbe: () => ({ loadavg: [7, 7, 7], nproc: 8 }) });
+  const st = require("child_process").spawnSync(process.execPath, [require.resolve("tsx/cli"), path.join(__dirname, "..", "bin", "odg-local-model-benchmark.ts"), "--v178-measure-selftest"], { encoding: "utf8", timeout: 300000, env: { ...process.env, OLLAMA_HOST: "127.0.0.1:1" } });
+  check("V178-P2/AC4: the selftest runs offline (no daemon: fake provider/sandbox) and passes; daemon down / busy host BEFORE the first call ⇒ NOT_MEASURED", st.status === 0 && /^ok - offline/m.test(String(st.stdout)) && down.verdict === "NOT_MEASURED" && busy.verdict === "NOT_MEASURED" && /HOST-1/.test(busy.reason));
+}
+
 async function main(): Promise<void> {
+  await v178P2Tests();
   await providerTests();
   taskSetAndGraderTests();
   samplerTest();

@@ -24,19 +24,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795564859000,
+    "nowEpochMs": 1795566720000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "3f4bbff7fd34ad4ec48fd3e4a5613925d79d490bfa283ff1a1c760bb47b88a7a",
-      "epochMs": 1795564859000
+      "sha256": "d444f4e0ec715d66653f2400dc46db9359d3617f9f6c9f8d0a8d287ae9d808f9",
+      "epochMs": 1795566720000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "87101a313ebf64a5e56eb2042980f8f9886f9eb308bdd50ab43f6e7f35e07e50",
-      "epochMs": 1795564859000
+      "sha256": "fb9952b721ee80183d5a0bb50ac69d671faa549c072cbddb0a8114c04ebf58e5",
+      "epochMs": 1795566720000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -3615,15 +3615,15 @@
     },
     {
       "scenario": "V178-P1",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3, les vagues GO parallèles et la conversion des propositions Radar en contrats, dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. » « Transformer les meilleures propositions Radar en contrats exécutables, sans créer de système parallèle. » « Ne pas confondre autorisation de construction interne et autorisation de production, dépense ou engagement externe. » — V178-P1 only, internal, local model, €0, 0 provider calls; no production / spend / external engagement / install",
       "sourceProposal": "V178-P1",
       "conversionBatch": "V178-RADAR-1"
     },
     {
       "scenario": "V178-P2",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3, les vagues GO parallèles et la conversion des propositions Radar en contrats, dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. » « Transformer les meilleures propositions Radar en contrats exécutables, sans créer de système parallèle. » « Ne pas confondre autorisation de construction interne et autorisation de production, dépense ou engagement externe. » — V178-P2 only, internal, local model, €0, 0 provider calls; no production / spend / external engagement / install",
       "sourceProposal": "V178-P2",
       "conversionBatch": "V178-RADAR-1"
     },

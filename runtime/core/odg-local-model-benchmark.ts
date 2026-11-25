@@ -395,6 +395,13 @@ async function runBenchmark(cfg: any = {}): Promise<any> {
   const loadavg = typeof cfg.loadavg === "function" ? cfg.loadavg : () => Math.round(require("os").loadavg()[0] * 100) / 100;
   const samplerFactory = typeof cfg.samplerFactory === "function" ? cfg.samplerFactory : () => createProcSampler();
   const tasks = arr(ts.tasks).filter((t: any) => !arr(cfg.onlyTasks).length || arr(cfg.onlyTasks).includes(t.id));
+  // V17.8 P2 (all optional; absent ⇒ V155 behaviour unchanged): loadCeiling ⇒ per-trial CONTENDED flag; maxCalls / wallMs ⇒
+  // hard caps on generation calls (warm-ups included) — once hit, no further call is sent and the cap is recorded.
+  const loadCeiling = typeof cfg.loadCeiling === "number" && Number.isFinite(cfg.loadCeiling) ? cfg.loadCeiling : null;
+  const nowMs = typeof cfg.nowMs === "function" ? cfg.nowMs : () => Date.now();
+  const deadline = Number(cfg.wallMs) > 0 ? nowMs() + Number(cfg.wallMs) : null;
+  const caps: any = { maxCalls: Number.isInteger(cfg.maxCalls) && cfg.maxCalls > 0 ? cfg.maxCalls : null, wallMs: deadline !== null ? Number(cfg.wallMs) : null, calls: 0, capHit: null };
+  const capOk = (): boolean => { if (caps.maxCalls !== null && caps.calls >= caps.maxCalls) { caps.capHit = caps.capHit || "maxCalls"; return false; } if (deadline !== null && nowMs() > deadline) { caps.capHit = caps.capHit || "wallMs"; return false; } caps.calls++; return true; };
   const ver = await P.ollamaVersion();
   const listed = await P.listModels();
   const meta = { ollamaVersion: ver.ok ? ver.version : null, daemonUp: listed.ok === true, taskSetVersion: ts.version, taskSetSha256: ts.sha256, trialsPerTask: trialsN, options, keepAlive: cfg.keepAlive || "10m", parallelism: 1 };
@@ -404,11 +411,13 @@ async function runBenchmark(cfg: any = {}): Promise<any> {
     if (!tag) { models.push({ id, available: false, reason: listed.ok ? "model not installed in the local daemon" : "Ollama daemon not reachable" }); log(`[${id}] UNAVAILABLE`); continue; }
     const show = await P.showModel(id);
     models.push({ id, available: true, digest: tag.digest, sizeBytes: tag.sizeBytes, quantization: (show.ok && show.details.quantization) || tag.quantization, parameterSize: (show.ok && show.details.parameterSize) || tag.parameterSize, parameterCount: show.ok ? show.parameterCount : null, contextLength: show.ok && show.contextLength !== null ? show.contextLength : tag.contextLength, family: tag.family, format: tag.format });
+    if (!capOk()) { log(`[${id}] cap ${caps.capHit} — not started`); break; }
     const warm = await P.generateMeasured({ model: id, prompt: "Reply with the single word OK.", options: { ...options, num_predict: 4 }, keepAlive: meta.keepAlive, timeoutMs: cfg.timeoutMs });
     coldLoads[id] = warm.ok ? { totalMs: warm.totalMs, loadMs: warm.loadDurationNs !== null ? Math.round(warm.loadDurationNs / 1e6) : null } : { error: warm.reason };
     log(`[${id}] cold load ${JSON.stringify(coldLoads[id])}`);
     for (const task of tasks) {
       for (let k = 1; k <= trialsN; k++) {
+        if (!capOk()) break;
         const sampler = samplerFactory();
         const hostLoad1m = loadavg();
         sampler.start();
@@ -417,18 +426,55 @@ async function runBenchmark(cfg: any = {}): Promise<any> {
         const rec: any = { model: id, taskId: task.id, taskClass: task.taskClass, trial: k, generated: g.ok === true };
         if (!g.ok) { rec.error = g.reason; rec.unavailable = !!g.unavailable; rec.timedOut = !!g.timedOut; rec.grade = { passed: false, measured: !g.unavailable, compile: { applicable: CODE_GRADERS.includes(task.grader), ok: false }, structured: { applicable: JSON_GRADERS.includes(task.grader), ok: false }, strict: { applicable: task.grader === "strict-schema", ok: false }, reason: "generation failed: " + g.reason }; }
         else {
-          rec.ttftMs = g.ttftMs; rec.totalMs = g.totalMs; rec.tokPerSec = g.tokPerSec; rec.evalCount = g.evalCount; rec.promptEvalCount = g.promptEvalCount; rec.loadMs = g.loadDurationNs !== null ? Math.round(g.loadDurationNs / 1e6) : null; rec.doneReason = g.doneReason;
+          rec.ttftMs = g.ttftMs; rec.totalMs = g.totalMs; rec.tokPerSec = g.tokPerSec; rec.evalCount = g.evalCount; rec.promptEvalCount = g.promptEvalCount;
+          rec.promptTokPerSec = promptTokPerSec(g);   // V17.8 P2: prompt_eval_count / prompt_eval_duration (daemon counters)
+          rec.loadMs = g.loadDurationNs !== null ? Math.round(g.loadDurationNs / 1e6) : null; rec.doneReason = g.doneReason;
           rec.outputSha256 = sha256(g.text); rec.outputChars = g.text.length; rec.outputHead = g.text.slice(0, 160);
           rec.grade = gradeTrial(task, g.text, { codeRunner: cfg.codeRunner });
         }
-        rec.hostLoad1m = hostLoad1m; rec.cpuAvgPct = res.cpuAvgPct; rec.cpuPeakPct = res.cpuPeakPct; rec.rssPeakMb = res.rssPeakMb; rec.resourceSamples = res.samples;
+        rec.hostLoad1m = hostLoad1m; if (loadCeiling !== null) rec.contended = !(typeof hostLoad1m === "number" && hostLoad1m <= loadCeiling); rec.cpuAvgPct = res.cpuAvgPct; rec.cpuPeakPct = res.cpuPeakPct; rec.rssPeakMb = res.rssPeakMb; rec.resourceSamples = res.samples;
         trials.push(rec);
         log(`[${id}] ${task.id}#${k} ${rec.grade.passed ? "PASS" : "FAIL"} ${rec.totalMs || "-"}ms ${rec.tokPerSec || "-"}tok/s cpu=${rec.cpuAvgPct}% rss=${rec.rssPeakMb}MB — ${String(rec.grade.reason).slice(0, 90)}`);
       }
     }
     await P.unloadModel(id);
+    if (caps.capHit) break;
   }
-  return { ok: true, meta, models, trials, coldLoads, taskSet: { version: ts.version, sha256: ts.sha256, tasks: tasks.map((t: any) => ({ id: t.id, taskClass: t.taskClass, grader: t.grader, lang: t.lang })) } };
+  return { ok: true, meta: { ...meta, ...(loadCeiling !== null ? { loadCeiling } : {}), ...(caps.maxCalls !== null || caps.wallMs !== null ? { caps: { maxCalls: caps.maxCalls, wallMs: caps.wallMs, calls: caps.calls, capHit: caps.capHit } } : {}) }, models, trials, coldLoads, taskSet: { version: ts.version, sha256: ts.sha256, tasks: tasks.map((t: any) => ({ id: t.id, taskClass: t.taskClass, grader: t.grader, lang: t.lang })) } };
+}
+
+/* =========================== V17.8 P2 measurement profile (pure summaries over runBenchmark trials) =========================== */
+/** promptTokPerSec(g) — prompt_eval_count / prompt_eval_duration(s) from the daemon's counters; absent/zero ⇒ null (NOT_MEASURED). */
+function promptTokPerSec(g: any): number | null {
+  const c = g && Number.isFinite(g.promptEvalCount) ? g.promptEvalCount : null; const d = g && Number.isFinite(g.promptEvalDurationNs) ? g.promptEvalDurationNs : null;
+  return c !== null && d !== null && c > 0 && d > 0 ? Math.round((c / (d / 1e9)) * 100) / 100 : null;
+}
+function stat(xs: number[]): any {
+  const v = xs.filter((x) => typeof x === "number" && Number.isFinite(x)).sort((a, b) => a - b);
+  if (!v.length) return { n: 0, status: "NOT_MEASURED" };
+  const q = (p: number) => v[Math.min(v.length - 1, Math.floor(p * (v.length - 1)))];
+  return { n: v.length, mean: Math.round((v.reduce((a, b) => a + b, 0) / v.length) * 100) / 100, p50: q(0.5), min: v[0], max: v[v.length - 1] };
+}
+const MEASURE_RULE = "MEAS-1: speed statistics (generation tok/s = eval_count/eval_duration, prompt tok/s = prompt_eval_count/prompt_eval_duration, totalMs, warm loadMs) use ONLY generated trials NOT flagged CONTENDED (hostLoad1m ≤ loadCeiling); CONTENDED trials stay in the raw trials and are counted; cold load = the first (warm-up) generation after unload; RSS peak = /proc samples of the Ollama runner process (0 samples ⇒ NOT_MEASURED); per-class pass rate over MEASURED trials (grade.measured ≠ false), all trials regardless of load";
+/** summarizeMeasurement(run) -> per model: speed (uncontended only), coldLoad, rssPeak, perClass pass rate, contention counts. */
+function summarizeMeasurement(run: any): any {
+  const out: any = {};
+  for (const m of arr(run && run.models)) {
+    const ts = arr(run.trials).filter((t: any) => t.model === m.id);
+    const gen = ts.filter((t: any) => t.generated);
+    const clean = gen.filter((t: any) => t.contended !== true);
+    const perClass: any = {};
+    for (const t of ts) { const c = perClass[t.taskClass] = perClass[t.taskClass] || { passes: 0, n: 0, notMeasured: 0 }; if (t.grade && t.grade.measured === false) c.notMeasured++; else { c.n++; if (t.grade && t.grade.passed) c.passes++; } }
+    for (const c of Object.values(perClass) as any[]) c.passRate = c.n ? Math.round((c.passes / c.n) * 1000) / 1000 : null;
+    const rss = ts.filter((t: any) => Number(t.resourceSamples) > 0).map((t: any) => t.rssPeakMb);
+    const cold = run.coldLoads ? run.coldLoads[m.id] : null;
+    out[m.id] = { available: m.available === true, trials: ts.length, generated: gen.length, contended: gen.length - clean.length,
+      speed: { genTokPerSec: stat(clean.map((t: any) => t.tokPerSec)), promptTokPerSec: stat(clean.map((t: any) => t.promptTokPerSec)), totalMs: stat(clean.map((t: any) => t.totalMs)), warmLoadMs: stat(clean.map((t: any) => t.loadMs)) },
+      coldLoadMs: cold && Number.isFinite(cold.loadMs) ? cold.loadMs : null, coldLoadStatus: cold && Number.isFinite(cold.loadMs) ? "MEASURED" : "NOT_MEASURED",
+      rssPeakMb: rss.length ? Math.max(...rss) : null, rssStatus: rss.length ? "MEASURED (/proc of the Ollama runner)" : "NOT_MEASURED (runner /proc not readable or no sample)",
+      hostLoad1m: stat(ts.map((t: any) => t.hostLoad1m)), perClass };
+  }
+  return { rule: MEASURE_RULE, models: out };
 }
 
 const LOCAL_MODEL_BENCHMARK_CONTRACT = Object.freeze({
@@ -448,5 +494,5 @@ const LOCAL_MODEL_BENCHMARK_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { TASKSET_FILE, DEFAULT_OPTIONS, CODE_MEMORY_LIMIT_BYTES, CTX_ASSERT_SRC, loadTaskSet, validateTaskSet, extractCode, parseJsonLoose, compileCheck, hiddenTestProgram, testWritingProgram, gradeObservations, gradeTrial, createProcSampler, runBenchmark, parseResult, defaultCodeRunner, LOCAL_MODEL_BENCHMARK_CONTRACT };
+module.exports = { promptTokPerSec, summarizeMeasurement, MEASURE_RULE, TASKSET_FILE, DEFAULT_OPTIONS, CODE_MEMORY_LIMIT_BYTES, CTX_ASSERT_SRC, loadTaskSet, validateTaskSet, extractCode, parseJsonLoose, compileCheck, hiddenTestProgram, testWritingProgram, gradeObservations, gradeTrial, createProcSampler, runBenchmark, parseResult, defaultCodeRunner, LOCAL_MODEL_BENCHMARK_CONTRACT };
 export {};

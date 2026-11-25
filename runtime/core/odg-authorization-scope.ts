@@ -73,6 +73,10 @@ const STEP_SEQUENCES: any = Object.freeze({
   // V17.6 — F (multi-agents / GO parallel waves) ⇐ the SAME owner build-missions record (« y compris NB3, les vagues GO
   // parallèles […] »): same evidence-bound sequence.
   F: Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  // V17.8 — V178-P1 / V178-P2 (Radar-proposal contracts, batch V178-RADAR-1) ⇐ owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json
+  // (« la conversion des propositions Radar en contrats »): same evidence-bound sequence.
+  "V178-P1": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  "V178-P2": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
 });
 const EXECUTION_STEPS = Object.freeze(["RUN_CONTROLLED_EXPERIMENTS"]);
 const STEP_KIND: any = Object.freeze({
@@ -106,6 +110,10 @@ const OWNER_SOURCES: any = Object.freeze({
   // the record ONLY with the family's members (V176-NB3); every other scenario citing it is refused, and F citing any other
   // scenario's record (J, J2, V175 …) is refused.
   F: Object.freeze({ re: /V176_OWNER_AUTHORIZATION_BUILD_MISSIONS\.json/, label: "V176 build missions (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json)", family: "V176-BUILD-MISSIONS" }),
+  // V17.8 — the two bound Radar-proposal contracts join the declared family V176-BUILD-MISSIONS explicitly (the record names « la
+  // conversion des propositions Radar en contrats »). P3–P7 stay PROPOSED and unbound (no entry ⇒ nothing derived for them).
+  "V178-P1": Object.freeze({ re: /V176_OWNER_AUTHORIZATION_BUILD_MISSIONS\.json/, label: "V176 build missions (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json)", family: "V176-BUILD-MISSIONS" }),
+  "V178-P2": Object.freeze({ re: /V176_OWNER_AUTHORIZATION_BUILD_MISSIONS\.json/, label: "V176 build missions (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json)", family: "V176-BUILD-MISSIONS" }),
 });
 function ownerSourceCheck(scenario: string, source: string): any {
   const own = OWNER_SOURCES[scenario];
@@ -282,7 +290,7 @@ function isStepAuthorized(scope: any, step: string): boolean {
 const AUTHORIZATION_SCOPE_CONTRACT = Object.freeze({
   id: "V166-ODG-AUTHORIZATION-SCOPE",
   source: "owner directive V166 §3–§4 over V165 §1 (docs/odg/V165_OWNER_AUTHORIZATION.json#missionG); H: owner directive V168 (docs/odg/V168_OWNER_AUTHORIZATION_H.json); G2: owner directive V170 (docs/odg/V170_OWNER_AUTHORIZATION_HG.json); J2: owner directive V171 (docs/odg/V171_OWNER_AUTHORIZATION_PORTFOLIO.json); V175-NB1 + V175-NB2 (family V175-NATIVE-LOOP): owner directive V175 (docs/odg/V175_OWNER_AUTHORIZATION_NATIVE_BUILD.json); J: owner directive V176 (docs/odg/V176_OWNER_AUTHORIZATION_J.json); V176-NB3 + F (family V176-BUILD-MISSIONS): owner directive V176 build missions (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json)",
-  ownerSources: Object.freeze({ G: OWNER_SOURCES.G.label, H: OWNER_SOURCES.H.label, G2: OWNER_SOURCES.G2.label, J2: OWNER_SOURCES.J2.label, "V175-NB1": OWNER_SOURCES["V175-NB1"].label, "V175-NB2": OWNER_SOURCES["V175-NB2"].label, J: OWNER_SOURCES.J.label, "V176-NB3": OWNER_SOURCES["V176-NB3"].label, F: OWNER_SOURCES.F.label }),
+  ownerSources: Object.freeze({ G: OWNER_SOURCES.G.label, H: OWNER_SOURCES.H.label, G2: OWNER_SOURCES.G2.label, J2: OWNER_SOURCES.J2.label, "V175-NB1": OWNER_SOURCES["V175-NB1"].label, "V175-NB2": OWNER_SOURCES["V175-NB2"].label, J: OWNER_SOURCES.J.label, "V176-NB3": OWNER_SOURCES["V176-NB3"].label, F: OWNER_SOURCES.F.label, "V178-P1": OWNER_SOURCES["V178-P1"].label, "V178-P2": OWNER_SOURCES["V178-P2"].label }),
   steps: STEP_SEQUENCES, executionSteps: EXECUTION_STEPS, stepKind: STEP_KIND,
   invariants: Object.freeze([
     "PURE derivation: no write, no contract-state rewrite, no authorization minted",
