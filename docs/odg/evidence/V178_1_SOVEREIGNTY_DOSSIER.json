@@ -1,0 +1,214 @@
+{
+  "//": "V178.1 decision dossier — VPS PROVIDER SECURITY & CLIENT DATA SOVEREIGNTY (owner directive V178.1, P0). Facts = read-only, non-privileged observations on 2026-11-25; Radar signals = PROVIDER_CITED, UNVERIFIED (docs/odg/evidence/V178_RADAR_SIGNALS_SEC.json, 24 signals). Nothing installed or modified. No client data introduced.",
+  "schema": "odg-sovereignty-dossier/1",
+  "date": "2026-11-25",
+  "headAtCollection": "d59ff4b3",
+  "verdict": "NOT_SOVEREIGN — the current VPS cannot protect client data against its own provider; NO real client data may be introduced (owner principle)",
+  "observedFacts": {
+    "virtualization": "OpenStack Nova 19.3.2, KVM/QEMU guest (DMI sys_vendor 'OpenStack Foundation', chassis QEMU)",
+    "firmware": "SeaBIOS 1.16.3 (legacy BIOS boot, no UEFI)",
+    "confidentialComputing": "NONE — no sev/sev_es/sev_snp/tdx_guest CPU flags, no /dev/sev-guest, no /dev/tdx_guest",
+    "vTPM": "absent (/dev/tpm0, /dev/tpmrm0 missing) ⇒ no measured boot / attestation",
+    "diskEncryption": "NONE — root fs plain ext4 on /dev/sda1 (no LUKS/dm-crypt)",
+    "swap": "none (good: no swap leakage)",
+    "logs": "journald persistent, 3.5 GB in /var/log/journal",
+    "ssh": "PasswordAuthentication no; key-based; a private SSH key exists on the host (not read)",
+    "cloudInit": "present (provider metadata/user-data channel)",
+    "providerIdentity": "UNKNOWN beyond OpenStack — commercial offer, contract, sub-processors, location NOT observable from the guest (owner must supply)",
+    "notObserved": [
+      "systemd units / docker containers / firewall (permission denied, not bypassed)",
+      "provider console/rescue/snapshot policy",
+      "hypervisor operator controls"
+    ]
+  },
+  "threatModel": [
+    {
+      "actor": "VPS provider / hypervisor admins",
+      "capabilities": [
+        "read virtual disk at rest (no encryption)",
+        "snapshot / backup disk images",
+        "dump guest RAM (keys + plaintext in use)",
+        "console + rescue boot (SeaBIOS, no measured boot)",
+        "read cloud-init user-data",
+        "observe network metadata"
+      ],
+      "currentProtection": "NONE effective",
+      "residual": "TOTAL on this VPS — only client-side encryption with keys never present here, or a confidential VM, changes this"
+    },
+    {
+      "actor": "provider sub-contractors / maintenance staff",
+      "capabilities": "same as provider, scope per contract (UNKNOWN)",
+      "currentProtection": "contractual only (contract not seen)",
+      "residual": "UNKNOWN"
+    },
+    {
+      "actor": "backup/storage providers",
+      "capabilities": "read provider-side snapshots/backups",
+      "currentProtection": "none",
+      "residual": "total unless data is encrypted before it reaches the disk with keys off-host"
+    },
+    {
+      "actor": "external attackers",
+      "capabilities": "ssh (key-only), loopback-only services, public :22",
+      "currentProtection": "key-only SSH; services bound to loopback",
+      "residual": "medium — host firewall/egress not observed"
+    },
+    {
+      "actor": "compromised internal accounts / ODG processes / co-located sessions",
+      "capabilities": "read files of the same uid (one uid runs everything), logs, caches, Ollama loopback",
+      "currentProtection": "bwrap sandbox for model-written code; no per-tenant crypto",
+      "residual": "high for multi-client data — needs per-tenant encryption + process isolation"
+    }
+  ],
+  "achievableOnThisVps": {
+    "noRoot": [
+      "per-client application-level encryption (age/libsodium files, SQLCipher DBs incl. embeddings) with ONE data key per client wrapped by an owner-held master key kept OFF this VPS",
+      "crypto-shredding for verifiable deletion",
+      "client jobs in bwrap --unshare-net, plaintext only in tmpfs, Ollama keep_alive=0, no client text in logs",
+      "encrypt backups before they leave"
+    ],
+    "needsRoot": [
+      "LUKS data volume (optionally Clevis/Tang with a Tang server outside the provider)",
+      "host firewall / egress control",
+      "journald retention + no persistent sensitive logs",
+      "SSH hardening (ANSSI guidance)",
+      "encrypted DNS"
+    ],
+    "protectsAgainst": "other clients, compromised ODG parts, network attackers, provider snapshots/backups/rescue reading STORED data",
+    "doesNotProtectAgainst": "the provider at RUNTIME (RAM dump of keys/plaintext while processing) — disk encryption and sandboxes (bwrap/gVisor/Podman) do not stop a malicious host"
+  },
+  "architectures": [
+    {
+      "id": "ARCH-1 current VPS hardened",
+      "protection": "stored data vs third parties + snapshots; NOT runtime vs provider",
+      "verdict": "INSUFFICIENT for confidential client processing; acceptable only for ODG-internal / public data"
+    },
+    {
+      "id": "ARCH-2 confidential VM (AMD SEV-SNP / Intel TDX) with attestation verified OUTSIDE the provider before key release",
+      "options": "IONOS SEV-SNP (EU, price not public), AWS eu-west-1 (+~10%), GCP/Azure (US companies — sovereignty trade-off), rented AMD EPYC bare metal with SNP; ask current provider (Nova upstream supports SNP/TDX)",
+      "protection": "memory vs hypervisor + attested boot; PARTIAL — published SNP/TDX attacks ⇒ minimum firmware versions + residual risk documented",
+      "verdict": "best cloud option for in-use protection"
+    },
+    {
+      "id": "ARCH-3 hybrid: keys + sensitive processing under owner control, VPS stores/relays ciphertext only",
+      "protection": "provider never sees plaintext or keys (VPS = untrusted storage/relay)",
+      "verdict": "strongest with current provider; requires an owner/client-controlled processing node (local LLM there)"
+    },
+    {
+      "id": "ARCH-4 controlled hardware / client-side processing",
+      "protection": "no third-party hypervisor",
+      "verdict": "strongest overall; operational cost on the owner side"
+    }
+  ],
+  "recommendation": "Do NOT process confidential client data on the current VPS. Target ARCH-3 (hybrid) now + evaluate ARCH-2 (attested SEV-SNP/TDX VM in the EU) as the production host; keep the current VPS for ODG-internal engineering, public Radar research and ciphertext storage only. Apply the no-root measures immediately in code (per-tenant envelope encryption, crypto-shredding, no-egress client jobs, log hygiene) — they are required under every architecture.",
+  "blockingCriteria": [
+    {
+      "n": 1,
+      "criterion": "keys of confidential data not accessible to the VPS provider",
+      "status": "NOT_MET (no CVM; any key on this host is RAM-readable)"
+    },
+    {
+      "n": 2,
+      "criterion": "backups/snapshots do not expose plaintext",
+      "status": "NOT_MET (plain ext4)"
+    },
+    {
+      "n": 3,
+      "criterion": "no sensitive data in logs/caches/telemetry",
+      "status": "NOT_DEMONSTRATED (3.5 GB journald; Ollama caches)"
+    },
+    {
+      "n": 4,
+      "criterion": "outbound communications controlled + documented",
+      "status": "NOT_DEMONSTRATED (firewall not observable)"
+    },
+    {
+      "n": 5,
+      "criterion": "admin access limited, authenticated, auditable",
+      "status": "PARTIAL (key-only SSH; provider console/rescue uncontrolled)"
+    },
+    {
+      "n": 6,
+      "criterion": "per-client isolation",
+      "status": "NOT_MET (single uid, no per-tenant crypto yet)"
+    },
+    {
+      "n": 7,
+      "criterion": "in-use protection for sensitive processing",
+      "status": "NOT_MET (no SEV-SNP/TDX)"
+    },
+    {
+      "n": 8,
+      "criterion": "revocation/recovery/deletion tested",
+      "status": "NOT_MET"
+    },
+    {
+      "n": 9,
+      "criterion": "residual hardware/firmware/provider risks documented",
+      "status": "STARTED (this dossier)"
+    }
+  ],
+  "authorizations": {
+    "A_readOnly": [
+      "done: DMI, cpu flags, devices, lsblk, ssh config flags, journald size",
+      "denied (needs session permission, not bypassed): systemctl/docker introspection"
+    ],
+    "B_internalReversible_GO": [
+      "V178.1-S1 per-tenant envelope encryption library over existing memory/storage components (no new store)",
+      "V178.1-S2 no-egress client-job profile (bwrap --unshare-net + unix-socket Ollama) + log/cache hygiene checks",
+      "V178.1-S3 sovereignty test battery (criteria 1–9 as executable checks)"
+    ],
+    "C_downloadOrNetwork": [
+      "none required for S1–S3 (age/libsodium availability to be checked in node_modules first; any new npm dependency ⇒ owner approval)"
+    ],
+    "D_rootOrProvider": [
+      "LUKS data volume + external Tang (risk: data loss if unlock fails; rollback: keep unencrypted copy until verified)",
+      "host firewall/egress allowlist (risk: lockout; rollback: provider console)",
+      "journald retention change",
+      "provider contract/SecNumCloud/CVM availability inquiry (owner action)",
+      "migration to an attested CVM or owner-controlled node (owner decision; EU Data Act switching)"
+    ]
+  },
+  "clientDataGoLiveConditions": [
+    "blocking criteria 1,2,3,6,7,8 MET with executable evidence",
+    "attestation verified outside the provider (if ARCH-2) or provider sees ciphertext only (ARCH-3)",
+    "GDPR Art. 28 processor contract + sub-processor list reviewed by the owner",
+    "residual risks signed off by the owner"
+  ],
+  "p1p2Plan": "V178-P1 (multi-candidate + execution selection) and V178-P2 (real tok/s/RAM) are being prepared as executable contracts (no run); they do not touch client data and do not delay the security track; no model download / new dependency",
+  "radarProvenance": {
+    "signalsFile": "docs/odg/evidence/V178_RADAR_SIGNALS_SEC.json",
+    "signalIds": [
+      "SEC-A1",
+      "SEC-A2",
+      "SEC-A3",
+      "SEC-A4",
+      "SEC-A5",
+      "SEC-A6",
+      "SEC-B1",
+      "SEC-B2",
+      "SEC-B3",
+      "SEC-B4",
+      "SEC-B5",
+      "SEC-B6",
+      "SEC-B7",
+      "SEC-B8",
+      "SEC-C1",
+      "SEC-D1",
+      "SEC-D2",
+      "SEC-D3",
+      "SEC-D4",
+      "SEC-E1",
+      "SEC-E2",
+      "SEC-L1",
+      "SEC-L2",
+      "SEC-L3"
+    ],
+    "status": "PROVIDER_CITED, UNVERIFIED; legal points from law-firm summaries (EUR-Lex/ANSSI PDF not read)"
+  },
+  "openOwnerQuestions": [
+    "exact provider + offer + contract (Art. 28, sub-processors, data location, console/rescue/snapshot access)",
+    "does the provider offer SEV-SNP/TDX instances?",
+    "is an owner-controlled processing node acceptable (ARCH-3)?"
+  ]
+}
