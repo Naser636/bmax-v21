@@ -30,13 +30,13 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "3f2a0ef2ceaebd8d9c1608a99ad3556ff26d71eebb6f008c7ee5b03f46c46759",
-      "epochMs": 1795570313000
+      "sha256": "789d63069401aac3f3a4eb377ef1ff492022da86d8f8443b9c836c969d3bc2f3",
+      "epochMs": 1795569341000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "87101a313ebf64a5e56eb2042980f8f9886f9eb308bdd50ab43f6e7f35e07e50",
-      "epochMs": 1795564859000
+      "sha256": "fb9952b721ee80183d5a0bb50ac69d671faa549c072cbddb0a8114c04ebf58e5",
+      "epochMs": 1795568751000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -3654,15 +3654,15 @@
     },
     {
       "scenario": "V178-P1",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3, les vagues GO parallèles et la conversion des propositions Radar en contrats, dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. » « Transformer les meilleures propositions Radar en contrats exécutables, sans créer de système parallèle. » « Ne pas confondre autorisation de construction interne et autorisation de production, dépense ou engagement externe. » — V178-P1 only, internal, local model, €0, 0 provider calls; no production / spend / external engagement / install",
       "sourceProposal": "V178-P1",
       "conversionBatch": "V178-RADAR-1"
     },
     {
       "scenario": "V178-P2",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « J'autorise GO à sélectionner et exécuter les missions internes de construction de la roadmap, selon son ordre stratégique propre, y compris NB3, les vagues GO parallèles et la conversion des propositions Radar en contrats, dès lors que leurs contrats sont conformes et que les conditions nécessaires sont vertes. » « Transformer les meilleures propositions Radar en contrats exécutables, sans créer de système parallèle. » « Ne pas confondre autorisation de construction interne et autorisation de production, dépense ou engagement externe. » — V178-P2 only, internal, local model, €0, 0 provider calls; no production / spend / external engagement / install",
       "sourceProposal": "V178-P2",
       "conversionBatch": "V178-RADAR-1"
     },

@@ -553,6 +553,60 @@ async function diverseGenerate(x: any): Promise<any> {
   }
 }
 
+/* =========================== V17.8 P1 SAMPLE-1 / XSEL-1: multi-candidate generation + execution-based selection ===========================
+ * Reason (V178-P1, Radar campaign docs/odg/evidence/V178_RADAR_CAMPAIGN.json): `implement` is PROBATION 3/6 for qwen2.5-coder:7b
+ * (V155) and the pipeline implements each design ONCE at temperature 0, so the selector only ever sees one candidate. SAMPLE-1
+ * draws n candidates from a PRE-DECLARED (model, temperature, seed) schedule — the same allow-list mechanism the guard already
+ * enforces for DIV-1 (makeGuard.allowedCallOptions), so an undeclared point is refused twice (here and at the guard). XSEL-1
+ * ranks candidates on EXECUTED evidence only: visible-case passes measured in the sandbox → strict compile/typecheck → code size
+ * → content sha256 (a deterministic tie-break that is NOT the candidate id or its schedule position). The model never scores its
+ * own output; hidden cases never enter selection; acceptance stays the host-graded full oracle (unchanged). Candidates that
+ * reference a test / evaluator / oracle path are EXCLUDED before selection (TAMPER-1). */
+const SAMPLE_RULE = "SAMPLE-1: n candidates drawn in order from a PRE-DECLARED schedule of (model, temperature, seed) points; a schedule point not in spec.points is refused before any call; n ≤ |schedule|; every candidate records its point + sha256 of its output";
+const XSEL_RULE = "XSEL-1 (selection independent of generation): exclude TAMPER-1 candidates → visible-case passes desc (sandbox-executed, visible cases ONLY) → compileOk desc (strict typecheck / parse) → codeLines asc → sha256 asc (content tie-break; candidate id and schedule position are never decisive); no model self-assessment; hidden cases never consulted";
+const TAMPER_PATTERNS: ReadonlyArray<RegExp> = Object.freeze([
+  /\.test\.(ts|js)\b/, /odg-native-oracle-harness/, /odg-local-model-benchmark/, /benchmark-tasks/, /\bgradeTrial\b|\bgradeObservations\b|\bhiddenTestProgram\b/, /__odg[A-Za-z]/, /\bprocess\s*\.\s*(exit|stdout|stderr)\b/, /\brequire\s*\(\s*["'](fs|child_process|vm|path|os)["']\s*\)/,
+]);
+function pointKey(p: any): string { return JSON.stringify([String(p && p.model), Number(p && p.temperature), Number(p && p.seed)]); }
+/* sampleCandidates(spec, { n, schedule, generate(point) -> { ok, text, reason? } }) -> { ok, refused?, candidates[] }
+ *  spec = { points: [{ model, temperature, seed }] } (the declared allow-list). */
+async function sampleCandidates(spec: any, o: any): Promise<any> {
+  const allowed = new Set(arr(spec && spec.points).map(pointKey));
+  const schedule = arr(o && o.schedule); const n = Number(o && o.n);
+  if (!(Number.isInteger(n) && n >= 1 && n <= schedule.length)) return { ok: false, refused: `n=${o && o.n} is not an integer in [1, |schedule|=${schedule.length}]`, candidates: [] };
+  const bad = schedule.slice(0, n).filter((p: any) => !allowed.has(pointKey(p)));
+  if (bad.length) return { ok: false, refused: "SAMPLE-1: schedule point(s) not pre-declared: " + bad.map(pointKey).join(" "), candidates: [] };
+  const candidates: any[] = [];
+  for (let i = 0; i < n; i++) {
+    const p = schedule[i];
+    const g = await o.generate(p);
+    candidates.push(Object.freeze({ id: "C" + (i + 1), point: i, model: p.model, temperature: p.temperature, seed: p.seed, ok: !!(g && g.ok), text: g && g.ok ? String(g.text) : null, sha256: g && g.ok ? sha256(String(g.text)) : null, notSent: !!(g && g.notSent), reason: g && !g.ok ? String(g.reason || "generation failed") : null }));
+  }
+  return { ok: true, rule: SAMPLE_RULE, candidates };
+}
+/* tamperCheck(code, declaredFiles?) -> null | reason (TAMPER-1). Pure text/path check — the code is never executed here. */
+function tamperCheck(code: any, declaredFiles: any[] = []): string | null {
+  for (const f of arr(declaredFiles)) if (/\.test\.(ts|js)$|odg-native-oracle-harness|benchmark|grader|evaluator/i.test(String(f))) return `declares a test/evaluator path: ${String(f).slice(0, 120)}`;
+  const s = String(code == null ? "" : code);
+  for (const re of TAMPER_PATTERNS) if (re.test(s)) return `references a test/evaluator/oracle path or channel (${String(re)})`;
+  return null;
+}
+/* selectByExecution(candidates, visibleCases, opts?) -> { chosen, ranking, reasons, excluded } — PURE over executed results.
+ *  candidate = { id, sha256, ok, excludedReason?, compileOk, codeLines, caseResults: { [caseIndex]: boolean } }.
+ *  Only caseResults at the indices in visibleCases are counted. */
+function selectByExecution(candidates: any[], visibleCases: number[], _opts: any = {}): any {
+  const vis = arr(visibleCases).map(Number);
+  const excluded = arr(candidates).filter((c: any) => c && c.ok && c.excludedReason).map((c: any) => ({ id: c.id, reason: c.excludedReason }));
+  const pool = arr(candidates).filter((c: any) => c && c.ok && !c.excludedReason).map((c: any) => ({ id: c.id, sha256: String(c.sha256), compileOk: c.compileOk === true, codeLines: Number.isFinite(c.codeLines) ? c.codeLines : 1e9, visiblePassed: vis.filter((i) => !!(c.caseResults && c.caseResults[i] === true)).length }));
+  pool.sort((a: any, b: any) => (b.visiblePassed - a.visiblePassed) || (Number(b.compileOk) - Number(a.compileOk)) || (a.codeLines - b.codeLines) || (a.sha256 < b.sha256 ? -1 : a.sha256 > b.sha256 ? 1 : 0));
+  const reasons = pool.map((c: any, k: number) => ({ rank: k + 1, id: c.id, visiblePassed: c.visiblePassed, visibleTotal: vis.length, compileOk: c.compileOk, codeLines: c.codeLines, sha256: c.sha256 }));
+  const top = pool[0] || null, second = pool[1] || null;
+  const decidedBy = !top ? null : !second ? "ONLY_CANDIDATE" : top.visiblePassed !== second.visiblePassed ? "visiblePassed" : top.compileOk !== second.compileOk ? "compileOk" : top.codeLines !== second.codeLines ? "codeLines" : "sha256 (content tie-break)";
+  return Object.freeze({ rule: XSEL_RULE, chosen: top ? top.id : null, decidedBy, ranking: pool.map((c: any) => c.id), reasons, excluded });
+}
+/* visibleSplit(nCases) — VIS-1: visible = even case indices, hidden = odd (deterministic, declared; independent of content). */
+function visibleSplit(nCases: number): any { const all = Array.from({ length: Math.max(0, Number(nCases) || 0) }, (_, i) => i); return { rule: "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)", visible: all.filter((i) => i % 2 === 0), hidden: all.filter((i) => i % 2 === 1) }; }
+
 /* =========================== AUTHORSHIP LEDGER =========================== */
 function authorshipLedger(x: any): any {
   return Object.freeze({
@@ -582,6 +636,7 @@ const NATIVE_DESIGN_PIPELINE_CONTRACT = Object.freeze({
     "lessons enter prompts only through DIGEST-1 (deterministic, bounded to LESSON_DIGEST.budgetChars; omitted ids recorded)",
     "per-call timeouts follow ADAPT-1 from a measured warm-up rate (bounded by the declared caps); a run never starts on a busy host (HOST-1 ⇒ NOT_MEASURED)",
     "V17.6 NB3: repair diversity follows DIV-1 only — pre-declared (model, temperature, seed) points (the guard refuses any other), walked on a STALL only, ≤ maxVariations, inside the same maxModelCalls; every call records its params",
+    "V17.8 P1: multi-candidate generation follows SAMPLE-1 (pre-declared schedule only) and selection follows XSEL-1 (executed visible-case results → compile → size → content sha; never the model's own judgement, never hidden cases, never the candidate id); TAMPER-1 candidates are excluded before selection",
   ]),
 });
 
@@ -593,5 +648,6 @@ module.exports = {
   deriveLessons, collectLessons, authorshipLedger, NATIVE_DESIGN_PIPELINE_CONTRACT, extractCode: GEN.extractCode,
   WARMUP_PROMPT, measureRate, adaptiveTimeout, ADAPT_RULE, hostLoad, HOST_RULE, LESSON_DIGEST, lessonDigest,
   DIVERSITY_RULE, paramB, largerModels, diversityLadder, allowedCallOptions, makeDiversityController, diverseGenerate,
+  SAMPLE_RULE, XSEL_RULE, TAMPER_PATTERNS, sampleCandidates, tamperCheck, selectByExecution, visibleSplit,
 };
 export {};

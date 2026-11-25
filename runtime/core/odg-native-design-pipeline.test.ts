@@ -182,6 +182,37 @@ check("pipeline contract lists 6 stages + reused canonical components", P.NATIVE
   const x5 = await runDG(() => null, { ...SPEC, escalationModels: [], maxVariations: 8 }, ["OLD"]);
   check("diverseGenerate: a FAILED generation is not a stall (no advance; buildProject keeps its retry budget)", x5.r.gen === null && x5.ctl.st.transitions.length === 0);
   check("DIV-1 template plumbing unchanged: TEMPLATE segments still denylist-clean", P.denylistHits(P.implementPromptSegments(p1, item.currentSource, P.analyseImpact(ROOT, item.targetPath), [], { id: "D1", summary: "s", steps: [] }, { verifyError: "x", attemptSource: "y" })).length === 0);
+  // ---- V17.8 P1: SAMPLE-1 multi-candidate generation + XSEL-1 execution-based selection (fake transport only) ----
+  {
+    const SPEC = { points: [{ model: "m:7b", temperature: 0, seed: 42 }, { model: "m:7b", temperature: 0.6, seed: 1101 }, { model: "m:7b", temperature: 0.8, seed: 2101 }] };
+    const sentOpts: any[] = [];
+    const tr = async (_u: string, init: any) => { const b = JSON.parse(init.body); sentOpts.push(b.options); return { ok: true, json: async () => ({ response: "code t=" + b.options.temperature + " s=" + b.options.seed }) }; };
+    const g = P.makeGuard(tr, { maxModelCalls: 10, wallMs: 60000, seed: 42, temperature: 0, numPredict: 10, allowedCallOptions: SPEC.points });
+    const gen = async (p: any) => { const r = await P.ollamaGenerate(g.fetchImpl, { model: p.model, prompt: "x", timeoutMs: 5000, callOptions: { temperature: p.temperature, seed: p.seed } }); return r.ok ? { ok: true, text: r.response } : { ok: false, reason: r.reason }; };
+    const s1 = await P.sampleCandidates(SPEC, { n: 3, schedule: SPEC.points, generate: gen });
+    const bad = await P.sampleCandidates(SPEC, { n: 2, schedule: [SPEC.points[0], { model: "m:7b", temperature: 0.7, seed: 5 }], generate: gen });
+    const callsBefore = sentOpts.length;
+    const viaGuard = await P.ollamaGenerate(g.fetchImpl, { model: "m:7b", prompt: "x", timeoutMs: 5000, callOptions: { temperature: 0.7, seed: 5 } });
+    check("V178-P1/AC1: n candidates drawn exactly from the declared schedule (params + sha recorded); an undeclared point is refused by sampleCandidates (no call) AND by the guard", s1.ok && s1.candidates.length === 3 && s1.candidates.map((c: any) => `${c.temperature}/${c.seed}`).join() === "0/42,0.6/1101,0.8/2101" && sentOpts.slice(0, 3).map((o: any) => `${o.temperature}/${o.seed}`).join() === "0/42,0.6/1101,0.8/2101" && s1.candidates.every((c: any) => /^[0-9a-f]{64}$/.test(c.sha256)) && bad.ok === false && /not pre-declared/.test(bad.refused) && callsBefore === 3 && !viaGuard.ok && sentOpts.length === 3);
+    const cand = (id: string, sha: string, res: any, extra: any = {}) => ({ id, sha256: sha, ok: true, compileOk: true, codeLines: 5, caseResults: res, ...extra });
+    const visible = [0, 2, 4];
+    const A = cand("C1", "aa", { 0: true, 2: false, 4: true, 1: true, 3: true }), Bc = cand("C2", "bb", { 0: true, 2: true, 4: true, 1: false, 3: false }), Cc = cand("C3", "cc", { 0: false, 2: false, 4: false, 1: true, 3: true });
+    const sel1 = P.selectByExecution([A, Bc, Cc], visible);
+    const flipHidden = (c: any) => ({ ...c, caseResults: { ...c.caseResults, 1: !c.caseResults[1], 3: !c.caseResults[3] } });
+    const sel2 = P.selectByExecution([A, Bc, Cc].map(flipHidden), visible);
+    check("V178-P1/AC2: selection uses only visible-case results — flipping every hidden-case result never changes the choice or ranking", sel1.chosen === "C2" && sel1.decidedBy === "visiblePassed" && JSON.stringify(sel1.ranking) === JSON.stringify(sel2.ranking) && sel1.chosen === sel2.chosen && /never consulted/.test(P.XSEL_RULE));
+    const T1 = cand("C1", "11", { 0: true, 2: true, 4: true }, { excludedReason: P.tamperCheck("const fs = require('fs'); fs.writeFileSync('x.test.ts', '')") });
+    const T2 = cand("C2", "22", { 0: true, 2: true, 4: true }, { excludedReason: P.tamperCheck("function f() {}", ["runtime/core/odg-native-oracle-harness.js"]) });
+    const ok3 = cand("C3", "33", { 0: true, 2: false, 4: false });
+    const sel3 = P.selectByExecution([T1, T2, ok3], visible);
+    check("V178-P1/AC3: a candidate touching a test/evaluator path (code reference or declared file) is excluded BEFORE selection, even with more visible passes", !!T1.excludedReason && !!T2.excludedReason && P.tamperCheck("function chunk(a, s) { return a; }") === null && sel3.chosen === "C3" && sel3.excluded.length === 2 && !sel3.ranking.includes("C1"));
+    const X = cand("C9", "ff", { 0: true }), Y = cand("C1", "0f", { 0: true });
+    const order1 = P.selectByExecution([X, Y], [0]), order2 = P.selectByExecution([Y, X], [0]);
+    const s2 = await P.sampleCandidates(SPEC, { n: 3, schedule: SPEC.points, generate: async (p: any) => ({ ok: true, text: "fixed " + p.seed }) });
+    const s3 = await P.sampleCandidates(SPEC, { n: 3, schedule: SPEC.points, generate: async (p: any) => ({ ok: true, text: "fixed " + p.seed }) });
+    check("V178-P1/AC4: with fixed transport outputs the selection is deterministic — same candidates ⇒ same sha256s; input order and candidate id never decide (content sha tie-break)", JSON.stringify(s2.candidates) === JSON.stringify(s3.candidates) && order1.chosen === "C1" && order2.chosen === "C1" && order1.decidedBy === "sha256 (content tie-break)");
+    check("V178-P1: VIS-1 split = even indices visible, odd hidden", JSON.stringify(P.visibleSplit(7)) === JSON.stringify({ rule: P.visibleSplit(7).rule, visible: [0, 2, 4, 6], hidden: [1, 3, 5] }));
+  }
   if (failures) { process.stdout.write(`${failures} failure(s)\n`); process.exit(1); }
 })();
 export {};
