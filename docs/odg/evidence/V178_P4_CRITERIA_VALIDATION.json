@@ -1,0 +1,66 @@
+{
+  "//": "VALIDATE_CRITERIA for V178-P4 (owner record docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json). Graded only from the committed experiment record + the independent inspection of the RESULT (distinct session); no new judgement. Contractual closure only — operational integration into ODG call paths is a SEPARATE follow-up (not claimed here).",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V178-P4",
+  "date": "2026-11-25",
+  "contractSha256": "99277ddd47ffecdf8f01c4e346a874579a8120aeb4cd4fd6657f8ad09f576f33",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V178_P4_MEMORY_RESULT.json",
+    "sha256": "758fcaf8ee8599fdacd2579f4b58591bba1418435c8205d2ce14b516fc4f4e9d",
+    "experimentSha256": "99fd920d68a9250437a6ce6f0c0bfaaadf0ddf1d6c47e9abf037da2d5d1c1c52",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1034,
+    "mergedAs": "fe23a52b",
+    "producedBy": "ODG GO --execute native dispatch (run 506dc1f27658ad91; owner order GO-ORD-1 V19_OWNER_DECISION_ORDER_P4.json); trace docs/odg/evidence/V178_P4_GO_EXECUTE_TRACE.jsonl",
+    "priorIncident": "docs/odg/evidence/V178_P4_RUN1_INCIDENT.json (RUN-1 2d22b59e, EXECUTED_FAIL on write confinement — not graded)"
+  },
+  "experimentInspection": {
+    "pr": 1034,
+    "inspectedHead": "0f8d5f6a9218a2b0693b00d220490374607a91d5",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "a099f63877f7d54f3",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-506dc1f27658ad91",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "PASS",
+    "findings": "contract sha = result sha 99277ddd…; single DISPATCHED V178-P4, declared target only, writes ⊆ target writeSet (scratch); result byte-identical to the scratch output; AC6 recount vec 5 / hybrid 5 / fts 1 / control 2; RUN-1 not graded; non-blocking: target unsandboxed (opt-in, scratch-only confinement); sample size 10/6"
+  },
+  "criteria": [
+    {
+      "id": "AC1–AC3",
+      "status": "MET",
+      "evidence": "runtime/core/memory-architecture.test.ts exit 0 (V178-P4/AC1..AC3)"
+    },
+    {
+      "id": "AC4",
+      "status": "MET",
+      "evidence": "semanticRetrieval ABSENT → PRESENT at HEAD (git show) ⇒ IMPROVED"
+    },
+    {
+      "id": "AC5",
+      "status": "MET",
+      "evidence": "touched tests exit 0 + tsc --noEmit --incremental false exit 0"
+    },
+    {
+      "id": "AC6",
+      "status": "MET",
+      "evidence": "vecOnly 5/6 (≥4), hybrid 5/6 (≥5), control vecOnly 2/6 (≤3), LEX-0 no overlap, 14 embed calls"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "all AC1–AC6 MET under the pre-registered decision rule; independent result inspection ACCEPT"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "CONTRACTUALLY ACCEPTED (hybrid per-tenant memory index + sqlite-vec + qwen3-embedding:0.6b qualified at this sample size)",
+  "limits": [
+    "sample size 10 records / 6 queries",
+    "target ran unsandboxed by explicit opt-in (scratch-only write confinement)",
+    "NOT yet wired into ODG runtime call paths (GO knowledge() / memory writes) — operational integration is a separate work item; not OPERATIONALLY_COMPLETE"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionV178P4": "CLOSED_PASS"
+  }
+}
