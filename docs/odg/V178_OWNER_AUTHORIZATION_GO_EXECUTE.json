@@ -1,0 +1,36 @@
+{
+  "//": "OWNER authorization record — verbatim transcription (2026-11-25) by the coordinating provider session. Scope: GO --execute by the coordinator for GO executions covered by EXISTING AUTHORIZED contracts; never a strategic authorization; never converts a PROPOSED contract (D stays PROPOSED).",
+  "schema": "odg-owner-authorization/1",
+  "kind": "OWNER_AUTHORIZATION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-25",
+  "directives": [
+    "CTO — OWNER MASTER AUTHORIZATION — ODG V14.4 — AUTONOMOUS PROGRESSION & EXECUTION (2026-11-25)",
+    "AUTORISATION EXPLICITE DU PROPRIÉTAIRE — GO EXECUTION (2026-11-25)"
+  ],
+  "quote": [
+    "J'autorise explicitement le coordinateur à : lancer `GO --execute` une fois pour la mission V178-P1 ;",
+    "Le coordinateur peut lancer le mécanisme officiel `GO --execute` pour une mission dont le contrat est AUTHORIZED, dont les préconditions sont satisfaites et dont l'ordre est établi.",
+    "Ne jamais exécuter un contrat PROPOSED comme s'il était autorisé. D reste PROPOSED : cette directive ne transforme pas D en mission exécutable.",
+    "J'autorise l'ajout de la permission suivante dans `.claude/settings.local.json`, section `permissions.allow`, ou par le mécanisme officiel `/permissions` : `Bash(npx tsx runtime/bin/odg-go.ts --execute:*)`",
+    "Cette permission est durable pour les exécutions GO couvertes par des contrats existants et autorisés. Elle ne vaut pas autorisation stratégique générale pour exécuter n'importe quelle mission.",
+    "Utiliser `--allow-unsandboxed-target` uniquement pour le lanceur contractuel exigé par GO-DT-1, après vérification de son périmètre et du fonctionnement de bwrap."
+  ],
+  "supersedes": {
+    "rule": "docs/odg/V178_OWNER_OPERATING_RULE_LOCAL_NATIVE.json — « Ne jamais lancer GO --execute » (coordinator)",
+    "effect": "lifted ONLY for GO executions of AUTHORIZED contracts with established order; zero-subagent rule UNCHANGED"
+  },
+  "permissionMechanism": {
+    "file": ".claude/settings.local.json (git-ignored, host-local)",
+    "rule": "Bash(npx tsx runtime/bin/odg-go.ts --execute:*)",
+    "addedAt": "2026-11-25",
+    "note": "added on explicit owner instruction after the auto-mode classifier refused the first attempt (not retried, not bypassed)"
+  },
+  "allowUnsandboxedTargetJustification": {
+    "necessity": "runtime/bin/odg-go.ts dispatchNative: a contract-DECLARED dispatchTarget is refused UNSANDBOXED_TARGET_NOT_OPTED_IN without the flag (GO-DT-1); no sandboxed GO path exists for declared targets",
+    "whatItEnables": "ONLY the contract-declared runner (runtime/bin/odg-v178-p1-multi-candidate-run.ts), argv without shell, bounded timeout (GO-DTO-1), post-run write confinement check (git status --ignored ⊆ target writeSet)",
+    "modelCodeConfinement": "model-generated candidate code executes in bwrap via the V155 benchmark harness; runner probes the sandbox before the first model call (sandboxProbe measured+passed)",
+    "residual": "the runner process itself is not bwrap-confined; it writes only its declared OUT in the scratch worktree and calls loopback Ollama only",
+    "preflight": "bwrap --ro-bind / / --unshare-net true ⇒ OK; host loadavg 0.30; Ollama models qwen2.5-coder:7b/3b, qwen2.5:0.5b present"
+  }
+}

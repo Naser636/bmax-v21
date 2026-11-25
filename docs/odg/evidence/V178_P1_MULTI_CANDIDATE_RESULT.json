@@ -1,0 +1,2410 @@
+{
+  "schema": "odg-v178-p1-result/1",
+  "label": "NATIVE (ODG GO dispatch)",
+  "scenario": "V178-P1",
+  "contractSha256": "3d6ce0b00204e7dd7e3067cfbec35f6b19eb7cd6cb51320bc658d15357986194",
+  "run": {
+    "head": "a5a2c1ab47d830495d345e74d5e9779cc3879958",
+    "startedAt": "2026-11-25T10:07:16.670Z",
+    "runner": "runtime/bin/odg-v178-p1-multi-candidate-run.ts"
+  },
+  "budgets": {
+    "model": "qwen2.5-coder:7b",
+    "taskClass": "implement",
+    "taskSetFile": "runtime/core/odg-local-model-benchmark-tasks.v2.json",
+    "n": 4,
+    "trials": 3,
+    "schedule": [
+      [
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42
+        },
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.6,
+          "seed": 1101
+        },
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.8,
+          "seed": 2101
+        },
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 1,
+          "seed": 3101
+        }
+      ],
+      [
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42
+        },
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.6,
+          "seed": 1102
+        },
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.8,
+          "seed": 2102
+        },
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 1,
+          "seed": 3102
+        }
+      ],
+      [
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42
+        },
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.6,
+          "seed": 1103
+        },
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.8,
+          "seed": 2103
+        },
+        {
+          "model": "qwen2.5-coder:7b",
+          "temperature": 1,
+          "seed": 3103
+        }
+      ]
+    ],
+    "numPredict": 512,
+    "maxModelCalls": 20,
+    "maxWarmupCalls": 1,
+    "warmupNumPredict": 16,
+    "warmupTimeoutMs": 180000,
+    "wallMs": 1800000,
+    "perCallTimeout": {
+      "rule": "ADAPT-1",
+      "minMs": 60000,
+      "maxMs": 300000,
+      "safetyFactor": 3,
+      "overheadMs": 15000,
+      "charsPerToken": 3
+    },
+    "hostIdleFactor": 0.75,
+    "seed": 42,
+    "temperature": 0
+  },
+  "thresholds": {
+    "baseline": {
+      "passes": 3,
+      "n": 6,
+      "source": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[qwen2.5-coder:7b].perClass.implement.passRate"
+    },
+    "passMinPasses": 4,
+    "n": 6
+  },
+  "rules": {
+    "sample": "SAMPLE-1: n candidates drawn in order from a PRE-DECLARED schedule of (model, temperature, seed) points; a schedule point not in spec.points is refused before any call; n ≤ |schedule|; every candidate records its point + sha256 of its output",
+    "select": "XSEL-1 (selection independent of generation): exclude TAMPER-1 candidates → visible-case passes desc (sandbox-executed, visible cases ONLY) → compileOk desc (strict typecheck / parse) → codeLines asc → sha256 asc (content tie-break; candidate id and schedule position are never decisive); no model self-assessment; hidden cases never consulted",
+    "host": "HOST-1: loadavg-1m and nproc are recorded before EVERY model call (warm-up included); the run refuses to START (NOT_MEASURED, no model call) when loadavg-1m > nproc×idleFactor. A later reading above the threshold is recorded (hostLoadAboveThreshold) but does not stop the run: the model server's own inference raises loadavg-1m, so a mid-run reading cannot separate ODG's load from a concurrent one",
+    "adapt": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+  },
+  "taskSet": {
+    "version": "V155-TASKSET-2",
+    "sha256": "755cbf1f0acd64e4e3c84e1f8fd212d2b8e09e596dab7d6e503d5d2901e1b9e6",
+    "tasks": [
+      {
+        "id": "impl-chunk",
+        "lang": "js",
+        "cases": 6,
+        "split": {
+          "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+          "visible": [
+            0,
+            2,
+            4
+          ],
+          "hidden": [
+            1,
+            3,
+            5
+          ]
+        }
+      },
+      {
+        "id": "impl-ts-parse-range",
+        "lang": "ts",
+        "cases": 7,
+        "split": {
+          "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+          "visible": [
+            0,
+            2,
+            4,
+            6
+          ],
+          "hidden": [
+            1,
+            3,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  "baseline": {
+    "passes": 3,
+    "n": 6,
+    "value": 0.5,
+    "source": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[qwen2.5-coder:7b].perClass.implement.passRate"
+  },
+  "sandboxProbe": {
+    "measured": true,
+    "passed": true,
+    "reason": "hidden test passed (all 1 hidden cases passed)"
+  },
+  "host": {
+    "rule": "HOST-1: loadavg-1m and nproc are recorded before EVERY model call (warm-up included); the run refuses to START (NOT_MEASURED, no model call) when loadavg-1m > nproc×idleFactor. A later reading above the threshold is recorded (hostLoadAboveThreshold) but does not stop the run: the model server's own inference raises loadavg-1m, so a mid-run reading cannot separate ODG's load from a concurrent one",
+    "readings": [
+      {
+        "before": "W0 warm-up",
+        "at": "2026-11-25T10:07:16.990Z",
+        "load1": 0.37,
+        "load5": 0.28,
+        "load15": 0.46,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      {
+        "before": "impl-chunk t0 s42",
+        "at": "2026-11-25T10:07:31.860Z",
+        "load1": 1.15,
+        "load5": 0.45,
+        "load15": 0.51,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      {
+        "before": "impl-chunk t0.6 s1101",
+        "at": "2026-11-25T10:07:45.181Z",
+        "load1": 2.2,
+        "load5": 0.7,
+        "load15": 0.59,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      {
+        "before": "impl-chunk t0.8 s2101",
+        "at": "2026-11-25T10:07:56.133Z",
+        "load1": 3.1,
+        "load5": 0.94,
+        "load15": 0.67,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      {
+        "before": "impl-chunk t1 s3101",
+        "at": "2026-11-25T10:08:07.081Z",
+        "load1": 4.18,
+        "load5": 1.29,
+        "load15": 0.79,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      {
+        "before": "impl-chunk t0.6 s1102",
+        "at": "2026-11-25T10:08:20.990Z",
+        "load1": 4.77,
+        "load5": 1.51,
+        "load15": 0.87,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      {
+        "before": "impl-chunk t0.8 s2102",
+        "at": "2026-11-25T10:08:31.486Z",
+        "load1": 5.64,
+        "load5": 1.86,
+        "load15": 0.99,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      {
+        "before": "impl-chunk t1 s3102",
+        "at": "2026-11-25T10:08:41.814Z",
+        "load1": 6,
+        "load5": 2.06,
+        "load15": 1.07,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      {
+        "before": "impl-chunk t0.6 s1103",
+        "at": "2026-11-25T10:08:53.427Z",
+        "load1": 6.31,
+        "load5": 2.26,
+        "load15": 1.14,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-chunk t0.8 s2103",
+        "at": "2026-11-25T10:09:04.523Z",
+        "load1": 6.57,
+        "load5": 2.45,
+        "load15": 1.22,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-chunk t1 s3103",
+        "at": "2026-11-25T10:09:14.888Z",
+        "load1": 6.87,
+        "load5": 2.65,
+        "load15": 1.3,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t0 s42",
+        "at": "2026-11-25T10:09:25.807Z",
+        "load1": 7.05,
+        "load5": 2.83,
+        "load15": 1.37,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t0.6 s1101",
+        "at": "2026-11-25T10:09:54.973Z",
+        "load1": 7.42,
+        "load5": 3.32,
+        "load15": 1.58,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t0.8 s2101",
+        "at": "2026-11-25T10:10:20.387Z",
+        "load1": 7.62,
+        "load5": 3.7,
+        "load15": 1.75,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t1 s3101",
+        "at": "2026-11-25T10:10:46.913Z",
+        "load1": 7.94,
+        "load5": 4.16,
+        "load15": 1.97,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t0.6 s1102",
+        "at": "2026-11-25T10:11:17.321Z",
+        "load1": 7.18,
+        "load5": 4.36,
+        "load15": 2.11,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t0.8 s2102",
+        "at": "2026-11-25T10:11:42.560Z",
+        "load1": 7.46,
+        "load5": 4.65,
+        "load15": 2.26,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t1 s3102",
+        "at": "2026-11-25T10:12:07.736Z",
+        "load1": 7.7,
+        "load5": 4.94,
+        "load15": 2.42,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t0.6 s1103",
+        "at": "2026-11-25T10:12:36.809Z",
+        "load1": 7.01,
+        "load5": 5.07,
+        "load15": 2.55,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t0.8 s2103",
+        "at": "2026-11-25T10:12:57.170Z",
+        "load1": 7.29,
+        "load5": 5.26,
+        "load15": 2.66,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      {
+        "before": "impl-ts-parse-range t1 s3103",
+        "at": "2026-11-25T10:13:17.665Z",
+        "load1": 7.49,
+        "load5": 5.43,
+        "load15": 2.78,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      }
+    ]
+  },
+  "warmup": {
+    "ok": true,
+    "ms": 14868,
+    "reason": null,
+    "rate": {
+      "genTokPerS": 15.373499162144297,
+      "promptTokPerS": 25.431271987453904,
+      "promptRateSource": "prompt_eval_count/prompt_eval_duration",
+      "wallMs": 14868,
+      "loadDurationNs": 13255450161,
+      "timings": {
+        "evalCount": 2,
+        "evalDurationNs": 130094000,
+        "promptEvalCount": 36,
+        "promptEvalDurationNs": 1415580000,
+        "loadDurationNs": 13255450161,
+        "totalDurationNs": 14807135256
+      }
+    }
+  },
+  "verdict": "FAIL",
+  "reason": "implement accepted (host-graded full oracle) 3/6 vs baseline 3/6; PASS ⇔ ≥ 4/6",
+  "result": {
+    "passes": 3,
+    "n": 6,
+    "passRate": 0.5,
+    "controlT0": {
+      "passes": 3,
+      "n": 6,
+      "note": "descriptive: the t0 candidate alone, same run (V155-comparable point); never the verdict"
+    }
+  },
+  "trials": [
+    {
+      "task": "impl-chunk",
+      "trial": 1,
+      "split": {
+        "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+        "visible": [
+          0,
+          2,
+          4
+        ],
+        "hidden": [
+          1,
+          3,
+          5
+        ]
+      },
+      "candidates": [
+        {
+          "id": "C1",
+          "point": 0,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42,
+          "ok": true,
+          "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "cf45a0eaa470f55c89f9160e56e502412a3f4d8321f0ae56e0e1d37247e2b3bd",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C2",
+          "point": 1,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.6,
+          "seed": 1101,
+          "ok": true,
+          "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "cf45a0eaa470f55c89f9160e56e502412a3f4d8321f0ae56e0e1d37247e2b3bd",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C3",
+          "point": 2,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.8,
+          "seed": 2101,
+          "ok": true,
+          "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "cf45a0eaa470f55c89f9160e56e502412a3f4d8321f0ae56e0e1d37247e2b3bd",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C4",
+          "point": 3,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 1,
+          "seed": 3101,
+          "ok": true,
+          "sha256": "1387351586db15d456b91caa1aae0df32835fde9a231f0d2d51cbe53183769cb",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "73a6be5164b1deb49b2f29a68ba8c92ec2eb1b4e859041128a59484107be86ca",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        }
+      ],
+      "selection": {
+        "rule": "XSEL-1 (selection independent of generation): exclude TAMPER-1 candidates → visible-case passes desc (sandbox-executed, visible cases ONLY) → compileOk desc (strict typecheck / parse) → codeLines asc → sha256 asc (content tie-break; candidate id and schedule position are never decisive); no model self-assessment; hidden cases never consulted",
+        "chosen": "C4",
+        "decidedBy": "sha256 (content tie-break)",
+        "ranking": [
+          "C4",
+          "C1",
+          "C2",
+          "C3"
+        ],
+        "reasons": [
+          {
+            "rank": 1,
+            "id": "C4",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "1387351586db15d456b91caa1aae0df32835fde9a231f0d2d51cbe53183769cb"
+          },
+          {
+            "rank": 2,
+            "id": "C1",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2"
+          },
+          {
+            "rank": 3,
+            "id": "C2",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2"
+          },
+          {
+            "rank": 4,
+            "id": "C3",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2"
+          }
+        ],
+        "excluded": []
+      },
+      "accepted": {
+        "candidate": "C4",
+        "passed": true,
+        "measured": true,
+        "reason": "hidden test passed (all 6 hidden cases passed)"
+      },
+      "controlT0": {
+        "passed": true,
+        "measured": true,
+        "reason": "hidden test passed (all 6 hidden cases passed)"
+      }
+    },
+    {
+      "task": "impl-chunk",
+      "trial": 2,
+      "split": {
+        "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+        "visible": [
+          0,
+          2,
+          4
+        ],
+        "hidden": [
+          1,
+          3,
+          5
+        ]
+      },
+      "candidates": [
+        {
+          "id": "C1",
+          "point": 0,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42,
+          "ok": true,
+          "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+          "notSent": true,
+          "reason": null,
+          "codeSha256": "cf45a0eaa470f55c89f9160e56e502412a3f4d8321f0ae56e0e1d37247e2b3bd",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C2",
+          "point": 1,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.6,
+          "seed": 1102,
+          "ok": true,
+          "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "cf45a0eaa470f55c89f9160e56e502412a3f4d8321f0ae56e0e1d37247e2b3bd",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C3",
+          "point": 2,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.8,
+          "seed": 2102,
+          "ok": true,
+          "sha256": "05f594a3fc19820bbf5de0ae695dbaab0955c1e25f7d9ac9b828a6746546dca8",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "c3fe8cd0ac6c23bfa9149959351c02b702d036611d39d0bf2f11fe271d07d82b",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C4",
+          "point": 3,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 1,
+          "seed": 3102,
+          "ok": true,
+          "sha256": "aa66976a33db9fab5f1062e837e221e1e4a752eed45439710bc5ac0a97ee150c",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "a41c150f56f8d569e240355232d6a09c853bc74955e9de8b3e77f53762296bee",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        }
+      ],
+      "selection": {
+        "rule": "XSEL-1 (selection independent of generation): exclude TAMPER-1 candidates → visible-case passes desc (sandbox-executed, visible cases ONLY) → compileOk desc (strict typecheck / parse) → codeLines asc → sha256 asc (content tie-break; candidate id and schedule position are never decisive); no model self-assessment; hidden cases never consulted",
+        "chosen": "C3",
+        "decidedBy": "sha256 (content tie-break)",
+        "ranking": [
+          "C3",
+          "C1",
+          "C2",
+          "C4"
+        ],
+        "reasons": [
+          {
+            "rank": 1,
+            "id": "C3",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "05f594a3fc19820bbf5de0ae695dbaab0955c1e25f7d9ac9b828a6746546dca8"
+          },
+          {
+            "rank": 2,
+            "id": "C1",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2"
+          },
+          {
+            "rank": 3,
+            "id": "C2",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2"
+          },
+          {
+            "rank": 4,
+            "id": "C4",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "aa66976a33db9fab5f1062e837e221e1e4a752eed45439710bc5ac0a97ee150c"
+          }
+        ],
+        "excluded": []
+      },
+      "accepted": {
+        "candidate": "C3",
+        "passed": true,
+        "measured": true,
+        "reason": "hidden test passed (all 6 hidden cases passed)"
+      },
+      "controlT0": {
+        "passed": true,
+        "measured": true,
+        "reason": "hidden test passed (all 6 hidden cases passed)"
+      }
+    },
+    {
+      "task": "impl-chunk",
+      "trial": 3,
+      "split": {
+        "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+        "visible": [
+          0,
+          2,
+          4
+        ],
+        "hidden": [
+          1,
+          3,
+          5
+        ]
+      },
+      "candidates": [
+        {
+          "id": "C1",
+          "point": 0,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42,
+          "ok": true,
+          "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+          "notSent": true,
+          "reason": null,
+          "codeSha256": "cf45a0eaa470f55c89f9160e56e502412a3f4d8321f0ae56e0e1d37247e2b3bd",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C2",
+          "point": 1,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.6,
+          "seed": 1103,
+          "ok": true,
+          "sha256": "a5f6abf2be88c6ad6b1cae78c2f04ea7ba99411e16e829cc23aa80c92630f619",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "c24259e3b4d7540f64d99889054b56521921bf92d13ec6722ac0de13ca13ad48",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C3",
+          "point": 2,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.8,
+          "seed": 2103,
+          "ok": true,
+          "sha256": "87b372d850743cfdd2016dccc1dddf61eced394d8ca0835a6644d1ca487463d0",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "a46aa98314eff527935111886240e99b47fc431d64abb3c4588cf29c4892a591",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C4",
+          "point": 3,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 1,
+          "seed": 3103,
+          "ok": true,
+          "sha256": "6a7b0b5cdfc169345cb88b02fb86ea6cd7ebfaeeafa9ef8e7cc868149280535e",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "42821f8400824bafec3683be6e56405cd184b64551847a1f978d18c6636257f7",
+          "codeLines": 10,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true
+          },
+          "visibleReason": null
+        }
+      ],
+      "selection": {
+        "rule": "XSEL-1 (selection independent of generation): exclude TAMPER-1 candidates → visible-case passes desc (sandbox-executed, visible cases ONLY) → compileOk desc (strict typecheck / parse) → codeLines asc → sha256 asc (content tie-break; candidate id and schedule position are never decisive); no model self-assessment; hidden cases never consulted",
+        "chosen": "C4",
+        "decidedBy": "sha256 (content tie-break)",
+        "ranking": [
+          "C4",
+          "C1",
+          "C3",
+          "C2"
+        ],
+        "reasons": [
+          {
+            "rank": 1,
+            "id": "C4",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "6a7b0b5cdfc169345cb88b02fb86ea6cd7ebfaeeafa9ef8e7cc868149280535e"
+          },
+          {
+            "rank": 2,
+            "id": "C1",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2"
+          },
+          {
+            "rank": 3,
+            "id": "C3",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "87b372d850743cfdd2016dccc1dddf61eced394d8ca0835a6644d1ca487463d0"
+          },
+          {
+            "rank": 4,
+            "id": "C2",
+            "visiblePassed": 3,
+            "visibleTotal": 3,
+            "compileOk": true,
+            "codeLines": 10,
+            "sha256": "a5f6abf2be88c6ad6b1cae78c2f04ea7ba99411e16e829cc23aa80c92630f619"
+          }
+        ],
+        "excluded": []
+      },
+      "accepted": {
+        "candidate": "C4",
+        "passed": true,
+        "measured": true,
+        "reason": "hidden test passed (all 6 hidden cases passed)"
+      },
+      "controlT0": {
+        "passed": true,
+        "measured": true,
+        "reason": "hidden test passed (all 6 hidden cases passed)"
+      }
+    },
+    {
+      "task": "impl-ts-parse-range",
+      "trial": 1,
+      "split": {
+        "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+        "visible": [
+          0,
+          2,
+          4,
+          6
+        ],
+        "hidden": [
+          1,
+          3,
+          5
+        ]
+      },
+      "candidates": [
+        {
+          "id": "C1",
+          "point": 0,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42,
+          "ok": true,
+          "sha256": "b464da45096d495ce1bb27f16fdea1bdefe2c5dc142569d5867124b7198bfec7",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "6fa03a611f1d365c0fc52a3494ee33efec9e322b86985b66596336113992c502",
+          "codeLines": 28,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C2",
+          "point": 1,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.6,
+          "seed": 1101,
+          "ok": true,
+          "sha256": "673335003a75067042fc3a7cda0a604b90e145f218d1d63ba649be7e2786af51",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "d60c3041b6eb253d6b543f633990d3ce2f3018d2bca51fc882e8399c6bc346f1",
+          "codeLines": 22,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C3",
+          "point": 2,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.8,
+          "seed": 2101,
+          "ok": true,
+          "sha256": "28f05623d618ea0c35fb92932885f3a204f033b5456c60fd010f88c73003ae8b",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "de461c7b61d91c1d82d68dc443d239794c2d5b3132fe2949a864496097ef5cdb",
+          "codeLines": 23,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C4",
+          "point": 3,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 1,
+          "seed": 3101,
+          "ok": true,
+          "sha256": "3655927be250cf01fff8f4423d1a2d45c9c412a03fa93e200f3f2842efda0677",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "7afb2813a0b0c784d0d7aafddfe073147ae4b89e37ff0c1ac7e5aa8975f0e4b1",
+          "codeLines": 26,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        }
+      ],
+      "selection": {
+        "rule": "XSEL-1 (selection independent of generation): exclude TAMPER-1 candidates → visible-case passes desc (sandbox-executed, visible cases ONLY) → compileOk desc (strict typecheck / parse) → codeLines asc → sha256 asc (content tie-break; candidate id and schedule position are never decisive); no model self-assessment; hidden cases never consulted",
+        "chosen": "C2",
+        "decidedBy": "codeLines",
+        "ranking": [
+          "C2",
+          "C3",
+          "C4",
+          "C1"
+        ],
+        "reasons": [
+          {
+            "rank": 1,
+            "id": "C2",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 22,
+            "sha256": "673335003a75067042fc3a7cda0a604b90e145f218d1d63ba649be7e2786af51"
+          },
+          {
+            "rank": 2,
+            "id": "C3",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 23,
+            "sha256": "28f05623d618ea0c35fb92932885f3a204f033b5456c60fd010f88c73003ae8b"
+          },
+          {
+            "rank": 3,
+            "id": "C4",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 26,
+            "sha256": "3655927be250cf01fff8f4423d1a2d45c9c412a03fa93e200f3f2842efda0677"
+          },
+          {
+            "rank": 4,
+            "id": "C1",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 28,
+            "sha256": "b464da45096d495ce1bb27f16fdea1bdefe2c5dc142569d5867124b7198bfec7"
+          }
+        ],
+        "excluded": []
+      },
+      "accepted": {
+        "candidate": "C2",
+        "passed": false,
+        "measured": true,
+        "reason": "hidden test failed: case 3: threw Error: Malformed item"
+      },
+      "controlT0": {
+        "passed": false,
+        "measured": true,
+        "reason": "hidden test failed: case 3: got [0] expected []"
+      }
+    },
+    {
+      "task": "impl-ts-parse-range",
+      "trial": 2,
+      "split": {
+        "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+        "visible": [
+          0,
+          2,
+          4,
+          6
+        ],
+        "hidden": [
+          1,
+          3,
+          5
+        ]
+      },
+      "candidates": [
+        {
+          "id": "C1",
+          "point": 0,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42,
+          "ok": true,
+          "sha256": "b464da45096d495ce1bb27f16fdea1bdefe2c5dc142569d5867124b7198bfec7",
+          "notSent": true,
+          "reason": null,
+          "codeSha256": "6fa03a611f1d365c0fc52a3494ee33efec9e322b86985b66596336113992c502",
+          "codeLines": 28,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C2",
+          "point": 1,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.6,
+          "seed": 1102,
+          "ok": true,
+          "sha256": "ac23d8129a550229123c14076fb603baa5475d03df724ed431cbc6846d236c20",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "ff2306ff5cdede3925d883029ef32f5f1e7eedd7b4a45019198b617ba355b6cd",
+          "codeLines": 24,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C3",
+          "point": 2,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.8,
+          "seed": 2102,
+          "ok": true,
+          "sha256": "7ee17445483bb38f242a40807319a4b609775f42b22d99760eef81be85f2f3c4",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "4da94f14f01688049289fba3adf0f14218cfd9f8523cbc1351f6b719e0d7c2ea",
+          "codeLines": 25,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": false
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C4",
+          "point": 3,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 1,
+          "seed": 3102,
+          "ok": true,
+          "sha256": "4bde9c926806b7b12e7dfeec3faae28c93222061a65a9eb9b8c76159ee22daa2",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "e8d650e75ce53befacd9749e85d515f4fbb38fe0bf38aaf78c5e743f5b2925f1",
+          "codeLines": 26,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        }
+      ],
+      "selection": {
+        "rule": "XSEL-1 (selection independent of generation): exclude TAMPER-1 candidates → visible-case passes desc (sandbox-executed, visible cases ONLY) → compileOk desc (strict typecheck / parse) → codeLines asc → sha256 asc (content tie-break; candidate id and schedule position are never decisive); no model self-assessment; hidden cases never consulted",
+        "chosen": "C2",
+        "decidedBy": "codeLines",
+        "ranking": [
+          "C2",
+          "C4",
+          "C1",
+          "C3"
+        ],
+        "reasons": [
+          {
+            "rank": 1,
+            "id": "C2",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 24,
+            "sha256": "ac23d8129a550229123c14076fb603baa5475d03df724ed431cbc6846d236c20"
+          },
+          {
+            "rank": 2,
+            "id": "C4",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 26,
+            "sha256": "4bde9c926806b7b12e7dfeec3faae28c93222061a65a9eb9b8c76159ee22daa2"
+          },
+          {
+            "rank": 3,
+            "id": "C1",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 28,
+            "sha256": "b464da45096d495ce1bb27f16fdea1bdefe2c5dc142569d5867124b7198bfec7"
+          },
+          {
+            "rank": 4,
+            "id": "C3",
+            "visiblePassed": 3,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 25,
+            "sha256": "7ee17445483bb38f242a40807319a4b609775f42b22d99760eef81be85f2f3c4"
+          }
+        ],
+        "excluded": []
+      },
+      "accepted": {
+        "candidate": "C2",
+        "passed": false,
+        "measured": true,
+        "reason": "hidden test failed: case 3: threw Error: Malformed number"
+      },
+      "controlT0": {
+        "passed": false,
+        "measured": true,
+        "reason": "hidden test failed: case 3: got [0] expected []"
+      }
+    },
+    {
+      "task": "impl-ts-parse-range",
+      "trial": 3,
+      "split": {
+        "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+        "visible": [
+          0,
+          2,
+          4,
+          6
+        ],
+        "hidden": [
+          1,
+          3,
+          5
+        ]
+      },
+      "candidates": [
+        {
+          "id": "C1",
+          "point": 0,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0,
+          "seed": 42,
+          "ok": true,
+          "sha256": "b464da45096d495ce1bb27f16fdea1bdefe2c5dc142569d5867124b7198bfec7",
+          "notSent": true,
+          "reason": null,
+          "codeSha256": "6fa03a611f1d365c0fc52a3494ee33efec9e322b86985b66596336113992c502",
+          "codeLines": 28,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C2",
+          "point": 1,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.6,
+          "seed": 1103,
+          "ok": true,
+          "sha256": "6489d6f22e42fa45180525dc78b002b19a501f62f277e692950df7aea5c5bf6f",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "32c3119fa57288b5e4bea368cf1dbefe4254339216fc402808cf42c1fbdb2514",
+          "codeLines": 23,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C3",
+          "point": 2,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 0.8,
+          "seed": 2103,
+          "ok": true,
+          "sha256": "f29cba6adcfd4b0cc12cf924fe5f0ae7a8a71fe7976e8e2a6ed7a9a8a66e61ac",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "137673955d33a7b46d0bae0974f2444d01ea0536ac3ea4ca3b7d57d01aaead23",
+          "codeLines": 22,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        },
+        {
+          "id": "C4",
+          "point": 3,
+          "model": "qwen2.5-coder:7b",
+          "temperature": 1,
+          "seed": 3103,
+          "ok": true,
+          "sha256": "edc83bfd7e3da88b1600d7b762fa1c9d328319eda83f715a89aaca08ea7877f4",
+          "notSent": false,
+          "reason": null,
+          "codeSha256": "7958f9dab2d57ff71d4b3a289f28bbf16d9cb16a1f4eac9e2379b8d5d71ffcda",
+          "codeLines": 21,
+          "excludedReason": null,
+          "compileOk": true,
+          "visibleMeasured": true,
+          "caseResults": {
+            "0": true,
+            "2": true,
+            "4": true,
+            "6": true
+          },
+          "visibleReason": null
+        }
+      ],
+      "selection": {
+        "rule": "XSEL-1 (selection independent of generation): exclude TAMPER-1 candidates → visible-case passes desc (sandbox-executed, visible cases ONLY) → compileOk desc (strict typecheck / parse) → codeLines asc → sha256 asc (content tie-break; candidate id and schedule position are never decisive); no model self-assessment; hidden cases never consulted",
+        "chosen": "C4",
+        "decidedBy": "codeLines",
+        "ranking": [
+          "C4",
+          "C3",
+          "C2",
+          "C1"
+        ],
+        "reasons": [
+          {
+            "rank": 1,
+            "id": "C4",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 21,
+            "sha256": "edc83bfd7e3da88b1600d7b762fa1c9d328319eda83f715a89aaca08ea7877f4"
+          },
+          {
+            "rank": 2,
+            "id": "C3",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 22,
+            "sha256": "f29cba6adcfd4b0cc12cf924fe5f0ae7a8a71fe7976e8e2a6ed7a9a8a66e61ac"
+          },
+          {
+            "rank": 3,
+            "id": "C2",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 23,
+            "sha256": "6489d6f22e42fa45180525dc78b002b19a501f62f277e692950df7aea5c5bf6f"
+          },
+          {
+            "rank": 4,
+            "id": "C1",
+            "visiblePassed": 4,
+            "visibleTotal": 4,
+            "compileOk": true,
+            "codeLines": 28,
+            "sha256": "b464da45096d495ce1bb27f16fdea1bdefe2c5dc142569d5867124b7198bfec7"
+          }
+        ],
+        "excluded": []
+      },
+      "accepted": {
+        "candidate": "C4",
+        "passed": false,
+        "measured": true,
+        "reason": "hidden test failed: case 1: threw Error: Malformed item"
+      },
+      "controlT0": {
+        "passed": false,
+        "measured": true,
+        "reason": "hidden test failed: case 3: got [0] expected []"
+      }
+    }
+  ],
+  "calls": [
+    {
+      "i": 1,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0,
+      "seed": 42,
+      "hostLoad": {
+        "before": "impl-chunk t0 s42",
+        "at": "2026-11-25T10:07:31.860Z",
+        "load1": 1.15,
+        "load5": 0.45,
+        "load15": 0.51,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 13320,
+      "reason": null,
+      "responseSha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+      "timings": {
+        "evalCount": 84,
+        "evalDurationNs": 10556404000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 2737448000,
+        "loadDurationNs": 4425095,
+        "totalDurationNs": 13308501403
+      }
+    },
+    {
+      "i": 2,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.6,
+      "seed": 1101,
+      "hostLoad": {
+        "before": "impl-chunk t0.6 s1101",
+        "at": "2026-11-25T10:07:45.181Z",
+        "load1": 2.2,
+        "load5": 0.7,
+        "load15": 0.59,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 10950,
+      "reason": null,
+      "responseSha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+      "timings": {
+        "evalCount": 84,
+        "evalDurationNs": 10805434000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 128428000,
+        "loadDurationNs": 1894749,
+        "totalDurationNs": 10943223570
+      }
+    },
+    {
+      "i": 3,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.8,
+      "seed": 2101,
+      "hostLoad": {
+        "before": "impl-chunk t0.8 s2101",
+        "at": "2026-11-25T10:07:56.133Z",
+        "load1": 3.1,
+        "load5": 0.94,
+        "load15": 0.67,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 10947,
+      "reason": null,
+      "responseSha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+      "timings": {
+        "evalCount": 84,
+        "evalDurationNs": 10795486000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 128936000,
+        "loadDurationNs": 8032214,
+        "totalDurationNs": 10940219560
+      }
+    },
+    {
+      "i": 4,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 1,
+      "seed": 3101,
+      "hostLoad": {
+        "before": "impl-chunk t1 s3101",
+        "at": "2026-11-25T10:08:07.081Z",
+        "load1": 4.18,
+        "load5": 1.29,
+        "load15": 0.79,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 12430,
+      "reason": null,
+      "responseSha256": "1387351586db15d456b91caa1aae0df32835fde9a231f0d2d51cbe53183769cb",
+      "timings": {
+        "evalCount": 91,
+        "evalDurationNs": 12289441000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 123778000,
+        "loadDurationNs": 2807290,
+        "totalDurationNs": 12424010698
+      }
+    },
+    {
+      "i": 5,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.6,
+      "seed": 1102,
+      "hostLoad": {
+        "before": "impl-chunk t0.6 s1102",
+        "at": "2026-11-25T10:08:20.990Z",
+        "load1": 4.77,
+        "load5": 1.51,
+        "load15": 0.87,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 10495,
+      "reason": null,
+      "responseSha256": "7dc3957bdbdaf2d89c7d059b30272f8a357287dd2d3de96203fef1d292233bf2",
+      "timings": {
+        "evalCount": 84,
+        "evalDurationNs": 10316460000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 158524000,
+        "loadDurationNs": 4047778,
+        "totalDurationNs": 10487474678
+      }
+    },
+    {
+      "i": 6,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.8,
+      "seed": 2102,
+      "hostLoad": {
+        "before": "impl-chunk t0.8 s2102",
+        "at": "2026-11-25T10:08:31.486Z",
+        "load1": 5.64,
+        "load5": 1.86,
+        "load15": 0.99,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 10328,
+      "reason": null,
+      "responseSha256": "05f594a3fc19820bbf5de0ae695dbaab0955c1e25f7d9ac9b828a6746546dca8",
+      "timings": {
+        "evalCount": 84,
+        "evalDurationNs": 10192708000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 121234000,
+        "loadDurationNs": 1887854,
+        "totalDurationNs": 10322058812
+      }
+    },
+    {
+      "i": 7,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 1,
+      "seed": 3102,
+      "hostLoad": {
+        "before": "impl-chunk t1 s3102",
+        "at": "2026-11-25T10:08:41.814Z",
+        "load1": 6,
+        "load5": 2.06,
+        "load15": 1.07,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": false
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 10341,
+      "reason": null,
+      "responseSha256": "aa66976a33db9fab5f1062e837e221e1e4a752eed45439710bc5ac0a97ee150c",
+      "timings": {
+        "evalCount": 84,
+        "evalDurationNs": 10189833000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 131285000,
+        "loadDurationNs": 3437123,
+        "totalDurationNs": 10335479061
+      }
+    },
+    {
+      "i": 8,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.6,
+      "seed": 1103,
+      "hostLoad": {
+        "before": "impl-chunk t0.6 s1103",
+        "at": "2026-11-25T10:08:53.427Z",
+        "load1": 6.31,
+        "load5": 2.26,
+        "load15": 1.14,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 11095,
+      "reason": null,
+      "responseSha256": "a5f6abf2be88c6ad6b1cae78c2f04ea7ba99411e16e829cc23aa80c92630f619",
+      "timings": {
+        "evalCount": 91,
+        "evalDurationNs": 10907168000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 162618000,
+        "loadDurationNs": 3546311,
+        "totalDurationNs": 11080338534
+      }
+    },
+    {
+      "i": 9,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.8,
+      "seed": 2103,
+      "hostLoad": {
+        "before": "impl-chunk t0.8 s2103",
+        "at": "2026-11-25T10:09:04.523Z",
+        "load1": 6.57,
+        "load5": 2.45,
+        "load15": 1.22,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 10364,
+      "reason": null,
+      "responseSha256": "87b372d850743cfdd2016dccc1dddf61eced394d8ca0835a6644d1ca487463d0",
+      "timings": {
+        "evalCount": 84,
+        "evalDurationNs": 10207888000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 144604000,
+        "loadDurationNs": 1803462,
+        "totalDurationNs": 10359103276
+      }
+    },
+    {
+      "i": 10,
+      "task": "impl-chunk",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 1,
+      "seed": 3103,
+      "hostLoad": {
+        "before": "impl-chunk t1 s3103",
+        "at": "2026-11-25T10:09:14.888Z",
+        "load1": 6.87,
+        "load5": 2.65,
+        "load15": 1.3,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 100,
+        "estimateMs": 37237,
+        "timeoutMs": 126711,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 9627,
+      "reason": null,
+      "responseSha256": "6a7b0b5cdfc169345cb88b02fb86ea6cd7ebfaeeafa9ef8e7cc868149280535e",
+      "timings": {
+        "evalCount": 84,
+        "evalDurationNs": 9494322000,
+        "promptEvalCount": 102,
+        "promptEvalDurationNs": 120943000,
+        "loadDurationNs": 1629668,
+        "totalDurationNs": 9620921004
+      }
+    },
+    {
+      "i": 11,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0,
+      "seed": 42,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t0 s42",
+        "at": "2026-11-25T10:09:25.807Z",
+        "load1": 7.05,
+        "load5": 2.83,
+        "load15": 1.37,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 29165,
+      "reason": null,
+      "responseSha256": "b464da45096d495ce1bb27f16fdea1bdefe2c5dc142569d5867124b7198bfec7",
+      "timings": {
+        "evalCount": 204,
+        "evalDurationNs": 25262000000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 3863987000,
+        "loadDurationNs": 3676231,
+        "totalDurationNs": 29152438228
+      }
+    },
+    {
+      "i": 12,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.6,
+      "seed": 1101,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t0.6 s1101",
+        "at": "2026-11-25T10:09:54.973Z",
+        "load1": 7.42,
+        "load5": 3.32,
+        "load15": 1.58,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 25413,
+      "reason": null,
+      "responseSha256": "673335003a75067042fc3a7cda0a604b90e145f218d1d63ba649be7e2786af51",
+      "timings": {
+        "evalCount": 205,
+        "evalDurationNs": 25247194000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 124111000,
+        "loadDurationNs": 2368591,
+        "totalDurationNs": 25406303821
+      }
+    },
+    {
+      "i": 13,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.8,
+      "seed": 2101,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t0.8 s2101",
+        "at": "2026-11-25T10:10:20.387Z",
+        "load1": 7.62,
+        "load5": 3.7,
+        "load15": 1.75,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 26525,
+      "reason": null,
+      "responseSha256": "28f05623d618ea0c35fb92932885f3a204f033b5456c60fd010f88c73003ae8b",
+      "timings": {
+        "evalCount": 224,
+        "evalDurationNs": 26344992000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 140563000,
+        "loadDurationNs": 2739476,
+        "totalDurationNs": 26519395968
+      }
+    },
+    {
+      "i": 14,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 1,
+      "seed": 3101,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t1 s3101",
+        "at": "2026-11-25T10:10:46.913Z",
+        "load1": 7.94,
+        "load5": 4.16,
+        "load15": 1.97,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 22542,
+      "reason": null,
+      "responseSha256": "3655927be250cf01fff8f4423d1a2d45c9c412a03fa93e200f3f2842efda0677",
+      "timings": {
+        "evalCount": 194,
+        "evalDurationNs": 22391751000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 105232000,
+        "loadDurationNs": 2906872,
+        "totalDurationNs": 22533407844
+      }
+    },
+    {
+      "i": 15,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.6,
+      "seed": 1102,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t0.6 s1102",
+        "at": "2026-11-25T10:11:17.321Z",
+        "load1": 7.18,
+        "load5": 4.36,
+        "load15": 2.11,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 25238,
+      "reason": null,
+      "responseSha256": "ac23d8129a550229123c14076fb603baa5475d03df724ed431cbc6846d236c20",
+      "timings": {
+        "evalCount": 212,
+        "evalDurationNs": 25035090000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 137142000,
+        "loadDurationNs": 5051404,
+        "totalDurationNs": 25227439550
+      }
+    },
+    {
+      "i": 16,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.8,
+      "seed": 2102,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t0.8 s2102",
+        "at": "2026-11-25T10:11:42.560Z",
+        "load1": 7.46,
+        "load5": 4.65,
+        "load15": 2.26,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 25175,
+      "reason": null,
+      "responseSha256": "7ee17445483bb38f242a40807319a4b609775f42b22d99760eef81be85f2f3c4",
+      "timings": {
+        "evalCount": 215,
+        "evalDurationNs": 24998924000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 130309000,
+        "loadDurationNs": 3168923,
+        "totalDurationNs": 25169131945
+      }
+    },
+    {
+      "i": 17,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 1,
+      "seed": 3102,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t1 s3102",
+        "at": "2026-11-25T10:12:07.736Z",
+        "load1": 7.7,
+        "load5": 4.94,
+        "load15": 2.42,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 21303,
+      "reason": null,
+      "responseSha256": "4bde9c926806b7b12e7dfeec3faae28c93222061a65a9eb9b8c76159ee22daa2",
+      "timings": {
+        "evalCount": 192,
+        "evalDurationNs": 21146999000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 111653000,
+        "loadDurationNs": 2932724,
+        "totalDurationNs": 21298141634
+      }
+    },
+    {
+      "i": 18,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.6,
+      "seed": 1103,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t0.6 s1103",
+        "at": "2026-11-25T10:12:36.809Z",
+        "load1": 7.01,
+        "load5": 5.07,
+        "load15": 2.55,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 20361,
+      "reason": null,
+      "responseSha256": "6489d6f22e42fa45180525dc78b002b19a501f62f277e692950df7aea5c5bf6f",
+      "timings": {
+        "evalCount": 182,
+        "evalDurationNs": 20159973000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 154450000,
+        "loadDurationNs": 5061220,
+        "totalDurationNs": 20352825598
+      }
+    },
+    {
+      "i": 19,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0.8,
+      "seed": 2103,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t0.8 s2103",
+        "at": "2026-11-25T10:12:57.170Z",
+        "load1": 7.29,
+        "load5": 5.26,
+        "load15": 2.66,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 20494,
+      "reason": null,
+      "responseSha256": "f29cba6adcfd4b0cc12cf924fe5f0ae7a8a71fe7976e8e2a6ed7a9a8a66e61ac",
+      "timings": {
+        "evalCount": 181,
+        "evalDurationNs": 20341540000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 107130000,
+        "loadDurationNs": 2759798,
+        "totalDurationNs": 20480596704
+      }
+    },
+    {
+      "i": 20,
+      "task": "impl-ts-parse-range",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 1,
+      "seed": 3103,
+      "hostLoad": {
+        "before": "impl-ts-parse-range t1 s3103",
+        "at": "2026-11-25T10:13:17.665Z",
+        "load1": 7.49,
+        "load5": 5.43,
+        "load15": 2.78,
+        "nproc": 8,
+        "idleFactor": 0.75,
+        "threshold": 6,
+        "aboveThreshold": true
+      },
+      "timeout": {
+        "promptTokensEstimate": 126,
+        "estimateMs": 38259,
+        "timeoutMs": 129777,
+        "clamped": false,
+        "predictedOverCap": false,
+        "rule": "ADAPT-1: estimateMs = 1000·(ceil(promptChars/charsPerToken)/promptTokPerS + numPredict/genTokPerS) from ONE warm-up call on the same model; timeoutMs = clamp(ceil(safetyFactor·estimateMs) + overheadMs, minMs, maxMs); estimateMs > maxMs ⇒ the call is NOT sent (NOT_MEASURED: the cap cannot cover the predicted duration)"
+      },
+      "ok": true,
+      "ms": 20574,
+      "reason": null,
+      "responseSha256": "edc83bfd7e3da88b1600d7b762fa1c9d328319eda83f715a89aaca08ea7877f4",
+      "timings": {
+        "evalCount": 175,
+        "evalDurationNs": 20403415000,
+        "promptEvalCount": 135,
+        "promptEvalDurationNs": 130785000,
+        "loadDurationNs": 2150300,
+        "totalDurationNs": 20564631443
+      }
+    }
+  ],
+  "network": {
+    "modelCalls": 20,
+    "warmupCalls": 1,
+    "refused": [],
+    "capHit": null,
+    "providerCalls": 0,
+    "prompts": [
+      {
+        "i": "W1",
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "88306951b18d4726ab2a341566edd12498c5a9dfe96dffa3362cbb0075bad5a0",
+        "promptChars": 33,
+        "warmup": true
+      },
+      {
+        "i": 1,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 0,
+        "seed": 42
+      },
+      {
+        "i": 2,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 0.6,
+        "seed": 1101
+      },
+      {
+        "i": 3,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 0.8,
+        "seed": 2101
+      },
+      {
+        "i": 4,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 1,
+        "seed": 3101
+      },
+      {
+        "i": 5,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 0.6,
+        "seed": 1102
+      },
+      {
+        "i": 6,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 0.8,
+        "seed": 2102
+      },
+      {
+        "i": 7,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 1,
+        "seed": 3102
+      },
+      {
+        "i": 8,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 0.6,
+        "seed": 1103
+      },
+      {
+        "i": 9,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 0.8,
+        "seed": 2103
+      },
+      {
+        "i": 10,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "d47fc6dd12ea49433e2e97da3d8ee734ed8222a91c870cf80ad9fe7f18b28a43",
+        "promptChars": 300,
+        "temperature": 1,
+        "seed": 3103
+      },
+      {
+        "i": 11,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 0,
+        "seed": 42
+      },
+      {
+        "i": 12,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 0.6,
+        "seed": 1101
+      },
+      {
+        "i": 13,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 0.8,
+        "seed": 2101
+      },
+      {
+        "i": 14,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 1,
+        "seed": 3101
+      },
+      {
+        "i": 15,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 0.6,
+        "seed": 1102
+      },
+      {
+        "i": 16,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 0.8,
+        "seed": 2102
+      },
+      {
+        "i": 17,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 1,
+        "seed": 3102
+      },
+      {
+        "i": 18,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 0.6,
+        "seed": 1103
+      },
+      {
+        "i": 19,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 0.8,
+        "seed": 2103
+      },
+      {
+        "i": 20,
+        "model": "qwen2.5-coder:7b",
+        "promptSha256": "df29d236094bea8aa5d0a37a8e644db2c720b79e219e692d1f2e7226a462384f",
+        "promptChars": 377,
+        "temperature": 1,
+        "seed": 3103
+      }
+    ]
+  },
+  "provenance": {
+    "actor": "ODG",
+    "providerCalls": 0,
+    "providerEditedGeneratedCode": false
+  },
+  "outcome": "FAIL",
+  "wallMs": 389173
+}
