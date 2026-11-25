@@ -63,7 +63,12 @@ const MEMORY_ARCHITECTURE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { accessMemory, MEMORY_ARCHITECTURE_CONTRACT };
+/* V17.8 P4 — semanticRetrieval: the hybrid (FTS5 + sqlite-vec + RRF) retrieval over TRUSTED records, reached THROUGH this
+ * canonical access layer. Lazy (node:sqlite / sqlite-vec load only when used) so accessMemory stays pure. The index is a DERIVED,
+ * rebuildable per-tenant file maintained by odg-memory-hybrid-index (which itself calls accessMemory first) — not a 2nd memory. */
+function semanticRetrieval(): any { return require("./odg-memory-hybrid-index"); }
+
+module.exports = { accessMemory, semanticRetrieval, MEMORY_ARCHITECTURE_CONTRACT };
 
 if (require.main === module) {
   const recs = [

@@ -8,6 +8,14 @@
       "reason": "Security: next@16.2.9 carried multiple CRITICAL advisories (RCE in Image Optimization API via AVIF GHSA-2xp9-vwfh-vxw4 / SVG GHSA-2464-fhr4-w9xw, RCE in next/og GHSA-vcvr-r3jv-pc5j) plus HIGH (middleware/proxy bypass, SSRF in Server Actions/rewrites/Image Optimization, DoS). Fix is next@16.4.6 — latest stable 16.x, isSemVerMajor:false. Build verified compatible (build:runtime + next build OK on node v22).",
       "authorizedBy": "CTO V312",
       "date": "2026-11-18"
+    },
+    "sqlite-vec": {
+      "from": null,
+      "to": "0.1.9",
+      "reason": "V178-P4 hybrid per-tenant memory index (sqlite-vec vec0 KNN + FTS5 + RRF). Radar E-06 (MIT OR Apache-2.0, pre-v1). Pinned exact; installed with --ignore-scripts (prebuilt vec0.so from the platform optional dependency sqlite-vec-linux-x64@0.1.9); qualified with node:sqlite (load, KNN, persistence).",
+      "authorizedBy": "CTO V19 (« installer les dépendances et outils de développement nécessaires » / « Intégrer `sqlite-vec` au dépôt avec les dépendances et tests nécessaires. »)",
+      "record": "docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
+      "date": "2026-11-25"
     }
   },
   "devDependencies": {}
