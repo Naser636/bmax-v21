@@ -197,6 +197,17 @@ ok("discovery: the gate never lists itself", !disc.some((c: any) => c.cli === "r
   fs.rmSync(tmp2, { recursive: true, force: true });
 }
 
+// --- CI-1: an ADDED test outside the CI classified gate is NOT_READY (it would never run in CI)
+{
+  const gs = new Set(["runtime/core/a.test.ts"]);
+  const ch = [{ status: "A", path: "runtime/core/a.test.ts" }, { status: "A", path: "runtime/core/b.test.ts" }, { status: "M", path: "runtime/core/c.test.ts" }, { status: "A", path: "runtime/__bench__/d.e2e.test.ts" }, { status: "A", path: "runtime/core/e.ts" }];
+  ok("CI-1: only ADDED *.test.ts outside the gate are reported (modified, bench and non-test files are not)", JSON.stringify(G.newTestsOutsideCi(ch, gs)) === JSON.stringify(["runtime/core/b.test.ts"]));
+  ok("CI-1: no CI gate parsed ⇒ nothing reported (never invents a gate)", G.newTestsOutsideCi(ch, null).length === 0);
+  const v = G.verdict({ checks: [], newTestsOutsideCi: ["runtime/core/b.test.ts"] });
+  ok("CI-1: verdict NOT_READY with a NEW_TEST_OUTSIDE_CI reason", v.verdict === "NOT_READY" && v.reasons.some((r: string) => /^NEW_TEST_OUTSIDE_CI runtime\/core\/b\.test\.ts/.test(r)));
+  ok("CI-1: verdict READY when every added test is wired", G.verdict({ checks: [], newTestsOutsideCi: [] }).verdict === "READY");
+}
+
 console.log(`\nodg-pre-open-gate: ${passed} passed`);
 
 export {};
