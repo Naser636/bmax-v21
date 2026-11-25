@@ -4071,7 +4071,7 @@
           "AC3 test 'V178-P4/AC3' (file: acceptance_tests[2]): two tenants never read each other's file",
           "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
           "AC5 tsc clean; each touched test file passes run one at a time",
-          "AC6 pre-registered LIVE qualification (runtime/bin/odg-v178-p4-memory-run.ts SET: 10 synthetic records, 6 queries, qwen3-embedding:0.6b): hybrid recall@3 ≥ 5/6; FTS-only and vector-only recall@3 recorded descriptively; not measurable ⇒ NOT_MEASURED (never PASS)"
+          "AC6 (revision 2, after the inspection REJECT) pre-registered LIVE qualification (runtime/bin/odg-v178-p4-memory-run.ts SET: 10 synthetic records, 6 paraphrase queries sharing NO ≥2-letter token with their expected record — LEX-0 checked in the run): vector-only recall@3 ≥ 4/6 AND hybrid recall@3 ≥ 5/6 with qwen3-embedding:0.6b; CONTROL in the same run with a constant embedding must keep vector-only recall@3 ≤ 3/6, else NOT_MEASURED (non-discriminating); FTS-only recorded descriptively; not measurable ⇒ NOT_MEASURED (never PASS)"
         ],
         "acceptance_tests": [
           {
@@ -4105,25 +4105,43 @@
           "embedModel": "qwen3-embedding:0.6b",
           "records": 10,
           "queries": 6,
-          "maxEmbedCalls": 20,
+          "maxEmbedCalls": 40,
           "dispatchTimeoutMs": 900000,
           "network": "loopback Ollama /api/embed only",
           "providerCalls": 0
         },
         "preRegistration": {
-          "metric": "hybrid recall@3 over the fixed SET (6 queries with one expected record each) + AC1–AC5 pass/fail",
+          "metric": "vector-only and hybrid recall@3 over the fixed SET + AC1–AC5 pass/fail (AC5 includes tsc --noEmit -p tsconfig.json)",
           "baseline": "beforeMetric semanticRetrieval = ABSENT in runtime/core/memory-architecture.ts (no semantic retrieval existed); FTS-only and vector-only recall@3 measured in the SAME run as descriptive controls",
           "dataset": {
-            "source": "runtime/bin/odg-v178-p4-memory-run.ts SET (10 synthetic records, 6 queries; frozen in the runner)",
-            "runnerSha256": "de5c4fafecaa29cb7060a7b5a8ed203405accf23d59febe64d11fb1da1354842",
+            "source": "runtime/bin/odg-v178-p4-memory-run.ts SET (10 synthetic records, 6 paraphrase queries with zero lexical overlap; frozen in the runner)",
+            "runnerSha256": "be18aaa985d01623280c15dc1da437e62e16fd400272993b4f9e3caba85f2355",
             "embedModel": "qwen3-embedding:0.6b",
             "queryInstruction": "odg-memory-hybrid-index QUERY_INSTRUCTION"
           },
-          "decisionRule": "PASS ⇔ AC1–AC6 all met; any criterion not measurable ⇒ NOT_MEASURED (never PASS); otherwise FAIL",
+          "decisionRule": "PASS ⇔ AC1–AC6 all met; any criterion not measurable (incl. a non-discriminating AC6: lexical overlap or control vector leg ≥ floor) ⇒ NOT_MEASURED (never PASS); otherwise FAIL",
           "thresholds": {
+            "vecOnlyRecallAt3Min": 4,
             "hybridRecallAt3Min": 5,
+            "controlVecOnlyMax": 3,
             "of": 6
           }
+        },
+        "bindingFiles": {
+          "files": [
+            "runtime/core/odg-authorization-scope.ts",
+            "runtime/core/odg-authorization-evidence-paths.ts",
+            "docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
+            "docs/odg/supply-chain-authorized-deltas.json",
+            "runtime/bin/v97-forensic-release-selection.test.ts",
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+            "docs/odg/evidence/V175_RESUME_POINT.json",
+            "runtime/bin/odg-strategic-select.test.ts",
+            "runtime/bin/odg-v178-p1-multi-candidate-run.test.ts",
+            "runtime/bin/odg-v178-radar-campaign.test.ts"
+          ],
+          "note": "binding/governance plumbing touched by the binding PRs (#1027 and this revision) — declared here (inspector finding), not part of the work item's write_set"
         }
       },
       "authorization": {
@@ -4175,6 +4193,30 @@
           "reason": "make V178-P4 executable as written: AC1–AC3 implemented in runtime/core/memory-architecture.test.ts (V178-P4/AC1..AC3) through the canonical layer; a DERIVED index (no second memory system)",
           "justification": "owner record V19 authorizes P4 within its defined scope; criteria, thresholds and budgets fixed before any run (no experiment run yet)",
           "revisionAuthorSessionId": "v19-p4-binding"
+        },
+        {
+          "date": "2026-11-25",
+          "author": "PROVIDER (Claude Code, V19 P4 revision-2 session; branch fix/v178-p4-ac6-ac5-rework)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P4/AC1' (file: acceptance_tests[0]): FTS5 leg returns exact-term matches ranked by bm25 (offline test)",
+            "AC2 test 'V178-P4/AC2' (file: acceptance_tests[1]): RRF fusion is deterministic for fixed inputs",
+            "AC3 test 'V178-P4/AC3' (file: acceptance_tests[2]): two tenants never read each other's file",
+            "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC5 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC5 verbatim and UNCHANGED; AC6 (added in revision 1) REPLACED by a discriminating version",
+          "change": [
+            "AC6: zero-lexical-overlap paraphrase queries (LEX-0 checked at run time); vector-only floor 4/6 + hybrid 5/6; constant-embedding CONTROL ≤ 3/6 else NOT_MEASURED",
+            "runner AC5 now runs tsc --noEmit -p tsconfig.json (was unmeasured yet marked met)",
+            "runner AC4 reads the committed source via git show HEAD (not the working tree)",
+            "maxEmbedCalls 40 enforced in code; ollamaEmbed per-request timeout 120 s",
+            "bindingFiles declared",
+            "preRegistration runnerSha256 / thresholds / decisionRule updated before any run"
+          ],
+          "reason": "independent inspection REJECT of revision 1 (inspected head 6679cda7): AC6 satisfiable by the FTS5 leg alone (constant embedding ⇒ hybrid 6/6); AC5's tsc part unmeasured",
+          "justification": "fix both blocking defects and the minor findings before any run (no experiment has run); criteria only made stricter",
+          "revisionAuthorSessionId": "v19-p4-revision2"
         }
       ]
     },
