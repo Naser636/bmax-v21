@@ -1,0 +1,41 @@
+{
+  "//": "Independent inspection record of the V178-P4-INT contract — CURRENT binding: revision 2 (ACCEPT). Revision 1 (head c1a5b6cc, sha 55f35643…) was REJECTED (TIER-1 eligibility was a weaker second rule), fixed in #1038.",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V178-P4-INT",
+  "verdict": "ACCEPT",
+  "contractSha256": "dad4365a2103dda5d46298be0da3337c96e19c02efab6aa76a3395164dc96f66",
+  "inspectedHeadSha": "bc63231fe3ea44cbb6ff292ee3ef697bde01cbce",
+  "inspectedPr": 1038,
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session)",
+  "inspectorSessionId": "a9708f5fa7d5cbc5e",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "v19-p4int-rev2",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-25",
+  "priorVerdicts": [
+    {
+      "revision": 1,
+      "inspectedHeadSha": "c1a5b6cc772c7d9403cf07b18bf6960a0bcd2bbd",
+      "contractSha256": "55f356430c0a9bcc063359fadcd81157effe0dce2a3e0e0b6883d7b7b4c16ff9",
+      "verdict": "REJECT",
+      "blockingDefects": [
+        "contextEligible ignored the canonical exclusion verdict: UNATTRIBUTED (ODG-prefixed rogue) and SUPPRESSED records were indexed as CONTEXT"
+      ]
+    }
+  ],
+  "findings": [
+    "defect fixed: CONTEXT eligibility = canonical verdict UNVERIFIED + SUPPORTED + sourced; probe rerun: rogue/suppressed no longer indexed",
+    "regression tests correct; recall enrichment copies status/provenance/dates/confidence from canonical records and cannot override tier",
+    "contract: only revision 2 appended; AC1–AC6, preRegistration, authorization, write_set unchanged; sha dad4365a…; runner sha = preRegistration",
+    "no new blocking defect; non-blocking: absent epistemic accepted (no effect today); AC5 synthetic hits carry no enrichment fields"
+  ],
+  "testsRun": [
+    "odg-go-memory.test.ts PASS (9)",
+    "odg-memory-hybrid-index.test.ts PASS (20)",
+    "odg-go-cycle.test.ts PASS (145)",
+    "odg-go.test.ts PASS (120)",
+    "tsc --noEmit --incremental false PASS"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V178-P4-INT only; RUN via ODG GO --execute only; grades nothing."
+}

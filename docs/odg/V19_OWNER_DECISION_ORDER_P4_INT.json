@@ -1,0 +1,31 @@
+{
+  "//": "OWNER order-decision record — verbatim transcription (2026-11-25) resolving GO's exact actionable tie {V176-NB3, V178-P2, V178-P4-INT}: the owner names P4's operational completion as the single active priority. NB3 vs P2 not ordered. Grants nothing; changes no score, criterion, threshold or selection rule.",
+  "schema": "odg-owner-order-decision/1",
+  "kind": "OWNER_ORDER_DECISION",
+  "directive": "COMMANDE CTO — REPRISE IMMÉDIATE P4 / EXÉCUTION GO N°2; CTO — DIRECTIVE V14.4 — ACCÉLÉRATION INTELLIGENTE · AUTONOMIE NATIVE · ACHÈVEMENT INTÉGRAL",
+  "date": "2026-11-25",
+  "issuer": "OWNER (CTO)",
+  "source": "owner directives « COMMANDE CTO — REPRISE IMMÉDIATE P4 / EXÉCUTION GO N°2 » and « DIRECTIVE CTO — V14.4 — ACCÉLÉRATION INTELLIGENTE · AUTONOMIE NATIVE · ACHÈVEMENT INTÉGRAL », 2026-11-25 (relayed by the coordinating session)",
+  "quote": [
+    "Une seule priorité active : terminer P4.",
+    "1. Reprendre la branche P4 existante. 2. Terminer son intégration opérationnelle et sa clôture à 100 %."
+  ],
+  "tiedSet": [
+    "V176-NB3",
+    "V178-P2",
+    "V178-P4-INT"
+  ],
+  "order": [
+    "V178-P4-INT"
+  ],
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED with a tiedSet equal (as a set) to this record's tiedSet",
+    "neverAppliesTo": [
+      "strategicSelection",
+      "authorization (RUN still requires the committed inspection bound to the current contract sha)",
+      "ordering NB3 vs P2",
+      "scores / ranking / register"
+    ]
+  },
+  "appliedBy": "GO-ORD-1 (runtime/core/odg-go-cycle.ts)"
+}
