@@ -1,0 +1,164 @@
+{
+  "//": "V178.2 single operational roadmap — VPS engineering environment, repository integration & controlled deployment (owner directive V178.2; aligned on V14.4 as adopted, V12.4 canonical). Read-only facts collected 2026-11-25; nothing installed, deployed or changed.",
+  "schema": "odg-operational-roadmap/1",
+  "date": "2026-11-25",
+  "head": "4585b2e4",
+  "tiers": {
+    "A_sourceOfTruth": "git (Naser636/bmax-v21, branch-protected main: PR + CI) + ODG governance (contracts, owner records, inspections, register, checkpoints)",
+    "B_engineeringStaging": "current VPS (OpenStack/KVM, 8 vCPU, 22 GiB, no GPU) — synthetic/public data ONLY; no client secret, corpus or master key",
+    "C_confidentialProduction": "SEPARATE environment, NOT the current VPS (V178.1 verdict NOT_SOVEREIGN) — candidates ARCH-3 hybrid / ARCH-2 attested EU CVM; no client data until the 9 blocking criteria are met"
+  },
+  "repoState": {
+    "runtimeCoreModules": 804,
+    "coreTests": 884,
+    "binClis": 245,
+    "binTests": 132,
+    "app": "Next.js app (src/app), next 16.4.6 in package.json + node_modules",
+    "runtimeDist": "runtime/dist built (178 js) — test:report now builds it first (#984)",
+    "testHealth": "CI 'build + typecheck + parity + tests' green on main; test:report 874/874 on a fresh checkout (#984); pre-open gate in use (#987/#998)"
+  },
+  "vpsState": {
+    "inventory": "docs/odg/evidence/V178_P0_VPS_INVENTORY.json",
+    "liveServices": [
+      {
+        "name": "next-server (BMAX dashboard)",
+        "version": "next 16.2.9",
+        "releaseDir": "~/odg-releases/rel-20261111T190025Z-95661e1cb92e…",
+        "port": "127.0.0.1:3000",
+        "uptimeDays": 11.8,
+        "supervision": "user systemd (systemctl introspection denied this session)"
+      },
+      {
+        "name": "ollama",
+        "version": "0.35.1",
+        "port": "127.0.0.1:11434"
+      },
+      {
+        "name": "edg-core (Docker)",
+        "port": "127.0.0.1:8080 (deploy/README says 8080 public earlier — now loopback per ss)",
+        "note": "pre-existing, never mutated"
+      }
+    ],
+    "releases": {
+      "current": "rel-20261111T190025Z-95661e1cb92e (root-owned symlink, 2026-11-11)",
+      "previous": "rel-20261111T020508Z-22900dd501f8",
+      "preparedNotActivated": "rel-20261122T023859Z-b8b1aaf5 (commit b8b1aaf5, 579 commits behind main)"
+    },
+    "P0_FINDING": "the live dashboard runs next 16.2.9 while the repo is on 16.4.6; a prior session recorded a known RCE affecting next 16.2.9 (NOT re-verified today against the advisory — must be re-checked) ⇒ the live service is 579 commits and a framework security update behind"
+  },
+  "deliveryChain": {
+    "existing": [
+      "scripts/odg-release.sh build|verify|activate|rollback|status|list — immutable release dir per commit+buildId, artifact completeness, staging-port boot + health, ATOMIC current swap, rollback to previous; no sudo; persistent data outside releases",
+      "deploy/odg-stage-and-verify.sh (stage + verify without restarting services)",
+      "deploy/odg-rollback.sh <git-ref> (no force-push / reset --hard)",
+      "RELEASE.json provenance (releaseId, commit, buildId, node, host)",
+      "deploy/*.service / *.timer candidates (owner/root step)"
+    ],
+    "gaps": [
+      "artifact sha256 manifest + dependency versions + test results + GO authorization record inside RELEASE.json (provenance incomplete)",
+      "SBOM + signature/verification of the release artifact (existing SBOM tooling: multi-ecosystem SBOM memory — reuse)",
+      "GO-selected deployment contract (activation is a governed mission, not an ad-hoc command)",
+      "current symlink ownership (root) may block a user-space atomic swap — verify before activation"
+    ]
+  },
+  "operationalNow": [
+    "native engineering loop (local 7b/3b via Ollama) — NB1 PASS integrated",
+    "GO cycle (select/authorize/dispatch/evidence), one-shot claims, timeouts",
+    "register + selector + outcome feedback (attributable-only)",
+    "Radar frontier pipeline + build engine + campaign",
+    "release pipeline scripts (build/verify — activate needs a decision)",
+    "pre-open gate, test:report, CI"
+  ],
+  "missing": [
+    "GO wave wiring (odg-go-wave not called by odg-go-cycle)",
+    "ODG-designed code integrated = 0 (NB2 FAIL; NB3 not run)",
+    "per-tenant encryption (S1), no-egress client-job profile (S2), executable sovereignty battery (S3)",
+    "confidential production environment (tier C)",
+    "release provenance completeness (sha manifest, SBOM, signature, GO record)"
+  ],
+  "installationsMinimal": {
+    "rule": "install nothing by default; each install = justification, version, licence, compatibility, resources, risk, rollback, acceptance test, GO selection (+ owner for downloads/root)",
+    "neededNow": "NONE — every next step (S1–S3, P1–P2, release provenance, GO wave wiring) runs on the existing toolchain (Node 22, Python 3.14, git, bwrap, Ollama, Docker CLI)",
+    "candidatesLater": [
+      "libsodium/age or SQLCipher binding — check node_modules + Node built-in crypto first (S1 may need none)",
+      "Qwen3.5-9B + Qwen3-Embedding-0.6B (owner-approved downloads, V178-P3/P4)",
+      "sqlite-vec (npm, V178-P4)",
+      "LLVM/Clang/CMake/Rust: NOT needed — no C/C++/Rust sources are built by the repo today (Radar may revisit only if a mission needs it)"
+    ]
+  },
+  "buildOrder": [
+    {
+      "step": 1,
+      "mission": "V178.2-R1 release provenance: extend odg-release.sh/RELEASE.json with sha256 manifest, dependency lock hash, test results, SBOM (reuse existing SBOM tooling) — internal, reversible"
+    },
+    {
+      "step": 2,
+      "mission": "V178.2-R2 build + verify a release from current main on a staging port (user space; does NOT switch current)",
+      "note": "evidence: verify passes; health + buildId"
+    },
+    {
+      "step": 3,
+      "mission": "V178.1-S1/S2/S3 security track (no root)"
+    },
+    {
+      "step": 4,
+      "mission": "V178-P2 measurement then V178-P1 multi-candidate (native autonomy)"
+    },
+    {
+      "step": 5,
+      "mission": "GO wave wiring into odg-go-cycle (from F's library)"
+    },
+    {
+      "step": 6,
+      "mission": "V178.2-R3 ACTIVATE the qualified release (replaces next 16.2.9) — GO-selected deployment mission + owner decision (production service restart; possible root for the symlink) with rollback = odg-release.sh rollback"
+    }
+  ],
+  "permissionsToPrepare": [
+    {
+      "op": "odg-release.sh activate <rel>",
+      "why": "replace the live next 16.2.9 dashboard with a qualified current release",
+      "risk": "dashboard downtime/breakage",
+      "rollback": "odg-release.sh rollback (previous release dir intact)",
+      "needs": "GO selection + owner decision; root only if the root-owned current symlink blocks the swap"
+    },
+    {
+      "op": "systemctl --user status / list-units (read-only)",
+      "why": "complete the inventory (supervision of next/ollama/timers)",
+      "needs": "session permission (denied so far, not bypassed)"
+    },
+    {
+      "op": "docker ps / inspect edg-core (read-only)",
+      "why": "inventory of the pre-existing container",
+      "needs": "session permission"
+    },
+    {
+      "op": "LUKS+Tang, firewall, journald retention",
+      "why": "V178.1 stored-data hardening",
+      "needs": "separate root decision each (scope/risk/rollback in V178_1_SOVEREIGNTY_DOSSIER.json)"
+    }
+  ],
+  "acceptance": {
+    "release": "verify OK on staging port, health 200, buildId matches, provenance manifest complete, rollback drill OK (existing reboot/rollback drill evidence reusable)",
+    "security": "S3 battery passes criteria 1–9 in staging with synthetic data; tier C only after owner sign-off",
+    "autonomy": "see V178_RADAR_CAMPAIGN autonomy criteria (implement pass rate vs 3/6; ODG-designed code integrated; provider-free missions)"
+  },
+  "autonomyMeasures": {
+    "source": "V175_PRODUCTION_METRIC.json + outcome learning + per-mission GO traces",
+    "split": [
+      "missions fully native (GO-dispatched, local model, no provider call)",
+      "missions with provider assistance",
+      "blocked missions + cause",
+      "pass rate / regressions / time / RAM / calls per mission"
+    ],
+    "providerPolicy": "Claude Code only after a documented native incapacity, on a precise scope, with limited rights and independent ODG validation; never controls GO, permissions or governance"
+  },
+  "continuity": {
+    "checkpoint": "docs/odg/evidence/V178_CHECKPOINT_15.json",
+    "resume": "runtime/bin/odg-resume-point.ts --check",
+    "preserved": [
+      "feat/v175-register-criteria-measurement",
+      "governance/f11-operating-contract",
+      "feat/v178-p1-p2-contracts (in progress)"
+    ]
+  }
+}
