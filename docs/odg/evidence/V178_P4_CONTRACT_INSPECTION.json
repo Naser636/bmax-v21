@@ -1,15 +1,15 @@
 {
-  "//": "Independent inspection record of the revised V178-P4 contract — CURRENT binding: revision 3 (ACCEPT). Revision 1 REJECT and revision 2 ACCEPT kept in priorVerdicts.",
+  "//": "Independent inspection record of V178-P4 — CURRENT binding: revision 4 (ACCEPT). Earlier verdicts (rev-1 REJECT, rev-2/3 ACCEPT) kept in priorVerdicts. RUN-1 (2d22b59e) recorded only as an incident.",
   "schema": "odg-contract-inspection/1",
   "scenario": "V178-P4",
   "verdict": "ACCEPT",
-  "contractSha256": "0d6da74d091b62759d1f3a90e2f4dc441b26d25561e8937daa422302f2c776f6",
-  "inspectedHeadSha": "bce49d68680bbc7c6338af4e5a2dc4011d8d0996",
-  "inspectedPr": 1030,
+  "contractSha256": "99277ddd47ffecdf8f01c4e346a874579a8120aeb4cd4fd6657f8ad09f576f33",
+  "inspectedHeadSha": "a8251e9e025bc269a9f37cdf9e2b01c85381db1f",
+  "inspectedPr": 1032,
   "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session)",
   "inspectorSessionId": "a099f63877f7d54f3",
   "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
-  "authorSessionId": "v19-p4-revision3",
+  "authorSessionId": "v19-p4-revision4",
   "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
   "recordedBy": "coordinating provider session (Claude Code)",
   "date": "2026-11-25",
@@ -40,27 +40,33 @@
         "non-blocking: 4 derived register/snapshot records changed in #1027/#1028 not listed in write_set/bindingFiles",
         "runner gates unchanged and correct (REFUSED rc=3, ALREADY_RECORDED, inspection-gated, writes only OUT)"
       ]
+    },
+    {
+      "revision": 3,
+      "inspectedHeadSha": "bce49d68680bbc7c6338af4e5a2dc4011d8d0996",
+      "contractSha256": "0d6da74d091b62759d1f3a90e2f4dc441b26d25561e8937daa422302f2c776f6",
+      "verdict": "ACCEPT"
     }
   ],
   "findings": [
-    "field-by-field diff c356320b→bce49d68: only initialState.missingForPass, ownerGate (required→false + satisfiedBy/At/note) and revisionHistory changed; WORK_ITEM_CONTRACT, authorization (dispatch target, executionAuthorized=false), binding, state byte-identical",
-    "sha recomputed 0d6da74d…; runner sha unchanged = preRegistration.dataset.runnerSha256",
-    "ownerGate.required=false legitimate: V19 ownerGatesLifted names exactly the P4 download + sqlite-vec; state matches (ollama list has qwen3-embedding:0.6b; sqlite-vec pinned 0.1.9)",
-    "new missingForPass factual, no OWN-1 match, removes no constraint",
-    "owner order V19_OWNER_DECISION_ORDER_P4.json: quotes support P4 first in the exact tie {NB3, P2, P4}; NB3 vs P2 unordered; GO-ORD-1 grants no authorization (actionability still required)",
-    "non-blocking: owner records are provider transcriptions of relayed directives (same pattern as earlier records)"
+    "nested diff bce49d68→a8251e9e: only preRegistration.dataset.runnerSha256 and an appended revision 4; AC1–AC6, SET, thresholds, budgets, write_set, authorization unchanged",
+    "runner diff = tsc argv + --incremental false; committed runner sha 05bbe132… = preRegistration",
+    "fix verified in a temp worktree: with the flag tsc writes nothing; without it tsconfig.tsbuildinfo appears (RUN-1 root cause confirmed)",
+    "incident handled honestly: V178_P4_MEMORY_RESULT.json absent; RUN-1 PASS labelled NOT ACCEPTED, outside the experiment path, bound to the old sha",
+    "non-blocking: RUN-2's outcome must stand as recorded even if it differs from RUN-1",
+    "disclosure: the inspector's earlier tsc runs (without the flag) wrote the gitignored tsconfig.tsbuildinfo in the main checkout — not strictly write-free; untracked",
+    "non-blocking: 4 derived register/snapshot records regenerated outside write_set/bindingFiles"
   ],
   "testsRun": [
-    "memory-architecture.test.ts PASS",
-    "odg-memory-hybrid-index.test.ts PASS",
-    "odg-authorization-scope.test.ts PASS",
-    "odg-strategic-register.test.ts PASS",
-    "odg-resume-point.test.ts PASS",
-    "odg-v178-radar-campaign.test.ts PASS",
-    "odg-go.test.ts PASS",
-    "v97-forensic-release-selection.test.ts PASS",
-    "odg-v178-p4-memory-run.ts --selftest PASS",
-    "tsc --noEmit -p tsconfig.json PASS"
+    "memory-architecture PASS",
+    "odg-memory-hybrid-index PASS",
+    "odg-authorization-scope PASS",
+    "odg-strategic-register PASS",
+    "odg-resume-point PASS",
+    "odg-go PASS",
+    "odg-v178-radar-campaign PASS",
+    "p4 runner --selftest PASS",
+    "tsc --noEmit --incremental false PASS (no write)"
   ],
   "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V178-P4 only; RUN via ODG GO --execute only; grades nothing."
 }
