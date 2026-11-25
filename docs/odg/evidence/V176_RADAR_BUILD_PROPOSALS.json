@@ -24,19 +24,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795622018000,
+    "nowEpochMs": 1795627175000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "154f270bebc3cd98687ef00b803d7f31c7944951f7828e5b2d869dd8374c2eac",
-      "epochMs": 1795622018000
+      "sha256": "b566d36844afce1ec1520c1665e1ac75bd0b445cace8fe772842b345c353db3e",
+      "epochMs": 1795627175000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "fb9952b721ee80183d5a0bb50ac69d671faa549c072cbddb0a8114c04ebf58e5",
-      "epochMs": 1795568751000
+      "sha256": "9ed97d61ed9f3a993ad0511793c1a69f182a1d7660ea060ba0e6695a76f0451f",
+      "epochMs": 1795627175000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -2440,7 +2440,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -2492,7 +2492,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -3714,8 +3714,8 @@
     },
     {
       "scenario": "V178-P4",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json: « autoriser les contrats P4 à P7 dans le périmètre défini » / « Intégrer `sqlite-vec` au dépôt avec les dépendances et tests nécessaires. » / « Ne créer aucun système mémoire parallèle. » — internal, loopback-only, €0, synthetic data; no production / client data / exposure",
       "sourceProposal": "V178-P4",
       "conversionBatch": "V178-RADAR-1"
     },

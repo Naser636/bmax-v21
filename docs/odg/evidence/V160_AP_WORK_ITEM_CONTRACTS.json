@@ -3948,8 +3948,8 @@
     {
       "scenario": "V178-P4",
       "title": "local embeddings + SQLite FTS5/vector hybrid per-tenant memory inside the existing memory components",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json: « autoriser les contrats P4 à P7 dans le périmètre défini » / « Intégrer `sqlite-vec` au dépôt avec les dépendances et tests nécessaires. » / « Ne créer aucun système mémoire parallèle. » — internal, loopback-only, €0, synthetic data; no production / client data / exposure",
       "origin": {
         "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
         "sourceProposal": "V178-P4",
@@ -3992,8 +3992,11 @@
         }
       },
       "binding": {
-        "status": "UNBOUND",
-        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 P4 binding session; branch feat/v178-p4-hybrid-memory-index)",
+        "boundAt": "2026-11-25",
+        "note": "write_set ESTIMATE replaced by the concrete set; owner gates (model pull + sqlite-vec npm) lifted by the V19 record and executed (qwen3-embedding:0.6b pulled; sqlite-vec 0.1.9 exact, --ignore-scripts)"
       },
       "initialState": {
         "status": "NOT_STARTED",
@@ -4041,8 +4044,14 @@
         "objective": "local embeddings + SQLite FTS5/vector hybrid per-tenant memory inside the existing memory components",
         "scope": "improve memory-architecture, ollama-provider only; no network, no install, no canonical-authority change",
         "write_set": [
+          "runtime/core/odg-memory-hybrid-index.ts",
+          "runtime/core/odg-memory-hybrid-index.test.ts",
           "runtime/core/memory-architecture.ts",
-          "runtime/core/memory-architecture.test.ts"
+          "runtime/core/memory-architecture.test.ts",
+          "runtime/bin/odg-v178-p4-memory-run.ts",
+          "package.json",
+          "package-lock.json",
+          "docs/odg/evidence/V178_P4_MEMORY_RESULT.json"
         ],
         "write_set_estimate": {
           "estimate": true,
@@ -4061,7 +4070,8 @@
           "AC2 test 'V178-P4/AC2' (file: acceptance_tests[1]): RRF fusion is deterministic for fixed inputs",
           "AC3 test 'V178-P4/AC3' (file: acceptance_tests[2]): two tenants never read each other's file",
           "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
-          "AC5 tsc clean; each touched test file passes run one at a time"
+          "AC5 tsc clean; each touched test file passes run one at a time",
+          "AC6 pre-registered LIVE qualification (runtime/bin/odg-v178-p4-memory-run.ts SET: 10 synthetic records, 6 queries, qwen3-embedding:0.6b): hybrid recall@3 ≥ 5/6; FTS-only and vector-only recall@3 recorded descriptively; not measurable ⇒ NOT_MEASURED (never PASS)"
         ],
         "acceptance_tests": [
           {
@@ -4090,8 +4100,83 @@
           "test output per file",
           "recomputed before/after metric record",
           "independent inspection verdict"
-        ]
-      }
+        ],
+        "budgets": {
+          "embedModel": "qwen3-embedding:0.6b",
+          "records": 10,
+          "queries": 6,
+          "maxEmbedCalls": 20,
+          "dispatchTimeoutMs": 900000,
+          "network": "loopback Ollama /api/embed only",
+          "providerCalls": 0
+        },
+        "preRegistration": {
+          "metric": "hybrid recall@3 over the fixed SET (6 queries with one expected record each) + AC1–AC5 pass/fail",
+          "baseline": "beforeMetric semanticRetrieval = ABSENT in runtime/core/memory-architecture.ts (no semantic retrieval existed); FTS-only and vector-only recall@3 measured in the SAME run as descriptive controls",
+          "dataset": {
+            "source": "runtime/bin/odg-v178-p4-memory-run.ts SET (10 synthetic records, 6 queries; frozen in the runner)",
+            "runnerSha256": "de5c4fafecaa29cb7060a7b5a8ed203405accf23d59febe64d11fb1da1354842",
+            "embedModel": "qwen3-embedding:0.6b",
+            "queryInstruction": "odg-memory-hybrid-index QUERY_INSTRUCTION"
+          },
+          "decisionRule": "PASS ⇔ AC1–AC6 all met; any criterion not measurable ⇒ NOT_MEASURED (never PASS); otherwise FAIL",
+          "thresholds": {
+            "hybridRecallAt3Min": 5,
+            "of": 6
+          }
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json (V19 VPS equipment)",
+        "date": "2026-11-25",
+        "transcribedBy": "PROVIDER (Claude Code, V19 P4 binding session) — bound through the declared family V19-VPS-EQUIPMENT (odg-authorization-scope OWNER_SOURCES)",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "one GO-dispatched run of the declared target only, after an independent (distinct-session) inspection ACCEPT of this bound contract is committed; loopback Ollama /api/embed only (qwen3-embedding:0.6b already pulled); synthetic records only; writes only its result file",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v178-p4-memory-run.ts",
+            "args": [
+              "docs/odg/evidence/V178_P4_MEMORY_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V178_P4_MEMORY_RESULT.json"
+            ]
+          }
+        },
+        "dispatchTimeoutMs": 900000,
+        "inspectionRecord": "docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-25",
+          "author": "PROVIDER (Claude Code, V19 P4 binding session; branch feat/v178-p4-hybrid-memory-index)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P4/AC1' (file: acceptance_tests[0]): FTS5 leg returns exact-term matches ranked by bm25 (offline test)",
+            "AC2 test 'V178-P4/AC2' (file: acceptance_tests[1]): RRF fusion is deterministic for fixed inputs",
+            "AC3 test 'V178-P4/AC3' (file: acceptance_tests[2]): two tenants never read each other's file",
+            "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC5 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC5 as converted by RB-CONV-1 (batch V178-RADAR-1), verbatim and UNCHANGED; AC6 added (the GO-dispatched run's pre-registered live criterion)",
+          "change": [
+            "state PROPOSED → AUTHORIZED_FOR_REVISION bound to the V19 VPS-equipment record (family V19-VPS-EQUIPMENT)",
+            "write_set ESTIMATE replaced by the concrete set (new derived-index module + canonical entry point memory-architecture.semanticRetrieval)",
+            "AC6 + budgets fixed before any run",
+            "dispatch target runtime/bin/odg-v178-p4-memory-run.ts → docs/odg/evidence/V178_P4_MEMORY_RESULT.json"
+          ],
+          "reason": "make V178-P4 executable as written: AC1–AC3 implemented in runtime/core/memory-architecture.test.ts (V178-P4/AC1..AC3) through the canonical layer; a DERIVED index (no second memory system)",
+          "justification": "owner record V19 authorizes P4 within its defined scope; criteria, thresholds and budgets fixed before any run (no experiment run yet)",
+          "revisionAuthorSessionId": "v19-p4-binding"
+        }
+      ]
     },
     {
       "scenario": "V178-P5",

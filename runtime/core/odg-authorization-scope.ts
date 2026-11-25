@@ -77,6 +77,9 @@ const STEP_SEQUENCES: any = Object.freeze({
   // (« la conversion des propositions Radar en contrats »): same evidence-bound sequence.
   "V178-P1": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
   "V178-P2": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  // V17.8 / V19 — V178-P4 (hybrid per-tenant memory) ⇐ owner record docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json
+  // (« autoriser les contrats P4 à P7 dans le périmètre défini »): same evidence-bound sequence.
+  "V178-P4": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
 });
 const EXECUTION_STEPS = Object.freeze(["RUN_CONTROLLED_EXPERIMENTS"]);
 const STEP_KIND: any = Object.freeze({
@@ -124,6 +127,9 @@ const OWNER_SOURCES: any = Object.freeze({
   // conversion des propositions Radar en contrats »). P3–P7 stay PROPOSED and unbound (no entry ⇒ nothing derived for them).
   "V178-P1": Object.freeze({ re: /V176_OWNER_AUTHORIZATION_BUILD_MISSIONS\.json/, label: "V176 build missions (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json)", family: "V176-BUILD-MISSIONS" }),
   "V178-P2": Object.freeze({ re: /V176_OWNER_AUTHORIZATION_BUILD_MISSIONS\.json/, label: "V176 build missions (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json)", family: "V176-BUILD-MISSIONS" }),
+  // V19 — the VPS-equipment contracts bind to the V19 owner record through the declared family V19-VPS-EQUIPMENT (P4 first;
+  // P3/P5/P6/P7 join only when each is bound — no entry ⇒ nothing derived for them).
+  "V178-P4": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT\.json/, label: "V19 VPS equipment (docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json)", family: "V19-VPS-EQUIPMENT" }),
 });
 function ownerSourceCheck(scenario: string, source: string): any {
   const own = OWNER_SOURCES[scenario];

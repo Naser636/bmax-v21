@@ -1,0 +1,48 @@
+{
+  "//": "OWNER authorization record — verbatim transcription (2026-11-25) by the coordinating provider session of the owner directives « CTO — V19 EXECUTION DIRECTIVE — COMPLETE VPS EQUIPMENT · ODG INTEGRATION · NATIVE AUTONOMY » and « CTO — SESSION CLOSURE CP20 & VPS PRIORITY EXECUTION ». Authorization SOURCE for the V178-P3…P7 contracts (family V19-VPS-EQUIPMENT in odg-authorization-scope OWNER_SOURCES). It never self-inspects: each contract still needs its revision bound + a DISTINCT-session inspection ACCEPT before any RUN; never PASS by itself; never production, public exposure, client data or purchase.",
+  "schema": "odg-owner-authorization/1",
+  "kind": "OWNER_AUTHORIZATION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-25",
+  "directives": [
+    "CTO — V19 EXECUTION DIRECTIVE — COMPLETE VPS EQUIPMENT · ODG INTEGRATION · NATIVE AUTONOMY (base main b840ebce)",
+    "CTO — SESSION CLOSURE CP20 & VPS PRIORITY EXECUTION"
+  ],
+  "quote": [
+    "Le propriétaire a déjà donné son autorisation générale et les autorisations nécessaires pour poursuivre les travaux techniques prévus.",
+    "Ne plus demander une nouvelle confirmation générale pour : télécharger et installer les modèles retenus ; mettre à jour Ollama si une version supérieure est techniquement nécessaire ; installer les dépendances et outils de développement nécessaires ; effectuer les configurations techniques et permissions ciblées ; autoriser les contrats P4 à P7 dans le périmètre défini ; effectuer les inspections indépendantes prévues ; poursuivre les missions NB3 et P2 sous l'autorité de GO.",
+    "Respecter les limites techniques de l'hôte, les permissions réellement disponibles, la sécurité, la réversibilité et les règles de gouvernance.",
+    "Intégrer le modèle dans `odg-model-router` uniquement si ses performances le justifient.",
+    "Intégrer `sqlite-vec` au dépôt avec les dépendances et tests nécessaires.",
+    "Ne créer aucun système mémoire parallèle.",
+    "Pas de déploiement commercial ou de production.",
+    "Pas de données confidentielles clients sur l'ancien VPS.",
+    "Une mission ne passe à ACCEPTED que si les critères contractuels et les preuves sont satisfaits."
+  ],
+  "covers": {
+    "contracts": [
+      "V178-P3",
+      "V178-P4",
+      "V178-P5",
+      "V178-P6",
+      "V178-P7"
+    ],
+    "steps": [
+      "REVISE_CONTRACT",
+      "INSPECT_REVISED_CONTRACT",
+      "RUN_CONTROLLED_EXPERIMENTS",
+      "VALIDATE_CRITERIA"
+    ],
+    "ownerGatesLifted": [
+      "V178-P3 model download (qwen3.5:9b — pulled 2026-11-25)",
+      "V178-P4 model download (qwen3-embedding:0.6b — pulled 2026-11-25) + npm dependency sqlite-vec (0.1.9, exact)",
+      "Ollama upgrade only if technically necessary (NOT necessary: qwen3.5:9b requires 0.30.0, host 0.35.1)"
+    ]
+  },
+  "neverCovers": [
+    "NB3/P2 ORDER (GO-ORD-1 needs an explicit owner order naming the item)",
+    "production deployment, public exposure, client confidential data on this VPS, purchases",
+    "self-inspection (an inspection must come from a distinct session)",
+    "PASS/ACCEPTED without the contract's criteria and evidence"
+  ]
+}

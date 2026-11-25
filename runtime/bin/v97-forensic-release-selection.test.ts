@@ -31,9 +31,11 @@ function main(): void {
     // onto the e84a0cf2 baseline BEFORE comparing. The control is PRESERVED, not bypassed: any dependency drift NOT in
     // the authorized record (new dep, removed dep, or a version differing from the authorized 'to') still fails here.
     const authz = (() => { try { return JSON.parse(fs.readFileSync(path.join(DD, "supply-chain-authorized-deltas.json"), "utf8")); } catch { return { dependencies: {}, devDependencies: {} }; } })();
-    for (const [k, v] of Object.entries(authz.dependencies || {})) { if (a.dependencies && a.dependencies[k] !== undefined && v && typeof (v as any).to === "string") a.dependencies[k] = (v as any).to; }
-    for (const [k, v] of Object.entries(authz.devDependencies || {})) { if (a.devDependencies && a.devDependencies[k] !== undefined && v && typeof (v as any).to === "string") a.devDependencies[k] = (v as any).to; }
-    return JSON.stringify(a.dependencies) === JSON.stringify(b.dependencies) && JSON.stringify(a.devDependencies) === JSON.stringify(b.devDependencies);
+    // V19 SC-ADD-1: an owner-authorized NEW dependency is recorded with from:null + an exact 'to' + authorizedBy/record; any
+    // unrecorded addition still fails. Comparison is key-order independent (sorted), versions compared exactly.
+    const apply = (base: any, deltas: any) => { const o = { ...(base || {}) }; for (const [k, v] of Object.entries(deltas || {})) { const d: any = v; if (!d || typeof d.to !== "string") continue; if (o[k] !== undefined) o[k] = d.to; else if (d.from === null && typeof d.authorizedBy === "string" && typeof d.record === "string") o[k] = d.to; } return o; };
+    const sorted = (o: any) => JSON.stringify(Object.keys(o || {}).sort().map((k) => [k, o[k]]));
+    return sorted(apply(a.dependencies, authz.dependencies)) === sorted(b.dependencies) && sorted(apply(a.devDependencies, authz.devDependencies)) === sorted(b.devDependencies);
   } catch { return false; } })();
   check("§2 LIVE: runtime deps match e84a0cf2 + OWNER-AUTHORIZED deltas (next 16.4.6 security); any other drift fails", liveDepsIdentical === true && d.timeline.runtimeDepsIdentical === true);
   check("§2 timeline: 800+ commits since Oct-28, 0 migrations, package.json change is only the gate list", d.timeline.commits > 800 && d.timeline.migrations === 0 && /test:report gate list/.test(d.timeline.note));
