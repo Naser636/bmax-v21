@@ -467,7 +467,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
   }
 
   // 3 PROBLEMS_OPPORTUNITIES
-  r = await run("PROBLEMS_OPPORTUNITIES", () => {
+  r = await run("PROBLEMS_OPPORTUNITIES", async () => {
     const s = ctx.state;
     const register = REG.buildRegister(s.sources);
     ctx.register = register;
@@ -475,7 +475,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     const g = s.radar && s.radar.grant && s.radar.grant.grant ? s.radar.grant.grant : null;
     const tn = now();
     const grantActive = !!g && g.authorized === true && Number.isFinite(g.issuedMs) && Number.isFinite(g.expiresMs) && tn >= g.issuedMs && tn < g.expiresMs;
-    const k = ports.knowledge();
+    const k = await ports.knowledge();   // MEM-INT-1: may be async (hybrid memory indexing); sync ports unchanged
     ctx.knowledge = k;
     const claims = arr(k && k.claims);
     const decision = {
@@ -484,7 +484,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       blockedOrOwnerGated: register.items.filter((it: any) => it.status === "BLOCKED" || it.requiresOwnerAuthorization === true).map((it: any) => it.id),
       executedPartial: register.items.filter((it: any) => it.status === "EXECUTED_PARTIAL").map((it: any) => it.id),
       radar: { grant: g ? { authorized: g.authorized === true, issuedIso: g.issuedIso, expiresIso: g.expiresIso, allowedDomains: arr(g.allowedDomains), active: grantActive } : null, admissionSummary: s.radar && s.radar.admission ? s.radar.admission.summary : null, liveEgress: "NONE (GO never sets ODG_RADAR_LIVE; pinned collections only)" },
-      knowledge: { collection: k && k.collection, ok: !!(k && k.ok), claims: claims.map((c: any) => ({ id: c.id, epistemic: c.epistemic, isFact: c.isFact === true, usableFor: c.useAuthorization, admissibleAsFact: c.admissible ? c.admissible.trusted === true : false, admissibleVerdict: c.admissible ? c.admissible.verdict : null })) },
+      knowledge: { collection: k && k.collection, ok: !!(k && k.ok), claims: claims.map((c: any) => ({ id: c.id, epistemic: c.epistemic, isFact: c.isFact === true, usableFor: c.useAuthorization, admissibleAsFact: c.admissible ? c.admissible.trusted === true : false, admissibleVerdict: c.admissible ? c.admissible.verdict : null })) , ...(k && k.memory ? { memory: k.memory } : {}) },
     };
     return { status: "DONE", inputs: { register: sha(register), cp8: sha(cp8.gaps || null), grant: sha(g), knowledge: sha(decision.knowledge) }, decision, rationale: "problems = CP8 gaps + blocked/owner-gated register items; opportunities = selectable register items + usable (not fact-admitted) pinned knowledge; Radar read-only" };
   });
@@ -547,14 +547,19 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
   const skip = (why: string) => () => ({ status: "SKIPPED", inputs: null, decision: { skipped: why }, rationale: why });
 
   // 5 DECOMPOSE
-  r = await run("DECOMPOSE", item ? () => {
+  r = await run("DECOMPOSE", item ? async () => {
     const contract = contractOf(ctx.state, item.id);
     ctx.contract = contract;
     const spec = specOf(item, contract);
     if (!spec) return { status: "NOT_MEASURED", inputs: { item: item.id }, decision: { rule: SPEC_RULE, strategy: null, reason: "no WORK_ITEM_CONTRACT ⇒ no declared scope to decompose" }, rationale: "decomposition NOT_MEASURED (never default-filled)" };
     const c = DP.chooseStrategy(spec);
     ctx.decomposition = c;
-    return { status: "DONE", inputs: spec, decision: { rule: SPEC_RULE, strategy: c.strategy, complexity: c.complexity, reason: c.reason, parts: arr(c.architecture).map((a: any) => a.path) }, rationale: `decomposition-planner: ${c.strategy} (${c.complexity})` };
+    // MEM-INT-1: contextual reuse — when the memory port exists, recall the TRUSTED indexed memories most relevant to the item
+    // (hybrid FTS5 + vector RRF over records memory-architecture.accessMemory trusted). Absent port ⇒ decision unchanged.
+    let contextRecall: any = null;
+    if (typeof ports.memoryRecall === "function") { try { contextRecall = await ports.memoryRecall(String(item.title || item.id)); } catch (e: any) { contextRecall = { status: "NOT_MEASURED", reason: String((e && e.message) || e) }; } }
+    ctx.contextRecall = contextRecall;
+    return { status: "DONE", inputs: spec, decision: { rule: SPEC_RULE, strategy: c.strategy, complexity: c.complexity, reason: c.reason, parts: arr(c.architecture).map((a: any) => a.path), ...(contextRecall ? { contextRecall } : {}) }, rationale: `decomposition-planner: ${c.strategy} (${c.complexity})` };
   } : skip("no selected item (selection halted)"));
   if (stopped(r)) return stopped(r);
 

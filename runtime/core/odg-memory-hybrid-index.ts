@@ -26,7 +26,7 @@ const QUERY_INSTRUCTION = "Instruct: Given a question, retrieve the stored ODG m
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
 function sha(s: string): string { return crypto.createHash("sha256").update(s).digest("hex"); }
-function textOf(rec: any): string | null { const t = [rec.text, rec.summary, rec.content].find((x: any) => typeof x === "string" && x.trim()); return t ? String(t) : null; }
+function textOf(rec: any): string | null { const t = [rec.text, rec.summary, rec.content, rec.claim].find((x: any) => typeof x === "string" && x.trim()); return t ? String(t) : null; }
 
 /* vecExtensionPath() — the vec0 loadable from the installed sqlite-vec npm package (platform optional dependency). */
 function vecExtensionPath(): string | null {
