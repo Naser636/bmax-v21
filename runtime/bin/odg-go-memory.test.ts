@@ -25,6 +25,7 @@ const fake = async (t: string[]) => t.map((s) => { const v = new Array(D).fill(0
   const r = await m.recall("keep code review changes small");
   check(r.status === "RECALLED" && Array.isArray(r.facts) && Array.isArray(r.context) && r.context.every((h: any) => h.tier === "CONTEXT_UNVERIFIED") && r.facts.every((h: any) => h.tier === "FACT") && /NEVER as a fact/.test(r.contextNote),
     "memoryRecall separates FACT and CONTEXT_UNVERIFIED hits, with the never-a-fact note");
+  check([...r.facts, ...r.context].every((h: any) => typeof h.status === "string" && typeof h.provenance === "string" && Number.isFinite(h.learnedAt) && Number.isFinite(h.validUntil) && Number.isFinite(h.confidence)), "recalled hits carry the canonical record's status, provenance, dates and confidence (owner TIER-1)");
   const k2 = await B.knowledge(ROOT, Date.now(), B.memoryPort(dir, fake));
   check(k2.memory.embedded === 0 && k2.memory.indexed === k.memory.indexed, "persistence: a second cycle on the same index re-embeds nothing");
   // the REAL go-cycle: DECOMPOSE records contextRecall when the port exists (truth lock / claims stubbed — read-only DRY)
