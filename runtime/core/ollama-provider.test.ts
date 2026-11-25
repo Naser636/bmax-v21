@@ -29,6 +29,14 @@ let pass = 0; const ok = (n, c) => { assert.ok(c, n); console.log("  ok -", n); 
     await O.generate({ model: "m", prompt: "p", post: cp }); ok("generate: no keep_alive by default (behaviour unchanged)", !("keep_alive" in cap));
     await O.generate({ model: "m", prompt: "p", keepAlive: "10m", post: cp }); ok("generate: keepAlive passed through to keep_alive", cap.keep_alive === "10m");
     await O.generate({ model: "m", prompt: "p", keepAlive: "", post: cp }); ok("generate: empty keepAlive ignored (fail-safe)", !("keep_alive" in cap)); }
+  // THINK-1 (V17.8 P3): optional think passthrough for thinking-capable models; absent ⇒ payload unchanged
+  { let cap: any; const cp = async (_p: any, payload: any) => { cap = payload; return { ok: true, json: { response: "x" } }; };
+    await O.generate({ model: "m", prompt: "p", post: cp }); ok("THINK-1 generate: no think key by default (payload unchanged)", !("think" in cap));
+    await O.generate({ model: "m", prompt: "p", think: false, post: cp }); ok("THINK-1 generate: think:false passed through", cap.think === false);
+    await O.generate({ model: "m", prompt: "p", think: "no" as any, post: cp }); ok("THINK-1 generate: non-boolean think ignored (fail-safe)", !("think" in cap));
+    let scap: any; const sp = async (_p: any, payload: any) => { scap = payload; return { ok: false, reason: "stub" }; };
+    await O.generateMeasured({ model: "m", prompt: "p", stream: sp }); ok("THINK-1 generateMeasured: no think key by default", !("think" in scap));
+    await O.generateMeasured({ model: "m", prompt: "p", think: false, stream: sp }); ok("THINK-1 generateMeasured: think:false passed through", scap.think === false); }
   ok("generate fail-closed when response field missing", (await O.generate({ prompt: "x", post: async () => ({ ok: true, json: {} }) })).ok === false);
 
   // (4) parseEditsProposal: fenced JSON.

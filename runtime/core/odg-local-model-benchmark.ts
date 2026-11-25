@@ -391,6 +391,8 @@ async function runBenchmark(cfg: any = {}): Promise<any> {
   if (!ts.ok) return { ok: false, reason: ts.reason };
   const trialsN = Number.isInteger(cfg.trials) && cfg.trials > 0 ? cfg.trials : 3;
   const options = isObj(cfg.options) ? { ...cfg.options } : { ...DEFAULT_OPTIONS };
+  // THINK-1 (V17.8 P3): optional think passthrough; absent ⇒ calls unchanged (P2 pre-registered profile unaffected)
+  const thinkArg = typeof cfg.think === "boolean" ? { think: cfg.think } : {};
   const log = typeof cfg.log === "function" ? cfg.log : () => {};
   const loadavg = typeof cfg.loadavg === "function" ? cfg.loadavg : () => Math.round(require("os").loadavg()[0] * 100) / 100;
   const samplerFactory = typeof cfg.samplerFactory === "function" ? cfg.samplerFactory : () => createProcSampler();
@@ -404,7 +406,7 @@ async function runBenchmark(cfg: any = {}): Promise<any> {
   const capOk = (): boolean => { if (caps.maxCalls !== null && caps.calls >= caps.maxCalls) { caps.capHit = caps.capHit || "maxCalls"; return false; } if (deadline !== null && nowMs() > deadline) { caps.capHit = caps.capHit || "wallMs"; return false; } caps.calls++; return true; };
   const ver = await P.ollamaVersion();
   const listed = await P.listModels();
-  const meta = { ollamaVersion: ver.ok ? ver.version : null, daemonUp: listed.ok === true, taskSetVersion: ts.version, taskSetSha256: ts.sha256, trialsPerTask: trialsN, options, keepAlive: cfg.keepAlive || "10m", parallelism: 1 };
+  const meta = { ...thinkArg, ollamaVersion: ver.ok ? ver.version : null, daemonUp: listed.ok === true, taskSetVersion: ts.version, taskSetSha256: ts.sha256, trialsPerTask: trialsN, options, keepAlive: cfg.keepAlive || "10m", parallelism: 1 };
   const models: any[] = []; const trials: any[] = []; const coldLoads: any = {};
   for (const id of arr(cfg.models)) {
     const tag = listed.ok ? arr(listed.models).find((m: any) => m.id === id) : null;
@@ -412,7 +414,7 @@ async function runBenchmark(cfg: any = {}): Promise<any> {
     const show = await P.showModel(id);
     models.push({ id, available: true, digest: tag.digest, sizeBytes: tag.sizeBytes, quantization: (show.ok && show.details.quantization) || tag.quantization, parameterSize: (show.ok && show.details.parameterSize) || tag.parameterSize, parameterCount: show.ok ? show.parameterCount : null, contextLength: show.ok && show.contextLength !== null ? show.contextLength : tag.contextLength, family: tag.family, format: tag.format });
     if (!capOk()) { log(`[${id}] cap ${caps.capHit} — not started`); break; }
-    const warm = await P.generateMeasured({ model: id, prompt: "Reply with the single word OK.", options: { ...options, num_predict: 4 }, keepAlive: meta.keepAlive, timeoutMs: cfg.timeoutMs });
+    const warm = await P.generateMeasured({ model: id, prompt: "Reply with the single word OK.", options: { ...options, num_predict: 4 }, keepAlive: meta.keepAlive, timeoutMs: cfg.timeoutMs, ...thinkArg });
     coldLoads[id] = warm.ok ? { totalMs: warm.totalMs, loadMs: warm.loadDurationNs !== null ? Math.round(warm.loadDurationNs / 1e6) : null } : { error: warm.reason };
     log(`[${id}] cold load ${JSON.stringify(coldLoads[id])}`);
     for (const task of tasks) {
@@ -421,7 +423,7 @@ async function runBenchmark(cfg: any = {}): Promise<any> {
         const sampler = samplerFactory();
         const hostLoad1m = loadavg();
         sampler.start();
-        const g = await P.generateMeasured({ model: id, prompt: task.prompt, options, keepAlive: meta.keepAlive, timeoutMs: cfg.timeoutMs });
+        const g = await P.generateMeasured({ model: id, prompt: task.prompt, options, keepAlive: meta.keepAlive, timeoutMs: cfg.timeoutMs, ...thinkArg });
         const res = sampler.stop();
         const rec: any = { model: id, taskId: task.id, taskClass: task.taskClass, trial: k, generated: g.ok === true };
         if (!g.ok) { rec.error = g.reason; rec.unavailable = !!g.unavailable; rec.timedOut = !!g.timedOut; rec.grade = { passed: false, measured: !g.unavailable, compile: { applicable: CODE_GRADERS.includes(task.grader), ok: false }, structured: { applicable: JSON_GRADERS.includes(task.grader), ok: false }, strict: { applicable: task.grader === "strict-schema", ok: false }, reason: "generation failed: " + g.reason }; }

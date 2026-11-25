@@ -24,14 +24,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795612824000,
+    "nowEpochMs": 1795622018000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "3269751fd3041e6681b9a39948ac56cabbb5c8f60402275491fe4d28c395e3c8",
-      "epochMs": 1795612824000
+      "sha256": "154f270bebc3cd98687ef00b803d7f31c7944951f7828e5b2d869dd8374c2eac",
+      "epochMs": 1795622018000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -1525,7 +1525,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -1585,7 +1585,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -1645,7 +1645,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -1706,7 +1706,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -1768,7 +1768,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -1828,7 +1828,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -1887,7 +1887,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -1947,7 +1947,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -2555,7 +2555,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 0,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },

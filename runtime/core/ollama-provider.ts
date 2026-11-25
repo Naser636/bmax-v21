@@ -84,6 +84,9 @@ async function generate(input: any = {}): Promise<any> {
   // avoiding a ~reload per mission on CPU. Default omitted ⇒ Ollama's own default; behaviour unchanged when not set.
   // (Measured: forcing num_thread is NOT exposed — num_thread=8 benchmarked SLOWER than Ollama's default, so rejected.)
   if (typeof input.keepAlive === "string" && input.keepAlive) payload.keep_alive = input.keepAlive;
+  // THINK-1 (V17.8 P3): optional Ollama `think` passthrough for thinking-capable models (qwen3.5 defaults to think=true and
+  // spends num_predict on hidden reasoning ⇒ empty `response`). Absent ⇒ payload byte-identical to before.
+  if (typeof input.think === "boolean") payload.think = input.think;
   let r: any; try { r = await post("/api/generate", payload, { timeoutMs: input.timeoutMs || 120000 }); } catch (e: any) { r = { ok: false, reason: (e && e.message) || "generate error" }; }
   if (!r || !r.ok) return { ok: false, reason: (r && r.reason) || "generation failed" };
   const text = r.json && typeof r.json.response === "string" ? r.json.response : null;
@@ -278,6 +281,7 @@ async function generateMeasured(input: any = {}): Promise<any> {
   const options = isObj(input.options) ? { ...input.options } : { temperature: 0 };
   const payload: any = { model: input.model, prompt: input.prompt, stream: true, options };
   if (typeof input.keepAlive === "string" || typeof input.keepAlive === "number") payload.keep_alive = input.keepAlive;
+  if (typeof input.think === "boolean") payload.think = input.think;   // THINK-1 (absent ⇒ unchanged)
   let r: any; try { r = await stream("/api/generate", payload, { timeoutMs: input.timeoutMs || 180000, now: input.now }); } catch (e: any) { r = { ok: false, reason: (e && e.message) || "generate error" }; }
   if (!r || !r.ok) {
     const reason = (r && r.reason) || "generation failed";
