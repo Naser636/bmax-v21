@@ -1,11 +1,11 @@
 {
-  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 R2C (batch V176-R2C-1, owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json): RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.6 NB3: V176-NB3 (owner V176 build missions, docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS; NB2's target + oracle with the pre-registered DIV-1 repair-diversity lever) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6 F: F moved PROPOSED → AUTHORIZED_FOR_REVISION under the owner build-missions record (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json) and revised (REVISE_CONTRACT): authorization block, write_set 1:1 replacement, preRegistration (GO parallel-wave capability on a deterministic fixture), dispatch target; revision 2 after inspection REJECT (full write_set, FIXTURE-CAP-1 PARTIAL cap, GO wiring stated as remaining step); F's criteria verbatim; every other entry unchanged.",
+  "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 R2C (batch V176-R2C-1, owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json): RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.6 NB3: V176-NB3 (owner V176 build missions, docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS; NB2's target + oracle with the pre-registered DIV-1 repair-diversity lever) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6 F: F moved PROPOSED → AUTHORIZED_FOR_REVISION under the owner build-missions record (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json) and revised (REVISE_CONTRACT): authorization block, write_set 1:1 replacement, preRegistration (GO parallel-wave capability on a deterministic fixture), dispatch target; revision 2 after inspection REJECT (full write_set, FIXTURE-CAP-1 PARTIAL cap, GO wiring stated as remaining step); F's criteria verbatim; every other entry unchanged. V17.8 Radar campaign (batch V178-RADAR-1, owner record owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)): V178-P1, V178-P2, V178-P3, V178-P4, V178-P5, V178-P6, V178-P7 appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 24,
+  "count": 31,
   "initialStatusCounts": {
     "PASS": 2,
     "PARTIAL": 14,
-    "NOT_STARTED": 8
+    "NOT_STARTED": 15
   },
   "contracts": [
     {
@@ -2982,6 +2982,1038 @@
           "revisionAuthorSessionId": "nb3-v176"
         }
       ]
+    },
+    {
+      "scenario": "V178-P1",
+      "title": "multi-candidate generation (n diverse samples per design) with execution-based selection whose criteria are independent of generation, in the native design pipeline",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "V178-P1",
+        "sourceRecord": "docs/odg/evidence/V178_RADAR_CAMPAIGN.json",
+        "sourceRecordSha256AtConversion": "99f530dff4f562fdc126ff2cfddbedf2dd4f814fa06952cc216962fff80101e3",
+        "conversionBatch": "V178-RADAR-1",
+        "ownerRecord": "owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)",
+        "signals": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=C-02]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=C-04]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=C-12]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=I-04]"
+        ],
+        "selection": {
+          "rank": 1,
+          "evidenceScore": null,
+          "uncertainty": null,
+          "upperBound": null,
+          "tiedWith": [],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 2,
+          "maxTransitiveDependents": 5,
+          "perComponent": [
+            {
+              "component": "odg-native-design-pipeline",
+              "inCoreGraph": true,
+              "directConsumers": 0,
+              "transitiveDependents": 0
+            },
+            {
+              "component": "odg-native-build-sandbox",
+              "inCoreGraph": true,
+              "directConsumers": 2,
+              "transitiveDependents": 5
+            },
+            {
+              "component": "local-model-generator",
+              "inCoreGraph": true,
+              "directConsumers": 1,
+              "transitiveDependents": 1
+            }
+          ],
+          "rationale": "a change to odg-native-design-pipeline/odg-native-build-sandbox/local-model-generator reaches ≤ 5 transitive dependents (2 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+        "asOf": "base 9a2c5eeb (V17.8 Radar campaign)"
+      },
+      "proposal": {
+        "problem": "implement is PROBATION 3/6 for qwen2.5-coder:7b (V155); the pipeline implements each design once at temperature 0, so the selector sees one candidate per design",
+        "solution": "sampleCandidates(spec, {n, schedule}) draws n candidates from a PRE-DECLARED (temperature, seed) schedule; selectByExecution(candidates, visibleCases) runs each in the sandbox and ranks by visible-case passes, typecheck, diff size — never by model self-assessment; acceptance stays the host-graded HIDDEN oracle",
+        "components": [
+          "runtime/core/odg-native-design-pipeline.ts",
+          "runtime/core/odg-native-build-sandbox.ts",
+          "runtime/core/local-model-generator.ts"
+        ],
+        "interfaces": [
+          "sampleCandidates(spec, { n, schedule }) → candidates[] (each with model, temperature, seed, sha256)",
+          "selectByExecution(candidates, visibleCases, opts) → { chosen, ranking, reasons } (pure over sandbox results)"
+        ],
+        "measurableBenefit": "implement pass rate above 3/6 at a recorded call budget (measured later by the qualification scenario)",
+        "resources": "no install; n× model calls per design (7b implement p50 ≈ 23 s/call)",
+        "risks": "call cost grows with n; visible/hidden split must not leak hidden cases",
+        "buildCommand": "npx tsx runtime/core/odg-native-design-pipeline.test.ts",
+        "rankBasis": "provider-declared order from the owner brief; GO keeps selection authority (register ranks independently)"
+      },
+      "beforeMetric": [
+        {
+          "source": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[qwen2.5-coder:7b].perClass.implement.passRate",
+          "name": "implement.passRate",
+          "value": "3/6"
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "multi-candidate generation (n diverse samples per design) with execution-based selection whose criteria are independent of generation, in the native design pipeline",
+        "scope": "improve odg-native-design-pipeline, odg-native-build-sandbox, local-model-generator only; no network, no install, no canonical-authority change",
+        "write_set": [
+          "runtime/core/odg-native-design-pipeline.ts",
+          "runtime/core/odg-native-design-pipeline.test.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared V178 estimate — to be made concrete at binding",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network, no install, no protected path unless the owner-gated step is authorized"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'V178-P1/AC1' (file: acceptance_tests[0]): with a fake transport, n candidates are drawn exactly from the declared schedule (undeclared options refused)",
+          "AC2 test 'V178-P1/AC2' (file: acceptance_tests[1]): selection uses only visible-case results: changing hidden cases never changes the choice",
+          "AC3 test 'V178-P1/AC3' (file: acceptance_tests[2]): a candidate touching a test/evaluator path is excluded before selection",
+          "AC4 test 'V178-P1/AC4' (file: acceptance_tests[3]): with fixed transport outputs the selection is deterministic",
+          "AC5 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC6 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V178-P1/AC1",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "V178-P1/AC2",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC2"
+          },
+          {
+            "id": "V178-P1/AC3",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC3"
+          },
+          {
+            "id": "V178-P1/AC4",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC4"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an install or download is needed that is not authorized"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
+    },
+    {
+      "scenario": "V178-P2",
+      "title": "measure real generation tok/s, prompt tok/s, RAM peak, generation time and per-class pass rate of the installed models with the existing V155 benchmark harness",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "V178-P2",
+        "sourceRecord": "docs/odg/evidence/V178_RADAR_CAMPAIGN.json",
+        "sourceRecordSha256AtConversion": "99f530dff4f562fdc126ff2cfddbedf2dd4f814fa06952cc216962fff80101e3",
+        "conversionBatch": "V178-RADAR-1",
+        "ownerRecord": "owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)",
+        "signals": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=H-05]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=H-06]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=H-07]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=C-10]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=C-14]"
+        ],
+        "selection": {
+          "rank": 2,
+          "evidenceScore": null,
+          "uncertainty": null,
+          "upperBound": null,
+          "tiedWith": [],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 3,
+          "maxTransitiveDependents": 11,
+          "perComponent": [
+            {
+              "component": "odg-local-model-benchmark",
+              "inCoreGraph": true,
+              "directConsumers": 1,
+              "transitiveDependents": 6
+            },
+            {
+              "component": "ollama-provider",
+              "inCoreGraph": true,
+              "directConsumers": 3,
+              "transitiveDependents": 11
+            }
+          ],
+          "rationale": "a change to odg-local-model-benchmark/ollama-provider reaches ≤ 11 transitive dependents (3 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+        "asOf": "base 9a2c5eeb (V17.8 Radar campaign)"
+      },
+      "proposal": {
+        "problem": "V155 measured gen tok/s (7b 8.1, 3b 16, 0.5b 60.8 mean) and RSS peak (≈4.9/2.1/0.5 GB) on a SHARED host (loadavg up to 7.2), without prompt tok/s; implement n is only 6",
+        "solution": "add prompt tok/s (prompt_eval_count/duration), host-load gating (record and flag trials above a declared load), and the P1 n-candidate arm to runBenchmark; write a NEW evidence file (never overwrite V155)",
+        "components": [
+          "runtime/core/odg-local-model-benchmark.ts",
+          "runtime/bin/odg-local-model-benchmark.ts",
+          "runtime/core/ollama-provider.ts"
+        ],
+        "interfaces": [
+          "runBenchmark({ models, trials, onlyTasks, candidates?, loadCeiling? }) → adds promptTokPerSec, hostLoad flag, candidate records"
+        ],
+        "measurableBenefit": "measured tok/s + RAM per model at known load; tighter implement pass-rate interval",
+        "resources": "no install; a full run ≈ 10–15 min of local inference (NOT run here)",
+        "risks": "host contention from other sessions; numbers are host-specific",
+        "buildCommand": "npx tsx runtime/core/odg-local-model-benchmark.test.ts",
+        "rankBasis": "provider-declared order from the owner brief; GO keeps selection authority (register ranks independently)"
+      },
+      "beforeMetric": [
+        {
+          "source": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[*].speed.tokPerSec",
+          "name": "genTokPerSec.mean",
+          "value": {
+            "qwen2.5-coder:7b": 8.1,
+            "qwen2.5-coder:3b": 16,
+            "qwen2.5:0.5b": 60.8
+          }
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "measure real generation tok/s, prompt tok/s, RAM peak, generation time and per-class pass rate of the installed models with the existing V155 benchmark harness",
+        "scope": "improve odg-local-model-benchmark, ollama-provider only; no network, no install, no canonical-authority change",
+        "write_set": [
+          "runtime/core/odg-local-model-benchmark.ts",
+          "runtime/core/odg-local-model-benchmark.test.ts",
+          "runtime/bin/odg-local-model-benchmark.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared V178 estimate — to be made concrete at binding",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network, no install, no protected path unless the owner-gated step is authorized"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'V178-P2/AC1' (file: acceptance_tests[0]): a fake daemon response yields promptTokPerSec = prompt_eval_count / prompt_eval_duration",
+          "AC2 test 'V178-P2/AC2' (file: acceptance_tests[1]): trials above the declared load ceiling are flagged CONTENDED and excluded from speed stats (kept in raw)",
+          "AC3 test 'V178-P2/AC3' (file: acceptance_tests[2]): the V155 evidence file is never written by the new mode (--out required)",
+          "AC4 test 'V178-P2/AC4' (file: acceptance_tests[3]): the selftest runs offline (no daemon)",
+          "AC5 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC6 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V178-P2/AC1",
+            "file": "runtime/core/odg-local-model-benchmark.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "V178-P2/AC2",
+            "file": "runtime/core/odg-local-model-benchmark.test.ts",
+            "criterion": "AC2"
+          },
+          {
+            "id": "V178-P2/AC3",
+            "file": "runtime/core/odg-local-model-benchmark.test.ts",
+            "criterion": "AC3"
+          },
+          {
+            "id": "V178-P2/AC4",
+            "file": "runtime/core/odg-local-model-benchmark.test.ts",
+            "criterion": "AC4"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an install or download is needed that is not authorized"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
+    },
+    {
+      "scenario": "V178-P3",
+      "title": "qualify Qwen3.5-9B (Q4 then Q5) as coder on the V155 harness and register it in odg-model-router only if QUALIFIED",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "V178-P3",
+        "sourceRecord": "docs/odg/evidence/V178_RADAR_CAMPAIGN.json",
+        "sourceRecordSha256AtConversion": "99f530dff4f562fdc126ff2cfddbedf2dd4f814fa06952cc216962fff80101e3",
+        "conversionBatch": "V178-RADAR-1",
+        "ownerRecord": "owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)",
+        "signals": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=A-01]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=H-02]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=H-04]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=B-03]"
+        ],
+        "selection": {
+          "rank": 3,
+          "evidenceScore": null,
+          "uncertainty": null,
+          "upperBound": null,
+          "tiedWith": [],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 2,
+          "maxTransitiveDependents": 6,
+          "perComponent": [
+            {
+              "component": "odg-local-model-benchmark",
+              "inCoreGraph": true,
+              "directConsumers": 1,
+              "transitiveDependents": 6
+            },
+            {
+              "component": "odg-model-router",
+              "inCoreGraph": true,
+              "directConsumers": 2,
+              "transitiveDependents": 6
+            }
+          ],
+          "rationale": "a change to odg-local-model-benchmark/odg-model-router reaches ≤ 6 transitive dependents (2 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion; owner-gated step: model download (Ollama pull of the Qwen3.5-9B tag — exact tag to confirm in the Ollama library; network)",
+        "asOf": "base 9a2c5eeb (V17.8 Radar campaign)"
+      },
+      "ownerGate": {
+        "required": true,
+        "step": "model download (Ollama pull of the Qwen3.5-9B tag — exact tag to confirm in the Ollama library; network)",
+        "reason": [
+          "model download",
+          "possible Ollama upgrade (root) if 0.35.1 lacks support"
+        ]
+      },
+      "proposal": {
+        "problem": "no installed model is QUALIFIED on implement; the 9B fits RAM (Q4_K_M 5.68 GB per the vendor/GGUF pages)",
+        "solution": "after the authorized pull, run the harness with --models <tag>; add a LOCAL_POOL entry only from the measured registry",
+        "components": [
+          "runtime/core/odg-local-model-benchmark.ts",
+          "runtime/core/odg-model-router.ts"
+        ],
+        "interfaces": [
+          "LOCAL_POOL entry { id, costRank, covers, evidence } derived from the measured registry"
+        ],
+        "measurableBenefit": "implement pass rate vs 3/6 (to measure)",
+        "resources": "≈5.7–6.6 GB download; ≈6–7 GB RAM resident",
+        "risks": "installed Ollama 0.35.1 support for the hybrid architecture NOT_ESTABLISHED (B-03 may need a root upgrade); thinking mode default ON",
+        "buildCommand": "npx tsx runtime/core/odg-model-router.test.ts",
+        "rankBasis": "provider-declared order from the owner brief; GO keeps selection authority (register ranks independently)"
+      },
+      "beforeMetric": [
+        {
+          "source": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[qwen2.5-coder:7b].perClass.implement.status",
+          "name": "implement.status",
+          "value": "PROBATION"
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "qualify Qwen3.5-9B (Q4 then Q5) as coder on the V155 harness and register it in odg-model-router only if QUALIFIED",
+        "scope": "improve odg-local-model-benchmark, odg-model-router only; no network, no install, no canonical-authority change",
+        "write_set": [
+          "runtime/core/odg-model-router.ts",
+          "runtime/core/odg-model-router.test.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared V178 estimate — to be made concrete at binding",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network, no install, no protected path unless the owner-gated step is authorized"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'V178-P3/AC1' (file: acceptance_tests[0]): router test: the new model is selected for a class only if its measured status is QUALIFIED",
+          "AC2 test 'V178-P3/AC2' (file: acceptance_tests[1]): no pool entry exists without a committed measurement record",
+          "AC3 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC4 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V178-P3/AC1",
+            "file": "runtime/core/odg-model-router.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "V178-P3/AC2",
+            "file": "runtime/core/odg-model-router.test.ts",
+            "criterion": "AC2"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an install or download is needed that is not authorized"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
+    },
+    {
+      "scenario": "V178-P4",
+      "title": "local embeddings + SQLite FTS5/vector hybrid per-tenant memory inside the existing memory components",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "V178-P4",
+        "sourceRecord": "docs/odg/evidence/V178_RADAR_CAMPAIGN.json",
+        "sourceRecordSha256AtConversion": "99f530dff4f562fdc126ff2cfddbedf2dd4f814fa06952cc216962fff80101e3",
+        "conversionBatch": "V178-RADAR-1",
+        "ownerRecord": "owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)",
+        "signals": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=E-03]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=E-06]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=E-10]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=A-09]"
+        ],
+        "selection": {
+          "rank": 4,
+          "evidenceScore": null,
+          "uncertainty": null,
+          "upperBound": null,
+          "tiedWith": [],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 3,
+          "maxTransitiveDependents": 11,
+          "perComponent": [
+            {
+              "component": "memory-architecture",
+              "inCoreGraph": true,
+              "directConsumers": 1,
+              "transitiveDependents": 1
+            },
+            {
+              "component": "ollama-provider",
+              "inCoreGraph": true,
+              "directConsumers": 3,
+              "transitiveDependents": 11
+            }
+          ],
+          "rationale": "a change to memory-architecture/ollama-provider reaches ≤ 11 transitive dependents (3 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion; owner-gated step: model download (Qwen3-Embedding-0.6B pull) + npm dependency (sqlite-vec)",
+        "asOf": "base 9a2c5eeb (V17.8 Radar campaign)"
+      },
+      "ownerGate": {
+        "required": true,
+        "step": "model download (Qwen3-Embedding-0.6B pull) + npm dependency (sqlite-vec)",
+        "reason": [
+          "model download",
+          "npm dependency"
+        ]
+      },
+      "proposal": {
+        "problem": "ODG memory has no semantic retrieval; exact-term recall for client documents is needed",
+        "solution": "FTS5 BM25 leg on node:sqlite (no install, tested); vector leg via Qwen3-Embedding-0.6B through Ollama /api/embed + sqlite-vec; Reciprocal Rank Fusion; one SQLite file per tenant",
+        "components": [
+          "runtime/core/memory-architecture.ts",
+          "runtime/core/ollama-provider.ts"
+        ],
+        "interfaces": [
+          "hybridSearch(tenantDb, query, { k }) → ranked chunks with bm25 + vector ranks + RRF score"
+        ],
+        "measurableBenefit": "recall@k on an ODG retrieval set (to measure)",
+        "resources": "≈0.6B model (<1.5 GB RAM); sqlite-vec loadable extension",
+        "risks": "sqlite-vec is pre-v1; Node's node:sqlite is experimental",
+        "buildCommand": "npx tsx runtime/core/memory-architecture.test.ts",
+        "rankBasis": "provider-declared order from the owner brief; GO keeps selection authority (register ranks independently)"
+      },
+      "beforeMetric": [
+        {
+          "source": "runtime/core/memory-architecture.ts",
+          "name": "semanticRetrieval",
+          "value": "ABSENT"
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "local embeddings + SQLite FTS5/vector hybrid per-tenant memory inside the existing memory components",
+        "scope": "improve memory-architecture, ollama-provider only; no network, no install, no canonical-authority change",
+        "write_set": [
+          "runtime/core/memory-architecture.ts",
+          "runtime/core/memory-architecture.test.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared V178 estimate — to be made concrete at binding",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network, no install, no protected path unless the owner-gated step is authorized"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'V178-P4/AC1' (file: acceptance_tests[0]): FTS5 leg returns exact-term matches ranked by bm25 (offline test)",
+          "AC2 test 'V178-P4/AC2' (file: acceptance_tests[1]): RRF fusion is deterministic for fixed inputs",
+          "AC3 test 'V178-P4/AC3' (file: acceptance_tests[2]): two tenants never read each other's file",
+          "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC5 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V178-P4/AC1",
+            "file": "runtime/core/memory-architecture.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "V178-P4/AC2",
+            "file": "runtime/core/memory-architecture.test.ts",
+            "criterion": "AC2"
+          },
+          {
+            "id": "V178-P4/AC3",
+            "file": "runtime/core/memory-architecture.test.ts",
+            "criterion": "AC3"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an install or download is needed that is not authorized"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
+    },
+    {
+      "scenario": "V178-P5",
+      "title": "test-gated cheap-first cascade 3B → 7B on the existing odg-model-router (escalate only when the sandbox tests fail)",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "V178-P5",
+        "sourceRecord": "docs/odg/evidence/V178_RADAR_CAMPAIGN.json",
+        "sourceRecordSha256AtConversion": "99f530dff4f562fdc126ff2cfddbedf2dd4f814fa06952cc216962fff80101e3",
+        "conversionBatch": "V178-RADAR-1",
+        "ownerRecord": "owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)",
+        "signals": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=D-02]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=D-04]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=C-09]"
+        ],
+        "selection": {
+          "rank": 5,
+          "evidenceScore": null,
+          "uncertainty": null,
+          "upperBound": null,
+          "tiedWith": [],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 2,
+          "maxTransitiveDependents": 6,
+          "perComponent": [
+            {
+              "component": "odg-model-router",
+              "inCoreGraph": true,
+              "directConsumers": 2,
+              "transitiveDependents": 6
+            }
+          ],
+          "rationale": "a change to odg-model-router reaches ≤ 6 transitive dependents (2 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+        "asOf": "base 9a2c5eeb (V17.8 Radar campaign)"
+      },
+      "proposal": {
+        "problem": "runWithFallback falls back on unavailability/failure in quality-first order; 3B is never tried first where it would pass",
+        "solution": "runCascade(order, invoke, testGate): cheapest model first; escalate when the execution test fails; every attempt recorded",
+        "components": [
+          "runtime/core/odg-model-router.ts"
+        ],
+        "interfaces": [
+          "runCascade({ order, invoke, testGate, maxAttempts }) → { outcome, model, attempts }"
+        ],
+        "measurableBenefit": "time per passed task at equal pass rate (to measure)",
+        "resources": "no install",
+        "risks": "3B is DEMOTED on bugfix (V155) ⇒ class-aware order required",
+        "buildCommand": "npx tsx runtime/core/odg-model-router.test.ts",
+        "rankBasis": "provider-declared order from the owner brief; GO keeps selection authority (register ranks independently)"
+      },
+      "beforeMetric": [
+        {
+          "source": "runtime/core/odg-model-router.ts#runWithFallback",
+          "name": "testGatedCascade",
+          "value": "ABSENT"
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "test-gated cheap-first cascade 3B → 7B on the existing odg-model-router (escalate only when the sandbox tests fail)",
+        "scope": "improve odg-model-router only; no network, no install, no canonical-authority change",
+        "write_set": [
+          "runtime/core/odg-model-router.ts",
+          "runtime/core/odg-model-router.test.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared V178 estimate — to be made concrete at binding",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network, no install, no protected path unless the owner-gated step is authorized"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'V178-P5/AC1' (file: acceptance_tests[0]): a passing 3B result stops the cascade (7B never invoked)",
+          "AC2 test 'V178-P5/AC2' (file: acceptance_tests[1]): a failing 3B result escalates to 7B",
+          "AC3 test 'V178-P5/AC3' (file: acceptance_tests[2]): a DEMOTED model for the class is never in the order",
+          "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC5 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V178-P5/AC1",
+            "file": "runtime/core/odg-model-router.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "V178-P5/AC2",
+            "file": "runtime/core/odg-model-router.test.ts",
+            "criterion": "AC2"
+          },
+          {
+            "id": "V178-P5/AC3",
+            "file": "runtime/core/odg-model-router.test.ts",
+            "criterion": "AC3"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an install or download is needed that is not authorized"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
+    },
+    {
+      "scenario": "V178-P6",
+      "title": "anti-reward-hacking gate: evaluator, test and fixture files frozen (sha-pinned) and outside every model-writable write_set; held-out evaluation",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "V178-P6",
+        "sourceRecord": "docs/odg/evidence/V178_RADAR_CAMPAIGN.json",
+        "sourceRecordSha256AtConversion": "99f530dff4f562fdc126ff2cfddbedf2dd4f814fa06952cc216962fff80101e3",
+        "conversionBatch": "V178-RADAR-1",
+        "ownerRecord": "owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)",
+        "signals": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=I-01]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=I-04]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=C-06]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=C-15]"
+        ],
+        "selection": {
+          "rank": 6,
+          "evidenceScore": null,
+          "uncertainty": null,
+          "upperBound": null,
+          "tiedWith": [],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 4,
+          "maxTransitiveDependents": 12,
+          "perComponent": [
+            {
+              "component": "odg-native-design-pipeline",
+              "inCoreGraph": true,
+              "directConsumers": 0,
+              "transitiveDependents": 0
+            },
+            {
+              "component": "odg-local-model-benchmark",
+              "inCoreGraph": true,
+              "directConsumers": 1,
+              "transitiveDependents": 6
+            },
+            {
+              "component": "evaluator-independence",
+              "inCoreGraph": true,
+              "directConsumers": 4,
+              "transitiveDependents": 12
+            }
+          ],
+          "rationale": "a change to odg-native-design-pipeline/odg-local-model-benchmark/evaluator-independence reaches ≤ 12 transitive dependents (4 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+        "asOf": "base 9a2c5eeb (V17.8 Radar campaign)"
+      },
+      "proposal": {
+        "problem": "already present: NB2 host-graded held-out oracle, held-out values never in prompts, evaluator-independence audit, odg-eval-heldout-calibration; missing: one declared, tested rule shared by the pipeline AND the benchmark",
+        "solution": "frozenEvaluators(paths) pins sha256 before a run; guardCandidate(diff) refuses any candidate touching a pinned or test path; acceptance reruns from the pinned copy",
+        "components": [
+          "runtime/core/odg-native-design-pipeline.ts",
+          "runtime/core/odg-local-model-benchmark.ts",
+          "runtime/core/evaluator-independence.ts"
+        ],
+        "interfaces": [
+          "frozenEvaluators(paths) → { pins }",
+          "guardCandidate(diff, pins) → { ok, violations }"
+        ],
+        "measurableBenefit": "reward-hacking attempts detected (count) instead of silently accepted",
+        "resources": "no install",
+        "risks": "over-broad patterns could block legitimate test-writing tasks (test-writing class must keep its own grader)",
+        "buildCommand": "npx tsx runtime/core/odg-native-design-pipeline.test.ts",
+        "rankBasis": "provider-declared order from the owner brief; GO keeps selection authority (register ranks independently)"
+      },
+      "beforeMetric": [
+        {
+          "source": "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json",
+          "name": "sharedFrozenEvaluatorRule",
+          "value": "ABSENT (per-run invariants only)"
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "anti-reward-hacking gate: evaluator, test and fixture files frozen (sha-pinned) and outside every model-writable write_set; held-out evaluation",
+        "scope": "improve odg-native-design-pipeline, odg-local-model-benchmark, evaluator-independence only; no network, no install, no canonical-authority change",
+        "write_set": [
+          "runtime/core/odg-native-design-pipeline.ts",
+          "runtime/core/odg-native-design-pipeline.test.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared V178 estimate — to be made concrete at binding",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network, no install, no protected path unless the owner-gated step is authorized"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'V178-P6/AC1' (file: acceptance_tests[0]): a candidate editing a pinned test is refused before execution",
+          "AC2 test 'V178-P6/AC2' (file: acceptance_tests[1]): a changed pin sha between selection and acceptance fails the run",
+          "AC3 test 'V178-P6/AC3' (file: acceptance_tests[2]): existing NB2 held-out behaviour is unchanged (regression test)",
+          "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC5 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V178-P6/AC1",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "V178-P6/AC2",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC2"
+          },
+          {
+            "id": "V178-P6/AC3",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC3"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an install or download is needed that is not authorized"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
+    },
+    {
+      "scenario": "V178-P7",
+      "title": "client-job privacy sandbox: bwrap with no network namespace access, model reached through a bind-mounted unix socket, per-tenant directory, keep_alive 0, per-tenant encryption at rest with node:crypto",
+      "state": "PROPOSED",
+      "authorizedBy": null,
+      "origin": {
+        "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
+        "sourceProposal": "V178-P7",
+        "sourceRecord": "docs/odg/evidence/V178_RADAR_CAMPAIGN.json",
+        "sourceRecordSha256AtConversion": "99f530dff4f562fdc126ff2cfddbedf2dd4f814fa06952cc216962fff80101e3",
+        "conversionBatch": "V178-RADAR-1",
+        "ownerRecord": "owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)",
+        "signals": [
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=F-01]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=G-02]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=G-01]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=G-07]",
+          "docs/odg/evidence/V178_RADAR_CAMPAIGN.json#signals[id=F-03]"
+        ],
+        "selection": {
+          "rank": 7,
+          "evidenceScore": null,
+          "uncertainty": null,
+          "upperBound": null,
+          "tiedWith": [],
+          "scoreIsNotAuthorization": true
+        },
+        "multiplier": {
+          "maxDirectConsumers": 4,
+          "maxTransitiveDependents": 43,
+          "perComponent": [
+            {
+              "component": "provider-sandbox",
+              "inCoreGraph": true,
+              "directConsumers": 4,
+              "transitiveDependents": 43
+            },
+            {
+              "component": "ollama-provider",
+              "inCoreGraph": true,
+              "directConsumers": 3,
+              "transitiveDependents": 11
+            },
+            {
+              "component": "odg-native-build-sandbox",
+              "inCoreGraph": true,
+              "directConsumers": 2,
+              "transitiveDependents": 5
+            }
+          ],
+          "rationale": "a change to provider-sandbox/ollama-provider/odg-native-build-sandbox reaches ≤ 43 transitive dependents (4 direct) — reach, not benefit"
+        }
+      },
+      "binding": {
+        "status": "UNBOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
+        "evidence": [],
+        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+        "asOf": "base 9a2c5eeb (V17.8 Radar campaign)"
+      },
+      "proposal": {
+        "problem": "client documents must be processed locally with no outbound network path; a fresh network namespace cannot reach the loopback Ollama",
+        "solution": "a host-side unix-socket → 127.0.0.1:11434 forwarder (Node net, /api/generate and /api/embed only); bwrap --unshare-net with the socket bind-mounted; per-tenant AES-256-GCM files (node:crypto); requests carry keep_alive 0",
+        "components": [
+          "runtime/core/provider-sandbox.ts",
+          "runtime/core/ollama-provider.ts",
+          "runtime/core/odg-native-build-sandbox.ts"
+        ],
+        "interfaces": [
+          "runClientJob({ tenant, socketPath, cmd }) → { exit, outputs }",
+          "modelSocketForwarder({ socketPath, allowPaths }) → server"
+        ],
+        "measurableBenefit": "proven no-network client processing (negative test evidence)",
+        "resources": "no install (bwrap 0.11.1 present)",
+        "risks": "encrypted SQLite (G-04) and fscrypt (G-03) remain blocked; the hypervisor operator is outside this control",
+        "buildCommand": "npx tsx runtime/core/provider-sandbox.test.ts",
+        "rankBasis": "provider-declared order from the owner brief; GO keeps selection authority (register ranks independently)"
+      },
+      "beforeMetric": [
+        {
+          "source": "runtime/core/provider-sandbox.ts",
+          "name": "clientJobSandbox",
+          "value": "ABSENT (model-code sandbox only)"
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "client-job privacy sandbox: bwrap with no network namespace access, model reached through a bind-mounted unix socket, per-tenant directory, keep_alive 0, per-tenant encryption at rest with node:crypto",
+        "scope": "improve provider-sandbox, ollama-provider, odg-native-build-sandbox only; no network, no install, no canonical-authority change",
+        "write_set": [
+          "runtime/core/provider-sandbox.ts",
+          "runtime/core/provider-sandbox.test.ts"
+        ],
+        "write_set_estimate": {
+          "estimate": true,
+          "basis": "provider-declared V178 estimate — to be made concrete at binding",
+          "mustBeConcreteBefore": "independent inspection (binding step)"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network, no install, no protected path unless the owner-gated step is authorized"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'V178-P7/AC1' (file: acceptance_tests[0]): inside the sandbox a connect to a public IP fails (negative test)",
+          "AC2 test 'V178-P7/AC2' (file: acceptance_tests[1]): inference through the bound socket succeeds with a fake daemon",
+          "AC3 test 'V178-P7/AC3' (file: acceptance_tests[2]): a second tenant's directory is not visible",
+          "AC4 test 'V178-P7/AC4' (file: acceptance_tests[3]): the forwarder refuses paths other than /api/generate and /api/embed",
+          "AC5 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC6 tsc clean; each touched test file passes run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V178-P7/AC1",
+            "file": "runtime/core/provider-sandbox.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "V178-P7/AC2",
+            "file": "runtime/core/provider-sandbox.test.ts",
+            "criterion": "AC2"
+          },
+          {
+            "id": "V178-P7/AC3",
+            "file": "runtime/core/provider-sandbox.test.ts",
+            "criterion": "AC3"
+          },
+          {
+            "id": "V178-P7/AC4",
+            "file": "runtime/core/provider-sandbox.test.ts",
+            "criterion": "AC4"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an install or download is needed that is not authorized"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict"
+        ]
+      }
     }
   ]
 }

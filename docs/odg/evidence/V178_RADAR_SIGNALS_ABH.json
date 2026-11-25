@@ -1,0 +1,385 @@
+{
+  "collectedBy": "PROVIDER (Claude Code research agent)",
+  "collectedAt": "2026-11-25T12:00:00Z",
+  "epistemicStatus": "UNVERIFIED",
+  "domain": "A,B,H",
+  "method": "Generic public web search + fetch of official model cards / docs / repos / papers. No repo content, paths, hostnames or private data were sent. Numbers labelled VENDOR_CLAIM were read from vendor model cards and NOT reproduced. Nothing was installed or measured on the target VPS. RAM figures are GGUF file sizes from public quant repos (weights only); KV cache + runtime overhead + the host workload (Node/tests) come on top.",
+  "ramBudgetAssumption": "22 GiB total, NO swap, shared with the TypeScript/Node workload => model weights budget ~12 GB; >12 GB and <=~14 GB = borderline; >14 GB = does not fit safely.",
+  "signals": [
+    {
+      "id": "A-01",
+      "domain": "A",
+      "title": "Qwen3.5 small dense family (0.8B/2B/4B/9B), Apache-2.0, Feb-Mar 2026",
+      "kind": "model",
+      "claim": "Qwen3.5-9B: hybrid architecture (Gated DeltaNet + Gated Attention, 32 layers), native context 262,144 tokens, Apache-2.0, includes a vision encoder. Vendor card: LiveCodeBench v6 65.6 (4B: 55.8), BFCL-V4 66.1 (4B: 50.3), TAU2-Bench 79.1 (4B: 79.9). No SWE-bench figure on the card. Thinking mode is ON by default (disable via enable_thinking=False); card advises keeping >=128K context to preserve thinking quality. GGUF Q4_K_M 5.68 GB, Q5_K_M 6.58 GB, Q6_K 7.46 GB, Q8_0 9.53 GB.",
+      "evidence": [
+        {"url": "https://huggingface.co/Qwen/Qwen3.5-9B", "publisher": "Qwen (Alibaba) official HF org", "date": "2026-02 (citation metadata)", "type": "official"},
+        {"url": "https://huggingface.co/unsloth/Qwen3.5-9B-GGUF", "publisher": "Unsloth", "date": "2026", "type": "repo"},
+        {"url": "https://rits.shanghai.nyu.edu/ai/qwen-3-5-small-models-9b-parameters-that-beat-120b/", "publisher": "NYU Shanghai RITS (secondary)", "date": "2026-03", "type": "community"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0",
+      "resourceFit": {"ramGB": 5.7, "fitsThisVps": true, "why": "Q4_K_M 5.68 GB / Q5_K_M 6.58 GB well inside a 12 GB budget; hybrid linear-attention layers should keep KV growth lower than full-attention 7B (not measured)."},
+      "relevanceToODG": "Direct successor-generation replacement for the installed qwen2.5-coder:7b with tool-calling (BFCL) numbers; same family as the 0.8B draft candidate.",
+      "risks": "No SWE-bench on card; independent Go benchmark (H-04) ranks it below larger MoE models; default thinking mode inflates output tokens => CPU latency; Ollama 0.35.1 support for Qwen3.5 hybrid/recurrent GGUF not verified (0.40.15 notes added multi-request serving for recurrent GGUF)."
+    },
+    {
+      "id": "A-02",
+      "domain": "A",
+      "title": "Gemma 4 family (E2B/E4B/12B/26B-A4B MoE/31B), Apache-2.0",
+      "kind": "model",
+      "claim": "Official model card lists: E2B (2.3B eff., 128K ctx, LCB v6 44.0%), E4B (4.5B eff., 128K, LCB 52.0%), 12B Unified (11.95B, 256K, LCB 72.0%, Codeforces 1659), 26B-A4B MoE (25.2B total / 3.8B active, 256K, LCB 77.1%, Codeforces 1718), 31B dense (LCB 80.0%). All Apache-2.0. Note: the launch blog lists 4 sizes, the model card 5 (12B added) — inconsistency in vendor sources.",
+      "evidence": [
+        {"url": "https://gemma.ai/models/gemma-4/model-card/", "publisher": "Google (official model card; redirected from ai.google.dev)", "date": "2026 (not stated on page)", "type": "official"},
+        {"url": "https://blog.google/innovation-and-ai/technology/developers-tools/gemma-4/", "publisher": "Google blog", "date": "2026", "type": "official"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0",
+      "resourceFit": {"ramGB": 7.1, "fitsThisVps": true, "why": "12B Q4_K_M 7.12 GB, Q5_K_M 8.41 GB fit; 26B-A4B see A-03 (borderline)."},
+      "relevanceToODG": "Gemma 4 12B is the strongest vendor-claimed LCB score among dense models that clearly fit (72.0 vs Qwen3.5-9B 65.6); candidate generalModel / reviewer with a different model family than the coder (evaluator-independence).",
+      "risks": "Dense 12B on 8-vCPU DDR-class memory will decode slower than 7B (bandwidth-bound, ~proportional to file size); release date not stated on card; vendor numbers only."
+    },
+    {
+      "id": "A-03",
+      "domain": "A",
+      "title": "Gemma 4 26B-A4B MoE at 3-4 bit: MoE speed on CPU, borderline RAM",
+      "kind": "model",
+      "claim": "25.2B total / 3.8B active. Unsloth GGUF sizes: UD-Q3_K_M 12.7 GB, UD-IQ4_XS 13.6 GB, UD-Q4_K_M 16.9 GB, UD-Q5_K_M 21.2 GB, Q8_0 26.9 GB. Because only ~3.8B params are read per token, CPU decode speed should track a ~4B dense model (see H-01 for measured MoE-vs-dense CPU evidence). Independently scored best on a hard Go repair task in H-04.",
+      "evidence": [
+        {"url": "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF", "publisher": "Unsloth", "date": "2026", "type": "repo"},
+        {"url": "https://gemma.ai/models/gemma-4/model-card/", "publisher": "Google", "date": "2026", "type": "official"},
+        {"url": "https://msf.github.io/blogpost/local-llm-coding-harder-test.html", "publisher": "independent blogger (harness published)", "date": "2026-04", "type": "benchmark"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0",
+      "resourceFit": {"ramGB": 13.6, "fitsThisVps": "borderline", "why": "IQ4_XS 13.6 GB / Q3_K_M 12.7 GB exceed the ~12 GB weight budget on a no-swap 22 GiB host shared with Node; Q4_K_M 16.9 GB does not fit safely. Must be measured (RSS + OOM headroom) before adoption."},
+      "relevanceToODG": "Likely the best quality-per-CPU-token option if RAM headroom can be guaranteed (e.g., when no heavy test suite runs concurrently).",
+      "risks": "OOM-kill risk without swap; 3-bit/IQ4 quality loss on code not measured for this model; CPU tok/s not measured on this host."
+    },
+    {
+      "id": "A-04",
+      "domain": "A",
+      "title": "Qwen3.6-35B-A3B MoE (Apr 2026) — strong agentic coding claims, does not fit",
+      "kind": "model",
+      "claim": "35B total / 3B active (256 experts, 8 routed + 1 shared), 262K ctx, Apache-2.0. Vendor card: SWE-bench Verified 73.4, SWE-bench Pro 49.5, Terminal-Bench 2.0 51.5, LiveCodeBench v6 80.4 — SWE-bench via INTERNAL scaffold (bash + file-edit), Qwen also 'corrected' some SWE-bench Pro tasks and re-ran baselines (comparability caveat). GGUF: UD-Q3_K_M 16.6 GB, UD-IQ4_XS 17.7 GB, UD-Q4_K_M 22.1 GB.",
+      "evidence": [
+        {"url": "https://huggingface.co/Qwen/Qwen3.6-35B-A3B", "publisher": "Qwen official HF", "date": "2026-04", "type": "official"},
+        {"url": "https://huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF", "publisher": "Unsloth", "date": "2026", "type": "repo"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0",
+      "resourceFit": {"ramGB": 16.6, "fitsThisVps": false, "why": "Smallest listed quant 16.6 GB (3-bit) leaves <6 GiB for OS + Node + KV with no swap."},
+      "relevanceToODG": "Reference ceiling: what a 3B-active MoE can do if RAM were ~32 GB. Signals that MoE, not dense 7-9B, is the frontier for CPU-only coding.",
+      "risks": "Vendor-internal scaffold numbers; would require RAM upgrade."
+    },
+    {
+      "id": "A-05",
+      "domain": "A",
+      "title": "Qwen3.6-27B dense / Qwen3.8-27B dense — too large for CPU-only here",
+      "kind": "model",
+      "claim": "Qwen3.6-27B dense released 2026-04-22 (hybrid attention, 262K ctx), community-reported 4-bit ~16.8 GB. Qwen3.8 series (official README) lists only Qwen3.8-2.4T-A95B (2026-08-12) and Qwen3.8-27B (2026-08-14); no <15B Qwen3.8 model; smallest current Qwen small models remain Qwen3.5 (9B/4B/2B/0.8B). Qwen3.7 line reported closed-weight (unconfirmed).",
+      "evidence": [
+        {"url": "https://raw.githubusercontent.com/QwenLM/Qwen3.8/main/README.md", "publisher": "QwenLM GitHub", "date": "2026-08", "type": "official"},
+        {"url": "https://rits.shanghai.nyu.edu/ai/qwen3-6-27b-a-dense-27b-model-that-beats-a-397b-moe-on-coding", "publisher": "NYU Shanghai RITS (secondary)", "date": "2026-04", "type": "community"},
+        {"url": "https://epoch.ai/models/qwen3-7-flash", "publisher": "Epoch AI", "date": "2026-07", "type": "community"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0 (Qwen3.6-27B per secondary sources; Qwen3.8 license file not named on README — UNVERIFIED)",
+      "resourceFit": {"ramGB": 16.8, "fitsThisVps": false, "why": "Dense 27B at 4-bit ~16.8 GB exceeds budget, and dense 27B decode on CPU would be ~5x slower than 7B (bandwidth-bound)."},
+      "relevanceToODG": "Rules out 'latest flagship dense' path for this host; confirms the small-model choice is Qwen3.5 / Gemma 4 generation.",
+      "risks": "Qwen3.8-Flash / Flash-Next sizes could not be verified (source returned 403)."
+    },
+    {
+      "id": "A-06",
+      "domain": "A",
+      "title": "Qwen3-Coder-30B-A3B and Qwen3-Coder-Next (80B-A3B)",
+      "kind": "model",
+      "claim": "Qwen3-Coder-Next: 80B total / ~3B active, Apache-2.0, Feb 2026, GGUF Q2_K..Q8_0; secondary sources cite 70.6% SWE-bench Verified (not checked against card). Qwen3-Coder-30B-A3B (2025) GGUF Q4_K_M ~18.6 GB class (30B-A3B Q4_K_M measured file 18,557 MB in H-01).",
+      "evidence": [
+        {"url": "https://huggingface.co/Qwen/Qwen3-Coder-Next-GGUF", "publisher": "Qwen official HF", "date": "2026-02", "type": "official"},
+        {"url": "https://github.com/QwenLM/Qwen3-Coder", "publisher": "QwenLM GitHub", "date": "2025-2026", "type": "repo"},
+        {"url": "https://modal.com/resources/best-open-source-models-swe-bench-coding-agents", "publisher": "Modal (secondary)", "date": "2026", "type": "community"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0",
+      "resourceFit": {"ramGB": 18.6, "fitsThisVps": false, "why": "30B-A3B Q4_K_M ~18.6 GB; 80B-A3B far larger."},
+      "relevanceToODG": "Not runnable here; 70.6% figure is UNVERIFIED (secondary).",
+      "risks": "SEO-style aggregator numbers inconsistent."
+    },
+    {
+      "id": "A-07",
+      "domain": "A",
+      "title": "Devstral Small 2 (24B dense, Apache-2.0) — 68.0% SWE-bench Verified (vendor)",
+      "kind": "model",
+      "claim": "Mistral reports Devstral Small 2 (24B) at 68.0% SWE-bench Verified, Apache-2.0; Devstral 2 (123B) 72.2% under a MODIFIED MIT license that bars companies with >$20M monthly revenue.",
+      "evidence": [
+        {"url": "https://mistral.ai/news/devstral-2-vibe-cli/", "publisher": "Mistral AI", "date": "2025-12", "type": "official"},
+        {"url": "https://simonwillison.net/b/9188", "publisher": "Simon Willison (independent review of license)", "date": "2025-12", "type": "community"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0 (Small 2); modified MIT (Devstral 2 123B)",
+      "resourceFit": {"ramGB": 14.5, "fitsThisVps": "borderline", "why": "24B dense at Q4 is ~14 GB (estimate from params x ~4.8 bits; exact GGUF size NOT fetched); dense 24B decode on 8 vCPU would be ~3-4x slower than 7B."},
+      "relevanceToODG": "Agentic-coding-specialised; license trap on the larger sibling is a governance signal (license != open).",
+      "risks": "CPU speed likely impractical; GGUF size unverified."
+    },
+    {
+      "id": "A-08",
+      "domain": "A",
+      "title": "IBM Granite 4.0 hybrid Mamba-2 small models (H-Tiny 7B/1B-active, H-Micro 3B), Apache-2.0",
+      "kind": "model",
+      "claim": "Granite 4.0: hybrid Mamba-2/Transformer (~9:1). H-Small 32B/9B-active, H-Tiny 7B/1B-active MoE, H-Micro 3B dense; Nano line (Oct 2025) for edge. IBM claims >70% lower memory and 2x faster inference vs similar models; IFEval 0.89 for H-Small. No HumanEval/SWE-bench numbers found.",
+      "evidence": [
+        {"url": "https://www.ibm.com/new/announcements/ibm-granite-4-0-hyper-efficient-high-performance-hybrid-models", "publisher": "IBM", "date": "2025-10", "type": "official"},
+        {"url": "https://siliconangle.com/2025/10/29/ibm-releases-small-open-source-granite-4-models-mobile-devices-browsers/", "publisher": "SiliconANGLE", "date": "2025-10-29", "type": "community"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0",
+      "resourceFit": {"ramGB": 4.5, "fitsThisVps": true, "why": "7B-total/1B-active H-Tiny at Q4 is ~4-5 GB (estimate, not fetched); 1B active => fast CPU decode expected."},
+      "relevanceToODG": "Candidate for cheap ROUTING / classification / structured extraction at high tok/s, not for code generation (no coding evidence).",
+      "risks": "Coding quality unknown; 2025 generation (older than Qwen3.5/Gemma 4)."
+    },
+    {
+      "id": "A-09",
+      "domain": "A",
+      "title": "Embedding candidates: Qwen3-Embedding-0.6B (Apache-2.0) vs EmbeddingGemma-300M (Gemma terms)",
+      "kind": "model",
+      "claim": "Qwen3-Embedding-0.6B: Apache-2.0, 32K ctx, MRL dims 32-1024, MTEB Multilingual 64.33 / English v2 70.70 (vendor), instruction-aware (query instruction +1-5%), last-token pooling (must set pooling correctly in llama.cpp). GGUF Q8_0 ~639 MB, Q4_K_M ~397 MB (community repo). EmbeddingGemma-300M: SOTA <500M on MTEB Multilingual/English/Code per its paper; MTEB(Code) 68.76 @768d (card mirrors); license = Gemma Terms of Use (gated, not OSI).",
+      "evidence": [
+        {"url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B", "publisher": "Qwen official HF", "date": "2025-06", "type": "official"},
+        {"url": "https://arxiv.org/pdf/2506.05176", "publisher": "arXiv (Qwen3 Embedding paper)", "date": "2025-06-05", "type": "paper"},
+        {"url": "https://arxiv.org/abs/2509.20354v3", "publisher": "arXiv (EmbeddingGemma paper)", "date": "2025-09", "type": "paper"},
+        {"url": "https://huggingface.co/Mungert/Qwen3-Embedding-0.6B-GGUF", "publisher": "community GGUF", "date": "2025", "type": "repo"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0 (Qwen3-Embedding); Gemma Terms of Use (EmbeddingGemma)",
+      "resourceFit": {"ramGB": 0.7, "fitsThisVps": true, "why": "<1 GB at Q8_0; can co-reside with the main LLM."},
+      "relevanceToODG": "Code/repo retrieval for repair and review context; Apache-2.0 option preferred for licensing simplicity.",
+      "risks": "No head-to-head on code retrieval for a TS repo; nomic-embed-code / Jina code embeddings NOT researched (open question)."
+    },
+    {
+      "id": "B-01",
+      "domain": "B",
+      "title": "llama.cpp llama-server: parallel slots, continuous batching, prompt cache, grammar/JSON-schema, spec decoding, metrics",
+      "kind": "engine",
+      "claim": "Official server README: -np/--parallel slots (default auto), continuous batching ON by default (-nocb disables), --cache-prompt ON by default, --cache-reuse N (KV shifting, default 0=off), --grammar / -j/--json-schema constrained output, Jinja chat templates on by default (tool calling), --embedding and --rerank endpoints, Prometheus --metrics (off by default), -ctk/-ctv KV cache types (default f16), speculative decoding via -md draft model + --spec-type / --spec-draft-n-max (old --draft-max REMOVED — flag churn). Context is divided across slots (-c 16384 -np 4 => 4096 each).",
+      "evidence": [
+        {"url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md", "publisher": "ggml-org", "date": "2026-11 (master)", "type": "official"},
+        {"url": "https://www.mintlify.com/ggml-org/llama.cpp/api/tools/llama-server", "publisher": "docs mirror", "date": "2026", "type": "community"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "MIT (llama.cpp repository license — from prior knowledge; not re-read on this fetch)",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": true, "why": "Native C/C++, AVX2 CPU backend; no Python stack."},
+      "relevanceToODG": "Gives ODG explicit control of the features Ollama hides (spec decoding, cache-reuse, Prometheus metrics, per-request grammar) — useful for governed, observable local inference.",
+      "risks": "Fast-moving CLI flags (breaking renames); needs own process supervision; build/install is a host change (owner-gated)."
+    },
+    {
+      "id": "B-02",
+      "domain": "B",
+      "title": "Ollama: defaults that matter on CPU (NUM_PARALLEL=1, ctx 4096, KV f16) + structured outputs",
+      "kind": "engine",
+      "claim": "Official FAQ: OLLAMA_NUM_PARALLEL defaults to 1 on non-MLX backends; OLLAMA_MAX_LOADED_MODELS = 3 for CPU; OLLAMA_MAX_QUEUE 512; keep_alive 5 min (cold reload after idle — relevant to measured ~13 s cold load); default context 4096 tokens (OLLAMA_CONTEXT_LENGTH / num_ctx); OLLAMA_KV_CACHE_TYPE f16 default, q8_0 (~1/2) or q4_0 (~1/4) only with Flash Attention. Structured outputs: format='json' or a JSON-schema object; OpenAI-compatible response_format also works.",
+      "evidence": [
+        {"url": "https://docs.ollama.com/faq", "publisher": "Ollama official docs", "date": "2026-11", "type": "official"},
+        {"url": "https://docs.ollama.com/capabilities/structured-outputs", "publisher": "Ollama official docs", "date": "2026-11", "type": "official"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "MIT (Ollama — from prior knowledge, not re-read)",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": true, "why": "Already installed."},
+      "relevanceToODG": "Default 4096 ctx silently truncates repo-scale prompts; keep_alive explains cold loads; JSON-schema format supports governed tool/plan outputs without engine change.",
+      "risks": "Setting env vars for a systemd-managed Ollama requires a service drop-in (host change, owner-gated)."
+    },
+    {
+      "id": "B-03",
+      "domain": "B",
+      "title": "Installed Ollama 0.35.1 lags latest 0.40.18 (2026-11-24)",
+      "kind": "engine",
+      "claim": "GitHub releases page shows v0.40.18 'Latest' (24 Nov 2026, llama.cpp bumped to b12651). v0.40.15 (3 Nov) added multi-request serving for recurrent and vision GGUF models and YaRN long-context for Qwen3/Qwen3.5; v0.40.12 added DFlash draft-model speculative decoding but on MLX (Apple) only. Most recent feature work is Apple-silicon/MLX-centric; little CPU-specific news.",
+      "evidence": [
+        {"url": "https://github.com/ollama/ollama/releases", "publisher": "ollama/ollama GitHub", "date": "2026-11-24", "type": "repo"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "MIT",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": true, "why": "Upgrade only; no hardware change."},
+      "relevanceToODG": "If Qwen3.5 (hybrid/recurrent) is adopted, 0.35.1 may lack parallel serving / YaRN fixes for it — verify before choosing engine.",
+      "risks": "Upgrading is a host mutation (owner-gated); release cadence ~weekly => version drift."
+    },
+    {
+      "id": "B-04",
+      "domain": "B",
+      "title": "vLLM CPU backend: AVX2 = 'limited features'; no GGUF on CPU docs",
+      "kind": "engine",
+      "claim": "vLLM CPU install docs: avx512f recommended, avx2 'limited features'; x86 dtypes FP32/FP16/BF16; quantization AWQ/GPTQ/compressed-tensors INT8 W8A8; GGUF not mentioned; prebuilt AVX512/AVX2 wheels since v0.17.0; needs TCMalloc + Intel OpenMP LD_PRELOAD.",
+      "evidence": [
+        {"url": "https://docs.vllm.ai/en/latest/getting_started/installation/cpu/", "publisher": "vLLM project", "date": "2026", "type": "official"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "Apache-2.0 (vLLM — prior knowledge)",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": false, "why": "Haswell has AVX2 only (no AVX-512, no BF16/AMX) => degraded path; no K-quant GGUF => larger weights for the same model."},
+      "relevanceToODG": "Not recommended for this host; vLLM's throughput advantages are GPU/AVX-512/AMX-oriented.",
+      "risks": "Heavy Python stack; unclear AVX2 limitations."
+    },
+    {
+      "id": "B-05",
+      "domain": "B",
+      "title": "llamafile revived under Mozilla.ai (0.10.x, 2026)",
+      "kind": "engine",
+      "claim": "llamafile moved from Mozilla Ocho to Mozilla.ai; 0.10.0 (2026-03-20) core rebuild; 0.10.4 (Jul 2026) transcribefile; 0.10.5 (Aug 2026) re-synced embedded llama.cpp. Historically contributed faster AVX2 prompt processing for K-quants/IQ4_XS (llamafile PR #394), later upstreamed.",
+      "evidence": [
+        {"url": "https://github.com/mozilla-ai/llamafile", "publisher": "mozilla-ai", "date": "2026", "type": "repo"},
+        {"url": "https://www.helpnetsecurity.com/2026/03/20/llamafile-0-10-0-released/", "publisher": "Help Net Security", "date": "2026-03-20", "type": "community"},
+        {"url": "https://phoronix.com/news/Llamafile-0.10.4", "publisher": "Phoronix", "date": "2026-07-17", "type": "community"}
+      ],
+      "measuredOrClaimed": "COMMUNITY_REPORT",
+      "license": "Apache-2.0 (per third-party review — UNVERIFIED against repo)",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": true, "why": "Single-file binary, CPU-first."},
+      "relevanceToODG": "Low: it lags upstream llama.cpp; no capability beyond llama-server for ODG.",
+      "risks": "Lags upstream model support."
+    },
+    {
+      "id": "B-06",
+      "domain": "B",
+      "title": "ik_llama.cpp fork: faster CPU prompt processing (claims, dated)",
+      "kind": "engine",
+      "claim": "Fork README claims much faster CPU prompt processing for non-interleaved quants and MoE prefill gains; one third-party test ~1.24x pp on Gemma (31.16 vs 38.58 tok/s); one discussion 5.05 vs 2.70 t/s; CPU flash-attention 26% slower at 32k context in an older discussion; some models failed to load.",
+      "evidence": [
+        {"url": "https://github.com/ikawrakow/ik_llama.cpp/discussions/164", "publisher": "ik_llama.cpp GitHub", "date": "2025", "type": "community"},
+        {"url": "https://github.com/ikawrakow/ik_llama.cpp/wiki", "publisher": "ik_llama.cpp wiki", "date": "2024-2025", "type": "repo"}
+      ],
+      "measuredOrClaimed": "COMMUNITY_REPORT",
+      "license": "MIT (fork of llama.cpp — UNVERIFIED)",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": true, "why": "CPU-focused fork."},
+      "relevanceToODG": "Prompt processing (~27 tok/s measured) is ODG's bottleneck for long repo contexts; a pp-optimised build is worth a local A/B, not adoption on claims.",
+      "risks": "Single-maintainer fork; model coverage gaps; old comparisons vs a fast-moving mainline."
+    },
+    {
+      "id": "H-01",
+      "domain": "H",
+      "title": "MEASURED: on DDR4 CPU, 30B-A3B MoE decodes ~2x faster than dense 7B",
+      "kind": "benchmark",
+      "claim": "i7-8700 (6C, AVX2, no AVX-512), 64 GB DDR4-2400 dual-channel, llama.cpp CPU-only, 6 threads, greedy, 256 tokens, server predicted_per_second: Qwen2.5-Coder-1.5B Q4_K_M 22.4 tok/s; Qwen2.5-Coder-3B 11.8; Qwen2.5-Coder-7B Q4_K_M (4,683 MB) 4.9 tok/s; Llama-3.1-8B 4.2; Qwen3-VL-30B-A3B Q4_K_M (18,557 MB, ~3.3B active) 10.6 tok/s, quality 8/10 vs 5/10 for coder-7B on author's graded set. Decode is memory-bandwidth-bound: speed tracks ACTIVE weight bytes. Prefill not reported.",
+      "evidence": [
+        {"url": "https://inventivehq.com/blog/moe-on-cpu-benchmark", "publisher": "InventiveHQ Lab (independent)", "date": "2026-06-26", "type": "benchmark"}
+      ],
+      "measuredOrClaimed": "MEASURED_INDEPENDENT",
+      "license": "n/a",
+      "resourceFit": {"ramGB": 18.6, "fitsThisVps": "borderline", "why": "The MoE in the test needs 18.6 GB; the principle transfers to smaller MoEs (Gemma 4 26B-A4B IQ4_XS 13.6 GB)."},
+      "relevanceToODG": "Closest hardware analogue to the Haswell VPS (AVX2, DDR4-class). Predicts current qwen2.5-coder:7b generation speed in the ~5 tok/s range here (to be measured) and that a small-active MoE roughly doubles decode speed.",
+      "risks": "Single run set, single author; VPS memory bandwidth unknown (KVM, shared host); build number not stated."
+    },
+    {
+      "id": "H-02",
+      "domain": "H",
+      "title": "MEASURED (llama.cpp): quantization quality ladder via KL divergence",
+      "kind": "technique",
+      "claim": "llama.cpp perplexity README tables (Llama-3-8B class, wikitext): mean KL divergence vs FP16 — Q8_0 ~0.0014 (7.96 GiB), Q6_K ~0.0055 (6.14 GiB), Q5_K_M ~0.0108 (5.33 GiB, no imatrix), Q5_K_S ~0.0166, Q4_K_M ~0.0282 (4.58 GiB, with imatrix). Q5_K_M is ~2.6x closer to FP16 than Q4_K_M for ~16% more bytes (=> ~16% slower decode on bandwidth-bound CPU). README warns numbers are not comparable across projects; tables are from different model runs.",
+      "evidence": [
+        {"url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/perplexity/README.md", "publisher": "ggml-org", "date": "2024-2026", "type": "official"},
+        {"url": "https://sources.debian.org/src/llama.cpp/7965%2Bdfsg-1/tools/perplexity/README.md", "publisher": "Debian mirror of README", "date": "2026", "type": "repo"},
+        {"url": "https://arxiv.org/html/2601.14277v1", "publisher": "arXiv (13 llama.cpp quant configs on Llama-3.1-8B-Instruct)", "date": "2026-01", "type": "paper"}
+      ],
+      "measuredOrClaimed": "MEASURED_INDEPENDENT",
+      "license": "n/a",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": true, "why": "Technique."},
+      "relevanceToODG": "For a 9B model the Q4->Q5 step costs ~0.9 GB and fits; for MoE borderline models Q4/IQ4 is forced by RAM. Perplexity/KL is not task success — ODG must measure on its own tasks (H-05).",
+      "risks": "Generic-text KL may not reflect code-repair success; model-dependent."
+    },
+    {
+      "id": "H-03",
+      "domain": "H",
+      "title": "MEASURED: speculative decoding is often NOT a win on consumer hardware",
+      "kind": "technique",
+      "claim": "Empirical study (Apple-silicon laptop, 5 draft/target configs): best config 1.61x wall-clock at K=6; acceptance fell 69.7% (K=1) -> 37.8% at optimum K; 3 of 5 configs were SLOWER (draft not faster enough than target, or 'parallel' verification executed serially). Lossless (greedy outputs identical). Separately, a multilingual study reports Qwen pairs with very low acceptance (speedup ~1x) on translation; prima.cpp reports 0.5B draft gave only 20->18 ms/token for Qwen2.5-7B (GPU).",
+      "evidence": [
+        {"url": "https://arxiv.org/abs/2607.17283", "publisher": "arXiv (Chordiya, 'Lossless but Not Free')", "date": "2026-07-19", "type": "paper"},
+        {"url": "https://arxiv.org/pdf/2605.30580", "publisher": "arXiv ('Speculative Decoding and the Curse of Multilinguality')", "date": "2026-05", "type": "paper"},
+        {"url": "https://arxiv.org/pdf/2504.08791", "publisher": "arXiv (prima.cpp)", "date": "2025-04", "type": "paper"}
+      ],
+      "measuredOrClaimed": "MEASURED_INDEPENDENT",
+      "license": "n/a",
+      "resourceFit": {"ramGB": 0.6, "fitsThisVps": true, "why": "A 0.5-0.8B draft at Q8 is <1 GB."},
+      "relevanceToODG": "On an 8-vCPU host verification of K tokens is compute-bound (not free) — speedup must be MEASURED on ODG's code tasks (code is more predictable than prose, so acceptance may be higher; unproven). Do not assume a gain.",
+      "risks": "No CPU-only measurement found; Ollama's draft support is MLX-only (B-03) => requires llama-server."
+    },
+    {
+      "id": "H-04",
+      "domain": "H",
+      "title": "MEASURED (independent, reproducible harness): Gemma 4 26B vs Qwen3.5 on Go coding/repair",
+      "kind": "benchmark",
+      "claim": "llama.cpp b8708, 3 seeds, temp 1.0, 16k ctx. Exam v2 (resilience change on a 208-line Go program, 10 integration tests incl. race detector): Gemma 4 26B Q4_K_M 4.0/10 (Q5_K_M and MXFP4 also 4.0 — no quant gain), Qwen3-Coder-30B+draft 3.7, gpt-oss-20b 3.7, Gemma 4 E4B Q8 3.7, Qwen3.5-35B Q4_K_M 2.3, Qwen3.5-9B 2.3/10. Easy exam v1: Qwen3.5-9B 12.3/15 (range 9-14) vs 14.0 for larger models. Hardware = Ryzen AI iGPU via Vulkan (NOT CPU) so tok/s not transferable; scores are.",
+      "evidence": [
+        {"url": "https://msf.github.io/blogpost/local-llm-coding-harder-test.html", "publisher": "independent blogger (harness + sweep.sh published)", "date": "2026-04", "type": "benchmark"}
+      ],
+      "measuredOrClaimed": "MEASURED_INDEPENDENT",
+      "license": "n/a (harness license not stated)",
+      "resourceFit": {"ramGB": 16.9, "fitsThisVps": "borderline", "why": "Winning config (Gemma 4 26B Q4_K_M) is 16.9 GB; IQ4_XS 13.6 GB untested in this benchmark."},
+      "relevanceToODG": "Only test-driven-repair style independent evidence found: all small local models are weak on non-trivial repair (<=4/10); Gemma 4 E4B Q8 (~8 GB class) matched much larger models on the hard exam; quant level Q4 vs Q5 did not change score for Gemma 4 26B.",
+      "risks": "Tiny n (3 seeds, 1 task); Go not TypeScript; temp 1.0 adds variance."
+    },
+    {
+      "id": "H-05",
+      "domain": "H",
+      "title": "Method: llama-bench for reproducible tok/s (pp/tg, depth, repetitions, JSON/SQL output)",
+      "kind": "technique",
+      "claim": "llama-bench measures pp (prompt processing, batched) and tg (generation) separately, -pg combined, -d N to test at KV depth N (long-context degradation), -r repetitions (default 5) reporting mean +/- stddev, -t threads, output md/csv/json/jsonl/sql (pipe to sqlite3). Tokenization/sampling excluded. Ollama exposes analogous per-request prompt_eval_count/eval_count/eval_duration in API responses (prior knowledge — not re-verified here).",
+      "evidence": [
+        {"url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/llama-bench/README.md", "publisher": "ggml-org", "date": "2026", "type": "official"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "MIT",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": true, "why": "Ships with llama.cpp."},
+      "relevanceToODG": "Gives ODG an evidence-grade (mean+/-sd, JSON) throughput measurement to separate MEASURED from CLAIMED; combine with RSS sampling (/proc) and an ODG-owned task suite (TS repair with test pass/fail, like H-04's harness design) for quality.",
+      "risks": "Synthetic tokens != real prompts; KVM noisy-neighbour variance => use repetitions + report sd."
+    },
+    {
+      "id": "H-06",
+      "domain": "H",
+      "title": "Context & KV-cache RAM levers: default 4096 ctx, KV q8_0 halves cache, slots split context",
+      "kind": "technique",
+      "claim": "Ollama: default 4096 ctx; KV cache q8_0 ~1/2 and q4_0 ~1/4 of f16 memory, only with Flash Attention. llama.cpp: -ctk/-ctv set K/V types; total -c is split across -np slots; each extra parallel slot costs KV memory proportional to its context.",
+      "evidence": [
+        {"url": "https://docs.ollama.com/faq", "publisher": "Ollama", "date": "2026-11", "type": "official"},
+        {"url": "https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md", "publisher": "ggml-org", "date": "2026-11", "type": "official"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM",
+      "license": "n/a",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": true, "why": "Configuration only."},
+      "relevanceToODG": "With no swap, KV cache sizing is the main OOM risk when raising context for repo-scale prompts; hybrid/linear-attention models (Qwen3.5) reduce it further (unmeasured).",
+      "risks": "Quantized KV can degrade long-context accuracy (not measured here)."
+    },
+    {
+      "id": "H-07",
+      "domain": "H",
+      "title": "Benchmark-validity caveat: SWE-bench Verified saturated/archived; vendor scaffolds differ",
+      "kind": "benchmark",
+      "claim": "Vals.ai archived its SWE-bench Verified board (2025 snapshots); field moving to SWE-bench Pro / Terminal-Bench. Qwen3.6 card states SWE-bench via internal scaffold and a self-corrected SWE-bench Pro subset — vendor numbers across families are not directly comparable.",
+      "evidence": [
+        {"url": "https://www.vals.ai/benchmarks/swebench-2025-09-29", "publisher": "Vals AI (archived benchmark)", "date": "2025-09-29", "type": "benchmark"},
+        {"url": "https://huggingface.co/Qwen/Qwen3.6-35B-A3B", "publisher": "Qwen", "date": "2026-04", "type": "official"}
+      ],
+      "measuredOrClaimed": "COMMUNITY_REPORT",
+      "license": "n/a",
+      "resourceFit": {"ramGB": 0, "fitsThisVps": true, "why": "Methodological."},
+      "relevanceToODG": "Supports the 'marketing != measured' rule: ODG should rank candidates on its own TS test-driven-repair suite, not on vendor SWE-bench.",
+      "risks": "None."
+    }
+  ],
+  "shortlist": {
+    "coderModel": "PRIMARY (fits): Qwen3.5-9B Q5_K_M (6.58 GB) or Q4_K_M (5.68 GB), non-thinking mode for edits, Apache-2.0 — vendor LCB v6 65.6 / BFCL-V4 66.1; independent repair evidence weak (2.3/10 in H-04). CHALLENGER (borderline RAM, must measure RSS/OOM first): Gemma 4 26B-A4B UD-IQ4_XS (13.6 GB), MoE 3.8B active — best independent repair score in H-04 and MoE decode ~2x dense (H-01).",
+    "generalModel": "Gemma 4 12B Q4_K_M (7.12 GB), Apache-2.0, vendor LCB v6 72.0 — different family from the coder => usable as independent reviewer/planner. Alternative: Gemma 4 E4B Q8 (strong on H-04 hard exam).",
+    "draftModel": "Qwen3.5-0.8B (same tokenizer family as Qwen3.5-9B) via llama-server -md — speedup UNPROVEN on CPU (H-03: 3/5 configs slower); measure acceptance rate before enabling. Ollama draft support is MLX-only.",
+    "embeddingCandidates": ["Qwen3-Embedding-0.6B (Apache-2.0, 32K ctx, MRL, Q8_0 ~0.64 GB; last-token pooling + query instruction required)", "EmbeddingGemma-300M (Gemma Terms of Use — license review needed; MTEB(Code) 68.76 @768d)"],
+    "engine": "Keep Ollama for now (installed; JSON-schema outputs) but plan an owner-gated A/B with llama.cpp llama-server (MIT) for spec decoding, --cache-reuse, Prometheus metrics, per-request grammar; Ollama 0.35.1 lags 0.40.18 — verify Qwen3.5/Gemma 4 support before switching models. vLLM CPU not recommended on AVX2-only Haswell."
+  },
+  "openQuestions": [
+    "Actual generation (tg) tok/s of the installed qwen2.5-coder:7b on this VPS — only prompt eval (~27 tok/s) and cold load (~13 s) were measured; H-01 predicts ~5 tok/s on similar DDR4 AVX2 hardware.",
+    "VPS memory bandwidth (KVM, shared host) — the decisive variable for CPU decode speed; not measured.",
+    "Does Ollama 0.35.1 load Qwen3.5 (hybrid Gated DeltaNet) and Gemma 4 GGUFs correctly, and with parallel requests? Release notes suggest fixes landed in 0.40.x.",
+    "Gemma 4 26B-A4B at IQ4_XS/Q3_K_M: RSS under real load with KV for 16-32K ctx, and code-repair quality vs Q4_K_M — no source found.",
+    "Speculative decoding acceptance rate on TypeScript code with a 0.8B draft on CPU — no CPU-only measurement found.",
+    "Qwen3.8-Flash / Flash-Next parameter counts and RAM footprint (source returned 403) — could be a fitting MoE if small.",
+    "Ministral 3 (8B/14B, 2512) licenses and coding numbers — model cards not fetched.",
+    "nomic-embed-code / Jina code embeddings — not researched.",
+    "Exact license texts for llama.cpp, Ollama, vLLM, llamafile, ik_llama.cpp were taken from prior knowledge / third-party reviews, not re-read from LICENSE files on this pass.",
+    "Devstral Small 2 GGUF size and CPU speed — not fetched (estimate only)."
+  ]
+}

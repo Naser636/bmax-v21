@@ -350,7 +350,7 @@ const CONVERSION_N = 3;
 const CONVERSION_BATCH = "V176-R2C-1";
 const CONVERTED_BY = "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)";
 const OWNER_RECORD = "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json";
-const CONVERSION_RULE = "RB-CONV-1: walk `top` (selector rank order, superseded already excluded) and convert the first N eligible drafts; a draft is SKIPPED when: SUPERSEDED (SUP-1) · DUPLICATE (its id is already a contract scenario or a register item id, or names an in-flight build / IN_FLIGHT link) · OWNER_GATED (engine gate or draft.ownerGate.required) · NO_DECLARED_OBJECTIVE (objective NOT_DERIVED) · NO_WRITE_SET_ESTIMATE · OWN1_MATCH (the contract text would trip the register's OWN-1 owner rule ⇒ never silently converted). One batch id per conversion: a batch already present in the contracts file ⇒ ALREADY_CONVERTED, nothing appended (idempotent). Append-only: existing entries are never rewritten; only the header count / initialStatusCounts are recomputed from the array.";
+const CONVERSION_RULE = "RB-CONV-1: walk `top` (selector rank order, superseded already excluded) and convert the first N eligible drafts; a draft is SKIPPED when: SUPERSEDED (SUP-1) · DUPLICATE (its id is already a contract scenario or a register item id, or names an in-flight build / IN_FLIGHT link) · OWNER_GATED (engine gate or draft.ownerGate.required) · NO_DECLARED_OBJECTIVE (objective NOT_DERIVED) · NO_WRITE_SET_ESTIMATE · OWN1_MATCH (the contract text would trip the register's OWN-1 owner rule ⇒ never silently converted). RB-CONV-2: only with opts.convertOwnerGated, a draft declaring ownerGate {required, step} is converted with the step written into missingForPass so the register's OWN-1 marks it requiresOwnerAuthorization (visible, never auto-selectable). One batch id per conversion: a batch already present in the contracts file ⇒ ALREADY_CONVERTED, nothing appended (idempotent). Append-only: existing entries are never rewritten; only the header count / initialStatusCounts are recomputed from the array.";
 
 function convertedContractsOf(src: any): any[] {
   const cs = src && src.contracts && src.contracts.data && Array.isArray(src.contracts.data.contracts) ? src.contracts.data.contracts : [];
@@ -359,6 +359,9 @@ function convertedContractsOf(src: any): any[] {
 
 function contractFromDraft(t: any, opts: any): any {
   const d = t.contract;
+  // RB-CONV-2: an owner-gated STEP (e.g. a model pull) is converted only under opts.convertOwnerGated and stays VISIBLE to the
+  // register: the step is written into missingForPass, where OWN-1 reads it ⇒ requiresOwnerAuthorization (never hidden)
+  const gated = opts.convertOwnerGated === true && isObj(d.ownerGate) && d.ownerGate.required === true && typeof d.ownerGate.step === "string";
   const testFile = d.write_set.paths.find((p: string) => /\.test\.ts$/.test(p)) || null;
   const named = (Array.isArray(d.acceptance_criteria) ? d.acceptance_criteria : []).filter((a: string) => !/^tsc clean|^the before-metric is recomputed/.test(a));
   // the test FILE lives in the structured acceptance_tests (a module path in the criterion text would be scanned by OWN-1)
@@ -377,7 +380,7 @@ function contractFromDraft(t: any, opts: any): any {
       sourceRecord: opts.sourceRecord || null,
       sourceRecordSha256AtConversion: opts.sourceRecordSha256 || null,
       conversionBatch: opts.batch,
-      ownerRecord: OWNER_RECORD,
+      ownerRecord: opts.ownerRecord || OWNER_RECORD,
       signals: d.source.signals.slice(),
       selection: { rank: t.rank, evidenceScore: t.evidenceScore, uncertainty: t.uncertainty, upperBound: t.upperBound, tiedWith: t.tiedWith.slice(), scoreIsNotAuthorization: true },
       multiplier: { maxDirectConsumers: d.multiplier.maxDirectConsumers, maxTransitiveDependents: d.multiplier.maxTransitiveDependents, perComponent: d.multiplier.perComponent.map((x: any) => Object.assign({}, x)), rationale: d.multiplier.rationale },
@@ -387,9 +390,11 @@ function contractFromDraft(t: any, opts: any): any {
       status: "NOT_STARTED",
       note: "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
       evidence: [],
-      missingForPass: "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion",
+      missingForPass: "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion" + (gated ? `; owner-gated step: ${d.ownerGate.step}` : ""),
       asOf: opts.asOf || null,
     },
+    ...(gated ? { ownerGate: { required: true, step: d.ownerGate.step, reason: (d.ownerGate.reason || []).slice() } } : {}),
+    ...(isObj(d.proposal) ? { proposal: JSON.parse(JSON.stringify(d.proposal)) } : {}),
     beforeMetric: d.measure.before.map((b: any) => Object.assign({}, b)),
     measure: { after: null, compareRule: d.measure.compareRule },
     WORK_ITEM_CONTRACT: {
@@ -436,7 +441,7 @@ function convertToContracts(result: any, contractsData: any, opts?: any): any {
     else if (cs.some((c: any) => String(c.scenario) === t.id)) reason = "DUPLICATE (already a contract scenario)";
     else if (/^IN_FLIGHT:/.test(t.id) || (result.inFlightBuilds || []).map(String).includes(t.id)) reason = "DUPLICATE (IN_FLIGHT link: names an in-flight build, not a new improvement)";
     else if (known.has(t.id)) reason = "DUPLICATE (already a register item)";
-    else if (p.requiresOwnerAuthorization === true || p.verdict === "OWNER_GATED" || (d.ownerGate && d.ownerGate.required)) reason = "OWNER_GATED";
+    else if ((p.requiresOwnerAuthorization === true || p.verdict === "OWNER_GATED" || (d.ownerGate && d.ownerGate.required)) && !(o.convertOwnerGated === true && d.ownerGate && d.ownerGate.required === true && typeof d.ownerGate.step === "string")) reason = "OWNER_GATED";
     else if (!d.objective || /^NOT_DERIVED/.test(String(d.objective))) reason = "NO_DECLARED_OBJECTIVE";
     else if (!(d.write_set && Array.isArray(d.write_set.paths) && d.write_set.paths.length)) reason = "NO_WRITE_SET_ESTIMATE";
     let c: any = null;
@@ -444,7 +449,9 @@ function convertToContracts(result: any, contractsData: any, opts?: any): any {
       c = contractFromDraft(t, o);
       const scanned = [c.WORK_ITEM_CONTRACT.objective, ...c.WORK_ITEM_CONTRACT.acceptance_criteria, c.initialState.missingForPass].join(" ‖ ");
       const om = REG.ownerMatches(scanned);
-      if (om.length) reason = `OWN1_MATCH [${om.join(", ")}]`;
+      const declaredGate = c.ownerGate && c.ownerGate.required === true;   // RB-CONV-2: the match is the declared, visible gate
+      if (om.length && !declaredGate) reason = `OWN1_MATCH [${om.join(", ")}]`;
+      if (declaredGate && !om.length) reason = "OWNER_GATE_NOT_VISIBLE (the declared owner-gated step would not be read by OWN-1)";
     }
     if (reason) { skipped.push({ id: t.id, rank: t.rank, reason }); continue; }
     eligible.push({ t, c });
@@ -453,7 +460,7 @@ function convertToContracts(result: any, contractsData: any, opts?: any): any {
   const last = eligible[o.n - 1], next = eligible[o.n];
   const cut = { lastConvertedScore: last ? last.t.evidenceScore : null, firstNotConvertedScore: next ? next.t.evidenceScore : null, clean: !last || !next || next.t.evidenceScore < last.t.evidenceScore, note: "clean ⇔ the cut does not split a tie (first eligible draft left out scores strictly lower)" };
   const all = cs.concat(appended);
-  const note = appended.length ? ` V17.6 R2C (batch ${o.batch}, owner record ${OWNER_RECORD}): ${appended.map((c: any) => c.scenario).join(", ")} appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged.` : "";
+  const note = appended.length ? ` ${o.noteLabel || "V17.6 R2C"} (batch ${o.batch}, owner record ${o.ownerRecord || OWNER_RECORD}): ${appended.map((c: any) => c.scenario).join(", ")} appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged.` : "";
   const data = Object.assign({}, contractsData, typeof contractsData["//"] === "string" ? { "//": contractsData["//"] + note } : {}, { count: all.length, initialStatusCounts: statusCounts(all, contractsData.initialStatusCounts), contracts: all });
   return Object.assign(base, { status: appended.length ? "CONVERTED" : "NOTHING_ELIGIBLE", appended, skipped, cut, notConvertedEligible: eligible.slice(o.n).map((e) => e.t.id), data });
 }

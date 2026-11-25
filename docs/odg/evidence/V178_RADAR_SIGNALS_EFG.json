@@ -1,0 +1,465 @@
+{
+  "collectedBy": "PROVIDER (Claude Code research agent)",
+  "collectedAt": "2026-11-25T12:00:00Z",
+  "epistemicStatus": "UNVERIFIED",
+  "domain": "E,F,G",
+  "method": "WebSearch result summaries only (no page-level verification of each number unless noted); generic technical queries, no repo/host/client data sent. Nothing was installed or benchmarked on the VPS; every resourceFit is an estimate, NOT_MEASURED.",
+  "signals": [
+    {
+      "id": "E-01",
+      "domain": "E",
+      "title": "intfloat/multilingual-e5-small: small multilingual embedding (384-d, 12 layers), MIT",
+      "kind": "embedding-model",
+      "claim": "MIT-licensed multilingual embedder; tech report gives 57.9 average on English MTEB (56 datasets); 384-d embeddings, 12 layers; safetensors ~471 MB. Multilingual MTEB average for the small variant not found in this run.",
+      "evidence": [
+        {"url": "https://huggingface.co/intfloat/multilingual-e5-small/blob/main/README.md", "publisher": "Hugging Face / intfloat (Microsoft)", "date": "n/a", "type": "official model card"},
+        {"url": "https://arxiv.org/abs/2402.05672", "publisher": "arXiv (Wang et al., Multilingual E5 Text Embeddings: A Technical Report)", "date": "2024-02", "type": "technical report"}
+      ],
+      "measuredOrClaimed": "MEASURED_BY_AUTHORS (benchmark in tech report; not reproduced by ODG)",
+      "license": "MIT",
+      "requiresRoot": false,
+      "resourceFit": "Very good for 8 vCPU AVX2 / 22 GiB: ~118M params class (param count NOT confirmed in sources), <0.5 GB RAM in fp32; CPU throughput NOT_MEASURED.",
+      "relevanceToODG": "Cheapest FR/EN baseline embedder for client-document RAG; MIT avoids license gating. Requires 'query: '/'passage: ' prefixes.",
+      "risks": "Older (2024) and weaker than newer sub-1B models; 512-token context limits chunk size; param count unverified."
+    },
+    {
+      "id": "E-02",
+      "domain": "E",
+      "title": "EmbeddingGemma (~300-308M): top sub-500M on MMTEB, but Gemma license (not OSI)",
+      "kind": "embedding-model",
+      "claim": "Paper reports EmbeddingGemma ranks 8th overall on MTEB(Multilingual, v2), 17 places above the next sub-500M model; lead persists at 128-d Matryoshka truncation and 4-bit quantization. Mirror model cards list mean(task) 61.15 @768d, 58.23 @128d, Q4_0 60.62 (mirror figures NOT confirmed against official card).",
+      "evidence": [
+        {"url": "https://arxiv.org/abs/2509.20354", "publisher": "arXiv (Google DeepMind, EmbeddingGemma paper)", "date": "2025-09", "type": "technical report"},
+        {"url": "https://huggingface.co/lazyDataScientist/EmbeddingGemma/blob/main/README.md", "publisher": "Hugging Face (third-party mirror of model card)", "date": "n/a", "type": "secondary mirror - UNVERIFIED"}
+      ],
+      "measuredOrClaimed": "MEASURED_BY_AUTHORS (ranking); exact scores UNVERIFIED (mirror)",
+      "license": "Gemma Terms of Use (gated, custom, NOT OSI open source)",
+      "requiresRoot": false,
+      "resourceFit": "Good: ~300M params, <1.5 GB RAM fp32, smaller quantized; CPU latency NOT_MEASURED.",
+      "relevanceToODG": "Best quality-per-size multilingual candidate for FR/EN on CPU, if Gemma terms are acceptable for client work.",
+      "risks": "License requires owner/legal review (use restrictions, redistribution terms); gated download."
+    },
+    {
+      "id": "E-03",
+      "domain": "E",
+      "title": "Qwen3-Embedding-0.6B: 100+ languages, 32K context, up to 1024-d",
+      "kind": "embedding-model",
+      "claim": "Qwen3 Embedding series: 8B ranks #1 on MTEB multilingual (70.58, as of 2025-06-05). For 0.6B a third-party catalog lists MMTEB mean(task) 64.33 / mean(type) 56.00 (NOT confirmed against official card). 28 layers, 32K context, 100+ languages.",
+      "evidence": [
+        {"url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B", "publisher": "Hugging Face / Qwen (Alibaba)", "date": "2025-06", "type": "official model card"},
+        {"url": "https://arxiv.org/abs/2506.05176", "publisher": "arXiv (Qwen3 Embedding report)", "date": "2025-06", "type": "technical report"},
+        {"url": "https://qwenlm.github.io/blog/qwen3-embedding", "publisher": "Qwen team blog", "date": "2025-06", "type": "vendor blog (marketing + tables)"},
+        {"url": "https://sdk.airefinery.accenture.com/distiller/model_catalog/Embedding/Qwen/Qwen3-Embedding-0.6B/", "publisher": "Accenture model catalog", "date": "n/a", "type": "third-party - UNVERIFIED"}
+      ],
+      "measuredOrClaimed": "MEASURED_BY_AUTHORS for 8B; 0.6B number UNVERIFIED (secondary)",
+      "license": "Apache-2.0 per HF metadata (search summary flagged a wording conflict on the blog; verify on official card)",
+      "requiresRoot": false,
+      "resourceFit": "Acceptable: 0.6B params, ~1.2 GB bf16 / less quantized (GGUF exists); slower than E-01/E-02 on CPU; NOT_MEASURED.",
+      "relevanceToODG": "Strongest permissive-licensed candidate; long context helps contracts/tenders; also code-capable.",
+      "risks": "Higher CPU cost per chunk; license wording to confirm; 0.6B score secondhand."
+    },
+    {
+      "id": "E-04",
+      "domain": "E",
+      "title": "nomic-embed-text-v2-moe: Apache-2.0 multilingual MoE, available in Ollama library",
+      "kind": "embedding-model",
+      "claim": "475M total / 305M active params, 8 experts top-2, max 512 tokens, Matryoshka 768->256; ~100 languages per Ollama page (HF metadata lists only en/es - conflict); Apache-2.0; requires 'search_query:'/'search_document:' prefixes.",
+      "evidence": [
+        {"url": "https://huggingface.co/nomic-ai/nomic-embed-text-v2-moe", "publisher": "Hugging Face / Nomic AI", "date": "2025-02", "type": "official model card"},
+        {"url": "https://ollama.com/library/nomic-embed-text-v2-moe", "publisher": "Ollama", "date": "n/a", "type": "official model registry"},
+        {"url": "https://simonwillison.net/2025/Feb/12/nomic-embed-text-v2/", "publisher": "Simon Willison", "date": "2025-02-12", "type": "independent blog"}
+      ],
+      "measuredOrClaimed": "CLAIMED (specs); MTEB scores not collected in this run",
+      "license": "Apache-2.0",
+      "requiresRoot": false,
+      "resourceFit": "Good; runs through the Ollama already on the VPS (ollama pull = network egress, owner-gated); NOT_MEASURED.",
+      "relevanceToODG": "Lowest-integration-cost path: reuse existing Ollama loopback endpoint (/api/embed) instead of adding a new runtime.",
+      "risks": "512-token limit; language-coverage metadata conflict; pull requires egress."
+    },
+    {
+      "id": "E-05",
+      "domain": "E",
+      "title": "BAAI/bge-m3: dense + sparse + multi-vector in one model, MIT, 8192 tokens",
+      "kind": "embedding-model",
+      "claim": "Single model doing dense, sparse (lexical weights) and multi-vector (ColBERT-style) retrieval; 100+ languages; inputs up to 8192 tokens; dense dim 1024. Sparse/multi-vector outputs need FlagEmbedding (most libraries only support dense). 568M param figure NOT confirmed in this run.",
+      "evidence": [
+        {"url": "https://huggingface.co/BAAI/bge-m3", "publisher": "Hugging Face / BAAI", "date": "2024-01", "type": "official model card"},
+        {"url": "https://arxiv.org/abs/2402.03216", "publisher": "arXiv (BGE M3-Embedding)", "date": "2024-02", "type": "technical report"},
+        {"url": "https://build.nvidia.com/baai/bge-m3/modelcard", "publisher": "NVIDIA", "date": "n/a", "type": "third-party model card (license=MIT)"}
+      ],
+      "measuredOrClaimed": "MEASURED_BY_AUTHORS (paper benchmarks); not reproduced",
+      "license": "MIT",
+      "requiresRoot": false,
+      "resourceFit": "Heavier (XLM-R large class); feasible on 22 GiB but slowest of the candidates; NOT_MEASURED.",
+      "relevanceToODG": "Native hybrid (sparse+dense) for long FR legal/tender documents.",
+      "risks": "CPU cost; sparse mode needs Python FlagEmbedding (new dependency vs Node stack)."
+    },
+    {
+      "id": "E-06",
+      "domain": "E",
+      "title": "sqlite-vec (asg017): dependency-free C SQLite vector extension, pre-v1, new ANN indexes in alpha",
+      "kind": "vector-store",
+      "claim": "Pure C, no dependencies, MIT/Apache-2.0 dual license; vec0 virtual tables for float/int8/binary vectors; npm/pip/Go/Rust packages; README says pre-v1 with breaking changes expected; v0.1.10-alpha series adds ANN indexes (rescore, DiskANN; IVF experimental, not enabled). Default otherwise brute-force KNN.",
+      "evidence": [
+        {"url": "https://github.com/asg017/sqlite-vec", "publisher": "GitHub / Alex Garcia", "date": "n/a", "type": "official repository"},
+        {"url": "https://github.com/asg017/sqlite-vec/releases", "publisher": "GitHub", "date": "release dates not confirmed in search", "type": "release notes"},
+        {"url": "https://builders.mozilla.org/project/sqlite-vec/", "publisher": "Mozilla Builders", "date": "n/a", "type": "sponsor page"}
+      ],
+      "measuredOrClaimed": "CLAIMED (project docs); no ODG benchmark",
+      "license": "MIT OR Apache-2.0",
+      "requiresRoot": false,
+      "resourceFit": "Excellent: in-process, single file per DB, tiny footprint; brute force adequate up to ~1e5-1e6 vectors (estimate, NOT_MEASURED).",
+      "relevanceToODG": "Fits 'one SQLite file per tenant' isolation and reuse of an existing SQLite-based memory; combines with FTS5 for hybrid.",
+      "risks": "Pre-v1 API instability; ANN indexes alpha only; must pin version."
+    },
+    {
+      "id": "E-07",
+      "domain": "E",
+      "title": "Official SQLite 'vec1' ANN extension in development at sqlite.org",
+      "kind": "vector-store",
+      "claim": "sqlite.org hosts vec1, an ANN vector search extension using SQLite's virtual-table interface; roadmap says no further features required before first release but 'Testing is insufficient'. Forum post by Dan Kennedy dated 2026-03-30.",
+      "evidence": [
+        {"url": "https://sqlite.org/vec1/doc/trunk/doc/vec1.md", "publisher": "SQLite project", "date": "2026 (trunk)", "type": "official documentation"},
+        {"url": "https://sqlite.org/forum/forumpost/9fea7e0fbb6ddd2f", "publisher": "SQLite User Forum", "date": "2026-03-30", "type": "official forum"}
+      ],
+      "measuredOrClaimed": "CLAIMED (pre-release)",
+      "license": "Presumed public domain like SQLite - UNVERIFIED",
+      "requiresRoot": false,
+      "resourceFit": "Same in-process profile as sqlite-vec.",
+      "relevanceToODG": "Watch item: a first-party SQLite ANN would reduce third-party risk vs sqlite-vec.",
+      "risks": "Not released; self-declared insufficient testing; do not adopt yet."
+    },
+    {
+      "id": "E-08",
+      "domain": "E",
+      "title": "LanceDB (@lancedb/lancedb): embedded Apache-2.0 vector DB with Node bindings",
+      "kind": "vector-store",
+      "claim": "Embedded (no server) columnar vector DB, Apache-2.0; current Node package @lancedb/lancedb (old 'vectordb' deprecated); data on local disk, sharable with Python; not supported on musl Linux or Windows ARM64.",
+      "evidence": [
+        {"url": "https://npmjs.com/package/@lancedb/lancedb", "publisher": "npm / LanceDB", "date": "n/a", "type": "official package page"},
+        {"url": "https://npmjs.com/package/vectordb", "publisher": "npm", "date": "n/a", "type": "deprecation notice"},
+        {"url": "https://docs.langchain.com/oss/javascript/integrations/vectorstores/lancedb", "publisher": "LangChain", "date": "n/a", "type": "integration docs"}
+      ],
+      "measuredOrClaimed": "CLAIMED",
+      "license": "Apache-2.0",
+      "requiresRoot": false,
+      "resourceFit": "Good on glibc x86_64; larger native binary (Rust) than sqlite-vec; NOT_MEASURED.",
+      "relevanceToODG": "Option if corpus outgrows brute-force SQLite; built-in ANN + FTS.",
+      "risks": "Second storage engine beside existing SQLite memory (violates 'no parallel memory' unless it replaces); fast-moving API."
+    },
+    {
+      "id": "E-09",
+      "domain": "E",
+      "title": "vectorlite: hnswlib-backed SQLite extension (HNSW inside SQLite)",
+      "kind": "vector-store",
+      "claim": "Authors claim vector queries significantly faster than sqlite-vec/sqlite-vss (HNSW); same README notes its brute-force mode is slower than sqlite-vec for 128-d.",
+      "evidence": [
+        {"url": "https://github.com/1yefuwang1/vectorlite", "publisher": "GitHub", "date": "n/a", "type": "project README (self-benchmark)"}
+      ],
+      "measuredOrClaimed": "CLAIMED (author self-benchmark, not independently reproduced)",
+      "license": "UNVERIFIED (not captured in this run)",
+      "requiresRoot": false,
+      "resourceFit": "In-process; HNSW index RAM overhead; NOT_MEASURED.",
+      "relevanceToODG": "Fallback if ANN-in-SQLite needed before sqlite-vec ANN stabilises.",
+      "risks": "Smaller project, maintenance status unverified; vendor-style benchmark claims."
+    },
+    {
+      "id": "E-10",
+      "domain": "E",
+      "title": "Hybrid retrieval in SQLite: FTS5 BM25 + sqlite-vec KNN fused with Reciprocal Rank Fusion",
+      "kind": "retrieval-pattern",
+      "claim": "Documented pattern: run FTS5 (BM25) and sqlite-vec KNN separately and fuse by rank: score = sum 1/(k+rank), k commonly 60, because BM25 and cosine scores are on incompatible scales. Full SQL example published; arXiv 'scrydb' paper evaluates rank fusion in SQLite on IR benchmarks.",
+      "evidence": [
+        {"url": "https://simonwillison.net/2024/Oct/4/hybrid-full-text-search-and-vector-search-with-sqlite/", "publisher": "Simon Willison", "date": "2024-10-04", "type": "technical blog (with SQL)"},
+        {"url": "https://arxiv.org/pdf/2608.24060", "publisher": "arXiv (SQLite is Enough... scrydb)", "date": "2026-08 (per arXiv id)", "type": "academic paper - not read in full"},
+        {"url": "https://docs.cloud.google.com/spanner/docs/hybrid-full-text-vector-search", "publisher": "Google Cloud", "date": "n/a", "type": "official docs (RRF k=60 rationale)"}
+      ],
+      "measuredOrClaimed": "MEASURED (paper) / PATTERN (blog); ODG not measured",
+      "license": "n/a (pattern); SQLite public domain",
+      "requiresRoot": false,
+      "resourceFit": "Excellent: zero extra services.",
+      "relevanceToODG": "Exact-term recall (SIRET, article numbers, product refs, French legal terms) that pure vectors miss; one SQLite file.",
+      "risks": "FTS5 tokenizer config for French (accents/diacritics: unicode61 remove_diacritics) must be chosen; query sanitisation needed for FTS5 syntax injection."
+    },
+    {
+      "id": "E-11",
+      "domain": "E",
+      "title": "Code-aware retrieval: tree-sitter symbol extraction + PageRank repo map (aider)",
+      "kind": "code-retrieval",
+      "claim": "Aider builds a repo map with tree-sitter tag queries (defs/refs), a file-dependency graph ranked with PageRank (personalised to chat context), then emits the top-ranked symbols within a token budget; replaced its earlier ctags approach. Several Apache-2.0 reimplementations exist.",
+      "evidence": [
+        {"url": "https://aider.chat/2023/10/22/repomap.html", "publisher": "aider (Paul Gauthier)", "date": "2023-10-22", "type": "official blog"},
+        {"url": "https://aider.chat/docs/repomap.html", "publisher": "aider", "date": "n/a", "type": "official docs"},
+        {"url": "https://deepwiki.com/Aider-AI/aider/4.1-repository-mapping", "publisher": "DeepWiki", "date": "n/a", "type": "third-party code analysis - UNVERIFIED details"}
+      ],
+      "measuredOrClaimed": "CLAIMED (design description; no retrieval-quality benchmark collected)",
+      "license": "aider Apache-2.0",
+      "requiresRoot": false,
+      "resourceFit": "Excellent: CPU-only parsing, no model needed.",
+      "relevanceToODG": "ODG already has a change-impact graph / dependency graph: rank symbols over that existing graph rather than building a second one; use AST-based chunking (function/class boundaries) for code embeddings.",
+      "risks": "Duplication risk with existing ODG graph components; tree-sitter native bindings for Node add a build dependency."
+    },
+    {
+      "id": "F-01",
+      "domain": "F",
+      "title": "bubblewrap: unprivileged namespace sandbox; --unshare-all / --unshare-net / --die-with-parent / --new-session / stacked seccomp",
+      "kind": "sandbox",
+      "claim": "--unshare-all unshares user, IPC, PID, network, UTS, cgroup (user/cgroup as try); --share-net re-enables net; --new-session calls setsid (else block TIOCSTI via seccomp); --die-with-parent uses PR_SET_PDEATHSIG; --seccomp FD loads cBPF, newer versions add --add-seccomp-fd to stack filters.",
+      "evidence": [
+        {"url": "https://manpages.debian.org/testing/bubblewrap/bwrap.1", "publisher": "Debian manpages", "date": "n/a", "type": "official man page"},
+        {"url": "https://man.archlinux.org/man/bwrap.1", "publisher": "Arch Linux manpages", "date": "n/a", "type": "official man page"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED (man page); ODG has prior PROVEN bwrap launchSpec (internal, not re-verified here)",
+      "license": "LGPL-2.0-or-later (from general knowledge - UNVERIFIED in this run)",
+      "requiresRoot": false,
+      "resourceFit": "Near-zero overhead; already installed (0.11).",
+      "relevanceToODG": "Keep as primary sandbox; --unshare-net gives a network namespace with only loopback = hard no-egress for client-doc jobs. NOTE: a fresh netns has its own loopback, so the host Ollama at 127.0.0.1:11434 is NOT reachable from inside; needs a bind-mounted Unix socket proxy or running inference outside the sandbox.",
+      "risks": "Shares host kernel (namespace escape = kernel bug class); isolation strength depends on the seccomp profile ODG supplies."
+    },
+    {
+      "id": "F-02",
+      "domain": "F",
+      "title": "Ubuntu AppArmor restriction on unprivileged user namespaces (affects bwrap/podman/nsjail)",
+      "kind": "platform-constraint",
+      "claim": "Ubuntu (since 23.10/24.04) restricts unprivileged userns creation via kernel.apparmor_restrict_unprivileged_userns; binaries need an AppArmor profile granting 'userns' (bwrap-userns-restrict profile shipped in apparmor package on newer releases). Disabling via sysctl is system-wide and discouraged.",
+      "evidence": [
+        {"url": "https://discourse.ubuntu.com/t/understanding-apparmor-user-namespace-restriction/58007", "publisher": "Ubuntu Discourse (Canonical)", "date": "2025", "type": "official vendor explainer"},
+        {"url": "https://discourse.ubuntu.com/t/spec-unprivileged-user-namespace-restrictions-via-apparmor-in-ubuntu-23-10/37626", "publisher": "Ubuntu (spec SE045)", "date": "2023", "type": "official spec"},
+        {"url": "https://bugs.launchpad.net/bugs/2046844", "publisher": "Launchpad", "date": "2024", "type": "bug tracker"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED; 26.04 packaging status NOT verified",
+      "license": "n/a",
+      "requiresRoot": "partial",
+      "resourceFit": "n/a",
+      "relevanceToODG": "Since bwrap already works on the VPS, a profile is presumably in place; adding nsjail/podman/runsc --rootless would each need an AppArmor userns profile = root (owner-gated).",
+      "risks": "Any new sandbox binary may fail silently-ish ('Userns create restricted'); do not flip the sysctl."
+    },
+    {
+      "id": "F-03",
+      "domain": "F",
+      "title": "Landlock LSM: unprivileged filesystem + TCP (ABI>=4) + UDP (ABI>=10, dev docs) restrictions",
+      "kind": "kernel-sandbox",
+      "claim": "Unprivileged processes can restrict themselves; TCP bind/connect rules per port since ABI v4; UDP rights appear in v7.2-rc docs at ABI v10; ABI discovered via landlock_create_ruleset(NULL,0,LANDLOCK_CREATE_RULESET_VERSION) with best-effort degradation.",
+      "evidence": [
+        {"url": "https://www.kernel.org/doc/html/latest/userspace-api/landlock.html", "publisher": "kernel.org", "date": "current", "type": "official kernel documentation"},
+        {"url": "https://kernel.org/doc/html/v7.2-rc1/userspace-api/landlock.html", "publisher": "kernel.org", "date": "2026 (rc)", "type": "official dev documentation"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED; whether Landlock is enabled in the VPS kernel's LSM list NOT_OBSERVED",
+      "license": "kernel (GPL-2.0)",
+      "requiresRoot": false,
+      "resourceFit": "Negligible overhead.",
+      "relevanceToODG": "Defence-in-depth inside bwrap: deny-all TCP connect except allowlisted ports, restrict writes to tenant dir. Can be applied from a tiny helper or via existing tooling.",
+      "risks": "Port-based only (no IP/host allowlist); UDP control only on very new kernels; must check 'landlock' is in active LSMs."
+    },
+    {
+      "id": "F-04",
+      "domain": "F",
+      "title": "gVisor (runsc): user-space kernel; systrap platform needs no KVM; --rootless mainly for 'runsc do'",
+      "kind": "sandbox",
+      "claim": "Systrap (default platform) intercepts syscalls with signals + shared memory, needs no /dev/kvm; KVM platform requires KVM. Rootless: runsc --rootless maps caller to root in a new userns, 'create' unsupported, mainly suitable for 'runsc do'. Combination rootless+systrap not explicitly confirmed by docs.",
+      "evidence": [
+        {"url": "https://gvisor.dev/docs/architecture_guide/platforms", "publisher": "gVisor (Google)", "date": "n/a", "type": "official docs"},
+        {"url": "https://gvisor.dev/blog/2023/04/28/systrap-release/", "publisher": "gVisor blog", "date": "2023-04-28", "type": "official blog"},
+        {"url": "https://gvisor.dev/docs/user_guide/rootless/", "publisher": "gVisor", "date": "n/a", "type": "official docs"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED; overhead NOT_MEASURED on this host",
+      "license": "Apache-2.0",
+      "requiresRoot": "partial",
+      "resourceFit": "Works on a KVM guest without nested virt (systrap); syscall-heavy workloads pay overhead (amount NOT_MEASURED); installing binary + Docker runtime registration = root.",
+      "relevanceToODG": "Strongest isolation achievable WITHOUT nested virt: separate kernel surface for untrusted client-doc parsers (PDF/Office).",
+      "risks": "Install/AppArmor profile owner-gated; compatibility gaps for some syscalls; rootless mode limited."
+    },
+    {
+      "id": "F-05",
+      "domain": "F",
+      "title": "Firecracker microVMs require /dev/kvm; not usable on a KVM guest without nested virtualization; jailer needs root",
+      "kind": "sandbox",
+      "claim": "Firecracker requires the KVM module and rw on /dev/kvm; not well tested under nested virt; without nested virt there is no /dev/kvm. The jailer handles privileged setup (cgroups, chroot/pivot_root, device node ownership) then drops privileges - setup requires elevated permissions.",
+      "evidence": [
+        {"url": "https://github.com/firecracker-microvm/firecracker/blob/main/docs/getting-started.md", "publisher": "Firecracker (AWS)", "date": "n/a", "type": "official docs"},
+        {"url": "https://github.com/firecracker-microvm/firecracker/blob/main/docs/jailer.md", "publisher": "Firecracker (AWS)", "date": "n/a", "type": "official docs"},
+        {"url": "https://blog.alexellis.io/how-to-run-firecracker-without-kvm-on-regular-cloud-vms/", "publisher": "Alex Ellis", "date": "n/a", "type": "independent blog"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED; presence of /dev/kvm on VPS NOT_OBSERVED (V178 P0 inventory reported no GPU; nested-virt status not stated)",
+      "license": "Apache-2.0",
+      "requiresRoot": true,
+      "resourceFit": "Likely NOT available (needs nested virt from hosting provider).",
+      "relevanceToODG": "Reject for now; revisit only if provider enables nested virt or bare metal.",
+      "risks": "Wasted effort if pursued without /dev/kvm."
+    },
+    {
+      "id": "F-06",
+      "domain": "F",
+      "title": "nsjail (Google): namespaces + Kafel seccomp-bpf + cgroups v1/v2 + rlimits",
+      "kind": "sandbox",
+      "claim": "Supports UTS/MOUNT/PID/IPC/NET/USER/CGROUP/TIME namespaces, chroot/pivot_root, RO mounts, Kafel syscall policy DSL, rlimits and cgroups v1/v2 for CPU/memory/pids. Explicit rootless mode not confirmed in search results (user-namespace UID maps supported).",
+      "evidence": [
+        {"url": "https://github.com/google/nsjail", "publisher": "GitHub / Google", "date": "n/a", "type": "official repository"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "Apache-2.0",
+      "requiresRoot": "partial",
+      "resourceFit": "Low overhead; would need build/install + AppArmor userns profile.",
+      "relevanceToODG": "Only marginal gain over bwrap (built-in rlimits/cgroups/seccomp DSL); prefer extending existing bwrap launchSpec + systemd-run --user scope for limits (no 2nd sandbox).",
+      "risks": "Parallel sandbox component (anti-duplication); cgroup delegation requires systemd user setup."
+    },
+    {
+      "id": "F-07",
+      "domain": "F",
+      "title": "Rootless Podman: pasta default since 5.0, requires /etc/subuid + /etc/subgid entries",
+      "kind": "rootless-containers",
+      "claim": "Rootless networking via pasta (default since Podman 5.0) or slirp4netns; each user needs subuid/subgid ranges, else commands fail; run 'podman system migrate' after changes. Ubuntu resolute (26.04) ships podman 5.7.0.",
+      "evidence": [
+        {"url": "https://manpages.ubuntu.com/manpages/resolute/en/man7/podman-rootless.7.html", "publisher": "Ubuntu manpages (podman 5.7.0)", "date": "2026", "type": "official man page"},
+        {"url": "https://sources.debian.org/src/podman/5.7.0%2Bds2-3/docs/tutorials/rootless_tutorial.md", "publisher": "Debian / Podman project", "date": "n/a", "type": "official tutorial"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "Apache-2.0",
+      "requiresRoot": "partial",
+      "resourceFit": "Moderate overhead (images, storage); package install + subuid edit = root once.",
+      "relevanceToODG": "Docker CLI present but rootful Docker daemon membership = root-equivalent; rootless Podman with --network=none is the container option that keeps no-root operation after setup.",
+      "risks": "Docker group access is root-equivalent (general knowledge, not sourced here); --network=none semantics under rootless not confirmed in this run."
+    },
+    {
+      "id": "G-01",
+      "domain": "G",
+      "title": "Ollama: binds 127.0.0.1:11434 by default, local prompts not seen by Ollama; cloud features disable flag; keep_alive controls model/KV residency",
+      "kind": "privacy-config",
+      "claim": "FAQ: local runs - 'We don't see your prompts or data'; OLLAMA_HOST changes bind (default loopback); OLLAMA_KEEP_ALIVE / API keep_alive (0 = unload immediately after response); OLLAMA_NO_CLOUD=1 disables cloud features; OLLAMA_NOHISTORY disables readline history (CLI only). Linux logs via journalctl; OLLAMA_DEBUG=1 more detail. No official statement found on whether debug logs contain prompt text.",
+      "evidence": [
+        {"url": "https://docs.ollama.com/faq", "publisher": "Ollama", "date": "current", "type": "official docs"},
+        {"url": "https://github.com/ollama/ollama/blob/main/docs/troubleshooting.md", "publisher": "Ollama (GitHub)", "date": "n/a", "type": "official docs"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM (privacy statement); config semantics DOCUMENTED",
+      "license": "MIT",
+      "requiresRoot": "partial",
+      "resourceFit": "Already installed.",
+      "relevanceToODG": "Set OLLAMA_NO_CLOUD=1 and keep loopback bind; use keep_alive=0 for client-document jobs so model state/KV cache is not kept between tenants; never run with OLLAMA_DEBUG on client data. Changing the system service env = root/systemd (owner-gated).",
+      "risks": "Vendor privacy claim is not a measurement - must be enforced by egress control (G-02); 'ollama pull' needs egress; model registry contains cloud models."
+    },
+    {
+      "id": "G-02",
+      "domain": "G",
+      "title": "No-egress enforcement for LLM processing: network namespace (bwrap --unshare-net) + Landlock TCP connect deny",
+      "kind": "egress-control",
+      "claim": "A process in a new network namespace has no route off-host (only its own loopback) - bwrap --unshare-net / --unshare-all; Landlock ABI>=4 can additionally deny TCP connect to all but allowlisted ports, unprivileged. Host-level nftables owner-filtering (skuid) would need root.",
+      "evidence": [
+        {"url": "https://manpages.debian.org/testing/bubblewrap/bwrap.1", "publisher": "Debian manpages", "date": "n/a", "type": "official man page"},
+        {"url": "https://www.kernel.org/doc/html/latest/userspace-api/landlock.html", "publisher": "kernel.org", "date": "current", "type": "official kernel documentation"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED mechanism; ODG enforcement NOT re-measured in this run",
+      "license": "n/a",
+      "requiresRoot": false,
+      "resourceFit": "Zero cost.",
+      "relevanceToODG": "Client-doc pipeline = parser + embedder + retrieval inside --unshare-net (no network at all); inference reached via a bind-mounted Unix socket to a loopback-only Ollama proxy. Proof = negative test (connect to public IP fails) as evidence.",
+      "risks": "The Ollama daemon itself runs outside the sandbox and retains host network; it must be constrained separately (systemd IPAddressDeny etc. = root)."
+    },
+    {
+      "id": "G-03",
+      "domain": "G",
+      "title": "fscrypt: per-directory encryption; only 'fscrypt setup' (global) always needs root; filesystem needs encrypt feature",
+      "kind": "encryption-at-rest",
+      "claim": "fscrypt tool: 'fscrypt setup' (creates /etc/fscrypt.conf) is the only step that always requires root; kernel API usable by unprivileged users, but non-root users cannot securely remove keys; filesystem must have the encrypt feature flag (ext4: tune2fs -O encrypt - from general knowledge, UNVERIFIED in this run).",
+      "evidence": [
+        {"url": "https://github.com/google/fscrypt", "publisher": "GitHub / Google", "date": "n/a", "type": "official repository README"},
+        {"url": "https://docs.kernel.org/6.12/filesystems/fscrypt.html", "publisher": "kernel.org", "date": "6.12", "type": "official kernel documentation"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "Apache-2.0 (tool)",
+      "requiresRoot": "partial",
+      "resourceFit": "Low overhead (AES-NI on Haswell).",
+      "relevanceToODG": "Per-tenant directory keys = crypto-isolation of client data at rest; good fit once owner enables FS feature + setup.",
+      "risks": "Enabling ext4 encrypt feature on the root FS is a root, low-reversibility operation (owner-gated); metadata (file sizes/timestamps) not hidden."
+    },
+    {
+      "id": "G-04",
+      "domain": "G",
+      "title": "SQLCipher Community (BSD-style, AES-256) vs better-sqlite3-multiple-ciphers (MIT, SQLite3MultipleCiphers)",
+      "kind": "encryption-at-rest",
+      "claim": "SQLCipher Community Edition: BSD-style license usable in closed-source with attribution, 256-bit AES full-DB encryption; 5.0.0-beta moves default to AES-256-GCM (beta). better-sqlite3-multiple-ciphers is a Node fork of better-sqlite3 using SQLite3MultipleCiphers (default cipher sqleet/ChaCha20), MIT; SQLCipher-compatible mode exists but not verified here.",
+      "evidence": [
+        {"url": "https://www.zetetic.net/sqlcipher/community/", "publisher": "Zetetic", "date": "n/a", "type": "official vendor page"},
+        {"url": "https://www.zetetic.net/sqlcipher/license", "publisher": "Zetetic", "date": "n/a", "type": "license"},
+        {"url": "https://github.com/m4heshd/better-sqlite3-multiple-ciphers", "publisher": "GitHub", "date": "n/a", "type": "official repository"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "SQLCipher BSD-3-Clause-style; better-sqlite3-multiple-ciphers MIT",
+      "requiresRoot": false,
+      "resourceFit": "Low overhead; in-process.",
+      "relevanceToODG": "Per-tenant encrypted SQLite file (vectors + FTS + chunks) with a per-tenant key - root-free encryption at rest. Must verify sqlite-vec extension loads into the cipher build.",
+      "risks": "Key management is the real problem (where the key lives); extension-loading compatibility with sqlite-vec unverified; switching SQLite driver touches existing memory component."
+    },
+    {
+      "id": "G-05",
+      "domain": "G",
+      "title": "age (age-encryption.org/v1): simple file encryption, X25519/scrypt recipients, post-quantum hybrid in recent versions",
+      "kind": "encryption-at-rest",
+      "claim": "Spec defines X25519 recipients (ephemeral ECDH, HKDF-SHA-256, ChaCha20-Poly1305 wrap of 128-bit file key) and scrypt passphrase recipients; Go library recommends supporting only X25519 for new systems; recent versions add mlkem768x25519 post-quantum recipients; interoperable Rust impl (rage).",
+      "evidence": [
+        {"url": "https://www.github.com/C2SP/C2SP/blob/main/age.md", "publisher": "C2SP", "date": "n/a", "type": "official specification"},
+        {"url": "https://pkg.go.dev/filippo.io/age", "publisher": "Go package docs (Filippo Valsorda)", "date": "v1.3.x", "type": "official library docs"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "BSD-3-Clause (from general knowledge - UNVERIFIED in this run)",
+      "requiresRoot": false,
+      "resourceFit": "Trivial.",
+      "relevanceToODG": "Root-free encryption for client document blobs, backups and evidence bundles, one recipient key per tenant.",
+      "risks": "Files must be decrypted to tmpfs/RAM for processing - plaintext hygiene still required; key custody."
+    },
+    {
+      "id": "G-06",
+      "domain": "G",
+      "title": "EU AI Act amended by Digital Omnibus on AI - Regulation (EU) 2026/1744 in force 2026-07-27; high-risk Annex III deferred to 2027-12-02",
+      "kind": "regulation",
+      "claim": "Omnibus signed 2026-07-08, published OJ 2026-07-24, in force 2026-07-27 (law-firm reports). Stand-alone (Annex III) high-risk obligations move from 2026-08-02 to 2027-12-02; high-risk safety components of regulated products to 2028-08-02. Adds CSAM / non-consensual intimate content prohibitions; SME relief extended to 'small mid-caps'. The broader Digital Omnibus (incl. GDPR changes) is still in the legislative process.",
+      "evidence": [
+        {"url": "https://www.whitecase.com/insight-alert/eu-ai-omnibus-enters-force-amending-ai-act", "publisher": "White & Case", "date": "2026-07", "type": "law-firm alert (secondary)"},
+        {"url": "https://www.lewissilkin.com/insights/2026/07/27/the-digital-omnibus-on-ai-enters-into-force-today", "publisher": "Lewis Silkin", "date": "2026-07-27", "type": "law-firm alert (secondary)"},
+        {"url": "https://www.pinsentmasons.com/out-law/news/rules-high-risk-ai-delayed-under-eu-omnibus-deal", "publisher": "Pinsent Masons Out-Law", "date": "2026-05", "type": "legal news (secondary)"}
+      ],
+      "measuredOrClaimed": "LEGAL_FACT per secondary sources - official EUR-Lex text of Reg. 2026/1744 NOT fetched (UNVERIFIED against primary source)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "resourceFit": "n/a",
+      "relevanceToODG": "Updates ODG memory anchor 'AI-Act Art.113 2027-12-02' - consistent with the omnibus deferral; verify on EUR-Lex before citing to clients.",
+      "risks": "Relying on law-firm summaries; exact article wording and transitional rules must be read from the OJ."
+    },
+    {
+      "id": "G-07",
+      "domain": "G",
+      "title": "GDPR anchors: Art. 5(1)(c) data minimisation, Art. 25 data protection by design/default, Art. 32 security of processing",
+      "kind": "regulation",
+      "claim": "Art. 5(1)(c): data adequate, relevant and limited to what is necessary. Art. 25: implement principles effectively, taking account of state of the art (pseudonymisation cited as example). EDPB Guidelines 4/2019: effectiveness is at the heart of DPbD. Art. 32 encryption wording NOT retrieved in this run (general knowledge: Art. 32(1)(a) lists pseudonymisation and encryption) - UNVERIFIED.",
+      "evidence": [
+        {"url": "https://commission.europa.eu/law/law-topic/data-protection/rules-business-and-organisations/principles-gdpr", "publisher": "European Commission", "date": "n/a", "type": "official summary"},
+        {"url": "https://www.legislation.gov.uk/eur/2016/679/article/25/adopted/data.html", "publisher": "legislation.gov.uk (as-adopted EU text)", "date": "2016-04-27", "type": "official text mirror"},
+        {"url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj", "publisher": "EUR-Lex", "date": "2016", "type": "primary text - NOT fetched"}
+      ],
+      "measuredOrClaimed": "LEGAL_TEXT (partially retrieved)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "resourceFit": "n/a",
+      "relevanceToODG": "Justifies: local-only processing, chunk/log minimisation, per-tenant encryption, retention limits on embeddings/caches (embeddings of personal data are personal data - interpretation, not sourced here).",
+      "risks": "Interpretations (embeddings = personal data, logs) need DPO/legal confirmation; not legal advice."
+    }
+  ],
+  "recommendations": {
+    "embedding": "Shortlist for a local CPU bake-off (ODG must measure FR/EN retrieval on its own non-client corpus before choosing; all scores above are author/secondary claims): (1) nomic-embed-text-v2-moe via the EXISTING Ollama endpoint (Apache-2.0, lowest integration cost); (2) Qwen3-Embedding-0.6B (Apache-2.0, 32K ctx, strongest permissive; heavier); (3) multilingual-e5-small (MIT) as fast baseline. EmbeddingGemma only after owner/legal review of Gemma terms. bge-m3 only if native sparse is needed and a Python dep is accepted. Model download = egress = owner-gated.",
+    "vectorStore": "Reuse existing SQLite memory: sqlite-vec (pinned version, brute-force KNN) + FTS5 BM25 fused with RRF (k=60) in ONE SQLite file per tenant. No second store. Watch sqlite.org vec1; escalate to sqlite-vec DiskANN / LanceDB only if measured latency at real corpus size requires it.",
+    "sandbox": "Keep bubblewrap as the sole sandbox (--unshare-all, --die-with-parent, --new-session, seccomp) + Landlock FS/TCP rules as defence-in-depth + systemd-run --user scopes for CPU/memory limits. gVisor systrap is the only stronger option viable without nested virt (owner-gated install). Firecracker rejected (needs /dev/kvm). nsjail/Podman add a parallel component for marginal gain.",
+    "egressControl": "Client-document jobs run with no network namespace connectivity (bwrap --unshare-net); inference reached only via a bind-mounted Unix socket to loopback Ollama; Landlock deny TCP connect; Ollama with OLLAMA_NO_CLOUD=1, loopback bind, keep_alive=0 for tenant jobs; host-level egress deny for the ollama service (systemd IPAddressDeny / nftables) = root, owner-gated. Evidence = automated negative egress test per run.",
+    "encryption": "Root-free now: per-tenant SQLCipher/SQLite3MultipleCiphers DB file + age-encrypted document blobs, plaintext only on tmpfs inside the sandbox. Owner-gated later: fscrypt per-tenant directories (needs FS encrypt feature + 'fscrypt setup' as root) or LUKS volume (root). VPS has NO swap (good: no plaintext/KV pages swapped to disk) - keep it that way or use encrypted swap."
+  },
+  "openQuestions": [
+    "Is 'landlock' in the VPS kernel's active LSM list (cat /sys/kernel/security/lsm) and which ABI version?",
+    "Does the hosting provider expose /dev/kvm (nested virt)? Determines whether microVMs are ever an option.",
+    "Which AppArmor profile currently allows bwrap userns on Ubuntu 26.04, and would gVisor/nsjail need a new one?",
+    "Does sqlite-vec load as an extension into SQLCipher / SQLite3MultipleCiphers builds used from Node 22?",
+    "Real CPU throughput (chunks/s) and FR retrieval quality of the shortlisted embedders on 8 vCPU AVX2 - NOT_MEASURED.",
+    "Official licence text for Qwen3-Embedding-0.6B and Gemma Terms acceptability for client processing.",
+    "Do Ollama server logs (non-debug) ever contain prompt text? No official statement found.",
+    "Primary-source (EUR-Lex) verification of Regulation (EU) 2026/1744 dates and GDPR Art. 32 wording.",
+    "Where do per-tenant keys live (owner-held, TPM absent on VPS?) - key custody design is the main open risk.",
+    "Is the Docker CLI backed by a rootful daemon the runtime user can reach (root-equivalent exposure)?"
+  ]
+}
