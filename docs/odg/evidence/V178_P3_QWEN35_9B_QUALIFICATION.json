@@ -1,0 +1,1740 @@
+{
+  "schema": "V155_OLLAMA_CAPABILITY_REGISTRY_EVIDENCE",
+  "directive": "CTO V15.5 Step 5 — measured local-model capability registry",
+  "generatedAt": "2026-11-25T17:18:46.054Z",
+  "startedAt": "2026-11-25T17:07:43.647Z",
+  "head": "ee019f4f5210cb3f096467fbf082da5f31449844",
+  "branch": "feat/v178-p3-think-passthrough",
+  "host": {
+    "cpus": 8,
+    "memGb": 25,
+    "gpu": "none assumed (CPU inference)",
+    "loadavgAtStart": [
+      1.36,
+      1.49,
+      1.11
+    ],
+    "loadavgAtEnd": [
+      7.83,
+      7.36,
+      4.64
+    ],
+    "note": "the host is SHARED with other sessions; per-trial hostLoad1m is recorded so latency/throughput can be read against contention"
+  },
+  "ollama": {
+    "version": "0.35.1",
+    "endpoint": "http://127.0.0.1:11434 (loopback only)",
+    "daemonUp": true
+  },
+  "options": {
+    "temperature": 0,
+    "seed": 42,
+    "top_k": 1,
+    "num_predict": 512,
+    "num_ctx": 4096
+  },
+  "keepAlive": "10m",
+  "parallelism": 1,
+  "taskSet": {
+    "file": "runtime/core/odg-local-model-benchmark-tasks.v2.json",
+    "version": "V155-TASKSET-2",
+    "sha256": "755cbf1f0acd64e4e3c84e1f8fd212d2b8e09e596dab7d6e503d5d2901e1b9e6",
+    "tasks": [
+      {
+        "id": "impl-chunk",
+        "taskClass": "implement",
+        "grader": "hidden-test",
+        "lang": "js"
+      },
+      {
+        "id": "impl-ts-parse-range",
+        "taskClass": "implement",
+        "grader": "hidden-test",
+        "lang": "ts"
+      },
+      {
+        "id": "bugfix-median",
+        "taskClass": "bugfix",
+        "grader": "hidden-test",
+        "lang": "js"
+      },
+      {
+        "id": "repair-total-length",
+        "taskClass": "repair",
+        "grader": "hidden-test",
+        "lang": "js"
+      },
+      {
+        "id": "repair-parse-config",
+        "taskClass": "repair",
+        "grader": "hidden-test",
+        "lang": "js"
+      },
+      {
+        "id": "refactor-even-squares",
+        "taskClass": "refactor",
+        "grader": "refactor",
+        "lang": "js"
+      },
+      {
+        "id": "write-tests-slugify",
+        "taskClass": "test-writing",
+        "grader": "test-writing",
+        "lang": "js"
+      },
+      {
+        "id": "extract-invoice",
+        "taskClass": "extract",
+        "grader": "json-equal",
+        "lang": "json"
+      },
+      {
+        "id": "strict-status-contract",
+        "taskClass": "strict-contract",
+        "grader": "strict-schema",
+        "lang": "json"
+      },
+      {
+        "id": "judgment-risk-drop-table",
+        "taskClass": "judgment",
+        "grader": "json-field",
+        "lang": "json"
+      },
+      {
+        "id": "judgment-risk-readme-typo",
+        "taskClass": "judgment",
+        "grader": "json-field",
+        "lang": "json"
+      }
+    ]
+  },
+  "thresholds": {
+    "minPassRate": 0.67,
+    "demoteBelow": 0.5
+  },
+  "registry": {
+    "schema": "ODG_LOCAL_MODEL_CAPABILITY_REGISTRY_V1",
+    "classes": [
+      "bugfix",
+      "extract",
+      "implement",
+      "judgment",
+      "refactor",
+      "repair",
+      "strict-contract",
+      "test-writing"
+    ],
+    "models": [
+      {
+        "id": "qwen3.5:9b",
+        "available": true,
+        "unavailableReason": null,
+        "digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "sizeBytes": 6550825550,
+        "quantization": "Q4_K_M",
+        "parameterSize": "9.0B",
+        "parameterCount": 8953803264,
+        "contextLength": 262144,
+        "trialsMeasured": 33,
+        "trialsNotMeasured": 0,
+        "resources": {
+          "cpuAvgPct": {
+            "n": 33,
+            "mean": 777.1,
+            "p50": 781.7,
+            "min": 701.7,
+            "max": 794.3,
+            "stdev": 17.1
+          },
+          "cpuPeakPct": {
+            "n": 33,
+            "mean": 806.8,
+            "p50": 806.5,
+            "min": 799.2,
+            "max": 823.5,
+            "stdev": 5.2
+          },
+          "rssPeakMb": {
+            "n": 33,
+            "mean": 7348.4,
+            "p50": 7340.6,
+            "min": 6781,
+            "max": 7870.2,
+            "stdev": 326.1
+          },
+          "note": "sampled from the Ollama runner process via /proc during each trial (CPU% may exceed 100 on multi-core)"
+        },
+        "latency": {
+          "ttftMs": {
+            "n": 33,
+            "mean": 1972.5,
+            "p50": 475,
+            "min": 327,
+            "max": 6497,
+            "stdev": 2191.6
+          },
+          "totalMs": {
+            "n": 33,
+            "mean": 16114.2,
+            "p50": 13293,
+            "min": 2951,
+            "max": 53266,
+            "stdev": 11748.4
+          },
+          "coldLoad": {
+            "totalMs": 18986,
+            "loadMs": 17269
+          }
+        },
+        "speed": {
+          "tokPerSec": {
+            "n": 33,
+            "mean": 6.2,
+            "p50": 6.4,
+            "min": 3.4,
+            "max": 6.97,
+            "stdev": 0.7
+          },
+          "basis": "eval_count / eval_duration (daemon counters)"
+        },
+        "quality": {
+          "overallPassRate": {
+            "value": 0.909,
+            "passes": 30,
+            "n": 33
+          },
+          "compileRate": {
+            "value": 1,
+            "passes": 21,
+            "n": 21
+          },
+          "testPassRate": {
+            "value": 0.857,
+            "passes": 18,
+            "n": 21
+          },
+          "repairQuality": {
+            "value": 1,
+            "passes": 9,
+            "n": 9
+          },
+          "strictContractAdherence": {
+            "value": 1,
+            "passes": 3,
+            "n": 3
+          },
+          "structuredOutputRate": {
+            "value": 1,
+            "passes": 12,
+            "n": 12
+          }
+        },
+        "perClass": {
+          "bugfix": {
+            "passRate": {
+              "value": 1,
+              "passes": 3,
+              "n": 3
+            },
+            "minN": 3,
+            "sufficientSample": true,
+            "status": "QUALIFIED",
+            "totalMs": {
+              "n": 3,
+              "mean": 16942,
+              "p50": 16033,
+              "min": 15538,
+              "max": 19255,
+              "stdev": 1648
+            }
+          },
+          "extract": {
+            "passRate": {
+              "value": 1,
+              "passes": 3,
+              "n": 3
+            },
+            "minN": 3,
+            "sufficientSample": true,
+            "status": "QUALIFIED",
+            "totalMs": {
+              "n": 3,
+              "mean": 11903.7,
+              "p50": 10789,
+              "min": 10524,
+              "max": 14398,
+              "stdev": 1767.1
+            }
+          },
+          "implement": {
+            "passRate": {
+              "value": 0.5,
+              "passes": 3,
+              "n": 6
+            },
+            "minN": 6,
+            "sufficientSample": true,
+            "status": "PROBATION",
+            "totalMs": {
+              "n": 6,
+              "mean": 32496.8,
+              "p50": 32106.5,
+              "min": 15455,
+              "max": 53266,
+              "stdev": 16033.3
+            }
+          },
+          "judgment": {
+            "passRate": {
+              "value": 1,
+              "passes": 6,
+              "n": 6
+            },
+            "minN": 6,
+            "sufficientSample": true,
+            "status": "QUALIFIED",
+            "totalMs": {
+              "n": 6,
+              "mean": 8927,
+              "p50": 8699.5,
+              "min": 6191,
+              "max": 12600,
+              "stdev": 2362.9
+            }
+          },
+          "refactor": {
+            "passRate": {
+              "value": 1,
+              "passes": 3,
+              "n": 3
+            },
+            "minN": 3,
+            "sufficientSample": true,
+            "status": "QUALIFIED",
+            "totalMs": {
+              "n": 3,
+              "mean": 9250,
+              "p50": 7795,
+              "min": 6662,
+              "max": 13293,
+              "stdev": 2896
+            }
+          },
+          "repair": {
+            "passRate": {
+              "value": 1,
+              "passes": 6,
+              "n": 6
+            },
+            "minN": 6,
+            "sufficientSample": true,
+            "status": "QUALIFIED",
+            "totalMs": {
+              "n": 6,
+              "mean": 14080.8,
+              "p50": 13520.5,
+              "min": 7561,
+              "max": 24269,
+              "stdev": 5611.7
+            }
+          },
+          "strict-contract": {
+            "passRate": {
+              "value": 1,
+              "passes": 3,
+              "n": 3
+            },
+            "minN": 3,
+            "sufficientSample": true,
+            "status": "QUALIFIED",
+            "totalMs": {
+              "n": 3,
+              "mean": 4466.3,
+              "p50": 3021,
+              "min": 2951,
+              "max": 7427,
+              "stdev": 2093.7
+            }
+          },
+          "test-writing": {
+            "passRate": {
+              "value": 1,
+              "passes": 3,
+              "n": 3
+            },
+            "minN": 3,
+            "sufficientSample": true,
+            "status": "QUALIFIED",
+            "totalMs": {
+              "n": 3,
+              "mean": 23684.3,
+              "p50": 22605,
+              "min": 21794,
+              "max": 26654,
+              "stdev": 2125.8
+            }
+          }
+        },
+        "perTask": [
+          {
+            "taskId": "impl-chunk",
+            "taskClass": "implement",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 16683.7,
+              "p50": 16088,
+              "min": 15455,
+              "max": 18508,
+              "stdev": 1315.6
+            }
+          },
+          {
+            "taskId": "impl-ts-parse-range",
+            "taskClass": "implement",
+            "trials": 3,
+            "passes": 0,
+            "passRate": 0,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 48310,
+              "p50": 45959,
+              "min": 45705,
+              "max": 53266,
+              "stdev": 3506
+            }
+          },
+          {
+            "taskId": "bugfix-median",
+            "taskClass": "bugfix",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 16942,
+              "p50": 16033,
+              "min": 15538,
+              "max": 19255,
+              "stdev": 1648
+            }
+          },
+          {
+            "taskId": "repair-total-length",
+            "taskClass": "repair",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 9562.7,
+              "p50": 8495,
+              "min": 7561,
+              "max": 12632,
+              "stdev": 2203.6
+            }
+          },
+          {
+            "taskId": "repair-parse-config",
+            "taskClass": "repair",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 18599,
+              "p50": 17119,
+              "min": 14409,
+              "max": 24269,
+              "stdev": 4159.1
+            }
+          },
+          {
+            "taskId": "refactor-even-squares",
+            "taskClass": "refactor",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 9250,
+              "p50": 7795,
+              "min": 6662,
+              "max": 13293,
+              "stdev": 2896
+            }
+          },
+          {
+            "taskId": "write-tests-slugify",
+            "taskClass": "test-writing",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 23684.3,
+              "p50": 22605,
+              "min": 21794,
+              "max": 26654,
+              "stdev": 2125.8
+            }
+          },
+          {
+            "taskId": "extract-invoice",
+            "taskClass": "extract",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 11903.7,
+              "p50": 10789,
+              "min": 10524,
+              "max": 14398,
+              "stdev": 1767.1
+            }
+          },
+          {
+            "taskId": "strict-status-contract",
+            "taskClass": "strict-contract",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 4466.3,
+              "p50": 3021,
+              "min": 2951,
+              "max": 7427,
+              "stdev": 2093.7
+            }
+          },
+          {
+            "taskId": "judgment-risk-drop-table",
+            "taskClass": "judgment",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 7106.3,
+              "p50": 6215,
+              "min": 6191,
+              "max": 8913,
+              "stdev": 1277.5
+            }
+          },
+          {
+            "taskId": "judgment-risk-readme-typo",
+            "taskClass": "judgment",
+            "trials": 3,
+            "passes": 3,
+            "passRate": 1,
+            "passVariance": 0,
+            "distinctOutputs": 1,
+            "totalMs": {
+              "n": 3,
+              "mean": 10747.7,
+              "p50": 11157,
+              "min": 8486,
+              "max": 12600,
+              "stdev": 1704.3
+            }
+          }
+        ],
+        "stability": {
+          "trialsPerTask": 3,
+          "tasksWithMixedOutcomes": 0,
+          "maxPassVariance": 0,
+          "deterministicOutputTasks": 11,
+          "tasks": 11,
+          "latencyCvMean": 0.187
+        },
+        "knownLimits": [],
+        "domains": [
+          "bugfix",
+          "extract",
+          "judgment",
+          "refactor",
+          "repair",
+          "strict-contract",
+          "test-writing"
+        ]
+      }
+    ]
+  },
+  "graderSelfTest": {
+    "correctCandidatePasses": {
+      "passed": true,
+      "measured": true,
+      "ms": 205,
+      "reason": "hidden test passed (all 2 hidden cases passed)"
+    },
+    "assertNeuter": {
+      "passed": false,
+      "measured": true,
+      "ms": 197,
+      "reason": "hidden test failed: candidate crashed: require is not defined"
+    },
+    "stderrMarkerExit3": {
+      "passed": false,
+      "measured": true,
+      "ms": 201,
+      "reason": "hidden test failed: candidate crashed: process is not defined"
+    },
+    "constructorEscape": {
+      "passed": false,
+      "measured": true,
+      "ms": 261,
+      "reason": "hidden test failed: case 0: got -999 expected 3"
+    },
+    "memoryBomb": {
+      "passed": false,
+      "measured": true,
+      "ms": 278,
+      "reason": "hidden test failed: candidate crashed: Array buffer allocation failed"
+    },
+    "infiniteLoop": {
+      "passed": false,
+      "measured": true,
+      "ms": 5251,
+      "reason": "hidden test failed: candidate crashed: Script execution timed out after 5000ms"
+    },
+    "bufferBombRawSandbox": {
+      "launched": true,
+      "ok": false,
+      "ms": 218,
+      "allocatedAll": false
+    }
+  },
+  "selection": {
+    "bugfix": {
+      "qualityFirst": {
+        "ok": true,
+        "taskClass": "bugfix",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 16033,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 16033,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'bugfix' (1), then latency; fallback = remaining QUALIFIED then PROBATION models"
+      },
+      "underBudget30s": {
+        "ok": true,
+        "taskClass": "bugfix",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 16033,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 16033,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'bugfix' (1) within tolerance 0.1, then latency under a 30000ms budget; fallback = remaining QUALIFIED then PROBATION models"
+      }
+    },
+    "extract": {
+      "qualityFirst": {
+        "ok": true,
+        "taskClass": "extract",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 10789,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 10789,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'extract' (1), then latency; fallback = remaining QUALIFIED then PROBATION models"
+      },
+      "underBudget30s": {
+        "ok": true,
+        "taskClass": "extract",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 10789,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 10789,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'extract' (1) within tolerance 0.1, then latency under a 30000ms budget; fallback = remaining QUALIFIED then PROBATION models"
+      }
+    },
+    "implement": {
+      "qualityFirst": {
+        "ok": true,
+        "taskClass": "implement",
+        "decision": "NO_QUALIFIED_LOCAL_MODEL",
+        "model": null,
+        "fallbackOrder": [],
+        "probationCandidates": [
+          "qwen3.5:9b"
+        ],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "PROBATION",
+            "passRate": 0.5,
+            "totalMsP50": 32106.5,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": true,
+        "rationale": "no available local model is QUALIFIED for 'implement' by measurement (pass rate ≥ registry minPassRate); escalation is a FLAGGED decision requiring authorization — never an automatic paid-API call"
+      },
+      "underBudget30s": {
+        "ok": true,
+        "taskClass": "implement",
+        "decision": "NO_QUALIFIED_LOCAL_MODEL",
+        "model": null,
+        "fallbackOrder": [],
+        "probationCandidates": [
+          "qwen3.5:9b"
+        ],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "PROBATION",
+            "passRate": 0.5,
+            "totalMsP50": 32106.5,
+            "withinBudget": false
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": true,
+        "rationale": "no available local model is QUALIFIED for 'implement' by measurement (pass rate ≥ registry minPassRate); escalation is a FLAGGED decision requiring authorization — never an automatic paid-API call"
+      }
+    },
+    "judgment": {
+      "qualityFirst": {
+        "ok": true,
+        "taskClass": "judgment",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 8699.5,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 8699.5,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'judgment' (1), then latency; fallback = remaining QUALIFIED then PROBATION models"
+      },
+      "underBudget30s": {
+        "ok": true,
+        "taskClass": "judgment",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 8699.5,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 8699.5,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'judgment' (1) within tolerance 0.1, then latency under a 30000ms budget; fallback = remaining QUALIFIED then PROBATION models"
+      }
+    },
+    "refactor": {
+      "qualityFirst": {
+        "ok": true,
+        "taskClass": "refactor",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 7795,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 7795,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'refactor' (1), then latency; fallback = remaining QUALIFIED then PROBATION models"
+      },
+      "underBudget30s": {
+        "ok": true,
+        "taskClass": "refactor",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 7795,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 7795,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'refactor' (1) within tolerance 0.1, then latency under a 30000ms budget; fallback = remaining QUALIFIED then PROBATION models"
+      }
+    },
+    "repair": {
+      "qualityFirst": {
+        "ok": true,
+        "taskClass": "repair",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 13520.5,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 13520.5,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'repair' (1), then latency; fallback = remaining QUALIFIED then PROBATION models"
+      },
+      "underBudget30s": {
+        "ok": true,
+        "taskClass": "repair",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 13520.5,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 13520.5,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'repair' (1) within tolerance 0.1, then latency under a 30000ms budget; fallback = remaining QUALIFIED then PROBATION models"
+      }
+    },
+    "strict-contract": {
+      "qualityFirst": {
+        "ok": true,
+        "taskClass": "strict-contract",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 3021,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 3021,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'strict-contract' (1), then latency; fallback = remaining QUALIFIED then PROBATION models"
+      },
+      "underBudget30s": {
+        "ok": true,
+        "taskClass": "strict-contract",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 3021,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 3021,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'strict-contract' (1) within tolerance 0.1, then latency under a 30000ms budget; fallback = remaining QUALIFIED then PROBATION models"
+      }
+    },
+    "test-writing": {
+      "qualityFirst": {
+        "ok": true,
+        "taskClass": "test-writing",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 22605,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 22605,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'test-writing' (1), then latency; fallback = remaining QUALIFIED then PROBATION models"
+      },
+      "underBudget30s": {
+        "ok": true,
+        "taskClass": "test-writing",
+        "decision": "LOCAL",
+        "model": "qwen3.5:9b",
+        "passRate": 1,
+        "totalMsP50": 22605,
+        "fallbackOrder": [],
+        "considered": [
+          {
+            "id": "qwen3.5:9b",
+            "status": "QUALIFIED",
+            "passRate": 1,
+            "totalMsP50": 22605,
+            "withinBudget": true
+          }
+        ],
+        "overBudget": false,
+        "requiresAuthorization": false,
+        "rationale": "highest MEASURED pass rate for 'test-writing' (1) within tolerance 0.1, then latency under a 30000ms budget; fallback = remaining QUALIFIED then PROBATION models"
+      }
+    }
+  },
+  "fallbackProbe": {
+    "absentModel": "qwen2.5-coder:14b",
+    "outcome": "OK",
+    "model": "qwen3.5:9b",
+    "attempts": [
+      {
+        "model": "qwen2.5-coder:14b",
+        "ok": false,
+        "unavailable": true,
+        "timedOut": false,
+        "reason": "HTTP 404: {\"error\":\"model 'qwen2.5-coder:14b' not found\"}"
+      },
+      {
+        "model": "qwen3.5:9b",
+        "ok": true,
+        "unavailable": false,
+        "timedOut": false,
+        "reason": null
+      }
+    ],
+    "result": {
+      "ok": true,
+      "passed": false,
+      "totalMs": 95396
+    }
+  },
+  "demotions": [],
+  "qualificationHistory": [
+    {
+      "runId": "v155-2026-11-25T17:07:43.647Z",
+      "at": "2026-11-25T17:07:43.647Z",
+      "head": "ee019f4f5210cb3f096467fbf082da5f31449844",
+      "taskSetVersion": "V155-TASKSET-2",
+      "perModel": {
+        "qwen3.5:9b": {
+          "available": true,
+          "digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+          "perClass": {
+            "bugfix": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "extract": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "implement": {
+              "passRate": 0.5,
+              "n": 6,
+              "status": "PROBATION"
+            },
+            "judgment": {
+              "passRate": 1,
+              "n": 6,
+              "status": "QUALIFIED"
+            },
+            "refactor": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "repair": {
+              "passRate": 1,
+              "n": 6,
+              "status": "QUALIFIED"
+            },
+            "strict-contract": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            },
+            "test-writing": {
+              "passRate": 1,
+              "n": 3,
+              "status": "QUALIFIED"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "trialsSummary": [
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "impl-chunk",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 6 hidden cases passed)",
+      "ttftMs": 3675,
+      "totalMs": 18508,
+      "tokPerSec": 6.21,
+      "evalCount": 92,
+      "hostLoad1m": 1.82,
+      "cpuAvgPct": 785.3,
+      "rssPeakMb": 6781,
+      "outputSha256": "1bd0b15f5a3e5e6a00d744a4daeef55b4533d4d69152a6609e63793f38400f57",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "impl-chunk",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 6 hidden cases passed)",
+      "ttftMs": 584,
+      "totalMs": 15455,
+      "tokPerSec": 6.19,
+      "evalCount": 92,
+      "hostLoad1m": 3.26,
+      "cpuAvgPct": 781.2,
+      "rssPeakMb": 6887.1,
+      "outputSha256": "1bd0b15f5a3e5e6a00d744a4daeef55b4533d4d69152a6609e63793f38400f57",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "impl-chunk",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 6 hidden cases passed)",
+      "ttftMs": 475,
+      "totalMs": 16088,
+      "tokPerSec": 5.9,
+      "evalCount": 92,
+      "hostLoad1m": 4.32,
+      "cpuAvgPct": 787.7,
+      "rssPeakMb": 6887.1,
+      "outputSha256": "1bd0b15f5a3e5e6a00d744a4daeef55b4533d4d69152a6609e63793f38400f57",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "impl-ts-parse-range",
+      "trial": 1,
+      "passed": false,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test failed: case 0: threw Error: Malformed range item: 5",
+      "ttftMs": 4532,
+      "totalMs": 53266,
+      "tokPerSec": 6.18,
+      "evalCount": 301,
+      "hostLoad1m": 5.28,
+      "cpuAvgPct": 791.4,
+      "rssPeakMb": 6896.4,
+      "outputSha256": "61ba3290f5e193007a64c119c4d9cfc6631b61746dbf38a03e576de29dd97dcf",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "impl-ts-parse-range",
+      "trial": 2,
+      "passed": false,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test failed: case 0: threw Error: Malformed range item: 5",
+      "ttftMs": 608,
+      "totalMs": 45959,
+      "tokPerSec": 6.64,
+      "evalCount": 301,
+      "hostLoad1m": 6.97,
+      "cpuAvgPct": 792.3,
+      "rssPeakMb": 7010.1,
+      "outputSha256": "61ba3290f5e193007a64c119c4d9cfc6631b61746dbf38a03e576de29dd97dcf",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "impl-ts-parse-range",
+      "trial": 3,
+      "passed": false,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test failed: case 0: threw Error: Malformed range item: 5",
+      "ttftMs": 409,
+      "totalMs": 45705,
+      "tokPerSec": 6.65,
+      "evalCount": 301,
+      "hostLoad1m": 7.67,
+      "cpuAvgPct": 794.3,
+      "rssPeakMb": 7010.3,
+      "outputSha256": "61ba3290f5e193007a64c119c4d9cfc6631b61746dbf38a03e576de29dd97dcf",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "bugfix-median",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 4070,
+      "totalMs": 19255,
+      "tokPerSec": 6.32,
+      "evalCount": 96,
+      "hostLoad1m": 7.7,
+      "cpuAvgPct": 785.5,
+      "rssPeakMb": 7010.3,
+      "outputSha256": "148fe9be639f9db41b9a5087999cc1fdd9dbff409bdaf112e0328ce5fb46a26f",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "bugfix-median",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 388,
+      "totalMs": 16033,
+      "tokPerSec": 6.14,
+      "evalCount": 96,
+      "hostLoad1m": 7.84,
+      "cpuAvgPct": 775.5,
+      "rssPeakMb": 7010.3,
+      "outputSha256": "148fe9be639f9db41b9a5087999cc1fdd9dbff409bdaf112e0328ce5fb46a26f",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "bugfix-median",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 362,
+      "totalMs": 15538,
+      "tokPerSec": 6.33,
+      "evalCount": 96,
+      "hostLoad1m": 7.45,
+      "cpuAvgPct": 786.1,
+      "rssPeakMb": 7010.3,
+      "outputSha256": "148fe9be639f9db41b9a5087999cc1fdd9dbff409bdaf112e0328ce5fb46a26f",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "repair-total-length",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 5842,
+      "totalMs": 12632,
+      "tokPerSec": 6.78,
+      "evalCount": 46,
+      "hostLoad1m": 7.57,
+      "cpuAvgPct": 784.8,
+      "rssPeakMb": 7123.7,
+      "outputSha256": "0d666989e3647cb85393f40688878b05e19d161ae4842deda79259fadb4601b3",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "repair-total-length",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 375,
+      "totalMs": 8495,
+      "tokPerSec": 5.67,
+      "evalCount": 46,
+      "hostLoad1m": 7.64,
+      "cpuAvgPct": 766.5,
+      "rssPeakMb": 7123.7,
+      "outputSha256": "0d666989e3647cb85393f40688878b05e19d161ae4842deda79259fadb4601b3",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "repair-total-length",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 4 hidden cases passed)",
+      "ttftMs": 373,
+      "totalMs": 7561,
+      "tokPerSec": 6.4,
+      "evalCount": 46,
+      "hostLoad1m": 7.86,
+      "cpuAvgPct": 778.8,
+      "rssPeakMb": 7123.7,
+      "outputSha256": "0d666989e3647cb85393f40688878b05e19d161ae4842deda79259fadb4601b3",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "repair-parse-config",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 7 hidden cases passed)",
+      "ttftMs": 6268,
+      "totalMs": 17119,
+      "tokPerSec": 6.36,
+      "evalCount": 69,
+      "hostLoad1m": 8.11,
+      "cpuAvgPct": 781.7,
+      "rssPeakMb": 7233,
+      "outputSha256": "8fe93249420c7a80c551c03c11c83f380748fedc275e5a5c6b5fb837e7db240b",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "repair-parse-config",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 7 hidden cases passed)",
+      "ttftMs": 487,
+      "totalMs": 14409,
+      "tokPerSec": 4.96,
+      "evalCount": 69,
+      "hostLoad1m": 8.09,
+      "cpuAvgPct": 751.5,
+      "rssPeakMb": 7233,
+      "outputSha256": "8fe93249420c7a80c551c03c11c83f380748fedc275e5a5c6b5fb837e7db240b",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "repair-parse-config",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 7 hidden cases passed)",
+      "ttftMs": 4001,
+      "totalMs": 24269,
+      "tokPerSec": 3.4,
+      "evalCount": 69,
+      "hostLoad1m": 8.15,
+      "cpuAvgPct": 701.7,
+      "rssPeakMb": 7233,
+      "outputSha256": "8fe93249420c7a80c551c03c11c83f380748fedc275e5a5c6b5fb837e7db240b",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "refactor-even-squares",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 6497,
+      "totalMs": 13293,
+      "tokPerSec": 6.18,
+      "evalCount": 42,
+      "hostLoad1m": 8.5,
+      "cpuAvgPct": 755.2,
+      "rssPeakMb": 7340.6,
+      "outputSha256": "1e0c59d5e7b241f01b987a34d5544deeb4b64a103050961ac117aebc92f142aa",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "refactor-even-squares",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 369,
+      "totalMs": 6662,
+      "tokPerSec": 6.68,
+      "evalCount": 42,
+      "hostLoad1m": 8.46,
+      "cpuAvgPct": 783.2,
+      "rssPeakMb": 7340.6,
+      "outputSha256": "1e0c59d5e7b241f01b987a34d5544deeb4b64a103050961ac117aebc92f142aa",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "refactor-even-squares",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "hidden test passed (all 5 hidden cases passed)",
+      "ttftMs": 402,
+      "totalMs": 7795,
+      "tokPerSec": 5.68,
+      "evalCount": 42,
+      "hostLoad1m": 8.42,
+      "cpuAvgPct": 770.2,
+      "rssPeakMb": 7340.6,
+      "outputSha256": "1e0c59d5e7b241f01b987a34d5544deeb4b64a103050961ac117aebc92f142aa",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "write-tests-slugify",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "all mutants killed; reference passes",
+      "ttftMs": 6347,
+      "totalMs": 26654,
+      "tokPerSec": 6.5,
+      "evalCount": 132,
+      "hostLoad1m": 8.43,
+      "cpuAvgPct": 785.5,
+      "rssPeakMb": 7446.5,
+      "outputSha256": "cf3ed3fcec6131ca66ba7231fbbdd22a4939eb04fa005e5c9f865733a4e719d0",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "write-tests-slugify",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "all mutants killed; reference passes",
+      "ttftMs": 423,
+      "totalMs": 22605,
+      "tokPerSec": 5.95,
+      "evalCount": 132,
+      "hostLoad1m": 8.44,
+      "cpuAvgPct": 777.6,
+      "rssPeakMb": 7446.5,
+      "outputSha256": "cf3ed3fcec6131ca66ba7231fbbdd22a4939eb04fa005e5c9f865733a4e719d0",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "write-tests-slugify",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": true,
+      "structuredOk": null,
+      "strictOk": null,
+      "reason": "all mutants killed; reference passes",
+      "ttftMs": 392,
+      "totalMs": 21794,
+      "tokPerSec": 6.17,
+      "evalCount": 132,
+      "hostLoad1m": 8.42,
+      "cpuAvgPct": 785.5,
+      "rssPeakMb": 7446.5,
+      "outputSha256": "cf3ed3fcec6131ca66ba7231fbbdd22a4939eb04fa005e5c9f865733a4e719d0",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "extract-invoice",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "exact match",
+      "ttftMs": 4562,
+      "totalMs": 14398,
+      "tokPerSec": 6.71,
+      "evalCount": 66,
+      "hostLoad1m": 8.3,
+      "cpuAvgPct": 783.5,
+      "rssPeakMb": 7555.9,
+      "outputSha256": "6144adaf052f035eb63b9dfb639eefbd0266284ca0068cbb33947a7abaaa854e",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "extract-invoice",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "exact match",
+      "ttftMs": 575,
+      "totalMs": 10789,
+      "tokPerSec": 6.46,
+      "evalCount": 66,
+      "hostLoad1m": 8.23,
+      "cpuAvgPct": 780.9,
+      "rssPeakMb": 7555.9,
+      "outputSha256": "6144adaf052f035eb63b9dfb639eefbd0266284ca0068cbb33947a7abaaa854e",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "extract-invoice",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "exact match",
+      "ttftMs": 369,
+      "totalMs": 10524,
+      "tokPerSec": 6.5,
+      "evalCount": 66,
+      "hostLoad1m": 8.27,
+      "cpuAvgPct": 783.7,
+      "rssPeakMb": 7555.9,
+      "outputSha256": "6144adaf052f035eb63b9dfb639eefbd0266284ca0068cbb33947a7abaaa854e",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "strict-status-contract",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": true,
+      "reason": "strict contract + values correct",
+      "ttftMs": 4753,
+      "totalMs": 7427,
+      "tokPerSec": 6.74,
+      "evalCount": 18,
+      "hostLoad1m": 8.21,
+      "cpuAvgPct": 774.6,
+      "rssPeakMb": 7661.9,
+      "outputSha256": "11d783e98ffeeae840a61fc59750324cfc80eda0982e2718f557716679430b9f",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "strict-status-contract",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": true,
+      "reason": "strict contract + values correct",
+      "ttftMs": 363,
+      "totalMs": 2951,
+      "tokPerSec": 6.97,
+      "evalCount": 18,
+      "hostLoad1m": 8.19,
+      "cpuAvgPct": 778.7,
+      "rssPeakMb": 7661.9,
+      "outputSha256": "11d783e98ffeeae840a61fc59750324cfc80eda0982e2718f557716679430b9f",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "strict-status-contract",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": true,
+      "reason": "strict contract + values correct",
+      "ttftMs": 354,
+      "totalMs": 3021,
+      "tokPerSec": 6.77,
+      "evalCount": 18,
+      "hostLoad1m": 8.18,
+      "cpuAvgPct": 773.6,
+      "rssPeakMb": 7661.9,
+      "outputSha256": "11d783e98ffeeae840a61fc59750324cfc80eda0982e2718f557716679430b9f",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "judgment-risk-drop-table",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "risk correct",
+      "ttftMs": 3067,
+      "totalMs": 8913,
+      "tokPerSec": 6.67,
+      "evalCount": 39,
+      "hostLoad1m": 8.18,
+      "cpuAvgPct": 780.7,
+      "rssPeakMb": 7766.4,
+      "outputSha256": "5b8517d99513f2bf340fa9bdeb504c5e3e1a90ae7e0c6ec33a45a0e195b01144",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "judgment-risk-drop-table",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "risk correct",
+      "ttftMs": 372,
+      "totalMs": 6215,
+      "tokPerSec": 6.68,
+      "evalCount": 39,
+      "hostLoad1m": 8.15,
+      "cpuAvgPct": 786.8,
+      "rssPeakMb": 7766.4,
+      "outputSha256": "5b8517d99513f2bf340fa9bdeb504c5e3e1a90ae7e0c6ec33a45a0e195b01144",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "judgment-risk-drop-table",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "risk correct",
+      "ttftMs": 327,
+      "totalMs": 6191,
+      "tokPerSec": 6.66,
+      "evalCount": 39,
+      "hostLoad1m": 8.22,
+      "cpuAvgPct": 786.9,
+      "rssPeakMb": 7766.4,
+      "outputSha256": "5b8517d99513f2bf340fa9bdeb504c5e3e1a90ae7e0c6ec33a45a0e195b01144",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "judgment-risk-readme-typo",
+      "trial": 1,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "risk correct",
+      "ttftMs": 2796,
+      "totalMs": 11157,
+      "tokPerSec": 6.22,
+      "evalCount": 52,
+      "hostLoad1m": 8.42,
+      "cpuAvgPct": 779.3,
+      "rssPeakMb": 7870.2,
+      "outputSha256": "eab3b10ac3dcff383d9dfda56fe0248d7c9c1fe169bc947c48ce877579e6bef5",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "judgment-risk-readme-typo",
+      "trial": 2,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "risk correct",
+      "ttftMs": 328,
+      "totalMs": 8486,
+      "tokPerSec": 6.38,
+      "evalCount": 52,
+      "hostLoad1m": 8.35,
+      "cpuAvgPct": 785.4,
+      "rssPeakMb": 7870.2,
+      "outputSha256": "eab3b10ac3dcff383d9dfda56fe0248d7c9c1fe169bc947c48ce877579e6bef5",
+      "error": null
+    },
+    {
+      "model": "qwen3.5:9b",
+      "taskId": "judgment-risk-readme-typo",
+      "trial": 3,
+      "passed": true,
+      "measured": true,
+      "compileOk": null,
+      "structuredOk": true,
+      "strictOk": null,
+      "reason": "risk correct",
+      "ttftMs": 346,
+      "totalMs": 12600,
+      "tokPerSec": 4.24,
+      "evalCount": 52,
+      "hostLoad1m": 8.33,
+      "cpuAvgPct": 747.1,
+      "rssPeakMb": 7870.2,
+      "outputSha256": "eab3b10ac3dcff383d9dfda56fe0248d7c9c1fe169bc947c48ce877579e6bef5",
+      "error": null
+    }
+  ],
+  "honesty": [
+    "every number above comes from the trials in trialsSummary (this run); a metric with n=0 is NOT_MEASURED, never 0 or assumed",
+    "graders are objective: hidden tests / mutation-killing / exact JSON / strict schema; candidate code ran only inside the bubblewrap provider sandbox",
+    "temperature 0 + fixed seed ⇒ trials are near-deterministic; stability reports outcome variance AND distinct outputs, latency variance is real wall-clock",
+    "the daemon-down path is proven by unit tests with an injected transport, NOT live (stopping Ollama is out of scope)",
+    "small task set (11 tasks, 8 classes): it qualifies these task classes on this host only — not general model capability"
+  ]
+}

@@ -175,7 +175,7 @@
       {
         "id": "V178-P4",
         "status": "NOT_STARTED",
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        "reason": "inspection ACCEPT bound to contract 87489567dc94 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
       }
     ]
   },

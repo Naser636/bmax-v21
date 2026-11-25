@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "8198853cb29dbddfaa672ecc305df8cee3b98fe34ff778e870ed9fff4cda7449"
+      "sha256": "135e19ff3744c8e05dff3a5be3c8944f7d3161906cd9c55ecb8b566101a2f89a"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -176,6 +176,10 @@
     {
       "source": "docs/odg/evidence/V178_P2_CONTRACT_INSPECTION.json",
       "sha256": "c2e42548e160836503b897cdb3c6e733e77b6c7492440f9eba6c8c38de9e1be3"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json",
+      "sha256": "2be03d5d1a3cf91d309f43599250571d77e62470e47cad89d3bcacad023c6087"
     }
   ],
   "checkpoint": {
@@ -963,22 +967,23 @@
       },
       "contractSha256": "87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca",
       "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
-      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
       "scope": {
-        "currentStep": "INSPECT_REVISED_CONTRACT",
-        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "currentStepKind": "EXECUTION",
         "currentStepAuthorized": true,
-        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "nextStep": "VALIDATE_CRITERIA",
         "validatedSteps": [
-          "REVISE_CONTRACT"
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT"
         ],
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "reason": "inspection ACCEPT bound to contract 87489567dc94 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
         "contractSha256": "87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca"
       },
       "records": {
         "inspection": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json",
+          "basis": "REGISTER_LOADER"
         },
         "experiment": {
           "path": null,
@@ -990,16 +995,10 @@
         }
       },
       "lastGoRun": null,
-      "pending": [
-        {
-          "kind": "INSPECTION",
-          "of": "contract 87489567dc94",
-          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha 87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca) and commit the inspection record"
+        "actor": "GO",
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v178-p4-memory-run.ts"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P4]",
@@ -1191,19 +1190,18 @@
       {
         "item": "V178-P2",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-local-model-benchmark.ts"
+      },
+      {
+        "item": "V178-P4",
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v178-p4-memory-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2",
+    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2, V178-P4",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V178-P4",
-        "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha 87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca) and commit the inspection record"
       }
     ],
     "lastGoRun": {

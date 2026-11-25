@@ -1,0 +1,44 @@
+{
+  "//": "V19 P3 decision record — Qwen3.5-9B qualified on the V155 harness (same task set, 3 trials, think:false via THINK-1 #1026). Records the measured comparison and the routing decision; changes no router entry, no registry file.",
+  "schema": "odg-model-qualification-decision/1",
+  "date": "2026-11-25",
+  "model": "qwen3.5:9b",
+  "pulled": "2026-11-25 (6.6 GB, Q4_K_M, 9.0B, ctx 262144, requires Ollama ≥ 0.30.0 — host 0.35.1 ⇒ no upgrade needed)",
+  "evidence": "docs/odg/evidence/V178_P3_QWEN35_9B_QUALIFICATION.json (harness odg-local-model-benchmark --models qwen3.5:9b --trials 3 --think false; written to a separate file — V155 registry untouched)",
+  "comparison": {
+    "qwen3.5:9b": {
+      "overallPassRate": {
+        "value": 0.909,
+        "passes": 30,
+        "n": 33
+      },
+      "implement": {
+        "value": 0.5,
+        "passes": 3,
+        "n": 6
+      },
+      "totalMsP50": 13293,
+      "tokPerSecP50": 6.4,
+      "deterministicOutputTasks": 11
+    },
+    "qwen2.5-coder:7b (V155)": {
+      "overallPassRate": {
+        "value": 0.909,
+        "passes": 30,
+        "n": 33
+      },
+      "implement": {
+        "value": 0.5,
+        "passes": 3,
+        "n": 6
+      },
+      "totalMsP50": 8151,
+      "tokPerSecP50": 8.3,
+      "deterministicOutputTasks": 9
+    }
+  },
+  "perClass": "identical pass rates in all 8 classes (implement 3/6 PROBATION for both; failing task impl-ts-parse-range 0/3 for both)",
+  "decision": "NOT_ADDED_TO_ROUTER — no quality gain (30/33 = 30/33), 63 % slower total p50 (13 293 ms vs 8 151 ms), ~7.9 GB peak RSS vs ~5 GB; owner rule « Intégrer le modèle dans odg-model-router uniquement si ses performances le justifient »",
+  "kept": "installed (not removed): candidate for long-context (262k) / vision roles, to be qualified separately on evidence",
+  "knownGap": "local-model-generator / odg-native-design-pipeline callers do not pass think:false by default — any future use of qwen3.5:9b must set it (THINK-1)"
+}
