@@ -361,7 +361,7 @@ function knowledge(repo: string, useAt: number, mem?: any): any {
       const H = require("../core/memory-architecture.js").semanticRetrieval();
       const [probe] = await mem.embed(["dimension probe"]);
       const ix = H.openIndex({ dir: mem.dir, tenant: mem.tenant, dims: probe.length });
-      const sync = await H.syncIndex(ix, memories, { asOf: useAt, trustedAuthors: ["ODG"] }, mem.embed);
+      const sync = await H.syncIndex(ix, memories, { asOf: useAt, trustedAuthors: ["ODG"], contextTier: true }, mem.embed);   // TIER-1: FACT = trust-gated; CONTEXT = SUPPORTED/unverified (never a fact)
       mem.ix = ix;
       out.memory = { status: "INDEXED", tenant: mem.tenant, index: path.basename(ix.file), dims: probe.length, ...sync, records: memories.length };
     } catch (e: any) { out.memory = { status: "NOT_MEASURED", reason: String((e && e.message) || e) }; }
@@ -376,8 +376,10 @@ function memoryPort(physOut: string, embed?: any): any {
   m.recall = async (q: string) => {
     if (!m.ix) return { status: "NOT_MEASURED", reason: "no index (knowledge step did not index)" };
     const hits = await H().query(m.ix, q, m.embed, { k: 3 });
-    const prov = hits.map((h: any) => ({ id: h.id, family: h.family, score: Math.round(h.score * 1e6) / 1e6, ranks: h.ranks }));
-    return { status: "RECALLED", query: q, hits: prov, rule: "MEM-INT-1: hybrid FTS5 + vector RRF over TRUSTED canonical memory records" };
+    const prov = hits.map((h: any) => ({ id: h.id, family: h.family, tier: h.tier, score: Math.round(h.score * 1e6) / 1e6, ranks: h.ranks }));
+    return { status: "RECALLED", query: q, facts: prov.filter((h: any) => h.tier === "FACT"), context: prov.filter((h: any) => h.tier === "CONTEXT_UNVERIFIED"),
+      contextNote: "CONTEXT_UNVERIFIED = SUPPORTED, not corroborated: usable as context only, NEVER as a fact (not admissible, not evidence)",
+      rule: "MEM-INT-1 + TIER-1: hybrid FTS5 + vector RRF over canonical memory records; FACT tier = memory-architecture.accessMemory trusted only" };
   };
   return m;
 }

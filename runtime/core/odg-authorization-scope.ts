@@ -80,6 +80,8 @@ const STEP_SEQUENCES: any = Object.freeze({
   // V17.8 / V19 — V178-P4 (hybrid per-tenant memory) ⇐ owner record docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json
   // (« autoriser les contrats P4 à P7 dans le périmètre défini »): same evidence-bound sequence.
   "V178-P4": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  // V19 — V178-P4-INT (P4 operational integration) ⇐ docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json
+  "V178-P4-INT": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
 });
 const EXECUTION_STEPS = Object.freeze(["RUN_CONTROLLED_EXPERIMENTS"]);
 const STEP_KIND: any = Object.freeze({
@@ -130,6 +132,7 @@ const OWNER_SOURCES: any = Object.freeze({
   // V19 — the VPS-equipment contracts bind to the V19 owner record through the declared family V19-VPS-EQUIPMENT (P4 first;
   // P3/P5/P6/P7 join only when each is bound — no entry ⇒ nothing derived for them).
   "V178-P4": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT\.json/, label: "V19 VPS equipment (docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json)", family: "V19-VPS-EQUIPMENT" }),
+  "V178-P4-INT": Object.freeze({ re: /V19_OWNER_ORDER_P4_OPERATIONAL\.json/, label: "V19 P4 operational order (docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json)", family: "V19-VPS-EQUIPMENT" }),
 });
 function ownerSourceCheck(scenario: string, source: string): any {
   const own = OWNER_SOURCES[scenario];

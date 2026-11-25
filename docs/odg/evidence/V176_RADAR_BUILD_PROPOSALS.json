@@ -24,19 +24,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795643710000,
+    "nowEpochMs": 1795646748000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "6af991ef7250dd4e8635f5592697feb6afa5fbfcf9f1d73b56e25816d17c9832",
-      "epochMs": 1795643710000
+      "sha256": "84b7d214cf134a19dc592b073620f117b6456357f1e3b3065174ed5e071df310",
+      "epochMs": 1795646748000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "468166dc0b5d80681f963a7b6bdebb691127d9a7b8f0cdb2394ec25489e2464c",
-      "epochMs": 1795638646000
+      "sha256": "d3b56e34b09fb0e58e277cd5b7d0c0f0ba99b3aa304dddb9f8067f870c3ab983",
+      "epochMs": 1795646748000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -92,12 +92,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.capabilityGain"
       ],
-      "statement": "criterion capabilityGain NOT_MEASURED on 59/71 register items",
+      "statement": "criterion capabilityGain NOT_MEASURED on 60/72 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.capabilityGain.notMeasuredItems",
-        "value": 59,
-        "of": 71,
+        "value": 60,
+        "of": 72,
         "items": [
           "A",
           "B",
@@ -123,6 +123,7 @@
           "V178-P5",
           "V178-P6",
           "V178-P7",
+          "V178-P4-INT",
           "V150-AI4",
           "V150-AI5",
           "V150-OG01",
@@ -207,12 +208,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.blockerRepetitionReduction"
       ],
-      "statement": "criterion blockerRepetitionReduction NOT_MEASURED on 65/71 register items",
+      "statement": "criterion blockerRepetitionReduction NOT_MEASURED on 66/72 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.blockerRepetitionReduction.notMeasuredItems",
-        "value": 65,
-        "of": 71,
+        "value": 66,
+        "of": 72,
         "items": [
           "A",
           "B",
@@ -245,6 +246,7 @@
           "V178-P5",
           "V178-P6",
           "V178-P7",
+          "V178-P4-INT",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -328,12 +330,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reliabilityQuality"
       ],
-      "statement": "criterion reliabilityQuality NOT_MEASURED on 70/71 register items",
+      "statement": "criterion reliabilityQuality NOT_MEASURED on 71/72 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.reliabilityQuality.notMeasuredItems",
-        "value": 70,
-        "of": 71,
+        "value": 71,
+        "of": 72,
         "items": [
           "A",
           "B",
@@ -366,6 +368,7 @@
           "V178-P5",
           "V178-P6",
           "V178-P7",
+          "V178-P4-INT",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -454,12 +457,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.speedEfficiency"
       ],
-      "statement": "criterion speedEfficiency NOT_MEASURED on 71/71 register items",
+      "statement": "criterion speedEfficiency NOT_MEASURED on 72/72 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.speedEfficiency.notMeasuredItems",
-        "value": 71,
-        "of": 71,
+        "value": 72,
+        "of": 72,
         "items": [
           "A",
           "B",
@@ -492,6 +495,7 @@
           "V178-P5",
           "V178-P6",
           "V178-P7",
+          "V178-P4-INT",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -581,12 +585,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reusability"
       ],
-      "statement": "criterion reusability NOT_MEASURED on 71/71 register items",
+      "statement": "criterion reusability NOT_MEASURED on 72/72 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.reusability.notMeasuredItems",
-        "value": 71,
-        "of": 71,
+        "value": 72,
+        "of": 72,
         "items": [
           "A",
           "B",
@@ -619,6 +623,7 @@
           "V178-P5",
           "V178-P6",
           "V178-P7",
+          "V178-P4-INT",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -708,12 +713,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.strategicValue"
       ],
-      "statement": "criterion strategicValue NOT_MEASURED on 54/71 register items",
+      "statement": "criterion strategicValue NOT_MEASURED on 55/72 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.strategicValue.notMeasuredItems",
-        "value": 54,
-        "of": 71,
+        "value": 55,
+        "of": 72,
         "items": [
           "A",
           "B",
@@ -736,6 +741,7 @@
           "V178-P5",
           "V178-P6",
           "V178-P7",
+          "V178-P4-INT",
           "V150-OG01",
           "V150-OG02",
           "V150-OG03",
@@ -818,12 +824,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.costRiskComplexity"
       ],
-      "statement": "criterion costRiskComplexity NOT_MEASURED on 40/71 register items",
+      "statement": "criterion costRiskComplexity NOT_MEASURED on 40/72 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.costRiskComplexity.notMeasuredItems",
         "value": 40,
-        "of": 71,
+        "of": 72,
         "items": [
           "V150-T01",
           "V150-T02",
@@ -914,12 +920,12 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability"
       ],
-      "statement": "criterion dependencyAvailability NOT_MEASURED on 66/71 register items",
+      "statement": "criterion dependencyAvailability NOT_MEASURED on 67/72 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.dependencyAvailability.notMeasuredItems",
-        "value": 66,
-        "of": 71,
+        "value": 67,
+        "of": 72,
         "items": [
           "B",
           "C",
@@ -948,6 +954,7 @@
           "V178-P5",
           "V178-P6",
           "V178-P7",
+          "V178-P4-INT",
           "V150-T01",
           "V150-T02",
           "V150-T07",
@@ -2730,7 +2737,7 @@
   "inFlightBuilds": [
     "V175-NB2"
   ],
-  "knownKeysCount": 71,
+  "knownKeysCount": 72,
   "proposals": [
     {
       "id": "IN_FLIGHT:native-criteria-measurement",
@@ -3963,8 +3970,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.capabilityGain",
               "name": "register.capabilityGain.notMeasuredItems",
-              "value": 59,
-              "of": 71,
+              "value": 60,
+              "of": 72,
               "items": [
                 "A",
                 "B",
@@ -3990,6 +3997,7 @@
                 "V178-P5",
                 "V178-P6",
                 "V178-P7",
+                "V178-P4-INT",
                 "V150-AI4",
                 "V150-AI5",
                 "V150-OG01",
@@ -4030,8 +4038,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.blockerRepetitionReduction",
               "name": "register.blockerRepetitionReduction.notMeasuredItems",
-              "value": 65,
-              "of": 71,
+              "value": 66,
+              "of": 72,
               "items": [
                 "A",
                 "B",
@@ -4064,6 +4072,7 @@
                 "V178-P5",
                 "V178-P6",
                 "V178-P7",
+                "V178-P4-INT",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",
@@ -4103,8 +4112,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reliabilityQuality",
               "name": "register.reliabilityQuality.notMeasuredItems",
-              "value": 70,
-              "of": 71,
+              "value": 71,
+              "of": 72,
               "items": [
                 "A",
                 "B",
@@ -4137,6 +4146,7 @@
                 "V178-P5",
                 "V178-P6",
                 "V178-P7",
+                "V178-P4-INT",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",
@@ -4181,8 +4191,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.speedEfficiency",
               "name": "register.speedEfficiency.notMeasuredItems",
-              "value": 71,
-              "of": 71,
+              "value": 72,
+              "of": 72,
               "items": [
                 "A",
                 "B",
@@ -4215,6 +4225,7 @@
                 "V178-P5",
                 "V178-P6",
                 "V178-P7",
+                "V178-P4-INT",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",
@@ -4260,8 +4271,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.reusability",
               "name": "register.reusability.notMeasuredItems",
-              "value": 71,
-              "of": 71,
+              "value": 72,
+              "of": 72,
               "items": [
                 "A",
                 "B",
@@ -4294,6 +4305,7 @@
                 "V178-P5",
                 "V178-P6",
                 "V178-P7",
+                "V178-P4-INT",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",
@@ -4339,8 +4351,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.strategicValue",
               "name": "register.strategicValue.notMeasuredItems",
-              "value": 54,
-              "of": 71,
+              "value": 55,
+              "of": 72,
               "items": [
                 "A",
                 "B",
@@ -4363,6 +4375,7 @@
                 "V178-P5",
                 "V178-P6",
                 "V178-P7",
+                "V178-P4-INT",
                 "V150-OG01",
                 "V150-OG02",
                 "V150-OG03",
@@ -4402,7 +4415,7 @@
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.costRiskComplexity",
               "name": "register.costRiskComplexity.notMeasuredItems",
               "value": 40,
-              "of": 71,
+              "of": 72,
               "items": [
                 "V150-T01",
                 "V150-T02",
@@ -4449,8 +4462,8 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability",
               "name": "register.dependencyAvailability.notMeasuredItems",
-              "value": 66,
-              "of": 71,
+              "value": 67,
+              "of": 72,
               "items": [
                 "B",
                 "C",
@@ -4479,6 +4492,7 @@
                 "V178-P5",
                 "V178-P6",
                 "V178-P7",
+                "V178-P4-INT",
                 "V150-T01",
                 "V150-T02",
                 "V150-T07",

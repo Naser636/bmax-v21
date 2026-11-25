@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "6af991ef7250dd4e8635f5592697feb6afa5fbfcf9f1d73b56e25816d17c9832"
+      "sha256": "84b7d214cf134a19dc592b073620f117b6456357f1e3b3065174ed5e071df310"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "468166dc0b5d80681f963a7b6bdebb691127d9a7b8f0cdb2394ec25489e2464c"
+      "sha256": "d3b56e34b09fb0e58e277cd5b7d0c0f0ba99b3aa304dddb9f8067f870c3ab983"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -216,17 +216,17 @@
     },
     "coverage": {
       "rule": "BREF-1",
-      "items": 71,
+      "items": 72,
       "measured": 37,
-      "notMeasured": 34,
+      "notMeasured": 35,
       "withV124MissionId": 22,
       "withV124Section": 23,
       "withV144Phase": 21,
       "byKind": {
         "WORK_ITEM_CONTRACT": {
-          "items": 31,
+          "items": 32,
           "measured": 18,
-          "notMeasured": 13
+          "notMeasured": 14
         },
         "V150_TOP10_ITEM": {
           "items": 5,
@@ -1024,6 +1024,64 @@
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P4]",
         "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27]"
       ]
+    },
+    {
+      "id": "V178-P4-INT",
+      "title": "P4 operational integration — hybrid memory wired into GO knowledge()/DECOMPOSE with the two-level FACT/CONTEXT memory (MEM-INT-1 + TIER-1)",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'V178-P4-INT' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "55f356430c0a9bcc063359fadcd81157effe0dce2a3e0e0b6883d7b7b4c16ff9",
+      "ownerRecord": "docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "55f356430c0a9bcc063359fadcd81157effe0dce2a3e0e0b6883d7b7b4c16ff9"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 55f356430c0a",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 55f356430c0a9bcc063359fadcd81157effe0dce2a3e0e0b6883d7b7b4c16ff9) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P4-INT]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31]"
+      ]
     }
   ],
   "otherRegisterItems": {
@@ -1034,7 +1092,7 @@
       "CLOSED_PARTIAL": 4,
       "CLOSED_FAIL": 4,
       "CLOSED_PASS": 2,
-      "NOT_STARTED": 9,
+      "NOT_STARTED": 10,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1231,6 +1289,11 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V178-P4-INT",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 55f356430c0a9bcc063359fadcd81157effe0dce2a3e0e0b6883d7b7b4c16ff9) and commit the inspection record"
       }
     ],
     "lastGoRun": {

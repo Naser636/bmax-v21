@@ -48,6 +48,27 @@ const ACCESS = { asOf: 100, trustedAuthors: ["ODG"] };
   threw = ""; try { H.openIndex({ dir, tenant: "acme", dims: DIMS * 2 }); } catch (e: any) { threw = e.message; }
   check(/dims/.test(threw), "reopening with different dims is refused (rebuild required)");
   check(H.ftsQuery("a") === null && H.ftsQuery("Prix prix") === '"prix"', "ftsQuery: short/duplicate terms dropped, terms quoted");
+  // ---- TIER-1 (two-level memory) — SYNTHETIC fixtures: they prove the pipeline, never the truth of a real fact ----
+  {
+    const d2 = fs.mkdtempSync(path.join(os.tmpdir(), "p4tier-")); const ixT = H.openIndex({ dir: d2, tenant: "tiers", dims: DIMS });
+    const base = { provenance: "SYNTHETIC:fixture", authoredBy: "ODG_CAPABILITY", appliedBy: "ODG_EXECUTOR", family: "semantic", learnedAt: 50, validUntil: 200 };
+    const recsT = [{ id: "f1", claim: "SYNTHETIC corroborated fact about canonical JSON key ordering", status: "VERIFIED", epistemic: "CORROBORATED", confidence: 0.9, ...base },
+      { id: "c1", claim: "SYNTHETIC supported claim about small code review changes", status: "UNVERIFIED", epistemic: "SUPPORTED", confidence: 0.7, ...base },
+      { id: "x1", claim: "SYNTHETIC invalidated claim about review size", status: "INVALIDATED", epistemic: "CONTRADICTED", ...base },
+      { id: "s1", claim: "SYNTHETIC stale supported claim about review size", status: "UNVERIFIED", epistemic: "SUPPORTED", ...base, validUntil: 90 },
+      { id: "u1", claim: "SYNTHETIC unattributed supported claim about review size", status: "UNVERIFIED", epistemic: "SUPPORTED", ...base, authoredBy: "MYSTERY" }];
+    const off = await H.syncIndex(ixT, recsT, ACCESS, fakeEmbed);
+    check(off.contextIndexed === 0, "TIER-1: without contextTier only FACT-tier records are indexed (default unchanged)");
+    const on = await H.syncIndex(ixT, recsT, { ...ACCESS, contextTier: true }, fakeEmbed);
+    const rows = ixT.db.prepare("select id, tier from docs order by id").all().map((r: any) => r.id + ":" + r.tier).join(",");
+    check(rows === "c1:CONTEXT" + (rows.includes("f1:FACT") ? ",f1:FACT" : ""), "TIER-1: SUPPORTED attributed fresh ⇒ CONTEXT; INVALIDATED, stale and unattributed ⇒ never indexed (" + rows + ")");
+    const hits = await H.query(ixT, "small code review changes", fakeEmbed, { k: 5 });
+    check(hits.some((h: any) => h.id === "c1" && h.tier === "CONTEXT_UNVERIFIED") && !hits.some((h: any) => ["x1", "s1", "u1"].includes(h.id)), "TIER-1: context is retrieved and labelled CONTEXT_UNVERIFIED; invalid/stale/unattributed never returned");
+    const M = require("./memory-architecture"); const acc = M.accessMemory(recsT, ACCESS);
+    check(!acc.trusted.some((t: any) => t.id === "c1"), "TIER-1: a CONTEXT record is still NOT trusted by accessMemory (never promoted to a fact)");
+    check(on.factIndexed === acc.trusted.length, "TIER-1: FACT tier = exactly the records accessMemory trusts (" + acc.trusted.length + ")");
+    ixT.db.close();
+  }
   if (failures) { process.stdout.write(failures + " failure(s)\n"); process.exit(1); }
   process.stdout.write("all odg-memory-hybrid-index tests pass\n");
 })();

@@ -1,0 +1,36 @@
+{
+  "//": "OWNER authorization record — verbatim transcription (2026-11-25) of the owner directives ordering the P4 OPERATIONAL integration and the two-level memory decision. Authorization SOURCE for V178-P4-INT (family V19-VPS-EQUIPMENT). Never self-inspects; never PASS by itself; changes no trust rule beyond the CONTEXT tier it defines (CONTEXT is never a fact).",
+  "schema": "odg-owner-authorization/1",
+  "kind": "OWNER_AUTHORIZATION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-25",
+  "directives": [
+    "CTO — ORDRE P4 : INTÉGRATION OPÉRATIONNELLE COMPLÈTE",
+    "CTO — DIRECTIVE V14.4 — ACCÉLÉRATION INTELLIGENTE · AUTONOMIE NATIVE · ACHÈVEMENT INTÉGRAL"
+  ],
+  "quote": [
+    "Si le périmètre actuel ne permet pas de modifier `odg-go.ts` et `odg-go-cycle.ts`, préparer et qualifier une extension ciblée du contrat, sans modifier les protections par contournement.",
+    "Finaliser l'extension ciblée du contrat autorisant les fichiers d'intégration concernés.",
+    "Implémenter dans le mécanisme existant une distinction explicite : A. CONTEXTE — Autoriser l'indexation et la récupération des enregistrements SUPPORTED. — Conserver leur statut, provenance, date, source et niveau de confiance. — Les présenter explicitement comme contexte non vérifié. — Interdire leur promotion automatique en faits. B. FAITS FIABLES — Maintenir les règles actuelles de corroboration.",
+    "Ne créer ni seconde mémoire ni nouveau système de confiance.",
+    "Pour valider le fonctionnement mécanique, utiliser aussi des fixtures synthétiques clairement marquées SYNTHETIC. Elles prouvent le fonctionnement du pipeline, jamais la vérité d'un fait réel.",
+    "P4 ne sera OPERATIONALLY_COMPLETE qu'après cette démonstration."
+  ],
+  "covers": {
+    "contracts": [
+      "V178-P4-INT"
+    ],
+    "steps": [
+      "REVISE_CONTRACT",
+      "INSPECT_REVISED_CONTRACT",
+      "RUN_CONTROLLED_EXPERIMENTS",
+      "VALIDATE_CRITERIA"
+    ]
+  },
+  "neverCovers": [
+    "promotion of CONTEXT records to facts",
+    "changes to accessMemory / memory-trust-gate / admissible rules",
+    "production, public exposure, client data, purchases",
+    "self-inspection"
+  ]
+}
