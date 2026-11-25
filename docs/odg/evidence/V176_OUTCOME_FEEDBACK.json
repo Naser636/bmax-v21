@@ -165,12 +165,12 @@
       {
         "id": "V178-P1",
         "status": "NOT_STARTED",
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        "reason": "inspection ACCEPT bound to contract 3d6ce0b00204 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
       },
       {
         "id": "V178-P2",
         "status": "NOT_STARTED",
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        "reason": "inspection ACCEPT bound to contract 3342d16e2a6a ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
       }
     ]
   },
