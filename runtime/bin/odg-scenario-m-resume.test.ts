@@ -2,6 +2,9 @@
 "use strict";
 // V15.0 §45 scenario M — runs the REAL scenario (child processes, real SIGKILL) in a throw-away temp dir and asserts every
 // resume invariant from the durable trail. No network, no runtime/generated write.
+// MR-1: a TTL with margin over CPU starvation on shared CI runners (live ops are ~120 ms; a 1.5 s TTL could be overrun by
+// a starved LIVE holder ⇒ a legitimate-by-TTL but unintended takeover). Same assertions; only the wait scale changes.
+if (!process.env.ODG_SCENARIO_M_TTL_MS) process.env.ODG_SCENARIO_M_TTL_MS = "4000";
 const S = require("./odg-scenario-m-resume");
 let failures = 0;
 function check(c: any, l: string): void { if (!c) { failures++; process.stderr.write("FAIL: " + l + "\n"); } else process.stdout.write("  ok - " + l + "\n"); }
