@@ -1,0 +1,226 @@
+{
+  "schema": "odg-v178-p4-result/1",
+  "scenario": "V178-P4",
+  "label": "NATIVE (ODG GO dispatch)",
+  "threshold": {
+    "hybridRecallAt3Min": 5,
+    "vecOnlyRecallAt3Min": 4,
+    "controlVecOnlyMax": 3,
+    "of": 6,
+    "maxEmbedCalls": 40
+  },
+  "set": {
+    "records": 10,
+    "queries": 6
+  },
+  "criteria": {
+    "AC1_AC3": {
+      "met": true,
+      "evidence": {
+        "file": "runtime/core/memory-architecture.test.ts",
+        "exit": 0,
+        "ok": true
+      }
+    },
+    "AC4": {
+      "met": true,
+      "before": "ABSENT",
+      "after": "PRESENT",
+      "rule": "LEARN-1 (recomputed from the committed source at HEAD via git show)",
+      "verdict": "IMPROVED"
+    },
+    "AC5": {
+      "met": true,
+      "evidence": {
+        "tests": [
+          {
+            "file": "runtime/core/memory-architecture.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/core/odg-memory-hybrid-index.test.ts",
+            "exit": 0,
+            "ok": true
+          }
+        ],
+        "tsc": {
+          "command": "tsc --noEmit --incremental false -p tsconfig.json",
+          "exit": 0,
+          "ok": true
+        }
+      }
+    },
+    "AC6": {
+      "met": true,
+      "measured": {
+        "dims": 1024,
+        "sync": {
+          "trusted": 10,
+          "excluded": 0,
+          "indexed": 10,
+          "embedded": 10,
+          "removed": 0,
+          "withoutText": 0
+        },
+        "indexMs": 1153,
+        "recallAt3": {
+          "hybrid": 5,
+          "ftsOnly": 1,
+          "vecOnly": 5,
+          "of": 6
+        },
+        "queryMs": {
+          "max": 251,
+          "median": 113
+        },
+        "perQuery": [
+          {
+            "q": "actualiser le coût contractuel grâce à l'indicateur publié",
+            "expect": "m01",
+            "hybrid": [
+              "m01",
+              "m05",
+              "m08"
+            ],
+            "fts": [],
+            "vec": [
+              "m01",
+              "m05",
+              "m08"
+            ]
+          },
+          {
+            "q": "somme conservée pour sécuriser les paiements",
+            "expect": "m02",
+            "hybrid": [
+              "m04",
+              "m09",
+              "m08"
+            ],
+            "fts": [
+              "m04"
+            ],
+            "vec": [
+              "m09",
+              "m08",
+              "m06"
+            ]
+          },
+          {
+            "q": "quand verser le ciment aux semelles",
+            "expect": "m03",
+            "hybrid": [
+              "m10",
+              "m03",
+              "m04"
+            ],
+            "fts": [
+              "m10"
+            ],
+            "vec": [
+              "m03",
+              "m04",
+              "m10"
+            ]
+          },
+          {
+            "q": "récupérer les fichiers perdus après une panne",
+            "expect": "m07",
+            "hybrid": [
+              "m08",
+              "m07",
+              "m09"
+            ],
+            "fts": [
+              "m08"
+            ],
+            "vec": [
+              "m07",
+              "m09",
+              "m06"
+            ]
+          },
+          {
+            "q": "clôturer la livraison puis corriger les défauts constatés",
+            "expect": "m09",
+            "hybrid": [
+              "m08",
+              "m07",
+              "m09"
+            ],
+            "fts": [
+              "m08",
+              "m07"
+            ],
+            "vec": [
+              "m09",
+              "m05",
+              "m03"
+            ]
+          },
+          {
+            "q": "impôt ajouté au montant facturé",
+            "expect": "m08",
+            "hybrid": [
+              "m08",
+              "m01",
+              "m05"
+            ],
+            "fts": [
+              "m08"
+            ],
+            "vec": [
+              "m08",
+              "m01",
+              "m05"
+            ]
+          }
+        ]
+      },
+      "control": {
+        "recallAt3": {
+          "hybrid": 1,
+          "ftsOnly": 1,
+          "vecOnly": 2,
+          "of": 6
+        }
+      },
+      "lexicalOverlap": [
+        {
+          "expect": "m01",
+          "shared": []
+        },
+        {
+          "expect": "m02",
+          "shared": []
+        },
+        {
+          "expect": "m03",
+          "shared": []
+        },
+        {
+          "expect": "m07",
+          "shared": []
+        },
+        {
+          "expect": "m09",
+          "shared": []
+        },
+        {
+          "expect": "m08",
+          "shared": []
+        }
+      ],
+      "embedCalls": 14
+    }
+  },
+  "outcome": "PASS",
+  "provenance": {
+    "moduleAuthor": "PROVIDER (Claude Code)",
+    "embedModel": "qwen3-embedding:0.6b",
+    "network": "loopback Ollama /api/embed only",
+    "providerCalls": 0
+  },
+  "contractSha256": "99277ddd47ffecdf8f01c4e346a874579a8120aeb4cd4fd6657f8ad09f576f33"
+}
