@@ -1,0 +1,158 @@
+{
+  "//": "V178 Phase 0 — VPS discovery, READ-ONLY (owner directive V178 §3). Collected by the coordinating provider session on 2026-11-24 with non-privileged read commands only (lscpu, free, df, lsblk, /etc/os-release, uname, ss -tln, ps, tool --version, Ollama loopback API). No installation, no configuration change, no secret printed. Items the permission system did not allow to inspect are listed as NOT_OBSERVED (not guessed).",
+  "schema": "odg-vps-inventory/1",
+  "date": "2026-11-24",
+  "headAtCollection": "292f371e",
+  "compute": {
+    "arch": "x86_64",
+    "vCPU": 8,
+    "model": "Intel Core Processor (Haswell, no TSX)",
+    "threadsPerCore": 1,
+    "hypervisor": "KVM (full virtualization)",
+    "simd": [
+      "avx",
+      "avx2",
+      "fma",
+      "f16c"
+    ],
+    "avx512": false,
+    "l3": "128 MiB (8 instances)"
+  },
+  "memory": {
+    "totalGiB": 22,
+    "availableGiBAtCollection": 16,
+    "swap": "none"
+  },
+  "gpu": {
+    "present": false,
+    "evidence": "nvidia-smi absent; only VGA = Cirrus Logic GD 5446 (emulated); /dev/dri/card0 = virtual display"
+  },
+  "storage": {
+    "disk": "sda 200G (QEMU HARDDISK, rotational flag set)",
+    "root": "193G total, 33G used, 161G available (17%)",
+    "repoGitDir": "123M"
+  },
+  "os": {
+    "distro": "Ubuntu 26.04 LTS",
+    "kernel": "7.0.0-42-generic",
+    "uptime": "≈ 2 weeks 3 days"
+  },
+  "runtimes": {
+    "node": "v22.22.1",
+    "npm": "9.2.0",
+    "python3": "3.14.4",
+    "git": "2.53.0",
+    "docker": "29.1.3 (CLI present)",
+    "podman": "absent",
+    "bwrap": "0.11.1",
+    "gh": "2.46.0",
+    "ollama": "0.35.1"
+  },
+  "localModels": [
+    {
+      "name": "qwen2.5-coder:7b",
+      "sizeGB": 4.68,
+      "quant": "Q4_K_M",
+      "params": "7.6B"
+    },
+    {
+      "name": "qwen2.5-coder:3b",
+      "sizeGB": 1.93,
+      "quant": "Q4_K_M",
+      "params": "3.1B"
+    },
+    {
+      "name": "qwen2.5:0.5b",
+      "sizeGB": 0.4,
+      "quant": "Q4_K_M",
+      "params": "494M"
+    }
+  ],
+  "measuredInference": {
+    "source": "committed run records (no new benchmark run in P0)",
+    "nb2WarmupQwen7b": {
+      "coldLoadS": 13.2,
+      "promptEvalTokPerS": 27,
+      "note": "from a 36-token prompt / 2-token reply — indicative only"
+    },
+    "jRun": {
+      "modelCalls": 104,
+      "wallS": 617,
+      "note": "mixed 3b/7b, sandboxed tests included"
+    }
+  },
+  "network": {
+    "listening": {
+      "public": [
+        "0.0.0.0:22 / [::]:22 (ssh)"
+      ],
+      "loopbackOnly": [
+        "127.0.0.1:11434 (ollama)",
+        "127.0.0.1:3000",
+        "127.0.0.1:8080",
+        "127.0.0.1:38637",
+        "127.0.0.1:42243",
+        "127.0.0.53/54:53 (resolver)"
+      ]
+    },
+    "note": "service names behind 3000/8080/ephemeral ports NOT_OBSERVED (process-to-port mapping needs privileges)"
+  },
+  "processes": {
+    "topRss": [
+      "claude 615MB",
+      "systemd-journal 205MB",
+      "next-server 76MB",
+      "dockerd 29MB",
+      "ollama 25MB idle (models load on demand)"
+    ],
+    "ollamaServiceUser": "ollama (dedicated user), up ≈ 11.7 days"
+  },
+  "backups": {
+    "observed": [
+      "~/odg-preservation (dated snapshot 2026-11-21, PRESERVATION_PROTOCOL.md, V362/V363/V368 dirs) + verify-historical.sh (928 files)"
+    ],
+    "notObserved": "system-level backup/restore tooling"
+  },
+  "notObserved": {
+    "reason": "denied by the permission system for this session (read-only probes included) — not bypassed",
+    "items": [
+      "systemd units / timers (systemctl, incl. --user)",
+      "docker containers (docker ps)",
+      "firewall rules",
+      "process↔port mapping"
+    ]
+  },
+  "capacityDiagnosis": {
+    "inferenceClass": "CPU-only (no GPU), 8 vCPU AVX2, 22 GiB RAM, no swap",
+    "feasible": [
+      "7–8B Q4 models (≈5 GB RAM each) — current coding workhorse",
+      "3B / 0.5B for routing, classification, cheap checks",
+      "small embedding models (e.g. nomic-embed / bge-small class) for local semantic memory — CPU-friendly"
+    ],
+    "borderline": [
+      "13–14B Q4 (≈9 GB) — fits RAM with one model resident; expect a few tok/s generation ⇒ only for low-volume, high-value steps"
+    ],
+    "infeasible": [
+      "≥30B models (RAM)",
+      "multiple 7B+ models resident concurrently with ODG workloads (no swap ⇒ OOM risk)"
+    ],
+    "bottlenecks": [
+      "generation throughput (CPU) — the dominant cost of native engineering runs",
+      "cold model load ≈ 13 s",
+      "no swap ⇒ memory spikes kill processes"
+    ],
+    "implications": [
+      "keep one large model resident at a time; route cheap steps to 3B/0.5B (Model Router)",
+      "parallel GO waves must be capped by RAM, not by vCPU count",
+      "native-engineering quality gains should come from method (diversity, decomposition, retrieval) rather than bigger models on this host"
+    ]
+  },
+  "nextSteps": {
+    "phase1": "design the local architecture on these facts (Model Router over existing odg-model-intelligence / Ollama registry V155; local embeddings + semantic memory over existing memory components; sandbox = existing bwrap; observability = production metric + per-mission token/call accounting)",
+    "phase2Prereqs": [
+      "owner/permission decision to inspect systemd + docker read-only (or provide their state) before any service change",
+      "qualify any new model by a pinned benchmark on this host before adoption",
+      "every installation reversible and isolated (no production service touched)"
+    ]
+  }
+}
