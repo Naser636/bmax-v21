@@ -98,6 +98,7 @@ function buildRecord(root: string, item: string): any {
 
 function main(argv: string[]): number {
   if (argv[0] === "--check") { let rc = 0; for (const it of Object.keys(VERIFIERS)) rc = Math.max(rc, main([it, "--check"])); return rc; }   // all items
+  if (argv[0] === "--write") { let rc = 0; for (const it of Object.keys(VERIFIERS)) rc = Math.max(rc, main([it, "--write"])); return rc; }   // all items — the pre-open gate regenerates with `--write` alone
   const item = argv[0];
   if (!VERIFIERS[item]) { process.stdout.write(`usage: odg-mechanical-result-verifier.ts <${Object.keys(VERIFIERS).join("|")}> [--write|--check]\n`); return 2; }
   const rec = buildRecord(ROOT, item); const text = JSON.stringify(rec, null, 2) + "\n";

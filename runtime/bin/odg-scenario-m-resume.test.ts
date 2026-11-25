@@ -28,6 +28,8 @@ function check(c: any, l: string): void { if (!c) { failures++; process.stderr.w
   check(v.idempotentRerunExecutesNothing, "a re-run on the completed state executes nothing");
   for (const k of Object.keys(a.perMission)) check(a.perMission[k].repeatedCompletedOps === 0, `mission ${k}: 0 completed ops repeated`);
   check(out.allProven === true, "allProven");
+  // MR-2: on failure, dump the lease analysis so a CI-only flake carries its own root-cause data (no behaviour change)
+  if (failures) process.stderr.write("MR-2 lease diagnostics: " + JSON.stringify({ ttlMs: out.setup.leaseTtlMs, leases: out.analysis.leases, concurrent: out.measurements && out.measurements.concurrentResumers, phases: (out.phases || []).map((p: any) => ({ name: p.name, exit: p.exitCode, signal: p.signal, wallMs: p.wallMs })) }).slice(0, 6000) + "\n");
   if (failures === 0) process.stdout.write(`ALL PASS — V150 SCENARIO M (resume ${JSON.stringify(m.resumeWallMs)})\n`);
   process.exit(failures === 0 ? 0 : 1);
 })();
