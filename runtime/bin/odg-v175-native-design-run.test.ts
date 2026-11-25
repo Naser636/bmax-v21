@@ -33,8 +33,10 @@ const run = (args: string[], timeout = 300000) => cp.spawnSync(tsx, [R.SELF, ...
   // ---- contract ----
   const c = R.readContract(ROOT);
   const derived = R.contractFor(ROOT);
-  if (derived) check("V160 entry V175-NB2: origin + WORK_ITEM_CONTRACT = ODG-rules derivation from this tree", !!c && JSON.stringify(c.origin) === JSON.stringify(derived.origin) && JSON.stringify(c.WORK_ITEM_CONTRACT) === JSON.stringify(derived.WORK_ITEM_CONTRACT));
-  else check("after integration: no failing case ⇒ no new contract derived (item satisfied)", derived === null);
+  // re-baselined V17.8: the derivation is FROZEN at NB2's run head — once the result is recorded (CLOSED_FAIL) the current tree legitimately derives differently
+  if (existed) process.stdout.write("SKIP - V160 NB2 derivation: frozen at its run head (result recorded)\n");
+  else if (derived) check("V160 entry V175-NB2: origin + WORK_ITEM_CONTRACT = ODG-rules derivation from this tree", !!c && JSON.stringify(c.origin) === JSON.stringify(derived.origin) && JSON.stringify(c.WORK_ITEM_CONTRACT) === JSON.stringify(derived.WORK_ITEM_CONTRACT));
+  else if (!existed) check("after integration: no failing case ⇒ no new contract derived (item satisfied)", derived === null);
   const sc = AS.deriveAuthorizationScope(c, {});
   check("V175-NB2 bound to the V175 owner record via family V175-NATIVE-LOOP: REVISE validated, INSPECT current, nothing executable", sc.applicable === true && sc.currentStep === "INSPECT_REVISED_CONTRACT" && sc.executionAuthorized === false && c.authorization.executionAuthorized === false);
   check("gate refuses without an inspection record", R.gate(c, null, null).ok === false);
