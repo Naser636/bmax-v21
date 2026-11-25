@@ -219,7 +219,7 @@
     },
     {
       "source": "docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json",
-      "sha256": "fd5550f00353a0f2099db79438e402afebdcdd2bdb27b5f63b9d3439131f84e1"
+      "sha256": "701a01eec595f486129408fcd99daa1c604b32c159cbbec77ad09cdbbdb75dfc"
     },
     {
       "source": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
@@ -7263,8 +7263,8 @@
         "closure": {
           "closed": false,
           "rule": "CLOSE-1",
-          "currentStep": "INSPECT_REVISED_CONTRACT",
-          "reason": "INSPECT_REVISED_CONTRACT pending: inspection contractSha256 0d6da74d091b62759d1f3a90e2f4dc441b26d25561e8937daa422302f2c776f6 ≠ current contract sha256 99277ddd47ffecdf8f01c4e346a874579a8120aeb4cd4fd6657f8ad09f576f33 (contract edited after inspection, or wrong contract) ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+          "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+          "reason": "inspection ACCEPT bound to contract 99277ddd47ff ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         },
         "dependencyGraph": {
@@ -17703,5 +17703,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "05f783b79d7cd77842239582cc5c36c0917d001e"
+  "generatedAtHead": "2179fc760fbc978ddce01affd97f409433a0c772"
 }
