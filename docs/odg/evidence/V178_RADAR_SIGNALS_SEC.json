@@ -1,0 +1,519 @@
+{
+  "collectedBy": "PROVIDER (Claude Code research agent)",
+  "collectedAt": "2026-11-25T13:00:00Z",
+  "epistemicStatus": "UNVERIFIED",
+  "domain": "V178.1 VPS provider security & client data sovereignty (A-E + legal)",
+  "method": "WebSearch result summaries only; generic queries; no repo/host/client data sent; nothing installed or tested. 'currentVpsFit' statements are derived ONLY from the coordinator's MEASURED FACTS (OpenStack Nova KVM/QEMU guest, SeaBIOS, no SEV/SNP/TDX flags, no /dev/sev-guest, no /dev/tdx_guest, no vTPM, plain ext4, no swap, lockdown/IMA/EVM interfaces present, journald logs). No compatibility with the current VPS is asserted beyond those facts.",
+  "threatModelSummary": "On a conventional KVM guest the hypervisor operator (provider) can read guest RAM (memory dumps), boot rescue images, attach the disk, use the console and snapshot disks. Encryption at rest and in-guest sandboxes do not stop a malicious host at runtime. Only (a) hardware confidential computing (SEV-SNP/TDX/CCA, with attestation, still with known attacks) or (b) never giving the server plaintext/keys (client-side processing) change that.",
+  "signals": [
+    {
+      "id": "SEC-A1",
+      "domain": "A",
+      "title": "Hypervisor can dump guest memory: libvirt 'virsh dump --memory-only' / QEMU dump-guest-memory",
+      "kind": "threat-evidence",
+      "claim": "Host-side tooling documented by Red Hat/IBM writes the guest's memory and CPU register state to an ELF/kdump file; QEMU also ships a GDB script to extract guest memory from a qemu process core. Hence anything in guest RAM (decrypted data, LUKS master key, age/SQLCipher keys, model prompts, KV cache) is readable by the host operator on a non-confidential VM.",
+      "evidence": [
+        {"url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/virtualization_deployment_and_administration_guide/sect-Domain_Commands-Creating_a_dump_file_of_a_domains_core", "publisher": "Red Hat", "date": "RHEL 7 docs", "type": "official vendor documentation"},
+        {"url": "https://www.ibm.com/docs/en/linuxonibm/lddt/lddt_c_virsh_dump.html", "publisher": "IBM", "date": "n/a", "type": "official vendor documentation"},
+        {"url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/virtualization_deployment_and_administration_guide/sect-troubleshooting-creating_dump_files", "publisher": "Red Hat", "date": "RHEL 7 docs", "type": "official vendor documentation"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED capability (whether this provider uses it is NOT known)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "any KVM/QEMU host",
+      "currentVpsFit": "APPLIES: current VPS is a KVM/QEMU guest without memory encryption.",
+      "relevanceToODG": "Foundational: no in-guest measure makes plaintext-in-RAM secret from the provider.",
+      "risks": "Docs are older RHEL 6/7 releases; capability persists in current libvirt (not re-verified)."
+    },
+    {
+      "id": "SEC-A2",
+      "domain": "A",
+      "title": "Cold-boot / in-RAM key exposure: disk-encryption keys stay in memory while mounted",
+      "kind": "threat-evidence",
+      "claim": "Princeton (USENIX Security 2008) showed disk-encryption keys reside in RAM while volumes are mounted and can be recovered from memory images (AES keys reconstructable even with ~10% bit decay). Combined with SEC-A1, a hypervisor obtains the same keys without any physical attack.",
+      "evidence": [
+        {"url": "https://www.usenix.org/legacy/event/sec08/tech/full_papers/halderman/halderman_html/", "publisher": "USENIX Security 2008 (Halderman et al.)", "date": "2008", "type": "peer-reviewed paper"},
+        {"url": "https://developers.redhat.com/articles/2026/05/07/confidential-virtual-machine-storage-attack-scenarios", "publisher": "Red Hat Developer", "date": "2026-05-07", "type": "vendor technical article"}
+      ],
+      "measuredOrClaimed": "MEASURED (paper, physical machines); VM inference = reasoning from SEC-A1",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "any",
+      "currentVpsFit": "APPLIES.",
+      "relevanceToODG": "Explains why LUKS/fscrypt on this VPS protect only against offline disk/snapshot theft, not a runtime hypervisor operator.",
+      "risks": "None for ODG beyond correct framing; do not market disk encryption as provider-proof."
+    },
+    {
+      "id": "SEC-A3",
+      "domain": "A",
+      "title": "LUKS + Network-Bound Disk Encryption (Clevis/Tang)",
+      "kind": "encryption-at-rest",
+      "claim": "Clevis client + Tang server let LUKS volumes unlock automatically at boot only when the Tang server is reachable; Tang is stateless and needs no TLS/auth; clevis luks bind/list/report/regen/unbind documented; dracut needed for early-boot unlock; Oracle warns a Tang on a public IP lets anyone on the Internet unlock the disk.",
+      "evidence": [
+        {"url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/security_hardening/configuring-automated-unlocking-of-encrypted-volumes-using-policy-based-decryption_security-hardening", "publisher": "Red Hat", "date": "RHEL 9", "type": "official documentation"},
+        {"url": "https://docs.oracle.com/en/operating-systems/oracle-linux/nbde/nbde-UseClevisWithLUKS.html", "publisher": "Oracle", "date": "n/a", "type": "official documentation"},
+        {"url": "https://github.com/latchset/tang", "publisher": "latchset (upstream)", "date": "n/a", "type": "upstream repository"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "GPL-3.0 (Clevis/Tang, from general knowledge - UNVERIFIED in this run)",
+      "requiresRoot": true,
+      "requiresProviderSupport": false,
+      "hardware": "none special; Tang server must be off-provider and access-restricted",
+      "currentVpsFit": "NOT PRESENT (root fs plain ext4). Converting root fs = reinstall/rescue-mode re-encryption (root, high-risk, owner-gated). A separate LUKS data volume/file is less disruptive (root).",
+      "relevanceToODG": "Protects disk images, snapshots, backups and decommissioned virtual disks against offline reading; NOT against the live hypervisor (SEC-A1/A2).",
+      "risks": "Provider sees the Tang exchange endpoint metadata; mis-exposed Tang = auto-unlock for anyone; boot dependence on network."
+    },
+    {
+      "id": "SEC-A4",
+      "domain": "A",
+      "title": "Application-level/client-side encryption primitives: age, libsodium secretstream & sealed boxes",
+      "kind": "client-side-encryption",
+      "claim": "age v1: X25519 (or scrypt) recipients wrap a 128-bit file key; recent versions add mlkem768x25519 post-quantum recipients. libsodium: crypto_secretstream (XChaCha20-Poly1305, chunked streams, since 1.0.14), sealed boxes (anonymous public-key encryption to a recipient), KDF/HKDF for subkey derivation.",
+      "evidence": [
+        {"url": "https://www.github.com/C2SP/C2SP/blob/main/age.md", "publisher": "C2SP", "date": "n/a", "type": "official specification"},
+        {"url": "https://doc.libsodium.org/secret-key_cryptography/secretstream", "publisher": "libsodium", "date": "n/a", "type": "official documentation"},
+        {"url": "https://doc.libsodium.org/key_derivation", "publisher": "libsodium", "date": "n/a", "type": "official documentation"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "age BSD-3-Clause; libsodium ISC (general knowledge - UNVERIFIED in this run)",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "none",
+      "currentVpsFit": "Usable now without root. Provider-proof ONLY if data is encrypted on the client side and never decrypted on the VPS (storage/relay role). Any processing on the VPS (OCR, embedding, LLM) needs plaintext + key in VPS RAM -> visible to provider (SEC-A1).",
+      "relevanceToODG": "Per-tenant public keys: VPS can ingest/store client blobs it cannot read (sealed boxes / age recipients whose private key is client/owner-held), and crypto-shred per tenant.",
+      "risks": "Contradiction with 'process client docs on the VPS': encryption-in-use is impossible here; key custody and loss = data loss."
+    },
+    {
+      "id": "SEC-A5",
+      "domain": "A",
+      "title": "Envelope encryption with external KMS / Vault-OpenBao: Shamir split, auto-unseal, recovery keys",
+      "kind": "key-management",
+      "claim": "Vault key hierarchy: data keyring <- root key <- unseal key; default seal splits unseal key with Shamir (threshold of shares); auto-unseal via HSM/cloud KMS/Transit returns recovery keys that only authorise operations and cannot decrypt the root key. OpenBao RFC proposes multiple prioritised seals (Transit, then Shamir fallback) - proposal status not verified.",
+      "evidence": [
+        {"url": "https://developer.hashicorp.com/vault/docs/v1.21.x/concepts/seal", "publisher": "HashiCorp", "date": "v1.21", "type": "official documentation"},
+        {"url": "https://developer.hashicorp.com/vault/tutorials/auto-unseal/autounseal-transit", "publisher": "HashiCorp", "date": "n/a", "type": "official tutorial"},
+        {"url": "https://openbao.org/community/rfcs/parallel-unseal/", "publisher": "OpenBao (Linux Foundation)", "date": "n/a", "type": "project RFC (proposal)"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "Vault BUSL-1.1 (non-OSI, general knowledge - UNVERIFIED); OpenBao MPL-2.0 (general knowledge - UNVERIFIED)",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "optional HSM (PKCS#11) for root of trust",
+      "currentVpsFit": "A KMS running ON this VPS gives no protection against the provider (keys in its RAM). Value comes from an EXTERNAL KMS/HSM (owner premises or another trust domain) that releases data keys only per request, with audit + revocation. Even then, released data keys and plaintext are in VPS RAM while in use.",
+      "relevanceToODG": "Rotation/revocation/recovery pattern: per-tenant KEK in external KMS, DEK per document, Shamir-split owner recovery; revoke KEK = crypto-shred tenant.",
+      "risks": "Availability dependency on external KMS; license choice (Vault BUSL vs OpenBao); new component (anti-duplication: check existing ODG agent-identity/secret handling first)."
+    },
+    {
+      "id": "SEC-A6",
+      "domain": "A/E",
+      "title": "Cryptographic erase is the sanitisation method NIST SP 800-88 Rev.2 still details (Sept 2025)",
+      "kind": "deletion",
+      "claim": "NIST SP 800-88r2 (final 2025-09-26, supersedes r1) replaced most technique detail with references to IEEE 2883/NSA specs, except cryptographic erase (CE), which gets focused guidance on key types and key sanitisation; CE validity has stringent preconditions (listed in the PDF, not retrieved here).",
+      "evidence": [
+        {"url": "https://csrc.nist.gov/pubs/sp/800/88/r2/final", "publisher": "NIST CSRC", "date": "2025-09-26", "type": "official standard"},
+        {"url": "https://csrc.nist.gov/files/pubs/sp/800/88/r2/final/docs/sp800-88r2-faq.pdf", "publisher": "NIST", "date": "FAQ (date inconsistent in search)", "type": "official FAQ"}
+      ],
+      "measuredOrClaimed": "STANDARD (preconditions NOT read)",
+      "license": "public (US Gov)",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "none (application-level CE) / SED for drive-level CE",
+      "currentVpsFit": "Overwriting files on a virtual disk (thin-provisioned, snapshotted, SSD-backed) cannot be verified from the guest; crypto-shredding of per-tenant keys is the only deletion ODG can evidence itself - provided the key never reached a backup/snapshot in plaintext.",
+      "relevanceToODG": "Per-tenant DEK/KEK destruction as the 'verifiable deletion' mechanism for client data, embeddings and backups.",
+      "risks": "Key copies in RAM dumps/snapshots/backups defeat CE; preconditions must be read in the PDF."
+    },
+    {
+      "id": "SEC-B1",
+      "domain": "B",
+      "title": "AMD SEV-SNP: hypervisor treated as untrusted; memory encryption + integrity (RMP) + signed attestation reports",
+      "kind": "confidential-computing",
+      "claim": "AMD frames the threat model as an untrusted cloud provider; the AMD Secure Processor measures the guest and produces an attestation report (cert chain to AMD root/VCEK or VLEK) that the guest owner verifies before releasing secrets. Formal analysis (arXiv 2403.10296) treats the hypervisor as fully untrusted and reports issues in attestation properties.",
+      "evidence": [
+        {"url": "https://www.amd.com/content/dam/amd/en/documents/developer/lss-snp-attestation.pdf", "publisher": "AMD", "date": "n/a", "type": "vendor technical slides"},
+        {"url": "https://www.amd.com/content/dam/amd/en/documents/developer/58217-epyc-9004-ug-platform-attestation-using-virtee-snp.pdf", "publisher": "AMD", "date": "n/a", "type": "vendor user guide"},
+        {"url": "https://arxiv.org/abs/2403.10296", "publisher": "arXiv (formal security analysis of SEV-SNP)", "date": "2024", "type": "academic paper"},
+        {"url": "https://kernel.org/doc/html/v6.1/virt/coco/sev-guest.html", "publisher": "kernel.org", "date": "6.1", "type": "official kernel documentation"}
+      ],
+      "measuredOrClaimed": "VENDOR_CLAIM + ACADEMIC_ANALYSIS",
+      "license": "n/a (hardware); virtee tooling Apache-2.0 (UNVERIFIED)",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "AMD EPYC Milan/Genoa+ host with SNP enabled in firmware + host kernel/QEMU support",
+      "currentVpsFit": "NOT AVAILABLE: measured no SEV/SEV-ES/SNP guest flags, no /dev/sev-guest. Cannot be enabled from inside the guest.",
+      "relevanceToODG": "The only path (besides client-side processing) to run OCR/embeddings/LLM on client plaintext with RAM protected from the hosting operator.",
+      "risks": "See SEC-B3 attacks; still trusts AMD firmware/microcode; physical attackers partially out of scope."
+    },
+    {
+      "id": "SEC-B2",
+      "domain": "B",
+      "title": "Intel TDX: trust domains with quote-based attestation (DCAP); multiple 2025-2026 advisories",
+      "kind": "confidential-computing",
+      "claim": "Intel advisories cover TDX DCAP Quote Verification Library (CVE-2025-35987, INTEL-SA-01421), TDX data-authenticity issue allowing info disclosure from the hypervisor (CVE-2025-31356, INTEL-SA-01419, fixed in 2026.2 IPU), TDX Workload Attestation cert-validation flaw (CVE-2026-42067, INTEL-SA-01520). Intel/Microsoft joint TDX 1.5 review reported an 'attestation forgery via migration' finding; Intel refreshed SGX/TDX CRLs after TEE.fail research.",
+      "evidence": [
+        {"url": "https://intel.com/content/www/us/en/security-center/advisory/intel-sa-01421.html", "publisher": "Intel PSIRT", "date": "2025", "type": "official security advisory"},
+        {"url": "https://intel.com/content/www/us/en/security-center/advisory/intel-sa-01419.html", "publisher": "Intel PSIRT", "date": "2026", "type": "official security advisory"},
+        {"url": "https://intel.com/content/www/us/en/security-center/advisory/intel-sa-01520.html", "publisher": "Intel PSIRT", "date": "2026", "type": "official security advisory"},
+        {"url": "https://services.google.com/fh/files/misc/intel_tdx_1.5-full_report.pdf", "publisher": "Google/Intel", "date": "n/a", "type": "security review report"},
+        {"url": "https://community.intel.com/t5/Intel-Software-Guard-Extensions/Intel-operational-update-recommendation-to-refresh-Intel-SGX-TDX/m-p/1726386", "publisher": "Intel community (official post)", "date": "2025", "type": "vendor operational notice"}
+      ],
+      "measuredOrClaimed": "OFFICIAL_ADVISORIES (dates in search summaries partly inconsistent - verify on Intel pages)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "Intel Xeon (Sapphire Rapids+/Emerald Rapids/Granite Rapids) with TDX enabled + TDX module + host stack",
+      "currentVpsFit": "NOT AVAILABLE: no /dev/tdx_guest measured.",
+      "relevanceToODG": "Alternative CVM technology; attestation verification must pin TCB levels and refresh CRLs.",
+      "risks": "Attestation verifier software itself had CVEs; patch-level (TCB) policy is mandatory."
+    },
+    {
+      "id": "SEC-B3",
+      "domain": "B",
+      "title": "Published attacks on SEV-SNP/TDX: CacheWarp, BadRAM, Heracles, Battering RAM, attestation forgery (Mior/Skyfall)",
+      "kind": "known-limits",
+      "claim": "CacheWarp (USENIX Sec 2024, CVE-2023-20592): software fault injection reverting guest cache lines on SEV-ES/SNP, microcode fix. BadRAM (Dec 2024, CVE-2024-21944/AMD-SB-3015): physical SPD tampering (~cheap hardware) to fake attestation and backdoor SEV VMs; firmware fix + SPD lock. Heracles (CCS 2025): chosen-plaintext via deterministic re-encryption on page relocation; AMD mitigations. Battering RAM (Oct 2025): interposer bypassing BadRAM mitigations, affects Intel and AMD memory encryption. CSA note reports CVE-2026-0462 / AMD-SB-3059 attestation-measurement forgery with hypervisor+BIOS+PCIe device control (secondary source). AMD declined mitigation for an aliasing issue (AMD-SB-3024) as outside its threat model.",
+      "evidence": [
+        {"url": "https://www.usenix.org/conference/usenixsecurity24/presentation/zhang-ruiyi", "publisher": "USENIX Security 2024", "date": "2024", "type": "peer-reviewed paper (CacheWarp)"},
+        {"url": "https://www.theregister.com/2024/12/10/amd_secure_vm_tech_undone/", "publisher": "The Register", "date": "2024-12-10", "type": "press (BadRAM)"},
+        {"url": "https://heracles-attack.github.io", "publisher": "Heracles authors (ETH Zurich)", "date": "2025", "type": "research site"},
+        {"url": "https://thehackernews.com/2025/10/50-battering-ram-attack-breaks-intel.html", "publisher": "The Hacker News", "date": "2025-10", "type": "press (Battering RAM)"},
+        {"url": "https://labs.cloudsecurityalliance.org/research/csa-research-note-mior-skyfall-sev-snp-confidential-ai-20261/", "publisher": "Cloud Security Alliance", "date": "2026", "type": "secondary research note - UNVERIFIED vs AMD bulletin"},
+        {"url": "https://www.amd.com/en/resources/product-security/bulletin/amd-sb-3024.html", "publisher": "AMD PSIRT", "date": "n/a", "type": "official bulletin"},
+        {"url": "https://www.amd.com/en/resources/product-security/bulletin/amd-sb-3021.html", "publisher": "AMD PSIRT", "date": "n/a", "type": "official bulletin (ciphertext side channels)"}
+      ],
+      "measuredOrClaimed": "MEASURED (academic attacks); patch status per vendor bulletins NOT re-verified",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "n/a",
+      "currentVpsFit": "n/a (no CVM).",
+      "relevanceToODG": "CVM reduces but does not eliminate provider risk; attestation policy must require minimum firmware/TCB versions; physical-access attacks remain the provider's datacenter risk.",
+      "risks": "Over-claiming 'provider cannot access' if moving to CVM - forbidden by anti-overclaim rule."
+    },
+    {
+      "id": "SEC-B4",
+      "domain": "B",
+      "title": "Arm CCA (Realms/RME): specified, Linux support documented, public server silicon not confirmed",
+      "kind": "confidential-computing",
+      "claim": "RME is optional from Armv9.3-A; CCA firmware open source; Linux arm64 docs describe Realm guests protected from the hypervisor. OpenCCA paper (mid-2025) states no public Arm CPU supported CCA at that time. 2026 hardware availability NOT confirmed in this run.",
+      "evidence": [
+        {"url": "https://www.kernel.org/doc/html/v7.3-rc7/arch/arm64/arm-cca.html", "publisher": "kernel.org", "date": "2026 (rc)", "type": "official kernel documentation"},
+        {"url": "https://arxiv.org/html/2506.05129v1", "publisher": "arXiv (OpenCCA)", "date": "2025-06", "type": "academic paper"},
+        {"url": "https://newsroom.arm.com/blog/arm-cca-will-put-confidential-compute-in-the-hands-of-every-developer", "publisher": "Arm", "date": "n/a", "type": "vendor announcement (marketing)"}
+      ],
+      "measuredOrClaimed": "CLAIMED (spec); hardware availability UNVERIFIED",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "Armv9.3-A+ with RME (no confirmed cloud offering)",
+      "currentVpsFit": "NOT APPLICABLE (x86 guest).",
+      "relevanceToODG": "Watch item only.",
+      "risks": "Immature ecosystem."
+    },
+    {
+      "id": "SEC-B5",
+      "domain": "B",
+      "title": "OpenStack Nova 2026.2: SEV-SNP via libvirt (mem_encryption_model=amd-sev-snp), Intel TDX spec/docs",
+      "kind": "provider-platform",
+      "claim": "Nova 2026.2 (34.0.0) docs: SEV-SNP guest memory encryption requested via flavor hw:mem_encryption_model=amd-sev-snp or image hw_mem_encryption_model; host detection via /sys/module/kvm_amd/parameters/sev_snp; no live migration or suspend for SNP instances. TDX: approved spec (hw:mem_encryption_model=intel-tdx, trait HW_CPU_X86_INTEL_TDX) and admin doc; shipped status not fully confirmed.",
+      "evidence": [
+        {"url": "https://docs.openstack.org/nova/2026.2/admin/sev.html", "publisher": "OpenStack", "date": "2026.2", "type": "official documentation"},
+        {"url": "https://docs.openstack.org/nova/2026.2/admin/tdx.html", "publisher": "OpenStack", "date": "2026.2", "type": "official documentation"},
+        {"url": "https://specs.openstack.org/openstack/nova-specs/specs/2026.2/approved/amd-sev-snp-libvirt-support.html", "publisher": "OpenStack nova-specs", "date": "2026.2", "type": "approved spec"},
+        {"url": "https://docs.openstack.org/releasenotes/nova/2026.2.html", "publisher": "OpenStack", "date": "2026.2", "type": "release notes"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED (upstream); provider deployment NOT known",
+      "license": "Apache-2.0",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "provider compute hosts with SNP/TDX-capable CPUs + firmware + recent Nova/libvirt/QEMU",
+      "currentVpsFit": "Upstream Nova CAN do it, but the current provider's Nova version, hardware and flavors are unknown; measured guest shows none enabled. Also SNP guests typically need OVMF/UEFI, whereas current VPS boots SeaBIOS (inference, not verified for this provider).",
+      "relevanceToODG": "Concrete question for the current provider: do you offer an SEV-SNP or TDX flavor (2026.2+ Nova)? Otherwise migrate.",
+      "risks": "Provider may run older Nova; no live migration => maintenance downtime."
+    },
+    {
+      "id": "SEC-B6",
+      "domain": "B",
+      "title": "Hyperscaler CVM offerings and public prices: AWS (SNP, +10%), GCP (SNP/TDX, per-vCPU/GiB surcharge), Azure (SNP/TDX, vTPM)",
+      "kind": "provider-offer",
+      "claim": "AWS EC2: SEV-SNP on c6a/m6a/r6a sizes, only US East (Ohio) and Europe (Ireland), +10% of On-Demand hourly rate, attestation report VLEK-signed. GCP: SEV-SNP on N2D (Milan) and TDX on C3; surcharge SNP $0.0027502/vCPU-h + $0.0003686/GiB-h, TDX $0.0033982/vCPU-h + $0.0004555/GiB-h (on-demand, snippet values). Azure: confidential VMs on SEV-SNP and TDX, attested at boot, each with a vTPM.",
+      "evidence": [
+        {"url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/sev-snp.html", "publisher": "AWS", "date": "current", "type": "official documentation"},
+        {"url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/snp-find-instance-types.html", "publisher": "AWS", "date": "current", "type": "official documentation"},
+        {"url": "https://cloud.google.com/confidential-computing/confidential-vm/pricing", "publisher": "Google Cloud", "date": "current", "type": "official pricing page"},
+        {"url": "https://docs.cloud.google.com/confidential-computing/confidential-vm/docs/supported-configurations", "publisher": "Google Cloud", "date": "current", "type": "official documentation"},
+        {"url": "https://learn.microsoft.com/en-us/azure/confidential-computing/confidential-vm-overview", "publisher": "Microsoft", "date": "current", "type": "official documentation"},
+        {"url": "https://learn.microsoft.com/azure/confidential-computing/confidential-vm-faq", "publisher": "Microsoft", "date": "current", "type": "official FAQ"}
+      ],
+      "measuredOrClaimed": "OFFICIAL_PRICING/DOCS (values from search snippets; re-check live pages)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "provider-managed",
+      "currentVpsFit": "Would require migration.",
+      "relevanceToODG": "Price signal: CVM premium ~10% (AWS) or small per-vCPU/GiB adders (GCP) - not a cost blocker. But US-headquartered providers raise extraterritorial-law questions (see SEC-L2).",
+      "risks": "Azure SKU-level prices not collected; US providers vs sovereignty requirement."
+    },
+    {
+      "id": "SEC-B7",
+      "domain": "B",
+      "title": "EU providers: IONOS Cloud offers AMD SEV-SNP Confidential VMs (EU DCs) with open-source SNPGuard attestation; OVHcloud/Scaleway/Hetzner CVM VMs NOT found",
+      "kind": "provider-offer",
+      "claim": "IONOS: Confidential VM with AMD SEV-SNP only in EU data centers with SNP hardware (tutorial uses Frankfurt-East); vCPU/RAM fixed at creation; no live migration or in-guest warm restart; SNPGuard attestation toolchain; pricing via account manager (not public). OVHcloud page found concerns bare-metal confidential computing (technology not named in excerpt). No official Scaleway or Hetzner CVM documentation found in this run.",
+      "evidence": [
+        {"url": "https://docs.ionos.com/cloud/compute-services/compute-engine/confidential-computing-vm/overview", "publisher": "IONOS Cloud", "date": "current", "type": "official documentation"},
+        {"url": "https://docs.ionos.com/cloud/compute-services/confidential-computing-vm/confidential-vm-faq.md", "publisher": "IONOS Cloud", "date": "current", "type": "official FAQ"},
+        {"url": "https://docs.ionos.com/cloud/tutorials/compute-services/confidential-computing-vm/deploy-confidential-vm-with-snpguard", "publisher": "IONOS Cloud", "date": "current", "type": "official tutorial"},
+        {"url": "https://www.ovhcloud.com/en-ie/bare-metal/uc-confidential-computing/", "publisher": "OVHcloud", "date": "current", "type": "vendor product page"}
+      ],
+      "measuredOrClaimed": "OFFICIAL_DOCS (IONOS); absence for others = NOT_FOUND, not proof of absence",
+      "license": "SNPGuard open source (license UNVERIFIED)",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "provider SNP hardware; alternatively own bare-metal AMD EPYC server with SNP enabled (owner-operated host)",
+      "currentVpsFit": "Would require migration.",
+      "relevanceToODG": "Only EU-native CVM VM offer confirmed; bare-metal EPYC rental + self-managed SNP is the other sovereignty path (provider still has physical access - SEC-B3).",
+      "risks": "Price opaque; follow-up needed for OVHcloud/Scaleway/Hetzner/Outscale offerings."
+    },
+    {
+      "id": "SEC-B8",
+      "domain": "B",
+      "title": "Attestation is what makes a CVM meaningful: secrets released only after verifying report/quote against policy",
+      "kind": "attestation-pattern",
+      "claim": "AMD flow: guest measured by AMD-SP, report sent to guest owner, compared to expected measurement + policy before secrets are released. AWS documents VLEK-signed SNP reports; Azure attests SNP/TDX CVMs at boot with vTPM; Intel DCAP verifies TDX quotes (QVL with its own CVEs, CRL refresh required). Red Hat (2026) describes storage attacks where a pre-encrypted image sealed to vTPM subverts naive CVM disk trust.",
+      "evidence": [
+        {"url": "https://www.amd.com/content/dam/amd/en/documents/developer/lss-snp-attestation.pdf", "publisher": "AMD", "date": "n/a", "type": "vendor slides"},
+        {"url": "https://documentation.ubuntu.com/aws/aws-how-to/instances/launch-and-attest-amd-sev-snp-instances", "publisher": "Canonical", "date": "current", "type": "official how-to"},
+        {"url": "https://developers.redhat.com/articles/2026/05/07/confidential-virtual-machine-storage-attack-scenarios", "publisher": "Red Hat Developer", "date": "2026-05-07", "type": "vendor technical article"},
+        {"url": "https://ubuntu.com/server/docs/how-to/virtualisation/sev-snp/", "publisher": "Canonical", "date": "current", "type": "official how-to"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "CVM",
+      "currentVpsFit": "NOT POSSIBLE (no vTPM, no SNP/TDX report device).",
+      "relevanceToODG": "Key-release design for a future CVM: owner-held KMS releases tenant KEKs only to an attested measurement; attestation verifier runs OUTSIDE the provider.",
+      "risks": "Verifier must be off-provider and TCB-policy-pinned; measuring the full stack (kernel, initrd, cmdline) is non-trivial."
+    },
+    {
+      "id": "SEC-C1",
+      "domain": "C",
+      "title": "gVisor/bwrap/Podman protect the HOST from the workload - not the workload from a malicious host",
+      "kind": "isolation-limit",
+      "claim": "gVisor security model: relies on the host OS/platform for defense against hardware attacks; host kernel/hypervisor remain responsible; resource DoS protection relies on host cgroups; escape needs bugs in both Sentry and host kernel. By construction, namespace/seccomp sandboxes (bwrap, rootless Podman) run on and are fully visible to the guest kernel, which itself is visible to the hypervisor.",
+      "evidence": [
+        {"url": "https://gvisor.dev/docs/architecture_guide/security/", "publisher": "gVisor (Google)", "date": "current", "type": "official documentation"},
+        {"url": "https://gvisor.dev/docs/architecture_guide/intro/", "publisher": "gVisor (Google)", "date": "current", "type": "official documentation"},
+        {"url": "https://manpages.debian.org/testing/bubblewrap/bwrap.1", "publisher": "Debian manpages", "date": "n/a", "type": "official man page"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED (gVisor); bwrap/Podman = direct consequence of design (reasoning)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "n/a",
+      "currentVpsFit": "APPLIES: existing bwrap sandbox gives tenant-vs-tenant and workload-vs-ODG isolation only; zero protection from provider or guest root.",
+      "relevanceToODG": "Must be stated in any client-facing security claim (anti-overclaim).",
+      "risks": "Misrepresenting sandboxing as confidentiality."
+    },
+    {
+      "id": "SEC-D1",
+      "domain": "D",
+      "title": "Provider out-of-band access: OpenStack rescue mode, console, snapshots; OVHcloud VPS rescue + KVM console",
+      "kind": "provider-capability",
+      "claim": "OpenStack 'server rescue' boots a rescue image and attaches the instance's root disk for data recovery; console output/creation policies are admin_or_owner (Rocky sample); snapshot/backup commands exist. OVHcloud VPS: control-panel reboot into rescue mode with temporary password and SSH, browser KVM console (API POST /vps/{serviceName}/getConsoleUrl). Operators of the underlying cloud hold these capabilities administratively regardless of guest settings.",
+      "evidence": [
+        {"url": "https://docs.openstack.org/nova/latest/user/rescue.html", "publisher": "OpenStack", "date": "current", "type": "official documentation"},
+        {"url": "https://docs.openstack.org/nova/rocky/admin/configuration/samples/policy.yaml.html", "publisher": "OpenStack", "date": "Rocky (old)", "type": "official policy sample"},
+        {"url": "https://docs.ovhcloud.com/en/guides/bare-metal-cloud/virtual-private-servers/rescue", "publisher": "OVHcloud", "date": "2025-01-12", "type": "official documentation"},
+        {"url": "https://docs.ovhcloud.com/en/guides/bare-metal-cloud/virtual-private-servers/using-kvm-for-vps", "publisher": "OVHcloud", "date": "current", "type": "official documentation"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED (generic OpenStack + one example provider; the current VPS provider is not identified here)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "n/a",
+      "currentVpsFit": "APPLIES (OpenStack Nova guest): plain ext4 root means rescue/snapshot gives readable disk; console gives login prompt access path.",
+      "relevanceToODG": "Disk encryption (SEC-A3) closes rescue/snapshot reading of data at rest; nothing closes live-RAM access.",
+      "risks": "Account takeover of the provider panel = same capability for an attacker: enforce MFA on provider account (owner action)."
+    },
+    {
+      "id": "SEC-D2",
+      "domain": "D",
+      "title": "SSH hardening reference: ANSSI 'Recommandations pour un usage sécurisé d'(Open)SSH' + post-quantum SSH transition note",
+      "kind": "hardening",
+      "claim": "ANSSI note DAT-NT-007 (17/08/2015) is the national SSH hardening reference, referenced by ANSSI-BP-028 Linux configuration guide v2.0 (03/10/2022); ANSSI also published a 'Transition post-quantique de SSHv2' note. Specific directives not retrieved in this run.",
+      "evidence": [
+        {"url": "https://www.ssi.gouv.fr/guide/openssh-secure-use-recommendations/", "publisher": "ANSSI", "date": "2015-08-17", "type": "official guidance"},
+        {"url": "https://cyber.gouv.fr/sites/default/files/document/fr_np_linux_configuration-v2.0.pdf", "publisher": "ANSSI", "date": "2022-10-03", "type": "official guidance"},
+        {"url": "https://messervices.cyber.gouv.fr/documents-guides/transition_post_quantique_ssh_v2.pdf", "publisher": "ANSSI", "date": "n/a", "type": "official guidance"}
+      ],
+      "measuredOrClaimed": "OFFICIAL_GUIDANCE (content not read)",
+      "license": "n/a",
+      "requiresRoot": true,
+      "requiresProviderSupport": false,
+      "hardware": "none",
+      "currentVpsFit": "Applicable; sshd_config changes need root (owner-gated). Current sshd settings NOT observed in this run.",
+      "relevanceToODG": "Key-only auth, no root login, restricted ciphers/KEX (incl. hybrid PQ KEX), AllowUsers - protects against network attackers, not against the provider console.",
+      "risks": "2015 note is dated; lockout risk when changing sshd remotely (keep console path)."
+    },
+    {
+      "id": "SEC-D3",
+      "domain": "D",
+      "title": "Encrypted DNS: systemd-resolved DNSOverTLS=yes (strict) vs opportunistic",
+      "kind": "communications",
+      "claim": "DNSOverTLS=true: all connections encrypted, server must support DoT with valid certificate; resolution fails otherwise. 'opportunistic' falls back to plaintext and cannot authenticate the server (MITM). Default off. '#hostname' SNI syntax in newer systemd; configure via drop-in in /etc/systemd/resolved.conf.d/.",
+      "evidence": [
+        {"url": "https://www.freedesktop.org/software/systemd/man/253/resolved.conf.html", "publisher": "freedesktop.org (systemd)", "date": "v253", "type": "official man page"},
+        {"url": "https://manpages.ubuntu.com/manpages/focal/man5/resolved.conf.5.html", "publisher": "Ubuntu manpages", "date": "systemd 245", "type": "official man page"},
+        {"url": "https://wiki.archlinux.org/title/Systemd-resolved", "publisher": "ArchWiki", "date": "n/a", "type": "community documentation"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "LGPL-2.1 (systemd)",
+      "requiresRoot": true,
+      "requiresProviderSupport": false,
+      "hardware": "none",
+      "currentVpsFit": "Applicable if VPS uses systemd-resolved (NOT observed); hides DNS queries from on-path network observers, not from the hypervisor (which sees all guest traffic and RAM).",
+      "relevanceToODG": "Reduces metadata leakage of internal/Radar lookups; complements egress allowlist (DNS is part of allowlist).",
+      "risks": "Strict mode = outage if DoT resolver unreachable; choosing a resolver is a trust decision."
+    },
+    {
+      "id": "SEC-D4",
+      "domain": "D",
+      "title": "Egress filtering on the guest: netns/Landlock (rootless) + host firewall (root); provider still sees traffic",
+      "kind": "egress-control",
+      "claim": "Per signals-E-F-G (F-01, F-03, G-02): bwrap --unshare-net removes all routes; Landlock ABI>=4 restricts TCP connect ports unprivileged. Host-level nftables/systemd IPAddressDeny need root.",
+      "evidence": [
+        {"url": "https://www.kernel.org/doc/html/latest/userspace-api/landlock.html", "publisher": "kernel.org", "date": "current", "type": "official kernel documentation"},
+        {"url": "https://manpages.debian.org/testing/bubblewrap/bwrap.1", "publisher": "Debian manpages", "date": "n/a", "type": "official man page"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "n/a",
+      "requiresRoot": "partial",
+      "requiresProviderSupport": false,
+      "hardware": "none",
+      "currentVpsFit": "Rootless parts usable now (bwrap present per caller); firewall rules owner-gated.",
+      "relevanceToODG": "Prevents ODG/LLM pipeline from exfiltrating client data; does not address provider.",
+      "risks": "Guest root can disable it; provider-level network tap unaffected."
+    },
+    {
+      "id": "SEC-E1",
+      "domain": "E",
+      "title": "journald hygiene: Storage=volatile|none, Seal=, retention options",
+      "kind": "log-hygiene",
+      "claim": "journald Storage=volatile keeps logs only in RAM under /run/log/journal; Storage=none drops all (forwarding still works); auto = persistent iff /var/log/journal exists. Seal= (FSS) enabled by default when a sealing key exists. MaxRetentionSec definition not cleanly retrieved - check current man page.",
+      "evidence": [
+        {"url": "https://freedesktop.org/software/systemd/man/journald.conf.html", "publisher": "freedesktop.org (systemd)", "date": "v262", "type": "official man page"},
+        {"url": "https://www.man7.org/linux/man-pages/man5/journald.conf.d.5.html", "publisher": "man7.org", "date": "current", "type": "man page mirror"}
+      ],
+      "measuredOrClaimed": "DOCUMENTED",
+      "license": "LGPL-2.1",
+      "requiresRoot": true,
+      "requiresProviderSupport": false,
+      "hardware": "none",
+      "currentVpsFit": "Measured: journald holds logs (persistence mode NOT stated). Changing journald.conf = root (owner-gated). Rootless alternative: ODG never logs client content (redaction at source) and runs tenant jobs with stdout/stderr captured to encrypted per-tenant files.",
+      "relevanceToODG": "Client text/prompt fragments in system logs would land in plaintext on ext4 disk -> readable via rescue/snapshot (SEC-D1).",
+      "risks": "Volatile logs lose forensic evidence after reboot - trade-off with audit requirements."
+    },
+    {
+      "id": "SEC-E2",
+      "domain": "E",
+      "title": "Data-remanence surfaces for an LLM pipeline on this VPS (embeddings, caches, temp, backups, snapshots)",
+      "kind": "data-protection-pattern",
+      "claim": "Composite recommendation from sourced pieces: embeddings and chunks in per-tenant encrypted DB (SQLCipher/SQLite3MC, see G-04), blobs with age per-tenant recipients (SEC-A4), plaintext only in tmpfs within sandbox, Ollama keep_alive=0 to unload model/KV state between tenants (G-01), no swap (measured) so RAM pages not written to disk, backups encrypted client-side before leaving VPS, deletion by key destruction (SEC-A6). Provider snapshots of the virtual disk capture whatever is on disk at that time (SEC-D1).",
+      "evidence": [
+        {"url": "https://docs.ollama.com/faq", "publisher": "Ollama", "date": "current", "type": "official documentation"},
+        {"url": "https://www.zetetic.net/sqlcipher/community/", "publisher": "Zetetic", "date": "n/a", "type": "official vendor page"},
+        {"url": "https://csrc.nist.gov/pubs/sp/800/88/r2/final", "publisher": "NIST", "date": "2025-09-26", "type": "official standard"},
+        {"url": "https://docs.openstack.org/nova/latest/user/rescue.html", "publisher": "OpenStack", "date": "current", "type": "official documentation"}
+      ],
+      "measuredOrClaimed": "PATTERN (synthesis of documented mechanisms; not tested on VPS)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "none",
+      "currentVpsFit": "Achievable rootless except journald/system-level changes; protects against snapshot/rescue/backup leakage and tenant cross-contamination, NOT against live RAM access.",
+      "relevanceToODG": "Per-tenant cryptographic separation = one DEK per tenant, derived/wrapped by owner-held KEK.",
+      "risks": "Keys must be in VPS RAM to process -> provider-visible during processing; tmpfs is RAM (visible to hypervisor)."
+    },
+    {
+      "id": "SEC-L1",
+      "domain": "Legal",
+      "title": "GDPR Art. 28 processors + EDPB Guidelines 07/2020: controller must verify processor's 'sufficient guarantees'",
+      "kind": "regulation",
+      "claim": "EDPB Guidelines 07/2020 (v2.1 adopted 2021-07-07): controller must verify processor guarantees at appropriate intervals; contracts must not merely restate GDPR/Art. 32; with general authorisation, processor must actively notify new sub-processors. EDPB Opinion 22/2024: verification responsibility down the sub-processor chain stays with the controller. Hosting provider = (sub-)processor of client data processed by ODG.",
+      "evidence": [
+        {"url": "https://www.edpb.europa.eu/system/files/2021-07/eppb_guidelines_202007_controllerprocessor_final_en.pdf", "publisher": "EDPB", "date": "2021-07-07", "type": "official guidelines"},
+        {"url": "https://www.hsfkramer.com/en_US/notes/data/2024-posts/EDPB-Opinion--How-far-down-the-supply-chain-do-controller-duties-extend--", "publisher": "Herbert Smith Freehills Kramer", "date": "2024", "type": "law-firm summary (secondary)"},
+        {"url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj", "publisher": "EUR-Lex", "date": "2016", "type": "primary text - NOT fetched"}
+      ],
+      "measuredOrClaimed": "LEGAL_TEXT/GUIDANCE (partly via secondary summaries)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "n/a",
+      "currentVpsFit": "Requires the current provider's DPA (Art. 28 terms), sub-processor list and location - owner/legal action, not technical.",
+      "relevanceToODG": "ODG's clients (controllers) will need ODG's sub-processor chain incl. the VPS provider; technical measures (A/E) are the evidence of 'appropriate measures'.",
+      "risks": "Not legal advice; exact wording to be read in EDPB PDF."
+    },
+    {
+      "id": "SEC-L2",
+      "domain": "Legal",
+      "title": "SecNumCloud 3.2 (ANSSI, 2022-03-08): adds protection against non-EU (extraterritorial) law",
+      "kind": "certification",
+      "claim": "ANSSI v3.2 referential mainly adds criteria protecting against extra-European law (immunity requirements incl. corporate/shareholding structure). Qualified offers claimed by OUTSCALE, OVHcloud (hosted private cloud), Scaleway (vendor statements). A 2026 arrêté under SREN Art. 31 reported by a secondary source - NOT verified on Légifrance. CNIL has warned about EU certification schemes that would allow foreign-authority access.",
+      "evidence": [
+        {"url": "https://cyber.gouv.fr/uploads/2014/12/secnumcloud-referentiel-exigences-v3.2.pdf", "publisher": "ANSSI", "date": "2022-03-08", "type": "official referential"},
+        {"url": "https://www.ovhcloud.com/en-ca/enterprise/products/hosted-private-cloud/secnumcloud-qualified/", "publisher": "OVHcloud", "date": "current", "type": "vendor page (claim)"},
+        {"url": "https://www.3ds.com/newsroom/press-releases/outscale-first-cloud-qualified-secnumcloud-32", "publisher": "Dassault Systèmes / OUTSCALE", "date": "n/a", "type": "vendor press release (claim)"},
+        {"url": "https://cnil.fr/en/node/166008", "publisher": "CNIL", "date": "n/a", "type": "regulator statement"}
+      ],
+      "measuredOrClaimed": "OFFICIAL_REFERENTIAL + VENDOR_CLAIMS (qualification list must be checked on ANSSI's official list)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": true,
+      "hardware": "n/a",
+      "currentVpsFit": "Current VPS provider qualification status UNKNOWN; a generic VPS is very unlikely to be a SecNumCloud-qualified offer (unverified).",
+      "relevanceToODG": "Sovereignty answer to 'provider legal access' (organisational), complementary to CVM (technical). SecNumCloud qualification ≠ confidential computing (qualified provider can still technically access RAM).",
+      "risks": "Qualified offers cost more and are often private-cloud, not small VPS; do not conflate qualification with CVM."
+    },
+    {
+      "id": "SEC-L3",
+      "domain": "Legal",
+      "title": "EU Data Act (Reg. 2023/2854) cloud switching: Chapter VI applicable 2025-09-12; switching charges banned from 2027-01-12",
+      "kind": "regulation",
+      "claim": "Chapter VI switching provisions apply since 2025-09-12 (also to pre-existing contracts); reduced at-cost switching charges allowed until 2027-01-12, prohibited thereafter (Commission clarified this covers switching-related egress fees); max 2-month notice; transitional period generally ≤30 days.",
+      "evidence": [
+        {"url": "https://www.dlapiper.com/en/insights/publications/law-in-tech/2026/cloud-exit-under-the-eu-data-act", "publisher": "DLA Piper", "date": "2026-07", "type": "law-firm analysis (secondary)"},
+        {"url": "https://www.dlapiper.com/en-at/insights/publications/2025/07/understanding-switching-termination-rights-under-the-data-act", "publisher": "DLA Piper", "date": "2025-07-31", "type": "law-firm analysis (secondary)"},
+        {"url": "https://eur-lex.europa.eu/eli/reg/2023/2854/oj", "publisher": "EUR-Lex", "date": "2023", "type": "primary text - NOT fetched"}
+      ],
+      "measuredOrClaimed": "LEGAL_FACT per secondary sources (primary text NOT fetched)",
+      "license": "n/a",
+      "requiresRoot": false,
+      "requiresProviderSupport": false,
+      "hardware": "n/a",
+      "currentVpsFit": "Lowers lock-in cost of migrating from the current VPS to a CVM/sovereign provider.",
+      "relevanceToODG": "Supports a migration plan to a confidential/sovereign host; keep infra portable (no provider-specific dependencies).",
+      "risks": "Applicability to small IaaS contracts/exemptions not checked."
+    }
+  ],
+  "recommendations": {
+    "achievableOnThisVpsRootless": "Per-tenant application-level encryption (age/libsodium for blobs, SQLCipher/SQLite3MC for DB incl. embeddings), owner-held KEK with per-tenant DEKs and crypto-shredding for deletion, bwrap netns no-egress for client jobs, tmpfs-only plaintext, Ollama keep_alive=0, no client content in logs, client-side-encrypted backups. Protects against: other tenants, compromised ODG components, network attackers, provider snapshots/rescue/backup reading of data at rest. Does NOT protect against provider runtime access to RAM.",
+    "achievableOnThisVpsOwnerGatedRoot": "LUKS data volume (optionally Clevis/Tang with an off-provider, access-restricted Tang) or full re-install with encrypted root; sshd hardening per ANSSI; systemd-resolved DoT; journald Storage=volatile or redaction policy; host egress firewall. Same limit: no protection from the hypervisor at runtime.",
+    "requiresConfidentialComputingHost": "Processing client plaintext (OCR/embeddings/LLM) with memory protected from the hosting operator requires an SEV-SNP or TDX CVM with remote attestation verified off-provider, and key release gated on attestation. Options found: IONOS Cloud SEV-SNP CVM (EU, price on request), AWS (Ireland, +10%), GCP and Azure (US-HQ providers: sovereignty trade-off), or own bare-metal AMD EPYC with SNP. Ask the current provider whether it offers Nova 2026.2 SNP/TDX flavors. Note SNP/TDX still have published attacks; require TCB-version policy.",
+    "requiresClientSideProcessing": "If no CVM: the only provider-proof option is that client documents are processed on client/owner-controlled hardware and the VPS stores/relays only ciphertext it cannot decrypt.",
+    "legal": "Obtain the provider's GDPR Art. 28 DPA + sub-processor list; check SecNumCloud qualification on ANSSI's official list if French public/sensitive clients are targeted; use Data Act switching rights for migration. Never claim 'provider cannot access data' on the current VPS."
+  },
+  "openQuestions": [
+    "Which provider/region runs the current VPS, and does it offer SEV-SNP/TDX flavors (Nova 2026.2+) or UEFI images?",
+    "Is the current VPS provider's DPA (Art. 28) and sub-processor list available; data-centre location?",
+    "IONOS CVM pricing and whether OVHcloud/Scaleway/Outscale/Hetzner offer CVM VMs (not found in this run).",
+    "Where would the owner-held KMS/attestation verifier run (owner premises? second provider?) and its availability SLA?",
+    "Current journald persistence mode, sshd config and resolver on the VPS (NOT observed).",
+    "Exact NIST SP 800-88r2 preconditions for cryptographic erase.",
+    "AMD-SB-3059 / CVE-2026-0462 official bulletin text and affected firmware (only secondary source seen).",
+    "Official ANSSI list of SecNumCloud-qualified offers and status of the 2026 SREN arrêté (unverified)."
+  ]
+}
