@@ -334,12 +334,13 @@ function readState(repo: string): any {
 
 /* knowledge(repo, useAt) — the scenario-G canonical path (attestCollection → assessClaim → toMemory → usableFor) on the
  * pinned collection, plus admissible() (admission AS FACT). No network. */
-function knowledge(repo: string, useAt: number): any {
+function knowledge(repo: string, useAt: number, mem?: any): any {
   const col = readJson(path.join(repo, F.COLLECTION)); const reg = readJson(path.join(repo, F.COLLECTION_REGISTRY));
   const pins = (reg.collections || []).filter((c: any) => c.path === F.COLLECTION).map((c: any) => c.sha256);
   const collection = K.attestCollection(col, { pinnedDigests: pins });
   if (!collection.attested) return { ok: false, collection: F.COLLECTION, reason: "collection NOT authenticated against COLLECTION_REGISTRY", claims: [] };
   const asOf = Date.parse(col.consultedDate + "T12:00:00Z");
+  const memories: any[] = [];
   const claims = SG.CLAIMS.map((id: string) => {
     const cy = (col.cycles || []).find((c: any) => String(c.query).endsWith(":: " + id)); const st = KR.STRUCT[id];
     if (!cy || !st) return { id, status: "NOT_FOUND" };
@@ -347,9 +348,40 @@ function knowledge(repo: string, useAt: number): any {
     const mem = K.toMemory(a, asOf);
     const use = K.usableFor(mem, "DESIGN_PROPOSAL", useAt, { assessment: a });
     const adm = K.admissible(mem, useAt, { assessment: a });
+    memories.push(mem);
     return { id, epistemic: a.dimensions.epistemic, isFact: a.isFact === true, useAuthorization: use.authorization, useReason: use.reason, admissible: { trusted: adm.trusted === true, verdict: adm.verdict } };
   });
-  return { ok: claims.every((c: any) => c.useAuthorization === "DESIGN_PROPOSAL"), collection: F.COLLECTION, claims };
+  const out: any = { ok: claims.every((c: any) => c.useAuthorization === "DESIGN_PROPOSAL"), collection: F.COLLECTION, claims };
+  if (!mem) return out;
+  // MEM-INT-1 (V19 P4 operational): the canonical memory records (toMemory) are indexed into the derived per-tenant hybrid
+  // index — through memory-architecture.semanticRetrieval, which trust-gates via accessMemory (only VERIFIED + fresh +
+  // attributed records are indexed). Embedding failure ⇒ memory NOT_MEASURED, the cycle continues (fail-soft, never PASS).
+  return (async () => {
+    try {
+      const H = require("../core/memory-architecture.js").semanticRetrieval();
+      const [probe] = await mem.embed(["dimension probe"]);
+      const ix = H.openIndex({ dir: mem.dir, tenant: mem.tenant, dims: probe.length });
+      const sync = await H.syncIndex(ix, memories, { asOf: useAt, trustedAuthors: ["ODG"], contextTier: true }, mem.embed);   // TIER-1: FACT = trust-gated; CONTEXT = SUPPORTED/unverified (never a fact)
+      mem.ix = ix;
+      out.memory = { status: "INDEXED", tenant: mem.tenant, index: path.basename(ix.file), dims: probe.length, ...sync, records: memories.length };
+    } catch (e: any) { out.memory = { status: "NOT_MEASURED", reason: String((e && e.message) || e) }; }
+    return out;
+  })();
+}
+
+/* memoryPort(physOut, embed) — MEM-INT-1: the GO memory port (index under the confined GO out dir; tenant odg-go). */
+function memoryPort(physOut: string, embed?: any): any {
+  const H = () => require("../core/memory-architecture.js").semanticRetrieval();
+  const m: any = { dir: path.join(physOut, "memory-index"), tenant: "odg-go", embed: embed || H().ollamaEmbed(), ix: null };
+  m.recall = async (q: string) => {
+    if (!m.ix) return { status: "NOT_MEASURED", reason: "no index (knowledge step did not index)" };
+    const hits = await H().query(m.ix, q, m.embed, { k: 3 });
+    const prov = hits.map((h: any) => ({ id: h.id, family: h.family, tier: h.tier, score: Math.round(h.score * 1e6) / 1e6, ranks: h.ranks }));
+    return { status: "RECALLED", query: q, facts: prov.filter((h: any) => h.tier === "FACT"), context: prov.filter((h: any) => h.tier === "CONTEXT_UNVERIFIED"),
+      contextNote: "CONTEXT_UNVERIFIED = SUPPORTED, not corroborated: usable as context only, NEVER as a fact (not admissible, not evidence)",
+      rule: "MEM-INT-1 + TIER-1: hybrid FTS5 + vector RRF over canonical memory records; FACT tier = memory-architecture.accessMemory trusted only" };
+  };
+  return m;
 }
 
 /* buildPorts — every effect of a real cycle; all writes go through the confined writer. */
@@ -368,7 +400,8 @@ function buildPorts(o: any): any {
     now: () => Date.now(),
     truthLock: () => truthLockGate({ mutating: true, enforce: true, exec: (args: string[]) => git(repo, args) }),
     readState: () => readState(repo),
-    knowledge: () => knowledge(repo, Date.now()),
+    knowledge: () => knowledge(repo, Date.now(), o.memory || undefined),
+    ...(o.memory ? { memoryRecall: (q: string) => o.memory.recall(q) } : {}),
     stopRequested: () => {
       if (signalState.signal) return { stop: true, reason: "SIGNAL", source: signalState.signal };
       if (fs.existsSync(stopPath)) return { stop: true, reason: "STOP_FILE", source: stopPath };
@@ -414,7 +447,7 @@ async function runOnce(argv: string[]): Promise<{ code: number; result: any; wri
   const onSig = (s: string) => () => { signalState.signal = s; };
   const hInt = onSig("SIGINT"), hTerm = onSig("SIGTERM");
   process.on("SIGINT", hInt); process.on("SIGTERM", hTerm);
-  const ports = buildPorts({ repo, outDir, scratch: arg(argv, "--scratch"), stepDelayMs: numArg(argv, "--step-delay-ms", 0), signalState });
+  const ports = buildPorts({ repo, outDir, scratch: arg(argv, "--scratch"), stepDelayMs: numArg(argv, "--step-delay-ms", 0), signalState, memory: argv.includes("--memory-index") ? memoryPort(fs.realpathSync(outDir)) : null });
   try {
     const result = await GO.runGoCycle({ mode: argv.includes("--execute") ? "EXECUTE" : "DRY", allowUnsandboxedTarget: argv.includes("--allow-unsandboxed-target"), maxSteps: numArg(argv, "--max-steps", GO.DEFAULTS.maxSteps), ...(arg(argv, "--deadline-ms") !== null ? { deadlineMs: numArg(argv, "--deadline-ms", GO.DEFAULTS.deadlineMs) } : {}), resume: argv.includes("--resume") }, ports);
     const code = result.status === "STARTUP_REFUSED" ? 2 : result.status === "STOPPED" ? 3 : 0;
@@ -595,12 +628,12 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { makeClaimStore, claimDirOf, runGroup, groupAlive, targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, OWNER_SELECTION_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { memoryPort, makeClaimStore, claimDirOf, runGroup, groupAlive, targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, OWNER_SELECTION_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 /* CLI flag validation: --help/-h ⇒ usage on stdout, exit 0, no cycle; any unknown flag (or a value flag missing its
  * value) ⇒ usage on stderr, exit 2, no cycle. Never starts a cycle on a mistyped flag. */
 const VALUE_FLAGS = ["--repo", "--out", "--max-steps", "--deadline-ms", "--scratch", "--step-delay-ms", "--evidence-out"];
-const BOOL_FLAGS = ["--dry", "--execute", "--resume", "--allow-unsandboxed-target", "--scenario-evidence", "--check"];
+const BOOL_FLAGS = ["--dry", "--execute", "--resume", "--allow-unsandboxed-target", "--scenario-evidence", "--check", "--memory-index"];
 const USAGE = [
   "Usage:",
   "  npx tsx runtime/bin/odg-go.ts [--dry] [--execute] [--repo <dir>] [--out <dir>] [--max-steps N] [--deadline-ms MS]",

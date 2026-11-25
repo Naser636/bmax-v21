@@ -26,7 +26,7 @@ const QUERY_INSTRUCTION = "Instruct: Given a question, retrieve the stored ODG m
 function isObj(v: any): boolean { return v !== null && typeof v === "object" && !Array.isArray(v); }
 function arr(v: any): any[] { return Array.isArray(v) ? v : []; }
 function sha(s: string): string { return crypto.createHash("sha256").update(s).digest("hex"); }
-function textOf(rec: any): string | null { const t = [rec.text, rec.summary, rec.content].find((x: any) => typeof x === "string" && x.trim()); return t ? String(t) : null; }
+function textOf(rec: any): string | null { const t = [rec.text, rec.summary, rec.content, rec.claim].find((x: any) => typeof x === "string" && x.trim()); return t ? String(t) : null; }
 
 /* vecExtensionPath() — the vec0 loadable from the installed sqlite-vec npm package (platform optional dependency). */
 function vecExtensionPath(): string | null {
@@ -46,10 +46,12 @@ function openIndex(o: any): any {
   const file = path.join(o.dir, `memory-${o.tenant}.sqlite`);
   const db = new DatabaseSync(file, { allowExtension: true });
   db.loadExtension(ext);
-  db.exec(`create table if not exists docs(rid integer primary key, id text unique not null, family text, sha text not null);
+  db.exec(`create table if not exists docs(rid integer primary key, id text unique not null, family text, sha text not null, tier text not null default 'FACT');
            create virtual table if not exists fts using fts5(body);
            create virtual table if not exists vec using vec0(e float[${dims}]);
            create table if not exists meta(k text primary key, v text);`);
+  // TIER-1 migration of an older derived file (no tier column ⇒ every existing row was a trusted FACT)
+  if (!db.prepare("select name from pragma_table_info('docs') where name = 'tier'").get()) db.exec("alter table docs add column tier text not null default 'FACT'");
   const prev = db.prepare("select v from meta where k = 'dims'").get();
   if (prev && Number(prev.v) !== dims) { db.close(); throw new Error(`P4: index dims ${prev.v} ≠ requested ${dims} (rebuild the derived index)`); }
   db.prepare("insert or replace into meta(k, v) values ('dims', ?)").run(String(dims));
@@ -58,12 +60,28 @@ function openIndex(o: any): any {
 
 function f32(v: number[]): Uint8Array { return new Uint8Array(new Float32Array(v).buffer); }
 
+/* TIER-1 (owner decision 2026-11-25, two-level memory): a record the trust gate does NOT admit may still be indexed as
+ * CONTEXT (never a fact) iff it is SUPPORTED-but-unverified, attributed, has provenance, is fresh and is not invalidated.
+ * CONTEXT rows are returned with tier CONTEXT_UNVERIFIED and are never promoted: the FACT tier is exactly accessMemory's. */
+function contextEligible(rec: any, asOf: number): boolean {
+  if (!isObj(rec)) return false;
+  if (String(rec.status || "").toUpperCase() !== "UNVERIFIED") return false;
+  if (rec.epistemic !== undefined && rec.epistemic !== "SUPPORTED") return false;
+  if (!(typeof rec.provenance === "string" && rec.provenance.trim())) return false;
+  if (!(typeof rec.authoredBy === "string" && /^ODG/.test(rec.authoredBy))) return false;
+  if (!(Number.isFinite(rec.validUntil) && Number.isFinite(asOf) && rec.validUntil > asOf)) return false;
+  return true;
+}
+
 /* syncIndex(ix, records, accessOpts, embed) — index exactly the TRUSTED records with text; drop the rest. Returns counts. */
 async function syncIndex(ix: any, records: any, accessOpts: any, embed: any): Promise<any> {
   const access = MEM.accessMemory(records, accessOpts);
   const byId: Record<string, any> = {}; for (const r of arr(records)) if (isObj(r) && r.id != null) byId[String(r.id)] = r;
   const want: any[] = [];
-  for (const t of access.trusted) { const rec = byId[String(t.id)]; const text = rec ? textOf(rec) : null; if (text) want.push({ id: String(t.id), family: t.family, text, sha: sha(text) }); }
+  for (const t of access.trusted) { const rec = byId[String(t.id)]; const text = rec ? textOf(rec) : null; if (text) want.push({ id: String(t.id), family: t.family, text, sha: sha(text), tier: "FACT" }); }
+  const ctxOn = isObj(accessOpts) && accessOpts.contextTier === true;
+  let contextIndexed = 0;
+  if (ctxOn) for (const x of access.excluded) { const rec = byId[String(x.id)]; const text = rec ? textOf(rec) : null; if (text && contextEligible(rec, Number(accessOpts.asOf))) { want.push({ id: String(x.id), family: String(rec.family || "semantic"), text, sha: sha(text + "|CONTEXT"), tier: "CONTEXT" }); contextIndexed++; } }
   const wantIds = new Set(want.map((w) => w.id));
   const db = ix.db;
   let removed = 0;
@@ -73,13 +91,13 @@ async function syncIndex(ix: any, records: any, accessOpts: any, embed: any): Pr
   if (vecs.length !== todo.length || vecs.some((v: any) => !Array.isArray(v) || v.length !== ix.dims)) throw new Error("P4: embed() returned a wrong number/size of vectors");
   todo.forEach((w, i) => {
     const cur = db.prepare("select rid from docs where id = ?").get(w.id);
-    if (cur) { db.prepare("delete from fts where rowid = ?").run(cur.rid); db.prepare("delete from vec where rowid = ?").run(BigInt(cur.rid)); db.prepare("update docs set family = ?, sha = ? where rid = ?").run(w.family, w.sha, cur.rid); }
-    else db.prepare("insert into docs(id, family, sha) values (?, ?, ?)").run(w.id, w.family, w.sha);
+    if (cur) { db.prepare("delete from fts where rowid = ?").run(cur.rid); db.prepare("delete from vec where rowid = ?").run(BigInt(cur.rid)); db.prepare("update docs set family = ?, sha = ?, tier = ? where rid = ?").run(w.family, w.sha, w.tier, cur.rid); }
+    else db.prepare("insert into docs(id, family, sha, tier) values (?, ?, ?, ?)").run(w.id, w.family, w.sha, w.tier);
     const rid = db.prepare("select rid from docs where id = ?").get(w.id).rid;
     db.prepare("insert into fts(rowid, body) values (?, ?)").run(rid, w.text);
     db.prepare("insert into vec(rowid, e) values (?, ?)").run(BigInt(rid), f32(vecs[i]));
   });
-  return { trusted: access.trustedCount, excluded: access.excludedCount, indexed: want.length, embedded: todo.length, removed, withoutText: access.trustedCount - want.length };
+  return { trusted: access.trustedCount, excluded: access.excludedCount, indexed: want.length, factIndexed: want.length - contextIndexed, contextIndexed, embedded: todo.length, removed, withoutText: access.trustedCount - (want.length - contextIndexed) };
 }
 
 /* ftsQuery(q) — terms of ≥ 2 letters, quoted (no FTS5 operator injection), OR-ed. */
@@ -102,7 +120,7 @@ async function query(ix: any, q: string, embed: any, opts: any = {}): Promise<an
   const acc: Record<string, any> = {};
   fts.forEach((r: any, i: number) => { const a = acc[r.rid] = acc[r.rid] || { score: 0, ranks: {} }; a.score += 1 / (RRF_K + i + 1); a.ranks.fts = i + 1; });
   vec.forEach((r: any, i: number) => { const a = acc[r.rid] = acc[r.rid] || { score: 0, ranks: {} }; a.score += 1 / (RRF_K + i + 1); a.ranks.vec = i + 1; });
-  return Object.entries(acc).map(([rid, a]: any) => { const d = db.prepare("select id, family from docs where rid = ?").get(Number(rid)); return { id: d.id, family: d.family, score: a.score, ranks: a.ranks }; })
+  return Object.entries(acc).map(([rid, a]: any) => { const d = db.prepare("select id, family, tier from docs where rid = ?").get(Number(rid)); return { id: d.id, family: d.family, tier: d.tier === "CONTEXT" ? "CONTEXT_UNVERIFIED" : "FACT", score: a.score, ranks: a.ranks }; })
     .sort((x, y) => y.score - x.score || (x.id < y.id ? -1 : 1)).slice(0, k);
 }
 
@@ -122,10 +140,11 @@ const MEMORY_HYBRID_INDEX_CONTRACT = Object.freeze({
   invariants: Object.freeze([
     "only records accessMemory returns as TRUSTED are indexed; an untrusted/stale record is never indexed and is removed if present",
     "one SQLite file per validated tenant id; no cross-tenant table",
+    "TIER-1: FACT tier = exactly the records accessMemory trusts; CONTEXT tier (opt-in contextTier) = SUPPORTED/UNVERIFIED, attributed, sourced, fresh, never invalidated; CONTEXT is returned as CONTEXT_UNVERIFIED and never promoted to a fact",
     "fusion = RRF (k = 60), deterministic tie-break by id; FTS5 terms are quoted (no operator injection)",
     "no network in this module except the optional ollamaEmbed seam the caller injects",
   ]),
 });
 
-module.exports = { openIndex, syncIndex, query, ftsQuery, ollamaEmbed, vecExtensionPath, QUERY_INSTRUCTION, RRF_K, MEMORY_HYBRID_INDEX_CONTRACT };
+module.exports = { contextEligible, openIndex, syncIndex, query, ftsQuery, ollamaEmbed, vecExtensionPath, QUERY_INSTRUCTION, RRF_K, MEMORY_HYBRID_INDEX_CONTRACT };
 export {};

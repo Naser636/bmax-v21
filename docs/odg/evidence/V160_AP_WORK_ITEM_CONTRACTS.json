@@ -1,7 +1,7 @@
 {
   "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 R2C (batch V176-R2C-1, owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json): RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.6 NB3: V176-NB3 (owner V176 build missions, docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS; NB2's target + oracle with the pre-registered DIV-1 repair-diversity lever) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6 F: F moved PROPOSED → AUTHORIZED_FOR_REVISION under the owner build-missions record (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json) and revised (REVISE_CONTRACT): authorization block, write_set 1:1 replacement, preRegistration (GO parallel-wave capability on a deterministic fixture), dispatch target; revision 2 after inspection REJECT (full write_set, FIXTURE-CAP-1 PARTIAL cap, GO wiring stated as remaining step); F's criteria verbatim; every other entry unchanged. V17.8 Radar campaign (batch V178-RADAR-1, owner record owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)): V178-P1, V178-P2, V178-P3, V178-P4, V178-P5, V178-P6, V178-P7 appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.8 binding: V178-P1 and V178-P2 moved PROPOSED → AUTHORIZED_FOR_REVISION (owner V176 build missions, family V176-BUILD-MISSIONS; concrete write_set, AC7, budgets, preRegistration, dispatch target); P3–P7 unchanged; every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 31,
+  "count": 32,
   "initialStatusCounts": {
     "PASS": 2,
     "PARTIAL": 14,
@@ -4699,6 +4699,164 @@
           "independent inspection verdict"
         ]
       }
+    },
+    {
+      "scenario": "V178-P4-INT",
+      "title": "P4 operational integration — hybrid memory wired into GO knowledge()/DECOMPOSE with the two-level FACT/CONTEXT memory (MEM-INT-1 + TIER-1)",
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json: « Finaliser l'extension ciblée du contrat autorisant les fichiers d'intégration concernés. » / two-level memory CONTEXTE vs FAITS FIABLES — internal, loopback-only, €0",
+      "origin": {
+        "parent": "V178-P4 (CLOSED_PASS, docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json)",
+        "reason": "P4 closed contractually but not wired into ODG call paths; operational integration ordered by the owner"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "missingForPass": "the single GO-dispatched run meeting AC1–AC6, then VALIDATE_CRITERIA"
+      },
+      "beforeMetric": [
+        {
+          "source": "runtime/bin/odg-go.ts",
+          "name": "knowledgeMemoryIndexing",
+          "value": "ABSENT"
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "wire the P4 hybrid memory index into the canonical GO knowledge() and DECOMPOSE call paths with the two-level FACT/CONTEXT distinction, without a second memory system or trust rule",
+        "scope": "runtime/bin/odg-go.ts knowledge()/memoryPort/--memory-index, runtime/core/odg-go-cycle.ts PROBLEMS_OPPORTUNITIES (await knowledge) + DECOMPOSE (contextRecall), runtime/core/odg-memory-hybrid-index.ts TIER-1",
+        "write_set": [
+          "runtime/bin/odg-go.ts",
+          "runtime/core/odg-go-cycle.ts",
+          "runtime/core/odg-memory-hybrid-index.ts",
+          "runtime/core/odg-memory-hybrid-index.test.ts",
+          "runtime/bin/odg-go-memory.test.ts",
+          "runtime/bin/odg-v178-p4-int-run.ts",
+          "package.json",
+          "docs/odg/evidence/V178_P4_INT_RESULT.json"
+        ],
+        "authorized_symbols": [
+          "knowledge",
+          "memoryPort",
+          "buildPorts",
+          "runGoCycle",
+          "contextEligible",
+          "syncIndex",
+          "query"
+        ],
+        "invariants": [
+          "CONTEXT is never promoted to a fact; FACT tier = accessMemory trusted only",
+          "default GO behaviour unchanged without --memory-index / the memory port",
+          "no second memory system; the index is derived and rebuildable",
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED"
+        ],
+        "acceptance_criteria": [
+          "AC1 GO knowledge() (runtime/bin/odg-go.ts) indexes the canonical toMemory records into the per-tenant hybrid index: FACT tier = exactly the admissible-trusted claims (memory-architecture.accessMemory), CONTEXT tier = SUPPORTED-unverified attributed sourced fresh records; status INDEXED with indexed > 0",
+          "AC2 the real GO cycle (odg-go-cycle.runGoCycle) records DECOMPOSE.contextRecall RECALLED for its working item; every hit is FACT (⊆ admissible-trusted ids) or CONTEXT_UNVERIFIED",
+          "AC3 no promotion: the claims' admissibility is byte-identical with and without the memory port",
+          "AC4 persistence: a second knowledge() on the same index re-embeds nothing and indexes the same count",
+          "AC5 FACT pipeline on SYNTHETIC-labelled fixtures through the same port: a VERIFIED fresh attributed record is recalled as FACT, a SUPPORTED one as CONTEXT_UNVERIFIED (mechanism only, never a real fact)",
+          "AC6 tsc --noEmit --incremental false clean and every touched test file passes, run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V178-P4-INT/T1",
+            "file": "runtime/bin/odg-go-memory.test.ts"
+          },
+          {
+            "id": "V178-P4-INT/T2",
+            "file": "runtime/core/odg-memory-hybrid-index.test.ts"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an install or download is needed that is not authorized"
+        ],
+        "rollback": "revert the single PR (the memory port is opt-in; default behaviour unchanged)",
+        "evidence_required": [
+          "test output per file",
+          "GO run trace + result record",
+          "independent inspection verdicts (contract, result)"
+        ],
+        "budgets": {
+          "embedModel": "qwen3-embedding:0.6b",
+          "network": "loopback Ollama /api/embed only",
+          "providerCalls": 0,
+          "dispatchTimeoutMs": 1500000
+        },
+        "preRegistration": {
+          "metric": "AC1–AC6 pass/fail on the real repo state + SYNTHETIC fixtures",
+          "baseline": "beforeMetric knowledgeMemoryIndexing ABSENT (GO knowledge() indexed nothing; no recall in DECOMPOSE)",
+          "dataset": {
+            "source": "real repo state (pinned collection V160_PRACTICES_COLLECTION.json) + the SYNTHETIC fixtures frozen in the runner",
+            "runnerSha256": "344ced902da49423453566fed398c05670969caf49aa8fc71265e2ee8c500037",
+            "embedModel": "qwen3-embedding:0.6b"
+          },
+          "decisionRule": "PASS ⇔ AC1–AC6 all met; any criterion not measurable ⇒ NOT_MEASURED (never PASS); otherwise FAIL",
+          "thresholds": {
+            "AC1indexedMin": 1,
+            "AC2hitsMin": 1
+          }
+        }
+      },
+      "binding": {
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 P4-INT binding session; branch feat/v19-p4-int-go-knowledge)",
+        "boundAt": "2026-11-25"
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json (V19 P4 operational order)",
+        "date": "2026-11-25",
+        "transcribedBy": "PROVIDER (Claude Code) — bound through family V19-VPS-EQUIPMENT",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "one GO-dispatched run of the declared target only, after an independent (distinct-session) inspection ACCEPT of this contract; loopback Ollama only; writes only its result file",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v178-p4-int-run.ts",
+            "args": [
+              "docs/odg/evidence/V178_P4_INT_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V178_P4_INT_RESULT.json"
+            ]
+          }
+        },
+        "dispatchTimeoutMs": 1500000,
+        "inspectionRecord": "docs/odg/evidence/V178_P4_INT_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-25",
+          "author": "PROVIDER (Claude Code, V19 P4-INT binding session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json",
+          "originalCriteria": [
+            "AC1 GO knowledge() (runtime/bin/odg-go.ts) indexes the canonical toMemory records into the per-tenant hybrid index: FACT tier = exactly the admissible-trusted claims (memory-architecture.accessMemory), CONTEXT tier = SUPPORTED-unverified attributed sourced fresh records; status INDEXED with indexed > 0",
+            "AC2 the real GO cycle (odg-go-cycle.runGoCycle) records DECOMPOSE.contextRecall RECALLED for its working item; every hit is FACT (⊆ admissible-trusted ids) or CONTEXT_UNVERIFIED",
+            "AC3 no promotion: the claims' admissibility is byte-identical with and without the memory port",
+            "AC4 persistence: a second knowledge() on the same index re-embeds nothing and indexes the same count",
+            "AC5 FACT pipeline on SYNTHETIC-labelled fixtures through the same port: a VERIFIED fresh attributed record is recalled as FACT, a SUPPORTED one as CONTEXT_UNVERIFIED (mechanism only, never a real fact)",
+            "AC6 tsc --noEmit --incremental false clean and every touched test file passes, run one at a time"
+          ],
+          "originalCriteriaNote": "new work item: AC1–AC6 authored at binding, before any run",
+          "change": [
+            "new contract bound (write_set concrete, preRegistration, dispatch target)"
+          ],
+          "reason": "P4 CLOSED_PASS but not wired into ODG call paths",
+          "justification": "owner-ordered operational integration; criteria fixed before any run",
+          "revisionAuthorSessionId": "v19-p4int-binding"
+        }
+      ]
     }
   ]
 }
