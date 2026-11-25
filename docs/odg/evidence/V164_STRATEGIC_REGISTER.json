@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "f1fb0d063e2869e8767f675b671d479fcbce98b1094fe140762cba3d0762f961"
+      "sha256": "abc4acafd14216d7e004be11295859f09d402ba1e80f242814801600ae1348a3"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "13c47ebac0ab75f0b3d12999597b128f34d4d7fecd9f7fd5aa7e6861109ed560"
+      "sha256": "a35121c461870fefa4f51d13c0b88ae3b10965182e5f989975845aaf256f3361"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -7162,23 +7162,15 @@
           "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].initialState.status"
         ],
         "nextStep": {
-          "text": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion; owner-gated step: model download (Qwen3-Embedding-0.6B pull) + npm dependency (sqlite-vec)",
+          "text": "bound to the V19 owner record and independently inspected (ACCEPT, docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json); remaining: the single GO-dispatched run meeting AC1–AC6, then VALIDATE_CRITERIA. The former download/dependency gate is SATISFIED: qwen3-embedding:0.6b pulled and sqlite-vec 0.1.9 added under docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json (2026-11-25).",
           "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].initialState.missingForPass"
         },
         "executedEvidence": null,
         "deps": [],
         "depsNote": "no item-to-item dependency stated in the evidence ⇒ []",
-        "depsStated": [
-          {
-            "kind": "OWNER_AUTHORIZATION",
-            "text": "owner-gated step: model download (Qwen3-Embedding-0",
-            "satisfied": true,
-            "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].initialState.missingForPass",
-            "satisfiedSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].authorizedBy"
-          }
-        ],
-        "requiresOwnerAuthorization": true,
-        "ownerReason": "OWN-1 matched [owner-gated] in objective/acceptance_criteria/missingForPass",
+        "depsStated": [],
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
         "sectionsAdvanced": [
           "§45"
         ],
@@ -7247,16 +7239,16 @@
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.acceptance_criteria",
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.write_set"
             ],
-            "basis": "|AC|=6, |write_set|=8, ownerGatedStep=true"
+            "basis": "|AC|=6, |write_set|=8, ownerGatedStep=false"
           },
           "dependencyAvailability": {
-            "status": "MEASURED",
-            "value": 1,
+            "status": "NOT_MEASURED",
+            "value": null,
             "rule": "DEP-1",
             "source": [
               "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].initialState.missingForPass"
             ],
-            "basis": "1/1 stated dependencies satisfied"
+            "reason": "no dependency stated in the evidence ⇒ deps [] (absence of a statement is not availability)"
           },
           "evidenceLevel": {
             "status": "MEASURED",
@@ -7271,8 +7263,8 @@
         "closure": {
           "closed": false,
           "rule": "CLOSE-1",
-          "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-          "reason": "inspection ACCEPT bound to contract 87489567dc94 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+          "currentStep": "INSPECT_REVISED_CONTRACT",
+          "reason": "INSPECT_REVISED_CONTRACT pending: inspection contractSha256 87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca ≠ current contract sha256 0d6da74d091b62759d1f3a90e2f4dc441b26d25561e8937daa422302f2c776f6 (contract edited after inspection, or wrong contract) ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         },
         "dependencyGraph": {
@@ -7299,7 +7291,7 @@
           "reason": "contract scenario 'V178-P4' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
         },
         "contractRef": {
-          "contractSha256": "87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca",
+          "contractSha256": "0d6da74d091b62759d1f3a90e2f4dc441b26d25561e8937daa422302f2c776f6",
           "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27]",
           "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
           "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].authorization.source",
@@ -13537,6 +13529,7 @@
       "CP8-GAP-5-superviseExecution",
       "V176-NB3",
       "V178-P2",
+      "V178-P4",
       "V150-AI4",
       "MC-CI-BEFORE-REVIEW",
       "MC-CR-APPROVAL-STANDARD",
@@ -13546,7 +13539,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 30 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 31 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V178-P4, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -14219,98 +14212,6 @@
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
         "autoSelectable": true
-      },
-      {
-        "id": "V178-P4",
-        "status": "NOT_STARTED",
-        "evidenceScore": 0.15,
-        "upperBound": 0.75,
-        "uncertainty": 0.6,
-        "measuredWeightShare": 0.4,
-        "breakdown": [
-          {
-            "criterion": "autonomyBenefit",
-            "status": "MEASURED",
-            "value": 0.5,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.05,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "blockerRepetitionReduction",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "capabilityGain",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "costRiskComplexity",
-            "status": "MEASURED",
-            "value": 1,
-            "direction": "LOWER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "dependencyAvailability",
-            "status": "MEASURED",
-            "value": 1,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0.1,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "evidenceLevel",
-            "status": "MEASURED",
-            "value": 0,
-            "direction": "HIGHER_IS_BETTER",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0
-          },
-          {
-            "criterion": "reliabilityQuality",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "reusability",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "speedEfficiency",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          },
-          {
-            "criterion": "strategicValue",
-            "status": "NOT_MEASURED",
-            "weight": 0.1,
-            "contribution": 0,
-            "uncertaintyContribution": 0.1
-          }
-        ],
-        "unblocks": 0,
-        "requiresOwnerAuthorization": true,
-        "ownerReason": "OWN-1 matched [owner-gated] in objective/acceptance_criteria/missingForPass",
-        "autoSelectable": false
       },
       {
         "id": "N",
@@ -16553,6 +16454,96 @@
         "autoSelectable": true
       },
       {
+        "id": "V178-P4",
+        "status": "NOT_STARTED",
+        "evidenceScore": 0.05,
+        "upperBound": 0.75,
+        "uncertainty": 0.7,
+        "measuredWeightShare": 0.3,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 1,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
         "id": "CP8-GAP-canonicalDefectsJ",
         "status": "PROPOSED",
         "evidenceScore": 0.025,
@@ -17569,11 +17560,6 @@
         "ownerReason": "OWN-1 matched [owner AUTHORIZED] in objective/acceptance_criteria/missingForPass"
       },
       {
-        "id": "V178-P4",
-        "evidenceScore": 0.15,
-        "ownerReason": "OWN-1 matched [owner-gated] in objective/acceptance_criteria/missingForPass"
-      },
-      {
         "id": "A",
         "evidenceScore": 0.1,
         "ownerReason": "OWN-1 matched [owner-authorized, owner-authorized] in objective/acceptance_criteria/missingForPass"
@@ -17628,7 +17614,7 @@
     "proposed": null,
     "tiedSet": [],
     "resolvedBy": null,
-    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 30 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 31 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V178-P4, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
       "text": "comparison of ≥2 researched methods on a real task and a measured gain vs baseline",
@@ -17637,7 +17623,6 @@
     "ownerAuthorizationRequired": [
       "K",
       "C",
-      "V178-P4",
       "A",
       "CP8-GAP-4-authorizeProvider",
       "CP8-GAP-2-setPriorities",
@@ -17685,7 +17670,7 @@
         "b3": true,
         "b4": false
       },
-      "meanMeasuredWeightShareOverSelectable": 0.2613
+      "meanMeasuredWeightShareOverSelectable": 0.2625
     },
     "C": {
       "grade": "PASS",
@@ -17718,5 +17703,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "7219dfab32bf7460d3e4eddbf137cace263dbd3b"
+  "generatedAtHead": "479f6a6ab77c5dda283c60564391d84e16535bbb"
 }

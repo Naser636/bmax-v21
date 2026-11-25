@@ -24,19 +24,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795633378000,
+    "nowEpochMs": 1795635228000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "135e19ff3744c8e05dff3a5be3c8944f7d3161906cd9c55ecb8b566101a2f89a",
-      "epochMs": 1795633378000
+      "sha256": "e9dc8da247d48f3a1d1d8426c73f2c20c87770fa3324b4caf20c1bc9b9822fdd",
+      "epochMs": 1795635228000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "f1fb0d063e2869e8767f675b671d479fcbce98b1094fe140762cba3d0762f961",
-      "epochMs": 1795631316000
+      "sha256": "abc4acafd14216d7e004be11295859f09d402ba1e80f242814801600ae1348a3",
+      "epochMs": 1795635228000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -914,11 +914,11 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability"
       ],
-      "statement": "criterion dependencyAvailability NOT_MEASURED on 65/71 register items",
+      "statement": "criterion dependencyAvailability NOT_MEASURED on 66/71 register items",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.dependencyAvailability.notMeasuredItems",
-        "value": 65,
+        "value": 66,
         "of": 71,
         "items": [
           "B",
@@ -944,6 +944,7 @@
           "V176-NB3",
           "V178-P1",
           "V178-P2",
+          "V178-P4",
           "V178-P5",
           "V178-P6",
           "V178-P7",
@@ -4409,7 +4410,7 @@
             {
               "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[*].criteria.dependencyAvailability",
               "name": "register.dependencyAvailability.notMeasuredItems",
-              "value": 65,
+              "value": 66,
               "of": 71,
               "items": [
                 "B",
@@ -4435,6 +4436,7 @@
                 "V176-NB3",
                 "V178-P1",
                 "V178-P2",
+                "V178-P4",
                 "V178-P5",
                 "V178-P6",
                 "V178-P7",

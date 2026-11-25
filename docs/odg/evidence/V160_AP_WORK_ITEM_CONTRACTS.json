@@ -4002,16 +4002,19 @@
         "status": "NOT_STARTED",
         "note": "converted from a Radar build proposal (RB-CONV-1); PROPOSED, not bound, not inspected, not executed",
         "evidence": [],
-        "missingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion; owner-gated step: model download (Qwen3-Embedding-0.6B pull) + npm dependency (sqlite-vec)",
+        "missingForPass": "bound to the V19 owner record and independently inspected (ACCEPT, docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json); remaining: the single GO-dispatched run meeting AC1–AC6, then VALIDATE_CRITERIA. The former download/dependency gate is SATISFIED: qwen3-embedding:0.6b pulled and sqlite-vec 0.1.9 added under docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json (2026-11-25).",
         "asOf": "base 9a2c5eeb (V17.8 Radar campaign)"
       },
       "ownerGate": {
-        "required": true,
+        "required": false,
         "step": "model download (Qwen3-Embedding-0.6B pull) + npm dependency (sqlite-vec)",
         "reason": [
           "model download",
           "npm dependency"
-        ]
+        ],
+        "satisfiedBy": "docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
+        "satisfiedAt": "2026-11-25",
+        "note": "download + npm dependency executed under the V19 record (ownerGatesLifted)"
       },
       "proposal": {
         "problem": "ODG memory has no semantic retrieval; exact-term recall for client documents is needed",
@@ -4217,6 +4220,28 @@
           "reason": "independent inspection REJECT of revision 1 (inspected head 6679cda7): AC6 satisfiable by the FTS5 leg alone (constant embedding ⇒ hybrid 6/6); AC5's tsc part unmeasured",
           "justification": "fix both blocking defects and the minor findings before any run (no experiment has run); criteria only made stricter",
           "revisionAuthorSessionId": "v19-p4-revision2"
+        },
+        {
+          "date": "2026-11-25",
+          "author": "PROVIDER (Claude Code, V19 P4 revision-3 session; branch fix/v178-p4-rev3-owngate)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P4/AC1' (file: acceptance_tests[0]): FTS5 leg returns exact-term matches ranked by bm25 (offline test)",
+            "AC2 test 'V178-P4/AC2' (file: acceptance_tests[1]): RRF fusion is deterministic for fixed inputs",
+            "AC3 test 'V178-P4/AC3' (file: acceptance_tests[2]): two tenants never read each other's file",
+            "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC5 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC5 verbatim; AC6 unchanged since revision 2 (inspected ACCEPT)",
+          "change": [
+            "initialState.missingForPass: descriptive text updated — the download/dependency gate it named is SATISFIED under V19 (it kept OWN-1 matching 'owner-gated' ⇒ requiresOwnerAuthorization ⇒ GO never auto-selects P4)",
+            "ownerGate.required true → false with satisfiedBy the V19 record",
+            "no criterion, threshold, budget, write_set, runner or dispatch target changed"
+          ],
+          "previousMissingForPass": "bind the contract (concrete write_set replacing the ESTIMATE) and record an independent inspection ACCEPT; then a GO-dispatched build meeting every acceptance criterion; owner-gated step: model download (Qwen3-Embedding-0.6B pull) + npm dependency (sqlite-vec)",
+          "reason": "GO dry (2026-11-25) excluded V178-P4 as 'not authorized now' solely through OWN-1's text match on the stale missingForPass",
+          "justification": "state-of-fact update of a descriptive field; criteria/preRegistration byte-unchanged; requires re-inspection because the contract sha changes",
+          "revisionAuthorSessionId": "v19-p4-revision3"
         }
       ]
     },
