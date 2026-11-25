@@ -109,7 +109,7 @@ async function query(ix: any, q: string, embed: any, opts: any = {}): Promise<an
 /* ollamaEmbed(model) — live embed seam over loopback Ollama /api/embed (callers inject it; tests never use it). */
 function ollamaEmbed(model = "qwen3-embedding:0.6b", host = "http://127.0.0.1:11434"): any {
   return async (texts: string[]) => {
-    const r = await fetch(`${host}/api/embed`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ model, input: texts }) });
+    const r = await fetch(`${host}/api/embed`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ model, input: texts }), signal: AbortSignal.timeout(120000) });
     if (!r.ok) throw new Error(`P4: embed HTTP ${r.status}`);
     const j: any = await r.json(); return j.embeddings;
   };

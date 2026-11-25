@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "b566d36844afce1ec1520c1665e1ac75bd0b445cace8fe772842b345c353db3e"
+      "sha256": "8198853cb29dbddfaa672ecc305df8cee3b98fe34ff778e870ed9fff4cda7449"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "9ed97d61ed9f3a993ad0511793c1a69f182a1d7660ea060ba0e6695a76f0451f"
+      "sha256": "f1fb0d063e2869e8767f675b671d479fcbce98b1094fe140762cba3d0762f961"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -961,7 +961,7 @@
         "v150RequirementIds": [],
         "reason": "contract scenario 'V178-P4' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
       },
-      "contractSha256": "63812b6b4b9c3da56871b2f5c2d789e5a7052a9e5bd4702666871f9e6f94123c",
+      "contractSha256": "87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca",
       "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
       "currentStep": "INSPECT_REVISED_CONTRACT",
       "scope": {
@@ -973,7 +973,7 @@
           "REVISE_CONTRACT"
         ],
         "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
-        "contractSha256": "63812b6b4b9c3da56871b2f5c2d789e5a7052a9e5bd4702666871f9e6f94123c"
+        "contractSha256": "87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca"
       },
       "records": {
         "inspection": {
@@ -993,13 +993,13 @@
       "pending": [
         {
           "kind": "INSPECTION",
-          "of": "contract 63812b6b4b9c",
+          "of": "contract 87489567dc94",
           "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
         }
       ],
       "next": {
         "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha 63812b6b4b9c3da56871b2f5c2d789e5a7052a9e5bd4702666871f9e6f94123c) and commit the inspection record"
+        "action": "inspect the revised contract (sha 87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca) and commit the inspection record"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P4]",
@@ -1203,7 +1203,7 @@
       {
         "item": "V178-P4",
         "actor": "INDEPENDENT_INSPECTOR",
-        "action": "inspect the revised contract (sha 63812b6b4b9c3da56871b2f5c2d789e5a7052a9e5bd4702666871f9e6f94123c) and commit the inspection record"
+        "action": "inspect the revised contract (sha 87489567dc948990f5eb0bf80922ea409be1c1acc98721a33579b0ea88d707ca) and commit the inspection record"
       }
     ],
     "lastGoRun": {
