@@ -1,0 +1,75 @@
+{
+  "//": "V17.8 P1-REPAIR provenance record — root cause of the V178-P1 FAIL (#1016) and the correction built for it. Records WHO produced which code; grants nothing; changes no contract, score or threshold. The P1 verdict FAIL 3/6 is unchanged.",
+  "schema": "odg-repair-provenance/1",
+  "date": "2026-11-25",
+  "parent": {
+    "item": "V178-P1",
+    "result": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+    "verdict": "FAIL 3/6 (= baseline 3/6)",
+    "pr": 1016
+  },
+  "rootCause": {
+    "statement": "selection signal, not generation breadth: on impl-ts-parse-range 23/24 candidates passed ALL visible cases (VIS-1 even indices), so XSEL-1 fell through to codeLines/sha256 tie-breaks; every selected candidate failed hidden edge cases (case 3: empty input — t0 returns [0] where [] is expected; other candidates throw 'Malformed item'/'Malformed number'). impl-chunk was already 3/3 at t0, so no headroom there.",
+    "evidence": "trials[*].candidates[*].caseResults, trials[*].selection.decidedBy, trials[*].accepted.reason"
+  },
+  "radar": {
+    "reused": [
+      "V178_RADAR_SIGNALS_CDI.json#C-03 CodeT dual execution agreement (https://arxiv.org/abs/2207.10397)",
+      "V178_RADAR_SIGNALS_CDI.json#C-02 risk: weak/self-written tests make selection unreliable (https://arxiv.org/abs/2407.21787)",
+      "V178_RADAR_SIGNALS_CDI.json#C-04 budget-normalized self-repair: prefer diverse samples (https://arxiv.org/abs/2306.09896)"
+    ],
+    "newSearch": "none (existing committed signals cover the problem)"
+  },
+  "correction": {
+    "module": "runtime/core/odg-execution-agreement.ts",
+    "test": "runtime/core/odg-execution-agreement.test.ts",
+    "method": "derive probe inputs mechanically from VISIBLE inputs only (per-argument mutation: string→'',' ',s[0],s+s; number→0,-1,n+1; array→[],a[0..1]; ≤16), cluster candidates by output signatures on those probes, choose the largest cluster among visible-max candidates; hidden cases never consulted"
+  },
+  "provenance": {
+    "specAndTests": {
+      "author": "PROVIDER (Claude Code)",
+      "specSha256": "fe3c5cc70dea98fbd2fd5b244ef10056d8da9c23b36e0de6d0bb4ec6ced66fec",
+      "specTestSha256": "a5e05bd655deaeb6d379470b0cc13300f2d85f44455c71ab8efff20bcc33988d"
+    },
+    "nativeAttempt": {
+      "generator": "runtime/core/local-model-generator.ts makeLocalGenerator",
+      "model": "qwen2.5-coder:7b",
+      "temperature": 0,
+      "numPredict": 1400,
+      "bound": "2 attempts (attempt 2 with the failing-test feedback as verifyError)",
+      "executedIn": "bwrap --unshare-net (spec test)",
+      "attempts": [
+        {
+          "attempt": 1,
+          "codeSha256": "ce3112ac3b25f8b19157deb3d8772b7899c3b542cc712843eeca4faa2d14e17d",
+          "ms": 94362,
+          "evalCount": 524,
+          "specTests": "6/12"
+        },
+        {
+          "attempt": 2,
+          "codeSha256": "ffd41131e5f73a9fa957a7dedb7b59a6f567863eba7265e75dfbe3a7e42c3024",
+          "ms": 75113,
+          "evalCount": 524,
+          "specTests": "6/12"
+        }
+      ],
+      "outcome": "FAIL — native incapacity measured: per-argument tuple mutation (model replaced whole tuples / returned visible tuples) and smallest-id choice inside a cluster"
+    },
+    "integratedCode": {
+      "author": "PROVIDER (Claude Code) — fallback authorized by owner order 2026-11-25 §7",
+      "sha256": "bde82ac2b892a7e16f52fd46d3ded5d728eaa3ee88932507402276a995414cbb",
+      "specTests": "12/12 in bwrap --unshare-net",
+      "odgDesigned": false
+    }
+  },
+  "measuredEffect": {
+    "onFullOracle": "NOT_MEASURED",
+    "why": "requires a contracted P1 re-attempt (new model-call budget; owner: no new budget without contract, objective and success criterion)",
+    "runnerGap": "the P1 runner records candidate output sha256 only, not candidate code ⇒ offline re-selection of the 20 existing candidates is impossible; a re-attempt contract should persist candidate code"
+  },
+  "next": {
+    "proposal": "P1-R re-attempt citing the MEASURED changed input XSEL-2 (= XSEL-1 + execution agreement as the tie-break before codeLines) — RB-REATTEMPT-CHANGED-INPUT; contract to be PROPOSED then independently inspected (distinct session), never self-authorized",
+    "qualification": "ODG reproduction of this module: re-run the native attempt with the integrated module as a reference contract — NOT_STARTED"
+  }
+}
