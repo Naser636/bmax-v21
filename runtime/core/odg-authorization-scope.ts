@@ -86,6 +86,16 @@ const STEP_KIND: any = Object.freeze({
   VALIDATE_CRITERIA: "GRADING",
 });
 const INDEPENDENCE_LEVEL = "DECLARED_SESSION_INDEPENDENCE";   // declared opaque session ids — NOT cryptographic
+/* MECH-1 (owner decision docs/odg/V178_OWNER_DECISION_MECHANICAL_NEGATIVE_VALIDATION.json, 2026-11-25) — a NARROW R5b
+ * exception: a deterministic mechanical verifier may stand in for the distinct-session inspection ONLY to validate the
+ * recording of a NEGATIVE result (experiment outcome FAIL or NOT_MEASURED, scenarioGrade EQUAL to it). It never grades
+ * PASS/PARTIAL, never certifies success, never replaces an inspection for a positive result, and leaves every other R5b
+ * condition (contract sha, experiment sha, grade bound, R7 currency) unchanged. */
+const MECH_KIND = "MECHANICAL_VERIFIER";
+const MECH_OWNER_RECORD = "docs/odg/V178_OWNER_DECISION_MECHANICAL_NEGATIVE_VALIDATION.json";
+const MECH_NEGATIVE_GRADES = Object.freeze(["FAIL", "NOT_MEASURED"]);
+const MECH_REQUIRED_CHECKS = Object.freeze(["RAW_DATA", "RECOMPUTE", "IDS_TRACES", "CONTRACT_LIMITS", "PROVENANCE", "REGISTER_CONSISTENCY"]);
+const MECH_INDEPENDENCE_LEVEL = "MECHANICAL_NEGATIVE_ONLY";   // deterministic re-computation — NOT an independent inspection
 /* R0 — the owner directive bound to each scenario. An authorization source must cite ITS scenario's directive and no
  * other scenario's (so the V165 authorization of G can never cover H, nor the V168 authorization of H cover G). */
 const OWNER_SOURCES: any = Object.freeze({
@@ -209,21 +219,43 @@ const GRADE_RANK: any = Object.freeze({ NOT_MEASURED: 0, FAIL: 1, PARTIAL: 2, PA
  * the exact experiment record (experimentSha256), citing an independent inspection of the experiment result with
  * verdict ACCEPT and distinct declared session ids, whose scenarioGrade never exceeds the experiment outcome
  * (no upgrade; NOT_MEASURED only if the experiment is NOT_MEASURED). Grading is NOT done here — the record is. */
+/* MECH-1 — the mechanical stand-in: negative outcome only, grade EQUAL to the outcome, verdict CONSISTENT, bound to the
+ * same experiment sha, every required check present and ok, the recomputed outcome equal to the recorded one, and a
+ * reproduction command + verifier path recorded (the trace is the committed verification record it cites). */
+function mechanicalNegativeValid(rec: any, ei: any, xs: string, experiment: any): any {
+  const o = experiment && experiment.outcome;
+  if (!MECH_NEGATIVE_GRADES.includes(o)) return { ok: false, reason: `MECH-1: mechanical validation applies only to a NEGATIVE outcome (FAIL/NOT_MEASURED), not ${o} — a positive result needs an independent inspection ACCEPT` };
+  if (rec.scenarioGrade !== o) return { ok: false, reason: `MECH-1: scenarioGrade ${rec.scenarioGrade} must EQUAL the experiment outcome ${o}` };
+  if (ei.verdict !== "CONSISTENT") return { ok: false, reason: "MECH-1: mechanical verifier verdict is not CONSISTENT" };
+  if (ei.ownerRecord !== MECH_OWNER_RECORD) return { ok: false, reason: `MECH-1: must cite the owner record ${MECH_OWNER_RECORD}` };
+  if (ei.experimentSha256 !== xs) return { ok: false, reason: "MECH-1: mechanical verification not bound to the current experiment record" };
+  if (!str(ei.verifier) || !str(ei.reproduce) || !str(ei.verificationRecord)) return { ok: false, reason: "MECH-1: verifier path, reproduction command and verification record are required" };
+  const checks = arr(ei.checks);
+  const missing = MECH_REQUIRED_CHECKS.filter((id) => !checks.some((c: any) => isObj(c) && c.id === id && c.ok === true));
+  if (missing.length) return { ok: false, reason: `MECH-1: required mechanical checks missing or not ok: ${missing.join(", ")}` };
+  if (!isObj(ei.recomputed) || ei.recomputed.outcome !== o) return { ok: false, reason: "MECH-1: recomputed outcome differs from the recorded outcome" };
+  return { ok: true };
+}
+
 function validationValid(rec: any, sha: string, experiment: any, probes?: any): any {
   if (!isObj(rec)) return { ok: false, reason: "no committed criteria-validation record" };
   if (rec.contractSha256 !== sha) return { ok: false, reason: "criteria-validation record not bound to the current contract sha256" };
   const xs = experimentSha256(experiment);
   if (!isObj(rec.experimentEvidence) || rec.experimentEvidence.experimentSha256 !== xs) return { ok: false, reason: `criteria-validation record not bound to the current experiment record (experimentSha256 ${xs.slice(0, 12)})` };
   const ei = rec.experimentInspection;
+  const mech = isObj(ei) && ei.kind === MECH_KIND;
+  if (mech) { const m = mechanicalNegativeValid(rec, ei, xs, experiment); if (!m.ok) return m; }
+  else {
   if (!isObj(ei) || ei.verdict !== "ACCEPT") return { ok: false, reason: "experiment result lacks an independent inspection ACCEPT" };
   if (!str(ei.inspectorSessionId) || !str(ei.authorSessionId) || !SESSION_ID.test(String(ei.inspectorSessionId)) || !SESSION_ID.test(String(ei.authorSessionId)) || String(ei.inspectorSessionId) === String(ei.authorSessionId)) return { ok: false, reason: "experiment inspection lacks distinct declared session ids (not independent)" };
+  }
   const g = rec.scenarioGrade, o = experiment.outcome;
   if (!(g in GRADE_RANK) || !(o in GRADE_RANK)) return { ok: false, reason: "scenarioGrade or experiment outcome not a recognised grade" };
   if (GRADE_RANK[g] > GRADE_RANK[o]) return { ok: false, reason: `scenarioGrade ${g} exceeds the experiment outcome ${o} (upgrade refused)` };
   if (g === "NOT_MEASURED" && o !== "NOT_MEASURED") return { ok: false, reason: "NOT_MEASURED grade on a measured experiment" };
   const cur = currencyOf(rec, probes, sha, false);
   if (!cur.usableAsProof) return { ok: false, currency: currencySummary(cur), reason: `R7 proof currency ${cur.status}: ${cur.reason}` };
-  return { ok: true, evidence: withCurrency({ scenarioGrade: g, experimentOutcome: o, experimentSha256: xs, inspectorSessionId: String(ei.inspectorSessionId), independenceLevel: INDEPENDENCE_LEVEL, note: "VALIDATE_CRITERIA DONE with the recorded grade — never upgraded here" }, cur) };
+  return { ok: true, evidence: withCurrency({ scenarioGrade: g, experimentOutcome: o, experimentSha256: xs, inspectorSessionId: mech ? null : String(ei.inspectorSessionId), independenceLevel: mech ? MECH_INDEPENDENCE_LEVEL : INDEPENDENCE_LEVEL, ...(mech ? { mechanicalVerifier: String(ei.verifier), rule: "MECH-1" } : {}), note: "VALIDATE_CRITERIA DONE with the recorded grade — never upgraded here" }, cur) };
 }
 
 /*
@@ -298,9 +330,10 @@ const AUTHORIZATION_SCOPE_CONTRACT = Object.freeze({
     "steps outside the declared sequence (provider spend, governance, …) are never derived",
     "inspection validates only with verdict ACCEPT, contractSha256 = sha256(canon(current contract entry)), distinct opaque inspector/author session ids bound to the revision's revisionAuthorSessionId (DECLARED_SESSION_INDEPENDENCE, not cryptographic), inspected head SHA",
     "a validated step is DONE, never PASS: no outcome is graded or upgraded here",
+    "MECH-1: a deterministic mechanical verifier may validate ONLY the recording of a NEGATIVE result (outcome FAIL/NOT_MEASURED, grade equal); never PASS/PARTIAL, never a substitute for an inspection of a positive result",
     "R7 proof currency (odg-observation-currency.assessEvidenceCurrency over injected local-git probes): a record citing a commit absent from git / not an ancestor of main, or a STALE decisive hash, or unverified for want of a probe, validates nothing",
   ]),
 });
 
-module.exports = { deriveAuthorizationScope, isStepAuthorized, contractSha256, experimentSha256, canon, ownerSourceCheck, OWNER_SOURCES, STEP_SEQUENCES, EXECUTION_STEPS, STEP_KIND, INDEPENDENCE_LEVEL, AUTHORIZATION_SCOPE_CONTRACT };
+module.exports = { deriveAuthorizationScope, isStepAuthorized, contractSha256, experimentSha256, canon, ownerSourceCheck, OWNER_SOURCES, STEP_SEQUENCES, EXECUTION_STEPS, STEP_KIND, INDEPENDENCE_LEVEL, MECH_KIND, MECH_OWNER_RECORD, MECH_REQUIRED_CHECKS, MECH_INDEPENDENCE_LEVEL, AUTHORIZATION_SCOPE_CONTRACT };
 export {};
