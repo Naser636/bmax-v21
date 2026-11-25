@@ -62,6 +62,7 @@ function makeLocalGenerator(opts: any = {}, fetchImpl: any = undefined): any {
   const timeoutMs = Number(o.timeoutMs) || 120000;
   const numPredict = Number(o.numPredict) || 512;
   const temperature = Number.isFinite(Number(o.temperature)) ? Number(o.temperature) : 0.1;
+  const thinkArg = typeof o.think === "boolean" ? { think: o.think } : {};   // THINK-1 (absent ⇒ request unchanged)
   const doFetch = typeof fetchImpl === "function" ? fetchImpl : (typeof (globalThis as any).fetch === "function" ? (globalThis as any).fetch.bind(globalThis) : null);
 
   return async function generateFile(fileSpec: any, builtContracts: any): Promise<any> {
@@ -71,7 +72,7 @@ function makeLocalGenerator(opts: any = {}, fetchImpl: any = undefined): any {
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     const t0 = Date.now();
     try {
-      const res = await doFetch(`${host}/api/generate`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ model, prompt, stream: false, options: { temperature, num_predict: numPredict } }), signal: controller.signal });
+      const res = await doFetch(`${host}/api/generate`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ model, prompt, stream: false, ...thinkArg, options: { temperature, num_predict: numPredict } }), signal: controller.signal });
       if (!res || res.ok !== true) return Object.freeze({ ok: false, reason: `HTTP ${res && res.status}`, provenance: Object.freeze({ model, host, ms: Date.now() - t0 }) });
       const j = await res.json();
       const content = extractCode(j && j.response);

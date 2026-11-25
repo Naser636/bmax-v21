@@ -24,6 +24,9 @@ check(G.extractCode("") === null && G.extractCode(null) === null, "empty/null â‡
   const throwFetch = async () => { throw new Error("ECONNREFUSED"); };
 
   const genOk = G.makeLocalGenerator({ model: "qwen2.5-coder:3b" }, okFetch);
+  { const bodies: any[] = []; const capFetch = async (_u: any, init: any) => { bodies.push(JSON.parse(init.body)); return { ok: true, json: async () => ({ response: "module.exports = {};", model: "m" }) }; };
+    await G.makeLocalGenerator({ model: "m" }, capFetch)({ path: "a.js" }, {}); await G.makeLocalGenerator({ model: "m", think: false }, capFetch)({ path: "a.js" }, {});
+    check(!("think" in bodies[0]) && bodies[1].think === false, "THINK-1: think omitted by default, think:false passed through when set"); }
   const r1 = await genOk({ path: "a.js", role: "add", contract: "a+b" }, {});
   check(r1.ok === true && r1.content === "module.exports=(a,b)=>a+b;" && r1.provenance.native === true, "a valid model response â‡’ ok + extracted content + provenance");
   check(r1.provenance.model === "qwen2.5-coder:3b" && r1.provenance.evalCount === 12, "provenance carries the real model + eval_count");

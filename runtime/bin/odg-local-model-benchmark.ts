@@ -7,7 +7,7 @@
  * V155_OLLAMA_CAPABILITY_REGISTRY.json. One model at a time. No pull/delete, no external provider, no API key.
  * The qualification history is APPENDED from the previous evidence file (never overwritten).
  *
- *   npx tsx runtime/bin/odg-local-model-benchmark.ts [--models a,b] [--trials 3] [--only taskId,..] [--out file]
+ *   npx tsx runtime/bin/odg-local-model-benchmark.ts [--models a,b] [--trials 3] [--only taskId,..] [--out file] [--think false|true]
  *
  * V17.8 P2 MEASUREMENT PROFILE (contract V178-P2, docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json; owner record
  * docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json):
@@ -133,7 +133,9 @@ async function main(): Promise<number> {
   const startLoad = require("os").loadavg().map((x: number) => Math.round(x * 100) / 100);
   const log = (s: string) => process.stderr.write(s + "\n");
 
-  const run = await B.runBenchmark({ models, trials, onlyTasks: only, log, timeoutMs: 240000 });
+  const thinkRaw = arg("think", "");   // THINK-1: --think false|true (absent ⇒ unchanged V155 behaviour)
+  if (thinkRaw !== "" && thinkRaw !== "true" && thinkRaw !== "false") { log("REFUSED: --think must be true or false"); return 3; }
+  const run = await B.runBenchmark({ models, trials, onlyTasks: only, log, timeoutMs: 240000, ...(thinkRaw === "" ? {} : { think: thinkRaw === "true" }) });
   if (!run.ok) { log("benchmark refused: " + run.reason); return 1; }
   const record = { runId: "v155-" + startedAt, at: startedAt, head };
   const registry = CAP.buildCapabilityRegistry(run, { history, record });
