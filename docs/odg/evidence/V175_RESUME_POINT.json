@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "4706236890af6ce2fa2b208d821332b4d506cbeb5058095df65c4680084a8430"
+      "sha256": "a4948a0e79186f2911ac8bd30d5e8c27b6653853e29cef71db98653b6914a8b1"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -56,6 +56,10 @@
     {
       "source": "docs/odg/evidence/V178_P1_GO_EXECUTE_TRACE.jsonl",
       "sha256": "cac478eca0625fc3671203f1ea11d262c3495fd1bb186eb4787a11ccf1a7f955"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P4_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "d8a7dc44a117f86a94a60b1eff3f341554dd68261494903002c00b3f0e2eb909"
     },
     {
       "source": "docs/odg/evidence/V175_OPEN_PRS_SNAPSHOT.json",
@@ -180,6 +184,10 @@
     {
       "source": "docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json",
       "sha256": "701a01eec595f486129408fcd99daa1c604b32c159cbbec77ad09cdbbdb75dfc"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P4_MEMORY_RESULT.json",
+      "sha256": "758fcaf8ee8599fdacd2579f4b58591bba1418435c8205d2ce14b516fc4f4e9d"
     }
   ],
   "checkpoint": {
@@ -967,17 +975,18 @@
       },
       "contractSha256": "99277ddd47ffecdf8f01c4e346a874579a8120aeb4cd4fd6657f8ad09f576f33",
       "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": "VALIDATE_CRITERIA",
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
         "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
         ],
-        "reason": "inspection ACCEPT bound to contract 99277ddd47ff ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
         "contractSha256": "99277ddd47ffecdf8f01c4e346a874579a8120aeb4cd4fd6657f8ad09f576f33"
       },
       "records": {
@@ -986,19 +995,36 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V178_P4_MEMORY_RESULT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
-      "pending": [],
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V178_P4_GO_EXECUTE_TRACE.jsonl",
+        "runId": "506dc1f27658ad91",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-25T21:18:30.709Z",
+        "dispatched": true
+      },
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/V178_P4_MEMORY_RESULT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v178-p4-memory-run.ts"
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 99277ddd47ff and experiment docs/odg/evidence/V178_P4_MEMORY_RESULT.json, then an independent inspection — never auto-graded"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P4]",
@@ -1162,6 +1188,19 @@
       "strategic": "D",
       "workingOn": "V178-P1",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V178_P4_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "506dc1f27658ad91",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-25T21:18:30.709Z",
+      "dispatched": [
+        "V178-P4"
+      ],
+      "strategic": "D",
+      "workingOn": "V178-P4",
+      "ownerSelectionRecord": null
     }
   ],
   "nextGoAction": {
@@ -1190,27 +1229,28 @@
       {
         "item": "V178-P2",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-local-model-benchmark.ts"
-      },
-      {
-        "item": "V178-P4",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v178-p4-memory-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2, V178-P4",
+    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V178-P4",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 99277ddd47ff and experiment docs/odg/evidence/V178_P4_MEMORY_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/V178_P1_GO_EXECUTE_TRACE.jsonl",
-      "runId": "74284b0dc484299e",
-      "status": "EXECUTED_FAIL",
-      "endedAt": "2026-11-25T10:13:46.273Z",
+      "trace": "docs/odg/evidence/V178_P4_GO_EXECUTE_TRACE.jsonl",
+      "runId": "506dc1f27658ad91",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-25T21:18:30.709Z",
       "strategic": "D",
-      "workingOn": "V178-P1",
+      "workingOn": "V178-P4",
       "nextAfterCurrent": {
         "decision": "SELECTED",
         "selected": "D",
