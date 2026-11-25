@@ -1,0 +1,690 @@
+{
+  "schema": "odg-v176-scenario-f-result/1",
+  "scenario": "F",
+  "label": "ODG GO dispatch — F single initial execution (GO parallel wave, deterministic internal fixture)",
+  "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1",
+  "ownerText": "ODG décompose une mission, affecte des fournisseurs, réceptionne leurs résultats, détecte les incompatibilités et valide l'intégration.",
+  "kind": "DETERMINISTIC_FIXTURE (test-grade demonstration; fixture producers with PRE-SCRIPTED outputs and PLANTED incompatibilities; no model, no provider, no network)",
+  "run": {
+    "head": "30de70892103fd13d1ac03dabd722fc22339bb65",
+    "startedAt": "2026-11-25T01:11:16.663Z",
+    "runner": "runtime/bin/odg-v176-scenario-f-run.ts",
+    "capability": "runtime/core/odg-go-wave.ts"
+  },
+  "fixture": {
+    "id": "F-WAVE-FIXTURE-1",
+    "sha256": "79ebdd989d53e218c6ede53b754846182d7e5d3bfc8e989845cbcf37b2d1c745",
+    "workItems": [
+      {
+        "id": "W-PARSE",
+        "writeSet": [
+          "src/parse-line.js"
+        ],
+        "planted": {
+          "v1": "CHECK_FAILED (interface: unitCents not an integer for 0.29 / 1.15 / 19.99 / 0.07 — own test passes)"
+        },
+        "notDispatched": null
+      },
+      {
+        "id": "W-TOTAL",
+        "writeSet": [
+          "src/invoice-total.js"
+        ],
+        "planted": {
+          "v1": "WRITESET_VIOLATION (also writes src/parse-line.js ⇒ overlaps W-PARSE ⇒ merge conflict)"
+        },
+        "notDispatched": null
+      },
+      {
+        "id": "W-PARSE-LOCALE",
+        "writeSet": [
+          "src/parse-line.js"
+        ],
+        "planted": null,
+        "notDispatched": "write-set overlaps W-PARSE ⇒ excluded from the wave by selection"
+      },
+      {
+        "id": "W-NOTES",
+        "writeSet": null,
+        "planted": null,
+        "notDispatched": "no declared write-set ⇒ UNKNOWN ⇒ never parallelised"
+      }
+    ],
+    "planted": [
+      {
+        "kind": "WRITESET_VIOLATION",
+        "item": "W-TOTAL"
+      },
+      {
+        "kind": "CHECK_FAILED",
+        "item": "W-PARSE"
+      }
+    ],
+    "integrationChecks": [
+      "own:parse-line",
+      "own:invoice-total",
+      "iface:parse-line",
+      "iface:invoice-total",
+      "integration"
+    ]
+  },
+  "caps": {
+    "k": 3,
+    "maxRounds": 3,
+    "maxRunWallMs": 300000,
+    "perItemWallMs": 60000,
+    "timingRepetitions": 5,
+    "hostIdleFactor": 0.75,
+    "basis": "selftest on this host: whole run ≈ 10–15 s (2 rounds + timing); per-item producer ≈ 0.2–0.5 s; k=3 requested so that k is bounded by the concurrency policy (2 builders by default) rather than chosen to fit; hostIdleFactor = J/NB2's HOST-1",
+    "note": "hard caps; maxRunWallMs checked between rounds and timing repetitions, perItemWallMs = SIGKILL of a producer / check process; GO-DTO-1 dispatch timeout = maxRunWallMs + 120000"
+  },
+  "priorResult": {
+    "path": "docs/odg/evidence/V161_SCENARIO_F.json",
+    "sha256": "02519233db44ff1cc214969f1b45136276d91cc709ebbb954cd707c27f8997ab",
+    "note": "F's prior execution (V161, live local models) — read only, never written or re-graded"
+  },
+  "stage": "RUN",
+  "oracleSelfTest": {
+    "check": "integration",
+    "onBaseExitCode": 1,
+    "failsOnBase": true
+  },
+  "selection": {
+    "rule": "GO-WAVE-1 (provider rule, Claude Code; owner V176 BUILD_MISSIONS « vagues GO parallèles sur des zones d'écriture indépendantes »): a wave = the GO-ranked leader + every next actionable candidate whose write-set is KNOWN and disjoint from all members (odg-writeset-contention.pathsConflict), with no dependency edge to a member, up to k (k ≤ odg-concurrency-policy admitted builders when a decision is given; admit 0 ⇒ no wave). The set is re-verified by computeLayerContention (parallelSafe) AND parallel-execution-planner.plan (writeSetSafe, maxConcurrency k ⇒ exactly one wave); any disagreement ⇒ SERIAL (leader alone). UNKNOWN write-set ⇒ never parallelised. Post-receipt: WRITESET_VIOLATION / OVERLAPPING_WRITES / MERGE_CONFLICT (git merge-tree --write-tree) / CHECK_FAILED; integration only when none, validated by every declared integration check on the merged commit.",
+    "mode": "PARALLEL",
+    "wave": [
+      "W-PARSE",
+      "W-TOTAL"
+    ],
+    "writeSets": {
+      "W-PARSE": [
+        "src/parse-line.js"
+      ],
+      "W-TOTAL": [
+        "src/invoice-total.js"
+      ]
+    },
+    "k": 2,
+    "kRequested": 3,
+    "kBasis": "odg-concurrency-policy admitted 2 builder(s)",
+    "excluded": [
+      {
+        "id": "W-PARSE-LOCALE",
+        "reason": "WRITESET_OVERLAP with W-PARSE (src/parse-line.js)"
+      },
+      {
+        "id": "W-NOTES",
+        "reason": "WRITESET_UNKNOWN (no declared write-set (and not read-only)) ⇒ never parallelised"
+      }
+    ],
+    "verification": {
+      "contention": {
+        "parallelSafe": true,
+        "contentions": [],
+        "component": "odg-writeset-contention.computeLayerContention"
+      },
+      "planner": {
+        "oneWave": true,
+        "waves": [
+          [
+            "W-PARSE",
+            "W-TOTAL"
+          ]
+        ],
+        "unscheduled": [],
+        "component": "parallel-execution-planner.plan(writeSetSafe, maxConcurrency k)"
+      }
+    }
+  },
+  "concurrencyPolicy": {
+    "direction": "HOLD",
+    "limits": {
+      "coordinator": 1,
+      "builders": 2,
+      "inspectors": 1,
+      "gitIntegration": 1
+    },
+    "admit": {
+      "coordinator": 0,
+      "builders": 2,
+      "inspectors": 0,
+      "gitIntegration": 0
+    },
+    "notMeasured": [
+      "writesetConflicts",
+      "refusalRate",
+      "ciQueue",
+      "inspectionQueue"
+    ],
+    "reasons": [
+      "HOLD: scale-up needs every signal MEASURED (NOT_MEASURED: writesetConflicts, refusalRate, ciQueue, inspectionQueue)",
+      "inspectors: admitted only when a change is READY (changeReady=NOT_MEASURED)",
+      "gitIntegration: admitted only when no integration is active (gitIntegrationActive=NOT_MEASURED)"
+    ]
+  },
+  "supervisor": {
+    "mode": "REPO_MODE_SCENARIO_WORKSPACE (throw-away git workspace, staleMs 1000 — as V161)",
+    "assignments": [
+      {
+        "item": "W-PARSE",
+        "id": "f-wave-W-PARSE",
+        "outcome": "ASSIGNED",
+        "writeSet": [
+          "src/parse-line.js"
+        ],
+        "conflicts": null,
+        "renew": "RENEWED",
+        "close": {
+          "outcome": "CLOSED_NO_RESULT",
+          "state": "COMPLETED_NO_RESULT",
+          "reason": null
+        }
+      },
+      {
+        "item": "W-TOTAL",
+        "id": "f-wave-W-TOTAL",
+        "outcome": "ASSIGNED",
+        "writeSet": [
+          "src/invoice-total.js"
+        ],
+        "conflicts": null,
+        "renew": "RENEWED",
+        "close": {
+          "outcome": "CLOSED_NO_RESULT",
+          "state": "COMPLETED_NO_RESULT",
+          "reason": null
+        }
+      }
+    ]
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "dispatched": [
+        "W-PARSE",
+        "W-TOTAL"
+      ],
+      "dispatch": {
+        "mode": "PARALLEL",
+        "wallMs": 495,
+        "concurrentOverlapMs": 454,
+        "receipts": [
+          {
+            "ok": true,
+            "commit": "aabe8678b39773d028d3535284778007b27e07f9",
+            "branch": "wave/r1/W-PARSE",
+            "scratch": "scratch/r1/W-PARSE",
+            "version": "v1",
+            "producerPid": 2674633,
+            "producerExit": 0,
+            "producerSignal": null,
+            "ownTestExit": 0,
+            "timedOut": false,
+            "wallMs": 451,
+            "id": "W-PARSE",
+            "startedMs": 1,
+            "endedMs": 484
+          },
+          {
+            "ok": true,
+            "commit": "197991006a0118513ca15679f995c8ff6852dec0",
+            "branch": "wave/r1/W-TOTAL",
+            "scratch": "scratch/r1/W-TOTAL",
+            "version": "v1",
+            "producerPid": 2674637,
+            "producerExit": 0,
+            "producerSignal": null,
+            "ownTestExit": 0,
+            "timedOut": false,
+            "wallMs": 430,
+            "id": "W-TOTAL",
+            "startedMs": 30,
+            "endedMs": 494
+          }
+        ]
+      },
+      "detection": {
+        "incompatible": true,
+        "findings": [
+          {
+            "kind": "WRITESET_VIOLATION",
+            "items": [
+              "W-TOTAL"
+            ],
+            "files": [
+              "src/parse-line.js"
+            ],
+            "detail": "changed src/parse-line.js outside the declared write-set [src/invoice-total.js]",
+            "detectedBy": "git diff --name-only ⊄ declared write-set"
+          },
+          {
+            "kind": "OVERLAPPING_WRITES",
+            "items": [
+              "W-PARSE",
+              "W-TOTAL"
+            ],
+            "files": [
+              "src/parse-line.js"
+            ],
+            "detail": "both changed src/parse-line.js",
+            "detectedBy": "odg-writeset-contention.pathsConflict over the received change-sets"
+          },
+          {
+            "kind": "MERGE_CONFLICT",
+            "items": [
+              "W-PARSE",
+              "W-TOTAL"
+            ],
+            "files": [
+              "src/parse-line.js"
+            ],
+            "detail": "git merge-tree --write-tree reports conflicts in src/parse-line.js",
+            "detectedBy": "git merge-tree --write-tree (exit 1)"
+          },
+          {
+            "kind": "CHECK_FAILED",
+            "items": [
+              "W-PARSE"
+            ],
+            "check": "iface:parse-line",
+            "detail": "post-receipt check iface:parse-line exit 1",
+            "output": "node:internal/assert/utils:77\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: unitCents must be an integer for 0.29, got 28.999999999999996\n    at Object.<anonymous> (<tmp>/odg-wave-check-Im21JO/wt/test/interface/parse-line.iface.js:3:195)\n    at Module._compile (node:internal/modules/cjs/loader:1705:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1838:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at ",
+            "detectedBy": "declared post-receipt check iface:parse-line (process exit code)"
+          }
+        ],
+        "offending": [
+          "W-PARSE",
+          "W-TOTAL"
+        ],
+        "merge": {
+          "status": "CONFLICT",
+          "steps": [
+            {
+              "with": "W-TOTAL",
+              "status": "CONFLICT",
+              "conflictedFiles": [
+                "src/parse-line.js"
+              ]
+            }
+          ],
+          "tree": null,
+          "commit": null
+        },
+        "perItem": {
+          "W-PARSE": {
+            "commit": "aabe8678b39773d028d3535284778007b27e07f9",
+            "changedFiles": [
+              "src/parse-line.js"
+            ],
+            "declaredWriteSet": [
+              "src/parse-line.js"
+            ],
+            "outsideDeclared": [],
+            "checks": [
+              {
+                "id": "iface:parse-line",
+                "exitCode": 1,
+                "output": "node:internal/assert/utils:77\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: unitCents must be an integer for 0.29, got 28.999999999999996\n    at Object.<anonymous> (<tmp>/odg-wave-check-Im21JO/wt/test/interface/parse-line.iface.js:3:195)\n    at Module._compile (node:internal/modules/cjs/loader:1705:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1838:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at "
+              }
+            ]
+          },
+          "W-TOTAL": {
+            "commit": "197991006a0118513ca15679f995c8ff6852dec0",
+            "changedFiles": [
+              "src/invoice-total.js",
+              "src/parse-line.js"
+            ],
+            "declaredWriteSet": [
+              "src/invoice-total.js"
+            ],
+            "outsideDeclared": [
+              "src/parse-line.js"
+            ],
+            "checks": [
+              {
+                "id": "iface:invoice-total",
+                "exitCode": 0,
+                "output": null
+              }
+            ]
+          }
+        }
+      },
+      "integration": {
+        "status": "INTEGRATION_REFUSED",
+        "reason": "incompatible receipts",
+        "checks": []
+      }
+    },
+    {
+      "round": 2,
+      "dispatched": [
+        "W-PARSE",
+        "W-TOTAL"
+      ],
+      "dispatch": {
+        "mode": "PARALLEL",
+        "wallMs": 540,
+        "concurrentOverlapMs": 444,
+        "receipts": [
+          {
+            "ok": true,
+            "commit": "8f3722e0269f16b7798d59412515d742051921ae",
+            "branch": "wave/r2/W-PARSE",
+            "scratch": "scratch/r2/W-PARSE",
+            "version": "v2",
+            "producerPid": 2674720,
+            "producerExit": 0,
+            "producerSignal": null,
+            "ownTestExit": 0,
+            "timedOut": false,
+            "wallMs": 509,
+            "id": "W-PARSE",
+            "startedMs": 0,
+            "endedMs": 540
+          },
+          {
+            "ok": true,
+            "commit": "df6ca959dbc148bdbca6fc1e845490a349e71412",
+            "branch": "wave/r2/W-TOTAL",
+            "scratch": "scratch/r2/W-TOTAL",
+            "version": "v2",
+            "producerPid": 2674724,
+            "producerExit": 0,
+            "producerSignal": null,
+            "ownTestExit": 0,
+            "timedOut": false,
+            "wallMs": 416,
+            "id": "W-TOTAL",
+            "startedMs": 30,
+            "endedMs": 474
+          }
+        ]
+      },
+      "detection": {
+        "incompatible": false,
+        "findings": [],
+        "offending": [],
+        "merge": {
+          "status": "CLEAN",
+          "steps": [
+            {
+              "with": "W-TOTAL",
+              "status": "CLEAN",
+              "tree": "895cc5e3a849c2f0f03e0e3646756688231aa0d5"
+            }
+          ],
+          "tree": "895cc5e3a849c2f0f03e0e3646756688231aa0d5",
+          "commit": "bc4085a8aded090b0a3e61dd4863571b48071ddf"
+        },
+        "perItem": {
+          "W-PARSE": {
+            "commit": "8f3722e0269f16b7798d59412515d742051921ae",
+            "changedFiles": [
+              "src/parse-line.js"
+            ],
+            "declaredWriteSet": [
+              "src/parse-line.js"
+            ],
+            "outsideDeclared": [],
+            "checks": [
+              {
+                "id": "iface:parse-line",
+                "exitCode": 0,
+                "output": null
+              }
+            ]
+          },
+          "W-TOTAL": {
+            "commit": "df6ca959dbc148bdbca6fc1e845490a349e71412",
+            "changedFiles": [
+              "src/invoice-total.js"
+            ],
+            "declaredWriteSet": [
+              "src/invoice-total.js"
+            ],
+            "outsideDeclared": [],
+            "checks": [
+              {
+                "id": "iface:invoice-total",
+                "exitCode": 0,
+                "output": null
+              }
+            ]
+          }
+        }
+      },
+      "integration": {
+        "status": "INTEGRATED_VALIDATED",
+        "commit": "bc4085a8aded090b0a3e61dd4863571b48071ddf",
+        "tree": "895cc5e3a849c2f0f03e0e3646756688231aa0d5",
+        "changedFiles": [
+          "src/invoice-total.js",
+          "src/parse-line.js"
+        ],
+        "union": [
+          "src/invoice-total.js",
+          "src/parse-line.js"
+        ],
+        "unionOk": true,
+        "checks": [
+          {
+            "id": "own:parse-line",
+            "exitCode": 0,
+            "output": null
+          },
+          {
+            "id": "own:invoice-total",
+            "exitCode": 0,
+            "output": null
+          },
+          {
+            "id": "iface:parse-line",
+            "exitCode": 0,
+            "output": null
+          },
+          {
+            "id": "iface:invoice-total",
+            "exitCode": 0,
+            "output": null
+          },
+          {
+            "id": "integration",
+            "exitCode": 0,
+            "output": null
+          }
+        ],
+        "validatedBy": "declared integration checks (process exit codes) on the merged commit, run by ODG in its own scratch"
+      }
+    }
+  ],
+  "timing": {
+    "rule": "REPORT-ONLY (never changes the outcome): dispatchWave wall time of the v2 wave, PARALLEL vs SERIAL, alternating, fresh scratches; median per mode; shared host ⇒ confounded",
+    "repetitions": 5,
+    "parallelMs": [
+      538,
+      510,
+      506,
+      555,
+      540
+    ],
+    "serialMs": [
+      877,
+      874,
+      974,
+      975,
+      957
+    ],
+    "parallelMedianMs": 538,
+    "serialMedianMs": 957,
+    "speedup": 1.779
+  },
+  "pins": [
+    {
+      "file": "runtime/bin/odg-v176-scenario-f-run.ts",
+      "expected": "4b2d939fde0a77642191bdfecc560b9a8c745a4f5d940469a8497531e6b17bba",
+      "actual": "4b2d939fde0a77642191bdfecc560b9a8c745a4f5d940469a8497531e6b17bba"
+    },
+    {
+      "file": "runtime/core/odg-go-wave.ts",
+      "expected": "eb0b841cd59031d73eb6d8765f7ec0a0c7bdb0273a608f87c1c0edd874519a41",
+      "actual": "eb0b841cd59031d73eb6d8765f7ec0a0c7bdb0273a608f87c1c0edd874519a41"
+    },
+    {
+      "file": "runtime/core/parallel-execution-planner.ts",
+      "expected": "881e3070b75a4005281adcd62716ac1bb16d7371616a1f6b07b4f63f92b72e4c",
+      "actual": "881e3070b75a4005281adcd62716ac1bb16d7371616a1f6b07b4f63f92b72e4c"
+    },
+    {
+      "file": "runtime/core/odg-writeset-contention.ts",
+      "expected": "f9c099274d53372105306689b36567a02a1962ec75671e8ee34fa136c5f640eb",
+      "actual": "f9c099274d53372105306689b36567a02a1962ec75671e8ee34fa136c5f640eb"
+    },
+    {
+      "file": "runtime/core/odg-concurrency-policy.ts",
+      "expected": "caa0d2baecffc6c85aa7149e88b97a5ddd91f23242cfcbe14490cd3686d604a0",
+      "actual": "caa0d2baecffc6c85aa7149e88b97a5ddd91f23242cfcbe14490cd3686d604a0"
+    },
+    {
+      "file": "runtime/core/odg-agent-supervisor.ts",
+      "expected": "68ed12a338d5d58e5257cbda498ed6509226c6c2b1c03d8406909a3561589748",
+      "actual": "68ed12a338d5d58e5257cbda498ed6509226c6c2b1c03d8406909a3561589748"
+    },
+    {
+      "file": "docs/odg/evidence/V161_SCENARIO_F.json",
+      "expected": "02519233db44ff1cc214969f1b45136276d91cc709ebbb954cd707c27f8997ab",
+      "actual": "02519233db44ff1cc214969f1b45136276d91cc709ebbb954cd707c27f8997ab"
+    }
+  ],
+  "hostAtStart": {
+    "at": "2026-11-25T01:11:16.675Z",
+    "load1": 1.95,
+    "load5": 1.73,
+    "load15": 1.68,
+    "nproc": 8,
+    "idleFactor": 0.75,
+    "threshold": 6,
+    "aboveThreshold": false
+  },
+  "criteria": {
+    "C1": {
+      "text": "decomposition + assignment through odg-agent-supervisor (write-sets declared)",
+      "met": true,
+      "detail": {
+        "waveMode": "PARALLEL",
+        "wave": [
+          "W-PARSE",
+          "W-TOTAL"
+        ],
+        "supervisorOutcomes": [
+          "W-PARSE:ASSIGNED",
+          "W-TOTAL:ASSIGNED"
+        ]
+      }
+    },
+    "C2": {
+      "text": "two independently produced outputs received",
+      "met": true,
+      "detail": {
+        "received": [
+          {
+            "id": "W-PARSE",
+            "commit": "aabe8678b39773d028d3535284778007b27e07f9",
+            "branch": "wave/r1/W-PARSE",
+            "producerPid": 2674633
+          },
+          {
+            "id": "W-TOTAL",
+            "commit": "197991006a0118513ca15679f995c8ff6852dec0",
+            "branch": "wave/r1/W-TOTAL",
+            "producerPid": 2674637
+          }
+        ],
+        "concurrentOverlapMs": 454
+      }
+    },
+    "C3": {
+      "text": "an incompatibility is DETECTED by an ODG check (not by the coordinator)",
+      "met": true,
+      "detail": {
+        "round1Findings": [
+          {
+            "kind": "WRITESET_VIOLATION",
+            "items": [
+              "W-TOTAL"
+            ],
+            "detectedBy": "git diff --name-only ⊄ declared write-set"
+          },
+          {
+            "kind": "OVERLAPPING_WRITES",
+            "items": [
+              "W-PARSE",
+              "W-TOTAL"
+            ],
+            "detectedBy": "odg-writeset-contention.pathsConflict over the received change-sets"
+          },
+          {
+            "kind": "MERGE_CONFLICT",
+            "items": [
+              "W-PARSE",
+              "W-TOTAL"
+            ],
+            "detectedBy": "git merge-tree --write-tree (exit 1)"
+          },
+          {
+            "kind": "CHECK_FAILED",
+            "items": [
+              "W-PARSE"
+            ],
+            "detectedBy": "declared post-receipt check iface:parse-line (process exit code)"
+          }
+        ],
+        "plantedDetected": [
+          {
+            "kind": "WRITESET_VIOLATION",
+            "item": "W-TOTAL",
+            "detected": true
+          },
+          {
+            "kind": "CHECK_FAILED",
+            "item": "W-PARSE",
+            "detected": true
+          }
+        ]
+      }
+    },
+    "C4": {
+      "text": "integration validated by tests + independent inspection",
+      "testsMet": true,
+      "inspection": "PENDING — not part of the run: the independent inspection of this result is the VALIDATE_CRITERIA step (odg-authorization-scope R5b: criteria-validation record citing an independent inspection ACCEPT of the experiment; scenarioGrade never above this outcome)",
+      "detail": {
+        "finalRound": 2,
+        "integrationStatus": "INTEGRATED_VALIDATED",
+        "checks": [
+          "own:parse-line:0",
+          "own:invoice-total:0",
+          "iface:parse-line:0",
+          "iface:invoice-total:0",
+          "integration:0"
+        ],
+        "unionOk": true
+      }
+    }
+  },
+  "mechanicalGrade": "PASS",
+  "outcome": "PARTIAL",
+  "outcomeCap": "FIXTURE-CAP-1: outcome = min(mechanicalGrade, PARTIAL)",
+  "outcomeReason": "C1 ∧ C2 ∧ C3 ∧ C4(tests) met on the fixture (mechanics) — capped at PARTIAL by FIXTURE-CAP-1 (fixture mechanics only; natural detection between live providers NOT measured — V161's point stays OPEN; C4's independent-inspection part is assessed at VALIDATE_CRITERIA, R5b)",
+  "network": {
+    "modelCalls": 0,
+    "providerCalls": 0,
+    "requests": 0
+  },
+  "tempDirRemoved": true,
+  "wallMs": 15332,
+  "generatedAt": "2026-11-25T01:11:31.995Z",
+  "oneShotClaim": {
+    "key": "323da9a12215cc1e-F-runner",
+    "path": "323da9a12215cc1e-F-runner.claim"
+  }
+}

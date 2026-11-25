@@ -10,12 +10,12 @@
   },
   "inputs": [
     {
-      "source": "docs/odg/evidence/V178_CHECKPOINT_15.json",
-      "sha256": "c52bddff012f044d11b16dc11d6ab3eca950abf6a519e916795fccd74b503812"
+      "source": "docs/odg/evidence/V178_CHECKPOINT_17.json",
+      "sha256": "9daf21138377ba93116deb87d0988bafc1239e778e4565b27956ea203ba02c64"
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "ec48bcfdc87a28b254e78400c6cae3a3c908d48a9d8217f4a92bbbdffc59f082"
+      "sha256": "789d63069401aac3f3a4eb377ef1ff492022da86d8f8443b9c836c969d3bc2f3"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -42,6 +42,10 @@
       "sha256": "e8d8eb98d2c9d7b627906d4a542dd938b60775c4cf8a734ec9d8efa6c95772eb"
     },
     {
+      "source": "docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "a503cf18ddd0187464dc782f44d7a44d14b8369306f9284f364799e5582d7935"
+    },
+    {
       "source": "docs/odg/evidence/V176_J_GO_EXECUTE_TRACE.jsonl",
       "sha256": "dd2b0cea75c90989981498786970653ff67418e038e3d46315173b76b71b2365"
     },
@@ -56,6 +60,14 @@
     {
       "source": "docs/odg/evidence/V176_F_CONTRACT_INSPECTION.json",
       "sha256": "6dfe1222d80a0e1ac148eb817a5e3ee29b8a84a94be06b8c1b60d2a816e597c0"
+    },
+    {
+      "source": "docs/odg/evidence/V176_F_EXPERIMENT.json",
+      "sha256": "1dfa8e61d9ef7afb5e53cae822c3999fcd3032e12bea43cf5e4a57e140e310ef"
+    },
+    {
+      "source": "docs/odg/evidence/V176_F_CRITERIA_VALIDATION.json",
+      "sha256": "800e3f80871cc624396da306eeb8e697cdecc0d09aa20c8ec641c3e8539f42f6"
     },
     {
       "source": "docs/odg/evidence/V166_G_CONTRACT_INSPECTION.json",
@@ -147,10 +159,10 @@
     }
   ],
   "checkpoint": {
-    "path": "docs/odg/evidence/V178_CHECKPOINT_15.json",
-    "checkpoint": "CP15",
+    "path": "docs/odg/evidence/V178_CHECKPOINT_17.json",
+    "checkpoint": "CP17",
     "date": "2026-11-25",
-    "headAtCheckpoint": "d59ff4b3",
+    "headAtCheckpoint": "b2e8b9f6",
     "nextPriority": null,
     "rule": "LCP-1"
   },
@@ -243,7 +255,7 @@
     {
       "id": "F",
       "title": "F — Multi-agents",
-      "registerStatus": "EXECUTED_PARTIAL",
+      "registerStatus": "CLOSED_PARTIAL",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "MEASURED",
@@ -256,17 +268,19 @@
       },
       "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": null,
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
-        "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "inspection ACCEPT bound to contract 323da9a12215 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "all steps validated",
         "contractSha256": "323da9a12215cc1e16dc2ea16ee791263c87b5c4e178d6a0fb3b0f25397dfaa1"
       },
       "records": {
@@ -275,19 +289,25 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V176_F_EXPERIMENT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V176_F_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
-      "lastGoRun": null,
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl",
+        "runId": "72f232fd36191bff",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-25T01:11:32.207Z",
+        "dispatched": true
+      },
       "pending": [],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-scenario-f-run.ts"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PARTIAL, CLOSE-1 docs/odg/evidence/V176_F_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=F]",
@@ -916,8 +936,7 @@
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
-      "EXECUTED_PARTIAL": 1,
-      "CLOSED_PARTIAL": 3,
+      "CLOSED_PARTIAL": 4,
       "CLOSED_FAIL": 3,
       "CLOSED_PASS": 1,
       "NOT_STARTED": 11,
@@ -1042,12 +1061,25 @@
       "strategic": "J",
       "workingOn": "J",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "72f232fd36191bff",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-25T01:11:32.207Z",
+      "dispatched": [
+        "F"
+      ],
+      "strategic": "D",
+      "workingOn": "F",
+      "ownerSelectionRecord": null
     }
   ],
   "nextGoAction": {
     "rule": "RSP-5",
     "strategic": {
-      "decision": "TIE_EXPLAINED",
+      "decision": "SELECTED",
       "item": "D",
       "contractState": "PROPOSED",
       "boussoleRef": {
@@ -1064,15 +1096,11 @@
     },
     "dispatchable": [
       {
-        "item": "F",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-scenario-f-run.ts"
-      },
-      {
         "item": "V176-NB3",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-nb3-native-design-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: F, V176-NB3",
+    "verdict": "GO --execute could dispatch: V176-NB3",
     "pendingNonGo": [
       {
         "item": "D",
@@ -1091,15 +1119,15 @@
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/V176_J_GO_EXECUTE_TRACE.jsonl",
-      "runId": "e2aec9a403fb6263",
-      "status": "EXECUTED_FAIL",
-      "endedAt": "2026-11-24T21:01:42.944Z",
-      "strategic": "J",
-      "workingOn": "J",
+      "trace": "docs/odg/evidence/V176_F_GO_EXECUTE_TRACE.jsonl",
+      "runId": "72f232fd36191bff",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-25T01:11:32.207Z",
+      "strategic": "D",
+      "workingOn": "F",
       "nextAfterCurrent": {
         "decision": "SELECTED",
-        "selected": "F",
+        "selected": "D",
         "proposed": null
       }
     }

@@ -24,14 +24,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795568751000,
+    "nowEpochMs": 1795570313000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "ec48bcfdc87a28b254e78400c6cae3a3c908d48a9d8217f4a92bbbdffc59f082",
-      "epochMs": 1795568751000
+      "sha256": "789d63069401aac3f3a4eb377ef1ff492022da86d8f8443b9c836c969d3bc2f3",
+      "epochMs": 1795569341000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -45,8 +45,8 @@
     },
     {
       "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json",
-      "sha256": "34d6dd91fcba52ced0be73ae488b30eadbd763f08707788cad4971295bac8759",
-      "epochMs": 1795553408000
+      "sha256": "68bb121aa58aeb9ab56f1d829302afc69d35bfb0c955041c82965432934bd2bf",
+      "epochMs": 1795569000000
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -64,9 +64,9 @@
       "epochMs": 1795532572000
     },
     {
-      "source": "docs/odg/evidence/V178_CHECKPOINT_15.json",
-      "sha256": "c52bddff012f044d11b16dc11d6ab3eca950abf6a519e916795fccd74b503812",
-      "epochMs": 1795566720000
+      "source": "docs/odg/evidence/V178_CHECKPOINT_17.json",
+      "sha256": "9daf21138377ba93116deb87d0988bafc1239e778e4565b27956ea203ba02c64",
+      "epochMs": 1795570313000
     },
     {
       "source": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_EVIDENCE.json",
@@ -75,9 +75,9 @@
     }
   ],
   "counts": {
-    "signals": 38,
+    "signals": 39,
     "byVerdict": {
-      "REFUSED": 26,
+      "REFUSED": 27,
       "OWNER_GATED": 2,
       "PROPOSED": 10
     },
@@ -1074,7 +1074,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[1]"
       ],
-      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PARTIAL (CLOSED_PARTIAL)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-2",
@@ -1113,7 +1113,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[2]"
       ],
-      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PARTIAL (CLOSED_PARTIAL)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-2",
@@ -1191,7 +1191,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[4]"
       ],
-      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PARTIAL (CLOSED_PARTIAL)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-2",
@@ -1230,7 +1230,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[5]"
       ],
-      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PASS (CLOSED_PASS)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-2",
@@ -1269,7 +1269,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[6]"
       ],
-      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PASS (CLOSED_PASS)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-2",
@@ -1308,10 +1308,10 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[7]"
       ],
-      "statement": "CTR-1 GAP_STATED_FIXED: register status PROPOSED vs J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
       "claimStatus": "OBSERVED",
       "before": {
-        "name": "register.contradictions.CTR-1",
+        "name": "register.contradictions.CTR-2",
         "value": "OPEN"
       },
       "id": "RB-UNMAPPED-REGISTER_CONTRADICTION-2c55f924",
@@ -1347,7 +1347,46 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[8]"
       ],
-      "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V178_CHECKPOINT_15.json (LCP-1)",
+      "statement": "CTR-1 GAP_STATED_FIXED: register status PROPOSED vs J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+      "claimStatus": "OBSERVED",
+      "before": {
+        "name": "register.contradictions.CTR-1",
+        "value": "OPEN"
+      },
+      "id": "RB-UNMAPPED-REGISTER_CONTRADICTION-39fc23ff",
+      "link": {
+        "rule": "LINK-1",
+        "matched": false
+      },
+      "ownerGatedKind": null,
+      "targetComponents": [],
+      "multiplier": {
+        "perComponent": [],
+        "maxDirectConsumers": null,
+        "maxTransitiveDependents": null,
+        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
+      },
+      "gate": {
+        "verdict": "REFUSED",
+        "reasons": [
+          "NO_COMPONENT_ATTACHED"
+        ],
+        "authorized": false,
+        "executed": false
+      },
+      "assess": {
+        "ageDays": 0,
+        "fresh": true,
+        "corroboration": "UNCORROBORATED"
+      },
+      "qualification": "INTERNAL_IMPROVEMENT"
+    },
+    {
+      "origin": "REGISTER_CONTRADICTION",
+      "sources": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[9]"
+      ],
+      "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V178_CHECKPOINT_17.json (LCP-1)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-3",
@@ -4787,7 +4826,7 @@
         "source": {
           "directive": "owner CTO directive V176 2026-11-24 §4 (Radar → construction)",
           "signals": [
-            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[8]"
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[9]"
           ]
         },
         "scope": "improve odg-strategic-register only; no Radar egress, no spend, no canonical-authority change",
@@ -4866,7 +4905,7 @@
         "measure": {
           "before": [
             {
-              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[8]",
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[9]",
               "name": "register.contradictions.CTR-3",
               "value": "OPEN"
             }
