@@ -10,12 +10,12 @@
   },
   "inputs": [
     {
-      "source": "docs/odg/evidence/V178_CHECKPOINT_17.json",
-      "sha256": "9daf21138377ba93116deb87d0988bafc1239e778e4565b27956ea203ba02c64"
+      "source": "docs/odg/evidence/V178_CHECKPOINT_18.json",
+      "sha256": "d2a4199edd5fcb28083f5b01f94dc509cac1e279edc7f4e7062fbcb18c2d4a38"
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "3d4d5893f6ef6c84da92a51c69d60d1543f2d8e095660a80b1243a80f3b456c6"
+      "sha256": "43b1a4e6ca019283f64f437900572a74ae1c293cafc8db5f676ffeb0453c9e0e"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -179,10 +179,10 @@
     }
   ],
   "checkpoint": {
-    "path": "docs/odg/evidence/V178_CHECKPOINT_17.json",
-    "checkpoint": "CP17",
+    "path": "docs/odg/evidence/V178_CHECKPOINT_18.json",
+    "checkpoint": 18,
     "date": "2026-11-25",
-    "headAtCheckpoint": "b2e8b9f6",
+    "headAtCheckpoint": "95d57ca4",
     "nextPriority": null,
     "rule": "LCP-1"
   },
