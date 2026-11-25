@@ -4855,6 +4855,28 @@
           "reason": "P4 CLOSED_PASS but not wired into ODG call paths",
           "justification": "owner-ordered operational integration; criteria fixed before any run",
           "revisionAuthorSessionId": "v19-p4int-binding"
+        },
+        {
+          "date": "2026-11-25",
+          "author": "PROVIDER (Claude Code, V19 P4-INT revision-2 session; branch fix/v19-p4int-tier1-canonical)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json",
+          "originalCriteria": [
+            "AC1 GO knowledge() (runtime/bin/odg-go.ts) indexes the canonical toMemory records into the per-tenant hybrid index: FACT tier = exactly the admissible-trusted claims (memory-architecture.accessMemory), CONTEXT tier = SUPPORTED-unverified attributed sourced fresh records; status INDEXED with indexed > 0",
+            "AC2 the real GO cycle (odg-go-cycle.runGoCycle) records DECOMPOSE.contextRecall RECALLED for its working item; every hit is FACT (⊆ admissible-trusted ids) or CONTEXT_UNVERIFIED",
+            "AC3 no promotion: the claims' admissibility is byte-identical with and without the memory port",
+            "AC4 persistence: a second knowledge() on the same index re-embeds nothing and indexes the same count",
+            "AC5 FACT pipeline on SYNTHETIC-labelled fixtures through the same port: a VERIFIED fresh attributed record is recalled as FACT, a SUPPORTED one as CONTEXT_UNVERIFIED (mechanism only, never a real fact)",
+            "AC6 tsc --noEmit --incremental false clean and every touched test file passes, run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC6 unchanged",
+          "change": [
+            "TIER-1 contextEligible now derives from the canonical memory-trust-gate verdict (eligible ⇔ excluded ONLY as UNVERIFIED + SUPPORTED + sourced) — inspection REJECT: UNATTRIBUTED (ODG-prefixed rogue) / SUPPRESSED records were indexed as CONTEXT",
+            "recall hits carry the canonical record's status, provenance, learnedAt/validUntil, confidence (owner directive A)",
+            "regression tests UNATTRIBUTED + SUPPRESSED + contextEligible verdict table; runner unchanged"
+          ],
+          "reason": "independent inspection REJECT (head c1a5b6cc, sha 55f35643…)",
+          "justification": "remove the second (weaker) eligibility rule; criteria unchanged; no run yet",
+          "revisionAuthorSessionId": "v19-p4int-rev2"
         }
       ]
     }

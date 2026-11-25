@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "d3b56e34b09fb0e58e277cd5b7d0c0f0ba99b3aa304dddb9f8067f870c3ab983"
+      "sha256": "92389668ba5868c1177444a878ffd3e254d435ad078f16470c2c719c3f71cc82"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "b392526f736f30155481cbae7dda6fef2e91bc4f7d0f1f6221a1de91b922049c"
+      "sha256": "94762b58ad2418f813edf546bcdb73fa10f6ec475eb96edc8a90fc374f1e6e24"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -243,11 +243,11 @@
     },
     {
       "source": "runtime/bin/odg-go-memory.test.ts",
-      "sha256": "1ee337b635d94a0f39d8feab1fe4ad58fd9df03166a2eb0e2d267b09803b691b"
+      "sha256": "1788400acacdd4cd0b8acdb012f7934c0be4e34744da57f8c081d705c02161e9"
     },
     {
       "source": "runtime/bin/odg-go.ts",
-      "sha256": "f0409d109ffbea6c03c8c5268d62c7710799a5f9d05db88bd80b95c0c6a0e6b7"
+      "sha256": "024ba5bd552dd3c27409fa5db90985d8e0938ba53aea176904a4f615891c65f6"
     },
     {
       "source": "runtime/bin/odg-local-model-benchmark.ts",
@@ -367,11 +367,11 @@
     },
     {
       "source": "runtime/core/odg-memory-hybrid-index.test.ts",
-      "sha256": "c23cb1e15f0df830ca90e9e279a86a48790741d4a9a1f9ccfeeb5e5fb27d57a5"
+      "sha256": "17dd28fe08258a96f034650a0eda353530a342572f1b5bd0d387efffa6d129c7"
     },
     {
       "source": "runtime/core/odg-memory-hybrid-index.ts",
-      "sha256": "d9c9384720ffbcae3f4854f3aebe1862a345d4f47069cb515ee760293477d6da"
+      "sha256": "00cc937cf832f94010642672cd583fcff775185a0b250e39ee344f6eff4d6328"
     },
     {
       "source": "runtime/core/odg-model-router.test.ts",
@@ -8426,7 +8426,7 @@
           "reason": "contract scenario 'V178-P4-INT' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
         },
         "contractRef": {
-          "contractSha256": "55f356430c0a9bcc063359fadcd81157effe0dce2a3e0e0b6883d7b7b4c16ff9",
+          "contractSha256": "dad4365a2103dda5d46298be0da3337c96e19c02efab6aa76a3395164dc96f66",
           "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31]",
           "ownerRecord": "docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json",
           "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].authorization.source",
@@ -18383,5 +18383,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "964f5dc156ff1f63f43d37a6112fe2ef08540b85"
+  "generatedAtHead": "5c46081b5c501b999e7d25185e0f06b60e855a03"
 }

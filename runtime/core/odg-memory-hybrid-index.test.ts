@@ -67,6 +67,18 @@ const ACCESS = { asOf: 100, trustedAuthors: ["ODG"] };
     const M = require("./memory-architecture"); const acc = M.accessMemory(recsT, ACCESS);
     check(!acc.trusted.some((t: any) => t.id === "c1"), "TIER-1: a CONTEXT record is still NOT trusted by accessMemory (never promoted to a fact)");
     check(on.factIndexed === acc.trusted.length, "TIER-1: FACT tier = exactly the records accessMemory trusts (" + acc.trusted.length + ")");
+    // regression (inspection REJECT): records the canonical gate excludes for anything but UNVERIFIED are NEVER context
+    const ixR = H.openIndex({ dir: d2, tenant: "tiersreg", dims: DIMS });
+    const rogue = [{ id: "r-unattr", claim: "SYNTHETIC supported claim by an unresolvable ODG-prefixed author", status: "UNVERIFIED", epistemic: "SUPPORTED", ...base, authoredBy: "ODGX_ROGUE" },
+      { id: "r-supp", claim: "SYNTHETIC supported claim whose reuse is suppressed", status: "UNVERIFIED", epistemic: "SUPPORTED", ...base },
+      { id: "r-ok", claim: "SYNTHETIC supported claim eligible as context", status: "UNVERIFIED", epistemic: "SUPPORTED", ...base }];
+    const optsR = { ...ACCESS, contextTier: true, reuseHealthById: { "r-supp": { suppressed: true } } };
+    const verdicts = M.accessMemory(rogue, optsR).excluded.map((e: any) => e.id + ":" + e.verdict).sort().join(",");
+    const sr = await H.syncIndex(ixR, rogue, optsR, fakeEmbed);
+    const rowsR = ixR.db.prepare("select id from docs order by id").all().map((r: any) => r.id).join(",");
+    check(sr.contextIndexed === 1 && rowsR === "r-ok", "TIER-1 regression: UNATTRIBUTED (ODG-prefixed rogue) and SUPPRESSED records are never indexed as context; only the canonical UNVERIFIED one is (" + verdicts + " ⇒ " + rowsR + ")");
+    check(H.contextEligible({ epistemic: "SUPPORTED", provenance: "x" }, "UNATTRIBUTED") === false && H.contextEligible({ epistemic: "SUPPORTED", provenance: "x" }, "TAMPERED") === false && H.contextEligible({ epistemic: "SUPPORTED", provenance: "x" }, "UNVERIFIED") === true, "TIER-1: contextEligible accepts only the canonical verdict UNVERIFIED (TAMPERED / UNATTRIBUTED / SUPPRESSED / STALE refused)");
+    ixR.db.close();
     ixT.db.close();
   }
   if (failures) { process.stdout.write(failures + " failure(s)\n"); process.exit(1); }

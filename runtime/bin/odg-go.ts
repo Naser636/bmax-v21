@@ -362,7 +362,7 @@ function knowledge(repo: string, useAt: number, mem?: any): any {
       const [probe] = await mem.embed(["dimension probe"]);
       const ix = H.openIndex({ dir: mem.dir, tenant: mem.tenant, dims: probe.length });
       const sync = await H.syncIndex(ix, memories, { asOf: useAt, trustedAuthors: ["ODG"], contextTier: true }, mem.embed);   // TIER-1: FACT = trust-gated; CONTEXT = SUPPORTED/unverified (never a fact)
-      mem.ix = ix;
+      mem.ix = ix; mem.records = new Map(memories.map((r: any) => [String(r.id), r]));
       out.memory = { status: "INDEXED", tenant: mem.tenant, index: path.basename(ix.file), dims: probe.length, ...sync, records: memories.length };
     } catch (e: any) { out.memory = { status: "NOT_MEASURED", reason: String((e && e.message) || e) }; }
     return out;
@@ -372,11 +372,13 @@ function knowledge(repo: string, useAt: number, mem?: any): any {
 /* memoryPort(physOut, embed) — MEM-INT-1: the GO memory port (index under the confined GO out dir; tenant odg-go). */
 function memoryPort(physOut: string, embed?: any): any {
   const H = () => require("../core/memory-architecture.js").semanticRetrieval();
-  const m: any = { dir: path.join(physOut, "memory-index"), tenant: "odg-go", embed: embed || H().ollamaEmbed(), ix: null };
+  const m: any = { dir: path.join(physOut, "memory-index"), tenant: "odg-go", embed: embed || H().ollamaEmbed(), ix: null, records: null };
   m.recall = async (q: string) => {
     if (!m.ix) return { status: "NOT_MEASURED", reason: "no index (knowledge step did not index)" };
     const hits = await H().query(m.ix, q, m.embed, { k: 3 });
-    const prov = hits.map((h: any) => ({ id: h.id, family: h.family, tier: h.tier, score: Math.round(h.score * 1e6) / 1e6, ranks: h.ranks }));
+    // owner TIER-1: a recalled record keeps its status, provenance, dates, source and confidence (read from the canonical record)
+    const prov = hits.map((h: any) => { const r = m.records && m.records.get(String(h.id)); return { id: h.id, family: h.family, tier: h.tier, score: Math.round(h.score * 1e6) / 1e6, ranks: h.ranks,
+      ...(r ? { status: r.status, epistemic: r.epistemic, provenance: r.provenance, learnedAt: r.learnedAt, validUntil: r.validUntil, confidence: r.confidence } : {}) }; });
     return { status: "RECALLED", query: q, facts: prov.filter((h: any) => h.tier === "FACT"), context: prov.filter((h: any) => h.tier === "CONTEXT_UNVERIFIED"),
       contextNote: "CONTEXT_UNVERIFIED = SUPPORTED, not corroborated: usable as context only, NEVER as a fact (not admissible, not evidence)",
       rule: "MEM-INT-1 + TIER-1: hybrid FTS5 + vector RRF over canonical memory records; FACT tier = memory-architecture.accessMemory trusted only" };

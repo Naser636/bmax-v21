@@ -61,16 +61,15 @@ function openIndex(o: any): any {
 function f32(v: number[]): Uint8Array { return new Uint8Array(new Float32Array(v).buffer); }
 
 /* TIER-1 (owner decision 2026-11-25, two-level memory): a record the trust gate does NOT admit may still be indexed as
- * CONTEXT (never a fact) iff it is SUPPORTED-but-unverified, attributed, has provenance, is fresh and is not invalidated.
+ * CONTEXT (never a fact) iff the canonical gate's verdict for it is exactly UNVERIFIED (see contextEligible) + SUPPORTED + sourced.
  * CONTEXT rows are returned with tier CONTEXT_UNVERIFIED and are never promoted: the FACT tier is exactly accessMemory's. */
-function contextEligible(rec: any, asOf: number): boolean {
-  if (!isObj(rec)) return false;
-  if (String(rec.status || "").toUpperCase() !== "UNVERIFIED") return false;
+function contextEligible(rec: any, canonicalVerdict: string): boolean {
+  // TIER-1 fix (inspection REJECT 2026-11-25): eligibility DERIVES from the canonical gate — the record must have been
+  // excluded by memory-trust-gate ONLY for quality UNVERIFIED (i.e. it already passed invalidation, tamper, staleness,
+  // attribution, trusted-author and suppression checks). No rule of its own beyond "SUPPORTED + sourced".
+  if (!isObj(rec) || canonicalVerdict !== "UNVERIFIED") return false;
   if (rec.epistemic !== undefined && rec.epistemic !== "SUPPORTED") return false;
-  if (!(typeof rec.provenance === "string" && rec.provenance.trim())) return false;
-  if (!(typeof rec.authoredBy === "string" && /^ODG/.test(rec.authoredBy))) return false;
-  if (!(Number.isFinite(rec.validUntil) && Number.isFinite(asOf) && rec.validUntil > asOf)) return false;
-  return true;
+  return typeof rec.provenance === "string" && rec.provenance.trim().length > 0;
 }
 
 /* syncIndex(ix, records, accessOpts, embed) — index exactly the TRUSTED records with text; drop the rest. Returns counts. */
@@ -81,7 +80,7 @@ async function syncIndex(ix: any, records: any, accessOpts: any, embed: any): Pr
   for (const t of access.trusted) { const rec = byId[String(t.id)]; const text = rec ? textOf(rec) : null; if (text) want.push({ id: String(t.id), family: t.family, text, sha: sha(text), tier: "FACT" }); }
   const ctxOn = isObj(accessOpts) && accessOpts.contextTier === true;
   let contextIndexed = 0;
-  if (ctxOn) for (const x of access.excluded) { const rec = byId[String(x.id)]; const text = rec ? textOf(rec) : null; if (text && contextEligible(rec, Number(accessOpts.asOf))) { want.push({ id: String(x.id), family: String(rec.family || "semantic"), text, sha: sha(text + "|CONTEXT"), tier: "CONTEXT" }); contextIndexed++; } }
+  if (ctxOn) for (const x of access.excluded) { const rec = byId[String(x.id)]; const text = rec ? textOf(rec) : null; if (text && contextEligible(rec, String(x.verdict))) { want.push({ id: String(x.id), family: String(rec.family || "semantic"), text, sha: sha(text + "|CONTEXT"), tier: "CONTEXT" }); contextIndexed++; } }
   const wantIds = new Set(want.map((w) => w.id));
   const db = ix.db;
   let removed = 0;
@@ -140,7 +139,7 @@ const MEMORY_HYBRID_INDEX_CONTRACT = Object.freeze({
   invariants: Object.freeze([
     "only records accessMemory returns as TRUSTED are indexed; an untrusted/stale record is never indexed and is removed if present",
     "one SQLite file per validated tenant id; no cross-tenant table",
-    "TIER-1: FACT tier = exactly the records accessMemory trusts; CONTEXT tier (opt-in contextTier) = SUPPORTED/UNVERIFIED, attributed, sourced, fresh, never invalidated; CONTEXT is returned as CONTEXT_UNVERIFIED and never promoted to a fact",
+    "TIER-1: FACT tier = exactly the records accessMemory trusts; CONTEXT tier (opt-in contextTier) = records the canonical gate excluded ONLY as UNVERIFIED (so attributed, trusted-author, fresh, not suppressed, not invalidated) + SUPPORTED + sourced; CONTEXT is returned as CONTEXT_UNVERIFIED and never promoted to a fact",
     "fusion = RRF (k = 60), deterministic tie-break by id; FTS5 terms are quoted (no operator injection)",
     "no network in this module except the optional ollamaEmbed seam the caller injects",
   ]),
