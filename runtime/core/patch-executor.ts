@@ -10,6 +10,14 @@ const artifactState: any = require("./artifact-state");
 
 const GENERATED_DIR = "runtime/generated";
 
+// IMPORT-1 (V17.8): this module is a pipeline STAGE — every caller spawns it as a script (pipeline-builder stage, the
+// black-box tests run `node runtime/dist/core/patch-executor.js`). It used to EXECUTE runtime/generated/patch-plan.json as a
+// side effect of a mere require() (found when primitive-validation.test.ts loaded it: it rewrote patch-execution.json on
+// the host and crashed with ENOENT on a clean checkout). Importing is now refused BEFORE any read or write.
+if (require.main !== module) {
+  throw new Error("IMPORT_REFUSED: patch-executor is a pipeline stage — run it as a script (node patch-executor.js); importing it would execute runtime/generated/patch-plan.json");
+}
+
 const plan: any = JSON.parse(
   fs.readFileSync(path.join(GENERATED_DIR, "patch-plan.json"), "utf8")
 );

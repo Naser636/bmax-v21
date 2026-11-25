@@ -18,10 +18,13 @@ console.log("WI-A4-32 — NINE-PRIMITIVE VALIDATION MATRIX");
 // load each canonical runtime/core module (fail-safe)
 const loaded: any = {};
 for (const mod of V.canonModules()) {
-  try { loaded[mod] = { ok: true, exports: require("./" + mod) }; }
+  try { loaded[mod] = V.stageModules().includes(mod) ? { ok: !!require.resolve("./" + mod), exports: {}, stage: true } : { ok: true, exports: require("./" + mod) }; }
   catch (e: any) { loaded[mod] = { ok: false, error: String(e && e.message || e) }; }
 }
 const matrix = V.validatePrimitives(loaded);
+// IMPORT-1: the EXECUTOR stage refuses import (it would execute the live patch plan) — proven, not assumed
+{ let refused = false; try { require("./patch-executor"); } catch (e: any) { refused = /IMPORT_REFUSED/.test(String(e && e.message)); }
+  check(refused, "IMPORT-1: require('./patch-executor') is refused before any read/write (no plan executed on import)"); }
 
 check(matrix.count === 9 && matrix.noTenth === true, "exactly NINE primitives, no tenth");
 check(matrix.noDuplicateResponsibility === true, "nine distinct primitives (no artificial merge)");

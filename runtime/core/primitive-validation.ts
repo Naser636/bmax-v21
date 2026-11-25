@@ -17,7 +17,7 @@ const CANON = Object.freeze([
   Object.freeze({ primitive: "CONTRACT", module: "mission-contract-factory", responsibility: "mission interfaces / pre-postconditions / invariants", key: null }),
   Object.freeze({ primitive: "POLICY", module: "action-gate", responsibility: "STATE→CONTRACT→POLICY→AUTHORITY fail-closed admission", key: null }),
   Object.freeze({ primitive: "RESOLVER", module: "capability-router", responsibility: "tiered resolution Memory→Rules→Local-LLM→External", key: null }),
-  Object.freeze({ primitive: "EXECUTOR", module: "patch-executor", responsibility: "sole writer bounded to authorizedPaths, idempotent", key: null }),
+  Object.freeze({ primitive: "EXECUTOR", module: "patch-executor", responsibility: "sole writer bounded to authorizedPaths, idempotent", key: null, stage: true }),
   Object.freeze({ primitive: "EVIDENCE", module: "evidence-provenance", responsibility: "attributable, tamper-evident, revision-bound proof", key: "stampProvenance" }),
   Object.freeze({ primitive: "RECOVERY", module: "checkpoint-engine", responsibility: "resumable checkpoint state (FAILED-not-resumable)", key: null }),
   Object.freeze({ primitive: "ALLOCATOR", module: "vnext/resource-allocation-engine", responsibility: "deterministic resource selection under constraints (Seam B, additive)", key: null, external: true }),
@@ -44,6 +44,8 @@ function validatePrimitives(loaded: any): any {
 }
 
 /** canonModules() -> the runtime/core modules the caller must load (ALLOCATOR excluded: it is in vnext). */
+/* stage modules are SCRIPTS (they execute on load and refuse import — IMPORT-1): presence is proven by resolution, never by require */
+function stageModules(): any { return Object.freeze(CANON.filter((c: any) => c.stage === true).map((c: any) => c.module)); }
 function canonModules(): any { return Object.freeze(CANON.filter((c: any) => !c.external).map((c: any) => c.module)); }
 
 const PRIMITIVE_VALIDATION_CONTRACT = Object.freeze({
@@ -59,7 +61,7 @@ const PRIMITIVE_VALIDATION_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { CANON, PRIMITIVE_VALIDATION_CONTRACT, validatePrimitives, canonModules };
+module.exports = { stageModules, CANON, PRIMITIVE_VALIDATION_CONTRACT, validatePrimitives, canonModules };
 
 if (require.main === module) { process.stdout.write(JSON.stringify(PRIMITIVE_VALIDATION_CONTRACT, null, 2) + "\n"); }
 
