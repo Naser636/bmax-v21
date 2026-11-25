@@ -36,6 +36,11 @@ const FB = require(path.join(ROOT, "runtime", "core", "fleet-bridge.js"));
 const MISSIONS = ["M1", "M2", "M3", "M4"];
 const OPS_PER_MISSION = 4;
 const LEASE_TTL_MS = Number(process.env.ODG_SCENARIO_M_TTL_MS || 1500);
+/* MR-1: read one claim generation file (fleet-bridge layout <locksDir>/<id>.lock.<gen>) — { holder, mtimeMs } | null. */
+function readGeneration(cfg: any, id: string, gen: number): any {
+  const f = path.join(cfg.locksDir, `${id}.lock.${gen}`);
+  try { return { holder: JSON.parse(fs.readFileSync(f, "utf8")), mtimeMs: fs.statSync(f).mtimeMs }; } catch { return null; }
+}
 const OP_MS = Number(process.env.ODG_SCENARIO_M_OP_MS || 120);
 
 const sha = (s: string) => crypto.createHash("sha256").update(s).digest("hex");
@@ -91,10 +96,16 @@ function runWorker(dir: string): void {
       if (Date.now() > deadline) { ev({ e: "LEASE_UNAVAILABLE", op: lot.id, mission: lot.mission, contended }); return { status: "WAITING_EXTERNAL", reason: "lease held" }; }
       sleepSync(25);
     }
-    // takeover = the previous claim belonged to another pid and was NEVER released (released claims carry mtime=epoch).
+    // takeover = the generation we SUPERSEDED belonged to another pid and was NEVER released (released claims carry
+    // mtime=epoch). MR-1 (V17.8): it is read AFTER our successful claim from the predecessor generation file (fleet-bridge
+    // keeps gen-1), not from the pre-claim snapshot — a holder that RELEASED between that snapshot and our claim is a normal
+    // hand-off, not a takeover (that stale-snapshot race produced the CI flake "takeover younger than TTL").
     // Its age is measured from the claimedAt the dead holder wrote INTO the lock (independent of the TTL/mtime test).
-    const takeover = prevClaim && prevClaim.holder && prevClaim.holder.pid !== pid && prevClaim.mtimeMs !== 0
-      ? { fromPid: prevClaim.holder.pid, fromGen: prevClaim.gen, ageFromClaimedAtMs: Date.now() - Date.parse(prevClaim.holder.claimedAt) } : null;
+    const mine = FB.currentClaim(leaseCfg, lot.mission);
+    const pred = mine && mine.gen > 1 ? readGeneration(leaseCfg, lot.mission, mine.gen - 1) : null;
+    const takeover = pred && pred.holder && pred.holder.pid !== pid && pred.mtimeMs !== 0
+      ? { fromPid: pred.holder.pid, fromGen: mine.gen - 1, ageFromClaimedAtMs: Date.now() - Date.parse(pred.holder.claimedAt) } : null;
+    void prevClaim;
     ev({ e: "CLAIM", op: lot.id, mission: lot.mission, contended, takeover });
     // AUTHORITATIVE idempotency check UNDER the lease (another resumer may have committed this op while we waited).
     const adm2 = IG.admit({ actionId: lot.id, idempotencyKey: lot.id }, journal());
