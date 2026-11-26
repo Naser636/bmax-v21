@@ -1,0 +1,34 @@
+{
+  "//": "OWNER selection-decision record — verbatim transcription (2026-11-26) by the PROVIDER (Claude Code) of the owner directive relayed by the coordinating session. It resolves ONE undecided actionable selection (DECISION_REQUIRED for uncertainty, no tie) in favour of V176-NB3, already authorized (inspection bound). Grants nothing; changes no score, contract, criterion, threshold, selection rule or allocation rule; at most one dispatch.",
+  "schema": "odg-owner-selection-decision/1",
+  "kind": "OWNER_SELECTION_DECISION",
+  "directive": "CTO — DIRECTIVE D'ACCÉLÉRATION OPÉRATIONNELLE ODG — EXÉCUTION PRIORITAIRE — FIN DE V14.4",
+  "date": "2026-11-26",
+  "issuer": "OWNER (CTO)",
+  "source": "owner directive (relayed by the coordinating session), §9 and final order",
+  "quote": [
+    "Commencer par P2.",
+    "Puis NB3.",
+    "Commencer immédiatement par P2, puis poursuivre automatiquement les missions suivantes jusqu'à l'achèvement de toute la roadmap autorisée."
+  ],
+  "item": "V176-NB3",
+  "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68",
+  "precondition": {
+    "pr": 965,
+    "merged": true
+  },
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED for UNCERTAINTY (no tie: tiedSet empty or singleton) with proposed = item",
+    "neverAppliesTo": [
+      "strategicSelection",
+      "ties (GO-ORD-1)",
+      "authorization (the item must already be actionable)",
+      "scores / ranking / register / thresholds",
+      "any other item",
+      "any other contract sha"
+    ],
+    "maxDispatches": 1,
+    "consumedBy": "runtime/core/odg-go-cycle.ts (GO-ORD-2), loaded by runtime/bin/odg-go.ts readState from OWNER_SELECTION_DECISIONS"
+  },
+  "appliedBy": "GO-ORD-2 (runtime/core/odg-go-cycle.ts) — consumes this owner decision ONLY to resolve the undecided actionable selection of V176-NB3 that GO itself requested; not applied once NB3 has been dispatched or has an experiment record"
+}
