@@ -319,7 +319,7 @@
     },
     {
       "source": "runtime/bin/odg-go.ts",
-      "sha256": "fdb5da060a9e309469b26936de21bea96a227593d62333e6638dc9c55f079777"
+      "sha256": "96cf4724669e5e07fb68514a58b2cc8391fa10496ce72d53dabec7c200a31074"
     },
     {
       "source": "runtime/bin/odg-local-model-benchmark.ts",
@@ -20977,5 +20977,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "c61b704cf9cf4a4f06266a113786042e0d58c3be"
+  "generatedAtHead": "32bf3066e65724001d949dec773270c64364caa2"
 }
