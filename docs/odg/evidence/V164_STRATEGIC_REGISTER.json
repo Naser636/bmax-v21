@@ -218,6 +218,10 @@
       "sha256": "f30c89173b0dfc4bf9a16390643365cacacd567df3bb10385809149b4735f258"
     },
     {
+      "source": "docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json",
+      "sha256": "7215fba434eca0e7c04d439e9c0f8794234dc0ecfa9d183b3db3c05ad74d5b25"
+    },
+    {
       "source": "docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json",
       "sha256": "701a01eec595f486129408fcd99daa1c604b32c159cbbec77ad09cdbbdb75dfc"
     },
@@ -359,7 +363,7 @@
     },
     {
       "source": "runtime/bin/odg-v178-p1-multi-candidate-run.test.ts",
-      "sha256": "04438701d439b6ba6d9fe9984e0656ecad0043f1a3710798bdf7f1a8fbb4ca17"
+      "sha256": "715bcd60b76e294ade9cb9dd3d4d30f8f0cba8686433426b3364db2ffa9af18d"
     },
     {
       "source": "runtime/bin/odg-v178-p1-multi-candidate-run.ts",
@@ -2783,7 +2787,7 @@
         {
           "scenario": "V178-P2",
           "inspection": "docs/odg/evidence/V178_P2_CONTRACT_INSPECTION.json",
-          "experiment": null,
+          "experiment": "docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json",
           "validation": null
         },
         {
@@ -8019,7 +8023,7 @@
           "closed": false,
           "rule": "CLOSE-1",
           "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-          "reason": "inspection ACCEPT bound to contract 424bd7e86aa2 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+          "reason": "inspection ACCEPT bound to contract 424bd7e86aa2 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); experiment record has no recorded outcome",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         },
         "dependencyGraph": {
@@ -20301,5 +20305,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "c195780a52c9f8fda9543286c27d2172c69056ff"
+  "generatedAtHead": "6c2fe176a43eb73d3ad896904dc55ea089907336"
 }
