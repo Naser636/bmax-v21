@@ -43,6 +43,7 @@ function clearanceFor(records: any[], item: any, current: any): any {
     if (bad) { misses.push(`${(r && r.recordPath) || "?"}: ${bad}`); continue; }
     const e = arr(r.items).find((x: any) => isObj(x) && x.id === item.id);
     if (!e) continue;
+    if (typeof e.ownerReason !== "string" || !e.ownerReason.trim() || typeof e.contractSha256 !== "string" || !/^[0-9a-f]{64}$/.test(e.contractSha256)) { misses.push(`${r.recordPath}: entry lacks a non-empty ownerReason / 64-hex contractSha256`); continue; }
     if (!current || !current.contractSha256 || e.contractSha256 !== current.contractSha256) { misses.push(`${r.recordPath}: contract sha ${String(e.contractSha256).slice(0, 12)} ≠ current ${String(current && current.contractSha256).slice(0, 12)}`); continue; }
     if (e.ownerReason !== item.ownerReason) { misses.push(`${r.recordPath}: ownerReason differs from the current OWN-1 reason`); continue; }
     if (!current.step || !arr(e.steps).includes(current.step)) { misses.push(`${r.recordPath}: step ${current.step} not cleared`); continue; }

@@ -1,0 +1,74 @@
+{
+  "//": "VALIDATE_CRITERIA for V19-EXP-B (EXPERIENCE INTELLIGENCE increment B; owner records docs/odg/V19_OWNER_ORDER_EXP_B.json + docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json). Graded only from the committed run record + the independent RESULT inspection (distinct session, independent recomputation). Closes increment B: structured episodes + comparable-experience recall operational on the real GO DECOMPOSE path.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V19-EXP-B",
+  "date": "2026-11-26",
+  "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V19_EXP_B_RESULT.json",
+    "sha256": "032928b7bb10ab2a71e7ffc3930630e42c3b993bfb618bad354b4ecece63a44d",
+    "experimentSha256": "15bdb36a9a175ebbfd28e270435ccac4574098db8da84d4d2fb2dc89de992fc0",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1054,
+    "mergedAs": "afad5db0",
+    "producedBy": "ODG GO --execute native dispatch (run d87ca4d17a1e4ce3 at main 3b75c64f; owner order V19_OWNER_DECISION_ORDER_EXP_B.json; OWN-1 owner clearance V19_OWNER_OWN1_CLEARANCE_EXP_B.json via OWN-1-CLR-1); trace docs/odg/evidence/V19_EXP_B_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 1054,
+    "inspectedHead": "9444c2caefd39fef8b3b8c9d4596a6293bae33ad",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "a9708f5fa7d5cbc5e",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-d87ca4d17a1e4ce3",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "PASS",
+    "recomputed": {
+      "AC3hits": 10,
+      "episodes": 12
+    },
+    "findings": "contract sha = result sha 6ecd0c6a…; runner sha = preRegistration; scratch result byte-identical; one cycle, single DISPATCHED V19-EXP-B, writes ⊆ writeSet; SELECT own1Cleared V19-EXP-B (OWN-1-CLR-1) + GO-ORD-1 applied; AC1 12 ACTIVE episodes (validation shas re-hashed); AC3 recomputed with an independent Python Jaccard: 10/10 rank-1, similarities identical (also 10/10 without the stop list); AC2 50 INTERNAL_EXPERIENCE / 1 HYPOTHESIS; AC4 14 FAILED blocked / 8 SUCCEEDED applicable; AC5 RECALLED in-process and on the real GO trace"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET"
+    },
+    {
+      "id": "AC2",
+      "status": "MET"
+    },
+    {
+      "id": "AC3",
+      "status": "MET"
+    },
+    {
+      "id": "AC4",
+      "status": "MET"
+    },
+    {
+      "id": "AC5",
+      "status": "MET"
+    },
+    {
+      "id": "AC6",
+      "status": "MET"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "AC1–AC6 MET under the pre-registered rule (AC3 10/10 ≥ 8/10; without memory 0/10; random 2.73); independent result inspection ACCEPT with independent recomputation"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "OPERATIONAL: every real GO cycle records DECOMPOSE.experienceRecall (episodes derived from closed register items, recorded in decision-precedent, recalled by recallComparable; FAILED ⇒ AVOID_UNCHANGED; autoApply false); episodes re-evaluated against the current contract and experiment shas",
+  "limits": [
+    "in-sample: EXP-B-1 features were designed with the closed corpus visible — PASS demonstrates the mechanism on ODG's own closures, NOT retrieval quality on new missions (increment G)",
+    "lexical-structural Jaccard over titles/objectives/metrics + code-component names; families share vocabulary and code by construction (CODE_IMPORT/c: overlap)",
+    "12-episode corpus; costs/durations NOT_MEASURED in episodes",
+    "episodes are INTERNAL_EXPERIENCE: they add 0 corroborated facts to memory (the real-memory P0 is a separate chantier)"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionV19EXPB": "CLOSED_PASS"
+  }
+}

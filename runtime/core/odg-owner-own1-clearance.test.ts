@@ -10,8 +10,8 @@ let passed = 0;
 function ok(name, cond) { assert.ok(cond, name); console.log("  ok -", name); passed += 1; }
 console.log("odg-owner-own1-clearance — OWN-1-CLR-1");
 const item = { id: "X", requiresOwnerAuthorization: true, ownerReason: "OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass" };
-const rec = { recordPath: "docs/odg/R.json", schema: CLR.SCHEMA, kind: "OWNER_OWN1_CLEARANCE", issuer: "OWNER (CTO)", date: "2026-11-26", quote: ["V19-EXP-B est autorisé"], items: [{ id: "X", contractSha256: "aa", ownerReason: item.ownerReason, steps: ["RUN_CONTROLLED_EXPERIMENTS"] }] };
-const cur = { contractSha256: "aa", step: "RUN_CONTROLLED_EXPERIMENTS" };
+const rec = { recordPath: "docs/odg/R.json", schema: CLR.SCHEMA, kind: "OWNER_OWN1_CLEARANCE", issuer: "OWNER (CTO)", date: "2026-11-26", quote: ["V19-EXP-B est autorisé"], items: [{ id: "X", contractSha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", ownerReason: item.ownerReason, steps: ["RUN_CONTROLLED_EXPERIMENTS"] }] };
+const cur = { contractSha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", step: "RUN_CONTROLLED_EXPERIMENTS" };
 ok("exact match ⇒ cleared, record + rule reported", (() => { const r = CLR.clearanceFor([rec], item, cur); return r.cleared === true && r.record === "docs/odg/R.json" && /OWN-1 flag preserved/.test(r.reason); })());
 ok("contract changed ⇒ NOT cleared", CLR.clearanceFor([rec], item, { ...cur, contractSha256: "bb" }).cleared === false);
 ok("new OWN-1 reason ⇒ NOT cleared", CLR.clearanceFor([rec], { ...item, ownerReason: "OWN-1 matched [deploy] in objective" }, cur).cleared === false);
@@ -20,6 +20,7 @@ ok("other item id ⇒ NOT cleared (no wildcard)", CLR.clearanceFor([rec], { ...i
 ok("non-OWNER issuer ⇒ NOT cleared", CLR.clearanceFor([{ ...rec, issuer: "PROVIDER (Claude Code)" }], item, cur).cleared === false);
 ok("empty quote ⇒ NOT cleared", CLR.clearanceFor([{ ...rec, quote: [""] }], item, cur).cleared === false);
 ok("wrong schema / kind ⇒ NOT cleared", CLR.clearanceFor([{ ...rec, schema: "x" }], item, cur).cleared === false && CLR.clearanceFor([{ ...rec, kind: "OWNER_ORDER_DECISION" }], item, cur).cleared === false);
+ok("entry without ownerReason never clears an item without one (inspector hardening)", CLR.clearanceFor([{ ...rec, items: [{ ...rec.items[0], ownerReason: undefined }] }], { ...item, ownerReason: undefined }, cur).cleared === false);
 ok("no records ⇒ NOT cleared", CLR.clearanceFor([], item, cur).cleared === false);
 ok("non-flagged item ⇒ not applicable (nothing to clear)", CLR.clearanceFor([rec], { id: "X", requiresOwnerAuthorization: false }, cur).applicable === false);
 // committed record (real): names exactly V19-EXP-B and its current contract sha

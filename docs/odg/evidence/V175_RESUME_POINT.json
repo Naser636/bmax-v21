@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "1490941e69baac23fdfad2f8986c0744203e8769069312ca6caa8466f7af620b"
+      "sha256": "d49fe77ece5f3689fcafd28d12f0a0cef5daff670c4cff79fa9562b3f23ac609"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -240,6 +240,10 @@
     {
       "source": "docs/odg/evidence/V19_EXP_B_RESULT.json",
       "sha256": "032928b7bb10ab2a71e7ffc3930630e42c3b993bfb618bad354b4ecece63a44d"
+    },
+    {
+      "source": "docs/odg/evidence/V19_EXP_B_CRITERIA_VALIDATION.json",
+      "sha256": "023288bbdfd22dcbb7e8ef2a1f4d4c9278e29e1fd495f208f1af0f0149ea2e11"
     }
   ],
   "checkpoint": {
@@ -1198,7 +1202,7 @@
     {
       "id": "V19-EXP-B",
       "title": "EXPERIENCE INTELLIGENCE incr. B — structured mission episodes derived from closed register items, recorded in decision-precedent, comparable-experience recall wired into GO DECOMPOSE (EXP-B-1)",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_PASS",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -1210,18 +1214,19 @@
       },
       "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a",
       "ownerRecord": "docs/odg/V19_OWNER_ORDER_EXP_B.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a"
       },
       "records": {
@@ -1234,8 +1239,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V19_EXP_B_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -1246,26 +1251,15 @@
         "dispatched": true
       },
       "own1": {
-        "cleared": true,
-        "record": "docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json",
+        "cleared": false,
+        "record": null,
         "rule": "OWN-1-CLR-1: an OWN-1-flagged item is GO-actionable only when a committed OWNER_OWN1_CLEARANCE record (fixed list) names its id, its CURRENT contract sha, its CURRENT ownerReason and its CURRENT step, with a verbatim owner quote; the OWN-1 flag is preserved and the scoped step must still be authorized",
-        "reason": "OWN-1 owner clearance docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json (2026-11-26) for V19-EXP-B at contract 6ecd0c6a7219, step VALIDATE_CRITERIA; OWN-1 flag preserved (OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass)"
+        "reason": "no valid clearance: docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json: step null not cleared"
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/V19_EXP_B_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 6ecd0c6a7219 and experiment docs/odg/evidence/V19_EXP_B_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PASS, CLOSE-1 docs/odg/evidence/V19_EXP_B_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V19-EXP-B]",
@@ -1280,8 +1274,8 @@
       "PASS_IN_SCOPE": 2,
       "CLOSED_PARTIAL": 4,
       "CLOSED_FAIL": 5,
-      "CLOSED_PASS": 3,
-      "NOT_STARTED": 10,
+      "CLOSED_PASS": 4,
+      "NOT_STARTED": 9,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1517,11 +1511,6 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V19-EXP-B",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 6ecd0c6a7219 and experiment docs/odg/evidence/V19_EXP_B_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
