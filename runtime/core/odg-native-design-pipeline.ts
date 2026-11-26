@@ -644,6 +644,44 @@ const NATIVE_DESIGN_PIPELINE_CONTRACT = Object.freeze({
   ]),
 });
 
+/* =========================== V17.8 P6 FROZEN-1: anti-reward-hacking — frozen (sha-pinned) evaluators ===========================
+ * Complements TAMPER-1 (text/path screen of a candidate) with a sha-PINNED freeze of every evaluator / test / fixture file:
+ *   pinEvaluators(files, readFile)      → pins [{ file, sha256 }] taken BEFORE selection (unreadable file ⇒ refused, never pinned empty)
+ *   refusePinnedWrites(writeSet, pins)  → reason | null — a candidate whose write-set touches a pinned path (exact or contained, '..'
+ *                                         normalised) is REFUSED before execution (AC1)
+ *   verifyPins(pins, readFile)          → { ok, changed[] } — re-hash at acceptance; any changed / missing pin ⇒ the run FAILS (AC2)
+ * Pure except the injected readFile; never executes candidate code; changes no selection, oracle or threshold. */
+const FROZEN_RULE = "FROZEN-1: evaluator / test / fixture files are sha-pinned before selection; a candidate writing a pinned path is refused before execution; a pin whose sha differs (or is missing) at acceptance fails the run";
+function normRel(p: any): string { const parts: string[] = []; for (const seg of String(p == null ? "" : p).replace(/\\/g, "/").split("/")) { if (!seg || seg === ".") continue; if (seg === "..") parts.pop(); else parts.push(seg); } return parts.join("/"); }
+function pinEvaluators(files: any[], readFile: (f: string) => any): any {
+  const pins: any[] = []; const refused: any[] = [];
+  for (const f of arr(files)) {
+    const rel = normRel(f); let b: any = null;
+    try { b = readFile(rel); } catch { b = null; }
+    if (b === null || b === undefined) { refused.push({ file: rel, reason: "unreadable — never pinned empty" }); continue; }
+    pins.push(Object.freeze({ file: rel, sha256: sha256(b) }));
+  }
+  return Object.freeze({ ok: refused.length === 0 && pins.length > 0, rule: FROZEN_RULE, pins: Object.freeze(pins), refused: Object.freeze(refused) });
+}
+function refusePinnedWrites(writeSet: any[], pins: any[]): string | null {
+  const pinned = arr(pins).map((p: any) => normRel(p && p.file)).filter(Boolean);
+  for (const w of arr(writeSet)) {
+    const n = normRel(w);
+    const hit = pinned.find((p: string) => n === p || p.startsWith(n + "/") || n === "" );
+    if (hit) return `FROZEN-1: candidate write-set path '${String(w).slice(0, 120)}' touches the pinned evaluator '${hit}' — refused before execution`;
+  }
+  return null;
+}
+function verifyPins(pins: any[], readFile: (f: string) => any): any {
+  const changed: any[] = [];
+  for (const p of arr(pins)) {
+    let b: any = null; try { b = readFile(p.file); } catch { b = null; }
+    const now = b === null || b === undefined ? null : sha256(b);
+    if (now !== p.sha256) changed.push({ file: p.file, pinned: p.sha256, now });
+  }
+  return Object.freeze({ ok: arr(pins).length > 0 && changed.length === 0, rule: FROZEN_RULE, changed: Object.freeze(changed) });
+}
+
 module.exports = {
   renderOut, OLLAMA, OLLAMA_URL, makeGuard, transpile, typecheck, newFileDiff, replaceFileDiff, gitApplyCheck, headOf, changedLines, exportedNames, ollamaGenerate, sha256,
   loadModuleExport, callOn, kindOf, deriveProblem, analyseImpact,
@@ -653,5 +691,6 @@ module.exports = {
   WARMUP_PROMPT, measureRate, adaptiveTimeout, ADAPT_RULE, hostLoad, HOST_RULE, LESSON_DIGEST, lessonDigest,
   DIVERSITY_RULE, paramB, largerModels, diversityLadder, allowedCallOptions, makeDiversityController, diverseGenerate,
   SAMPLE_RULE, XSEL_RULE, TAMPER_PATTERNS, sampleCandidates, tamperCheck, selectByExecution, visibleSplit,
+  FROZEN_RULE, pinEvaluators, refusePinnedWrites, verifyPins,
 };
 export {};

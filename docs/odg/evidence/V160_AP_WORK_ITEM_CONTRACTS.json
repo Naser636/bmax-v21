@@ -4551,8 +4551,8 @@
     {
       "scenario": "V178-P6",
       "title": "anti-reward-hacking gate: evaluator, test and fixture files frozen (sha-pinned) and outside every model-writable write_set; held-out evaluation",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json: « Je confirme les autorisations nécessaires pour poursuivre et achever les missions restantes de la roadmap V14.4 dans le périmètre interne autorisé. » / « Puis P5, P6 et P7. » — internal, no network, €0",
       "origin": {
         "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
         "sourceProposal": "V178-P6",
@@ -4601,8 +4601,10 @@
         }
       },
       "binding": {
-        "status": "UNBOUND",
-        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 P6 binding session; branch feat/v178-p6-frozen-evaluators)",
+        "boundAt": "2026-11-26"
       },
       "initialState": {
         "status": "NOT_STARTED",
@@ -4631,9 +4633,9 @@
       },
       "beforeMetric": [
         {
-          "source": "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json",
+          "source": "runtime/core/odg-native-design-pipeline.ts#pinEvaluators",
           "name": "sharedFrozenEvaluatorRule",
-          "value": "ABSENT (per-run invariants only)"
+          "value": "ABSENT"
         }
       ],
       "measure": {
@@ -4645,7 +4647,10 @@
         "scope": "improve odg-native-design-pipeline, odg-local-model-benchmark, evaluator-independence only; no network, no install, no canonical-authority change",
         "write_set": [
           "runtime/core/odg-native-design-pipeline.ts",
-          "runtime/core/odg-native-design-pipeline.test.ts"
+          "runtime/core/odg-native-design-pipeline.test.ts",
+          "runtime/bin/odg-v19-acceptance-run.ts",
+          "runtime/bin/odg-v19-acceptance-run.test.ts",
+          "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json"
         ],
         "write_set_estimate": {
           "estimate": true,
@@ -4693,8 +4698,93 @@
           "test output per file",
           "recomputed before/after metric record",
           "independent inspection verdict"
-        ]
-      }
+        ],
+        "preRegistration": {
+          "metric": "ACC-1 over the contract's acceptance tests (V178-P6/AC1–AC3), tsc, and the LEARN-1 before-metric",
+          "baseline": "beforeMetric sharedFrozenEvaluatorRule ABSENT (per-run invariants + TAMPER-1 text screen only; no sha-pinned evaluator freeze)",
+          "dataset": {
+            "source": "the acceptance tests in runtime/core/odg-native-design-pipeline.test.ts at the run head",
+            "runnerSha256": "ff6193e72c872c5f50eb411248161d29ef3f7e791d093cf732fa42f971c2f60b"
+          },
+          "decisionRule": "PASS ⇔ every acceptance test id reported ok (file exit 0) ∧ tsc clean ∧ sharedFrozenEvaluatorRule IMPROVED (ABSENT → PRESENT); a metric not recomputable ⇒ NOT_MEASURED; else FAIL",
+          "thresholds": {
+            "acceptanceTests": 3
+          }
+        },
+        "budgets": {
+          "modelCalls": 0,
+          "network": "none",
+          "providerCalls": 0,
+          "dispatchTimeoutMs": 900000
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json (V19 V14.4 completion order)",
+        "date": "2026-11-26",
+        "transcribedBy": "PROVIDER (Claude Code) — bound through family V19-V144-COMPLETION",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "one GO-dispatched run of the declared target only, after an independent inspection ACCEPT of this contract; no network, no model; writes only its result file",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v19-acceptance-run.ts",
+            "args": [
+              "V178-P6",
+              "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json"
+            ]
+          }
+        },
+        "dispatchTimeoutMs": 900000,
+        "inspectionRecord": "docs/odg/evidence/V178_P6_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 P6 binding session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P6/AC1' (file: acceptance_tests[0]): a candidate editing a pinned test is refused before execution",
+            "AC2 test 'V178-P6/AC2' (file: acceptance_tests[1]): a changed pin sha between selection and acceptance fails the run",
+            "AC3 test 'V178-P6/AC3' (file: acceptance_tests[2]): existing NB2 held-out behaviour is unchanged (regression test)",
+            "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC5 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC5 text unchanged",
+          "change": [
+            "PROPOSED → AUTHORIZED_FOR_REVISION (owner record)",
+            "write_set concrete (+ reused generic acceptance runner + result file)",
+            "beforeMetric source made concrete: prose record pointer (not recomputable) → '#pinEvaluators' (the capability measured); name unchanged",
+            "preRegistration + budgets + dispatch target added",
+            "ACC-1 runner: indented 'ok - <id>' lines recognised (test harnesses that indent their ok lines, e.g. provider-sandbox); 'NOT OK' never matches"
+          ],
+          "original": {
+            "state": "PROPOSED",
+            "write_set": [
+              "runtime/core/odg-native-design-pipeline.ts",
+              "runtime/core/odg-native-design-pipeline.test.ts"
+            ],
+            "beforeMetric": [
+              {
+                "source": "docs/odg/evidence/V175_NB2_NATIVE_DESIGN_RESULT.json",
+                "name": "sharedFrozenEvaluatorRule",
+                "value": "ABSENT (per-run invariants only)"
+              }
+            ]
+          },
+          "reason": "owner order « Puis P5, P6 et P7. »",
+          "justification": "binding before any run; criteria unchanged",
+          "revisionAuthorSessionId": "v19-p6-binding"
+        }
+      ]
     },
     {
       "scenario": "V178-P7",
