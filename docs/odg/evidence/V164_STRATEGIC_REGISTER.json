@@ -246,6 +246,10 @@
       "sha256": "4934382745dc3b2940a2c162d11d3cc75aa579a4824247bb24deec8fa78ef4e5"
     },
     {
+      "source": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+      "sha256": "7702b2748d2def6d95ba2e2b668d0f9b123535c4b0bc49af2e2d3ee0fa116239"
+    },
+    {
       "source": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
       "sha256": "d0a45dfef1865ec90a51114d4fc60e6a1982715ac63d8c1b21886624893c3e1c"
     },
@@ -2110,7 +2114,7 @@
         {
           "scenario": "V178-P1-R",
           "inspection": "docs/odg/evidence/V178_P1R_CONTRACT_INSPECTION.json",
-          "experiment": null,
+          "experiment": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
           "validation": null
         },
         {
@@ -8691,8 +8695,8 @@
         "closure": {
           "closed": false,
           "rule": "CLOSE-1",
-          "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-          "reason": "inspection ACCEPT bound to contract 12c388bca689 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+          "currentStep": "VALIDATE_CRITERIA",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         },
         "dependencyGraph": {
@@ -18719,5 +18723,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "7a0e9e15b4bf7551c225e5bfe2efe5808a5ec914"
+  "generatedAtHead": "07eebdf5041135748144ad0cefba3be163230e25"
 }
