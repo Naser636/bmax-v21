@@ -204,7 +204,7 @@
       {
         "id": "V178-P2",
         "status": "NOT_STARTED",
-        "reason": "inspection ACCEPT bound to contract 424bd7e86aa2 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
+        "reason": "inspection ACCEPT bound to contract 424bd7e86aa2 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); experiment record has no recorded outcome"
       }
     ]
   },

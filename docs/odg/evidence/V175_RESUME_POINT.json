@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "3918544859b46a4eb559a65a3e627e8a8ddb1d034f4c1e3771e1c61628fc6a8e"
+      "sha256": "9c4e3343ecb301f7389f5c310c7f4c3707dcbf3814135e96fdba177c56864f34"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -60,6 +60,10 @@
     {
       "source": "docs/odg/evidence/V178_P1_GO_EXECUTE_TRACE.jsonl",
       "sha256": "cac478eca0625fc3671203f1ea11d262c3495fd1bb186eb4787a11ccf1a7f955"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "f36acfc8de10d0264abca05ca6f55d23ebbd240b731c669bc5412f1383ccd17a"
     },
     {
       "source": "docs/odg/evidence/V178_P4_GO_EXECUTE_TRACE.jsonl",
@@ -200,6 +204,10 @@
     {
       "source": "docs/odg/evidence/V178_P2_CONTRACT_INSPECTION.json",
       "sha256": "f30c89173b0dfc4bf9a16390643365cacacd567df3bb10385809149b4735f258"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json",
+      "sha256": "7215fba434eca0e7c04d439e9c0f8794234dc0ecfa9d183b3db3c05ad74d5b25"
     },
     {
       "source": "docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json",
@@ -1004,7 +1012,7 @@
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT"
         ],
-        "reason": "inspection ACCEPT bound to contract 424bd7e86aa2 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "inspection ACCEPT bound to contract 424bd7e86aa2 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); experiment record has no recorded outcome",
         "contractSha256": "424bd7e86aa237cbd64671e8f6d73a05a6d757a5a4707e395d4a06c80a8cfdae"
       },
       "records": {
@@ -1013,19 +1021,25 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl",
+        "runId": "73b25f2f329b128f",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-26T15:32:41.752Z",
+        "dispatched": true
+      },
       "pending": [],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-local-model-benchmark.ts"
+        "actor": "PROVIDER",
+        "action": "GO already dispatched V178-P2 (docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl run 73b25f2f329b128f); collect the runner's experiment record into a result PR — never re-run (one-shot claim)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P2]",
@@ -1565,6 +1579,19 @@
       "strategic": "D",
       "workingOn": "V19-MEM-2",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "73b25f2f329b128f",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-26T15:32:41.752Z",
+      "dispatched": [
+        "V178-P2"
+      ],
+      "strategic": "D",
+      "workingOn": "V178-P2",
+      "ownerSelectionRecord": null
     }
   ],
   "nextGoAction": {
@@ -1589,27 +1616,28 @@
       {
         "item": "V176-NB3",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-nb3-native-design-run.ts"
-      },
-      {
-        "item": "V178-P2",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-local-model-benchmark.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2",
+    "verdict": "GO --execute could dispatch: V176-NB3",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V178-P2",
+        "actor": "PROVIDER",
+        "action": "GO already dispatched V178-P2 (docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl run 73b25f2f329b128f); collect the runner's experiment record into a result PR — never re-run (one-shot claim)"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/V19_MEM2_GO_EXECUTE_TRACE.jsonl",
-      "runId": "247fa4eeb95c180c",
+      "trace": "docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl",
+      "runId": "73b25f2f329b128f",
       "status": "EXECUTED_PASS",
-      "endedAt": "2026-11-26T13:41:52.972Z",
+      "endedAt": "2026-11-26T15:32:41.752Z",
       "strategic": "D",
-      "workingOn": "V19-MEM-2",
+      "workingOn": "V178-P2",
       "nextAfterCurrent": {
         "decision": "SELECTED",
         "selected": "D",
