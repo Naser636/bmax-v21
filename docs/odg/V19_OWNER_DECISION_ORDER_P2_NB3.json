@@ -1,0 +1,31 @@
+{
+  "//": "OWNER order-decision record — verbatim transcription (2026-11-26) resolving GO's exact actionable tie {V176-NB3, V178-P2}: the owner orders P2 first, then NB3 (the dependency graph agrees: V178-P5 depends on P2's measurements). Grants nothing; changes no score, criterion, threshold or selection rule.",
+  "schema": "odg-owner-order-decision/1",
+  "kind": "OWNER_ORDER_DECISION",
+  "directive": "CTO — DIRECTIVE D'ACCÉLÉRATION OPÉRATIONNELLE ODG — EXÉCUTION PRIORITAIRE — FIN DE V14.4",
+  "date": "2026-11-26",
+  "issuer": "OWNER (CTO)",
+  "source": "owner directive (relayed by the coordinating session), §9 and final order; markdown emphasis omitted, words unchanged",
+  "quote": [
+    "Commencer par P2.",
+    "Puis NB3.",
+    "Commencer immédiatement par P2, puis poursuivre automatiquement les missions suivantes jusqu'à l'achèvement de toute la roadmap autorisée."
+  ],
+  "tiedSet": [
+    "V176-NB3",
+    "V178-P2"
+  ],
+  "order": [
+    "V178-P2",
+    "V176-NB3"
+  ],
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED with a tiedSet equal (as a set) to this record's tiedSet",
+    "neverAppliesTo": [
+      "strategicSelection",
+      "authorization (RUN still requires the committed inspection bound to the current contract sha)",
+      "scores / ranking / register"
+    ]
+  },
+  "appliedBy": "GO-ORD-1 (runtime/core/odg-go-cycle.ts)"
+}
