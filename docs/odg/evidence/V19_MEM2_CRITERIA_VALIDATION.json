@@ -1,0 +1,111 @@
+{
+  "//": "VALIDATE_CRITERIA for V19-MEM-2 (real-memory P0; owner record docs/odg/V19_OWNER_ORDER_MEM.json). Graded only from the committed run record + the independent RESULT inspection (distinct session, independent recomputation). ODG's real memory now holds corroborated facts: internal REAL observations reproduced by independent executions, admitted by the canonical trust gate, indexed in the FACT tier and recalled by the real GO cycle.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V19-MEM-2",
+  "date": "2026-11-26",
+  "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V19_MEM2_RESULT.json",
+    "sha256": "0ff8cc3711e787980f38724a6051b9034bed5f97e253e3602e7156b8364eab12",
+    "experimentSha256": "4ec9a7ab9ae4c9b221bc4c9ae12918b80c860a0111ff5b9622baf66dbc7ba0ca",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1059,
+    "mergedAs": "30935870",
+    "producedBy": "ODG GO --execute native dispatch (run 247fa4eeb95c180c at main a7d514c5; owner order V19_OWNER_DECISION_ORDER_MEM.json); trace docs/odg/evidence/V19_MEM2_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 1059,
+    "inspectedHead": "14ff6f1f3779cef389d1d1db7db30fbcb55bf188",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "a9708f5fa7d5cbc5e",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-247fa4eeb95c180c",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "PASS",
+    "recomputed": {
+      "corroborated": 4,
+      "trusted": 4
+    },
+    "findings": "contract sha = result sha e7c35ebd…; runner sha = preRegistration; scratch result byte-identical; one cycle, single DISPATCHED V19-MEM-2, writes ⊆ writeSet; GO-ORD-1 applied; AC1 36 observations (12+12 independent, 12 replay non-independent) recomputed by an independent Python reimplementation; AC2 4 keys CORROBORATED (2 independent executions each, replay never counted, 0 contradicted); AC3 accessMemory trusts exactly the 4; AC4 factIndexed 4 (= 0 claims + 4), port recall 3 OBS facts with REPRO-1 provenance on real source shas, real GO DECOMPOSE RECALLED 2 facts ⊆ trusted + 1 SUPPORTED claim kept CONTEXT; AC5 claims unchanged, 0 SUPPORTED/EPISODE in FACT"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET"
+    },
+    {
+      "id": "AC2",
+      "status": "MET"
+    },
+    {
+      "id": "AC3",
+      "status": "MET"
+    },
+    {
+      "id": "AC4",
+      "status": "MET"
+    },
+    {
+      "id": "AC5",
+      "status": "MET"
+    },
+    {
+      "id": "AC6",
+      "status": "MET"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "AC1–AC6 MET under the pre-registered rule; independent result inspection ACCEPT with independent recomputation (4 corroborated, 4 trusted)"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "OPERATIONAL: GO knowledge() reports REPRO-1 observations on every run and, with --memory-index, indexes the corroborated ones in the FACT tier through the canonical trust gate; GO DECOMPOSE recalls them with provenance",
+  "facts": [
+    {
+      "id": "OBS-bf40fe722638047b",
+      "claim": "qwen2.5-coder:7b t0 (temperature 0, seed 42) generated-code sha256 on impl-chunk (V155-TASKSET-2 755cbf1f…) = cf45a0ea…"
+    },
+    {
+      "id": "OBS-20410123cc46a17e",
+      "claim": "same conditions, impl-ts-parse-range code sha256 = 6fa03a61…"
+    },
+    {
+      "id": "OBS-4de57e921d7a9c97",
+      "claim": "same conditions, impl-chunk full-oracle outcome = PASS"
+    },
+    {
+      "id": "OBS-be4500238d27d131",
+      "claim": "same conditions, impl-ts-parse-range full-oracle outcome = FAIL"
+    }
+  ],
+  "tally": {
+    "collected": 36,
+    "verifiedSources": 3,
+    "corroborated": 4,
+    "rejectedAsFact": 0,
+    "contradicted": 0,
+    "pending": 0,
+    "indexedAsFact": 4,
+    "indexedAsContext": 2,
+    "reusedInGoDecompose": 2,
+    "reusedByPortQuery": 3,
+    "externalV19MEM1": {
+      "collected": 11,
+      "corroborated": 0,
+      "supported": 1
+    }
+  },
+  "limits": [
+    "the 4 facts are INTERNAL measurements under stated conditions on one host (determinism + outcome of the t0 control), not general truths; the claim text states the conditions",
+    "the provider knew the corroborated keys while authoring REPRO-1: the run validates mechanism + integration, not a prediction",
+    "the Ollama model digest is not recorded by the P1 runners: a re-pulled tag with the same name is a condition change REPRO-1 cannot see",
+    "one of the two corroborating sources is the V178-P1-R RUN-1 INCIDENT record (aacd35e3): its defect (probeSignatures) affected only XSEL-2 selection, never t0 generation or the grader",
+    "the provenance string also lists the replay source (transparency), which is NOT a vote",
+    "external corroboration (V19-MEM-1) remains 0: the near-verbatim cross-family rule is unchanged (a lemma/synonym extension would be an owner decision)"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionV19MEM2": "CLOSED_PASS"
+  }
+}
