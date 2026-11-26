@@ -1,0 +1,340 @@
+{
+  "//": "V19-MEM-1 — corroboration Radar collection under docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json. Fetched by ODG's OWN chain (odg-v16-claude-code-research.runResearch → research-budget/research-governor/bounded-http-client.validateUrl+get with ODG_RADAR_LIVE=1), NOT by a provider WebFetch tool. Quotes extracted by the DETERMINISTIC pattern extractor of runtime/bin/odg-v158-collection-run.ts (no model). Purpose: pairs of independent publisher families on the same practice so the canonical assessClaim can decide CORROBORATED (or not).",
+  "grant": "docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json",
+  "consultedDate": "2026-11-26",
+  "collectedAtIso": "2026-11-26T12:31:23.804Z",
+  "callsUsed": 7,
+  "budgetMaxCalls": 30,
+  "verdict": "LIVE_OK",
+  "extraction": "deterministic pre-registered-pattern extractor (runtime/bin/odg-v158-collection-run.ts): each quote is a verbatim substring of the documented normalisation (HTML tag strip + entity decode / Markdown link+emphasis strip / JSON raw), 20..300 chars, ≤4 per page, e-mail-bearing quotes dropped; sha256 is of the RAW response body",
+  "sources": [
+    {
+      "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+      "org": "Google",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Small CLs | eng-practices",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 15500,
+      "sha256": "0637b70bbb8235a8a3dfe86041e206bd91db35b4b8a4c34cb938f4d8fd6bf5c3",
+      "normalisation": "HTML",
+      "quotes": [
+        "Why Write Small CLs?",
+        "It’s easier for a reviewer to find five minutes several times to review small CLs than to set aside a 30 minute block to review one large CL.",
+        "The CL should include related test code."
+      ],
+      "quotePatterns": [
+        "G_SIZE",
+        "G_SIZE_WHY",
+        "G_TESTS"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+      "org": "Google",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Speed of Code Reviews | eng-practices",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 10391,
+      "sha256": "3c495e756023d3bdc35153557d63d8057a09137ebed23dd8a3069624714c8c1c",
+      "normalisation": "HTML",
+      "quotes": [
+        "Why Should Code Reviews Be Fast?"
+      ],
+      "quotePatterns": [
+        "G_SPEED"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+      "org": "Google",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "What to look for in a code review | eng-practices",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 15075,
+      "sha256": "5946a2fa713dbafed9a2846e187be7705e3f3240c2b925f13d45530791c0e4af",
+      "normalisation": "HTML",
+      "quotes": [
+        "The most important thing to cover in a review is the overall design of the CL.",
+        "Mostly, we expect developers to test CLs well-enough that they work correctly by the time they get to code review."
+      ],
+      "quotePatterns": [
+        "G_DESIGN",
+        "GL_TESTS"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/pull-requests/",
+      "org": "Microsoft",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Pull Requests - Engineering Fundamentals Playbook",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 134013,
+      "sha256": "9088bf2456dc7d971a930e7a4d3a8959ee1be03a1bde4d115afee0989b3f2e2e",
+      "normalisation": "HTML",
+      "quotes": [
+        "We should always aim to keep pull requests small.",
+        "Start small, it is easier to create a small PR from the start than to break up a bigger one.",
+        "include related tests as part of the PR."
+      ],
+      "quotePatterns": [
+        "M_SIZE",
+        "M_SIZE_WHY",
+        "M_TESTS"
+      ],
+      "unmatchedPatterns": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/reviewer-guidance/",
+      "org": "Microsoft",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Reviewer Guidance - Engineering Fundamentals Playbook",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 139204,
+      "sha256": "1502923be35e3805430a77cde48256c164cd9c2ffd15bce61b17181a18910999",
+      "normalisation": "HTML",
+      "quotes": [
+        "The correctness of any new or changed tests."
+      ],
+      "quotePatterns": [
+        "MR_TESTS"
+      ],
+      "unmatchedPatterns": [
+        "MR_SPEED",
+        "MR_DESIGN"
+      ]
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/author-guidance/",
+      "org": "Microsoft",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Author Guidance - Engineering Fundamentals Playbook",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 131866,
+      "sha256": "8abdef3c5562f0df58c2b06d6780a45820ffcf1f481cdec4c7a199afc0bc58d7",
+      "normalisation": "HTML",
+      "quotes": [
+        "If you can't avoid large PRs, include explanations of the changes in order to make it easier for the reviewer to review the code, with clear comments the reviewer can identify the goal of every code block."
+      ],
+      "quotePatterns": [
+        "MA_SIZE"
+      ],
+      "unmatchedPatterns": [
+        "MA_SIZE_WHY",
+        "MA_TESTS"
+      ]
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+      "org": "Microsoft",
+      "practiceArea": "code review",
+      "status": "RETRIEVED",
+      "title": "Code Reviews - Engineering Fundamentals Playbook",
+      "publishedDate": null,
+      "httpStatus": 200,
+      "contentType": "text/html; charset=utf-8",
+      "bytes": 126573,
+      "sha256": "4db58d3ad154ec6ceedfe65c16313a37686951d2e5e6daf7c90c9b92b618f80b",
+      "normalisation": "HTML",
+      "quotes": [],
+      "quotePatterns": [],
+      "unmatchedPatterns": [
+        "MC_SPEED",
+        "MC_SIZE",
+        "MC_SIZE_WHY"
+      ]
+    }
+  ],
+  "cycles": [
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SIZE",
+      "question": "What does the guide say about the size of a change / pull request?",
+      "capability": "ODG mission sizing — small changes (corroboration pair)",
+      "claim": "The page states: Why Write Small CLs?",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "quote": "Why Write Small CLs?"
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_SIZE_WHY",
+      "question": "Why does the guide recommend small changes?",
+      "capability": "ODG mission sizing — small changes (corroboration pair)",
+      "claim": "The page states: It’s easier for a reviewer to find five minutes several times to review small CLs than to set aside a 30 minute block to review one large CL.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "quote": "It’s easier for a reviewer to find five minutes several times to review small CLs than to set aside a 30 minute block to review one large CL."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/developer/small-cls.html :: G_TESTS",
+      "question": "What does the guide say about tests in a change under review?",
+      "capability": "ODG mission sizing — small changes (corroboration pair)",
+      "claim": "The page states: The CL should include related test code.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+          "quote": "The CL should include related test code."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/speed.html :: G_SPEED",
+      "question": "How quickly should a code review be done?",
+      "capability": "ODG review gate — review latency (corroboration pair)",
+      "claim": "The page states: Why Should Code Reviews Be Fast?",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+          "quote": "Why Should Code Reviews Be Fast?"
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: G_DESIGN",
+      "question": "What does the guide say reviewers should look at first / most?",
+      "capability": "ODG review checklist (corroboration pair)",
+      "claim": "The page states: The most important thing to cover in a review is the overall design of the CL.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "quote": "The most important thing to cover in a review is the overall design of the CL."
+        }
+      ]
+    },
+    {
+      "query": "google.github.io/eng-practices/review/reviewer/looking-for.html :: GL_TESTS",
+      "question": "What does the guide say about tests in a change under review?",
+      "capability": "ODG review checklist (corroboration pair)",
+      "claim": "The page states: Mostly, we expect developers to test CLs well-enough that they work correctly by the time they get to code review.",
+      "support": [
+        {
+          "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+          "quote": "Mostly, we expect developers to test CLs well-enough that they work correctly by the time they get to code review."
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/code-reviews/pull-requests/ :: M_SIZE",
+      "question": "What does the guide say about the size of a change / pull request?",
+      "capability": "ODG mission sizing — small changes (corroboration pair)",
+      "claim": "The page states: We should always aim to keep pull requests small.",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/pull-requests/",
+          "quote": "We should always aim to keep pull requests small."
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/code-reviews/pull-requests/ :: M_SIZE_WHY",
+      "question": "Why does the guide recommend small changes?",
+      "capability": "ODG mission sizing — small changes (corroboration pair)",
+      "claim": "The page states: Start small, it is easier to create a small PR from the start than to break up a bigger one.",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/pull-requests/",
+          "quote": "Start small, it is easier to create a small PR from the start than to break up a bigger one."
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/code-reviews/pull-requests/ :: M_TESTS",
+      "question": "What does the guide say about tests in a change under review?",
+      "capability": "ODG mission sizing — small changes (corroboration pair)",
+      "claim": "The page states: include related tests as part of the PR.",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/pull-requests/",
+          "quote": "include related tests as part of the PR."
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/reviewer-guidance/ :: MR_TESTS",
+      "question": "What does the guide say about tests in a change under review?",
+      "capability": "ODG review gate — reviewer guidance (corroboration pair)",
+      "claim": "The page states: The correctness of any new or changed tests.",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/reviewer-guidance/",
+          "quote": "The correctness of any new or changed tests."
+        }
+      ]
+    },
+    {
+      "query": "microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/author-guidance/ :: MA_SIZE",
+      "question": "What does the guide say about the size of a change / pull request?",
+      "capability": "ODG review gate — author guidance (corroboration pair)",
+      "claim": "The page states: If you can't avoid large PRs, include explanations of the changes in order to make it easier for the reviewer to review the code, with clear comments the reviewer can identify the goal of every code block.",
+      "support": [
+        {
+          "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/author-guidance/",
+          "quote": "If you can't avoid large PRs, include explanations of the changes in order to make it easier for the reviewer to review the code, with clear comments the reviewer can identify the goal of every code block."
+        }
+      ]
+    }
+  ],
+  "screening": [
+    {
+      "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/pull-requests/",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/reviewer-guidance/",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/process-guidance/author-guidance/",
+      "untrusted": false,
+      "injectionFlags": []
+    },
+    {
+      "url": "https://microsoft.github.io/code-with-engineering-playbook/code-reviews/",
+      "untrusted": false,
+      "injectionFlags": []
+    }
+  ],
+  "egressGating": "govern()+per-run quota (research-budget.governWithBudget) and bounded-http-client.validateUrl ran IN THIS PROCESS immediately before each fetch (runResearch planRun + per-call re-check); bounded-http-client.get was the only egress (ODG_RADAR_LIVE=1, GET, redirects blocked, size cap). This live-time gating is recorded by the collector, not reproducible from the repo alone (the replay re-checks the plan)."
+}

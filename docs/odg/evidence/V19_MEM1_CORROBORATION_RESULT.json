@@ -1,0 +1,39 @@
+{
+  "//": "V19-MEM-1 — real-memory P0, EXTERNAL corroboration attempt. Honest outcome: 0 corroborated facts. Root cause proven at two levels (no rule relaxed).",
+  "schema": "odg-v19-mem1-result/1",
+  "date": "2026-11-26",
+  "rootCause": {
+    "level1": "pinned V160 collection: 25/25 claims from ONE publisher host each; CORROBORATED requires ≥2 independent publisher families (odg-knowledge-intelligence.assessClaim) ⇒ 0 facts by construction; 24/25 structured keys unique, 0 cross-publisher key match",
+    "level2": "a governed pair collection (Google ↔ Microsoft, same practices) shows the rule also requires the PRESENTED claim text (≥3 content words, containing the grounded value) to be covered by EACH family's own citations — independent publishers paraphrase (CL/PR, test/tests), so crossFamilyOverlap finds only 2-word shared phrases ('include related', 'easier for', 'it easier for') ⇒ no claim can corroborate; best pair (G_TESTS ↔ M_TESTS) canonical verdict SUPPORTED: 'keys match across families but the PRESENTED claim text is not covered by ≥2 families' citations ⇒ not a fact'",
+    "rule": "the near-verbatim co-coverage requirement is a deliberate safety (inspection HIGH history: lexical/shared-word keys must not ground); NOT relaxed here — a lemma/synonym extension would be a trust-rule change requiring an explicit owner decision"
+  },
+  "collection": {
+    "path": "docs/odg/evidence/V19_CORROBORATION_COLLECTION.json",
+    "sha256": "24dda8e0691211c5b5e93354e8f28ffd3b8b2f3a2f402b6391f3b9a3ea7767c5",
+    "preRegisteredIn": "b05d1740 (campaign module committed before the fetch)",
+    "grant": "docs/odg/V160_RESEARCH_GRANT_ENGINEERING_PRACTICES.json (expires 2026-12-22)",
+    "transport": "bounded-http-client GET, allowlisted hosts only, ODG_RADAR_LIVE=1, no data sent",
+    "verdict": "LIVE_OK",
+    "pagesPlanned": 7,
+    "pagesReceived": 7,
+    "quotes": 11,
+    "cycles": 11,
+    "pinned": "NOT pinned: appending a pin changes COLLECTION_REGISTRY.json's sha, which the CLOSED scenario-G experiment's frozen check records as an input (DRIFT_BEYOND_CONTEXT); no fact depends on this collection (0 corroborated), so it stays an unpinned evidence record (a later use as a trust root needs its own reviewed pin together with a governed G-check context extension)"
+  },
+  "tally": {
+    "collected": 11,
+    "crossFamilySharedPhrases": 3,
+    "pairsAssessed": 1,
+    "corroborated": 0,
+    "supported": 1,
+    "rejectedAsFact": 1,
+    "pending": 0,
+    "indexedAsFact": 0,
+    "reusedAsFact": 0
+  },
+  "crossFamilyOverlapV160": [
+    "a code review",
+    "code review"
+  ],
+  "next": "V19-MEM-2: internal REAL_OBSERVATION corroboration by independent reproduction (≥2 independent GO runs measuring the same structured key with the same value, no contradiction) — a governed admission rule (contract + independent inspection), facts indexed in the FACT tier and recalled by GO"
+}
