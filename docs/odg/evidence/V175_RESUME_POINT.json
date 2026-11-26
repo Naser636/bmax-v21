@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "9292339815a6e1b2a5e8e6aacbaac1924c542d818da0a2bd333f1cefd82aab40"
+      "sha256": "c7dc41bc7b67326c24ab96d06a7103991a753f30c15cecf6f9b0c052d48e53b4"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "1d9616351bfa98536126022f5937f9c985f13cdefae077932cd33bbe0808dcc9"
+      "sha256": "612af0930cd62c607e49aafd769242eb1409c676b00c5bf1da75b83cc415fcd9"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -248,17 +248,17 @@
     },
     "coverage": {
       "rule": "BREF-1",
-      "items": 73,
+      "items": 74,
       "measured": 37,
-      "notMeasured": 36,
+      "notMeasured": 37,
       "withV124MissionId": 22,
       "withV124Section": 23,
       "withV144Phase": 21,
       "byKind": {
         "WORK_ITEM_CONTRACT": {
-          "items": 33,
+          "items": 34,
           "measured": 18,
-          "notMeasured": 15
+          "notMeasured": 16
         },
         "V150_TOP10_ITEM": {
           "items": 5,
@@ -1178,6 +1178,64 @@
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P1-R]",
         "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[32]"
       ]
+    },
+    {
+      "id": "V19-EXP-B",
+      "title": "EXPERIENCE INTELLIGENCE incr. B — structured mission episodes derived from closed register items, recorded in decision-precedent, comparable-experience recall wired into GO DECOMPOSE (EXP-B-1)",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'V19-EXP-B' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a",
+      "ownerRecord": "docs/odg/V19_OWNER_ORDER_EXP_B.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 6ecd0c6a7219",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V19-EXP-B]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33]"
+      ]
     }
   ],
   "otherRegisterItems": {
@@ -1188,7 +1246,7 @@
       "CLOSED_PARTIAL": 4,
       "CLOSED_FAIL": 5,
       "CLOSED_PASS": 3,
-      "NOT_STARTED": 9,
+      "NOT_STARTED": 10,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1411,6 +1469,11 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V19-EXP-B",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a) and commit the inspection record"
       }
     ],
     "lastGoRun": {

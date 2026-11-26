@@ -58,6 +58,9 @@ function recordPrecedent(store: any, entry: any): any {
     limitations: entry.limitations != null ? entry.limitations : (prior ? prior.limitations : null),
     authoredBy,
     reuseCount: prior && Number.isFinite(prior.reuseCount) ? prior.reuseCount : 0,
+    // EXP-B-1 (additive): optional comparable-recall features + the structured episode; absent ⇒ entry shape unchanged
+    ...(Array.isArray(entry.features) ? { features: entry.features.slice().sort() } : {}),
+    ...(isPlainObject(entry.episode) ? { episode: entry.episode } : {}),
   };
   return s.entries[sig];
 }
@@ -114,7 +117,30 @@ function recallPrecedentFresh(store: any, task: any, signals: any): any {
   return Object.freeze({ ...precedent, validity, reusableAsProven: validity.ok === true && validity.verdict === "REUSABLE_AS_PROVEN" });
 }
 
-module.exports = { NAME, signature, emptyStore, recordPrecedent, recallPrecedent, recallPrecedentFresh, applyPrecedent, reusePrecedent, summarizeReuse };
+// (EXP-B-1, ADDITIVE — exact-signature recall UNCHANGED) recallComparable(store, query, opts): rank the precedents that
+// carry `features` by Jaccard similarity with query.features (pure; no mutation). Ties ⇒ signature order (deterministic).
+// Returns [{ signature, sourceMission, similarity, shared, onlyInPrecedent, onlyInQuery, entry }], similarity ≥ minSimilarity.
+function recallComparable(store: any, query: any, opts: any): any[] {
+  const s = ensureStore(store);
+  const o = { k: 3, minSimilarity: 0, excludeMissions: [] as any[], ...(isPlainObject(opts) ? opts : {}) };
+  const q = new Set(Array.isArray(query && query.features) ? query.features : []);
+  if (!q.size) return [];
+  const excl = new Set((o.excludeMissions || []).map(String));
+  const out: any[] = [];
+  for (const e of Object.values(s.entries) as any[]) {
+    if (!Array.isArray(e.features) || excl.has(String(e.sourceMission))) continue;
+    const f = new Set(e.features);
+    const shared = [...q].filter((x) => f.has(x)).sort();
+    const union = new Set([...q, ...f]).size;
+    const similarity = union ? Math.round((shared.length / union) * 1e6) / 1e6 : 0;
+    if (similarity < o.minSimilarity || shared.length === 0) continue;
+    out.push({ signature: e.signature, sourceMission: e.sourceMission, similarity, shared, onlyInPrecedent: [...f].filter((x) => !q.has(x)).sort(), onlyInQuery: [...q].filter((x) => !f.has(x)).sort(), entry: e });
+  }
+  out.sort((a, b) => b.similarity - a.similarity || (a.signature < b.signature ? -1 : a.signature > b.signature ? 1 : 0));
+  return out.slice(0, Math.max(0, o.k));
+}
+
+module.exports = { NAME, signature, emptyStore, recordPrecedent, recallPrecedent, recallPrecedentFresh, applyPrecedent, reusePrecedent, summarizeReuse, recallComparable };
 
 // Read-only CLI: print the store model; mutates nothing.
 if (require.main === module) {

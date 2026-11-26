@@ -386,6 +386,23 @@ function memoryPort(physOut: string, embed?: any): any {
   return m;
 }
 
+/* experienceRecall(repo) — EXP-B-1 (EXPERIENCE INTELLIGENCE incr. B): episodes DERIVED from the committed register's closed
+ * items + their criteria-validation records + contracts, recorded in the canonical decision-precedent store; read-only. */
+const CONTRACTS_FILE = "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json";
+function experienceRecall(repo: string): (mission: any) => any {
+  const EXP = require("../core/odg-experience-episode.js");
+  let store: any = null;
+  return (mission: any) => {
+    if (!store) {
+      const register = readJson(path.join(repo, F.REGISTER)).register;
+      const contracts = readJson(path.join(repo, CONTRACTS_FILE)).contracts;
+      const readRecord = (rel: string) => { const p = path.join(repo, rel); const sha = sha256File(p); return sha ? { json: readJson(p), sha256: sha } : null; };
+      store = EXP.toPrecedentStore(EXP.buildEpisodes({ register, contracts, readRecord, contractSha256: require("../core/odg-authorization-scope.js").contractSha256 }));
+    }
+    return EXP.recallForMission(store, mission);
+  };
+}
+
 /* buildPorts — every effect of a real cycle; all writes go through the confined writer. */
 function buildPorts(o: any): any {
   const { repo, outDir, scratch, stepDelayMs, signalState } = o;
@@ -404,6 +421,7 @@ function buildPorts(o: any): any {
     readState: () => readState(repo),
     knowledge: () => knowledge(repo, Date.now(), o.memory || undefined),
     ...(o.memory ? { memoryRecall: (q: string) => o.memory.recall(q) } : {}),
+    experienceRecall: experienceRecall(repo),
     stopRequested: () => {
       if (signalState.signal) return { stop: true, reason: "SIGNAL", source: signalState.signal };
       if (fs.existsSync(stopPath)) return { stop: true, reason: "STOP_FILE", source: stopPath };
@@ -630,7 +648,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { memoryPort, makeClaimStore, claimDirOf, runGroup, groupAlive, targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, OWNER_SELECTION_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { memoryPort, experienceRecall, makeClaimStore, claimDirOf, runGroup, groupAlive, targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, OWNER_SELECTION_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 /* CLI flag validation: --help/-h ⇒ usage on stdout, exit 0, no cycle; any unknown flag (or a value flag missing its
  * value) ⇒ usage on stderr, exit 2, no cycle. Never starts a cycle on a mistyped flag. */
