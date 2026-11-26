@@ -233,17 +233,17 @@
       {
         "id": "RB-REATTEMPT-CHANGED-INPUT",
         "status": "NOT_STARTED",
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        "reason": "inspection ACCEPT bound to contract 1b8eecdea10d ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
       },
       {
         "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
         "status": "NOT_STARTED",
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        "reason": "inspection ACCEPT bound to contract 52da42dc552c ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
       },
       {
         "id": "RB-SELECTION-AT-RUN-HEAD",
         "status": "NOT_STARTED",
-        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        "reason": "inspection ACCEPT bound to contract d23e00ca6e7a ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
       }
     ]
   },
