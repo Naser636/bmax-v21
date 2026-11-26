@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "d49fe77ece5f3689fcafd28d12f0a0cef5daff670c4cff79fa9562b3f23ac609"
+      "sha256": "142d7aee1fe0eb5d3a578eb1caed51270e4b2353e599b8a7e73302c237fdda36"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "612af0930cd62c607e49aafd769242eb1409c676b00c5bf1da75b83cc415fcd9"
+      "sha256": "b62c752cbe94e787a12bb61e9c34edf49cd691999d796d08dc49b0653a3d8c1c"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -268,17 +268,17 @@
     },
     "coverage": {
       "rule": "BREF-1",
-      "items": 74,
+      "items": 75,
       "measured": 37,
-      "notMeasured": 37,
+      "notMeasured": 38,
       "withV124MissionId": 22,
       "withV124Section": 23,
       "withV144Phase": 21,
       "byKind": {
         "WORK_ITEM_CONTRACT": {
-          "items": 34,
+          "items": 35,
           "measured": 18,
-          "notMeasured": 16
+          "notMeasured": 17
         },
         "V150_TOP10_ITEM": {
           "items": 5,
@@ -1265,6 +1265,64 @@
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V19-EXP-B]",
         "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33]"
       ]
+    },
+    {
+      "id": "V19-MEM-2",
+      "title": "Real-memory P0 — internal REAL observations corroborated by independent reproduction (REPRO-1), recorded through the canonical memory trust gate, indexed in the FACT tier and recalled by GO",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'V19-MEM-2' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1",
+      "ownerRecord": "docs/odg/V19_OWNER_ORDER_MEM.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract e7c35ebdf9f3",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V19-MEM-2]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34]"
+      ]
     }
   ],
   "otherRegisterItems": {
@@ -1275,7 +1333,7 @@
       "CLOSED_PARTIAL": 4,
       "CLOSED_FAIL": 5,
       "CLOSED_PASS": 4,
-      "NOT_STARTED": 9,
+      "NOT_STARTED": 10,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1511,6 +1569,11 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V19-MEM-2",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1) and commit the inspection record"
       }
     ],
     "lastGoRun": {

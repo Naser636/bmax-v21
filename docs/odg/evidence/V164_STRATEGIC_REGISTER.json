@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "612af0930cd62c607e49aafd769242eb1409c676b00c5bf1da75b83cc415fcd9"
+      "sha256": "b62c752cbe94e787a12bb61e9c34edf49cd691999d796d08dc49b0653a3d8c1c"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "aa6b27adf8aaabf3ac8e65e7d4ba9d4b490f3286da7c00fbadbc84b63be4bcf4"
+      "sha256": "c6d94f577d936a117c3f9f178fc4f0c2c11bf5b590fc9c1cab3418d3d78f481a"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -279,11 +279,11 @@
     },
     {
       "source": "runtime/bin/odg-go-memory.test.ts",
-      "sha256": "1788400acacdd4cd0b8acdb012f7934c0be4e34744da57f8c081d705c02161e9"
+      "sha256": "f412aa93245e56c47a2a63860f9ceaf21ee50e965f9c9edd2bb836f9082563fc"
     },
     {
       "source": "runtime/bin/odg-go.ts",
-      "sha256": "d9af6c40e3e10268fe14d7c2432718a0ddee3b1b266a6c3d7cda1a888e825f63"
+      "sha256": "0b5026c4c9f60bc1727b9c50924c7c3ba7d154854432309e81c9798142089d5d"
     },
     {
       "source": "runtime/bin/odg-local-model-benchmark.ts",
@@ -370,6 +370,10 @@
       "sha256": "6ae55bfb3c1eadb0383f531b51cce2ecfddeff6e4d7362217d2613ba9fafc83a"
     },
     {
+      "source": "runtime/bin/odg-v19-mem2-run.ts",
+      "sha256": "85d0331da6e20ee06f4de0f07defe5decd6225ee4ab54fcf9c44afef29934481"
+    },
+    {
       "source": "runtime/core/decision-precedent.ts",
       "sha256": "b03184a5ca7e9a5f78abee19ad721ad7f41dcfd0cb8489f44c178e70900e9e8c"
     },
@@ -444,6 +448,14 @@
     {
       "source": "runtime/core/odg-native-design-pipeline.ts",
       "sha256": "33d35296f3bf5be8fa93a13c3b0d3248a4b3587b041d3caec57daa649f37777c"
+    },
+    {
+      "source": "runtime/core/odg-observation-corroboration.test.ts",
+      "sha256": "111e3663bde1ddba2d588bb6628f58638b128936dd3d584f7ebe1773e35222ca"
+    },
+    {
+      "source": "runtime/core/odg-observation-corroboration.ts",
+      "sha256": "a303c40af9e9393e830b05e01b388f41ceedc9309fa3e38efc0ef9dc350dba91"
     },
     {
       "source": "runtime/core/odg-production-metric.test.ts",
@@ -792,15 +804,15 @@
         "RESOLVED_BY_EVIDENCE"
       ],
       "counts": {
-        "edges": 71,
+        "edges": 97,
         "byKind": {
           "DATASET_INPUT": 1,
-          "CODE_IMPORT": 70,
+          "CODE_IMPORT": 96,
           "STATED_TEXT": 0
         },
-        "satisfied": 71,
+        "satisfied": 97,
         "unsatisfied": 0,
-        "itemsWithDeps": 17,
+        "itemsWithDeps": 18,
         "itemsNotMeasured": 40
       },
       "fanOut": {
@@ -935,11 +947,12 @@
           "blockingDependents": []
         },
         "RB-SELECTION-AT-RUN-HEAD": {
-          "fanOut": 3,
+          "fanOut": 4,
           "dependents": [
             "F",
             "V178-P4-INT",
-            "V19-EXP-B"
+            "V19-EXP-B",
+            "V19-MEM-2"
           ],
           "blockingFanOut": 0,
           "blockingDependents": []
@@ -1006,22 +1019,24 @@
           "blockingDependents": []
         },
         "V178-P4": {
-          "fanOut": 2,
+          "fanOut": 3,
           "dependents": [
             "V178-P4-INT",
-            "V19-EXP-B"
+            "V19-EXP-B",
+            "V19-MEM-2"
           ],
           "blockingFanOut": 0,
           "blockingDependents": []
         },
         "V178-P4-INT": {
-          "fanOut": 5,
+          "fanOut": 6,
           "dependents": [
             "F",
             "J",
             "RB-SELECTION-AT-RUN-HEAD",
             "V178-P4",
-            "V19-EXP-B"
+            "V19-EXP-B",
+            "V19-MEM-2"
           ],
           "blockingFanOut": 0,
           "blockingDependents": []
@@ -1058,12 +1073,24 @@
           "blockingDependents": []
         },
         "V19-EXP-B": {
-          "fanOut": 4,
+          "fanOut": 5,
           "dependents": [
             "F",
             "J",
             "RB-SELECTION-AT-RUN-HEAD",
-            "V178-P4-INT"
+            "V178-P4-INT",
+            "V19-MEM-2"
+          ],
+          "blockingFanOut": 0,
+          "blockingDependents": []
+        },
+        "V19-MEM-2": {
+          "fanOut": 4,
+          "dependents": [
+            "F",
+            "J",
+            "V178-P4-INT",
+            "V19-EXP-B"
           ],
           "blockingFanOut": 0,
           "blockingDependents": []
@@ -1148,6 +1175,17 @@
           "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
         },
         {
+          "from": "F",
+          "to": "V19-MEM-2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-go.ts",
+          "source": "runtime/bin/odg-v176-scenario-f-run.ts#require(\"./odg-go.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[0]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+        },
+        {
           "from": "G2",
           "to": "G",
           "kind": "CODE_IMPORT",
@@ -1210,6 +1248,17 @@
           "source": "runtime/bin/odg-v176-scenario-j-run.ts#require(\"./odg-go.ts\")",
           "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.write_set[0]",
           "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[4]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+        },
+        {
+          "from": "J",
+          "to": "V19-MEM-2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-go.ts",
+          "source": "runtime/bin/odg-v176-scenario-j-run.ts#require(\"./odg-go.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.write_set[0]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
           "satisfied": true,
           "satisfiedBasis": "runtime/bin/odg-go.ts committed"
         },
@@ -1752,6 +1801,39 @@
           "satisfiedBasis": "runtime/bin/odg-go.ts committed"
         },
         {
+          "from": "V178-P4-INT",
+          "to": "V19-MEM-2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-go.ts",
+          "source": "runtime/bin/odg-go-memory.test.ts#require(\"./odg-go.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+        },
+        {
+          "from": "V178-P4-INT",
+          "to": "V19-MEM-2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-observation-corroboration.ts",
+          "source": "runtime/bin/odg-go.ts#require(\"../core/odg-observation-corroboration.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[0]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-observation-corroboration.ts committed"
+        },
+        {
+          "from": "V178-P4-INT",
+          "to": "V19-MEM-2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-go.ts",
+          "source": "runtime/bin/odg-v178-p4-int-run.ts#require(\"./odg-go.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[5]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+        },
+        {
           "from": "V178-P5",
           "to": "V178-P3",
           "kind": "CODE_IMPORT",
@@ -1849,6 +1931,237 @@
           "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[0]",
           "satisfied": true,
           "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+        },
+        {
+          "from": "V19-EXP-B",
+          "to": "V19-MEM-2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-observation-corroboration.ts",
+          "source": "runtime/bin/odg-go.ts#require(\"../core/odg-observation-corroboration.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-observation-corroboration.ts committed"
+        },
+        {
+          "from": "V19-EXP-B",
+          "to": "V19-MEM-2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-go.ts",
+          "source": "runtime/bin/odg-v19-exp-b-run.ts#require(\"./odg-go.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[5]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "RB-SELECTION-AT-RUN-HEAD",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/bin/odg-go-memory.test.ts#require(\"../core/odg-go-cycle.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[22].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "RB-SELECTION-AT-RUN-HEAD",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/bin/odg-go.ts#require(\"../core/odg-go-cycle.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[22].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "RB-SELECTION-AT-RUN-HEAD",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-go-cycle.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[22].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/memory-architecture.ts",
+          "source": "runtime/bin/odg-go.ts#require(\"../core/memory-architecture.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/memory-architecture.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/memory-architecture.ts",
+          "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/memory-architecture.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/memory-architecture.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-memory-hybrid-index.ts",
+          "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-memory-hybrid-index\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-memory-hybrid-index.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/memory-architecture.ts",
+          "source": "runtime/core/odg-observation-corroboration.test.ts#require(\"./memory-architecture.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[1]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/memory-architecture.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4-INT",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/bin/odg-go-memory.test.ts#require(\"../core/odg-go-cycle.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[1]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4-INT",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-go.ts",
+          "source": "runtime/bin/odg-go-memory.test.ts#require(\"./odg-go.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4-INT",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/bin/odg-go.ts#require(\"../core/odg-go-cycle.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[1]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4-INT",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-go-cycle.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[1]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4-INT",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-memory-hybrid-index.ts",
+          "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-memory-hybrid-index\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-memory-hybrid-index.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V178-P4-INT",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-go.ts",
+          "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"./odg-go.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V19-EXP-B",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/bin/odg-go-memory.test.ts#require(\"../core/odg-go-cycle.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[3]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V19-EXP-B",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-go.ts",
+          "source": "runtime/bin/odg-go-memory.test.ts#require(\"./odg-go.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[4]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V19-EXP-B",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-experience-episode.ts",
+          "source": "runtime/bin/odg-go.ts#require(\"../core/odg-experience-episode.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[0]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-experience-episode.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V19-EXP-B",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/bin/odg-go.ts#require(\"../core/odg-go-cycle.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[3]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V19-EXP-B",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/core/odg-go-cycle.ts",
+          "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-go-cycle.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[3]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+        },
+        {
+          "from": "V19-MEM-2",
+          "to": "V19-EXP-B",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-go.ts",
+          "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"./odg-go.ts\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[4]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-go.ts committed"
         }
       ],
       "contention": {
@@ -1938,6 +2251,14 @@
             ]
           },
           {
+            "a": "V178-P4",
+            "b": "V19-MEM-2",
+            "reason": "WRITESET_OVERLAP",
+            "shared": [
+              "package.json"
+            ]
+          },
+          {
             "a": "V178-P4-INT",
             "b": "V19-EXP-B",
             "reason": "WRITESET_OVERLAP",
@@ -1946,11 +2267,30 @@
               "runtime/core/odg-go-cycle.ts",
               "package.json"
             ]
+          },
+          {
+            "a": "V178-P4-INT",
+            "b": "V19-MEM-2",
+            "reason": "WRITESET_OVERLAP",
+            "shared": [
+              "runtime/bin/odg-go.ts",
+              "runtime/bin/odg-go-memory.test.ts",
+              "package.json"
+            ]
+          },
+          {
+            "a": "V19-EXP-B",
+            "b": "V19-MEM-2",
+            "reason": "WRITESET_OVERLAP",
+            "shared": [
+              "runtime/bin/odg-go.ts",
+              "package.json"
+            ]
           }
         ],
         "pairsNote": "pairs lists WRITESET_OVERLAP pairs; UNKNOWN_WRITESET pairs (every pair involving an unknownWriteSets item) are counted in unknownPairs, not listed",
-        "overlapPairs": 10,
-        "unknownPairs": 96,
+        "overlapPairs": 13,
+        "unknownPairs": 99,
         "note": "contention is NOT a dependency: never in deps[], depsStated or any criterion"
       },
       "dep1Kinds": [
@@ -1986,17 +2326,17 @@
       "rule": "BREF-1 (provider-authored; applied uniformly to every register item): (1) v150RequirementIds — WORK_ITEM_CONTRACT: the V171 matrix row whose v150.section is '§45 scenario X' for X = the contract scenario when it is an A–P letter, else contract.parent.scenario when that is an A–P letter (stated lineage); V150_TOP10_ITEM: rows of each V150 summary.top10NextInternal[i].advances entry ('§45-X' ⇒ '§45 scenario X', '§N…' ⇒ '§N'); V150_ALSO_INTERNAL / V150_OWNER_GATED: rows of the '§N' citations of the item's own V150 summary text (a citation directly preceded by a document name, e.g. 'V15_CLOSURE_DOSSIER §8', is not a V15.0 section and is skipped); every other kind: no field links it ⇒ []. (2) V12.4 — each row's anchors.v12_4 segment '<S> <MISSION-ID>' counts only if the canonical V12.4 companion lists MISSION-ID with section S; a section-only segment '<S> …' counts as section S only if the companion has a mission in S; 'none' / 'transversal' state no mission; v124MissionId = the single distinct mission over all rows, else null (ambiguous or none); v124Section = that mission's section, else the single distinct section, else null. (3) v144Phase — from the ADOPTED docs/odg/V14_4_ROADMAP.md §2 table: a phase matches a mission candidate when its 'V12.4 anchor(s)' cell names that mission id, or names its section letter without a mission id; a section-only candidate matches cells naming that letter without a mission id; v144Phase = the single distinct matched phase, else null. status = MEASURED iff ≥1 requirement row resolved (each measured ref cites ≥1 source pointer), else NOT_MEASURED with the reason; per-field nulls carry fieldReasons.",
       "coverage": {
         "rule": "BREF-1",
-        "items": 74,
+        "items": 75,
         "measured": 37,
-        "notMeasured": 37,
+        "notMeasured": 38,
         "withV124MissionId": 22,
         "withV124Section": 23,
         "withV144Phase": 21,
         "byKind": {
           "WORK_ITEM_CONTRACT": {
-            "items": 34,
+            "items": 35,
             "measured": 18,
-            "notMeasured": 16
+            "notMeasured": 17
           },
           "V150_TOP10_ITEM": {
             "items": 5,
@@ -2434,6 +2774,12 @@
           "inspection": "docs/odg/evidence/V19_EXP_B_CONTRACT_INSPECTION.json",
           "experiment": "docs/odg/evidence/V19_EXP_B_RESULT.json",
           "validation": "docs/odg/evidence/V19_EXP_B_CRITERIA_VALIDATION.json"
+        },
+        {
+          "scenario": "V19-MEM-2",
+          "inspection": null,
+          "experiment": null,
+          "validation": null
         }
       ],
       "resolutionEvidence": [
@@ -2474,13 +2820,13 @@
         "V178_CHECKPOINT_19.json"
       ]
     },
-    "itemCount": 74,
+    "itemCount": 75,
     "statusCounts": {
       "ACCEPTED": 1,
       "PASS_IN_SCOPE": 2,
       "EXECUTED_PARTIAL": 0,
       "PARTIAL": 18,
-      "NOT_STARTED": 9,
+      "NOT_STARTED": 10,
       "NOT_ADOPTED": 1,
       "BLOCKED": 14,
       "FAILED": 0,
@@ -3357,7 +3703,7 @@
         },
         "executedEvidence": "docs/odg/evidence/V161_SCENARIO_F.json",
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 7 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 8 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
         "depsStated": [],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
@@ -3524,13 +3870,14 @@
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
-          "edgesOut": 7,
+          "edgesOut": 8,
           "dependsOn": [
             "RB-SELECTION-AT-RUN-HEAD",
             "V178-P1",
             "V178-P4-INT",
             "V178-P6",
-            "V19-EXP-B"
+            "V19-EXP-B",
+            "V19-MEM-2"
           ],
           "unsatisfiedDeps": [],
           "dependents": [],
@@ -3615,6 +3962,17 @@
             "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[3]",
             "satisfied": true,
             "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "F",
+            "to": "V19-MEM-2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-go.ts",
+            "source": "runtime/bin/odg-v176-scenario-f-run.ts#require(\"./odg-go.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[5].WORK_ITEM_CONTRACT.write_set[0]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-go.ts committed"
           }
         ],
         "boussoleRef": {
@@ -4320,7 +4678,7 @@
         },
         "executedEvidence": "docs/odg/evidence/V161_SCENARIO_J.json",
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 4 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 5 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
         "depsStated": [],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
@@ -4489,12 +4847,13 @@
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
-          "edgesOut": 4,
+          "edgesOut": 5,
           "dependsOn": [
             "V178-P1",
             "V178-P4-INT",
             "V178-P6",
-            "V19-EXP-B"
+            "V19-EXP-B",
+            "V19-MEM-2"
           ],
           "unsatisfiedDeps": [],
           "dependents": [
@@ -4546,6 +4905,17 @@
             "source": "runtime/bin/odg-v176-scenario-j-run.ts#require(\"./odg-go.ts\")",
             "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.write_set[0]",
             "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[4]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+          },
+          {
+            "from": "J",
+            "to": "V19-MEM-2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-go.ts",
+            "source": "runtime/bin/odg-v176-scenario-j-run.ts#require(\"./odg-go.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[9].WORK_ITEM_CONTRACT.write_set[0]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
             "satisfied": true,
             "satisfiedBasis": "runtime/bin/odg-go.ts committed"
           }
@@ -6976,10 +7346,11 @@
           "dependents": [
             "F",
             "V178-P4-INT",
-            "V19-EXP-B"
+            "V19-EXP-B",
+            "V19-MEM-2"
           ],
           "blockingDependents": [],
-          "fanOut": 3,
+          "fanOut": 4,
           "blockingFanOut": 0
         },
         "dependencyEdges": [
@@ -8087,10 +8458,11 @@
           "unsatisfiedDeps": [],
           "dependents": [
             "V178-P4-INT",
-            "V19-EXP-B"
+            "V19-EXP-B",
+            "V19-MEM-2"
           ],
           "blockingDependents": [],
-          "fanOut": 2,
+          "fanOut": 3,
           "blockingFanOut": 0
         },
         "dependencyEdges": [
@@ -8626,7 +8998,7 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 16 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 19 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
         "depsStated": [],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
@@ -8785,12 +9157,13 @@
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
-          "edgesOut": 16,
+          "edgesOut": 19,
           "dependsOn": [
             "RB-REATTEMPT-CHANGED-INPUT",
             "RB-SELECTION-AT-RUN-HEAD",
             "V178-P4",
-            "V19-EXP-B"
+            "V19-EXP-B",
+            "V19-MEM-2"
           ],
           "unsatisfiedDeps": [],
           "dependents": [
@@ -8798,10 +9171,11 @@
             "J",
             "RB-SELECTION-AT-RUN-HEAD",
             "V178-P4",
-            "V19-EXP-B"
+            "V19-EXP-B",
+            "V19-MEM-2"
           ],
           "blockingDependents": [],
-          "fanOut": 5,
+          "fanOut": 6,
           "blockingFanOut": 0
         },
         "dependencyEdges": [
@@ -8978,6 +9352,39 @@
             "source": "runtime/bin/odg-v178-p4-int-run.ts#require(\"./odg-go.ts\")",
             "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[5]",
             "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[4]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+          },
+          {
+            "from": "V178-P4-INT",
+            "to": "V19-MEM-2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-go.ts",
+            "source": "runtime/bin/odg-go-memory.test.ts#require(\"./odg-go.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+          },
+          {
+            "from": "V178-P4-INT",
+            "to": "V19-MEM-2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-observation-corroboration.ts",
+            "source": "runtime/bin/odg-go.ts#require(\"../core/odg-observation-corroboration.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[0]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-observation-corroboration.ts committed"
+          },
+          {
+            "from": "V178-P4-INT",
+            "to": "V19-MEM-2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-go.ts",
+            "source": "runtime/bin/odg-v178-p4-int-run.ts#require(\"./odg-go.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[5]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
             "satisfied": true,
             "satisfiedBasis": "runtime/bin/odg-go.ts committed"
           }
@@ -9262,7 +9669,7 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 7 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 9 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
         "depsStated": [],
         "requiresOwnerAuthorization": true,
         "ownerReason": "OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass",
@@ -9421,22 +9828,24 @@
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
-          "edgesOut": 7,
+          "edgesOut": 9,
           "dependsOn": [
             "RB-REATTEMPT-CHANGED-INPUT",
             "RB-SELECTION-AT-RUN-HEAD",
             "V178-P4",
-            "V178-P4-INT"
+            "V178-P4-INT",
+            "V19-MEM-2"
           ],
           "unsatisfiedDeps": [],
           "dependents": [
             "F",
             "J",
             "RB-SELECTION-AT-RUN-HEAD",
-            "V178-P4-INT"
+            "V178-P4-INT",
+            "V19-MEM-2"
           ],
           "blockingDependents": [],
-          "fanOut": 4,
+          "fanOut": 5,
           "blockingFanOut": 0
         },
         "dependencyEdges": [
@@ -9516,6 +9925,28 @@
             "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[0]",
             "satisfied": true,
             "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+          },
+          {
+            "from": "V19-EXP-B",
+            "to": "V19-MEM-2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-observation-corroboration.ts",
+            "source": "runtime/bin/odg-go.ts#require(\"../core/odg-observation-corroboration.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-observation-corroboration.ts committed"
+          },
+          {
+            "from": "V19-EXP-B",
+            "to": "V19-MEM-2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-go.ts",
+            "source": "runtime/bin/odg-v19-exp-b-run.ts#require(\"./odg-go.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[5]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-go.ts committed"
           }
         ],
         "boussoleRef": {
@@ -9534,6 +9965,373 @@
           "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33]",
           "ownerRecord": "docs/odg/V19_OWNER_ORDER_EXP_B.json",
           "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].authorization.source",
+          "ownerRecordReason": null
+        }
+      },
+      {
+        "id": "V19-MEM-2",
+        "kind": "WORK_ITEM_CONTRACT",
+        "title": "Real-memory P0 — internal REAL observations corroborated by independent reproduction (REPRO-1), recorded through the canonical memory trust gate, indexed in the FACT tier and recalled by GO",
+        "contractState": "AUTHORIZED_FOR_REVISION",
+        "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_MEM.json: « les travaux nécessaires pour obtenir une mémoire réelle exploitable et corroborée » / « Ne pas inventer des faits pour remplir un compteur. » — internal, loopback-only, €0",
+        "status": "NOT_STARTED",
+        "statusSource": [
+          "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].initialState.status"
+        ],
+        "nextStep": {
+          "text": "the single GO-dispatched run meeting AC1–AC6, then VALIDATE_CRITERIA",
+          "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].initialState.missingForPass"
+        },
+        "executedEvidence": null,
+        "deps": [],
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 19 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsStated": [],
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "sectionsAdvanced": [
+          "§45"
+        ],
+        "criteria": {
+          "autonomyBenefit": {
+            "status": "MEASURED",
+            "value": 0.5,
+            "rule": "AUT-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].scenario",
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#sectionsStatus[45].title"
+            ],
+            "basis": "sections advanced matching /AUTONOM/: [§45]"
+          },
+          "capabilityGain": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "CAP-1",
+            "source": [
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary.top10NextInternal"
+            ],
+            "reason": "not referenced by any V150 top10NextInternal item ('§45-V19-MEM-2')"
+          },
+          "blockerRepetitionReduction": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "BLK-0",
+            "source": [],
+            "reason": "no canonical field links this item to blockers/repetitions removed"
+          },
+          "reliabilityQuality": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REL-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "speedEfficiency": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "SPD-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "reusability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "REU-0",
+            "source": [],
+            "reason": "no evidence field records it"
+          },
+          "strategicValue": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "STR-1",
+            "source": [
+              "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json#summary"
+            ],
+            "reason": "absent from top10NextInternal and alsoInternal"
+          },
+          "costRiskComplexity": {
+            "status": "MEASURED",
+            "value": 1,
+            "rule": "CRC-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.acceptance_criteria",
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set"
+            ],
+            "basis": "|AC|=6, |write_set|=7, ownerGatedStep=false"
+          },
+          "dependencyAvailability": {
+            "status": "NOT_MEASURED",
+            "value": null,
+            "rule": "DEP-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].initialState.missingForPass"
+            ],
+            "reason": "no dependency stated in the evidence ⇒ deps [] (absence of a statement is not availability)"
+          },
+          "evidenceLevel": {
+            "status": "MEASURED",
+            "value": 0,
+            "rule": "EVD-1",
+            "source": [
+              "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].initialState.evidence"
+            ],
+            "basis": "k=0 (initialState.evidence 0)"
+          }
+        },
+        "closure": {
+          "closed": false,
+          "rule": "CLOSE-1",
+          "currentStep": "INSPECT_REVISED_CONTRACT",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+          "component": "odg-authorization-scope.deriveAuthorizationScope"
+        },
+        "dependencyGraph": {
+          "status": "DERIVED",
+          "rule": "DEPG-1",
+          "edgesOut": 19,
+          "dependsOn": [
+            "RB-SELECTION-AT-RUN-HEAD",
+            "V178-P4",
+            "V178-P4-INT",
+            "V19-EXP-B"
+          ],
+          "unsatisfiedDeps": [],
+          "dependents": [
+            "F",
+            "J",
+            "V178-P4-INT",
+            "V19-EXP-B"
+          ],
+          "blockingDependents": [],
+          "fanOut": 4,
+          "blockingFanOut": 0
+        },
+        "dependencyEdges": [
+          {
+            "from": "V19-MEM-2",
+            "to": "RB-SELECTION-AT-RUN-HEAD",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/bin/odg-go-memory.test.ts#require(\"../core/odg-go-cycle.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[22].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "RB-SELECTION-AT-RUN-HEAD",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/bin/odg-go.ts#require(\"../core/odg-go-cycle.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[22].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "RB-SELECTION-AT-RUN-HEAD",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-go-cycle.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[22].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/memory-architecture.ts",
+            "source": "runtime/bin/odg-go.ts#require(\"../core/memory-architecture.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/memory-architecture.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/memory-architecture.ts",
+            "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/memory-architecture.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/memory-architecture.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-memory-hybrid-index.ts",
+            "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-memory-hybrid-index\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-memory-hybrid-index.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/memory-architecture.ts",
+            "source": "runtime/core/odg-observation-corroboration.test.ts#require(\"./memory-architecture.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[1]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[27].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/memory-architecture.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4-INT",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/bin/odg-go-memory.test.ts#require(\"../core/odg-go-cycle.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[1]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4-INT",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-go.ts",
+            "source": "runtime/bin/odg-go-memory.test.ts#require(\"./odg-go.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4-INT",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/bin/odg-go.ts#require(\"../core/odg-go-cycle.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[1]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4-INT",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-go-cycle.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[1]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4-INT",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-memory-hybrid-index.ts",
+            "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-memory-hybrid-index\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-memory-hybrid-index.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V178-P4-INT",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-go.ts",
+            "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"./odg-go.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[31].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V19-EXP-B",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/bin/odg-go-memory.test.ts#require(\"../core/odg-go-cycle.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[3]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V19-EXP-B",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-go.ts",
+            "source": "runtime/bin/odg-go-memory.test.ts#require(\"./odg-go.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[3]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[4]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V19-EXP-B",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-experience-episode.ts",
+            "source": "runtime/bin/odg-go.ts#require(\"../core/odg-experience-episode.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[0]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-experience-episode.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V19-EXP-B",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/bin/odg-go.ts#require(\"../core/odg-go-cycle.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[3]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V19-EXP-B",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/core/odg-go-cycle.ts",
+            "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"../core/odg-go-cycle.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[3]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/core/odg-go-cycle.ts committed"
+          },
+          {
+            "from": "V19-MEM-2",
+            "to": "V19-EXP-B",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-go.ts",
+            "source": "runtime/bin/odg-v19-mem2-run.ts#require(\"./odg-go.ts\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].WORK_ITEM_CONTRACT.write_set[4]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[33].WORK_ITEM_CONTRACT.write_set[4]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-go.ts committed"
+          }
+        ],
+        "boussoleRef": {
+          "status": "NOT_MEASURED",
+          "rule": "BREF-1",
+          "canonical": "V12.4",
+          "v124MissionId": null,
+          "v124Section": null,
+          "v144Phase": null,
+          "v150RequirementIds": [],
+          "source": [],
+          "reason": "contract scenario 'V19-MEM-2' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+        },
+        "contractRef": {
+          "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1",
+          "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34]",
+          "ownerRecord": "docs/odg/V19_OWNER_ORDER_MEM.json",
+          "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[34].authorization.source",
           "ownerRecordReason": null
         }
       },
@@ -15308,6 +16106,7 @@
       "CP8-GAP-5-superviseExecution",
       "V176-NB3",
       "V178-P2",
+      "V19-MEM-2",
       "V150-AI4",
       "MC-CI-BEFORE-REVIEW",
       "MC-CR-APPROVAL-STANDARD",
@@ -15317,7 +16116,7 @@
       "MC-PEER-REVIEW-EVERY-PR",
       "MC-REVIEW-FOCUS"
     ],
-    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 30 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 31 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V19-MEM-2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "thresholds": {
       "epsilon": 0.02,
       "uncertaintyMax": 0.5
@@ -18232,6 +19031,96 @@
         "autoSelectable": true
       },
       {
+        "id": "V19-MEM-2",
+        "status": "NOT_STARTED",
+        "evidenceScore": 0.05,
+        "upperBound": 0.75,
+        "uncertainty": 0.7,
+        "measuredWeightShare": 0.3,
+        "breakdown": [
+          {
+            "criterion": "autonomyBenefit",
+            "status": "MEASURED",
+            "value": 0.5,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0.05,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "blockerRepetitionReduction",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "capabilityGain",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "costRiskComplexity",
+            "status": "MEASURED",
+            "value": 1,
+            "direction": "LOWER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "dependencyAvailability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "evidenceLevel",
+            "status": "MEASURED",
+            "value": 0,
+            "direction": "HIGHER_IS_BETTER",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0
+          },
+          {
+            "criterion": "reliabilityQuality",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "reusability",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "speedEfficiency",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          },
+          {
+            "criterion": "strategicValue",
+            "status": "NOT_MEASURED",
+            "weight": 0.1,
+            "contribution": 0,
+            "uncertaintyContribution": 0.1
+          }
+        ],
+        "unblocks": 0,
+        "requiresOwnerAuthorization": false,
+        "ownerReason": null,
+        "autoSelectable": true
+      },
+      {
         "id": "CP8-GAP-canonicalDefectsJ",
         "status": "PROPOSED",
         "evidenceScore": 0.025,
@@ -19322,7 +20211,7 @@
     "proposed": null,
     "tiedSet": [],
     "resolvedBy": null,
-    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 30 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
+    "justification": "ODG proposes 'D': evidence score 0.28 (uncertainty 0.5 ≤ 0.5); next best is ≥ epsilon 0.02 lower; 31 candidate(s) could overtake only if their NOT_MEASURED criteria were favourable: V150-T02, L, P, O, N, V150-T07, E, I, RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD, V150-T10, V178-P5, V178-P6, CP8-GAP-1-selectNextMission, CP8-GAP-9-chooseFollowing, V150-T09, V178-P7, CP8-GAP-3-chooseMode, CP8-GAP-5-superviseExecution, V176-NB3, V178-P2, V19-MEM-2, V150-AI4, MC-CI-BEFORE-REVIEW, MC-CR-APPROVAL-STANDARD, MC-CR-LATENCY, MC-LESSONS-LEARNED, MC-MERGE-QUEUE, MC-PEER-REVIEW-EVERY-PR, MC-REVIEW-FOCUS",
     "uncertainty": 0.5,
     "choiceNextStep": {
       "text": "comparison of ≥2 researched methods on a real task and a measured gain vs baseline",
@@ -19378,7 +20267,7 @@
         "b3": true,
         "b4": false
       },
-      "meanMeasuredWeightShareOverSelectable": 0.2613
+      "meanMeasuredWeightShareOverSelectable": 0.2625
     },
     "C": {
       "grade": "PASS",
@@ -19411,5 +20300,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "afad5db0d9dc569c46d20e780d7a3aec3dfdc47b"
+  "generatedAtHead": "61e640767d93c7fc0e21052776f465db7cb1e6e7"
 }

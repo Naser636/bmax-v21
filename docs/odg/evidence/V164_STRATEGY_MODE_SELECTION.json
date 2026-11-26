@@ -2,7 +2,7 @@
   "schema": "V164_STRATEGY_MODE_SELECTION_EVIDENCE",
   "directive": "owner V16.4 §4 sélecteur de stratégie (MODE NATIF / HYBRIDE / FOURNISSEUR) + §7 gap 'absence de mode hybride dans le sélecteur' + §10 scenario D",
   "gapRef": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (\"'hybrid' is not an option of the component\")",
-  "head": "67ae38bb56817dbf8a1be5245f0b1bdae744594f",
+  "head": "61e640767d93c7fc0e21052776f465db7cb1e6e7",
   "evaluationInstant": "2026-11-23T18:56:03.582Z",
   "evaluationInstantNote": "pinned = latest timestamp among the source evidence files (deterministic; registry freshness checked against it)",
   "sources": {
@@ -28,7 +28,7 @@
     },
     "AP": {
       "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "612af0930cd62c607e49aafd769242eb1409c676b00c5bf1da75b83cc415fcd9"
+      "sha256": "b62c752cbe94e787a12bb61e9c34edf49cd691999d796d08dc49b0653a3d8c1c"
     },
     "CP8": {
       "path": "docs/odg/evidence/V163_CHECKPOINT_8.json",
@@ -3859,6 +3859,75 @@
         },
         "delegationRecords": []
       }
+    },
+    {
+      "id": "AP-V19-MEM-2",
+      "family": "AP",
+      "observedOutcome": null,
+      "prior": null,
+      "current": {
+        "mode": "DECISION_REQUIRED",
+        "tentativeMode": "NATIVE",
+        "rule": "M0",
+        "rationale": "mission state AUTHORIZED_FOR_REVISION ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-V19-MEM-2:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "uncertainty": {
+          "level": "HIGH",
+          "because": [
+            "part qualification NOT_MEASURED: AP-V19-MEM-2",
+            "risk NOT_MEASURED"
+          ]
+        },
+        "authorizationRequired": true,
+        "budgetRequired": false,
+        "providerExecutable": false,
+        "launchedBySelector": false,
+        "fallbackChain": [
+          "NATIVE",
+          "PROVIDER",
+          "DECISION_REQUIRED"
+        ],
+        "parts": [
+          {
+            "id": "AP-V19-MEM-2",
+            "qualification": "NOT_MEASURED",
+            "localModel": null,
+            "basis": "Q4 no taskClass and no observation ⇒ NOT_MEASURED ⇒ €0 PROBE"
+          }
+        ],
+        "hybrid": {
+          "applicable": false,
+          "nativeParts": [
+            "AP-V19-MEM-2"
+          ],
+          "delegatedParts": [],
+          "refusedBecause": [
+            "single part (nothing to split)",
+            "no part needs delegation"
+          ]
+        },
+        "provider": {
+          "cost": "UNKNOWN",
+          "executable": false
+        },
+        "inputs": {
+          "planner": {
+            "value": "MONOLITHIC",
+            "source": "decomposition-planner.chooseStrategy (computed)"
+          },
+          "decomposable": false,
+          "writeSetDisjoint": true,
+          "risk": {
+            "value": null,
+            "status": "NOT_MEASURED",
+            "reason": "no risk level in the evidence record"
+          },
+          "deadline": {
+            "value": null,
+            "status": "NOT_SUPPLIED"
+          }
+        },
+        "delegationRecords": []
+      }
     }
   ],
   "modeCounts": {
@@ -3870,7 +3939,7 @@
       "NATIVE": 4,
       "PROVIDER": 2,
       "HYBRID": 3,
-      "DECISION_REQUIRED": 34
+      "DECISION_REQUIRED": 35
     }
   },
   "jStrategyReplay": [

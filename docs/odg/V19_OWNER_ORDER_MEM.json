@@ -1,0 +1,19 @@
+{
+  "//": "OWNER authorization record — verbatim transcription (2026-11-26) of the owner directive making the empty real memory a P0 chantier. Authorization SOURCE for V19-MEM-2 (family V19-REAL-MEMORY). Markdown emphasis omitted, words unchanged. Never self-inspects; never PASS by itself.",
+  "schema": "odg-owner-authorization/1",
+  "kind": "OWNER_AUTHORIZATION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-26",
+  "directives": ["DIRECTIVE CTO — AUTORISATION PROPRIÉTAIRE GLOBALE ET ACHÈVEMENT V14.4 — REPRISE IMMÉDIATE — EXPERIENCE INTELLIGENCE — MÉMOIRE RÉELLE — TOUTES MISSIONS RESTANTES"],
+  "quote": [
+    "Cette autorisation comprend explicitement : … les travaux nécessaires pour obtenir une mémoire réelle exploitable et corroborée ;",
+    "Le problème de mémoire vide doit devenir un chantier de résolution effectif, et non un défaut simplement mentionné dans les rapports.",
+    "Ne pas créer de deuxième mémoire.",
+    "8. enregistrer le fait uniquement lorsque les critères de corroboration sont satisfaits ; 9. indexer la connaissance ; 10. la retrouver dans une véritable mission GO ; 11. conserver les preuves permettant de réévaluer ultérieurement sa validité.",
+    "Utiliser les sources internes réelles et les recherches Radar autorisées.",
+    "Ne pas inventer des faits pour remplir un compteur.",
+    "Ne pas transformer les 12 épisodes internes en faits corroborés simplement parce qu'ils sont ACTIVE."
+  ],
+  "covers": { "contracts": ["V19-MEM-2"], "steps": ["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"] },
+  "neverCovers": ["relaxing the external corroboration rule (odg-knowledge-intelligence.assessClaim)", "promoting experience episodes or SUPPORTED claims to facts", "a second memory or trust gate", "production, deployment, public exposure, client data, purchases", "self-inspection"]
+}
