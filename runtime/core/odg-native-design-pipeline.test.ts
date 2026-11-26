@@ -250,7 +250,7 @@ check("pipeline contract lists 6 stages + reused canonical components", P.NATIVE
         const F2 = R3.fakeBySampling(); const r2 = await NB2.runNativeDesign({ root: ROOT2, label: "TEST", transport: F2.fake, loadProbe: NB2.IDLE });
         const v2 = P.verifyPins(pins2.pins, rf2);
         const hiddenNeverShown = (r2.prompts || []).every((pr: any) => !(pr.segments || []).some((sg: any) => /held-out|hidden/i.test(String(sg.source || ""))));
-        check("V178-P6/AC3: existing NB2 held-out behaviour is unchanged (regression test)", pins2.ok && v2.ok && r2.verdict === "FAIL" && r2.rounds.every((x: any) => x.repairStopReason === "NO_PROGRESS_IDENTICAL_REGENERATION") && r2.diversity === undefined && P.refusePinnedWrites(["runtime/core/odg-canonical-json.ts"], pins2.pins) === null && hiddenNeverShown);
+        check("V178-P6/AC3: existing NB2 held-out behaviour is unchanged (regression test)", pins2.ok && v2.ok && r2.verdict === "FAIL" && r2.rounds.every((x: any) => x.repairStopReason === "NO_PROGRESS_IDENTICAL_REGENERATION") && r2.diversity === undefined && P.refusePinnedWrites(["runtime/core/odg-canonical-json.ts"], pins2.pins) === null && hiddenNeverShown && !!r2.frozen && r2.frozen.ok === true && r2.frozen.pins.some((p: any) => p.file === P.HARNESS_FILE) && r2.frozen.refusedCandidates.length === 0 && r2.frozen.verifiedAtAcceptance && r2.frozen.verifiedAtAcceptance.ok === true);   // FROZEN-1 wired on the real NB2 path
       }
     }
   }

@@ -4648,6 +4648,7 @@
         "write_set": [
           "runtime/core/odg-native-design-pipeline.ts",
           "runtime/core/odg-native-design-pipeline.test.ts",
+          "runtime/bin/odg-v175-native-design-run.ts",
           "runtime/bin/odg-v19-acceptance-run.ts",
           "runtime/bin/odg-v19-acceptance-run.test.ts",
           "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json"
@@ -4783,14 +4784,44 @@
           "reason": "owner order « Puis P5, P6 et P7. »",
           "justification": "binding before any run; criteria unchanged",
           "revisionAuthorSessionId": "v19-p6-binding"
+        },
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 P6 revision-2 session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P6/AC1' (file: acceptance_tests[0]): a candidate editing a pinned test is refused before execution",
+            "AC2 test 'V178-P6/AC2' (file: acceptance_tests[1]): a changed pin sha between selection and acceptance fails the run",
+            "AC3 test 'V178-P6/AC3' (file: acceptance_tests[2]): existing NB2 held-out behaviour is unchanged (regression test)",
+            "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC5 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC5, beforeMetric, preRegistration rule/thresholds unchanged",
+          "change": [
+            "write_set += runtime/bin/odg-v175-native-design-run.ts (FROZEN-1 wired into the real NB2/NB3 native-design path: evaluators pinned at start, candidate write-set refused before execution at S4 and S5, pins re-verified at acceptance ⇒ FAIL on change)",
+            "refusePinnedWrites: absolute paths root-relativised or refused (fail-closed)",
+            "AC3 test exercises the REAL NB2 runNativeDesign path (+ asserts FROZEN-1 active on it)"
+          ],
+          "original": {
+            "write_set": [
+              "runtime/core/odg-native-design-pipeline.ts",
+              "runtime/core/odg-native-design-pipeline.test.ts",
+              "runtime/bin/odg-v19-acceptance-run.ts",
+              "runtime/bin/odg-v19-acceptance-run.test.ts",
+              "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json"
+            ]
+          },
+          "reason": "independent contract inspection REJECT (insp-6cab89c8-v19-nb3-p6-p7-20261126): absolute-path fail-open, AC3 overclaim, FROZEN-1 not called from any real path",
+          "justification": "fix exactly the three findings before any run; criteria unchanged",
+          "revisionAuthorSessionId": "v19-p6-rev2"
         }
       ]
     },
     {
       "scenario": "V178-P7",
       "title": "client-job privacy sandbox: bwrap with no network namespace access, model reached through a bind-mounted unix socket, per-tenant directory, keep_alive 0, per-tenant encryption at rest with node:crypto",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json: « Je confirme les autorisations nécessaires pour poursuivre et achever les missions restantes de la roadmap V14.4 dans le périmètre interne autorisé. » / « Puis P5, P6 et P7. » — internal, synthetic tenants only, never client data on this host",
       "origin": {
         "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
         "sourceProposal": "V178-P7",
@@ -4840,8 +4871,10 @@
         }
       },
       "binding": {
-        "status": "UNBOUND",
-        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 P7 binding session; branch feat/v178-p7-client-job-sandbox)",
+        "boundAt": "2026-11-26"
       },
       "initialState": {
         "status": "NOT_STARTED",
@@ -4870,9 +4903,9 @@
       },
       "beforeMetric": [
         {
-          "source": "runtime/core/provider-sandbox.ts",
+          "source": "runtime/core/provider-sandbox.ts#clientJobSandbox",
           "name": "clientJobSandbox",
-          "value": "ABSENT (model-code sandbox only)"
+          "value": "ABSENT"
         }
       ],
       "measure": {
@@ -4884,7 +4917,9 @@
         "scope": "improve provider-sandbox, ollama-provider, odg-native-build-sandbox only; no network, no install, no canonical-authority change",
         "write_set": [
           "runtime/core/provider-sandbox.ts",
-          "runtime/core/provider-sandbox.test.ts"
+          "runtime/core/provider-sandbox.test.ts",
+          "runtime/bin/odg-v19-acceptance-run.ts",
+          "docs/odg/evidence/V178_P7_ACCEPTANCE_RESULT.json"
         ],
         "write_set_estimate": {
           "estimate": true,
@@ -4938,8 +4973,94 @@
           "test output per file",
           "recomputed before/after metric record",
           "independent inspection verdict"
-        ]
-      }
+        ],
+        "preRegistration": {
+          "metric": "ACC-1 over the contract's acceptance tests (V178-P7/AC1–AC4, real bubblewrap, SYNTHETIC tenants), tsc, and the LEARN-1 before-metric",
+          "baseline": "beforeMetric clientJobSandbox ABSENT (model-code sandbox only)",
+          "dataset": {
+            "source": "the acceptance tests in runtime/core/provider-sandbox.test.ts at the run head (synthetic tenant dirs + fake model daemon behind the unix-socket forwarder)",
+            "runnerSha256": "ff6193e72c872c5f50eb411248161d29ef3f7e791d093cf732fa42f971c2f60b"
+          },
+          "decisionRule": "PASS ⇔ every acceptance test id reported ok (file exit 0; a bubblewrap SKIP is never an ok) ∧ tsc clean ∧ clientJobSandbox IMPROVED (ABSENT → PRESENT); a metric not recomputable ⇒ NOT_MEASURED; else FAIL",
+          "thresholds": {
+            "acceptanceTests": 4
+          }
+        },
+        "budgets": {
+          "modelCalls": 0,
+          "network": "none (the AC1 negative test proves no route out of the sandbox)",
+          "providerCalls": 0,
+          "clientData": "NONE — synthetic tenants only (V178.1 NOT_SOVEREIGN)",
+          "dispatchTimeoutMs": 900000
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json (V19 V14.4 completion order)",
+        "date": "2026-11-26",
+        "transcribedBy": "PROVIDER (Claude Code) — bound through family V19-V144-COMPLETION",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "one GO-dispatched run of the declared target only, after an independent inspection ACCEPT of this contract; no network, no model, no client data; writes only its result file",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v19-acceptance-run.ts",
+            "args": [
+              "V178-P7",
+              "docs/odg/evidence/V178_P7_ACCEPTANCE_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V178_P7_ACCEPTANCE_RESULT.json"
+            ]
+          }
+        },
+        "dispatchTimeoutMs": 900000,
+        "inspectionRecord": "docs/odg/evidence/V178_P7_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 P7 binding session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P7/AC1' (file: acceptance_tests[0]): inside the sandbox a connect to a public IP fails (negative test)",
+            "AC2 test 'V178-P7/AC2' (file: acceptance_tests[1]): inference through the bound socket succeeds with a fake daemon",
+            "AC3 test 'V178-P7/AC3' (file: acceptance_tests[2]): a second tenant's directory is not visible",
+            "AC4 test 'V178-P7/AC4' (file: acceptance_tests[3]): the forwarder refuses paths other than /api/generate and /api/embed",
+            "AC5 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC6 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC6 text unchanged",
+          "change": [
+            "PROPOSED → AUTHORIZED_FOR_REVISION (owner record)",
+            "write_set concrete (+ reused generic acceptance runner + result file)",
+            "beforeMetric source made concrete: file-level prose → '#clientJobSandbox'",
+            "preRegistration + budgets + dispatch target added"
+          ],
+          "original": {
+            "state": "PROPOSED",
+            "write_set": [
+              "runtime/core/provider-sandbox.ts",
+              "runtime/core/provider-sandbox.test.ts"
+            ],
+            "beforeMetric": [
+              {
+                "source": "runtime/core/provider-sandbox.ts",
+                "name": "clientJobSandbox",
+                "value": "ABSENT (model-code sandbox only)"
+              }
+            ]
+          },
+          "reason": "owner order « Puis P5, P6 et P7. »",
+          "justification": "binding before any run; criteria unchanged",
+          "revisionAuthorSessionId": "v19-p7-binding"
+        }
+      ]
     },
     {
       "scenario": "V178-P4-INT",

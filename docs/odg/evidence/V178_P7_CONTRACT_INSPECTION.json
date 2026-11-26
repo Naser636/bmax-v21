@@ -1,0 +1,44 @@
+{
+  "schema": "odg-contract-inspection/1",
+  "verdict": "ACCEPT",
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session; launched under the owner's explicit authorization of 2026-11-26)",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-26",
+  "//": "Independent inspection of V178-P7 (binding + CJS-1). First pass ACCEPT at 61634a12; post-inspection delta (extra read-only binds) REJECTED at 73573a21, fixed and ACCEPTED at 7b9ffea8 (current binding).",
+  "scenario": "V178-P7",
+  "contractSha256": "1ebefeb74e1577c142a780970b7c0f106b7e5dd6f57034f053f309889914d867",
+  "inspectedHeadSha": "7b9ffea8f9323983a832bc89695709c38517857b",
+  "inspectedPr": 1075,
+  "inspectorSessionId": "insp-6cab89c8-v19-p7-delta2-20261126",
+  "authorSessionId": "v19-p7-binding",
+  "priorVerdicts": [
+    {
+      "verdict": "ACCEPT",
+      "inspectedHeadSha": "61634a1252496c720dec265f5fe1b7d34ee81f42",
+      "inspectorSessionId": "insp-6cab89c8-v19-nb3-p6-p7-20261126"
+    },
+    {
+      "verdict": "REJECT",
+      "inspectedHeadSha": "73573a219377048ebe639d51a5dac4a2e94b80c7",
+      "inspectorSessionId": "insp-6cab89c8-v19-p7-delta-20261126",
+      "blocking": [
+        "roBinds could expose tenantsRoot / another tenant (no overlap check)",
+        "symlink to /etc not resolved before the prefix check"
+      ]
+    }
+  ],
+  "findings": [
+    "sha 1ebefeb7… unchanged across 61634a12 → 7b9ffea8",
+    "binding correct: positional target [V178-P7, OUT], beforeMetric #clientJobSandbox ABSENT at a60e047f, runnerSha256 matches, budgets.clientData NONE, owner neverCovers client data",
+    "clientJobSandbox: --unshare-all (no network), only system dirs read-only, only <tenantsRoot>/<tenant> rw at /work, tenant id validated, model only via the bound unix socket; extra roBinds realpath-resolved, never overlapping the tenants root / socket dir, never under /tmp or /run, confidential prefixes refused (all probed)",
+    "forwarder: only POST /api/generate and /api/embed (403 otherwise)",
+    "AC1–AC4 ok under real bwrap 0.11.1, synthetic tenants (46 ok, 0 skipped)",
+    "not certified: keep_alive 0 and per-tenant encryption at rest (not in ACs); NO client data on this host"
+  ],
+  "testsRun": [
+    "provider-sandbox.test.ts exit 0 at 61634a12 (43 ok) and 7b9ffea8 (46 ok)",
+    "tsc exit 0"
+  ]
+}

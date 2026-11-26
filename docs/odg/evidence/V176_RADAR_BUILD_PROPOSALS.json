@@ -24,19 +24,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795725143000,
+    "nowEpochMs": 1795727897000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "47ecf715a4ad1ce20666ebfe1ca327aba52be3d96a168a3718c8a9d8a6761d16",
-      "epochMs": 1795725143000
+      "sha256": "480b93f1b3f392f7e3c06a0e17fefecd2774d4afa41c7d3a305a19d927c049ab",
+      "epochMs": 1795725313000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "399a5e9218194d8300d04bcc0fec57bb70f9d24cba9f93099d2e888fd4015f1e",
-      "epochMs": 1795722242000
+      "sha256": "846c77601e978cb5e003fe19d4be966abaa8488516800818cea73312ae144378",
+      "epochMs": 1795725313000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -45,8 +45,8 @@
     },
     {
       "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json",
-      "sha256": "417b22795c8358076fdd346b3d71d95adf30e118127b074fd549dfef2c41abd7",
-      "epochMs": 1795718937000
+      "sha256": "68578876e2d80b2c45dd1108f0386eabb78ba17b733758b7edc7e3675fec0a84",
+      "epochMs": 1795727897000
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -4037,8 +4037,8 @@
     },
     {
       "scenario": "V178-P7",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json: « Je confirme les autorisations nécessaires pour poursuivre et achever les missions restantes de la roadmap V14.4 dans le périmètre interne autorisé. » / « Puis P5, P6 et P7. » — internal, synthetic tenants only, never client data on this host",
       "sourceProposal": "V178-P7",
       "conversionBatch": "V178-RADAR-1"
     }
