@@ -212,12 +212,58 @@ function runProvider(prompt: any, opts: any): any {
   };
 }
 
+// ---- V17.8 P7 — CLIENT-JOB PRIVACY SANDBOX (extends this canonical sandbox; no second sandbox).
+// A client job runs in bwrap with EVERY namespace unshared (no network namespace access: --unshare-all), its OWN tenant
+// directory as the only writable path (/work) — other tenants' directories are never bound, so they are not visible — and the
+// local model reached ONLY through a bind-mounted unix socket (/run/odg-model.sock) served by a host-side forwarder that
+// admits exactly POST /api/generate and POST /api/embed (keep_alive passed through). The forwarder is the only path to the
+// model; there is no TCP route out of the sandbox. NEVER used with client data on this host (V178.1 NOT_SOVEREIGN) — the
+// tests use synthetic tenants only.
+const CLIENT_JOB_RULE = "CJS-1: client job = bwrap --unshare-all (no network), only its tenant dir bound read-write at /work, the model only via a bind-mounted unix socket whose host forwarder admits POST /api/generate and /api/embed only";
+const FORWARD_ALLOWED = Object.freeze(["/api/generate", "/api/embed"]);
+const TENANT_RE = /^[a-z0-9][a-z0-9-]{0,62}$/;
+function clientJobSandbox(spec: any): string[] {
+  const s = spec && typeof spec === "object" ? spec : {};
+  if (!TENANT_RE.test(String(s.tenant || ""))) throw new Error("clientJobSandbox: tenant must match " + TENANT_RE);
+  if (typeof s.tenantsRoot !== "string" || !path.isAbsolute(s.tenantsRoot)) throw new Error("clientJobSandbox: absolute tenantsRoot required");
+  const tenantDir = path.join(s.tenantsRoot, s.tenant);
+  if (path.dirname(tenantDir) !== path.resolve(s.tenantsRoot)) throw new Error("clientJobSandbox: tenant escapes tenantsRoot");
+  if (typeof s.socketPath !== "string" || !path.isAbsolute(s.socketPath)) throw new Error("clientJobSandbox: absolute socketPath required");
+  const argv = Array.isArray(s.argv) ? s.argv : [];
+  if (!argv.length) throw new Error("clientJobSandbox: empty argv");
+  const sysRo = DEFAULT_SYSTEM_RO.filter((p: string) => fs.existsSync(p));
+  const out = ["--unshare-all", "--die-with-parent", "--new-session", "--clearenv", "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", "/work", "--setenv", "ODG_MODEL_SOCKET", "/run/odg-model.sock"];
+  for (const p of sysRo) out.push("--ro-bind", p, p);
+  out.push("--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp", "--tmpfs", "/run");
+  out.push("--bind", tenantDir, "/work", "--chdir", "/work");
+  out.push("--bind", s.socketPath, "/run/odg-model.sock");
+  out.push("--", ...argv);
+  return out;
+}
+/* makeModelForwarder({ socketPath, upstream(path, bodyText) -> Promise<{ status, body }> }) -> Promise<{ close(), refused[] }>
+ * A host-side HTTP server on a UNIX socket: POST + path ∈ FORWARD_ALLOWED ⇒ forwarded to `upstream`; anything else ⇒ 403. */
+function makeModelForwarder(o: any): Promise<any> {
+  const http = require("http");
+  const refused: any[] = [];
+  const server = http.createServer((req: any, res: any) => {
+    const p = String(req.url || "").split("?")[0];
+    if (req.method !== "POST" || !FORWARD_ALLOWED.includes(p)) { refused.push({ method: req.method, path: p }); res.writeHead(403, { "content-type": "application/json" }); res.end(JSON.stringify({ error: "CJS-1: only POST /api/generate and /api/embed are forwarded" })); return; }
+    let body = ""; req.on("data", (c: any) => { body += c; if (body.length > 1_000_000) req.destroy(); });
+    req.on("end", async () => { try { const r = await o.upstream(p, body); res.writeHead(r.status || 200, { "content-type": "application/json" }); res.end(typeof r.body === "string" ? r.body : JSON.stringify(r.body)); } catch (e: any) { res.writeHead(502); res.end(JSON.stringify({ error: String((e && e.message) || e).slice(0, 200) })); } });
+  });
+  return new Promise((resolve, reject) => { server.on("error", reject); server.listen(o.socketPath, () => resolve({ socketPath: o.socketPath, refused, close: () => new Promise((r) => server.close(() => r(null))) })); });
+}
+
 module.exports = {
   parseCommand,
   buildBwrapArgs,
   runProvider,
   DEFAULT_SYSTEM_RO,
   CONFIDENTIAL_PREFIXES,
+  CLIENT_JOB_RULE,
+  FORWARD_ALLOWED,
+  clientJobSandbox,
+  makeModelForwarder,
 };
 
 // Module-scope marker (adds NO export): forces TypeScript MODULE scope (no global-script collisions).

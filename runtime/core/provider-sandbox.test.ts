@@ -169,3 +169,34 @@ console.log("J — negative config");
 
 console.log(`\nPROVIDER SANDBOX — ${passed} assertions passed, ${skipped} skipped.`);
 if (skipped > 0) console.log("NOTE: skipped cases require bubblewrap; they are NOT counted as passes.");
+
+// ---- V17.8 P7 — client-job privacy sandbox (SYNTHETIC tenants only; never client data on this host) ----
+(async () => {
+  const cp = require("child_process"); const fsx = require("fs"); const osx = require("os"); const pathx = require("path");
+  const hasBwrap = cp.spawnSync("bwrap", ["--version"], { encoding: "utf8" }).status === 0;
+  const run = (args: string[]) => new Promise((resolve) => { const c = cp.spawn("bwrap", args, { stdio: ["ignore", "pipe", "pipe"] }); let out = ""; c.stdout.on("data", (d: any) => (out += d)); c.stderr.on("data", (d: any) => (out += d)); const t = setTimeout(() => c.kill("SIGKILL"), 20000); c.on("close", (code: any) => { clearTimeout(t); resolve({ code, out }); }); });
+  const root = fsx.mkdtempSync(pathx.join(osx.tmpdir(), "cjs-"));
+  for (const t of ["tenant-a", "tenant-b"]) { fsx.mkdirSync(pathx.join(root, "tenants", t), { recursive: true }); fsx.writeFileSync(pathx.join(root, "tenants", t, "secret.txt"), "SYNTHETIC-" + t); }
+  const sock = pathx.join(root, "model.sock");
+  const upstreamCalls: string[] = [];
+  const fwd = await ps.makeModelForwarder({ socketPath: sock, upstream: async (p: string, body: string) => { upstreamCalls.push(p); return { status: 200, body: { model: "fake", response: "ok:" + JSON.parse(body || "{}").prompt, keep_alive: JSON.parse(body || "{}").keep_alive || null } }; } });
+  const http = require("http");
+  const call = (method: string, p: string, body: any) => new Promise((resolve) => { const r = http.request({ socketPath: sock, path: p, method, headers: { "content-type": "application/json" } }, (res: any) => { let d = ""; res.on("data", (c: any) => (d += c)); res.on("end", () => resolve({ status: res.statusCode, body: d })); }); r.on("error", (e: any) => resolve({ status: 0, body: String(e.code) })); if (body) r.write(JSON.stringify(body)); r.end(); });
+  const pull: any = await call("POST", "/api/pull", { name: "x" }); const tags: any = await call("GET", "/api/tags", null); const gen: any = await call("POST", "/api/generate", { prompt: "hi", keep_alive: "10m" });
+  ok("V178-P7/AC4: the forwarder refuses paths other than /api/generate and /api/embed", pull.status === 403 && tags.status === 403 && gen.status === 200 && upstreamCalls.join() === "/api/generate" && fwd.refused.length === 2);
+  if (!hasBwrap) { console.log("  SKIP - V178-P7/AC1–AC3 need bubblewrap (NOT counted as passes)"); skipped += 3; }
+  else {
+    const node = fsx.realpathSync("/usr/bin/node");
+    const job = (tenant: string, code: string) => ps.clientJobSandbox({ tenant, tenantsRoot: pathx.join(root, "tenants"), socketPath: sock, argv: [node, "-e", code] });
+    const r1: any = await run(job("tenant-a", 'require("net").connect(80,"1.1.1.1").on("error",e=>{console.log("NETERR "+e.code);process.exit(0)}).on("connect",()=>{console.log("CONNECTED");process.exit(0)})'));
+    ok("V178-P7/AC1: inside the sandbox a connect to a public IP fails (negative test)", /NETERR/.test(r1.out) && !/CONNECTED/.test(r1.out));
+    const r2: any = await run(job("tenant-a", 'const h=require("http");const r=h.request({socketPath:process.env.ODG_MODEL_SOCKET,path:"/api/generate",method:"POST"},s=>{let d="";s.on("data",c=>d+=c);s.on("end",()=>{console.log("STATUS "+s.statusCode+" "+d)})});r.on("error",e=>console.log("ERR "+e.code));r.write(JSON.stringify({prompt:"sandboxed",keep_alive:"10m"}));r.end()'));
+    ok("V178-P7/AC2: inference through the bound socket succeeds with a fake daemon (keep_alive passed through)", /STATUS 200/.test(r2.out) && /ok:sandboxed/.test(r2.out) && /"keep_alive":"10m"/.test(r2.out));
+    const r3: any = await run(job("tenant-a", 'const fs=require("fs");let other="HIDDEN";try{fs.readdirSync("' + pathx.join(root, "tenants", "tenant-b") + '");other="VISIBLE"}catch(e){};console.log("OWN "+fs.readFileSync("/work/secret.txt","utf8")+" OTHER "+other+" WORK "+fs.readdirSync("/work").join(","))'));
+    ok("V178-P7/AC3: a second tenant's directory is not visible", /OWN SYNTHETIC-tenant-a/.test(r3.out) && /OTHER HIDDEN/.test(r3.out) && /WORK secret.txt/.test(r3.out));
+  }
+  let threw = false; try { ps.clientJobSandbox({ tenant: "../tenant-b", tenantsRoot: pathx.join(root, "tenants"), socketPath: sock, argv: ["x"] }); } catch { threw = true; }
+  ok("P7: a tenant id escaping tenantsRoot is refused", threw);
+  await fwd.close(); fsx.rmSync(root, { recursive: true, force: true });
+  console.log(`\nPROVIDER SANDBOX P7 — ${passed} assertions passed, ${skipped} skipped.`);
+})().catch((e: any) => { console.log("NOT OK - P7 threw " + String((e && e.stack) || e)); process.exit(1); });
