@@ -1,0 +1,65 @@
+{
+  "//": "VALIDATE_CRITERIA for V178-P5 (owner record docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json). Graded only from the committed ACC-1 record + the independent result inspection.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V178-P5",
+  "date": "2026-11-26",
+  "contractSha256": "68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V178_P5_ACCEPTANCE_RESULT.json",
+    "sha256": "3665e3ebc38bbc9ce6e380b84cac4ba987f545788095f40d7f85dd55edcb1bf4",
+    "experimentSha256": "0c141366ea2bb768ffcb55a2d041a022a01a8da7ea2b87400d5bc27bbb13a769",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1070,
+    "mergedAs": "b451a5e9",
+    "producedBy": "ODG GO --execute native dispatch (run 24931aa45c15145d at main eb422ce6; owner order V19_OWNER_DECISION_ORDER_P5_NB3.json); trace docs/odg/evidence/V178_P5_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 1070,
+    "inspectedHead": "6adbd7adf90635d11db3523e95a7f64d995b792c",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "a9708f5fa7d5cbc5e",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-24931aa45c15145d",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "PASS",
+    "findings": "contract sha = result sha; scratch byte-identical; one dispatch, writes ⊆ writeSet; GO-ORD-1 applied (tie NB3/P5); AC1–AC3 reportedOk, file exit 0; tsc 0; runTestGatedCascade ABSENT → PRESENT recomputed at the run-head tree"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET"
+    },
+    {
+      "id": "AC2",
+      "status": "MET"
+    },
+    {
+      "id": "AC3",
+      "status": "MET"
+    },
+    {
+      "id": "AC4",
+      "status": "MET"
+    },
+    {
+      "id": "AC5",
+      "status": "MET"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "ACC-1 PASS (AC1–AC3 tests ok, tsc clean, LEARN-1 IMPROVED); independent result inspection ACCEPT"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "CAPABILITY PRESENT in the canonical odg-model-router (cascadeOrder + runTestGatedCascade, CASCADE-1)",
+  "limits": [
+    "PASS certifies the CASCADE-1 mechanism on a synthetic registry with an injected test gate; it is NOT yet wired into a real ODG generation path and shows no measured cost/quality gain on real tasks (integration = a later item)",
+    "the LEARN-1 metric only checks the deliverable symbol is present; the substantive evidence is AC1–AC3",
+    "V178-P2 measured per-class quality (3b 21/33 vs 7b 30/33; 3b fails bugfix/test-writing/strict-contract) but not speed (MEAS-1 self-contention) — the cascade's cost benefit is NOT_MEASURED"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionV178P5": "CLOSED_PASS"
+  }
+}
