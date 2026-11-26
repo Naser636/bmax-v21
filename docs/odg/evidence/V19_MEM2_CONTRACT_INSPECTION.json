@@ -1,0 +1,44 @@
+{
+  "//": "Independent inspection record of V19-MEM-2 — CURRENT binding: revision 2 (ACCEPT). Prior: rev1 ACCEPT at 61e64076 (non-blocking findings fixed by rev 2 before any run).",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V19-MEM-2",
+  "verdict": "ACCEPT",
+  "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1",
+  "inspectedHeadSha": "3b0d778a00abb315e28545d86a5a9ace2d841da3",
+  "inspectedPr": 1057,
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session)",
+  "inspectorSessionId": "a9708f5fa7d5cbc5e",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "v19-mem2-rev2",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-26",
+  "priorVerdicts": [
+    {
+      "revision": 1,
+      "verdict": "ACCEPT",
+      "contractSha256": "9e1cfcda99fdc13cc13ac2290c925ed00eb3298c8767c40ac9b03d4805b465a2",
+      "inspectedHeadSha": "61e640767d93c7fc0e21052776f465db7cb1e6e7",
+      "nonBlocking": [
+        "independence rested on the self-declared replay field (fixed rev 2: evidence-based calls[] t0 check)",
+        "condition key omits numPredict / Ollama version / digest (equal or unrecorded here; digest limit disclosed)",
+        "one source is the RUN-1 incident record (disclosed rev 2: defect affected XSEL-2 only)",
+        "knowledge() reports observations unconditionally (disclosed defaultBehaviour)"
+      ]
+    }
+  ],
+  "findings": [
+    "sha recomputed e7c35ebd…; count 35; runnerSha256 85d0331d… = runner file (runner unchanged by rev 2)",
+    "delta limited to the evidence-based independence in extractT0Observations (+1 assertion), invariant + honest limit, rev 2; AC1–AC6/thresholds/query/write_set byte-identical",
+    "real records: P1 and P1-R RUN-1 each record both t0 calls (ok, responseSha256) ⇒ 12 independent observations each; replay (0 calls) ⇒ 12 non-independent",
+    "non-blocking: the sent-call match does not require k.ok === true (moot: both real t0 calls ok)",
+    "REPRO-1 pure + fail-closed; canonical record shape; no second memory/gate; SUPPORTED claims and episodes never facts"
+  ],
+  "testsRun": [
+    "odg-observation-corroboration.test.ts exit 0 (14)",
+    "odg-go-memory.test.ts exit 0 (rev 1)",
+    "odg-go-cycle.test.ts exit 0 (rev 1)",
+    "odg-go.test.ts exit 0 (rev 1)",
+    "tsc --noEmit --incremental false exit 0"
+  ]
+}
