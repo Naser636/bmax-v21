@@ -1,0 +1,69 @@
+{
+  "schema": "odg-v19-acceptance-result/1",
+  "scenario": "V178-P7",
+  "label": "NATIVE (ODG GO dispatch)",
+  "rule": "ACC-1: PASS ⇔ every acceptance test id reported ok by its file (each file once, exit 0) ∧ tsc clean ∧ every LEARN-1 before-metric IMPROVED; NOT_MEASURED if any metric cannot be recomputed",
+  "criteria": {
+    "ACC-T": {
+      "met": true,
+      "tests": [
+        {
+          "id": "V178-P7/AC1",
+          "file": "runtime/core/provider-sandbox.test.ts",
+          "reportedOk": true,
+          "fileExit": 0
+        },
+        {
+          "id": "V178-P7/AC2",
+          "file": "runtime/core/provider-sandbox.test.ts",
+          "reportedOk": true,
+          "fileExit": 0
+        },
+        {
+          "id": "V178-P7/AC3",
+          "file": "runtime/core/provider-sandbox.test.ts",
+          "reportedOk": true,
+          "fileExit": 0
+        },
+        {
+          "id": "V178-P7/AC4",
+          "file": "runtime/core/provider-sandbox.test.ts",
+          "reportedOk": true,
+          "fileExit": 0
+        }
+      ],
+      "files": [
+        {
+          "file": "runtime/core/provider-sandbox.test.ts",
+          "exit": 0
+        }
+      ]
+    },
+    "ACC-C": {
+      "met": true,
+      "command": "tsc --noEmit --incremental false -p tsconfig.json",
+      "exit": 0,
+      "ok": true
+    },
+    "ACC-M": {
+      "verdicts": [
+        {
+          "source": "runtime/core/provider-sandbox.ts#clientJobSandbox",
+          "before": "ABSENT",
+          "after": "PRESENT",
+          "verdict": "IMPROVED"
+        }
+      ],
+      "met": true
+    }
+  },
+  "outcome": "PASS",
+  "contractSha256": "1ebefeb74e1577c142a780970b7c0f106b7e5dd6f57034f053f309889914d867",
+  "provenance": {
+    "codeAuthor": "PROVIDER (Claude Code)",
+    "decisionAuthority": "ODG GO (dispatch of the declared target)",
+    "network": "none",
+    "modelCalls": 0,
+    "providerCalls": 0
+  }
+}
