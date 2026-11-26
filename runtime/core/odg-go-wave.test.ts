@@ -88,6 +88,16 @@ const git = (repo: string, args: string[]) => String(cp.execFileSync("git", ["-C
     const r = W.selectWaveFromState(state, { items: [{ id: "P1", deps: [] }, { id: "P2", deps: [] }] }, { k: 3 });
     check("plain AUTHORIZED ⇒ candidate with UNKNOWN write-set ⇒ SERIAL; PROPOSED never a candidate", r.mode === "SERIAL" && JSON.stringify(r.wave) === JSON.stringify(["P1"]) && r.candidates.length === 1 && r.candidates[0].writeSet === "UNKNOWN");
   }
+  // F-B RES-1 — exclusive resource classes (checked before write-set disjointness)
+  {
+    const r = (id: string, ws: string[], res: string[]) => ({ id, writeSet: ws, actionable: true, resourceClasses: res });
+    const both = W.selectWave([r("NB3", ["docs/a.json"], ["LOCAL_MODEL_HOST"]), r("P5", ["docs/b.json"], ["LOCAL_MODEL_HOST"])], { k: 2 });
+    check("RES-1: two disjoint-write-set items on the exclusive LOCAL_MODEL_HOST ⇒ SERIAL, the second excluded RESOURCE_EXCLUSIVE", both.mode === "SERIAL" && both.wave.join() === "NB3" && /^RESOURCE_EXCLUSIVE LOCAL_MODEL_HOST held by NB3/.test(both.excluded[0].reason));
+    const mixed = W.selectWave([r("NB3", ["docs/a.json"], ["LOCAL_MODEL_HOST"]), r("DOC", ["docs/b.json"], [])], { k: 2 });
+    check("RES-1: a model-host item and a resource-free disjoint item ⇒ PARALLEL", mixed.mode === "PARALLEL" && mixed.wave.join() === "NB3,DOC");
+    check("RES-1: resource check precedes write-set overlap (reason is RESOURCE_EXCLUSIVE)", /RESOURCE_EXCLUSIVE/.test(W.selectWave([r("A", ["x/a"], ["LOCAL_MODEL_HOST"]), r("B", ["x/a"], ["LOCAL_MODEL_HOST"])], { k: 2 }).excluded[0].reason));
+    check("RES-1: contract classes derived fail-closed from budgets (model / models / embedModel ⇒ LOCAL_MODEL_HOST); explicit list wins", W.resourceClassesOfContract({ WORK_ITEM_CONTRACT: { budgets: { model: "m" } } }).join() === "LOCAL_MODEL_HOST" && W.resourceClassesOfContract({ WORK_ITEM_CONTRACT: { budgets: { models: ["a"] } } }).join() === "LOCAL_MODEL_HOST" && W.resourceClassesOfContract({ WORK_ITEM_CONTRACT: { budgets: { embedModel: "e" } } }).join() === "LOCAL_MODEL_HOST" && W.resourceClassesOfContract({ WORK_ITEM_CONTRACT: { budgets: {} } }).length === 0 && W.resourceClassesOfContract({ WORK_ITEM_CONTRACT: { resourceClasses: [], budgets: { model: "m" } } }).length === 0);
+  }
   process.stdout.write(failures ? `${failures} FAILED\n` : "ALL PASS — odg-go-wave\n");
   process.exit(failures ? 1 : 0);
 })().catch((e) => { process.stdout.write("NOT OK - threw " + String((e && e.stack) || e) + "\n"); process.exit(1); });

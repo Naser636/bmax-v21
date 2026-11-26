@@ -54,6 +54,18 @@ const str = (v: any) => typeof v === "string" && v.trim().length > 0;
 
 const WAVE_RULE = "GO-WAVE-1 (provider rule, Claude Code; owner V176 BUILD_MISSIONS « vagues GO parallèles sur des zones d'écriture indépendantes »): a wave = the GO-ranked leader + every next actionable candidate whose write-set is KNOWN and disjoint from all members (odg-writeset-contention.pathsConflict), with no dependency edge to a member, up to k (k ≤ odg-concurrency-policy admitted builders when a decision is given; admit 0 ⇒ no wave). The set is re-verified by computeLayerContention (parallelSafe) AND parallel-execution-planner.plan (writeSetSafe, maxConcurrency k ⇒ exactly one wave); any disagreement ⇒ SERIAL (leader alone). UNKNOWN write-set ⇒ never parallelised. Post-receipt: WRITESET_VIOLATION / OVERLAPPING_WRITES / MERGE_CONFLICT (git merge-tree --write-tree) / CHECK_FAILED; integration only when none, validated by every declared integration check on the merged commit.";
 
+/* RES-1 resource classes. EXCLUSIVE: at most one wave member may hold it. resourcesOf(c) = the candidate's declared classes. */
+const EXCLUSIVE_RESOURCES = Object.freeze(["LOCAL_MODEL_HOST"]);
+function resourcesOf(c: any): string[] { return arr(c && c.resourceClasses).map(String); }
+/* resourceClassesOfContract(contract) — explicit WORK_ITEM_CONTRACT.resourceClasses, else DERIVED fail-closed: a contract
+ * whose budgets name a local model (model / models / embedModel) uses the LOCAL_MODEL_HOST. */
+function resourceClassesOfContract(contract: any): string[] {
+  const w = contract && isObj(contract.WORK_ITEM_CONTRACT) ? contract.WORK_ITEM_CONTRACT : {};
+  if (Array.isArray(w.resourceClasses)) return w.resourceClasses.map(String);
+  const b = isObj(w.budgets) ? w.budgets : {};
+  return (str(b.model) || (Array.isArray(b.models) && b.models.length) || str(b.embedModel)) ? ["LOCAL_MODEL_HOST"] : [];
+}
+
 /* writeSetKind(c) — KNOWN (non-empty string list, no repo-root path), READ_ONLY, or UNKNOWN (fail-closed). */
 function writeSetKind(c: any): any {
   const ws = CONT.writeSetOf({ authorizedPaths: c && c.writeSet, readOnly: c && c.readOnly === true });
@@ -90,6 +102,11 @@ function selectWave(candidates: any, opts: any = {}): any {
     if (!members.length) { members.push({ c, ws }); continue; }
     if (members[0].ws.kind === "UNKNOWN") { excluded.push({ id: c.id, reason: "LEADER_WRITESET_UNKNOWN ⇒ SERIAL (the leader runs alone)" }); continue; }
     if (ws.kind === "UNKNOWN") { excluded.push({ id: c.id, reason: `WRITESET_UNKNOWN (${ws.reason}) ⇒ never parallelised` }); continue; }
+    // F-B RES-1: an EXCLUSIVE resource class (e.g. LOCAL_MODEL_HOST — one local-model host whose speed/RSS measurements a
+    // concurrent sibling would contaminate) is held by at most one member; checked BEFORE write-set disjointness.
+    const held = members.flatMap((m) => resourcesOf(m.c).filter((r: string) => EXCLUSIVE_RESOURCES.includes(r)).map((r: string) => ({ id: m.c.id, r })));
+    const res = resourcesOf(c).filter((r: string) => held.some((h) => h.r === r));
+    if (res.length) { excluded.push({ id: c.id, reason: `RESOURCE_EXCLUSIVE ${res.join(", ")} held by ${held.filter((h) => res.includes(h.r)).map((h) => h.id).join(", ")} (RES-1)` }); continue; }
     const clash = members.map((m) => ({ id: m.c.id, shared: conflictsWith(ws, m.ws) })).filter((x) => x.shared.length);
     if (clash.length) { excluded.push({ id: c.id, reason: `WRITESET_OVERLAP with ${clash.map((x) => `${x.id} (${x.shared.join(", ")})`).join("; ")}` }); continue; }
     const depEdge = members.find((m) => depsOf(c).includes(m.c.id) || depsOf(m.c).includes(c.id));
@@ -136,10 +153,10 @@ function selectWaveFromState(state: any, register: any, opts: any = {}): any {
     if (a.basis !== "SCOPED_STEP_AUTHORIZED" || a.executionAuthorized !== true) { notDispatchable.push({ id, reason: `actionable step ${a.step || a.basis} is not an authorized EXECUTION step (provider/docs/inspection work is reported, never dispatched)` }); continue; }
     const dt = GOC.resolveDispatchTarget(contract, a.step);
     if (!dt.ok) { notDispatchable.push({ id, reason: dt.reason }); continue; }
-    cands.push({ id, writeSet: dt.target.writeSet, deps: arr(it.deps).map(String), actionable: true, step: a.step });
+    cands.push({ id, writeSet: dt.target.writeSet, deps: arr(it.deps).map(String), actionable: true, step: a.step, resourceClasses: resourceClassesOfContract(contract) });
   }
   const sel = selectWave(cands, opts);
-  return freeze({ ...sel, candidates: freeze(cands.map((c) => ({ id: c.id, step: c.step, writeSet: c.writeSet || "UNKNOWN", ...(c.writeSetNote ? { note: c.writeSetNote } : {}) }))), notDispatchable: freeze(notDispatchable), source: "odg-go-cycle.actionabilityOf + resolveDispatchTarget (GO-ACT-1, GO-DT-1) — read-only" });
+  return freeze({ ...sel, candidates: freeze(cands.map((c) => ({ id: c.id, step: c.step, writeSet: c.writeSet || "UNKNOWN", resourceClasses: c.resourceClasses || [], ...(c.writeSetNote ? { note: c.writeSetNote } : {}) }))), notDispatchable: freeze(notDispatchable), source: "odg-go-cycle.actionabilityOf + resolveDispatchTarget (GO-ACT-1, GO-DT-1) — read-only" });
 }
 
 /* dispatchWave(wave, ports, mode) — ports.runItem(item, { index, mode }) → Promise<receipt>; receipt = { id, ok, commit?,
@@ -302,5 +319,5 @@ const GO_WAVE_CONTRACT = freeze({
   ]),
 });
 
-module.exports = { selectWave, selectWaveFromState, dispatchWave, detectIncompatibilities, integrate, runCheckInScratch, spawnP, mergeTreeSupported, changedFiles, writeSetKind, git, WAVE_RULE, GO_WAVE_CONTRACT };
+module.exports = { EXCLUSIVE_RESOURCES, resourcesOf, resourceClassesOfContract, selectWave, selectWaveFromState, dispatchWave, detectIncompatibilities, integrate, runCheckInScratch, spawnP, mergeTreeSupported, changedFiles, writeSetKind, git, WAVE_RULE, GO_WAVE_CONTRACT };
 export {};

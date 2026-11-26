@@ -53,7 +53,7 @@ function main() {
   const reqRe = (m: string) => new RegExp(`require\\(\\s*["'](?:\\./|\\.\\./core/)${m.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?:\\.js|\\.ts)?["']\\s*\\)`);
   const archOk = C.ARCH.filter((a: any) => /^runtime\/core\/[\w.-]+\.ts$/.test(a.path)).every((a: any) => { const m = path.basename(a.path, ".ts"); return fs.existsSync(path.join(ROOT, a.path)) && a.consumers.every((c: string) => { const s = srcOf(c.split(" ")[0]); return s !== null && reqRe(m).test(s); }); });
   check("existing-architecture consumers re-verified against the source", archOk);
-  check("odg-go-wave is NOT wired into odg-go-cycle / odg-go (missing connection stated)", !reqRe("odg-go-wave").test(srcOf("runtime/core/odg-go-cycle.ts") || "") && !reqRe("odg-go-wave").test(srcOf("runtime/bin/odg-go.ts") || ""));
+  check("F-B: odg-go-wave is wired into odg-go-cycle EXECUTE as a recorded wave DECISION; concurrent member dispatch stays NOT_WIRED (stated, CP8-GAP-8)", reqRe("odg-go-wave").test(srcOf("runtime/core/odg-go-cycle.ts") || "") && /memberDispatch: ws\.mode === "PARALLEL" \? "NOT_WIRED/.test(srcOf("runtime/core/odg-go-cycle.ts") || ""));
   check("every proposal component / write-set path exists", C.PROPOSALS.every((p: any) => p.components.concat(p.writeSet).every((f: string) => fs.existsSync(path.join(ROOT, f)))));
 
   // sections present and honest
