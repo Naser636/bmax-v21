@@ -1,25 +1,39 @@
 {
-  "//": "Independent inspection record of the V176-NB3 native-design (repair-diversity) contract (owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS). Transcribed verbatim from the inspector's verdicts by the coordinating session. Independence DECLARED by distinct session ids (not cryptographic). Inspection ≠ selection: GO selects in its own strategic order (currently F).",
   "schema": "odg-contract-inspection/1",
-  "scenario": "V176-NB3",
   "verdict": "ACCEPT",
-  "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68",
-  "inspectedHeadSha": "4e7bb559fe451f3e73aec45bce25e52902e70779",
-  "inspectedPr": 1002,
-  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
-  "inspectorSessionId": "ab245bf3019f79340",
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session; launched under the owner's explicit authorization of 2026-11-26)",
   "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
-  "authorSessionId": "nb3-v176",
   "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
   "recordedBy": "coordinating provider session (Claude Code)",
-  "date": "2026-11-24",
+  "date": "2026-11-26",
+  "//": "Independent inspection of V176-NB3 revision 2 (NB3-FIX-1 + RERUN-1, owner decision docs/odg/V19_OWNER_DECISION_NB3_RERUN.json). Prior: revision-1 ACCEPT; RUN-1 6382ec04 result REJECTED (kept as incident).",
+  "scenario": "V176-NB3",
+  "contractSha256": "6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a",
+  "inspectedHeadSha": "61634a1252496c720dec265f5fe1b7d34ee81f42",
+  "inspectedPr": 1073,
+  "inspectorSessionId": "insp-6cab89c8-v19-nb3-p6-p7-20261126",
+  "authorSessionId": "v19-nb3-fix1",
   "findings": [
-    "budgets equal NB2's except the added diversity block (0.5/1042 → 0.9/2042 → design switch; escalationModels [] — no model larger than 7b in V155); maxVariations 8 inside the same 12-call cap",
-    "AC1–AC6 byte-identical to NB2's; AC7 (diversity recorded) added; no existing contract changed (23 → 24, NB3 appended)",
-    "gate refuses a contract whose budgets/schedule differ from the runner's (budgetsMatch); runner refuses ALREADY_RECORDED; guard refuses (model, temperature, seed) outside allowedCallOptions before sending; NOT_MEASURED only before the first work call (#986)",
-    "NB2 run path = same code under NB2_PROFILE; no diversity block ⇒ no new path runs; NB3 test never calls main",
-    "binding exclusive: NB1/NB2/J/J2 citing the build-missions record refused; NB3 citing V175/V176-J records refused; unbound NB4 refused",
-    "LOW (pre-existing, separate): NB2 runner test 'origin + WORK_ITEM_CONTRACT = ODG-rules derivation' fails on main (derivation drift, no runtime effect)"
+    "sha recomputed 6fa59629…; only write_set (+4 fixed files), preRegistration.rerun and revisionHistory[1] changed; AC1–AC7, budgets (incl. diversity), thresholds, decisionRule byte-identical",
+    "pipeline diverseGenerate reusedS4: pre-seeded S4 reusable once; behaviour without reusedS4 unchanged; only caller = v175 runner inside if(div)",
+    "v175 runner: hint + 'repair' label only when pt.design === hintDesign; NB2 (no diversity) unaffected (v175 test 30 ok)",
+    "reuse assertion verified in memory: passes with the fix, fails without; prompt-order assertion weak (does not regression-test hint scoping) — non-blocking",
+    "RUN-1 kept as incident: pure renames, sha matches, verdict FAIL kept, never reclassified; OUT absent ⇒ exactly one dispatch"
   ],
-  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V176-NB3 only; RUN via ODG GO --execute only, in GO's own strategic order; one initial execution; grades nothing."
+  "testsRun": [
+    "odg-native-design-pipeline.test.ts exit 0",
+    "odg-v176-nb3-native-design-run.test.ts exit 0 (25 ok)",
+    "odg-v175-native-design-run.test.ts exit 0 (30 ok)",
+    "tsc exit 0"
+  ],
+  "priorVerdicts": [
+    {
+      "verdict": "ACCEPT",
+      "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68",
+      "inspectedHeadSha": "4e7bb559fe451f3e73aec45bce25e52902e70779",
+      "inspectorSessionId": "ab245bf3019f79340",
+      "date": "2026-11-24",
+      "revision": 1
+    }
+  ]
 }
