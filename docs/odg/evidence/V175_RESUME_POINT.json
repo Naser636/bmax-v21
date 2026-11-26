@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "c2d823197f248cc66f3cf9d812e0c7fd29d631bea3bc123755259ed5879dcba0"
+      "sha256": "4e5b2c346cf36ed5bc456ccef49b1dfefcaaaff16d5c7f5126e2a80f73dc313d"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -72,6 +72,10 @@
     {
       "source": "docs/odg/evidence/V175_OPEN_PRS_SNAPSHOT.json",
       "sha256": "d29b6d5715d3573fab4691447cae9b927f0bb170ee20d8ed75bf0d9100e3244c"
+    },
+    {
+      "source": "docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json",
+      "sha256": "c24a32ccb2be202ef4a88b45c7ee73de44b935a417a77d613da1182cd8b8a4c7"
     },
     {
       "source": "docs/odg/evidence/V176_F_CONTRACT_INSPECTION.json",
@@ -1226,16 +1230,16 @@
         }
       },
       "lastGoRun": null,
-      "pending": [
-        {
-          "kind": "OWNER_AUTHORIZATION",
-          "of": "V19-EXP-B",
-          "reason": "OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass"
-        }
-      ],
+      "own1": {
+        "cleared": true,
+        "record": "docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json",
+        "rule": "OWN-1-CLR-1: an OWN-1-flagged item is GO-actionable only when a committed OWNER_OWN1_CLEARANCE record (fixed list) names its id, its CURRENT contract sha, its CURRENT ownerReason and its CURRENT step, with a verbatim owner quote; the OWN-1 flag is preserved and the scoped step must still be authorized",
+        "reason": "OWN-1 owner clearance docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json (2026-11-26) for V19-EXP-B at contract 6ecd0c6a7219, step RUN_CONTROLLED_EXPERIMENTS; OWN-1 flag preserved (OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass)"
+      },
+      "pending": [],
       "next": {
-        "actor": "OWNER",
-        "action": "RUN step authorized by scope, but the register flags V19-EXP-B owner-gated (OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass) — GO never auto-selects it (GO-ACT-1 actionabilityOf); explicit owner decision required"
+        "actor": "GO",
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-exp-b-run.ts"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V19-EXP-B]",
@@ -1466,19 +1470,18 @@
       {
         "item": "V178-P2",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-local-model-benchmark.ts"
+      },
+      {
+        "item": "V19-EXP-B",
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-exp-b-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2",
+    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2, V19-EXP-B",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V19-EXP-B",
-        "actor": "OWNER",
-        "action": "RUN step authorized by scope, but the register flags V19-EXP-B owner-gated (OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass) — GO never auto-selects it (GO-ACT-1 actionabilityOf); explicit owner decision required"
       }
     ],
     "lastGoRun": {

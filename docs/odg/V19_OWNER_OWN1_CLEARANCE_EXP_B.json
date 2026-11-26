@@ -1,0 +1,36 @@
+{
+  "//": "OWNER OWN-1 clearance record — verbatim transcription (2026-11-26) of the owner's explicit option B: V19-EXP-B may be executed by GO despite its OWN-1 flag. Scope = exactly this item, at its current contract sha and OWN-1 reason, for the named steps. OWN-1 is preserved (flag stays true in the register; every other OWN-1 item unaffected). Grants no step authorization by itself (the scoped step still needs the owner record + independent inspection bound to the contract sha). Applied by OWN-1-CLR-1 (runtime/core/odg-owner-own1-clearance.ts). Markdown emphasis omitted, words unchanged.",
+  "schema": "odg-owner-own1-clearance/1",
+  "kind": "OWNER_OWN1_CLEARANCE",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-26",
+  "directive": "DIRECTIVE CTO — AUTORISATION PROPRIÉTAIRE GLOBALE ET ACHÈVEMENT V14.4 — REPRISE IMMÉDIATE — EXPERIENCE INTELLIGENCE — MÉMOIRE RÉELLE — TOUTES MISSIONS RESTANTES",
+  "source": "owner directive (relayed by the coordinating session), §1–§2",
+  "quote": [
+    "Je confirme explicitement l'option B :",
+    "V19-EXP-B est autorisé par le propriétaire à être exécuté par GO, malgré son marquage OWN-1.",
+    "Enregistrer cette autorisation pour V19-EXP-B, avec une portée limitée à cet élément et à ses opérations autorisées.",
+    "Préserver OWN-1 et sa fonction de protection.",
+    "Ne pas renommer le critère AC2 pour échapper au contrôle. Ne pas désactiver OWN-1. Ne pas accorder une autorisation générale à des éléments non concernés.",
+    "Si le mécanisme propriétaire nécessite une évolution technique, la construire comme une évolution gouvernée et traçable, sans affaiblir les protections existantes."
+  ],
+  "items": [
+    {
+      "id": "V19-EXP-B",
+      "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a",
+      "ownerReason": "OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass",
+      "steps": [
+        "RUN_CONTROLLED_EXPERIMENTS",
+        "VALIDATE_CRITERIA"
+      ]
+    }
+  ],
+  "neverCovers": [
+    "any other OWN-1-flagged item",
+    "removal or weakening of OWN-1 or its classifier",
+    "rewording AC2 or any criterion",
+    "authorization of a step without its independent inspection",
+    "production, deployment, public exposure, client data, purchases"
+  ],
+  "appliedBy": "OWN-1-CLR-1 (runtime/core/odg-owner-own1-clearance.ts) via odg-go-cycle actionabilityOf and odg-resume-point"
+}

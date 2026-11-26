@@ -1151,7 +1151,8 @@
         "proposed": null,
         "tiedSet": [
           "V176-NB3",
-          "V178-P2"
+          "V178-P2",
+          "V19-EXP-B"
         ],
         "resolvedBy": null,
         "top3AutoSelectable": [
@@ -1162,6 +1163,11 @@
           },
           {
             "id": "V178-P2",
+            "evidenceScore": 0.05,
+            "uncertainty": 0.7
+          },
+          {
+            "id": "V19-EXP-B",
             "evidenceScore": 0.05,
             "uncertainty": 0.7
           }
@@ -1173,7 +1179,8 @@
         "proposed": null,
         "tiedSet": [
           "V176-NB3",
-          "V178-P2"
+          "V178-P2",
+          "V19-EXP-B"
         ],
         "resolvedBy": null,
         "top3AutoSelectable": [
@@ -1184,6 +1191,11 @@
           },
           {
             "id": "V178-P2",
+            "evidenceScore": 0.05,
+            "uncertainty": 0.7
+          },
+          {
+            "id": "V19-EXP-B",
             "evidenceScore": 0.05,
             "uncertainty": 0.7
           }
