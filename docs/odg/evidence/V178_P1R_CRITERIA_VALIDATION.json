@@ -1,0 +1,60 @@
+{
+  "//": "VALIDATE_CRITERIA for V178-P1-R (owner records docs/odg/V19_OWNER_ORDER_P1R.json + V19_OWNER_DECISION_P1R_REPLAY_RUN.json). Graded only from the committed valid-run record + the independent RESULT inspection (distinct session, mechanical recomputation). Records the NEGATIVE result honestly: H-P1-R refuted. V178-P1 CLOSED_FAIL untouched.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V178-P1-R",
+  "date": "2026-11-26",
+  "contractSha256": "12c388bca68935de52eefaddacc10c1a9f30c85b8b1c46eb00ca33427b00af73",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+    "sha256": "7702b2748d2def6d95ba2e2b668d0f9b123535c4b0bc49af2e2d3ee0fa116239",
+    "experimentSha256": "99420c930679e7d26f240489293521b33dc571f91ab2e253251a9193041854f6",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1048,
+    "mergedAs": "ae3dd283",
+    "producedBy": "ODG GO --execute native dispatch (run fdcefee5ce7ca795; REPLAY-1 of RUN-1 ODG-generated candidates; owner order V19_OWNER_DECISION_ORDER_P1R.json); trace docs/odg/evidence/V178_P1R_GO_EXECUTE_TRACE.jsonl",
+    "priorIncident": "docs/odg/evidence/V178_P1R_RUN1_INCIDENT.json (RUN-1 aacd35e3: degenerate signatures — not graded)"
+  },
+  "experimentInspection": {
+    "pr": 1048,
+    "inspectedHead": "4f40fc703456093cc1573b89ac92349fa7f2f908",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "a9708f5fa7d5cbc5e",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-fdcefee5ce7ca795",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "FAIL",
+    "findings": "contract sha bound; REPLAY-1 pinned source, 0 model/provider calls; single DISPATCHED, writes ⊆ writeSet; result byte-identical to scratch; replayed candidates = RUN-1 exactly; signatures NON-degenerate (parse-range 3 clusters/trial, 0 unmeasured); XSEL-2 choices recomputed 6/6; accepted 3/6 ⇒ FAIL; controls t0 3/6, XSEL-1 3/6"
+  },
+  "criteria": [
+    {
+      "id": "AC7",
+      "status": "NOT_MET",
+      "evidence": "full oracle 3/6 accepted vs required ≥ 4/6 (baseline 3/6)"
+    },
+    {
+      "id": "AC8",
+      "status": "MET",
+      "evidence": "XSEL-2 recorded every trial, non-degenerate signatures, candidate code persisted, controls t0 3/6 + XSEL-1 3/6 recorded"
+    },
+    {
+      "id": "budgets",
+      "status": "MET",
+      "evidence": "0 model calls (replay), 0 provider calls"
+    }
+  ],
+  "result": {
+    "outcome": "FAIL",
+    "basis": "3/6 < 4/6 under the pre-registered rule; independent result inspection ACCEPT (recomputed FAIL)"
+  },
+  "scenarioGrade": "FAIL",
+  "learning": {
+    "hypothesis": "H-P1-R REFUTED",
+    "why": "on impl-ts-parse-range the model produced exactly 1 correct candidate in 10 distinct; it was a minority singleton while the majority clusters shared the same wrong behaviour on the empty input — execution agreement amplifies the majority error",
+    "nextLever": "a discriminating signal independent of the candidates majority: model-generated tests (CodeT-style) and specification edge cases — a separate contract (owner: after P1-R closure)"
+  },
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded FAIL)",
+    "missionV178P1R": "CLOSED_FAIL"
+  }
+}
