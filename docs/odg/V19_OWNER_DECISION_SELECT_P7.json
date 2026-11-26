@@ -1,0 +1,33 @@
+{
+  "//": "OWNER selection-decision record — verbatim transcription (2026-11-26) of the owner order relayed by the coordinating session. It resolves ONE undecided actionable selection (DECISION_REQUIRED for uncertainty, no tie; GO run e8c5d237 halted) in favour of V178-P7, already authorized (inspection bound). Grants nothing; at most one dispatch.",
+  "schema": "odg-owner-selection-decision/1",
+  "kind": "OWNER_SELECTION_DECISION",
+  "directive": "CTO — REPRISE IMMÉDIATE | ODG FAST DELIVERY PROTOCOL — MANDAT PERMANENT — ACHÈVEMENT GLOBAL V14.4",
+  "date": "2026-11-26",
+  "issuer": "OWNER (CTO)",
+  "source": "owner directive (relayed by the coordinating session), §2",
+  "quote": [
+    "2. Engager immédiatement le GO P7.",
+    "3. Finaliser P7 et intégrer son résultat."
+  ],
+  "item": "V178-P7",
+  "contractSha256": "1ebefeb74e1577c142a780970b7c0f106b7e5dd6f57034f053f309889914d867",
+  "precondition": {
+    "pr": 965,
+    "merged": true
+  },
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED for UNCERTAINTY (no tie: tiedSet empty or singleton) with proposed = item",
+    "neverAppliesTo": [
+      "strategicSelection",
+      "ties (GO-ORD-1)",
+      "authorization (the item must already be actionable)",
+      "scores / ranking / register / thresholds",
+      "any other item",
+      "any other contract sha"
+    ],
+    "maxDispatches": 1,
+    "consumedBy": "runtime/core/odg-go-cycle.ts (GO-ORD-2), loaded by runtime/bin/odg-go.ts readState from OWNER_SELECTION_DECISIONS"
+  },
+  "appliedBy": "GO-ORD-2 (runtime/core/odg-go-cycle.ts) — consumes this owner decision ONLY to resolve the undecided actionable selection of V178-P7 that GO itself requested"
+}
