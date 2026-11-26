@@ -24,19 +24,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795734296000,
+    "nowEpochMs": 1795734801000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "844ee4eb7f72034197bfbc913c7007362497bbe6cbdc5fc5fc340b30ea958a76",
-      "epochMs": 1795734296000
+      "sha256": "491f1cabaecb9086b5ca8606a4fee713054ce05b32765e2586925df2d64bcc9b",
+      "epochMs": 1795734801000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "846c77601e978cb5e003fe19d4be966abaa8488516800818cea73312ae144378",
-      "epochMs": 1795729996000
+      "sha256": "6acb589f5eae5ccd0e04784dcd655bf81c6a99926a1a092b7f8e6857c90fe5dd",
+      "epochMs": 1795734801000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -45,8 +45,8 @@
     },
     {
       "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json",
-      "sha256": "679cf34e78655bd26eff4639474de8955c2befac703c7bdbfaeb13215ac073fa",
-      "epochMs": 1795733517000
+      "sha256": "180f0e6b60bcb6b6de1b162c279aa00fbccd21e6d6c2ba3bf626fe33b0f5b488",
+      "epochMs": 1795734801000
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -4091,22 +4091,22 @@
   "convertedContracts": [
     {
       "scenario": "RB-REATTEMPT-CHANGED-INPUT",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_RB.json: « Poursuis la liaison des trois contrats RB-* annoncés comme non liés et non owner-gated. » — internal, no network, €0",
       "sourceProposal": "RB-REATTEMPT-CHANGED-INPUT",
       "conversionBatch": "V176-R2C-1"
     },
     {
       "scenario": "RB-RECORD-INSPECTION-VERDICT-TIME",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_RB.json: « Poursuis la liaison des trois contrats RB-* annoncés comme non liés et non owner-gated. » — internal, no network, €0",
       "sourceProposal": "RB-RECORD-INSPECTION-VERDICT-TIME",
       "conversionBatch": "V176-R2C-1"
     },
     {
       "scenario": "RB-SELECTION-AT-RUN-HEAD",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_RB.json: « Poursuis la liaison des trois contrats RB-* annoncés comme non liés et non owner-gated. » — internal, no network, €0",
       "sourceProposal": "RB-SELECTION-AT-RUN-HEAD",
       "conversionBatch": "V176-R2C-1"
     },

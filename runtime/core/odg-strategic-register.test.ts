@@ -236,6 +236,18 @@ check("fieldRecords / auditRefs helpers", REG.fieldRecords({ a: { b: ["x", "y"] 
   check("synthetic V16.4 fixture has no closure/resolution fields (no authorization blocks, no records)", R.items.every((x: any) => !x.closure && !x.statusHistory && !x.resolution));
 }
 
+// RB-REATTEMPT-CHANGED-INPUT (REATTEMPT-1)
+{
+  const byId = new Map<string, any>([["PARENT", { id: "PARENT", status: "CLOSED_FAIL" }], ["GOOD", { id: "GOOD", status: "CLOSED_PASS" }]]);
+  const noInput = REG.reattemptOf({ scenario: "R1", origin: { parent: "PARENT (CLOSED_FAIL 3/6, docs/x.json)" }, WORK_ITEM_CONTRACT: { preRegistration: {} } }, byId);
+  const cand = REG.toSelectorCandidates({ items: [{ id: "R1", status: "NOT_STARTED", deps: [], requiresOwnerAuthorization: false, ownerReason: null, criteria: {}, reattempt: noInput }] })[0];
+  const dec = SEL.selectNextExplained([cand], {});
+  check("RB-REATTEMPT-CHANGED-INPUT/AC1: a re-attempt with no stated changed input is NOT selectable", noInput && noInput.changedInputCited === false && cand.status === "REATTEMPT_WITHOUT_CHANGED_INPUT" && !(dec.selected && dec.selected.id === "R1"));
+  const withInput = REG.reattemptOf({ scenario: "R2", origin: { parent: "PARENT (CLOSED_FAIL)" }, WORK_ITEM_CONTRACT: { preRegistration: { changedInput: "XSEL-2 execution agreement (measured on 20 persisted candidates)" } } }, byId);
+  const cand2 = REG.toSelectorCandidates({ items: [{ id: "R2", status: "NOT_STARTED", deps: [], requiresOwnerAuthorization: false, ownerReason: null, criteria: {}, reattempt: withInput }] })[0];
+  check("RB-REATTEMPT-CHANGED-INPUT/AC2: one with a cited changed input is", withInput && withInput.changedInputCited === true && cand2.status === "NOT_STARTED");
+  check("REATTEMPT-1: a child of a PASS parent is not a re-attempt; no parent ⇒ not a re-attempt", REG.reattemptOf({ origin: { parent: "GOOD (CLOSED_PASS)" } }, byId) === null && REG.reattemptOf({ origin: {} }, byId) === null);
+}
 process.stdout.write("\n" + (f === 0 ? "ALL PASS — odg-strategic-register + selectNextExplained (taxonomy, EXECUTED_PARTIAL≠ACCEPTED, NOT_MEASURED⇒uncertainty, no id tie-break, owner-gated never auto-selected)" : f + " FAIL") + "\n");
 process.exit(f === 0 ? 0 : 1);
 export {};

@@ -96,6 +96,7 @@ const EXPLAINED_DEFAULTS = Object.freeze({
     BLOCKED: "blocked on an owner-gated / external condition",
     NOT_ADOPTED: "tested under a stated rule and not adopted; re-test only with new data",
     FAILED: "failed; a re-attempt needs a new strategy decision, not an automatic re-selection",
+    REATTEMPT_WITHOUT_CHANGED_INPUT: "re-attempt of a non-PASS parent that cites no measured changed input (new data / strategy) — RB-REATTEMPT-CHANGED-INPUT",
     NOT_MEASURED: "current state not measured; it must be measured before it can be selected",
     // V16.9 Phase 1 — statuses derived by odg-strategic-register CLOSE-1 / RES-1 from committed closure/resolution records
     CLOSED_PASS: "closed (all scoped steps validated, graded PASS) — further work is a new mission",

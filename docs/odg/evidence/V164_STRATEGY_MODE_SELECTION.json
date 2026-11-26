@@ -2,7 +2,7 @@
   "schema": "V164_STRATEGY_MODE_SELECTION_EVIDENCE",
   "directive": "owner V16.4 §4 sélecteur de stratégie (MODE NATIF / HYBRIDE / FOURNISSEUR) + §7 gap 'absence de mode hybride dans le sélecteur' + §10 scenario D",
   "gapRef": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (\"'hybrid' is not an option of the component\")",
-  "head": "7528cf7a7fc380e59a7bd645db1c3b0ef75ec70f",
+  "head": "dfcd2f2c23bd0b0fa18d119b7d48608da13ed870",
   "evaluationInstant": "2026-11-23T18:56:03.582Z",
   "evaluationInstantNote": "pinned = latest timestamp among the source evidence files (deterministic; registry freshness checked against it)",
   "sources": {
@@ -28,7 +28,7 @@
     },
     "AP": {
       "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "846c77601e978cb5e003fe19d4be966abaa8488516800818cea73312ae144378"
+      "sha256": "6acb589f5eae5ccd0e04784dcd655bf81c6a99926a1a092b7f8e6857c90fe5dd"
     },
     "CP8": {
       "path": "docs/odg/evidence/V163_CHECKPOINT_8.json",
@@ -2903,7 +2903,7 @@
         "mode": "DECISION_REQUIRED",
         "tentativeMode": "NATIVE",
         "rule": "M0",
-        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-RB-REATTEMPT-CHANGED-INPUT:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "rationale": "mission state AUTHORIZED_FOR_REVISION ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-RB-REATTEMPT-CHANGED-INPUT:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
         "uncertainty": {
           "level": "HIGH",
           "because": [
@@ -2972,7 +2972,7 @@
         "mode": "DECISION_REQUIRED",
         "tentativeMode": "NATIVE",
         "rule": "M0",
-        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-RB-RECORD-INSPECTION-VERDICT-TIME:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "rationale": "mission state AUTHORIZED_FOR_REVISION ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-RB-RECORD-INSPECTION-VERDICT-TIME:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
         "uncertainty": {
           "level": "HIGH",
           "because": [
@@ -3041,7 +3041,7 @@
         "mode": "DECISION_REQUIRED",
         "tentativeMode": "NATIVE",
         "rule": "M0",
-        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-RB-SELECTION-AT-RUN-HEAD:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "rationale": "mission state AUTHORIZED_FOR_REVISION ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-RB-SELECTION-AT-RUN-HEAD:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
         "uncertainty": {
           "level": "HIGH",
           "because": [

@@ -92,6 +92,10 @@ const STEP_SEQUENCES: any = Object.freeze({
   "V178-P5": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
   "V178-P6": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
   "V178-P7": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  // V19 — RB-* (owner order) ⇐ docs/odg/V19_OWNER_AUTHORIZATION_RB.json
+  "RB-REATTEMPT-CHANGED-INPUT": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  "RB-RECORD-INSPECTION-VERDICT-TIME": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  "RB-SELECTION-AT-RUN-HEAD": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
 });
 const EXECUTION_STEPS = Object.freeze(["RUN_CONTROLLED_EXPERIMENTS"]);
 const STEP_KIND: any = Object.freeze({
@@ -149,6 +153,9 @@ const OWNER_SOURCES: any = Object.freeze({
   "V178-P5": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_P5_P7\.json/, label: "V19 V14.4 completion order (docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json)", family: "V19-V144-COMPLETION" }),
   "V178-P6": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_P5_P7\.json/, label: "V19 V14.4 completion order (docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json)", family: "V19-V144-COMPLETION" }),
   "V178-P7": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_P5_P7\.json/, label: "V19 V14.4 completion order (docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json)", family: "V19-V144-COMPLETION" }),
+  "RB-REATTEMPT-CHANGED-INPUT": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_RB\.json/, label: "V19 RB order (docs/odg/V19_OWNER_AUTHORIZATION_RB.json)", family: "V19-RB" }),
+  "RB-RECORD-INSPECTION-VERDICT-TIME": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_RB\.json/, label: "V19 RB order (docs/odg/V19_OWNER_AUTHORIZATION_RB.json)", family: "V19-RB" }),
+  "RB-SELECTION-AT-RUN-HEAD": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_RB\.json/, label: "V19 RB order (docs/odg/V19_OWNER_AUTHORIZATION_RB.json)", family: "V19-RB" }),
 });
 function ownerSourceCheck(scenario: string, source: string): any {
   const own = OWNER_SOURCES[scenario];

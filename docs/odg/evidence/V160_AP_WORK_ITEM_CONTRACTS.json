@@ -2300,8 +2300,8 @@
     {
       "scenario": "RB-REATTEMPT-CHANGED-INPUT",
       "title": "a re-attempt of a non-PASS parent must cite a measured changed input (new data/strategy) before it is selectable",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_RB.json: « Poursuis la liaison des trois contrats RB-* annoncés comme non liés et non owner-gated. » — internal, no network, €0",
       "origin": {
         "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
         "sourceProposal": "RB-REATTEMPT-CHANGED-INPUT",
@@ -2344,8 +2344,10 @@
         }
       },
       "binding": {
-        "status": "UNBOUND",
-        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 RB binding session; branch feat/v19-rb-contracts)",
+        "boundAt": "2026-11-26"
       },
       "initialState": {
         "status": "NOT_STARTED",
@@ -2356,13 +2358,9 @@
       },
       "beforeMetric": [
         {
-          "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[7]",
-          "name": "outcomeLearning.OL-8.n",
-          "value": 2,
-          "support": [
-            "G2 (parent G, parent status CLOSED_PARTIAL) → PARTIAL",
-            "J2 (parent J, parent status EXECUTED_PARTIAL) → FAIL"
-          ]
+          "source": "runtime/core/odg-strategic-register.ts#reattemptOf",
+          "name": "reattemptGate",
+          "value": "ABSENT"
         }
       ],
       "measure": {
@@ -2374,7 +2372,10 @@
         "scope": "improve mission-priority-selector, odg-strategic-register only; no Radar egress, no spend, no canonical-authority change",
         "write_set": [
           "runtime/core/odg-strategic-register.ts",
-          "runtime/core/odg-strategic-register.test.ts"
+          "runtime/core/odg-strategic-register.test.ts",
+          "runtime/core/mission-priority-selector.ts",
+          "runtime/bin/odg-v19-acceptance-run.ts",
+          "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json"
         ],
         "write_set_estimate": {
           "estimate": true,
@@ -2416,14 +2417,101 @@
           "test output per file",
           "recomputed before/after metric record",
           "independent inspection verdict"
-        ]
-      }
+        ],
+        "preRegistration": {
+          "metric": "ACC-1 over the contract's acceptance tests (RB-REATTEMPT-CHANGED-INPUT/AC1–AC2), tsc, and the LEARN-1 before-metric",
+          "baseline": "beforeMetric reattemptGate ABSENT (original numeric finding recorded in revisionHistory)",
+          "dataset": {
+            "source": "the acceptance tests at the run head",
+            "runnerSha256": "ff6193e72c872c5f50eb411248161d29ef3f7e791d093cf732fa42f971c2f60b"
+          },
+          "decisionRule": "PASS ⇔ every acceptance test id reported ok (file exit 0) ∧ tsc clean ∧ reattemptGate IMPROVED (ABSENT → PRESENT); a metric not recomputable ⇒ NOT_MEASURED; else FAIL",
+          "thresholds": {
+            "acceptanceTests": 2
+          }
+        },
+        "budgets": {
+          "modelCalls": 0,
+          "network": "none",
+          "providerCalls": 0,
+          "dispatchTimeoutMs": 900000
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json (V19 RB order)",
+        "date": "2026-11-26",
+        "transcribedBy": "PROVIDER (Claude Code) — bound through family V19-RB",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "one GO-dispatched run of the declared target only, after an independent inspection ACCEPT of this contract; no network, no model; writes only its result file",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v19-acceptance-run.ts",
+            "args": [
+              "RB-REATTEMPT-CHANGED-INPUT",
+              "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json"
+            ]
+          }
+        },
+        "dispatchTimeoutMs": 900000,
+        "inspectionRecord": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 RB binding session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
+          "originalCriteria": [
+            "AC1 test 'RB-REATTEMPT-CHANGED-INPUT/AC1' (file: acceptance_tests[0]): a re-attempt with no stated changed input is NOT selectable",
+            "AC2 test 'RB-REATTEMPT-CHANGED-INPUT/AC2' (file: acceptance_tests[1]): one with a cited changed input is",
+            "AC3 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC4 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC4 text unchanged",
+          "change": [
+            "PROPOSED → AUTHORIZED_FOR_REVISION (owner record)",
+            "write_set concrete (ESTIMATE replaced; + reused ACC-1 runner + result file)",
+            "beforeMetric concretised to the capability symbol (the original numeric finding is not recomputable by ACC-1 and is kept in 'original')",
+            "preRegistration + budgets + dispatch target added"
+          ],
+          "original": {
+            "state": "PROPOSED",
+            "write_set": [
+              "runtime/core/odg-strategic-register.ts",
+              "runtime/core/odg-strategic-register.test.ts"
+            ],
+            "beforeMetric": [
+              {
+                "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[7]",
+                "name": "outcomeLearning.OL-8.n",
+                "value": 2,
+                "support": [
+                  "G2 (parent G, parent status CLOSED_PARTIAL) → PARTIAL",
+                  "J2 (parent J, parent status EXECUTED_PARTIAL) → FAIL"
+                ]
+              }
+            ]
+          },
+          "reason": "owner order « Poursuis la liaison des trois contrats RB-* »",
+          "justification": "binding before any run; criteria unchanged",
+          "revisionAuthorSessionId": "v19-rb-binding"
+        }
+      ]
     },
     {
       "scenario": "RB-RECORD-INSPECTION-VERDICT-TIME",
       "title": "record the inspection verdict timestamp in the committed inspection record so verdict latency is measured, not bounded",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_RB.json: « Poursuis la liaison des trois contrats RB-* annoncés comme non liés et non owner-gated. » — internal, no network, €0",
       "origin": {
         "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
         "sourceProposal": "RB-RECORD-INSPECTION-VERDICT-TIME",
@@ -2466,8 +2554,10 @@
         }
       },
       "binding": {
-        "status": "UNBOUND",
-        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 RB binding session; branch feat/v19-rb-contracts)",
+        "boundAt": "2026-11-26"
       },
       "initialState": {
         "status": "NOT_STARTED",
@@ -2478,9 +2568,9 @@
       },
       "beforeMetric": [
         {
-          "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.prs[*].inspectionVerdictAt",
-          "name": "productionMetric.inspectionVerdictAt.notMeasured",
-          "value": 17
+          "source": "runtime/core/odg-production-metric.ts#inspectionVerdictFor",
+          "name": "inspectionVerdictTime",
+          "value": "ABSENT"
         }
       ],
       "measure": {
@@ -2492,7 +2582,10 @@
         "scope": "improve odg-production-metric, evaluator-independence only; no Radar egress, no spend, no canonical-authority change",
         "write_set": [
           "runtime/core/odg-production-metric.ts",
-          "runtime/core/odg-production-metric.test.ts"
+          "runtime/core/odg-production-metric.test.ts",
+          "runtime/bin/odg-v175-production-metric.ts",
+          "runtime/bin/odg-v19-acceptance-run.ts",
+          "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json"
         ],
         "write_set_estimate": {
           "estimate": true,
@@ -2534,14 +2627,97 @@
           "test output per file",
           "recomputed before/after metric record",
           "independent inspection verdict"
-        ]
-      }
+        ],
+        "preRegistration": {
+          "metric": "ACC-1 over the contract's acceptance tests (RB-RECORD-INSPECTION-VERDICT-TIME/AC1–AC2), tsc, and the LEARN-1 before-metric",
+          "baseline": "beforeMetric inspectionVerdictTime ABSENT (original numeric finding recorded in revisionHistory)",
+          "dataset": {
+            "source": "the acceptance tests at the run head",
+            "runnerSha256": "ff6193e72c872c5f50eb411248161d29ef3f7e791d093cf732fa42f971c2f60b"
+          },
+          "decisionRule": "PASS ⇔ every acceptance test id reported ok (file exit 0) ∧ tsc clean ∧ inspectionVerdictTime IMPROVED (ABSENT → PRESENT); a metric not recomputable ⇒ NOT_MEASURED; else FAIL",
+          "thresholds": {
+            "acceptanceTests": 2
+          }
+        },
+        "budgets": {
+          "modelCalls": 0,
+          "network": "none",
+          "providerCalls": 0,
+          "dispatchTimeoutMs": 900000
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json (V19 RB order)",
+        "date": "2026-11-26",
+        "transcribedBy": "PROVIDER (Claude Code) — bound through family V19-RB",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "one GO-dispatched run of the declared target only, after an independent inspection ACCEPT of this contract; no network, no model; writes only its result file",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v19-acceptance-run.ts",
+            "args": [
+              "RB-RECORD-INSPECTION-VERDICT-TIME",
+              "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json"
+            ]
+          }
+        },
+        "dispatchTimeoutMs": 900000,
+        "inspectionRecord": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 RB binding session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
+          "originalCriteria": [
+            "AC1 test 'RB-RECORD-INSPECTION-VERDICT-TIME/AC1' (file: acceptance_tests[0]): inspectionVerdictAt MEASURED for PRs inspected after the change",
+            "AC2 test 'RB-RECORD-INSPECTION-VERDICT-TIME/AC2' (file: acceptance_tests[1]): older PRs stay NOT_MEASURED (no backfill guess)",
+            "AC3 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC4 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC4 text unchanged",
+          "change": [
+            "PROPOSED → AUTHORIZED_FOR_REVISION (owner record)",
+            "write_set concrete (ESTIMATE replaced; + reused ACC-1 runner + result file)",
+            "beforeMetric concretised to the capability symbol (the original numeric finding is not recomputable by ACC-1 and is kept in 'original')",
+            "preRegistration + budgets + dispatch target added"
+          ],
+          "original": {
+            "state": "PROPOSED",
+            "write_set": [
+              "runtime/core/odg-production-metric.ts",
+              "runtime/core/odg-production-metric.test.ts"
+            ],
+            "beforeMetric": [
+              {
+                "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json#prTimeline.prs[*].inspectionVerdictAt",
+                "name": "productionMetric.inspectionVerdictAt.notMeasured",
+                "value": 17
+              }
+            ]
+          },
+          "reason": "owner order « Poursuis la liaison des trois contrats RB-* »",
+          "justification": "binding before any run; criteria unchanged",
+          "revisionAuthorSessionId": "v19-rb-binding"
+        }
+      ]
     },
     {
       "scenario": "RB-SELECTION-AT-RUN-HEAD",
       "title": "GO re-derives the register selection at run head and refuses (or records the owner override) when it differs from the selection being executed",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_RB.json: « Poursuis la liaison des trois contrats RB-* annoncés comme non liés et non owner-gated. » — internal, no network, €0",
       "origin": {
         "detectedBy": "runtime/core/odg-radar-build-engine.ts convertToContracts (RB-CONV-1)",
         "sourceProposal": "RB-SELECTION-AT-RUN-HEAD",
@@ -2584,8 +2760,10 @@
         }
       },
       "binding": {
-        "status": "UNBOUND",
-        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected"
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 RB binding session; branch feat/v19-rb-contracts)",
+        "boundAt": "2026-11-26"
       },
       "initialState": {
         "status": "NOT_STARTED",
@@ -2596,13 +2774,9 @@
       },
       "beforeMetric": [
         {
-          "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[1]",
-          "name": "outcomeLearning.OL-2.n",
-          "value": 2,
-          "support": [
-            "G: selected at b994ca69c7f8; at run head 83427f936423 the register decided TIE_EXPLAINED (H)",
-            "H: selected at 7c2fd7b2edbd; at run head 98eed7f23c20 the register decided DECISION_REQUIRED (no selection)"
-          ]
+          "source": "runtime/core/odg-go-cycle.ts#selectionAtRunHead",
+          "name": "selectionAtRunHead",
+          "value": "ABSENT"
         }
       ],
       "measure": {
@@ -2614,7 +2788,9 @@
         "scope": "improve odg-go-cycle, mission-priority-selector only; no Radar egress, no spend, no canonical-authority change",
         "write_set": [
           "runtime/core/odg-go-cycle.ts",
-          "runtime/core/odg-go-cycle.test.ts"
+          "runtime/core/odg-go-cycle.test.ts",
+          "runtime/bin/odg-v19-acceptance-run.ts",
+          "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_ACCEPTANCE_RESULT.json"
         ],
         "write_set_estimate": {
           "estimate": true,
@@ -2656,8 +2832,95 @@
           "test output per file",
           "recomputed before/after metric record",
           "independent inspection verdict"
-        ]
-      }
+        ],
+        "preRegistration": {
+          "metric": "ACC-1 over the contract's acceptance tests (RB-SELECTION-AT-RUN-HEAD/AC1–AC2), tsc, and the LEARN-1 before-metric",
+          "baseline": "beforeMetric selectionAtRunHead ABSENT (original numeric finding recorded in revisionHistory)",
+          "dataset": {
+            "source": "the acceptance tests at the run head",
+            "runnerSha256": "ff6193e72c872c5f50eb411248161d29ef3f7e791d093cf732fa42f971c2f60b"
+          },
+          "decisionRule": "PASS ⇔ every acceptance test id reported ok (file exit 0) ∧ tsc clean ∧ selectionAtRunHead IMPROVED (ABSENT → PRESENT); a metric not recomputable ⇒ NOT_MEASURED; else FAIL",
+          "thresholds": {
+            "acceptanceTests": 2
+          }
+        },
+        "budgets": {
+          "modelCalls": 0,
+          "network": "none",
+          "providerCalls": 0,
+          "dispatchTimeoutMs": 900000
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json (V19 RB order)",
+        "date": "2026-11-26",
+        "transcribedBy": "PROVIDER (Claude Code) — bound through family V19-RB",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "one GO-dispatched run of the declared target only, after an independent inspection ACCEPT of this contract; no network, no model; writes only its result file",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v19-acceptance-run.ts",
+            "args": [
+              "RB-SELECTION-AT-RUN-HEAD",
+              "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_ACCEPTANCE_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_ACCEPTANCE_RESULT.json"
+            ]
+          }
+        },
+        "dispatchTimeoutMs": 900000,
+        "inspectionRecord": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 RB binding session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
+          "originalCriteria": [
+            "AC1 test 'RB-SELECTION-AT-RUN-HEAD/AC1' (file: acceptance_tests[0]): a stale selection is detected before EXECUTE",
+            "AC2 test 'RB-SELECTION-AT-RUN-HEAD/AC2' (file: acceptance_tests[1]): the trace records selectedAt vs runHead",
+            "AC3 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC4 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC4 text unchanged",
+          "change": [
+            "PROPOSED → AUTHORIZED_FOR_REVISION (owner record)",
+            "write_set concrete (ESTIMATE replaced; + reused ACC-1 runner + result file)",
+            "beforeMetric concretised to the capability symbol (the original numeric finding is not recomputable by ACC-1 and is kept in 'original')",
+            "preRegistration + budgets + dispatch target added"
+          ],
+          "original": {
+            "state": "PROPOSED",
+            "write_set": [
+              "runtime/core/odg-go-cycle.ts",
+              "runtime/core/odg-go-cycle.test.ts"
+            ],
+            "beforeMetric": [
+              {
+                "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json#findings[1]",
+                "name": "outcomeLearning.OL-2.n",
+                "value": 2,
+                "support": [
+                  "G: selected at b994ca69c7f8; at run head 83427f936423 the register decided TIE_EXPLAINED (H)",
+                  "H: selected at 7c2fd7b2edbd; at run head 98eed7f23c20 the register decided DECISION_REQUIRED (no selection)"
+                ]
+              }
+            ]
+          },
+          "reason": "owner order « Poursuis la liaison des trois contrats RB-* »",
+          "justification": "binding before any run; criteria unchanged",
+          "revisionAuthorSessionId": "v19-rb-binding"
+        }
+      ]
     },
     {
       "scenario": "V176-NB3",

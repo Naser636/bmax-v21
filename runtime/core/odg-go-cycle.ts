@@ -191,6 +191,15 @@ const SPEC_RULE = "GO-DEC-1 (provider rule): spec.architecture = one entry per W
  * sources.outcomeFeedback — the same object odg-strategic-select uses ⇒ GO SELECT stays consistent with the register record). */
 function selectorOptions(state?: any): any { return OFB.selectorOptions({ weights: REG.WEIGHTS, directions: REG.DIRECTIONS }, state && state.sources ? state.sources.outcomeFeedback : null); }
 
+/* RB-SELECTION-AT-RUN-HEAD (RB-SEL-1) — pure: committed register selection vs the selection re-derived at the run head. */
+const SELECTION_AT_RUN_HEAD_RULE = "RB-SEL-1: committed register selection vs selection re-derived at the run head; a difference is STALE ⇒ EXECUTE refuses unless an owner override record applies (recorded)";
+function selectionAtRunHead(x: any): any {
+  const c = x && x.committed, d = x && x.rederived;
+  return { rule: SELECTION_AT_RUN_HEAD_RULE, selectedAt: x.selectedAt || null, runHead: x.runHead || null,
+    committed: c ? { decision: c.decision, selected: c.selected || null } : null, rederived: d ? { decision: d.decision, selected: d.selected ? d.selected.id : null } : null,
+    consistent: x.consistent, stale: x.consistent === false, executing: x.executing || null, ownerOverride: x.ownerOverride || null };
+}
+
 /* V166 GO-ACT-1 (PROVIDER-AUTHORED rule, Claude Code; owner V165 §2 "sélection et priorisation des missions", V166 §5). */
 const ACTIONABLE_RULE = "authorization is a feasibility constraint, priority is the ranking: ODG works on the best item it is allowed to do, and asks the owner for the best item overall";
 const ACTIONABLE_RULE_DETAIL = "GO-ACT-1 (provider-authored, Claude Code): actionableSelection = mission-priority-selector.selectNextExplained over the SAME register candidates and options, with every item lacking an AUTHORIZED next step mapped to the non-selectable status NOT_AUTHORIZED_NOW (excluded with its reason; still counted for dependency/unblock edges) — no new scoring, same ties semantics. An item has an AUTHORIZED next step iff it is not owner-gated (requiresOwnerAuthorization) AND (its WORK_ITEM_CONTRACT is AUTHORIZED with authorizedBy, OR odg-authorization-scope derives its CURRENT step authorized). PROPOSED is never authorized. Applied only when the strategic decision chose an item (SELECTED/TIE_EXPLAINED) that is itself not actionable; DECISION_REQUIRED stays a halt. Dispatch still only through the existing NATIVE + isolated path; provider/docs steps are reported, not dispatched.";
@@ -454,6 +463,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
   // 1 TRUTH_LOCK
   let r: any = await run("TRUTH_LOCK", () => {
     const tl = ports.truthLock();
+    ctx.runHead = tl && tl.gitState && tl.gitState.head ? tl.gitState.head : null;   // RB-SELECTION-AT-RUN-HEAD
     const ok = !!tl && tl.ok === true && tl.blocked !== true;
     return { status: ok ? "PASS" : "REFUSED", inputs: tl && tl.gitState, decision: { status: tl && tl.status, ok: !!(tl && tl.ok), blocked: !!(tl && tl.blocked), enforce: !!(tl && tl.enforce), detail: tl && tl.verdict && tl.verdict.detail, gitState: tl && tl.gitState }, rationale: ok ? "repo on expected branch, HEAD == origin/main, index empty" : "Truth-Lock refused — fail-closed: no state read, no selection, no execution" };
   });
@@ -550,8 +560,12 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       ...(ownerSelection ? { ownerSelectionDecision: ownerSelection, ...(ownerSelection.applied ? { resolvedBy: ownerSelection.resolvedBy } : {}) } : {}) };
     const committed = ctx.state.registerEvidence && ctx.state.registerEvidence.decisionRecord ? ctx.state.registerEvidence.decisionRecord : null;
     const consistent = committed ? committed.decision === d.decision && committed.selected === (d.selected ? d.selected.id : null) && canon(arr(committed.tiedSet)) === canon(arr(d.tiedSet)) : null;
+    // RB-SELECTION-AT-RUN-HEAD: the register selection is RE-DERIVED here at the run head (d) and compared with the committed one;
+    // a difference is a STALE selection — EXECUTE refuses it unless an owner override (GO-ORD-1 / GO-ORD-2 record) was applied.
+    const override = ownerOrder && ownerOrder.applied ? { kind: "GO-ORD-1", record: ownerOrder.record || null } : ownerSelection && ownerSelection.applied ? { kind: "GO-ORD-2", record: ownerSelection.record || null } : null;
+    ctx.selectionAtRunHead = selectionAtRunHead({ committed, rederived: d, consistent, selectedAt: ctx.state.registerEvidence && ctx.state.registerEvidence.generatedAtHead ? ctx.state.registerEvidence.generatedAtHead : null, runHead: ctx.runHead || null, executing: ctx.item ? ctx.item.id : null, ownerOverride: override });
     return { status: id || proceedWithActionable ? "DONE" : "HALTED", inputs: REG.toSelectorCandidates(ctx.register),
-      decision: { decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, resolutionSteps: d.resolutionSteps || null, justification: d.justification, uncertainty: d.selected ? d.selected.uncertainty : d.proposed ? d.proposed.uncertainty : null, ownerAuthorizationRequired: arr(d.ownerAuthorizationRequired).map((x: any) => x.id), consistentWithCommittedRegisterEvidence: consistent,
+      decision: { selectionAtRunHead: ctx.selectionAtRunHead, decision: d.decision, selected: d.selected ? d.selected.id : null, proposed: d.proposed ? d.proposed.id : null, tiedSet: arr(d.tiedSet), resolvedBy: d.resolvedBy || null, resolutionSteps: d.resolutionSteps || null, justification: d.justification, uncertainty: d.selected ? d.selected.uncertainty : d.proposed ? d.proposed.uncertainty : null, ownerAuthorizationRequired: arr(d.ownerAuthorizationRequired).map((x: any) => x.id), consistentWithCommittedRegisterEvidence: consistent,
         strategicSelection: selectionSummary(d), actionableSelection: ctx.actionable, ownerRequest: ctx.ownerRequest, workingOn: ctx.item ? ctx.item.id : null, dependencies: { rule: "read-only view of odg-strategic-register DEPG-1 (register.dependencyGraph): deps = unsatisfied prerequisites, fanOut = dependents", strategic: dependencyView(strategicItem), workingOn: dependencyView(ctx.item) }, boussole: { rule: BOUSSOLE_TRACE_RULE, strategic: boussoleView(strategicItem), workingOn: boussoleView(ctx.item) } },
       rationale: (ownerOrder && ownerOrder.applied ? `actionable tie ${ownerOrder.tiedSet.join("/")} resolved by ${ownerOrder.resolvedBy} (owner order ${ownerOrder.order.join(" → ")}, ${ownerOrder.date}: « ${ownerOrder.quote[0] || ""} ») — order arbitration only, no score/authorization change (GO-ORD-1); ` : "")
         + (ownerSelection && ownerSelection.applied ? `actionable selection DECISION_REQUIRED (selector: ${ownerSelection.selector.justification}) resolved for ${ownerSelection.chosen} by ${ownerSelection.resolvedBy} (${ownerSelection.date}: « ${ownerSelection.quote[2] || ownerSelection.quote[0]} ») — owner selection of an already-authorized item, max 1 dispatch, no score/threshold/authorization change (GO-ORD-2); ` : "")
@@ -669,6 +683,8 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
       if (isSelected && !ctx.loopAuthorized) return { ok: false, reason: "selected item NOT AUTHORIZED (PROPOSED; no external authorization)" };
       if (isSelected && !strategyNative) return { ok: false, reason: `strategy mode ${ctx.strategy ? ctx.strategy.mode : "UNKNOWN"} ≠ NATIVE ⇒ native execution refused (PROVIDER/HYBRID parts are delegation RECORDS only)` };
       if (isSelected && dt && !dt.ok) return { ok: false, reason: dt.reason };
+      const sarh = ctx.selectionAtRunHead;
+      if (isSelected && sarh && sarh.stale && !sarh.ownerOverride) return { ok: false, reason: `STALE_SELECTION (RB-SEL-1): committed register selection ${sarh.committed ? sarh.committed.selected : "?"} (at ${String(sarh.selectedAt).slice(0, 12)}) ≠ re-derived ${sarh.rederived.selected} at run head ${String(sarh.runHead).slice(0, 12)} — refused (no owner override)` };
       if (!isSelected && !allow.includes(next.mission)) return { ok: false, reason: "not on the canonical pre-authorized allowlist" };
       const isoArg = isSelected && dt && dt.ok ? { ...next, dispatchTarget: dt.target } : next;
       const iso2 = (() => { try { return ports.isolation(isoArg); } catch (e: any) { return { ok: false, reason: String((e && e.message) || e) }; } })();
@@ -788,5 +804,5 @@ const GO_CYCLE_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { selectorOptions, actionableOptions, NOT_AUTHORIZED_NOW, boussoleView, BOUSSOLE_TRACE_RULE, dependencyView, deriveDispatchTimeout, DISPATCH_TIMEOUT_RULE, DISPATCH_TIMEOUT_DEFAULT_MS, DISPATCH_TIMEOUT_CEILING_MS, DISPATCH_TIMEOUT_MARGIN_MS, DISPATCH_DEADLINE_MARGIN_MS, OWNER_SELECTION_RULE, resolveOwnerSelection, ownerSelectionClaimKey, OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
+module.exports = { selectionAtRunHead, SELECTION_AT_RUN_HEAD_RULE, selectorOptions, actionableOptions, NOT_AUTHORIZED_NOW, boussoleView, BOUSSOLE_TRACE_RULE, dependencyView, deriveDispatchTimeout, DISPATCH_TIMEOUT_RULE, DISPATCH_TIMEOUT_DEFAULT_MS, DISPATCH_TIMEOUT_CEILING_MS, DISPATCH_TIMEOUT_MARGIN_MS, DISPATCH_DEADLINE_MARGIN_MS, OWNER_SELECTION_RULE, resolveOwnerSelection, ownerSelectionClaimKey, OWNER_ORDER_RULE, resolveOwnerOrder, resumeFromTrace, DEADLINE_HISTORY, resolveDispatchTarget, DISPATCH_TARGET_RULE, actionabilityOf, actionableCandidates, ACTIONABLE_RULE, ACTIONABLE_RULE_DETAIL, runGoCycle, assertConfinedWrite, STEPS, DEFAULTS, DECIDED_BY, SPEC_RULE, GO_CYCLE_CONTRACT, sha, canon, declaredAuthorization, scopedAuthorization, scopedExecutionAuthorization, specOf };
 export {};

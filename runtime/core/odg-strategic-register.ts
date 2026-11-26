@@ -420,6 +420,10 @@ function buildRegister(sources: any): any {
   const latestDoc = latestCp ? (cps.find((c: any) => String(c.path).endsWith(latestCp)) || (Array.isArray(sources.benefitEvidence) ? sources.benefitEvidence : []).find((e: any) => String(e.path).endsWith(latestCp))) : null;
   const latestCheckpoint = { file: latestCp, rule: LATEST_CP_RULE, source: latestCp ? `docs/odg/evidence/${latestCp}` : null, declaredFieldsPresent: latestDoc ? { ownerQuestions: Array.isArray(latestDoc.data.ownerQuestions) } : null, dep2Note: latestDoc && !Array.isArray(latestDoc.data.ownerQuestions) ? `${latestCp} has no ownerQuestions field ⇒ DEP-2 finds no re-listed owner question ⇒ NOT_MEASURED (the rule is not widened to other fields)` : null };
 
+  // ── 7b. RB-REATTEMPT-CHANGED-INPUT (REATTEMPT-1): after every status rule, so the parent's FINAL status is read
+  { const byId = new Map(items.map((it: any) => [it.id, it]));
+    for (const it of items) { if (it.kind !== "WORK_ITEM_CONTRACT") continue; const c = C.data.contracts.find((x: any) => String(x.scenario) === it.id); const ra = c ? reattemptOf(c, byId) : null; if (ra) it.reattempt = ra; } }
+
   // ── 8. V17.5 DEPG-1: item→item dependency edges from explicit committed evidence (after every status rule, so a
   // STATED_TEXT edge reads the final status). deps[] = targets of UNSATISFIED edges (the selector's eligibility gate and
   // R1_MORE_UNBLOCKING read it); every edge is a stated dependency for DEP-1 (rule text unchanged, applied as declared).
@@ -688,8 +692,25 @@ function capabilityGapItems(P8: any, later: any[], benefit: any[] = [], latestCh
 }
 
 /* toSelectorCandidates(register) — the exact candidate shape mission-priority-selector.selectNextExplained consumes. */
+/* RB-REATTEMPT-CHANGED-INPUT (REATTEMPT-1): a contract whose origin names a PARENT register item (origin.parent "ID (…)" or
+ * origin.parentId) is a RE-ATTEMPT; when that parent is not PASS/CLOSED_PASS the re-attempt is selectable only if the contract
+ * CITES a changed input (WORK_ITEM_CONTRACT.preRegistration.changedInput or origin.changedInput — non-empty). Pure. */
+const REATTEMPT_RULE = "REATTEMPT-1: a re-attempt of a non-PASS parent must cite a measured changed input (preRegistration.changedInput / origin.changedInput) before it is selectable";
+function reattemptOf(contract: any, byId: Map<string, any>): any {
+  const o = contract && isObj(contract.origin) ? contract.origin : null;
+  if (!o) return null;
+  const pid = typeof o.parentId === "string" ? o.parentId : typeof o.parent === "string" ? (/^([A-Z0-9][A-Za-z0-9-]*)\b/.exec(o.parent.trim()) || [])[1] || null : null;
+  const parent = pid ? byId.get(pid) : null;
+  if (!parent) return null;
+  const pStatus = String(parent.status || "");
+  if (pStatus === "PASS" || pStatus === "CLOSED_PASS") return null;
+  const w = isObj(contract.WORK_ITEM_CONTRACT) ? contract.WORK_ITEM_CONTRACT : {};
+  const pre = isObj(w.preRegistration) ? w.preRegistration : {};
+  const ci = [pre.changedInput, o.changedInput].find((x: any) => (typeof x === "string" && x.trim()) || (isObj(x) && Object.keys(x).length));
+  return { rule: REATTEMPT_RULE, parent: pid, parentStatus: pStatus, changedInputCited: !!ci, changedInput: ci || null };
+}
 function toSelectorCandidates(register: any): any[] {
-  return register.items.map((it: any) => ({ id: it.id, status: it.status, deps: it.deps, requiresOwnerAuthorization: it.requiresOwnerAuthorization, ownerReason: it.ownerReason, criteria: Object.fromEntries(Object.entries(it.criteria).map(([k, v]: any) => [k, { status: v.status, value: v.value }])) }));
+  return register.items.map((it: any) => ({ id: it.id, status: it.reattempt && it.reattempt.changedInputCited === false && !/^CLOSED_/.test(String(it.status)) ? "REATTEMPT_WITHOUT_CHANGED_INPUT" : it.status, deps: it.deps, requiresOwnerAuthorization: it.requiresOwnerAuthorization, ownerReason: it.ownerReason, criteria: Object.fromEntries(Object.entries(it.criteria).map(([k, v]: any) => [k, { status: v.status, value: v.value }])) }));
 }
 
 /* priorSince(statusSource, P8) — the dated source of a pre-closure status: CP8 date when CP8 is cited, else null (cited). */
@@ -732,6 +753,6 @@ const STRATEGIC_REGISTER_CONTRACT = Object.freeze({
   ]),
 });
 
-module.exports = { CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, committedKnown, isCommittedToken, OWN1_PATH_CLARIFICATION, OWN1_NEVER_EXEMPT, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
+module.exports = { REATTEMPT_RULE, reattemptOf, CLOSE_RULE, RES_RULE, CONTRADICTION_RULES, LATEST_CP_RULE, latestCheckpointOf, discoverLatestCheckpoint, cpNumber, resolutionValid, resolutionCheck, buildRegister, toSelectorCandidates, scenarioLetter, ownerMatches, committedKnown, isCommittedToken, OWN1_PATH_CLARIFICATION, OWN1_NEVER_EXEMPT, STATUS, CRITERIA, SCN_RULE, GAP_LINKS, GAP_DEDUP_RULE, OWNER_RULE_GAP, LAND_RULE, capabilityGapItems, BLOCKER_FIELDS, PR_RECORD_FIELDS, LATEST_CHECKPOINT, BLK2_RULE, REL2_RULE, DEP2_RULE, BENEFIT_NOT_DERIVED, benefitCriteria, fieldRecords, auditRefs, countRejects, normTxt, WEIGHTS, DIRECTIONS, WEIGHTS_NOTE, OWNER_RULE, STRATEGIC_REGISTER_CONTRACT };
 if (require.main === module) { process.stdout.write(JSON.stringify(STRATEGIC_REGISTER_CONTRACT, null, 2) + "\n"); }
 export {};

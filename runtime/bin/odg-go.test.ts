@@ -332,7 +332,10 @@ function check(name: string, cond: boolean): void { process.stdout.write(`${cond
     // V17.5: NB1 has now RUN natively (committed V175_NATIVE_BUILD_RESULT.json) ⇒ on the REAL state GO-ORD-2's one-shot rule refuses (asserted);
     // the NB1 GO-path behaviour tests below run on a LABELLED fixture = real state with only NB1's result record removed (the pre-run state GO saw).
     const nbStrip = (c: any) => { c.authorizationEvidence["V175-NB1"] = { ...c.authorizationEvidence["V175-NB1"], experiment: null, validation: null }; if (c.sources && c.sources.authorizationEvidence && c.sources.authorizationEvidence["V175-NB1"]) c.sources = { ...c.sources, authorizationEvidence: { ...c.sources.authorizationEvidence, "V175-NB1": { ...c.sources.authorizationEvidence["V175-NB1"], experiment: null, validation: null } } }; return c; };
-    const nbPre = nbStrip(preV176J(cloneS(real)));   // V17.6: J pre-V176 (see preV176J)
+    // V19 RB-*: bound (AUTHORIZED_FOR_REVISION ⇒ actionable) after NB1 ran — the LABELLED pre-run fixture keeps them as committed
+    // before that binding (PROPOSED, no authorization), like preV176J does for J.
+    const preRB = (c: any) => { for (const x of c.sources.contracts.data.contracts) if (/^RB-/.test(String(x.scenario))) { x.state = "PROPOSED"; x.authorizedBy = null; delete x.authorization; } return c; };
+    const nbPre = nbStrip(preRB(preV176J(cloneS(real))));   // V17.6: J pre-V176 (see preV176J); V19: RB-* pre-binding
     {
       const after = await runDry(real); const aa = after.sel.decision.actionableSelection; const ad = aa.ownerSelectionDecision;
       check("V175-NB1 REAL state after the native run (result committed) ⇒ one-shot: GO-ORD-2 NOT applied, NB1 not worked on via the record", !(ad && ad.applied && ad.chosen === "V175-NB1") && after.sel.decision.workingOn !== "V175-NB1");
