@@ -977,7 +977,8 @@
       "docs/odg/evidence/V176_J_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V176_NB2_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V178_P1_GO_EXECUTE_TRACE.jsonl",
-      "docs/odg/evidence/V178_P4_GO_EXECUTE_TRACE.jsonl"
+      "docs/odg/evidence/V178_P4_GO_EXECUTE_TRACE.jsonl",
+      "docs/odg/evidence/V178_P4_INT_GO_EXECUTE_TRACE.jsonl"
     ],
     "odgWrittenPaths": [
       "docs/odg/evidence/V168_H_EXPERIMENT.json",
@@ -989,6 +990,7 @@
       "docs/odg/evidence/V176_F_EXPERIMENT.json",
       "docs/odg/evidence/V176_J_EXPERIMENT.json",
       "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+      "docs/odg/evidence/V178_P4_INT_RESULT.json",
       "docs/odg/evidence/V178_P4_MEMORY_RESULT.json"
     ],
     "commits": 25,

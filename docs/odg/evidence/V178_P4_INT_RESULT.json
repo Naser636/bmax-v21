@@ -1,0 +1,154 @@
+{
+  "schema": "odg-v178-p4-int-result/1",
+  "scenario": "V178-P4-INT",
+  "label": "NATIVE (ODG GO dispatch)",
+  "embedModel": "qwen3-embedding:0.6b",
+  "criteria": {
+    "AC1": {
+      "met": true,
+      "memory": {
+        "status": "INDEXED",
+        "tenant": "odg-go",
+        "index": "memory-odg-go.sqlite",
+        "dims": 1024,
+        "trusted": 0,
+        "excluded": 2,
+        "indexed": 2,
+        "factIndexed": 0,
+        "contextIndexed": 2,
+        "embedded": 2,
+        "removed": 0,
+        "withoutText": 0,
+        "records": 2
+      },
+      "admissibleTrusted": []
+    },
+    "AC3": {
+      "met": true
+    },
+    "AC2": {
+      "met": true,
+      "workingOn": "V178-P4-INT",
+      "decompose": "DONE",
+      "contextRecall": {
+        "status": "RECALLED",
+        "query": "P4 operational integration — hybrid memory wired into GO knowledge()/DECOMPOSE with the two-level FACT/CONTEXT memory (MEM-INT-1 + TIER-1)",
+        "facts": [],
+        "context": [
+          {
+            "id": "kc:efae40927e7a0f2d",
+            "family": "semantic",
+            "tier": "CONTEXT_UNVERIFIED",
+            "score": 0.032787,
+            "ranks": {
+              "fts": 1,
+              "vec": 1
+            },
+            "status": "UNVERIFIED",
+            "epistemic": "SUPPORTED",
+            "provenance": "KI_V2_VERIFIED_CITATION:https://google.github.io/eng-practices/review/developer/small-cls.html",
+            "learnedAt": 1795435200000,
+            "validUntil": 1803211200000,
+            "confidence": 0.7
+          },
+          {
+            "id": "kc:e353da6e42eab8d9",
+            "family": "semantic",
+            "tier": "CONTEXT_UNVERIFIED",
+            "score": 0.032258,
+            "ranks": {
+              "fts": 2,
+              "vec": 2
+            },
+            "status": "UNVERIFIED",
+            "epistemic": "SUPPORTED",
+            "provenance": "KI_V2_VERIFIED_CITATION:https://google.github.io/eng-practices/review/developer/small-cls.html",
+            "learnedAt": 1795435200000,
+            "validUntil": 1803211200000,
+            "confidence": 0.7
+          }
+        ],
+        "contextNote": "CONTEXT_UNVERIFIED = SUPPORTED, not corroborated: usable as context only, NEVER as a fact (not admissible, not evidence)",
+        "rule": "MEM-INT-1 + TIER-1: hybrid FTS5 + vector RRF over canonical memory records; FACT tier = memory-architecture.accessMemory trusted only"
+      }
+    },
+    "AC4": {
+      "met": true,
+      "second": {
+        "status": "INDEXED",
+        "tenant": "odg-go",
+        "index": "memory-odg-go.sqlite",
+        "dims": 1024,
+        "trusted": 0,
+        "excluded": 2,
+        "indexed": 2,
+        "factIndexed": 0,
+        "contextIndexed": 2,
+        "embedded": 0,
+        "removed": 0,
+        "withoutText": 0,
+        "records": 2
+      }
+    },
+    "AC5": {
+      "met": true,
+      "label": "SYNTHETIC fixtures — mechanism only, never the truth of a real fact",
+      "sync": {
+        "trusted": 1,
+        "excluded": 1,
+        "indexed": 2,
+        "factIndexed": 1,
+        "contextIndexed": 1,
+        "embedded": 2,
+        "removed": 0,
+        "withoutText": 0
+      },
+      "factQuery": [
+        "SYN-FACT"
+      ],
+      "contextQuery": [
+        "SYN-CTX"
+      ]
+    },
+    "AC6": {
+      "met": true,
+      "evidence": {
+        "tests": [
+          {
+            "file": "runtime/core/odg-memory-hybrid-index.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/bin/odg-go-memory.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/core/odg-go-cycle.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/bin/odg-go.test.ts",
+            "exit": 0,
+            "ok": true
+          }
+        ],
+        "tsc": {
+          "command": "tsc --noEmit --incremental false -p tsconfig.json",
+          "exit": 0,
+          "ok": true
+        }
+      }
+    }
+  },
+  "outcome": "PASS",
+  "provenance": {
+    "codeAuthor": "PROVIDER (Claude Code) — MEM-INT-1 / TIER-1",
+    "decisionAuthority": "ODG GO (dispatch of the declared target)",
+    "network": "loopback Ollama /api/embed only",
+    "providerCalls": 0
+  },
+  "contractSha256": "dad4365a2103dda5d46298be0da3337c96e19c02efab6aa76a3395164dc96f66"
+}
