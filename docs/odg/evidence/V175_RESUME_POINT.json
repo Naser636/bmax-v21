@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "2237d4ad7987c09c3244ec37dfcf3109a2fc5e48549fdceaae30b2e0b6e01f54"
+      "sha256": "c944ef06cfb2bd66585574db2e8f9aaa7346cbfa9569a10858c97ecfe9d6e2bc"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -264,6 +264,10 @@
     {
       "source": "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json",
       "sha256": "e9e2807b8a698c17aca79917fde8001f220ac18a8e7894729f22e21bc4a11637"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P6_CRITERIA_VALIDATION.json",
+      "sha256": "751e6e9c946992959ecd9d4cd617fa66448cc3939809c6d6224373ae286d59fc"
     },
     {
       "source": "docs/odg/evidence/V178_P7_CONTRACT_INSPECTION.json",
@@ -1229,7 +1233,7 @@
     {
       "id": "V178-P6",
       "title": "anti-reward-hacking gate: evaluator, test and fixture files frozen (sha-pinned) and outside every model-writable write_set; held-out evaluation",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_PASS",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -1241,18 +1245,19 @@
       },
       "contractSha256": "a9ba4454a6c624f991144a19dcf489be9b4b0a4a1b1102b3f0191d5152bdeaf6",
       "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "a9ba4454a6c624f991144a19dcf489be9b4b0a4a1b1102b3f0191d5152bdeaf6"
       },
       "records": {
@@ -1265,8 +1270,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V178_P6_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -1276,21 +1281,10 @@
         "endedAt": "2026-11-26T22:18:08.709Z",
         "dispatched": true
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract a9ba4454a6c6 and experiment docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PASS, CLOSE-1 docs/odg/evidence/V178_P6_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P6]",
@@ -1608,8 +1602,8 @@
       "PASS_IN_SCOPE": 2,
       "CLOSED_PARTIAL": 5,
       "CLOSED_FAIL": 6,
-      "CLOSED_PASS": 6,
-      "NOT_STARTED": 6,
+      "CLOSED_PASS": 7,
+      "NOT_STARTED": 5,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1906,11 +1900,6 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V178-P6",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract a9ba4454a6c6 and experiment docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
