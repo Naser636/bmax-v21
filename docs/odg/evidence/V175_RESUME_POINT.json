@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "8e2580e4b6e05f364900a63aa6149167ad1bf4829ca516750b025f0122d19c67"
+      "sha256": "c5c1df8e40b6928d552a46c2cb3c3a59a4ab5cf750b1689e9d2691a475b32902"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -200,6 +200,10 @@
     {
       "source": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
       "sha256": "1c10fc702931c8a0164f7d763467b1cddeeffcfc2040a3be2ee7f8d76ad52fba"
+    },
+    {
+      "source": "docs/odg/evidence/V176_NB3_CRITERIA_VALIDATION.json",
+      "sha256": "905aaf290dfb9f88c9285ab04881c1e0b3d761e8bb8a3db200aac8b57f7c4281"
     },
     {
       "source": "docs/odg/evidence/V178_P1_CONTRACT_INSPECTION.json",
@@ -908,7 +912,7 @@
     {
       "id": "V176-NB3",
       "title": "NB3: ODG repairs odg-canonical-json's undefined gap again (NB2's target + oracle) with the pre-registered DIV-1 repair-diversity lever",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_FAIL",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -920,18 +924,19 @@
       },
       "contractSha256": "6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a"
       },
       "records": {
@@ -944,8 +949,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V176_NB3_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -955,21 +960,10 @@
         "endedAt": "2026-11-26T21:14:02.105Z",
         "dispatched": true
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 6fa596299cd6 and experiment docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_FAIL, CLOSE-1 docs/odg/evidence/V176_NB3_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V176-NB3]",
@@ -1588,9 +1582,9 @@
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
       "CLOSED_PARTIAL": 5,
-      "CLOSED_FAIL": 5,
+      "CLOSED_FAIL": 6,
       "CLOSED_PASS": 6,
-      "NOT_STARTED": 7,
+      "NOT_STARTED": 6,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1874,11 +1868,6 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V176-NB3",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 6fa596299cd6 and experiment docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json, then an independent inspection — never auto-graded"
       },
       {
         "item": "V178-P6",

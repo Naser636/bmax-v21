@@ -24,14 +24,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795727897000,
+    "nowEpochMs": 1795728986000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "8e2580e4b6e05f364900a63aa6149167ad1bf4829ca516750b025f0122d19c67",
-      "epochMs": 1795727897000
+      "sha256": "c5c1df8e40b6928d552a46c2cb3c3a59a4ab5cf750b1689e9d2691a475b32902",
+      "epochMs": 1795728986000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -75,9 +75,9 @@
     }
   ],
   "counts": {
-    "signals": 47,
+    "signals": 48,
     "byVerdict": {
-      "REFUSED": 35,
+      "REFUSED": 36,
       "OWNER_GATED": 2,
       "PROPOSED": 10
     },
@@ -1415,7 +1415,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[9]"
       ],
-      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PARTIAL (CLOSED_PARTIAL)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-2",
@@ -1454,7 +1454,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[10]"
       ],
-      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PASS (CLOSED_PASS)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PARTIAL (CLOSED_PARTIAL)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-2",
@@ -1571,7 +1571,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[13]"
       ],
-      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PASS (CLOSED_PASS)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-2",
@@ -1610,7 +1610,7 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[14]"
       ],
-      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PASS (CLOSED_PASS)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade FAIL (CLOSED_FAIL)",
       "claimStatus": "OBSERVED",
       "before": {
         "name": "register.contradictions.CTR-2",
@@ -1688,10 +1688,10 @@
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[16]"
       ],
-      "statement": "CTR-1 GAP_STATED_FIXED: register status PROPOSED vs J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+      "statement": "CTR-2 CONTRACT_STATE_VS_CLOSURE: contract state AUTHORIZED_FOR_REVISION vs closure record grade PASS (CLOSED_PASS)",
       "claimStatus": "OBSERVED",
       "before": {
-        "name": "register.contradictions.CTR-1",
+        "name": "register.contradictions.CTR-2",
         "value": "OPEN"
       },
       "id": "RB-UNMAPPED-REGISTER_CONTRADICTION-3874634d",
@@ -1726,6 +1726,45 @@
       "origin": "REGISTER_CONTRADICTION",
       "sources": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[17]"
+      ],
+      "statement": "CTR-1 GAP_STATED_FIXED: register status PROPOSED vs J canonical defects fixed (decomposed-execution verified files; repair-feedback structuralEqual)",
+      "claimStatus": "OBSERVED",
+      "before": {
+        "name": "register.contradictions.CTR-1",
+        "value": "OPEN"
+      },
+      "id": "RB-UNMAPPED-REGISTER_CONTRADICTION-54e46d44",
+      "link": {
+        "rule": "LINK-1",
+        "matched": false
+      },
+      "ownerGatedKind": null,
+      "targetComponents": [],
+      "multiplier": {
+        "perComponent": [],
+        "maxDirectConsumers": null,
+        "maxTransitiveDependents": null,
+        "source": "change-impact-graph.buildGraph (runtime/core import graph, injected)"
+      },
+      "gate": {
+        "verdict": "REFUSED",
+        "reasons": [
+          "NO_COMPONENT_ATTACHED"
+        ],
+        "authorized": false,
+        "executed": false
+      },
+      "assess": {
+        "ageDays": 0,
+        "fresh": true,
+        "corroboration": "UNCORROBORATED"
+      },
+      "qualification": "INTERNAL_IMPROVEMENT"
+    },
+    {
+      "origin": "REGISTER_CONTRADICTION",
+      "sources": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[18]"
       ],
       "statement": "CTR-3 STALE_CHECKPOINT_POINTER: declared benefit record sets (blockerFields/prRecordFields) stop at V166_CHECKPOINT_9.json vs newest committed checkpoint V178_CHECKPOINT_19.json (LCP-1)",
       "claimStatus": "OBSERVED",
@@ -5196,7 +5235,7 @@
         "source": {
           "directive": "owner CTO directive V176 2026-11-24 §4 (Radar → construction)",
           "signals": [
-            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[17]"
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[18]"
           ]
         },
         "scope": "improve odg-strategic-register only; no Radar egress, no spend, no canonical-authority change",
@@ -5275,7 +5314,7 @@
         "measure": {
           "before": [
             {
-              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[17]",
+              "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.contradictions.detected[18]",
               "name": "register.contradictions.CTR-3",
               "value": "OPEN"
             }
