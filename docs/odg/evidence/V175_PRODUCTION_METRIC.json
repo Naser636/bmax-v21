@@ -983,6 +983,7 @@
       "docs/odg/evidence/V178_P4_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V178_P4_INT_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V178_P5_GO_EXECUTE_TRACE.jsonl",
+      "docs/odg/evidence/V178_P6_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V19_EXP_B_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V19_MEM2_GO_EXECUTE_TRACE.jsonl"
     ],
@@ -1002,6 +1003,7 @@
       "docs/odg/evidence/V178_P4_INT_RESULT.json",
       "docs/odg/evidence/V178_P4_MEMORY_RESULT.json",
       "docs/odg/evidence/V178_P5_ACCEPTANCE_RESULT.json",
+      "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json",
       "docs/odg/evidence/V19_EXP_B_RESULT.json",
       "docs/odg/evidence/V19_MEM2_RESULT.json"
     ],
