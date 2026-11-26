@@ -1,0 +1,21 @@
+{
+  "//": "OWNER decision record — verbatim transcription (2026-11-26): ONE valid GO execution of V178-P1-R that RE-USES the 20 candidates ODG generated in RUN-1 (no new generation), after RUN-1 was found to have tested a degenerate rule (incident). Answers the inspector's governance note on 'one single initial execution'. Grants nothing beyond that single replay run; never a re-run to seek a better number.",
+  "schema": "odg-owner-decision/1",
+  "kind": "OWNER_DECISION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-26",
+  "directive": "CTO — P1-R : REPRISE MINIMALE, SANS REFAIRE LES TRAVAUX VALIDÉS",
+  "quote": [
+    "Réutiliser exactement les candidats persistés de la première génération.",
+    "Aucune nouvelle génération ne doit être lancée pour tenter d'améliorer artificiellement le résultat.",
+    "réutiliser les 20 candidats existants ;",
+    "ne faire aucun nouvel appel de génération de candidats ;",
+    "exécuter une seule fois P1-R par GO ;",
+    "Si GO obtient 3/6 : […] clôturer H-P1-R avec son résultat réel ; ne pas recommencer P1-R pour chercher un meilleur chiffre."
+  ],
+  "appliesTo": {
+    "contract": "V178-P1-R",
+    "runs": 1,
+    "mode": "REPLAY-1 (persisted RUN-1 candidates, sha-pinned)"
+  }
+}

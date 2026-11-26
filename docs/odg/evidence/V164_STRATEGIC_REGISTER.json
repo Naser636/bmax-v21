@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "fd425b60a9911dfd5216fce2115f8538e33072cbbff660f2fd02282283294c9b"
+      "sha256": "1d9616351bfa98536126022f5937f9c985f13cdefae077932cd33bbe0808dcc9"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "0f6abfbee911033d0704c544cebaacb15d27de59a8ca78709f22e91644efe377"
+      "sha256": "f6cf849459a1915457f312c9b892c45d2ee8039e69a214971d522499a303fd3a"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -243,7 +243,7 @@
     },
     {
       "source": "docs/odg/evidence/V178_P1R_CONTRACT_INSPECTION.json",
-      "sha256": "aa561805eedcb681bd76aea44d1256c4a71cccc3b08593de3c23a43ed15ffbce"
+      "sha256": "6d549e6ae6224ec6e3dfa5b607136851efb192b1768e4caab34e572fe223d1db"
     },
     {
       "source": "docs/odg/evidence/V169_J_CANONICAL_DEFECTS_FIX.json",
@@ -335,7 +335,7 @@
     },
     {
       "source": "runtime/bin/odg-v178-p1r-agreement-run.ts",
-      "sha256": "9ce9682005932e4ae5ff4b5bf1adcf7a8f3af222b451e15d1d09eb884d84d8dc"
+      "sha256": "3ec64e486ab4c14e307aa908c86ac07068026394bc6a7129a700294453912345"
     },
     {
       "source": "runtime/bin/odg-v178-p4-int-run.ts",
@@ -8692,7 +8692,7 @@
           "closed": false,
           "rule": "CLOSE-1",
           "currentStep": "INSPECT_REVISED_CONTRACT",
-          "reason": "INSPECT_REVISED_CONTRACT pending: inspection contractSha256 0af895beba1764c3b7e93ed355572fa8a5467c2701941115c43ef52abecd726d ≠ current contract sha256 2b2467845dd935905f46093e3d958b5fc95357357914871de10272faa881619d (contract edited after inspection, or wrong contract) ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+          "reason": "INSPECT_REVISED_CONTRACT pending: inspection contractSha256 2b2467845dd935905f46093e3d958b5fc95357357914871de10272faa881619d ≠ current contract sha256 12c388bca68935de52eefaddacc10c1a9f30c85b8b1c46eb00ca33427b00af73 (contract edited after inspection, or wrong contract) ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         },
         "dependencyGraph": {
@@ -8757,7 +8757,7 @@
           "reason": "contract scenario 'V178-P1-R' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
         },
         "contractRef": {
-          "contractSha256": "2b2467845dd935905f46093e3d958b5fc95357357914871de10272faa881619d",
+          "contractSha256": "12c388bca68935de52eefaddacc10c1a9f30c85b8b1c46eb00ca33427b00af73",
           "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[32]",
           "ownerRecord": "docs/odg/V19_OWNER_ORDER_P1R.json",
           "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[32].authorization.source",
@@ -18719,5 +18719,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "ef5c363b910a84244d7feb6798461242eedd3e27"
+  "generatedAtHead": "538b300d5759945733e336f01b887b794fe3c8cc"
 }
