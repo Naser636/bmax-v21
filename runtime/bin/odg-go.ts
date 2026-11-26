@@ -63,7 +63,7 @@ const AUTH_EVIDENCE = require("../core/odg-authorization-evidence-paths.js").AUT
 const OWNER_ORDER_DECISIONS = Object.freeze(["docs/odg/V174_OWNER_DECISION_ORDER_G2_J2.json", "docs/odg/V178_OWNER_DECISION_ORDER_P1.json", "docs/odg/V19_OWNER_DECISION_ORDER_P4.json", "docs/odg/V19_OWNER_DECISION_ORDER_P4_INT.json", "docs/odg/V19_OWNER_DECISION_ORDER_P1R.json", "docs/odg/V19_OWNER_DECISION_ORDER_EXP_B.json", "docs/odg/V19_OWNER_DECISION_ORDER_MEM.json", "docs/odg/V19_OWNER_DECISION_ORDER_P2_NB3.json", "docs/odg/V19_OWNER_DECISION_ORDER_P5_NB3.json", "docs/odg/V19_OWNER_DECISION_ORDER_NB3_P7.json", "docs/odg/V19_OWNER_DECISION_ORDER_NB3_P6_P7.json", "docs/odg/V19_OWNER_DECISION_ORDER_P6_P7.json"]);
 /* V17.4 GO-ORD-2 owner SELECTION-decision records (fixed declared list; committed records ONLY; absent ⇒ skipped). They only
  * resolve an actionable DECISION_REQUIRED that is NOT a tie (uncertainty) for their own item + contract sha, max 1 dispatch. */
-const OWNER_SELECTION_DECISIONS = Object.freeze(["docs/odg/V174_OWNER_DECISION_SELECT_J2.json", "docs/odg/V175_OWNER_DECISION_SELECT_NB1.json", "docs/odg/V176_OWNER_DECISION_SELECT_NB2.json", "docs/odg/V19_OWNER_DECISION_SELECT_NB3.json"]);
+const OWNER_SELECTION_DECISIONS = Object.freeze(["docs/odg/V174_OWNER_DECISION_SELECT_J2.json", "docs/odg/V175_OWNER_DECISION_SELECT_NB1.json", "docs/odg/V176_OWNER_DECISION_SELECT_NB2.json", "docs/odg/V19_OWNER_DECISION_SELECT_NB3.json", "docs/odg/V19_OWNER_DECISION_SELECT_P7.json"]);
 const UNIT_SYSTEM = "/etc/systemd/system/odg-mission-runner.service";
 const UNIT_REPO = "deploy/odg-mission-runner.service";
 const MAX_STEP_DELAY_MS = 5000;
