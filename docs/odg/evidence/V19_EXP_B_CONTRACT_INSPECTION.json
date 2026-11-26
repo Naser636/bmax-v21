@@ -1,0 +1,48 @@
+{
+  "//": "Independent inspection record of V19-EXP-B — CURRENT binding: revision 2 (ACCEPT). Prior: rev1 ACCEPT at 67ae38bb (non-blocking findings fixed by rev 2 before any run).",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V19-EXP-B",
+  "verdict": "ACCEPT",
+  "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a",
+  "inspectedHeadSha": "f076071b4dafa1fe77141f7516e35de6cb80add4",
+  "inspectedPr": 1050,
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session)",
+  "inspectorSessionId": "a9708f5fa7d5cbc5e",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "v19-exp-b-rev2",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-26",
+  "priorVerdicts": [
+    {
+      "revision": 1,
+      "verdict": "ACCEPT",
+      "contractSha256": "5de740fed4d51721a9d3143f297808c2b4ee8649936d5bb4f590976692e46ad7",
+      "inspectedHeadSha": "67ae38bb56817dbf8a1be5245f0b1bdae744594f",
+      "nonBlocking": [
+        "real-path re-evaluation compared two historical shas (fixed rev 2)",
+        "bindingFiles undisclosed (fixed rev 2)",
+        "unconditional GO port undisclosed (fixed rev 2)",
+        "GO-wiring unit checks are source-regex (behaviour covered by AC5)",
+        "AC3 families partly structural; G2/NB1 have other committed links (disclosed)"
+      ]
+    }
+  ],
+  "findings": [
+    "contract sha recomputed 6ecd0c6a…; count 34 = array length",
+    "runnerSha256 6ae55bfb… = runner file sha256",
+    "delta 67ae38bb→f076071b limited to the declared re-evaluation fix, runner/odg-go contractSha256 injection, +3 assertions, contract rev 2; all within write_set ∪ bindingFiles",
+    "AC1–AC6, families, thresholds, write_set byte-identical to rev 1",
+    "dispatch target writes only docs/odg/evidence/V19_EXP_B_RESULT.json; exit 3/4 refusals; gated on deriveAuthorizationScope + this record",
+    "budgets: 0 model calls, no network, no provider calls",
+    "non-blocking: experiment-sha check compares recorded values (does not re-hash the experiment file); contract-absent fail-closed requires the validation record to declare contractSha256 (all 12 do)",
+    "AC3 ranking deliberately NOT computed by the inspector (pre-registered run is the first measurement)"
+  ],
+  "testsRun": [
+    "odg-experience-episode.test.ts exit 0 (30)",
+    "decision-precedent.test.ts exit 0 (20)",
+    "odg-go.test.ts exit 0",
+    "odg-go-cycle.test.ts exit 0 (rev 1)",
+    "tsc --noEmit --incremental false exit 0"
+  ]
+}
