@@ -1,0 +1,29 @@
+{
+  "//": "V19 P1-R RUN-1 incident record. GO run aacd35e39538c7cf (2026-11-26 01:30) EXECUTED the declared target correctly (20 local calls, 0 provider, writes ⊆ writeSet) and recorded FAIL 3/6 — but the runner's probeSignatures read .ok on the JSON-STRING observations, so every signature was 'T' ⇒ every agreement unanimous ⇒ XSEL-2 degenerated to XSEL-1 in all 6 trials. RUN-1 therefore did NOT test H-P1-R; it is kept as an incident (never the experiment record). The independent inspection also missed it.",
+  "schema": "odg-run-incident/1",
+  "item": "V178-P1-R",
+  "runId": "aacd35e39538c7cf",
+  "goStatus": "EXECUTED_FAIL (outcome FAIL 3/6)",
+  "defect": "probeSignatures: observations are JSON strings (B.gradeObservations parses them); unparsed ⇒ all 'T'",
+  "evidence": {
+    "clusterKeys": "every trial: single cluster key 'T|T|T|T|T|T|T|T'",
+    "result": "docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json",
+    "trace": "docs/odg/evidence/V178_P1R_RUN1_GO_TRACE.jsonl"
+  },
+  "offlineAnalysis": {
+    "note": "DESCRIPTIVE ONLY — computed after the run from the persisted candidate code (no model call); never the verdict",
+    "persistedCandidates": "impl-chunk 7 distinct, 7 pass the full oracle; impl-ts-parse-range 10 distinct, exactly 1 passes (trial 1, C3, T 0.8, all visible cases passed)",
+    "correctedXsel2OnRun1Candidates": [
+      "impl-chunk 1 chosen C4 xsel1(unanimous agreement — no clusters [[\"C4\",\"C1\",\"C2\",\"C3\"]] oracle true",
+      "impl-chunk 2 chosen C3 xsel1(unanimous agreement — no clusters [[\"C3\",\"C1\",\"C2\",\"C4\"]] oracle true",
+      "impl-chunk 3 chosen C4 xsel1(unanimous agreement — no clusters [[\"C4\",\"C1\",\"C3\",\"C2\"]] oracle true",
+      "impl-ts-pars 1 chosen C4 agreement clusters [[\"C4\",\"C1\"],[\"C2\"],[\"C3\"]] oracle false",
+      "impl-ts-pars 2 chosen C2 xsel1(agreement tie) clusters [[\"C2\"],[\"C4\"],[\"C1\"]] oracle false",
+      "impl-ts-pars 3 chosen C3 agreement clusters [[\"C3\",\"C1\"],[\"C4\"],[\"C2\"]] oracle false",
+      "OFFLINE corrected-XSEL-2 on RUN-1 candidates: 3 / 6"
+    ],
+    "reading": "even with the parse defect fixed, XSEL-2 selects 3/6: on impl-ts-parse-range the only correct candidate is a MINORITY singleton cluster (majority clusters share the same wrong behaviour on the probe '' — hidden case 3 input) ⇒ execution agreement cannot recover it; H-P1-R is expected to be refuted on these generations"
+  },
+  "fix": "runner parses each observation before signing (revision 3) + regression test; any re-run needs re-inspection",
+  "date": "2026-11-26"
+}

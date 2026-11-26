@@ -79,7 +79,10 @@ function probeSignatures(task: any, code: string | null, run: any, probes: any[]
   if (!r.ran || !r.exitOk) return null;
   const obs = B.parseResult(r.stdout, nonce);
   if (!Array.isArray(obs) || obs.length !== probes.length) return null;
-  return obs.map((o: any) => AGREE.outputSignature({ threw: !(o && o.ok === true), value: o && o.undef ? undefined : o && o.value }));
+  // RUN-1 defect (2026-11-26): each observation is a JSON STRING (as B.gradeObservations parses it) — reading .ok on the raw
+  // string made every signature "T" ⇒ every agreement unanimous ⇒ XSEL-2 silently degenerated to XSEL-1. Parse first.
+  return obs.map((raw: any) => { let o: any = null; try { o = typeof raw === "string" ? JSON.parse(raw) : raw; } catch { o = null; }
+    return AGREE.outputSignature({ threw: !(o && o.ok === true), value: o && o.undef ? undefined : o && o.value }); });
 }
 
 const XSEL2_RULE = "XSEL-2 (V19 P1-R, revision 2): X = XSEL-1 ranking over ALL candidates (TAMPER-1 excluded → visible passes desc → compileOk desc → codeLines asc → sha256 asc); M = the candidates tied at X's top visible-pass count; each member of M gets its signature vector over probes derived from VISIBLE args only (a member whose probe run is not measurable forms its OWN singleton cluster — never dropped); clusters by identical vector; if |M| ≤ 1, a single cluster (unanimous ⇒ no information) or a tie for the largest cluster ⇒ X's choice; else the strictly largest cluster wins and, within it, the member with the best X rank (candidate id / schedule position never decisive); hidden cases never consulted";
@@ -236,6 +239,10 @@ async function selftest(): Promise<number> {
   check("selftest: PASS 6/6 with sampled candidates; control t0 arm 3/6 (descriptive)", r.verdict === "PASS" && r.result.passes === 6 && r.result.controlT0.passes === 3);
   check("selftest: every call is a pre-declared point; t0 sent once per task; ≤ maxModelCalls", T.calls.every((c: any) => POINTS.some((p: any) => p.temperature === c.temperature && p.seed === c.seed)) && T.calls.filter((c: any) => c.temperature === 0).length === 2 && r.network.modelCalls <= BUDGETS.maxModelCalls);
   check("selftest: XSEL-2 recorded (rule + xsel1 control) and candidate CODE persisted", r.trials.every((t: any) => /XSEL-2/.test(t.selection.rule) && "xsel1Chosen" in t.selection && t.controlXsel1) && r.trials.every((t: any) => t.candidates.every((c: any) => !c.ok || typeof c.code === "string")) && typeof r.result.controlXsel1.passes === "number");
+  { // RUN-1 defect regression: probe signatures must DISTINGUISH behaviours (real fakeRunner execution, not all "T")
+    const ts0 = B.loadTaskSet(path.join(ROOT, BUDGETS.taskSetFile)); const task0 = implementTasks(ts0).find((t: any) => t.id === "impl-ts-parse-range");
+    if (task0) { const probes = AGREE.deriveProbeInputs([[""], ["1-3"]]); const a1 = probeSignatures(task0, RIGHT_RANGE, fakeRunner, probes); const a2 = probeSignatures(task0, "export function parseRange(spec: string): number[] { throw new Error('x'); }", fakeRunner, probes);
+      check("probe signatures distinguish a correct candidate from an always-throwing one (observations are JSON strings — parsed)", Array.isArray(a1) && Array.isArray(a2) && a1.some((x: string) => x !== "T") && a2.every((x: string) => x === "T") && a1.join("|") !== a2.join("|")); } }
   // ---- XSEL-2 regressions (inspection REJECT B1) — pure decision over XSEL-1 ----
   const X = (ranking: string[], vp: Record<string, number>) => ({ chosen: ranking[0], ranking, reasons: ranking.map((id, k) => ({ rank: k + 1, id, visiblePassed: vp[id] })) });
   { const d = xsel2Choose(X(["C2", "C1", "C3", "C4"], { C2: 3, C1: 2, C3: 2, C4: 2 }), { C2: null, C1: ["V:1"], C3: ["V:1"], C4: ["V:1"] });

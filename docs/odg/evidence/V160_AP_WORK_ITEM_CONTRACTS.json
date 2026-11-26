@@ -5140,7 +5140,7 @@
             ],
             "trials": 3,
             "candidatesPerTrial": 4,
-            "runnerSha256": "8f4dea091f386f18fdb03a5c82807526a97fdff583f667c5fe77af908a43e26c",
+            "runnerSha256": "9ce9682005932e4ae5ff4b5bf1adcf7a8f3af222b451e15d1d09eb884d84d8dc",
             "runner": "runtime/bin/odg-v178-p1r-agreement-run.ts"
           },
           "schedule": {
@@ -5390,6 +5390,30 @@
           "reason": "independent inspection REJECT (head ef6a8570, sha 7e4f2e64…)",
           "justification": "fix both blocking defects before any run; oracle/threshold/budgets unchanged",
           "revisionAuthorSessionId": "v19-p1r-rev2"
+        },
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 P1-R revision-3 session; branch fix/v19-p1r-signature-parse)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_P1R.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P1/AC1' (file: acceptance_tests[0]): with a fake transport, n candidates are drawn exactly from the declared schedule (undeclared options refused)",
+            "AC2 test 'V178-P1/AC2' (file: acceptance_tests[1]): selection uses only visible-case results: changing hidden cases never changes the choice",
+            "AC3 test 'V178-P1/AC3' (file: acceptance_tests[2]): a candidate touching a test/evaluator path is excluded before selection",
+            "AC4 test 'V178-P1/AC4' (file: acceptance_tests[3]): with fixed transport outputs the selection is deterministic",
+            "AC5 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC6 tsc clean; each touched test file passes run one at a time",
+            "AC7 run (GO-dispatched runtime/bin/odg-v178-p1-multi-candidate-run.ts → docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json): implement task class of task set v2 (impl-chunk, impl-ts-parse-range), 3 trials each, n=4 SAMPLE-1 candidates per trial, XSEL-1 selection on VISIBLE cases (VIS-1) in the bwrap sandbox, acceptance = the V155 host-graded full oracle (all cases): PASS ⇔ ≥ 4/6 accepted (baseline 3/6, V155) within budgets"
+          ],
+          "originalCriteriaNote": "AC1–AC8 unchanged",
+          "change": [
+            "runner probeSignatures parses the JSON-string observations (RUN-1 defect: all signatures 'T' ⇒ XSEL-2 degenerated to XSEL-1)",
+            "regression test: signatures distinguish a correct from an always-throwing candidate",
+            "RUN-1 kept as incident docs/odg/evidence/V178_P1R_RUN1_INCIDENT.json (with descriptive offline analysis)",
+            "runnerSha256 updated"
+          ],
+          "reason": "RUN-1 (aacd35e3) did not test H-P1-R",
+          "justification": "fix the runner defect; criteria/oracle/threshold/budgets unchanged",
+          "revisionAuthorSessionId": "v19-p1r-rev3"
         }
       ]
     }
