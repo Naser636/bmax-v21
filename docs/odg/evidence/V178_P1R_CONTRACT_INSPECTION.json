@@ -1,0 +1,39 @@
+{
+  "//": "Independent inspection record of the V178-P1-R contract — CURRENT binding: revision 2 (ACCEPT). Revision 1 (head ef6a8570, sha 7e4f2e64…) REJECTED (B1 XSEL-2 dropped unmeasurable candidates / chose by id; B2 pre-registration named P1's runner) — fixed in #1043.",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V178-P1-R",
+  "verdict": "ACCEPT",
+  "contractSha256": "0af895beba1764c3b7e93ed355572fa8a5467c2701941115c43ef52abecd726d",
+  "inspectedHeadSha": "809c832d9d7374f919ac72d042f0d4d09f153d1c",
+  "inspectedPr": 1043,
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session)",
+  "inspectorSessionId": "a9708f5fa7d5cbc5e",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "v19-p1r-rev2",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-26",
+  "priorVerdicts": [
+    {
+      "revision": 1,
+      "inspectedHeadSha": "ef6a8570b9f832c4652bf0b12afa31c667132739",
+      "contractSha256": "7e4f2e64f7f1aaf9d0e52871118901413227127b794656b362275e331896d92e",
+      "verdict": "REJECT",
+      "blockingDefects": [
+        "B1 XSEL-2 dropped unmeasurable-signature candidates and chose by lowest id",
+        "B2 AC7/evidence/selectionRule still named P1's runner/XSEL-1"
+      ]
+    }
+  ],
+  "findings": [
+    "B1 fixed: XSEL-2 pure over the XSEL-1 ranking; unmeasurable = own singleton; unanimous/tie ⇒ XSEL-1; within-cluster by XSEL-1 rank; reproductions rerun correct",
+    "selftest 9 ok incl. 5 decision regressions + meaningful hidden-case invariance (2 candidates; branch not asserted — non-blocking)",
+    "B2 fixed: AC7/evidence_required/selectionRule (== XSEL2_RULE)/hypothesis/scope for P1-R; oracle/threshold/budgets verbatim; budgetsMatch true; runnerSha256 = committed runner; V178-P1 entry unchanged",
+    "no new defect"
+  ],
+  "testsRun": [
+    "p1r runner --selftest PASS (9)",
+    "tsc --noEmit --incremental false PASS"
+  ],
+  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V178-P1-R only; RUN via ODG GO --execute only; grades nothing."
+}
