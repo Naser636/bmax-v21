@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "f8cef6247b1e432b45b8ea3b371e8240fffb1a0e6e9c11520e0bf3474d39cd96"
+      "sha256": "8ad95a48420f8b4b641e1a8ee17c3fa04a40360878ffd171a32d08ddb8c88c73"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -76,6 +76,10 @@
     {
       "source": "docs/odg/evidence/V178_P4_INT_GO_EXECUTE_TRACE.jsonl",
       "sha256": "2a179cad2527398a1d41f7df98f716590477278f7d2c6f205550c903d7118eb0"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P5_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "fcafaf7a3ef549e918e9c8784c175c4766c9ac5426cf6d00ee97ed7a1bc08205"
     },
     {
       "source": "docs/odg/evidence/V19_EXP_B_GO_EXECUTE_TRACE.jsonl",
@@ -236,6 +240,10 @@
     {
       "source": "docs/odg/evidence/V178_P5_CONTRACT_INSPECTION.json",
       "sha256": "124b1981f90a754047e0c1dd7ebf0bee302089a96549c6c26f68c0409465c8d4"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P5_ACCEPTANCE_RESULT.json",
+      "sha256": "3665e3ebc38bbc9ce6e380b84cac4ba987f545788095f40d7f85dd55edcb1bf4"
     },
     {
       "source": "docs/odg/evidence/V178_P4_INT_CONTRACT_INSPECTION.json",
@@ -1158,17 +1166,18 @@
       },
       "contractSha256": "68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8",
       "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": "VALIDATE_CRITERIA",
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
         "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
         ],
-        "reason": "inspection ACCEPT bound to contract 68cd7a698d18 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
         "contractSha256": "68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8"
       },
       "records": {
@@ -1177,19 +1186,36 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V178_P5_ACCEPTANCE_RESULT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
-      "pending": [],
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V178_P5_GO_EXECUTE_TRACE.jsonl",
+        "runId": "24931aa45c15145d",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-26T17:50:25.855Z",
+        "dispatched": true
+      },
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/V178_P5_ACCEPTANCE_RESULT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 68cd7a698d18 and experiment docs/odg/evidence/V178_P5_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P5]",
@@ -1694,6 +1720,19 @@
       "strategic": "D",
       "workingOn": "V176-NB3",
       "ownerSelectionRecord": "docs/odg/V19_OWNER_DECISION_SELECT_NB3.json"
+    },
+    {
+      "trace": "docs/odg/evidence/V178_P5_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "24931aa45c15145d",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-26T17:50:25.855Z",
+      "dispatched": [
+        "V178-P5"
+      ],
+      "strategic": "D",
+      "workingOn": "V178-P5",
+      "ownerSelectionRecord": null
     }
   ],
   "nextGoAction": {
@@ -1714,13 +1753,8 @@
       "ownerAuthorizationNeeded": "owner — D PROPOSED → AUTHORIZED (authorizedBy)",
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
-    "dispatchable": [
-      {
-        "item": "V178-P5",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
-      }
-    ],
-    "verdict": "GO --execute could dispatch: V178-P5",
+    "dispatchable": [],
+    "verdict": "no tracked item has an authorized, not-yet-dispatched EXECUTION step ⇒ a GO --execute run has nothing to dispatch; the pending steps are provider / inspector / owner steps (see trackedItems[].next)",
     "pendingNonGo": [
       {
         "item": "D",
@@ -1731,15 +1765,20 @@
         "item": "V176-NB3",
         "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
         "action": "commit the criteria-validation record (R5b) bound to contract 5c551b0d3053 and experiment docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json, then an independent inspection — never auto-graded"
+      },
+      {
+        "item": "V178-P5",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 68cd7a698d18 and experiment docs/odg/evidence/V178_P5_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/V176_NB3_GO_EXECUTE_TRACE.jsonl",
-      "runId": "6382ec0449920f6c",
-      "status": "EXECUTED_FAIL",
-      "endedAt": "2026-11-26T16:39:19.393Z",
+      "trace": "docs/odg/evidence/V178_P5_GO_EXECUTE_TRACE.jsonl",
+      "runId": "24931aa45c15145d",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-26T17:50:25.855Z",
       "strategic": "D",
-      "workingOn": "V176-NB3",
+      "workingOn": "V178-P5",
       "nextAfterCurrent": {
         "decision": "SELECTED",
         "selected": "D",
