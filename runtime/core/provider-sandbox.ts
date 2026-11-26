@@ -235,8 +235,19 @@ function clientJobSandbox(spec: any): string[] {
   // optional EXTRA read-only binds (e.g. a runtime installed outside /usr on a CI host) — validated by the SAME confidential-prefix
   // rule as buildBwrapArgs (never '/', never /etc /home /root …); read-only only.
   const extra = Array.isArray(s.roBinds) ? s.roBinds : [];
-  const extraChk = validateRoPaths(extra, "roBinds");
+  // inspection fix (P7 delta REJECT): every extra bind is REALPATH-resolved first (a symlink to /etc is refused) and must not
+  // equal, sit under, or contain the tenants root or the socket dir (no cross-tenant read), nor sit under the masked /tmp, /run.
+  const real = (p: string) => { try { return fs.realpathSync(p); } catch { throw new Error(`clientJobSandbox: roBinds entry '${p}' cannot be resolved (refused)`); } };
+  const resolved = extra.map((p: any) => real(String(p)));
+  const extraChk = validateRoPaths(resolved, "roBinds");
   if (!extraChk.ok) throw new Error(extraChk.error);
+  const guarded = [real(s.tenantsRoot), real(path.dirname(s.socketPath))];
+  const rel = (a: string, b: string) => a === b || a.startsWith(b + "/") || b.startsWith(a + "/");
+  for (const p of extraChk.paths) {
+    const g = guarded.find((x: string) => rel(p, x));
+    if (g) throw new Error(`clientJobSandbox: roBinds entry '${p}' overlaps the tenants root / socket dir '${g}' (cross-tenant exposure refused)`);
+    if (p === "/tmp" || p.startsWith("/tmp/") || p === "/run" || p.startsWith("/run/")) throw new Error(`clientJobSandbox: roBinds entry '${p}' is under a masked tmpfs (/tmp, /run) — refused, never silently ignored`);
+  }
   const out = ["--unshare-all", "--die-with-parent", "--new-session", "--clearenv", "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", "/work", "--setenv", "ODG_MODEL_SOCKET", "/run/odg-model.sock"];
   for (const p of sysRo) out.push("--ro-bind", p, p);
   for (const p of extraChk.paths.filter((x: string) => !sysRo.some((r: string) => x === r || x.startsWith(r + "/")))) out.push("--ro-bind", p, p);

@@ -200,6 +200,10 @@ if (skipped > 0) console.log("NOTE: skipped cases require bubblewrap; they are N
   ok("P7: a tenant id escaping tenantsRoot is refused", threw);
   let threwRo = false; try { ps.clientJobSandbox({ tenant: "tenant-a", tenantsRoot: pathx.join(root, "tenants"), socketPath: sock, roBinds: ["/etc"], argv: ["x"] }); } catch { threwRo = true; }
   ok("P7: an extra read-only bind of a confidential prefix (/etc) is refused", threwRo);
+  const refusesRo = (ro: string[]) => { try { ps.clientJobSandbox({ tenant: "tenant-a", tenantsRoot: pathx.join(root, "tenants"), socketPath: sock, roBinds: ro, argv: ["x"] }); return false; } catch { return true; } };
+  try { fsx.symlinkSync("/etc", pathx.join(root, "etclink")); } catch { /* exists */ }
+  ok("P7 inspection fix: extra binds of the tenants root, its parent, another tenant, a symlink to /etc, or a /tmp path are ALL refused", refusesRo([pathx.join(root, "tenants")]) && refusesRo([root]) && refusesRo([pathx.join(root, "tenants", "tenant-b")]) && refusesRo([pathx.join(root, "etclink")]) && refusesRo(["/tmp"]) && refusesRo(["/nonexistent-zz"]));
+  ok("P7: a legitimate system runtime dir outside the guarded paths is accepted", !refusesRo(["/usr/share"]) && !refusesRo([]));
   await fwd.close(); fsx.rmSync(root, { recursive: true, force: true });
   console.log(`\nPROVIDER SANDBOX P7 — ${passed} assertions passed, ${skipped} skipped.`);
 })().catch((e: any) => { console.log("NOT OK - P7 threw " + String((e && e.stack) || e)); process.exit(1); });
