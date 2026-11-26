@@ -559,7 +559,17 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     let contextRecall: any = null;
     if (typeof ports.memoryRecall === "function") { try { contextRecall = await ports.memoryRecall(String(item.title || item.id)); } catch (e: any) { contextRecall = { status: "NOT_MEASURED", reason: String((e && e.message) || e) }; } }
     ctx.contextRecall = contextRecall;
-    return { status: "DONE", inputs: spec, decision: { rule: SPEC_RULE, strategy: c.strategy, complexity: c.complexity, reason: c.reason, parts: arr(c.architecture).map((a: any) => a.path), ...(contextRecall ? { contextRecall } : {}) }, rationale: `decomposition-planner: ${c.strategy} (${c.complexity})` };
+    // EXP-B-1 (EXPERIENCE INTELLIGENCE incr. B): comparable past EPISODES (closed register items, decision-precedent store)
+    // for the mission being decomposed — recorded in the trace, never auto-applied (FAILED ⇒ AVOID_UNCHANGED). Absent port ⇒ unchanged.
+    let experienceRecall: any = null;
+    if (typeof ports.experienceRecall === "function") {
+      const w = contract && isObj(contract.WORK_ITEM_CONTRACT) ? contract.WORK_ITEM_CONTRACT : {};
+      const pre = isObj(w.preRegistration) ? w.preRegistration : {};
+      try { experienceRecall = await ports.experienceRecall({ id: item.id, title: item.title, objective: w.objective, metric: pre.metric, question: pre.question, components: arr(w.write_set) }); }
+      catch (e: any) { experienceRecall = { status: "NOT_MEASURED", reason: String((e && e.message) || e) }; }
+    }
+    ctx.experienceRecall = experienceRecall;
+    return { status: "DONE", inputs: spec, decision: { rule: SPEC_RULE, strategy: c.strategy, complexity: c.complexity, reason: c.reason, parts: arr(c.architecture).map((a: any) => a.path), ...(contextRecall ? { contextRecall } : {}), ...(experienceRecall ? { experienceRecall } : {}) }, rationale: `decomposition-planner: ${c.strategy} (${c.complexity})` };
   } : skip("no selected item (selection halted)"));
   if (stopped(r)) return stopped(r);
 

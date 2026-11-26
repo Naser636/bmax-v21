@@ -1,7 +1,7 @@
 {
   "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 R2C (batch V176-R2C-1, owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json): RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.6 NB3: V176-NB3 (owner V176 build missions, docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS; NB2's target + oracle with the pre-registered DIV-1 repair-diversity lever) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6 F: F moved PROPOSED → AUTHORIZED_FOR_REVISION under the owner build-missions record (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json) and revised (REVISE_CONTRACT): authorization block, write_set 1:1 replacement, preRegistration (GO parallel-wave capability on a deterministic fixture), dispatch target; revision 2 after inspection REJECT (full write_set, FIXTURE-CAP-1 PARTIAL cap, GO wiring stated as remaining step); F's criteria verbatim; every other entry unchanged. V17.8 Radar campaign (batch V178-RADAR-1, owner record owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)): V178-P1, V178-P2, V178-P3, V178-P4, V178-P5, V178-P6, V178-P7 appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.8 binding: V178-P1 and V178-P2 moved PROPOSED → AUTHORIZED_FOR_REVISION (owner V176 build missions, family V176-BUILD-MISSIONS; concrete write_set, AC7, budgets, preRegistration, dispatch target); P3–P7 unchanged; every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 33,
+  "count": 34,
   "initialStatusCounts": {
     "PASS": 2,
     "PARTIAL": 14,
@@ -5445,6 +5445,203 @@
           "reason": "owner decision: one valid GO run re-using the 20 ODG-generated candidates, no new generation",
           "justification": "tests H-P1-R on exactly the candidates already generated; oracle/threshold/budgets unchanged; no PASS-seeking (the offline analysis predicts 3/6)",
           "revisionAuthorSessionId": "v19-p1r-rev4"
+        }
+      ]
+    },
+    {
+      "scenario": "V19-EXP-B",
+      "title": "EXPERIENCE INTELLIGENCE incr. B — structured mission episodes derived from closed register items, recorded in decision-precedent, comparable-experience recall wired into GO DECOMPOSE (EXP-B-1)",
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_EXP_B.json: « Le prochain travail est l'incrément B — EXPERIENCE INTELLIGENCE. » / « Ne crée pas une seconde mémoire, un deuxième moteur d'expérience, un nouvel orchestrateur ou une architecture parallèle. » — internal, no network, €0",
+      "origin": {
+        "parent": "EXPERIENCE INTELLIGENCE roadmap (owner directive 2026-11-26); increment A = V178-P1-R closure (CLOSED_FAIL, docs/odg/evidence/V178_P1R_CRITERIA_VALIDATION.json)",
+        "reason": "inventory (2026-11-26, main 295e29ce): patch-memory 7 entries, 0 reused; decision-precedent store absent (no producer); learning-reuse-proof synthetic cost only; only memory-architecture wired into GO — no structured episodes, no comparable-experience recall on a real ODG path"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "missingForPass": "the single GO-dispatched run meeting AC1–AC6, then VALIDATE_CRITERIA"
+      },
+      "beforeMetric": [
+        {
+          "source": "runtime/core/odg-go-cycle.ts",
+          "name": "decomposeExperienceRecall",
+          "value": "ABSENT"
+        },
+        {
+          "source": "runtime/generated/autonomy/decision-precedent.json",
+          "name": "decisionPrecedentEntries",
+          "value": "ABSENT (store never produced)"
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "turn ODG's closed, criteria-validated work items into structured episodes recorded in the existing decision-precedent store and recall comparable past experiences (succeeded, failed, partial; applicability and risks; never auto-applied) on the real GO DECOMPOSE path, without a second memory or experience engine",
+        "scope": "runtime/core/odg-experience-episode.ts (new, pure: episodes, knowledge classes, re-evaluation/suspension, recall), runtime/core/decision-precedent.ts (additive recallComparable + optional features/episode), runtime/core/odg-go-cycle.ts DECOMPOSE (experienceRecall port), runtime/bin/odg-go.ts (experienceRecall port on the real path)",
+        "write_set": [
+          "runtime/core/odg-experience-episode.ts",
+          "runtime/core/odg-experience-episode.test.ts",
+          "runtime/core/decision-precedent.ts",
+          "runtime/core/odg-go-cycle.ts",
+          "runtime/bin/odg-go.ts",
+          "runtime/bin/odg-v19-exp-b-run.ts",
+          "package.json",
+          "docs/odg/evidence/V19_EXP_B_RESULT.json"
+        ],
+        "authorized_symbols": [
+          "buildEpisode",
+          "buildEpisodes",
+          "reevaluate",
+          "suspend",
+          "toPrecedentStore",
+          "recallForMission",
+          "features",
+          "recallComparable",
+          "recordPrecedent",
+          "experienceRecall",
+          "buildPorts",
+          "runGoCycle"
+        ],
+        "invariants": [
+          "an episode is INTERNAL_EXPERIENCE, never a corroborated fact; a nextLever is a HYPOTHESIS; nothing is promoted",
+          "no second memory: episodes are a derived projection of committed records recorded in decision-precedent; nothing persisted by this item",
+          "a FAILED precedent is never reusable unchanged (RB-REATTEMPT-CHANGED-INPUT); adaptation.autoApply is always false",
+          "GO DECOMPOSE decision unchanged when the port is absent; no closed item is re-graded",
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED"
+        ],
+        "acceptance_criteria": [
+          "AC1 episodes: every CLOSED_* register item with a CLOSE-1 record yields exactly one ACTIVE episode (odg-experience-episode.buildEpisodes) carrying every owner §3.A section (context, initialSituation, diagnosis, decisions, steps, components, results, difficulties, corrections, costs, evidence, lessons, knowledgeClass, confidence, method, features), its validation record sha256 recomputed from the file",
+          "AC2 knowledge governance: every episode knowledgeClass INTERNAL_EXPERIENCE; every validation.learning.nextLever lesson classed HYPOTHESIS; no lesson classed CORROBORATED_FACT; every recall adaptation.autoApply === false",
+          "AC3 comparable recall over the canonical decision-precedent store (recallComparable), leave-one-out on the pre-registered FAMILIES (10 directional queries: each member's own title/objective/metric/question/write_set as the new mission, its own episode excluded, digit-bearing tokens never features): hit ⇔ the family partner is in the top-3; met ⇔ hits ≥ 8/10",
+          "AC4 non-reuse discipline over every AC3 recall: each recalled FAILED episode applicable=false with the RB-REATTEMPT-CHANGED-INPUT blocker, and each recalled ACTIVE SUCCEEDED episode applicable=true (100%, at least one recall)",
+          "AC5 real GO path: odg-go-cycle.runGoCycle (DRY, in-process) with odg-go.ts's experienceRecall port records DECOMPOSE.experienceRecall with status RECALLED or NO_COMPARABLE for the working item; without the port the DECOMPOSE decision carries no experienceRecall field",
+          "AC6 tsc --noEmit --incremental false clean and every touched test file passes, run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V19-EXP-B/T1",
+            "file": "runtime/core/odg-experience-episode.test.ts"
+          },
+          {
+            "id": "V19-EXP-B/T2",
+            "file": "runtime/core/decision-precedent.test.ts"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "a network access, model call or install is needed"
+        ],
+        "rollback": "revert the single PR (the port is additive; decision-precedent exact-signature API unchanged)",
+        "evidence_required": [
+          "test output per file",
+          "GO run trace + result record",
+          "independent inspection verdicts (contract, result)"
+        ],
+        "budgets": {
+          "modelCalls": 0,
+          "network": "none",
+          "providerCalls": 0,
+          "dispatchTimeoutMs": 1500000
+        },
+        "preRegistration": {
+          "metric": "AC1–AC6 pass/fail on the real committed corpus; AC3 = top-3 family-partner hits out of 10 leave-one-out queries",
+          "baseline": "beforeMetric decomposeExperienceRecall ABSENT (no recall); control arm WITHOUT memory (empty decision-precedent store) ⇒ 0/10 by construction; random-rank expectation 10 × 3/(n−1) recorded by the runner",
+          "dataset": {
+            "source": "committed docs/odg/evidence/V164_STRATEGIC_REGISTER.json closed items + their CLOSE-1 criteria-validation records + docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json at the run head",
+            "runnerSha256": "6ca68c70c839d43316afb8950d80e6b4745f1f542e499d703819662ab0d9818e",
+            "families": [
+              [
+                "G",
+                "G2"
+              ],
+              [
+                "J",
+                "J2"
+              ],
+              [
+                "V175-NB1",
+                "V175-NB2"
+              ],
+              [
+                "V178-P1",
+                "V178-P1-R"
+              ],
+              [
+                "V178-P4",
+                "V178-P4-INT"
+              ]
+            ],
+            "familiesSource": "committed links: G2→G (dependencyEdges CODE_IMPORT; title 'G2 — Mémoire'), J2→J (dependencyEdges DATASET_INPUT), V175-NB1→V175-NB2 (dependencyEdges CODE_IMPORT; NB2 repairs NB1's module), V178-P1-R origin.parent V178-P1, V178-P4-INT origin.parent V178-P4"
+          },
+          "decisionRule": "PASS ⇔ AC1–AC6 all met; any criterion not measurable ⇒ NOT_MEASURED (never PASS); otherwise FAIL",
+          "thresholds": {
+            "AC3hitsMin": 8,
+            "AC3of": 10,
+            "AC3k": 3
+          },
+          "honestLimits": [
+            "in-sample: EXP-B-1 features/similarity were designed with the closed corpus visible (no ranking computed on it before this pre-registration)",
+            "lexical-structural Jaccard, not semantic proof",
+            "12-episode corpus: proves the mechanism on ODG's own closures, not cross-domain transfer (increment G)"
+          ]
+        }
+      },
+      "binding": {
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 EXP-B binding session; branch feat/v19-exp-b-episodes)",
+        "boundAt": "2026-11-26"
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_ORDER_EXP_B.json (V19 EXPERIENCE INTELLIGENCE incr. B order)",
+        "date": "2026-11-26",
+        "transcribedBy": "PROVIDER (Claude Code) — bound through family V19-EXPERIENCE-INTELLIGENCE",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "one GO-dispatched run of the declared target only, after an independent (distinct-session) inspection ACCEPT of this contract; no network, no model; writes only its result file",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v19-exp-b-run.ts",
+            "args": [
+              "docs/odg/evidence/V19_EXP_B_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V19_EXP_B_RESULT.json"
+            ]
+          }
+        },
+        "dispatchTimeoutMs": 1500000,
+        "inspectionRecord": "docs/odg/evidence/V19_EXP_B_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 EXP-B binding session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_EXP_B.json",
+          "originalCriteria": [
+            "AC1 episodes: every CLOSED_* register item with a CLOSE-1 record yields exactly one ACTIVE episode (odg-experience-episode.buildEpisodes) carrying every owner §3.A section (context, initialSituation, diagnosis, decisions, steps, components, results, difficulties, corrections, costs, evidence, lessons, knowledgeClass, confidence, method, features), its validation record sha256 recomputed from the file",
+            "AC2 knowledge governance: every episode knowledgeClass INTERNAL_EXPERIENCE; every validation.learning.nextLever lesson classed HYPOTHESIS; no lesson classed CORROBORATED_FACT; every recall adaptation.autoApply === false",
+            "AC3 comparable recall over the canonical decision-precedent store (recallComparable), leave-one-out on the pre-registered FAMILIES (10 directional queries: each member's own title/objective/metric/question/write_set as the new mission, its own episode excluded, digit-bearing tokens never features): hit ⇔ the family partner is in the top-3; met ⇔ hits ≥ 8/10",
+            "AC4 non-reuse discipline over every AC3 recall: each recalled FAILED episode applicable=false with the RB-REATTEMPT-CHANGED-INPUT blocker, and each recalled ACTIVE SUCCEEDED episode applicable=true (100%, at least one recall)",
+            "AC5 real GO path: odg-go-cycle.runGoCycle (DRY, in-process) with odg-go.ts's experienceRecall port records DECOMPOSE.experienceRecall with status RECALLED or NO_COMPARABLE for the working item; without the port the DECOMPOSE decision carries no experienceRecall field",
+            "AC6 tsc --noEmit --incremental false clean and every touched test file passes, run one at a time"
+          ],
+          "originalCriteriaNote": "new work item: AC1–AC6 authored at binding, before any run",
+          "change": [
+            "new contract bound (write_set concrete, preRegistration, dispatch target)"
+          ],
+          "reason": "EXPERIENCE INTELLIGENCE increment B ordered by the owner",
+          "justification": "criteria and families fixed before any recall ranking on the real corpus",
+          "revisionAuthorSessionId": "v19-exp-b-binding"
         }
       ]
     }
