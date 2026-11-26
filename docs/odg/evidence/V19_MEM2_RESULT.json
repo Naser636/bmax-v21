@@ -1,0 +1,245 @@
+{
+  "schema": "odg-v19-mem2-result/1",
+  "scenario": "V19-MEM-2",
+  "label": "NATIVE (ODG GO dispatch)",
+  "embedModel": "qwen3-embedding:0.6b",
+  "rule": "REPRO-1: an internal observation is CORROBORATED iff ≥2 INDEPENDENT ODG executions (distinct run ids, fresh generation, never a replay) measured the same structured key (subject + metric + all declared conditions) with the same value, each from a committed record with a recorded sha256, and no same-key source disagrees (⇒ CONTRADICTED). Single source ⇒ UNVERIFIED.",
+  "tally": {
+    "collected": 36,
+    "verifiedSources": 3,
+    "corroborated": 4,
+    "rejectedAsFact": 0,
+    "contradicted": 0,
+    "pending": 0,
+    "indexedAsFact": 4,
+    "indexedAsContext": 2,
+    "reusedInGoDecompose": 2,
+    "reusedByPortQuery": 3
+  },
+  "criteria": {
+    "AC1": {
+      "met": true,
+      "sources": [
+        {
+          "path": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+          "sha256": "9819cb8cf6cc3547d7de9eaee6695387158b9630f6ba5bacb55bcbbd28440a4d",
+          "observations": 12
+        },
+        {
+          "path": "docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json",
+          "sha256": "1ddc97f87b5639baaf5bd007e2f12ad1f77d7d14d574f81bf0c4e035c0e6322e",
+          "observations": 12
+        },
+        {
+          "path": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+          "sha256": "7702b2748d2def6d95ba2e2b668d0f9b123535c4b0bc49af2e2d3ee0fa116239",
+          "observations": 12
+        }
+      ],
+      "observations": 36
+    },
+    "AC2": {
+      "met": true,
+      "tally": {
+        "keys": 4,
+        "corroborated": 4,
+        "unverified": 0,
+        "contradicted": 0
+      },
+      "corroborated": [
+        {
+          "metric": "t0 full-oracle outcome (odg-local-model-benchmark.gradeTrial, all cases)",
+          "task": "impl-chunk",
+          "value": "PASS",
+          "independentExecutions": 2,
+          "sources": [
+            {
+              "path": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+              "independent": true
+            },
+            {
+              "path": "docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json",
+              "independent": true
+            },
+            {
+              "path": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+              "independent": false
+            }
+          ]
+        },
+        {
+          "metric": "t0 generated-code sha256",
+          "task": "impl-chunk",
+          "value": "cf45a0eaa470f55c89f9160e56e502412a3f4d8321f0ae56e0e1d37247e2b3bd",
+          "independentExecutions": 2,
+          "sources": [
+            {
+              "path": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+              "independent": true
+            },
+            {
+              "path": "docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json",
+              "independent": true
+            },
+            {
+              "path": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+              "independent": false
+            }
+          ]
+        },
+        {
+          "metric": "t0 full-oracle outcome (odg-local-model-benchmark.gradeTrial, all cases)",
+          "task": "impl-ts-parse-range",
+          "value": "FAIL",
+          "independentExecutions": 2,
+          "sources": [
+            {
+              "path": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+              "independent": true
+            },
+            {
+              "path": "docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json",
+              "independent": true
+            },
+            {
+              "path": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+              "independent": false
+            }
+          ]
+        },
+        {
+          "metric": "t0 generated-code sha256",
+          "task": "impl-ts-parse-range",
+          "value": "6fa03a611f1d365c0fc52a3494ee33efec9e322b86985b66596336113992c502",
+          "independentExecutions": 2,
+          "sources": [
+            {
+              "path": "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json",
+              "independent": true
+            },
+            {
+              "path": "docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json",
+              "independent": true
+            },
+            {
+              "path": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+              "independent": false
+            }
+          ]
+        }
+      ],
+      "sameWithoutReplay": true
+    },
+    "AC3": {
+      "met": true,
+      "trusted": 4,
+      "factIds": [
+        "OBS-20410123cc46a17e",
+        "OBS-4de57e921d7a9c97",
+        "OBS-be4500238d27d131",
+        "OBS-bf40fe722638047b"
+      ],
+      "staleTrusted": 0
+    },
+    "AC4": {
+      "met": true,
+      "memory": {
+        "status": "INDEXED",
+        "tenant": "odg-go",
+        "index": "memory-odg-go.sqlite",
+        "dims": 1024,
+        "trusted": 4,
+        "excluded": 2,
+        "indexed": 6,
+        "factIndexed": 4,
+        "contextIndexed": 2,
+        "embedded": 6,
+        "removed": 0,
+        "withoutText": 0,
+        "records": 6
+      },
+      "portQuery": "qwen2.5-coder:7b local model result on impl-ts-parse-range at temperature 0",
+      "portRecallFacts": [
+        {
+          "id": "OBS-20410123cc46a17e",
+          "score": 0.032522,
+          "provenance": "REPRO-1:docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json@9819cb8cf6cc3547|docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json@1ddc97f87b5639ba|docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json@7702b2748d2def6d"
+        },
+        {
+          "id": "OBS-be4500238d27d131",
+          "score": 0.032522,
+          "provenance": "REPRO-1:docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json@9819cb8cf6cc3547|docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json@1ddc97f87b5639ba|docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json@7702b2748d2def6d"
+        },
+        {
+          "id": "OBS-4de57e921d7a9c97",
+          "score": 0.031746,
+          "provenance": "REPRO-1:docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json@9819cb8cf6cc3547|docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json@1ddc97f87b5639ba|docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json@7702b2748d2def6d"
+        }
+      ],
+      "portRecallContext": [],
+      "workingOn": "V19-MEM-2",
+      "decomposeRecall": {
+        "status": "RECALLED",
+        "facts": [
+          "OBS-bf40fe722638047b",
+          "OBS-20410123cc46a17e"
+        ],
+        "context": [
+          "kc:efae40927e7a0f2d"
+        ]
+      }
+    },
+    "AC5": {
+      "met": true,
+      "claimsUnchanged": true,
+      "supportedClaimsInFact": 0,
+      "contextRecalled": []
+    },
+    "AC6": {
+      "met": true,
+      "evidence": {
+        "tests": [
+          {
+            "file": "runtime/core/odg-observation-corroboration.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/bin/odg-go-memory.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/bin/odg-go.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/core/odg-go-cycle.test.ts",
+            "exit": 0,
+            "ok": true
+          }
+        ],
+        "tsc": {
+          "command": "tsc --noEmit --incremental false -p tsconfig.json",
+          "exit": 0,
+          "ok": true
+        }
+      }
+    }
+  },
+  "outcome": "PASS",
+  "honestLimits": [
+    "the provider inspected the source records while authoring REPRO-1 (the corroborated keys were known): this run validates the mechanism and its integration, it is not a prediction",
+    "the facts are INTERNAL measurements under stated conditions (model tag, temperature 0, seed 42, task set sha) — the Ollama model digest is not recorded by the P1 runners, so a re-pulled tag with the same name is a condition change REPRO-1 cannot see",
+    "2 independent executions is the minimum; V155 (same grader) is consistent but not counted (its top_k condition is not recorded by the P1 runners)"
+  ],
+  "provenance": {
+    "codeAuthor": "PROVIDER (Claude Code) — REPRO-1 / V19-MEM-2",
+    "decisionAuthority": "ODG GO (dispatch of the declared target)",
+    "network": "loopback Ollama /api/embed only",
+    "modelCalls": "embedding only",
+    "providerCalls": 0
+  },
+  "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1"
+}
