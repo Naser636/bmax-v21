@@ -1,0 +1,69 @@
+{
+  "//": "VALIDATE_CRITERIA for V178-P6 (owner record docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json). Graded from the committed ACC-1 record + the independent result inspection.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V178-P6",
+  "date": "2026-11-26",
+  "contractSha256": "a9ba4454a6c624f991144a19dcf489be9b4b0a4a1b1102b3f0191d5152bdeaf6",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json",
+    "sha256": "e9e2807b8a698c17aca79917fde8001f220ac18a8e7894729f22e21bc4a11637",
+    "experimentSha256": "4a3b0038725941aadf495cce29697bf72c18d68b8d6676085309302c67fbe267",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1083,
+    "mergedAs": "5733489c",
+    "producedBy": "ODG GO --execute native dispatch (run 91bfed11e3245a27 at main a643c619; owner order V19_OWNER_DECISION_ORDER_P6_P7.json); trace docs/odg/evidence/V178_P6_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 1083,
+    "inspectedHead": "45aaf8ef4b89727e602d1a6d5133ef1a69c0451b",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "insp-6cab89c8-v19-p6-result-20261126",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-91bfed11e3245a27",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "PASS",
+    "findings": "contract sha = result sha; scratch byte-identical; one dispatch, writes ⊆ writeSet; GO-ORD-1 applied; run-head code = inspected rev-2 code; AC1–AC3 reportedOk (AC3 on the real NB2 path), tsc 0, pinEvaluators ABSENT → PRESENT recomputed"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET"
+    },
+    {
+      "id": "AC2",
+      "status": "MET"
+    },
+    {
+      "id": "AC3",
+      "status": "MET"
+    },
+    {
+      "id": "AC4",
+      "status": "MET"
+    },
+    {
+      "id": "AC5",
+      "status": "MET"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "ACC-1 PASS within the AC1–AC5 scope; independent result inspection ACCEPT"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "FROZEN-1 wired into the native-design runner (NB2/NB3 path): evaluators pinned, candidate write-set gated before execution, pins re-verified at acceptance",
+  "limits": [
+    "PASS within AC1–AC5 only — NOT the full anti-reward-hacking objective: FROZEN-1 is not yet wired into runtime/core/odg-local-model-benchmark.ts nor evaluator-independence (the 'shared by the pipeline AND the benchmark' gap is half closed)",
+    "in this runner the candidate write-set is the fixed sandbox file ⇒ the pre-execution refusal can only fire on misconfiguration (AC1 proven at function level + structural gate)",
+    "the in-memory harness pin re-verification is tautological; the substantive acceptance-time check is the on-disk pipeline file (item.testPath normally absent for NB2/NB3)",
+    "frozen.ok === false (unreadable evaluator) is recorded but does not stop a run — follow-up: fail-closed / NOT_MEASURED",
+    "LEARN-1 is a symbol-presence proxy; behaviour = AC1–AC3",
+    "the result record keeps per-test booleans + exit codes, not the raw test output (contract evidence_required 'test output per file')",
+    "no reward-hacking attempt was observed or counted (measurableBenefit 'attempts detected' NOT_MEASURED)"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionV178P6": "CLOSED_PASS"
+  }
+}
