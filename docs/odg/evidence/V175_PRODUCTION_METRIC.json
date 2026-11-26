@@ -433,7 +433,7 @@
         "openToMergeMs": 420000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [],
         "reviewCount": 0,
@@ -459,7 +459,7 @@
         "openToMergeMs": 585000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [],
         "reviewCount": 0,
@@ -485,7 +485,7 @@
         "openToMergeMs": 458000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [
           {
@@ -518,7 +518,7 @@
         "openToMergeMs": 559000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [],
         "reviewCount": 0,
@@ -544,7 +544,7 @@
         "openToMergeMs": 30209000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [],
         "reviewCount": 0,
@@ -570,7 +570,7 @@
         "openToMergeMs": 405000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [],
         "reviewCount": 0,
@@ -596,7 +596,7 @@
         "openToMergeMs": 289000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [
           {
@@ -629,7 +629,7 @@
         "openToMergeMs": 688000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [
           {
@@ -662,7 +662,7 @@
         "openToMergeMs": 398000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [],
         "reviewCount": 0,
@@ -688,7 +688,7 @@
         "openToMergeMs": 325000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [],
         "reviewCount": 0,
@@ -714,7 +714,7 @@
         "openToMergeMs": 915000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [
           {
@@ -747,7 +747,7 @@
         "openToMergeMs": 736000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [
           {
@@ -780,7 +780,7 @@
         "openToMergeMs": 524000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [
           {
@@ -819,7 +819,7 @@
         },
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [],
         "reviewCount": 0,
@@ -845,7 +845,7 @@
         "openToMergeMs": 1414000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [
           {
@@ -884,7 +884,7 @@
         "openToMergeMs": 560000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [],
         "reviewCount": 0,
@@ -910,7 +910,7 @@
         "openToMergeMs": 679000,
         "inspectionVerdictAt": {
           "status": "NOT_MEASURED",
-          "reason": "inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"
+          "reason": "inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound"
         },
         "inspectionFindingCommits": [
           {

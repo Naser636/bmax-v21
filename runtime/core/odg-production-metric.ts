@@ -59,7 +59,15 @@ function traceSummary(events: any): any {
 }
 
 /* prTimeline(pr) — wall-time split for one PR (latest CI run in the snapshot). */
-function prTimeline(pr: any): any {
+/* RB-RECORD-INSPECTION-VERDICT-TIME: an inspection record that carries verdictAt (ISO) for inspectedPr makes that PR's verdict time
+ * MEASURED (latency from PR open); older PRs (no recorded verdictAt) stay NOT_MEASURED — never back-filled from commit times. */
+function inspectionVerdictFor(pr: any, verdicts: any): any {
+  const p = isObj(pr) ? pr : {};
+  const v = isObj(verdicts) ? verdicts[String(p.number)] : null;
+  if (!isObj(v) || typeof v.verdictAt !== "string" || !Number.isFinite(Date.parse(v.verdictAt))) return nm("inspection verdicts are not recorded on the PR (no review/comment) and no committed inspection record carries verdictAt for it; see inspectionFindingCommits for an upper bound");
+  return { status: "MEASURED", at: v.verdictAt, verdict: v.verdict || null, record: v.record || null, openToVerdictMs: p.createdAt ? ms(p.createdAt, v.verdictAt) : null };
+}
+function prTimeline(pr: any, verdicts?: any): any {
   const p = isObj(pr) ? pr : {};
   const commits = arr(p.commits).slice().sort((a: any, b: any) => String(a.committedDate).localeCompare(String(b.committedDate)));
   const first = commits[0], last = commits[commits.length - 1];
@@ -79,7 +87,7 @@ function prTimeline(pr: any): any {
     ciConclusion: checks.length ? checks.map((c: any) => c.conclusion).join(",") : null,
     ciEndToMergeMs: ciEnd && p.mergedAt ? ms(ciEnd, p.mergedAt) : (p.mergedAt ? nm("no completed check run") : nm(`not merged (${p.state})`)),
     openToMergeMs: p.mergedAt ? ms(p.createdAt, p.mergedAt) : nm(`not merged (${p.state})`),
-    inspectionVerdictAt: nm("inspection verdicts are not recorded on the PR (no review/comment); see inspectionFindingCommits for an upper bound"),
+    inspectionVerdictAt: inspectionVerdictFor(p, verdicts),
     inspectionFindingCommits: insp.map((c: any) => ({ sha: String(c.oid).slice(0, 8), committedDate: c.committedDate, headline: c.messageHeadline, verdictExistedBefore: c.committedDate })),
     reviewCount: arr(p.reviews).length, commentCount: arr(p.comments).length,
   };
@@ -157,7 +165,7 @@ function measureProduction(input: any): any {
   });
 
   const [lo, hi] = arr(inp.windowPrs).length === 2 ? inp.windowPrs : [0, Infinity];
-  const timeline = prs.filter((p: any) => p.number >= lo && p.number <= hi).map(prTimeline);
+  const timeline = prs.filter((p: any) => p.number >= lo && p.number <= hi).map((p: any) => prTimeline(p, inp.inspectionVerdicts));
   const merged = timeline.filter((t: any) => isNum(t.openToMergeMs));
   const sum = (k: string) => merged.reduce((a: number, t: any) => a + (isNum(t[k]) ? t[k] : 0), 0);
   const total = sum("openToMergeMs");
@@ -189,5 +197,5 @@ function measureProduction(input: any): any {
 
 const PRODUCTION_METRIC_CONTRACT = freeze({ module: "odg-production-metric", pure: true, notMeasuredPreserved: true });
 
-module.exports = { measureProduction, traceSummary, prTimeline, splitLines, PRODUCTION_METRIC_CONTRACT };
+module.exports = { measureProduction, traceSummary, prTimeline, splitLines, inspectionVerdictFor, PRODUCTION_METRIC_CONTRACT };
 export {};

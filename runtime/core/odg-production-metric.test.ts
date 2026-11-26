@@ -42,6 +42,14 @@ function main(): void {
   const tl = PM.prTimeline(pr(3, true));
   check("PR timeline phases: open→last commit 5 min, queue 1 min, CI 5 min, wait 4 min; sum = open→merge", tl.openToLastCommitMs === 300000 && tl.lastCommitToCiStartMs === 60000 && tl.ciMs === 300000 && tl.ciEndToMergeMs === 240000 && tl.openToMergeMs === 900000);
   check("inspection verdict time NOT_MEASURED; finding commit gives an upper bound", NM(tl.inspectionVerdictAt) && tl.inspectionFindingCommits.length === 1 && NM(tl.preOpenBuildMs));
+  {
+    const pr = { number: 2001, createdAt: "2026-11-26T10:00:00Z", commits: [], checks: [] };
+    const m = PM.prTimeline(pr, { "2001": { verdictAt: "2026-11-26T10:30:00Z", verdict: "ACCEPT", record: "docs/odg/evidence/X_CONTRACT_INSPECTION.json" } });
+    check("RB-RECORD-INSPECTION-VERDICT-TIME/AC1: inspectionVerdictAt MEASURED for PRs inspected after the change", m.inspectionVerdictAt.status === "MEASURED" && m.inspectionVerdictAt.openToVerdictMs === 1800000 && m.inspectionVerdictAt.verdict === "ACCEPT");
+    const old = PM.prTimeline({ ...pr, number: 999 }, { "2001": { verdictAt: "2026-11-26T10:30:00Z" } });
+    const bad = PM.prTimeline(pr, { "2001": { verdictAt: "not-a-date" } });
+    check("RB-RECORD-INSPECTION-VERDICT-TIME/AC2: older PRs stay NOT_MEASURED (no backfill guess)", NM(old.inspectionVerdictAt) && NM(bad.inspectionVerdictAt) && NM(PM.prTimeline(pr).inspectionVerdictAt));
+  }
   const u = PM.prTimeline(pr(4, false));
   check("unmerged PR ⇒ open→merge NOT_MEASURED (not 0)", NM(u.openToMergeMs) && NM(u.ciEndToMergeMs));
   const x1 = JSON.stringify(PM.measureProduction({ missions: [mission(true, true)], prs: [pr(2, true), pr(1, true)], windowPrs: [1, 2] }));

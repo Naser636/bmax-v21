@@ -98,7 +98,13 @@ function build(): string {
   const traces = fs.readdirSync(path.join(ROOT, "docs/odg/evidence")).filter((f: string) => /_GO_EXECUTE_TRACE\.jsonl$/.test(f)).sort();
   const nativePaths = Array.from(new Set(traces.flatMap((f: string) => PM.traceSummary(fs.readFileSync(path.join(ROOT, "docs/odg/evidence", f), "utf8").split("\n").filter((l: string) => l.trim()).map((l: string) => JSON.parse(l))).writeSet))).sort() as string[];
   const windowCommits = snap.prs.filter((p: any) => p.number >= WINDOW[0] && p.number <= WINDOW[1] && p.mergeCommit && p.mergedAt).flatMap((p: any) => prCommits(p.mergeCommit));
-  const rec = PM.measureProduction({ missions, prs: snap.prs, windowPrs: WINDOW });
+  // RB-RECORD-INSPECTION-VERDICT-TIME: committed inspection records that carry verdictAt (current + priorVerdicts), by inspectedPr
+  const inspectionVerdicts: any = {};
+  for (const f of fs.readdirSync(path.join(ROOT, "docs/odg/evidence")).filter((x: string) => /_CONTRACT_INSPECTION\.json$/.test(x)).sort()) {
+    let r: any = null; try { r = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence", f), "utf8")); } catch { r = null; }
+    for (const v of [r, ...(r && Array.isArray(r.priorVerdicts) ? r.priorVerdicts : [])]) if (v && typeof v.verdictAt === "string" && Number.isInteger(v.inspectedPr)) inspectionVerdicts[String(v.inspectedPr)] = { verdictAt: v.verdictAt, verdict: v.verdict || null, record: `docs/odg/evidence/${f}` };
+  }
+  const rec = PM.measureProduction({ missions, prs: snap.prs, windowPrs: WINDOW, inspectionVerdicts });
   const out = { "//": "V17.5 PRIORITY 5 — verified production measure per mission (G, H, G2, J2) + PR #955–#971 wall-time split. READ-ONLY; NOT_MEASURED preserved. Recompute: npx tsx runtime/bin/odg-v175-production-metric.ts --check",
     ...rec,
     windowShare: { prs: `#${WINDOW[0]}–#${WINDOW[1]} merged`, goTraces: traces.map((f: string) => `docs/odg/evidence/${f}`), odgWrittenPaths: nativePaths, ...PM.splitLines(windowCommits, nativePaths) },

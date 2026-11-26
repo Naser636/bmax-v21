@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "844ee4eb7f72034197bfbc913c7007362497bbe6cbdc5fc5fc340b30ea958a76"
+      "sha256": "491f1cabaecb9086b5ca8606a4fee713054ce05b32765e2586925df2d64bcc9b"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "846c77601e978cb5e003fe19d4be966abaa8488516800818cea73312ae144378"
+      "sha256": "6acb589f5eae5ccd0e04784dcd655bf81c6a99926a1a092b7f8e6857c90fe5dd"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -938,6 +938,180 @@
       ]
     },
     {
+      "id": "RB-REATTEMPT-CHANGED-INPUT",
+      "title": "a re-attempt of a non-PASS parent must cite a measured changed input (new data/strategy) before it is selectable",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'RB-REATTEMPT-CHANGED-INPUT' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1",
+      "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 1b8eecdea10d",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=RB-REATTEMPT-CHANGED-INPUT]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[20]"
+      ]
+    },
+    {
+      "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
+      "title": "record the inspection verdict timestamp in the committed inspection record so verdict latency is measured, not bounded",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'RB-RECORD-INSPECTION-VERDICT-TIME' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57",
+      "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 52da42dc552c",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=RB-RECORD-INSPECTION-VERDICT-TIME]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[21]"
+      ]
+    },
+    {
+      "id": "RB-SELECTION-AT-RUN-HEAD",
+      "title": "GO re-derives the register selection at run head and refuses (or records the owner override) when it differs from the selection being executed",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'RB-SELECTION-AT-RUN-HEAD' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "d23e00ca6e7a125c75823e4e1f03b338a1f32c65adcab6e2b162fba2350c2d1a",
+      "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "d23e00ca6e7a125c75823e4e1f03b338a1f32c65adcab6e2b162fba2350c2d1a"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract d23e00ca6e7a",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha d23e00ca6e7a125c75823e4e1f03b338a1f32c65adcab6e2b162fba2350c2d1a) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=RB-SELECTION-AT-RUN-HEAD]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[22]"
+      ]
+    },
+    {
       "id": "V176-NB3",
       "title": "NB3: ODG repairs odg-canonical-json's undefined gap again (NB2's target + oracle) with the pre-registered DIV-1 repair-diversity lever",
       "registerStatus": "CLOSED_FAIL",
@@ -1616,7 +1790,7 @@
     }
   ],
   "otherRegisterItems": {
-    "count": 55,
+    "count": 52,
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
@@ -1928,6 +2102,21 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "RB-REATTEMPT-CHANGED-INPUT",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1) and commit the inspection record"
+      },
+      {
+        "item": "RB-RECORD-INSPECTION-VERDICT-TIME",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57) and commit the inspection record"
+      },
+      {
+        "item": "RB-SELECTION-AT-RUN-HEAD",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha d23e00ca6e7a125c75823e4e1f03b338a1f32c65adcab6e2b162fba2350c2d1a) and commit the inspection record"
       }
     ],
     "lastGoRun": {

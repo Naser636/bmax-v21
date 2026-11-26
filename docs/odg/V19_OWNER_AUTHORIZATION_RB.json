@@ -1,0 +1,35 @@
+{
+  "//": "OWNER authorization record — verbatim transcription (2026-11-26) of the owner directive ordering the three RB-* contracts (not owner-gated) to be bound and delivered. Authorization SOURCE for RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD (family V19-RB). Markdown emphasis omitted, words unchanged.",
+  "schema": "odg-owner-authorization/1",
+  "kind": "OWNER_AUTHORIZATION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-26",
+  "directives": [
+    "CTO — DIRECTIVE DE CONTINUITÉ TOTALE — REPRISE IMMÉDIATE — RB-* → V14.4 COMPLET"
+  ],
+  "quote": [
+    "Poursuis la liaison des trois contrats RB-* annoncés comme non liés et non owner-gated.",
+    "effectuer la liaison réelle avec les composants existants ;",
+    "Ne touche pas aux éléments owner-gated et ne contourne aucune garde.",
+    "ORDRE FINAL : COMMENCE PAR RB-* ET POURSUIS ENSUITE TOUT V14.4."
+  ],
+  "covers": {
+    "contracts": [
+      "RB-REATTEMPT-CHANGED-INPUT",
+      "RB-RECORD-INSPECTION-VERDICT-TIME",
+      "RB-SELECTION-AT-RUN-HEAD"
+    ],
+    "steps": [
+      "REVISE_CONTRACT",
+      "INSPECT_REVISED_CONTRACT",
+      "RUN_CONTROLLED_EXPERIMENTS",
+      "VALIDATE_CRITERIA"
+    ]
+  },
+  "neverCovers": [
+    "owner-gated items",
+    "weakening any guard",
+    "production, deployment, public exposure, client data, purchases",
+    "self-inspection"
+  ]
+}

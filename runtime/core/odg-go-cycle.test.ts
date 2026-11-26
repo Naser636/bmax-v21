@@ -72,17 +72,24 @@ const TL_FAIL = { status: "BLOCKED", ok: false, blocked: true, enforce: true, gi
 /* V166 (#933 inspection fix): G's write_set now carries the experiment files, so the COMMITTED register selects H
  * (TIE_EXPLAINED J/G/H, R3). Tests that exercise G's own gate/dispatch path run on an explicit FOCUS fixture where H and J
  * are marked PASS (not selectable) so the selector itself selects G — a test fixture, never committed state. */
+/* RB-SELECTION-AT-RUN-HEAD: GO now refuses a STALE committed selection, so a fixture that edits the contracts must carry a
+ * register selection re-computed over those same contracts (self-consistent, as a real committed register is). */
+function recommit(s: any): any {
+  const src = SS.loadSources(ROOT);
+  s.registerEvidence = JSON.parse(JSON.stringify(SS.compute({ ...src, contracts: s.sources.contracts, authorizationEvidence: s.authorizationEvidence || {} })));
+  return s;
+}
 function focusG(state: any): any {
   const s = clone(state); s.measured = state.measured;
   for (const id of ["H", "J"]) s.sources.contracts.data.contracts.find((x: any) => x.scenario === id).initialState.status = "PASS";
-  return s;
+  return recommit(s);
 }
 function authorizeG(state0: any): any {
   const state = focusG(state0);
   const s = clone(state); s.measured = state.measured;
   const c = s.sources.contracts.data.contracts.find((x: any) => x.scenario === "G");
   c.state = "AUTHORIZED"; c.authorizedBy = "owner (test fixture)";
-  return s;
+  return recommit(s);
 }
 /* V16.9 Phase 1 (test harness): the register now derives CLOSE-1 closures from sources.authorizationEvidence. Every
  * fixture's register reads the SAME authorization evidence as that fixture's GO state (state.authorizationEvidence;
@@ -342,6 +349,20 @@ const stepIn = (tr: any[], s: string) => tr.find((e) => e.kind === "STEP" && e.s
     const { ports, trace, calls } = mkPorts();
     const r = await GO.runGoCycle({ mode: "EXECUTE" }, ports);
     check("EXECUTE mode + unauthorized ⇒ gate holds, dispatchNative never called", r.status === "HALTED_AT_AUTHORIZATION_GATE" && calls.dispatch === 0 && stepIn(trace, "EXECUTE").status === "NOTHING_EXECUTED");
+  }
+  // RB-SELECTION-AT-RUN-HEAD — the committed register selection is re-derived at the run head; a stale one is refused before EXECUTE
+  {
+    const S0 = authorizeG(BASE);
+    const ok = mkPorts({ state: S0 });
+    await GO.runGoCycle({ mode: "DRY" }, ok.ports);
+    const sel0 = stepIn(ok.trace, "SELECT").decision.selectionAtRunHead;
+    check("RB-SELECTION-AT-RUN-HEAD/AC2: the trace records selectedAt vs runHead", !!sel0 && sel0.runHead === "h" && "selectedAt" in sel0 && sel0.consistent === true && sel0.stale === false && !!sel0.rederived);
+    const ST = clone(S0); ST.measured = S0.measured;
+    ST.registerEvidence.decisionRecord = { ...ST.registerEvidence.decisionRecord, selected: "STALE-ITEM", decision: "SELECTED" };
+    const st = mkPorts({ state: ST });
+    await GO.runGoCycle({ mode: "EXECUTE" }, st.ports);
+    const sarh = stepIn(st.trace, "SELECT").decision.selectionAtRunHead; const ex = stepIn(st.trace, "EXECUTE");
+    check("RB-SELECTION-AT-RUN-HEAD/AC1: a stale selection is detected before EXECUTE", sarh.stale === true && sarh.committed.selected === "STALE-ITEM" && st.calls.dispatch === 0 && /STALE_SELECTION/.test(JSON.stringify(ex.decision)));
   }
   // 3. authorized NATIVE: DRY ⇒ WOULD_DISPATCH (no call); EXECUTE ⇒ exactly one dispatch; re-run ⇒ deduped
   {

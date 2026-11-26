@@ -133,7 +133,7 @@ function main() {
   {
     const CF = JSON.parse(fs.readFileSync(path.join(ROOT, "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json"), "utf8"));
     const conv = CF.contracts.filter((c: any) => c.origin && c.origin.conversionBatch === E.CONVERSION_BATCH);
-    check("committed: batch V176-R2C-1 = 3 PROPOSED contracts, authorizedBy null, from non-superseded, non-owner-gated proposals", conv.length === 3 && conv.every((c: any) => c.state === "PROPOSED" && c.authorizedBy === null && !/OUTCOME-FEEDBACK|PRE-OPEN|OWNER|CANON-CALLER/.test(c.scenario)));
+    check("committed: batch V176-R2C-1 = 3 contracts from non-superseded, non-owner-gated proposals — converted PROPOSED/unbound, since bound by the V19 owner RB order (origin untouched)", conv.length === 3 && conv.every((c: any) => !/OUTCOME-FEEDBACK|PRE-OPEN|OWNER|CANON-CALLER/.test(c.scenario) && ((c.state === "PROPOSED" && c.authorizedBy === null) || (c.state === "AUTHORIZED_FOR_REVISION" && /V19_OWNER_AUTHORIZATION_RB/.test(String(c.authorizedBy)) && c.revisionHistory.some((r: any) => r.original && r.original.state === "PROPOSED")))));
     check("committed: header count equals the contracts array length", CF.count === CF.contracts.length);
     check("committed: --convert-contracts is now a no-op (ALREADY_CONVERTED)", CLI.convert(ROOT).res.status === "ALREADY_CONVERTED");
     check("committed record marks #994 and #987/#998 proposals superseded", (() => { const rec = JSON.parse(fs.readFileSync(path.join(ROOT, CLI.OUT_REL), "utf8")); const m = Object.fromEntries(rec.superseded.items.map((x: any) => [x.id, x.prs.join("/")])); return m["RB-OUTCOME-FEEDBACK-TO-SCORING"] === "#994" && m["RB-PRE-OPEN-SELF-INSPECTION"] === "#987/#998"; })());
