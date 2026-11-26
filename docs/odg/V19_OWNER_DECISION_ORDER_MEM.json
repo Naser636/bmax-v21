@@ -1,0 +1,32 @@
+{
+  "//": "OWNER order-decision record — verbatim transcription (2026-11-26) resolving GO's exact actionable tie {V176-NB3, V178-P2, V19-MEM-2}: the owner makes the empty real memory P0, before the continuation of the remaining V14.4 missions (NB3, P2, …). NB3 vs P2 not ordered here. Grants nothing; changes no score, criterion, threshold or selection rule.",
+  "schema": "odg-owner-order-decision/1",
+  "kind": "OWNER_ORDER_DECISION",
+  "directive": "DIRECTIVE CTO — AUTORISATION PROPRIÉTAIRE GLOBALE ET ACHÈVEMENT V14.4 — REPRISE IMMÉDIATE — EXPERIENCE INTELLIGENCE — MÉMOIRE RÉELLE — TOUTES MISSIONS RESTANTES",
+  "date": "2026-11-26",
+  "issuer": "OWNER (CTO)",
+  "source": "owner directive (relayed by the coordinating session), §4 and the final instruction; markdown emphasis omitted, words unchanged",
+  "quote": [
+    "4. PRIORITÉ P0 — RÉSOUDRE LA MÉMOIRE RÉELLE VIDE",
+    "Le problème de mémoire vide doit devenir un chantier de résolution effectif, et non un défaut simplement mentionné dans les rapports.",
+    "INSTRUCTION FINALE : EXÉCUTER IMMÉDIATEMENT. ENREGISTRER L'AUTORISATION PROPRIÉTAIRE. TERMINER LE TRAVAIL EN COURS. DÉBLOQUER ET MESURER V19-EXP-B. RÉSOUDRE LA MÉMOIRE RÉELLE VIDE. TERMINER TOUTES LES MISSIONS RESTANTES DE V14.4."
+  ],
+  "tiedSet": [
+    "V176-NB3",
+    "V178-P2",
+    "V19-MEM-2"
+  ],
+  "order": [
+    "V19-MEM-2"
+  ],
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED with a tiedSet equal (as a set) to this record's tiedSet",
+    "neverAppliesTo": [
+      "strategicSelection",
+      "authorization (RUN still requires the committed inspection bound to the current contract sha)",
+      "ordering NB3 vs P2",
+      "scores / ranking / register"
+    ]
+  },
+  "appliedBy": "GO-ORD-1 (runtime/core/odg-go-cycle.ts)"
+}
