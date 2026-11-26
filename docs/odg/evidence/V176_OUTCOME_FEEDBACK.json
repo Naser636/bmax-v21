@@ -164,6 +164,11 @@
         "id": "V178-P4",
         "reason": "no attributable selection-time prediction (absent)",
         "validation": "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json"
+      },
+      {
+        "id": "V178-P4-INT",
+        "reason": "no attributable selection-time prediction (absent)",
+        "validation": "docs/odg/evidence/V178_P4_INT_CRITERIA_VALIDATION.json"
       }
     ],
     "notGraded": [
@@ -176,11 +181,6 @@
         "id": "V178-P2",
         "status": "NOT_STARTED",
         "reason": "inspection ACCEPT bound to contract 3342d16e2a6a ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
-      },
-      {
-        "id": "V178-P4-INT",
-        "status": "NOT_STARTED",
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
       }
     ]
   },
@@ -1003,13 +1003,6 @@
       "uncertainty": 0.6
     },
     {
-      "id": "V178-P4-INT",
-      "baseScore": 0.05,
-      "adjustedScore": 0.05,
-      "delta": 0,
-      "uncertainty": 0.7
-    },
-    {
       "id": "V178-P5",
       "baseScore": 0.08,
       "adjustedScore": 0.08,
@@ -1091,8 +1084,7 @@
         "proposed": null,
         "tiedSet": [
           "V176-NB3",
-          "V178-P2",
-          "V178-P4-INT"
+          "V178-P2"
         ],
         "resolvedBy": null,
         "top3AutoSelectable": [
@@ -1103,11 +1095,6 @@
           },
           {
             "id": "V178-P2",
-            "evidenceScore": 0.05,
-            "uncertainty": 0.7
-          },
-          {
-            "id": "V178-P4-INT",
             "evidenceScore": 0.05,
             "uncertainty": 0.7
           }
@@ -1119,8 +1106,7 @@
         "proposed": null,
         "tiedSet": [
           "V176-NB3",
-          "V178-P2",
-          "V178-P4-INT"
+          "V178-P2"
         ],
         "resolvedBy": null,
         "top3AutoSelectable": [
@@ -1133,11 +1119,6 @@
             "id": "V178-P2",
             "evidenceScore": 0.05,
             "uncertainty": 0.7
-          },
-          {
-            "id": "V178-P4-INT",
-            "evidenceScore": 0.05,
-            "uncertainty": 0.7
           }
         ]
       },
@@ -1147,7 +1128,7 @@
     "inEffect": "ADJUSTED (activation bound to these adjustments)"
   },
   "honesty": [
-    "7 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL]; 6 refused (incl. every PROBE record); 3 declared item(s) not graded",
+    "7 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL]; 7 refused (incl. every PROBE record); 2 declared item(s) not graded",
     "adjusted (attributable) criteria: [NONE]; NOT_ATTRIBUTABLE (×1): [autonomyBenefit CONSTANT_VALUES n=7; blockerRepetitionReduction NO_MEASURED_PREDICTION n=0; capabilityGain BELOW_MIN_N n=3; costRiskComplexity NO_MEASURED_ASSOCIATION n=7 ρ=0.101057; dependencyAvailability NO_MEASURED_PREDICTION n=0; evidenceLevel NO_MEASURED_ASSOCIATION n=7 ρ=0.363803; reliabilityQuality NO_MEASURED_PREDICTION n=0; reusability NO_MEASURED_PREDICTION n=0; speedEfficiency NO_MEASURED_PREDICTION n=0; strategicValue BELOW_MIN_N n=3] ⇒ every multiplier is 1: the activation stays recorded but the register is byte-identical to the base register",
     "OFB-CAL-2 replaces the base-rate rule OFB-CAL-1 (rejected at inspection: it adjusted criteria constant across items, e.g. autonomyBenefit = 0.5 on all 5); a multiplier now requires a MEASURED, SIGNED rank association — an order association on few items, never a claim that the criterion predicts or discriminates outcomes; n is tiny",
     "NOT_MEASURED criteria stay NOT_MEASURED (multipliers scale MEASURED contributions only); statuses, criterion values, weights, thresholds and eligibility are unchanged",

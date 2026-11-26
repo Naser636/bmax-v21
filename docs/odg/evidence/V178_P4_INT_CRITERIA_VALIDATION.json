@@ -1,0 +1,75 @@
+{
+  "//": "VALIDATE_CRITERIA for V178-P4-INT (owner record docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json). Graded only from the committed RUN-1 record + the independent RESULT inspection (distinct session). Closes P4 OPERATIONALLY: the hybrid memory is wired into and USED by GO knowledge()/DECOMPOSE (FACT/CONTEXT two-level memory).",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V178-P4-INT",
+  "date": "2026-11-26",
+  "contractSha256": "dad4365a2103dda5d46298be0da3337c96e19c02efab6aa76a3395164dc96f66",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V178_P4_INT_RESULT.json",
+    "sha256": "320fa748bcbf6b4efb9e02af8ea9f45ece4816fad1418f60dd4904c8bc3218ee",
+    "experimentSha256": "9f4a118faeb514a53a5276e59ba34710be48c81f4e3e88dc6f528fedc9a1193d",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1040,
+    "mergedAs": "cbb3d9ae",
+    "producedBy": "ODG GO --execute native dispatch (run 110038c3b4e89a9c; owner order V19_OWNER_DECISION_ORDER_P4_INT.json); trace docs/odg/evidence/V178_P4_INT_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 1040,
+    "inspectedHead": "39bd95742a2d59abfb605efbdf93680693b038a7",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "a9708f5fa7d5cbc5e",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-110038c3b4e89a9c",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "PASS",
+    "findings": "contract sha = result sha dad4365a…; one cycle, single DISPATCHED V178-P4-INT, writes ⊆ target writeSet; result byte-identical to scratch; AC1–AC6 recomputed met; no CONTEXT appears as a FACT; claims unchanged (NOT_A_FACT)"
+  },
+  "supplementaryLiveEvidence": {
+    "trace": "docs/odg/evidence/V178_P4_INT_LIVE_GO_MEMORY_TRACE.jsonl",
+    "command": "npx tsx runtime/bin/odg-go.ts --dry --memory-index --repo <main checkout> (real Truth Lock PASS, run 0f56a820e6200843)",
+    "observed": "PROBLEMS_OPPORTUNITIES knowledge.memory INDEXED (2 CONTEXT, 0 FACT, 1024-d); DECOMPOSE (workingOn V178-P4-INT) contextRecall RECALLED both as CONTEXT_UNVERIFIED",
+    "why": "answers the inspector non-blocking note: the outer GO CLI path with --memory-index is also exercised live, not only the in-process cycle"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET"
+    },
+    {
+      "id": "AC3",
+      "status": "MET"
+    },
+    {
+      "id": "AC2",
+      "status": "MET"
+    },
+    {
+      "id": "AC4",
+      "status": "MET"
+    },
+    {
+      "id": "AC5",
+      "status": "MET"
+    },
+    {
+      "id": "AC6",
+      "status": "MET"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "AC1–AC6 MET under the pre-registered rule; independent result inspection ACCEPT"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "OPERATIONALLY_COMPLETE for P4: hybrid FTS5 + sqlite-vec + RRF memory with qwen3-embedding:0.6b, wired into GO knowledge()/DECOMPOSE (opt-in --memory-index), two-level FACT/CONTEXT memory with the canonical trust gate",
+  "limits": [
+    "real memory currently holds 0 corroborated facts (both claims SUPPORTED) — the FACT path is proven on SYNTHETIC fixtures only",
+    "--memory-index is opt-in (default GO behaviour unchanged)",
+    "sample sizes small (2 real records)"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionV178P4INT": "CLOSED_PASS"
+  }
+}
