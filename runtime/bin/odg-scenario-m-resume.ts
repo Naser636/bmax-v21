@@ -225,6 +225,27 @@ async function atomicWriteStress(dir: string, kills: number): Promise<any> {
 }
 
 /** analyse(dir, phases): the verification over the durable trail (events + records + register). */
+/* leaseDoubleHeld(evs, ttlMs) — MR-2 ROOT FIX (CI run 45887839647 diagnostics: doubleHeld gapMs 4000 = TTL while the takeover's
+ * ageFromClaimedAtMs was 4001): a CLAIM on a mission is legitimate iff the previous claim was RELEASED before it, or the previous
+ * holder died holding it and the lease had EXPIRED — measured on the lease's OWN clock (the claimedAt the holder wrote INTO the lock,
+ * the same instant the expiry test reads), never on the CLAIM event timestamps, which are logged AFTER the lock write and therefore
+ * under-state the lease age by the logging delay (a false double-hold at the TTL boundary). The threshold stays strictly > TTL. */
+function leaseDoubleHeld(evs: any[], ttlMs: number): any[] {
+  const claims = evs.filter((e: any) => e.e === "CLAIM");
+  const released = (c: any) => evs.find((r: any) => r.e === "RELEASE" && r.pid === c.pid && r.op === c.op);
+  const out: any[] = [];
+  claims.forEach((c: any, i: number) => {
+    const last = claims.slice(0, i).filter((p: any) => p.mission === c.mission).pop();
+    if (!last) return;
+    const rel = released(last);
+    if (rel && rel.t <= c.t) return;
+    const leaseAge = !rel && c.takeover && c.takeover.fromPid === last.pid && Number.isFinite(c.takeover.ageFromClaimedAtMs) ? c.takeover.ageFromClaimedAtMs : c.t - last.t;
+    if (!rel && leaseAge > ttlMs) return;
+    out.push({ mission: c.mission, claim: c.op, pid: c.pid, priorClaim: last.op, priorPid: last.pid, gapMs: c.t - last.t, leaseAgeMs: leaseAge });
+  });
+  return out;
+}
+
 function analyse(dir: string, phases: any[]): any {
   const evs = readEvents(dir).map((e, i) => ({ ...e, i })).sort((x, y) => x.t - y.t || x.i - y.i);
   const ids = opIds();
@@ -259,15 +280,7 @@ function analyse(dir: string, phases: any[]): any {
   const claims = evs.filter((e) => e.e === "CLAIM");
   const released = (c: any) => evs.find((r) => r.e === "RELEASE" && r.pid === c.pid && r.op === c.op);
   const orphaned = claims.filter((c) => !released(c));
-  const doubleHeld: any[] = [];
-  claims.forEach((c, i) => {
-    const last = claims.slice(0, i).filter((p) => p.mission === c.mission).pop();
-    if (!last) return;
-    const rel = released(last);
-    if (rel && rel.t <= c.t) return;
-    if (!rel && c.t - last.t > LEASE_TTL_MS) return;
-    doubleHeld.push({ mission: c.mission, claim: c.op, pid: c.pid, priorClaim: last.op, priorPid: last.pid, gapMs: c.t - last.t });
-  });
+  const doubleHeld = leaseDoubleHeld(evs, LEASE_TTL_MS);
   return {
     opsTotal: ids.length, opsAccepted: accepted.length, allAccepted: accepted.length === ids.length,
     opsRepeatedCompleted: Object.values(commitsBy).reduce((n: number, c: number) => n + Math.max(0, c - 1), 0),
@@ -359,7 +372,7 @@ async function runScenario(opts: any = {}): Promise<any> {
   return out;
 }
 
-module.exports = { runScenario, expectedValues, seedRegister, LEASE_TTL_MS };
+module.exports = { runScenario, expectedValues, seedRegister, LEASE_TTL_MS, leaseDoubleHeld };
 
 if (require.main === module) {
   const mode = process.argv[2];

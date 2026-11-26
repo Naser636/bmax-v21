@@ -10,6 +10,21 @@ let failures = 0;
 function check(c: any, l: string): void { if (!c) { failures++; process.stderr.write("FAIL: " + l + "\n"); } else process.stdout.write("  ok - " + l + "\n"); }
 
 (async () => {
+  // MR-2 ROOT FIX regression (pure, no processes): the CI false double-hold — prior holder SIGKILLed holding the lease, the
+  // successor's CLAIM event logged exactly TTL ms after the prior CLAIM event, but the lease's own age (claimedAt → takeover) > TTL.
+  {
+    const T = 4000;
+    const boundary = [{ e: "CLAIM", t: 1000, op: "M3.o2", mission: "M3", pid: 1 }, { e: "CLAIM", t: 1000 + T, op: "M3.o2", mission: "M3", pid: 2, takeover: { fromPid: 1, fromGen: 2, ageFromClaimedAtMs: T + 1 } }];
+    check(S.leaseDoubleHeld(boundary, T).length === 0, "MR-2: a takeover whose LEASE age (claimedAt) > TTL is legitimate even when the CLAIM-event gap is exactly TTL (no false double-hold)");
+    const early = [{ e: "CLAIM", t: 1000, op: "M3.o2", mission: "M3", pid: 1 }, { e: "CLAIM", t: 1000 + T, op: "M3.o2", mission: "M3", pid: 2, takeover: { fromPid: 1, fromGen: 2, ageFromClaimedAtMs: T } }];
+    check(S.leaseDoubleHeld(early, T).length === 1, "MR-2: a takeover at lease age = TTL (not strictly beyond) is still a double-hold (threshold unchanged)");
+    const live = [{ e: "CLAIM", t: 1000, op: "M1.o1", mission: "M1", pid: 1 }, { e: "CLAIM", t: 1500, op: "M1.o1", mission: "M1", pid: 2 }];
+    check(S.leaseDoubleHeld(live, T).length === 1, "MR-2: a second claim while the first is unreleased and unexpired is a double-hold");
+    const rel = [{ e: "CLAIM", t: 1000, op: "M1.o1", mission: "M1", pid: 1 }, { e: "RELEASE", t: 1200, op: "M1.o1", pid: 1 }, { e: "CLAIM", t: 1300, op: "M1.o2", mission: "M1", pid: 2 }];
+    check(S.leaseDoubleHeld(rel, T).length === 0, "MR-2: a claim after the previous RELEASE is legitimate");
+    const otherPid = [{ e: "CLAIM", t: 1000, op: "M3.o2", mission: "M3", pid: 1 }, { e: "CLAIM", t: 1100, op: "M3.o2", mission: "M3", pid: 3, takeover: { fromPid: 9, ageFromClaimedAtMs: 99999 } }];
+    check(S.leaseDoubleHeld(otherPid, T).length === 1, "MR-2: a takeover record about ANOTHER holder never excuses a claim on a live lease");
+  }
   const out = await S.runScenario({ atomicKills: 4 });
   const v = out.verdicts, m = out.measurements, a = out.analysis;
   check(out.setup.missions >= 3, "N >= 3 independent missions");
