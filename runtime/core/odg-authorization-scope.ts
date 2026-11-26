@@ -82,6 +82,8 @@ const STEP_SEQUENCES: any = Object.freeze({
   "V178-P4": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
   // V19 — V178-P4-INT (P4 operational integration) ⇐ docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json
   "V178-P4-INT": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  // V19 — V178-P1-R (P1 recovery) ⇐ docs/odg/V19_OWNER_ORDER_P1R.json
+  "V178-P1-R": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
 });
 const EXECUTION_STEPS = Object.freeze(["RUN_CONTROLLED_EXPERIMENTS"]);
 const STEP_KIND: any = Object.freeze({
@@ -133,6 +135,7 @@ const OWNER_SOURCES: any = Object.freeze({
   // P3/P5/P6/P7 join only when each is bound — no entry ⇒ nothing derived for them).
   "V178-P4": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT\.json/, label: "V19 VPS equipment (docs/odg/V19_OWNER_AUTHORIZATION_VPS_EQUIPMENT.json)", family: "V19-VPS-EQUIPMENT" }),
   "V178-P4-INT": Object.freeze({ re: /V19_OWNER_ORDER_P4_OPERATIONAL\.json/, label: "V19 P4 operational order (docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json)", family: "V19-VPS-EQUIPMENT" }),
+  "V178-P1-R": Object.freeze({ re: /V19_OWNER_ORDER_P1R\.json/, label: "V19 P1-R order (docs/odg/V19_OWNER_ORDER_P1R.json)", family: "V19-VPS-EQUIPMENT" }),
 });
 function ownerSourceCheck(scenario: string, source: string): any {
   const own = OWNER_SOURCES[scenario];
