@@ -1,7 +1,7 @@
 {
   "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 R2C (batch V176-R2C-1, owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json): RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.6 NB3: V176-NB3 (owner V176 build missions, docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS; NB2's target + oracle with the pre-registered DIV-1 repair-diversity lever) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6 F: F moved PROPOSED → AUTHORIZED_FOR_REVISION under the owner build-missions record (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json) and revised (REVISE_CONTRACT): authorization block, write_set 1:1 replacement, preRegistration (GO parallel-wave capability on a deterministic fixture), dispatch target; revision 2 after inspection REJECT (full write_set, FIXTURE-CAP-1 PARTIAL cap, GO wiring stated as remaining step); F's criteria verbatim; every other entry unchanged. V17.8 Radar campaign (batch V178-RADAR-1, owner record owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)): V178-P1, V178-P2, V178-P3, V178-P4, V178-P5, V178-P6, V178-P7 appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.8 binding: V178-P1 and V178-P2 moved PROPOSED → AUTHORIZED_FOR_REVISION (owner V176 build missions, family V176-BUILD-MISSIONS; concrete write_set, AC7, budgets, preRegistration, dispatch target); P3–P7 unchanged; every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 32,
+  "count": 33,
   "initialStatusCounts": {
     "PASS": 2,
     "PARTIAL": 14,
@@ -4877,6 +4877,493 @@
           "reason": "independent inspection REJECT (head c1a5b6cc, sha 55f35643…)",
           "justification": "remove the second (weaker) eligibility rule; criteria unchanged; no run yet",
           "revisionAuthorSessionId": "v19-p4int-rev2"
+        }
+      ]
+    },
+    {
+      "scenario": "V178-P1-R",
+      "title": "P1-R — re-attempt of V178-P1 (CLOSED_FAIL 3/6) with ONE changed input: XSEL-2 execution-agreement selection; candidate code persisted",
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_P1R.json: « Qualifier P1-R. » / « Exécuter la nouvelle mission selon son contrat et GO. » / « Conserver l'ancien P1 en CLOSED_FAIL. » — internal, local model, €0, 0 provider calls",
+      "origin": {
+        "parent": "V178-P1 (CLOSED_FAIL 3/6, docs/odg/evidence/V178_P1_CRITERIA_VALIDATION.json — preserved, never re-graded)",
+        "rule": "RB-REATTEMPT-CHANGED-INPUT: the re-attempt cites ONE measured changed input",
+        "changedInput": "selection rule XSEL-1 → XSEL-2 (XSEL-1 + execution-agreement tie-break, runtime/core/odg-execution-agreement.ts #1017); everything else (model, schedule, budgets, oracle, threshold) identical",
+        "rootCause": "docs/odg/evidence/V178_P1_REPAIR_AGREEMENT_PROVENANCE.json (visible cases non-discriminating on impl-ts-parse-range)"
+      },
+      "binding": {
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 P1-R binding session; branch feat/v19-p1r-contract)",
+        "boundAt": "2026-11-26"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "missingForPass": "the single GO-dispatched run meeting AC1–AC8, then VALIDATE_CRITERIA"
+      },
+      "proposal": {
+        "problem": "implement is PROBATION 3/6 for qwen2.5-coder:7b (V155); the pipeline implements each design once at temperature 0, so the selector sees one candidate per design",
+        "solution": "sampleCandidates(spec, {n, schedule}) draws n candidates from a PRE-DECLARED (temperature, seed) schedule; selectByExecution(candidates, visibleCases) runs each in the sandbox and ranks by visible-case passes, typecheck, diff size — never by model self-assessment; acceptance stays the host-graded HIDDEN oracle",
+        "components": [
+          "runtime/core/odg-native-design-pipeline.ts",
+          "runtime/core/odg-native-build-sandbox.ts",
+          "runtime/core/local-model-generator.ts"
+        ],
+        "interfaces": [
+          "sampleCandidates(spec, { n, schedule }) → candidates[] (each with model, temperature, seed, sha256)",
+          "selectByExecution(candidates, visibleCases, opts) → { chosen, ranking, reasons } (pure over sandbox results)"
+        ],
+        "measurableBenefit": "implement pass rate above 3/6 at a recorded call budget (measured later by the qualification scenario)",
+        "resources": "no install; n× model calls per design (7b implement p50 ≈ 23 s/call)",
+        "risks": "call cost grows with n; visible/hidden split must not leak hidden cases",
+        "buildCommand": "npx tsx runtime/core/odg-native-design-pipeline.test.ts",
+        "rankBasis": "provider-declared order from the owner brief; GO keeps selection authority (register ranks independently)"
+      },
+      "beforeMetric": [
+        {
+          "source": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[qwen2.5-coder:7b].perClass.implement.passRate",
+          "name": "implement.passRate",
+          "value": "3/6"
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1: a later run recomputes each before-metric from the then-committed source; improved iff it moved in the objective's direction; unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "re-attempt V178-P1's implement-class qualification (full oracle ≥ 4/6) with the execution-agreement selection XSEL-2, everything else identical",
+        "scope": "improve odg-native-design-pipeline, odg-native-build-sandbox, local-model-generator only; no network, no install, no canonical-authority change",
+        "write_set": [
+          "runtime/bin/odg-v178-p1r-agreement-run.ts",
+          "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json"
+        ],
+        "write_set_estimate": {
+          "estimate": false,
+          "replacedEstimate": [
+            "runtime/core/odg-native-design-pipeline.ts",
+            "runtime/core/odg-native-design-pipeline.test.ts"
+          ],
+          "basis": "concrete at binding: every file BUILT for this contract (code, tests, runner, result record); the shared governance / derived files changed by the same PR are disclosed in bindingFiles"
+        },
+        "authorized_symbols": [],
+        "invariants": [
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "score ≠ authorization",
+          "hypothesis ≠ fact",
+          "no network, no install, no protected path unless the owner-gated step is authorized"
+        ],
+        "acceptance_criteria": [
+          "AC1 test 'V178-P1/AC1' (file: acceptance_tests[0]): with a fake transport, n candidates are drawn exactly from the declared schedule (undeclared options refused)",
+          "AC2 test 'V178-P1/AC2' (file: acceptance_tests[1]): selection uses only visible-case results: changing hidden cases never changes the choice",
+          "AC3 test 'V178-P1/AC3' (file: acceptance_tests[2]): a candidate touching a test/evaluator path is excluded before selection",
+          "AC4 test 'V178-P1/AC4' (file: acceptance_tests[3]): with fixed transport outputs the selection is deterministic",
+          "AC5 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+          "AC6 tsc clean; each touched test file passes run one at a time",
+          "AC7 run (GO-dispatched runtime/bin/odg-v178-p1-multi-candidate-run.ts → docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json): implement task class of task set v2 (impl-chunk, impl-ts-parse-range), 3 trials each, n=4 SAMPLE-1 candidates per trial, XSEL-1 selection on VISIBLE cases (VIS-1) in the bwrap sandbox, acceptance = the V155 host-graded full oracle (all cases): PASS ⇔ ≥ 4/6 accepted (baseline 3/6, V155) within budgets",
+          "AC8 (P1-R changed input) every trial's selection is XSEL-2 (rule recorded; agreement over probes derived from VISIBLE args only; agreement tie ⇒ XSEL-1 order), candidate CODE is persisted, and the control arms t0 and XSEL-1 (same run) are recorded descriptively — never the verdict"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V178-P1/AC1",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC1"
+          },
+          {
+            "id": "V178-P1/AC2",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC2"
+          },
+          {
+            "id": "V178-P1/AC3",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC3"
+          },
+          {
+            "id": "V178-P1/AC4",
+            "file": "runtime/core/odg-native-design-pipeline.test.ts",
+            "criterion": "AC4"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "an install or download is needed that is not authorized",
+          "model call cap (maxModelCalls 20) / wall cap",
+          "HOST-1 busy host at start ⇒ NOT_MEASURED (no model call)",
+          "sandbox probe fails before the first model call ⇒ NOT_MEASURED",
+          "ADAPT-1 warm-up unmeasurable ⇒ NOT_MEASURED; a call predicted over perCallTimeout.maxMs: BEFORE the first work call ⇒ NOT_MEASURED, AFTER it ⇒ a FAILED generation",
+          "non-loopback request / non-declared call options ⇒ refused by the guard",
+          "result record already present ⇒ ALREADY_RECORDED (no second run)"
+        ],
+        "rollback": "revert the single PR (additive change)",
+        "evidence_required": [
+          "test output per file",
+          "recomputed before/after metric record",
+          "independent inspection verdict",
+          "docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json"
+        ],
+        "budgets": {
+          "model": "qwen2.5-coder:7b",
+          "taskClass": "implement",
+          "taskSetFile": "runtime/core/odg-local-model-benchmark-tasks.v2.json",
+          "n": 4,
+          "trials": 3,
+          "schedule": [
+            [
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0,
+                "seed": 42
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.6,
+                "seed": 1101
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.8,
+                "seed": 2101
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 1,
+                "seed": 3101
+              }
+            ],
+            [
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0,
+                "seed": 42
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.6,
+                "seed": 1102
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.8,
+                "seed": 2102
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 1,
+                "seed": 3102
+              }
+            ],
+            [
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0,
+                "seed": 42
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.6,
+                "seed": 1103
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.8,
+                "seed": 2103
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 1,
+                "seed": 3103
+              }
+            ]
+          ],
+          "numPredict": 512,
+          "maxModelCalls": 20,
+          "maxWarmupCalls": 1,
+          "warmupNumPredict": 16,
+          "warmupTimeoutMs": 180000,
+          "wallMs": 1800000,
+          "perCallTimeout": {
+            "rule": "ADAPT-1",
+            "minMs": 60000,
+            "maxMs": 300000,
+            "safetyFactor": 3,
+            "overheadMs": 15000,
+            "charsPerToken": 3
+          },
+          "hostIdleFactor": 0.75,
+          "seed": 42,
+          "temperature": 0
+        },
+        "preRegistration": {
+          "metric": "accepted implement trials (host-graded full oracle, B.gradeTrial) out of 6",
+          "baseline": "V155 (docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json): qwen2.5-coder:7b implement 3/6 (impl-chunk 3/3, impl-ts-parse-range 0/3) at temperature 0, seed 42, top_k 1",
+          "dataset": {
+            "taskSet": "runtime/core/odg-local-model-benchmark-tasks.v2.json",
+            "taskSetVersion": "V155-TASKSET-2",
+            "taskSetSha256": "755cbf1f0acd64e4e3c84e1f8fd212d2b8e09e596dab7d6e503d5d2901e1b9e6",
+            "tasks": [
+              {
+                "id": "impl-chunk",
+                "cases": 6,
+                "split": {
+                  "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+                  "visible": [
+                    0,
+                    2,
+                    4
+                  ],
+                  "hidden": [
+                    1,
+                    3,
+                    5
+                  ]
+                }
+              },
+              {
+                "id": "impl-ts-parse-range",
+                "cases": 7,
+                "split": {
+                  "rule": "VIS-1: visible = even case indices (0, 2, 4, …); hidden = odd indices; acceptance = ALL cases (host-graded)",
+                  "visible": [
+                    0,
+                    2,
+                    4,
+                    6
+                  ],
+                  "hidden": [
+                    1,
+                    3,
+                    5
+                  ]
+                }
+              }
+            ],
+            "trials": 3,
+            "candidatesPerTrial": 4,
+            "runnerSha256": "7249e4c36e28a81283607cc5beae71fa4a6fe7b8c7f8d0495020d4eee228be23",
+            "runner": "runtime/bin/odg-v178-p1r-agreement-run.ts"
+          },
+          "schedule": {
+            "rule": "SAMPLE-1: n candidates drawn in order from a PRE-DECLARED schedule of (model, temperature, seed) points; a schedule point not in spec.points is refused before any call; n ≤ |schedule|; every candidate records its point + sha256 of its output",
+            "perTrial": [
+              [
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 0,
+                  "seed": 42
+                },
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 0.6,
+                  "seed": 1101
+                },
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 0.8,
+                  "seed": 2101
+                },
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 1,
+                  "seed": 3101
+                }
+              ],
+              [
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 0,
+                  "seed": 42
+                },
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 0.6,
+                  "seed": 1102
+                },
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 0.8,
+                  "seed": 2102
+                },
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 1,
+                  "seed": 3102
+                }
+              ],
+              [
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 0,
+                  "seed": 42
+                },
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 0.6,
+                  "seed": 1103
+                },
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 0.8,
+                  "seed": 2103
+                },
+                {
+                  "model": "qwen2.5-coder:7b",
+                  "temperature": 1,
+                  "seed": 3103
+                }
+              ]
+            ],
+            "points": [
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0,
+                "seed": 42
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.6,
+                "seed": 1101
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.8,
+                "seed": 2101
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 1,
+                "seed": 3101
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.6,
+                "seed": 1102
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.8,
+                "seed": 2102
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 1,
+                "seed": 3102
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.6,
+                "seed": 1103
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 0.8,
+                "seed": 2103
+              },
+              {
+                "model": "qwen2.5-coder:7b",
+                "temperature": 1,
+                "seed": 3103
+              }
+            ],
+            "note": "the t0 point is the V155-comparable decode; deterministic ⇒ sent once per task and reused"
+          },
+          "selectionRule": "XSEL-1 (selection independent of generation): exclude TAMPER-1 candidates → visible-case passes desc (sandbox-executed, visible cases ONLY) → compileOk desc (strict typecheck / parse) → codeLines asc → sha256 asc (content tie-break; candidate id and schedule position are never decisive); no model self-assessment; hidden cases never consulted",
+          "tamperRule": "TAMPER-1 (runtime/core/odg-native-design-pipeline.ts TAMPER_PATTERNS)",
+          "hypothesis": "H-P1: n=4 pre-declared diverse samples + selection on executed visible cases raise implement above 3/6. Refuted if FAIL; untestable (NOT_MEASURED) only before the first work call",
+          "decisionRule": "outcome = runner verdict recorded verbatim (PASS / FAIL / NOT_MEASURED); one dispatch; no re-run to obtain a PASS; criteria / schedule / thresholds / caps not changed after observation",
+          "thresholds": {
+            "PASS": "≥ 4/6 accepted (strictly above the 3/6 baseline)",
+            "FAIL": "≤ 3/6 accepted, or a cap hit without PASS (after the first work call)",
+            "NOT_MEASURED": "HOST-1 busy host at start / sandbox probe fails / no measurable warm-up rate / non-loopback refusal / predicted call over cap — all BEFORE the first work call",
+            "declared": {
+              "baseline": {
+                "passes": 3,
+                "n": 6,
+                "source": "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json#registry.models[qwen2.5-coder:7b].perClass.implement.passRate"
+              },
+              "passMinPasses": 4,
+              "n": 6
+            }
+          },
+          "controlArm": "the t0 candidate's own full-oracle result is recorded per trial (descriptive, no extra model call) — never the verdict",
+          "caps": {
+            "maxRunWallMs": 2100000,
+            "maxModelCalls": 20,
+            "maxWarmupCalls": 1,
+            "perCallTimeoutMs": {
+              "min": 60000,
+              "max": 300000
+            },
+            "basis": "2 tasks × (1 t0 + 3 trials × 3 sampled) = 20 calls; V155 7b implement p50 ≈ 23 s/call ⇒ ≈ 8 min expected; no new call after wallMs"
+          },
+          "honestLimits": "n = 6 trials is small: 4/6 vs 3/6 is descriptive, not statistically significant; decoding differs from V155 (no top_k=1, so sampling is possible); the task set and prompts are V155's (provider-written); host-specific",
+          "changedInput": "XSEL-2 selection (only)"
+        },
+        "bindingFiles": {
+          "files": [
+            "runtime/core/odg-authorization-scope.ts",
+            "runtime/core/odg-authorization-evidence-paths.ts",
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+            "runtime/bin/odg-strategic-select.test.ts",
+            "runtime/bin/odg-v178-radar-campaign.test.ts",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+            "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+            "docs/odg/evidence/V175_RESUME_POINT.json",
+            "docs/odg/evidence/V176_OUTCOME_FEEDBACK.json",
+            "docs/odg/evidence/V176_RADAR_BUILD_PROPOSALS.json"
+          ],
+          "note": "also changed by the binding PR (shared by V178-P1 and V178-P2): owner binding + evidence paths + contract entries, count/state assertions of existing tests, and records regenerated by their own --check CLIs. Disclosed here, NOT in write_set: they are governance/derived files, not this item's build — listing them in write_set would make every contract that requires odg-authorization-scope a CODE_IMPORT dependent of this item (a spurious dependency-graph / fan-out change)"
+        }
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_ORDER_P1R.json (V19 P1-R order)",
+        "date": "2026-11-26",
+        "transcribedBy": "PROVIDER (Claude Code) — bound through family V19-VPS-EQUIPMENT",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "isolated, reproducible, loopback-only local-model run at €0 with 0 provider calls; model code only in the bwrap sandbox; no install / download / VPS change; only after an independent inspection ACCEPT of this contract is recorded; selected by GO's OWN strategic order (never forced); one single initial execution",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v178-p1r-agreement-run.ts",
+            "args": [
+              "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json"
+            ]
+          }
+        },
+        "inspectionRecord": "docs/odg/evidence/V178_P1R_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 P1-R binding session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_P1R.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P1/AC1' (file: acceptance_tests[0]): with a fake transport, n candidates are drawn exactly from the declared schedule (undeclared options refused)",
+            "AC2 test 'V178-P1/AC2' (file: acceptance_tests[1]): selection uses only visible-case results: changing hidden cases never changes the choice",
+            "AC3 test 'V178-P1/AC3' (file: acceptance_tests[2]): a candidate touching a test/evaluator path is excluded before selection",
+            "AC4 test 'V178-P1/AC4' (file: acceptance_tests[3]): with fixed transport outputs the selection is deterministic",
+            "AC5 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC6 tsc clean; each touched test file passes run one at a time",
+            "AC7 run (GO-dispatched runtime/bin/odg-v178-p1-multi-candidate-run.ts → docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json): implement task class of task set v2 (impl-chunk, impl-ts-parse-range), 3 trials each, n=4 SAMPLE-1 candidates per trial, XSEL-1 selection on VISIBLE cases (VIS-1) in the bwrap sandbox, acceptance = the V155 host-graded full oracle (all cases): PASS ⇔ ≥ 4/6 accepted (baseline 3/6, V155) within budgets"
+          ],
+          "originalCriteriaNote": "P1's AC1–AC7 verbatim (same oracle, threshold, budgets); AC8 added for the single changed input",
+          "change": [
+            "new re-attempt contract cloned from V178-P1 (P1 left untouched)",
+            "dispatch target runtime/bin/odg-v178-p1r-agreement-run.ts → docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+            "AC8 + preRegistration.changedInput"
+          ],
+          "reason": "owner-ordered P1 recovery after CLOSED_FAIL",
+          "justification": "RB-REATTEMPT-CHANGED-INPUT: one measured changed input; criteria fixed before any run",
+          "revisionAuthorSessionId": "v19-p1r-binding"
         }
       ]
     }

@@ -1,0 +1,39 @@
+{
+  "//": "OWNER authorization record — verbatim transcription (2026-11-26) of the owner directives ordering the P1-R recovery (re-attempt of V178-P1 CLOSED_FAIL). Authorization SOURCE for V178-P1-R. Never self-inspects; never PASS by itself.",
+  "schema": "odg-owner-authorization/1",
+  "kind": "OWNER_AUTHORIZATION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-26",
+  "directives": [
+    "CTO — ODG MASTER EXECUTION DIRECTIVE — COMPLETE VPS → FULL INTEGRATION → NATIVE ODG AUTONOMY → P1 RECOVERY",
+    "DIRECTIVE CTO — V14.4 — ACCÉLÉRATION INTELLIGENTE · AUTONOMIE NATIVE · ACHÈVEMENT INTÉGRAL"
+  ],
+  "quote": [
+    "Première mission après clôture VPS : P1.",
+    "Conserver l'ancien P1 en CLOSED_FAIL.",
+    "Reprendre toutes ses preuves, causes racines et corrections.",
+    "Qualifier P1-R.",
+    "Exécuter la nouvelle mission selon son contrat et GO.",
+    "Mesurer le Full Oracle.",
+    "Obtenir une inspection indépendante.",
+    "Ne déclarer P1 validé que si les critères contractuels sont satisfaits.",
+    "P1-R n'est pas un nouveau projet : c'est la récupération et l'achèvement du travail déjà engagé."
+  ],
+  "covers": {
+    "contracts": [
+      "V178-P1-R"
+    ],
+    "steps": [
+      "REVISE_CONTRACT",
+      "INSPECT_REVISED_CONTRACT",
+      "RUN_CONTROLLED_EXPERIMENTS",
+      "VALIDATE_CRITERIA"
+    ]
+  },
+  "neverCovers": [
+    "rewriting V178-P1's CLOSED_FAIL record",
+    "changing the oracle, threshold, model or budgets of P1",
+    "self-inspection",
+    "paid providers / downloads"
+  ]
+}
