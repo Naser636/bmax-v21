@@ -2,7 +2,7 @@
   "schema": "V164_STRATEGY_MODE_SELECTION_EVIDENCE",
   "directive": "owner V16.4 §4 sélecteur de stratégie (MODE NATIF / HYBRIDE / FOURNISSEUR) + §7 gap 'absence de mode hybride dans le sélecteur' + §10 scenario D",
   "gapRef": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (\"'hybrid' is not an option of the component\")",
-  "head": "42dea2eaeec7c15d2eda0eaffd9284ed5657bf6c",
+  "head": "502e49cd96a88b5faa8784cb7f40cf38eb8fc549",
   "evaluationInstant": "2026-11-23T18:56:03.582Z",
   "evaluationInstantNote": "pinned = latest timestamp among the source evidence files (deterministic; registry freshness checked against it)",
   "sources": {
@@ -28,7 +28,7 @@
     },
     "AP": {
       "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "2e065a88074bc5dad9ed8382101f0c2303ef7ef8ebefa7456fe18b78cb47247b"
+      "sha256": "846c77601e978cb5e003fe19d4be966abaa8488516800818cea73312ae144378"
     },
     "CP8": {
       "path": "docs/odg/evidence/V163_CHECKPOINT_8.json",

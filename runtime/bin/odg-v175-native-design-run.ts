@@ -151,6 +151,13 @@ async function runNativeDesign(opts: any): Promise<any> {
     return g;
   };
   const harness = PIPE.harnessSource(item.sandboxFile, item.exportName, problem.cases.map((c: any) => c.src));
+  // V17.8 P6 FROZEN-1 (wired): the evaluators — the oracle/harness code, the in-memory harness, and the target's existing test file
+  // when present — are sha-PINNED before any candidate runs; a candidate whose write-set touches a pinned path is refused before
+  // execution; at acceptance every pin is re-verified and a changed / missing pin FAILS the run (never accepted).
+  const readEval = (f: string) => (f === PIPE.HARNESS_FILE ? harness : (() => { try { return require("fs").readFileSync(path.join(root, f), "utf8"); } catch { return null; } })());
+  const evalFiles = ["runtime/core/odg-native-design-pipeline.ts", PIPE.HARNESS_FILE, ...(item.testPath && require("fs").existsSync(path.join(root, item.testPath)) ? [item.testPath] : [])];
+  const frozen: any = { ...PIPE.pinEvaluators(evalFiles, readEval), refusedCandidates: [] as any[], verifiedAtAcceptance: null };
+  const frozenRefuses = (stage: string) => { const why = PIPE.refusePinnedWrites([item.sandboxFile], frozen.pins, { root }); if (why) frozen.refusedCandidates.push({ stage, reason: why }); return why; };
   // V17.6 NB3 DIV-1: `point` = a pre-declared (model, temperature, seed) ladder point (null ⇒ the base budgets, NB2 behaviour).
   // An implement call whose (prompt, model, temperature 0, seed) was already SENT is not re-sent (deterministic ⇒ the earlier
   // generation is returned flagged notSent; diverseGenerate counts it as a stall and advances — no budget spent).
@@ -193,7 +200,7 @@ async function runNativeDesign(opts: any): Promise<any> {
   for (const d of designs) {
     if (halt.reason) break;
     const gen = await implement(`S4 implement ${d.id}`, d, null);
-    const oracle = gen ? PIPE.oracleRun({ [item.sandboxFile]: gen.content, [PIPE.HARNESS_FILE]: harness }, problem, opts.sandboxRunner) : null;
+    const oracle = gen && !frozenRefuses(`S4 ${d.id}`) ? PIPE.oracleRun({ [item.sandboxFile]: gen.content, [PIPE.HARNESS_FILE]: harness }, problem, opts.sandboxRunner) : null;
     if (oracle && !oracle.executed) return finish({ verdict: "NOT_MEASURED", reason: "sandbox did not execute (NOT_RUN): " + oracle.reason, design: designRecord, prompts, generations: strip(generations), network: network() });
     const tc = gen ? PIPE.typecheck(gen.tsSource, item.targetPath) : null;
     if (gen) { gen.oracle = oracle ? { passed: oracle.passed, total: oracle.total, failing: oracle.failingIdx } : null; gen.typecheck = tc; }
@@ -229,6 +236,7 @@ async function runNativeDesign(opts: any): Promise<any> {
   for (let round = 1; round <= B.maxRounds && !accepted && !halt.reason; round++) {
     const generateFile = async (fileSpec: any): Promise<any> => {
       if (fileSpec.path === PIPE.HARNESS_FILE) return { ok: true, content: harness };
+      if (frozenRefuses(`S5 r${round}`)) return { ok: false };   // FROZEN-1: refused before execution
       if (firstUse && !fileSpec.buildError && !fileSpec.verifyError) { firstUse = false; current.gen = candidates[sel.chosen]; return { ok: true, content: current.gen.content }; }   // S4's implementation of the chosen design (no new call)
       let hint: any = null;
       if (fileSpec.buildError) hint = { buildError: fileSpec.buildError };
@@ -265,10 +273,12 @@ async function runNativeDesign(opts: any): Promise<any> {
   const provenance = { actor: "ODG", executionClass: NE.EXEC.LOCAL, providerEditedGeneratedCode: false, providerCalls: 0 };
   base.host.aboveThresholdDuringRun = hostReadings.filter((h: any) => h.aboveThreshold).length;   // context only (HOST_RULE); never re-grades the verdict
   const diversity = div ? { ...div.record(), events: diversityEvents, callsByPoint: generations.filter((g: any) => !g.notSent && g.point !== null && g.promptI !== null).map((g: any) => ({ generation: g.i, point: g.point, model: g.model, temperature: g.temperature, seed: g.seed })) } : undefined;
-  const common: any = { overCapFailures, ...(diversity ? { diversity } : {}), design: designRecord, selection, rounds, repairTrace, prompts, generations: strip(generations), network: network(), provenance, authorship: ledger };
+  frozen.verifiedAtAcceptance = PIPE.verifyPins(frozen.pins, readEval);
+  const common: any = { frozen, overCapFailures, ...(diversity ? { diversity } : {}), design: designRecord, selection, rounds, repairTrace, prompts, generations: strip(generations), network: network(), provenance, authorship: ledger };
   const notMeasured = nm() || rounds.some((r: any) => r.executionStatus !== "EXECUTED" || r.executionMode !== "SANDBOX");
   const withLessons = (rec: any) => ({ ...rec, lessons: PIPE.deriveLessons(rec, opts.lessonProvenance || P.out) });
   if (notMeasured) return withLessons(finish({ verdict: "NOT_MEASURED", reason: nm() ? nmReason() : "sandbox did not execute (NOT_RUN) — no verdict", ...common }));
+  if (accepted && !frozen.verifiedAtAcceptance.ok) return withLessons(finish({ verdict: "FAIL", reason: "FROZEN-1: a pinned evaluator changed between selection and acceptance (" + frozen.verifiedAtAcceptance.changed.map((c: any) => c.file).join(", ") + ") — never accepted", ...common }));
   if (!accepted) return withLessons(finish({ verdict: "FAIL", reason: `S5: the chosen design did not pass the held-out oracle + strict typecheck within ${B.maxRounds} rounds × (1 + ${B.maxRepairPerRound} repairs)${guard.st.capHit ? " (cap " + guard.st.capHit + ")" : ""}${div && div.st.exhausted ? " (DIV-1 ladder exhausted)" : ""}`, ...common }));
   const testSrc = oracleTestSource(item, problem);
   const diff = PIPE.replaceFileDiff(item.targetPath, item.currentSource, accepted.tsSource) + PIPE.newFileDiff(item.testPath, testSrc);

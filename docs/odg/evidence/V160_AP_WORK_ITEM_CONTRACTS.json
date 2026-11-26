@@ -4648,6 +4648,7 @@
         "write_set": [
           "runtime/core/odg-native-design-pipeline.ts",
           "runtime/core/odg-native-design-pipeline.test.ts",
+          "runtime/bin/odg-v175-native-design-run.ts",
           "runtime/bin/odg-v19-acceptance-run.ts",
           "runtime/bin/odg-v19-acceptance-run.test.ts",
           "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json"
@@ -4783,6 +4784,36 @@
           "reason": "owner order « Puis P5, P6 et P7. »",
           "justification": "binding before any run; criteria unchanged",
           "revisionAuthorSessionId": "v19-p6-binding"
+        },
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 P6 revision-2 session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json",
+          "originalCriteria": [
+            "AC1 test 'V178-P6/AC1' (file: acceptance_tests[0]): a candidate editing a pinned test is refused before execution",
+            "AC2 test 'V178-P6/AC2' (file: acceptance_tests[1]): a changed pin sha between selection and acceptance fails the run",
+            "AC3 test 'V178-P6/AC3' (file: acceptance_tests[2]): existing NB2 held-out behaviour is unchanged (regression test)",
+            "AC4 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC5 tsc clean; each touched test file passes run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC5, beforeMetric, preRegistration rule/thresholds unchanged",
+          "change": [
+            "write_set += runtime/bin/odg-v175-native-design-run.ts (FROZEN-1 wired into the real NB2/NB3 native-design path: evaluators pinned at start, candidate write-set refused before execution at S4 and S5, pins re-verified at acceptance ⇒ FAIL on change)",
+            "refusePinnedWrites: absolute paths root-relativised or refused (fail-closed)",
+            "AC3 test exercises the REAL NB2 runNativeDesign path (+ asserts FROZEN-1 active on it)"
+          ],
+          "original": {
+            "write_set": [
+              "runtime/core/odg-native-design-pipeline.ts",
+              "runtime/core/odg-native-design-pipeline.test.ts",
+              "runtime/bin/odg-v19-acceptance-run.ts",
+              "runtime/bin/odg-v19-acceptance-run.test.ts",
+              "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json"
+            ]
+          },
+          "reason": "independent contract inspection REJECT (insp-6cab89c8-v19-nb3-p6-p7-20261126): absolute-path fail-open, AC3 overclaim, FROZEN-1 not called from any real path",
+          "justification": "fix exactly the three findings before any run; criteria unchanged",
+          "revisionAuthorSessionId": "v19-p6-rev2"
         }
       ]
     },
