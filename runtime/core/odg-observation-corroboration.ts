@@ -41,8 +41,12 @@ function extractT0Observations(rec: any, src: any): any[] {
     const c0 = arr(t && t.candidates).find((c: any) => c && c.point === 0);
     if (!c0 || !isObj(t.controlT0) || t.controlT0.measured !== true) continue;
     const conditions = { model: c0.model, temperature: c0.temperature, seed: c0.seed, task: t.task, taskSet: rec.taskSet.version, taskSetSha256: rec.taskSet.sha256, schedulePoint: 0 };
-    out.push({ subject: c0.model, metric: "t0 generated-code sha256", conditions, value: c0.codeSha256, trial: t.trial, source });
-    out.push({ subject: c0.model, metric: "t0 full-oracle outcome (odg-local-model-benchmark.gradeTrial, all cases)", conditions, value: t.controlT0.passed === true ? "PASS" : "FAIL", trial: t.trial, source });
+    // independence is EVIDENCE-based (inspector hardening): the record must show the t0 generation call was actually SENT in
+    // this run (calls[] entry for this task / model / temperature / seed); a record without it never counts as independent.
+    const sent = arr(rec.calls).some((k: any) => isObj(k) && k.task === t.task && k.model === c0.model && k.temperature === c0.temperature && k.seed === c0.seed);
+    const s = sent ? source : { ...source, independent: false, notIndependentReason: source.independent ? "no recorded t0 generation call in this run" : "replay" };
+    out.push({ subject: c0.model, metric: "t0 generated-code sha256", conditions, value: c0.codeSha256, trial: t.trial, source: s });
+    out.push({ subject: c0.model, metric: "t0 full-oracle outcome (odg-local-model-benchmark.gradeTrial, all cases)", conditions, value: t.controlT0.passed === true ? "PASS" : "FAIL", trial: t.trial, source: s });
   }
   return out;
 }
