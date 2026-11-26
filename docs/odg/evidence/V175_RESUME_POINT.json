@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "6ec7bc469536608fb68fbc502266b424fd1a43bee1849dc8b2ad5af3ca3e3c7a"
+      "sha256": "c1e32f39ee05c1c8ab41b57ea51ea08ba24623a0abbd26ee3a1f48d9ce19510f"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -256,6 +256,10 @@
     {
       "source": "docs/odg/evidence/V19_MEM2_RESULT.json",
       "sha256": "0ff8cc3711e787980f38724a6051b9034bed5f97e253e3602e7156b8364eab12"
+    },
+    {
+      "source": "docs/odg/evidence/V19_MEM2_CRITERIA_VALIDATION.json",
+      "sha256": "687e7d95bc9ad3124e9bd7a2402fd3c4dbaa5a02872d6da8d0d42150d368fbcb"
     }
   ],
   "checkpoint": {
@@ -1281,7 +1285,7 @@
     {
       "id": "V19-MEM-2",
       "title": "Real-memory P0 — internal REAL observations corroborated by independent reproduction (REPRO-1), recorded through the canonical memory trust gate, indexed in the FACT tier and recalled by GO",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_PASS",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -1293,18 +1297,19 @@
       },
       "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1",
       "ownerRecord": "docs/odg/V19_OWNER_ORDER_MEM.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1"
       },
       "records": {
@@ -1317,8 +1322,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V19_MEM2_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -1328,21 +1333,10 @@
         "endedAt": "2026-11-26T13:41:52.972Z",
         "dispatched": true
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/V19_MEM2_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract e7c35ebdf9f3 and experiment docs/odg/evidence/V19_MEM2_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PASS, CLOSE-1 docs/odg/evidence/V19_MEM2_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V19-MEM-2]",
@@ -1357,8 +1351,8 @@
       "PASS_IN_SCOPE": 2,
       "CLOSED_PARTIAL": 4,
       "CLOSED_FAIL": 5,
-      "CLOSED_PASS": 4,
-      "NOT_STARTED": 10,
+      "CLOSED_PASS": 5,
+      "NOT_STARTED": 9,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1607,11 +1601,6 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V19-MEM-2",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract e7c35ebdf9f3 and experiment docs/odg/evidence/V19_MEM2_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
