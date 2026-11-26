@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "7f94b7154ceee566e98b4e70d8ec9180fbf0fa9dde91cc3df38522ee95bc902c"
+      "sha256": "b359ae4d6a3752b99e92684ead2164180a0fc48e600900ccfc9a66d5f32f4299"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "fdf3b26816866421d6aa8d68195e065a74bab3990bf731327dd19ab13534194b"
+      "sha256": "5ee235c0ed42ad751a69ef643b778969e18db7215b4d64c589f1853ead42702b"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -1196,6 +1196,64 @@
       ]
     },
     {
+      "id": "V178-P6",
+      "title": "anti-reward-hacking gate: evaluator, test and fixture files frozen (sha-pinned) and outside every model-writable write_set; held-out evaluation",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'V178-P6' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "15c2ed4792585089c9c5501ede326b52dd8d27d3e17f099a2d336f4821333ecb",
+      "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "15c2ed4792585089c9c5501ede326b52dd8d27d3e17f099a2d336f4821333ecb"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 15c2ed479258",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 15c2ed4792585089c9c5501ede326b52dd8d27d3e17f099a2d336f4821333ecb) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P6]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[29]"
+      ]
+    },
+    {
       "id": "V178-P4-INT",
       "title": "P4 operational integration — hybrid memory wired into GO knowledge()/DECOMPOSE with the two-level FACT/CONTEXT memory (MEM-INT-1 + TIER-1)",
       "registerStatus": "CLOSED_PASS",
@@ -1447,7 +1505,7 @@
     }
   ],
   "otherRegisterItems": {
-    "count": 57,
+    "count": 56,
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
@@ -1725,6 +1783,11 @@
         "item": "V176-NB3",
         "actor": "INDEPENDENT_INSPECTOR",
         "action": "inspect the revised contract (sha 6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a) and commit the inspection record"
+      },
+      {
+        "item": "V178-P6",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 15c2ed4792585089c9c5501ede326b52dd8d27d3e17f099a2d336f4821333ecb) and commit the inspection record"
       }
     ],
     "lastGoRun": {

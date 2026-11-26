@@ -223,6 +223,21 @@ check("pipeline contract lists 6 stages + reused canonical components", P.NATIVE
     check("V178-P1/AC4: with fixed transport outputs the selection is deterministic — same candidates ⇒ same sha256s; input order and candidate id never decide (content sha tie-break)", JSON.stringify(s2.candidates) === JSON.stringify(s3.candidates) && order1.chosen === "C1" && order2.chosen === "C1" && order1.decidedBy === "sha256 (content tie-break)");
     check("V178-P1: VIS-1 split = even indices visible, odd hidden", JSON.stringify(P.visibleSplit(7)) === JSON.stringify({ rule: P.visibleSplit(7).rule, visible: [0, 2, 4, 6], hidden: [1, 3, 5] }));
   }
+  // ---- V17.8 P6 FROZEN-1: sha-pinned evaluators (anti-reward-hacking) ----
+  {
+    const files: any = { "runtime/core/odg-canonical-json-extended.test.ts": "test-v1", "runtime/core/odg-native-oracle-harness.js": "harness-v1" };
+    const rf = (f: string) => (f in files ? files[f] : null);
+    const pin = P.pinEvaluators(Object.keys(files), rf);
+    check("V178-P6/AC1: a candidate editing a pinned test is refused before execution", pin.ok && /FROZEN-1/.test(String(P.refusePinnedWrites(["runtime/core/odg-canonical-json.ts", "runtime/core/./x/../odg-canonical-json-extended.test.ts"], pin.pins))) && P.refusePinnedWrites(["runtime/core"], pin.pins) !== null);
+    const ok0 = P.verifyPins(pin.pins, rf).ok; files["runtime/core/odg-canonical-json-extended.test.ts"] = "test-v2-edited";
+    const after = P.verifyPins(pin.pins, rf);
+    check("V178-P6/AC2: a changed pin sha between selection and acceptance fails the run", ok0 === true && after.ok === false && after.changed.length === 1 && after.changed[0].file === "runtime/core/odg-canonical-json-extended.test.ts");
+    check("P6: an unreadable evaluator is never pinned empty (refused); a deleted pin fails verification", P.pinEvaluators(["nope.test.ts"], rf).ok === false && P.verifyPins([{ file: "gone.js", sha256: "x" }], rf).ok === false && P.verifyPins([], rf).ok === false);
+    // AC3 — NB2 held-out behaviour unchanged: the NB2 model write-set (module under repair) is not blocked by the freeze of its
+    // evaluators; TAMPER-1 still refuses test/evaluator paths; selection still counts VISIBLE cases only (held-out unseen)
+    const sel = P.selectByExecution([{ id: "A", sha256: "a", ok: true, compileOk: true, codeLines: 5, caseResults: { 0: true, 1: false } }, { id: "B", sha256: "b", ok: true, compileOk: true, codeLines: 5, caseResults: { 0: false, 1: true } }], [0]);
+    check("V178-P6/AC3: existing NB2 held-out behaviour is unchanged (regression test)", P.refusePinnedWrites(["runtime/core/odg-canonical-json.ts"], pin.pins) === null && P.tamperCheck("x", ["runtime/core/a.test.ts"]) !== null && sel.chosen === "A");
+  }
   if (failures) { process.stdout.write(`${failures} failure(s)\n`); process.exit(1); }
 })();
 export {};
