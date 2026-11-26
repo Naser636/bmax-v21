@@ -1,0 +1,79 @@
+{
+  "//": "VALIDATE_CRITERIA for V176-NB3 — the single owner-authorized re-run (docs/odg/V19_OWNER_DECISION_NB3_RERUN.json). RUN-1 6382ec04 stays an incident (never graded). Graded from the committed re-run record + the independent result inspection.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V176-NB3",
+  "date": "2026-11-26",
+  "contractSha256": "6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
+    "sha256": "1c10fc702931c8a0164f7d763467b1cddeeffcfc2040a3be2ee7f8d76ad52fba",
+    "experimentSha256": "c5504f783ccfc7121f771bdc67393df57bfe6126db5fcbc58e9ac0d8076b9bde",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1080,
+    "mergedAs": "42dea2ea",
+    "producedBy": "ODG GO --execute native dispatch (run 4286cf9ab051d373 at main cf7383c6; owner order V19_OWNER_DECISION_ORDER_NB3_P6_P7.json); trace docs/odg/evidence/V176_NB3_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 1080,
+    "inspectedHead": "733be5f82aae014e5d5d2820ff492c50e42335d5",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "insp-6cab89c8-v19-nb3-rerun-result-20261126",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-4286cf9ab051d373",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "FAIL",
+    "findings": "contract sha = result sha; scratch byte-identical; one dispatch, writes ⊆ writeSet; GO-ORD-1 applied; 11 model calls ≤ 12 (all pre-registered DIV-1 points), providerCalls 0, HOST-1 held at start; DESIGN_SWITCH_REUSED_S4 for D3 happened and D3's repairs carried D3's own source (defect of RUN-1 gone); AC1 met, AC2 met (D1 27/33, D3 measured; D2 not executed), AC3 NOT met (final verifyError on SHOWN case 21; repair trace 21 → 18 → 21); ladder exhausted"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET"
+    },
+    {
+      "id": "AC2",
+      "status": "MET",
+      "evidence": "2 of 3 designs implemented and measured (D2's S4 generation failed writeSetOk)"
+    },
+    {
+      "id": "AC3",
+      "status": "NOT_MET",
+      "evidence": "no candidate passes the 33-case oracle + strict typecheck; final failure on shown case 21 (undefined@top), D3's novel t0.9 code failed case 18 (undefined@object)"
+    },
+    {
+      "id": "AC4",
+      "status": "NOT_MET",
+      "evidence": "no accepted diff"
+    },
+    {
+      "id": "AC5",
+      "status": "MET"
+    },
+    {
+      "id": "AC6",
+      "status": "MET"
+    },
+    {
+      "id": "AC7",
+      "status": "MET"
+    }
+  ],
+  "result": {
+    "outcome": "FAIL",
+    "basis": "recorded verdict FAIL under the pre-registered rule; independent result inspection ACCEPT (recomputed FAIL)"
+  },
+  "scenarioGrade": "FAIL",
+  "learning": {
+    "hypothesis": "H-NB3 (repair diversity unlocks the fix) NOT SUPPORTED",
+    "why": "D1 is unmoved by sampling (t0/0.5/0.9 identical failing code); D3, now genuinely exercised, produced new code at t0.9 that still fails a shown case (the undefined handling cluster: undefined@top / undefined@object)",
+    "nextLever": "a discriminating signal independent of generation (spec-derived edge cases / model-generated tests, as for V178-P1-R) — a separate contract; this run must NOT be repeated (single authorized re-run consumed)"
+  },
+  "limits": [
+    "RUN-1 6382ec04 is an incident (runner defect), never graded",
+    "during S5 the host load stayed above the HOST-1 threshold (Ollama's own inference load, single dispatch); only the start is gated by the rule"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded FAIL)",
+    "missionV176NB3": "CLOSED_FAIL"
+  }
+}

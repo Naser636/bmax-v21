@@ -134,6 +134,20 @@
         "predictionBasis": "NOT_REGISTER_SELECTED"
       },
       {
+        "id": "V176-NB3",
+        "grade": "FAIL",
+        "utility": 0,
+        "validation": "docs/odg/evidence/V176_NB3_CRITERIA_VALIDATION.json",
+        "experiment": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
+        "closureRule": "CLOSE-1",
+        "predictionSource": [
+          "git show 86ae57110eca:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decision.ranking[id=V176-NB3]",
+          "git show 86ae57110eca:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V176-NB3].criteria",
+          "git log cf7383c63d90 -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting V176-NB3: none)"
+        ],
+        "predictionBasis": "NOT_REGISTER_SELECTED"
+      },
+      {
         "id": "V178-P1-R",
         "grade": "FAIL",
         "utility": 0,
@@ -207,11 +221,6 @@
     ],
     "notGraded": [
       {
-        "id": "V176-NB3",
-        "status": "NOT_STARTED",
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-      },
-      {
         "id": "V178-P6",
         "status": "NOT_STARTED",
         "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
@@ -227,11 +236,11 @@
     {
       "criterion": "autonomyBenefit",
       "direction": "HIGHER_IS_BETTER",
-      "n": 8,
+      "n": 9,
       "minN": 5,
       "rhoMin": 0.5,
       "meanFavourability": 0.5,
-      "meanUtility": 0.3125,
+      "meanUtility": 0.2778,
       "observations": [
         {
           "item": "G",
@@ -283,6 +292,13 @@
           "utility": 0
         },
         {
+          "item": "V176-NB3",
+          "predictedValue": 0.5,
+          "favourability": 0.5,
+          "grade": "FAIL",
+          "utility": 0
+        },
+        {
           "item": "V178-P1-R",
           "predictedValue": 0.5,
           "favourability": 0.5,
@@ -296,7 +312,7 @@
       "why": "CONSTANT_VALUES",
       "multiplier": 1,
       "spearman": null,
-      "reading": "selection-time favourability is 0.5 on all 8 items ⇒ it carries no information about the grade ⇒ ×1"
+      "reading": "selection-time favourability is 0.5 on all 9 items ⇒ it carries no information about the grade ⇒ ×1"
     },
     {
       "criterion": "blockerRepetitionReduction",
@@ -315,6 +331,7 @@
         "J2",
         "V175-NB1",
         "V175-NB2",
+        "V176-NB3",
         "V178-P1-R"
       ],
       "rule": "OFB-CAL-2",
@@ -360,6 +377,7 @@
         "J2",
         "V175-NB1",
         "V175-NB2",
+        "V176-NB3",
         "V178-P1-R"
       ],
       "rule": "OFB-CAL-2",
@@ -372,11 +390,11 @@
     {
       "criterion": "costRiskComplexity",
       "direction": "LOWER_IS_BETTER",
-      "n": 8,
+      "n": 9,
       "minN": 5,
       "rhoMin": 0.5,
-      "meanFavourability": 0.275,
-      "meanUtility": 0.3125,
+      "meanFavourability": 0.2444,
+      "meanUtility": 0.2778,
       "observations": [
         {
           "item": "G",
@@ -428,6 +446,13 @@
           "utility": 0
         },
         {
+          "item": "V176-NB3",
+          "predictedValue": 1,
+          "favourability": 0,
+          "grade": "FAIL",
+          "utility": 0
+        },
+        {
           "item": "V178-P1-R",
           "predictedValue": 1,
           "favourability": 0,
@@ -442,12 +467,12 @@
       "multiplier": 1,
       "spearman": {
         "ok": true,
-        "n": 8,
-        "rho": 0.304499,
-        "strength": "WEAK",
+        "n": 9,
+        "rho": 0.426241,
+        "strength": "MODERATE",
         "note": "Spearman ρ = Pearson of average ranks (tie-correct); measures MONOTONIC order association — NOT causation/accuracy/linear agreement on raw values."
       },
-      "reading": "Spearman ρ = 0.304499 (|ρ| < 0.5) between predicted favourability and realized utility on these 8 items ⇒ no attributable association ⇒ ×1"
+      "reading": "Spearman ρ = 0.426241 (|ρ| < 0.5) between predicted favourability and realized utility on these 9 items ⇒ no attributable association ⇒ ×1"
     },
     {
       "criterion": "dependencyAvailability",
@@ -466,6 +491,7 @@
         "J2",
         "V175-NB1",
         "V175-NB2",
+        "V176-NB3",
         "V178-P1-R"
       ],
       "rule": "OFB-CAL-2",
@@ -478,11 +504,11 @@
     {
       "criterion": "evidenceLevel",
       "direction": "HIGHER_IS_BETTER",
-      "n": 8,
+      "n": 9,
       "minN": 5,
       "rhoMin": 0.5,
-      "meanFavourability": 0.375,
-      "meanUtility": 0.3125,
+      "meanFavourability": 0.3333,
+      "meanUtility": 0.2778,
       "observations": [
         {
           "item": "G",
@@ -534,6 +560,13 @@
           "utility": 0
         },
         {
+          "item": "V176-NB3",
+          "predictedValue": 0,
+          "favourability": 0,
+          "grade": "FAIL",
+          "utility": 0
+        },
+        {
           "item": "V178-P1-R",
           "predictedValue": 0,
           "favourability": 0,
@@ -543,17 +576,17 @@
       ],
       "notMeasuredOn": [],
       "rule": "OFB-CAL-2",
-      "status": "NOT_ATTRIBUTABLE",
-      "why": "NO_MEASURED_ASSOCIATION",
-      "multiplier": 1,
+      "status": "ADJUSTED",
+      "why": "ATTRIBUTED",
+      "multiplier": 1.1067,
       "spearman": {
         "ok": true,
-        "n": 8,
-        "rho": 0.468635,
+        "n": 9,
+        "rho": 0.533396,
         "strength": "MODERATE",
         "note": "Spearman ρ = Pearson of average ranks (tie-correct); measures MONOTONIC order association — NOT causation/accuracy/linear agreement on raw values."
       },
-      "reading": "Spearman ρ = 0.468635 (|ρ| < 0.5) between predicted favourability and realized utility on these 8 items ⇒ no attributable association ⇒ ×1"
+      "reading": "Spearman ρ = 0.533396 (n=9): higher predicted favourability preceded better grades ⇒ contributions ×1.1067"
     },
     {
       "criterion": "reliabilityQuality",
@@ -572,6 +605,7 @@
         "J2",
         "V175-NB1",
         "V175-NB2",
+        "V176-NB3",
         "V178-P1-R"
       ],
       "rule": "OFB-CAL-2",
@@ -598,6 +632,7 @@
         "J2",
         "V175-NB1",
         "V175-NB2",
+        "V176-NB3",
         "V178-P1-R"
       ],
       "rule": "OFB-CAL-2",
@@ -624,6 +659,7 @@
         "J2",
         "V175-NB1",
         "V175-NB2",
+        "V176-NB3",
         "V178-P1-R"
       ],
       "rule": "OFB-CAL-2",
@@ -669,6 +705,7 @@
         "J2",
         "V175-NB1",
         "V175-NB2",
+        "V176-NB3",
         "V178-P1-R"
       ],
       "rule": "OFB-CAL-2",
@@ -679,7 +716,7 @@
       "reading": "3 observation(s) < MIN_N 5 ⇒ ×1 (reported, not applied)"
     }
   ],
-  "adjustmentsSha256": "387040848d6339a659535c9b4daf5e96a79fe0569d9623d7e57681dd16342903",
+  "adjustmentsSha256": "8f276e7c2fcfd8b61b765dcca5feb0be642cbe3e773d09dfd8137434cbf8353f",
   "adjustmentsCanonical": {
     "feedbackVersion": "OFB-1",
     "calibrationRule": "OFB-CAL-2",
@@ -786,6 +823,20 @@
         "predictionBasis": "NOT_REGISTER_SELECTED"
       },
       {
+        "id": "V176-NB3",
+        "grade": "FAIL",
+        "utility": 0,
+        "validation": "docs/odg/evidence/V176_NB3_CRITERIA_VALIDATION.json",
+        "experiment": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
+        "closureRule": "CLOSE-1",
+        "predictionSource": [
+          "git show 86ae57110eca:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decision.ranking[id=V176-NB3]",
+          "git show 86ae57110eca:docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V176-NB3].criteria",
+          "git log cf7383c63d90 -- docs/odg/evidence/V164_STRATEGIC_REGISTER.json (latest ancestor version selecting V176-NB3: none)"
+        ],
+        "predictionBasis": "NOT_REGISTER_SELECTED"
+      },
+      {
         "id": "V178-P1-R",
         "grade": "FAIL",
         "utility": 0,
@@ -800,139 +851,141 @@
         "predictionBasis": "NOT_REGISTER_SELECTED"
       }
     ],
-    "multipliers": {}
+    "multipliers": {
+      "evidenceLevel": 1.1067
+    }
   },
   "activation": {
     "record": "docs/odg/V176_OUTCOME_FEEDBACK_ACTIVATION.json",
     "active": false,
-    "reason": "activation bound to adjustments c77e0fabfa4c… but the layer's adjustments are 387040848d63… ⇒ OFF until a new activation binds them (OFB-RB-1)",
+    "reason": "activation bound to adjustments c77e0fabfa4c… but the layer's adjustments are 8f276e7c2fcf… ⇒ OFF until a new activation binds them (OFB-RB-1)",
     "ownerRecordStatus": "PRESENT_QUOTE_MATCH"
   },
   "scores": [
     {
       "id": "A",
       "baseScore": 0.1,
-      "adjustedScore": 0.1,
-      "delta": 0,
+      "adjustedScore": 0.1053,
+      "delta": 0.0053,
       "uncertainty": 0.6
     },
     {
       "id": "C",
       "baseScore": 0.225,
-      "adjustedScore": 0.225,
-      "delta": 0,
+      "adjustedScore": 0.233,
+      "delta": 0.008,
       "uncertainty": 0.5
     },
     {
       "id": "CP8-GAP-1-selectNextMission",
       "baseScore": 0.075,
-      "adjustedScore": 0.075,
-      "delta": 0,
+      "adjustedScore": 0.0777,
+      "delta": 0.0027,
       "uncertainty": 0.8
     },
     {
       "id": "CP8-GAP-2-setPriorities",
       "baseScore": 0.075,
-      "adjustedScore": 0.075,
-      "delta": 0,
+      "adjustedScore": 0.0803,
+      "delta": 0.0053,
       "uncertainty": 0.8
     },
     {
       "id": "CP8-GAP-3-chooseMode",
       "baseScore": 0.05,
-      "adjustedScore": 0.05,
-      "delta": 0,
+      "adjustedScore": 0.0553,
+      "delta": 0.0053,
       "uncertainty": 0.9
     },
     {
       "id": "CP8-GAP-4-authorizeProvider",
       "baseScore": 0.1,
-      "adjustedScore": 0.1,
-      "delta": 0,
+      "adjustedScore": 0.1053,
+      "delta": 0.0053,
       "uncertainty": 0.8
     },
     {
       "id": "CP8-GAP-5-superviseExecution",
       "baseScore": 0.05,
-      "adjustedScore": 0.05,
-      "delta": 0,
+      "adjustedScore": 0.0553,
+      "delta": 0.0053,
       "uncertainty": 0.9
     },
     {
       "id": "CP8-GAP-6-recoverResults",
       "baseScore": 0.075,
-      "adjustedScore": 0.075,
-      "delta": 0,
+      "adjustedScore": 0.0777,
+      "delta": 0.0027,
       "uncertainty": 0.8
     },
     {
       "id": "CP8-GAP-7-validateIndependently",
       "baseScore": 0.05,
-      "adjustedScore": 0.05,
-      "delta": 0,
+      "adjustedScore": 0.0527,
+      "delta": 0.0027,
       "uncertainty": 0.8
     },
     {
       "id": "CP8-GAP-8-integrateResult",
       "baseScore": 0.075,
-      "adjustedScore": 0.075,
-      "delta": 0,
+      "adjustedScore": 0.0803,
+      "delta": 0.0053,
       "uncertainty": 0.8
     },
     {
       "id": "CP8-GAP-9-chooseFollowing",
       "baseScore": 0.075,
-      "adjustedScore": 0.075,
-      "delta": 0,
+      "adjustedScore": 0.0777,
+      "delta": 0.0027,
       "uncertainty": 0.8
     },
     {
       "id": "CP8-GAP-canonicalDefectsJ",
       "baseScore": 0.025,
-      "adjustedScore": 0.025,
-      "delta": 0,
+      "adjustedScore": 0.0277,
+      "delta": 0.0027,
       "uncertainty": 0.9
     },
     {
       "id": "CP8-GAP-executedPartialMapping",
       "baseScore": 0.025,
-      "adjustedScore": 0.025,
-      "delta": 0,
+      "adjustedScore": 0.0277,
+      "delta": 0.0027,
       "uncertainty": 0.9
     },
     {
       "id": "D",
       "baseScore": 0.28,
-      "adjustedScore": 0.28,
-      "delta": 0,
+      "adjustedScore": 0.2853,
+      "delta": 0.0053,
       "uncertainty": 0.5
     },
     {
       "id": "E",
       "baseScore": 0.135,
-      "adjustedScore": 0.135,
-      "delta": 0,
+      "adjustedScore": 0.1377,
+      "delta": 0.0027,
       "uncertainty": 0.7
     },
     {
       "id": "I",
       "baseScore": 0.135,
-      "adjustedScore": 0.135,
-      "delta": 0,
+      "adjustedScore": 0.1377,
+      "delta": 0.0027,
       "uncertainty": 0.7
     },
     {
       "id": "K",
       "baseScore": 0.285,
-      "adjustedScore": 0.285,
-      "delta": 0,
+      "adjustedScore": 0.293,
+      "delta": 0.008,
       "uncertainty": 0.4
     },
     {
       "id": "L",
       "baseScore": 0.19,
-      "adjustedScore": 0.19,
-      "delta": 0,
+      "adjustedScore": 0.198,
+      "delta": 0.008,
       "uncertainty": 0.6
     },
     {
@@ -987,22 +1040,22 @@
     {
       "id": "N",
       "baseScore": 0.14,
-      "adjustedScore": 0.14,
-      "delta": 0,
+      "adjustedScore": 0.1427,
+      "delta": 0.0027,
       "uncertainty": 0.6
     },
     {
       "id": "O",
       "baseScore": 0.165,
-      "adjustedScore": 0.165,
-      "delta": 0,
+      "adjustedScore": 0.1703,
+      "delta": 0.0053,
       "uncertainty": 0.6
     },
     {
       "id": "P",
       "baseScore": 0.17,
-      "adjustedScore": 0.17,
-      "delta": 0,
+      "adjustedScore": 0.1753,
+      "delta": 0.0053,
       "uncertainty": 0.7
     },
     {
@@ -1062,13 +1115,6 @@
       "uncertainty": 0.6
     },
     {
-      "id": "V176-NB3",
-      "baseScore": 0.05,
-      "adjustedScore": 0.05,
-      "delta": 0,
-      "uncertainty": 0.7
-    },
-    {
       "id": "V178-P3",
       "baseScore": 0.06,
       "adjustedScore": 0.06,
@@ -1125,7 +1171,7 @@
         "top3AutoSelectable": [
           {
             "id": "D",
-            "evidenceScore": 0.28,
+            "evidenceScore": 0.2853,
             "uncertainty": 0.5
           },
           {
@@ -1135,7 +1181,7 @@
           },
           {
             "id": "L",
-            "evidenceScore": 0.19,
+            "evidenceScore": 0.198,
             "uncertainty": 0.6
           }
         ]
@@ -1149,17 +1195,11 @@
         "selected": null,
         "proposed": null,
         "tiedSet": [
-          "V176-NB3",
           "V178-P6",
           "V178-P7"
         ],
         "resolvedBy": null,
         "top3AutoSelectable": [
-          {
-            "id": "V176-NB3",
-            "evidenceScore": 0.05,
-            "uncertainty": 0.7
-          },
           {
             "id": "V178-P6",
             "evidenceScore": 0.05,
@@ -1177,17 +1217,11 @@
         "selected": null,
         "proposed": null,
         "tiedSet": [
-          "V176-NB3",
           "V178-P6",
           "V178-P7"
         ],
         "resolvedBy": null,
         "top3AutoSelectable": [
-          {
-            "id": "V176-NB3",
-            "evidenceScore": 0.05,
-            "uncertainty": 0.7
-          },
           {
             "id": "V178-P6",
             "evidenceScore": 0.05,
@@ -1202,12 +1236,12 @@
       },
       "changed": false
     },
-    "scoresChanged": 0,
+    "scoresChanged": 21,
     "inEffect": "BASE (feedback OFF)"
   },
   "honesty": [
-    "8 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL, V178-P1-R=FAIL]; 11 refused (incl. every PROBE record); 3 declared item(s) not graded",
-    "adjusted (attributable) criteria: [NONE]; NOT_ATTRIBUTABLE (×1): [autonomyBenefit CONSTANT_VALUES n=8; blockerRepetitionReduction NO_MEASURED_PREDICTION n=0; capabilityGain BELOW_MIN_N n=3; costRiskComplexity NO_MEASURED_ASSOCIATION n=8 ρ=0.304499; dependencyAvailability NO_MEASURED_PREDICTION n=0; evidenceLevel NO_MEASURED_ASSOCIATION n=8 ρ=0.468635; reliabilityQuality NO_MEASURED_PREDICTION n=0; reusability NO_MEASURED_PREDICTION n=0; speedEfficiency NO_MEASURED_PREDICTION n=0; strategicValue BELOW_MIN_N n=3] ⇒ every multiplier is 1: the activation stays recorded but the register is byte-identical to the base register",
+    "9 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL, V176-NB3=FAIL, V178-P1-R=FAIL]; 11 refused (incl. every PROBE record); 2 declared item(s) not graded",
+    "adjusted (attributable) criteria: [evidenceLevel]; NOT_ATTRIBUTABLE (×1): [autonomyBenefit CONSTANT_VALUES n=9; blockerRepetitionReduction NO_MEASURED_PREDICTION n=0; capabilityGain BELOW_MIN_N n=3; costRiskComplexity NO_MEASURED_ASSOCIATION n=9 ρ=0.426241; dependencyAvailability NO_MEASURED_PREDICTION n=0; reliabilityQuality NO_MEASURED_PREDICTION n=0; reusability NO_MEASURED_PREDICTION n=0; speedEfficiency NO_MEASURED_PREDICTION n=0; strategicValue BELOW_MIN_N n=3]",
     "OFB-CAL-2 replaces the base-rate rule OFB-CAL-1 (rejected at inspection: it adjusted criteria constant across items, e.g. autonomyBenefit = 0.5 on all 5); a multiplier now requires a MEASURED, SIGNED rank association — an order association on few items, never a claim that the criterion predicts or discriminates outcomes; n is tiny",
     "NOT_MEASURED criteria stay NOT_MEASURED (multipliers scale MEASURED contributions only); statuses, criterion values, weights, thresholds and eligibility are unchanged",
     "no hypothesis, probe, simulation or fixture is used as an outcome; the V17.5 outcome-learning record stays report-only (feedsScoring false) — this layer is the separate, owner-authorized consumption"
