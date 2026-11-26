@@ -228,15 +228,31 @@ check("pipeline contract lists 6 stages + reused canonical components", P.NATIVE
     const files: any = { "runtime/core/odg-canonical-json-extended.test.ts": "test-v1", "runtime/core/odg-native-oracle-harness.js": "harness-v1" };
     const rf = (f: string) => (f in files ? files[f] : null);
     const pin = P.pinEvaluators(Object.keys(files), rf);
-    check("V178-P6/AC1: a candidate editing a pinned test is refused before execution", pin.ok && /FROZEN-1/.test(String(P.refusePinnedWrites(["runtime/core/odg-canonical-json.ts", "runtime/core/./x/../odg-canonical-json-extended.test.ts"], pin.pins))) && P.refusePinnedWrites(["runtime/core"], pin.pins) !== null);
+    check("V178-P6/AC1: a candidate editing a pinned test is refused before execution", pin.ok && /FROZEN-1/.test(String(P.refusePinnedWrites(["runtime/core/odg-canonical-json.ts", "runtime/core/./x/../odg-canonical-json-extended.test.ts"], pin.pins))) && P.refusePinnedWrites(["runtime/core"], pin.pins) !== null && P.refusePinnedWrites(["/repo/runtime/core/odg-canonical-json-extended.test.ts"], pin.pins) !== null && P.refusePinnedWrites(["/repo/runtime/core/odg-canonical-json-extended.test.ts"], pin.pins, { root: "/repo" }) !== null && P.refusePinnedWrites(["/elsewhere/x.js"], pin.pins, { root: "/repo" }) === null);   // inspection fix: absolute paths never silently relativised
     const ok0 = P.verifyPins(pin.pins, rf).ok; files["runtime/core/odg-canonical-json-extended.test.ts"] = "test-v2-edited";
     const after = P.verifyPins(pin.pins, rf);
     check("V178-P6/AC2: a changed pin sha between selection and acceptance fails the run", ok0 === true && after.ok === false && after.changed.length === 1 && after.changed[0].file === "runtime/core/odg-canonical-json-extended.test.ts");
     check("P6: an unreadable evaluator is never pinned empty (refused); a deleted pin fails verification", P.pinEvaluators(["nope.test.ts"], rf).ok === false && P.verifyPins([{ file: "gone.js", sha256: "x" }], rf).ok === false && P.verifyPins([], rf).ok === false);
-    // AC3 — NB2 held-out behaviour unchanged: the NB2 model write-set (module under repair) is not blocked by the freeze of its
-    // evaluators; TAMPER-1 still refuses test/evaluator paths; selection still counts VISIBLE cases only (held-out unseen)
-    const sel = P.selectByExecution([{ id: "A", sha256: "a", ok: true, compileOk: true, codeLines: 5, caseResults: { 0: true, 1: false } }, { id: "B", sha256: "b", ok: true, compileOk: true, codeLines: 5, caseResults: { 0: false, 1: true } }], [0]);
-    check("V178-P6/AC3: existing NB2 held-out behaviour is unchanged (regression test)", P.refusePinnedWrites(["runtime/core/odg-canonical-json.ts"], pin.pins) === null && P.tamperCheck("x", ["runtime/core/a.test.ts"]) !== null && sel.chosen === "A");
+    // AC3 — NB2 held-out behaviour unchanged (inspection fix: exercise the REAL NB2 path, not only pure helpers). The NB2 runner
+    // runs with the fake transport that reproduced NB2's failure mode; its verdict + stall reason are the historical ones; the
+    // evaluator files (harness + NB2's extended oracle test) are pinned before and verify unchanged after; NB2's model write-set
+    // (the module under repair) is not refused by the freeze; held-out cases never appear in any prompt.
+    {
+      const NBS = require("./odg-native-build-sandbox.js");
+      const probe = NBS.probeSandbox();
+      if (!(probe && probe.ok === true)) process.stdout.write("SKIP - V178-P6/AC3 needs the native build sandbox (NOT an ok)\n");
+      else {
+        const NB2 = require("../bin/odg-v175-native-design-run.js"); const R3 = require("../bin/odg-v176-nb3-native-design-run.js");
+        const ROOT2 = path.resolve(__dirname, "..", "..");
+        const evalFiles = ["runtime/core/odg-canonical-json-extended.test.ts", "runtime/core/odg-native-design-pipeline.ts"].filter((f) => fs.existsSync(path.join(ROOT2, f)));
+        const rf2 = (f: string) => { try { return fs.readFileSync(path.join(ROOT2, f), "utf8"); } catch { return null; } };
+        const pins2 = P.pinEvaluators(evalFiles, rf2);
+        const F2 = R3.fakeBySampling(); const r2 = await NB2.runNativeDesign({ root: ROOT2, label: "TEST", transport: F2.fake, loadProbe: NB2.IDLE });
+        const v2 = P.verifyPins(pins2.pins, rf2);
+        const hiddenNeverShown = (r2.prompts || []).every((pr: any) => !(pr.segments || []).some((sg: any) => /held-out|hidden/i.test(String(sg.source || ""))));
+        check("V178-P6/AC3: existing NB2 held-out behaviour is unchanged (regression test)", pins2.ok && v2.ok && r2.verdict === "FAIL" && r2.rounds.every((x: any) => x.repairStopReason === "NO_PROGRESS_IDENTICAL_REGENERATION") && r2.diversity === undefined && P.refusePinnedWrites(["runtime/core/odg-canonical-json.ts"], pins2.pins) === null && hiddenNeverShown);
+      }
+    }
   }
   if (failures) { process.stdout.write(`${failures} failure(s)\n`); process.exit(1); }
 })();

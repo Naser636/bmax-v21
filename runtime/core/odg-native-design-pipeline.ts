@@ -663,9 +663,14 @@ function pinEvaluators(files: any[], readFile: (f: string) => any): any {
   }
   return Object.freeze({ ok: refused.length === 0 && pins.length > 0, rule: FROZEN_RULE, pins: Object.freeze(pins), refused: Object.freeze(refused) });
 }
-function refusePinnedWrites(writeSet: any[], pins: any[]): string | null {
+function refusePinnedWrites(writeSet: any[], pins: any[], opts: any = {}): string | null {
   const pinned = arr(pins).map((p: any) => normRel(p && p.file)).filter(Boolean);
+  const root = opts && typeof opts.root === "string" ? opts.root : null;
   for (const w of arr(writeSet)) {
+    // inspection fix: an ABSOLUTE path is never silently stripped to a relative one — it is relativised against the declared root
+    // (outside the root ⇒ cannot be a pinned repo file) or, with no root, refused fail-closed.
+    const ws = String(w == null ? "" : w).replace(/\\/g, "/");
+    if (ws.startsWith("/")) { if (!root) return `FROZEN-1: absolute write-set path '${ws.slice(0, 120)}' without a declared root — refused (fail-closed)`; const rel = require("path").relative(root, ws).replace(/\\/g, "/"); if (rel.startsWith("..")) continue; const hitAbs = pinned.find((p: string) => normRel(rel) === p || p.startsWith(normRel(rel) + "/") || normRel(rel) === ""); if (hitAbs) return `FROZEN-1: candidate write-set path '${ws.slice(0, 120)}' touches the pinned evaluator '${hitAbs}' — refused before execution`; continue; }
     const n = normRel(w);
     const hit = pinned.find((p: string) => n === p || p.startsWith(n + "/") || n === "" );
     if (hit) return `FROZEN-1: candidate write-set path '${String(w).slice(0, 120)}' touches the pinned evaluator '${hit}' — refused before execution`;
