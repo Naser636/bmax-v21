@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "2f45ccfb38369539eb0e073da279e96f325fe76e924604d98bdd8aabe756716e"
+      "sha256": "69277280131354443f70422a2671f3c661b05ae0eee534ef663b71d97df52651"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -204,6 +204,10 @@
     {
       "source": "docs/odg/evidence/V178_P4_INT_RESULT.json",
       "sha256": "320fa748bcbf6b4efb9e02af8ea9f45ece4816fad1418f60dd4904c8bc3218ee"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P4_INT_CRITERIA_VALIDATION.json",
+      "sha256": "76364a59f84b2b45e79238c6f8ce3d53a23dcb93dcdd034f80a5d1b8053f9fc9"
     }
   ],
   "checkpoint": {
@@ -1040,7 +1044,7 @@
     {
       "id": "V178-P4-INT",
       "title": "P4 operational integration — hybrid memory wired into GO knowledge()/DECOMPOSE with the two-level FACT/CONTEXT memory (MEM-INT-1 + TIER-1)",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_PASS",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -1052,18 +1056,19 @@
       },
       "contractSha256": "dad4365a2103dda5d46298be0da3337c96e19c02efab6aa76a3395164dc96f66",
       "ownerRecord": "docs/odg/V19_OWNER_ORDER_P4_OPERATIONAL.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "dad4365a2103dda5d46298be0da3337c96e19c02efab6aa76a3395164dc96f66"
       },
       "records": {
@@ -1076,8 +1081,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V178_P4_INT_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -1087,21 +1092,10 @@
         "endedAt": "2026-11-25T23:55:05.456Z",
         "dispatched": true
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/V178_P4_INT_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract dad4365a2103 and experiment docs/odg/evidence/V178_P4_INT_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PASS, CLOSE-1 docs/odg/evidence/V178_P4_INT_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P4-INT]",
@@ -1116,8 +1110,8 @@
       "PASS_IN_SCOPE": 2,
       "CLOSED_PARTIAL": 4,
       "CLOSED_FAIL": 4,
-      "CLOSED_PASS": 2,
-      "NOT_STARTED": 10,
+      "CLOSED_PASS": 3,
+      "NOT_STARTED": 9,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1327,11 +1321,6 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V178-P4-INT",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract dad4365a2103 and experiment docs/odg/evidence/V178_P4_INT_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
