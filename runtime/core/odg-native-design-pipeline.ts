@@ -543,7 +543,11 @@ async function diverseGenerate(x: any): Promise<any> {
     if (pt.kind === "DESIGN_SWITCH" && !c.st.switchUsed.has(pt.i)) {
       c.st.switchUsed.add(pt.i);
       const cand = x.candidateFor(pt.design);
-      if (cand && !x.seen.has(cand.sandboxContentSha256)) { x.seen.add(cand.sandboxContentSha256); arr(x.events).push({ point: pt.i, kind: "DESIGN_SWITCH_REUSED_S4", design: pt.design, generation: cand.i, sha256: cand.sandboxContentSha256 }); return { gen: cand, stalls, exhausted: false, reusedS4: true }; }
+      // NB3-FIX-1: when the caller tracks S5 reuse (x.reusedS4), the switched design's S4 implementation is reused unless it was
+      // ALREADY reused in S5 — its S4 sandbox measurement does not make it 'seen' for repair purposes (the old seen-check made
+      // this branch unreachable for every S4-implemented design). Without x.reusedS4 the historical behaviour is unchanged.
+      const reusable = cand && (x.reusedS4 instanceof Set ? !x.reusedS4.has(cand.sandboxContentSha256) : !x.seen.has(cand.sandboxContentSha256));
+      if (reusable) { if (x.reusedS4 instanceof Set) x.reusedS4.add(cand.sandboxContentSha256); x.seen.add(cand.sandboxContentSha256); arr(x.events).push({ point: pt.i, kind: "DESIGN_SWITCH_REUSED_S4", design: pt.design, generation: cand.i, sha256: cand.sandboxContentSha256 }); return { gen: cand, stalls, exhausted: false, reusedS4: true }; }
     }
     const gen = await x.generate(pt);
     if (!gen) return { gen: null, stalls, exhausted: false };

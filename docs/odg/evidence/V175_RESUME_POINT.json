@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "493d4853093240e914f6e51f232decb0c0d8d44d868bcbbd49d1e7e5502b88a8"
+      "sha256": "23ba7a55e43a35e37966ee3cfef7fad5bb6dd435cad2be95c5bc39e5d336623a"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "d5cd9d716eddc1beb20658d5de0944c0fd161b704053d2726e448533b75f5f00"
+      "sha256": "fdf3b26816866421d6aa8d68195e065a74bab3990bf731327dd19ab13534194b"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -52,10 +52,6 @@
     {
       "source": "docs/odg/evidence/V176_NB2_GO_EXECUTE_TRACE.jsonl",
       "sha256": "f6568cd70c96d1a85c360a6405b6f46a2bfe4bc3470c73fc587881555f95c6b5"
-    },
-    {
-      "source": "docs/odg/evidence/V176_NB3_GO_EXECUTE_TRACE.jsonl",
-      "sha256": "b370410d3cd2c447076c177fd69130213e81b5e3ca5d7016450183df9eab1336"
     },
     {
       "source": "docs/odg/evidence/V178_P1R_GO_EXECUTE_TRACE.jsonl",
@@ -196,10 +192,6 @@
     {
       "source": "docs/odg/evidence/V176_NB3_CONTRACT_INSPECTION.json",
       "sha256": "e004319966724bea0ad339ddf8b5f341a67eb1529e7eaf0f8e45a2fee64818cc"
-    },
-    {
-      "source": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
-      "sha256": "367034990a7e0138dba4db722808f358288b26dc25ccc32409a8f6771b5bd33f"
     },
     {
       "source": "docs/odg/evidence/V178_P1_CONTRACT_INSPECTION.json",
@@ -914,21 +906,19 @@
         "v150RequirementIds": [],
         "reason": "contract scenario 'V176-NB3' is not an A–P §45 scenario and contract.parent.scenario is \"V175-NB2\" ⇒ no committed field links it to a V15.0 requirement row"
       },
-      "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68",
+      "contractSha256": "6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
         "currentStepAuthorized": true,
-        "nextStep": null,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
         "validatedSteps": [
-          "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "REVISE_CONTRACT"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
-        "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68"
+        "reason": "INSPECT_REVISED_CONTRACT pending: inspection contractSha256 5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68 ≠ current contract sha256 6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a (contract edited after inspection, or wrong contract) ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a"
       },
       "records": {
         "inspection": {
@@ -936,36 +926,25 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
-          "basis": "REGISTER_LOADER"
+          "path": null,
+          "basis": "NONE"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": {
-        "trace": "docs/odg/evidence/V176_NB3_GO_EXECUTE_TRACE.jsonl",
-        "runId": "6382ec0449920f6c",
-        "status": "EXECUTED_FAIL",
-        "endedAt": "2026-11-26T16:39:19.393Z",
-        "dispatched": true
-      },
+      "lastGoRun": null,
       "pending": [
         {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
           "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
+          "of": "contract 6fa596299cd6",
+          "reason": "INSPECT_REVISED_CONTRACT pending: inspection contractSha256 5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68 ≠ current contract sha256 6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a (contract edited after inspection, or wrong contract) ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
         }
       ],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 5c551b0d3053 and experiment docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a) and commit the inspection record"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V176-NB3]",
@@ -1703,19 +1682,6 @@
       "ownerSelectionRecord": null
     },
     {
-      "trace": "docs/odg/evidence/V176_NB3_GO_EXECUTE_TRACE.jsonl",
-      "cycle": 1,
-      "runId": "6382ec0449920f6c",
-      "status": "EXECUTED_FAIL",
-      "endedAt": "2026-11-26T16:39:19.393Z",
-      "dispatched": [
-        "V176-NB3"
-      ],
-      "strategic": "D",
-      "workingOn": "V176-NB3",
-      "ownerSelectionRecord": "docs/odg/V19_OWNER_DECISION_SELECT_NB3.json"
-    },
-    {
       "trace": "docs/odg/evidence/V178_P5_GO_EXECUTE_TRACE.jsonl",
       "cycle": 1,
       "runId": "24931aa45c15145d",
@@ -1757,8 +1723,8 @@
       },
       {
         "item": "V176-NB3",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 5c551b0d3053 and experiment docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 6fa596299cd6b07451c403a1e33b4ed47ec8527802b6be785131dffdf1d30c3a) and commit the inspection record"
       }
     ],
     "lastGoRun": {

@@ -1,0 +1,25 @@
+{
+  "//": "OWNER decision record — verbatim transcription (2026-11-26) of the owner's explicit authorization of ONE controlled re-run of V176-NB3 after the runner fix (NB3-FIX-1). RUN-1 (6382ec04) stays an INVALID result for qualifying D3 (never reclassified as a success). Grants exactly one dispatch; changes no criterion, threshold or rule.",
+  "schema": "odg-owner-decision/1",
+  "kind": "OWNER_DECISION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-26",
+  "directive": "CTO — DIRECTIVE D'EXÉCUTION CONTINUE — ODG — INTELLIGENCE ET AUTONOMIE NATIVES",
+  "quote": [
+    "AUTORISATION GÉNÉRALE D'AVANCEMENT DANS LE PÉRIMÈTRE INTERNE DÉJÀ AUTORISÉ, AVEC AUTORISATION EXPLICITE D'UNE UNIQUE RELANCE CONTRÔLÉE DE NB3.",
+    "NB3 — RELANCE AUTORISÉE UNE FOIS : le run 6382ec04 reste un résultat invalide pour qualifier D3. Ne pas le reclassifier en réussite.",
+    "Autorisation du propriétaire : effectuer une seule relance de NB3",
+    "Ne pas multiplier les relances. Si cette unique exécution échoue, conserver l'échec, identifier sa cause et documenter le prochain blocage sans contourner le contrat.",
+    "Cette autorisation ne permet pas de modifier les règles de gouvernance, de contourner les permissions ou de transformer une preuve invalide en preuve valide."
+  ],
+  "covers": {
+    "contract": "V176-NB3",
+    "dispatches": 1,
+    "after": "NB3-FIX-1 integrated + contract revision inspected"
+  },
+  "neverCovers": [
+    "a second re-run",
+    "re-grading RUN-1",
+    "any criterion / threshold change"
+  ]
+}

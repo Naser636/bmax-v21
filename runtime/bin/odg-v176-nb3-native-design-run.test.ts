@@ -67,6 +67,16 @@ const inLadder = (calls: any[]) => calls.every((c: any) => P.allowedCallOptions(
     const ladderN = rn.diversity.ladder.length;
     check("never-right model: ladder walked to exhaustion, FAIL (not NOT_MEASURED), no call past the schedule, within the cap", rn.verdict === "FAIL" && rn.diversity.exhausted === true && rn.diversity.transitions.length === ladderN - 1 && /DIV-1 ladder exhausted/.test(rn.reason) && rn.network.modelCalls <= R.BUDGETS.maxModelCalls && inLadder(Fn.calls));
     check("never-right model: design switch happened in SEL-1 order (rank 2 after rank 1's sampling points)", rn.diversity.transitions.filter((x: any) => x.kind === "DESIGN_SWITCH").map((x: any) => x.design).join() === rn.selection.ranking.slice(1).join());
+    // NB3-FIX-1 (inspection REJECT of run 6382ec04): after a DESIGN_SWITCH the switched design's S4 implementation is REUSED (no
+    // call), and every "S5 repair <D>" prompt follows a generation/reuse of THAT design (never D1's failed attempt carried over)
+    {
+      const sw = rn.diversity.transitions.filter((x: any) => x.kind === "DESIGN_SWITCH").map((x: any) => x.design);
+      const reused = rn.diversity.events.filter((e: any) => e.kind === "DESIGN_SWITCH_REUSED_S4").map((e: any) => e.design);
+      check("NB3-FIX-1: every switched design with an S4 implementation is reused first (DESIGN_SWITCH_REUSED_S4)", sw.length > 0 && sw.filter((d: string) => rn.selection && rn.design && rn.generations.some((g: any) => g.design === d && /^S4 /.test(g.stage) && g.ok)).every((d: string) => reused.includes(d)));
+      const firstOf = (d: string) => Math.min(...rn.generations.filter((g: any) => g.design === d).map((g: any) => g.promptI || Infinity));
+      const repairOk = rn.prompts.filter((p: any) => /^S5 repair (D\d+)/.test(p.stage)).every((p: any) => { const d = /^S5 repair (D\d+)/.exec(p.stage)[1]; return d === rn.selection.chosen || reused.includes(d) || firstOf(d) < p.i; });
+      check("NB3-FIX-1: no S5 repair prompt of a switched design before that design was generated or reused (its attempt is its own)", repairOk);
+    }
     // the SAME total cap binds the diversity walk: a 5-call profile stops on the cap
     const small = { ...R.PROFILE, budgets: { ...R.BUDGETS, maxModelCalls: 5 } };
     const Fc = R.fakeBySampling({ never: true }); const rc = await NB2.runNativeDesign({ root: ROOT, label: "TEST", transport: Fc.fake, loadProbe: NB2.IDLE, profile: small });
