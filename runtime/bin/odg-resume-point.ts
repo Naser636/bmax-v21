@@ -158,7 +158,11 @@ function buildResumePoint(I: any): any {
     let next: any;
     if (closed) next = { actor: "NONE", action: `closed (${it.status}, CLOSE-1 ${it.closure && it.closure.record}) — further work only as a NEW mission (no re-grade, no re-run)` };
     else if (scope && scope.currentStep === "INSPECT_REVISED_CONTRACT") { pending.push({ kind: "INSPECTION", of: `contract ${String(scope.contractSha256).slice(0, 12)}`, reason: scope.reason }); next = { actor: "INDEPENDENT_INSPECTOR", action: `inspect the revised contract (sha ${scope.contractSha256}) and commit the inspection record` }; }
-    else if (scope && scope.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && scope.currentStepAuthorized) {
+    else if (scope && scope.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && scope.currentStepAuthorized && it.requiresOwnerAuthorization === true && dispatchedBy(it.id).length === 0) {
+      // RSP-OWN-1 (parity with GO actionabilityOf): an OWN-1-flagged item is never auto-selected by GO, even with an authorized RUN step
+      pending.push({ kind: "OWNER_AUTHORIZATION", of: it.id, reason: it.ownerReason || "requiresOwnerAuthorization" });
+      next = { actor: "OWNER", action: `RUN step authorized by scope, but the register flags ${it.id} owner-gated (${it.ownerReason || "requiresOwnerAuthorization"}) — GO never auto-selects it (GO-ACT-1 actionabilityOf); explicit owner decision required` };
+    } else if (scope && scope.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && scope.currentStepAuthorized) {
       const d = dispatchedBy(it.id);
       next = d.length ? { actor: "PROVIDER", action: `GO already dispatched ${it.id} (${d[d.length - 1].trace} run ${d[d.length - 1].runId}); collect the runner's experiment record into a result PR — never re-run (one-shot claim)` }
         : { actor: "GO", action: `GO --execute dispatches the declared target ${c && c.authorization && c.authorization.dispatchTargets && c.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS ? c.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS.command : "(none declared)"}` };

@@ -1226,10 +1226,16 @@
         }
       },
       "lastGoRun": null,
-      "pending": [],
+      "pending": [
+        {
+          "kind": "OWNER_AUTHORIZATION",
+          "of": "V19-EXP-B",
+          "reason": "OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-exp-b-run.ts"
+        "actor": "OWNER",
+        "action": "RUN step authorized by scope, but the register flags V19-EXP-B owner-gated (OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass) — GO never auto-selects it (GO-ACT-1 actionabilityOf); explicit owner decision required"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V19-EXP-B]",
@@ -1460,18 +1466,19 @@
       {
         "item": "V178-P2",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-local-model-benchmark.ts"
-      },
-      {
-        "item": "V19-EXP-B",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-exp-b-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2, V19-EXP-B",
+    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V19-EXP-B",
+        "actor": "OWNER",
+        "action": "RUN step authorized by scope, but the register flags V19-EXP-B owner-gated (OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass) — GO never auto-selects it (GO-ACT-1 actionabilityOf); explicit owner decision required"
       }
     ],
     "lastGoRun": {
