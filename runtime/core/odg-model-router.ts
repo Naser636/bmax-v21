@@ -160,5 +160,43 @@ async function runWithFallback(decision: any, invoke: any, opts: any = {}): Prom
   return freeze({ outcome: "UNAVAILABLE", model: null, attempts: freeze(attempts), reason: order.length ? "every model in the fallback order was unavailable or timed out" : "no model to try" });
 }
 
-module.exports = { DIFFICULTIES, LOCAL_POOL, selectModel, routeBatch, MODEL_ROUTER_CONTRACT, MEASURED_DECISION, selectMeasured, runWithFallback };
+// ---- V17.8 P5 — TEST-GATED CHEAP-FIRST CASCADE (extends this canonical router; no second router).
+// cascadeOrder: the measured registry's models for a task class, cheapest first (registry cost: parameterCount, else
+// sizeBytes; unknown cost ⇒ last), EXCLUDING every DEMOTED / NOT_MEASURED / UNAVAILABLE model (as selectMeasured).
+// runTestGatedCascade: generate with each model in that order and STOP at the first result whose sandbox tests PASS;
+// escalate ONLY when the tests fail (a test FAIL is the escalation signal, never a silent retry of the same model);
+// unavailable / timed-out models are skipped (recorded). The test gate is injected (the caller's sandbox), never self-graded.
+const CASCADE_RULE = "CASCADE-1: cheap-first over the measured registry (DEMOTED / NOT_MEASURED / UNAVAILABLE excluded); a model's output is accepted only when the injected sandbox test gate PASSES; a test FAIL escalates to the next (more expensive) model; exhausted ⇒ ALL_FAILED (honest)";
+function costOf(m: any): number { return Number.isFinite(m && m.parameterCount) ? m.parameterCount : Number.isFinite(m && m.sizeBytes) ? m.sizeBytes : Infinity; }
+function cascadeOrder(input: any): any {
+  const i = isObj(input) ? input : {};
+  if (!isStr(i.taskClass)) return freeze({ ok: false, code: "BAD_TASK_CLASS" });
+  const models = isObj(i.registry) && Array.isArray(i.registry.models) ? i.registry.models : null;
+  if (!models) return freeze({ ok: false, code: "NO_REGISTRY", detail: "a measured registry is required — no measurement ⇒ no cascade" });
+  const avail = Array.isArray(i.available) ? new Set(i.available) : null;
+  const rows = models.map((m: any) => {
+    const pc = isObj(m.perClass) ? m.perClass[i.taskClass] : null;
+    let status = pc ? pc.status : "NOT_MEASURED";
+    if (m.available === false || (avail && !avail.has(m.id))) status = "UNAVAILABLE";
+    return { id: m.id, status, cost: costOf(m) };
+  });
+  const order = rows.filter((r: any) => r.status === "QUALIFIED" || r.status === "PROBATION").sort((a: any, b: any) => a.cost - b.cost || (a.id < b.id ? -1 : 1));
+  return freeze({ ok: true, rule: CASCADE_RULE, taskClass: i.taskClass, order: freeze(order.map((r: any) => r.id)), excluded: freeze(rows.filter((r: any) => !order.includes(r)).map((r: any) => ({ id: r.id, status: r.status }))) });
+}
+async function runTestGatedCascade(order: any, generate: any, testGate: any): Promise<any> {
+  const ids = Array.isArray(order) ? order.filter(isStr) : [];
+  if (typeof generate !== "function" || typeof testGate !== "function") return freeze({ outcome: "ERROR", model: null, attempts: freeze([]), reason: "generate and testGate (functions) required" });
+  const attempts: any[] = [];
+  for (const m of ids) {
+    let g: any; try { g = await generate(m); } catch (e: any) { attempts.push(freeze({ model: m, generated: false, reason: "generate threw: " + String((e && e.message) || e).slice(0, 200) })); return freeze({ outcome: "ERROR", model: m, attempts: freeze(attempts), rule: CASCADE_RULE }); }
+    if (!g || g.ok !== true) { attempts.push(freeze({ model: m, generated: false, unavailable: !!(g && (g.unavailable || g.timedOut)), reason: g && g.reason ? String(g.reason).slice(0, 200) : "no output" })); continue; }
+    let t: any; try { t = await testGate(g, m); } catch (e: any) { t = { pass: false, reason: "test gate threw: " + String((e && e.message) || e).slice(0, 200) }; }
+    const pass = !!(t && t.pass === true);
+    attempts.push(freeze({ model: m, generated: true, testsPass: pass, reason: t && t.reason ? String(t.reason).slice(0, 200) : null }));
+    if (pass) return freeze({ outcome: "PASS", model: m, escalations: attempts.filter((a: any) => a.generated && a.testsPass === false).length, attempts: freeze(attempts), result: g, rule: CASCADE_RULE });
+  }
+  return freeze({ outcome: "ALL_FAILED", model: null, escalations: attempts.filter((a: any) => a.generated && a.testsPass === false).length, attempts: freeze(attempts), rule: CASCADE_RULE });
+}
+
+module.exports = { DIFFICULTIES, LOCAL_POOL, selectModel, routeBatch, MODEL_ROUTER_CONTRACT, MEASURED_DECISION, selectMeasured, runWithFallback, CASCADE_RULE, cascadeOrder, runTestGatedCascade };
 export {};
