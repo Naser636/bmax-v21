@@ -1,0 +1,21 @@
+{
+  "//": "INCIDENT record — V176-NB3 RUN-1 (GO run 6382ec0449920f6c). Result inspection (a9708f5fa7d5cbc5e) REJECTED it as valid evidence: runner defect in the DIV-1 DESIGN_SWITCH leg. Kept for history, never graded, never reclassified as a success (owner decision docs/odg/V19_OWNER_DECISION_NB3_RERUN.json).",
+  "schema": "odg-run-incident/1",
+  "scenario": "V176-NB3",
+  "date": "2026-11-26",
+  "run": "6382ec0449920f6c",
+  "resultRecord": "docs/odg/evidence/V176_NB3_RUN1_INCIDENT_RESULT.json",
+  "resultSha256": "367034990a7e0138dba4db722808f358288b26dc25ccc32409a8f6771b5bd33f",
+  "trace": "docs/odg/evidence/V176_NB3_RUN1_GO_TRACE.jsonl",
+  "mergedOriginallyAs": "V176_NB3_NATIVE_DESIGN_RESULT.json (#1067)",
+  "recordedOutcome": "FAIL (runner verdict; NOT accepted as evidence for D3)",
+  "inspection": {
+    "verdict": "REJECT",
+    "inspectorSessionId": "a9708f5fa7d5cbc5e",
+    "inspectedHeadSha": "e884167e",
+    "defect": "(1) D3's repair prompts carried D1's failed attempt (hint computed once, reused across ladder points); (2) the DESIGN_SWITCH 'S4 implementation reused first' branch was unreachable (S4 contents pre-seeded in seen); all 3 D3 repair outputs byte-identical to D1's code; ladder consumed in round 1",
+    "validlyShown": "D1 is not repaired by base or sampling (temperature 0 / 0.5 / 0.9 ⇒ identical failing code); AC1 met; AC2 met (D1 27/33, D3 24/33, SEL-1 chose D1); AC3 not met"
+  },
+  "fix": "NB3-FIX-1: runtime/core/odg-native-design-pipeline.ts diverseGenerate reusedS4 + runtime/bin/odg-v175-native-design-run.ts design-scoped hint; regression tests (pipeline unit + NB3 end-to-end, the reuse assertion fails without the fix)",
+  "rerun": "exactly one, authorized by docs/odg/V19_OWNER_DECISION_NB3_RERUN.json"
+}

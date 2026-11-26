@@ -181,6 +181,16 @@ check("pipeline contract lists 6 stages + reused canonical components", P.NATIVE
   check("diverseGenerate: a predicted-identical (not sent) generation is a stall with its own event kind", x4.ev[0].kind === "STALL_PREDICTED_IDENTICAL_NOT_SENT" && x4.ctl.st.transitions[0].reason === "PREDICTED_IDENTICAL" && x4.r.gen.content === "NEW");
   const x5 = await runDG(() => null, { ...SPEC, escalationModels: [], maxVariations: 8 }, ["OLD"]);
   check("diverseGenerate: a FAILED generation is not a stall (no advance; buildProject keeps its retry budget)", x5.r.gen === null && x5.ctl.st.transitions.length === 0);
+  // NB3-FIX-1 regression (inspection REJECT of NB3 run 6382ec04): S4 contents pre-seeded in `seen` must NOT block the S4 reuse
+  {
+    const ctl = P.makeDiversityController({ ...SPEC, escalationModels: [], maxVariations: 8 }, ["D1", "D2"], "m:7b");
+    const seen = new Set(["OLD", "S4-D2"]); const reusedS4 = new Set<string>(); const ev: any[] = []; let n = 0;
+    const r = await P.diverseGenerate({ controller: ctl, seen, reusedS4, events: ev, candidateFor: (d: string) => (d === "D2" ? mk("S4-D2", 99) : null), generate: async () => { n++; return mk("OLD", n); } });
+    check("NB3-FIX-1: with reusedS4 tracked, the switched design's S4 implementation is reused even though S4 contents are pre-seeded in seen", r.gen && r.gen.content === "S4-D2" && reusedS4.has("S4-D2") && ev.some((e: any) => e.kind === "DESIGN_SWITCH_REUSED_S4"));
+    const ctl2 = P.makeDiversityController({ ...SPEC, escalationModels: [], maxVariations: 8 }, ["D1", "D2"], "m:7b"); ctl2.st.switchUsed = new Set();
+    const r2 = await P.diverseGenerate({ controller: ctl2, seen: new Set(["OLD", "S4-D2"]), reusedS4: new Set(["S4-D2"]), events: [], candidateFor: (d: string) => (d === "D2" ? mk("S4-D2", 99) : null), generate: async () => mk("OLD", 1) });
+    check("NB3-FIX-1: an S4 implementation already reused in S5 is not reused twice", !(r2.gen && r2.gen.content === "S4-D2" && r2.reusedS4 === true));
+  }
   check("DIV-1 template plumbing unchanged: TEMPLATE segments still denylist-clean", P.denylistHits(P.implementPromptSegments(p1, item.currentSource, P.analyseImpact(ROOT, item.targetPath), [], { id: "D1", summary: "s", steps: [] }, { verifyError: "x", attemptSource: "y" })).length === 0);
   // ---- V17.8 P1: SAMPLE-1 multi-candidate generation + XSEL-1 execution-based selection (fake transport only) ----
   {

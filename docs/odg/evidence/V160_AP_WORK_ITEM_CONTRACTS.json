@@ -2708,6 +2708,10 @@
           "runtime/core/odg-canonical-json.ts",
           "runtime/core/odg-canonical-json-extended.test.ts",
           "runtime/bin/odg-v176-nb3-native-design-run.ts",
+          "runtime/core/odg-native-design-pipeline.ts",
+          "runtime/core/odg-native-design-pipeline.test.ts",
+          "runtime/bin/odg-v175-native-design-run.ts",
+          "runtime/bin/odg-v176-nb3-native-design-run.test.ts",
           "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json"
         ],
         "nativePatchWriteSet": [
@@ -2928,6 +2932,12 @@
               }
             ],
             "note": "the ladder is instantiated over the run's SEL-1 ranking (rank1 = chosen design); design ids are the run's"
+          },
+          "rerun": {
+            "rule": "RERUN-1: exactly ONE re-run after NB3-FIX-1, authorized by the owner",
+            "ownerDecision": "docs/odg/V19_OWNER_DECISION_NB3_RERUN.json",
+            "invalidRun": "6382ec0449920f6c (docs/odg/evidence/V176_NB3_RUN1_INCIDENT.json)",
+            "fix": "NB3-FIX-1"
           }
         }
       },
@@ -2980,6 +2990,36 @@
           "reason": "NB2 (CLOSED_FAIL, V175_NB2_NATIVE_DESIGN_RESULT.json + V175_NB2_CRITERIA_VALIDATION.json): best design 27/33; both repair rounds stopped NO_PROGRESS_IDENTICAL_REGENERATION (generations 1, 4, 5, 6 byte-identical) even with the failed attempt shown ⇒ hypothesis: the next lever is repair diversity",
           "justification": "owner V176 build missions explicitly asks to prepare NB3 with the repair-diversity lever and have its contract inspected; criteria, oracle and caps are NB2's (not weakened), fixed with the schedule before any NB3 model call",
           "revisionAuthorSessionId": "nb3-v176"
+        },
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 NB3 NB3-FIX-1 session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_DECISION_NB3_RERUN.json",
+          "originalCriteria": [
+            "AC1 problem reproduced at run time: fresh PROB-1 evidenceDigest equals origin.evidenceDigest (else NOT_MEASURED)",
+            "AC2 designs: ≥2 parseable designs from the local model, each implemented and measured in the sandbox; SEL-1 choice recorded with all scores",
+            "AC3 held-out oracle: all 33 PROB-1 cases PASS inside odg-native-build-sandbox (EXECUTED, SANDBOX) + strict typecheck 0 diagnostics",
+            "AC4 branch-ready: the diff modifies runtime/core/odg-canonical-json.ts, adds runtime/core/odg-canonical-json-extended.test.ts, passes git apply --check at the run HEAD",
+            "AC5 authorship ledger + provenance: per-stage authorship, every prompt sha256 + its segment kinds + denylist hits (0), every generation sha256, providerCalls 0",
+            "AC6 learning: lessons read before the run (memory-taxonomy CONSOLIDATED) and lessons derived from this run are both in the record",
+            "AC7 diversity recorded: the result carries diversity.ladder, every transition (reason, point, params) and per-call (model, temperature, seed); every sent call is a pre-registered point; network.modelCalls ≤ maxModelCalls"
+          ],
+          "originalCriteriaNote": "AC1–AC7, budgets, thresholds and decision rule UNCHANGED",
+          "change": [
+            "write_set += the two files of NB3-FIX-1 (shared pipeline diverseGenerate, shared v175 runner S5 hint) + their tests",
+            "preRegistration.rerun (RERUN-1, one re-run, owner decision)"
+          ],
+          "original": {
+            "write_set": [
+              "runtime/core/odg-canonical-json.ts",
+              "runtime/core/odg-canonical-json-extended.test.ts",
+              "runtime/bin/odg-v176-nb3-native-design-run.ts",
+              "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json"
+            ]
+          },
+          "reason": "result inspection REJECT of RUN-1 6382ec04 (DESIGN_SWITCH leg degenerate); owner authorized one controlled re-run",
+          "justification": "fix the cause, replay only the invalidated operation",
+          "revisionAuthorSessionId": "v19-nb3-fix1"
         }
       ]
     },

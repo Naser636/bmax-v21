@@ -222,6 +222,7 @@ async function runNativeDesign(opts: any): Promise<any> {
   // V17.6 NB3 DIV-1 (only when the profile's budgets declare `diversity`): a STALL (content already seen) walks the ladder.
   const div = B.diversity ? PIPE.makeDiversityController(B.diversity, sel.ranking, B.model) : null;
   const seenContent = new Set<string>(Object.values(candidates).filter(Boolean).map((g: any) => g.sandboxContentSha256));
+  const reusedS4 = new Set<string>();   // NB3-FIX-1: S4 implementations already reused in S5 (DESIGN_SWITCH reuse is reachable)
   const diversityEvents: any[] = [];
   const rounds: any[] = []; let accepted: any = null; let typeHint: any = null; let firstUse = true;
   const current: any = { gen: null };   // the last generation fed to the sandbox (its source is shown on repair)
@@ -236,8 +237,11 @@ async function runNativeDesign(opts: any): Promise<any> {
       if (hint && current.gen && typeof current.gen.tsSource === "string") hint = { ...hint, attemptSource: current.gen.tsSource };   // show the failed attempt
       const label = hint && hint.typeError ? "typefix" : hint ? "repair" : "implement";
       if (div) {
-        const r = await PIPE.diverseGenerate({ controller: div, seen: seenContent, events: diversityEvents, candidateFor: (id: string) => candidates[id] || null,
-          generate: (pt: any) => implement(`S5 ${label} ${pt.design} r${round} p${pt.i}`, designs.find((d: any) => d.id === pt.design), hint, pt) });
+        // NB3-FIX-1: a generation for ANOTHER design than the attempt the hint describes never carries that attempt (its
+        // verifyError / attemptSource belong to the previous design): it is a fresh implementation of the switched design.
+        const hintDesign = current.gen && current.gen.design ? current.gen.design : sel.chosen;
+        const r = await PIPE.diverseGenerate({ controller: div, seen: seenContent, reusedS4, events: diversityEvents, candidateFor: (id: string) => candidates[id] || null,
+          generate: (pt: any) => implement(`S5 ${pt.design === hintDesign ? label : "implement"} ${pt.design} r${round} p${pt.i}`, designs.find((d: any) => d.id === pt.design), pt.design === hintDesign ? hint : null, pt) });
         if (!r.gen) return { ok: false };
         current.gen = r.gen; return { ok: true, content: r.gen.content };
       }
