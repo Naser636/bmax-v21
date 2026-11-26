@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "3f51723974f3cdd1a5623954697c58edbcc6721514aa34b4a1f9316a42b272cf"
+      "sha256": "ea81925d89431adf641ae496f026d788e28fd9481af44e43a40a115dda701ad7"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -52,6 +52,10 @@
     {
       "source": "docs/odg/evidence/V176_NB2_GO_EXECUTE_TRACE.jsonl",
       "sha256": "f6568cd70c96d1a85c360a6405b6f46a2bfe4bc3470c73fc587881555f95c6b5"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P1R_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "9609b87d903d38a4d3f5da7d243c07445b9c7b4b3208d49accc95d56015218b2"
     },
     {
       "source": "docs/odg/evidence/V178_P1_GO_EXECUTE_TRACE.jsonl",
@@ -212,6 +216,10 @@
     {
       "source": "docs/odg/evidence/V178_P1R_CONTRACT_INSPECTION.json",
       "sha256": "4934382745dc3b2940a2c162d11d3cc75aa579a4824247bb24deec8fa78ef4e5"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+      "sha256": "7702b2748d2def6d95ba2e2b668d0f9b123535c4b0bc49af2e2d3ee0fa116239"
     }
   ],
   "checkpoint": {
@@ -1121,17 +1129,18 @@
       },
       "contractSha256": "12c388bca68935de52eefaddacc10c1a9f30c85b8b1c46eb00ca33427b00af73",
       "ownerRecord": "docs/odg/V19_OWNER_ORDER_P1R.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": "VALIDATE_CRITERIA",
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
         "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
         ],
-        "reason": "inspection ACCEPT bound to contract 12c388bca689 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
         "contractSha256": "12c388bca68935de52eefaddacc10c1a9f30c85b8b1c46eb00ca33427b00af73"
       },
       "records": {
@@ -1140,19 +1149,36 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
-      "pending": [],
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V178_P1R_GO_EXECUTE_TRACE.jsonl",
+        "runId": "fdcefee5ce7ca795",
+        "status": "EXECUTED_FAIL",
+        "endedAt": "2026-11-26T02:34:38.577Z",
+        "dispatched": true
+      },
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v178-p1r-agreement-run.ts"
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 12c388bca689 and experiment docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json, then an independent inspection — never auto-graded"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P1-R]",
@@ -1342,6 +1368,19 @@
       "strategic": "D",
       "workingOn": "V178-P4-INT",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V178_P1R_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "fdcefee5ce7ca795",
+      "status": "EXECUTED_FAIL",
+      "endedAt": "2026-11-26T02:34:38.577Z",
+      "dispatched": [
+        "V178-P1-R"
+      ],
+      "strategic": "D",
+      "workingOn": "V178-P1-R",
+      "ownerSelectionRecord": null
     }
   ],
   "nextGoAction": {
@@ -1370,27 +1409,28 @@
       {
         "item": "V178-P2",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-local-model-benchmark.ts"
-      },
-      {
-        "item": "V178-P1-R",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v178-p1r-agreement-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2, V178-P1-R",
+    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V178-P1-R",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 12c388bca689 and experiment docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/V178_P4_INT_GO_EXECUTE_TRACE.jsonl",
-      "runId": "110038c3b4e89a9c",
-      "status": "EXECUTED_PASS",
-      "endedAt": "2026-11-25T23:55:05.456Z",
+      "trace": "docs/odg/evidence/V178_P1R_GO_EXECUTE_TRACE.jsonl",
+      "runId": "fdcefee5ce7ca795",
+      "status": "EXECUTED_FAIL",
+      "endedAt": "2026-11-26T02:34:38.577Z",
       "strategic": "D",
-      "workingOn": "V178-P4-INT",
+      "workingOn": "V178-P1-R",
       "nextAfterCurrent": {
         "decision": "SELECTED",
         "selected": "D",
