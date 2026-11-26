@@ -3639,7 +3639,7 @@
           "AC4 test 'V178-P2/AC4' (file: acceptance_tests[3]): the selftest runs offline (no daemon)",
           "AC5 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
           "AC6 tsc clean; each touched test file passes run one at a time",
-          "AC7 run (GO-dispatched runtime/bin/odg-local-model-benchmark.ts --v178-measure --out docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json): one measurement record on the 3 installed models (qwen2.5-coder:7b, qwen2.5-coder:3b, qwen2.5:0.5b) × task set v2 × 3 trials with per model: generation tok/s and prompt tok/s (uncontended trials only, MEAS-1), cold load (warm-up) and warm loadMs, peak RSS of the Ollama runner (/proc; unreadable ⇒ NOT_MEASURED), host load per trial, per-class pass rate; verdict MEASURED ⇔ ≥ 1 trial generated; every metric with n = 0 recorded NOT_MEASURED (never 0)"
+          "AC7 run (GO-dispatched runtime/bin/odg-local-model-benchmark.ts v178-measure docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json): one measurement record on the 3 installed models (qwen2.5-coder:7b, qwen2.5-coder:3b, qwen2.5:0.5b) × task set v2 × 3 trials with per model: generation tok/s and prompt tok/s (uncontended trials only, MEAS-1), cold load (warm-up) and warm loadMs, peak RSS of the Ollama runner (/proc; unreadable ⇒ NOT_MEASURED), host load per trial, per-class pass rate; verdict MEASURED ⇔ ≥ 1 trial generated; every metric with n = 0 recorded NOT_MEASURED (never 0)"
         ],
         "acceptance_tests": [
           {
@@ -3766,8 +3766,7 @@
           "RUN_CONTROLLED_EXPERIMENTS": {
             "command": "runtime/bin/odg-local-model-benchmark.ts",
             "args": [
-              "--v178-measure",
-              "--out",
+              "v178-measure",
               "docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json"
             ],
             "writeSet": [
@@ -3800,6 +3799,28 @@
           "reason": "make the Radar proposal V178-P2 executable as written; AC1–AC4 are implemented in runtime/core/odg-local-model-benchmark.test.ts (fake daemon, offline)",
           "justification": "owner record authorizes converting Radar proposals into EXECUTABLE contracts; criteria, thresholds, schedule and caps fixed before any run (no model call made)",
           "revisionAuthorSessionId": "p12-v178"
+        },
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 P2 dispatch-form fix)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json: « la conversion des propositions Radar en contrats » / « Transformer les meilleures propositions Radar en contrats exécutables, sans créer de système parallèle. »",
+          "originalCriteria": [
+            "AC1 test 'V178-P2/AC1' (file: acceptance_tests[0]): a fake daemon response yields promptTokPerSec = prompt_eval_count / prompt_eval_duration",
+            "AC2 test 'V178-P2/AC2' (file: acceptance_tests[1]): trials above the declared load ceiling are flagged CONTENDED and excluded from speed stats (kept in raw)",
+            "AC3 test 'V178-P2/AC3' (file: acceptance_tests[2]): the V155 evidence file is never written by the new mode (--out required)",
+            "AC4 test 'V178-P2/AC4' (file: acceptance_tests[3]): the selftest runs offline (no daemon)",
+            "AC5 measure: every entry of beforeMetric is recomputed from the then-committed source at the same pointer and moved in the objective's direction (LEARN-1); unchanged ⇒ NOT_IMPROVED; source missing ⇒ NOT_MEASURED",
+            "AC6 tsc clean; each touched test file passes run one at a time",
+            "AC7 run (GO-dispatched runtime/bin/odg-local-model-benchmark.ts --v178-measure --out docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json): one measurement record on the 3 installed models (qwen2.5-coder:7b, qwen2.5-coder:3b, qwen2.5:0.5b) × task set v2 × 3 trials with per model: generation tok/s and prompt tok/s (uncontended trials only, MEAS-1), cold load (warm-up) and warm loadMs, peak RSS of the Ollama runner (/proc; unreadable ⇒ NOT_MEASURED), host load per trial, per-class pass rate; verdict MEASURED ⇔ ≥ 1 trial generated; every metric with n = 0 recorded NOT_MEASURED (never 0)"
+          ],
+          "originalCriteriaNote": "AC7 invocation form only ('--v178-measure --out OUT' → positional 'v178-measure OUT'); measurement, budgets, models, task set, thresholds and decision rule unchanged",
+          "change": [
+            "dispatchTargets.RUN_CONTROLLED_EXPERIMENTS.args → positional [v178-measure, OUT]",
+            "CLI accepts the positional form (same measureMain, same --out discipline)"
+          ],
+          "reason": "GO run 118050e8d4c0f416 HALTED (0 dispatch): GO-DT-1 refuses dispatch args starting with '-' (INVALID_DISPATCH_TARGET) — a protection, kept",
+          "justification": "invocation form only; no measurement executed",
+          "revisionAuthorSessionId": "v19-p2-rev2"
         }
       ]
     },

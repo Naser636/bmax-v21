@@ -319,6 +319,7 @@ async function v178P2Tests(): Promise<void> {
   const noOut = M.p2CheckOut(["--v178-measure"]), toV155 = M.p2CheckOut(["--v178-measure", "--out", "docs/odg/evidence/V155_OLLAMA_CAPABILITY_REGISTRY.json"]), other = M.p2CheckOut(["--v178-measure", "--out", "/tmp/x.json"]);
   const code = await M.measureMain(["--v178-measure"]);
   check("V178-P2/AC3: the measure mode never writes the V155 evidence file — --out is required and must be the declared P2 record (missing / V155 / other ⇒ REFUSED exit 3, nothing written)", !noOut.ok && !toV155.ok && !other.ok && noOut.code === 3 && code === 3 && M.p2CheckOut(["--v178-measure", "--out", M.P2_OUT]).ok === true && fs.readFileSync(v155, "utf8") === before && M.P2_OUT !== M.DEFAULT_OUT);
+  check("V178-P2 GO-DT-1: the declared measure args are positional (no token starts with '-') and name exactly the P2 record", M.P2_ARGS.every((a: string) => !a.startsWith("-")) && M.P2_ARGS[0] === "v178-measure" && M.P2_ARGS[1] === M.P2_OUT);
   const down = await M.runMeasurement({ provider: M.fakeProvider({ down: true }), hostProbe: () => ({ loadavg: [0.1, 0.1, 0.1], nproc: 8 }) });
   const busy = await M.runMeasurement({ provider: M.fakeProvider(), hostProbe: () => ({ loadavg: [7, 7, 7], nproc: 8 }) });
   const st = require("child_process").spawnSync(process.execPath, [require.resolve("tsx/cli"), path.join(__dirname, "..", "bin", "odg-local-model-benchmark.ts"), "--v178-measure-selftest"], { encoding: "utf8", timeout: 300000, env: { ...process.env, OLLAMA_HOST: "127.0.0.1:1" } });

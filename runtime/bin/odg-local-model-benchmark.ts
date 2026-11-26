@@ -40,7 +40,8 @@ const P2_SCENARIO = "V178-P2";
 const P2_OUT = "docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json";
 const P2_INSPECTION = "docs/odg/evidence/V178_P2_CONTRACT_INSPECTION.json";
 const P2_SELF = "runtime/bin/odg-local-model-benchmark.ts";
-const P2_ARGS = Object.freeze(["--v178-measure", "--out", P2_OUT]);
+// GO-DT-1 dispatches POSITIONAL args only (no token may start with '-'): the measure mode is reachable as `v178-measure <OUT>`
+const P2_ARGS = Object.freeze(["v178-measure", P2_OUT]);
 const CONTRACTS = "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json";
 const P2_BUDGETS = Object.freeze({ models: Object.freeze(DEFAULT_MODELS.slice()), taskSetFile: "runtime/core/odg-local-model-benchmark-tasks.v2.json", trials: 3, options: B.DEFAULT_OPTIONS, keepAlive: "10m", perCallTimeoutMs: 240000,
   maxCalls: 105, wallMs: 3600000, hostIdleFactor: 0.75, loadCeilingFactor: 0.75, note: "maxCalls = 3 models × (1 warm-up + 11 tasks × 3 trials) = 102 + 3 slack; loadCeiling = nproc × loadCeilingFactor (same factor as HOST-1)" });
@@ -55,7 +56,7 @@ function p2Gate(root: string, contract: any): any {
   if (!sc.applicable) return { ok: false, reason: `authorization scope not applicable: ${sc.reason}` };
   if (sc.currentStep !== "RUN_CONTROLLED_EXPERIMENTS" || sc.executionAuthorized !== true) return { ok: false, reason: `current step ${sc.currentStep} not execution-authorized: ${sc.reason}` };
   const t = contract.authorization && contract.authorization.dispatchTargets ? contract.authorization.dispatchTargets.RUN_CONTROLLED_EXPERIMENTS : null;
-  if (!t || t.command !== P2_SELF || JSON.stringify(t.args) !== JSON.stringify(P2_ARGS) || JSON.stringify(t.writeSet) !== JSON.stringify([P2_OUT])) return { ok: false, reason: "declared dispatch target is not this CLI with args [--v178-measure --out P2_OUT] / writeSet [P2_OUT]" };
+  if (!t || t.command !== P2_SELF || JSON.stringify(t.args) !== JSON.stringify(P2_ARGS) || JSON.stringify(t.writeSet) !== JSON.stringify([P2_OUT])) return { ok: false, reason: "declared dispatch target is not this CLI with args [v178-measure P2_OUT] / writeSet [P2_OUT]" };
   return { ok: true, contractSha256: sc.contractSha256 };
 }
 /* p2CheckOut(argv) — the --out discipline of the measure mode: required, exactly P2_OUT (so never the V155 file). */
@@ -121,6 +122,7 @@ async function measureSelftest(): Promise<number> {
 
 async function main(): Promise<number> {
   if (process.argv.includes("--v178-measure-selftest")) return (await measureSelftest()) === 0 ? 0 : 1;
+  if (process.argv[2] === "v178-measure") return measureMain(["--v178-measure", "--out", ...process.argv.slice(3, 4)]);   // positional form (GO-DT-1)
   if (process.argv.includes("--v178-measure")) return measureMain(process.argv.slice(2));
   const models = String(arg("models", DEFAULT_MODELS.join(","))).split(",").map((s: string) => s.trim()).filter(Boolean);
   const trials = Number(arg("trials", 3));
