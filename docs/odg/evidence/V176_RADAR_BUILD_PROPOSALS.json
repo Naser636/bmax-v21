@@ -24,14 +24,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795712112000,
+    "nowEpochMs": 1795715366000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "f8cef6247b1e432b45b8ea3b371e8240fffb1a0e6e9c11520e0bf3474d39cd96",
-      "epochMs": 1795712112000
+      "sha256": "7bc3b1c22b4f9f8e5f4428a7c3fbdf847ee90651019be49956cd33cefebe2e38",
+      "epochMs": 1795715366000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -2703,7 +2703,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 1,
+        "ageDays": 2,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -2755,7 +2755,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 1,
+        "ageDays": 2,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
