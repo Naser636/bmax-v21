@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "7d82246b1e27381dc7370651d1a01dee6b751d8feddf173e6a66e5621695d7df"
+      "sha256": "6ec7bc469536608fb68fbc502266b424fd1a43bee1849dc8b2ad5af3ca3e3c7a"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -72,6 +72,10 @@
     {
       "source": "docs/odg/evidence/V19_EXP_B_GO_EXECUTE_TRACE.jsonl",
       "sha256": "27eedbcce33b06542c4f7f39d18dc9fab334500a4de761e835b82f33197f7a85"
+    },
+    {
+      "source": "docs/odg/evidence/V19_MEM2_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "154ff0d1ed7c24db62ce756e75e878db60873965448f1979874ed67cd6a0bfa8"
     },
     {
       "source": "docs/odg/evidence/V175_OPEN_PRS_SNAPSHOT.json",
@@ -248,6 +252,10 @@
     {
       "source": "docs/odg/evidence/V19_MEM2_CONTRACT_INSPECTION.json",
       "sha256": "a7ebfecebd91e6fe1d611afbba5898cfd0086aceae0061b60b340b57b3a97546"
+    },
+    {
+      "source": "docs/odg/evidence/V19_MEM2_RESULT.json",
+      "sha256": "0ff8cc3711e787980f38724a6051b9034bed5f97e253e3602e7156b8364eab12"
     }
   ],
   "checkpoint": {
@@ -1285,17 +1293,18 @@
       },
       "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1",
       "ownerRecord": "docs/odg/V19_OWNER_ORDER_MEM.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": "VALIDATE_CRITERIA",
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
         "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
         ],
-        "reason": "inspection ACCEPT bound to contract e7c35ebdf9f3 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
         "contractSha256": "e7c35ebdf9f30d1397bd1fd3ba90de892449615fb15d1d69a7cd348bfee5bcf1"
       },
       "records": {
@@ -1304,19 +1313,36 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V19_MEM2_RESULT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
-      "pending": [],
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V19_MEM2_GO_EXECUTE_TRACE.jsonl",
+        "runId": "247fa4eeb95c180c",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-26T13:41:52.972Z",
+        "dispatched": true
+      },
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/V19_MEM2_RESULT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-mem2-run.ts"
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract e7c35ebdf9f3 and experiment docs/odg/evidence/V19_MEM2_RESULT.json, then an independent inspection — never auto-graded"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V19-MEM-2]",
@@ -1532,6 +1558,19 @@
       "strategic": "D",
       "workingOn": "V19-EXP-B",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V19_MEM2_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "247fa4eeb95c180c",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-26T13:41:52.972Z",
+      "dispatched": [
+        "V19-MEM-2"
+      ],
+      "strategic": "D",
+      "workingOn": "V19-MEM-2",
+      "ownerSelectionRecord": null
     }
   ],
   "nextGoAction": {
@@ -1560,27 +1599,28 @@
       {
         "item": "V178-P2",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-local-model-benchmark.ts"
-      },
-      {
-        "item": "V19-MEM-2",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-mem2-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2, V19-MEM-2",
+    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V19-MEM-2",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract e7c35ebdf9f3 and experiment docs/odg/evidence/V19_MEM2_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/V19_EXP_B_GO_EXECUTE_TRACE.jsonl",
-      "runId": "d87ca4d17a1e4ce3",
+      "trace": "docs/odg/evidence/V19_MEM2_GO_EXECUTE_TRACE.jsonl",
+      "runId": "247fa4eeb95c180c",
       "status": "EXECUTED_PASS",
-      "endedAt": "2026-11-26T10:44:56.694Z",
+      "endedAt": "2026-11-26T13:41:52.972Z",
       "strategic": "D",
-      "workingOn": "V19-EXP-B",
+      "workingOn": "V19-MEM-2",
       "nextAfterCurrent": {
         "decision": "SELECTED",
         "selected": "D",
