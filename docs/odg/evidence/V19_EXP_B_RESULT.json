@@ -1,0 +1,552 @@
+{
+  "schema": "odg-v19-exp-b-result/1",
+  "scenario": "V19-EXP-B",
+  "label": "NATIVE (ODG GO dispatch)",
+  "rule": "EXP-B-1: episode = derived projection (closed register item + criteria-validation record + contract) recorded in decision-precedent; recallComparable = Jaccard over normalized features (digit-bearing tokens dropped: ids/versions/shas never leak); FAILED ⇒ AVOID_UNCHANGED, PARTIAL ⇒ PARTIAL_REUSE, PASS ⇒ REUSABLE_WITH_ADAPTATION; autoApply always false",
+  "criteria": {
+    "AC1": {
+      "met": true,
+      "closedItems": [
+        "F",
+        "G",
+        "H",
+        "J",
+        "G2",
+        "J2",
+        "V175-NB1",
+        "V175-NB2",
+        "V178-P1",
+        "V178-P4",
+        "V178-P4-INT",
+        "V178-P1-R"
+      ],
+      "episodes": [
+        {
+          "id": "EPISODE:F",
+          "status": "ACTIVE",
+          "outcome": "PARTIAL",
+          "reuse": "PARTIAL_REUSE",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 5,
+          "features": 78,
+          "components": 5
+        },
+        {
+          "id": "EPISODE:G",
+          "status": "ACTIVE",
+          "outcome": "PARTIAL",
+          "reuse": "PARTIAL_REUSE",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 1,
+          "features": 38,
+          "components": 3
+        },
+        {
+          "id": "EPISODE:H",
+          "status": "ACTIVE",
+          "outcome": "FAILED",
+          "reuse": "AVOID_UNCHANGED",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 3,
+          "features": 46,
+          "components": 7
+        },
+        {
+          "id": "EPISODE:J",
+          "status": "ACTIVE",
+          "outcome": "PARTIAL",
+          "reuse": "PARTIAL_REUSE",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 7,
+          "features": 46,
+          "components": 2
+        },
+        {
+          "id": "EPISODE:G2",
+          "status": "ACTIVE",
+          "outcome": "PARTIAL",
+          "reuse": "PARTIAL_REUSE",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 5,
+          "features": 57,
+          "components": 5
+        },
+        {
+          "id": "EPISODE:J2",
+          "status": "ACTIVE",
+          "outcome": "FAILED",
+          "reuse": "AVOID_UNCHANGED",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 6,
+          "features": 52,
+          "components": 3
+        },
+        {
+          "id": "EPISODE:V175-NB1",
+          "status": "ACTIVE",
+          "outcome": "SUCCEEDED",
+          "reuse": "REUSABLE_WITH_ADAPTATION",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 4,
+          "features": 52,
+          "components": 4
+        },
+        {
+          "id": "EPISODE:V175-NB2",
+          "status": "ACTIVE",
+          "outcome": "FAILED",
+          "reuse": "AVOID_UNCHANGED",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 7,
+          "features": 45,
+          "components": 4
+        },
+        {
+          "id": "EPISODE:V178-P1",
+          "status": "ACTIVE",
+          "outcome": "FAILED",
+          "reuse": "AVOID_UNCHANGED",
+          "confidence": "MECHANICALLY_VERIFIED_NEGATIVE",
+          "lessons": 2,
+          "features": 27,
+          "components": 5
+        },
+        {
+          "id": "EPISODE:V178-P4",
+          "status": "ACTIVE",
+          "outcome": "SUCCEEDED",
+          "reuse": "REUSABLE_WITH_ADAPTATION",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 4,
+          "features": 25,
+          "components": 8
+        },
+        {
+          "id": "EPISODE:V178-P4-INT",
+          "status": "ACTIVE",
+          "outcome": "SUCCEEDED",
+          "reuse": "REUSABLE_WITH_ADAPTATION",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 4,
+          "features": 36,
+          "components": 8
+        },
+        {
+          "id": "EPISODE:V178-P1-R",
+          "status": "ACTIVE",
+          "outcome": "FAILED",
+          "reuse": "AVOID_UNCHANGED",
+          "confidence": "INSPECTED_CRITERIA_VALIDATED",
+          "lessons": 3,
+          "features": 26,
+          "components": 2
+        }
+      ],
+      "validationShaRecomputed": true
+    },
+    "AC3": {
+      "met": true,
+      "hits": 10,
+      "of": 10,
+      "threshold": 8,
+      "k": 3,
+      "withoutMemoryHits": 0,
+      "randomExpectation": 2.727,
+      "queries": [
+        {
+          "query": "G",
+          "partner": "G2",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "G2",
+              "similarity": 0.266667,
+              "outcome": "PARTIAL",
+              "applicable": true
+            },
+            {
+              "item": "H",
+              "similarity": 0.063291,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "J",
+              "similarity": 0.063291,
+              "outcome": "PARTIAL",
+              "applicable": true
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        },
+        {
+          "query": "G2",
+          "partner": "G",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "G",
+              "similarity": 0.266667,
+              "outcome": "PARTIAL",
+              "applicable": true
+            },
+            {
+              "item": "H",
+              "similarity": 0.157303,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "J2",
+              "similarity": 0.058252,
+              "outcome": "FAILED",
+              "applicable": false
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        },
+        {
+          "query": "J",
+          "partner": "J2",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "J2",
+              "similarity": 0.324324,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "F",
+              "similarity": 0.097345,
+              "outcome": "PARTIAL",
+              "applicable": true
+            },
+            {
+              "item": "G",
+              "similarity": 0.063291,
+              "outcome": "PARTIAL",
+              "applicable": true
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        },
+        {
+          "query": "J2",
+          "partner": "J",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "J",
+              "similarity": 0.324324,
+              "outcome": "PARTIAL",
+              "applicable": true
+            },
+            {
+              "item": "H",
+              "similarity": 0.065217,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "G2",
+              "similarity": 0.058252,
+              "outcome": "PARTIAL",
+              "applicable": true
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        },
+        {
+          "query": "V175-NB1",
+          "partner": "V175-NB2",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "V175-NB2",
+              "similarity": 0.154762,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "V178-P1",
+              "similarity": 0.082192,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "V178-P4",
+              "similarity": 0.040541,
+              "outcome": "SUCCEEDED",
+              "applicable": true
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        },
+        {
+          "query": "V175-NB2",
+          "partner": "V175-NB1",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "V175-NB1",
+              "similarity": 0.154762,
+              "outcome": "SUCCEEDED",
+              "applicable": true
+            },
+            {
+              "item": "V178-P4-INT",
+              "similarity": 0.051948,
+              "outcome": "SUCCEEDED",
+              "applicable": true
+            },
+            {
+              "item": "V178-P4",
+              "similarity": 0.044776,
+              "outcome": "SUCCEEDED",
+              "applicable": true
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        },
+        {
+          "query": "V178-P1",
+          "partner": "V178-P1-R",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "V178-P1-R",
+              "similarity": 0.261905,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "V175-NB1",
+              "similarity": 0.082192,
+              "outcome": "SUCCEEDED",
+              "applicable": true
+            },
+            {
+              "item": "V175-NB2",
+              "similarity": 0.028571,
+              "outcome": "FAILED",
+              "applicable": false
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        },
+        {
+          "query": "V178-P1-R",
+          "partner": "V178-P1",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "V178-P1",
+              "similarity": 0.261905,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "V175-NB2",
+              "similarity": 0.044118,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "V175-NB1",
+              "similarity": 0.04,
+              "outcome": "SUCCEEDED",
+              "applicable": true
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        },
+        {
+          "query": "V178-P4",
+          "partner": "V178-P4-INT",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "V178-P4-INT",
+              "similarity": 0.12963,
+              "outcome": "SUCCEEDED",
+              "applicable": true
+            },
+            {
+              "item": "V175-NB2",
+              "similarity": 0.044776,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "J2",
+              "similarity": 0.040541,
+              "outcome": "FAILED",
+              "applicable": false
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        },
+        {
+          "query": "V178-P4-INT",
+          "partner": "V178-P4",
+          "hit": true,
+          "rank": 1,
+          "top": [
+            {
+              "item": "V178-P4",
+              "similarity": 0.12963,
+              "outcome": "SUCCEEDED",
+              "applicable": true
+            },
+            {
+              "item": "V175-NB2",
+              "similarity": 0.051948,
+              "outcome": "FAILED",
+              "applicable": false
+            },
+            {
+              "item": "G",
+              "similarity": 0.042254,
+              "outcome": "PARTIAL",
+              "applicable": true
+            }
+          ],
+          "withoutMemory": {
+            "status": "NO_COMPARABLE",
+            "hit": false
+          }
+        }
+      ]
+    },
+    "AC2": {
+      "met": true,
+      "lessonClasses": {
+        "INTERNAL_EXPERIENCE": 50,
+        "HYPOTHESIS": 1
+      },
+      "recalls": 10
+    },
+    "AC4": {
+      "met": true,
+      "recalledFailed": 14,
+      "recalledSucceeded": 8,
+      "failedBlocked": true,
+      "succeededApplicable": true
+    },
+    "AC5": {
+      "met": true,
+      "workingOn": "V19-EXP-B",
+      "decompose": "DONE",
+      "experienceRecall": {
+        "status": "RECALLED",
+        "comparable": [
+          {
+            "item": "V178-P4-INT",
+            "similarity": 0.108434,
+            "outcome": "SUCCEEDED",
+            "reuse": "REUSABLE_WITH_ADAPTATION",
+            "applicable": true
+          },
+          {
+            "item": "V178-P4",
+            "similarity": 0.065789,
+            "outcome": "SUCCEEDED",
+            "reuse": "REUSABLE_WITH_ADAPTATION",
+            "applicable": true
+          }
+        ],
+        "succeeded": [
+          "V178-P4-INT",
+          "V178-P4"
+        ],
+        "failed": [],
+        "partial": [],
+        "autoApply": false
+      },
+      "withoutPortHasField": false
+    },
+    "AC6": {
+      "met": true,
+      "evidence": {
+        "tests": [
+          {
+            "file": "runtime/core/odg-experience-episode.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/core/decision-precedent.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/core/odg-go-cycle.test.ts",
+            "exit": 0,
+            "ok": true
+          },
+          {
+            "file": "runtime/bin/odg-go.test.ts",
+            "exit": 0,
+            "ok": true
+          }
+        ],
+        "tsc": {
+          "command": "tsc --noEmit --incremental false -p tsconfig.json",
+          "exit": 0,
+          "ok": true
+        }
+      }
+    }
+  },
+  "outcome": "PASS",
+  "honestLimits": [
+    "in-sample: the feature/similarity design (EXP-B-1) was written with the closed corpus visible, although no ranking was computed on it before pre-registration",
+    "similarity is lexical-structural Jaccard, not semantic proof; families share vocabulary by construction (a child restates its parent's problem)",
+    "12-episode corpus: a retrieval PASS here shows the mechanism works on ODG's own closures, not generalisation to new domains (increment G)"
+  ],
+  "provenance": {
+    "codeAuthor": "PROVIDER (Claude Code) — EXP-B-1",
+    "decisionAuthority": "ODG GO (dispatch of the declared target)",
+    "network": "none",
+    "modelCalls": 0,
+    "providerCalls": 0
+  },
+  "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a"
+}

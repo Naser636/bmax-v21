@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "4e5b2c346cf36ed5bc456ccef49b1dfefcaaaff16d5c7f5126e2a80f73dc313d"
+      "sha256": "1490941e69baac23fdfad2f8986c0744203e8769069312ca6caa8466f7af620b"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -68,6 +68,10 @@
     {
       "source": "docs/odg/evidence/V178_P4_INT_GO_EXECUTE_TRACE.jsonl",
       "sha256": "2a179cad2527398a1d41f7df98f716590477278f7d2c6f205550c903d7118eb0"
+    },
+    {
+      "source": "docs/odg/evidence/V19_EXP_B_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "27eedbcce33b06542c4f7f39d18dc9fab334500a4de761e835b82f33197f7a85"
     },
     {
       "source": "docs/odg/evidence/V175_OPEN_PRS_SNAPSHOT.json",
@@ -232,6 +236,10 @@
     {
       "source": "docs/odg/evidence/V19_EXP_B_CONTRACT_INSPECTION.json",
       "sha256": "105a44220fbaf109888362fd5b7879e184c70ae811a83494ec8e7cccd6b70356"
+    },
+    {
+      "source": "docs/odg/evidence/V19_EXP_B_RESULT.json",
+      "sha256": "032928b7bb10ab2a71e7ffc3930630e42c3b993bfb618bad354b4ecece63a44d"
     }
   ],
   "checkpoint": {
@@ -1202,17 +1210,18 @@
       },
       "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a",
       "ownerRecord": "docs/odg/V19_OWNER_ORDER_EXP_B.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": "VALIDATE_CRITERIA",
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
         "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
         ],
-        "reason": "inspection ACCEPT bound to contract 6ecd0c6a7219 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
         "contractSha256": "6ecd0c6a7219bbdfb13a2b59282e2a68807a3e1bd1e1447e0f40b6d64eec0e4a"
       },
       "records": {
@@ -1221,25 +1230,42 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V19_EXP_B_RESULT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V19_EXP_B_GO_EXECUTE_TRACE.jsonl",
+        "runId": "d87ca4d17a1e4ce3",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-26T10:44:56.694Z",
+        "dispatched": true
+      },
       "own1": {
         "cleared": true,
         "record": "docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json",
         "rule": "OWN-1-CLR-1: an OWN-1-flagged item is GO-actionable only when a committed OWNER_OWN1_CLEARANCE record (fixed list) names its id, its CURRENT contract sha, its CURRENT ownerReason and its CURRENT step, with a verbatim owner quote; the OWN-1 flag is preserved and the scoped step must still be authorized",
-        "reason": "OWN-1 owner clearance docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json (2026-11-26) for V19-EXP-B at contract 6ecd0c6a7219, step RUN_CONTROLLED_EXPERIMENTS; OWN-1 flag preserved (OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass)"
+        "reason": "OWN-1 owner clearance docs/odg/V19_OWNER_OWN1_CLEARANCE_EXP_B.json (2026-11-26) for V19-EXP-B at contract 6ecd0c6a7219, step VALIDATE_CRITERIA; OWN-1 flag preserved (OWN-1 matched [governance] in objective/acceptance_criteria/missingForPass)"
       },
-      "pending": [],
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/V19_EXP_B_RESULT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-exp-b-run.ts"
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 6ecd0c6a7219 and experiment docs/odg/evidence/V19_EXP_B_RESULT.json, then an independent inspection — never auto-graded"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V19-EXP-B]",
@@ -1442,6 +1468,19 @@
       "strategic": "D",
       "workingOn": "V178-P1-R",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V19_EXP_B_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "d87ca4d17a1e4ce3",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-26T10:44:56.694Z",
+      "dispatched": [
+        "V19-EXP-B"
+      ],
+      "strategic": "D",
+      "workingOn": "V19-EXP-B",
+      "ownerSelectionRecord": null
     }
   ],
   "nextGoAction": {
@@ -1470,27 +1509,28 @@
       {
         "item": "V178-P2",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-local-model-benchmark.ts"
-      },
-      {
-        "item": "V19-EXP-B",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-exp-b-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2, V19-EXP-B",
+    "verdict": "GO --execute could dispatch: V176-NB3, V178-P2",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V19-EXP-B",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 6ecd0c6a7219 and experiment docs/odg/evidence/V19_EXP_B_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/V178_P1R_GO_EXECUTE_TRACE.jsonl",
-      "runId": "fdcefee5ce7ca795",
-      "status": "EXECUTED_FAIL",
-      "endedAt": "2026-11-26T02:34:38.577Z",
+      "trace": "docs/odg/evidence/V19_EXP_B_GO_EXECUTE_TRACE.jsonl",
+      "runId": "d87ca4d17a1e4ce3",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-26T10:44:56.694Z",
       "strategic": "D",
-      "workingOn": "V178-P1-R",
+      "workingOn": "V19-EXP-B",
       "nextAfterCurrent": {
         "decision": "SELECTED",
         "selected": "D",
