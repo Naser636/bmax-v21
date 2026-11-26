@@ -1,0 +1,98 @@
+{
+  "//": "VALIDATE_CRITERIA for V178-P2 (owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json). Graded only from the committed measurement record + the independent RESULT inspection (distinct session, recomputation).",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "V178-P2",
+  "date": "2026-11-26",
+  "contractSha256": "424bd7e86aa237cbd64671e8f6d73a05a6d757a5a4707e395d4a06c80a8cfdae",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json",
+    "sha256": "7215fba434eca0e7c04d439e9c0f8794234dc0ecfa9d183b3db3c05ad74d5b25",
+    "experimentSha256": "44cd714ae85079dd6379762874a798e1e430146918c07cb4e8e19f0c1db9f6f1",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1064,
+    "mergedAs": "48cdcd7c",
+    "producedBy": "ODG GO --execute native dispatch (run 73b25f2f329b128f at main 6c2fe176; owner order V19_OWNER_DECISION_ORDER_P2_NB3.json); trace docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 1064,
+    "inspectedHead": "966d460ec931c277a4fe442be45418c7c037688f",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "a9708f5fa7d5cbc5e",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-73b25f2f329b128f",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "MEASURED",
+    "gradeRecommended": "PARTIAL",
+    "findings": "contract sha = result sha; scratch byte-identical; one dispatch (positional args), writes ⊆ writeSet; GO-ORD-1 applied; 102 calls ≤ 105, wall 612695 ≤ 3600000, 99 trials; MEAS-1 contended ⇔ hostLoad1m > 6 in every trial (95/99); 7b gen tok/s recomputed 7.4 (n 4); 3b/0.5b speed NOT_MEASURED; per-class passes recomputed exactly"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET"
+    },
+    {
+      "id": "AC2",
+      "status": "MET"
+    },
+    {
+      "id": "AC3",
+      "status": "MET"
+    },
+    {
+      "id": "AC4",
+      "status": "MET"
+    },
+    {
+      "id": "AC5",
+      "status": "NOT_MET",
+      "evidence": "LEARN-1: 7b gen tok/s 7.4 vs V155 8.1 ⇒ NOT_IMPROVED; 3b/0.5b NOT_MEASURED (all trials CONTENDED); note: the 'objective direction' is ill-fitted to a measurement-profile objective, but it is the pre-registered criterion and stands"
+    },
+    {
+      "id": "AC6",
+      "status": "MET"
+    },
+    {
+      "id": "AC7",
+      "status": "MET",
+      "evidence": "complete record on 3 models × task set v2 × 3 trials; every n=0 metric NOT_MEASURED"
+    }
+  ],
+  "result": {
+    "outcome": "PARTIAL",
+    "basis": "verdict MEASURED (decisionRule) with AC1–AC4, AC6, AC7 met and AC5 not met; independent result inspection ACCEPT recommending PARTIAL"
+  },
+  "scenarioGrade": "PARTIAL",
+  "measured": {
+    "perClassPass": {
+      "qwen2.5-coder:7b": "30/33",
+      "qwen2.5-coder:3b": "21/33",
+      "qwen2.5:0.5b": "9/33"
+    },
+    "rssPeakMb": {
+      "qwen2.5-coder:7b": 4929.7,
+      "qwen2.5-coder:3b": 2162.1,
+      "qwen2.5:0.5b": 538.2
+    },
+    "coldLoadMs": {
+      "qwen2.5-coder:7b": 14515,
+      "qwen2.5-coder:3b": 6247,
+      "qwen2.5:0.5b": 1982
+    },
+    "genTokPerSec": {
+      "qwen2.5-coder:7b": "7.4 (n=4)",
+      "qwen2.5-coder:3b": "NOT_MEASURED",
+      "qwen2.5:0.5b": "NOT_MEASURED"
+    },
+    "promptTokPerSecNote": "7b prompt tok/s: use p50 36.6 (mean 335 skewed by one 705 outlier, likely a prompt-cache hit)"
+  },
+  "limits": [
+    "MEAS-1 self-contention (root cause of the NOT_MEASURED speeds): the 1-min loadavg ceiling (6 = 8 × 0.75) is raised by the benchmark's OWN back-to-back CPU-bound generation (loadavg 0.48 → ~8 within the first 7b trials) — a measurement-validity defect of the rule, not of the run; a fix (contention signal excluding the measured process, or a per-trial idle gap) needs a pre-registered revision",
+    "the record carries no process census: 'no other process' is supported by the load pattern, not evidenced",
+    "implications for V178-P5 (cascade 3B → 7B): quality by class is measured (3b solves 21/33 vs 7b 30/33; 3b fails bugfix, test-writing, strict-contract), speed is not"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PARTIAL)",
+    "missionV178P2": "CLOSED_PARTIAL"
+  }
+}

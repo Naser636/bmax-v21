@@ -40,6 +40,8 @@ const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contrac
   check("⇒ VALIDATE_CRITERIA NOT yet authorized (no experiment record)", !AS.isStepAuthorized(s, "VALIDATE_CRITERIA") && s.nextStepAuthorized === false);
   const e = derive(G, { inspection: inspection(), experiment: { contractSha256: SHA, outcome: "FAIL" } });
   check("experiment record (any outcome, here FAIL) ⇒ step DONE, VALIDATE_CRITERIA current, authorized, NEVER auto-validated, no execution", e.currentStep === "VALIDATE_CRITERIA" && e.currentStepAuthorized === true && e.executionAuthorized === false && e.validatedSteps.find((v: any) => v.step === "RUN_CONTROLLED_EXPERIMENTS").evidence.outcome === "FAIL" && !e.validatedSteps.some((v: any) => v.step === "VALIDATE_CRITERIA"));
+  { const m = derive(G, { inspection: inspection(), experiment: { contractSha256: SHA, outcome: "MEASURED" } }); const x = derive(G, { inspection: inspection(), experiment: { contractSha256: SHA, outcome: "GREAT" } });
+    check("a DESCRIPTIVE MEASURED outcome is a recorded outcome (RUN step DONE, VALIDATE_CRITERIA current, never auto-graded); an unknown outcome still is not", m.currentStep === "VALIDATE_CRITERIA" && m.executionAuthorized === false && x.currentStep === "RUN_CONTROLLED_EXPERIMENTS"); }
 }
 // refusals
 {
@@ -104,6 +106,7 @@ const inspection = (o: any = {}) => ({ scenario: "G", verdict: "ACCEPT", contrac
   check("R5b: downgrade allowed (FAIL ≤ PARTIAL)", run(val({ scenarioGrade: "FAIL" })).currentStep === null);
   check("R5b: NOT_MEASURED grade on a measured experiment refused", run(val({ scenarioGrade: "NOT_MEASURED" })).currentStep === "VALIDATE_CRITERIA");
   check("R5b: experiment edited after validation ⇒ not validated", run(val(), { ...exp, outcome: "PASS" }).currentStep === "VALIDATE_CRITERIA");
+  check("R5b: a DESCRIPTIVE MEASURED outcome caps the grade at PARTIAL (PASS refused as an upgrade; PARTIAL accepted)", (() => { const me = { contractSha256: SHA, outcome: "MEASURED" }; const mv = (g: string) => ({ ...val(), experimentEvidence: { experimentSha256: AS.experimentSha256(me) }, scenarioGrade: g }); return run(mv("PASS"), me).currentStep === "VALIDATE_CRITERIA" && run(mv("PARTIAL"), me).currentStep === null; })());
   check("R5b: reader-added recordPath does not change experimentSha256", AS.experimentSha256({ ...exp, recordPath: "x" }) === xs);
   check("R5b: contract sha mismatch ⇒ not validated", run(val({ contractSha256: "0".repeat(64) })).currentStep === "VALIDATE_CRITERIA");
   check("R5b: inspection REJECT ⇒ not validated", run(val({ experimentInspection: { verdict: "REJECT", inspectorSessionId: "insp-session-0002", authorSessionId: "exp-author-0003" } })).currentStep === "VALIDATE_CRITERIA");

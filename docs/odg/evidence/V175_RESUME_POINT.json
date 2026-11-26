@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "9c4e3343ecb301f7389f5c310c7f4c3707dcbf3814135e96fdba177c56864f34"
+      "sha256": "6e15f81a693e56222ef2af63026465856d367197979ecde161b1e03e548ba290"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -208,6 +208,10 @@
     {
       "source": "docs/odg/evidence/V178_P2_MODEL_MEASUREMENT.json",
       "sha256": "7215fba434eca0e7c04d439e9c0f8794234dc0ecfa9d183b3db3c05ad74d5b25"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P2_CRITERIA_VALIDATION.json",
+      "sha256": "1581d8ace10c6deeb76ee5a6fccb6c333ff01be50678d456547bb9d6fef9fbcb"
     },
     {
       "source": "docs/odg/evidence/V178_P4_CONTRACT_INSPECTION.json",
@@ -990,7 +994,7 @@
     {
       "id": "V178-P2",
       "title": "measure real generation tok/s, prompt tok/s, RAM peak, generation time and per-class pass rate of the installed models with the existing V155 benchmark harness",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_PARTIAL",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -1002,17 +1006,19 @@
       },
       "contractSha256": "424bd7e86aa237cbd64671e8f6d73a05a6d757a5a4707e395d4a06c80a8cfdae",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": null,
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
-        "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "inspection ACCEPT bound to contract 424bd7e86aa2 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); experiment record has no recorded outcome",
+        "reason": "all steps validated",
         "contractSha256": "424bd7e86aa237cbd64671e8f6d73a05a6d757a5a4707e395d4a06c80a8cfdae"
       },
       "records": {
@@ -1025,8 +1031,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V178_P2_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -1038,8 +1044,8 @@
       },
       "pending": [],
       "next": {
-        "actor": "PROVIDER",
-        "action": "GO already dispatched V178-P2 (docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl run 73b25f2f329b128f); collect the runner's experiment record into a result PR — never re-run (one-shot claim)"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PARTIAL, CLOSE-1 docs/odg/evidence/V178_P2_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P2]",
@@ -1363,10 +1369,10 @@
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
-      "CLOSED_PARTIAL": 4,
+      "CLOSED_PARTIAL": 5,
       "CLOSED_FAIL": 5,
       "CLOSED_PASS": 5,
-      "NOT_STARTED": 9,
+      "NOT_STARTED": 8,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -1624,11 +1630,6 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "V178-P2",
-        "actor": "PROVIDER",
-        "action": "GO already dispatched V178-P2 (docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl run 73b25f2f329b128f); collect the runner's experiment record into a result PR — never re-run (one-shot claim)"
       }
     ],
     "lastGoRun": {
