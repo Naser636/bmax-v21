@@ -1,15 +1,15 @@
 {
-  "//": "Independent inspection record of V178-P1-R — CURRENT binding: revision 3 (ACCEPT). rev1 REJECT, rev2 ACCEPT (missed the RUN-1 signature defect), rev3 ACCEPT. RUN-1 (aacd35e3) is an incident only.",
+  "//": "Independent inspection record of V178-P1-R — CURRENT binding: revision 4 (ACCEPT, REPLAY-1). Prior: rev1 REJECT, rev2 ACCEPT (missed the signature defect), rev3 ACCEPT. RUN-1 (aacd35e3) incident only.",
   "schema": "odg-contract-inspection/1",
   "scenario": "V178-P1-R",
   "verdict": "ACCEPT",
-  "contractSha256": "2b2467845dd935905f46093e3d958b5fc95357357914871de10272faa881619d",
-  "inspectedHeadSha": "64e0e6ae0ba85a1ad0c7b0c48cb50c451c30748d",
-  "inspectedPr": 1045,
+  "contractSha256": "12c388bca68935de52eefaddacc10c1a9f30c85b8b1c46eb00ca33427b00af73",
+  "inspectedHeadSha": "a5707e3193338f4973c689f08233cc47a3533240",
+  "inspectedPr": 1046,
   "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session)",
   "inspectorSessionId": "a9708f5fa7d5cbc5e",
   "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
-  "authorSessionId": "v19-p1r-rev3",
+  "authorSessionId": "v19-p1r-rev4",
   "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
   "recordedBy": "coordinating provider session (Claude Code)",
   "date": "2026-11-26",
@@ -30,18 +30,25 @@
       "contractSha256": "0af895beba1764c3b7e93ed355572fa8a5467c2701941115c43ef52abecd726d",
       "verdict": "ACCEPT",
       "note": "accepted although the probeSignatures JSON-string defect was present (missed) ⇒ RUN-1 incident"
+    },
+    {
+      "revision": 3,
+      "inspectedHeadSha": "64e0e6ae0ba85a1ad0c7b0c48cb50c451c30748d",
+      "contractSha256": "2b2467845dd935905f46093e3d958b5fc95357357914871de10272faa881619d",
+      "verdict": "ACCEPT"
     }
   ],
   "findings": [
-    "RUN-1 defect fixed (observations JSON-parsed) + meaningful regression (real harness program via fakeRunner; would fail on the old code)",
-    "other degeneracies (compile/run failure, timeout, count mismatch) ⇒ NOT_MEASURED singleton, visible in unmeasuredSignatures",
-    "non-blocking: unparseable observation signed 'T' (should be null); no probes ⇒ unanimous fallback (visible); no run-level degeneracy detector — VALIDATE_CRITERIA must check signatures were non-degenerate",
-    "contract: only runnerSha256 + revision 3; AC1–AC8 identical; budgetsMatch true; sha 2b246784…; V178-P1 untouched",
-    "incident honest; V178_P1R_AGREEMENT_RESULT.json absent",
-    "GOVERNANCE (owner): contract says one single initial execution / no re-run to obtain a PASS; RUN-1 was reclassified by the provider after the outcome ⇒ a RUN-2 needs an owner acknowledgement recorded before RUN-2 (precedent P4 rev 4); VALIDATE_CRITERIA must cite the RUN-1 incident"
+    "REPLAY-1 source sha-pinned; 0 model calls (noNet transport, no warm-up); per-trial n=4, codeSha256 re-hash, schedule-point checks, fail-closed NOT_MEASURED",
+    "offline check on the real RUN-1 record: 24/24 slots pass; extractCode round-trip exact; TAMPER-1 identical; XSEL-1 tie-break sha kept",
+    "no hidden leak: only id/point/model/temperature/seed/ok/sha256/reason/code read; all RUN-1 grading fields discarded and recomputed",
+    "contract: only preRegistration.replay + runnerSha256 + revision 4; AC1–AC8 and executionCondition identical; sha 12c388bc…; budgetsMatch",
+    "owner decision supports exactly one replay run",
+    "non-blocking: one-run limit relies on ALREADY_RECORDED + owner record; VALIDATE_CRITERIA must check non-degenerate signatures and cite the RUN-1 incident"
   ],
   "testsRun": [
-    "p1r runner --selftest PASS (10)",
+    "p1r runner --selftest PASS (12)",
+    "offline replay integrity check 24/24",
     "tsc --noEmit --incremental false PASS"
   ],
   "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V178-P1-R only; RUN via ODG GO --execute only; grades nothing."
