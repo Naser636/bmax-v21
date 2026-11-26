@@ -1,0 +1,17 @@
+{
+  "//": "OWNER authorization record — verbatim transcription (2026-11-26) of the owner acceleration directive confirming the authorizations to finish the remaining V14.4 missions, in order P2 → NB3 → F-B → P5, P6, P7. Authorization SOURCE for V178-P5, V178-P6, V178-P7 (family V19-V144-COMPLETION). Markdown emphasis omitted, words unchanged. Never self-inspects; never PASS by itself.",
+  "schema": "odg-owner-authorization/1",
+  "kind": "OWNER_AUTHORIZATION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-26",
+  "directives": ["CTO — DIRECTIVE D'ACCÉLÉRATION OPÉRATIONNELLE ODG — EXÉCUTION PRIORITAIRE — FIN DE V14.4 — AUTORISATIONS ET RÉDUCTION DES DÉLAIS"],
+  "quote": [
+    "Je confirme les autorisations nécessaires pour poursuivre et achever les missions restantes de la roadmap V14.4 dans le périmètre interne autorisé.",
+    "Ensuite F-B.",
+    "Puis P5, P6 et P7.",
+    "Pour chaque mission, construire et intégrer immédiatement les éléments manquants.",
+    "Aucune autorisation générale ne doit servir à affaiblir les protections du système."
+  ],
+  "covers": { "contracts": ["V178-P5", "V178-P6", "V178-P7"], "steps": ["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"] },
+  "neverCovers": ["P7 receiving client data on this host (V178.1 NOT_SOVEREIGN)", "production, deployment, public exposure, client data, purchases", "weakening any protection or gate", "self-inspection"]
+}

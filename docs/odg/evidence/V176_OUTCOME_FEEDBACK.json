@@ -205,6 +205,11 @@
         "id": "V176-NB3",
         "status": "NOT_STARTED",
         "reason": "inspection ACCEPT bound to contract 5c551b0d3053 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
+      },
+      {
+        "id": "V178-P5",
+        "status": "NOT_STARTED",
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
       }
     ]
   },
@@ -1062,8 +1067,8 @@
     },
     {
       "id": "V178-P5",
-      "baseScore": 0.08,
-      "adjustedScore": 0.08,
+      "baseScore": 0.05,
+      "adjustedScore": 0.05,
       "delta": 0,
       "uncertainty": 0.7
     },
@@ -1139,12 +1144,20 @@
       "base": {
         "decision": "DECISION_REQUIRED",
         "selected": null,
-        "proposed": "V176-NB3",
-        "tiedSet": [],
+        "proposed": null,
+        "tiedSet": [
+          "V176-NB3",
+          "V178-P5"
+        ],
         "resolvedBy": null,
         "top3AutoSelectable": [
           {
             "id": "V176-NB3",
+            "evidenceScore": 0.05,
+            "uncertainty": 0.7
+          },
+          {
+            "id": "V178-P5",
             "evidenceScore": 0.05,
             "uncertainty": 0.7
           }
@@ -1153,12 +1166,20 @@
       "adjusted": {
         "decision": "DECISION_REQUIRED",
         "selected": null,
-        "proposed": "V176-NB3",
-        "tiedSet": [],
+        "proposed": null,
+        "tiedSet": [
+          "V176-NB3",
+          "V178-P5"
+        ],
         "resolvedBy": null,
         "top3AutoSelectable": [
           {
             "id": "V176-NB3",
+            "evidenceScore": 0.05,
+            "uncertainty": 0.7
+          },
+          {
+            "id": "V178-P5",
             "evidenceScore": 0.05,
             "uncertainty": 0.7
           }
@@ -1170,7 +1191,7 @@
     "inEffect": "BASE (feedback OFF)"
   },
   "honesty": [
-    "8 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL, V178-P1-R=FAIL]; 10 refused (incl. every PROBE record); 1 declared item(s) not graded",
+    "8 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL, V178-P1-R=FAIL]; 10 refused (incl. every PROBE record); 2 declared item(s) not graded",
     "adjusted (attributable) criteria: [NONE]; NOT_ATTRIBUTABLE (×1): [autonomyBenefit CONSTANT_VALUES n=8; blockerRepetitionReduction NO_MEASURED_PREDICTION n=0; capabilityGain BELOW_MIN_N n=3; costRiskComplexity NO_MEASURED_ASSOCIATION n=8 ρ=0.304499; dependencyAvailability NO_MEASURED_PREDICTION n=0; evidenceLevel NO_MEASURED_ASSOCIATION n=8 ρ=0.468635; reliabilityQuality NO_MEASURED_PREDICTION n=0; reusability NO_MEASURED_PREDICTION n=0; speedEfficiency NO_MEASURED_PREDICTION n=0; strategicValue BELOW_MIN_N n=3] ⇒ every multiplier is 1: the activation stays recorded but the register is byte-identical to the base register",
     "OFB-CAL-2 replaces the base-rate rule OFB-CAL-1 (rejected at inspection: it adjusted criteria constant across items, e.g. autonomyBenefit = 0.5 on all 5); a multiplier now requires a MEASURED, SIGNED rank association — an order association on few items, never a claim that the criterion predicts or discriminates outcomes; n is tiny",
     "NOT_MEASURED criteria stay NOT_MEASURED (multipliers scale MEASURED contributions only); statuses, criterion values, weights, thresholds and eligibility are unchanged",
@@ -1210,6 +1231,8 @@
     "docs/odg/evidence/V19_EXP_B_CRITERIA_VALIDATION.json",
     "docs/odg/evidence/V19_MEM2_RESULT.json",
     "docs/odg/evidence/V19_MEM2_CRITERIA_VALIDATION.json",
+    "docs/odg/evidence/V178_P5_ACCEPTANCE_RESULT.json",
+    "docs/odg/evidence/V178_P5_CRITERIA_VALIDATION.json",
     "docs/odg/V176_OUTCOME_FEEDBACK_ACTIVATION.json",
     "docs/odg/V176_OWNER_DIRECTIVE_DEBLOCAGE_FINAL.json"
   ]

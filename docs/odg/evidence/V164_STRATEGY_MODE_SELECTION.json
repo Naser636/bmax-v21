@@ -2,7 +2,7 @@
   "schema": "V164_STRATEGY_MODE_SELECTION_EVIDENCE",
   "directive": "owner V16.4 §4 sélecteur de stratégie (MODE NATIF / HYBRIDE / FOURNISSEUR) + §7 gap 'absence de mode hybride dans le sélecteur' + §10 scenario D",
   "gapRef": "docs/odg/evidence/V163_CHECKPOINT_8.json#odgCapabilityAudit.3_chooseMode (\"'hybrid' is not an option of the component\")",
-  "head": "f51599f194263acfc925f260b53af7ad85998065",
+  "head": "e50fe4991a27ae4af5a2c6ccceb700a489a79b6d",
   "evaluationInstant": "2026-11-23T18:56:03.582Z",
   "evaluationInstantNote": "pinned = latest timestamp among the source evidence files (deterministic; registry freshness checked against it)",
   "sources": {
@@ -28,7 +28,7 @@
     },
     "AP": {
       "path": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "fa952a2d53ebf39c7a5981527300f62afb7b564e0f1dc452fc6cb4173d7cc5aa"
+      "sha256": "d5cd9d716eddc1beb20658d5de0944c0fd161b704053d2726e448533b75f5f00"
     },
     "CP8": {
       "path": "docs/odg/evidence/V163_CHECKPOINT_8.json",
@@ -3455,7 +3455,7 @@
         "mode": "DECISION_REQUIRED",
         "tentativeMode": "NATIVE",
         "rule": "M0",
-        "rationale": "mission state PROPOSED ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-V178-P5:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
+        "rationale": "mission state AUTHORIZED_FOR_REVISION ≠ AUTHORIZED ⇒ DECISION_REQUIRED (tentative NATIVE: every part LOCAL_OK (AP-V178-P5:NOT_MEASURED) ⇒ NATIVE (€0) — NOT_MEASURED parts run as a €0 PROBE, uncertainty HIGH)",
         "uncertainty": {
           "level": "HIGH",
           "because": [

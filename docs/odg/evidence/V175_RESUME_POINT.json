@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "186c2d8f3f5739b04d1d18120567ed9a7413e498898d31f6f56ba185e10dabe5"
+      "sha256": "2462e494669aa440b8ffe00bc93527e69af4716ce3a95501cda4fef2722509ac"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "fa952a2d53ebf39c7a5981527300f62afb7b564e0f1dc452fc6cb4173d7cc5aa"
+      "sha256": "d5cd9d716eddc1beb20658d5de0944c0fd161b704053d2726e448533b75f5f00"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -1114,6 +1114,64 @@
       ]
     },
     {
+      "id": "V178-P5",
+      "title": "test-gated cheap-first cascade 3B → 7B on the existing odg-model-router (escalate only when the sandbox tests fail)",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'V178-P5' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8",
+      "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json",
+      "currentStep": "INSPECT_REVISED_CONTRACT",
+      "scope": {
+        "currentStep": "INSPECT_REVISED_CONTRACT",
+        "currentStepKind": "INDEPENDENT_INSPECTION",
+        "currentStepAuthorized": true,
+        "nextStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "validatedSteps": [
+          "REVISE_CONTRACT"
+        ],
+        "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized",
+        "contractSha256": "68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8"
+      },
+      "records": {
+        "inspection": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [
+        {
+          "kind": "INSPECTION",
+          "of": "contract 68cd7a698d18",
+          "reason": "INSPECT_REVISED_CONTRACT pending: no committed inspection record ⇒ RUN_CONTROLLED_EXPERIMENTS NOT authorized"
+        }
+      ],
+      "next": {
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8) and commit the inspection record"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P5]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[28]"
+      ]
+    },
+    {
       "id": "V178-P4-INT",
       "title": "P4 operational integration — hybrid memory wired into GO knowledge()/DECOMPOSE with the two-level FACT/CONTEXT memory (MEM-INT-1 + TIER-1)",
       "registerStatus": "CLOSED_PASS",
@@ -1365,7 +1423,7 @@
     }
   ],
   "otherRegisterItems": {
-    "count": 58,
+    "count": 57,
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
@@ -1630,6 +1688,11 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V178-P5",
+        "actor": "INDEPENDENT_INSPECTOR",
+        "action": "inspect the revised contract (sha 68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8) and commit the inspection record"
       }
     ],
     "lastGoRun": {

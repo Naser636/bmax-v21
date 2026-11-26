@@ -24,19 +24,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795709948000,
+    "nowEpochMs": 1795712421000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "186c2d8f3f5739b04d1d18120567ed9a7413e498898d31f6f56ba185e10dabe5",
-      "epochMs": 1795709948000
+      "sha256": "2462e494669aa440b8ffe00bc93527e69af4716ce3a95501cda4fef2722509ac",
+      "epochMs": 1795712421000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "fa952a2d53ebf39c7a5981527300f62afb7b564e0f1dc452fc6cb4173d7cc5aa",
-      "epochMs": 1795703701000
+      "sha256": "d5cd9d716eddc1beb20658d5de0944c0fd161b704053d2726e448533b75f5f00",
+      "epochMs": 1795710834000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -3984,8 +3984,8 @@
     },
     {
       "scenario": "V178-P5",
-      "state": "PROPOSED",
-      "authorizedBy": null,
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json: « Je confirme les autorisations nécessaires pour poursuivre et achever les missions restantes de la roadmap V14.4 dans le périmètre interne autorisé. » / « Puis P5, P6 et P7. » — internal, no network, €0",
       "sourceProposal": "V178-P5",
       "conversionBatch": "V178-RADAR-1"
     },
