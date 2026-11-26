@@ -1,24 +1,36 @@
 {
-  "//": "Independent inspection record of the revised V178-P2 contract (owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS). Transcribed verbatim from the inspector's verdicts by the coordinating session. Independence DECLARED by session ids. Inspection ≠ selection; under the owner operating rule (V178_OWNER_OPERATING_RULE_LOCAL_NATIVE.json) the coordinator does not run GO --execute.",
+  "//": "Independent inspection record of V178-P2 — CURRENT binding: revision 2 (ACCEPT, positional dispatch form). Prior: revision 1 ACCEPT (#1014) kept in priorVerdicts.",
   "schema": "odg-contract-inspection/1",
   "scenario": "V178-P2",
   "verdict": "ACCEPT",
-  "contractSha256": "3342d16e2a6acfcb3755b5f5b8d5af4dc4b8dd178d64b31a149e3c004ed0e244",
-  "inspectedHeadSha": "9dfe298fd30c021b08b5a240b3bfb413e7af7641",
-  "inspectedPr": 1011,
-  "inspector": "independent REINFORCED inspector (Claude Code provider session)",
-  "inspectorSessionId": "ab245bf3019f79340",
+  "contractSha256": "424bd7e86aa237cbd64671e8f6d73a05a6d757a5a4707e395d4a06c80a8cfdae",
+  "inspectedHeadSha": "bda32b4d4691ea942ff3c0979d92662c5c20ed69",
+  "inspectedPr": 1062,
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session)",
+  "inspectorSessionId": "a9708f5fa7d5cbc5e",
   "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
-  "authorSessionId": "p12-v178",
+  "authorSessionId": "v19-p2-rev2",
   "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
   "recordedBy": "coordinating provider session (Claude Code)",
-  "date": "2026-11-25",
-  "findings": [
-    "AC1–AC6 byte-unchanged; AC7 added; thresholds fixed before any run",
-    "p2Gate refuses budget/threshold mismatch",
-    "measure mode requires --out to be exactly the P2 record; the V155 file is explicitly refused (p2CheckOut; no --out ⇒ exit 3)",
-    "ALREADY_RECORDED checked; busy host / unreachable daemon ⇒ NOT_MEASURED only before the first call",
-    "binding exclusive to V176-BUILD-MISSIONS"
+  "date": "2026-11-26",
+  "priorVerdicts": [
+    {
+      "verdict": "ACCEPT",
+      "contractSha256": "3342d16e2a6acfcb3755b5f5b8d5af4dc4b8dd178d64b31a149e3c004ed0e244",
+      "inspectedHeadSha": "9dfe298fd30c021b08b5a240b3bfb413e7af7641",
+      "inspectedPr": 1011,
+      "inspectorSessionId": "ab245bf3019f79340",
+      "date": "2026-11-25",
+      "revision": 1
+    },
+    {
+      "note": "rev-1 record body (findings etc.) preserved in git history of this file"
+    }
   ],
-  "scopeNote": "Validates INSPECT_REVISED_CONTRACT of V178-P2 only; RUN via ODG GO --execute only, in GO's own order; grades nothing."
+  "findings": [
+    "sha recomputed 424bd7e8…; only V178-P2 entry changed: dispatch args ['--v178-measure','--out',OUT] → ['v178-measure',OUT], AC7 invocation text only, rev 2 with originalCriteria",
+    "budgets = P2_BUDGETS; models/task set/trials/rule/thresholds untouched",
+    "positional route takes exactly one token; p2CheckOut refuses missing/V155/other (exit 3); ALREADY_RECORDED exit 4; p2Gate exact target match; writes only P2_OUT",
+    "odg-local-model-benchmark.test.ts ALL PASS incl. the new GO-DT-1 assertion"
+  ]
 }
