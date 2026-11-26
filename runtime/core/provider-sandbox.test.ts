@@ -186,8 +186,9 @@ if (skipped > 0) console.log("NOTE: skipped cases require bubblewrap; they are N
   ok("V178-P7/AC4: the forwarder refuses paths other than /api/generate and /api/embed", pull.status === 403 && tags.status === 403 && gen.status === 200 && upstreamCalls.join() === "/api/generate" && fwd.refused.length === 2);
   if (!hasBwrap) { console.log("  SKIP - V178-P7/AC1–AC3 need bubblewrap (NOT counted as passes)"); skipped += 3; }
   else {
-    const node = fsx.realpathSync("/usr/bin/node");
-    const job = (tenant: string, code: string) => ps.clientJobSandbox({ tenant, tenantsRoot: pathx.join(root, "tenants"), socketPath: sock, argv: [node, "-e", code] });
+    const node = fsx.realpathSync(process.execPath);   // CI hosts may install node outside /usr (e.g. /opt/hostedtoolcache)
+    const nodeDir = pathx.dirname(pathx.dirname(node));
+    const job = (tenant: string, code: string) => ps.clientJobSandbox({ tenant, tenantsRoot: pathx.join(root, "tenants"), socketPath: sock, roBinds: node.startsWith("/usr/") ? [] : [nodeDir], argv: [node, "-e", code] });
     const r1: any = await run(job("tenant-a", 'require("net").connect(80,"1.1.1.1").on("error",e=>{console.log("NETERR "+e.code);process.exit(0)}).on("connect",()=>{console.log("CONNECTED");process.exit(0)})'));
     ok("V178-P7/AC1: inside the sandbox a connect to a public IP fails (negative test)", /NETERR/.test(r1.out) && !/CONNECTED/.test(r1.out));
     const r2: any = await run(job("tenant-a", 'const h=require("http");const r=h.request({socketPath:process.env.ODG_MODEL_SOCKET,path:"/api/generate",method:"POST"},s=>{let d="";s.on("data",c=>d+=c);s.on("end",()=>{console.log("STATUS "+s.statusCode+" "+d)})});r.on("error",e=>console.log("ERR "+e.code));r.write(JSON.stringify({prompt:"sandboxed",keep_alive:"10m"}));r.end()'));
@@ -197,6 +198,8 @@ if (skipped > 0) console.log("NOTE: skipped cases require bubblewrap; they are N
   }
   let threw = false; try { ps.clientJobSandbox({ tenant: "../tenant-b", tenantsRoot: pathx.join(root, "tenants"), socketPath: sock, argv: ["x"] }); } catch { threw = true; }
   ok("P7: a tenant id escaping tenantsRoot is refused", threw);
+  let threwRo = false; try { ps.clientJobSandbox({ tenant: "tenant-a", tenantsRoot: pathx.join(root, "tenants"), socketPath: sock, roBinds: ["/etc"], argv: ["x"] }); } catch { threwRo = true; }
+  ok("P7: an extra read-only bind of a confidential prefix (/etc) is refused", threwRo);
   await fwd.close(); fsx.rmSync(root, { recursive: true, force: true });
   console.log(`\nPROVIDER SANDBOX P7 — ${passed} assertions passed, ${skipped} skipped.`);
 })().catch((e: any) => { console.log("NOT OK - P7 threw " + String((e && e.stack) || e)); process.exit(1); });

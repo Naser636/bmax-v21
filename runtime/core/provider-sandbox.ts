@@ -232,8 +232,14 @@ function clientJobSandbox(spec: any): string[] {
   const argv = Array.isArray(s.argv) ? s.argv : [];
   if (!argv.length) throw new Error("clientJobSandbox: empty argv");
   const sysRo = DEFAULT_SYSTEM_RO.filter((p: string) => fs.existsSync(p));
+  // optional EXTRA read-only binds (e.g. a runtime installed outside /usr on a CI host) — validated by the SAME confidential-prefix
+  // rule as buildBwrapArgs (never '/', never /etc /home /root …); read-only only.
+  const extra = Array.isArray(s.roBinds) ? s.roBinds : [];
+  const extraChk = validateRoPaths(extra, "roBinds");
+  if (!extraChk.ok) throw new Error(extraChk.error);
   const out = ["--unshare-all", "--die-with-parent", "--new-session", "--clearenv", "--setenv", "PATH", "/usr/bin:/bin", "--setenv", "HOME", "/work", "--setenv", "ODG_MODEL_SOCKET", "/run/odg-model.sock"];
   for (const p of sysRo) out.push("--ro-bind", p, p);
+  for (const p of extraChk.paths.filter((x: string) => !sysRo.some((r: string) => x === r || x.startsWith(r + "/")))) out.push("--ro-bind", p, p);
   out.push("--dev", "/dev", "--proc", "/proc", "--tmpfs", "/tmp", "--tmpfs", "/run");
   out.push("--bind", tenantDir, "/work", "--chdir", "/work");
   out.push("--bind", s.socketPath, "/run/odg-model.sock");
