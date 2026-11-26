@@ -1072,8 +1072,8 @@
     },
     {
       "id": "V178-P6",
-      "baseScore": 0.06,
-      "adjustedScore": 0.06,
+      "baseScore": 0.05,
+      "adjustedScore": 0.05,
       "delta": 0,
       "uncertainty": 0.7
     },
@@ -1142,20 +1142,20 @@
       "base": {
         "decision": "DECISION_REQUIRED",
         "selected": null,
-        "proposed": "V178-P6",
+        "proposed": null,
         "tiedSet": [
-          "V178-P6",
-          "V176-NB3"
+          "V176-NB3",
+          "V178-P6"
         ],
-        "resolvedBy": "R3_LOWER_RISK",
+        "resolvedBy": null,
         "top3AutoSelectable": [
           {
-            "id": "V178-P6",
-            "evidenceScore": 0.06,
+            "id": "V176-NB3",
+            "evidenceScore": 0.05,
             "uncertainty": 0.7
           },
           {
-            "id": "V176-NB3",
+            "id": "V178-P6",
             "evidenceScore": 0.05,
             "uncertainty": 0.7
           }
@@ -1164,20 +1164,20 @@
       "adjusted": {
         "decision": "DECISION_REQUIRED",
         "selected": null,
-        "proposed": "V178-P6",
+        "proposed": null,
         "tiedSet": [
-          "V178-P6",
-          "V176-NB3"
+          "V176-NB3",
+          "V178-P6"
         ],
-        "resolvedBy": "R3_LOWER_RISK",
+        "resolvedBy": null,
         "top3AutoSelectable": [
           {
-            "id": "V178-P6",
-            "evidenceScore": 0.06,
+            "id": "V176-NB3",
+            "evidenceScore": 0.05,
             "uncertainty": 0.7
           },
           {
-            "id": "V176-NB3",
+            "id": "V178-P6",
             "evidenceScore": 0.05,
             "uncertainty": 0.7
           }

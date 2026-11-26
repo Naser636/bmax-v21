@@ -37,7 +37,7 @@ function runAcceptance(contract: any, o: any): any {
   const tests = Array.isArray(w.acceptance_tests) ? w.acceptance_tests : [];
   const files = [...new Set(tests.map((t: any) => t.file))] as string[];
   const outs = new Map(files.map((f) => [f, o.runFile(f)]));
-  const perTest = tests.map((t: any) => { const r = outs.get(t.file); const seen = !!r && new RegExp(`^ok - ${esc(t.id)}\\b`, "m").test(r.out); return { id: t.id, file: t.file, reportedOk: seen, fileExit: r ? r.exit : null }; });
+  const perTest = tests.map((t: any) => { const r = outs.get(t.file); const seen = !!r && new RegExp(`^[ \\t]*ok - ${esc(t.id)}\\b`, "m").test(r.out); return { id: t.id, file: t.file, reportedOk: seen, fileExit: r ? r.exit : null }; });
   const accT = { met: tests.length > 0 && perTest.every((x: any) => x.reportedOk) && files.every((f) => outs.get(f).exit === 0), tests: perTest, files: files.map((f) => ({ file: f, exit: outs.get(f).exit })) };
   const tsc = o.runTsc();
   const metrics = (Array.isArray(contract.beforeMetric) ? contract.beforeMetric : []).map((e: any) => measure(e, o.root));

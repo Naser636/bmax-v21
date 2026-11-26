@@ -4649,6 +4649,7 @@
           "runtime/core/odg-native-design-pipeline.ts",
           "runtime/core/odg-native-design-pipeline.test.ts",
           "runtime/bin/odg-v19-acceptance-run.ts",
+          "runtime/bin/odg-v19-acceptance-run.test.ts",
           "docs/odg/evidence/V178_P6_ACCEPTANCE_RESULT.json"
         ],
         "write_set_estimate": {
@@ -4703,7 +4704,7 @@
           "baseline": "beforeMetric sharedFrozenEvaluatorRule ABSENT (per-run invariants + TAMPER-1 text screen only; no sha-pinned evaluator freeze)",
           "dataset": {
             "source": "the acceptance tests in runtime/core/odg-native-design-pipeline.test.ts at the run head",
-            "runnerSha256": "6f11dc748cc37221d765b0f67e01758d2aa5202b9ca6a064803681f86e7c72a9"
+            "runnerSha256": "ff6193e72c872c5f50eb411248161d29ef3f7e791d093cf732fa42f971c2f60b"
           },
           "decisionRule": "PASS ⇔ every acceptance test id reported ok (file exit 0) ∧ tsc clean ∧ sharedFrozenEvaluatorRule IMPROVED (ABSENT → PRESENT); a metric not recomputable ⇒ NOT_MEASURED; else FAIL",
           "thresholds": {
@@ -4762,7 +4763,8 @@
             "PROPOSED → AUTHORIZED_FOR_REVISION (owner record)",
             "write_set concrete (+ reused generic acceptance runner + result file)",
             "beforeMetric source made concrete: prose record pointer (not recomputable) → '#pinEvaluators' (the capability measured); name unchanged",
-            "preRegistration + budgets + dispatch target added"
+            "preRegistration + budgets + dispatch target added",
+            "ACC-1 runner: indented 'ok - <id>' lines recognised (test harnesses that indent their ok lines, e.g. provider-sandbox); 'NOT OK' never matches"
           ],
           "original": {
             "state": "PROPOSED",

@@ -10,6 +10,7 @@ const bmOk = [{ source: "runtime/core/odg-model-router.ts#runTestGatedCascade", 
 const fake = (out: string, exit = 0, tsc = true) => { let n = 0; return { root, runFile: () => { n++; return { exit, out, calls: n }; }, runTsc: () => ({ ok: tsc, exit: tsc ? 0 : 2 }), get n() { return n; } }; };
 const good = "ok - X/AC1: a\nok - X/AC2: b\n";
 check("PASS ⇔ every AC id reported ok + file exit 0 + tsc + metric IMPROVED", A.runAcceptance(contract(bmOk), fake(good)).outcome === "PASS");
+check("indented ok lines ('  ok - X/ACn') are recognised; 'NOT OK' never is", A.runAcceptance(contract(bmOk), fake("  ok - X/AC1: a\n\tok - X/AC2: b\n")).outcome === "PASS" && A.runAcceptance(contract(bmOk), fake("  NOT OK - X/AC1\nok - X/AC2\n")).outcome === "FAIL");
 check("a missing AC id ⇒ FAIL", A.runAcceptance(contract(bmOk), fake("ok - X/AC1: a\nNOT OK - X/AC2: b\n")).outcome === "FAIL");
 check("a non-zero file exit ⇒ FAIL even with ok lines", A.runAcceptance(contract(bmOk), fake(good, 1)).outcome === "FAIL");
 check("tsc failure ⇒ FAIL", A.runAcceptance(contract(bmOk), fake(good, 0, false)).outcome === "FAIL");
