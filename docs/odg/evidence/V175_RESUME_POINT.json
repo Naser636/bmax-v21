@@ -15,11 +15,11 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "b08490e9ddbfc762d9abe3d7e963a6b326601f505ab1bb834fa6cec24590a51c"
+      "sha256": "f8cef6247b1e432b45b8ea3b371e8240fffb1a0e6e9c11520e0bf3474d39cd96"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "fa952a2d53ebf39c7a5981527300f62afb7b564e0f1dc452fc6cb4173d7cc5aa"
+      "sha256": "d5cd9d716eddc1beb20658d5de0944c0fd161b704053d2726e448533b75f5f00"
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -232,6 +232,10 @@
     {
       "source": "docs/odg/evidence/V178_P4_CRITERIA_VALIDATION.json",
       "sha256": "b7c1200da8cce79c29eb539a0e2c1c606bf8d29f05cc3a663799c01fb3d3758a"
+    },
+    {
+      "source": "docs/odg/evidence/V178_P5_CONTRACT_INSPECTION.json",
+      "sha256": "124b1981f90a754047e0c1dd7ebf0bee302089a96549c6c26f68c0409465c8d4"
     },
     {
       "source": "docs/odg/evidence/V178_P4_INT_CONTRACT_INSPECTION.json",
@@ -1140,6 +1144,59 @@
       ]
     },
     {
+      "id": "V178-P5",
+      "title": "test-gated cheap-first cascade 3B → 7B on the existing odg-model-router (escalate only when the sandbox tests fail)",
+      "registerStatus": "NOT_STARTED",
+      "contractState": "AUTHORIZED_FOR_REVISION",
+      "boussoleRef": {
+        "status": "NOT_MEASURED",
+        "v124MissionId": null,
+        "v124Section": null,
+        "v144Phase": null,
+        "v150RequirementIds": [],
+        "reason": "contract scenario 'V178-P5' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
+      },
+      "contractSha256": "68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8",
+      "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json",
+      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "scope": {
+        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+        "currentStepKind": "EXECUTION",
+        "currentStepAuthorized": true,
+        "nextStep": "VALIDATE_CRITERIA",
+        "validatedSteps": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT"
+        ],
+        "reason": "inspection ACCEPT bound to contract 68cd7a698d18 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "contractSha256": "68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8"
+      },
+      "records": {
+        "inspection": {
+          "path": "docs/odg/evidence/V178_P5_CONTRACT_INSPECTION.json",
+          "basis": "REGISTER_LOADER"
+        },
+        "experiment": {
+          "path": null,
+          "basis": "NONE"
+        },
+        "validation": {
+          "path": null,
+          "basis": "NONE"
+        }
+      },
+      "lastGoRun": null,
+      "pending": [],
+      "next": {
+        "actor": "GO",
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
+      },
+      "source": [
+        "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V178-P5]",
+        "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[28]"
+      ]
+    },
+    {
       "id": "V178-P4-INT",
       "title": "P4 operational integration — hybrid memory wired into GO knowledge()/DECOMPOSE with the two-level FACT/CONTEXT memory (MEM-INT-1 + TIER-1)",
       "registerStatus": "CLOSED_PASS",
@@ -1391,7 +1448,7 @@
     }
   ],
   "otherRegisterItems": {
-    "count": 58,
+    "count": 57,
     "statusCounts": {
       "PARTIAL": 18,
       "PASS_IN_SCOPE": 2,
@@ -1657,8 +1714,13 @@
       "ownerAuthorizationNeeded": "owner — D PROPOSED → AUTHORIZED (authorizedBy)",
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
-    "dispatchable": [],
-    "verdict": "no tracked item has an authorized, not-yet-dispatched EXECUTION step ⇒ a GO --execute run has nothing to dispatch; the pending steps are provider / inspector / owner steps (see trackedItems[].next)",
+    "dispatchable": [
+      {
+        "item": "V178-P5",
+        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
+      }
+    ],
+    "verdict": "GO --execute could dispatch: V178-P5",
     "pendingNonGo": [
       {
         "item": "D",

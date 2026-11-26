@@ -1,0 +1,24 @@
+{
+  "//": "Independent inspection record of V178-P5 — binding revision (owner record docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json).",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V178-P5",
+  "verdict": "ACCEPT",
+  "contractSha256": "68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8",
+  "inspectedHeadSha": "5078d958c424c77416fa2e77a4f2a7c2ef6f4940",
+  "inspectedPr": 1068,
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session)",
+  "inspectorSessionId": "a9708f5fa7d5cbc5e",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "v19-p5-binding",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-26",
+  "findings": [
+    "sha 68cd7a69…; runnerSha256 = runner file; only V178-P5 entry changed",
+    "write_set concrete, no protected path; positional dispatch [V178-P5, OUT]; runner refusals exit 3/4, gated exit 2, writes only OUT",
+    "ACC-1 sound and fail-closed (line-anchored ok ids, file exit 0, tsc, defined+exported symbol; NOT_MEASURED otherwise); 8 runner tests",
+    "AC1–AC3 test what they claim (synthetic registry, injected gate)",
+    "beforeMetric re-pointing is a legitimate binding concretisation (original pointed at an existing symbol)",
+    "non-blocking: LEARN-1 only checks the deliverable symbol exists; CASCADE-1 is module+tests, not yet wired into a real generation path"
+  ]
+}

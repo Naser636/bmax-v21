@@ -88,6 +88,10 @@ const STEP_SEQUENCES: any = Object.freeze({
   "V19-EXP-B": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
   // V19 — V19-MEM-2 (real-memory P0, REPRO-1) ⇐ docs/odg/V19_OWNER_ORDER_MEM.json
   "V19-MEM-2": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  // V19 — V178-P5 / P6 / P7 (V14.4 completion) ⇐ docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json
+  "V178-P5": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  "V178-P6": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
+  "V178-P7": Object.freeze(["REVISE_CONTRACT", "INSPECT_REVISED_CONTRACT", "RUN_CONTROLLED_EXPERIMENTS", "VALIDATE_CRITERIA"]),
 });
 const EXECUTION_STEPS = Object.freeze(["RUN_CONTROLLED_EXPERIMENTS"]);
 const STEP_KIND: any = Object.freeze({
@@ -142,6 +146,9 @@ const OWNER_SOURCES: any = Object.freeze({
   "V178-P1-R": Object.freeze({ re: /V19_OWNER_ORDER_P1R\.json/, label: "V19 P1-R order (docs/odg/V19_OWNER_ORDER_P1R.json)", family: "V19-VPS-EQUIPMENT" }),
   "V19-EXP-B": Object.freeze({ re: /V19_OWNER_ORDER_EXP_B\.json/, label: "V19 EXPERIENCE INTELLIGENCE incr. B order (docs/odg/V19_OWNER_ORDER_EXP_B.json)", family: "V19-EXPERIENCE-INTELLIGENCE" }),
   "V19-MEM-2": Object.freeze({ re: /V19_OWNER_ORDER_MEM\.json/, label: "V19 real-memory P0 order (docs/odg/V19_OWNER_ORDER_MEM.json)", family: "V19-REAL-MEMORY" }),
+  "V178-P5": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_P5_P7\.json/, label: "V19 V14.4 completion order (docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json)", family: "V19-V144-COMPLETION" }),
+  "V178-P6": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_P5_P7\.json/, label: "V19 V14.4 completion order (docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json)", family: "V19-V144-COMPLETION" }),
+  "V178-P7": Object.freeze({ re: /V19_OWNER_AUTHORIZATION_P5_P7\.json/, label: "V19 V14.4 completion order (docs/odg/V19_OWNER_AUTHORIZATION_P5_P7.json)", family: "V19-V144-COMPLETION" }),
 });
 function ownerSourceCheck(scenario: string, source: string): any {
   const own = OWNER_SOURCES[scenario];

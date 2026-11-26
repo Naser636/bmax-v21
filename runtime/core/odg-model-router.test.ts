@@ -5,7 +5,7 @@ const R = require("./odg-model-router.js");
 let failures = 0;
 function check(name: string, cond: boolean): void { process.stdout.write(`${cond ? "ok" : "NOT OK"} - ${name}\n`); if (!cond) failures++; }
 
-function main(): void {
+async function main(): Promise<void> {
   // cheapest-sufficient, NOT largest
   check("trivial ⇒ cheapest (qwen2.5:0.5b)", R.selectModel({ difficulty: "trivial" }).model === "qwen2.5:0.5b");
   check("easy ⇒ 3b (cheapest that covers easy, NOT 7b)", R.selectModel({ difficulty: "easy" }).model === "qwen2.5-coder:3b" && R.selectModel({ difficulty: "easy" }).decision === "LOCAL");
@@ -42,6 +42,29 @@ function main(): void {
 
   check("contract: cheapest-sufficient, measured evidence, escalation never auto-paid", R.MODEL_ROUTER_CONTRACT.invariants.some((s: string) => /never assume the largest/.test(s)) && R.MODEL_ROUTER_CONTRACT.invariants.some((s: string) => /NEVER an auto paid-API call/.test(s)) && R.MODEL_ROUTER_CONTRACT.invariants.some((s: string) => /measured/.test(s)));
 
+  // V17.8 P5 — test-gated cheap-first cascade 3B → 7B
+  {
+    const reg = { models: [
+      { id: "qwen2.5-coder:7b", available: true, parameterCount: 7615616512, perClass: { implement: { status: "QUALIFIED" } } },
+      { id: "qwen2.5-coder:3b", available: true, parameterCount: 3085938688, perClass: { implement: { status: "PROBATION" } } },
+      { id: "qwen2.5:0.5b", available: true, parameterCount: 494032768, perClass: { implement: { status: "DEMOTED" } } },
+    ] };
+    const co = R.cascadeOrder({ taskClass: "implement", registry: reg });
+    const calls: string[] = [];
+    const gen = (m: string) => { calls.push(m); return { ok: true, text: "code-" + m }; };
+    const pass3 = await R.runTestGatedCascade(co.order, gen, (g: any) => ({ pass: true }));
+    check("V178-P5/AC1: a passing 3B result stops the cascade (7B never invoked)", co.order[0] === "qwen2.5-coder:3b" && pass3.outcome === "PASS" && pass3.model === "qwen2.5-coder:3b" && calls.join() === "qwen2.5-coder:3b");
+    calls.length = 0;
+    const esc = await R.runTestGatedCascade(co.order, gen, (g: any, m: string) => ({ pass: m === "qwen2.5-coder:7b", reason: m === "qwen2.5-coder:7b" ? null : "hidden tests failed" }));
+    check("V178-P5/AC2: a failing 3B result escalates to 7B", esc.outcome === "PASS" && esc.model === "qwen2.5-coder:7b" && esc.escalations === 1 && calls.join() === "qwen2.5-coder:3b,qwen2.5-coder:7b");
+    check("V178-P5/AC3: a DEMOTED model for the class is never in the order", !co.order.includes("qwen2.5:0.5b") && co.excluded.some((x: any) => x.id === "qwen2.5:0.5b" && x.status === "DEMOTED"));
+    const allf = await R.runTestGatedCascade(co.order, gen, () => ({ pass: false }));
+    check("P5: every model failing the tests ⇒ ALL_FAILED (honest, never a fabricated pass)", allf.outcome === "ALL_FAILED" && allf.model === null && allf.escalations === 2);
+    const skip = await R.runTestGatedCascade(co.order, (m: string) => (m === "qwen2.5-coder:3b" ? { ok: false, unavailable: true } : { ok: true }), () => ({ pass: true }));
+    check("P5: an unavailable model is skipped (recorded), not counted as a test escalation", skip.model === "qwen2.5-coder:7b" && skip.escalations === 0 && skip.attempts[0].generated === false);
+    check("P5: no registry ⇒ NO_REGISTRY (no measurement ⇒ no cascade)", R.cascadeOrder({ taskClass: "implement" }).code === "NO_REGISTRY");
+    check("P5: an unavailable model is excluded from the order", !R.cascadeOrder({ taskClass: "implement", registry: reg, available: ["qwen2.5-coder:7b"] }).order.includes("qwen2.5-coder:3b"));
+  }
   process.stdout.write(`\n${failures === 0 ? "ALL PASS — odg-model-router (§11.6: cost-aware local-first routing by MEASURED capability [V318/V319b]; cheapest-sufficient not largest; hard⇒ESCALATE flagged/never-auto-paid; requireLocal refuses rather than overclaims; deterministic)" : failures + " FAIL"}\n`);
   process.exit(failures === 0 ? 0 : 1);
 }
