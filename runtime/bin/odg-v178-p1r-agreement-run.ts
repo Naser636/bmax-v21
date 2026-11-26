@@ -2,7 +2,7 @@
 "use strict";
 /*
  * V19 V178-P1-R — re-attempt of V178-P1 (CLOSED_FAIL 3/6, #1016/#1019) with ONE measured changed input (RB-REATTEMPT-CHANGED-INPUT):
- * the selection rule XSEL-2 = XSEL-1 + execution-agreement tie-break over probes derived from VISIBLE args only
+ * the selection rule XSEL-2 (exact text: XSEL2_RULE, revision 2) = XSEL-1 ranking + execution-agreement tie-break over probes derived from VISIBLE args only
  * (runtime/core/odg-execution-agreement.ts, #1017, Radar C-03 CodeT). Same model, same pre-declared (temperature, seed) schedule,
  * same budgets (≤ 20 model calls), same full host-graded oracle, same threshold (PASS ⇔ ≥ 4/6). Candidate CODE is persisted
  * (P1 gap: only hashes were kept). Control arms (descriptive, never the verdict): t0 alone; XSEL-1's choice in this same run.
@@ -82,27 +82,43 @@ function probeSignatures(task: any, code: string | null, run: any, probes: any[]
   return obs.map((o: any) => AGREE.outputSignature({ threw: !(o && o.ok === true), value: o && o.undef ? undefined : o && o.value }));
 }
 
-/* selectXsel2(cands, split, task, run) — XSEL-1 first (visible passes desc, tamper excluded); among the visible-max set the
- * execution-agreement cluster decides; if agreement is a TIE (no strict largest cluster) the XSEL-1 order decides. */
+const XSEL2_RULE = "XSEL-2 (V19 P1-R, revision 2): X = XSEL-1 ranking over ALL candidates (TAMPER-1 excluded → visible passes desc → compileOk desc → codeLines asc → sha256 asc); M = the candidates tied at X's top visible-pass count; each member of M gets its signature vector over probes derived from VISIBLE args only (a member whose probe run is not measurable forms its OWN singleton cluster — never dropped); clusters by identical vector; if |M| ≤ 1, a single cluster (unanimous ⇒ no information) or a tie for the largest cluster ⇒ X's choice; else the strictly largest cluster wins and, within it, the member with the best X rank (candidate id / schedule position never decisive); hidden cases never consulted";
+
+/* xsel2Choose(x1, sigById) — PURE XSEL-2 decision over an XSEL-1 result (ranking/reasons) and per-candidate probe signatures. */
+function xsel2Choose(x1: any, sigById: Record<string, string[] | null>): any {
+  const reasons = Array.isArray(x1 && x1.reasons) ? x1.reasons : [];
+  if (!reasons.length) return { chosen: null, decidedBy: "none", visibleMax: [], clusters: [] };
+  const top = reasons[0].visiblePassed;
+  const M = reasons.filter((r: any) => r.visiblePassed === top).map((r: any) => r.id);
+  const rank = (id: string) => x1.ranking.indexOf(id);
+  const key = (id: string) => Array.isArray(sigById[id]) ? "S:" + (sigById[id] as string[]).join("|") : "NULL:" + id;
+  const by = new Map<string, string[]>(); for (const id of M) { const k = key(id); if (!by.has(k)) by.set(k, []); (by.get(k) as string[]).push(id); }
+  const clusters = [...by.entries()].map(([k, ids]) => ({ key: k.startsWith("NULL:") ? "NOT_MEASURED" : k.slice(2), members: ids.slice().sort((a, b) => rank(a) - rank(b)), size: ids.length }))
+    .sort((a, b) => b.size - a.size || rank(a.members[0]) - rank(b.members[0]));
+  if (M.length <= 1) return { chosen: x1.chosen, decidedBy: "xsel1(single visible-max)", visibleMax: M, clusters };
+  if (clusters.length === 1) return { chosen: x1.chosen, decidedBy: "xsel1(unanimous agreement — no information)", visibleMax: M, clusters };
+  if (clusters[0].size === clusters[1].size) return { chosen: x1.chosen, decidedBy: "xsel1(agreement tie)", visibleMax: M, clusters };
+  return { chosen: clusters[0].members[0], decidedBy: "agreement", visibleMax: M, clusters };
+}
+
+/* selectXsel2(cands, split, task, run) — XSEL-1 over all candidates, then xsel2Choose with probe signatures for the visible-max set. */
 function selectXsel2(cands: any[], split: any, task: any, run: any): any {
   const x1 = PIPE.selectByExecution(cands, split.visible);
-  const visArgs = split.visible.map((i: number) => task.cases[i].args);
-  const probes = AGREE.deriveProbeInputs(visArgs);
-  const elig = cands.filter((c: any) => c.ok && !c.excludedReason && c.compileOk);
-  const vp = (c: any) => Object.values(c.caseResults || {}).filter(Boolean).length;
-  const sigs = elig.map((c: any) => ({ id: c.id, visiblePasses: vp(c), signatures: probeSignatures(task, c.code, run, probes) }));
-  const usable = sigs.filter((x: any) => Array.isArray(x.signatures));
-  const ag = usable.length ? AGREE.selectByAgreement(usable) : { chosen: null, clusters: [], eligible: 0, decidedBy: "none" };
-  const chosen = ag.decidedBy === "agreement" ? ag.chosen : x1.chosen;
-  return { rule: "XSEL-2 (V19 P1-R): XSEL-1 → among visible-max candidates the largest execution-agreement cluster over probes derived from VISIBLE args (odg-execution-agreement); agreement tie ⇒ XSEL-1 order; hidden cases never consulted",
-    chosen, decidedBy: ag.decidedBy === "agreement" ? "agreement" : "xsel1-fallback(" + ag.decidedBy + ")", xsel1Chosen: x1.chosen, probes: probes.length, clusters: ag.clusters, unmeasuredSignatures: sigs.length - usable.length };
+  const probes = AGREE.deriveProbeInputs(split.visible.map((i: number) => task.cases[i].args));
+  const top = x1.reasons && x1.reasons[0] ? x1.reasons[0].visiblePassed : null;
+  const M = (x1.reasons || []).filter((r: any) => r.visiblePassed === top).map((r: any) => r.id);
+  const sigById: Record<string, string[] | null> = {};
+  for (const id of M) { const c = cands.find((x: any) => x.id === id); sigById[id] = c ? probeSignatures(task, c.code, run, probes) : null; }
+  const d = xsel2Choose(x1, sigById);
+  return { rule: XSEL2_RULE, chosen: d.chosen, decidedBy: d.decidedBy, xsel1Chosen: x1.chosen, xsel1Ranking: x1.ranking, visibleMax: d.visibleMax, probes: probes.length, clusters: d.clusters,
+    unmeasuredSignatures: M.filter((id: string) => !Array.isArray(sigById[id])) };
 }
 
 async function runP1(opts: any): Promise<any> {
   const root = opts.root || ROOT;
   const t0 = Date.now();
   const run = typeof opts.codeRunner === "function" ? opts.codeRunner : defaultRunner;
-  const base: any = { schema: "odg-v178-p1r-result/1", label: opts.label, scenario: SCENARIO, contractSha256: opts.contractSha256 || null, run: { head: PIPE.headOf(root), startedAt: new Date(t0).toISOString(), runner: SELF }, budgets: BUDGETS, thresholds: THRESHOLDS, rules: { sample: PIPE.SAMPLE_RULE, select: PIPE.XSEL_RULE, host: PIPE.HOST_RULE, adapt: PIPE.ADAPT_RULE } };
+  const base: any = { schema: "odg-v178-p1r-result/1", label: opts.label, scenario: SCENARIO, contractSha256: opts.contractSha256 || null, run: { head: PIPE.headOf(root), startedAt: new Date(t0).toISOString(), runner: SELF }, budgets: BUDGETS, thresholds: THRESHOLDS, rules: { sample: PIPE.SAMPLE_RULE, select: XSEL2_RULE, controlSelect: PIPE.XSEL_RULE, host: PIPE.HOST_RULE, adapt: PIPE.ADAPT_RULE } };
   const finish = (x: any) => ({ ...base, ...x, outcome: x.verdict, wallMs: Date.now() - t0 });
   const ts = B.loadTaskSet(path.join(root, BUDGETS.taskSetFile));
   const tasks = implementTasks(ts);
@@ -220,6 +236,25 @@ async function selftest(): Promise<number> {
   check("selftest: PASS 6/6 with sampled candidates; control t0 arm 3/6 (descriptive)", r.verdict === "PASS" && r.result.passes === 6 && r.result.controlT0.passes === 3);
   check("selftest: every call is a pre-declared point; t0 sent once per task; ≤ maxModelCalls", T.calls.every((c: any) => POINTS.some((p: any) => p.temperature === c.temperature && p.seed === c.seed)) && T.calls.filter((c: any) => c.temperature === 0).length === 2 && r.network.modelCalls <= BUDGETS.maxModelCalls);
   check("selftest: XSEL-2 recorded (rule + xsel1 control) and candidate CODE persisted", r.trials.every((t: any) => /XSEL-2/.test(t.selection.rule) && "xsel1Chosen" in t.selection && t.controlXsel1) && r.trials.every((t: any) => t.candidates.every((c: any) => !c.ok || typeof c.code === "string")) && typeof r.result.controlXsel1.passes === "number");
+  // ---- XSEL-2 regressions (inspection REJECT B1) — pure decision over XSEL-1 ----
+  const X = (ranking: string[], vp: Record<string, number>) => ({ chosen: ranking[0], ranking, reasons: ranking.map((id, k) => ({ rank: k + 1, id, visiblePassed: vp[id] })) });
+  { const d = xsel2Choose(X(["C2", "C1", "C3", "C4"], { C2: 3, C1: 2, C3: 2, C4: 2 }), { C2: null, C1: ["V:1"], C3: ["V:1"], C4: ["V:1"] });
+    check("XSEL-2: a lower-visible candidate never beats the unique visible-max one (unmeasured signature ⇒ XSEL-1 choice)", d.chosen === "C2"); }
+  { const d = xsel2Choose(X(["C2", "C1", "C3", "C4"], { C2: 3, C1: 3, C3: 3, C4: 3 }), { C2: null, C1: ["V:1"], C3: ["V:1"], C4: ["V:2"] });
+    check("XSEL-2: an unmeasurable member is kept as its own singleton cluster (not dropped); largest cluster {C1,C3} wins", d.chosen === "C1" && d.clusters.some((c: any) => c.key === "NOT_MEASURED" && c.members[0] === "C2")); }
+  { const d = xsel2Choose(X(["C3", "C1", "C2"], { C3: 3, C1: 3, C2: 3 }), { C3: ["V:1"], C1: ["V:1"], C2: ["V:1"] });
+    check("XSEL-2: unanimous agreement carries no information ⇒ XSEL-1 choice (C3, not lowest id C1)", d.chosen === "C3" && /unanimous/.test(d.decidedBy)); }
+  { const d = xsel2Choose(X(["C4", "C2", "C1"], { C4: 3, C2: 3, C1: 3 }), { C4: ["T"], C2: ["V:[]"], C1: ["V:[]"] });
+    check("XSEL-2: within the winning cluster the best XSEL-1 rank decides (C2 ranked above C1), never the id", d.chosen === "C2" && d.decidedBy === "agreement"); }
+  { const d = xsel2Choose(X(["C1", "C2", "C3", "C4"], { C1: 3, C2: 3, C3: 3, C4: 3 }), { C1: ["A"], C2: ["A"], C3: ["B"], C4: ["B"] });
+    check("XSEL-2: a tie for the largest cluster ⇒ XSEL-1 choice", d.chosen === "C1" && /tie/.test(d.decidedBy)); }
+  { // hidden-case invariance: changing ONLY hidden cases' expectations never changes the XSEL-2 choice
+    const ts = B.loadTaskSet(path.join(ROOT, BUDGETS.taskSetFile)); const task = implementTasks(ts).find((t: any) => t.id === "impl-ts-parse-range");
+    if (task) { const split = PIPE.visibleSplit(task.cases.length); const codes = [RIGHT_RANGE, "export function parseRange(spec: string): number[] { if (spec === '') return [0]; return " + JSON.stringify([1]) + "; }"];
+      const mk = (tk: any) => codes.map((code: string, k: number) => { const v = visibleResults(tk, code, fakeRunner, split.visible); return { id: "C" + (k + 1), ok: true, code, text: code, sha256: sha256(code), codeLines: code.split("\n").length, excludedReason: null, compileOk: v.compileOk, caseResults: v.caseResults }; });
+      const t2 = { ...task, cases: task.cases.map((c: any, i: number) => split.visible.includes(i) ? c : { ...c, expect: "__CHANGED_HIDDEN__" }) };
+      const s1 = selectXsel2(mk(task), split, task, fakeRunner), s2 = selectXsel2(mk(t2), split, t2, fakeRunner);
+      check("XSEL-2: hidden-case invariance — altering only hidden expectations leaves the choice and clusters unchanged", s1.chosen === s2.chosen && JSON.stringify(s1.clusters) === JSON.stringify(s2.clusters)); } }
   return f;
 }
 
@@ -237,6 +272,6 @@ async function main(argv: string[]): Promise<number> {
   return r.verdict === "PASS" ? 0 : 1;
 }
 
-module.exports = { runP1, gate, budgetsMatch, readContract, readInspection, visibleResults, fakeTransport, fakeRunner, IDLE, BUDGETS, THRESHOLDS, SCHEDULE, POINTS, SELF, SCENARIO, OUT, INSPECTION, STEP, BASELINE_SOURCE };
+module.exports = { xsel2Choose, selectXsel2, XSEL2_RULE, runP1, gate, budgetsMatch, readContract, readInspection, visibleResults, fakeTransport, fakeRunner, IDLE, BUDGETS, THRESHOLDS, SCHEDULE, POINTS, SELF, SCENARIO, OUT, INSPECTION, STEP, BASELINE_SOURCE };
 if (require.main === module) main(process.argv.slice(2)).then((c) => process.exit(c), (e) => { process.stdout.write("ERROR " + String((e && e.stack) || e) + "\n"); process.exit(1); });
 export {};

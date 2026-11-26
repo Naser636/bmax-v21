@@ -19,7 +19,7 @@
   "inputs": [
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
-      "sha256": "1d15304beb67bd3d8fa2505b76792bfcb4a245d56df320b6bcf8f75b4bf71a66"
+      "sha256": "d6862adc9b71b80698c3d0593cefe1aa9dddf1bd254eddc452841787dbd130f9"
     },
     {
       "source": "docs/odg/evidence/V150_TRACEABILITY_MATRIX.json",
@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "edda6a73c121d3ac76effe149ead52666ef2b308df008a607cd6632e4d7e9648"
+      "sha256": "0c2fc24d46aedb567855a8827a9c7643444a77e617ec587f4789ba1bda507348"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -331,7 +331,7 @@
     },
     {
       "source": "runtime/bin/odg-v178-p1r-agreement-run.ts",
-      "sha256": "7249e4c36e28a81283607cc5beae71fa4a6fe7b8c7f8d0495020d4eee228be23"
+      "sha256": "8f4dea091f386f18fdb03a5c82807526a97fdff583f667c5fe77af908a43e26c"
     },
     {
       "source": "runtime/bin/odg-v178-p4-int-run.ts",
@@ -8753,7 +8753,7 @@
           "reason": "contract scenario 'V178-P1-R' is not an A–P §45 scenario and contract.parent.scenario is absent ⇒ no committed field links it to a V15.0 requirement row"
         },
         "contractRef": {
-          "contractSha256": "7e4f2e64f7f1aaf9d0e52871118901413227127b794656b362275e331896d92e",
+          "contractSha256": "0af895beba1764c3b7e93ed355572fa8a5467c2701941115c43ef52abecd726d",
           "contractSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[32]",
           "ownerRecord": "docs/odg/V19_OWNER_ORDER_P1R.json",
           "ownerRecordSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[32].authorization.source",
@@ -18715,5 +18715,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "f1eb9a431eed83dce0f48adf63266a1ce4201ba7"
+  "generatedAtHead": "3ebf5192c38ada57126f8806832f2f03bcbff65d"
 }
