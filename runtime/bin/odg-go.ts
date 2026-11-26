@@ -310,6 +310,8 @@ function readState(repo: string): any {
   // V16.9 Phase 1b — R7 proof-currency probes: the SAME read-only local-git probe object the canonical loader built for this repo.
   for (const [sc, files] of Object.entries(AUTH_EVIDENCE) as any) authorizationEvidence[sc] = { inspection: optional(files.inspection), experiment: optional(files.experiment), validation: optional(files.validation), probes: src.proofProbes };
   const ownerOrderDecisions = OWNER_ORDER_DECISIONS.map((rel: string) => optional(rel)).filter(Boolean);
+  // OWN-1-CLR-1: committed OWNER OWN-1 clearance records (fixed reviewed list; absent ⇒ skipped; sha recorded in inputs)
+  const ownerOwn1Clearances = require("../core/odg-owner-own1-clearance.js").CLEARANCE_RECORDS.map((rel: string) => optional(rel)).filter(Boolean);
   const ownerSelectionDecisions = OWNER_SELECTION_DECISIONS.map((rel: string) => optional(rel)).filter(Boolean);
   inputs.push({ source: F.MEASURED, sha256: sha256File(path.join(repo, F.MEASURED)) });
   let ledgerPayload: any = null;
@@ -326,7 +328,7 @@ function readState(repo: string): any {
     // EXACTLY the canonical loader's sources (odg-strategic-select.loadSources minus its inputs list, which is merged above):
     // no hand-picked subset, so LAND-1 laterEvidence and the BLK-2/REL-2/DEP-2 benefitEvidence reach the in-cycle register.
     repo, inputs, sources: registerSources(src),
-    registerEvidence, strategyEvidence, radar: { grant, admission }, authorizationEvidence, ownerOrderDecisions, ownerSelectionDecisions,
+    registerEvidence, strategyEvidence, radar: { grant, admission }, authorizationEvidence, ownerOrderDecisions, ownerSelectionDecisions, ownerOwn1Clearances,
     ledger: { proven, integrity }, attempts: { count: att.length, last: last ? { mission: last.mission, status: last.status, recordedAt: last.recordedAt } : null },
     allowlist: readAllowlist(), measured: POL.loadMeasuredRegistry(F.MEASURED, { root: repo }), strategyNow: smr.now, codeTreeParity: parity,
   };

@@ -44,6 +44,7 @@ const IL = require("./intelligence-loop.js");
 const SCHED = require("./mission-scheduler.js");
 const SD = require("./odg-sovereign-delegation.js");
 const AS = require("./odg-authorization-scope.js");
+const CLR = require("./odg-owner-own1-clearance.js");   // OWN-1-CLR-1 owner clearance (pure)
 
 const STEPS = Object.freeze(["TRUTH_LOCK", "STATE_READ", "PROBLEMS_OPPORTUNITIES", "SELECT", "DECOMPOSE", "STRATEGY", "AUTHORIZE", "EXECUTE", "EVIDENCE", "NEXT_SELECTION"]);
 /* deadlineMs: V16.9 Phase 1b raised 120000 → 900000. Measured cause: the real H experiment (V168_H_GO_EXECUTE_TRACE.jsonl)
@@ -197,12 +198,20 @@ const NOT_AUTHORIZED_NOW = "NOT_AUTHORIZED_NOW";
 /* actionabilityOf(state, item) — does this register item currently have an AUTHORIZED next step? (never mints anything) */
 function actionabilityOf(state: any, item: any): any {
   if (!item) return { actionable: false, basis: null, reason: "no item" };
-  if (item.requiresOwnerAuthorization === true) return { actionable: false, basis: null, reason: `owner-gated (${item.ownerReason || "requiresOwnerAuthorization"}) — never auto-selected` };
   const contract = contractOf(state, item.id);
+  // OWN-1 stays a hard exclusion unless a committed OWNER OWN-1 clearance (OWN-1-CLR-1) names THIS item at its CURRENT
+  // contract sha, ownerReason and step; the flag is preserved and the scoped step must still be authorized below.
+  let own1: any = null;
+  if (item.requiresOwnerAuthorization === true) {
+    const scope0 = contract ? scopedAuthorization(state, contract) : null;
+    own1 = CLR.clearanceFor(arr(state && state.ownerOwn1Clearances), item, { contractSha256: contract ? AS.contractSha256(contract) : null, step: scope0 ? scope0.currentStep : null });
+    if (!own1.cleared) return { actionable: false, basis: null, reason: `owner-gated (${item.ownerReason || "requiresOwnerAuthorization"}) — never auto-selected (${own1.reason})` };
+  }
+  const withOwn1 = (r: any) => (own1 ? { ...r, own1Clearance: own1 } : r);
   if (!contract) return { actionable: false, basis: null, reason: "no WORK_ITEM_CONTRACT ⇒ no authorization to act on" };
-  if (declaredAuthorization(contract)) return { actionable: true, basis: "CONTRACT_AUTHORIZED", reason: `contract AUTHORIZED by ${contract.authorizedBy}` };
+  if (declaredAuthorization(contract)) return withOwn1({ actionable: true, basis: "CONTRACT_AUTHORIZED", reason: `contract AUTHORIZED by ${contract.authorizedBy}` });
   const scope = scopedAuthorization(state, contract);
-  if (scope && scope.currentStepAuthorized === true) return { actionable: true, basis: "SCOPED_STEP_AUTHORIZED", step: scope.currentStep, stepKind: scope.currentStepKind, executionAuthorized: scope.executionAuthorized === true, reason: `scoped step ${scope.currentStep} (${scope.currentStepKind}) authorized by ${scope.owner.by.split(" — ")[0]} (odg-authorization-scope)` };
+  if (scope && scope.currentStepAuthorized === true) return withOwn1({ actionable: true, basis: "SCOPED_STEP_AUTHORIZED", step: scope.currentStep, stepKind: scope.currentStepKind, executionAuthorized: scope.executionAuthorized === true, reason: `scoped step ${scope.currentStep} (${scope.currentStepKind}) authorized by ${scope.owner.by.split(" — ")[0]} (odg-authorization-scope)` });
   return { actionable: false, basis: null, reason: scope ? `scoped: current step ${scope.currentStep} NOT authorized (${scope.reason})` : `contract ${contract.state || "PROPOSED"} — no authorized next step (ODG never self-authorizes)` };
 }
 /* V17.5 dependencyView(item) — READ-ONLY projection of the register's DEPG-1 fields for the SELECT trace (never recomputed here). */
@@ -222,7 +231,13 @@ function boussoleView(it: any): any {
 }
 function actionableCandidates(state: any, register: any): any[] {
   const byId = new Map(register.items.map((it: any) => [it.id, it]));
-  return REG.toSelectorCandidates(register).map((c: any) => actionabilityOf(state, byId.get(c.id)).actionable ? c : { ...c, status: NOT_AUTHORIZED_NOW });
+  return REG.toSelectorCandidates(register).map((c: any) => {
+    const a = actionabilityOf(state, byId.get(c.id));
+    if (!a.actionable) return { ...c, status: NOT_AUTHORIZED_NOW };
+    // OWN-1-CLR-1: the owner gate of THIS candidate is satisfied by a committed owner clearance — the actionable selector may
+    // pick it; the register flag (and the strategic selection) are unchanged.
+    return a.own1Clearance && a.own1Clearance.cleared ? { ...c, requiresOwnerAuthorization: false, own1ClearedBy: a.own1Clearance.record } : c;
+  });
 }
 function actionableOptions(state?: any): any {
   const SELX = SEL.EXPLAINED_DEFAULTS || {};
@@ -527,6 +542,7 @@ async function runGoCycle(opts: any, ports: any): Promise<any> {
     ctx.ownerRequest = !strategicItem ? { item: null, decisionNeeded: `strategic selection ${d.decision}${arr(d.tiedSet).length ? ` among ${arr(d.tiedSet).join("/")}` : ""} — owner/ODG decision required (no id tie-break)${actTieText ? `; actionable selection: ${actTieText}` : ""}`, ...(actTied.length ? { actionableTiedSet: actTied } : {}), requestedBy: "ODG GO (GO-ACT-1) — a REQUEST, not an authorization" }
       : strategicItem && !strategicAct.actionable ? { item: strategicItem.id, authorizationNeeded: `owner — ${strategicItem.id} ${strategicItem.contractState || "PROPOSED"}${strategicItem.contractState === "AUTHORIZED" ? "" : " → AUTHORIZED (authorizedBy)"}`, reason: strategicAct.reason, ...(actTieText ? { decisionNeeded: `actionable selection among ${actTied.join("/")}: ${actTieText}`, actionableTiedSet: actTied } : {}), requestedBy: "ODG GO (GO-ACT-1) — a REQUEST, not an authorization" } : null;
     ctx.actionable = { rule: ACTIONABLE_RULE, ruleDetail: ACTIONABLE_RULE_DETAIL, authoredBy: "technical provider (Claude Code) — provider-authored rule; every decision is the selector's",
+      own1Cleared: ctx.register.items.filter((it: any) => it.requiresOwnerAuthorization === true).map((it: any) => ({ id: it.id, a: actionabilityOf(ctx.state, it) })).filter((x: any) => x.a.own1Clearance && x.a.own1Clearance.cleared).map((x: any) => ({ id: x.id, record: x.a.own1Clearance.record, step: x.a.own1Clearance.step, rule: x.a.own1Clearance.rule })),
       strategicActionable: strategicItem ? strategicAct : null,
       selection: act ? (act === d ? { sameAsStrategic: true, ...selectionSummary(d) } : { sameAsStrategic: false, ...selectionSummary(act), excludedNotAuthorizedNow: arr(act.excluded).filter((x: any) => x.status === NOT_AUTHORIZED_NOW).map((x: any) => x.id) }) : null,
       item: actItem ? actItem.id : null, basis: actItem ? actionabilityOf(ctx.state, actItem) : null, proceedingWith: ctx.item ? ctx.item.id : null, proceedingWithActionable: proceedWithActionable,

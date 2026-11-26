@@ -27,6 +27,7 @@ const path = require("path");
 const crypto = require("crypto");
 const REG = require("../core/odg-strategic-register.js");
 const AS = require("../core/odg-authorization-scope.js");
+const CLR = require("../core/odg-owner-own1-clearance.js");   // OWN-1-CLR-1 (same pure rule as GO actionabilityOf)
 const OCUR = require("../core/odg-observation-currency.js");
 
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -82,7 +83,8 @@ function loadInputs(root: string, prsRel: string): any {
   };
   const prsTxt = prsRel ? read(prsRel, true) : null;
   const prs = prsTxt ? { path: prsRel, data: JSON.parse(prsTxt) } : null;
-  return { root, evFiles, checkpoint, register, contracts, precedence, traces, readRecord, prs, probes: OCUR.localGitProbes(root), inputs };
+  const ownerOwn1Clearances = CLR.CLEARANCE_RECORDS.map((rel: string) => { const t = read(rel, true); try { return t ? { ...JSON.parse(t), recordPath: rel } : null; } catch { return null; } }).filter(Boolean);
+  return { root, evFiles, checkpoint, register, contracts, precedence, traces, readRecord, prs, probes: OCUR.localGitProbes(root), inputs, ownerOwn1Clearances };
 }
 
 /* recordPathFor(kind, contract, register, evFiles) — RSP-2 record discovery (a) register loader, (b) contract-declared, (c) short id. */
@@ -156,9 +158,11 @@ function buildResumePoint(I: any): any {
     const closed = /^CLOSED_/.test(String(it.status));
     const pending: any[] = [];
     let next: any;
+    const own1 = it.requiresOwnerAuthorization === true ? CLR.clearanceFor(arr(I.ownerOwn1Clearances), it, { contractSha256: c ? AS.contractSha256(c) : null, step: scope ? scope.currentStep : null }) : null;
+    const ownerGated = !!own1 && !own1.cleared;
     if (closed) next = { actor: "NONE", action: `closed (${it.status}, CLOSE-1 ${it.closure && it.closure.record}) — further work only as a NEW mission (no re-grade, no re-run)` };
     else if (scope && scope.currentStep === "INSPECT_REVISED_CONTRACT") { pending.push({ kind: "INSPECTION", of: `contract ${String(scope.contractSha256).slice(0, 12)}`, reason: scope.reason }); next = { actor: "INDEPENDENT_INSPECTOR", action: `inspect the revised contract (sha ${scope.contractSha256}) and commit the inspection record` }; }
-    else if (scope && scope.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && scope.currentStepAuthorized && it.requiresOwnerAuthorization === true && dispatchedBy(it.id).length === 0) {
+    else if (scope && scope.currentStep === "RUN_CONTROLLED_EXPERIMENTS" && scope.currentStepAuthorized && ownerGated && dispatchedBy(it.id).length === 0) {
       // RSP-OWN-1 (parity with GO actionabilityOf): an OWN-1-flagged item is never auto-selected by GO, even with an authorized RUN step
       pending.push({ kind: "OWNER_AUTHORIZATION", of: it.id, reason: it.ownerReason || "requiresOwnerAuthorization" });
       next = { actor: "OWNER", action: `RUN step authorized by scope, but the register flags ${it.id} owner-gated (${it.ownerReason || "requiresOwnerAuthorization"}) — GO never auto-selects it (GO-ACT-1 actionabilityOf); explicit owner decision required` };
@@ -171,6 +175,7 @@ function buildResumePoint(I: any): any {
       pending.push({ kind: "INSPECTION", of: "the criteria-validation result (R5b independent inspection)", reason: "required before CLOSE-1 can close the item" });
       next = { actor: "PROVIDER + INDEPENDENT_INSPECTOR", action: `commit the criteria-validation record (R5b) bound to contract ${String(scope.contractSha256).slice(0, 12)} and experiment ${records && records.experiment && records.experiment.path}, then an independent inspection — never auto-graded` };
     } else if (scope && scope.currentStep && !scope.currentStepAuthorized) next = { actor: "OWNER", action: `current step ${scope.currentStep} is NOT authorized (${scope.reason})` };
+    else if ((!scope || scope.applicable === false) && ownerGated) next = { actor: "OWNER", action: `${it.id} owner-gated (${it.ownerReason || "requiresOwnerAuthorization"}) — GO never auto-selects it (GO-ACT-1 actionabilityOf; ${own1.reason})` };
     else if (!scope || scope.applicable === false) next = c && c.state === "AUTHORIZED" && c.authorizedBy ? { actor: "GO", action: "contract AUTHORIZED — GO may work on it (GO-ACT-1)" } : { actor: "OWNER", action: `${it.id} contract ${c ? c.state : "?"} → AUTHORIZED (authorizedBy) — ODG never self-authorizes` };
     else next = { actor: "UNKNOWN", action: `current step ${scope.currentStep}` };
     return {
@@ -178,6 +183,7 @@ function buildResumePoint(I: any): any {
       boussoleRef: compactRef(it.boussoleRef), contractSha256: it.contractRef ? it.contractRef.contractSha256 : null, ownerRecord: it.contractRef ? it.contractRef.ownerRecord : null,
       currentStep: closed ? null : scope ? scope.currentStep : null, scope, records, ...(divergence ? { divergence } : {}),
       lastGoRun: lastRun ? { trace: lastRun.trace, runId: lastRun.runId, status: lastRun.status, endedAt: lastRun.endedAt, dispatched: lastRun.dispatchedMissions.includes(it.id) } : null,
+      ...(own1 ? { own1: { cleared: own1.cleared === true, record: own1.record || null, rule: CLR.RULE, reason: own1.reason } } : {}),
       pending, next, source: [`${REGISTER_REL}#register.items[id=${it.id}]`, ...(ci >= 0 ? [`${CONTRACTS_REL}#contracts[${ci}]`] : [])],
     };
   });
