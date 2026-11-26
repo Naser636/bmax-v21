@@ -487,11 +487,11 @@
     },
     {
       "source": "runtime/core/odg-native-design-pipeline.test.ts",
-      "sha256": "c4257cab7d464af8ad57b4968f32c58a982a78df41b0aaf38bcfa632a0300d1d"
+      "sha256": "63f2e396e2272c368be661787e32d9ebf74dbc8fa84aec565a35267dc6a2af49"
     },
     {
       "source": "runtime/core/odg-native-design-pipeline.ts",
-      "sha256": "a7b5a9e5bf89289b409c843258dd70e77e0e103a5a5dfc864ebeaa490e488561"
+      "sha256": "761f9732a57536f25f89b90cf4d1c938c83ecbf542973e14aee9bac196c2d694"
     },
     {
       "source": "runtime/core/odg-observation-corroboration.test.ts",
@@ -848,13 +848,13 @@
         "RESOLVED_BY_EVIDENCE"
       ],
       "counts": {
-        "edges": 118,
+        "edges": 125,
         "byKind": {
           "DATASET_INPUT": 1,
-          "CODE_IMPORT": 117,
+          "CODE_IMPORT": 124,
           "STATED_TEXT": 0
         },
-        "satisfied": 118,
+        "satisfied": 125,
         "unsatisfied": 0,
         "itemsWithDeps": 18,
         "itemsNotMeasured": 40
@@ -1012,10 +1012,12 @@
           "blockingDependents": []
         },
         "V175-NB2": {
-          "fanOut": 2,
+          "fanOut": 4,
           "dependents": [
             "V175-NB1",
-            "V176-NB3"
+            "V176-NB3",
+            "V178-P1",
+            "V178-P6"
           ],
           "blockingFanOut": 0,
           "blockingDependents": []
@@ -1517,6 +1519,17 @@
         },
         {
           "from": "V176-NB3",
+          "to": "V175-NB2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-v175-native-design-run.ts",
+          "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[4]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+        },
+        {
+          "from": "V176-NB3",
           "to": "V178-P1",
           "kind": "CODE_IMPORT",
           "via": "runtime/core/odg-native-design-pipeline.ts",
@@ -1602,6 +1615,17 @@
           "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[29].WORK_ITEM_CONTRACT.write_set[0]",
           "satisfied": true,
           "satisfiedBasis": "runtime/core/odg-native-design-pipeline.ts committed"
+        },
+        {
+          "from": "V178-P1",
+          "to": "V175-NB2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-v175-native-design-run.ts",
+          "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[24].WORK_ITEM_CONTRACT.write_set[1]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
         },
         {
           "from": "V178-P1",
@@ -1624,6 +1648,28 @@
           "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[3]",
           "satisfied": true,
           "satisfiedBasis": "runtime/core/odg-native-design-pipeline.ts committed"
+        },
+        {
+          "from": "V178-P1",
+          "to": "V176-NB3",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-v175-native-design-run.ts",
+          "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[24].WORK_ITEM_CONTRACT.write_set[1]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[5]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+        },
+        {
+          "from": "V178-P1",
+          "to": "V176-NB3",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-v176-nb3-native-design-run.ts",
+          "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v176-nb3-native-design-run.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[24].WORK_ITEM_CONTRACT.write_set[1]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-v176-nb3-native-design-run.ts committed"
         },
         {
           "from": "V178-P1",
@@ -2097,6 +2143,39 @@
           "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[29].WORK_ITEM_CONTRACT.write_set[2]",
           "satisfied": true,
           "satisfiedBasis": "runtime/bin/odg-v19-acceptance-run.ts committed"
+        },
+        {
+          "from": "V178-P6",
+          "to": "V175-NB2",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-v175-native-design-run.ts",
+          "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[29].WORK_ITEM_CONTRACT.write_set[1]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+        },
+        {
+          "from": "V178-P6",
+          "to": "V176-NB3",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-v175-native-design-run.ts",
+          "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[29].WORK_ITEM_CONTRACT.write_set[1]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[5]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+        },
+        {
+          "from": "V178-P6",
+          "to": "V176-NB3",
+          "kind": "CODE_IMPORT",
+          "via": "runtime/bin/odg-v176-nb3-native-design-run.ts",
+          "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v176-nb3-native-design-run.js\")",
+          "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[29].WORK_ITEM_CONTRACT.write_set[1]",
+          "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[2]",
+          "satisfied": true,
+          "satisfiedBasis": "runtime/bin/odg-v176-nb3-native-design-run.ts committed"
         },
         {
           "from": "V178-P6",
@@ -7341,10 +7420,12 @@
           "unsatisfiedDeps": [],
           "dependents": [
             "V175-NB1",
-            "V176-NB3"
+            "V176-NB3",
+            "V178-P1",
+            "V178-P6"
           ],
           "blockingDependents": [],
-          "fanOut": 2,
+          "fanOut": 4,
           "blockingFanOut": 0
         },
         "dependencyEdges": [
@@ -7907,7 +7988,7 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 10 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 11 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
         "depsStated": [],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
@@ -8010,7 +8091,7 @@
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
-          "edgesOut": 10,
+          "edgesOut": 11,
           "dependsOn": [
             "V175-NB2",
             "V178-P1",
@@ -8049,6 +8130,17 @@
             "via": "runtime/bin/odg-v175-native-design-run.ts",
             "source": "runtime/bin/odg-v176-nb3-native-design-run.ts#require(\"./odg-v175-native-design-run.js\")",
             "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[2]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+          },
+          {
+            "from": "V176-NB3",
+            "to": "V175-NB2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-v175-native-design-run.ts",
+            "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[4]",
             "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[2]",
             "satisfied": true,
             "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
@@ -8179,7 +8271,7 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 8 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 11 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
         "depsStated": [],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
@@ -8338,8 +8430,9 @@
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
-          "edgesOut": 8,
+          "edgesOut": 11,
           "dependsOn": [
+            "V175-NB2",
             "V176-NB3",
             "V178-P2",
             "V178-P6"
@@ -8361,6 +8454,17 @@
         "dependencyEdges": [
           {
             "from": "V178-P1",
+            "to": "V175-NB2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-v175-native-design-run.ts",
+            "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[24].WORK_ITEM_CONTRACT.write_set[1]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+          },
+          {
+            "from": "V178-P1",
             "to": "V176-NB3",
             "kind": "CODE_IMPORT",
             "via": "runtime/core/odg-native-design-pipeline.ts",
@@ -8380,6 +8484,28 @@
             "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[3]",
             "satisfied": true,
             "satisfiedBasis": "runtime/core/odg-native-design-pipeline.ts committed"
+          },
+          {
+            "from": "V178-P1",
+            "to": "V176-NB3",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-v175-native-design-run.ts",
+            "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[24].WORK_ITEM_CONTRACT.write_set[1]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[5]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+          },
+          {
+            "from": "V178-P1",
+            "to": "V176-NB3",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-v176-nb3-native-design-run.ts",
+            "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v176-nb3-native-design-run.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[24].WORK_ITEM_CONTRACT.write_set[1]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v176-nb3-native-design-run.ts committed"
           },
           {
             "from": "V178-P1",
@@ -9418,7 +9544,7 @@
         },
         "executedEvidence": null,
         "deps": [],
-        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 3 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
+        "depsNote": "no item-to-item dependency stated in the evidence ⇒ []; 6 structural CODE_IMPORT edge(s) recorded for fanOut only (not DEP-1)",
         "depsStated": [],
         "requiresOwnerAuthorization": false,
         "ownerReason": null,
@@ -9521,8 +9647,9 @@
         "dependencyGraph": {
           "status": "DERIVED",
           "rule": "DEPG-1",
-          "edgesOut": 3,
+          "edgesOut": 6,
           "dependsOn": [
+            "V175-NB2",
             "V176-NB3",
             "V178-P1",
             "V178-P5"
@@ -9543,6 +9670,39 @@
           "blockingFanOut": 0
         },
         "dependencyEdges": [
+          {
+            "from": "V178-P6",
+            "to": "V175-NB2",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-v175-native-design-run.ts",
+            "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[29].WORK_ITEM_CONTRACT.write_set[1]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[19].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+          },
+          {
+            "from": "V178-P6",
+            "to": "V176-NB3",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-v175-native-design-run.ts",
+            "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v175-native-design-run.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[29].WORK_ITEM_CONTRACT.write_set[1]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[5]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v175-native-design-run.ts committed"
+          },
+          {
+            "from": "V178-P6",
+            "to": "V176-NB3",
+            "kind": "CODE_IMPORT",
+            "via": "runtime/bin/odg-v176-nb3-native-design-run.ts",
+            "source": "runtime/core/odg-native-design-pipeline.test.ts#require(\"../bin/odg-v176-nb3-native-design-run.js\")",
+            "sourceWriteSet": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[29].WORK_ITEM_CONTRACT.write_set[1]",
+            "targetSource": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json#contracts[23].WORK_ITEM_CONTRACT.write_set[2]",
+            "satisfied": true,
+            "satisfiedBasis": "runtime/bin/odg-v176-nb3-native-design-run.ts committed"
+          },
           {
             "from": "V178-P6",
             "to": "V176-NB3",
@@ -20894,5 +21054,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "951524faeec13c7f82e25c980f74a88670297d17"
+  "generatedAtHead": "8a0ac026491227dbe1ae127900392b97d660da9f"
 }
