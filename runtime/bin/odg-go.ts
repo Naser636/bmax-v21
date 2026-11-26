@@ -354,6 +354,11 @@ function knowledge(repo: string, useAt: number, mem?: any): any {
     return { id, epistemic: a.dimensions.epistemic, isFact: a.isFact === true, useAuthorization: use.authorization, useReason: use.reason, admissible: { trusted: adm.trusted === true, verdict: adm.verdict } };
   });
   const out: any = { ok: claims.every((c: any) => c.useAuthorization === "DESIGN_PROPOSAL"), collection: F.COLLECTION, claims };
+  // V19-MEM-2 (REPRO-1): internal REAL observations corroborated by independent reproduction, from the fixed list of committed
+  // ODG run records (sha recorded); emitted in the canonical memory shape so memory-trust-gate decides FACT vs not.
+  const obs = observationMemories(repo, useAt);
+  out.observations = obs.summary;
+  memories.push(...obs.records);
   if (!mem) return out;
   // MEM-INT-1 (V19 P4 operational): the canonical memory records (toMemory) are indexed into the derived per-tenant hybrid
   // index — through memory-architecture.semanticRetrieval, which trust-gates via accessMemory (only VERIFIED + fresh +
@@ -369,6 +374,17 @@ function knowledge(repo: string, useAt: number, mem?: any): any {
     } catch (e: any) { out.memory = { status: "NOT_MEASURED", reason: String((e && e.message) || e) }; }
     return out;
   })();
+}
+
+/* observationMemories(repo, asOf) — V19-MEM-2: REPRO-1 over OBSERVATION_SOURCES (committed records; absent ⇒ skipped). */
+const OBSERVATION_SOURCES = Object.freeze(["docs/odg/evidence/V178_P1_MULTI_CANDIDATE_RESULT.json", "docs/odg/evidence/V178_P1R_RUN1_INCIDENT_RESULT.json", "docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json"]);
+function observationMemories(repo: string, asOf: number): any {
+  const OC = require("../core/odg-observation-corroboration.js");
+  const all: any[] = []; const read: any[] = [];
+  for (const rel of OBSERVATION_SOURCES) { const p = path.join(repo, rel); const sha = sha256File(p); if (!sha) { read.push({ path: rel, sha256: null }); continue; } read.push({ path: rel, sha256: sha }); all.push(...OC.extractT0Observations(readJson(p), { path: rel, sha256: sha })); }
+  const c = OC.corroborate(all);
+  const records = c.results.map((r: any) => OC.toMemory(r, asOf));
+  return { records, summary: { rule: OC.RULE, sources: read, observations: all.length, ...c.tally, facts: records.filter((r: any) => r.isFact).map((r: any) => r.id) } };
 }
 
 /* memoryPort(physOut, embed) — MEM-INT-1: the GO memory port (index under the confined GO out dir; tenant odg-go). */
@@ -650,7 +666,7 @@ async function check(argv: string[]): Promise<number> {
   return ok ? 0 : 1;
 }
 
-module.exports = { memoryPort, experienceRecall, makeClaimStore, claimDirOf, runGroup, groupAlive, targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, OWNER_SELECTION_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
+module.exports = { memoryPort, experienceRecall, observationMemories, OBSERVATION_SOURCES, makeClaimStore, claimDirOf, runGroup, groupAlive, targetTimeoutMs, DISPATCH_TIMEOUT_MS, OWNER_ORDER_DECISIONS, OWNER_SELECTION_DECISIONS, WRITE_REFUSED_EXIT, WRITE_REFUSAL_RULE, registerSources, parsePorcelainZ, dispatchArgv, targetWriteConfinement, PRE_REGISTERED, runOnce, readState, knowledge, safeWrite, physicalPath, symlinkComponent, isolationCheck, redact, buildPorts, validateOutDir, forbiddenRoots, mainCheckoutOf, readAllowlist, gradeI, EVIDENCE_REL };
 
 /* CLI flag validation: --help/-h ⇒ usage on stdout, exit 0, no cycle; any unknown flag (or a value flag missing its
  * value) ⇒ usage on stderr, exit 2, no cycle. Never starts a cycle on a mistyped flag. */

@@ -1,7 +1,7 @@
 {
   "//": "V16.0 directive §7 — WORK_ITEM_CONTRACTs for scenarios A–P with an EXPLICIT initial state. Authored by the Claude Code provider in state PROPOSED; PROPOSED ≠ AUTHORIZED — each needs a human authorization before EXECUTING (ODG_AUTONOMOUS_WORK_PROTOCOL.json work_item_contract_schema). Initial state copied from docs/odg/evidence/V150_TRACEABILITY_MATRIX.json (#914). V15.0 remains PROPOSED; Boussole V12.4 canonical. V17.2: G2 (owner V170) and J2 (owner V171) appended as NEW, distinct contracts (initial state NOT_STARTED); the A–P entries, including G, H and J, are unchanged. V17.5: V175-NB1 (owner V175, first ODG-native build) appended as a NEW contract (initial state NOT_STARTED); all prior entries unchanged. V17.5 NB2: V175-NB2 (owner V175 via the declared family V175-NATIVE-LOOP; ODG designs the change) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6: J moved PROPOSED → AUTHORIZED_FOR_REVISION under owner V176 « DÉBLOCAGE FINAL » item 2 (docs/odg/V176_OWNER_AUTHORIZATION_J.json): authorization block + revisionHistory + a clearly-labelled proposedRevision (NOT applied); J's criteria/write_set unchanged; every other entry unchanged. V17.6 R2C (batch V176-R2C-1, owner record docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json): RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME, RB-SELECTION-AT-RUN-HEAD appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.6 NB3: V176-NB3 (owner V176 build missions, docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json, family V176-BUILD-MISSIONS; NB2's target + oracle with the pre-registered DIV-1 repair-diversity lever) appended as a NEW contract (initial state NOT_STARTED); every other entry unchanged. V17.6 F: F moved PROPOSED → AUTHORIZED_FOR_REVISION under the owner build-missions record (docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json) and revised (REVISE_CONTRACT): authorization block, write_set 1:1 replacement, preRegistration (GO parallel-wave capability on a deterministic fixture), dispatch target; revision 2 after inspection REJECT (full write_set, FIXTURE-CAP-1 PARTIAL cap, GO wiring stated as remaining step); F's criteria verbatim; every other entry unchanged. V17.8 Radar campaign (batch V178-RADAR-1, owner record owner directives « V178-RADAR FIRST » / « V178 — CONVERGENCE PRATIQUE RADAR → ODG » / « V178 — CONVERGENCE FINALE ET PRÉPARATION GO » (relayed by the coordinator 2026-11-25; no committed docs/odg owner record)): V178-P1, V178-P2, V178-P3, V178-P4, V178-P5, V178-P6, V178-P7 appended by RB-CONV-1 from the Radar build proposals as NEW contracts (state PROPOSED, authorizedBy null, write_set ESTIMATE, initial state NOT_STARTED); every other entry unchanged. V17.8 binding: V178-P1 and V178-P2 moved PROPOSED → AUTHORIZED_FOR_REVISION (owner V176 build missions, family V176-BUILD-MISSIONS; concrete write_set, AC7, budgets, preRegistration, dispatch target); P3–P7 unchanged; every other entry unchanged.",
   "schema": "ODG_AUTONOMOUS_WORK_PROTOCOL.work_item_contract_schema",
-  "count": 34,
+  "count": 35,
   "initialStatusCounts": {
     "PASS": 2,
     "PARTIAL": 14,
@@ -5684,6 +5684,183 @@
           "reason": "independent contract inspection (rev 1 ACCEPT, a9708f5fa7d5cbc5e, head 67ae38bb) non-blocking findings: re-evaluation compared two historical shas on the real path; binding files and unconditional GO port undisclosed",
           "justification": "fixed BEFORE the single run so the measured code is the shipped code; criteria unchanged; no ranking computed on the real corpus",
           "revisionAuthorSessionId": "v19-exp-b-rev2"
+        }
+      ]
+    },
+    {
+      "scenario": "V19-MEM-2",
+      "title": "Real-memory P0 — internal REAL observations corroborated by independent reproduction (REPRO-1), recorded through the canonical memory trust gate, indexed in the FACT tier and recalled by GO",
+      "state": "AUTHORIZED_FOR_REVISION",
+      "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_MEM.json: « les travaux nécessaires pour obtenir une mémoire réelle exploitable et corroborée » / « Ne pas inventer des faits pour remplir un compteur. » — internal, loopback-only, €0",
+      "origin": {
+        "parent": "V19-MEM-1 (docs/odg/evidence/V19_MEM1_CORROBORATION_RESULT.json: external corroboration ⇒ 0 facts, root cause proven at two levels)",
+        "reason": "the other legitimate road to a corroborated fact is ODG's own measurements reproduced by independent executions"
+      },
+      "initialState": {
+        "status": "NOT_STARTED",
+        "missingForPass": "the single GO-dispatched run meeting AC1–AC6, then VALIDATE_CRITERIA"
+      },
+      "beforeMetric": [
+        {
+          "source": "runtime/bin/odg-go.ts knowledge()",
+          "name": "factTierRecords",
+          "value": 0
+        }
+      ],
+      "measure": {
+        "after": null,
+        "compareRule": "LEARN-1"
+      },
+      "WORK_ITEM_CONTRACT": {
+        "objective": "give ODG real corroborated facts from its own measurements: observations reproduced by at least two independent ODG executions under identical declared conditions become memory records that the canonical trust gate admits, indexed in the FACT tier and recalled on the real GO path, without a second memory and without relaxing the external rule",
+        "scope": "runtime/core/odg-observation-corroboration.ts (new, pure REPRO-1), runtime/bin/odg-go.ts knowledge() (observationMemories over the fixed OBSERVATION_SOURCES list)",
+        "write_set": [
+          "runtime/core/odg-observation-corroboration.ts",
+          "runtime/core/odg-observation-corroboration.test.ts",
+          "runtime/bin/odg-go.ts",
+          "runtime/bin/odg-go-memory.test.ts",
+          "runtime/bin/odg-v19-mem2-run.ts",
+          "package.json",
+          "docs/odg/evidence/V19_MEM2_RESULT.json"
+        ],
+        "authorized_symbols": [
+          "extractT0Observations",
+          "corroborate",
+          "toMemory",
+          "observationMemories",
+          "OBSERVATION_SOURCES",
+          "knowledge"
+        ],
+        "invariants": [
+          "a fact needs at least 2 INDEPENDENT ODG executions (a replay never counts), identical declared conditions and one value; any same-key disagreement ⇒ INVALIDATED",
+          "memory records use the canonical shape; memory-trust-gate / memory-architecture decide FACT (no second memory, no second gate)",
+          "the external assessClaim rule is unchanged; SUPPORTED claims and experience episodes are never facts",
+          "claim text states the conditions (an internal measurement, never a general truth)",
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED"
+        ],
+        "acceptance_criteria": [
+          "AC1 extraction: every OBSERVATION_SOURCES record (runtime/bin/odg-go.ts) is read with its sha256; observations > 0; every observation of the replay record docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json is marked non-independent",
+          "AC2 REPRO-1 recomputed (runtime/core/odg-observation-corroboration.corroborate): at least 1 CORROBORATED key; each has at least 2 independent ODG executions and a single value; recomputing without the replay record yields the same corroborated keys",
+          "AC3 canonical trust gate (memory-architecture.accessMemory, trustedAuthors ODG) trusts exactly the corroborated memory records; past validUntil they are STALE and not trusted",
+          "AC4 real GO path: knowledge() with the memory port indexes FACT = admissible-trusted claims + corroborated observations (live qwen3-embedding:0.6b, loopback); the port recalls at least 1 REPRO-1 fact (OBS- id, provenance REPRO-1) for the declared local-model query; the real GO cycle (runGoCycle DRY, in-process) records DECOMPOSE.contextRecall RECALLED with every FACT hit among the trusted ids",
+          "AC5 no promotion: claims byte-identical with and without the observations; no SUPPORTED claim and no experience episode is in the FACT tier",
+          "AC6 tsc --noEmit --incremental false clean and every touched test file passes, run one at a time"
+        ],
+        "acceptance_tests": [
+          {
+            "id": "V19-MEM-2/T1",
+            "file": "runtime/core/odg-observation-corroboration.test.ts"
+          },
+          {
+            "id": "V19-MEM-2/T2",
+            "file": "runtime/bin/odg-go-memory.test.ts"
+          }
+        ],
+        "stop_conditions": [
+          "write_set must grow beyond the authorized one",
+          "a protected path (Master/Constitution/CTO directives/ROADMAP.json/secrets/deploy) is needed",
+          "a network access beyond loopback embedding, an install or a download is needed"
+        ],
+        "rollback": "revert the single PR (observationMemories is additive; claims and the external rule unchanged)",
+        "evidence_required": [
+          "test output per file",
+          "GO run trace + result record",
+          "independent inspection verdicts (contract, result)"
+        ],
+        "budgets": {
+          "embedModel": "qwen3-embedding:0.6b",
+          "network": "loopback Ollama /api/embed only",
+          "generationModelCalls": 0,
+          "providerCalls": 0,
+          "dispatchTimeoutMs": 1500000
+        },
+        "preRegistration": {
+          "metric": "AC1–AC6 pass/fail on the committed records + the live embedding index",
+          "baseline": "beforeMetric factTierRecords 0 (V19-MEM-1: 0 corroborated facts)",
+          "dataset": {
+            "source": "committed OBSERVATION_SOURCES records at the run head (V178-P1 run 74284b0d, V178-P1-R RUN-1 aacd35e3, V178-P1-R replay fdcefee5 — the replay must not count)",
+            "runnerSha256": "85d0331da6e20ee06f4de0f07defe5decd6225ee4ab54fcf9c44afef29934481",
+            "embedModel": "qwen3-embedding:0.6b",
+            "query": "qwen2.5-coder:7b local model result on impl-ts-parse-range at temperature 0"
+          },
+          "decisionRule": "PASS ⇔ AC1–AC6 all met; any criterion not measurable ⇒ NOT_MEASURED (never PASS); otherwise FAIL",
+          "thresholds": {
+            "AC2corroboratedMin": 1,
+            "AC2independentMin": 2,
+            "AC4obsFactsMin": 1
+          },
+          "honestLimits": [
+            "the provider inspected the source records while authoring REPRO-1 (corroborated keys known); the run validates mechanism + integration, not a prediction; a mechanics check with a FAKE embedding ran before binding (no result written)",
+            "the Ollama model digest is not recorded by the P1 runners: a re-pulled tag with the same name is a condition change REPRO-1 cannot see",
+            "V155 (same grader) is consistent but not counted (top_k condition unrecorded in the P1 runners)"
+          ]
+        }
+      },
+      "binding": {
+        "status": "BOUND",
+        "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
+        "boundBy": "PROVIDER (Claude Code, V19 MEM-2 binding session; branch feat/v19-mem2-observation-corroboration)",
+        "boundAt": "2026-11-26",
+        "bindingFiles": {
+          "rule": "governance/binding files changed by the binding PR (outside the execution write_set, never written by the run)",
+          "files": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+            "docs/odg/V19_OWNER_ORDER_MEM.json",
+            "runtime/core/odg-authorization-scope.ts",
+            "runtime/core/odg-authorization-evidence-paths.ts",
+            "regenerated evidence (register, strategy-mode, resume point, outcome feedback, radar proposals)",
+            "count/list tests"
+          ]
+        },
+        "defaultBehaviour": "GO knowledge() now always reports `observations` (REPRO-1 summary) and, with --memory-index, indexes the corroborated observations in the FACT tier; claims and their admissibility are unchanged"
+      },
+      "authorization": {
+        "by": "OWNER",
+        "source": "docs/odg/V19_OWNER_ORDER_MEM.json (V19 real-memory P0 order)",
+        "date": "2026-11-26",
+        "transcribedBy": "PROVIDER (Claude Code) — bound through family V19-REAL-MEMORY",
+        "scope": [
+          "REVISE_CONTRACT",
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
+        ],
+        "executionAuthorized": false,
+        "executionCondition": "one GO-dispatched run of the declared target only, after an independent (distinct-session) inspection ACCEPT of this contract; loopback Ollama embedding only; writes only its result file",
+        "dispatchTargets": {
+          "RUN_CONTROLLED_EXPERIMENTS": {
+            "command": "runtime/bin/odg-v19-mem2-run.ts",
+            "args": [
+              "docs/odg/evidence/V19_MEM2_RESULT.json"
+            ],
+            "writeSet": [
+              "docs/odg/evidence/V19_MEM2_RESULT.json"
+            ]
+          }
+        },
+        "dispatchTimeoutMs": 1500000,
+        "inspectionRecord": "docs/odg/evidence/V19_MEM2_CONTRACT_INSPECTION.json"
+      },
+      "revisionHistory": [
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 MEM-2 binding session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_MEM.json",
+          "originalCriteria": [
+            "AC1 extraction: every OBSERVATION_SOURCES record (runtime/bin/odg-go.ts) is read with its sha256; observations > 0; every observation of the replay record docs/odg/evidence/V178_P1R_AGREEMENT_RESULT.json is marked non-independent",
+            "AC2 REPRO-1 recomputed (runtime/core/odg-observation-corroboration.corroborate): at least 1 CORROBORATED key; each has at least 2 independent ODG executions and a single value; recomputing without the replay record yields the same corroborated keys",
+            "AC3 canonical trust gate (memory-architecture.accessMemory, trustedAuthors ODG) trusts exactly the corroborated memory records; past validUntil they are STALE and not trusted",
+            "AC4 real GO path: knowledge() with the memory port indexes FACT = admissible-trusted claims + corroborated observations (live qwen3-embedding:0.6b, loopback); the port recalls at least 1 REPRO-1 fact (OBS- id, provenance REPRO-1) for the declared local-model query; the real GO cycle (runGoCycle DRY, in-process) records DECOMPOSE.contextRecall RECALLED with every FACT hit among the trusted ids",
+            "AC5 no promotion: claims byte-identical with and without the observations; no SUPPORTED claim and no experience episode is in the FACT tier",
+            "AC6 tsc --noEmit --incremental false clean and every touched test file passes, run one at a time"
+          ],
+          "originalCriteriaNote": "new work item: AC1–AC6 authored at binding, before the run",
+          "change": [
+            "new contract bound (write_set concrete, preRegistration, dispatch target)"
+          ],
+          "reason": "real-memory P0 ordered by the owner; V19-MEM-1 external road ⇒ 0 facts",
+          "justification": "criteria fixed before the GO run",
+          "revisionAuthorSessionId": "v19-mem2-binding"
         }
       ]
     }

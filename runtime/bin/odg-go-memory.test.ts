@@ -19,8 +19,9 @@ const fake = async (t: string[]) => t.map((s) => { const v = new Array(D).fill(0
   const m = B.memoryPort(dir, fake);
   const k = await B.knowledge(ROOT, Date.now(), m);
   const trustedFacts = k.claims.filter((c: any) => c.admissible && c.admissible.trusted).length;
-  check(k.memory && k.memory.status === "INDEXED" && k.memory.factIndexed === trustedFacts && k.memory.records === k.claims.filter((c: any) => c.status !== "NOT_FOUND").length,
-    `knowledge(): canonical memory records indexed; FACT tier = admissible-trusted count (${trustedFacts}); CONTEXT ${k.memory && k.memory.contextIndexed}`);
+  const obsFacts = k.observations ? k.observations.corroborated : 0;   // V19-MEM-2: REPRO-1 corroborated internal observations join the FACT tier
+  check(k.memory && k.memory.status === "INDEXED" && k.memory.factIndexed === trustedFacts + obsFacts && k.memory.records === k.claims.filter((c: any) => c.status !== "NOT_FOUND").length + (k.observations ? k.observations.keys : 0),
+    `knowledge(): canonical memory records indexed; FACT tier = admissible-trusted claims (${trustedFacts}) + REPRO-1 corroborated observations (${obsFacts}); CONTEXT ${k.memory && k.memory.contextIndexed}`);
   check(JSON.stringify(k.claims) === JSON.stringify(plain.claims), "no promotion: the claims' admissibility is byte-identical with and without the memory port");
   const r = await m.recall("keep code review changes small");
   check(r.status === "RECALLED" && Array.isArray(r.facts) && Array.isArray(r.context) && r.context.every((h: any) => h.tier === "CONTEXT_UNVERIFIED") && r.facts.every((h: any) => h.tier === "FACT") && /NEVER as a fact/.test(r.contextNote),
