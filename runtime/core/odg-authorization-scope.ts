@@ -224,7 +224,9 @@ function inspectionValid(contract: any, rec: any, revisionAuthorSessionId: strin
 function experimentValid(rec: any, sha: string, probes?: any): any {
   if (!isObj(rec)) return { ok: false, reason: "no committed experiment record" };
   if (rec.contractSha256 !== sha) return { ok: false, reason: "experiment record not bound to the current contract sha256" };
-  if (!["PASS", "PARTIAL", "FAIL", "NOT_MEASURED"].includes(rec.outcome)) return { ok: false, reason: "experiment record has no recorded outcome" };
+  // MEASURED = the recorded outcome of a DESCRIPTIVE measurement contract (e.g. V178-P2: "outcome = the recorded verdict verbatim");
+  // it is never a grade — the grade comes only from VALIDATE_CRITERIA (R5b), exactly as for every other outcome.
+  if (!["PASS", "PARTIAL", "FAIL", "NOT_MEASURED", "MEASURED"].includes(rec.outcome)) return { ok: false, reason: "experiment record has no recorded outcome" };
   const cur = currencyOf(rec, probes, sha, false);
   if (!cur.usableAsProof) return { ok: false, currency: currencySummary(cur), reason: `R7 proof currency ${cur.status}: ${cur.reason}` };
   return { ok: true, evidence: withCurrency({ outcome: rec.outcome, contractSha256: sha, note: "step DONE with its recorded outcome — the outcome is not graded or upgraded here" }, cur) };
@@ -267,7 +269,9 @@ function validationValid(rec: any, sha: string, experiment: any, probes?: any): 
   if (!isObj(ei) || ei.verdict !== "ACCEPT") return { ok: false, reason: "experiment result lacks an independent inspection ACCEPT" };
   if (!str(ei.inspectorSessionId) || !str(ei.authorSessionId) || !SESSION_ID.test(String(ei.inspectorSessionId)) || !SESSION_ID.test(String(ei.authorSessionId)) || String(ei.inspectorSessionId) === String(ei.authorSessionId)) return { ok: false, reason: "experiment inspection lacks distinct declared session ids (not independent)" };
   }
-  const g = rec.scenarioGrade, o = experiment.outcome;
+  // a DESCRIPTIVE "MEASURED" outcome carries no verdict: it caps the grade at PARTIAL (fail-closed — a measurement record alone
+  // never supports PASS; the upgrade-refusal rule below applies unchanged).
+  const g = rec.scenarioGrade, o = experiment.outcome === "MEASURED" ? "PARTIAL" : experiment.outcome;
   if (!(g in GRADE_RANK) || !(o in GRADE_RANK)) return { ok: false, reason: "scenarioGrade or experiment outcome not a recognised grade" };
   if (GRADE_RANK[g] > GRADE_RANK[o]) return { ok: false, reason: `scenarioGrade ${g} exceeds the experiment outcome ${o} (upgrade refused)` };
   if (g === "NOT_MEASURED" && o !== "NOT_MEASURED") return { ok: false, reason: "NOT_MEASURED grade on a measured experiment" };
