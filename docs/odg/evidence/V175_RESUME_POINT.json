@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "df923851d08cd50158bdc8ee4a8382232842181bcbf36dfa92e1547cf6e893b6"
+      "sha256": "f8cef6247b1e432b45b8ea3b371e8240fffb1a0e6e9c11520e0bf3474d39cd96"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -52,6 +52,10 @@
     {
       "source": "docs/odg/evidence/V176_NB2_GO_EXECUTE_TRACE.jsonl",
       "sha256": "f6568cd70c96d1a85c360a6405b6f46a2bfe4bc3470c73fc587881555f95c6b5"
+    },
+    {
+      "source": "docs/odg/evidence/V176_NB3_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "b370410d3cd2c447076c177fd69130213e81b5e3ca5d7016450183df9eab1336"
     },
     {
       "source": "docs/odg/evidence/V178_P1R_GO_EXECUTE_TRACE.jsonl",
@@ -188,6 +192,10 @@
     {
       "source": "docs/odg/evidence/V176_NB3_CONTRACT_INSPECTION.json",
       "sha256": "e004319966724bea0ad339ddf8b5f341a67eb1529e7eaf0f8e45a2fee64818cc"
+    },
+    {
+      "source": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
+      "sha256": "367034990a7e0138dba4db722808f358288b26dc25ccc32409a8f6771b5bd33f"
     },
     {
       "source": "docs/odg/evidence/V178_P1_CONTRACT_INSPECTION.json",
@@ -896,17 +904,18 @@
       },
       "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68",
       "ownerRecord": "docs/odg/V176_OWNER_AUTHORIZATION_BUILD_MISSIONS.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": "VALIDATE_CRITERIA",
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
         "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
         ],
-        "reason": "inspection ACCEPT bound to contract 5c551b0d3053 ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
         "contractSha256": "5c551b0d3053d21d38003169243dd2b0f0e0ca520b469ab5dbd403b07b26ed68"
       },
       "records": {
@@ -915,19 +924,36 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
-      "pending": [],
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/V176_NB3_GO_EXECUTE_TRACE.jsonl",
+        "runId": "6382ec0449920f6c",
+        "status": "EXECUTED_FAIL",
+        "endedAt": "2026-11-26T16:39:19.393Z",
+        "dispatched": true
+      },
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-nb3-native-design-run.ts"
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 5c551b0d3053 and experiment docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json, then an independent inspection — never auto-graded"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=V176-NB3]",
@@ -1655,6 +1681,19 @@
       "strategic": "D",
       "workingOn": "V178-P2",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/V176_NB3_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "6382ec0449920f6c",
+      "status": "EXECUTED_FAIL",
+      "endedAt": "2026-11-26T16:39:19.393Z",
+      "dispatched": [
+        "V176-NB3"
+      ],
+      "strategic": "D",
+      "workingOn": "V176-NB3",
+      "ownerSelectionRecord": "docs/odg/V19_OWNER_DECISION_SELECT_NB3.json"
     }
   ],
   "nextGoAction": {
@@ -1677,29 +1716,30 @@
     },
     "dispatchable": [
       {
-        "item": "V176-NB3",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v176-nb3-native-design-run.ts"
-      },
-      {
         "item": "V178-P5",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: V176-NB3, V178-P5",
+    "verdict": "GO --execute could dispatch: V178-P5",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "V176-NB3",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 5c551b0d3053 and experiment docs/odg/evidence/V176_NB3_NATIVE_DESIGN_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/V178_P2_GO_EXECUTE_TRACE.jsonl",
-      "runId": "73b25f2f329b128f",
-      "status": "EXECUTED_PASS",
-      "endedAt": "2026-11-26T15:32:41.752Z",
+      "trace": "docs/odg/evidence/V176_NB3_GO_EXECUTE_TRACE.jsonl",
+      "runId": "6382ec0449920f6c",
+      "status": "EXECUTED_FAIL",
+      "endedAt": "2026-11-26T16:39:19.393Z",
       "strategic": "D",
-      "workingOn": "V178-P2",
+      "workingOn": "V176-NB3",
       "nextAfterCurrent": {
         "decision": "SELECTED",
         "selected": "D",

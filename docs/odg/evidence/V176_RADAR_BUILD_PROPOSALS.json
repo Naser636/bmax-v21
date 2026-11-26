@@ -24,19 +24,19 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795713449000,
+    "nowEpochMs": 1795712112000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "df923851d08cd50158bdc8ee4a8382232842181bcbf36dfa92e1547cf6e893b6",
-      "epochMs": 1795713449000
+      "sha256": "f8cef6247b1e432b45b8ea3b371e8240fffb1a0e6e9c11520e0bf3474d39cd96",
+      "epochMs": 1795712112000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
       "sha256": "d5cd9d716eddc1beb20658d5de0944c0fd161b704053d2726e448533b75f5f00",
-      "epochMs": 1795710834000
+      "epochMs": 1795712112000
     },
     {
       "source": "docs/odg/evidence/V175_OUTCOME_LEARNING.json",
@@ -45,8 +45,8 @@
     },
     {
       "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json",
-      "sha256": "0dacc4f991a38f5a184a857a55565252e309002c13e31e37d521f9aecf74854f",
-      "epochMs": 1795706530000
+      "sha256": "b5d5ff424246f14c339f2d4465c99ea4dd076e9a65142a29c2571d1881da1236",
+      "epochMs": 1795711965000
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
@@ -66,7 +66,7 @@
     {
       "source": "docs/odg/evidence/V178_CHECKPOINT_19.json",
       "sha256": "954af5a35279b707fce9e7ea6d56d42c3646cfccbebd14058cb887e9e39a1a21",
-      "epochMs": 1795612824000
+      "epochMs": 1795613331000
     },
     {
       "source": "docs/odg/evidence/CM-RADAR-GATE-CHAIN_STEP2_EVIDENCE.json",
@@ -2703,7 +2703,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 2,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
@@ -2755,7 +2755,7 @@
         "executed": false
       },
       "assess": {
-        "ageDays": 2,
+        "ageDays": 1,
         "fresh": true,
         "corroboration": "UNCORROBORATED"
       },
