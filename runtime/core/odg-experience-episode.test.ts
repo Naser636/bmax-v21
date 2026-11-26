@@ -82,6 +82,9 @@ const sus = EXP.suspend(eps[1], "owner: conditions changed");
 ok("suspend ⇒ SUSPENDED with reason; recall marks it not applicable", sus.status === "SUSPENDED" && (() => { const s2 = EXP.toPrecedentStore([sus]); const r = EXP.recallForMission(s2, { id: "Q", title: "hybrid memory index embeddings" }); return r.comparable[0].applicable === false && r.comparable[0].blockers[0] === "episode SUSPENDED"; })());
 assert.throws(() => EXP.suspend(eps[1], ""), /reason/);
 ok("suspension without reason refused", true);
+ok("real-path re-evaluation: a contract edited after closure (current sha ≠ validated sha) ⇒ INVALIDATED", (() => { const r = EXP.buildEpisodes({ register, contracts, readRecord, contractSha256: (c) => (c.scenario === "X2" ? "c-EDITED" : "c-" + c.scenario) }); return r[1].status === "INVALIDATED" && /contract sha changed/.test(r[1].statusHistory[0].reasons[0]) && r[0].status === "ACTIVE"; })());
+ok("real-path re-evaluation: experiment sha differing from the validated one ⇒ INVALIDATED", (() => { const rr = (rel) => { const x = readRecord(rel); return x && rel.includes("X1") ? { ...x, json: { ...x.json, experimentEvidence: { experimentSha256: "e-OTHER" } } } : x; }; const r = EXP.buildEpisodes({ register, contracts, readRecord: rr, contractSha256: (c) => "c-" + c.scenario }); return r[0].status === "INVALIDATED" && r[2].status === "ACTIVE"; })());
+ok("contract absent while a current-sha function is given ⇒ INVALIDATED (fail-closed)", EXP.buildEpisodes({ register: { items: [register.items[0]] }, contracts: [], readRecord, contractSha256: () => "x" })[0].status === "INVALIDATED");
 ok("unreadable validation record ⇒ INVALIDATED", EXP.buildEpisodes({ register: { items: [register.items[0]] }, contracts, readRecord: () => null })[0].status === "INVALIDATED");
 
 // 6 — GO DECOMPOSE wiring: the cycle consumes ports.experienceRecall and records it (absent port ⇒ no field).

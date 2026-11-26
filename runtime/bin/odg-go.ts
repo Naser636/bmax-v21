@@ -397,7 +397,7 @@ function experienceRecall(repo: string): (mission: any) => any {
       const register = readJson(path.join(repo, F.REGISTER)).register;
       const contracts = readJson(path.join(repo, CONTRACTS_FILE)).contracts;
       const readRecord = (rel: string) => { const p = path.join(repo, rel); const sha = sha256File(p); return sha ? { json: readJson(p), sha256: sha } : null; };
-      store = EXP.toPrecedentStore(EXP.buildEpisodes({ register, contracts, readRecord }));
+      store = EXP.toPrecedentStore(EXP.buildEpisodes({ register, contracts, readRecord, contractSha256: require("../core/odg-authorization-scope.js").contractSha256 }));
     }
     return EXP.recallForMission(store, mission);
   };

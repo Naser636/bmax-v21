@@ -107,7 +107,7 @@ function buildEpisode(item: any, contract: any, validation: any, validationSha25
     lessons,
     features: features([item.title, w.objective, pre.metric, pre.question].map(str).join(" "), components),
   };
-  return reevaluate(ep, { contractSha256: item.closure.contractSha256 || null });
+  return ep;
 }
 
 /* reevaluate(episode, current) — conditions changed ⇒ INVALIDATED (new version; history kept; never deleted). */
@@ -115,6 +115,7 @@ function reevaluate(ep: any, current: any): any {
   const reasons: string[] = [];
   const e = ep.evidence || {};
   if (e.validationContractSha256 && current && current.contractSha256 && e.validationContractSha256 !== current.contractSha256) reasons.push("contract sha changed since validation");
+  if (e.experimentSha256 && current && current.experimentSha256 && e.experimentSha256 !== current.experimentSha256) reasons.push("experiment sha differs from the validated experiment");
   if (!e.validationSha256) reasons.push("validation record unreadable (sha absent)");
   if (!reasons.length || ep.status === "INVALIDATED") return ep;
   return { ...ep, version: ep.version + 1, status: "INVALIDATED", statusHistory: [...ep.statusHistory, { from: ep.status, to: "INVALIDATED", reasons }] };
@@ -124,7 +125,9 @@ function suspend(ep: any, reason: string): any {
   return { ...ep, version: ep.version + 1, status: "SUSPENDED", statusHistory: [...arr(ep.statusHistory), { from: ep.status, to: "SUSPENDED", reasons: [reason] }] };
 }
 
-/* buildEpisodes({ register, contracts, readRecord }) — every CLOSED_* register item with a CLOSE-1 record. */
+/* buildEpisodes({ register, contracts, readRecord, contractSha256 }) — every CLOSED_* register item with a CLOSE-1 record,
+ * each re-evaluated against the CURRENT conditions: the current contract's sha (contractSha256(contract), injected — e.g.
+ * odg-authorization-scope.contractSha256; absent ⇒ the register's recorded closure sha) and the validated experiment sha. */
 function buildEpisodes(src: any): any[] {
   const items = arr(src && src.register && src.register.items);
   const C = new Map(arr(src && src.contracts).map((c: any) => [c.scenario, c]));
@@ -133,8 +136,13 @@ function buildEpisodes(src: any): any[] {
     if (!String(it.status || "").startsWith("CLOSED_") || !isObj(it.closure) || !it.closure.record) continue;
     let rec: any = null;
     try { rec = src.readRecord(it.closure.record); } catch { rec = null; }
-    const ep = buildEpisode(it, C.get(it.id) || null, rec ? rec.json : null, rec ? rec.sha256 : null);
-    if (ep) out.push(ep);
+    const contract = C.get(it.id) || null;
+    const ep = buildEpisode(it, contract, rec ? rec.json : null, rec ? rec.sha256 : null);
+    if (!ep) continue;
+    let currentSha: any = it.closure.contractSha256 || null;
+    if (typeof src.contractSha256 === "function") { try { currentSha = contract ? src.contractSha256(contract) : null; } catch { currentSha = null; } }
+    const ev = rec && isObj(rec.json) && isObj(rec.json.experimentEvidence) ? rec.json.experimentEvidence.experimentSha256 || null : null;
+    out.push(reevaluate(ep, { contractSha256: currentSha || "ABSENT", experimentSha256: ev }));
   }
   return out;
 }

@@ -47,7 +47,7 @@ async function runExp(o: any): Promise<any> {
   const register = readJson(o.root, REGISTER).register; const contracts = readJson(o.root, CONTRACTS).contracts;
   const readRecord = (rel: string) => { const b = fs.readFileSync(path.join(o.root, rel)); return { json: JSON.parse(b), sha256: crypto.createHash("sha256").update(b).digest("hex") }; };
   const closed = register.items.filter((i: any) => String(i.status || "").startsWith("CLOSED_") && i.closure && i.closure.record);
-  const eps = EXP.buildEpisodes({ register, contracts, readRecord });
+  const eps = EXP.buildEpisodes({ register, contracts, readRecord, contractSha256: require("../core/odg-authorization-scope.js").contractSha256 });
   // AC1
   const shaOk = eps.every((e: any) => e.evidence.validationSha256 === crypto.createHash("sha256").update(fs.readFileSync(path.join(o.root, e.evidence.validationRecord))).digest("hex"));
   ac.AC1 = { met: closed.length > 0 && eps.length === closed.length && eps.every((e: any) => e.status === "ACTIVE" && SECTIONS.every((k) => k in e)) && shaOk,

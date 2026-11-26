@@ -5509,7 +5509,8 @@
           "no second memory: episodes are a derived projection of committed records recorded in decision-precedent; nothing persisted by this item",
           "a FAILED precedent is never reusable unchanged (RB-REATTEMPT-CHANGED-INPUT); adaptation.autoApply is always false",
           "GO DECOMPOSE decision unchanged when the port is absent; no closed item is re-graded",
-          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED"
+          "PROPOSED ≠ AUTHORIZED ≠ EXECUTED",
+          "on the real path every episode is re-evaluated against the CURRENT contract sha (odg-authorization-scope.contractSha256) and the validated experiment sha; a mismatch ⇒ INVALIDATED (versioned, never deleted)"
         ],
         "acceptance_criteria": [
           "AC1 episodes: every CLOSED_* register item with a CLOSE-1 record yields exactly one ACTIVE episode (odg-experience-episode.buildEpisodes) carrying every owner §3.A section (context, initialSituation, diagnosis, decisions, steps, components, results, difficulties, corrections, costs, evidence, lessons, knowledgeClass, confidence, method, features), its validation record sha256 recomputed from the file",
@@ -5551,7 +5552,7 @@
           "baseline": "beforeMetric decomposeExperienceRecall ABSENT (no recall); control arm WITHOUT memory (empty decision-precedent store) ⇒ 0/10 by construction; random-rank expectation 10 × 3/(n−1) recorded by the runner",
           "dataset": {
             "source": "committed docs/odg/evidence/V164_STRATEGIC_REGISTER.json closed items + their CLOSE-1 criteria-validation records + docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json at the run head",
-            "runnerSha256": "6ca68c70c839d43316afb8950d80e6b4745f1f542e499d703819662ab0d9818e",
+            "runnerSha256": "6ae55bfb3c1eadb0383f531b51cce2ecfddeff6e4d7362217d2613ba9fafc83a",
             "families": [
               [
                 "G",
@@ -5593,7 +5594,26 @@
         "status": "BOUND",
         "rule": "binding = make write_set concrete (replace the ESTIMATE) + independent inspection ACCEPT of the bound contract; done per contract when GO selects it; the owner record covers GO executing it only once bound and inspected",
         "boundBy": "PROVIDER (Claude Code, V19 EXP-B binding session; branch feat/v19-exp-b-episodes)",
-        "boundAt": "2026-11-26"
+        "boundAt": "2026-11-26",
+        "defaultBehaviour": "odg-go.ts buildPorts wires experienceRecall UNCONDITIONALLY (owner: « accessible depuis les véritables chemins d'exécution »): every real GO cycle now records DECOMPOSE.experienceRecall (trace / decision digests change); a port failure fails soft to NOT_MEASURED; selection/authorization/strategy are unchanged",
+        "bindingFiles": {
+          "rule": "governance/binding files changed by the binding PR (outside the execution write_set, never written by the run)",
+          "files": [
+            "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
+            "docs/odg/V19_OWNER_ORDER_EXP_B.json",
+            "runtime/core/odg-authorization-scope.ts",
+            "runtime/core/odg-authorization-evidence-paths.ts",
+            "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
+            "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
+            "docs/odg/evidence/V175_RESUME_POINT.json",
+            "docs/odg/evidence/V176_OUTCOME_FEEDBACK.json",
+            "docs/odg/evidence/V176_RADAR_BUILD_PROPOSALS.json",
+            "docs/odg/evidence/V178_P1_MECHANICAL_VERIFICATION.json",
+            "runtime/bin/odg-strategic-select.test.ts",
+            "runtime/bin/odg-strategy-mode-run.test.ts",
+            "runtime/bin/odg-v178-radar-campaign.test.ts"
+          ]
+        }
       },
       "authorization": {
         "by": "OWNER",
@@ -5642,6 +5662,28 @@
           "reason": "EXPERIENCE INTELLIGENCE increment B ordered by the owner",
           "justification": "criteria and families fixed before any recall ranking on the real corpus",
           "revisionAuthorSessionId": "v19-exp-b-binding"
+        },
+        {
+          "date": "2026-11-26",
+          "author": "PROVIDER (Claude Code, V19 EXP-B revision-2 session)",
+          "authorizedBy": "OWNER (CTO) — docs/odg/V19_OWNER_ORDER_EXP_B.json",
+          "originalCriteria": [
+            "AC1 episodes: every CLOSED_* register item with a CLOSE-1 record yields exactly one ACTIVE episode (odg-experience-episode.buildEpisodes) carrying every owner §3.A section (context, initialSituation, diagnosis, decisions, steps, components, results, difficulties, corrections, costs, evidence, lessons, knowledgeClass, confidence, method, features), its validation record sha256 recomputed from the file",
+            "AC2 knowledge governance: every episode knowledgeClass INTERNAL_EXPERIENCE; every validation.learning.nextLever lesson classed HYPOTHESIS; no lesson classed CORROBORATED_FACT; every recall adaptation.autoApply === false",
+            "AC3 comparable recall over the canonical decision-precedent store (recallComparable), leave-one-out on the pre-registered FAMILIES (10 directional queries: each member's own title/objective/metric/question/write_set as the new mission, its own episode excluded, digit-bearing tokens never features): hit ⇔ the family partner is in the top-3; met ⇔ hits ≥ 8/10",
+            "AC4 non-reuse discipline over every AC3 recall: each recalled FAILED episode applicable=false with the RB-REATTEMPT-CHANGED-INPUT blocker, and each recalled ACTIVE SUCCEEDED episode applicable=true (100%, at least one recall)",
+            "AC5 real GO path: odg-go-cycle.runGoCycle (DRY, in-process) with odg-go.ts's experienceRecall port records DECOMPOSE.experienceRecall with status RECALLED or NO_COMPARABLE for the working item; without the port the DECOMPOSE decision carries no experienceRecall field",
+            "AC6 tsc --noEmit --incremental false clean and every touched test file passes, run one at a time"
+          ],
+          "originalCriteriaNote": "AC1–AC6, families and thresholds UNCHANGED",
+          "change": [
+            "real-path re-evaluation: buildEpisodes re-evaluates against the current contract sha (injected contractSha256) and the validated experiment sha",
+            "runnerSha256 updated (runner passes contractSha256)",
+            "bindingFiles + defaultBehaviour disclosed"
+          ],
+          "reason": "independent contract inspection (rev 1 ACCEPT, a9708f5fa7d5cbc5e, head 67ae38bb) non-blocking findings: re-evaluation compared two historical shas on the real path; binding files and unconditional GO port undisclosed",
+          "justification": "fixed BEFORE the single run so the measured code is the shipped code; criteria unchanged; no ranking computed on the real corpus",
+          "revisionAuthorSessionId": "v19-exp-b-rev2"
         }
       ]
     }
