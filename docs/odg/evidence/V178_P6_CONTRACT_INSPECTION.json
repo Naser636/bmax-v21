@@ -1,0 +1,39 @@
+{
+  "//": "Independent inspection of V178-P6 — CURRENT binding: revision 2 (ACCEPT). Prior: revision 1 REJECT (absolute-path fail-open, AC3 overclaim, FROZEN-1 called from no real path) — all three fixed.",
+  "schema": "odg-contract-inspection/1",
+  "scenario": "V178-P6",
+  "verdict": "ACCEPT",
+  "contractSha256": "a9ba4454a6c624f991144a19dcf489be9b4b0a4a1b1102b3f0191d5152bdeaf6",
+  "inspectedHeadSha": "502e49cd96a88b5faa8784cb7f40cf38eb8fc549",
+  "inspectedPr": 1077,
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session; owner-authorized 2026-11-26)",
+  "inspectorSessionId": "insp-6cab89c8-v19-p6-rev2-20261126",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "authorSessionId": "v19-p6-rev2",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-26",
+  "priorVerdicts": [
+    {
+      "revision": 1,
+      "verdict": "REJECT",
+      "contractSha256": "90edf710d565310ed5d85897fa3cfe4802fe858a6ab75a17000e4f8d8ad86424",
+      "inspectedHeadSha": "61634a1252496c720dec265f5fe1b7d34ee81f42",
+      "inspectorSessionId": "insp-6cab89c8-v19-nb3-p6-p7-20261126"
+    }
+  ],
+  "findings": [
+    "sha a9ba4454…; only write_set (+ v175 runner) and revisionHistory rev 2 changed; ACs, beforeMetric, preRegistration, dispatch target unchanged; runnerSha256 holds",
+    "absolute-path fail-open CLOSED (root-relativised or fail-closed; probed)",
+    "AC3 now runs the real NB2 runNativeDesign (historical verdict + stall reason, pins identical before/after, write-set not refused, r2.frozen active); weak: held-out check scans segment labels only",
+    "FROZEN-1 wired in the real v175 runner (pin at start, gate S4/S5, verify at acceptance ⇒ FAIL on change, result.frozen recorded)",
+    "limits: the candidate write-set is the fixed sandbox file (gate fires only on misconfiguration); harness re-verification tautological; item.testPath normally absent; frozen.ok === false recorded but does not stop the run (follow-up)",
+    "NB2/NB3 behaviour otherwise unchanged (v175 test 30 ok, NB3 test 25 ok); NB3 committed result byte-identical, not re-run"
+  ],
+  "testsRun": [
+    "odg-native-design-pipeline.test.ts exit 0 (P6/AC1–AC3 ok)",
+    "odg-v175-native-design-run.test.ts exit 0 (30 ok)",
+    "odg-v176-nb3-native-design-run.test.ts exit 0 (25 ok)",
+    "tsc exit 0"
+  ]
+}
