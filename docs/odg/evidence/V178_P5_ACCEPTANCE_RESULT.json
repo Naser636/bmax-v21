@@ -1,0 +1,63 @@
+{
+  "schema": "odg-v19-acceptance-result/1",
+  "scenario": "V178-P5",
+  "label": "NATIVE (ODG GO dispatch)",
+  "rule": "ACC-1: PASS ⇔ every acceptance test id reported ok by its file (each file once, exit 0) ∧ tsc clean ∧ every LEARN-1 before-metric IMPROVED; NOT_MEASURED if any metric cannot be recomputed",
+  "criteria": {
+    "ACC-T": {
+      "met": true,
+      "tests": [
+        {
+          "id": "V178-P5/AC1",
+          "file": "runtime/core/odg-model-router.test.ts",
+          "reportedOk": true,
+          "fileExit": 0
+        },
+        {
+          "id": "V178-P5/AC2",
+          "file": "runtime/core/odg-model-router.test.ts",
+          "reportedOk": true,
+          "fileExit": 0
+        },
+        {
+          "id": "V178-P5/AC3",
+          "file": "runtime/core/odg-model-router.test.ts",
+          "reportedOk": true,
+          "fileExit": 0
+        }
+      ],
+      "files": [
+        {
+          "file": "runtime/core/odg-model-router.test.ts",
+          "exit": 0
+        }
+      ]
+    },
+    "ACC-C": {
+      "met": true,
+      "command": "tsc --noEmit --incremental false -p tsconfig.json",
+      "exit": 0,
+      "ok": true
+    },
+    "ACC-M": {
+      "verdicts": [
+        {
+          "source": "runtime/core/odg-model-router.ts#runTestGatedCascade",
+          "before": "ABSENT",
+          "after": "PRESENT",
+          "verdict": "IMPROVED"
+        }
+      ],
+      "met": true
+    }
+  },
+  "outcome": "PASS",
+  "contractSha256": "68cd7a698d180e0ee4bd21f97d9bbde0430ecc040df835ee61acb4dd4e6595a8",
+  "provenance": {
+    "codeAuthor": "PROVIDER (Claude Code)",
+    "decisionAuthority": "ODG GO (dispatch of the declared target)",
+    "network": "none",
+    "modelCalls": 0,
+    "providerCalls": 0
+  }
+}
