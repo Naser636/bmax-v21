@@ -17,7 +17,7 @@
   "item": "RB-RECORD-INSPECTION-VERDICT-TIME",
   "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57",
   "precondition": {
-    "pr": 1089,
+    "pr": 965,
     "merged": true
   },
   "scope": {
@@ -37,5 +37,6 @@
   "reservations": [
     "Cette décision d'ordre ne constitue pas une acceptation des limites techniques relevées par l'inspecteur.",
     "Les critères des contrats restent inchangés. Aucun PASS ne doit être fabriqué ou déduit de l'ordre propriétaire."
-  ]
+  ],
+  "preconditionNote": "corrected 2026-11-27 before any use: the transcription first set precondition.pr 1089, which GO cannot verify in code (only pr 965 ⇔ the GO-DTO-1 rule is code-verifiable, as in every prior GO-ORD-2 record); the record was never applied nor claimed. Owner quote, item and contract sha unchanged."
 }
