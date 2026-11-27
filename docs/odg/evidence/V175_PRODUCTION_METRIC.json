@@ -969,6 +969,7 @@
   "windowShare": {
     "prs": "#955–#971 merged",
     "goTraces": [
+      "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V168_H_GO_EXECUTE_TRACE.jsonl",
       "docs/odg/evidence/V174_G2_GO_EXECUTE_TRACE.jsonl",
@@ -990,6 +991,7 @@
       "docs/odg/evidence/V19_MEM2_GO_EXECUTE_TRACE.jsonl"
     ],
     "odgWrittenPaths": [
+      "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json",
       "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_ACCEPTANCE_RESULT.json",
       "docs/odg/evidence/V168_H_EXPERIMENT.json",
       "docs/odg/evidence/V172_G2_EXPERIMENT.json",
