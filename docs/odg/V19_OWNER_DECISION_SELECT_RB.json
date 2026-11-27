@@ -1,0 +1,41 @@
+{
+  "//": "OWNER selection-decision record — same owner decision (2026-11-27), position 3: resolves ONE undecided actionable selection (DECISION_REQUIRED for uncertainty, no tie) in favour of RB-RECORD-INSPECTION-VERDICT-TIME once positions 1–2 are done. Grants nothing; at most one dispatch.",
+  "schema": "odg-owner-selection-decision/1",
+  "kind": "OWNER_SELECTION_DECISION",
+  "directive": "CTO — DÉCISION PROPRIÉTAIRE D'ORDRE RB-*",
+  "date": "2026-11-27",
+  "issuer": "OWNER (CTO)",
+  "source": "explicit owner decision of 2026-11-27 (relayed by the coordinating session)",
+  "quote": [
+    "J'adopte l'ordre proposé par ODG pour l'exécution des trois contrats RB-*.",
+    "Ordre obligatoire :",
+    "1. RB-SELECTION-AT-RUN-HEAD",
+    "2. RB-REATTEMPT-CHANGED-INPUT",
+    "3. RB-RECORD-INSPECTION-VERDICT-TIME",
+    "Cette décision autorise uniquement la transcription de cet ordre dans les enregistrements canoniques prévus par le système et l'exécution des trois GO conformément à leurs contrats existants."
+  ],
+  "item": "RB-RECORD-INSPECTION-VERDICT-TIME",
+  "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57",
+  "precondition": {
+    "pr": 1089,
+    "merged": true
+  },
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED for UNCERTAINTY (no tie: tiedSet empty or singleton) with proposed = item",
+    "neverAppliesTo": [
+      "strategicSelection",
+      "ties (GO-ORD-1)",
+      "authorization (the item must already be actionable)",
+      "scores / ranking / register / thresholds",
+      "any other item",
+      "any other contract sha"
+    ],
+    "maxDispatches": 1,
+    "consumedBy": "runtime/core/odg-go-cycle.ts (GO-ORD-2), loaded by runtime/bin/odg-go.ts readState from OWNER_SELECTION_DECISIONS"
+  },
+  "appliedBy": "GO-ORD-2 (runtime/core/odg-go-cycle.ts) — consumes this owner decision ONLY to resolve the undecided actionable selection of V178-P7 that GO itself requested",
+  "reservations": [
+    "Cette décision d'ordre ne constitue pas une acceptation des limites techniques relevées par l'inspecteur.",
+    "Les critères des contrats restent inchangés. Aucun PASS ne doit être fabriqué ou déduit de l'ordre propriétaire."
+  ]
+}
