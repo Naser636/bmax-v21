@@ -1,0 +1,18 @@
+{
+  "schema": "odg-run-incident/1",
+  "scenario": "RB-SELECTION-AT-RUN-HEAD",
+  "runId": "79789e6b4e5c46fb",
+  "date": "2026-11-27",
+  "outcome": "FAIL",
+  "outcomeKept": true,
+  "//": "Incident record for the single GO-dispatched run of RB-SELECTION-AT-RUN-HEAD. The committed result is FAIL and stays FAIL; this record only states the measured root cause. No re-run without an explicit owner decision.",
+  "criteria": {
+    "ACC-T": "met (AC1, AC2 ok; odg-go-cycle.test.ts exit 0)",
+    "ACC-M": "met (selectionAtRunHead ABSENT → PRESENT)",
+    "ACC-C": "NOT met — tsc exit 1"
+  },
+  "rootCause": "environment (provider setup), not the contract code: the GO scratch worktree /home/ubuntu/odg-scratch-rb/run1 had no node_modules reachable (the scratch must stay pristine, and the parent-directory node_modules link used for the P7 scratch /home/ubuntu/odg-scratch-p7/node_modules was not created for /home/ubuntu/odg-scratch-rb/). tsc in the scratch reports TS2307 'Cannot find module' (next, eslint/config, …) and TS2580 (no @types/node).",
+  "reproduction": "tsc --noEmit --incremental false -p tsconfig.json run in /home/ubuntu/odg-scratch-rb/run1 without a reachable node_modules ⇒ TS2307/TS2580; the same command at the same head in a checkout with node_modules exits 0 (PR #1090 CI 'build + typecheck' pass at e0db6b9e).",
+  "correction": "setup only: the parent-directory node_modules link is created before any further RB-* GO scratch; no code, criterion or threshold change.",
+  "reRun": "NOT performed — requires an explicit owner decision (precedent: V176-NB3 RUN-1 kept as incident)"
+}
