@@ -174,6 +174,11 @@
         "validation": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_CRITERIA_VALIDATION.json"
       },
       {
+        "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
+        "reason": "no attributable selection-time prediction (absent)",
+        "validation": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CRITERIA_VALIDATION.json"
+      },
+      {
         "id": "RB-SELECTION-AT-RUN-HEAD",
         "reason": "no attributable selection-time prediction (absent)",
         "validation": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_CRITERIA_VALIDATION.json"
@@ -239,13 +244,7 @@
         "validation": "docs/odg/evidence/V19_MEM2_CRITERIA_VALIDATION.json"
       }
     ],
-    "notGraded": [
-      {
-        "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
-        "status": "NOT_STARTED",
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-      }
-    ]
+    "notGraded": []
   },
   "perCriterion": [
     {
@@ -1074,13 +1073,6 @@
       "uncertainty": 0.7
     },
     {
-      "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
-      "baseScore": 0.06,
-      "adjustedScore": 0.06,
-      "delta": 0,
-      "uncertainty": 0.7
-    },
-    {
       "id": "V150-AI4",
       "baseScore": 0.005,
       "adjustedScore": 0.005,
@@ -1178,32 +1170,20 @@
     "actionable": {
       "rule": "GO-ACT-1 (same selector, items without an AUTHORIZED next step excluded as NOT_AUTHORIZED_NOW); GO-ORD-1/GO-ORD-2 owner records apply on top, unchanged",
       "base": {
-        "decision": "DECISION_REQUIRED",
+        "decision": "NO_ELIGIBLE",
         "selected": null,
-        "proposed": "RB-RECORD-INSPECTION-VERDICT-TIME",
+        "proposed": null,
         "tiedSet": [],
         "resolvedBy": null,
-        "top3AutoSelectable": [
-          {
-            "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
-            "evidenceScore": 0.06,
-            "uncertainty": 0.7
-          }
-        ]
+        "top3AutoSelectable": []
       },
       "adjusted": {
-        "decision": "DECISION_REQUIRED",
+        "decision": "NO_ELIGIBLE",
         "selected": null,
-        "proposed": "RB-RECORD-INSPECTION-VERDICT-TIME",
+        "proposed": null,
         "tiedSet": [],
         "resolvedBy": null,
-        "top3AutoSelectable": [
-          {
-            "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
-            "evidenceScore": 0.06,
-            "uncertainty": 0.7
-          }
-        ]
+        "top3AutoSelectable": []
       },
       "changed": false
     },
@@ -1211,7 +1191,7 @@
     "inEffect": "BASE (feedback OFF)"
   },
   "honesty": [
-    "9 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL, V176-NB3=FAIL, V178-P1-R=FAIL]; 15 refused (incl. every PROBE record); 1 declared item(s) not graded",
+    "9 admitted graded item(s) [G=PARTIAL, G2=PARTIAL, H=FAIL, J=PARTIAL, J2=FAIL, V175-NB1=PASS, V175-NB2=FAIL, V176-NB3=FAIL, V178-P1-R=FAIL]; 16 refused (incl. every PROBE record); 0 declared item(s) not graded",
     "adjusted (attributable) criteria: [evidenceLevel]; NOT_ATTRIBUTABLE (×1): [autonomyBenefit CONSTANT_VALUES n=9; blockerRepetitionReduction NO_MEASURED_PREDICTION n=0; capabilityGain BELOW_MIN_N n=3; costRiskComplexity NO_MEASURED_ASSOCIATION n=9 ρ=0.426241; dependencyAvailability NO_MEASURED_PREDICTION n=0; reliabilityQuality NO_MEASURED_PREDICTION n=0; reusability NO_MEASURED_PREDICTION n=0; speedEfficiency NO_MEASURED_PREDICTION n=0; strategicValue BELOW_MIN_N n=3]",
     "OFB-CAL-2 replaces the base-rate rule OFB-CAL-1 (rejected at inspection: it adjusted criteria constant across items, e.g. autonomyBenefit = 0.5 on all 5); a multiplier now requires a MEASURED, SIGNED rank association — an order association on few items, never a claim that the criterion predicts or discriminates outcomes; n is tiny",
     "NOT_MEASURED criteria stay NOT_MEASURED (multipliers scale MEASURED contributions only); statuses, criterion values, weights, thresholds and eligibility are unchanged",

@@ -1,0 +1,67 @@
+{
+  "//": "VALIDATE_CRITERIA for RB-RECORD-INSPECTION-VERDICT-TIME (owner records docs/odg/V19_OWNER_AUTHORIZATION_RB.json, V19_OWNER_DECISION_SELECT_RB.json position 3). Graded from the committed ACC-1 record + the independent result inspection. PASS within AC1–AC4 only: it proves the READER capability, not a measured verdict latency on real PRs; verdictAt is not an enforced write.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "RB-RECORD-INSPECTION-VERDICT-TIME",
+  "date": "2026-11-27",
+  "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json",
+    "sha256": "c26c695a6225e8ea88e26c709c1076ae3dafd9d46cebb3909a03b0753dea2fae",
+    "experimentSha256": "a081c61c710e2dd346b0e6cb2f6430cdfb3ed4bc36396688731eff2df99636bb",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1098,
+    "mergedAs": "e8577266",
+    "producedBy": "ODG GO --execute native dispatch (run 1689556333c7ac03 at main 9e0c957f; owner selection GO-ORD-2 V19_OWNER_DECISION_SELECT_RB.json, one-shot claim taken); trace docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 1098,
+    "inspectedHead": "82c0eaf3a855840f4faea2b55571b666c33d7d44",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "insp-6cab89c8-v19-rb-verdict-time-result-20261127",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-1689556333c7ac03",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "PASS",
+    "findings": "contract sha 52da42dc unchanged since the contract ACCEPT; one dispatch via the declared positional target, writes ⊆ writeSet, result byte-identical to the scratch, one-shot claim taken; write_set code unchanged abc92376..9e0c957f; AC1/AC2 reportedOk (18 ok), tsc 0, inspectionVerdictFor ABSENT → PRESENT recomputed; #1097 precondition fix legitimate (record never claimed before the edit)"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET",
+      "note": "MEASURED for a PR whose committed inspection record carries verdictAt — proven on a SYNTHETIC fixture"
+    },
+    {
+      "id": "AC2",
+      "status": "MET",
+      "note": "older PRs stay NOT_MEASURED, no backfill (real metric unchanged: 0/17 MEASURED in window #955–#971)"
+    },
+    {
+      "id": "AC3",
+      "status": "MET",
+      "note": "LEARN-1 before-metric concretised to the capability symbol: ABSENT → PRESENT (original notMeasured=17 NOT reduced)"
+    },
+    {
+      "id": "AC4",
+      "status": "MET",
+      "note": "tsc 0"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "ACC-1 PASS within AC1–AC4; independent result inspection ACCEPT"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "inspectionVerdictFor in odg-production-metric + collector of committed *_CONTRACT_INSPECTION.json verdictAt/inspectedPr in bin/odg-v175-production-metric",
+  "limits": [
+    "READER only: nothing writes or enforces verdictAt/inspectedPr in inspection records — a manual convention (only the 3 RB contract inspections carry it, all inspectedPr 1088)",
+    "real V175_PRODUCTION_METRIC: 0 of 17 PRs MEASURED (window #955–#971 contains no record with verdictAt) — no real verdict latency measured yet",
+    "verdictAt in the RB records = time the verdict was received by the coordinating session, not an inspector-emitted timestamp",
+    "duplicate inspectedPr: last write wins (order of files/priorVerdicts), no declared rule; verdictAt not checked against PR creation (negative latency possible)",
+    "GO-ORD-2 record appliedBy text still mentions V178-P7 (copy defect; binding fields item/contractSha256 correct)"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionRbRecordInspectionVerdictTime": "CLOSED_PASS"
+  }
+}
