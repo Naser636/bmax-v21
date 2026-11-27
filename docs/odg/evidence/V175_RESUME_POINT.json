@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "39960b700b9031e22425f21fbc7fd5fd5e8ef958bb94e4f357a3230bd2750df2"
+      "sha256": "f3c40fbe2e1746953daa9966ef4e925f508808aa27b9a8fa1e06c9ac025e1fbc"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -28,6 +28,10 @@
     {
       "source": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_GO_EXECUTE_TRACE.jsonl",
       "sha256": "a7fef9edf9f2b9a179a5b176b743267e848106877595344312139d8ee2217b07"
+    },
+    {
+      "source": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "f581278edcf37e5089c421ac054c209636b0443d879c3050ed8062b95b78fabc"
     },
     {
       "source": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_GO_EXECUTE_TRACE.jsonl",
@@ -224,6 +228,10 @@
     {
       "source": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CONTRACT_INSPECTION.json",
       "sha256": "e0a070635cbf6cb5dcc8455ca85fdc493d368ee55eaffc070416e48ce4d70b02"
+    },
+    {
+      "source": "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json",
+      "sha256": "c26c695a6225e8ea88e26c709c1076ae3dafd9d46cebb3909a03b0753dea2fae"
     },
     {
       "source": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_CONTRACT_INSPECTION.json",
@@ -1049,17 +1057,18 @@
       },
       "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57",
       "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": "VALIDATE_CRITERIA",
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
         "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
         ],
-        "reason": "inspection ACCEPT bound to contract 52da42dc552c ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
         "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57"
       },
       "records": {
@@ -1068,19 +1077,36 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
-      "pending": [],
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_GO_EXECUTE_TRACE.jsonl",
+        "runId": "1689556333c7ac03",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-27T09:13:29.357Z",
+        "dispatched": true
+      },
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 52da42dc552c and experiment docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=RB-RECORD-INSPECTION-VERDICT-TIME]",
@@ -2138,6 +2164,19 @@
       "strategic": "D",
       "workingOn": "RB-REATTEMPT-CHANGED-INPUT",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "1689556333c7ac03",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-27T09:13:29.357Z",
+      "dispatched": [
+        "RB-RECORD-INSPECTION-VERDICT-TIME"
+      ],
+      "strategic": "D",
+      "workingOn": "RB-RECORD-INSPECTION-VERDICT-TIME",
+      "ownerSelectionRecord": "docs/odg/V19_OWNER_DECISION_SELECT_RB.json"
     }
   ],
   "nextGoAction": {
@@ -2158,27 +2197,27 @@
       "ownerAuthorizationNeeded": "owner — D PROPOSED → AUTHORIZED (authorizedBy)",
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#decisionRecord"
     },
-    "dispatchable": [
-      {
-        "item": "RB-RECORD-INSPECTION-VERDICT-TIME",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
-      }
-    ],
-    "verdict": "GO --execute could dispatch: RB-RECORD-INSPECTION-VERDICT-TIME",
+    "dispatchable": [],
+    "verdict": "no tracked item has an authorized, not-yet-dispatched EXECUTION step ⇒ a GO --execute run has nothing to dispatch; the pending steps are provider / inspector / owner steps (see trackedItems[].next)",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "RB-RECORD-INSPECTION-VERDICT-TIME",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 52da42dc552c and experiment docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_GO_EXECUTE_TRACE.jsonl",
-      "runId": "8b08e395993c0434",
+      "trace": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_GO_EXECUTE_TRACE.jsonl",
+      "runId": "1689556333c7ac03",
       "status": "EXECUTED_PASS",
-      "endedAt": "2026-11-27T02:14:10.212Z",
+      "endedAt": "2026-11-27T09:13:29.357Z",
       "strategic": "D",
-      "workingOn": "RB-REATTEMPT-CHANGED-INPUT",
+      "workingOn": "RB-RECORD-INSPECTION-VERDICT-TIME",
       "nextAfterCurrent": {
         "decision": "SELECTED",
         "selected": "D",

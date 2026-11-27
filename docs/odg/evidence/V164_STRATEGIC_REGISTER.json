@@ -55,7 +55,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGY_MODE_SELECTION.json",
-      "sha256": "f3bffd5a844578ee1825c1e4affc8a08eac811fe93f20d772b4d81503fc11fd0"
+      "sha256": "d17a679f5a087713523b73fecc88b84887f5f3c742b23fcf15d57ed62d7168bc"
     },
     {
       "source": "docs/odg/evidence/V166_CHECKPOINT_9.json",
@@ -212,6 +212,10 @@
     {
       "source": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CONTRACT_INSPECTION.json",
       "sha256": "e0a070635cbf6cb5dcc8455ca85fdc493d368ee55eaffc070416e48ce4d70b02"
+    },
+    {
+      "source": "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json",
+      "sha256": "c26c695a6225e8ea88e26c709c1076ae3dafd9d46cebb3909a03b0753dea2fae"
     },
     {
       "source": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_CONTRACT_INSPECTION.json",
@@ -3677,7 +3681,7 @@
         {
           "scenario": "RB-RECORD-INSPECTION-VERDICT-TIME",
           "inspection": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CONTRACT_INSPECTION.json",
-          "experiment": null,
+          "experiment": "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json",
           "validation": null
         },
         {
@@ -8299,8 +8303,8 @@
         "closure": {
           "closed": false,
           "rule": "CLOSE-1",
-          "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-          "reason": "inspection ACCEPT bound to contract 52da42dc552c ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+          "currentStep": "VALIDATE_CRITERIA",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
           "component": "odg-authorization-scope.deriveAuthorizationScope"
         },
         "dependencyGraph": {
@@ -21648,5 +21652,5 @@
     "V17.5 PRIORITY 3 BREF-1: every item carries a boussoleRef derived from the V171 reconciliation matrix rows (a PROPOSED documentary record — its anchors are its statements, not owner adoption), validated against the canonical V12.4 companion and mapped to a phase by the ADOPTED V14.4 §2 table; ambiguous or unstated hops stay null with a reason; CP8 capability-gap / method-card items and V175-NB1 have no committed link ⇒ NOT_MEASURED (see register.boussole.coverage). BREF-1 changes no status, criterion or selection",
     "V16.9 Phase 1: the latest checkpoint is discovered by number (LCP-1 ⇒ V168_CHECKPOINT_10.json); CP10 has no ownerQuestions field, so DEP-2 finds no re-listed owner question: CP8-GAP-4-authorizeProvider dependencyAvailability moves 0 → NOT_MEASURED (the other owner-question-linked gaps were already NOT_MEASURED under CP9); CP10.ownerDecisions (which still lists 'provider spend ceiling') is not read — the rule was not widened; contradictions (CTR-1..3) are reported in register.contradictions and never auto-resolved; the declared BLOCKER_FIELDS / PR_RECORD_FIELDS still stop at CP9 (CTR-3, reported, not extended)"
   ],
-  "generatedAtHead": "a38302310604096f8ac14088d113e9d228cd61a5"
+  "generatedAtHead": "9e0c957f329200c455f6c53ad1f18ed5fde7d344"
 }
