@@ -1,0 +1,31 @@
+{
+  "schema": "odg-contract-inspection/1",
+  "verdict": "ACCEPT",
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session; the single inspector authorized by the owner)",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-26",
+  "//": "Independent grouped inspection of the three RB-* contracts (one pass, one verdict per contract) at the binding head (PR #1088). verdictAt = time the verdict was received by the coordinating session (RB-RECORD-INSPECTION-VERDICT-TIME convention, first use).",
+  "scenario": "RB-RECORD-INSPECTION-VERDICT-TIME",
+  "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57",
+  "inspectedHeadSha": "abc92376b86c12f6912730a1e77f84dfdbf1cb74",
+  "inspectedPr": 1088,
+  "verdictAt": "2026-11-26T23:37:49Z",
+  "inspectorSessionId": "insp-6cab89c8-v19-rb-contracts-20261126",
+  "authorSessionId": "v19-rb-binding",
+  "priorVerdicts": [],
+  "findings": [
+    "The recomputed sha matches the expected prefix 52da42dc. Binding is the same as A: the target is [ID, docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json], and the write_set adds runtime/bin/odg-v175-production-metric.ts, the runner and OUT. The beforeMetric moves from 'inspectionVerdictAt.notMeasured = 17' (kept in original) to 'odg-production-metric.ts#inspectionVerdictFor' ABSENT. The AC text is unchanged.",
+    "Code: inspectionVerdictFor returns MEASURED only for an entry keyed by the PR number whose verdictAt is a string with a finite Date.parse; everything else is NOT_MEASURED with a reason. openToVerdictMs is computed from createdAt. Nothing is back-filled from commit times, and inspectionFindingCommits stays as the upper bound. The bin collector reads committed *_CONTRACT_INSPECTION.json files and their priorVerdicts that carry verdictAt plus an integer inspectedPr.",
+    "AC1 and AC2 prove the claims synthetically. A recorded verdictAt gives MEASURED with openToVerdictMs 1800000 and the verdict 'ACCEPT'. An older PR, an unparseable date, and no verdicts at all each give NOT_MEASURED.",
+    "A synthetic AC1 is acceptable as written ('for PRs inspected after the change'). But the validation must state that the real V175_PRODUCTION_METRIC.json still has 0 MEASURED PRs: no committed inspection record carries verdictAt yet, and only the reason text changed.",
+    "Scope limit: only the READER side is built. Nothing writes or enforces verdictAt and inspectedPr in inspection records; it remains a convention for whoever commits them, so the objective's 'record the timestamp in the committed record' is not enforced.",
+    "Minor defect: when several records or priorVerdicts share an inspectedPr, the last one written wins. Priors are iterated after the current record, so an older prior verdict overwrites the current one. Which verdict is kept depends on file and array order rather than on a declared rule (first verdict or latest). verdictAt is also not checked against PR creation, so a negative latency is possible. Neither is blocking.",
+    "runtime/core/odg-production-metric.test.ts: exit 0, 18 ok, AC1 and AC2 ok."
+  ],
+  "testsRun": [
+    "odg-strategic-register / odg-production-metric / odg-go-cycle / odg-go / odg-strategic-select / odg-radar-build-engine tests exit 0 at abc92376",
+    "tsc exit 0"
+  ]
+}

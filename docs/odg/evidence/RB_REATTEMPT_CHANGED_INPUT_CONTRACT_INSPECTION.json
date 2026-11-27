@@ -1,0 +1,35 @@
+{
+  "schema": "odg-contract-inspection/1",
+  "verdict": "ACCEPT",
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session; the single inspector authorized by the owner)",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-26",
+  "//": "Independent grouped inspection of the three RB-* contracts (one pass, one verdict per contract) at the binding head (PR #1088). verdictAt = time the verdict was received by the coordinating session (RB-RECORD-INSPECTION-VERDICT-TIME convention, first use).",
+  "scenario": "RB-REATTEMPT-CHANGED-INPUT",
+  "contractSha256": "1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1",
+  "inspectedHeadSha": "abc92376b86c12f6912730a1e77f84dfdbf1cb74",
+  "inspectedPr": 1088,
+  "verdictAt": "2026-11-26T23:37:49Z",
+  "inspectorSessionId": "insp-6cab89c8-v19-rb-contracts-20261126",
+  "authorSessionId": "v19-rb-binding",
+  "priorVerdicts": [],
+  "findings": [
+    "The recomputed sha matches the expected prefix 1b8eecde. ownerSourceCheck is ok, against docs/odg/V19_OWNER_AUTHORIZATION_RB.json, family V19-RB. That record covers the 3 RB contracts for REVISE, INSPECT, RUN and VALIDATE. It never covers owner-gated items or weakening a guard.",
+    "A deep field diff against dfcd2f2c shows exactly the binding pattern used for P5–P7, and nothing else changed. The contract moves from PROPOSED to AUTHORIZED_FOR_REVISION and is now BOUND. The write_set is concrete: register.ts + test, mission-priority-selector.ts, the ACC-1 runner and OUT. The dispatch target is positional, [ID, docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json], with writeSet [OUT]. executionAuthorized is false. preRegistration and budgets were added (0 model calls, no network).",
+    "The beforeMetric moves from OL-8.n=2 (a numeric finding ACC-1 cannot recompute) to the symbol 'odg-strategic-register.ts#reattemptOf' ABSENT. The original metric and its G2/J2 support are kept in revisionHistory.original. The AC1–AC4 text is unchanged. The concretisation is legitimate. As with P6/P7, the new metric only checks that the symbol is present.",
+    "Code: reattemptOf runs in section 7b, after every status rule. A contract is a re-attempt when origin.parentId, or the leading id parsed from origin.parent (/^([A-Z0-9][A-Za-z0-9-]*)\\b/), names a register item whose status is not PASS or CLOSED_PASS. toSelectorCandidates then maps it to the non-selectable status REATTEMPT_WITHOUT_CHANGED_INPUT. This happens only when no non-empty preRegistration.changedInput or origin.changedInput is given, and never to CLOSED_* items. The new status is added to the selector's EXPLAINED_DEFAULTS.",
+    "The parse is sound for the 'ID (…)' convention: 'V178-P1 (CLOSED_FAIL …)' parses to V178-P1, and 'V178-P4 (CLOSED_PASS …)' is correctly not a re-attempt.",
+    "The parse is not fail-safe, but it only adds a restriction and weakens no existing guard. An unparseable parent or one absent from the register yields 'not a re-attempt' (fail-open to the prior behaviour). V19-EXP-B ('EXPERIENCE …' parses to EXPERIENCE) and V19-MEM-2 (parent V19-MEM-1, not a register item) are silently skipped.",
+    "Scope limit the validation must state: detection relies on a declared origin.parent or parentId. G2 and J2, the very cases behind the original OL-8 finding, have no origin.parent, so this rule would not have caught them.",
+    "Further limits. 'changedInput' is accepted as any non-empty string or object: the gate checks that a changed input is CITED, not MEASURED, although the objective says 'measured'. A parent that is NOT_STARTED also triggers the rule, which is over-blocking but fail-closed.",
+    "On the real register, only V178-P1-R is detected (parent V178-P1 CLOSED_FAIL), and it is CLOSED_FAIL itself, so selection is unaffected.",
+    "AC1 and AC2 are tested on synthetic fixtures through the real toSelectorCandidates and selectNextExplained. With no changed input, the status becomes REATTEMPT_WITHOUT_CHANGED_INPUT and the item is not selected. With a cited input, the status stays NOT_STARTED. A third check covers a PASS parent and the no-parent case. The tests prove the claims as written.",
+    "runtime/core/odg-strategic-register.test.ts: exit 0, 133 ok, 0 NOT OK, AC1 and AC2 ok."
+  ],
+  "testsRun": [
+    "odg-strategic-register / odg-production-metric / odg-go-cycle / odg-go / odg-strategic-select / odg-radar-build-engine tests exit 0 at abc92376",
+    "tsc exit 0"
+  ]
+}

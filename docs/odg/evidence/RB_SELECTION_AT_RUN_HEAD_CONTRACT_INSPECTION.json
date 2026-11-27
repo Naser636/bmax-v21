@@ -1,0 +1,33 @@
+{
+  "schema": "odg-contract-inspection/1",
+  "verdict": "ACCEPT",
+  "inspector": "independent inspector (Claude Code provider session, read-only, distinct from the author session; the single inspector authorized by the owner)",
+  "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+  "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+  "recordedBy": "coordinating provider session (Claude Code)",
+  "date": "2026-11-26",
+  "//": "Independent grouped inspection of the three RB-* contracts (one pass, one verdict per contract) at the binding head (PR #1088). verdictAt = time the verdict was received by the coordinating session (RB-RECORD-INSPECTION-VERDICT-TIME convention, first use).",
+  "scenario": "RB-SELECTION-AT-RUN-HEAD",
+  "contractSha256": "d23e00ca6e7a125c75823e4e1f03b338a1f32c65adcab6e2b162fba2350c2d1a",
+  "inspectedHeadSha": "abc92376b86c12f6912730a1e77f84dfdbf1cb74",
+  "inspectedPr": 1088,
+  "verdictAt": "2026-11-26T23:37:49Z",
+  "inspectorSessionId": "insp-6cab89c8-v19-rb-contracts-20261126",
+  "authorSessionId": "v19-rb-binding",
+  "priorVerdicts": [],
+  "findings": [
+    "The recomputed sha matches the expected prefix d23e00ca. Binding is the same as A: the target is [ID, docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_ACCEPTANCE_RESULT.json]. The beforeMetric moves from OL-2.n=2 (kept in original) to 'odg-go-cycle.ts#selectionAtRunHead' ABSENT. The AC text is unchanged.",
+    "Files touched outside the write_set follow the P5–P7 binding precedent: odg-authorization-scope.ts (STEP_SEQUENCES and OWNER_SOURCES for family V19-RB), odg-authorization-evidence-paths.ts, test count updates, and the odg-go.test.ts NB1 fixture (preRB reverts RB-* to pre-binding, mirroring preV176J), plus regenerated derived records.",
+    "Code: TRUTH_LOCK stores ctx.runHead from gitState.head. SELECT records selectionAtRunHead, which holds: selectedAt (the register's generatedAtHead), runHead, the committed and re-derived {decision, selected}, consistent, stale, executing, and ownerOverride (GO-ORD-1 or GO-ORD-2, recorded). EXECUTE's authorize step refuses STALE_SELECTION for the selected item before isolation and dispatch, unless an override applies.",
+    "Override exemption: appropriate, but broad. The objective itself says 'refuses (or records the owner override)'. GO-ORD-1 and GO-ORD-2 are evaluated against the RE-DERIVED run-head state: GO-ORD-1 needs the tiedSet to equal the current tie, and GO-ORD-2 needs a matching contractSha256 plus a one-shot claim. So the executed item comes from the run-head computation, and the override is recorded. The exemption keys on any applied owner record rather than on the specific stale difference. It weakens nothing that existed before, because before this change there was no refusal at all.",
+    "False-refusal risk is low. All 21 committed GO traces (H through P7) recorded consistentWithCommittedRegisterEvidence: true, so the guard would have refused none of them. CI checks the committed register against a fresh computation, and runtime/bin/odg-strategic-select.test.ts passes.",
+    "The guard fails open when there is no committed decisionRecord: consistent is null, so stale is false and nothing is refused. selectedAt is the register's generatedAtHead. That is always the parent of the PR that commits the register, so it differs from runHead by construction and is informational only; staleness is decided by content.",
+    "The tests prove the ACs but are thin. AC1 injects a stale committed record ('STALE-ITEM') into an authorized fixture: the trace shows stale true, dispatch is called 0 times, and EXECUTE shows STALE_SELECTION. AC2 checks that runHead is 'h' and consistent is true, but it only checks that the selectedAt KEY exists; in the fixture its value is null because SS.compute sets no generatedAtHead. No test covers the override path (stale plus an applied GO-ORD-1/2 record lets the run proceed and records ownerOverride). Recommended follow-up test.",
+    "recommit() keeps the fixtures self-consistent by recomputing the register over the edited contracts, which is how a real committed register behaves. It does not mask the guard: the AC1 fixture deliberately breaks that consistency.",
+    "Tests: runtime/core/odg-go-cycle.test.ts exit 0, 147 ok, AC1 and AC2 ok. runtime/bin/odg-go.test.ts exit 0, 120 ok. runtime/bin/odg-strategic-select.test.ts exit 0, 18 ok. runtime/core/odg-radar-build-engine.test.ts exit 0, 58 ok. tsc --noEmit --incremental false -p tsconfig.json exit 0. All at abc92376; the worktree was clean."
+  ],
+  "testsRun": [
+    "odg-strategic-register / odg-production-metric / odg-go-cycle / odg-go / odg-strategic-select / odg-radar-build-engine tests exit 0 at abc92376",
+    "tsc exit 0"
+  ]
+}
