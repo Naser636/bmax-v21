@@ -1,0 +1,43 @@
+{
+  "schema": "odg-run-environment/1",
+  "scenario": "RB-SELECTION-AT-RUN-HEAD",
+  "date": "2026-11-27",
+  "authorizedBy": "docs/odg/V19_OWNER_DECISION_RB_SEL_RERUN.json (ONE controlled re-run)",
+  "runs": {
+    "RUN-1": {
+      "runId": "79789e6b4e5c46fb",
+      "outcome": "EXECUTED_FAIL",
+      "result": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_RUN1_INCIDENT_RESULT.json",
+      "criteria": {
+        "ACC-T": "met",
+        "ACC-C": "NOT met (tsc exit 1 — no reachable node_modules)",
+        "ACC-M": "met"
+      },
+      "incident": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_RUN_INCIDENT.json"
+    },
+    "RERUN": {
+      "runId": "9051b4afab115886",
+      "outcome": "EXECUTED_PASS",
+      "result": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_ACCEPTANCE_RESULT.json",
+      "trace": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_GO_EXECUTE_TRACE.jsonl",
+      "criteria": {
+        "ACC-T": "met (AC1, AC2 ok; odg-go-cycle.test.ts exit 0)",
+        "ACC-C": "met (tsc exit 0)",
+        "ACC-M": "met (selectionAtRunHead ABSENT → PRESENT)"
+      }
+    }
+  },
+  "environment": {
+    "runHead": "800a3724001e8de0f611895168e4639aff72dbc4",
+    "codeChangeSinceRun1": "none to the contract code or criteria (only evidence/governance records: #1091 RUN-1 result, #1092 re-run authorization + RUN-1 renamed byte-identical)",
+    "contractSha256": "d23e00ca6e7a125c75823e4e1f03b338a1f32c65adcab6e2b162fba2350c2d1a",
+    "scratch": "/home/ubuntu/odg-scratch-rb/run3 — fresh detached git worktree at runHead, pristine (0 untracked/ignored entries)",
+    "dependencies": "/home/ubuntu/odg-scratch-rb/node_modules → /home/ubuntu/bmax-v21/node_modules (parent-directory link, outside the scratch, as for the P7 scratch)",
+    "preflight": "tsc --noEmit --incremental false -p tsconfig.json in the scratch BEFORE the GO: exit 0",
+    "network": "none",
+    "modelCalls": 0
+  },
+  "limits": [
+    "The re-run proves the contract's ACs as written; the inspector's recorded limits on RB-SEL-1 remain (AC2 checks only the selectedAt key, not its value in the fixture; no test of the owner-override path; the override exemption keys on any applied GO-ORD-1/2 record)."
+  ]
+}
