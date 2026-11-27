@@ -1,0 +1,44 @@
+{
+  "//": "OWNER order-decision record — same owner decision (2026-11-27), applied to the tie of the two RB-* contracts remaining after RB-SELECTION-AT-RUN-HEAD (order 2 then 3). Grants nothing beyond the order.",
+  "schema": "odg-owner-order-decision/1",
+  "kind": "OWNER_ORDER_DECISION",
+  "directive": "CTO — DÉCISION PROPRIÉTAIRE D'ORDRE RB-*",
+  "date": "2026-11-27",
+  "issuer": "OWNER (CTO)",
+  "source": "explicit owner decision of 2026-11-27 (relayed by the coordinating session)",
+  "quote": [
+    "J'adopte l'ordre proposé par ODG pour l'exécution des trois contrats RB-*.",
+    "Ordre obligatoire :",
+    "1. RB-SELECTION-AT-RUN-HEAD",
+    "2. RB-REATTEMPT-CHANGED-INPUT",
+    "3. RB-RECORD-INSPECTION-VERDICT-TIME",
+    "Cette décision autorise uniquement la transcription de cet ordre dans les enregistrements canoniques prévus par le système et l'exécution des trois GO conformément à leurs contrats existants."
+  ],
+  "reservations": [
+    "Cette décision d'ordre ne constitue pas une acceptation des limites techniques relevées par l'inspecteur.",
+    "Les critères des contrats restent inchangés. Aucun PASS ne doit être fabriqué ou déduit de l'ordre propriétaire."
+  ],
+  "contracts": [
+    "RB-SELECTION-AT-RUN-HEAD",
+    "RB-REATTEMPT-CHANGED-INPUT",
+    "RB-RECORD-INSPECTION-VERDICT-TIME"
+  ],
+  "tiedSet": [
+    "RB-REATTEMPT-CHANGED-INPUT",
+    "RB-RECORD-INSPECTION-VERDICT-TIME"
+  ],
+  "order": [
+    "RB-REATTEMPT-CHANGED-INPUT",
+    "RB-RECORD-INSPECTION-VERDICT-TIME"
+  ],
+  "scope": {
+    "appliesTo": "ODG GO actionableSelection ONLY when DECISION_REQUIRED with a tiedSet equal (as a set) to this record's tiedSet",
+    "neverAppliesTo": [
+      "strategicSelection",
+      "authorization (RUN still requires the committed inspection bound to the current contract sha)",
+      "scores / ranking / register",
+      "acceptance of the inspector's recorded limits"
+    ]
+  },
+  "appliedBy": "GO-ORD-1 (runtime/core/odg-go-cycle.ts)"
+}
