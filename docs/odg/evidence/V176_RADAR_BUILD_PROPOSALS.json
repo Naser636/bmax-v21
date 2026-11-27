@@ -24,14 +24,14 @@
     "pure: no file write, no network, no store; deterministic given the injected sources, graph and epochs"
   ],
   "freshness": {
-    "nowEpochMs": 1795740006000,
+    "nowEpochMs": 1795743712000,
     "rule": "now = newest source epoch (no wall clock); each source's epoch is pinned in inputs[].epochMs and re-dated from local git (last commit time; current commit time if uncommitted) only when its sha256 changes; a signal whose source is older than odg-radar-to-mission-loop.FRESHNESS_DAYS is refused EXPIRED"
   },
   "inputs": [
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "693d1eb5804913ddb232d6397fc67094edd1f667014197974a71629857dbd2d1",
-      "epochMs": 1795740006000
+      "sha256": "d293b5cb6660e11b1fcc0ca12e32fec853c8fbfd3d0a290fc2c0e4adf1eab6a7",
+      "epochMs": 1795743712000
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -45,8 +45,8 @@
     },
     {
       "source": "docs/odg/evidence/V175_PRODUCTION_METRIC.json",
-      "sha256": "180f0e6b60bcb6b6de1b162c279aa00fbccd21e6d6c2ba3bf626fe33b0f5b488",
-      "epochMs": 1795740006000
+      "sha256": "bd856348caf92d846b796b65b40888f5284c117ab891cd1830701fd3e035a55c",
+      "epochMs": 1795743712000
     },
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
