@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "fb35e1c747923ac263788f8671855ec832a1db4fecbe32ad9323d3a091cb2177"
+      "sha256": "39960b700b9031e22425f21fbc7fd5fd5e8ef958bb94e4f357a3230bd2750df2"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -216,6 +216,10 @@
     {
       "source": "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json",
       "sha256": "301880b109977814589fdd09a7c60ebec513159c42f90ef1336e6556a4c7ad7e"
+    },
+    {
+      "source": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_CRITERIA_VALIDATION.json",
+      "sha256": "9d46fae6d14e522bc8667f8e46ae215c16f8a3a32fef05c87e6df8652f809435"
     },
     {
       "source": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CONTRACT_INSPECTION.json",
@@ -972,7 +976,7 @@
     {
       "id": "RB-REATTEMPT-CHANGED-INPUT",
       "title": "a re-attempt of a non-PASS parent must cite a measured changed input (new data/strategy) before it is selectable",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_PASS",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -984,18 +988,19 @@
       },
       "contractSha256": "1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1",
       "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1"
       },
       "records": {
@@ -1008,8 +1013,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -1019,21 +1024,10 @@
         "endedAt": "2026-11-27T02:14:10.212Z",
         "dispatched": true
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 1b8eecdea10d and experiment docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PASS, CLOSE-1 docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=RB-REATTEMPT-CHANGED-INPUT]",
@@ -1839,8 +1833,8 @@
       "PASS_IN_SCOPE": 2,
       "CLOSED_PARTIAL": 5,
       "CLOSED_FAIL": 6,
-      "CLOSED_PASS": 9,
-      "NOT_STARTED": 3,
+      "CLOSED_PASS": 10,
+      "NOT_STARTED": 2,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -2176,11 +2170,6 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "RB-REATTEMPT-CHANGED-INPUT",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 1b8eecdea10d and experiment docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {

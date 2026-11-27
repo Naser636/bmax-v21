@@ -1,0 +1,67 @@
+{
+  "//": "VALIDATE_CRITERIA for RB-REATTEMPT-CHANGED-INPUT (owner records docs/odg/V19_OWNER_AUTHORIZATION_RB.json, V19_OWNER_DECISION_ORDER_RB_PAIR.json position 2). Graded from the committed ACC-1 record + the independent result inspection. PASS within AC1–AC4 only; the owner order is not an acceptance of the inspector limits.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "RB-REATTEMPT-CHANGED-INPUT",
+  "date": "2026-11-27",
+  "contractSha256": "1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json",
+    "sha256": "301880b109977814589fdd09a7c60ebec513159c42f90ef1336e6556a4c7ad7e",
+    "experimentSha256": "a96ab7637f30af2b4d67cfa60816cd284e7154d6aa310cbd72ace7111fc53870",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1095,
+    "mergedAs": "a3830231",
+    "producedBy": "ODG GO --execute native dispatch (run 8b08e395993c0434 at main 8c18eaea; owner order GO-ORD-1 V19_OWNER_DECISION_ORDER_RB_PAIR.json); trace docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_GO_EXECUTE_TRACE.jsonl"
+  },
+  "experimentInspection": {
+    "pr": 1095,
+    "inspectedHead": "a86f7b870adfbf7b1a2f19023faf7da6a50a1827",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "insp-6cab89c8-v19-rb-reattempt-result-20261127",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-8b08e395993c0434",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "PASS",
+    "findings": "contract sha 1b8eecde unchanged since the contract ACCEPT; one dispatch via the declared positional target, writes ⊆ writeSet, result byte-identical to the scratch; register/selector/runner code unchanged abc92376..8c18eaea; AC1/AC2 reportedOk (133 ok), tsc 0, reattemptOf ABSENT → PRESENT recomputed in the scratch"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET",
+      "note": "re-attempt without a cited changed input not selectable (synthetic fixture through toSelectorCandidates + selectNextExplained)"
+    },
+    {
+      "id": "AC2",
+      "status": "MET",
+      "note": "cited changed input ⇒ selectable"
+    },
+    {
+      "id": "AC3",
+      "status": "MET",
+      "note": "LEARN-1 before-metric concretised to the capability symbol: ABSENT → PRESENT (original OL-8.n=2 not recomputed)"
+    },
+    {
+      "id": "AC4",
+      "status": "MET",
+      "note": "tsc 0 + tests"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "ACC-1 PASS within AC1–AC4; independent result inspection ACCEPT"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "REATTEMPT-1 in odg-strategic-register + selector status REATTEMPT_WITHOUT_CHANGED_INPUT",
+  "limits": [
+    "detection relies on a DECLARED origin.parent / parentId: G2 and J2 (the original OL-8 cases) declare no parent and would NOT be caught",
+    "an unparseable or unknown parent falls back to \"not a re-attempt\" (prior behaviour)",
+    "changedInput is checked as CITED (non-empty), NOT as measured",
+    "on the real register only V178-P1-R is detected, already CLOSED_FAIL ⇒ no live selection effect yet",
+    "write_set test file odg-strategic-register.test.ts changed after the contract ACCEPT (8a3176cf, 84d63b0b): 4 lines of real-register bookkeeping lists only (CTR-2 count, Phase-1 exclusions); the AC1/AC2 block and reattemptOf tests are untouched"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionRbReattemptChangedInput": "CLOSED_PASS"
+  }
+}
