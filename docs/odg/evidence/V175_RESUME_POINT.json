@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "f3c40fbe2e1746953daa9966ef4e925f508808aa27b9a8fa1e06c9ac025e1fbc"
+      "sha256": "7ac296fa02c1ed580b22a2e5e14e65219675fd548ca0b432da343747ff6a6fbe"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -232,6 +232,10 @@
     {
       "source": "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json",
       "sha256": "c26c695a6225e8ea88e26c709c1076ae3dafd9d46cebb3909a03b0753dea2fae"
+    },
+    {
+      "source": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CRITERIA_VALIDATION.json",
+      "sha256": "89a07de256510c3aeb8c914a281ceccb53e6349d5ad5a1375df03ff5208c315f"
     },
     {
       "source": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_CONTRACT_INSPECTION.json",
@@ -1045,7 +1049,7 @@
     {
       "id": "RB-RECORD-INSPECTION-VERDICT-TIME",
       "title": "record the inspection verdict timestamp in the committed inspection record so verdict latency is measured, not bounded",
-      "registerStatus": "NOT_STARTED",
+      "registerStatus": "CLOSED_PASS",
       "contractState": "AUTHORIZED_FOR_REVISION",
       "boussoleRef": {
         "status": "NOT_MEASURED",
@@ -1057,18 +1061,19 @@
       },
       "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57",
       "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
-      "currentStep": "VALIDATE_CRITERIA",
+      "currentStep": null,
       "scope": {
-        "currentStep": "VALIDATE_CRITERIA",
-        "currentStepKind": "GRADING",
-        "currentStepAuthorized": true,
+        "currentStep": null,
+        "currentStepKind": null,
+        "currentStepAuthorized": false,
         "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
           "INSPECT_REVISED_CONTRACT",
-          "RUN_CONTROLLED_EXPERIMENTS"
+          "RUN_CONTROLLED_EXPERIMENTS",
+          "VALIDATE_CRITERIA"
         ],
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
+        "reason": "all steps validated",
         "contractSha256": "52da42dc552cbcccaa9a2b367c7ded416be381585a97e3353fb0faccff002d57"
       },
       "records": {
@@ -1081,8 +1086,8 @@
           "basis": "REGISTER_LOADER"
         },
         "validation": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CRITERIA_VALIDATION.json",
+          "basis": "REGISTER_LOADER"
         }
       },
       "lastGoRun": {
@@ -1092,21 +1097,10 @@
         "endedAt": "2026-11-27T09:13:29.357Z",
         "dispatched": true
       },
-      "pending": [
-        {
-          "kind": "VALIDATION",
-          "of": "docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json",
-          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
-        },
-        {
-          "kind": "INSPECTION",
-          "of": "the criteria-validation result (R5b independent inspection)",
-          "reason": "required before CLOSE-1 can close the item"
-        }
-      ],
+      "pending": [],
       "next": {
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 52da42dc552c and experiment docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
+        "actor": "NONE",
+        "action": "closed (CLOSED_PASS, CLOSE-1 docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CRITERIA_VALIDATION.json) — further work only as a NEW mission (no re-grade, no re-run)"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=RB-RECORD-INSPECTION-VERDICT-TIME]",
@@ -1859,8 +1853,8 @@
       "PASS_IN_SCOPE": 2,
       "CLOSED_PARTIAL": 5,
       "CLOSED_FAIL": 6,
-      "CLOSED_PASS": 10,
-      "NOT_STARTED": 2,
+      "CLOSED_PASS": 11,
+      "NOT_STARTED": 1,
       "ACCEPTED": 1,
       "PROPOSED": 14,
       "NOT_MEASURED": 1,
@@ -2204,11 +2198,6 @@
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
-      },
-      {
-        "item": "RB-RECORD-INSPECTION-VERDICT-TIME",
-        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
-        "action": "commit the criteria-validation record (R5b) bound to contract 52da42dc552c and experiment docs/odg/evidence/RB_INSPECTION_VERDICT_TIME_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
