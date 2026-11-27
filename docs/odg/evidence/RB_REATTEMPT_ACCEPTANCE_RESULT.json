@@ -1,0 +1,57 @@
+{
+  "schema": "odg-v19-acceptance-result/1",
+  "scenario": "RB-REATTEMPT-CHANGED-INPUT",
+  "label": "NATIVE (ODG GO dispatch)",
+  "rule": "ACC-1: PASS ⇔ every acceptance test id reported ok by its file (each file once, exit 0) ∧ tsc clean ∧ every LEARN-1 before-metric IMPROVED; NOT_MEASURED if any metric cannot be recomputed",
+  "criteria": {
+    "ACC-T": {
+      "met": true,
+      "tests": [
+        {
+          "id": "RB-REATTEMPT-CHANGED-INPUT/AC1",
+          "file": "runtime/core/odg-strategic-register.test.ts",
+          "reportedOk": true,
+          "fileExit": 0
+        },
+        {
+          "id": "RB-REATTEMPT-CHANGED-INPUT/AC2",
+          "file": "runtime/core/odg-strategic-register.test.ts",
+          "reportedOk": true,
+          "fileExit": 0
+        }
+      ],
+      "files": [
+        {
+          "file": "runtime/core/odg-strategic-register.test.ts",
+          "exit": 0
+        }
+      ]
+    },
+    "ACC-C": {
+      "met": true,
+      "command": "tsc --noEmit --incremental false -p tsconfig.json",
+      "exit": 0,
+      "ok": true
+    },
+    "ACC-M": {
+      "verdicts": [
+        {
+          "source": "runtime/core/odg-strategic-register.ts#reattemptOf",
+          "before": "ABSENT",
+          "after": "PRESENT",
+          "verdict": "IMPROVED"
+        }
+      ],
+      "met": true
+    }
+  },
+  "outcome": "PASS",
+  "contractSha256": "1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1",
+  "provenance": {
+    "codeAuthor": "PROVIDER (Claude Code)",
+    "decisionAuthority": "ODG GO (dispatch of the declared target)",
+    "network": "none",
+    "modelCalls": 0,
+    "providerCalls": 0
+  }
+}

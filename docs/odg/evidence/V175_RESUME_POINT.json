@@ -15,7 +15,7 @@
     },
     {
       "source": "docs/odg/evidence/V164_STRATEGIC_REGISTER.json",
-      "sha256": "5a99ccaa999701bf3b8dfa7e1ed427a30f1d5905fa43657eb2a0a8f99de6e693"
+      "sha256": "fb35e1c747923ac263788f8671855ec832a1db4fecbe32ad9323d3a091cb2177"
     },
     {
       "source": "docs/odg/evidence/V160_AP_WORK_ITEM_CONTRACTS.json",
@@ -24,6 +24,10 @@
     {
       "source": "docs/odg/evidence/V175_GOVERNANCE_PRECEDENCE.json",
       "sha256": "8e15c4aced4c2db13b73a2e57de868191e538df3e317729ef6f270c9d413a91f"
+    },
+    {
+      "source": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_GO_EXECUTE_TRACE.jsonl",
+      "sha256": "a7fef9edf9f2b9a179a5b176b743267e848106877595344312139d8ee2217b07"
     },
     {
       "source": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_GO_EXECUTE_TRACE.jsonl",
@@ -208,6 +212,10 @@
     {
       "source": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_CONTRACT_INSPECTION.json",
       "sha256": "e36fed8d4816c62ad4c6a0661a8a9e71a7d3f01325809edb97aa49132b5df544"
+    },
+    {
+      "source": "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json",
+      "sha256": "301880b109977814589fdd09a7c60ebec513159c42f90ef1336e6556a4c7ad7e"
     },
     {
       "source": "docs/odg/evidence/RB_RECORD_INSPECTION_VERDICT_TIME_CONTRACT_INSPECTION.json",
@@ -976,17 +984,18 @@
       },
       "contractSha256": "1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1",
       "ownerRecord": "docs/odg/V19_OWNER_AUTHORIZATION_RB.json",
-      "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
+      "currentStep": "VALIDATE_CRITERIA",
       "scope": {
-        "currentStep": "RUN_CONTROLLED_EXPERIMENTS",
-        "currentStepKind": "EXECUTION",
+        "currentStep": "VALIDATE_CRITERIA",
+        "currentStepKind": "GRADING",
         "currentStepAuthorized": true,
-        "nextStep": "VALIDATE_CRITERIA",
+        "nextStep": null,
         "validatedSteps": [
           "REVISE_CONTRACT",
-          "INSPECT_REVISED_CONTRACT"
+          "INSPECT_REVISED_CONTRACT",
+          "RUN_CONTROLLED_EXPERIMENTS"
         ],
-        "reason": "inspection ACCEPT bound to contract 1b8eecdea10d ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record",
+        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)",
         "contractSha256": "1b8eecdea10d3037dea191cbde763c3c0680889c06240f584600d6c6e73efce1"
       },
       "records": {
@@ -995,19 +1004,36 @@
           "basis": "REGISTER_LOADER"
         },
         "experiment": {
-          "path": null,
-          "basis": "NONE"
+          "path": "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json",
+          "basis": "REGISTER_LOADER"
         },
         "validation": {
           "path": null,
           "basis": "NONE"
         }
       },
-      "lastGoRun": null,
-      "pending": [],
+      "lastGoRun": {
+        "trace": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_GO_EXECUTE_TRACE.jsonl",
+        "runId": "8b08e395993c0434",
+        "status": "EXECUTED_PASS",
+        "endedAt": "2026-11-27T02:14:10.212Z",
+        "dispatched": true
+      },
+      "pending": [
+        {
+          "kind": "VALIDATION",
+          "of": "docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json",
+          "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        },
+        {
+          "kind": "INSPECTION",
+          "of": "the criteria-validation result (R5b independent inspection)",
+          "reason": "required before CLOSE-1 can close the item"
+        }
+      ],
       "next": {
-        "actor": "GO",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 1b8eecdea10d and experiment docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
       },
       "source": [
         "docs/odg/evidence/V164_STRATEGIC_REGISTER.json#register.items[id=RB-REATTEMPT-CHANGED-INPUT]",
@@ -2105,6 +2131,19 @@
       "strategic": "D",
       "workingOn": "RB-SELECTION-AT-RUN-HEAD",
       "ownerSelectionRecord": null
+    },
+    {
+      "trace": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_GO_EXECUTE_TRACE.jsonl",
+      "cycle": 1,
+      "runId": "8b08e395993c0434",
+      "status": "EXECUTED_PASS",
+      "endedAt": "2026-11-27T02:14:10.212Z",
+      "dispatched": [
+        "RB-REATTEMPT-CHANGED-INPUT"
+      ],
+      "strategic": "D",
+      "workingOn": "RB-REATTEMPT-CHANGED-INPUT",
+      "ownerSelectionRecord": null
     }
   ],
   "nextGoAction": {
@@ -2127,29 +2166,30 @@
     },
     "dispatchable": [
       {
-        "item": "RB-REATTEMPT-CHANGED-INPUT",
-        "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
-      },
-      {
         "item": "RB-RECORD-INSPECTION-VERDICT-TIME",
         "action": "GO --execute dispatches the declared target runtime/bin/odg-v19-acceptance-run.ts"
       }
     ],
-    "verdict": "GO --execute could dispatch: RB-REATTEMPT-CHANGED-INPUT, RB-RECORD-INSPECTION-VERDICT-TIME",
+    "verdict": "GO --execute could dispatch: RB-RECORD-INSPECTION-VERDICT-TIME",
     "pendingNonGo": [
       {
         "item": "D",
         "actor": "OWNER",
         "action": "D contract PROPOSED → AUTHORIZED (authorizedBy) — ODG never self-authorizes"
+      },
+      {
+        "item": "RB-REATTEMPT-CHANGED-INPUT",
+        "actor": "PROVIDER + INDEPENDENT_INSPECTOR",
+        "action": "commit the criteria-validation record (R5b) bound to contract 1b8eecdea10d and experiment docs/odg/evidence/RB_REATTEMPT_ACCEPTANCE_RESULT.json, then an independent inspection — never auto-graded"
       }
     ],
     "lastGoRun": {
-      "trace": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_GO_EXECUTE_TRACE.jsonl",
-      "runId": "9051b4afab115886",
+      "trace": "docs/odg/evidence/RB_REATTEMPT_CHANGED_INPUT_GO_EXECUTE_TRACE.jsonl",
+      "runId": "8b08e395993c0434",
       "status": "EXECUTED_PASS",
-      "endedAt": "2026-11-27T01:43:52.793Z",
+      "endedAt": "2026-11-27T02:14:10.212Z",
       "strategic": "D",
-      "workingOn": "RB-SELECTION-AT-RUN-HEAD",
+      "workingOn": "RB-REATTEMPT-CHANGED-INPUT",
       "nextAfterCurrent": {
         "decision": "SELECTED",
         "selected": "D",
