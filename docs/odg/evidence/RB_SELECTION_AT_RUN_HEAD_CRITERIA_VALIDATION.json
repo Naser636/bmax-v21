@@ -1,0 +1,74 @@
+{
+  "//": "VALIDATE_CRITERIA for RB-SELECTION-AT-RUN-HEAD (owner records docs/odg/V19_OWNER_AUTHORIZATION_RB.json, V19_OWNER_DECISION_ORDER_RB.json position 1, V19_OWNER_DECISION_RB_SEL_RERUN.json). Graded from the committed ACC-1 record of the owner-authorized single re-run + the independent result inspection. RUN-1 79789e6b stays EXECUTED_FAIL (preserved, not re-graded). PASS within AC1–AC4 only; the owner order is not an acceptance of the inspector limits.",
+  "schema": "odg-criteria-validation/1",
+  "scenario": "RB-SELECTION-AT-RUN-HEAD",
+  "date": "2026-11-27",
+  "contractSha256": "d23e00ca6e7a125c75823e4e1f03b338a1f32c65adcab6e2b162fba2350c2d1a",
+  "experimentEvidence": {
+    "path": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_ACCEPTANCE_RESULT.json",
+    "sha256": "8ca401109f23c2efbc3389df64326500abe3f4d50cdf0abc61fbd90fbb1c105a",
+    "experimentSha256": "483b2efc5b875d081e5e15b91efff44a8720e6a45afd39406a68d7203fc5ffb8",
+    "experimentSha256Rule": "sha256(canon(record without recordPath)) — odg-authorization-scope.experimentSha256",
+    "pr": 1093,
+    "mergedAs": "79a11968",
+    "producedBy": "ODG GO --execute native dispatch (owner-authorized single re-run 9051b4afab115886 at main 800a3724; owner order GO-ORD-1 V19_OWNER_DECISION_ORDER_RB.json); trace docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_GO_EXECUTE_TRACE.jsonl",
+    "priorRun": {
+      "runId": "79789e6b4e5c46fb",
+      "outcome": "EXECUTED_FAIL",
+      "result": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_RUN1_INCIDENT_RESULT.json",
+      "incident": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_RUN_INCIDENT.json",
+      "note": "environment fault (no reachable node_modules ⇒ tsc exit 1); kept FAIL"
+    }
+  },
+  "experimentInspection": {
+    "pr": 1093,
+    "inspectedHead": "a66730a363b234c6677ca91eb6d02fa180fbf6a9",
+    "verdict": "ACCEPT",
+    "inspectorSessionId": "insp-6cab89c8-v19-rb-sel-rerun-result-20261127",
+    "inspectorSessionIdNote": "harness agent id attributed by the coordinating session",
+    "authorSessionId": "odg-go-run-9051b4afab115886",
+    "independenceLevel": "DECLARED_SESSION_INDEPENDENCE",
+    "experimentOutcomeRecomputed": "PASS",
+    "findings": "contract sha d23e00ca unchanged since the contract ACCEPT; exactly one dispatch via the declared positional target, writes ⊆ writeSet, committed result byte-identical to the scratch; write_set code unchanged abc92376..800a3724; AC1/AC2 reportedOk (odg-go-cycle.test.ts 147 ok), tsc 0, selectionAtRunHead ABSENT → PRESENT recomputed in the scratch; RUN-1 preserved byte-identical, not re-graded; one-dispatch limit respected (no GO-ORD-1 one-shot claim of its own — limit rests on the owner record + the runner OUT-exists refusal)"
+  },
+  "criteria": [
+    {
+      "id": "AC1",
+      "status": "MET",
+      "note": "stale selection detected before EXECUTE (synthetic fixture)"
+    },
+    {
+      "id": "AC2",
+      "status": "MET",
+      "note": "trace records selectedAt vs runHead — the test checks the selectedAt KEY only, not its value"
+    },
+    {
+      "id": "AC3",
+      "status": "MET",
+      "note": "LEARN-1 before-metric concretised to the capability symbol: ABSENT → PRESENT (original OL-2.n=2 not recomputed)"
+    },
+    {
+      "id": "AC4",
+      "status": "MET",
+      "note": "tsc 0 (re-run)"
+    }
+  ],
+  "result": {
+    "outcome": "PASS",
+    "basis": "ACC-1 PASS of the owner-authorized single re-run within AC1–AC4; independent result inspection ACCEPT"
+  },
+  "scenarioGrade": "PASS",
+  "adoption": "RB-SEL-1 in odg-go-cycle: GO records committed vs re-derived selection at the run head and refuses a STALE one at EXECUTE unless an owner override record applied",
+  "limits": [
+    "AC2 checks only the presence of selectedAt; selectedAt is the register generation parent head (informational) — staleness is decided by content",
+    "no test of the owner-override path (stale + applied GO-ORD-1/2 ⇒ proceeds, ownerOverride recorded)",
+    "the override exemption keys on ANY applied owner record, not on the specific stale difference",
+    "fails open when no committed decisionRecord exists (consistent null ⇒ not stale)",
+    "RUN-1 EXECUTED_FAIL (environment) is part of this mission history"
+  ],
+  "validatedBy": "coordinating provider session applying the committed evidence + the independent result inspection verdict (no new judgement)",
+  "stepState": {
+    "VALIDATE_CRITERIA": "DONE (graded PASS)",
+    "missionRbSelectionAtRunHead": "CLOSED_PASS"
+  }
+}
