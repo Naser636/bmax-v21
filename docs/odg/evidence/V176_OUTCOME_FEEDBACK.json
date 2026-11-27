@@ -243,7 +243,7 @@
       {
         "id": "RB-SELECTION-AT-RUN-HEAD",
         "status": "NOT_STARTED",
-        "reason": "VALIDATE_CRITERIA pending: no committed criteria-validation record (R5b — needs a criteria-validation record bound to the contract + experiment and an independent inspection ACCEPT of the result; never auto-graded)"
+        "reason": "inspection ACCEPT bound to contract d23e00ca6e7a ⇒ experiments AUTHORIZED by the owner's prior authorization (derived, R4); no committed experiment record"
       }
     ]
   },

@@ -1,0 +1,39 @@
+{
+  "//": "OWNER decision record — verbatim transcription (2026-11-27) of the owner's explicit authorization of ONE controlled re-run of the RB-SELECTION-AT-RUN-HEAD GO (position 1). RUN-1 (79789e6b) stays EXECUTED_FAIL, preserved byte-identical as RB_SELECTION_AT_RUN_HEAD_RUN1_INCIDENT_RESULT.json + RB_SELECTION_AT_RUN_HEAD_RUN1_GO_TRACE.jsonl with its incident record. Grants exactly one dispatch; changes no contract, criterion, threshold or rule.",
+  "schema": "odg-owner-decision/1",
+  "kind": "OWNER_DECISION",
+  "issuer": "OWNER (CTO)",
+  "date": "2026-11-27",
+  "directive": "CTO — AUTORISATION DE RELANCE CONTRÔLÉE RB-SELECTION-AT-RUN-HEAD",
+  "quote": [
+    "J'autorise UNE seule relance contrôlée du GO de position 1 :",
+    "RB-SELECTION-AT-RUN-HEAD",
+    "Conserver intégralement le run 79789e6b comme EXECUTED_FAIL.",
+    "Le premier FAIL ne doit pas être transformé rétroactivement en PASS.",
+    "Même contrat.",
+    "Mêmes critères d'acceptation.",
+    "Scratch vierge correctement préparé, avec accès aux dépendances node_modules.",
+    "Vérifier que TSC s'exécute dans cet environnement avant le GO.",
+    "Exécuter le GO une seule fois.",
+    "Le statut final doit refléter le résultat réel de la relance et les critères contractuels."
+  ],
+  "covers": {
+    "contract": "RB-SELECTION-AT-RUN-HEAD",
+    "contractSha256": "d23e00ca6e7a125c75823e4e1f03b338a1f32c65adcab6e2b162fba2350c2d1a",
+    "dispatches": 1,
+    "after": "RUN-1 preserved as incident; scratch with reachable node_modules and tsc exit 0 verified before the GO"
+  },
+  "run1": {
+    "runId": "79789e6b4e5c46fb",
+    "outcome": "EXECUTED_FAIL",
+    "result": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_RUN1_INCIDENT_RESULT.json",
+    "trace": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_RUN1_GO_TRACE.jsonl",
+    "incident": "docs/odg/evidence/RB_SELECTION_AT_RUN_HEAD_RUN_INCIDENT.json",
+    "note": "files renamed byte-identical (git mv) so the declared experiment path is free for the single re-run — same mechanism as V176-NB3 RUN-1"
+  },
+  "neverCovers": [
+    "a second re-run",
+    "re-grading RUN-1",
+    "any contract / criterion / threshold change"
+  ]
+}
